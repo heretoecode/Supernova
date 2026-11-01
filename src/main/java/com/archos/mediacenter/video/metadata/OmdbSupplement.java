@@ -17,8 +17,13 @@ public final class OmdbSupplement {
     public interface Transport { JSONObject get(HttpUrl url) throws Exception; }
     public static final class Ratings {
         public static final Ratings EMPTY=new Ratings("","","","","");
-        public final String imdb,rottenTomatoes,metacritic,awards,imdbVotes;
-        private Ratings(String imdb,String rottenTomatoes,String metacritic,String awards,String votes){this.imdb=imdb;this.rottenTomatoes=rottenTomatoes;this.metacritic=metacritic;this.awards=awards;this.imdbVotes=votes;}
+        public final String imdb,rottenTomatoes,metacritic,awards,imdbVotes,tomatoReviews,metacriticReviews;
+        private Ratings(String imdb,String rt,String mc,String awards,String votes){this(imdb,rt,mc,awards,votes,"","");}
+        private Ratings(String imdb,String rt,String mc,String awards,String votes,String rtCount,String mcCount){this.imdb=imdb;rottenTomatoes=rt;metacritic=mc;this.awards=awards;imdbVotes=votes;tomatoReviews=rtCount;metacriticReviews=mcCount;}
+        /** Counts supplied by an authorised provider adapter, never derived from another score. */
+        public Ratings withReviewCounts(String rt,String mc){return new Ratings(imdb,rottenTomatoes,metacritic,awards,imdbVotes,count(rt),count(mc));}
+        public boolean hasData(int row){return !value(row).isEmpty()||row==0&&!imdbVotes.isEmpty()||row==1&&!tomatoReviews.isEmpty()||row==2&&!metacriticReviews.isEmpty();}
+        public String countsSignature(){return imdbVotes+"|"+tomatoReviews+"|"+metacriticReviews;}
         public String value(int row){return row==0?imdb:row==1?rottenTomatoes:row==2?metacritic:awards;}
     }
     private static final Access DENIED=new Access(){public boolean permitted(){return false;}public boolean acquireRequest(){return false;}public String apiKey(){return "";}};
@@ -43,8 +48,9 @@ public final class OmdbSupplement {
             else if("Metacritic".equals(source)&&value.endsWith("/100"))mc=score(value.substring(0,value.length()-4),100,"/100");
         }
         String votes=clean(data.optString("imdbVotes"),32);if(!votes.matches("[0-9]{1,12}|[0-9]{1,3}(,[0-9]{3}){1,3}"))votes="";
-        return new Ratings(imdb,rt,mc,clean(data.optString("Awards"),512),votes);
+        return new Ratings(imdb,rt,mc,clean(data.optString("Awards"),512),votes,count(data.optString("tomatoReviews")),"");
     }
+    private static String count(String value){String clean=clean(value,32);return clean.matches("[0-9]{1,12}|[0-9]{1,3}(,[0-9]{3}){1,3}")?clean:"";}
     private static String score(String text,int maximum,String suffix){try{if(!text.matches("[0-9]{1,3}(\\.[0-9]{1,2})?"))return "";double value=Double.parseDouble(text);return value>=0&&value<=maximum?text+suffix:"";}catch(Exception invalid){return "";}}
     private static String clean(String value,int limit){if(value==null)return "";value=value.trim();return value.isEmpty()||value.equalsIgnoreCase("N/A")||value.equalsIgnoreCase("null")?"":value.replaceAll("[\\p{Cntrl}]"," ").substring(0,Math.min(limit,value.length()));}
     private static final class HttpsTransport implements Transport {

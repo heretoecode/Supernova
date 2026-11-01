@@ -48,7 +48,7 @@ public class SettingsWorkspaceTest {
             toggle.measure(View.MeasureSpec.makeMeasureSpec(200,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(100,View.MeasureSpec.EXACTLY));toggle.layout(0,0,200,100);
             android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(200,100,android.graphics.Bitmap.Config.ARGB_8888);toggle.draw(new android.graphics.Canvas(image));
             java.util.Set<Integer> colours=new java.util.HashSet<>();for(int y=0;y<100;y++)for(int x=0;x<200;x++)colours.add(image.getPixel(x,y));
-            assertTrue("White thumb visible",colours.contains(android.graphics.Color.WHITE));assertTrue("Separate coloured track visible",colours.contains(PreviewAccent.switchTrack(host.get())));assertNotEquals(android.graphics.Color.WHITE,PreviewAccent.switchTrack(host.get()));assertNotEquals(android.graphics.Color.BLACK,PreviewAccent.switchTrack(host.get()));
+            assertTrue("White thumb visible",colours.contains(android.graphics.Color.WHITE));assertTrue("Blue gradient remains visible",colours.stream().anyMatch(c->android.graphics.Color.blue(c)>180&&android.graphics.Color.red(c)<100));assertNotEquals(android.graphics.Color.WHITE,PreviewAccent.switchTrack(host.get()));assertNotEquals(android.graphics.Color.BLACK,PreviewAccent.switchTrack(host.get()));
             if(accent==0xff62bbf3)assertEquals(accent,PreviewAccent.switchTrack(host.get()));
         }
     }
@@ -58,7 +58,7 @@ public class SettingsWorkspaceTest {
             box.setEnabled(true);box.setChecked(checked);android.graphics.drawable.Drawable icon=box.getButtonDrawable();icon.setBounds(0,0,60,32);
             android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(60,32,android.graphics.Bitmap.Config.ARGB_8888);icon.draw(new android.graphics.Canvas(image));
             java.util.Set<Integer> colours=new java.util.HashSet<>();for(int y=0;y<32;y++)for(int x=0;x<60;x++)if(android.graphics.Color.alpha(image.getPixel(x,y))>240)colours.add(image.getPixel(x,y));
-            assertTrue(colours.contains(android.graphics.Color.WHITE));assertTrue(colours.contains(checked?0xff00a9db:0xff3c5565));
+            assertTrue(colours.contains(android.graphics.Color.WHITE));if(checked)assertTrue(colours.stream().anyMatch(c->android.graphics.Color.blue(c)>180&&android.graphics.Color.red(c)<100));else assertTrue(colours.contains(com.archos.mediacenter.video.leanback.StandardSwitchDrawable.OFF));
             box.setEnabled(false);image.eraseColor(android.graphics.Color.TRANSPARENT);icon=box.getButtonDrawable();icon.setBounds(0,0,60,32);icon.draw(new android.graphics.Canvas(image));
             int maximumAlpha=0;for(int y=0;y<32;y++)for(int x=0;x<60;x++)maximumAlpha=Math.max(maximumAlpha,android.graphics.Color.alpha(image.getPixel(x,y)));
             assertTrue("Disabled switch remains visible but distinct",maximumAlpha>0&&maximumAlpha<255);

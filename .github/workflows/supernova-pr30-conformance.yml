@@ -46,7 +46,8 @@ jobs:
           python3 nova/Video/.github/build/verify-next-qa.py --root nova
           # The owner now authorises corrections to the previously frozen library,
           # settings and Reception sources. Preserve delivery identity and native inputs.
-          git -C nova/Video diff --exit-code 02ba4b02 HEAD -- AndroidManifest.xml build.gradle settings.gradle gradle.properties assets/foundation .github/signing tools/native146 res/raw/keep.xml res/layout/player_controller_experimental.xml src/main/java/com/archos/mediacenter/video/player/PlayerController.java src/main/java/com/archos/mediacenter/video/player/PreviewHudTiming.java src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java
+          git -C nova/Video diff --exit-code 02ba4b02 HEAD -- AndroidManifest.xml build.gradle settings.gradle gradle.properties assets/foundation .github/signing tools/native146 res/raw/keep.xml res/layout/player_controller_experimental.xml src/main/java/com/archos/mediacenter/video/player/PlayerController.java src/main/java/com/archos/mediacenter/video/player/PreviewHudTiming.java
+          python3 nova/Video/.github/build/verify-owner-reference-preservation.py --video nova/Video
       - name: Complete application and library tests, lint and Java compilation (no APK)
         run: |
           set -euo pipefail

@@ -1,3 +1,5 @@
+> Historical report for commit 75c17bed. Original references have now been supplied; see [the current raw-diagnostics/reference continuation](OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md).
+
 # Shield 0.149 consolidated correction report
 
 **Status: confirmed source corrections implemented and tested; physical Shield acceptance OPEN. Exact Reception restoration and raw diagnostics investigation BLOCKED by missing inputs.**

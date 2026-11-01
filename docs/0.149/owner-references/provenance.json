@@ -1,0 +1,25 @@
+{
+  "owner_attachment": "Supernova_0.149_Codex_QA_References.zip",
+  "files": [
+    {
+      "name": "IMG_5090.jpeg",
+      "bytes": 171568,
+      "sha256": "ee52d374797ca303da25491a3349d9460e2328bc86b3bae08df6962e87a0052a",
+      "retained_in_repository": true
+    },
+    {
+      "name": "gemini_generated_video_A1E9E8FB.mp4",
+      "bytes": 2908362,
+      "sha256": "2e71d7b6e620a35a622e9c4f0458618b1d03ba557aad7c8f5c009a423bd0efc4",
+      "retained_in_repository": true
+    },
+    {
+      "name": "Supernova Diagnostics - 2026-11-01 21-02-06-018.zip",
+      "bytes": 762005,
+      "sha256": "b20fd7dc35d958370092de3adba036ad64e88becbecce392f9382bfd1eceae41",
+      "retained_in_repository": false
+    }
+  ],
+  "raw_diagnostics": "Analysed privately; original log archive is not committed.",
+  "provider_artwork": "Reception RT, Metacritic and trophy vector marks transcribed from owner reference; existing IMDb wordmark composited into its reference square tile. No values from screenshot are hardcoded in production."
+}

@@ -366,9 +366,9 @@ public final class PreviewMoviePage extends ScrollView {
         if(technicalFacts.containsKey("Average file size"))technicalFacts.put("Library size",technicalFacts.get("Library size")+" · avg "+technicalFacts.get("Average file size"));
         Map<String,String> keyFacts=DetailsBlueprintPanel.facts(key),receptionFacts=DetailsBlueprintPanel.facts(reception);
         com.archos.mediacenter.video.metadata.OmdbSupplement.Ratings supplied=enrichment!=null&&selectedEpisode==null&&seasonNumber<0?enrichment.supplementary:com.archos.mediacenter.video.metadata.OmdbSupplement.Ratings.EMPTY;
-        String receptionKey=new TreeMap<>(receptionFacts).toString()+supplied.imdbVotes;
+        String receptionKey=new TreeMap<>(receptionFacts).toString()+supplied.countsSignature();
         for(int slot=0;slot<4;slot++)receptionKey+="|"+supplied.value(slot);
-        String signature=synopsis+new TreeMap<>(keyFacts)+new TreeMap<>(technicalFacts)+new TreeMap<>(receptionFacts)+supplied.imdbVotes;
+        String signature=synopsis+new TreeMap<>(keyFacts)+new TreeMap<>(technicalFacts)+new TreeMap<>(receptionFacts)+supplied.countsSignature();
         for(int slot=0;slot<4;slot++)signature+="|"+supplied.value(slot);
         if(!signature.equals(informationSignature)){
             informationSignature=signature;
@@ -627,7 +627,7 @@ public final class PreviewMoviePage extends ScrollView {
     private static String extrasFingerprint(PreviewDetailsData.Result result){if(result==null)return "";StringBuilder text=new StringBuilder().append(result.extrasLoaded);for(PreviewDetailsData.Extra e:result.extras)text.append(e.key).append(e.name).append(e.type);return text.toString();}
     private static String relatedFingerprint(PreviewDetailsData.Result result){if(result==null)return "";StringBuilder text=new StringBuilder().append(result.relatedLoaded);for(PreviewDetailsData.Remote e:result.related)text.append(e.title).append(e.provider==null?0:e.provider.id);return text.toString();}
     private String informationFingerprint(PreviewDetailsData.Result result){
-        if(result==null)return "";String text=String.valueOf(result.details)+result.classification+result.alternatives+result.supplementary.imdbVotes;
+        if(result==null)return "";String text=String.valueOf(result.details)+result.classification+result.alternatives+result.supplementary.countsSignature();
         for(int slot=0;slot<4;slot++)text+="|"+result.supplementary.value(slot);
         return text+(movie instanceof Episode?result.episodes.toString():"");
     }

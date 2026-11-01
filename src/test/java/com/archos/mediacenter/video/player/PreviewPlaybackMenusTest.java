@@ -24,6 +24,14 @@ public class PreviewPlaybackMenusTest {
     Dialog dialog(){return org.robolectric.shadows.ShadowDialog.getLatestDialog();}
     void layoutWindow(){View root=dialog().getWindow().getDecorView();for(int pass=0;pass<3;pass++){root.measure(View.MeasureSpec.makeMeasureSpec(dialog().getWindow().getAttributes().width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(dialog().getWindow().getAttributes().height,View.MeasureSpec.EXACTLY));root.layout(0,0,root.getMeasuredWidth(),root.getMeasuredHeight());Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();}}
     TextView option(String label){return dialog().getWindow().getDecorView().findViewWithTag("playback.option:"+label);}
+    @Test @Config(sdk=30) public void nestedUpWithFocusOnOuterTabCannotCrash(){
+        TVMenu menu=new TVMenu(host);PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_audio),menu),host.getString(R.string.menu_audio));
+        ViewGroup container=(ViewGroup)LayoutInflater.from(host).inflate(R.layout.card_dialog_layout,null);TVCardDialog card=container.findViewById(R.id.card_view);card.setText("Adjustment");card.addOtherView(new TVMenu(host));PreviewPlaybackMenus.showNested(host,card);
+        View tab=dialog().getWindow().getDecorView().findViewWithTag("playback.tab:0");assertTrue(tab.requestFocus());
+        assertNull(PreviewPlaybackMenus.nextFocusWithin(card,tab,View.FOCUS_UP));
+        assertTrue(dialog().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_UP)));assertTrue(tab.hasFocus());
+        TextView detached=new TextView(host);assertNull(PreviewPlaybackMenus.nextFocusWithin(card,detached,View.FOCUS_UP));
+    }
     @Test public void exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries() throws Exception {
         PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View root=dialog().getWindow().getDecorView();
         assertNotNull(root.findViewWithTag("subtitles.main"));ViewGroup tabs=(ViewGroup)root.findViewWithTag("playback.tab:1").getParent();assertEquals("playback.tab:1",tabs.getChildAt(0).getTag());assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tabs).getOrientation());

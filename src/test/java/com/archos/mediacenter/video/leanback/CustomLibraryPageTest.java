@@ -6,12 +6,26 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class CustomLibraryPageTest {
  private Entry movie(long id,String name,int year,String genres,boolean watched){Movie video=mock(Movie.class);when(video.getId()).thenReturn(id);when(video.getName()).thenReturn(name);when(video.getYear()).thenReturn(year);when(video.isWatched()).thenReturn(watched);when(video.getRating()).thenReturn(8f);return new Entry(video,id,0,genres);}
+ @Test @Config(sdk=30,qualifiers="w960dp-h540dp-land-xhdpi") @GraphicsMode(GraphicsMode.Mode.NATIVE)
+ public void populatedCustomViewportShowsStatisticsBeforeAnyScrollAndAfterRefresh()throws Exception{
+  PreviewAsyncFixtures.offlineTransport();Snapshot previous=PreviewLibraryLoader.cached,library=new Snapshot();
+  for(int i=1;i<=45;i++){Movie movie=new Movie(i,"/movie"+i,"Film "+i,i,"Fixture synopsis",2024,7,"",null,100000,0,0,0,false,false,false,false,i,i,3840,2160,"Atmos",null,null,null,0,1,1000,0);library.movies.add(new Entry(movie,i,0,"Drama"));}PreviewLibraryLoader.cached=library;
+  var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();try{
+   try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException absent){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(host.get()).build());}
+   android.widget.FrameLayout workspace=new android.widget.FrameLayout(host.get());TopNavigation root=new TopNavigation(host.get(),workspace,i->{},()->true);root.selectTab(6);host.get().setContentView(root);
+   PreviewPages pages=new PreviewPages(host.get(),(holder,item)->{});pages.configureCustomLibrary(new CustomLibraryPage(),()->{});pages.setSnapshot(library);
+   android.widget.LinearLayout body=new android.widget.LinearLayout(host.get());body.addView(pages,new android.widget.LinearLayout.LayoutParams(-1,-1));workspace.addView(body,new android.widget.FrameLayout.LayoutParams(-1,-1));pages.focusFromNavigation();
+   PreviewPagesTest.layout(root);android.view.View stats=root.findViewWithTag("library.statistics");android.graphics.Rect visible=new android.graphics.Rect();assertNotNull(stats);assertTrue(stats.getGlobalVisibleRect(visible));assertEquals(stats.getHeight(),visible.height());assertNotNull(PreviewPagesTest.findText(stats,"45"));
+   androidx.recyclerview.widget.RecyclerView list=(androidx.recyclerview.widget.RecyclerView)pages.getChildAt(0);assertFalse("No initial scroll past statistics",list.canScrollVertically(-1));pages.post(()->pages.setSnapshot(library));Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();PreviewPagesTest.layout(root);stats=root.findViewWithTag("library.statistics");assertTrue(stats.getGlobalVisibleRect(visible));assertEquals(stats.getHeight(),visible.height());assertFalse(list.canScrollVertically(-1));PreviewPagesTest.capture(root,"custom-populated-first-frame-api30");
+  }finally{host.pause().stop().destroy();PreviewLibraryLoader.cached=previous;PreviewAsyncFixtures.drain();}
+ }
  @Test public void initialCustomFocusDoesNotScrollPastStatisticsBeforeLayout(){
   Application c=RuntimeEnvironment.getApplication();PreviewPages pages=new PreviewPages(c,(holder,item)->{});pages.configureCustomLibrary(new CustomLibraryPage(),()->{});pages.setSnapshot(new Snapshot());
   assertTrue(pages.focusFromNavigation());

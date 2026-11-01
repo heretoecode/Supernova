@@ -15,6 +15,11 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {
+    @Test public void episodeExternalIdsUseEpisodeIdentityRatherThanSeriesIdentity()throws Exception{
+        StreamingRepository.validateMetadataResponse("tv/42/season/1/episode/2/external_ids",new JSONObject("{id:765432,imdb_id:null,tvdb_id:123}"));
+        for(String body:new String[]{"{id:0,tvdb_id:123}","{id:765432}","{success:false,id:765432,tvdb_id:123}"})try{StreamingRepository.validateMetadataResponse("tv/42/season/1/episode/2/external_ids",new JSONObject(body));fail("Invalid episode payload accepted");}catch(java.io.IOException expected){}
+        try{StreamingRepository.validateMetadataResponse("tv/42/external_ids",new JSONObject("{id:765432,tvdb_id:123}"));fail("Wrong series ID accepted");}catch(java.io.IOException expected){}
+    }
     @Test public void metadataTransportReportsSafeServiceStatusBoundsAndParent()throws Exception{
         android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
         try{

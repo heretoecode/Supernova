@@ -104,6 +104,16 @@ public final class Diagnostics {
     private static SharedPreferences sessionState;
     private static final Map<Activity,android.view.ViewTreeObserver.OnGlobalFocusChangeListener> FOCUS=new WeakHashMap<>();
 
+    static SharedPreferences processSessionState(Context c,String processName){
+        return c.getSharedPreferences("supernova_diagnostic_session_"+processName.replaceAll("[^a-zA-Z0-9._-]","_"),Context.MODE_PRIVATE);
+    }
+    private static String currentProcessName(Context c){
+        if(android.os.Build.VERSION.SDK_INT>=28){String name=Application.getProcessName();if(name!=null&&!name.isEmpty())return name;}
+        android.app.ActivityManager manager=(android.app.ActivityManager)c.getSystemService(Context.ACTIVITY_SERVICE);
+        if(manager!=null){java.util.List<android.app.ActivityManager.RunningAppProcessInfo> processes=manager.getRunningAppProcesses();if(processes!=null)for(android.app.ActivityManager.RunningAppProcessInfo process:processes)if(process.pid==android.os.Process.myPid())return process.processName;}
+        // Unknown roles must not overwrite another process's crash/clean marker.
+        return "unknown_"+android.os.Process.myPid();
+    }
     public static void install(Application app){
         context=app.getApplicationContext();
         enabled=PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY,defaultEnabled());
@@ -111,7 +121,7 @@ public final class Diagnostics {
         qa="qa".equals(PreferenceManager.getDefaultSharedPreferences(app).getString(LEVEL,"qa"));
         if(!heartbeatInstalled){heartbeatInstalled=true;HEARTBEAT.scheduleWithFixedDelay(Diagnostics::heartbeat,10,10,TimeUnit.SECONDS);}
         PreferenceManager.getDefaultSharedPreferences(app).registerOnSharedPreferenceChangeListener(CONFIG);
-        sessionState=app.getSharedPreferences("supernova_diagnostic_session",Context.MODE_PRIVATE);
+        sessionState=processSessionState(app,currentProcessName(app));
         if(enabled){
             String previousProcess=sessionState.getString("process","");
             if(!previousProcess.isEmpty()&&!sessionState.getBoolean("clean",true))event("PREVIOUS_SESSION_UNCLEAN_EXIT","previous_process",previousProcess,"previous_pid",sessionState.getInt("pid",0),"previous_operation",sessionState.getString("last_operation","unknown"),"previous_screen",sessionState.getString("last_screen","unknown"),"previous_focus",sessionState.getString("last_focus","unknown"));
@@ -200,7 +210,7 @@ public final class Diagnostics {
         if(previous==next&&!consumed&&key!=android.view.KeyEvent.KEYCODE_DPAD_CENTER){if(++unhandledNavigation==4)event("focus_anomaly_suspected","kind","repeated_unhandled_navigation","screen",uiScreen,"target",viewId(next));}else unhandledNavigation=0;
     }
     static void inspectFocusGeometry(View target){
-        if(!enabled||!target.isAttachedToWindow()||!target.hasFocus()||target.getWidth()==0||target.getHeight()==0)return;
+        if(!enabled||target instanceof com.archos.mediacenter.video.leanback.PreviewPages||!target.isAttachedToWindow()||!target.hasFocus()||target.getWidth()==0||target.getHeight()==0)return;
         android.graphics.Rect visible=new android.graphics.Rect();if(!target.getGlobalVisibleRect(visible))return;
         // Sample after focus scrolling settles. Small rounding and deliberate card zoom are ignored.
         if(visible.width()<target.getWidth()*.75f||visible.height()<target.getHeight()*.75f)
@@ -494,6 +504,8 @@ public final class Diagnostics {
             json.put("sequence",SEQUENCE.incrementAndGet());json.put("pid",android.os.Process.myPid());json.put("last_operation",lastOperation);json.put("process",PROCESS);json.put("session",playback);json.put("app_session",appSession);json.put("event",safe(event));
             for(int i=0;i+1<fields.length;i+=2){String key=String.valueOf(fields[i]);
                 if(!key.matches("[a-z_]{1,48}")||key.matches(".*(password|credential|token|secret|header|cookie|path|url|uri|api_key).*"))continue;
+                if("elapsed_ms".equals(key))key="duration_ms";
+                else if(java.util.Arrays.asList("utc_ms","severity","sequence","pid","last_operation","process","session","app_session","event").contains(key))continue;
                 Object value=fields[i+1];json.put(key,value instanceof Number||value instanceof Boolean?value:safe(String.valueOf(value)));
             }String line=json.toString()+"\n";
             if(line.getBytes(StandardCharsets.UTF_8).length>32768){DROPPED.incrementAndGet();return "";}return line;

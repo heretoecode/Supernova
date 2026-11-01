@@ -119,6 +119,11 @@ public final class StreamingRepository {
         if(parts.length==4&&"season".equals(parts[2])){
             if(value.optInt("season_number",-1)!=Integer.parseInt(parts[3])||value.optJSONArray("episodes")==null)throw new IOException("Invalid season package");return;
         }
+        // Episode external IDs identify the episode, not the show in the URL.
+        if(parts.length==7&&"tv".equals(parts[0])&&"season".equals(parts[2])&&"episode".equals(parts[4])&&"external_ids".equals(parts[6])){
+            if(!parts[3].matches("[0-9]{1,4}")||!parts[5].matches("[0-9]{1,4}")||value.optLong("id",0)<=0||!(value.has("imdb_id")||value.has("tvdb_id")||value.has("wikidata_id")))throw new IOException("Invalid episode external IDs");
+            return;
+        }
         String section=parts.length==2?"":parts[2];
         // Recommendation pages carry result IDs, not a top-level source-title ID.
         if("reviews".equals(section)){

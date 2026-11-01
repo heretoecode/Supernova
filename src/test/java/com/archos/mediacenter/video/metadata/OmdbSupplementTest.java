@@ -7,6 +7,11 @@ import org.json.*;
 import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
 public class OmdbSupplementTest {
+ @Test public void reviewCountsAreProviderSuppliedAndNeverDerivedFromScores()throws Exception{
+  JSONObject data=new JSONObject("{Response:'True',imdbID:'tt0089218',Type:'movie',imdbRating:'7.7',Metascore:'62',tomatoReviews:'338',Ratings:[{Source:'Rotten Tomatoes',Value:'77%'}]}");
+  var ratings=OmdbSupplement.parse(data,"tt0089218","movie");assertEquals("338",ratings.tomatoReviews);assertEquals("",ratings.metacriticReviews);assertEquals("20",ratings.withReviewCounts("338","20").metacriticReviews);
+  for(String invalid:new String[]{"N/A","-1","20 reviews","1.5","<script>","999999999999999"}){var missing=ratings.withReviewCounts(invalid,invalid);assertEquals("",missing.tomatoReviews);assertEquals("",missing.metacriticReviews);}
+ }
  @Test public void productionHasNoCredentialBinding(){assertFalse(OmdbSupplement.PRODUCTION.enabled());assertSame(OmdbSupplement.Ratings.EMPTY,OmdbSupplement.PRODUCTION.load("tt0089218","movie"));}
  @Test public void deniedAccessDoesNotReadKeyOrCallTransport(){OmdbSupplement client=new OmdbSupplement(new OmdbSupplement.Access(){public boolean permitted(){return false;}public boolean acquireRequest(){throw new AssertionError();}public String apiKey(){throw new AssertionError();}},url->{throw new AssertionError();});assertSame(OmdbSupplement.Ratings.EMPTY,client.load("tt0089218","movie"));}
  @Test public void budgetAndIdentifierGuardNetwork(){OmdbSupplement client=new OmdbSupplement(access(false),url->{throw new AssertionError();});assertSame(OmdbSupplement.Ratings.EMPTY,client.load("tt0089218","movie"));assertSame(OmdbSupplement.Ratings.EMPTY,client.load("wrong","movie"));assertSame(OmdbSupplement.Ratings.EMPTY,client.load("tt0089218","season"));}

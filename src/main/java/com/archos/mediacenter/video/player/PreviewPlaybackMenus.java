@@ -68,7 +68,7 @@ final class PreviewPlaybackMenus {
         legacyPanel=panel;presentationHost=new FrameLayout(owner);presentationHost.addView(panel,new FrameLayout.LayoutParams(-1,-1));current.setContentView(presentationHost);current.setOnCancelListener(d->close());
         current.setOnKeyListener((d,key,event)->{if(key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_ESCAPE||key==KeyEvent.KEYCODE_BUTTON_B){if(event.getAction()==KeyEvent.ACTION_UP)back();return true;}
             if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_MENU){if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();return true;}
-            if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_DPAD_UP&&nested!=null){View focused=current.getCurrentFocus();View next=focused==null?null:FocusFinder.getInstance().findNextFocus(nested,focused,View.FOCUS_UP);if(next==null||next==focused){tabs.getChildAt(tab).requestFocus();return true;}}
+            if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_DPAD_UP&&nested!=null){View focused=current.getCurrentFocus();View next=focused==null?null:nextFocusWithin(nested,focused,View.FOCUS_UP);if(next==null||next==focused){tabs.getChildAt(tab).requestFocus();return true;}}
             return false;});
         current.show();Window window=current.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.setDimAmount(.12f);
         int width=Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f));int height=Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48));
@@ -141,10 +141,11 @@ final class PreviewPlaybackMenus {
         if(item.isSwitchable()||owner.getString(R.string.pref_audio_filt_night_mode).equals(item.getText()))switchState(row,label,item.isChecked());
     }
     private static void switchState(TextView row,String label,boolean on){
-        final int accent=PreviewAccent.switchTrack(owner);row.setText(label);row.setAlpha(row.isEnabled()?1f:.4f);row.setContentDescription(label+", "+(on?"On":"Off"));
-            android.graphics.drawable.Drawable indicator=new android.graphics.drawable.Drawable(){final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);public void draw(android.graphics.Canvas canvas){android.graphics.Rect bounds=getBounds();paint.setColor(on?accent:0xff526174);canvas.drawRoundRect(bounds.left,bounds.top,bounds.right,bounds.bottom,dp(10),dp(10),paint);paint.setColor(android.graphics.Color.WHITE);canvas.drawCircle(on?bounds.right-dp(10):bounds.left+dp(10),bounds.exactCenterY(),dp(7),paint);}public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}};
-            indicator.setBounds(0,0,dp(36),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
+        row.setText(label);row.setAlpha(row.isEnabled()?1f:.4f);row.setContentDescription(label+", "+(on?"On":"Off"));
+        android.graphics.drawable.Drawable indicator=com.archos.mediacenter.video.leanback.StandardSwitchDrawable.snapshot(owner,on);
+        indicator.setBounds(0,0,dp(54),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
     }
+
     private static void refreshChecks(){
         if(owner==null)return;
         View focused=current.getCurrentFocus();Object key=expansionAnchor!=null?expansionAnchor.getTag():focused==null?null:focused.getTag();int occurrence=0;
@@ -163,7 +164,7 @@ final class PreviewPlaybackMenus {
     private static TextView action(String label,boolean checked,boolean enabled,String code,Runnable run){
         int index=rows.getChildCount();TextView text=SharedThreePanel.text(owner,(checked?"✓  ":"")+label+(enabled?"":" — unavailable"),14);text.setTag("playback.option:"+label);text.setFocusable(enabled);text.setFocusableInTouchMode(enabled);text.setEnabled(enabled);text.setGravity(Gravity.CENTER_VERTICAL);text.setPadding(dp(10),dp(9),dp(10),dp(9));text.setMinimumHeight(dp(40));text.setBackground(SharedThreePanel.accentFocus(owner));text.setOnClickListener(v->{invokingRow=text;run.run();});
         if(code!=null)PreviewLanguageIcon.apply(text,code);
-        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){ViewGroup scope=text.getParent() instanceof ViewGroup?(ViewGroup)text.getParent():content;View next=FocusFinder.getInstance().findNextFocus(scope,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){View next=FocusFinder.getInstance().findNextFocus(content,text,key==KeyEvent.KEYCODE_DPAD_LEFT?View.FOCUS_LEFT:View.FOCUS_RIGHT);if(next!=null&&next!=text)next.requestFocus();return true;}return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
+        text.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;if(key==KeyEvent.KEYCODE_DPAD_UP){ViewGroup scope=text.getParent() instanceof ViewGroup?(ViewGroup)text.getParent():content;View next=nextFocusWithin(scope,text,View.FOCUS_UP);if(next==null||next==text){tabs.getChildAt(tab).requestFocus();return true;}}if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){View next=nextFocusWithin(content,text,key==KeyEvent.KEYCODE_DPAD_LEFT?View.FOCUS_LEFT:View.FOCUS_RIGHT);if(next!=null&&next!=text)next.requestFocus();return true;}return false;});rows.addView(text,new LinearLayout.LayoutParams(-1,-2));return text;
     }
     private static SharedPreferences preferences(){return PreferenceManager.getDefaultSharedPreferences(owner);}
     private static void subtitlePreferences(){
@@ -211,6 +212,12 @@ final class PreviewPlaybackMenus {
         if(focus&&inCurrentContent(anchor))anchor.requestFocus();
     }
 
+    /** FocusFinder requires its focused argument to belong to the supplied subtree. */
+    static View nextFocusWithin(ViewGroup scope,View focused,int direction){
+        if(scope==null||focused==null)return null;
+        View cursor=focused;while(cursor!=scope&&cursor.getParent() instanceof View)cursor=(View)cursor.getParent();
+        return cursor==scope?FocusFinder.getInstance().findNextFocus(scope,focused,direction):null;
+    }
     private static void focusContent(){if(content!=null)for(View view:content.getFocusables(View.FOCUS_FORWARD))if(view.isEnabled()&&view.isShown()&&view.requestFocus())return;}
     private static void compact(View view,Activity activity){
         if(view instanceof TextView){TextView text=(TextView)view;text.setTextSize(14);text.setMaxLines(3);text.setEllipsize(android.text.TextUtils.TruncateAt.END);text.setTextColor(android.graphics.Color.WHITE);text.setMinHeight(0);}

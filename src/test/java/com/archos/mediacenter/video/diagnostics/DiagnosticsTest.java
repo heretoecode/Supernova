@@ -9,6 +9,19 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DiagnosticsTest {
+    @Test public void independentProcessRolesCannotMarkEachOtherAsUnclean(){
+        Application c=RuntimeEnvironment.getApplication();android.content.SharedPreferences main=Diagnostics.processSessionState(c,"app.supernova.player"),scanner=Diagnostics.processSessionState(c,"app.supernova.player:scanner");
+        main.edit().clear().putString("process","main-active").putBoolean("clean",false).commit();scanner.edit().clear().putString("process","scanner-active").putBoolean("clean",true).commit();
+        assertEquals("main-active",main.getString("process",""));assertFalse(main.getBoolean("clean",true));assertEquals("scanner-active",scanner.getString("process",""));assertTrue(scanner.getBoolean("clean",false));
+        assertEquals("main-active",Diagnostics.processSessionState(c,"app.supernova.player").getString("process",""));
+    }
+    @Test public void payloadDurationCannotOverwriteEventClockOrIdentity()throws Exception{
+        long before=android.os.SystemClock.elapsedRealtime();String line=org.robolectric.util.ReflectionHelpers.callStaticMethod(Diagnostics.class,"record",org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class,"artwork_ready"),org.robolectric.util.ReflectionHelpers.ClassParameter.from(Object[].class,new Object[]{"elapsed_ms",3,"utc_ms",1,"sequence",-1,"event","spoof","process","spoof"}));
+        var json=new org.json.JSONObject(line);assertTrue(json.getLong("elapsed_ms")>=before);assertEquals(3,json.getLong("duration_ms"));assertTrue(json.getLong("utc_ms")>1);assertTrue(json.getLong("sequence")>0);assertEquals("artwork_ready",json.getString("event"));assertNotEquals("spoof",json.getString("process"));
+    }
+    @Test public void temporaryLibraryFocusHolderIsNotClassifiedAsClippedControl(){
+        Diagnostics.setEnabled(RuntimeEnvironment.getApplication(),true);var holder=org.mockito.Mockito.mock(com.archos.mediacenter.video.leanback.PreviewPages.class);Diagnostics.inspectFocusGeometry(holder);org.mockito.Mockito.verifyNoInteractions(holder);
+    }
     @Test public void postFailureWindowUsesEventTimeEvenWhenBothWritersAreDelayed()throws Exception{
         Application c=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(c,true);
         java.util.concurrent.ExecutorService important=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"IMPORTANT");
