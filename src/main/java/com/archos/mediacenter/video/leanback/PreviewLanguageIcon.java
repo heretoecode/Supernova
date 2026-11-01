@@ -16,13 +16,9 @@ public final class PreviewLanguageIcon extends Drawable {
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
     private final PreviewIcon neutral=new PreviewIcon("language");
     private final Bitmap flag;
-    private final int intrinsicSize;
-    @Override public int getIntrinsicWidth(){return intrinsicSize;}
-    @Override public int getIntrinsicHeight(){return intrinsicSize;}
     /** Contextless callers retain the neutral safe fallback. App consumers use bundled resources. */
     public PreviewLanguageIcon(String code){this(null,code);}
     public PreviewLanguageIcon(android.content.Context context,String code){
-        intrinsicSize=context==null?24:PreviewDialog.dp(context,24);
         String country=country(providerCode(code));Bitmap bitmap=null;
         if(context!=null&&!country.isEmpty()){
             synchronized(FLAGS){bitmap=FLAGS.get(country);if(bitmap==null){int id=context.getResources().getIdentifier("region_"+country.toLowerCase(Locale.ROOT),"drawable",context.getPackageName());if(id!=0){bitmap=BitmapFactory.decodeResource(context.getResources(),id);if(bitmap!=null)FLAGS.put(country,bitmap);}}}
