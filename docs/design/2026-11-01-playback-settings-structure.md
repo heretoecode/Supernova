@@ -36,3 +36,8 @@
 - Use existing dark visual styling and blue focus/selection treatment.
 - Exact preset palette is **not yet approved**; example colours shown during discussion are illustrative. Preserve existing subtitle colour capability in implementation.
 - Design-only; explicitly excluded from ongoing Codex fix batch.
+
+## Background opacity refinement (approved)
+- **Background Opacity** is controlled directly in its existing row, with inline presets **0%, 25%, 50%, 75%, 100%** and a blue selected state; no submenu.
+- These are proposed UI presets; implementation must map them safely to the existing 0–255 opacity control and preserve current settings appropriately.
+- This remains design-only and is excluded from the active Codex fix batch.
