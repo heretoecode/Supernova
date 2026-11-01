@@ -4,7 +4,7 @@
 
 - Retain one Settings button on the playback HUD.
 - Activating it opens one on-screen settings window containing all available playback settings.
-- Keep existing categories **Audio, Subtitles, Video and More** for now; settings are organised within the single window.
+- Display the categories in this approved order: **Subtitles → Audio → Video → More**; settings are organised within the single window.
 - Support Nvidia Shield remote navigation.
 - Preserve all existing setting functionality; this work concerns presentation and organisation.
 - Earlier proposal for a standalone Subtitles window opened directly from the HUD is **parked**, not approved for implementation.
