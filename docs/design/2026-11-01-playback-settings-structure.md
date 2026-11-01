@@ -11,3 +11,7 @@
 - Do not alter the ongoing Codex fixes or include this redesign in that work.
 
 **Next design task:** establish accurate complete inventory and grouping within the single settings window before producing further implementation-ready mock-ups.
+
+## Category presentation (approved)
+- Use monochrome category icons, positioned immediately **to the left of** their text labels (horizontal alignment), not above the labels.
+- Applies to Subtitles, Audio, Video and More, in that order.
