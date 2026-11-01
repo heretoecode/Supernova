@@ -17,3 +17,9 @@
 - Applies to Subtitles, Audio, Video and More, in that order.
 
 - **Category navigation layout (approved):** one continuous horizontal left-to-right row, in the order Subtitles → Audio → Video → More. Do not arrange categories in a 2×2 grid. Keep each monochrome icon to the left of its label.
+
+## Subtitle section refinements (approved 1 November)
+- Subtitle Selection: first row **Subtitles** with a direct On/Off toggle; second row **Subtitle Track** with a selection control.
+- Subtitle Appearance: **Outline** and **Background** must each use a direct On/Off toggle, not navigate to a submenu.
+- Keep the remaining appearance controls individually visible; retain the four horizontal category tabs and existing overall styling.
+- Mock-up values are illustrative, not verified current playback values. Redesign remains parked for implementation until separately approved.
