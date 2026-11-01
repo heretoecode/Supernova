@@ -1,24 +1,31 @@
-# 0.149 QA continuation — signed delivery blocked
+# 0.149 Shield QA APK — delivered and download verified
 
-Draft [PR #30](https://github.com/heretoecode/Supernova/pull/30), branch `codex/agreed-fixes-2026-11-01`. Continues from owner handover `d84ab3ae37330d8eb65018f68fca53f55756c33a`. Tested APK source: **`cb28b1b936891374bc801f0b58b3397926fc3086`**. Later commits change documentation only. Main is unmerged; no production release/tag or signing identity change.
+[Download Supernova_0.149.apk](https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk)
+
+| Item | Verified value |
+|---|---|
+| Version / versionCode | **0.149 / 149** |
+| Package | `app.supernova.player` |
+| Filename / bytes | `Supernova_0.149.apk` / **95,598,263** |
+| SHA-256 | `cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c` |
+| Tested APK source | `cb28b1b936891374bc801f0b58b3397926fc3086` |
+| Signing | Existing protected environment, [run 41331247034 attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41331247034/attempts/2), successful; no approval pending |
+| Existing certificate | `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e` |
+| Drive verification | Complete raw download byte-identical to verified signed artifact; signature/manifest/payload checks repeated successfully |
+
+Draft [PR #30](https://github.com/heretoecode/Supernova/pull/30), branch `codex/agreed-fixes-2026-11-01`. The owner resolved the environment permission blocker and restarted signing. This delivery continuation made **documentation-only changes**: no development repeated, completed fixes modified, new APK build/version started, signing identity changed, branch merge, production release or tag. The signed payload is the exact tested unsigned candidate; only APK signing data differs.
 
 | Objective | Actual status |
 |---|---|
-| Preserve all ten completed fixes | PASS: original implementation files frozen by scope checks; all regression classes run in full suite. No restarted/duplicated implementation. |
+| Preserve all ten completed fixes | PASS: original implementation files frozen by scope checks; all regression classes ran in full suite. No restarted/duplicated implementation. |
 | Approved Subtitles main/Track/Download | Implemented using blueprint v2, Image B main and only Image A's right-side popups. Existing provider/menu/renderer/preference contracts retained. |
-| Combined validation | PASS: 1,276 application cases; 300 library passes plus four existing skips; 147 tooling tests; release build/lint, zero errors and 1,252 warnings. 33 focused cases also pass. Software comparisons inspected; emulator/Shield visual parity NOT VERIFIED. |
-| Signed installable Shield QA APK | BLOCKED: GitHub rejected protected signing run 41331247034 before any steps because this branch is excluded from the existing signing environment. No key accessed. |
-| Existing Drive upload/full download verification | NOT DONE: no signed 0.149 exists to upload. Folder read access and complete existing 0.148 readback verified; all 16 entries retained. |
-| Documentation and QA | Updated implementation, evidence, comparisons, exact signing rejection/resume instructions and physical Shield checklist. |
+| Combined validation | PASS: 1,276 application cases; 300 library passes plus four existing skips; 147 tooling tests; release build/lint, zero errors and 1,252 warnings. 33 focused cases also passed. Existing results reused for the identical source; no development/test cycle repeated for delivery. |
+| Signed installable Shield QA APK | PASS: existing certificate verifies for API23–36, v1/v2/v3; manifest, ZIP integrity, alignment, 84 native hashes, 64 offline licences and shrunk flag/provider resources independently verified. Package/certificate and increasing versionCode match 0.148 upgrade prerequisites. Actual installed upgrade remains NOT RUN. |
+| Existing Drive upload/full download verification | PASS: one 0.149 APK added; all 16 previous entries preserved; complete 95,598,263-byte download matches signed artifact and verifies again. No sharing/existing-file changes. |
+| Physical/emulator QA | PENDING: emulator/Shield visual parity, real track rendering, live provider download, installed upgrade and hardware acceptance remain unverified. |
 
-Maximum verified non-release artifact: [unsigned APK + conformance receipt](https://github.com/heretoecode/Supernova/actions/runs/41328625056/artifacts/13093101711), retained 14 days. **This unsigned APK is not installable.**
+[Delivery receipt](DRIVE_APK_DELIVERY.json) · [Drive readback verification](DRIVE_APK_READBACK_VERIFICATION.json) · [independent signed APK checks](INDEPENDENT_SIGNED_APK_VERIFICATION.json) · [signing evidence](SIGNED_QA_EVIDENCE.json) · [test/lint evidence](FINAL_VALIDATION.json) · [signing history](SIGNING_RESUME.md).
 
-- Filename: `Supernova_0.149_unsigned.apk`
-- Package: `app.supernova.player`; version **0.149**, versionCode **149**; min SDK 23, target SDK 36; arm64-v8a, armeabi-v7a, x86, x86_64.
-- Bytes: **95,398,440**
-- SHA-256: **`ec453ae4a9cc4e9d34d4668270c8a243d52163d746741c70f862c24c0370437f`**
-- [Full passing conformance](https://github.com/heretoecode/Supernova/actions/runs/41328625056) · [independent unsigned APK checks](INDEPENDENT_UNSIGNED_APK_VERIFICATION.json) · [test/lint XML receipt](FINAL_VALIDATION.json)
-- [Actual signing rejection](https://github.com/heretoecode/Supernova/actions/runs/41331247034) · [resume signed delivery](SIGNING_RESUME.md) · [Drive status](DRIVE_STATUS.json)
-- [Implementation/mappings/deviations](IMPLEMENTATION.md) · [three approved-image comparisons](VISUAL_REVIEW.md) · [physical Shield checklist](SHIELD_QA.md)
+[Implementation/mappings/deviations](IMPLEMENTATION.md) · [approved-image software comparisons](VISUAL_REVIEW.md) · [physical Shield checklist](SHIELD_QA.md).
 
-Remaining device acceptance includes installed upgrade from 0.148, all ten original fixes, actual three-surface visual comparisons/remote timing, real track rendering, persisted appearance/delay, and live provider download/association/error states. Position labels retain the existing bottom-third adjustment range; delay changes are 100 ms in existing millisecond storage; size is unavailable where the provider lacks it; search filters returned results. Audio/Video/More and HUD were not redesigned; legacy tab fixture PNGs remain byte-identical.
+Position labels retain the existing bottom-third adjustment range; delay changes are 100 ms in existing millisecond storage; size is unavailable where the provider lacks it; search filters returned results. Audio/Video/More and HUD were not redesigned; legacy tab fixture PNGs remain byte-identical. Shield acceptance includes all ten prior fixes, actual three-surface visual comparison/remote timing, persisted appearance/delay, real subtitle playback/download association and upgrade data preservation.

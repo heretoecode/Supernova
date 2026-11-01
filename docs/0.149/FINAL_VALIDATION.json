@@ -2539,7 +2539,14 @@
   ],
   "tooling_tests": 147,
   "apk_build": "PASS; unsigned",
-  "signed": "BLOCKED; protected signing run failed before any steps",
+  "signed": "PASS; signing run 41331247034 attempt 2",
   "emulator_and_shield_visual_parity": "NOT VERIFIED",
-  "physical_shield_qa": "NOT RUN"
+  "physical_shield_qa": "NOT RUN",
+  "signed_artifact_id": 13093937009,
+  "delivery_verified": true,
+  "drive_file_id": "1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG",
+  "drive_url": "https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk",
+  "signed_apk_sha256": "cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c",
+  "complete_drive_readback_byte_equal": true,
+  "validation_reused_without_development_changes": true
 }

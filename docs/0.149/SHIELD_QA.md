@@ -1,6 +1,6 @@
 # Physical Nvidia Shield acceptance — NOT RUN
 
-Do not install the unsigned build. A signed 0.149 APK with the existing certificate is required. Retain installed data and test an in-place upgrade from 0.148; do not reset settings or the library. Record Shield model, Android version, TV resolution, text scale and remote used. No hardware acceptance is implied by software-render/JVM tests.
+Use the [verified signed Supernova_0.149.apk](https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk); do not install the historical unsigned artifact. Complete Drive download/signature verification is recorded in [the delivery receipt](DRIVE_APK_DELIVERY.json). Retain installed data and test an in-place upgrade from 0.148; do not reset settings or the library. Record Shield model, Android version, TV resolution, text scale and remote used. No hardware acceptance is implied by software-render/JVM tests.
 
 ## Approved Subtitles surfaces
 

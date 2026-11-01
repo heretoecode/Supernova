@@ -1,20 +1,13 @@
-# Resume signed 0.149 delivery
+# Signing continuation — resolved and delivered
 
-The owner-authorised delivery was attempted after green conformance. GitHub rejected [run 41331247034](https://github.com/heretoecode/Supernova/actions/runs/41331247034) before any steps: `Branch "codex/agreed-fixes-2026-11-01" is not allowed to deploy to supernova-foundation-signing due to environment protection rules.` No signing key was accessed, no rule was changed and no alternate certificate was used.
+The owner updated the existing signing environment permissions and restarted the previously blocked workflow. [Run 41331247034, attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41331247034/attempts/2) **succeeded**. No approval remains pending; signing, independent CI verification, private-material cleanup and artifact publication all passed. No new build, release or signing identity was introduced by delivery.
 
-Required owner/admin action: in the existing `supernova-foundation-signing` environment, add **only** the exact branch `codex/agreed-fixes-2026-11-01` to the existing permitted deployment branches. Retain all other branches, protections, secrets and signing identity. Secret metadata access through the current integration returned HTTP 403; the existing secret contents/presence have not been inspected or claimed missing.
+The original attempt 1 was rejected before any steps because `codex/agreed-fixes-2026-11-01` was not permitted in `supernova-foundation-signing`. That historical blocker is resolved. [Access/history record](SIGNING_ACCESS.json) preserves the rejection and successful continuation; no further owner action is required for this delivered candidate.
 
-The ready candidate is [successful conformance 41328625056](https://github.com/heretoecode/Supernova/actions/runs/41328625056), tested source `cb28b1b936891374bc801f0b58b3397926fc3086`. Artifact [13093101711](https://github.com/heretoecode/Supernova/actions/runs/41328625056/artifacts/13093101711) contains `Supernova_0.149_unsigned.apk` and its complete conformance receipt. Artifact retention is 14 days; rerun conformance if it expires. Subsequent source/assets/build changes require another conformance run; documentation-only descendants are explicitly permitted.
+Signing consumed the exact payload from [successful conformance 41328625056](https://github.com/heretoecode/Supernova/actions/runs/41328625056), source `cb28b1b936891374bc801f0b58b3397926fc3086`. The workflow checked exact source, complete test/lint/native/resource proof and unsigned hash before key access, signed with the existing certificate, checked non-signature entry parity and published [signed artifact 13093937009](https://github.com/heretoecode/Supernova/actions/runs/41331247034/artifacts/13093937009). Private material remained inside protected CI and cleanup passed; no local signing key was accessed.
 
-After the existing environment permits the branch, dispatch:
+The signed artifact was downloaded and independently verified with official Android build-tools 36. Its signature verifies for API23–36 (v1/v2/v3); certificate remains `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. Manifest, ZIP integrity/unique entries, alignment, all 84 native hashes, 64 offline licence entries, retained resources and full non-signature payload parity pass. Package/certificate/versionCode prerequisites match upgrade from 0.148; an actual installed upgrade is not claimed.
 
-```sh
-gh workflow run supernova-0149-qa.yml \
-  --repo heretoecode/Supernova \
-  --ref codex/agreed-fixes-2026-11-01 \
-  -f conformance_run_id=41328625056
-```
+[Supernova_0.149.apk is delivered in the existing Drive APK folder](https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk). Exactly one new file was uploaded; all 16 existing entries remain. The complete raw download is byte-identical to the verified signed artifact and was independently checked again. SHA-256: `cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c`.
 
-The workflow independently checks the successful exact-source run, payload hash, all test/lint/native/resource gates and existing certificate before private-key access. It signs the tested payload and checks all non-signature APK entries for parity. It publishes `Supernova_0.149.apk` plus a public verification receipt only after success. The required certificate is `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`.
-
-Delivery is still unfinished: download and independently verify that signed artifact, compare package/version/certificate and payload against the tested unsigned build, upload once to existing Drive APK folder `1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM`, then download the complete uploaded bytes and recheck checksum, manifest and signature. Record the signed checksum and actual Drive link only then. Do not treat the unsigned artifact as installable QA. Perform feasible installed/emulator checks and retain [physical Shield acceptance](SHIELD_QA.md) as pending until observed.
+[Current delivery status](STATUS.md) · [public signing receipt](SIGNED_QA_EVIDENCE.json) · [local signed verification](INDEPENDENT_SIGNED_APK_VERIFICATION.json) · [Drive download verification](DRIVE_APK_READBACK_VERIFICATION.json) · [physical Shield acceptance still pending](SHIELD_QA.md).
