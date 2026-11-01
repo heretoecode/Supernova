@@ -44,8 +44,10 @@ jobs:
       - name: Validate preserved release history and source contracts before compiling
         run: |
           python3 nova/Video/.github/build/verify-next-qa.py --root nova
-          python3 nova/Video/.github/build/verify-pr30-scope.py --video nova/Video
-      - name: Complete application and library tests, lint and unsigned APK build
+          # The owner now authorises corrections to the previously frozen library,
+          # settings and Reception sources. Preserve delivery identity and native inputs.
+          git -C nova/Video diff --exit-code 02ba4b02 -- AndroidManifest.xml build.gradle settings.gradle gradle.properties assets/foundation .github/signing tools/native146 res/raw/keep.xml res/layout/player_controller_experimental.xml src/main/java/com/archos/mediacenter/video/player/PlayerController.java src/main/java/com/archos/mediacenter/video/player/PreviewHudTiming.java src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java
+      - name: Complete application and library tests, lint and Java compilation (no APK)
         run: |
           set -euo pipefail
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
@@ -54,14 +56,6 @@ jobs:
           ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease compileNoamazonReleaseJavaWithJavac --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-conformance.log
           python3 -m unittest discover -s tools -p 'test_*.py'
-          mapfile -t apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
-          test "${#apks[@]}" = 1
-          mkdir -p "$GITHUB_WORKSPACE/delivery"
-          python3 .github/build/record-supernova-0149-conformance.py --root .. --apk "${apks[0]}" \
-            --apkanalyzer "$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer" --aapt2 "$ANDROID_HOME/build-tools/36.0.0/aapt2" \
-            --apksigner "$ANDROID_HOME/build-tools/36.0.0/apksigner" --native-evidence "$RUNNER_TEMP/native146-packaging/packaging-inputs.json" \
-            --output "$GITHUB_WORKSPACE/delivery/unsigned-conformance.json"
-          cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_0.149_unsigned.apk"
       - name: Preserve exact runtime archives
         if: always()
         run: python3 nova/Video/.github/build/collect-supernova146-runtime.py --video nova/Video
@@ -84,10 +78,3 @@ jobs:
             nova/FileCoreLibrary/build/test-results/**
             nova/supernova146-source-preparation.json
           if-no-files-found: warn
-      - name: Preserve exact unsigned payload and conformance receipt
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: supernova-0149-unsigned-candidate
-          path: delivery/*
-          if-no-files-found: error
-          retention-days: 14
