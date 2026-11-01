@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-01T16:56:14.228Z",
+  "checked_at_utc": "2026-11-01T17:28:31.551Z",
   "folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
   "folder_url": "https://drive.google.com/drive/folders/1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
   "read_access_verified": true,
@@ -7,5 +7,5 @@
   "candidate_entries": [],
   "uploaded": false,
   "sharing_changed": false,
-  "reason": "Await cryptographically verified signed 0.149 candidate; do not upload the unsigned build as installable QA."
+  "reason": "Protected signing run 41331247034 was rejected before any steps because the PR30 branch is excluded from the existing environment. No signed 0.149 exists to upload. Unsigned candidate is preserved in GitHub artifact 13093101711."
 }

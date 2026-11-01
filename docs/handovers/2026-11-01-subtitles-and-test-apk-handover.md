@@ -34,3 +34,9 @@ The ten previously agreed fixes are already implemented in PR #30. **Do not redo
 
 ## Completion report
 Provide: what changed; reused/new components; test results; screenshot links and visual differences; APK link and SHA-256; final commit; outstanding Shield QA and any unverified items. **Do not stop at code complete if APK delivery is still feasible.** Do not report an upload or signed APK as complete without checking it.
+
+## Execution record — 1 November 2026
+
+The authorised continuation is implemented and has passing combined conformance on `cb28b1b936891374bc801f0b58b3397926fc3086`: 1,276 application tests, 300 library passes/four existing skips, 147 tooling tests, release lint zero errors/1,252 warnings and unsigned 0.149 APK assembly. All ten prior fixes remain intact. Actual Android-view software comparisons are recorded; emulator/Shield visual parity and physical acceptance remain NOT VERIFIED.
+
+**Signed delivery is blocked, not complete.** Protected signing run [41331247034](https://github.com/heretoecode/Supernova/actions/runs/41331247034) was rejected before steps because `codex/agreed-fixes-2026-11-01` is not an allowed deployment branch for `supernova-foundation-signing`. No key/identity/protection was changed, and no 0.149 APK was uploaded to Drive. The exact tested unsigned artifact, checksum, rejection, owner action/resume command and all evidence are in [0.149 status](../0.149/STATUS.md). PR #30 remains draft and unmerged.

@@ -1,0 +1,67 @@
+{
+  "prior_warnings": 1247,
+  "current_warnings": 1252,
+  "errors": 0,
+  "additional_warnings": [
+    {
+      "id": "StaticFieldLeak",
+      "severity": "Warning",
+      "message": "Do not place Android context classes in static fields (static reference to `PlaybackSubtitlePanel` which has field `owner` pointing to `Activity`); this is a memory leak",
+      "locations": [
+        {
+          "file": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+          "line": "21"
+        }
+      ]
+    },
+    {
+      "id": "StaticFieldLeak",
+      "severity": "Warning",
+      "message": "Do not place Android context classes in static fields; this is a memory leak",
+      "locations": [
+        {
+          "file": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+          "line": "34"
+        }
+      ]
+    },
+    {
+      "id": "StaticFieldLeak",
+      "severity": "Warning",
+      "message": "Do not place Android context classes in static fields; this is a memory leak",
+      "locations": [
+        {
+          "file": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+          "line": "34"
+        }
+      ]
+    },
+    {
+      "id": "ViewConstructor",
+      "severity": "Warning",
+      "message": "Custom view `PlaybackSubtitlePanel` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`",
+      "locations": [
+        {
+          "file": "src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java",
+          "line": "13"
+        }
+      ]
+    },
+    {
+      "id": "RtlHardcoded",
+      "severity": "Warning",
+      "message": "Use \"`Gravity.END`\" instead of \"`Gravity.RIGHT`\" to ensure correct behavior in right-to-left locales",
+      "locations": [
+        {
+          "file": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+          "line": "86"
+        }
+      ]
+    }
+  ],
+  "review": {
+    "StaticFieldLeak": "The retained session-owned static controller now holds three additional presentation references. PreviewPlaybackMenus.close() nulls all three; its regression asserts this. Existing PlayerActivity.stop() invokes PlayerController.stop(), which closes the window. No warning suppression or new global lifetime is introduced. Physical lifecycle/soak acceptance remains pending.",
+    "ViewConstructor": "PlaybackSubtitlePanel is created programmatically with its Activity/backend/navigation adapter, never inflated from XML. No unused XML constructor was added.",
+    "RtlHardcoded": "Explicit RIGHT gravity restores the retained legacy Audio/Video/More shell exactly, as required. Locale-dependent repositioning is outside this presentation scope."
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-01T16:55:15.880404+00:00",
+  "checked_at_utc": "2026-11-01T17:27:15.962209+00:00",
   "environment": "supernova-foundation-signing",
   "deployment_branch_policy": {
     "custom_branch_policies": true,
@@ -24,11 +24,33 @@
   ],
   "candidate_branch": "codex/agreed-fixes-2026-11-01",
   "exact_candidate_branch_rule_present": false,
-  "protected_signing_attempt": "PENDING green conformance",
+  "protected_signing_attempt": {
+    "run_id": 41331247034,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/41331247034",
+    "conclusion": "failure",
+    "job_id": 124921640177,
+    "steps_executed": 0,
+    "head_commit": "2e677a82ea5ce13425144c062118c93461d067e5",
+    "conformance_run_id": 41328625056,
+    "source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+    "annotations": [
+      {
+        "annotation_level": "failure",
+        "message": "Branch \"codex/agreed-fixes-2026-11-01\" is not allowed to deploy to supernova-foundation-signing due to environment protection rules.",
+        "title": ".github#L1"
+      },
+      {
+        "annotation_level": "failure",
+        "message": "The deployment was rejected or didn't satisfy other protection rules.",
+        "title": ""
+      }
+    ]
+  },
   "signing_identity_changed": false,
   "protection_rules_changed": false,
   "private_key_accessed": false,
   "signed_candidate_available": false,
   "owner_action_if_unchanged": "Add only the exact PR30 branch to this existing environment allowed deployment branches; preserve all existing rules and the certificate.",
-  "secret_metadata_read_status": "HTTP 403 Resource not accessible by integration; secret presence is unknown"
+  "secret_metadata_read_status": "HTTP 403 Resource not accessible by integration; secret presence is unknown",
+  "protected_environment_bypassed": false
 }
