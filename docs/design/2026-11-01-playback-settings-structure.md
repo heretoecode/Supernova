@@ -71,3 +71,8 @@
 - Each minus/plus activation adjusts the delay by **100 ms** as observed by the user in Supernova 0.148; no submenu or dialog.
 - Display signed offset clearly, including zero; preserve the existing subtitle timing behaviour and remote focus/navigation.
 - Still design-only and excluded from the active Codex fix handover.
+
+## Subtitle language flags (proposed visual refinement)
+- Show a language flag alongside the CC badge and language name in Subtitle Track and Download Subtitles lists, and alongside the currently selected track where space permits.
+- Flags are supplemental, not substitutes for language names or accessibility/SDH labels. Language-to-country flags are not universally one-to-one; use a neutral language/globe fallback when country/region is unknown or ambiguous. Do not invent a country from language alone.
+- Preserve list selection and download actions. Design proposal awaiting user approval, not included in active Codex work.
