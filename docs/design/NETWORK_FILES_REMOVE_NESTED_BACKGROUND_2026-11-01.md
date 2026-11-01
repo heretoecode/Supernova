@@ -5,3 +5,6 @@ Owner-supplied Shield photograph `IMG_CA1882BC-4BC0-4AFC-9C4C-1B5900F77E5A.jpeg`
 A conceptual mock-up was generated in conversation, but it uses an unapproved borderless/divider-only six-item treatment and different wallpaper colours: **not approved implementation reference**. The exact request is limited to eliminating the redundant outer enclosing background. Preserve existing approved branding, wallpaper, card styling and focus effects. Verify at 720p/1080p/4K and on physical Shield; check focus and legibility on wallpaper. This is a design correction pending implementation, not a completed fix. Original photo and generated mock-up are not verified uploaded to GitHub.
 
 Keep active PR29 draft and main unchanged. Documentation-only update.
+
+## Final owner approval — 1 November 2026
+**Approved for the next Supernova version:** Remove **only** the large enclosing background panel behind the six existing Network & Files cards. Keep all six existing cards, card surfaces, borders, positions, labels, icons, focus effects and functionality **unchanged**. Show the standard existing Supernova wallpaper directly behind the cards. **No redesign and no mock-ups requested.** This clarification supersedes any conceptual image or proposed borderless treatment. Implement and verify in next version; not yet fixed in 0.148.
