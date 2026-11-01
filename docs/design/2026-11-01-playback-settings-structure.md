@@ -57,3 +57,11 @@
 - Add **Download Subtitles** immediately beneath Subtitle Track in Subtitle Selection; selecting it should invoke the existing subtitle search/download workflow, not invent a new downloader.
 - Verify exact current playback entry point and any other missing in-player subtitle actions before marking the Subtitles category complete.
 - The updated mock-up is a proposal only; no implementation authorised and still excluded from current Codex fixes.
+
+## Design fidelity and implementation acceptance (planning; no implementation authorised)
+- Once user approves the final mock-up, preserve the exact image in a dedicated approved-reference folder and link its verified repository path here. A chat image alone is not a verified GitHub asset.
+- Supply Codex with both the visual reference and this written behaviour specification; do not treat illustrative values in the image as app defaults.
+- Acceptance requires matching layout, typography, icons, spacing, colours, selection/focus states, inline controls, and working Shield D-pad/Back navigation.
+- Require screenshots from actual implementation compared against the approved reference, documented differences and corrections, plus functional/regression tests. A passing build alone is insufficient.
+- Preserve existing functionality and audit current subtitle track/download integration before implementation.
+- **Not yet approved for implementation.** Keep separate from the active Codex fix batch.
