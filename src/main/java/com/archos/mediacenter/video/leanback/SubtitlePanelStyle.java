@@ -48,7 +48,8 @@ public final class SubtitlePanelStyle {
                 case "palette":c.drawOval(2,2,22,22,p);for(float[] xy:new float[][]{{7,8},{12,5},{18,8},{7,15}})c.drawCircle(xy[0],xy[1],1,p);break;
                 case "position":line(c,12,2,12,22);line(c,6,8,12,2,18,8);line(c,6,16,12,22,18,16);break;
                 case "background":c.drawRect(2,4,22,21,p);for(int i=0;i<24;i+=5)line(c,Math.max(2,i-12),Math.min(21,4+i),Math.min(22,i+4),Math.max(4,i-14));break;
-                case "opacity":line(c,12,2,3,15,4,20,9,23,15,23,20,19,20,14,12,2);break;
+                case "opacity":Path drop=new Path();drop.moveTo(12,2);drop.cubicTo(10,6,3,12,3,16);drop.cubicTo(3,25,21,25,21,16);drop.cubicTo(21,12,14,6,12,2);c.drawPath(drop,p);break;
+                case "time":c.drawCircle(12,14,8,p);line(c,9,2,15,2);line(c,12,2,12,6);line(c,18,5,20,7);line(c,12,9,12,14,15,16);break;
                 case "download":line(c,12,2,12,17);line(c,6,11,12,17,18,11);line(c,3,17,3,22,21,22,21,17);break;
                 case "check":line(c,3,12,9,18,21,5);break;
                 default:PreviewIcon icon=new PreviewIcon(kind);icon.setBounds(0,0,24,24);icon.draw(c);break;
