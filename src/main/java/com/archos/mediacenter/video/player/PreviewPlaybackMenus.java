@@ -28,7 +28,7 @@ final class PreviewPlaybackMenus {
     private static Runnable restoreParent,backAction;
     private static TVCardDialog nested;
     private static TVCardView liveCard;
-    private static boolean closing;
+    private static boolean closing,switchingPresentation;
     private static LinearLayout expansion;
     private static View expansionAnchor,invokingRow;
     static boolean isShowing(){return current!=null&&current.isShowing();}
@@ -47,7 +47,7 @@ final class PreviewPlaybackMenus {
         close();owner=activity;adapter=source;origin=activity.getCurrentFocus();tab=1;rootFocus=-1;
         if(activity.getString(R.string.menu_audio).equals(target))tab=0;
         if(activity.getString(R.string.player_pref_audio_speed_title).equals(target))tab=3;
-        int selected=tab;shell();tab=selected;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();
+        int selected=tab;switchingPresentation=true;try{shell();tab=selected;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}
     }
     private static void shell(){
         current=PreviewDialog.create(owner);current.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,7 +56,7 @@ final class PreviewPlaybackMenus {
         tabs=new LinearLayout(owner);tabs.setBaselineAligned(false);panel.addView(tabs,new LinearLayout.LayoutParams(-1,-2));
         for(int i=0;i<TABS.length;i++){
             final int index=i;TextView button=SharedThreePanel.text(owner,TABS[i],13);button.setGravity(Gravity.CENTER);button.setSingleLine(true);androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(button,10,13,1,android.util.TypedValue.COMPLEX_UNIT_SP);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setPadding(dp(4),dp(10),dp(4),dp(10));button.setBackground(tabBackground());button.setTag("playback.tab:"+i);
-            button.setOnClickListener(v->switchTab(index));button.setOnFocusChangeListener((v,focused)->{if(focused&&tab!=index)switchTab(index);});
+            button.setOnClickListener(v->switchTab(index));button.setOnFocusChangeListener((v,focused)->{if(focused&&!closing&&!switchingPresentation&&tab!=index)switchTab(index);});
             button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
                 if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){int next=Math.max(0,Math.min(3,index+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1)));tabs.getChildAt(next).requestFocus();return true;}
                 if(key==KeyEvent.KEYCODE_DPAD_DOWN){focusContent();return true;}return key==KeyEvent.KEYCODE_DPAD_UP;});
@@ -79,7 +79,7 @@ final class PreviewPlaybackMenus {
         }
         return states;
     }
-    private static void switchTab(int selected){flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;current.setContentView(legacyPanel);Window window=current.getWindow();window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f)),Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48)));}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}
+    private static void switchTab(int selected){if(closing||switchingPresentation)return;switchingPresentation=true;try{flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;current.setContentView(legacyPanel);Window window=current.getWindow();window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f)),Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48)));}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}}
     private static TVCardView card(int title){for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
     private static void clear(){expansion=null;expansionAnchor=null;invokingRow=null;trackRows=adjustmentRows=null;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
     private static void columns(){
