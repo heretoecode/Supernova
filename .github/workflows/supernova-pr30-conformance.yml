@@ -51,7 +51,7 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
           cd nova/Video
           chmod +x gradlew
-          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease --continue \
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease compileNoamazonReleaseJavaWithJavac --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-conformance.log
           python3 -m unittest discover -s tools -p 'test_*.py'
           mapfile -t apks < <(find build/outputs/apk/noamazon/release -maxdepth 1 -name '*.apk')
