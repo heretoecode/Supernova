@@ -72,7 +72,7 @@ public class PreviewPlaybackMenusTest {
         TVCardView formats=mock(TVCardView.class),filters=mock(TVCardView.class);
         when(formats.previewTitle()).thenReturn(host.getString(R.string.pref_format_mode_title));when(formats.previewMenu()).thenReturn(format);
         when(filters.previewTitle()).thenReturn("Video filters");TVMenuAdapter adapter=mock(TVMenuAdapter.class);when(adapter.previewCards()).thenReturn(Arrays.asList(formats,filters));
-        PreviewPlaybackMenus.show(host,adapter,null);dialog().getWindow().getDecorView().findViewWithTag("playback.tab:2").performClick();
+        PreviewPlaybackMenus.show(host,adapter,null);dialog().getWindow().getDecorView().findViewWithTag("playback.tab:2").performClick();assertEquals("Programmatic tab activation must select Video",2,(int)org.robolectric.util.ReflectionHelpers.getStaticField(PreviewPlaybackMenus.class,"tab"));
         assertNull("No intermediate Format submenu",option(host.getString(R.string.pref_format_mode_title)));
         assertNotNull(option("Original"));assertNotNull(option("Fullscreen"));assertNotNull(option("Video filters"));
         assertNotSame(option("Original").getParent(),option("Video filters").getParent());
@@ -86,7 +86,7 @@ public class PreviewPlaybackMenusTest {
     }
     @Test public void moreChoicesExpandBelowParentThenCollapseAndRestoreFocus(){
         TVMenu menu=new TVMenu(host);TVMenuItem once=menu.createAndAddTVMenuItem("Once",true,true),repeat=menu.createAndAddTVMenuItem("Repeat",true,false);repeat.setOnClickListener(v->{once.setChecked(false);repeat.setChecked(true);});
-        String title=host.getString(R.string.pref_play_mode_title);PreviewPlaybackMenus.show(host,source(title,menu),null);View root=dialog().getWindow().getDecorView();root.findViewWithTag("playback.tab:3").performClick();View parent=option(title);parent.requestFocus();parent.performClick();
+        String title=host.getString(R.string.pref_play_mode_title);PreviewPlaybackMenus.show(host,source(title,menu),null);View root=dialog().getWindow().getDecorView();root.findViewWithTag("playback.tab:3").performClick();assertEquals("Programmatic tab activation must select More",3,(int)org.robolectric.util.ReflectionHelpers.getStaticField(PreviewPlaybackMenus.class,"tab"));View parent=option(title);parent.requestFocus();parent.performClick();
         assertSame(parent,option(title));ViewGroup expansion=root.findViewWithTag("playback.inline");assertNotNull(expansion);assertSame(parent.getParent(),expansion.getParent());ViewGroup column=(ViewGroup)parent.getParent();assertEquals(column.indexOfChild(parent)+1,column.indexOfChild(expansion));
         option("Repeat").performClick();assertTrue(repeat.isChecked());assertNull(root.findViewWithTag("playback.inline"));assertTrue("Parent focus after inline selection/Back: "+dialog().getCurrentFocus()+" parent attached="+option(title).isAttachedToWindow(),option(title).hasFocus());
         option(title).performClick();PreviewPlaybackMenus.back();assertNull(root.findViewWithTag("playback.inline"));assertTrue("Parent focus after inline selection/Back: "+dialog().getCurrentFocus()+" parent attached="+option(title).isAttachedToWindow(),option(title).hasFocus());assertTrue(PreviewPlaybackMenus.isShowing());
