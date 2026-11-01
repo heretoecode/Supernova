@@ -131,7 +131,7 @@ public final class PreviewSettings {
  public static void styleSwitch(androidx.appcompat.widget.SwitchCompat toggle){
   android.content.Context context=toggle.getContext();
   android.graphics.drawable.Drawable thumb=new SettingsSwitchThumb(context);
-  toggle.setShowText(false);toggle.setThumbDrawable(thumb);toggle.setTrackTintList(null);toggle.setTrackDrawable(new com.archos.mediacenter.video.leanback.StandardSwitchDrawable(context,false));toggle.setSplitTrack(false);toggle.setSwitchMinWidth(PreviewDialog.dp(context,70));
+  toggle.setShowText(false);toggle.setThumbDrawable(thumb);toggle.setTrackTintList(null);toggle.setTrackDrawable(new com.archos.mediacenter.video.leanback.StandardSwitchDrawable(context,false));toggle.getTrackDrawable().setState(toggle.getDrawableState());toggle.setSplitTrack(false);toggle.setSwitchMinWidth(PreviewDialog.dp(context,70));
   toggle.setThumbTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
 
  }

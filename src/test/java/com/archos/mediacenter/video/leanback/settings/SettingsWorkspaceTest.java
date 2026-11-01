@@ -44,7 +44,7 @@ public class SettingsWorkspaceTest {
         var prefs=PreferenceManager.getDefaultSharedPreferences(host.get());
         for(int accent:new int[]{android.graphics.Color.WHITE,android.graphics.Color.BLACK,0xff62bbf3}){
             prefs.edit().putInt("preview_accent41",accent).commit();
-            androidx.appcompat.widget.SwitchCompat toggle=new androidx.appcompat.widget.SwitchCompat(host.get());PreviewSettings.styleSwitch(toggle);toggle.setBackground(null);toggle.setChecked(true);toggle.jumpDrawablesToCurrentState();
+            androidx.appcompat.widget.SwitchCompat toggle=new androidx.appcompat.widget.SwitchCompat(host.get());PreviewSettings.styleSwitch(toggle);toggle.setBackground(null);toggle.setChecked(true);PreviewSettings.styleSwitch(toggle);assertArrayEquals("Restyling preserves native checked/enabled state",toggle.getDrawableState(),toggle.getTrackDrawable().getState());toggle.jumpDrawablesToCurrentState();
             toggle.measure(View.MeasureSpec.makeMeasureSpec(200,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(100,View.MeasureSpec.EXACTLY));toggle.layout(0,0,200,100);
             android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(200,100,android.graphics.Bitmap.Config.ARGB_8888);toggle.draw(new android.graphics.Canvas(image));
             java.util.Set<Integer> colours=new java.util.HashSet<>();for(int y=0;y<100;y++)for(int x=0;x<200;x++)colours.add(image.getPixel(x,y));
