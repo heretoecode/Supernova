@@ -76,3 +76,9 @@
 - Show a language flag alongside the CC badge and language name in Subtitle Track and Download Subtitles lists, and alongside the currently selected track where space permits.
 - Flags are supplemental, not substitutes for language names or accessibility/SDH labels. Language-to-country flags are not universally one-to-one; use a neutral language/globe fallback when country/region is unknown or ambiguous. Do not invent a country from language alone.
 - Preserve list selection and download actions. Design proposal awaiting user approval, not included in active Codex work.
+
+## Subtitle design review — 1 November 2026
+- User expressed satisfaction with the simplified layout without inner group boxes, retaining section headings and horizontal row separators. Treat this as the preferred visual direction.
+- Subtitle category design is ready for final approval/asset preservation, subject to confirming no remaining 0.148 in-player options are missing. Functional implementation, source parity, remote navigation and Shield QA are **not** complete.
+- Do not claim the latest mock-up is uploaded to GitHub until the asset is verified there.
+- Continue to keep this redesign separate from active Codex fixes.
