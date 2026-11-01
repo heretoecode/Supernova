@@ -15,3 +15,5 @@
 ## Category presentation (approved)
 - Use monochrome category icons, positioned immediately **to the left of** their text labels (horizontal alignment), not above the labels.
 - Applies to Subtitles, Audio, Video and More, in that order.
+
+- **Category navigation layout (approved):** one continuous horizontal left-to-right row, in the order Subtitles → Audio → Video → More. Do not arrange categories in a 2×2 grid. Keep each monochrome icon to the left of its label.
