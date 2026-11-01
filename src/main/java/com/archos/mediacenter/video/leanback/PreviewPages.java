@@ -134,7 +134,13 @@ public final class PreviewPages extends FrameLayout {
         int position=anchor==null?0:Math.min(anchor.position,Math.max(0,cells.size()-1));
         if(anchor!=null)for(int i=0;i<cells.size();i++)if(cellKey(cells.get(i)).equals(anchor.cell)){position=i;break;}
         final int target=position;
-        if(layout.findViewByPosition(target)==null)list.scrollToPosition(target);
+        if(layout.findViewByPosition(target)==null){
+            // Custom Library enters before its first layout. Focusing Filters (row 1)
+            // must not replace the pending scroll-to-top with scroll-to-row-1,
+            // which moves the read-only statistics (row 0) out of the viewport.
+            boolean initialCustomHeader=customLibrary!=null&&target<cells.size()&&cells.get(target).type==HEADER&&Boolean.TRUE.equals(cells.get(target).value);
+            if(initialCustomHeader)layout.scrollToPositionWithOffset(0,0);else list.scrollToPosition(target);
+        }
         list.postOnAnimation(new Runnable(){int attempts;
             public void run(){
                 if(generation!=focusGeneration)return;
