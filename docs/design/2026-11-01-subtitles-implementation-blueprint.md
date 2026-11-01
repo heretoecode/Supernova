@@ -51,3 +51,13 @@ Two PNG files have been verified as present in `docs/design/approved/` on `main`
 - [AA59180F-F8E0-4697-9423-78621273D28B.png](https://github.com/heretoecode/Supernova/blob/main/docs/design/approved/AA59180F-F8E0-4697-9423-78621273D28B.png) (1,472,382 bytes)
 
 **Unresolved:** Three reference views were requested; only two images are present. Their visual contents have not been inspected through the GitHub connector (binary image access unavailable), so do not label either as main, track or download reference or rename them until verified. The reference set is **incomplete/unverified**, and Codex must not treat it as an implementation-ready approved set.
+
+## APPROVED IMAGE AUTHORITY — user clarification (1 November 2026)
+**These two uploaded PNGs together form the complete reference set. No third upload is required.** User identified the images and explicitly approved their roles:
+
+1. **IMAGE B — authoritative, approved MAIN Playback Settings / Subtitles window:** [AA59180F-F8E0-4697-9423-78621273D28B.png](https://github.com/heretoecode/Supernova/blob/main/docs/design/approved/AA59180F-F8E0-4697-9423-78621273D28B.png). Use its window structure, spacing, section headings and thin row dividers. **NO surrounding inner boxes** around Subtitle Selection or Subtitle Appearance.
+2. **IMAGE A — approved POP-UP reference ONLY:** [A31E82C8-CC81-4E6C-AC1D-6AE60370E152.png](https://github.com/heretoecode/Supernova/blob/main/docs/design/approved/A31E82C8-CC81-4E6C-AC1D-6AE60370E152.png). Use only its **Subtitle Track** and **Download Subtitles** pop-up windows. Its older main Playback Settings window is **superseded** and MUST NOT be copied.
+
+**Conflict resolution:** Image B always takes precedence for the main window. Image A is authoritative only for the two pop-ups. Do not blend the old nested section-box design back into the main screen. This supersedes earlier notes calling for a third PNG or stating that image roles were unknown.
+
+**Approval scope:** Visual references approved for design specification; implementation remains on hold until separately authorised, and Shield QA remains pending.
