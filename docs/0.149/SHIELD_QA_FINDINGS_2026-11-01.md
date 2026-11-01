@@ -26,3 +26,21 @@
 **Reception acceptance correction:** `docs/0.149/SHIELD_QA.md` still mentions 'supported reviews even without ratings'; this is superseded by the owner's **ratings-only, no reviews** decision. Update all QA criteria, tests and UI documentation consistently when implementing.
 
 **Diagnosis status:** These are evidenced testing gaps and plausible causes, **not confirmed root causes** until source tracing and runtime verification. Keep all three defects open.
+
+
+## URGENT owner clarification — exact reproduction and strict scope
+
+### Custom library statistics: first-load visibility defect
+- **Reproduction:** Open the **third/custom library page**. Statistics are initially not visible. Scroll down, then scroll back up: the statistics appear. This proves the data/view can exist and points towards initial layout/measure/visibility/refresh/focus/scroll invalidation; root cause must still be traced.
+- **Expected:** Statistics are visible at the top **immediately on first entry** to the custom library, without any scrolling or manual refresh. Repeat after leaving/re-entering, app relaunch, data refresh, and D-pad focus transitions.
+- **Scope:** **Do not change Movies or TV pages.** They work correctly. Inspect their proven first-render behaviour read-only as a reference. Fix the custom-library-specific initial rendering path, preferably using existing shared logic without modifying the other pages or duplicating unnecessary code.
+- **Proof:** Test the precise no-scroll initial entry with a genuine Android view/runtime test and ideally Shield/emulator screenshot. A unit test of statistics data alone is insufficient. Do not report device verification unless actually performed.
+
+### Language flags: recurring actual Shield failure
+- **Reproduction:** Language flag icons still absent in installed 0.149 on owner's Nvidia Shield.
+- **Expected:** Correct flag/icon visibly displayed where intended for known locale metadata, and an approved neutral fallback where region is genuinely unknown. Preserve truthful language/region semantics.
+- **Investigation:** Trace actual metadata values and locale normalisation, flag drawable resolution, binding, view sizing/visibility, lifecycle updates and resource shrink in the **installed** build. Check all intended flag surfaces, including Audio/Subtitle where applicable. Establish why prior 'retention/binding' and packaging tests passed but Shield display fails.
+- **Proof:** Capture actual runtime view screenshots or equivalent reliable on-device evidence and add an end-to-end regression for the failure mode. Never mark fixed on resource presence or isolated unit tests alone.
+
+### Priority and delivery
+Owner requests these two issues **fixed urgently**. They are open until proven. Preserve all other 0.149 functionality, including approved Subtitles design; PR #30 remains draft/unmerged. Do not confuse these with the separately recorded Reception ratings-only correction. When implementation is complete, produce a concise root-cause report and identify any remaining physical Shield verification honestly. Do not initiate a new signed APK without clear owner approval.
