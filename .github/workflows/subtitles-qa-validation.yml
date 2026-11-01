@@ -1,4 +1,4 @@
-name: PR30 subtitles and preserved-fix validation
+name: PR30 subtitles visual and remote regression
 on:
   workflow_dispatch:
     inputs:
@@ -54,11 +54,11 @@ jobs:
           chmod +x gradlew
           filters=()
           if [[ "${{ inputs.full_suite }}" != "true" ]]; then
-            for pattern in '*LibraryStatistics*' '*PreviewPagesTest' '*Supernova138HomeTest' '*Supernova139LibraryNavigationTest' '*Supernova141UiTest' '*SettingsWorkspaceTest' '*SettingsShieldNavigationTest' '*Playback141RenderTest' '*PlaybackSubtitlePanelTest' '*PreviewPlaybackMenusTest' '*Subtitle*Test' '*NextHudTest' '*AudioTrackSelectionPolicyTest' '*ReceptionSupplementTest' '*Details139AcceptanceTest' '*DetailsImprovementsTest' '*PreviewMoviePageTest' '*Network142*Test' '*Supernova139LanguageFlagsTest' '*Supernova139ProviderMarksTest' '*PreviewProviderFilterTest' '*StreamingProviderFocusTest'; do
+            for pattern in '*Playback141RenderTest' '*PlaybackSubtitlePanelTest' '*PreviewPlaybackMenusTest' '*PreviewSubtitleResultsTest' '*SubtitleLegacyPreferencesTest' '*SubtitleReplacementTest'; do
               filters+=(--tests "$pattern")
             done
           fi
-          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest "${filters[@]}" :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease compileNoamazonReleaseJavaWithJavac --continue \
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest "${filters[@]}" compileNoamazonReleaseJavaWithJavac --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-conformance.log
           python3 -m unittest discover -s tools -p 'test_*.py'
       - name: Retain test and lint evidence

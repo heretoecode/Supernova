@@ -31,6 +31,7 @@ final class PreviewPlaybackMenus {
     private static boolean closing,switchingPresentation;
     private static LinearLayout expansion;
     private static View expansionAnchor,invokingRow;
+    static boolean isSubtitlesShowing(){return isShowing()&&subtitlePanel!=null;}
     static boolean isShowing(){return current!=null&&current.isShowing();}
     static boolean back(){if(!isShowing())return false;if(subtitlePanel!=null&&subtitlePanel.dismissPopup())return true;if(nested!=null)nested.handleBackPressed();else if(expansion!=null)collapseExpansion(true);else if(backAction!=null)backAction.run();else close();return true;}
     static void close(){

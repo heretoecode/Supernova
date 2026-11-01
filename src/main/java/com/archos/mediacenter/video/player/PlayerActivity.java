@@ -4486,6 +4486,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private void downloadSubtitles() {
         Intent subIntent = new Intent(Intent.ACTION_MAIN);
         subIntent.setClass(mContext, SubtitlesDownloaderActivity2.class);
+        subIntent.putExtra(SubtitlesDownloaderActivity2.PLAYBACK_SETTINGS_POPUP,PreviewPlaybackMenus.isSubtitlesShowing());
         subIntent.putExtra(SubtitlesDownloaderActivity2.FILE_URL, PlayerService.sPlayerService.getStreamingUri().toString());
         if (mTitle != null) {
             subIntent.putExtra(SubtitlesDownloaderActivity2.FILE_NAME, mTitle);

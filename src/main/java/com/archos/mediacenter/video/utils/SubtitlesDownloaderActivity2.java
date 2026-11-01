@@ -85,6 +85,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
 
     private static final Logger log = LoggerFactory.getLogger(SubtitlesDownloaderActivity2.class);
 
+    public static final String PLAYBACK_SETTINGS_POPUP = "playback_settings_subtitle_popup";
     public static final String FILE_URL = "fileUrl";
     public static final String FILE_NAME = "fileName"; //friendly name for Upnp
     public static final String FILE_SIZE = "fileSize";
@@ -103,7 +104,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
     private volatile String previewNotice;
 
     private OpenSubtitlesTask mOpenSubtitlesTask = null;
-    private boolean previewUi(){return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);}
+    private boolean previewUi(){return getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP,false)||PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);}
 
     private static class NonConfigurationInstance {
         public NovaProgressDialog progressDialog;
@@ -522,7 +523,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         private void askSubChoice(final String videoFilePath, final ArrayList<OpenSubtitlesSearchResult> searchResults, final boolean displayLang, final boolean hasSuccess) {
             if(previewUi()){
                 if(isCancelled||isFinishing()||isDestroyed())return;
-                Dialog choices=com.archos.mediacenter.video.leanback.PreviewSubtitleResults.show(SubtitlesDownloaderActivity2.this,searchResults,
+                java.util.function.Consumer<OpenSubtitlesSearchResult> accept=
                         selected->{
                             previewNotice=null;
                             showPreviewProgress("Downloading selected subtitle…");
@@ -530,7 +531,8 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                                 try {if(!isCancelled)getSub(videoFilePath,selected);}
                                 catch(RuntimeException failure){previewNotice=getString(R.string.dialog_subloader_fails);finishDownload(false);}
                             },"preview-subtitle-download").start();
-                        });
+                        };
+                Dialog choices=getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP,false)?com.archos.mediacenter.video.leanback.PreviewSubtitleResults.showPlayback(SubtitlesDownloaderActivity2.this,searchResults,accept):com.archos.mediacenter.video.leanback.PreviewSubtitleResults.show(SubtitlesDownloaderActivity2.this,searchResults,accept);
                 choices.setOnCancelListener(dialog->finish());return;
             }
             View view = LayoutInflater.from(SubtitlesDownloaderActivity2.this).inflate(R.layout.subtitle_chooser_title_layout, null);
