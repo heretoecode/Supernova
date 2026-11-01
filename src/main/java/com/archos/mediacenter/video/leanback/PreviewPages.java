@@ -336,7 +336,6 @@ public final class PreviewPages extends FrameLayout {
                 // the read-only statistics above Filters when entering either library.
                 if((tab==1||tab==2)&&position>=0&&position<cells.size()){
                     if(cells.get(position).type==HEADER&&Boolean.TRUE.equals(cells.get(position).value))return true;
-                    if(cells.get(position).type==POSTER){scheduleCentre();return true;}
                 }
                 return super.onRequestChildFocus(parent,state,child,focused);
             }
