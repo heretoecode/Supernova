@@ -17,6 +17,7 @@ final class PreviewPlaybackMenus {
     private static final String[] TABS={"Audio","Subtitles","Video","More"};
     private static Dialog current;
     private static LinearLayout legacyPanel;
+    private static FrameLayout presentationHost;
     private static PlaybackSubtitlePanel subtitlePanel;
     private static Activity owner;
     private static TVMenuAdapter adapter;
@@ -35,7 +36,7 @@ final class PreviewPlaybackMenus {
     static boolean isShowing(){return current!=null&&current.isShowing();}
     static boolean back(){if(!isShowing())return false;if(subtitlePanel!=null&&subtitlePanel.dismissPopup())return true;if(nested!=null)nested.handleBackPressed();else if(expansion!=null)collapseExpansion(true);else if(backAction!=null)backAction.run();else close();return true;}
     static void close(){
-        closing=true;if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;}legacyPanel=null;flushNested();Dialog old=current;current=null;
+        closing=true;if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;}legacyPanel=null;presentationHost=null;flushNested();Dialog old=current;current=null;
         if(old!=null){old.setOnCancelListener(null);old.dismiss();}
         if(owner instanceof PlayerActivity&&!owner.isFinishing())((PlayerActivity)owner).restorePreviewSettingsFocus(origin);else if(origin!=null&&origin.isAttachedToWindow()&&origin.isShown())origin.requestFocus();
         origin=null;owner=null;adapter=null;liveCard=null;restoreParent=null;backAction=null;
@@ -64,7 +65,7 @@ final class PreviewPlaybackMenus {
             tabs.addView(button,new LinearLayout.LayoutParams(0,-2,1));
         }
         content=new FrameLayout(owner);LinearLayout.LayoutParams body=new LinearLayout.LayoutParams(-1,0,1);body.topMargin=dp(12);panel.addView(content,body);
-        legacyPanel=panel;current.setContentView(panel);current.setOnCancelListener(d->close());
+        legacyPanel=panel;presentationHost=new FrameLayout(owner);presentationHost.addView(panel,new FrameLayout.LayoutParams(-1,-1));current.setContentView(presentationHost);current.setOnCancelListener(d->close());
         current.setOnKeyListener((d,key,event)->{if(key==KeyEvent.KEYCODE_BACK||key==KeyEvent.KEYCODE_ESCAPE||key==KeyEvent.KEYCODE_BUTTON_B){if(event.getAction()==KeyEvent.ACTION_UP)back();return true;}
             if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_MENU){if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();return true;}
             if(event.getAction()==KeyEvent.ACTION_DOWN&&key==KeyEvent.KEYCODE_DPAD_UP&&nested!=null){View focused=current.getCurrentFocus();View next=focused==null?null:FocusFinder.getInstance().findNextFocus(nested,focused,View.FOCUS_UP);if(next==null||next==focused){tabs.getChildAt(tab).requestFocus();return true;}}
@@ -80,7 +81,9 @@ final class PreviewPlaybackMenus {
         }
         return states;
     }
-    private static void switchTab(int selected){if(closing||switchingPresentation)return;switchingPresentation=true;try{flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;current.setContentView(legacyPanel);Window window=current.getWindow();window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f)),Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48)));}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}}
+    /** Keep one window content root: replacing Dialog content can retain a transitioning old scene. */
+    private static void present(View panel){presentationHost.removeAllViews();presentationHost.addView(panel,new FrameLayout.LayoutParams(-1,-1));}
+    private static void switchTab(int selected){if(closing||switchingPresentation)return;switchingPresentation=true;try{flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;present(legacyPanel);Window window=current.getWindow();window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f)),Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48)));}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}}
     private static TVCardView card(int title){for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
     private static void clear(){expansion=null;expansionAnchor=null;invokingRow=null;trackRows=adjustmentRows=null;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
     private static void columns(){
@@ -90,7 +93,7 @@ final class PreviewPlaybackMenus {
     }
     private static void renderTab(){
         if(owner==null||closing)return;
-        if(tab==1){collapseExpansion(false);backAction=null;restoreParent=null;liveCard=card(R.string.menu_subtitles);subtitlePanel=new PlaybackSubtitlePanel(owner,new SubtitlePlaybackBackend(owner,liveCard),(index,enter)->{switchTab(index);if(enter)focusContent();});current.setContentView(subtitlePanel);Window window=current.getWindow();window.setGravity(Gravity.CENTER);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=0;window.setAttributes(attrs);window.setLayout(subtitlePanel.panelWidth(),subtitlePanel.panelHeight());return;}
+        if(tab==1){collapseExpansion(false);backAction=null;restoreParent=null;liveCard=card(R.string.menu_subtitles);subtitlePanel=new PlaybackSubtitlePanel(owner,new SubtitlePlaybackBackend(owner,liveCard),(index,enter)->{switchTab(index);if(enter)focusContent();});present(subtitlePanel);Window window=current.getWindow();window.setGravity(Gravity.CENTER);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=0;window.setAttributes(attrs);window.setLayout(subtitlePanel.panelWidth(),subtitlePanel.panelHeight());return;}
         clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
         if(tab==0||tab==1){TVCardView selected=card(tab==1?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null){if(tab==0)columns();addNative(selected,true,false);}else heading(tab==1?"No subtitle tracks":"No audio tracks");if(tab==1)subtitlePreferences();}
         else {
