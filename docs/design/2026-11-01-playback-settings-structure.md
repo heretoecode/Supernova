@@ -65,3 +65,9 @@
 - Require screenshots from actual implementation compared against the approved reference, documented differences and corrections, plus functional/regression tests. A passing build alone is insufficient.
 - Preserve existing functionality and audit current subtitle track/download integration before implementation.
 - **Not yet approved for implementation.** Keep separate from the active Codex fix batch.
+
+## Subtitle delay (approved design addition)
+- Add **Subtitle Delay** as a directly adjustable inline row in the Subtitles section, with **− / current offset in milliseconds / +** controls.
+- Each minus/plus activation adjusts the delay by **100 ms** as observed by the user in Supernova 0.148; no submenu or dialog.
+- Display signed offset clearly, including zero; preserve the existing subtitle timing behaviour and remote focus/navigation.
+- Still design-only and excluded from the active Codex fix handover.
