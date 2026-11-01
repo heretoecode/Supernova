@@ -54,7 +54,7 @@ jobs:
           chmod +x gradlew
           filters=()
           if [[ "${{ inputs.full_suite }}" != "true" ]]; then
-            for pattern in '*LibraryStatistics*' '*PreviewPagesTest' '*Supernova138HomeTest' '*Supernova139LibraryNavigationTest' '*Supernova141UiTest' '*SettingsWorkspaceTest' '*SettingsShieldNavigationTest' '*PlaybackSubtitlePanelTest' '*PreviewPlaybackMenusTest' '*Subtitle*Test' '*NextHudTest' '*AudioTrackSelectionPolicyTest' '*ReceptionSupplementTest' '*Details139AcceptanceTest' '*DetailsImprovementsTest' '*PreviewMoviePageTest' '*Network142*Test' '*Supernova139LanguageFlagsTest' '*Supernova139ProviderMarksTest' '*PreviewProviderFilterTest' '*StreamingProviderFocusTest'; do
+            for pattern in '*LibraryStatistics*' '*PreviewPagesTest' '*Supernova138HomeTest' '*Supernova139LibraryNavigationTest' '*Supernova141UiTest' '*SettingsWorkspaceTest' '*SettingsShieldNavigationTest' '*Playback141RenderTest' '*PlaybackSubtitlePanelTest' '*PreviewPlaybackMenusTest' '*Subtitle*Test' '*NextHudTest' '*AudioTrackSelectionPolicyTest' '*ReceptionSupplementTest' '*Details139AcceptanceTest' '*DetailsImprovementsTest' '*PreviewMoviePageTest' '*Network142*Test' '*Supernova139LanguageFlagsTest' '*Supernova139ProviderMarksTest' '*PreviewProviderFilterTest' '*StreamingProviderFocusTest'; do
               filters+=(--tests "$pattern")
             done
           fi
