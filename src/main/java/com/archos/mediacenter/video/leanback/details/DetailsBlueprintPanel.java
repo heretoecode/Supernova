@@ -49,7 +49,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         int shown=0;for(int n=0;n<providers.length;n++){
             if(!supplementary.hasData(n))continue;
             if(shown++>0){rule(reception,false);LayoutParams divider=(LayoutParams)reception.getChildAt(reception.getChildCount()-1).getLayoutParams();divider.leftMargin=dp(38);if(getResources().getConfiguration().fontScale>1.2f){divider.topMargin=dp(2);divider.bottomMargin=dp(2);}}
-            LinearLayout rating=new LinearLayout(c);rating.setGravity(Gravity.CENTER_VERTICAL);rating.setBaselineAligned(false);reception.addView(rating,new LayoutParams(-1,0,n==3?1.25f:1));
+            LinearLayout rating=new LinearLayout(c);rating.setGravity(Gravity.CENTER_VERTICAL);rating.setBaselineAligned(false);reception.addView(rating,new LayoutParams(-1,0,n==3?(getResources().getConfiguration().fontScale>1.2f?1.8f:1.25f):1));
             rating.setTag("details.reception.slot."+n);
             rating.addView(providerMark(n,providers[n]),new LayoutParams(0,-1,.25f));
             rating.addView(ratingValue(n,supplementary),new LayoutParams(0,-1,.75f));
@@ -83,7 +83,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         LinearLayout box=new LinearLayout(getContext());box.setOrientation(VERTICAL);String supplied=ratings.value(row);
         if(row==3){int stop=supplied.indexOf(". ");String headline=stop<0?supplied:supplied.substring(0,stop),details=stop<0?"":supplied.substring(stop+2);
             TextView summary=label(headline,12,false);summary.setTag("details.reception.awards.summary");summary.setGravity(Gravity.CENTER_VERTICAL);summary.setMaxLines(2);summary.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(summary,6,12);box.addView(summary,new LayoutParams(-1,0,1));
-            if(!details.isEmpty()){TextView body=label(details,11,false);body.setTag("details.reception.awards.details");body.setLineSpacing(0,1);body.setTextColor(0xffc7c4ce);body.setMaxLines(2);body.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(body,6,11);box.addView(body,new LayoutParams(-1,0,2f));}return box;
+            if(!details.isEmpty()){TextView body=label(details,11,false);body.setTag("details.reception.awards.details");body.setLineSpacing(0,1);body.setTextColor(0xffc7c4ce);body.setMaxLines(getResources().getConfiguration().fontScale>1.2f?3:2);body.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(body,6,11);box.addView(body,new LayoutParams(-1,0,getResources().getConfiguration().fontScale>1.2f?2.5f:2f));}return box;
         }
         TextView score=label(supplied.isEmpty()?"Rating unavailable":supplied,16,false);score.setTag("details.reception.score."+row);score.setGravity(Gravity.CENTER_VERTICAL);score.setSingleLine(true);score.setHorizontallyScrolling(false);score.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(score,8,16);
         int unit=supplied.indexOf('/');if(unit<0&&supplied.endsWith("%"))unit=supplied.length()-1;
