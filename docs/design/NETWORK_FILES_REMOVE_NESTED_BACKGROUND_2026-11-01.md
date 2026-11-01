@@ -1,0 +1,7 @@
+# Network & Files — remove redundant nested background (owner direction, 1 November 2026)
+
+Owner-supplied Shield photograph `IMG_CA1882BC-4BC0-4AFC-9C4C-1B5900F77E5A.jpeg` shows six Network & Files tiles enclosed by an additional large blue rounded background panel, over the application's normal wallpaper. Owner requests **remove the large enclosing background/panel**, allowing the **existing standard Supernova wallpaper** to show directly behind the six cards, matching other main screens such as Settings and Search. Keep the six-card layout, card boundaries, text/icons, selection/focus indication, and all existing actions/navigation; do not replace approved six cards with a new grid style or remove individual card surfaces unless separately approved. No extra background behind the six cards.
+
+A conceptual mock-up was generated in conversation, but it uses an unapproved borderless/divider-only six-item treatment and different wallpaper colours: **not approved implementation reference**. The exact request is limited to eliminating the redundant outer enclosing background. Preserve existing approved branding, wallpaper, card styling and focus effects. Verify at 720p/1080p/4K and on physical Shield; check focus and legibility on wallpaper. This is a design correction pending implementation, not a completed fix. Original photo and generated mock-up are not verified uploaded to GitHub.
+
+Keep active PR29 draft and main unchanged. Documentation-only update.
