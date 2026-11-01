@@ -22,7 +22,7 @@ final class PreviewPreferenceDialogs {
    String id=ids.get(i);if(id==null){if(i==ids.size()-1)dialog[0].dismiss();return;}Set<String> next=new HashSet<>(selected);if(!next.remove(id))next.add(id);
    if(p.callChangeListener(next)){p.setValues(next);selected.clear();selected.addAll(next);checked.clear();for(int j=0;j<ids.size();j++)if(selected.contains(ids.get(j)))checked.add(j);PreviewDialog.updateChecks(dialog[0],checked);}
   });
-  Map<String,String> logos=com.archos.mediacenter.video.streaming.PreviewProviderIcons.catalogue(f.requireContext());for(int i=0;i<ids.size();i++)com.archos.mediacenter.video.streaming.PreviewProviderIcons.bind(dialog[0],i,logos.get(ids.get(i)));
+  Map<String,String> logos=com.archos.mediacenter.video.streaming.PreviewProviderIcons.catalogue(f.requireContext());for(int i=0;i<ids.size();i++)if(ids.get(i)!=null)com.archos.mediacenter.video.streaming.PreviewProviderIcons.bindProvider(dialog[0],i,new com.archos.mediacenter.video.streaming.StreamingRepository.Provider(Integer.parseInt(ids.get(i)),labels.get(i),logos.get(ids.get(i))),"settings.providers");
  }
  private static void multi(PreferenceFragmentCompat f,MultiSelectListPreference p,Set<String> selected,int focus){
   CharSequence[] values=p.getEntryValues(),entries=p.getEntries();if(values==null||entries==null)return;

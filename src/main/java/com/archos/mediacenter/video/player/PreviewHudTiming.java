@@ -1,6 +1,6 @@
 package com.archos.mediacenter.video.player;
 
-/** Duration arithmetic independent of presentation. Paused HUD hides the finish prediction. */
+/** Duration arithmetic independent of presentation. Known-duration HUD predicts the end if playback continues or resumes now. */
 public final class PreviewHudTiming {
     public static long end(long now,long duration,long position,float speed){
         if(duration<=0)return -1;if(!Float.isFinite(speed)||speed<=0)speed=1;

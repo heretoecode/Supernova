@@ -376,7 +376,7 @@ public final class PreviewMoviePage extends ScrollView {
             informationSignature=signature;
             com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(details,"details.information",reason,previous,1,false);
             if(informationPanel!=null&&receptionKey.equals(receptionSignature)){informationPanel.updateText(synopsis,keyFacts,technicalFacts);}else{
-            DetailsBlueprintPanel blueprint=new DetailsBlueprintPanel(getContext(),synopsis,keyFacts,technicalFacts,receptionFacts,cast,crew,supplied,null);
+            DetailsBlueprintPanel blueprint=new DetailsBlueprintPanel(getContext(),synopsis,keyFacts,technicalFacts,receptionFacts,cast,crew,supplied,reviewable?this::showReviews:null);
             details.removeAllViews();details.addView(blueprint,new LinearLayout.LayoutParams(-1,-1));informationPanel=blueprint;receptionSignature=receptionKey;}
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_information_ready","media_id",diagnosticMedia(),"elapsed_ms",android.os.SystemClock.elapsedRealtime()-openedAt);
         }

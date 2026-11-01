@@ -329,7 +329,18 @@ public final class PreviewPages extends FrameLayout {
     public PreviewPages(Context c,Click click) {
         super(c); this.click=click; setBackgroundColor(Color.TRANSPARENT);setFocusable(true);setFocusableInTouchMode(true);setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         list=new FocusRecycler(c,false); list.setClipChildren(false);list.setClipToPadding(false);setClipChildren(false); list.setPadding(dp(28),dp(10),dp(28),dp(12));
-        layout=new GridLayoutManager(c,120); layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?120:120/libraryColumns()):cells.get(p).type==NETWORK_PANEL?40:cells.get(p).type==STORAGE?30:120;}});
+        layout=new GridLayoutManager(c,120){
+            @Override public boolean onRequestChildFocus(RecyclerView parent,RecyclerView.State state,View child,View focused){
+                int position=parent.getChildAdapterPosition(child);
+                // RecyclerView calls the layout manager directly for focus scrolling. Keep
+                // the read-only statistics above Filters when entering either library.
+                if((tab==1||tab==2)&&position>=0&&position<cells.size()){
+                    if(cells.get(position).type==HEADER&&Boolean.TRUE.equals(cells.get(position).value))return true;
+                    if(cells.get(position).type==POSTER){scheduleCentre();return true;}
+                }
+                return super.onRequestChildFocus(parent,state,child,focused);
+            }
+        }; layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){@Override public int getSpanSize(int p){return cells.get(p).type==POSTER?(tab<3&&listMode[tab]?120:120/libraryColumns()):cells.get(p).type==NETWORK_PANEL?40:cells.get(p).type==STORAGE?30:120;}});
         adapter.setHasStableIds(true);
         list.addOnScrollListener(new RecyclerView.OnScrollListener(){@Override public void onScrollStateChanged(RecyclerView rv,int state){if(state==RecyclerView.SCROLL_STATE_IDLE)scheduleCentre();}@Override public void onScrolled(RecyclerView rv,int dx,int dy){notifyScroll();scheduleVisibleEnrichment();}});list.setLayoutManager(layout); list.setAdapter(adapter); list.setItemAnimator(null);
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,"library.adapter","adapter_created",0,adapter.getItemCount(),true);
@@ -455,7 +466,7 @@ public final class PreviewPages extends FrameLayout {
     /** A carousel change must not rebind the library rows below it. */
     private void renderFeatured() {
         if(tab!=0 || cells.isEmpty() || cells.get(0).type!=HERO){render("featured_structure_changed");return;}
-        rememberFocus();boolean preserve=hasFocus();if(preserve)holdFocus();
+        rememberFocus();boolean preserve=list.hasFocus()&&anchors[tab]!=null&&anchors[tab].position==0;if(preserve)holdFocus();
         Entry featuredEntry=featured();cells.set(0,new Cell(HERO,"Featured",featuredEntry==null?HomePlaceholder.Kind.HERO:featuredEntry));
         updateArtwork();
         cells.get(0).signature=signature(cells.get(0));adapter.notifyItemChanged(0);
@@ -471,8 +482,9 @@ public final class PreviewPages extends FrameLayout {
         long started=android.os.SystemClock.elapsedRealtime();
         List<Cell> previous=new ArrayList<>(cells);
         persistViews();
-        rememberFocus();boolean preserve=hasFocus();
-        if(preserve)holdFocus();
+        rememberFocus();boolean preserve=false;
+        View focused=list.findFocus();View focusedItem=focused==null?null:list.findContainingItemView(focused);
+        int focusedPosition=focusedItem==null?-1:list.getChildAdapterPosition(focusedItem);
         Object state=layout.onSaveInstanceState(); cells.clear();
         if(tab==0) {
             if(featured()==null)cells.add(new Cell(HERO,"Featured",HomePlaceholder.Kind.HERO));
@@ -500,6 +512,14 @@ public final class PreviewPages extends FrameLayout {
         }
         if(!loaded&&tab>0&&tab!=3)header(tab==1?"Movies":"TV Shows",false);
         updateArtwork();for(Cell cell:cells){cell.signature=signature(cell);cell.viewType=cell.type==POSTER&&tab<3&&listMode[tab]?LIST:cell.type;}
+        // Keep the actual focused view across unrelated or no-op refreshes. Only
+        // transfer focus when its own cell will be rebound, moved or removed.
+        if(focusedPosition>=0&&focusedPosition<previous.size()){
+            Cell old=previous.get(focusedPosition);int match=-1;
+            for(int i=0;i<cells.size();i++)if(cellKey(old).equals(cellKey(cells.get(i)))){match=i;break;}
+            preserve=match!=focusedPosition||match<0||old.viewType!=cells.get(match).viewType||!old.signature.equals(cells.get(match).signature);
+            if(preserve)holdFocus();
+        }
         int[] changes=new int[4];androidx.recyclerview.widget.AdapterListUpdateCallback updates=new androidx.recyclerview.widget.AdapterListUpdateCallback(adapter);
         DiffUtil.calculateDiff(new DiffUtil.Callback(){public int getOldListSize(){return previous.size();}public int getNewListSize(){return cells.size();}public boolean areItemsTheSame(int a,int b){return previous.get(a).viewType==cells.get(b).viewType&&cellKey(previous.get(a)).equals(cellKey(cells.get(b)));}public boolean areContentsTheSame(int a,int b){return previous.get(a).signature.equals(cells.get(b).signature);}}).dispatchUpdatesTo(new androidx.recyclerview.widget.ListUpdateCallback(){
             public void onInserted(int position,int count){changes[0]+=count;updates.onInserted(position,count);}
@@ -509,7 +529,7 @@ public final class PreviewPages extends FrameLayout {
         });
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("home_page_render","reason",reason,"tab",tab,"previous_cells",previous.size(),"cells",cells.size(),"inserted",changes[0],"removed",changes[1],"moved",changes[2],"rebound",changes[3],"adapter_recreated",false,"elapsed_ms",android.os.SystemClock.elapsedRealtime()-started);
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,tab==0?"home.rows":tab==1?"movies.library":tab==2?"tv.library":"network.page",reason,previous.size(),cells.size(),false);
-        if(state!=null&&!switchingTab)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);scheduleVisibleEnrichment();
+        if(state!=null&&!switchingTab&&preserve)layout.onRestoreInstanceState((android.os.Parcelable)state);if(preserve)restoreFocus();list.post(this::notifyScroll);scheduleVisibleEnrichment();
         removeCallbacks(importRefresh);if(loaded&&emptyHome()&&isAttachedToWindow())postDelayed(importRefresh,1000);
     }
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+e.tagline+"|"+(e.homeMetadata==null?"":SharedMetadata.primary(e.homeMetadata).toString()+e.homeMetadata.technical)+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}

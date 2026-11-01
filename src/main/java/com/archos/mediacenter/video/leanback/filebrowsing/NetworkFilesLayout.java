@@ -36,12 +36,12 @@ final class NetworkFilesLayout extends LinearLayout {
         mode(false);
     }
     void landing(View grid){
-        landing=true;back.setVisibility(GONE);workspace.removeAllViews();
+        landing=true;workspace.setBackground(null);back.setVisibility(GONE);workspace.removeAllViews();
         detach(grid);workspace.addView(grid,new FrameLayout.LayoutParams(-1,-1));
     }
     boolean landing(){return landing;}
     void mode(boolean value) {
-        if(landing){landing=false;initialised=false;back.setVisibility(VISIBLE);}
+        if(landing){surface(workspace,10);landing=false;initialised=false;back.setVisibility(VISIBLE);}
 
         if(initialised&&browsing==value)return;initialised=true;browsing=value;
         detach(centre);detach(right);detach(details);detach(items);detach(scroll);
