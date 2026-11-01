@@ -8,7 +8,7 @@ Read `SHIELD_DIAGNOSTICS_AND_TOGGLE_HANDOVER_2026-11-01.md` and `SHIELD_QA_FINDI
 
 ## Custom Library
 
-Confirmed lifecycle defect: its initial cached render attaches `PreviewPages`, then asynchronous loader completion calls `Workspace.render`, removing its entire hierarchy and attaching the same `PreviewPages` again. `PreviewPages.onDetachedFromWindow` shuts down its worker and cancels enrichment/focus-related callbacks; this is not a safe refresh path. Movies/TV use `setSnapshot` on the attached page. Updated Custom Library to do the same. Initial mount now supplies its snapshot before attachment and enters via the shared `focusFromNavigation` path, which pins adapter position zero while selecting Filters. Movies/TV implementation paths remain unchanged; the shared focus correction is gated to Custom Library.
+Confirmed lifecycle defect: its initial cached render attaches `PreviewPages`, then asynchronous loader completion calls `Workspace.render`, removing its entire hierarchy and attaching the same `PreviewPages` again. `PreviewPages.onDetachedFromWindow` shuts down its discovery worker and cancels enrichment/focus-related callbacks. The `requestedDiscovery` flag remains true, so reattachment cannot retry an interrupted discovery request; this is not a safe refresh path. Movies/TV use `setSnapshot` on the attached page. Updated Custom Library to do the same. Initial mount now supplies its snapshot before attachment and enters via the shared `focusFromNavigation` path, which pins adapter position zero while selecting Filters. Movies/TV implementation paths remain unchanged; the shared focus correction is gated to Custom Library.
 
 Additional initial-focus defect traced: `focusFromNavigation` requests position zero, but `restoreFocus` then replaces that pending scroll with `scrollToPosition(1)` when Filters has not been laid out yet. That targets the Filters row below the statistics and can hide row zero. Custom-only focus restoration now retains the pending top offset in that case. Movies/TV retain their existing behaviour. The source path explains the report; physical causal confirmation remains pending. Added first-entry activity visibility and snapshot-refresh/no-detach assertions, without issuing scroll input. **Implemented candidate correction, awaiting Shield confirmation.**
 
@@ -55,3 +55,46 @@ Local tooling suite: 147 tests passed. `git diff --check` passed. New/updated An
 Remaining mandatory acceptance: first entry/re-entry/relaunch/refresh custom statistics, actual metadata-to-icon rendering, switch off/on/focus/disabled with one remote-OK change and restart persistence, exact original Reception and counts, raw diagnostic investigation, physical Shield confirmation. No unrelated approved feature is declared device-verified.
 
 The existing PR-triggered conformance workflow included `assembleNoamazonRelease`. Its two automatically triggered continuation runs (41351147911 and 41351186104) were cancelled before their Gradle step. Replaced assembly with Java compilation so subsequent PR validation respects the owner's no-new-APK constraint. Tests, lint and compile remain enabled. A superseded manual validation run was also cancelled.
+
+## Exact changed files
+
+- `.github/workflows/agreed-fixes-validation.yml`
+- `.github/workflows/supernova-pr30-conformance.yml`
+- `docs/0.149/CONSOLIDATED_FIX_INVESTIGATION_2026-11-01.md`
+- `docs/0.149/SHIELD_QA.md`
+- `docs/0.149/shield-continuation-software-evidence/custom-first-entry-robolectric-b161ae7b.png`
+- `docs/0.149/shield-continuation-software-evidence/reception-available-data-robolectric-b161ae7b.png`
+- `docs/0.149/shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png`
+- `docs/0.149/shield-continuation-software-evidence/switch-states-robolectric-b161ae7b.png`
+- `res/drawable/preview_preference_toggle.xml`
+- `src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/details/DetailsBlueprintPanel.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspace.java`
+- `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/CustomLibraryPageTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/NextQaWizardTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/Supernova139LanguageFlagsTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/details/DetailsImprovementsTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/details/ReceptionSupplementTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspaceTest.java`
+- `src/test/java/com/archos/mediacenter/video/player/NextHudTest.java`
+
+## Retrieved software visual evidence
+
+**All four captures are Robolectric native-graphics software fixtures, not Android emulator/Shield screenshots.** Test data is synthetic; Reception fixture intentionally shows the supplied indexed rating, not fabricated provider values.
+
+- [Custom Library first entry, no scroll input](shield-continuation-software-evidence/custom-first-entry-robolectric-b161ae7b.png): statistics fully visible with an empty fixture library. Source b161ae7b; its Custom Library implementation is identical to final source.
+- [Switch ON and OFF states](shield-continuation-software-evidence/switch-states-robolectric-b161ae7b.png): blue/right white thumb and dark/left white thumb, no adjacent state text. Source b161ae7b; settings code/resources identical to final source.
+- [Global regional flags and neutral globes in the approved Subtitle Track popup](shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png): final application source.
+- [Reception with available data and Technical Information preserved](shield-continuation-software-evidence/reception-available-data-robolectric-b161ae7b.png): no review UI; **does not establish original-reference parity**. Source b161ae7b; details implementation identical to final source.
+
+Focused run [41351239143](https://github.com/heretoecode/Supernova/actions/runs/41351239143) at b161ae7b succeeded: JUnit XML reports 170 application tests, 200 MediaLib tests (2 skipped), 104 FileCoreLibrary tests (2 skipped), zero failures/errors. Thus 170 application passes and 300 library passes, four existing skips. This predates the later global-inline fallback and playback-text corrections; do not substitute it for final-source validation of those corrections.
+
+Final-source Subtitles run [41351832324](https://github.com/heretoecode/Supernova/actions/runs/41351832324) at 50f76e93 succeeded: 33 tests, zero failures/errors/skips, Java compilation and 147 tooling tests passed. Retrieved artifact 13101459495. Focused artifact 13100943908 supplies the earlier software fixtures.
+
+Full final-application-source validation [41351832319](https://github.com/heretoecode/Supernova/actions/runs/41351832319) at 50f76e93 is running as of this evidence checkpoint. No pass result is claimed while it is pending. Later evidence-only commits preserve that application/test/resource tree.
