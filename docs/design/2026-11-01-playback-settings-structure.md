@@ -52,3 +52,8 @@
 - Increase the vertical height/padding of each individual settings row to reduce the condensed appearance, keeping existing labels, controls, icons and overall structure unchanged.
 - Maintain comfortable Shield remote focus targets and visual separation between rows.
 - Do not implement until the user approves the updated mock-up.
+
+## Subtitle download action — missing from mock-up (proposed, not yet approved)
+- Add **Download Subtitles** immediately beneath Subtitle Track in Subtitle Selection; selecting it should invoke the existing subtitle search/download workflow, not invent a new downloader.
+- Verify exact current playback entry point and any other missing in-player subtitle actions before marking the Subtitles category complete.
+- The updated mock-up is a proposal only; no implementation authorised and still excluded from current Codex fixes.
