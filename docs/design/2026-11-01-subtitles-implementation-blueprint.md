@@ -44,3 +44,10 @@ Upload approved reference PNGs to `docs/design/approved/` using clear names:
 - `supernova-subtitle-track-popup-reference.png`
 - `supernova-subtitle-download-popup-reference.png`
 Once uploaded, verify each exists and update this file with direct links. The pop-up mock-ups are reference proposals until individually confirmed.
+
+## GitHub asset verification — 1 November 2026
+Two PNG files have been verified as present in `docs/design/approved/` on `main`:
+- [A31E82C8-CC81-4E6C-AC1D-6AE60370E152.png](https://github.com/heretoecode/Supernova/blob/main/docs/design/approved/A31E82C8-CC81-4E6C-AC1D-6AE60370E152.png) (1,561,700 bytes)
+- [AA59180F-F8E0-4697-9423-78621273D28B.png](https://github.com/heretoecode/Supernova/blob/main/docs/design/approved/AA59180F-F8E0-4697-9423-78621273D28B.png) (1,472,382 bytes)
+
+**Unresolved:** Three reference views were requested; only two images are present. Their visual contents have not been inspected through the GitHub connector (binary image access unavailable), so do not label either as main, track or download reference or rename them until verified. The reference set is **incomplete/unverified**, and Codex must not treat it as an implementation-ready approved set.
