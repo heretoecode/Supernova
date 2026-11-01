@@ -1,3 +1,5 @@
+> Current source continuation: [original-reference and raw Shield investigation](OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md). These candidate corrections are **not in the previously delivered APK linked below**. No replacement APK has been built. Shield acceptance remains open; PR #30 stays draft/unmerged. The delivery record below is historical.
+
 # 0.149 Shield QA APK — delivered and download verified
 
 [Download Supernova_0.149.apk](https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk)

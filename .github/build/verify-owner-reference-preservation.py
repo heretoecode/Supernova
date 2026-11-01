@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep the approved Subtitles contract; permit only its shared switch-face replacement."""
+"""Keep the approved Subtitles contract; permit its shared switch face and final icon bounds."""
 import subprocess
 from pathlib import Path
 import argparse

@@ -1,0 +1,92 @@
+[
+  {
+    "file": "gemini-switch-states-api30.png",
+    "sha256": "acc5301a473ca1f82410b3588837100e6b77331d57848a094da0d34957bec040",
+    "run": 41359758407,
+    "source": "eca8f287",
+    "artifact": 13104908311,
+    "scope": "Robolectric native graphics, SDK30; isolated OFF/ON and disabled faces",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "settings-switches-1080p.png",
+    "sha256": "8ac2b4fc0e1a654982204a0aa0356d0fc62f4af1c8d3d86a4f4faec1ec9c3012",
+    "run": 41359758407,
+    "source": "eca8f287",
+    "artifact": 13104908311,
+    "scope": "Robolectric native graphics, SDK28; populated preference screen",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "subtitles-main.png",
+    "sha256": "6215faf8529679aaf1257f043f26fb3444642057eb4129529ce411f90ae4f548",
+    "run": 41359647840,
+    "source": "a75997f4",
+    "artifact": 13105415402,
+    "scope": "Robolectric native graphics, SDK28; fixture en-GB track",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "subtitles-track.png",
+    "sha256": "657da7643389175a8628d2b1593d8358b1d2fd2564ec9cd074a65390502c2cc1",
+    "run": 41359647840,
+    "source": "a75997f4",
+    "artifact": 13105415402,
+    "scope": "Robolectric native graphics, SDK28; fixture track menu",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "regional-language-icons.png",
+    "sha256": "392dce386b82353de4e917cc9dccc496639541f04ccecefe7f56d9d23678c2f9",
+    "run": 41359647840,
+    "source": "a75997f4",
+    "artifact": 13105415402,
+    "scope": "Robolectric fixture canvas; generic/undetermined neutral and explicit regional PNGs",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "custom-populated-first-frame-api30.png",
+    "sha256": "3a19cece8975efdf99edb3bae0fb0b28931b3beefeac9e6b4fdfc7f5bb0ad51d",
+    "run": 41361733457,
+    "source": "82e7646c",
+    "artifact": 13105477600,
+    "scope": "Robolectric native graphics, SDK30; configured 1920x1080 populated Custom viewport; before snapshot refresh is queued",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "custom-populated-after-refresh-api30.png",
+    "sha256": "3a19cece8975efdf99edb3bae0fb0b28931b3beefeac9e6b4fdfc7f5bb0ad51d",
+    "run": 41361733457,
+    "source": "82e7646c",
+    "artifact": 13105477600,
+    "scope": "Robolectric native graphics, SDK30; configured 1920x1080 populated Custom viewport; after attached snapshot refresh",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "reception-reference-1080p.png",
+    "sha256": "991ddf38f716b356b7fd797c14648edf55616410c389fcb6c6f76793f7cb2d63",
+    "run": 41362433013,
+    "source": "f5efd624",
+    "artifact": 13105014445,
+    "scope": "Robolectric native graphics, SDK28; illustrative reference-content fixture, normal text, 1080p",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  },
+  {
+    "file": "reception-reference-150-percent.png",
+    "sha256": "05e18a5758e2517b6fbc3c21f5a835d081b8c37ea72106c6e52718f4f632004f",
+    "run": 41362433013,
+    "source": "f5efd624",
+    "artifact": 13105014445,
+    "scope": "Robolectric native graphics, SDK28; illustrative reference-content fixture, 150 percent enlarged text with complete award detail",
+    "physical_device": false,
+    "unmodified_artifact_bytes": true
+  }
+]

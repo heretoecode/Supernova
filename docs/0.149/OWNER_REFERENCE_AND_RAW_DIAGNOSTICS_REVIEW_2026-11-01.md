@@ -1,6 +1,6 @@
 # Original references and raw Shield diagnostics continuation
 
-Continues `75c17bed` on the existing PR #30 branch. **Candidate implementation; CI pending. No physical Shield verification or new APK.** This supersedes the earlier report's missing-reference limitation. The production metadata feed limitation described below remains.
+Continues `75c17bed` on the existing PR #30 branch. **Implemented and affected regressions verified; awaiting physical Shield confirmation. No new APK.** This supersedes the earlier report's missing-reference limitation. The production metadata feed limitation described below remains.
 
 ## Original evidence
 
@@ -39,26 +39,117 @@ The export describes installed 0.149 / Android 11 / SDK30 / NVIDIA SHIELD, but r
 
 ## Reception restoration
 
-Replaced textual RT/Metacritic provider names with reference-derived vector marks, restored the square IMDb tile and trophy, positioned icon marks at the start of a quarter-width icon column, restored smaller unit typography, caption colouring, inset dividers and separate award summary/detail. Removed the extra visible attribution row. Technical Information and other details regions remain unchanged.
+Replaced textual RT/Metacritic provider names with reference-derived vector marks, restored the square IMDb tile and trophy, positioned icon marks at the start of a quarter-width icon column, restored smaller unit typography, caption colouring, inset dividers and separate award summary/detail. Awards receive the reference’s larger vertical share; genuine provider line breaks survive sanitizing, and detail text uses single line spacing. The final-reference assertion exposed 150%-text truncation of the category at the previous two-line limit: enlarged text now receives additional award-row space and up to three detail lines, keeping the normal-size reference layout unchanged. The no-ellipsis assertion remains intact. No title/category wording is inserted into production metadata. Removed the extra visible attribution row. Technical Information and other details regions remain unchanged.
 
 All three numeric captions now bind genuine metadata when supplied. The data model retains OMDb's actual legacy `tomatoReviews`; a validated typed `withReviewCounts` adapter accepts independently verified RT/Metacritic counts. Counts are never derived from percentages, IMDb votes or screenshot values. Missing counts render an explicit unavailable caption. Count-only updates participate in details/enrichment signatures; an available count can be shown without fabricating a missing score. Reference example numbers exist only in tests.
 
-**Remaining production-data limitation:** the existing production OMDb access gate has no credential/entitlement binding, and standard OMDb provides no Metacritic review count. This continuation does not invent credentials, silently enable an unapproved service, scrape guessed title matches or claim live provider data. Layout/count rendering is implemented; real-world completeness depends on genuine approved metadata access. Original-reference visual comparison and software captures are required below before finalizing this candidate.
+**Remaining production-data limitation:** the existing production OMDb access gate has no credential/entitlement binding, and standard OMDb provides no Metacritic review count. This continuation does not invent credentials, silently enable an unapproved service, scrape guessed title matches or claim live provider data. Layout/count rendering is implemented; real-world completeness depends on genuine approved metadata access. Unmodified software-rendered reference fixtures are linked below; their illustrative values are not a live metadata fetch.
 
 ## Switch comparison and correction
 
-The previous short flat pills differed from the video. `StandardSwitchDrawable` now supplies the approximately 70×26 reference proportions, cyan/blue ON gradient, dark OFF face, subtle border and white circular thumb. It is shared by native preference faces, native SwitchCompat tracks and playback switches; no theme tint can turn the entire face white. Settings allocate enough width to prevent clipping. Focus remains in the existing row outline/glow, never in the switch-state fill. Disabled controls dim without changing thumb-side state; redundant On/Off text stays removed.
+The original white ON-pill cause was whole-drawable/theme tint merging the track and thumb; that suppression remains in place. The previous short flat pills also differed from the video. `StandardSwitchDrawable` now supplies the approximately 70×26 reference proportions, cyan/blue ON gradient, dark OFF face, subtle border and white circular thumb. It is shared by native preference faces, native SwitchCompat tracks and playback switches; no theme tint can turn the entire face white. A newly attached native track explicitly receives current checked/enabled state, including restyling an already-checked control. Settings allocate enough width to prevent clipping. Focus remains in the existing row outline/glow, never in the switch-state fill. Disabled controls dim without changing thumb-side state; redundant On/Off text stays removed.
 
 Only switch-face rendering and the compound-icon sizing correction below change in the approved Subtitles panel: its row layout, dimensions, backend, labels, track/download popups and preferences remain intact. A committed-source scope check enforces that exact replacement; the existing panel tests/render tests must pass. The video does not justify redesigning Audio/Video/More or other controls.
 
 ## Custom Library and global language recheck
 
-The source implementation from 75c17bed is preserved: Custom-only pending-position-zero protection and attached-page snapshot refresh. A new SDK30 native-graphics regression uses a populated 45-title custom viewport, first focus before layout, full initial statistics visibility and refresh without scrolling. The earlier actual CustomLibraryActivity first-entry/no-detach regression remains.
+The source implementation from 75c17bed is preserved: Custom-only pending-position-zero protection and attached-page snapshot refresh. Its reproduced source root cause was initial shared focus restoration queuing row one (Filters) before a holder existed, which scrolled row-zero statistics away; Custom entry now retains row zero. Loader refresh previously detached/remounted the page; the preserved fix updates its attached snapshot. Movies/TV branches remain unchanged. A new SDK30 native-graphics regression uses a populated 45-title custom viewport, first focus before layout, full initial statistics visibility and refresh without scrolling. Its capture uses the configured density/physical viewport (1920×1080), rather than the older unrelated 960×540 helper; no production geometry was changed to accommodate the test. The earlier actual CustomLibraryActivity first-entry/no-detach regression remains.
 
-Global language rendering remains `PreviewLanguageIcon`, including real regional PNGs and neutral fallback for generic/undetermined codes. A further confirmed binding defect was found: the selected Subtitle Track label bound its icon at 20dp and then changed its bounds to the approved 46 reference pixels, leaving TextView’s cached compound width stale. A shared size-aware bind now sets final bounds before assignment; the existing 46px design token is retained. An SDK30 regression checks actual cached padding against final drawable bounds before/after track refresh. This is not assumed to explain every reported missing flag. Existing text/ImageView/inline/popup rendering regressions are rerun. Archive track counts cannot be converted into language or region values; actual Shield icon binding, codes and visibility remain unverified. No arbitrary country flags are assigned to generic languages.
+Global language rendering remains `PreviewLanguageIcon`, including real regional PNGs and neutral fallback for generic/undetermined codes. The preserved inline fallback correction ensures unknown/null/undetermined track metadata no longer drops the icon entirely. Existing signed-APK inspection already found retained regional drawables in the correct resource package; that proves packaging only, not Shield rendering. A further confirmed binding defect was found: the selected Subtitle Track label bound its icon at 20dp and then changed its bounds to the approved 46 reference pixels, leaving TextView’s cached compound width stale. A shared size-aware bind now sets final bounds before assignment; the existing 46px design token is retained. An SDK30 regression checks actual cached padding against final drawable bounds before/after track refresh. This is not assumed to explain every reported missing flag. Existing text/ImageView/inline/popup rendering regressions are rerun. Archive track counts cannot be converted into language or region values; actual Shield icon binding, codes and visibility remain unverified. No arbitrary country flags are assigned to generic languages.
 
 ## Validation and delivery
 
-Pending candidate CI. No APK-producing tasks are requested; existing PR validation uses tests, lint and Java compilation only. Original raw logs remain private. Keep PR #30 draft/unmerged and do not start a release. Physical Shield acceptance stays open even if software/native-graphics regressions pass.
+Final application source: `f5efd624448298ce7e01443e39ef2b6686c46473`. Subsequent delivery documentation/capture changes do not modify application or test sources. All three original files were analysed; original-reference availability is resolved, while the production-data and physical-device limitations below remain.
 
-Initial affected run 41358847531: 177 application tests, 175 passed / two diagnostic failures; same two failures occurred in diagnostic-only follow-up 41359345706. They exposed an overly broad new payload guard blocking legitimate captured session context, and missing cleanup in the new holder test contaminating the existing post-failure-window regression. Both are corrected; original delayed-session/window assertions are retained. Final diagnostic rerun is required before closure.
+Candidate checks are recorded by source/run below. No APK-producing tasks were requested; existing PR validation uses tests, lint and Java compilation only. Original raw logs remain private. Physical Shield acceptance stays open even when software regressions pass.
+
+| Scope / source | Evidence | Result |
+| --- | --- | --- |
+| Full app suite, `34017913` | [41359107706](https://github.com/heretoecode/Supernova/actions/runs/41359107706), artifact 13105148073 | 1,293 cases: 1,291 passed, two diagnostic failures below. Libraries: 300 passed/four existing skips. Compilation/lint completed; zero lint errors/1,251 warnings. This was before the diagnostic/session corrections and final reference-spacing changes. |
+| Languages, Subtitles, playback focus and switch face, `a75997f4` | [41359647840](https://github.com/heretoecode/Supernova/actions/runs/41359647840), artifact 13105415402 | 31 app passes; 300 library passes/four existing skips; compile/lint passed, zero errors/1,251 warnings. Includes new SDK30 actual Dialog focus-crash and selected-icon cached-width regressions. |
+| Settings and shared switch face, `eca8f287` | [41359758407](https://github.com/heretoecode/Supernova/actions/runs/41359758407), artifact 13104908311 | 26 app passes; 300 library passes/four existing skips; compile/lint passed, zero errors/1,251 warnings. Checked/disabled restyle, white thumb, OFF fill, ON gradient and unchanged focus-state pixels verified. |
+| Diagnostics correction, `54615e24` | [41360768312](https://github.com/heretoecode/Supernova/actions/runs/41360768312), artifact 13105172395 | 62 app passes, including both formerly failing methods; 300 library passes/four existing skips; 150 tooling passes; compile/lint passed, zero errors/1,251 warnings. |
+| Reception/metadata/Custom regressions, `5b0e4464` | [41361495483](https://github.com/heretoecode/Supernova/actions/runs/41361495483), artifact 13105357543 | 66 app cases: 65 passed/one newly asserted award-detail truncation at 150% text. 300 library passes/four existing skips. Normal/720p/4K fixtures and metadata/Custom regressions passed. Enlarged-text correction follows below. |
+| Final Reception enlargement, `f5efd624` | [41362433013](https://github.com/heretoecode/Supernova/actions/runs/41362433013), artifact 13105014445 | 47 app passes: complete reference text at 720p/1080p/4K/150%, Reception/metadata/details regressions. 300 library passes/four existing skips; 150 tooling passes; compile/lint passed, zero errors/1,251 warnings. Normal and enlarged captures inspected; normal PNG byte-identical to preceding run. |
+| Initial Custom capture, `82e7646c` | [41361733457](https://github.com/heretoecode/Supernova/actions/runs/41361733457), artifact 13105477600 | 19 app passes, including populated initial/no-scroll/refresh and actual CustomLibraryActivity entry/no-detach; 300 library passes/four existing skips; 150 tooling passes; compile/lint passed, zero errors/1,251 warnings. First-layout and refreshed PNGs inspected. |
+| Local parser, scoped preservation guard and tooling | `java tools/ParseJava.java src`; preservation check; unittest discovery | 1,110 Java sources parse without syntax errors; approved-scope guard passes; all 150 tooling tests pass, including private-archive aggregate fixtures. |
+
+The full run includes 18/18 `StreamingRepositoryTest` and 16/16 `PreviewPlaybackMenusTest` passes, covering episode identity and guarded focus respectively.
+
+No all-green full suite at final HEAD is claimed. Full-suite scope plus corrected affected-class runs are reported separately. The library log’s “HTTP length mismatch” is the deliberately failing truncation fixture within a passing test, not a separate suite failure.
+
+[Unmodified software evidence and provenance](owner-reference-software-evidence/README.md).
+
+Initial affected run 41358847531: 177 application tests, 175 passed / two diagnostic failures; same two failures occurred in diagnostic-only follow-up 41359345706. They exposed an overly broad new payload guard blocking legitimate captured session context, and missing cleanup in the new holder test contaminating the existing post-failure-window regression. Both are corrected; original delayed-session/window assertions are retained and the complete diagnostic-class follow-up passes all 62 cases.
+
+## Exact changed files since 75c17bed
+
+These are the complete continuation paths relative to the repository root. Original raw diagnostic ZIP/logs are excluded. `STATUS.md` separates this unshipped source from the historic delivered APK.
+
+### Application and resources
+
+- [res/drawable/preview_preference_toggle.xml](../../res/drawable/preview_preference_toggle.xml)
+- [res/drawable/reception_awards.xml](../../res/drawable/reception_awards.xml)
+- [res/drawable/reception_metacritic.xml](../../res/drawable/reception_metacritic.xml)
+- [res/drawable/reception_rotten_tomatoes.xml](../../res/drawable/reception_rotten_tomatoes.xml)
+- [res/layout/preview_preference_checkbox.xml](../../res/layout/preview_preference_checkbox.xml)
+- [src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java](../../src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java)
+- [src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java](../../src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java)
+- [src/main/java/com/archos/mediacenter/video/leanback/StandardSwitchDrawable.java](../../src/main/java/com/archos/mediacenter/video/leanback/StandardSwitchDrawable.java)
+- [src/main/java/com/archos/mediacenter/video/leanback/details/DetailsBlueprintPanel.java](../../src/main/java/com/archos/mediacenter/video/leanback/details/DetailsBlueprintPanel.java)
+- [src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java](../../src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java)
+- [src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java](../../src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java)
+- [src/main/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspace.java](../../src/main/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspace.java)
+- [src/main/java/com/archos/mediacenter/video/metadata/OmdbSupplement.java](../../src/main/java/com/archos/mediacenter/video/metadata/OmdbSupplement.java)
+- [src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java](../../src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java)
+- [src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java](../../src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java)
+- [src/main/java/com/archos/mediacenter/video/streaming/StreamingRepository.java](../../src/main/java/com/archos/mediacenter/video/streaming/StreamingRepository.java)
+
+### Regression tests and archive analysis
+
+- [src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java](../../src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticsTest.java)
+- [src/test/java/com/archos/mediacenter/video/leanback/CustomLibraryPageTest.java](../../src/test/java/com/archos/mediacenter/video/leanback/CustomLibraryPageTest.java)
+- [src/test/java/com/archos/mediacenter/video/leanback/StandardSwitchReferenceTest.java](../../src/test/java/com/archos/mediacenter/video/leanback/StandardSwitchReferenceTest.java)
+- [src/test/java/com/archos/mediacenter/video/leanback/details/DetailsReferenceRenderTest.java](../../src/test/java/com/archos/mediacenter/video/leanback/details/DetailsReferenceRenderTest.java)
+- [src/test/java/com/archos/mediacenter/video/leanback/details/ReceptionSupplementTest.java](../../src/test/java/com/archos/mediacenter/video/leanback/details/ReceptionSupplementTest.java)
+- [src/test/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspaceTest.java](../../src/test/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspaceTest.java)
+- [src/test/java/com/archos/mediacenter/video/metadata/OmdbSupplementTest.java](../../src/test/java/com/archos/mediacenter/video/metadata/OmdbSupplementTest.java)
+- [src/test/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanelTest.java](../../src/test/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanelTest.java)
+- [src/test/java/com/archos/mediacenter/video/player/PreviewPlaybackMenusTest.java](../../src/test/java/com/archos/mediacenter/video/player/PreviewPlaybackMenusTest.java)
+- [src/test/java/com/archos/mediacenter/video/streaming/StreamingRepositoryTest.java](../../src/test/java/com/archos/mediacenter/video/streaming/StreamingRepositoryTest.java)
+- [tools/analyse_shield_archive.py](../../tools/analyse_shield_archive.py)
+- [tools/test_analyse_shield_archive.py](../../tools/test_analyse_shield_archive.py)
+
+### Preservation workflow
+
+- [.github/build/verify-owner-reference-preservation.py](../../.github/build/verify-owner-reference-preservation.py)
+- [.github/workflows/supernova-pr30-conformance.yml](../../.github/workflows/supernova-pr30-conformance.yml)
+
+### Reports, original references and unmodified software evidence
+
+- [docs/0.149/owner-reference-software-evidence/reception-reference-150-percent.png](../../docs/0.149/owner-reference-software-evidence/reception-reference-150-percent.png)
+- [docs/0.149/owner-reference-software-evidence/reception-reference-1080p.png](../../docs/0.149/owner-reference-software-evidence/reception-reference-1080p.png)
+- [docs/0.149/CONSOLIDATED_FIX_INVESTIGATION_2026-11-01.md](../../docs/0.149/CONSOLIDATED_FIX_INVESTIGATION_2026-11-01.md)
+- [docs/0.149/OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md](../../docs/0.149/OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md)
+- [docs/0.149/STATUS.md](../../docs/0.149/STATUS.md)
+- [docs/0.149/owner-reference-software-evidence/README.md](../../docs/0.149/owner-reference-software-evidence/README.md)
+- [docs/0.149/owner-reference-software-evidence/custom-populated-after-refresh-api30.png](../../docs/0.149/owner-reference-software-evidence/custom-populated-after-refresh-api30.png)
+- [docs/0.149/owner-reference-software-evidence/custom-populated-first-frame-api30.png](../../docs/0.149/owner-reference-software-evidence/custom-populated-first-frame-api30.png)
+- [docs/0.149/owner-reference-software-evidence/gemini-switch-states-api30.png](../../docs/0.149/owner-reference-software-evidence/gemini-switch-states-api30.png)
+- [docs/0.149/owner-reference-software-evidence/provenance.json](../../docs/0.149/owner-reference-software-evidence/provenance.json)
+- [docs/0.149/owner-reference-software-evidence/regional-language-icons.png](../../docs/0.149/owner-reference-software-evidence/regional-language-icons.png)
+- [docs/0.149/owner-reference-software-evidence/settings-switches-1080p.png](../../docs/0.149/owner-reference-software-evidence/settings-switches-1080p.png)
+- [docs/0.149/owner-reference-software-evidence/subtitles-main.png](../../docs/0.149/owner-reference-software-evidence/subtitles-main.png)
+- [docs/0.149/owner-reference-software-evidence/subtitles-track.png](../../docs/0.149/owner-reference-software-evidence/subtitles-track.png)
+- [docs/0.149/owner-references/IMG_5090.jpeg](../../docs/0.149/owner-references/IMG_5090.jpeg)
+- [docs/0.149/owner-references/diagnostic-aggregate.json](../../docs/0.149/owner-references/diagnostic-aggregate.json)
+- [docs/0.149/owner-references/gemini_generated_video_A1E9E8FB.mp4](../../docs/0.149/owner-references/gemini_generated_video_A1E9E8FB.mp4)
+- [docs/0.149/owner-references/provenance.json](../../docs/0.149/owner-references/provenance.json)
+
+## Remaining acceptance limits
+
+- No attached Shield, Android emulator or adb runtime is available in this workspace. All supplied PNGs are Robolectric/software fixture output. Native graphics refers to the Robolectric graphics backend, not a physical Nvidia/GPU run. No physical fix or signed-APK runtime claim is made.
+- Shield first-entry statistics, real metadata on every language surface, remote hardware input, provider counts, actual playback and cold-entry rendering remain awaiting device confirmation. The original partial logs cannot replace those checks.
+- Production Reception needs a genuine authorised metadata feed to fill every original provider value/count/award detail. Existing safe access gating remains; missing values are explicit rather than fabricated.
+- Scanner source/listing exceptions, residual legacy focus symptoms and the native file-error cause remain unproven in the retained archive. DNS/timeout observations do not establish a precise external infrastructure cause.
+- No APK was assembled, signed or delivered; no version/release/tag was started and PR #30 remains draft/unmerged. Existing production native libraries and Movies/TV page sources were preserved.

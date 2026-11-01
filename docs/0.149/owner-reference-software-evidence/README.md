@@ -1,0 +1,12 @@
+# Software evidence — physical Shield acceptance remains open
+
+These are unmodified PNG bytes downloaded from the identified GitHub Actions artifacts. They are Robolectric fixture output, **not Shield or emulator screenshots**. “Native graphics” identifies Robolectric’s renderer only. [Per-file hashes, source commits and artifact provenance](provenance.json).
+
+- [Reception normal size](reception-reference-1080p.png) and [150% text](reception-reference-150-percent.png): complete scores, captions and awards; no separate reviews interface. The latter confirms the corrected three-line enlarged award detail. The normal capture is byte-identical to the prior normal-size reference run; other details regions retain their existing layout. Tests also cover 720p and 4K. These values are fixture-only examples.
+- [Custom first layout](custom-populated-first-frame-api30.png) and [after refresh](custom-populated-after-refresh-api30.png): SDK30 native graphics, 45 indexed fixture titles. The first PNG is drawn before queuing the refresh; tests assert full statistics height and no upward-scroll range at both stages. The actual empty CustomLibraryActivity entry/no-detach regression also passes.
+- [Switch reference states](gemini-switch-states-api30.png): SDK30 native graphics; OFF, ON, disabled OFF, disabled ON. The regression also compares focused/unfocused face pixels for equality and measures the white thumb’s side and gradient.
+- [Populated Settings](settings-switches-1080p.png): both state appearances within the actual preference layout; focus outline is separate. Tests dispatch remote-style down/up events, assert a single mutation, persistence and disabled behaviour.
+- [Approved Subtitles main panel](subtitles-main.png), [Track popup](subtitles-track.png): shared switch face and regional track icon with final compound bounds set before binding. The separate SDK30 cached-width regression covers refresh too.
+- [Global neutral/regional icon fixture](regional-language-icons.png): generic/undetermined metadata keeps a neutral globe; explicit regions retain bundled PNG flags. This fixture does not represent received Shield metadata.
+
+Original references remain available as [IMG_5090.jpeg](../owner-references/IMG_5090.jpeg) and the [Gemini video](../owner-references/gemini_generated_video_A1E9E8FB.mp4). Example ratings, counts, awards and media in software fixtures are illustrative test data, never production constants.
