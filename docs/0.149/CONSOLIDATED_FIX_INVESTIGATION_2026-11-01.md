@@ -1,62 +1,97 @@
-# Shield continuation — implementation and open evidence gaps
+# Shield 0.149 consolidated correction report
 
-Continues `02ba4b02` on `codex/agreed-fixes-2026-11-01`, PR #30 draft/unmerged. No version, APK, signing, release or merge requested or performed.
+**Status: confirmed source corrections implemented and tested; physical Shield acceptance OPEN. Exact Reception restoration and raw diagnostics investigation BLOCKED by missing inputs.**
 
-## Evidence available
+Continues baseline `02ba4b02` on `codex/agreed-fixes-2026-11-01`, existing PR #30. Tested application/test/resource/workflow source: `f4bdffa2a26fcd57cba3e64da7d41d19416c12bc`. Later report-only commits do not change those trees. No new version, APK, signing, release, tag or merge performed.
 
-Read `SHIELD_DIAGNOSTICS_AND_TOGGLE_HANDOVER_2026-11-01.md` and `SHIELD_QA_FINDINGS_2026-11-01.md`. Original diagnostics ZIP, IMG_5090.jpeg and Gemini demonstration are **not present in this workspace/repository**. No Android SDK, adb, emulator or physical Shield is available locally. Existing software fixture images are not device evidence. No claim of physical resolution is made.
+## Available evidence and limits
 
-## Custom Library
+Read both existing Shield handovers. The original `Supernova Diagnostics - 2026-11-01 21-02-06-018.zip`, `IMG_5090.jpeg` and Gemini toggle demonstration are **absent from this workspace/repository**. No Shield, Android SDK/adb or emulator is available locally. CI uses Robolectric native graphics; its software captures are not device/emulator screenshots. Device metadata values and installed APK bytes are not independently verified.
 
-Confirmed lifecycle defect: its initial cached render attaches `PreviewPages`, then asynchronous loader completion calls `Workspace.render`, removing its entire hierarchy and attaching the same `PreviewPages` again. `PreviewPages.onDetachedFromWindow` shuts down its discovery worker and cancels enrichment/focus-related callbacks. The `requestedDiscovery` flag remains true, so reattachment cannot retry an interrupted discovery request; this is not a safe refresh path. Movies/TV use `setSnapshot` on the attached page. Updated Custom Library to do the same. Initial mount now supplies its snapshot before attachment and enters via the shared `focusFromNavigation` path, which pins adapter position zero while selecting Filters. Movies/TV implementation paths remain unchanged; the shared focus correction is gated to Custom Library.
+## Custom Library: initial statistics
 
-Additional initial-focus defect traced: `focusFromNavigation` requests position zero, but `restoreFocus` then replaces that pending scroll with `scrollToPosition(1)` when Filters has not been laid out yet. That targets the Filters row below the statistics and can hide row zero. Custom-only focus restoration now retains the pending top offset in that case. Movies/TV retain their existing behaviour. The source path explains the report; physical causal confirmation remains pending. Added first-entry activity visibility and snapshot-refresh/no-detach assertions, without issuing scroll input. **Implemented candidate correction, awaiting Shield confirmation.**
+**Root cause:** Custom Library enters before its first RecyclerView layout. `focusFromNavigation` requests adapter position zero (statistics), but `restoreFocus` replaces that pending request with `scrollToPosition(1)` when Filters has not been laid out. This can put statistics above the initial viewport. Movies/TV generally enter using an already-mounted shared page.
 
-## Language icons
+**Correction:** retain the top offset in that pre-layout case, gated specifically to Custom Library. Supply its snapshot before attachment and use the shared navigation-entry method. Movies/TV paths and their page design remain unchanged.
 
-Owner clarified during this continuation that **all language icon locations must use the global implementation**. Settings choices, Audio/Subtitle tracks, download results and inline details all use `PreviewLanguageIcon`; the fallback correction belongs there, not in per-screen icon copies.
+A second confirmed lifecycle defect was corrected: asynchronous loader completion rebuilt the custom hierarchy, detaching and reattaching the same shared page. Detach cancels its discovery worker and focus/enrichment callbacks while `requestedDiscovery` remains true, preventing retry of an interrupted discovery request. Refresh now calls `setSnapshot` on the attached page, as Movies/TV do.
 
-Traced metadata from player audio/subtitle track `.language` through `preview_track_language`, compound TextViews and subtitle popup ImageViews; settings use stored locale values; download results use provider language codes. Regional codes resolve bundled `region_*` resources. Generic `en`/`eng` deliberately resolve to the neutral globe, not an invented country. OpenSubtitles `zh-ca` denotes Cantonese and must remain neutral. Resource shrink keep rules already retain `region_*`; no new APK inspection is claimed.
+**Regression:** pending scroll must remain at row zero before layout; saved custom-page activity must show the entire statistics panel on first entry without scroll input; asynchronous snapshot delivery must not detach the shared page. Tests pass. Physical first-entry/re-entry/relaunch/refresh acceptance remains open.
 
-Confirmed fallback omission: `inline` returned plain text without any icon for null, empty, undetermined, bibliographic aliases and unrecognized language metadata. Removed that suppression so every inline track receives either its explicit regional flag or the neutral globe, and added regression cases for these inputs. This is a confirmed application defect; the raw Shield metadata is still unavailable to establish whether it caused the owner’s particular failure.
+## Global language icons
 
-Kept Android’s existing fixed-view drawable sizing rather than treating missing intrinsic dimensions as a root cause; centralized the provider-code guard in construction. Added native-graphics software tests that render actual ImageViews for regional, ISO3, generic, provider-special and null metadata without manually assigning drawable bounds. Existing tests only drew icons onto a Canvas with explicit bounds or checked packaged resources. **Root cause of missing Shield icons remains unconfirmed**: Android supports fallback bounds for dimensionless drawables, so speculative intrinsic-size changes were removed. Actual Shield language values and affected UI captures remain needed.
+Owner clarified that all language-icon locations must use the global implementation. Inspected Settings choices, Audio/Subtitle track binding, download results and inline details; these use `PreviewLanguageIcon`. Track metadata comes from `.language`, carried through `preview_track_language`; settings/provider choices supply their stored locale/provider code.
 
-## Standard switches
+**Confirmed defect:** the shared `inline` path returned plain text without any icon for null, empty, undetermined and unrecognized language metadata. It now consistently provides a neutral globe. Regional locales keep their genuine country flag; generic `en`/`eng` never invent a nationality. OpenSubtitles `zh-ca` remains a neutral Cantonese alias. Code interpretation is centralized in the constructor; region parsing tolerates surrounding whitespace.
 
-Confirmed additional white-pill path: a permitted custom white accent makes the checked track white, merging it with the white thumb. Added shared `PreviewAccent.switchTrack` luminance guard for Settings and standard playback switches: very light/dark accents fall back to blue; normal accents are retained. Added actual SwitchCompat raster coverage for white/black/default accents and use white accent in the playback-switch regression. This configuration reproduces an indistinguishable ON appearance without requiring an APK resource failure; whether it matches the owner’s current accent still requires Shield confirmation.
+**Regression:** real ImageView drawing without manual drawable bounds, inline ImageSpan fallback for unknown inputs, country resource decoding and full-colour rendering despite monochrome tint. The older assertion requiring no icon for unknown metadata was updated to require one neutral icon while preserving its label. Tests pass.
 
-Confirmed legacy preference defect: `tintSwitches` tints an entire CheckBox's multicolour track/thumb layer-list with one colour, destroying their distinction. Clear the tint and bind the existing two-state switch artwork; OFF thumb is now white. Added explicit disabled checked/unchecked drawable states, retaining thumb position and track hue with translucent colours; the legacy selector previously had no disabled state. Existing SwitchCompat controls retain their white circular thumb and separate checked-state track tint. SettingsWorkspace explicitly emitted redundant On/Off text; removed that visual text while retaining spoken accessibility state. Applied the same text correction to standard switches in PreviewPlaybackMenus without changing Audio/Video/More layout; disabled standard playback switches now also dim to 40% opacity, matching their existing noninteractive state. Disabled switch state remains disabled/dimmed and its row explains availability. The standard row still delegates one click to the persisted preference model; no second click listener was introduced. Approved playback Subtitles geometry and controls remain unchanged.
+**Still open:** the root cause of the owner's **all-screen Shield** failure is not proven by the inline omission. Actual Shield values, affected-view visibility and hardware rendering remain unverified. Android supports fallback bounds for dimensionless drawables; speculative intrinsic-size changes were removed rather than represented as a fix.
 
-Added multicolour raster assertions for legacy switches and updated settings visibility/accessibility assertions. Existing persistence, focus and remote-navigation tests remain required. Gemini exact-reference comparison and physical remote verification are unavailable.
+**Existing delivered binary inspection:** retrieved the existing signed artifact from run 41331247034 / artifact 13093937009. APK SHA-256 `cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c` matches the previously delivered receipt. Parsed `resources.arsc`: package `app.supernova.player`, ID `0x7f`, matches global context lookup; tested region names remain present. This rules out a resource-package-name mismatch in that delivered artifact. Existing `region_*` shrink retention is unchanged. Resource presence is **not** offered as rendering acceptance, nor is that artifact assumed to match the owner's installed bytes. No new APK was built.
 
-## Reception
+## Conventional switches
 
-Confirmed requirement mismatch: DetailsBlueprintPanel always added either “Reviews unavailable” or a Read reviews button, and PreviewMoviePage supplied the reader action. Removed that affordance and unavailable-review text; retained rating availability, genuine supplied scores/awards, dividers and the complete Technical Information composition. IMDb vote count now sits beneath its score rather than alongside it. Existing tests explicitly required review navigation; updated those tests to require its absence.
+**Confirmed causes and corrections:**
 
-**Exact original restoration is blocked**, not complete. IMG_5090.jpeg is absent; only IMDb has existing logo artwork, while Rotten Tomatoes/Metacritic are currently text marks. `OmdbSupplement.PRODUCTION` deliberately denies access pending entitlement, its data model contains only IMDb votes, and standard supplied data contains no RT/Metacritic review counts. No fabricated counts, copied screenshot numbers, unauthorized provider access or guessed replacement design introduced. Owner reference and an approved genuine metadata source for missing provider counts are needed to finish exact parity.
+- A supported custom white accent produced a white checked track beside a white thumb, merging them into a white pill. Shared `PreviewAccent.switchTrack` now uses blue for very light/dark accents while retaining normal accent colours. Settings and standard playback switches use this shared rule. Native SwitchCompat raster tests cover white, black and normal accents.
+- Legacy preference tinting recoloured the entire multicolour CheckBox layer-list, erasing the track/thumb distinction. Clear that tint and use the checked/unchecked artwork directly. The OFF thumb is white; explicit disabled checked/unchecked entries retain position and hue with dimmed colours.
+- SettingsWorkspace and standard playback switch rows explicitly appended redundant On/Off text. Removed visual status text and retained spoken accessibility state.
+- Disabled standard playback switches were noninteractive but fully opaque. They now dim; modern Settings already preserves disabled track/opacity and availability help. Approved Subtitles controls already dim correctly and were left unchanged.
 
-## Diagnostics disposition
+Focus remains a separate row outline; checked-state artwork has no focus-dependent fill. Existing parent-row click ownership and persisted preference model are retained, with no second toggle listener. Remote navigation/persistence regressions and raster checks pass. Real remote OK, restart persistence and Shield appearance remain unverified. Exact Gemini comparison is unavailable.
 
-Only the handover summary was analysed, **not the original ZIP**. Counts cannot reveal distinct incident causes.
+## Reception: partial correction, not exact restoration
 
-| Class | Evidence and disposition |
+**Root cause:** the panel explicitly added either “Reviews unavailable” or a Read reviews button, and the details page supplied its reader action. Removed those affordances. No new review cards, articles or reader interface introduced.
+
+IMDb votes now sit beneath the score. When IMDb is available, suppress the extra TMDb/indexed score row, preserving the four-source hierarchy. When IMDb is absent, retain the genuine existing rating/votes as a fallback. Awards, dividers and the complete Technical Information composition remain.
+
+The full suite caught a real introduced large-text regression: a wrap-content vote caption consumed the height before a weighted score, leaving 14px for a minimum 28px line. Both captions now receive proportional height with autosizing, and the redundant extra rating no longer consumes space. The existing 150% text no-clipping assertion was retained unchanged and now passes, along with the other reference viewport tests.
+
+**Blocked:** exact comparison with IMG_5090.jpeg; original RT/Metacritic logos and review-count presentation. Only IMDb has existing logo artwork; RT/Metacritic are still text marks. `OmdbSupplement.PRODUCTION` deliberately denies access pending entitlement, and its model only contains IMDb votes, not RT/Metacritic review counts. No fabricated counts, screenshot numbers as production data, unapproved provider access or guessed replacement design added. A reference attachment and a genuine approved data source for missing counts are needed to finish parity. The software fixture below is not a claim of that parity.
+
+## Latest Shield diagnostics
+
+**Only the existing handover summary was analysed; the original ZIP was not available.** Counts are events, not distinct bugs or confirmed crash totals.
+
+| Class | Disposition |
 | --- | --- |
-| Focus anomalies (864 events) | Cannot distinguish expected transitions from focus loss without session/operation context. Custom lifecycle correction may remove one source of churn; not claimed as resolution of these events. |
-| Scan failures (166 + 8 batch events) | Need unique source/operation IDs and exception chains; no confirmed scanner cause from counts. |
-| Metadata network/package (671/672), semantic (12) | May describe cascading failures in one operation. Need endpoints/statuses/exception causes; neither external outage nor application defect can be inferred from totals. |
-| Playback error (1), uncaught exception (1) | Need actual stacks and player cause chain; no crash root cause established. |
-| Suspected unclean exits (101) | Not confirmed crashes. Correlate process/session and Android exit evidence first. Partial archive coverage and clean-shutdown counts do not establish a crash count. |
+| Focus anomalies: 864 | Need session/operation context to distinguish expected transitions from genuine focus loss. Custom lifecycle/focus corrections are not claimed to resolve these archive events. |
+| Scan failed: 166; batches: 8 | Need unique source/operation IDs and exception chains. No confirmed scanner root cause from counts. |
+| Metadata network/package: 671/672; semantic: 12 | Could include cascades from the same operation. Need endpoint/status/cause context; neither external failure nor app defect is established by totals. |
+| Playback error: 1; uncaught exception: 1 | Actual player cause chain and stack traces required. No crash diagnosis claimed. |
+| Suspected unclean exits: 101 | Not confirmed crashes. Correlate sessions/processes and Android exit evidence. Partial archive coverage and clean-shutdown counts do not establish crash totals. |
 
-No speculative changes to scanning, network, playback or exception handling.
+No speculative scanning, network, playback or exception-handling changes made. Raw private diagnostics were not published.
 
-## Validation
+## Validation results
 
-Local tooling suite: 147 tests passed. `git diff --check` passed. New/updated Android tests and relevant existing regressions are selected by `agreed-fixes-validation.yml` (tests/lint/compilation only, no APK). CI result recorded below when available. Software fixture output must be labelled Robolectric software evidence, never Shield/emulator screenshots.
+| Run/source | Result |
+| --- | --- |
+| [Final affected regressions 41354599694](https://github.com/heretoecode/Supernova/actions/runs/41354599694), **f4bdffa2** | **73 application tests passed**, zero failures/errors/skips; **300 library passes / 4 existing skips**; release Java compilation and lint pass, **0 lint errors / 1,251 warnings**; **147 tooling tests passed**. Includes both previously failing classes and all final switch corrections. Artifact 13103395424, retrieved XML inspected. |
+| [Broader suite 41351832319](https://github.com/heretoecode/Supernova/actions/runs/41351832319), 50f76e93 | 1,282 application tests: **1,280 passed / 2 failed**, zero errors/skips. Libraries 300 passes / 4 existing skips; compilation/lint completed. Failures were the superseded unknown-language assertion and the real Reception 150% clipping defect described above. Both full classes pass in the final targeted run. **No clean full-suite result is claimed after the corrections.** |
+| [Subtitles regressions 41351832324](https://github.com/heretoecode/Supernova/actions/runs/41351832324), 50f76e93 | 33 passes, zero failures/errors/skips; Java compilation and tooling pass. Approved Subtitles panel source remains unchanged through final source; global icon implementation in this run is identical to final source. |
+| [Earlier affected suite 41351239143](https://github.com/heretoecode/Supernova/actions/runs/41351239143), b161ae7b | 170 application passes; 300 library passes / 4 existing skips. Predates the final global fallback, switch contrast and large-text corrections; not substituted for their final validation. |
 
-Remaining mandatory acceptance: first entry/re-entry/relaunch/refresh custom statistics, actual metadata-to-icon rendering, switch off/on/focus/disabled with one remote-OK change and restart persistence, exact original Reception and counts, raw diagnostic investigation, physical Shield confirmation. No unrelated approved feature is declared device-verified.
+Final affected classes: CustomLibraryPageTest (8), NextQaWizardTest (10), Supernova139LanguageFlagsTest (4), Supernova141UiTest (8), DetailsReferenceRenderTest (4), ReceptionSupplementTest (4), SettingsWorkspaceTest (25), NextHudTest (10).
 
-The existing PR-triggered conformance workflow included `assembleNoamazonRelease`. Its two automatically triggered continuation runs (41351147911 and 41351186104) were cancelled before their Gradle step. Replaced assembly with Java compilation so subsequent PR validation respects the owner's no-new-APK constraint. Tests, lint and compile remain enabled. A superseded manual validation run was also cancelled.
+Local JDK parser: 1,108 Java files, zero syntax errors. `git diff --check` passes. CI is tests/lint/compilation only. The old PR workflow's automatic APK assembly runs were cancelled before their Gradle step, and assembly/delivery steps replaced with compilation/evidence collection. Its obsolete frozen-source guard was replaced with committed-input preservation checks for the newly authorised correction scope; the original native/signing tools remain untouched. No signing/release workflow dispatched.
+
+## Software visual evidence
+
+**Robolectric native-graphics fixtures only; not Android emulator/Shield screenshots. Data is synthetic, not owner metadata or production hardcoding.**
+
+- [Custom first entry without scrolling — final source](shield-continuation-software-evidence/custom-first-entry-robolectric-f4bdffa2.png): complete statistics visible for an empty fixture library.
+- [ON/OFF switches — final source](shield-continuation-software-evidence/switch-states-robolectric-f4bdffa2.png): separate white thumbs, coloured/dark tracks, no adjacent state text. White/black-accent and disabled variants additionally pass raster assertions.
+- [Reception at 150% text — final source](shield-continuation-software-evidence/reception-large-text-robolectric-f4bdffa2.png): score/count no longer clipped; four source slots and Technical Information visible. Not an exact original-reference match.
+- [Subtitle Track regional flags and neutral fallback](shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png): source 50f76e93; that popup/global icon implementation is unchanged in final source.
+
+## Preservation and remaining acceptance
+
+Committed diff checks confirm no change to version/build identity, release history/legal assets, native/signing inputs, resource retention, playback HUD/controller or approved PlaybackSubtitlePanel. Movies/TV paths remain unchanged by the Custom-only shared focus condition. Their existing regressions were included in the earlier broader/affected validation; no physical functionality is inferred from those passes.
+
+Remaining work: obtain original ZIP, IMG_5090.jpeg and Gemini reference; finish genuine provider counts/logos and exact Reception parity; trace the actual all-screen Shield icon failure; inspect raw diagnostic stacks/operations; perform physical first-entry/re-entry/relaunch/refresh statistics checks, language rendering, both toggle states/focus/disabled/one-OK/persistence, and Reception acceptance. **Implemented portions await Shield confirmation; the overall handover is not fully closed.** PR #30 stays draft and unmerged. No new APK/release without owner approval.
 
 ## Exact changed files
 
@@ -64,12 +99,13 @@ The existing PR-triggered conformance workflow included `assembleNoamazonRelease
 - `.github/workflows/supernova-pr30-conformance.yml`
 - `docs/0.149/CONSOLIDATED_FIX_INVESTIGATION_2026-11-01.md`
 - `docs/0.149/SHIELD_QA.md`
-- `docs/0.149/shield-continuation-software-evidence/custom-first-entry-robolectric-b161ae7b.png`
-- `docs/0.149/shield-continuation-software-evidence/reception-available-data-robolectric-b161ae7b.png`
+- `docs/0.149/shield-continuation-software-evidence/custom-first-entry-robolectric-f4bdffa2.png`
+- `docs/0.149/shield-continuation-software-evidence/reception-large-text-robolectric-f4bdffa2.png`
 - `docs/0.149/shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png`
-- `docs/0.149/shield-continuation-software-evidence/switch-states-robolectric-b161ae7b.png`
+- `docs/0.149/shield-continuation-software-evidence/switch-states-robolectric-f4bdffa2.png`
 - `res/drawable/preview_preference_toggle.xml`
 - `src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java`
 - `src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java`
 - `src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java`
 - `src/main/java/com/archos/mediacenter/video/leanback/details/DetailsBlueprintPanel.java`
@@ -81,37 +117,8 @@ The existing PR-triggered conformance workflow included `assembleNoamazonRelease
 - `src/test/java/com/archos/mediacenter/video/leanback/NextQaWizardTest.java`
 - `src/test/java/com/archos/mediacenter/video/leanback/PreviewMoviePageTest.java`
 - `src/test/java/com/archos/mediacenter/video/leanback/Supernova139LanguageFlagsTest.java`
+- `src/test/java/com/archos/mediacenter/video/leanback/Supernova141UiTest.java`
 - `src/test/java/com/archos/mediacenter/video/leanback/details/DetailsImprovementsTest.java`
 - `src/test/java/com/archos/mediacenter/video/leanback/details/ReceptionSupplementTest.java`
 - `src/test/java/com/archos/mediacenter/video/leanback/settings/SettingsWorkspaceTest.java`
 - `src/test/java/com/archos/mediacenter/video/player/NextHudTest.java`
-
-## Retrieved software visual evidence
-
-**All four captures are Robolectric native-graphics software fixtures, not Android emulator/Shield screenshots.** Test data is synthetic; Reception fixture intentionally shows the supplied indexed rating, not fabricated provider values.
-
-- [Custom Library first entry, no scroll input](shield-continuation-software-evidence/custom-first-entry-robolectric-b161ae7b.png): statistics fully visible with an empty fixture library. Source b161ae7b; its Custom Library implementation is identical to final source.
-- [Switch ON and OFF states](shield-continuation-software-evidence/switch-states-robolectric-b161ae7b.png): blue/right white thumb and dark/left white thumb, no adjacent state text. Source b161ae7b; settings code/resources identical to final source.
-- [Global regional flags and neutral globes in the approved Subtitle Track popup](shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png): final application source.
-- [Reception with available data and Technical Information preserved](shield-continuation-software-evidence/reception-available-data-robolectric-b161ae7b.png): no review UI; **does not establish original-reference parity**. Source b161ae7b; details implementation identical to final source.
-
-Focused run [41351239143](https://github.com/heretoecode/Supernova/actions/runs/41351239143) at b161ae7b succeeded: JUnit XML reports 170 application tests, 200 MediaLib tests (2 skipped), 104 FileCoreLibrary tests (2 skipped), zero failures/errors. Thus 170 application passes and 300 library passes, four existing skips. This predates the later global-inline fallback and playback-text corrections; do not substitute it for final-source validation of those corrections.
-
-Final-source Subtitles run [41351832324](https://github.com/heretoecode/Supernova/actions/runs/41351832324) at 50f76e93 succeeded: 33 tests, zero failures/errors/skips, Java compilation and 147 tooling tests passed. Retrieved artifact 13101459495. Focused artifact 13100943908 supplies the earlier software fixtures.
-
-Full final-application-source validation [41351832319](https://github.com/heretoecode/Supernova/actions/runs/41351832319) at 50f76e93 is running as of this evidence checkpoint. No pass result is claimed while it is pending. Later evidence-only commits preserve that application/test/resource tree.
-
-A final narrow disabled-playback-switch correction follows 50f76e93; its targeted NextHud validation must pass separately. The full 50f76e93 run validates the otherwise unchanged application source, not this later opacity line.
-
-Final legacy disabled-state raster assertions are validated separately with the targeted SettingsWorkspace legacy-switch method; both enabled states retain their previous geometry and colours.
-
-Final custom-accent track rendering and the combined disabled-state corrections are checked in targeted SettingsWorkspace/NextHud runs after the broader 50f76e93 run.
-
-## Full-suite failure investigation
-
-Run 41351832319 completed: 1,282 application tests, **1,280 passed / 2 failed**, zero errors/skips; libraries 300 passed / 4 existing skips, zero failures/errors. Compilation and lint completed; the failed task was application tests.
-
-1. `Supernova141UiTest` still required plain text for `und`/unrecognized track language. Updated it to require one neutral shared icon and preserve the actual label, reflecting the owner's global fallback requirement. Regional flags must still not be invented.
-2. `DetailsReferenceRenderTest.populatedGridAt150PercentText` exposed a real clipping regression in the newly stacked IMDb score/vote count: a wrap-content caption consumed height before the weighted score, leaving only 14px for a minimum 28px text line. Both lines now receive proportional measured height with autosizing. When IMDb is supplied, suppress the additional TMDb/indexed score row, preserving the requested four-source hierarchy and freeing the necessary vertical space. Genuine TMDb/indexed fallback remains when IMDb is unavailable. The existing large-text no-clipping assertion is retained unchanged and must pass.
-
-Both failed classes, Reception tests, the global language tests, Custom Library regressions and the final Settings/Playback switch tests are included in the final targeted rerun. No full-suite success is claimed for the failed run.
