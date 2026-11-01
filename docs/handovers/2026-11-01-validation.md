@@ -21,11 +21,18 @@ Work branch: `codex/agreed-fixes-2026-11-01`. Existing branches and PR bases rem
 
 ## Validation status
 
-Implementation and tests committed; Android validation in progress. Do not treat this document as physical acceptance.
+All ten items are implemented and covered by passing automated regression checks. Physical Shield acceptance remains pending. Flag retention and picker binding are validated; final resource-shrunk package/device rendering remains pending as described below.
 
+The first full application run compiled successfully and completed lint with zero errors / 1,247 warnings. It ran 1,264 application tests: 1,256 passed and eight legacy Reception assertions failed because they required the panel/review action to be hidden, contrary to the new handover. Those assertions were updated. All 300 library tests passed (four existing skips). The superseded follow-up run also exposed an intermittent programmatic-scroll/row visibility assertion; the layout-manager fix was narrowed to the controls row, preserving existing poster centring. Exact-source affected-class validation [41315819719](https://github.com/heretoecode/Supernova/actions/runs/41315819719) **passed**: 134 application regressions, 300 library tests, four existing library skips; release compilation and lint passed (zero errors / 1,247 warnings), and 141 tooling tests passed. XML reports and representative native-rendered HUD, Settings and statistics screenshots were downloaded and inspected.
+
+The broader follow-up [41315305839](https://github.com/heretoecode/Supernova/actions/runs/41315305839) passed the revised Reception acceptance but failed two of 1,265 application tests during Robolectric application setup: a delayed production CustomApplication HDMI receiver callback reached a torn-down ActivityThread. No audio selection assertion failed. AudioTrackSelectionPolicyTest now uses a plain Application with an explicit Archos global test context, excluding production background bootstrap; audio selection implementation is untouched. The final affected-class rerun [41317089694](https://github.com/heretoecode/Supernova/actions/runs/41317089694) **passed**, including all 14 audio policy tests. No final whole-application green suite is claimed.
+
+- Final validated source: **`3929e769fb69ce172de56ebe40fc07c238546bcc`**. Later completion commits change documentation only.
+- Final [run 41317089694](https://github.com/heretoecode/Supernova/actions/runs/41317089694): **148 affected application tests pass**, **300 library tests pass**, **four existing library skips**, **141 tooling tests pass**. Release Java/resource compilation passes; release lint: **zero errors / 1,247 warnings**.
+- Downloaded artifact **13087628882** and read back all JUnit XML and lint counts. [Machine-readable receipt](2026-11-01-validation.json) includes class counts, archive hash, exact source and limitations.
 - Local tooling: **141 tests pass**; `git diff --check` passes.
 - GitHub Actions: [first implementation run](https://github.com/heretoecode/Supernova/actions/runs/41313256939), [additional regression run](https://github.com/heretoecode/Supernova/actions/runs/41313338811).
-- The dedicated workflow runs full app/library JVM tests, release lint and Java/resource compilation using the existing pinned dependency/native inputs. It does **not** assemble, sign, publish or upload an APK.
+- The dedicated workflow supports full application validation on manual dispatch and runs affected application regression classes on push, full library JVM tests, release lint and Java/resource compilation using the existing pinned dependency/native inputs. It does **not** assemble, sign, publish or upload an APK.
 - Explicit flag keep rules and pre-shrink rendered assets are tested; final resource-shrunk package/device rendering must be verified during a separately authorised future APK cycle.
 
 ## Outstanding physical Nvidia Shield QA
@@ -33,3 +40,5 @@ Implementation and tests committed; Android validation in progress. Do not treat
 All ten items require device acceptance: enter TV library and confirm complete statistics without scrolling; hold/repeat remote navigation through Home/Filters; verify no Settings rail ticks while genuine option selection remains; compare On/Off/Unavailable focused/unfocused; inspect regional and neutral language icons; inspect provider logos/fallback and Done; load cached/live/unavailable Reception and review errors; navigate all six network cards and return from the browser; pause/resume/seek/speed-change the HUD; check timestamp separation at supported resolutions and enlarged text. JVM/native graphics tests cannot establish device remote timing, TV font rendering, overscan or real service availability.
 
 Playback settings redesigns, standalone Subtitles window and subtitle appearance grouping were **not implemented**. No version bump, new release, APK production, signing, device installation, data reset or migration.
+
+Main independently advanced to `28484b9f069d09d248908506509f9720aa3c3c94` during this task with a proposed playback Settings document. That work was not modified or merged. The authoritative handover remained blob `f6f345055d37c02866947ce9465cea06d1597f2c`; PR #29 remains draft/open at its original tip. Completion PR #30 is draft against the 0.148 continuation branch.

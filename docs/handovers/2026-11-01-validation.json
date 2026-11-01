@@ -1,0 +1,539 @@
+{
+  "validated_commit": "3929e769fb69ce172de56ebe40fc07c238546bcc",
+  "continuation_base": "fc1f07b832af14274455d81b654a9631440e7add",
+  "authoritative_handover_blob": "f6f345055d37c02866947ce9465cea06d1597f2c",
+  "branch": "codex/agreed-fixes-2026-11-01",
+  "run_id": 41317089694,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/41317089694",
+  "result": "success",
+  "application_suite_scope": "affected regression classes plus audio policy fixture; not the whole application suite",
+  "artifact_id": 13087628882,
+  "artifact_sha256": "91d8ce6d55e1ac0eef16492c763827d4d3a181ee3e49e177904a3deb2643e042",
+  "junit": {
+    "Video": {
+      "totals": {
+        "tests": 148,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "classes": {
+        "com.archos.mediacenter.video.leanback.PreviewPagesTest": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Network142CredentialsTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Network142Test": {
+          "tests": 16,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.player.NextHudTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.streaming.putio.Network142PutioTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest": {
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Details139AcceptanceTest": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Supernova139LanguageFlagsTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.PreviewMoviePageTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.details.ReceptionSupplementTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Network142WebdavTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.player.AudioTrackSelectionPolicyTest": {
+          "tests": 14,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest": {
+          "tests": 23,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.LibraryStatisticsLayoutTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Network142RenderTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.streaming.StreamingProviderFocusTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Supernova138HomeTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.streaming.Supernova139ProviderMarksTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.LibraryStatisticsTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.video.leanback.Supernova141UiTest": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "MediaLib": {
+      "totals": {
+        "tests": 200,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 2
+      },
+      "classes": {
+        "com.archos.mediacenter.utils.TrackNamingTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.CategoryRowsRefreshTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.DatabaseMigrationTest": {
+          "tests": 15,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.VideoStoreIdRemapDatabaseTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.NfoWriterTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.DbHolderTest": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.NfoMovieHandlerTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.GenreUtilsTest": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.themoviedb3.TmdbTitleLanguageTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.utils.MediaUtilsSubsDirTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.preprocess.NonScrapableFolderTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.AutoScrapeServicePersistenceTest": {
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.medialib.ContentFileDescriptorTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.utils.ChineseReproTest": {
+          "tests": 22,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.NetworkScannerServiceVideoTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.VideoStoreImportReconciliationTest": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.medialib.StreamBufferSettingsTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.NfoParserTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.filecoreextension.upnp2.UpnpFile2Test": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.preprocess.SortTitleUtilsTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.VolumeHiddenFilesReconciliationTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.NfoEpisodeHandlerTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.ShowTagsPersistenceTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.NfoShowHandlerTest": {
+          "tests": 9,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.EpisodeTagsPersistenceTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.VideoProviderTransactionTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.perf.ScraperPerfQueryCountTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.ScraperProviderInsertTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.xml.ShowScraper4TitleCollisionFallbackTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.AutoScrapeServiceNetworkScanTest": {
+          "tests": 14,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.preprocess.ScraperIntegrationTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManagerRegistryReplayTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.preprocess.MovieScraperFileTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.LocalImagesTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediaprovider.video.RealDatabasePruningTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 2
+        },
+        "com.archos.mediascraper.perf.ScraperPerfClassificationTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.perf.ScraperPerfNoCascadeTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediascraper.perf.ScraperPerfCascadeOrderTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.mediacenter.utils.UpnpItemDataTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    },
+    "FileCoreLibrary": {
+      "totals": {
+        "tests": 104,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 2
+      },
+      "classes": {
+        "com.jcraft.jsch.SFTPSessionLifecycleTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.SpeedTestTransferTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1
+        },
+        "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 1
+        },
+        "com.archos.filecorelibrary.StreamOverHttpCancellationTest": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.StreamOverHttpBufferTest": {
+          "tests": 16,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.ReadOptionsTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.NetworkCryptoTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.sshj.SshjStreamLifecycleTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.ftp.FtpUtilsTest": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.TransferDiagnosticTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.BackgroundInitializationTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.samba.NetworkCredentialsDatabaseCredentialTest": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.FileUtilsUriTest": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.contentstorage.ContentStorageStreamTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.StreamOverHttpReadPolicyTest": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.hierynomus.msfscc.fileinformation.SmbjFileLengthTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest": {
+          "tests": 20,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.OwnedStreamsTest": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
+  },
+  "tooling_tests_passed": 141,
+  "release_java_resource_compilation": "passed",
+  "apk_assembly_or_signing": "not invoked",
+  "physical_shield_qa": "not run",
+  "final_shrunk_package_flag_rendering": "pending separately authorised APK cycle",
+  "playback_settings_redesign": "not implemented",
+  "release_lint": {
+    "Warning": 1247
+  }
+}
