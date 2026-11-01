@@ -42,8 +42,10 @@ public final class PreviewLanguageIcon extends Drawable {
     @Override public int getOpacity(){return PixelFormat.TRANSLUCENT;}
     /** OpenSubtitles uses zh-ca for Cantonese, not a reliable Canadian region. */
     public static String providerCode(String code){return "zh-ca".equalsIgnoreCase(code)?"yue":code;}
-    public static void apply(TextView text,String code){
-        PreviewLanguageIcon icon=new PreviewLanguageIcon(text.getContext(),code);int size=PreviewDialog.dp(text.getContext(),20);icon.setBounds(0,0,size,size);
+    public static void apply(TextView text,String code){apply(text,code,PreviewDialog.dp(text.getContext(),20));}
+    /** Bounds must be final before binding: TextView caches compound drawable dimensions. */
+    public static void apply(TextView text,String code,int sizePx){
+        PreviewLanguageIcon icon=new PreviewLanguageIcon(text.getContext(),code);int size=Math.max(1,sizePx);icon.setBounds(0,0,size,size);
         android.graphics.drawable.Drawable[] existing=text.getCompoundDrawables();text.setCompoundDrawables(icon,existing[1],existing[2],existing[3]);text.setCompoundDrawablePadding(PreviewDialog.dp(text.getContext(),8));
     }
     /** Inline icon for legacy/mixed metadata text; keep each track's own reliable locale. */
