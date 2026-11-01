@@ -47,3 +47,8 @@
 - Separate choices subtly; the selected value is blue, others neutral. Maintain clear individual D-pad focus indication and accessible selection targets even without visible button chrome.
 - Do not change their approved option sets or move them to submenus.
 - Design only; excluded from active Codex fixes.
+
+## Row spacing refinement (proposed mock-up, awaiting confirmation)
+- Increase the vertical height/padding of each individual settings row to reduce the condensed appearance, keeping existing labels, controls, icons and overall structure unchanged.
+- Maintain comfortable Shield remote focus targets and visual separation between rows.
+- Do not implement until the user approves the updated mock-up.
