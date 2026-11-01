@@ -90,7 +90,7 @@ final class PreviewPlaybackMenus {
     }
     private static void renderTab(){
         if(owner==null||closing)return;
-        if(tab==1){collapseExpansion(false);backAction=null;restoreParent=null;liveCard=card(R.string.menu_subtitles);subtitlePanel=new PlaybackSubtitlePanel(owner,new SubtitlePlaybackBackend(owner,liveCard),PreviewPlaybackMenus::switchTab);current.setContentView(subtitlePanel);Window window=current.getWindow();window.setGravity(Gravity.CENTER);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=0;window.setAttributes(attrs);window.setLayout(subtitlePanel.panelWidth(),subtitlePanel.panelHeight());return;}
+        if(tab==1){collapseExpansion(false);backAction=null;restoreParent=null;liveCard=card(R.string.menu_subtitles);subtitlePanel=new PlaybackSubtitlePanel(owner,new SubtitlePlaybackBackend(owner,liveCard),(index,enter)->{switchTab(index);if(enter)focusContent();});current.setContentView(subtitlePanel);Window window=current.getWindow();window.setGravity(Gravity.CENTER);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=0;window.setAttributes(attrs);window.setLayout(subtitlePanel.panelWidth(),subtitlePanel.panelHeight());return;}
         clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
         if(tab==0||tab==1){TVCardView selected=card(tab==1?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null){if(tab==0)columns();addNative(selected,true,false);}else heading(tab==1?"No subtitle tracks":"No audio tracks");if(tab==1)subtitlePreferences();}
         else {
