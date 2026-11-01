@@ -41,3 +41,9 @@
 - **Background Opacity** is controlled directly in its existing row, with inline presets **0%, 25%, 50%, 75%, 100%** and a blue selected state; no submenu.
 - These are proposed UI presets; implementation must map them safely to the existing 0–255 opacity control and preserve current settings appropriately.
 - This remains design-only and is excluded from the active Codex fix batch.
+
+## Inline selector styling (approved)
+- Text Size, Vertical Position and Background Opacity options appear as **plain inline text**, not pill/button-shaped controls.
+- Separate choices subtly; the selected value is blue, others neutral. Maintain clear individual D-pad focus indication and accessible selection targets even without visible button chrome.
+- Do not change their approved option sets or move them to submenus.
+- Design only; excluded from active Codex fixes.
