@@ -6,6 +6,8 @@ import android.graphics.drawable.GradientDrawable;
 public final class PreviewAccent {
  public static int color(Context c){return color(c,0xff62bbf3);}
  public static int color(Context c,int defaultColour){return androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getInt("preview_accent41",defaultColour);}
+ /** A white thumb must remain distinct, including with custom white/black accents. */
+ public static int switchTrack(Context c){int accent=color(c);double luminance=androidx.core.graphics.ColorUtils.calculateLuminance(accent);return luminance<.08||luminance>.65?0xff0a6cff:accent;}
  public static int alpha(Context c,int alpha){return (color(c)&0x00ffffff)|(alpha<<24);}
  public static GradientDrawable utility(Context c){int a=color(c);return new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{Color.rgb(13+Color.red(a)/24,17+Color.green(a)/24,22+Color.blue(a)/24),0xff070d14,0xff131b24});}
  public static void choose(Context c,Runnable changed){String[] names={"Slate Blue","Cyan","Emerald","Purple","Amber","Red","Custom…"};int[] colours={0xff62bbf3,0xff51d8e8,0xff58cfaa,0xffb49af4,0xffedbd67,0xffef8282};PreviewDialog.choose(c,"Accent & Colour",names,-1,n->{if(n<colours.length){save(c,colours[n]);changed.run();}else custom(c,changed);});}

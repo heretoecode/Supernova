@@ -24,6 +24,8 @@ Kept Android’s existing fixed-view drawable sizing rather than treating missin
 
 ## Standard switches
 
+Confirmed additional white-pill path: a permitted custom white accent makes the checked track white, merging it with the white thumb. Added shared `PreviewAccent.switchTrack` luminance guard for Settings and standard playback switches: very light/dark accents fall back to blue; normal accents are retained. Added actual SwitchCompat raster coverage for white/black/default accents and use white accent in the playback-switch regression. This configuration reproduces an indistinguishable ON appearance without requiring an APK resource failure; whether it matches the owner’s current accent still requires Shield confirmation.
+
 Confirmed legacy preference defect: `tintSwitches` tints an entire CheckBox's multicolour track/thumb layer-list with one colour, destroying their distinction. Clear the tint and bind the existing two-state switch artwork; OFF thumb is now white. Added explicit disabled checked/unchecked drawable states, retaining thumb position and track hue with translucent colours; the legacy selector previously had no disabled state. Existing SwitchCompat controls retain their white circular thumb and separate checked-state track tint. SettingsWorkspace explicitly emitted redundant On/Off text; removed that visual text while retaining spoken accessibility state. Applied the same text correction to standard switches in PreviewPlaybackMenus without changing Audio/Video/More layout; disabled standard playback switches now also dim to 40% opacity, matching their existing noninteractive state. Disabled switch state remains disabled/dimmed and its row explains availability. The standard row still delegates one click to the persisted preference model; no second click listener was introduced. Approved playback Subtitles geometry and controls remain unchanged.
 
 Added multicolour raster assertions for legacy switches and updated settings visibility/accessibility assertions. Existing persistence, focus and remote-navigation tests remain required. Gemini exact-reference comparison and physical remote verification are unavailable.
@@ -102,3 +104,5 @@ Full final-application-source validation [41351832319](https://github.com/hereto
 A final narrow disabled-playback-switch correction follows 50f76e93; its targeted NextHud validation must pass separately. The full 50f76e93 run validates the otherwise unchanged application source, not this later opacity line.
 
 Final legacy disabled-state raster assertions are validated separately with the targeted SettingsWorkspace legacy-switch method; both enabled states retain their previous geometry and colours.
+
+Final custom-accent track rendering and the combined disabled-state corrections are checked in targeted SettingsWorkspace/NextHud runs after the broader 50f76e93 run.

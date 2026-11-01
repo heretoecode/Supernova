@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 public class NextHudTest {
  @Test public void ordinaryPlaybackSwitchHasNoRedundantStateText(){
   ReflectionHelpers.setStaticField(PreviewPlaybackMenus.class,"owner",host.get());
+  androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get()).edit().putInt("preview_accent41",android.graphics.Color.WHITE).commit();
   try{for(boolean on:new boolean[]{false,true}){
    TextView row=new TextView(host.get());
    ReflectionHelpers.callStaticMethod(PreviewPlaybackMenus.class,"switchState",ReflectionHelpers.ClassParameter.from(TextView.class,row),ReflectionHelpers.ClassParameter.from(String.class,"Night mode"),ReflectionHelpers.ClassParameter.from(boolean.class,on));

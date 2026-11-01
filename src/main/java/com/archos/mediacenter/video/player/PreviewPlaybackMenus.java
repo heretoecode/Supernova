@@ -141,7 +141,7 @@ final class PreviewPlaybackMenus {
         if(item.isSwitchable()||owner.getString(R.string.pref_audio_filt_night_mode).equals(item.getText()))switchState(row,label,item.isChecked());
     }
     private static void switchState(TextView row,String label,boolean on){
-        final int accent=PreviewAccent.color(owner);row.setText(label);row.setAlpha(row.isEnabled()?1f:.4f);row.setContentDescription(label+", "+(on?"On":"Off"));
+        final int accent=PreviewAccent.switchTrack(owner);row.setText(label);row.setAlpha(row.isEnabled()?1f:.4f);row.setContentDescription(label+", "+(on?"On":"Off"));
             android.graphics.drawable.Drawable indicator=new android.graphics.drawable.Drawable(){final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);public void draw(android.graphics.Canvas canvas){android.graphics.Rect bounds=getBounds();paint.setColor(on?accent:0xff526174);canvas.drawRoundRect(bounds.left,bounds.top,bounds.right,bounds.bottom,dp(10),dp(10),paint);paint.setColor(android.graphics.Color.WHITE);canvas.drawCircle(on?bounds.right-dp(10):bounds.left+dp(10),bounds.exactCenterY(),dp(7),paint);}public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(android.graphics.ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}};
             indicator.setBounds(0,0,dp(36),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
     }

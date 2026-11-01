@@ -40,6 +40,18 @@ public class SettingsWorkspaceTest {
     @Test public void railHasOneImmediateBoundaryDuringRapidFocusChanges(){
         workspace.open(0,"Playback");layout();View first=tagged("settings.section.Playback"),second=tagged("settings.section.Video & Display");first.requestFocus();second.requestFocus();first.requestFocus();second.requestFocus();ViewGroup rail=(ViewGroup)second.getParent();assertFalse("Child surface must not paint a second focus boundary",second.getBackground() instanceof android.graphics.drawable.StateListDrawable);assertNull("Selected state must not paint a second outline",second.getForeground());assertFalse(((TextView)second).getText().toString().contains("✓"));assertTrue(ReflectionHelpers.getField(rail,"visible"));android.graphics.RectF outline=ReflectionHelpers.getField(rail,"current");assertEquals(second.getTop(),outline.top,1);assertEquals(second.getBottom(),outline.bottom,1);assertNull(ReflectionHelpers.getField(rail,"movement"));workspace.enter();assertFalse(ReflectionHelpers.getField(rail,"visible"));
     }
+    @Test public void switchTrackRemainsDistinctWithWhiteAndBlackCustomAccents(){
+        var prefs=PreferenceManager.getDefaultSharedPreferences(host.get());
+        for(int accent:new int[]{android.graphics.Color.WHITE,android.graphics.Color.BLACK,0xff62bbf3}){
+            prefs.edit().putInt("preview_accent41",accent).commit();
+            androidx.appcompat.widget.SwitchCompat toggle=new androidx.appcompat.widget.SwitchCompat(host.get());PreviewSettings.styleSwitch(toggle);toggle.setBackground(null);toggle.setChecked(true);toggle.jumpDrawablesToCurrentState();
+            toggle.measure(View.MeasureSpec.makeMeasureSpec(200,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(100,View.MeasureSpec.EXACTLY));toggle.layout(0,0,200,100);
+            android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(200,100,android.graphics.Bitmap.Config.ARGB_8888);toggle.draw(new android.graphics.Canvas(image));
+            java.util.Set<Integer> colours=new java.util.HashSet<>();for(int y=0;y<100;y++)for(int x=0;x<200;x++)colours.add(image.getPixel(x,y));
+            assertTrue("White thumb visible",colours.contains(android.graphics.Color.WHITE));assertTrue("Separate coloured track visible",colours.contains(PreviewAccent.switchTrack(host.get())));assertNotEquals(android.graphics.Color.WHITE,PreviewAccent.switchTrack(host.get()));assertNotEquals(android.graphics.Color.BLACK,PreviewAccent.switchTrack(host.get()));
+            if(accent==0xff62bbf3)assertEquals(accent,PreviewAccent.switchTrack(host.get()));
+        }
+    }
     @Test public void legacySwitchRetainsSeparateTrackAndThumbColours(){
         CheckBox box=new CheckBox(host.get());box.setButtonTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));PreviewSettings.tintSwitches(box);assertNull(box.getButtonTintList());
         for(boolean checked:new boolean[]{false,true}){
