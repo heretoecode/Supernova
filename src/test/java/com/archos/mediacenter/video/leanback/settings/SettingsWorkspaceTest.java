@@ -43,10 +43,13 @@ public class SettingsWorkspaceTest {
     @Test public void legacySwitchRetainsSeparateTrackAndThumbColours(){
         CheckBox box=new CheckBox(host.get());box.setButtonTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));PreviewSettings.tintSwitches(box);assertNull(box.getButtonTintList());
         for(boolean checked:new boolean[]{false,true}){
-            box.setChecked(checked);android.graphics.drawable.Drawable icon=box.getButtonDrawable();icon.setBounds(0,0,60,32);
+            box.setEnabled(true);box.setChecked(checked);android.graphics.drawable.Drawable icon=box.getButtonDrawable();icon.setBounds(0,0,60,32);
             android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(60,32,android.graphics.Bitmap.Config.ARGB_8888);icon.draw(new android.graphics.Canvas(image));
             java.util.Set<Integer> colours=new java.util.HashSet<>();for(int y=0;y<32;y++)for(int x=0;x<60;x++)if(android.graphics.Color.alpha(image.getPixel(x,y))>240)colours.add(image.getPixel(x,y));
             assertTrue(colours.contains(android.graphics.Color.WHITE));assertTrue(colours.contains(checked?0xff00a9db:0xff3c5565));
+            box.setEnabled(false);image.eraseColor(android.graphics.Color.TRANSPARENT);icon=box.getButtonDrawable();icon.setBounds(0,0,60,32);icon.draw(new android.graphics.Canvas(image));
+            int maximumAlpha=0;for(int y=0;y<32;y++)for(int x=0;x<60;x++)maximumAlpha=Math.max(maximumAlpha,android.graphics.Color.alpha(image.getPixel(x,y)));
+            assertTrue("Disabled switch remains visible but distinct",maximumAlpha>0&&maximumAlpha<255);
         }
     }
     @Test public void togglePersistsWithoutMovingFocusAndHiddenRowsRemainAbsent(){
