@@ -1,0 +1,23 @@
+{
+  "checked_at_utc": "2026-11-01T16:48:30.990572+00:00",
+  "source": "Existing Drive 0.148 APK, complete raw-file download via connected Drive tool",
+  "drive_file_id": "1Fz8PJYvYpbwKJv_W0wg3frpRLlhLYMuw",
+  "apk_bytes": 95585975,
+  "apk_sha256": "44c156c55798799cca8de8b3388e9d2ba23c7e328238193b8b4a50a4bd0f2898",
+  "signature_verifies": true,
+  "verified_signature_schemes": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "application_id": "app.supernova.player",
+  "version_name": "0.148",
+  "version_code": 148,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "build_tools_version": "36.0.0",
+  "apksigner_jar_sha256": "3716d9311e55d2b0918a2fd9d54ba9e406c5f6abeea700b287f11259bc163dec",
+  "new_candidate_signed": false,
+  "installed_upgrade_test": "NOT RUN"
+}

@@ -1,0 +1,34 @@
+{
+  "checked_at_utc": "2026-11-01T16:55:15.880404+00:00",
+  "environment": "supernova-foundation-signing",
+  "deployment_branch_policy": {
+    "custom_branch_policies": true,
+    "protected_branches": false
+  },
+  "allowed_branch_rules": [
+    "codex/foundation-release",
+    "codex/supernova-0.135",
+    "codex/supernova-0.137-qa-2026-10-11",
+    "codex/supernova-0.138-qa-2026-10-12",
+    "codex/supernova-0.139-implementation-2026-10-13",
+    "codex/supernova-0.140-implementation-2026-10-16",
+    "codex/supernova-0.141-implementation-2026-10-22",
+    "codex/supernova-0.142-implementation-2026-10-23",
+    "codex/supernova-0.143-implementation-2026-10-27",
+    "codex/supernova-0.144-implementation-2026-10-28",
+    "codex/supernova-0.145-maintenance-2026-10-28",
+    "codex/supernova-0.146-upstream-completion-2026-10-28",
+    "codex/supernova-0.147-implementation-2026-10-29",
+    "codex/supernova-next-implementation-2026-10-30",
+    "codex/supernova-next-refinement-2026-10-10"
+  ],
+  "candidate_branch": "codex/agreed-fixes-2026-11-01",
+  "exact_candidate_branch_rule_present": false,
+  "protected_signing_attempt": "PENDING green conformance",
+  "signing_identity_changed": false,
+  "protection_rules_changed": false,
+  "private_key_accessed": false,
+  "signed_candidate_available": false,
+  "owner_action_if_unchanged": "Add only the exact PR30 branch to this existing environment allowed deployment branches; preserve all existing rules and the certificate.",
+  "secret_metadata_read_status": "HTTP 403 Resource not accessible by integration; secret presence is unknown"
+}

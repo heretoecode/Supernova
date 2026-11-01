@@ -1,0 +1,27 @@
+{
+  "before_source_commit": "3929e769fb69ce172de56ebe40fc07c238546bcc",
+  "before_run_id": 41317089694,
+  "after_source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+  "after_run_id": 41328625028,
+  "runtime": "Robolectric native graphics, API30, synthetic 960x540 scene; NOT installed APK/device evidence",
+  "tabs": {
+    "Audio": {
+      "before_sha256": "a472b676e846a761efaa304969faad3ddffa28a2ef930682e5ffb469d9c888e4",
+      "after_sha256": "a472b676e846a761efaa304969faad3ddffa28a2ef930682e5ffb469d9c888e4",
+      "png_byte_identical": true,
+      "rgb_difference_bounds": null
+    },
+    "Video": {
+      "before_sha256": "17b028a859f35cb28dc031d496893981b577aab5ecd390ec5d57ad971834709e",
+      "after_sha256": "17b028a859f35cb28dc031d496893981b577aab5ecd390ec5d57ad971834709e",
+      "png_byte_identical": true,
+      "rgb_difference_bounds": null
+    },
+    "More": {
+      "before_sha256": "77c30961289496c37030a4fb8d6f11458cfb133b6ccfe5143e6a390a0e1f8503",
+      "after_sha256": "77c30961289496c37030a4fb8d6f11458cfb133b6ccfe5143e6a390a0e1f8503",
+      "png_byte_identical": true,
+      "rgb_difference_bounds": null
+    }
+  }
+}

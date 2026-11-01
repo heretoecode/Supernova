@@ -1,0 +1,63 @@
+{
+  "source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+  "run_id": 41328625028,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/41328625028",
+  "conclusion": "success",
+  "artifact_id": 13092254004,
+  "artifact_zip_sha256": "c976a5e72d958e9a5c8ae33a8a7b5fc210f1ff2534f5d7d324cee73f5fc8e7cc",
+  "application": {
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": [
+    {
+      "class": "com.archos.mediacenter.video.player.Playback141RenderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.PreviewSubtitleResultsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.player.SubtitleLegacyPreferencesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.archos.mediacenter.video.utils.SubtitleReplacementTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "tooling_tests": 147,
+  "release_java_resource_compilation": "pass",
+  "full_application_or_library_suite": false,
+  "lint_run_in_this_focused_job": false,
+  "apk_built_in_this_focused_job": false
+}

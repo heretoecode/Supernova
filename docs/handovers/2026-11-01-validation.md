@@ -1,5 +1,7 @@
 # 1 November agreed fixes — implementation and validation
 
+> Historical ten-fix validation record. The later owner-authorised Subtitles/0.149 continuation is tracked in [docs/0.149/IMPLEMENTATION.md](../0.149/IMPLEMENTATION.md). The exclusions and no-APK statements below describe this earlier completed task, not the subsequently authorised continuation.
+
 Scope: [authoritative agreed fixes](2026-11-01-agreed-fixes.md). Continuation base:
 `fc1f07b832af14274455d81b654a9631440e7add` on PR #29's 0.148 branch.
 Work branch: `codex/agreed-fixes-2026-11-01`. Existing branches and PR bases remain unchanged; no merges or resets.
