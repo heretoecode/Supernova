@@ -1876,6 +1876,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         tvPicker.requestFocus();
     }
 
+    // Read-only presentation bridge; setters and preference contracts remain in SubtitleManager.
+    SubtitleManager subtitlePresentationManager(){return mSubtitleManager;}
+    int subtitlePresentationDelay(){return mVideoInfo==null?0:mVideoInfo.subtitleDelay;}
+
     private void createTVSubtitleSettingsDialog() {
         float density = getApplicationContext().getResources().getDisplayMetrics().density;
         float pickerWidth= (float)100 * density;

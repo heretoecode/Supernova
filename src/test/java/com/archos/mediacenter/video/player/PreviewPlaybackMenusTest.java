@@ -25,9 +25,10 @@ public class PreviewPlaybackMenusTest {
     TextView option(String label){return dialog().getWindow().getDecorView().findViewWithTag("playback.option:"+label);}
     @Test public void exactHorizontalTabsSubtitlesFirstAndNoPlaybackDiagnosticEntries() throws Exception {
         PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View root=dialog().getWindow().getDecorView();
-        for(int i=0;i<4;i++){TextView tab=root.findViewWithTag("playback.tab:"+i);assertEquals(new String[]{"Audio","Subtitles","Video","More"}[i],tab.getText());assertTrue(tab.getParent() instanceof LinearLayout);assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tab.getParent()).getOrientation());tab.requestFocus();assertTrue(tab.isSelected());assertNull(option("Technical Information"));assertNull(option("Report a Problem"));}
+        assertNotNull(root.findViewWithTag("subtitles.main"));ViewGroup tabs=(ViewGroup)root.findViewWithTag("playback.tab:1").getParent();assertEquals("playback.tab:1",tabs.getChildAt(0).getTag());assertEquals(LinearLayout.HORIZONTAL,((LinearLayout)tabs).getOrientation());
+        root.findViewWithTag("playback.tab:0").performClick();root=dialog().getWindow().getDecorView();assertNull(option("Technical Information"));assertNull(option("Report a Problem"));
         assertTrue(PreviewPlaybackMenus.back());assertFalse(PreviewPlaybackMenus.isShowing());assertTrue(opener.hasFocus());
-        for(String fieldName:new String[]{"current","owner","adapter","origin","tabs","rows","trackRows","adjustmentRows","content","scroll","restoreParent","backAction","nested","liveCard"}){
+        for(String fieldName:new String[]{"current","owner","adapter","origin","tabs","rows","trackRows","adjustmentRows","content","scroll","restoreParent","backAction","nested","liveCard","legacyPanel","subtitlePanel"}){
             java.lang.reflect.Field field=PreviewPlaybackMenus.class.getDeclaredField(fieldName);field.setAccessible(true);
             assertNull("Closed playback settings must release Activity-owned "+fieldName,field.get(null));
         }
@@ -49,11 +50,11 @@ public class PreviewPlaybackMenusTest {
         PreviewPlaybackMenus.refresh(host,source.previewCards().get(0));assertSame(original,dialog());assertTrue(option("French").hasFocus());assertTrue(option("French").getText().toString().startsWith("✓"));option("French").performClick();assertEquals(1,called[0]);
     }
     @Test public void subtitleAndAudioTracksUseCentralLanguageDrawable(){
-        for(int kind:new int[]{R.string.menu_subtitles,R.string.menu_audio}){TVMenu menu=new TVMenu(host);TVMenuItem track=menu.createAndAddTVMenuItem("English",true,true);track.setTag(R.id.preview_track_language,"en-GB");PreviewPlaybackMenus.show(host,source(host.getString(kind),menu),host.getString(kind));assertTrue(option("English").getCompoundDrawables()[0] instanceof com.archos.mediacenter.video.leanback.PreviewLanguageIcon);assertTrue(track.isChecked());PreviewPlaybackMenus.close();}
+        TVMenu menu=new TVMenu(host);TVMenuItem track=menu.createAndAddTVMenuItem("English",true,true);track.setTag(R.id.preview_track_language,"en-GB");PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_audio),menu),host.getString(R.string.menu_audio));assertTrue(option("English").getCompoundDrawables()[0] instanceof com.archos.mediacenter.video.leanback.PreviewLanguageIcon);assertTrue(track.isChecked());
     }
     @Test public void downloadAndLocalActionsRetainCallbacks(){
         TVMenu menu=new TVMenu(host);int[] calls={0,0};menu.createAndAddTVMenuItem(host.getString(R.string.get_subtitles_online),false,false).setOnClickListener(v->calls[0]++);menu.createAndAddTVMenuItem(host.getString(R.string.get_subtitles_on_drive),false,false).setOnClickListener(v->calls[1]++);
-        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),menu),null);option("Download Subtitles").performClick();option("Choose Subtitles").performClick();assertArrayEquals(new int[]{1,1},calls);
+        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),menu),null);dialog().getWindow().getDecorView().findViewWithTag("subtitles.row.download").performClick();dialog().getWindow().getDecorView().findViewWithTag("subtitles.row.track").performClick();dialog().getWindow().getDecorView().findViewWithTag("subtitles.choose.file").performClick();assertArrayEquals(new int[]{1,1},calls);
     }
     @Test public void nestedAdjustmentRetainsTabsAndSavesOnBackTabChangeAndProgrammaticClose(){
         TVMenu menu=new TVMenu(host);PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_audio),menu),host.getString(R.string.menu_audio));Dialog original=dialog();int[] saves={0};
@@ -62,8 +63,9 @@ public class PreviewPlaybackMenusTest {
             assertSame(original,dialog());assertNotNull(dialog().getWindow().getDecorView().findViewWithTag("playback.tab:0"));if(exit==0)PreviewPlaybackMenus.back();else if(exit==1)dialog().getWindow().getDecorView().findViewWithTag("playback.tab:2").performClick();else PreviewPlaybackMenus.close();assertEquals(exit+1,saves[0]);
         }
     }
-    @Test public void subtitlePreferencesStayInsidePlaybackAndPersist(){
-        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);Dialog original=dialog();option("Subtitles by Default").performClick();assertTrue(androidx.preference.PreferenceManager.getDefaultSharedPreferences(host).getBoolean("subtitles_hide_default",false));assertFalse(option("Reading language").isEnabled());option("Download languages").performClick();assertSame(original,dialog());assertTrue(PreviewPlaybackMenus.back());assertNotNull(option("Prepare Subtitle Searches"));
+    @Test public void subtitlesRedesignPreservesStoredLanguageAndPreparationPreferences(){
+        var prefs=androidx.preference.PreferenceManager.getDefaultSharedPreferences(host);prefs.edit().putBoolean("subtitles_hide_default",true).putString("favSubLang","fra").putStringSet("languages_list",Set.of("fra","eng")).commit();
+        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);assertNotNull(dialog().getWindow().getDecorView().findViewWithTag("subtitles.row.colour"));PreviewPlaybackMenus.back();assertTrue(prefs.getBoolean("subtitles_hide_default",false));assertEquals("fra",prefs.getString("favSubLang",null));assertEquals(Set.of("fra","eng"),prefs.getStringSet("languages_list",Set.of()));
     }
     @Test public void videoFormatsAreInlineWithOtherControlsInTheirOwnColumn(){
         TVMenu format=new TVMenu(host);format.createAndAddTVMenuItem("Original",true,true);format.createAndAddTVMenuItem("Fullscreen",true,false);
@@ -89,8 +91,7 @@ public class PreviewPlaybackMenusTest {
         option("Repeat").performClick();assertTrue(repeat.isChecked());assertNull(root.findViewWithTag("playback.inline"));assertTrue("Parent focus after inline selection/Back: "+dialog().getCurrentFocus()+" parent attached="+option(title).isAttachedToWindow(),option(title).hasFocus());
         option(title).performClick();PreviewPlaybackMenus.back();assertNull(root.findViewWithTag("playback.inline"));assertTrue("Parent focus after inline selection/Back: "+dialog().getCurrentFocus()+" parent attached="+option(title).isAttachedToWindow(),option(title).hasFocus());assertTrue(PreviewPlaybackMenus.isShowing());
     }
-    @Test public void readingLanguagePreservesSiblingRowsAndReturnsToParent(){
-        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);View parent=option("Reading language"),sibling=option("Download languages");parent.performClick();assertSame(sibling,option("Download languages"));ViewGroup inline=dialog().getWindow().getDecorView().findViewWithTag("playback.inline");assertNotNull(inline);PreviewPlaybackMenus.back();assertTrue("Reading parent after Back: "+dialog().getCurrentFocus()+" attached="+parent.isAttachedToWindow(),parent.hasFocus());assertNull(dialog().getWindow().getDecorView().findViewWithTag("playback.inline"));
+    @Test public void trackBackReturnsToInvokingRowAndThenClosesOneLevel(){
+        PreviewPlaybackMenus.show(host,source(host.getString(R.string.menu_subtitles),new TVMenu(host)),null);Dialog main=dialog();View row=main.getWindow().getDecorView().findViewWithTag("subtitles.row.track");row.requestFocus();row.performClick();assertNotSame(main,dialog());assertTrue(PreviewPlaybackMenus.back());assertTrue(main.isShowing());assertTrue(row.hasFocus());PreviewPlaybackMenus.back();assertFalse(main.isShowing());
     }
-
 }

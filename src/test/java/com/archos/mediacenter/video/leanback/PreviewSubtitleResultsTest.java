@@ -18,7 +18,7 @@ public class PreviewSubtitleResultsTest {
     @Test public void evenSingleResultNeedsExplicitDownloadAndBackPreservesSelection(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();OpenSubtitlesSearchResult result=new OpenSubtitlesSearchResult("42","Example.en.srt","English");result.setMoviehashMatch(true);
         AtomicReference<OpenSubtitlesSearchResult> downloaded=new AtomicReference<>();Dialog parent=PreviewSubtitleResults.show(host,Collections.singletonList(result),downloaded::set);
-        View row=(View)parent.getWindow().getDecorView().findViewWithTag("preview-label:0").getParent();row.performClick();Dialog review=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNull(downloaded.get());
+        View row=parent.getWindow().getDecorView().findViewWithTag("subtitles.result.0");row.performClick();Dialog review=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNull(downloaded.get());
         assertNotNull(PreviewPagesTest.findText(review.getWindow().getDecorView(),"Source: OpenSubtitles"));review.dismiss();assertTrue(parent.isShowing());assertNull(downloaded.get());
         row.performClick();review=org.robolectric.shadows.ShadowDialog.getLatestDialog();View confirm=exact(review.getWindow().getDecorView(),"Download");assertNotNull(confirm);confirm.performClick();
         assertSame(result,downloaded.get());assertFalse(parent.isShowing());

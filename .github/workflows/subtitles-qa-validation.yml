@@ -1,0 +1,71 @@
+name: PR30 subtitles and preserved-fix validation
+on:
+  workflow_dispatch:
+    inputs:
+      full_suite:
+        description: Run every application test instead of the affected regression classes
+        type: boolean
+        default: false
+  push:
+    branches: [codex/agreed-fixes-2026-11-01]
+    paths: [.github/workflows/subtitles-qa-validation.yml, '.github/build/next-*test-fixtures.patch', 'src/**', 'res/**', 'assets/**', 'tools/**', build.gradle, '.github/signing/*0148*', .github/build/record-supernova-0148-conformance.py, .github/build/verify-supernova-0148-scope.py]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact candidate source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: nova/Video
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Java21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Download pinned source-built native artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: supernova-0146-native-*
+          path: native-artifacts
+          run-id: 40843685431
+          github-token: ${{ github.token }}
+      - name: Prepare exact dependency source and verify native inputs
+        run: |
+          set -euo pipefail
+          python3 nova/Video/.github/build/prepare-supernova146-workspace.py --root nova
+          python3 nova/Video/.github/build/package-supernova146-native.py --root nova --artifacts native-artifacts --workspace "$RUNNER_TEMP/native146-packaging" 2>&1 | tee native146-packaging.log
+          python3 nova/Video/.github/build/build-supernova146-jetty.py --workspace nova/Video/build/supernova146-jetty
+          git -C nova/FileCoreLibrary apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-filecore-test-fixtures.patch"
+          git -C nova/MediaLib apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-medialib-test-fixtures.patch"
+      - name: Complete application and library tests, lint and release compilation
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
+          cd nova/Video
+          chmod +x gradlew
+          filters=()
+          if [[ "${{ inputs.full_suite }}" != "true" ]]; then
+            for pattern in '*LibraryStatistics*' '*PreviewPagesTest' '*Supernova138HomeTest' '*Supernova139LibraryNavigationTest' '*Supernova141UiTest' '*SettingsWorkspaceTest' '*SettingsShieldNavigationTest' '*PlaybackSubtitlePanelTest' '*PreviewPlaybackMenusTest' '*Subtitle*Test' '*NextHudTest' '*AudioTrackSelectionPolicyTest' '*ReceptionSupplementTest' '*Details139AcceptanceTest' '*DetailsImprovementsTest' '*PreviewMoviePageTest' '*Network142*Test' '*Supernova139LanguageFlagsTest' '*Supernova139ProviderMarksTest' '*PreviewProviderFilterTest' '*StreamingProviderFocusTest'; do
+              filters+=(--tests "$pattern")
+            done
+          fi
+          ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest "${filters[@]}" :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease compileNoamazonReleaseJavaWithJavac --continue \
+            -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova146-conformance.log
+          python3 -m unittest discover -s tools -p 'test_*.py'
+      - name: Retain test and lint evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: agreed-fixes-validation
+          path: |
+            nova/Video/build/test-results/**
+            nova/Video/build/reports/**
+            nova/Video/build/supernova146-conformance.log
+            nova/MediaLib/build/test-results/**
+            nova/FileCoreLibrary/build/test-results/**
