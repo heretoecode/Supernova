@@ -373,7 +373,7 @@ public final class Diagnostics {
             long since=sessionState.getLong("exit_evidence_time",0),latest=since;
             for(android.app.ApplicationExitInfo info:manager.getHistoricalProcessExitReasons(context.getPackageName(),0,4)){
                 if(info.getTimestamp()<=since)continue;latest=Math.max(latest,info.getTimestamp());
-                event("android_process_exit","reason",info.getReason(),"status",info.getStatus(),"importance",info.getImportance(),"pss_kb",info.getPss(),"rss_kb",info.getRss(),"exit_utc_ms",info.getTimestamp(),"pid",info.getPid(),"evidence","android_os");
+                event("android_process_exit","reason",info.getReason(),"status",info.getStatus(),"importance",info.getImportance(),"pss_kb",info.getPss(),"rss_kb",info.getRss(),"exit_utc_ms",info.getTimestamp(),"exit_pid",info.getPid(),"evidence","android_os");
                 // OS ANR/native trace streams may contain file paths and account data. Export bounded method frames only.
                 if(info.getReason()==android.app.ApplicationExitInfo.REASON_ANR)try(java.io.InputStream input=info.getTraceInputStream()){
                     if(input!=null){java.io.BufferedReader reader=new java.io.BufferedReader(new java.io.InputStreamReader(input,java.nio.charset.StandardCharsets.UTF_8));String line;StringBuilder frames=new StringBuilder();int bytes=0,count=0;
