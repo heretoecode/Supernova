@@ -23,3 +23,9 @@
 - Subtitle Appearance: **Outline** and **Background** must each use a direct On/Off toggle, not navigate to a submenu.
 - Keep the remaining appearance controls individually visible; retain the four horizontal category tabs and existing overall styling.
 - Mock-up values are illustrative, not verified current playback values. Redesign remains parked for implementation until separately approved.
+
+## Text size refinement (approved)
+- Subtitle Appearance > **Text Size** displays three inline, directly selectable options on the same row: **Small | Medium | Large**.
+- Highlight the currently selected option. Do not open another menu or dialog to change text size.
+- Existing underlying fine-grained subtitle sizing functionality must be preserved or explicitly mapped during implementation; the three preset values are a design choice, not verified existing engine values.
+- Still design-only, excluded from the active Codex fix batch.
