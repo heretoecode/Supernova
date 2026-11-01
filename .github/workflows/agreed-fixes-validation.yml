@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       test_filter:
-        description: Optional single JUnit class pattern for a narrow correction check
+        description: Optional semicolon-separated JUnit patterns for narrow correction checks
         type: string
         default: ''
       full_suite:
@@ -54,7 +54,10 @@ jobs:
           chmod +x gradlew
           filters=()
           if [[ -n "$TARGET_TEST_FILTER" ]]; then
-            filters+=(--tests "$TARGET_TEST_FILTER")
+            IFS=';' read -r -a selected_patterns <<< "$TARGET_TEST_FILTER"
+            for selected_pattern in "${selected_patterns[@]}"; do
+              filters+=(--tests "$selected_pattern")
+            done
           elif [[ "${{ inputs.full_suite }}" != "true" ]]; then
             for pattern in '*CustomLibraryPageTest' '*NextQaWizardTest' '*PreviewLanguageIconTest' '*LibraryStatistics*' '*PreviewPagesTest' '*Supernova138HomeTest' '*Supernova139LibraryNavigationTest' '*Supernova141UiTest' '*SettingsWorkspaceTest' '*SettingsShieldNavigationTest' '*NextHudTest' '*AudioTrackSelectionPolicyTest' '*ReceptionSupplementTest' '*Details139AcceptanceTest' '*DetailsImprovementsTest' '*PreviewMoviePageTest' '*Network142*Test' '*Supernova139LanguageFlagsTest' '*Supernova139ProviderMarksTest' '*PreviewProviderFilterTest' '*StreamingProviderFocusTest'; do
               filters+=(--tests "$pattern")

@@ -39,7 +39,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         {
         LinearLayout reception=region(upper,"Reception",.294f);
         String existing=existingReception.containsKey("TMDB Rating")?"TMDb "+existingReception.get("TMDB Rating"):existingReception.containsKey("Indexed Rating")?"Indexed rating "+existingReception.get("Indexed Rating"):"";
-        if(!existing.isEmpty()){
+        if(!existing.isEmpty()&&supplementary.imdb.isEmpty()){
             TextView score=label(existing,16,true);score.setTag("details.reception.primary");score.setSingleLine(false);score.setMaxLines(2);score.setEllipsize(android.text.TextUtils.TruncateAt.END);reception.addView(score,new LayoutParams(-1,0,1));
             if(existingReception.containsKey("TMDb votes")){TextView votes=label(existingReception.get("TMDb votes")+" votes",11,false);votes.setTextColor(0xffb9c7d2);reception.addView(votes,new LayoutParams(-1,-2));}
         }
@@ -83,7 +83,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         int unit=supplied.indexOf('/');if(unit<0&&supplied.endsWith("%"))unit=supplied.length()-1;
         if(unit>=0){android.text.SpannableString styled=new android.text.SpannableString(supplied);styled.setSpan(new android.text.style.RelativeSizeSpan(11f/16f),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);styled.setSpan(new android.text.style.StyleSpan(Typeface.NORMAL),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);score.setText(styled);}
         boolean support=row==0&&!ratings.imdbVotes.isEmpty();box.addView(score,new LayoutParams(-1,0,1f));
-        if(support){TextView count=label(votes(ratings.imdbVotes),10,false);count.setTextColor(0xffb9c7d2);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setHorizontallyScrolling(false);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,10);count.setPadding(dp(4),0,0,0);box.addView(count,new LayoutParams(-1,-2));}
+        if(support){TextView count=label(votes(ratings.imdbVotes),10,false);count.setTextColor(0xffb9c7d2);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setHorizontallyScrolling(false);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,10);count.setPadding(dp(4),0,0,0);box.addView(count,new LayoutParams(-1,0,.65f));}
         return box;
     }
     private void auto(TextView view,int min,int max){androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(view,DetailsDimensions.sp(getContext(),min),DetailsDimensions.sp(getContext(),max),1,android.util.TypedValue.COMPLEX_UNIT_SP);}

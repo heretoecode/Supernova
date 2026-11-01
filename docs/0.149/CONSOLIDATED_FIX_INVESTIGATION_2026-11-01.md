@@ -106,3 +106,12 @@ A final narrow disabled-playback-switch correction follows 50f76e93; its targete
 Final legacy disabled-state raster assertions are validated separately with the targeted SettingsWorkspace legacy-switch method; both enabled states retain their previous geometry and colours.
 
 Final custom-accent track rendering and the combined disabled-state corrections are checked in targeted SettingsWorkspace/NextHud runs after the broader 50f76e93 run.
+
+## Full-suite failure investigation
+
+Run 41351832319 completed: 1,282 application tests, **1,280 passed / 2 failed**, zero errors/skips; libraries 300 passed / 4 existing skips, zero failures/errors. Compilation and lint completed; the failed task was application tests.
+
+1. `Supernova141UiTest` still required plain text for `und`/unrecognized track language. Updated it to require one neutral shared icon and preserve the actual label, reflecting the owner's global fallback requirement. Regional flags must still not be invented.
+2. `DetailsReferenceRenderTest.populatedGridAt150PercentText` exposed a real clipping regression in the newly stacked IMDb score/vote count: a wrap-content caption consumed height before the weighted score, leaving only 14px for a minimum 28px text line. Both lines now receive proportional measured height with autosizing. When IMDb is supplied, suppress the additional TMDb/indexed score row, preserving the requested four-source hierarchy and freeing the necessary vertical space. Genuine TMDb/indexed fallback remains when IMDb is unavailable. The existing large-text no-clipping assertion is retained unchanged and must pass.
+
+Both failed classes, Reception tests, the global language tests, Custom Library regressions and the final Settings/Playback switch tests are included in the final targeted rerun. No full-suite success is claimed for the failed run.
