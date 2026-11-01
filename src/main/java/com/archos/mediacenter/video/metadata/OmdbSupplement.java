@@ -48,8 +48,10 @@ public final class OmdbSupplement {
             else if("Metacritic".equals(source)&&value.endsWith("/100"))mc=score(value.substring(0,value.length()-4),100,"/100");
         }
         String votes=clean(data.optString("imdbVotes"),32);if(!votes.matches("[0-9]{1,12}|[0-9]{1,3}(,[0-9]{3}){1,3}"))votes="";
-        return new Ratings(imdb,rt,mc,clean(data.optString("Awards"),512),votes,count(data.optString("tomatoReviews")),"");
+        return new Ratings(imdb,rt,mc,awardText(data.optString("Awards")),votes,count(data.optString("tomatoReviews")),"");
     }
+    /** Preserve genuine provider line breaks in award details. */
+    private static String awardText(String value){if(value==null)return "";value=value.replace("\r\n","\n").replace('\r','\n').trim();if(value.isEmpty()||value.equalsIgnoreCase("N/A")||value.equalsIgnoreCase("null"))return "";value=value.replaceAll("[\\p{Cntrl}&&[^\\n]]"," ");return value.substring(0,Math.min(512,value.length()));}
     private static String count(String value){String clean=clean(value,32);return clean.matches("[0-9]{1,12}|[0-9]{1,3}(,[0-9]{3}){1,3}")?clean:"";}
     private static String score(String text,int maximum,String suffix){try{if(!text.matches("[0-9]{1,3}(\\.[0-9]{1,2})?"))return "";double value=Double.parseDouble(text);return value>=0&&value<=maximum?text+suffix:"";}catch(Exception invalid){return "";}}
     private static String clean(String value,int limit){if(value==null)return "";value=value.trim();return value.isEmpty()||value.equalsIgnoreCase("N/A")||value.equalsIgnoreCase("null")?"":value.replaceAll("[\\p{Cntrl}]"," ").substring(0,Math.min(limit,value.length()));}
