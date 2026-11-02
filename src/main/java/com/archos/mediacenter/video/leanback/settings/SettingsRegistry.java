@@ -9,7 +9,9 @@ import org.json.*;
 /** Audit IDs are stable; runtime values and capability gates remain owned by native preferences. */
 final class SettingsRegistry {
     static final String[] CATEGORIES={"Playback & Video","Audio & Subtitles","Library & Home","Streaming & Providers","Appearance","Connections & Integrations","System & Maintenance","About Supernova"};
-    static final String[] DESCRIPTIONS={"Control how content plays, resumes and looks on screen.","Configure audio, subtitles and related playback options.","Manage your libraries, metadata and Home screen displays.","Set up and manage streaming providers and availability preferences.","Customise the look and feel of Supernova.","Manage external connections, accounts and integrations.","Diagnostics, backup and other system options.","Version information, credits and legal details."};
+    /** What the user sees (approved 2 Nov 2026: every title on one line). CATEGORIES stay as the internal keys of the settings maps. */
+    static final String[] LABELS={"Playback & Video","Audio & Subtitles","Library & Home","Streaming","Appearance","Connections","System","About Supernova"};
+    static final String[] DESCRIPTIONS={"Control how content plays, resumes and looks on screen.","Configure audio, subtitles and related playback options.","Manage your libraries, metadata and Home screen displays.","Choose your streaming providers and how availability is shown.","Customise the look and feel of Supernova.","Manage external connections, accounts and integrations.","Diagnostics, backup and other system options.","Version information, credits and legal details."};
     static final String[] ICONS={"play","audio","film","cloud","tv","settings.nodes","settings.gear","info"};
     static final class Entry {
         final String id,key,category,section,disposition;

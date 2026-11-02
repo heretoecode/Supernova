@@ -58,17 +58,13 @@ public final class SidePanelKit {
         return image;
     }
 
+    /** The shared glass (approved 2 Nov 2026: one 97% navy material for every panel). */
     public Drawable panelSurface(int glow) {
-        return new Surface(SOLID_TOP, SOLID_BOTTOM, PANEL_BORDER, s(26), Math.max(1, s(2)), 0x595fd0ff, glow);
+        return new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26), Math.max(1, s(2)), 0x66000000, glow);
     }
 
-    public Drawable rowFocus() {
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused},
-                new Surface(0x145fd0ff, 0x145fd0ff, FOCUS_BORDER, s(10), Math.max(1, s(2.5f)), 0x995fd0ff, s(4)));
-        states.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
-        return states;
-    }
+    /** The shared row focus: white outline, no fill change. */
+    public Drawable rowFocus() { return SupernovaStyle.rowFocus(context); }
 
     /** Filled accent button (Save) with the focus glow when focused. */
     public Drawable accentButton() {
@@ -108,7 +104,7 @@ public final class SidePanelKit {
         row.setTag(tag);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(Math.round(s(ROW_HEIGHT) * context.getResources().getConfiguration().fontScale));
-        row.setPadding(s(6), 0, s(12), 0);
+        row.setPadding(s(16), 0, s(16), 0);
         row.setFocusable(true);
         row.setFocusableInTouchMode(true);
         row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);

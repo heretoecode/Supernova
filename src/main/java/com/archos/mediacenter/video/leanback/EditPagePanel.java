@@ -76,7 +76,7 @@ public final class EditPagePanel extends LinearLayout {
         save.setGravity(Gravity.CENTER);
         save.setFocusable(true);
         save.setFocusableInTouchMode(true);
-        save.setBackground(kit.accentButton());
+        SupernovaStyle.applyButton(save, SupernovaStyle.Surface.PANEL);
         save.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         save.setPadding(kit.s(22), 0, kit.s(22), 0);
         save.setMinHeight(kit.s(46));
@@ -204,7 +204,7 @@ public final class EditPagePanel extends LinearLayout {
             delete.setTag("edit.row.delete");
             delete.setGravity(Gravity.CENTER_VERTICAL);
             delete.setMinimumHeight(kit.s(48));
-            delete.setPadding(kit.s(6), 0, kit.s(6), 0);
+            delete.setPadding(kit.s(16), 0, kit.s(16), 0);
             delete.setFocusable(true);
             delete.setFocusableInTouchMode(true);
             delete.setBackground(kit.rowFocus());
@@ -389,7 +389,7 @@ public final class EditPagePanel extends LinearLayout {
         row.setTag(tag);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(kit.s(SidePanelKit.ROW_HEIGHT));
-        row.setPadding(kit.s(6), 0, kit.s(6), 0);
+        row.setPadding(kit.s(16), 0, kit.s(16), 0);
         row.setFocusable(true);
         row.setFocusableInTouchMode(true);
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);

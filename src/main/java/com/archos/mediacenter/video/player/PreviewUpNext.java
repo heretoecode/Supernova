@@ -23,7 +23,7 @@ final class PreviewUpNext {
   PlayerService.SegmentPrompt prompt=service==null?null:service.segmentPrompt();
   if(prompt==null){removeSkip();return;}if(skipPill!=null&&skipExpires==prompt.expires)return;removeSkip();skipExpires=prompt.expires;
   skipPill=com.archos.mediacenter.video.leanback.SharedThreePanel.action(activity,"Skip "+PlayerService.introLabels(activity).get(prompt.type),()->{service.skipPrompt();removeSkip();});
-  skipPill.setTag("playback.segment.skip");skipPill.setBackground(PreviewDialog.actionContainerFocus(activity));skipPill.setElevation(dp(4));
+  skipPill.setTag("playback.segment.skip");com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(skipPill,com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);skipPill.setElevation(dp(4));
   FrameLayout root=activity.findViewById(android.R.id.content);FrameLayout.LayoutParams frame=new FrameLayout.LayoutParams(-2,dp(50),Gravity.END|Gravity.BOTTOM);frame.setMargins(dp(24),dp(20),dp(26),dp(196));root.addView(skipPill,frame);
  }
  private void removeSkip(){if(skipPill!=null){boolean restore=skipPill.hasFocus();if(skipPill.getParent() instanceof ViewGroup)((ViewGroup)skipPill.getParent()).removeView(skipPill);skipPill=null;if(restore&&skipOrigin!=null)skipOrigin.requestFocus();}skipOrigin=null;}

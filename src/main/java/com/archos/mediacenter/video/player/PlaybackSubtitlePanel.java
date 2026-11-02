@@ -10,6 +10,7 @@ import android.widget.*;
 import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import com.archos.mediacenter.video.leanback.StandardSwitchDrawable;
 import com.archos.mediacenter.video.leanback.SubtitlePanelStyle;
+import com.archos.mediacenter.video.leanback.SupernovaStyle;
 import java.util.*;
 
 /**
@@ -100,7 +101,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         setTag("subtitles.main");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         int glow = s(14);
-        setBackground(new Surface(PANEL_TOP, PANEL_BOTTOM, PANEL_BORDER, s(26), Math.max(1, s(2)), 0x595fd0ff, glow));
+        setBackground(new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26), Math.max(1, s(2)), 0x66000000, glow));
         setPadding(s(30) + glow, s(30) + glow, s(30) + glow, s(26) + glow);
 
         header = new LinearLayout(owner);
@@ -184,13 +185,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         return image;
     }
 
-    private Drawable rowFocus() {
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused},
-                new Surface(0x145fd0ff, 0x145fd0ff, FOCUS_BORDER, s(10), Math.max(1, s(2.5f)), 0x995fd0ff, s(4)));
-        states.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
-        return states;
-    }
+    /** Approved global row focus: white outline, no fill change. */
+    private Drawable rowFocus() { return SupernovaStyle.rowFocus(owner); }
 
     private LayoutParams tabSize(int index) {
         LayoutParams size = new LayoutParams(0, -1, 1);
@@ -231,14 +227,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             View t = tabs.getChildAt(i);
             boolean active = ("playback.tab:" + tab).equals(t.getTag());
             t.setSelected(active);
-            int radius = s(14), stroke = Math.max(1, s(2));
-            StateListDrawable states = new StateListDrawable();
-            states.addState(new int[]{android.R.attr.state_focused},
-                    new Surface(TAB_ACTIVE, TAB_ACTIVE, FOCUS_BORDER, radius, stroke, 0x8c5fd0ff, s(6)));
-            states.addState(new int[]{},
-                    active ? new Surface(TAB_ACTIVE, TAB_ACTIVE, FOCUS_BORDER, radius, stroke, 0, 0)
-                           : new Surface(Color.TRANSPARENT, Color.TRANSPARENT, TAB_BORDER, radius, stroke, 0, 0));
-            t.setBackground(states);
+            // Approved global button style: tabs never change size; selected = thin white outline; focus = white box.
+            SupernovaStyle.applyButton(t, SupernovaStyle.Surface.PANEL);
         }
     }
 
@@ -262,7 +252,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         row.setTag(tag);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(Math.round(s(ROW_HEIGHT) * owner.getResources().getConfiguration().fontScale));
-        row.setPadding(s(6), 0, s(6), 0);
+        row.setPadding(s(16), 0, s(16), 0);
         row.setFocusable(true);
         row.setFocusableInTouchMode(true);
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
@@ -722,7 +712,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         row.setTag(which + ".track." + index);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(s(ROW_HEIGHT));
-        row.setPadding(s(6), 0, s(6), 0);
+        row.setPadding(s(16), 0, s(16), 0);
         row.setFocusable(track.enabled);
         row.setFocusableInTouchMode(track.enabled);
         row.setEnabled(track.enabled);

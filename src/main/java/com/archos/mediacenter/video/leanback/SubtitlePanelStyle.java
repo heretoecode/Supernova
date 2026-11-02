@@ -40,7 +40,8 @@ public final class SubtitlePanelStyle {
     public int px(float reference){return Math.max(1,Math.round(reference*scale));}
     public TextView text(String label,int size){TextView v=new TextView(context);v.setText(label);v.setTextColor(Color.WHITE);v.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,size*scale*context.getResources().getConfiguration().fontScale);v.setIncludeFontPadding(false);return v;}
     public GradientDrawable surface(int color,int stroke,int radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(px(radius));if(stroke!=0)d.setStroke(px(2),stroke);return d;}
-    public Drawable panelSurface(){return side?new Glow(0xf5181d55,0xff5fd0ff,35,3,14):new Glow(0xf5050b14,0xff4f8fcb,36,2,6);}
+    /** The shared glass (approved 2 Nov 2026). */
+    public Drawable panelSurface(){return new Glow(SupernovaStyle.GLASS,SupernovaStyle.GLASS_EDGE,side?35:36,2,side?14:6);}
     public Drawable glow(int radius){return side?new Glow(0x145fd0ff,0xff7fd6ff,Math.min(radius,14),3,5):new Glow(0xcc0b2a4a,0xff2fb6ff,radius,3,8);}
     private final class Glow extends Drawable {
         final int fill,border,radius,stroke,blur;final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -49,7 +50,8 @@ public final class SubtitlePanelStyle {
         public void setAlpha(int a){paint.setAlpha(a);invalidateSelf();}public void setColorFilter(ColorFilter f){paint.setColorFilter(f);invalidateSelf();}public int getOpacity(){return PixelFormat.TRANSLUCENT;}
     }
     public void scrollbar(ScrollView view){view.setScrollBarSize(px(6));if(android.os.Build.VERSION.SDK_INT>=29){view.setVerticalScrollbarThumbDrawable(surface(0xb36e7f90,0,3));view.setVerticalScrollbarTrackDrawable(new ColorDrawable(Color.TRANSPARENT));}}
-    public Drawable focus(){StateListDrawable states=new StateListDrawable();states.addState(new int[]{android.R.attr.state_focused},glow(22));states.addState(new int[]{},surface(Color.TRANSPARENT,0,22));return states;}
+    /** The shared row focus: white outline, no fill change. */
+    public Drawable focus(){return SupernovaStyle.rowFocus(context);}
     public LinearLayout panel(){LinearLayout panel=new LinearLayout(context);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(px(44),px(24),px(44),px(30));panel.setBackground(panelSurface());panel.setLayerType(View.LAYER_TYPE_SOFTWARE,null);panel.setClipToPadding(false);return panel;}
     public void rule(LinearLayout parent){View line=new View(context);line.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);line.setBackgroundColor(0xb32a4a6b);parent.addView(line,new LinearLayout.LayoutParams(-1,px(1)));}
     public ImageView icon(String kind,int size){ImageView image=new ImageView(context);image.setImageDrawable(new Icon(kind));image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);image.setScaleType(ImageView.ScaleType.FIT_CENTER);image.setLayoutParams(new LinearLayout.LayoutParams(px(size),px(size)));return image;}
