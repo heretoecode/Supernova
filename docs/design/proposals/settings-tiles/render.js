@@ -27,6 +27,9 @@ const styles = {
   outline: { rest: 'background:rgba(26,31,92,.97);border:2px solid rgba(255,255,255,.18);color:#fff', focus: 'background:rgba(26,31,92,.97);border:4px solid #fff;color:#fff', sub: ['#c9d3e6', '#c9d3e6'] },
   glasswhite: { rest: 'background:rgba(26,31,92,.97);border:2px solid rgba(255,255,255,.18);color:#fff', focus: 'background:#f4f6fb;color:#0b0d12;box-shadow:0 10px 28px rgba(0,0,0,.5)', sub: ['#c9d3e6', '#3a4256'] },
 };
+// Measured (2 Nov 2026): 35px is the largest title size at which every Settings title stays on one line.
+// Headings sit at a fixed offset so they line up across a row whatever the description length.
+let LARGER = process.env.LARGER || '.t{font-size:35px !important}.d{font-size:25px !important;line-height:1.45 !important}.tile{padding:150px 36px 40px !important;justify-content:flex-start !important}.tile svg{width:44px !important;height:44px !important}';
 const SHORT = { 'Streaming &amp; Providers': 'Streaming', 'Connections &amp; Integrations': 'Connections', 'System &amp; Maintenance': 'System' };
 const SHORT_DESC = { 'Streaming &amp; Providers': 'Choose your streaming providers and how availability is shown.' };
 const page = (key, caption, left = false, header = false, short = false, fill = false, big = false) => {
@@ -40,8 +43,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
 .grid{position:absolute;left:56px;right:56px;top:190px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
 .tile{height:380px;border-radius:22px;padding:40px 34px;display:flex;flex-direction:column;justify-content:center;gap:14px;border:2px solid transparent}
 .t{font-size:32px;font-weight:700;line-height:1.15}.d{font-size:22px;line-height:1.4}
-.cap{position:absolute;left:56px;bottom:26px;z-index:5;font-size:20px;color:#e8eeff;background:rgba(0,0,0,.55);padding:8px 14px;border-radius:10px}
-${big ? '.t{font-size:35px !important}.d{font-size:24px !important;line-height:1.45 !important}.tile svg{width:46px;height:46px}.tile{padding:44px 38px !important}' : ''}</style></head><body>
+.cap{position:absolute;left:56px;bottom:26px;z-index:5;z-index:5;font-size:20px;color:#e8eeff;background:rgba(0,0,0,.55);padding:8px 14px;border-radius:10px}
+${big ? '.t{font-size:35px !important}.d{font-size:24px !important;line-height:1.45 !important}.tile svg{width:46px;height:46px}.tile{padding:44px 38px !important}' : ''}${big}</style></head><body>
 <div class="nav"><b style="font-weight:500">SUPERNOVA</b><span>Home</span><span>Movies</span><span>TV Shows</span><span>Documentaries</span><span style="flex:1"></span><span>Network &amp; Files</span>
  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
  <span style="border-bottom:3px solid #fff;padding-bottom:4px">${svg(ic.gear).replace('44', '36').replace('44', '36')}</span><span>23:01</span></div>
@@ -57,6 +60,7 @@ ${fill ? '' : '<div style="position:absolute;left:56px;top:122px;font-size:36px;
     ['03-hybrid-glass-white.png', page('glasswhite', 'Option 3 · Hybrid: navy glass at rest, white box with black text on focus')],
     ['04-hybrid-icon-left.png', page('glasswhite', 'Option 3 with the icon to the left of the text', true)],
     ['05-hybrid-icon-beside-title.png', page('glasswhite', 'Option 3 · icon beside the title, description full width underneath', false, true)],
+    ['08-full-height-larger.png', page('glasswhite', 'No page title · full height · icons and text enlarged, every title on one line', false, true, true, true, LARGER)],
     ['07-no-title-full-height.png', page('glasswhite', 'No page title · the grid fills everything below the top bar (TV safe margins kept)', false, true, true, true)],
     ['06-single-line-titles.png', page('glasswhite', 'Single-line titles: Streaming · Connections · System · Streaming description shortened to two lines', false, true, true)],
   ];
