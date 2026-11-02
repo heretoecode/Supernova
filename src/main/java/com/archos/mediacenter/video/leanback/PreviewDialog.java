@@ -109,7 +109,8 @@ public final class PreviewDialog {
   View anchor=anchor(c);
   Dialog d=create(c,"choice");d.requestWindowFeature(Window.FEATURE_NO_TITLE);
   LinearLayout panel=new LinearLayout(c);panel.setOrientation(android.widget.LinearLayout.VERTICAL);int pad=dp(c,12);panel.setPadding(pad,pad,Math.round(pad*1.2f),pad);panel.setBackground(menuSurface(c));panel.setClipChildren(false);panel.setClipToPadding(false);
-  TextView heading=new TextView(c);heading.setText(title);heading.setTextSize(17);heading.setTextColor(Color.WHITE);heading.setPadding(dp(c,6),dp(c,2),0,dp(c,12));panel.addView(heading);View divider=new View(c);divider.setBackgroundColor(0x50426a80);panel.addView(divider,new LinearLayout.LayoutParams(-1,dp(c,1)));
+  // Approved global rule (2 Nov 2026): pop-up menus have no title; the title only names the menu for accessibility.
+  panel.setContentDescription(title);
   ScrollView scroll=new ScrollView(c){
    @Override protected void dispatchDraw(android.graphics.Canvas canvas){
     // The surrounding panel permits outward focus glow, but scrolling rows must
@@ -120,21 +121,23 @@ public final class PreviewDialog {
   };scroll.setVerticalScrollBarEnabled(false);LinearLayout rows=new LinearLayout(c);rows.setOrientation(android.widget.LinearLayout.VERTICAL);scroll.addView(rows);panel.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
   View initial=null;int height=60;int footerHeight=0;
   for(int i=0;i<labels.length;i++){final int index=i;boolean group=labels[i].startsWith("— ");boolean enabled=!group&&!labels[i].endsWith(" (unavailable)")&&!labels[i].endsWith(" — unavailable")&&!labels[i].contains("Coming soon");
-   LinearLayout row=new LinearLayout(c);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(dp(c,10),0,dp(c,10),0);row.setBackground(focus(c));row.setFocusable(enabled);row.setFocusableInTouchMode(enabled);row.setEnabled(enabled);row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);row.setAlpha(enabled?1f:group?1f:.4f);
+   if(group){View heading=SupernovaStyle.groupHeading(c,labels[i].substring(2),11);heading.setTag(i);rows.addView(heading,new LinearLayout.LayoutParams(-1,dp(c,25)));height+=25;continue;}
+   LinearLayout row=new LinearLayout(c);row.setGravity(Gravity.CENTER_VERTICAL);row.setPadding(dp(c,SupernovaStyle.ROW_INSET_DP),0,dp(c,SupernovaStyle.ROW_INSET_DP),0);row.setBackground(focus(c));row.setFocusable(enabled);row.setFocusableInTouchMode(enabled);row.setEnabled(enabled);row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);row.setAlpha(enabled?1f:group?1f:.4f);
    com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row,"dialog.choice."+i);
    if(!group){ImageView icon=new ImageView(c);String iconLabel=title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_audio))?"Audio":title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_subtitles))?"Subtitles":labels[i];icon.setImageDrawable(PreviewGenres.known(iconLabel)?new PreviewGenres.Icon(iconLabel):new PreviewIcon(iconLabel));row.addView(icon,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}
    TextView label=new TextView(c);label.setText(group?labels[i].substring(2):labels[i]);label.setTag("preview-label:"+i);label.setTextSize(group?11:14);label.setTextColor(group?0xff8aaec5:Color.WHITE);label.setSingleLine(true);label.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-2,1);lp.leftMargin=group?0:dp(c,10);row.addView(label,lp);
    if(!group){ImageView check=new ImageView(c);check.setTag("preview-check:"+i);check.setImageDrawable(new PreviewIcon("check"));check.setVisibility(checked.contains(i)?View.VISIBLE:View.INVISIBLE);row.addView(check,new LinearLayout.LayoutParams(dp(c,18),dp(c,18)));}
    row.setTag(i);row.setContentDescription(labels[i]+(checked.contains(i)?", selected":""));row.setOnClickListener(v->{if(dismissOnSelect)d.dismiss();action.accept(index);});int rh=group?25:37;height+=rh;if(i==labels.length-1&&labels[i].equals("Done")){View doneDivider=new View(c);doneDivider.setBackgroundColor(0x50426a80);LinearLayout.LayoutParams dividerSize=new LinearLayout.LayoutParams(-1,dp(c,1));dividerSize.topMargin=dp(c,10);dividerSize.bottomMargin=dp(c,8);panel.addView(doneDivider,dividerSize);panel.addView(row,new LinearLayout.LayoutParams(-1,dp(c,rh)));footerHeight=dp(c,rh+19);height+=19;}else rows.addView(row,new LinearLayout.LayoutParams(-1,dp(c,rh)));if(enabled&&(initial==null||i==selected))initial=row;
   }
-  d.setContentView(panel);d.show();Window w=d.getWindow();w.setBackgroundDrawableResource(android.R.color.transparent);w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);w.setDimAmount(.32f);int width=dp(c,240);android.graphics.Paint measure=new android.graphics.Paint();measure.setTextSize(14*c.getResources().getDisplayMetrics().scaledDensity);for(String label:labels)width=Math.max(width,(int)Math.ceil(measure.measureText(label))+dp(c,88));width=Math.min(width,Math.min(dp(c,520),c.getResources().getDisplayMetrics().widthPixels-dp(c,48)));
-  heading.measure(View.MeasureSpec.makeMeasureSpec(width-pad*2,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED));int chrome=pad*2+heading.getMeasuredHeight()+dp(c,1);
+  d.setContentView(panel);d.show();Window w=d.getWindow();w.setBackgroundDrawableResource(android.R.color.transparent);w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);w.setDimAmount(.32f);android.graphics.Paint measure=new android.graphics.Paint();measure.setTextSize(14*c.getResources().getDisplayMetrics().scaledDensity);int longest=0;for(String label:labels)if(!label.startsWith("— "))longest=Math.max(longest,(int)Math.ceil(measure.measureText(label)));
+  // Approved global rule: width = longest item (icon + text + tick) + breathing room, between 360px and 40% of the screen.
+  int width=SupernovaStyle.menuWidth(c,longest+dp(c,18+10+18+6),pad+Math.round(pad*1.2f));int chrome=pad*2;
   int maxHeight=c.getResources().getDisplayMetrics().heightPixels-dp(c,48);int menuHeight=Math.min(dp(c,height-60)+chrome,maxHeight);
   if(anchor!=null){int[] pos=new int[2];anchor.getLocationOnScreen(pos);int[] fit=PreviewMenuPlacement.place(width,menuHeight,pos[0],pos[1],pos[0]+anchor.getWidth(),pos[1]+anchor.getHeight(),c.getResources().getDisplayMetrics().widthPixels,c.getResources().getDisplayMetrics().heightPixels,dp(c,24),dp(c,14));WindowManager.LayoutParams params=w.getAttributes();params.gravity=Gravity.TOP|Gravity.LEFT;params.x=fit[0];params.y=fit[1];w.setAttributes(params);width=fit[2];menuHeight=fit[3];}
   scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,Math.max(dp(c,30),menuHeight-chrome-footerHeight)));w.setLayout(width,menuHeight);if(initial!=null)initial.requestFocus();return d;
  }
  private static View anchor(Context c){Dialog parent=top(c);if(parent!=null&&parent.getCurrentFocus()!=null)return parent.getCurrentFocus();Context owner=owner(c);return owner instanceof android.app.Activity?((android.app.Activity)owner).getCurrentFocus():null;}
- public static android.graphics.drawable.Drawable menuSurface(Context c){return surface(c,false);}
+ public static android.graphics.drawable.Drawable menuSurface(Context c){return SupernovaStyle.glass(c);}
  /** Membership states use a plain white plus/check rather than a second generic row icon. */
  public static void updateMembership(Dialog dialog,java.util.Set<Integer> checked,int count){
   if(dialog==null||dialog.getWindow()==null)return;View root=dialog.getWindow().getDecorView();
@@ -163,7 +166,7 @@ public final class PreviewDialog {
   Dialog dialog=create(c,"dialog");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
   int width=TvLayout.dialogWidth(c),padding=Math.max(dp(c,20),Math.min(dp(c,32),Math.round(width*.075f)));
   LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(padding,dp(c,24),padding,dp(c,24));
-  GradientDrawable background=surface(c,false);background.setColor(0xff0b1b29);background.setCornerRadius(dp(c,16));panel.setBackground(background);
+  panel.setBackground(SupernovaStyle.glass(c));
   ScrollView scroll=new ScrollView(c);scroll.setFocusable(true);LinearLayout content=new LinearLayout(c);content.setOrientation(LinearLayout.VERTICAL);scroll.addView(content);panel.addView(scroll,new LinearLayout.LayoutParams(-1,-2));
   if(welcome){ImageView icon=new ImageView(c);icon.setImageResource(com.archos.mediacenter.video.R.drawable.foundation_icon);icon.setContentDescription("Supernova");LinearLayout.LayoutParams image=new LinearLayout.LayoutParams(dp(c,56),dp(c,56));image.gravity=Gravity.CENTER;content.addView(icon,image);TextView brand=SharedThreePanel.text(c,"SUPERNOVA",14);brand.setLetterSpacing(.06f);brand.setGravity(Gravity.CENTER);brand.setPadding(0,dp(c,12),0,dp(c,8));content.addView(brand);}
   TextView heading=SharedThreePanel.text(c,title,24);heading.setTypeface(null,android.graphics.Typeface.BOLD);heading.setGravity(Gravity.CENTER);content.addView(heading);
@@ -175,14 +178,13 @@ public final class PreviewDialog {
   int exact=View.MeasureSpec.makeMeasureSpec(width-2*padding,View.MeasureSpec.EXACTLY),free=View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);actions.measure(exact,free);content.measure(exact,free);
   int chrome=2*dp(c,24)+actions.getMeasuredHeight();int available=Math.max(dp(c,32),Math.round(TvLayout.safeHeight(c)*.8f)-chrome);int bodyHeight=Math.min(content.getMeasuredHeight(),available);scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,bodyHeight));window.setLayout(width,chrome+bodyHeight);if(selected!=null)selected.requestFocus();return dialog;
  }
- public static GradientDrawable dialogSurface(Context c){GradientDrawable background=surface(c,false);background.setColor(0xff0b1b29);background.setCornerRadius(dp(c,16));return background;}
+ public static android.graphics.drawable.Drawable dialogSurface(Context c){return SupernovaStyle.glass(c);}
  public static int dp(Context c,int v){return TvLayout.dimension(c,v);}
  public static StateListDrawable focus(Context c){return new PreviewContentFocus(c);}
  public static StateListDrawable buttonFocus(Context c){return focus(c);}
  public static StateListDrawable actionContainerFocus(Context c){
-  StateListDrawable states=new StateListDrawable();
-  android.graphics.drawable.LayerDrawable focused=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{surface(c,false),new PreviewFocusGlow(c)});
-  states.addState(new int[]{android.R.attr.state_focused},focused);states.addState(new int[]{},surface(c,false));return states;
+  // A focusable action container is a button: use SupernovaStyle.applyButton(view, STANDARD) so its content follows focus.
+  return SupernovaStyle.button(c,SupernovaStyle.Surface.STANDARD);
  }
  public static GradientDrawable surface(Context c,boolean f){GradientDrawable g=new GradientDrawable();g.setColor(f?PreviewAccent.alpha(c,70):0xef0b1b29);g.setCornerRadius(dp(c,6));g.setStroke(dp(c,1),f?PreviewAccent.color(c):0x50426a80);return g;}
 }

@@ -58,7 +58,7 @@ public final class PreviewKeyboard extends LinearLayout {
                     }
                 });
                 key.setTag("semantic:keyboard:" + label);
-                if(r>=4){key.setBackground(SharedThreePanel.control(context,10));key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);key.setCompoundDrawablePadding(dp(4));if(label.equals("Caps Lock")){key.setText("");capsState(key);}}
+                if(r>=4){key.setTextSize(12);key.setPadding(dp(6),0,dp(6),0);key.setGravity(Gravity.CENTER);PreviewIcon.apply(key,label,14);SupernovaStyle.applyButton(key,SupernovaStyle.Surface.STANDARD);key.setCompoundDrawablePadding(dp(4));if(label.equals("Caps Lock")){key.setText("");capsState(key);}}
                 LayoutParams keySize=new LayoutParams(0,-1,1);if(r>=4){keySize=new LayoutParams(0,-1,r==4&&label.equals("Space")?3f:1f);lp.leftMargin=0;lp.rightMargin=0;}if(label.equals("Backspace")){key.setText("");key.setContentDescription("Backspace");}keySize.leftMargin=dp(2);keySize.rightMargin=dp(2);
                 key.setOnFocusChangeListener((v, focused) -> { if (focused) lastKey = (TextView) v; });
                 key.setOnKeyListener((v, code, event) -> {
@@ -106,7 +106,7 @@ public final class PreviewKeyboard extends LinearLayout {
         key.setContentDescription("Caps Lock "+(caps?"On":"Off"));key.setForeground(null);
     }
     public void useMenuFoundation(){
-        for(List<TextView> row:keys)for(TextView key:row)key.setBackground(MenuFoundation.controlBackground(getContext()));
+        for(List<TextView> row:keys)for(TextView key:row)SupernovaStyle.applyButton(key,SupernovaStyle.Surface.STANDARD);
     }
     public boolean focusLastKey() { return lastKey.requestFocus(); }
     public boolean atTop() { return keys.get(0).contains(findFocus()); }
@@ -126,7 +126,7 @@ public final class PreviewKeyboard extends LinearLayout {
         key.setText(label); key.setTextColor(Color.WHITE); key.setTextSize(14);
         key.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         key.setGravity(Gravity.CENTER); key.setFocusable(true); key.setFocusableInTouchMode(true); key.setId(View.generateViewId());
-        key.setBackground(SharedThreePanel.control(getContext(),6));
+        SupernovaStyle.applyButton(key,SupernovaStyle.Surface.STANDARD);
         key.setOnClickListener(v -> action.run());
         return key;
     }

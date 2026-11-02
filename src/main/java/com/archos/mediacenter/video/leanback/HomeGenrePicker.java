@@ -71,7 +71,7 @@ final class HomeGenrePicker {
             target.setTag("home.genre:" + name); target.setId(View.generateViewId()); target.setFocusable(true); target.setFocusableInTouchMode(true); target.setClickable(true);
             target.setDescendantFocusability(android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             target.setPadding(dp(context, 10), dp(context, 8), dp(context, 10), dp(context, 8)); target.setMinimumHeight(dp(context, 44));
-            target.setBackground(MenuFoundation.controlBackground(context)); targets.add(target);
+            SupernovaStyle.applyButton(target, SupernovaStyle.Surface.STANDARD); targets.add(target);
             ImageView check = new ImageView(context); checks.add(check); target.addView(check, new LinearLayout.LayoutParams(dp(context, 18), dp(context, 18)));
             TextView label = MenuFoundation.text(context, name, 14); MenuFoundation.icon(label, i == 0 ? "genres" : name);
             LinearLayout.LayoutParams labelSize = new LinearLayout.LayoutParams(0, -2, 1); labelSize.leftMargin = dp(context, 10); target.addView(label, labelSize);

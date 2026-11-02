@@ -32,7 +32,7 @@ public final class PreviewToolbar extends LinearLayout {
     }
     @Override public void onViewAdded(View child) {
         super.onViewAdded(child);
-        child.setBackground(boxed && child.isFocusable() ? SharedThreePanel.control(getContext(), 10) : null);
+        if (boxed && child.isFocusable()) SupernovaStyle.applyButton(child, SupernovaStyle.Surface.STANDARD); else child.setBackground(null);
         if (boxed && child instanceof android.widget.TextView) {
             TvButton.style((android.widget.TextView)child,true);
             ((android.widget.TextView)child).setSingleLine(true);
@@ -40,7 +40,7 @@ public final class PreviewToolbar extends LinearLayout {
             child.setMinimumHeight(TvLayout.dimension(getContext(), 44));
             child.setPadding(TvLayout.dimension(getContext(),12),TvLayout.dimension(getContext(),6),TvLayout.dimension(getContext(),12),TvLayout.dimension(getContext(),6));
             ((android.widget.TextView)child).setCompoundDrawablePadding(TvLayout.dimension(getContext(),6));
-            child.setBackground(MenuFoundation.controlBackground(getContext()));
+            SupernovaStyle.applyButton(child, SupernovaStyle.Surface.STANDARD);
         }
         child.setOnFocusChangeListener((v, focused) -> invalidate());
         child.setOnKeyListener((v, key, event) -> {

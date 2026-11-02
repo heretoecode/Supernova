@@ -102,31 +102,12 @@ public class SharedThreePanel extends LinearLayout {
         };
         android.graphics.drawable.Drawable existing=row.getForeground();row.setForeground(existing==null?line:new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{existing,line}));
     }
-    public static StateListDrawable control(Context context, int radius) {
-        StateListDrawable states = new StateListDrawable();
-        int[][] conditions={new int[]{-android.R.attr.state_enabled},new int[]{android.R.attr.state_pressed},new int[]{android.R.attr.state_focused},new int[]{}};
-        for(int i=0;i<conditions.length;i++){
-            GradientDrawable shape=new GradientDrawable();shape.setColor(i==0?0x800b1b29:i==1?0xe0324a5b:i==2?0xe0203b50:0xc80b1b29);
-            shape.setCornerRadius(dp(context,Math.max(10,Math.min(12,radius))));shape.setStroke(dp(context,1),i==2?PreviewAccent.color(context):i==0?0x447f8996:0x887f8996);states.addState(conditions[i],shape);
-        }
-        return states;
-    }
+    /** Button background from the shared style. Prefer {@link SupernovaStyle#applyButton}, which also sets the content colours. */
+    public static StateListDrawable control(Context context, int radius) { return SupernovaStyle.button(context, SupernovaStyle.Surface.STANDARD); }
 
-    public static StateListDrawable focus(Context context) { return focus(context,Color.WHITE); }
-    public static StateListDrawable accentFocus(Context context) { return focus(context,PreviewAccent.color(context)); }
-    private static StateListDrawable focus(Context context,int strokeColor) {
-        GradientDrawable focused = new GradientDrawable();
-        focused.setColor(0x263b4857);
-        focused.setCornerRadius(dp(context, 10));
-        focused.setStroke(dp(context, 1), strokeColor);
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused}, focused);
-        GradientDrawable normal = new GradientDrawable();
-        normal.setColor(Color.TRANSPARENT);
-        normal.setCornerRadius(dp(context, 10));
-        states.addState(new int[]{}, normal);
-        return states;
-    }
+    /** Row focus from the shared style: white outline, no fill change. */
+    public static StateListDrawable focus(Context context) { return SupernovaStyle.rowFocus(context); }
+    public static StateListDrawable accentFocus(Context context) { return SupernovaStyle.rowFocus(context); }
 
     public static int dp(Context context, int value) { return PreviewDialog.dp(context, value); }
 }

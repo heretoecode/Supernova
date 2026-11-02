@@ -26,7 +26,7 @@ final class InlineMenuSelector extends AppCompatTextView {
         setPadding(MenuFoundation.dp(context, 8), MenuFoundation.dp(context, 8),
                 MenuFoundation.dp(context, 8), MenuFoundation.dp(context, 8));
         MenuFoundation.icon(this, icon); left = getCompoundDrawables()[0];
-        setBackground(MenuFoundation.controlBackground(context)); update();
+        update(); SupernovaStyle.applyButton(this, SupernovaStyle.Surface.STANDARD);
         setOnClickListener(view -> {
             if (editing) { selected = preview; editing = false; commit.accept(selected); }
             else { preview = selected; editing = true; }

@@ -12,6 +12,7 @@ public final class PreviewIcon extends Drawable {
   if(kind.startsWith("settings.radio")){c.drawCircle(12,12,8,p);if(kind.endsWith(".on")){p.setStyle(Paint.Style.FILL);c.drawCircle(12,12,4,p);p.setStyle(Paint.Style.STROKE);}}
   else if(kind.equals("settings.nodes")){line(c,6,6,18,6,12,18,6,6);for(float[] point:new float[][]{{6,6},{18,6},{12,18}})c.drawCircle(point[0],point[1],3,p);}
   else if(kind.equals("settings.gear")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,11,1,11,5);line(c,13,1,13,5);c.restore();}}
+  else if(kind.equals("external")){line(c,14,4,20,4,20,10);line(c,20,4,11,13);line(c,18,14,18,18.5f,16.5f,20,5.5f,20,4,18.5f,4,7.5f,5.5f,6,10,6);}
   else if(kind.equals("health")){line(c,1,12,6,12,9,3,13,21,16,12,23,12);}
   else if(kind.equals("eye")||kind.equals("eye-off")){c.drawOval(2,6,22,18,p);c.drawCircle(12,12,3,p);if(kind.equals("eye-off"))line(c,2,2,22,22);}
   else if(kind.equals("bookmark")){line(c,6,2,18,2,18,22,12,17,6,22,6,2);}

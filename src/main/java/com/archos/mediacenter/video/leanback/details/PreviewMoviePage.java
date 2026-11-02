@@ -217,7 +217,7 @@ public final class PreviewMoviePage extends ScrollView {
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
     private TextView text(String s,int size){TextView t=new TextView(getContext());t.setText(s);t.setTextColor(Color.WHITE);t.setTextSize(size);t.setIncludeFontPadding(false);t.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));return t;}
     private GradientDrawable bg(boolean focus){GradientDrawable d=new GradientDrawable();d.setColor(focus?0xee254964:0xcc10283b);d.setCornerRadius(dp(5));d.setStroke(dp(focus?2:1),focus?PreviewAccent.color(getContext()):0xff284b62);return d;}
-    private TextView button(String s,Runnable run){TextView t=TvButton.create(getContext(),s,run,false);t.setTag("action:"+s);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(t,"details.action."+s.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+","."));PreviewIcon.apply(t,s,16);t.setGravity(Gravity.CENTER);t.setPadding(dp(14),dp(9),dp(14),dp(9));t.setFocusable(true);t.setFocusableInTouchMode(true);t.setBackground(SharedThreePanel.control(getContext(),10));t.setOnClickListener(v->run.run());return t;}
+    private TextView button(String s,Runnable run){TextView t=TvButton.create(getContext(),s,run,false);t.setTag("action:"+s);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(t,"details.action."+s.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+","."));PreviewIcon.apply(t,s,16);t.setGravity(Gravity.CENTER);t.setPadding(dp(14),dp(9),dp(14),dp(9));t.setFocusable(true);t.setFocusableInTouchMode(true);SupernovaStyle.applyButton(t,SupernovaStyle.Surface.STANDARD);t.setOnClickListener(v->run.run());return t;}
     private void margin(LinearLayout row,View view){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(18);row.addView(view,lp);}
     private LinearLayout section(String name){LinearLayout section=new LinearLayout(getContext());section.setOrientation(LinearLayout.VERTICAL);section.setPadding(0,dp(10),0,dp(8));TextView label=text(name,16);label.setTextColor(0xff9ed4f7);section.addView(label);if(name.equals("More Like This")||name.equals("Details")||name.equals("Episodes")||name.equals("Extras"))label.setVisibility(GONE);LinearLayout content=new LinearLayout(getContext());content.setOrientation(LinearLayout.VERTICAL);content.setPadding(0,dp(6),0,0);section.addView(content);body.addView(section);return content;}
     private void freshTitle(String identity){
@@ -428,7 +428,11 @@ public final class PreviewMoviePage extends ScrollView {
         List<Action> offers=new ArrayList<>(),extraOptions=new ArrayList<>();for(int i=0;i<observedActions.size();i++){Object item=observedActions.get(i);if(item instanceof Action&&com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))offers.add((Action)item);else if(item instanceof Action&&"•••".contentEquals(((Action)item).getLabel1()))extraOptions.add((Action)item);}
         play.setVisibility(remoteDetails==null?VISIBLE:GONE);
         if(!offers.isEmpty()){
-            Action offer=offers.get(0);Presenter.ViewHolder holder=providerPresenter.onCreateViewHolder(providerActions);providerPresenter.onBindViewHolder(holder,offer);holder.view.setTag(offer.getId());holder.view.setOnClickListener(v->action.accept(offer));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(dp(160),Math.max(dp(44),play.getMeasuredHeight()));lp.leftMargin=dp(18);providerActions.addView(holder.view,lp);providerHolders.add(holder);
+            Action offer=offers.get(0);
+            // Approved 2 Nov 2026: provider name + one generic "open externally" icon, same size and style as Resume/More.
+            String provider=offer instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction?((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)offer).provider.name:String.valueOf(offer.getLabel1());
+            TextView open=button(provider,()->action.accept(offer));PreviewIcon.apply(open,"external",16);SupernovaStyle.tintIcons(open);open.setTag(offer.getId());open.setContentDescription("Open in "+provider);
+            LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(18);providerActions.addView(open,lp);
 
         }
         if(focused!=null){View replacement=focusKey==null?null:providerActions.findViewWithTag(focusKey);if(replacement!=null)replacement.requestFocus();else if(providerActions.getChildCount()>0)providerActions.getChildAt(0).requestFocus();else play.requestFocus();}
@@ -673,22 +677,29 @@ public final class PreviewMoviePage extends ScrollView {
             if(current!=null)PreviewDialog.updateLabel(moreDialog,row.getKey(),titleStyle(String.valueOf(current.getLabel1())));
         }
     }
+    private void moreAction(List<String> labels,List<Runnable> commands,Action a){moreRows.put(labels.size(),a);labels.add(titleStyle(String.valueOf(a.getLabel1())));commands.add(()->{Action current=PreviewMoreActions.current(actions.get(),a,show!=null);if(current!=null)action.accept(current);refreshMoreRows();});}
+    private static boolean isRemoveFromLibrary(Action a){long id=a.getId();return id==VideoActionAdapter.ACTION_UNINDEX||id==com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter.ACTION_UNINDEX;}
     private void more(){if(seasonNumber>=0){PreviewDialog.choose(getContext(),"Season "+seasonNumber,new String[]{"Series Details","Episodes"},-1,n->{if(n==0)nativeDetails.run();else{showSection("Seasons & Episodes",true);}});return;}ObjectAdapter adapter=actions.get();if(adapter==null)return;
         moreRows.clear();
         List<String> labels=new ArrayList<>();List<Runnable> commands=new ArrayList<>();Map<Integer,String> logos=new HashMap<>();
-        if(movie!=null&&getContext() instanceof Activity){labels.add(movie instanceof Episode?"Restart Episode":"Restart Movie");commands.add(()->com.archos.mediacenter.video.utils.PlayUtils.startVideo((Activity)getContext(),movie,com.archos.mediacenter.video.player.PlayerActivity.RESUME_NO,false,-1,null,-1));}
+        // Approved grouping (2 Nov 2026): Playback — Restart · Library — Mark Watched, Add to Row, Report Incorrect Match, Remove From Library · Files & Media.
+        String restartLabel=null;Runnable restart=null,report=null;
+        if(movie!=null&&getContext() instanceof Activity){restartLabel=movie instanceof Episode?"Restart Episode":"Restart Movie";restart=(()->com.archos.mediacenter.video.utils.PlayUtils.startVideo((Activity)getContext(),movie,com.archos.mediacenter.video.player.PlayerActivity.RESUME_NO,false,-1,null,-1));}
 
-        if(movie!=null&&movie.hasScraperData()){labels.add("Report Incorrect Match");commands.add(()->{getContext().getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0).edit().putBoolean("incorrect:"+movie.getId(),true).apply();getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.LibraryHealthActivity.class));});}
-        String[] groups={"Playback & Navigation","Library","Streaming Services","Files & Media"};
+        if(movie!=null&&movie.hasScraperData()){report=(()->{getContext().getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0).edit().putBoolean("incorrect:"+movie.getId(),true).apply();getContext().startActivity(new android.content.Intent(getContext(),com.archos.mediacenter.video.leanback.LibraryHealthActivity.class));});}
+        String[] groups={"Playback","Library","Streaming Services","Files & Media"};
         for(int group=0;group<groups.length;group++){
             List<Action> section=new ArrayList<>();for(int i=0;i<adapter.size();i++){Object value=adapter.get(i);if(!(value instanceof Action))continue;Action a=(Action)value;
                 int category=remoteDetails!=null?-1:PreviewMoreActions.group(a,show!=null);
                 if(category==group)section.add(a);
             }
-            if(section.isEmpty()&&!(group==1&&remoteDetails==null)&&!(group==3&&(movie!=null||show!=null)))continue;
+            if(section.isEmpty()&&!(group==0&&restart!=null)&&!(group==1&&remoteDetails==null)&&!(group==3&&(movie!=null||show!=null)))continue;
             labels.add("— "+groups[group]);commands.add(null);
-            for(Action a:section){moreRows.put(labels.size(),a);labels.add(titleStyle(String.valueOf(a.getLabel1())));commands.add(()->{Action current=PreviewMoreActions.current(actions.get(),a,show!=null);if(current!=null)action.accept(current);refreshMoreRows();});}
-            if(group==1){if(remoteDetails==null){labels.add("Add to Row");commands.add(()->PreviewHomeRows.add(getContext(),rowEntry(),()->{}));}}
+            if(group==0&&restart!=null){labels.add(restartLabel);commands.add(restart);}
+            List<Action> last=new ArrayList<>();
+            for(Action a:section){if(group==1&&isRemoveFromLibrary(a)){last.add(a);continue;}moreAction(labels,commands,a);}
+            if(group==1){if(remoteDetails==null){labels.add("Add to Row");commands.add(()->PreviewHomeRows.add(getContext(),rowEntry(),()->{}));}if(report!=null){labels.add("Report Incorrect Match");commands.add(report);}}
+            for(Action a:last)moreAction(labels,commands,a);
             if(group==3&&movie!=null){labels.add("Subtitles and Artwork");commands.add(nativeDetails);}
             else if(group==3&&show!=null){labels.add("Artwork");commands.add(nativeDetails);}
         }
