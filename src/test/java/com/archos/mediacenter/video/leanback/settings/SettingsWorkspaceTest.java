@@ -90,8 +90,22 @@ public class SettingsWorkspaceTest {
         LinearLayout target=new LinearLayout(host.get());target.setOrientation(LinearLayout.VERTICAL);MultiSelectListPreference p=new MultiSelectListPreference(host.get());p.setKey("streaming_providers_IE");p.setEntries(new String[]{"Alpha","Beta"});p.setEntryValues(new String[]{"1","2"});p.setValues(new java.util.HashSet<>(java.util.Set.of("1")));host.get().addContentView(target,new ViewGroup.LayoutParams(800,600));InlinePreferenceChoices.show(target,p);target.measure(View.MeasureSpec.makeMeasureSpec(800,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(600,View.MeasureSpec.EXACTLY));target.layout(0,0,800,600);View alpha=target.findViewWithTag("1");assertNotNull(alpha);alpha.requestFocus();alpha.performClick();assertSame(alpha,target.findViewWithTag("1"));assertTrue(alpha.hasFocus());assertFalse(p.getValues().contains("1"));alpha.performClick();assertSame(alpha,target.findViewWithTag("1"));assertTrue(p.getValues().contains("1"));
     }
     @Test public void mapAccountsForBaselineAndNativeSubtitleExtensionWithoutResurrectingHiddenState(){
-        SettingsRegistry registry=new SettingsRegistry(host.get());assertEquals(170,registry.entries.size());assertEquals(165,registry.entries.stream().filter(e->e.id.startsWith("S")).count());assertEquals(5,registry.entries.stream().filter(e->e.id.startsWith("N146")&&!e.nested()).count());java.util.Set<String> ids=new java.util.HashSet<>();for(SettingsRegistry.Entry e:registry.entries){assertTrue(ids.add(e.id));assertFalse(e.disposition.isEmpty());if(e.excluded())assertFalse(e.integration());}
+        SettingsRegistry registry=new SettingsRegistry(host.get());assertEquals(171,registry.entries.size());assertEquals(1,registry.entries.stream().filter(e->e.id.startsWith("N151")&&!e.nested()).count());assertEquals(165,registry.entries.stream().filter(e->e.id.startsWith("S")).count());assertEquals(5,registry.entries.stream().filter(e->e.id.startsWith("N146")&&!e.nested()).count());java.util.Set<String> ids=new java.util.HashSet<>();for(SettingsRegistry.Entry e:registry.entries){assertTrue(ids.add(e.id));assertFalse(e.disposition.isEmpty());if(e.excluded())assertFalse(e.integration());}
         for(int i=0;i<8;i++){workspace.open(i,null);layout();assertEquals(2,((ViewGroup)tagged("settings.category")).getChildCount());}
+    }
+    /** Owner question 2 Nov 2026: the OMDb key must actually be reachable at Settings > Library & Home > Library & metadata. */
+    @Test public void ratingsKeyIsVisibleUnderLibraryAndMetadata(){
+        assertEquals("Library & Home",SettingsRegistry.CATEGORIES[2]);
+        workspace.open(2,"Library & metadata");layout();
+        View row=tagged("settings.preference.omdb_api_key");
+        assertTrue("row is shown",row.isShown());
+        assertTrue("row is reachable with the remote",row.isFocusable());
+        assertTrue("row is titled for the owner",containsText(row,"Ratings key (OMDb)"));
+    }
+    private static boolean containsText(View view,String text){
+        if(view instanceof android.widget.TextView&&((android.widget.TextView)view).getText().toString().contains(text))return true;
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)if(containsText(((ViewGroup)view).getChildAt(i),text))return true;
+        return false;
     }
     @Test public void navigationStateSurvivesRecreationWithoutReplayingAnAction(){
         workspace.open(6,"Diagnostics");layout();View row=tagged("settings.preference.supernova_diagnostic_level");row.requestFocus();Bundle state=new Bundle();fragment.onSaveInstanceState(state);SettingsWorkspace copy=new SettingsWorkspace(fragment,ReflectionHelpers.getField(fragment,"backupController"),state);assertNotNull(copy.findViewWithTag("settings.section.Diagnostics"));copy.dispose();
