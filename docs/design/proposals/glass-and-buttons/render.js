@@ -176,7 +176,7 @@ const details = `<div style="position:absolute;inset:0;background:radial-gradien
   <div style="position:absolute;left:84px;top:760px;font-size:30px;font-weight:700">Description</div>
   <div style="position:absolute;left:84px;top:810px;width:1500px;font-size:26px;line-height:40px;color:#cfd8ef">Key Information · Directed by James Cameron · Starring Arnold Schwarzenegger, Linda Hamilton, Edward Furlong, Robert Patrick · Carolco Pictures · 137 minutes · English</div>
 </div>`;
-const menuRow = (ic, label, focus) => `<div class="row ${focus ? 'focus' : ''} last" style="height:72px"><span class="ic">${svg(ic, 30)}</span><span class="label" style="font-weight:500;font-size:24px">${label}</span></div>`;
+const menuRow = (ic, label, focus) => `<div class="row ${focus ? 'focus' : ''} last" style="height:72px;padding-right:40px"><span class="ic">${svg(ic, 30)}</span><span class="label" style="font-weight:500;font-size:24px">${label}</span></div>`;
 const menuHead = t => `<div style="color:#9cc9f0;font-size:19px;padding:16px 16px 6px">${t}</div>`;
 const actions = (glass, label) => doc(`${details}<div class="tag" style="top:auto;bottom:24px">${label}</div>
 <div class="panel" style="top:150px;left:820px;width:620px;padding:26px 22px;background:${glass}">
@@ -214,6 +214,38 @@ const focusSheet = doc(`<style>${focusCss}</style><div style="position:absolute;
   ${places.map(([name, bg, b]) => `<div style="font-size:20px;font-weight:600">${name}</div>${cell(bg, b(''))}${options.map(([, , c]) => cell(bg, b(c))).join('')}`).join('')}
 </div></div>`);
 
+
+// ---------- 11. Boxless resting buttons, white focus (owner idea, Netflix-like) ----------
+const bl = `
+.bx{display:inline-flex;align-items:center;gap:12px;height:64px;padding:0 26px;border-radius:${RADIUS}px;font-size:24px;font-weight:500;color:#fff;border:3px solid transparent;
+  text-shadow:0 1px 3px rgba(0,0,0,.75),0 0 12px rgba(0,0,0,.45)}
+.bx svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
+.bx.big{height:72px;font-size:26px}
+.bx.focus{background:#f4f6fb;color:#0d1240;text-shadow:none;border-color:#fff}
+.bx.focus svg{filter:none}`;
+const boxless = [
+  ['Playback HUD', 'background:linear-gradient(180deg,#9fc3dc 0%,#d6a77e 55%,rgba(20,12,14,.9) 100%)', (f1, f2) => `<span class="bx big ${f1}">${svg('pause', 28)}</span><span class="bx big ${f2}">${svg('gear', 28)}Settings</span>`],
+  ['Library toolbar', library, (f1, f2) => `<span class="bx ${f1}">${svg('sort', 24)}Newest First</span><span class="bx ${f2}">${svg('list', 24)}List View</span>`],
+  ['Home hero', hero, (f1, f2) => `<span class="bx big ${f1}">${svg('play', 28)}Play</span><span class="bx big ${f2}">${svg('info', 28)}More Info</span>`],
+  ['Panel tabs', `background:rgba(26,31,92,0.97);border:2px solid ${EDGE}`, (f1, f2) => `<span class="bx ${f1}" style="height:56px;font-size:19px">${svg('cc', 22)}Subtitles</span><span class="bx ${f2}" style="height:56px;font-size:19px">${svg('speaker', 22)}Audio</span>`],
+];
+const boxlessSheet = doc(`<style>${bl}</style><div style="position:absolute;inset:0;background:#05080d;padding:36px 44px">
+<div style="font-size:32px;font-weight:700;margin-bottom:6px">Boxless resting buttons · white box only on focus</div>
+<div style="font-size:19px;color:#b9c7e8;margin-bottom:22px">Resting: icon + text with a soft shadow, no box · Focused: white box, navy text, same footprint — nothing moves</div>
+<div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:16px;align-items:center">
+  <div></div><div style="color:#9cc9f0;font-size:16px;font-weight:700">NOTHING FOCUSED</div><div style="color:#9cc9f0;font-size:16px;font-weight:700">SECOND BUTTON FOCUSED</div>
+  ${boxless.map(([name, bg, b]) => `<div style="font-size:20px;font-weight:600">${name}</div>${cell(bg, b('', ''))}${cell(bg, b('', 'focus'))}`).join('')}
+</div></div>`);
+
+// ---------- 12. Context menu fitted to its longest item (97% glass) ----------
+const fitted = doc(`${details}<div class="tag" style="top:auto;bottom:24px">Menu width = longest item + 24px each side (min 360px, max 40% of the screen) · glass 97%</div>
+<div class="panel" style="top:150px;left:820px;width:auto;display:inline-block;padding:26px 22px;background:rgba(26,31,92,0.97)">
+  <div style="font-size:30px;font-weight:500;padding:4px 16px 14px">Actions</div>
+  ${menuRow('play', 'Restart Movie', true)}${menuRow('info', 'Report Incorrect Match')}
+  ${menuHead('Library')}${menuRow('eye', 'Mark Watched')}${menuRow('list', 'Remove From Library')}${menuRow('list', 'Add to Row')}
+  ${menuHead('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}
+</div>`);
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
@@ -228,6 +260,8 @@ const focusSheet = doc(`<style>${focusCss}</style><div style="position:absolute;
     ['08-context-menu-glass-97.png', actions('rgba(26,31,92,0.97)', 'Actions menu over the details page · shared glass at 97%')],
     ['09-context-menu-glass-98.png', actions('rgba(26,31,92,0.98)', 'Actions menu over the details page · shared glass at 98%')],
     ['10-focus-options.png', focusSheet],
+    ['11-boxless-buttons.png', boxlessSheet],
+    ['12-context-menu-fitted-97.png', fitted],
   ];
   for (const [name, html] of shots) {
     await page.setContent(html);
