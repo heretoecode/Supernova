@@ -38,22 +38,29 @@ final class DetailsBlueprintPanel extends LinearLayout {
         bindFacts(key,KEY_FIELDS,facts,keyValues);
         {
         LinearLayout reception=region(upper,"Reception",.294f);
-        String existing=existingReception.containsKey("TMDB Rating")?"TMDb "+existingReception.get("TMDB Rating"):existingReception.containsKey("Indexed Rating")?"Indexed rating "+existingReception.get("Indexed Rating"):"";
-        if(!existing.isEmpty()&&!supplementary.hasData(0)){
-            TextView score=label(existing,16,true);score.setTag("details.reception.primary");score.setSingleLine(false);score.setMaxLines(2);score.setEllipsize(android.text.TextUtils.TruncateAt.END);reception.addView(score,new LayoutParams(-1,0,1));
-            if(existingReception.containsKey("TMDb votes")){TextView votes=label(existingReception.get("TMDb votes")+" votes",11,false);votes.setTextColor(0xffb9c7d2);reception.addView(votes,new LayoutParams(-1,-2));}
+        // Owner decision 2 Nov 2026: show every rating that has real data, TMDb included, as
+        // stacked rows (logo · score · caption directly beneath). Order: IMDb, Rotten Tomatoes,
+        // Metacritic, TMDb, Awards. Rows without data are omitted, never shown empty.
+        tmdbScore=existingReception.containsKey("TMDB Rating")?existingReception.get("TMDB Rating").replace(" / ","/"):"";
+        tmdbVotes=existingReception.getOrDefault("TMDb votes","");
+        if(tmdbScore.isEmpty()&&existingReception.containsKey("Indexed Rating")&&!suppliedData){
+            TextView score=label("Rating "+existingReception.get("Indexed Rating"),16,true);score.setTag("details.reception.primary");score.setSingleLine(true);score.setEllipsize(android.text.TextUtils.TruncateAt.END);reception.addView(score,new LayoutParams(-1,-2));
         }
         if(!hasReception){TextView unavailable=label("Ratings unavailable",14,false);unavailable.setTag("details.reception.unavailable");reception.addView(unavailable,new LayoutParams(-1,0,1));}
         if(suppliedData)reception.setContentDescription("Reception. Supplementary data via OMDb");
-        String[] providers={"IMDb","Rotten Tomatoes","Metacritic","Awards"};
-        int shown=0;for(int n=0;n<providers.length;n++){
-            if(!supplementary.hasData(n))continue;
+        String[] providers={"IMDb","Rotten Tomatoes","Metacritic","Awards","TMDb"};
+        int[] order={0,1,2,TMDB_ROW,3};
+        int shown=0;for(int n:order){
+            if(n==TMDB_ROW?tmdbScore.isEmpty():!supplementary.hasData(n))continue;
             if(shown++>0){rule(reception,false);LayoutParams divider=(LayoutParams)reception.getChildAt(reception.getChildCount()-1).getLayoutParams();divider.leftMargin=dp(38);if(getResources().getConfiguration().fontScale>1.2f){divider.topMargin=dp(2);divider.bottomMargin=dp(2);}}
             LinearLayout rating=new LinearLayout(c);rating.setGravity(Gravity.CENTER_VERTICAL);rating.setBaselineAligned(false);reception.addView(rating,new LayoutParams(-1,0,n==3?(getResources().getConfiguration().fontScale>1.2f?1.8f:1.25f):1));
             rating.setTag("details.reception.slot."+n);
             rating.addView(providerMark(n,providers[n]),new LayoutParams(0,-1,.25f));
             rating.addView(ratingValue(n,supplementary),new LayoutParams(0,-1,.75f));
         }
+        // Keep each row the height it has in a full panel: with fewer than four rows, pad the
+        // remainder instead of stretching rows (which pushed captions away from their scores).
+        if(shown>0&&shown<4){View spacer=new View(c);spacer.setTag("details.reception.spacer");reception.addView(spacer,new LayoutParams(-1,0,4-shown));}
 
         }
         rule(this,false);lower=row(.44f);lowerRow=lower;
@@ -70,8 +77,18 @@ final class DetailsBlueprintPanel extends LinearLayout {
         }
         super.onMeasure(widthSpec,heightSpec);
     }
+    /** Reception row index for TMDb (rows 0-3 are the OMDb sources and awards). */
+    static final int TMDB_ROW=4;
+    private String tmdbScore="",tmdbVotes="";
+    /** TMDb mark: a rounded tile in TMDb's own green-to-blue brand colours, matching the IMDb tile. */
+    private View tmdbMark(){
+        TextView tile=new TextView(getContext());tile.setText("TMDB");tile.setTypeface(null,Typeface.BOLD);tile.setTextColor(0xff0d253f);tile.setGravity(Gravity.CENTER);tile.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,dp(9));tile.setIncludeFontPadding(false);tile.setSingleLine(true);
+        android.graphics.drawable.GradientDrawable background=new android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xff90cea1,0xff01b4e4});background.setCornerRadius(dp(2));tile.setBackground(background);
+        return tile;
+    }
     private View providerMark(int row,String name){
         FrameLayout mark=new FrameLayout(getContext()){@Override protected void onMeasure(int w,int h){int width=MeasureSpec.getSize(w),height=MeasureSpec.getSize(h);int side=Math.min(dp(34),Math.min(width>0?width:dp(34),height>0?height:dp(34)));if(getChildCount()>0){getChildAt(0).getLayoutParams().width=side;getChildAt(0).getLayoutParams().height=side;}super.onMeasure(w,h);}};
+        if(row==TMDB_ROW){View tile=tmdbMark();tile.setTag("details.reception.logo."+row);tile.setContentDescription(name);FrameLayout.LayoutParams size=new FrameLayout.LayoutParams(dp(34),dp(34),Gravity.START|Gravity.CENTER_VERTICAL);size.leftMargin=dp(4);mark.addView(tile,size);return mark;}
         ImageView logo=new ImageView(getContext());logo.setTag("details.reception.logo."+row);
         if(row==0){logo.setImageResource(com.archos.mediacenter.video.R.drawable.imdb_logo);android.graphics.drawable.GradientDrawable tile=new android.graphics.drawable.GradientDrawable();tile.setColor(0xffeead3d);tile.setCornerRadius(dp(2));logo.setBackground(tile);logo.setPadding(dp(1),dp(1),dp(1),dp(1));logo.setColorFilter(new android.graphics.ColorMatrixColorFilter(new android.graphics.ColorMatrix(new float[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,-1,1,0})));}
         else if(row==1)logo.setImageResource(com.archos.mediacenter.video.R.drawable.reception_rotten_tomatoes);
@@ -80,7 +97,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);logo.setContentDescription(name);FrameLayout.LayoutParams size=new FrameLayout.LayoutParams(dp(34),dp(34),Gravity.START|Gravity.CENTER_VERTICAL);size.leftMargin=dp(4);mark.addView(logo,size);return mark;
     }
     private View ratingValue(int row,OmdbSupplement.Ratings ratings){
-        LinearLayout box=new LinearLayout(getContext());box.setOrientation(VERTICAL);String supplied=ratings.value(row);
+        LinearLayout box=new LinearLayout(getContext());box.setOrientation(VERTICAL);String supplied=row==TMDB_ROW?tmdbScore:ratings.value(row);
         if(row==3){int stop=supplied.indexOf(". ");String headline=stop<0?supplied:supplied.substring(0,stop),details=stop<0?"":supplied.substring(stop+2);
             TextView summary=label(headline,12,false);summary.setTag("details.reception.awards.summary");summary.setGravity(Gravity.CENTER_VERTICAL);summary.setMaxLines(2);summary.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(summary,6,12);box.addView(summary,new LayoutParams(-1,0,1));
             if(!details.isEmpty()){TextView body=label(details,11,false);body.setTag("details.reception.awards.details");body.setLineSpacing(0,1);body.setTextColor(0xffc7c4ce);body.setMaxLines(getResources().getConfiguration().fontScale>1.2f?3:2);body.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(body,6,11);box.addView(body,new LayoutParams(-1,0,getResources().getConfiguration().fontScale>1.2f?2.5f:2f));}return box;
@@ -89,7 +106,13 @@ final class DetailsBlueprintPanel extends LinearLayout {
         int unit=supplied.indexOf('/');if(unit<0&&supplied.endsWith("%"))unit=supplied.length()-1;
         if(unit>=0){android.text.SpannableString styled=new android.text.SpannableString(supplied);styled.setSpan(new android.text.style.RelativeSizeSpan(.85f),unit,supplied.length(),android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);score.setText(styled);}
         box.addView(score,new LayoutParams(-1,0,1f));
-        String caption=row==0?(ratings.imdbVotes.isEmpty()?"Votes unavailable":votes(ratings.imdbVotes)):row==1?"Tomatometer ("+(ratings.tomatoReviews.isEmpty()?"reviews unavailable":ratings.tomatoReviews+" reviews")+")":"Metascore ("+(ratings.metacriticReviews.isEmpty()?"reviews unavailable":ratings.metacriticReviews+" reviews")+")";
+        // Captions sit directly beneath their score. Counts appear only when genuinely supplied;
+        // otherwise the caption names the measure (owner decision 2 Nov 2026: no "unavailable" noise).
+        String caption;
+        if(row==0)caption=ratings.imdbVotes.isEmpty()?"IMDb rating":votes(ratings.imdbVotes);
+        else if(row==1)caption=ratings.tomatoReviews.isEmpty()?"Tomatometer":"Tomatometer ("+ratings.tomatoReviews+" reviews)";
+        else if(row==2)caption=ratings.metacriticReviews.isEmpty()?"Metascore":"Metascore ("+ratings.metacriticReviews+" reviews)";
+        else caption=tmdbVotes.isEmpty()?"TMDb user score":tmdbVotes+" votes";
         TextView count=label(caption,11,false);count.setTag("details.reception.count."+row);count.setTextColor(0xffc7c4ce);count.setGravity(Gravity.CENTER_VERTICAL);count.setSingleLine(true);count.setHorizontallyScrolling(false);count.setEllipsize(android.text.TextUtils.TruncateAt.END);auto(count,6,11);box.addView(count,new LayoutParams(-1,0,.7f));return box;
     }
 
