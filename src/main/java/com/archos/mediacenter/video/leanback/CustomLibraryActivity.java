@@ -66,6 +66,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
   @Override public boolean isNew(){return CustomLibraryPage.load(getContext())==null;}
   @Override public Snapshot snapshot(){return snapshot;}
   @Override public void changed(){if(sharedLibrary!=null)sharedLibrary.configureCustomLibrary(draft,()->edit(0));updatePlaceholder();showDraftName();}
+  @Override public boolean untouched(){return editing&&isNew()&&draft.encode().equals(blank);}
   void updatePlaceholder(){if(sharedLibrary!=null)sharedLibrary.setCustomPlaceholder(editing&&isNew()&&draft.encode().equals(blank)?NEW_PAGE_PLACEHOLDER:null);}
   void showDraftName(){navigation.previewCustomPage(draft.name.trim().isEmpty()?NEW_PAGE_NAME:draft.name.trim(),isNew());}
   @Override public void save(){save(null);}

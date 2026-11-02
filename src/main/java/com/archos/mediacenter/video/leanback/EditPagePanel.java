@@ -28,6 +28,8 @@ public final class EditPagePanel extends LinearLayout {
         /** Back with nothing left to close inside the panel. */
         void back();
         void delete();
+        /** A new page whose settings have not been touched yet. */
+        default boolean untouched() { return false; }
     }
 
     static final String[] TYPES = {"movies", "tv", "both"}, TYPE_LABELS = {"Movies", "TV Shows", "Both"};
@@ -92,6 +94,7 @@ public final class EditPagePanel extends LinearLayout {
         addView(header, headerSize);
 
         scroll = new SidePanelKit.FittedScroll(owner);
+        scroll.setVerticalScrollBarEnabled(false); // focus scrolls it; a bar over the values only clutters
         body = new LinearLayout(owner);
         body.setOrientation(VERTICAL);
         scroll.addView(body);
@@ -473,7 +476,10 @@ public final class EditPagePanel extends LinearLayout {
         title.setText("Edit Page");
         save.setText(host.isNew() ? "Save Page" : "Save Changes");
         List<Entry> shown = host.draft().entries(host.snapshot());
-        if (shown.isEmpty()) {
+        if (host.untouched()) {
+            matches.setText("Choose what to show");
+            matches.setTextColor(SidePanelKit.META);
+        } else if (shown.isEmpty()) {
             matches.setText("No titles match these settings");
             matches.setTextColor(SidePanelKit.WARNING);
         } else {
