@@ -8,18 +8,45 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.149",
-    "version_code": 149,
-    "date": "2026-11-01",
-    "kind": "Shield QA candidate \u2014 PR30 ten fixes and approved Subtitles presentation; physical acceptance pending",
+    "version": "0.150",
+    "version_code": 150,
+    "date": "2026-11-02",
+    "kind": "Shield QA candidate \u2014 consolidated corrections; physical verification pending",
     "notes": [
-      "Preserves all ten PR30 fixes from 1 November.",
-      "Approved Subtitles main panel, track picker and download result presentation retain existing subtitle engine, preferences and provider operations.",
-      "Audio, Video, More and playback HUD are preserved. Existing package and upgrade signing certificate retained.",
-      "Physical Shield, signed installed-upgrade and live provider QA pending."
+      "Continues completed corrections at 538cb869 on draft PR30: initial Custom Library statistics, global language icons, standard switches and original Reception layout.",
+      "Includes guarded playback-menu focus, episode metadata validation and diagnostic recorder corrections.",
+      "Movies/TV, approved Subtitles design, other functionality, package and existing upgrade certificate preserved.",
+      "Physical Shield testing, installed upgrade, real provider rendering/count completeness and playback acceptance remain pending."
     ]
   },
   "history": [
+    {
+      "version": "0.149",
+      "version_code": 149,
+      "date": "2026-11-01",
+      "kind": "Shield QA candidate \u2014 PR30 ten fixes and approved Subtitles presentation; physical acceptance pending",
+      "notes": [
+        "Preserves all ten PR30 fixes from 1 November.",
+        "Approved Subtitles main panel, track picker and download result presentation retain existing subtitle engine, preferences and provider operations.",
+        "Audio, Video, More and playback HUD are preserved. Existing package and upgrade signing certificate retained.",
+        "Physical Shield, signed installed-upgrade and live provider QA pending."
+      ],
+      "source_sha": "cb28b1b936891374bc801f0b58b3397926fc3086",
+      "evidence": "docs/0.149/SIGNED_QA_EVIDENCE.json",
+      "recorded_binary_verification": "docs/0.149/INDEPENDENT_SIGNED_APK_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "e06f178b1436ff113ba19b79f849acda797468858a1f48ebc9e5a767d98eb100",
+      "artifact_id": 13093937009,
+      "run_id": 41331247034,
+      "apks": [
+        {
+          "sha256": "cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c",
+          "size": 95598263,
+          "url": "https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk",
+          "filename": "Supernova_0.149.apk"
+        }
+      ]
+    },
     {
       "version": "0.148",
       "version_code": 148,
