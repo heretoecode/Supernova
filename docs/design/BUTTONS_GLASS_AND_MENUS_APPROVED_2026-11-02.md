@@ -48,6 +48,15 @@ Mock-ups (1920×1080, [render.js](proposals/glass-and-buttons/render.js)):
   buttons created directly by a screen. Example found 2 Nov 2026 (owner photo, Dune: Part Two details page): the
   "Netflix" streaming button is built by a separate provider presenter and forced to a fixed 160dp width and Play's
   height, so it renders far larger than Resume and More. Under these rules it must match them exactly.
+
+### Streaming-provider buttons (approved 2 Nov 2026)
+- Label: the provider's name only ("Netflix", "Disney+", "Prime Video").
+- Icon: one generic **"open externally"** icon for every provider — a box with an arrow leaving it — telling the user
+  the button opens another app ([option A](proposals/streaming-button/01-icon-designs.png),
+  [in context](proposals/streaming-button/02-in-context-A-B-C.png)). No provider logo on the button.
+- Same size, shape and states as every other button (matches Resume and More).
+- Provider logos elsewhere (badges, filters, settings): official one-colour versions only, never recoloured by us;
+  a provider without an official one-colour mark is shown by name.
 - Reason: owner's Netflix reference — white means focused, unmistakably; the black box keeps buttons readable on any
   background (tested on white, yellow, pale sky, busy artwork and dark film).
 
