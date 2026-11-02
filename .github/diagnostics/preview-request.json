@@ -1,0 +1,4 @@
+{"purpose": "Baseline renders of current 0.151 screens before 0.152 changes",
+ "tests": ["com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+           "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+           "com.archos.mediacenter.video.leanback.NextQaWizardTest"]}
