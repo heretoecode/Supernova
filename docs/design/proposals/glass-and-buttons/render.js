@@ -65,7 +65,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
 .head{font-size:16px;font-weight:700;color:#9cc9f0;letter-spacing:.9px;padding:14px 4px 8px;border-bottom:1.5px solid rgba(156,201,240,.35)}
 .row{display:flex;align-items:center;height:62px;padding:0 16px;position:relative;border-radius:${RADIUS}px;border:3px solid transparent;margin:2px 0}
 .row:after{content:'';position:absolute;left:16px;right:16px;bottom:-3px;height:1.5px;background:rgba(255,255,255,.14)}
-.row.focus{border-color:#fff;background:rgba(255,255,255,.08)}
+.row.focus{border-color:#fff}
 .row.focus:after,.row.last:after{display:none}
 .row .ic{width:46px;display:flex;color:#e8eeff}
 .row .label{flex:1;font-size:21px;font-weight:600}
@@ -165,6 +165,27 @@ const editPage = (solid, label) => doc(`${libraryPage}<div class="tag" style="to
   ${editRows}
 </div>`);
 
+
+// ---------- 6/7. Context menus (owner photos, 2 Nov): keep their structure and focus, apply the shared glass ----------
+const details = `<div style="position:absolute;inset:0;background:radial-gradient(ellipse 900px 700px at 80% 30%,#6c8db5,#14233a 60%,#05080d)">
+  <div style="position:absolute;left:80px;top:70px;width:1100px;font-size:92px;font-weight:900;letter-spacing:4px;color:#e9eef6">TERMINATOR 2</div>
+  <div style="position:absolute;left:84px;top:180px;font-size:44px;letter-spacing:22px;color:#e9eef6">JUDGMENT DAY</div>
+  <div style="position:absolute;left:84px;top:290px;font-size:26px;color:#dfe7f2">15 · 1991 · Thriller, Action, Science Fiction · 2h 35m · TMDb 8.2/10</div>
+  <div style="position:absolute;left:84px;top:380px;width:1150px;font-size:28px;line-height:44px;color:#e9eef6">Ten years after the events of the original, a reprogrammed T-800 is sent back in time to protect young John Connor from the shape-shifting T-1000. Together with his mother Sarah, he fights to stop Skynet from triggering a nuclear apocalypse.</div>
+  <div style="position:absolute;left:84px;top:600px;display:flex;gap:20px"><span class="btn big">${svg('play', 28)}Play</span><span class="btn big">··· More</span></div>
+  <div style="position:absolute;left:84px;top:760px;font-size:30px;font-weight:700">Description</div>
+  <div style="position:absolute;left:84px;top:810px;width:1500px;font-size:26px;line-height:40px;color:#cfd8ef">Key Information · Directed by James Cameron · Starring Arnold Schwarzenegger, Linda Hamilton, Edward Furlong, Robert Patrick · Carolco Pictures · 137 minutes · English</div>
+</div>`;
+const menuRow = (ic, label, focus) => `<div class="row ${focus ? 'focus' : ''} last" style="height:72px"><span class="ic">${svg(ic, 30)}</span><span class="label" style="font-weight:500;font-size:24px">${label}</span></div>`;
+const menuHead = t => `<div style="color:#9cc9f0;font-size:19px;padding:16px 16px 6px">${t}</div>`;
+const actions = (glass, label) => doc(`${details}<div class="tag" style="top:auto;bottom:24px">${label}</div>
+<div class="panel" style="top:150px;left:820px;width:620px;padding:26px 22px;background:${glass}">
+  <div style="font-size:30px;font-weight:500;padding:4px 16px 14px">Actions</div>
+  ${menuRow('play', 'Restart Movie', true)}${menuRow('info', 'Report Incorrect Match')}
+  ${menuHead('Library')}${menuRow('eye', 'Mark Watched')}${menuRow('list', 'Remove From Library')}${menuRow('list', 'Add to Row')}
+  ${menuHead('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}
+</div>`);
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
@@ -174,6 +195,8 @@ const editPage = (solid, label) => doc(`${libraryPage}<div class="tag" style="to
     ['03-hud-glass.png', hud],
     ['04-edit-page-option-A-glass-88.png', editPage(false, 'Option A · Edit Page in the same 88% glass (page text shows through faintly)')],
     ['05-edit-page-option-B-solid.png', editPage(true, 'Option B · same colour, solid over text-heavy pages')],
+    ['06-context-menu-glass-88.png', actions('rgba(26,31,92,0.88)', 'Actions menu over the details page · shared glass at 88% (synopsis faintly visible)')],
+    ['07-context-menu-glass-94.png', actions('rgba(26,31,92,0.94)', 'Actions menu over the details page · shared glass at 94%')],
   ];
   for (const [name, html] of shots) {
     await page.setContent(html);
