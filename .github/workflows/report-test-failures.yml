@@ -1,0 +1,53 @@
+name: Report test failures from a run
+# Diagnostic helper: prints only the failing test cases (with their messages) from the
+# test-result XML that a conformance run already uploaded. No build, no secrets.
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/diagnostics/failures-request.json]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Run whose conformance evidence to inspect
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Resolve run
+        id: run
+        run: |
+          if [ -n "${{ inputs.run_id }}" ]; then echo "id=${{ inputs.run_id }}" >> "$GITHUB_OUTPUT";
+          else echo "id=$(python3 -c "import json;print(json.load(open('.github/diagnostics/failures-request.json'))['run_id'])")" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: supernova-*-conformance-evidence
+          path: evidence
+          run-id: ${{ steps.run.outputs.id }}
+          github-token: ${{ github.token }}
+      - name: Print failing tests only
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET, pathlib
+          total=failed=0
+          for path in sorted(pathlib.Path('evidence').rglob('TEST-*.xml')):
+              suite=ET.parse(path).getroot()
+              for case in suite.findall('testcase'):
+                  total+=1
+                  for kind in ('failure','error'):
+                      node=case.find(kind)
+                      if node is None: continue
+                      failed+=1
+                      text=(node.text or '').strip().splitlines()
+                      print(f"::error::{case.get('classname')}.{case.get('name')} [{kind}] {node.get('message','')[:300]}")
+                      for line in text[:25]: print('    '+line)
+          print(f'{failed} failing of {total} test cases')
+          PY
