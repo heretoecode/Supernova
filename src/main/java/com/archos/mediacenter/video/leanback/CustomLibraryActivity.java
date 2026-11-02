@@ -16,6 +16,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
  @Override public void onCreate(Bundle state){super.onCreate(state);workspace=new Workspace();navigation=new TopNavigation(this,workspace,this::navigate,()->workspace.atTop());navigation.selectTab(6);setContentView(navigation);
   getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){public void handleOnBackPressed(){workspace.back();}});
   Snapshot cache=PreviewLibraryLoader.memoryCache();if(cache!=null)workspace.snapshot=cache;
+  workspace.freshEntry = state == null;
   if(state!=null){CustomLibraryPage draft=CustomLibraryPage.decode(state.getString("draft","{}"));if(draft!=null)workspace.draft=draft;workspace.editing=state.getBoolean("editing");int oldStep=state.getInt("step");workspace.step=Math.max(0,Math.min(3,state.getInt("editor_sections_version",1)<2?Math.max(0,oldStep-1):oldStep));workspace.original=state.getString("original",workspace.original);workspace.restoreFocus=state.getString("focus","");if(state.getInt("editor_sections_version",1)<2){String savedFocus=workspace.restoreFocus;for(int legacy=1;legacy<=4;legacy++)if(savedFocus.equals("wizard.step."+legacy)||savedFocus.startsWith("wizard.option."+legacy+".")){workspace.restoreFocus=savedFocus.replace("wizard.step."+legacy,"wizard.step."+Math.max(0,legacy-1)).replace("wizard.option."+legacy+".","wizard.option."+Math.max(0,legacy-1)+".");break;}}workspace.restoreScroll=state.getParcelable("scroll");}
   workspace.render();PreviewLibraryLoader loader=new PreviewLibraryLoader(this);worker.execute(()->{try(Cursor cursor=loader.loadInBackground()){Snapshot library=loader.snapshot;runOnUiThread(()->{if(!closed)applySnapshot(library);});}catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("custom_library_load",failure);runOnUiThread(()->{if(!closed){snapshotLoading=false;snapshotFailed=true;workspace.preview();}});}});
  }
@@ -32,6 +33,8 @@ public final class CustomLibraryActivity extends LeanbackActivity {
    if(!(target.getTag() instanceof String))return;
    for(Entry entry:draft.entries(snapshot))if(entry.key().equals(target.getTag())){navigation.setArtwork(entry.backdrop);navigation.setScrolled(grid!=null&&grid.canScrollVertically(-1));break;}
   });}
+  /** True only for the first library mount of a newly opened page (not a restore or editor return). */
+  boolean freshEntry;
   @Override public boolean focusFromNavigation(){if(editing){View rail=findViewWithTag("wizard.step."+step);return rail!=null&&rail.requestFocus();}return sharedLibrary!=null&&sharedLibrary.focusFromNavigation();}
   boolean atTop(){if(!editing&&sharedLibrary!=null)return sharedLibrary.atTop();return editing?wizardRail!=null&&findFocus()==findViewWithTag("wizard.step.0"):grid==null||!grid.canScrollVertically(-1);}
   TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
@@ -99,7 +102,15 @@ public final class CustomLibraryActivity extends LeanbackActivity {
    if(sharedLibrary==null){sharedLibrary=new PreviewPages(getContext(),(holder,item)->new VideoViewClickedListener(CustomLibraryActivity.this).onItemClicked(holder,item,null,null));sharedLibrary.configureCustomLibrary(draft,()->edit(0));sharedLibrary.setArtworkListener(uri->{if(navigation!=null)navigation.setArtwork(uri);});}
    if(sharedLibrary.getParent() instanceof ViewGroup)((ViewGroup)sharedLibrary.getParent()).removeView(sharedLibrary);
    sharedLibrary.setSnapshot(snapshot);libraryBody.addView(sharedLibrary,new LinearLayout.LayoutParams(-1,-1));
-   sharedLibrary.focusFromNavigation();
+   if (freshEntry) {
+       // Owner decision 2 Nov 2026: opening the custom page from the top bar behaves like
+       // Movies/TV — focus stays visibly on this page's own tab; DOWN then enters the page
+       // through TopNavigation's normal content-focus route.
+       freshEntry = false;
+       navigation.post(navigation::focusSelectedTab);
+   } else {
+       sharedLibrary.focusFromNavigation();
+   }
    if(restoreFocus!=null&&restoreFocus.startsWith("custom.control.")){String control=restoreFocus.substring("custom.control.".length());sharedLibrary.post(()->sharedLibrary.focusCustomControl(control));}
   }
   @Override public boolean dispatchKeyEvent(KeyEvent event){

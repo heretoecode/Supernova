@@ -11,6 +11,33 @@ import static org.junit.Assert.*;
 public class NextQaWizardTest {
  @Before public void offline(){Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");PreviewAsyncFixtures.offlineTransport();PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).putBoolean("supernova_onboarding_complete",true).remove(CustomLibraryPage.KEY).commit();}
  @After public void drain() throws Exception {PreviewAsyncFixtures.drain();}
+ /** Owner report 2 Nov 2026: opening Documentaries left focus invisible. Like Movies/TV, it must sit on the page's own tab. */
+ @Test public void openingCustomPageKeepsVisibleFocusOnItsOwnTab() {
+  CustomLibraryPage page = new CustomLibraryPage();
+  page.name = "Documentaries";
+  assertTrue(page.save(RuntimeEnvironment.getApplication()));
+  var host = Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();
+  try {
+   View root = host.get().findViewById(android.R.id.content);
+   PreviewPagesTest.layout(root);
+   View tab = root.findViewWithTag("semantic:topnav.custom");
+   assertNotNull(tab);
+   assertSame("focus starts on the Documentaries tab", tab, root.findFocus());
+   assertTrue(tab.isSelected());
+   View statistics = root.findViewWithTag("library.statistics");
+   android.graphics.Rect visible = new android.graphics.Rect();
+   assertNotNull(statistics);
+   assertTrue("statistics still visible without scrolling", statistics.getGlobalVisibleRect(visible));
+   root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
+   root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_DOWN));
+   PreviewPagesTest.layout(root);
+   Object workspace = ReflectionHelpers.getField(host.get(), "workspace");
+   PreviewPages pages = ReflectionHelpers.getField(workspace, "sharedLibrary");
+   assertTrue("DOWN enters the page", pages.hasFocus());
+  } finally {
+   host.pause().stop().destroy();
+  }
+ }
  @Test public void savedCustomPageShowsEntireStatisticsOnFirstEntryWithoutScrolling() throws Exception {
   CustomLibraryPage page=new CustomLibraryPage();page.name="QA library";assertTrue(page.save(RuntimeEnvironment.getApplication()));
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{
