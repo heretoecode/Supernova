@@ -99,7 +99,9 @@ public final class CustomLibraryActivity extends LeanbackActivity {
   void library(){
    editorReady=false;setBackground(null);setPadding(0,0,0,0);
    libraryBody=column();addView(libraryBody,new FrameLayout.LayoutParams(-1,-1));options=null;preview=null;grid=null;
-   if(sharedLibrary==null){sharedLibrary=new PreviewPages(getContext(),(holder,item)->new VideoViewClickedListener(CustomLibraryActivity.this).onItemClicked(holder,item,null,null));sharedLibrary.configureCustomLibrary(draft,()->edit(0));sharedLibrary.setArtworkListener(uri->{if(navigation!=null)navigation.setArtwork(uri);});}
+   if(sharedLibrary==null){sharedLibrary=new PreviewPages(getContext(),(holder,item)->new VideoViewClickedListener(CustomLibraryActivity.this).onItemClicked(holder,item,null,null));sharedLibrary.configureCustomLibrary(draft,()->edit(0));sharedLibrary.setArtworkListener(uri->{if(navigation!=null)navigation.setArtwork(uri);});
+    // Owner 2 Nov 2026: like Movies/TV, scrolling content blurs and fades under the top bar.
+    sharedLibrary.setScrollListener(scrolled->{if(navigation!=null)navigation.setScrolled(scrolled);});}
    if(sharedLibrary.getParent() instanceof ViewGroup)((ViewGroup)sharedLibrary.getParent()).removeView(sharedLibrary);
    sharedLibrary.setSnapshot(snapshot);libraryBody.addView(sharedLibrary,new LinearLayout.LayoutParams(-1,-1));
    if (freshEntry) {

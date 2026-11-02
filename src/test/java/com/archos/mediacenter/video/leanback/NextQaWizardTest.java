@@ -11,6 +11,37 @@ import static org.junit.Assert.*;
 public class NextQaWizardTest {
  @Before public void offline(){Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");PreviewAsyncFixtures.offlineTransport();PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).putBoolean("supernova_onboarding_complete",true).remove(CustomLibraryPage.KEY).commit();}
  @After public void drain() throws Exception {PreviewAsyncFixtures.drain();}
+ /** Owner report 2 Nov 2026: Movies/TV blur content scrolling under the top bar; the custom page showed a hard band instead. */
+ @Test public void customPageBlursContentScrollingUnderTheTopBar() throws Exception {
+  CustomLibraryPage page = new CustomLibraryPage();
+  page.name = "Documentaries";
+  assertTrue(page.save(RuntimeEnvironment.getApplication()));
+  var host = Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();
+  try {
+   View root = host.get().findViewById(android.R.id.content);
+   PreviewPagesTest.layout(root);
+   TopNavigation navigation = ReflectionHelpers.getField(host.get(), "navigation");
+   assertFalse("not scrolled at the top", (boolean) ReflectionHelpers.getField(navigation, "scrolled"));
+   Object workspace = ReflectionHelpers.getField(host.get(), "workspace");
+   PreviewPages pages = ReflectionHelpers.getField(workspace, "sharedLibrary");
+   androidx.recyclerview.widget.RecyclerView list = (androidx.recyclerview.widget.RecyclerView) pages.getChildAt(0);
+   list.scrollBy(0, Math.round(160 * root.getResources().getDisplayMetrics().density));
+   PreviewPagesTest.layout(root);
+   if (list.canScrollVertically(-1)) {
+    assertTrue("top bar switches to its blurred scrolled state", (boolean) ReflectionHelpers.getField(navigation, "scrolled"));
+   }
+   // Deterministic wiring check, independent of how much fixture content there is to scroll.
+   java.util.function.Consumer<Boolean> listener = ReflectionHelpers.getField(pages, "scrollListener");
+   assertNotNull("custom page reports scrolling to the top bar", listener);
+   listener.accept(true);
+   assertTrue((boolean) ReflectionHelpers.getField(navigation, "scrolled"));
+   listener.accept(false);
+   assertFalse((boolean) ReflectionHelpers.getField(navigation, "scrolled"));
+   PreviewPagesTest.capture(root, "custom-scrolled-under-top-bar");
+  } finally {
+   host.pause().stop().destroy();
+  }
+ }
  /** Owner 2 Nov 2026: the toolbar sits centred between the statistics and the separator on every library page (shared code). */
  @Test public void libraryToolbarIsCentredBetweenStatisticsAndSeparator() throws Exception {
   CustomLibraryPage page = new CustomLibraryPage();
