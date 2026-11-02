@@ -3047,6 +3047,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             if(mEndTime!=null)mEndTime.setText(duration>0?PreviewHudTiming.timestamp(duration):"—");
             TextView finish=mControllerViewLeft==null?null:mControllerViewLeft.findViewById(R.id.preview_end_time);
             if(finish!=null){long end=PreviewHudTiming.end(now,duration,position,speed);boolean predicting=duration>0;finish.setVisibility(predicting?View.VISIBLE:View.GONE);finish.setText(predicting?"Ends at "+getDateFormat().format(new Date(end)):"");}
+            // The "·" between total runtime and "Ends at" only shows when "Ends at" does.
+            View separator=mControllerViewLeft==null?null:mControllerViewLeft.findViewById(R.id.preview_end_separator);
+            if(separator!=null)separator.setVisibility(finish!=null&&finish.getVisibility()==View.VISIBLE?View.VISIBLE:View.GONE);
         }else if(duration>0&&duration>position)mClock.setText(Clock.formatTimeWithArrow(currentClockText,getDateFormat().format(new Date(PreviewHudTiming.end(now,duration,position,speed)))));
     }
 
