@@ -1,3 +1,5 @@
+> Latest QA delivery: [Supernova 0.150](../0.150/STATUS.md) contains the consolidated corrections. The 0.149 delivery record below is historical; physical Shield verification of 0.150 remains pending.
+
 > Current source continuation: [original-reference and raw Shield investigation](OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md). These candidate corrections are **not in the previously delivered APK linked below**. No replacement APK has been built. Shield acceptance remains open; PR #30 stays draft/unmerged. The delivery record below is historical.
 
 # 0.149 Shield QA APK — delivered and download verified

@@ -1,0 +1,109 @@
+{
+  "source_commit": "8d3c46abd1baa25e912ca9b29a59e617f34beeea",
+  "corrections_baseline": "538cb869a4bd7e3b5a84c7997437dbc45c37a321",
+  "version_name": "0.150",
+  "version_code": 150,
+  "conformance_run_id": 41402999860,
+  "conformance_result": "success",
+  "conformance_workflow": ".github/workflows/supernova-0150-conformance.yml",
+  "conformance_artifact_id": 13123251702,
+  "conformance_artifact_sha256": "ab5d558bd6645b0f98fab55a7583f94470ce295587744516865b434caa0f04de",
+  "unsigned_artifact_id": 13123436138,
+  "unsigned_artifact_sha256": "35de02eb6c2b87dd19c4b21542c0ff635270c7da84a576b2c5122d6a24610127",
+  "application_tests": {
+    "tests": 1295,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "library_suites": {
+    "MediaLib": {
+      "tests": 200,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_cases": [
+        "com.archos.mediaprovider.video.RealDatabasePruningTest.syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent",
+        "com.archos.mediaprovider.video.RealDatabasePruningTest.realDatabaseUpgradesCleanlyAndPassesIntegrityCheck"
+      ]
+    },
+    "FileCoreLibrary": {
+      "tests": 104,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_cases": [
+        "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest.compareMinimalPropertiesWithAllprop",
+        "com.archos.filecorelibrary.SpeedTestTransferTest.compareTransferRates"
+      ]
+    }
+  },
+  "tooling": {
+    "tests": 157,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1251
+  },
+  "software_capture_comparison": [
+    {
+      "capture": "gemini-switch-states-api30.png",
+      "available": false,
+      "matches_previous_reference": null,
+      "note": "This capture directory was not retained by the conformance artifact allowlist; corresponding tests passed. No visual difference is inferred."
+    },
+    {
+      "capture": "settings-switches-1080p.png",
+      "available": true,
+      "matches_previous_reference": true
+    },
+    {
+      "capture": "subtitles-main.png",
+      "available": false,
+      "matches_previous_reference": null,
+      "note": "This capture directory was not retained by the conformance artifact allowlist; corresponding tests passed. No visual difference is inferred."
+    },
+    {
+      "capture": "subtitles-track.png",
+      "available": false,
+      "matches_previous_reference": null,
+      "note": "This capture directory was not retained by the conformance artifact allowlist; corresponding tests passed. No visual difference is inferred."
+    },
+    {
+      "capture": "regional-language-icons.png",
+      "available": true,
+      "matches_previous_reference": true
+    },
+    {
+      "capture": "custom-populated-first-frame-api30.png",
+      "available": true,
+      "matches_previous_reference": true
+    },
+    {
+      "capture": "custom-populated-after-refresh-api30.png",
+      "available": true,
+      "matches_previous_reference": true
+    },
+    {
+      "capture": "reception-reference-1080p.png",
+      "available": true,
+      "matches_previous_reference": true
+    },
+    {
+      "capture": "reception-reference-150-percent.png",
+      "available": true,
+      "matches_previous_reference": true
+    }
+  ],
+  "physical_shield_verified": false,
+  "signed_installed_upgrade_verified": false,
+  "production_release_created": false,
+  "signing_run_id": 41405684145,
+  "signing_result": "success",
+  "signing_cleanup_passed": true,
+  "signed_apk_sha256": "26f23e7ff0203469f41dc49d24121a71be52227b78edda5a423af24b3848822e",
+  "complete_drive_readback_byte_equal": true
+}
