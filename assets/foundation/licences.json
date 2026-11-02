@@ -512,6 +512,22 @@
       "role": "Source availability and relinking notice",
       "url": "https://github.com/heretoecode/Supernova",
       "text_asset": "foundation/legal/source-availability.txt"
+    },
+    {
+      "name": "Twemoji country and subdivision flags",
+      "version": "b6b55fef1e8636b540a6d016a4729ca8cdf2e60b",
+      "licence": "CC-BY-4.0",
+      "role": "Language flag artwork: country flags plus Wales and Scotland; unchanged source PNGs",
+      "url": "https://github.com/jdecked/twemoji",
+      "text_asset": "foundation/legal/twemoji-country-flags.txt"
+    },
+    {
+      "name": "flag-icons regional flags",
+      "version": "7.2.3",
+      "licence": "MIT",
+      "role": "Language flag artwork for Catalan, Galician, Basque and Arabic (Arab League)",
+      "url": "https://github.com/lipis/flag-icons",
+      "text_asset": "foundation/legal/flag-icons-regional-flags.txt"
     }
   ]
 }

@@ -39,9 +39,11 @@ public final class PreviewLanguageIcon extends Drawable {
         LANGUAGES.addAll(Arrays.asList("in","id","iw","he","ji","yi"));
     }
     /**
-     * Default flag for a language with no explicit region. Deliberately absent (→ globe):
-     * ar, sw, ca, eu, gl, cy, gd, br, oc, an, eo, ia, la, ku, ab, se, yue and other languages
-     * without a single obvious country.
+     * Default flag key for a language with no explicit region. Keys are ISO countries ("GB"),
+     * subdivisions ("GB-WLS", "ES-CT"), the Arab League ("ARAB") or Supernova-drawn language
+     * flags ("L-EO"). Owner 2 Nov 2026: a unique flag wherever possible; the globe remains only
+     * for languages without a fitting flag (e.g. Asturian, Aragonese, Navajo, Abkhazian, Syriac,
+     * Interlingua, Toki Pona, und).
      */
     static final Map<String,String> DEFAULT_COUNTRY;
     static {
@@ -53,10 +55,16 @@ public final class PreviewLanguageIcon extends Drawable {
             "id=ID in=ID ms=MY tl=PH ja=JP ko=KR zh=CN ka=GE hy=AM az=AZ kk=KZ uz=UZ mn=MN km=KH " +
             "lo=LA my=MM ne=NP si=LK ga=IE mt=MT lb=LU af=ZA zu=ZA xh=ZA am=ET so=SO yo=NG ig=NG " +
             "ha=NG mi=NZ ta=IN te=IN mr=IN kn=IN ml=IN gu=IN pa=IN or=IN as=IN sd=PK ps=AF tk=TM " +
-            "tg=TJ ky=KG fo=FO kl=GL";
+            "tg=TJ ky=KG fo=FO kl=GL " +
+            "cy=GB-WLS gd=GB-SCT ca=ES-CT gl=ES-GA eu=ES-PV ar=ARAB sw=KE " +
+            "eo=L-EO se=L-SE tt=L-TT ku=L-KU kmr=L-KU ckb=L-KU br=L-BR oc=L-OC " +
+            "kaa=UZ sat=IN yue=HK";
         for(String entry:table.split(" ")){String[] kv=entry.split("=");map.put(kv[0],kv[1]);}
         DEFAULT_COUNTRY=Collections.unmodifiableMap(map);
     }
+    /** English language names ("English", "French") for track metadata that carries a name instead of a code. */
+    private static final Map<String,String> NAME_TO_LANGUAGE=new HashMap<>();
+    static {for(String language:Locale.getISOLanguages()){String name=new Locale(language).getDisplayLanguage(Locale.ENGLISH).toLowerCase(Locale.ROOT);if(!name.isEmpty()&&!name.equals(language))NAME_TO_LANGUAGE.putIfAbsent(name,language);}}
     /** OpenSubtitles-only language codes that are not ISO 639 codes. */
     private static final Map<String,String> PROVIDER_COUNTRY;
     static {
@@ -65,6 +73,11 @@ public final class PreviewLanguageIcon extends Drawable {
         map.put("pm","MZ"); // Portuguese (Mozambique)
         map.put("pr","AF"); // Dari
         map.put("ma","IN"); // Manipuri
+        map.put("sp","ES"); // Spanish (EU)
+        map.put("ea","MX"); // Spanish (LA) — owner: Mexico flag
+        map.put("ze","CN"); // Chinese bilingual
+        map.put("ex","L-EXT"); // Extremaduran
+        map.put("zh-ca","HK"); // OpenSubtitles Cantonese (not Canada)
         PROVIDER_COUNTRY=Collections.unmodifiableMap(map);
     }
     private static final android.util.LruCache<String,Bitmap> FLAGS=new android.util.LruCache<>(32);
@@ -76,29 +89,46 @@ public final class PreviewLanguageIcon extends Drawable {
     public PreviewLanguageIcon(android.content.Context context,String code){
         String country=country(providerCode(code));Bitmap bitmap=null;
         if(context!=null&&!country.isEmpty()){
-            synchronized(FLAGS){bitmap=FLAGS.get(country);if(bitmap==null){int id=context.getResources().getIdentifier("region_"+country.toLowerCase(Locale.ROOT),"drawable",context.getPackageName());if(id!=0){bitmap=BitmapFactory.decodeResource(context.getResources(),id);if(bitmap!=null)FLAGS.put(country,bitmap);}}}
+            synchronized(FLAGS){bitmap=FLAGS.get(country);if(bitmap==null){int id=context.getResources().getIdentifier(resourceName(country),"drawable",context.getPackageName());if(id!=0){bitmap=BitmapFactory.decodeResource(context.getResources(),id);if(bitmap!=null)FLAGS.put(country,bitmap);}}}
         }
         flag=bitmap;
     }
-    /** ISO country code whose flag represents {@code code}, or "" for the neutral globe. See class doc. */
+    /** Flag key for {@code code} (see {@link #DEFAULT_COUNTRY}), or "" for the neutral globe. */
     static String country(String code) {
         if (code == null) return "";
         code = code.trim().toLowerCase(Locale.ROOT).replace('_', '-');
-        // OpenSubtitles zh-ca means Cantonese (not Canada): neutral.
-        if (code.isEmpty() || "zh-ca".equals(code)) return "";
+        if (code.isEmpty()) return "";
         if (PROVIDER_COUNTRY.containsKey(code)) return PROVIDER_COUNTRY.get(code);
-        if (!code.matches("[a-z]{2,3}(?:-[a-z0-9]{2,8})*")) return ""; // names such as "English", "default"
+        if (!code.matches("[a-z]{2,3}(?:-[a-z0-9]{2,8})*")) {
+            // Metadata that carries a language name rather than a code, e.g. "English" or "English (UK)".
+            String name = code.replaceAll("\\s*\\(.*\\)$", "").trim();
+            String language = NAME_TO_LANGUAGE.get(name);
+            return language == null ? "" : country(language);
+        }
         Locale locale = Locale.forLanguageTag(code);
         String language = locale.getLanguage();
-        if (!LANGUAGES.contains(language)) return ""; // und, qqq, commentary…
-        // 1. An explicit, valid region always wins.
-        String region = locale.getCountry().toUpperCase(Locale.ROOT);
-        if (COUNTRIES.contains(region)) return region;
-        // Traditional Chinese script without a region is shown as Taiwan.
-        if ("Hant".equals(locale.getScript()) && ("zh".equals(language) || "zho".equals(language) || "chi".equals(language))) return "TW";
-        // 2. The language's default flag; 3. otherwise the neutral globe.
+        if (!wellFormedLanguage(language)) return ""; // und, mul, zxx, private use (qaa-qtz), commentary…
         String iso1 = language.length() == 3 ? ISO3_TO_ISO1.getOrDefault(language, language) : language;
-        return DEFAULT_COUNTRY.getOrDefault(iso1, "");
+        String fallback = DEFAULT_COUNTRY.getOrDefault(iso1, "");
+        // 1. An explicit, valid region wins — but keep a subdivision flag within its own country (cy-GB → Wales).
+        String region = locale.getCountry().toUpperCase(Locale.ROOT);
+        if (COUNTRIES.contains(region)) return fallback.startsWith(region + "-") ? fallback : region;
+        // Traditional Chinese script without a region is shown as Taiwan.
+        if ("Hant".equals(locale.getScript()) && "zh".equals(iso1)) return "TW";
+        // 2. The language's default flag; 3. otherwise the neutral globe.
+        return fallback;
+    }
+    /** Any well-formed ISO 639 code (including rarer 639-3 codes such as kmr, sat, kaa), excluding special codes. */
+    static boolean wellFormedLanguage(String language) {
+        if (language == null || !language.matches("[a-z]{2,3}")) return false;
+        if (Arrays.asList("und", "mul", "zxx", "mis").contains(language)) return false;
+        if (language.length() == 3 && language.compareTo("qaa") >= 0 && language.compareTo("qtz") <= 0) return false;
+        return language.length() == 3 || LANGUAGES.contains(language);
+    }
+    /** Drawable resource name for a flag key: "GB" → region_gb, "GB-WLS" → region_gb_wls, "L-EO" → lang_eo. */
+    static String resourceName(String key) {
+        String k = key.toLowerCase(Locale.ROOT);
+        return k.startsWith("l-") ? "lang_" + k.substring(2) : "region_" + k.replace('-', '_');
     }
     @Override public void draw(Canvas canvas){
         Rect bounds=getBounds();

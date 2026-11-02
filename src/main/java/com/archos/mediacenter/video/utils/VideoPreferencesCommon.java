@@ -1798,13 +1798,25 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
         for (String s : languageCodeArray) {
             Locale locale = getLocaleFromCode(s);
-            String currentLocaleLanguage = locale.getDisplayName(locale);
+            String currentLocaleLanguage = uiLanguageName(locale);
             sortedLanguages.put(currentLocaleLanguage, s);
         }
 
         // Add the sorted languages to the listEntries and listEntryValues
         languageEntries.addAll(sortedLanguages.keySet());
         languageEntryValues.addAll(sortedLanguages.values());
+    }
+
+    /** Languages Java cannot name, which would otherwise show their raw code (owner 2 Nov 2026: "kmr (Turkey)"). */
+    private static final java.util.Map<String, String> UNNAMED_LANGUAGES = java.util.Map.of("kmr", "Kurmanji");
+
+    /** Display name for an interface language, replacing a raw ISO code with a readable name where Java has none. */
+    static String uiLanguageName(Locale locale) {
+        String name = locale.getDisplayName(locale);
+        String language = locale.getLanguage();
+        String readable = UNNAMED_LANGUAGES.get(language);
+        if (readable != null && name.startsWith(language)) name = readable + name.substring(language.length());
+        return name;
     }
 
     public static Locale getLocaleFromCode(String code) {

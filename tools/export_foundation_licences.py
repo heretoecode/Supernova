@@ -144,6 +144,10 @@ def export(inventory, legal):
     native_catalogue = ROOT / 'docs/foundation/NATIVE_LICENCE_ENTRIES.json'
     if native_catalogue.exists():
         catalogue.extend(json.loads(native_catalogue.read_text()))
+    # Bundled artwork credits (e.g. language flags) are hand-maintained and must survive regeneration.
+    artwork_catalogue = ROOT / 'docs/foundation/ARTWORK_LICENCE_ENTRIES.json'
+    if artwork_catalogue.exists():
+        catalogue.extend(json.loads(artwork_catalogue.read_text()))
     (ROOT / 'assets/foundation/licences.json').write_text(json.dumps({'schema':1, 'components':catalogue},indent=2)+'\n')
     (ROOT / 'docs/foundation/RUNTIME_SBOM.json').write_text(json.dumps({'schema':1, 'scope':'Resolved external release runtime and core-library desugaring artifacts; conservative inclusion before R8 reachability inspection. Test/build plugins excluded.', 'artifacts':sbom, 'legal_sources':provenance},indent=2)+'\n')
     print(f'Exported {len(sbom)} resolved artifacts in {len(catalogue)} offline legal entries')

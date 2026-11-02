@@ -61,6 +61,6 @@ public class Supernova141UiTest {
     }
     /** Superseded 2 Nov 2026: language-only codes now take their default flag (en/eng → GB). */
     @Test public void flagsRequireValidExplicitRegionAndProviderAliasesCannotInventNationality()throws Exception{
-        assertEquals("",PreviewLanguageIcon.country("zh-ca"));assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));assertEquals("GB",PreviewLanguageIcon.country("en"));assertEquals("GB",PreviewLanguageIcon.country("eng"));assertEquals("",PreviewLanguageIcon.country("und-US"));assertEquals("",PreviewLanguageIcon.country("qqq-US"));assertEquals("",PreviewLanguageIcon.country("commentary"));assertEquals("",PreviewLanguageIcon.country(PreviewLanguageIcon.providerCode("zh-ca")));
+        assertEquals("HK",PreviewLanguageIcon.country("zh-ca"));assertEquals("GB",PreviewLanguageIcon.country("en-GB"));assertEquals("BR",PreviewLanguageIcon.country("pt_BR"));assertEquals("GB",PreviewLanguageIcon.country("en"));assertEquals("GB",PreviewLanguageIcon.country("eng"));assertEquals("",PreviewLanguageIcon.country("und-US"));assertEquals("",PreviewLanguageIcon.country("qqq-US"));assertEquals("",PreviewLanguageIcon.country("commentary"));assertEquals("HK",PreviewLanguageIcon.country(PreviewLanguageIcon.providerCode("zh-ca")));
     }
 }

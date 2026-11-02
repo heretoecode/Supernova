@@ -1,4 +1,4 @@
-Twemoji country flag artwork. Copyright2014–2021 Twitter;2022–present Jason Sofonia & Justine De Caires and Twemoji contributors. Source: https://github.com/jdecked/twemoji/tree/b6b55fef1e8636b540a6d016a4729ca8cdf2e60b
+Twemoji country and subdivision flag artwork (including Wales and Scotland). Copyright2014–2021 Twitter;2022–present Jason Sofonia & Justine De Caires and Twemoji contributors. Source: https://github.com/jdecked/twemoji/tree/b6b55fef1e8636b540a6d016a4729ca8cdf2e60b
 Artwork licensed under Creative Commons Attribution4.0 International: https://creativecommons.org/licenses/by/4.0/
 Bundled original72×72 PNGs are unchanged; displayed scaled to the requested icon bounds. No Twemoji JavaScript is included. No endorsement is implied.
 
