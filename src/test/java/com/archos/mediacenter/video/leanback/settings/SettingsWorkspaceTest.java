@@ -74,7 +74,7 @@ public class SettingsWorkspaceTest {
     }
     @Test public void regionalLanguageChoicesBindBundledFlagsAndKeepNeutralFallback(){
         for(String key:new String[]{"favAudioLang","favSubLang"}){ListPreference p=new ListPreference(host.get());p.setPersistent(false);p.setKey(key);p.setTitle("Language");p.setEntries(new String[]{"English UK","English US","English","Unknown"});p.setEntryValues(new String[]{"en-GB","en-US","en","xx"});p.setValue("en");android.app.Dialog dialog=SettingsChoiceDialog.show(host.get(),p);
-            for(int n=0;n<4;n++){ViewGroup row=dialog.getWindow().getDecorView().findViewWithTag("settings.choice."+n);android.graphics.drawable.Drawable icon=((ImageView)row.getChildAt(1)).getDrawable();assertTrue(icon instanceof PreviewLanguageIcon);Object flag=ReflectionHelpers.getField(icon,"flag");if(n<2)assertNotNull(flag);else assertNull(flag);assertTrue(row.requestFocus());}
+            for(int n=0;n<4;n++){ViewGroup row=dialog.getWindow().getDecorView().findViewWithTag("settings.choice."+n);android.graphics.drawable.Drawable icon=((ImageView)row.getChildAt(1)).getDrawable();assertTrue(icon instanceof PreviewLanguageIcon);Object flag=ReflectionHelpers.getField(icon,"flag");if(n<3)assertNotNull(flag);else assertNull(flag);assertTrue(row.requestFocus());}
             dialog.dismiss();
         }
     }

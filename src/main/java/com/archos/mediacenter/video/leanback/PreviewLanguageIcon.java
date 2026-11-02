@@ -7,11 +7,66 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 
-/** A country flag only for an explicitly regional locale; never infer a country from a language. */
+/**
+ * Language icon used everywhere a language is shown (Settings pickers, audio/subtitle tracks,
+ * subtitle downloads, Details).
+ *
+ * Flag policy (owner decision, 2 November 2026 — supersedes the earlier
+ * "flag only for an explicit region" rule, which left real-world tracks such as {@code eng}
+ * showing a globe):
+ * <ol>
+ *   <li>An explicit, valid region always wins: {@code en-US} → US, {@code pt-BR} → BR.</li>
+ *   <li>Otherwise the language's default flag from {@link #DEFAULT_COUNTRY}:
+ *       {@code en}/{@code eng} → GB, {@code fre}/{@code fra}/{@code fr} → FR, and so on.</li>
+ *   <li>Languages with no single obvious country (Arabic, Swahili, Catalan, Welsh, Esperanto,
+ *       Cantonese, unknown/undetermined…) keep the neutral globe.</li>
+ * </ol>
+ */
 public final class PreviewLanguageIcon extends Drawable {
     private static final Set<String> COUNTRIES=new HashSet<>(Arrays.asList(Locale.getISOCountries()));
     private static final Set<String> LANGUAGES=new HashSet<>();
-    static {for(String language:Locale.getISOLanguages()){LANGUAGES.add(language);try{LANGUAGES.add(new Locale(language).getISO3Language());}catch(MissingResourceException ignored){}}}
+    /** Three-letter ISO 639-2 codes (terminology and bibliographic) → two-letter ISO 639-1. */
+    private static final Map<String,String> ISO3_TO_ISO1=new HashMap<>();
+    static {
+        for(String language:Locale.getISOLanguages()){
+            LANGUAGES.add(language);
+            try{String iso3=new Locale(language).getISO3Language();LANGUAGES.add(iso3);ISO3_TO_ISO1.put(iso3,language);}catch(MissingResourceException ignored){}
+        }
+        // Bibliographic ISO 639-2/B codes, common in MKV/MP4 track metadata.
+        String[][] bibliographic={{"fre","fr"},{"ger","de"},{"chi","zh"},{"cze","cs"},{"dut","nl"},{"per","fa"},{"gre","el"},{"slo","sk"},{"alb","sq"},{"arm","hy"},{"geo","ka"},{"mac","mk"},{"may","ms"},{"bur","my"},{"rum","ro"},{"ice","is"},{"baq","eu"},{"wel","cy"},{"tib","bo"},{"fil","tl"}};
+        for(String[] pair:bibliographic){ISO3_TO_ISO1.put(pair[0],pair[1]);LANGUAGES.add(pair[0]);}
+        // Android/Java swap legacy and modern codes for Hebrew, Indonesian and Yiddish; accept both.
+        LANGUAGES.addAll(Arrays.asList("in","id","iw","he","ji","yi"));
+    }
+    /**
+     * Default flag for a language with no explicit region. Deliberately absent (→ globe):
+     * ar, sw, ca, eu, gl, cy, gd, br, oc, an, eo, ia, la, ku, ab, se, yue and other languages
+     * without a single obvious country.
+     */
+    static final Map<String,String> DEFAULT_COUNTRY;
+    static {
+        Map<String,String> map=new HashMap<>();
+        String table=
+            "en=GB fr=FR de=DE es=ES it=IT pt=PT nl=NL sv=SE da=DK no=NO nb=NO nn=NO fi=FI is=IS " +
+            "pl=PL cs=CZ sk=SK hu=HU ro=RO bg=BG el=GR ru=RU uk=UA be=BY sr=RS hr=HR sl=SI bs=BA " +
+            "mk=MK sq=AL et=EE lv=LV lt=LT tr=TR he=IL iw=IL fa=IR hi=IN bn=BD ur=PK th=TH vi=VN " +
+            "id=ID in=ID ms=MY tl=PH ja=JP ko=KR zh=CN ka=GE hy=AM az=AZ kk=KZ uz=UZ mn=MN km=KH " +
+            "lo=LA my=MM ne=NP si=LK ga=IE mt=MT lb=LU af=ZA zu=ZA xh=ZA am=ET so=SO yo=NG ig=NG " +
+            "ha=NG mi=NZ ta=IN te=IN mr=IN kn=IN ml=IN gu=IN pa=IN or=IN as=IN sd=PK ps=AF tk=TM " +
+            "tg=TJ ky=KG fo=FO kl=GL";
+        for(String entry:table.split(" ")){String[] kv=entry.split("=");map.put(kv[0],kv[1]);}
+        DEFAULT_COUNTRY=Collections.unmodifiableMap(map);
+    }
+    /** OpenSubtitles-only language codes that are not ISO 639 codes. */
+    private static final Map<String,String> PROVIDER_COUNTRY;
+    static {
+        Map<String,String> map=new HashMap<>();
+        map.put("me","ME"); // Montenegrin
+        map.put("pm","MZ"); // Portuguese (Mozambique)
+        map.put("pr","AF"); // Dari
+        map.put("ma","IN"); // Manipuri
+        PROVIDER_COUNTRY=Collections.unmodifiableMap(map);
+    }
     private static final android.util.LruCache<String,Bitmap> FLAGS=new android.util.LruCache<>(32);
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
     private final PreviewIcon neutral=new PreviewIcon("language");
@@ -25,12 +80,25 @@ public final class PreviewLanguageIcon extends Drawable {
         }
         flag=bitmap;
     }
-    static String country(String code){
-        if(code!=null)code=code.trim();
-        if(code==null||"zh-ca".equalsIgnoreCase(code)||!code.matches("(?i)[a-z]{2,3}(?:[-_][a-z0-9]{2,8})+"))return "";
-        Locale locale=Locale.forLanguageTag(code.replace('_','-'));
-        String country=locale.getCountry().toUpperCase(Locale.ROOT);
-        return LANGUAGES.contains(locale.getLanguage())&&COUNTRIES.contains(country)?country:"";
+    /** ISO country code whose flag represents {@code code}, or "" for the neutral globe. See class doc. */
+    static String country(String code) {
+        if (code == null) return "";
+        code = code.trim().toLowerCase(Locale.ROOT).replace('_', '-');
+        // OpenSubtitles zh-ca means Cantonese (not Canada): neutral.
+        if (code.isEmpty() || "zh-ca".equals(code)) return "";
+        if (PROVIDER_COUNTRY.containsKey(code)) return PROVIDER_COUNTRY.get(code);
+        if (!code.matches("[a-z]{2,3}(?:-[a-z0-9]{2,8})*")) return ""; // names such as "English", "default"
+        Locale locale = Locale.forLanguageTag(code);
+        String language = locale.getLanguage();
+        if (!LANGUAGES.contains(language)) return ""; // und, qqq, commentary…
+        // 1. An explicit, valid region always wins.
+        String region = locale.getCountry().toUpperCase(Locale.ROOT);
+        if (COUNTRIES.contains(region)) return region;
+        // Traditional Chinese script without a region is shown as Taiwan.
+        if ("Hant".equals(locale.getScript()) && ("zh".equals(language) || "zho".equals(language) || "chi".equals(language))) return "TW";
+        // 2. The language's default flag; 3. otherwise the neutral globe.
+        String iso1 = language.length() == 3 ? ISO3_TO_ISO1.getOrDefault(language, language) : language;
+        return DEFAULT_COUNTRY.getOrDefault(iso1, "");
     }
     @Override public void draw(Canvas canvas){
         Rect bounds=getBounds();
