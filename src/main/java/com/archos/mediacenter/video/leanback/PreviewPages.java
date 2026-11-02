@@ -419,6 +419,7 @@ public final class PreviewPages extends FrameLayout {
     private void rail(String title,List<Entry> items) {if(items.isEmpty())return; header(title,false);cells.add(new Cell(RAIL,title,new ArrayList<>(items.subList(0,items.size()))));}
     private void persistViews(){
         if(preferences==null||!preferences.getBoolean("remember_library_views",true)||tab<1||tab>2)return;
+        if(customLibrary!=null&&customEditing)return; // the Edit Page draft is stored only by Save
         if(customLibrary!=null){customLibrary.view=listMode[tab]?"list":"grid";customLibrary.sort=sorts[tab]==1?"title":sorts[tab]==2?"year":"added";customLibrary.descending=!ascending[tab];customLibrary.save(getContext());preferences.edit().putString("preview_custom_genres",genres[tab]).putString("preview_custom_years",selectedYears[tab]).putString("preview_custom_providers",providers[tab]).apply();return;}
         String k="preview_library_"+tab+"_";preferences.edit().putInt(k+"sort",sorts[tab]).putString(k+"genre",genres[tab]).putInt(k+"year",years[tab]).putString(k+"years",selectedYears[tab]).putString(k+"providers",providers[tab]).putBoolean(k+"ascending",ascending[tab]).putBoolean(k+"list",listMode[tab]).apply();
     }
@@ -544,6 +545,9 @@ public final class PreviewPages extends FrameLayout {
     private CustomLibraryPage customLibrary;private Runnable customEdit;
     /** Text shown instead of results while a brand-new custom page has no settings yet (owner, 2 Nov 2026). */
     private String customPlaceholder;
+    /** While the Edit Page panel is open the page shows the unsaved draft and must never store it. */
+    private boolean customEditing;
+    public void setCustomEditing(boolean editing){customEditing=editing;}
     public void setCustomPlaceholder(String text){if(java.util.Objects.equals(text,customPlaceholder))return;customPlaceholder=text;render();}
     public void configureCustomLibrary(CustomLibraryPage page,Runnable edit){
         customLibrary=page;customEdit=edit;tab=1;listMode[1]="list".equals(page.view);sorts[1]="title".equals(page.sort)?1:"year".equals(page.sort)?2:0;ascending[1]=!page.descending;columns[1]=new PreviewLibraryColumns(getContext(),true,"custom_");

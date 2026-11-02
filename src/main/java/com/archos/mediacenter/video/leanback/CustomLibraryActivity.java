@@ -79,12 +79,12 @@ public final class CustomLibraryActivity extends LeanbackActivity {
     else if(n==2){CustomLibraryPage clean=CustomLibraryPage.decode(original);if(clean!=null)draft=clean;boolean wasNew=isNew();editing=wasNew;if(!wasNew){pendingFocus="custom.control.edit";sharedLibrary=null;render();}leave.run();}
    });}
   void closeEditor(){CustomLibraryPage saved=CustomLibraryPage.load(getContext());if(saved!=null)draft=saved;original=draft.encode();editing=false;pendingFocus="custom.control.edit";sharedLibrary=null;render();}
-  void edit(int ignored){editing=true;original=draft.encode();render();}
+  void edit(int ignored){editing=true;original=draft.encode();if(sharedLibrary!=null)sharedLibrary.setCustomEditing(true);render();}
 
   void library(){
    setBackground(null);setPadding(0,0,0,0);
    libraryBody=new LinearLayout(getContext());libraryBody.setOrientation(LinearLayout.VERTICAL);addView(libraryBody,new FrameLayout.LayoutParams(-1,-1));
-   if(sharedLibrary==null){sharedLibrary=new PreviewPages(getContext(),(holder,item)->new VideoViewClickedListener(CustomLibraryActivity.this).onItemClicked(holder,item,null,null));sharedLibrary.configureCustomLibrary(draft,()->edit(0));sharedLibrary.setArtworkListener(uri->{if(navigation!=null)navigation.setArtwork(uri);});
+   if(sharedLibrary==null){sharedLibrary=new PreviewPages(getContext(),(holder,item)->new VideoViewClickedListener(CustomLibraryActivity.this).onItemClicked(holder,item,null,null));sharedLibrary.setCustomEditing(editing);sharedLibrary.configureCustomLibrary(draft,()->edit(0));sharedLibrary.setArtworkListener(uri->{if(navigation!=null)navigation.setArtwork(uri);});
     // Owner 2 Nov 2026: like Movies/TV, scrolling content blurs and fades under the top bar.
     sharedLibrary.setScrollListener(scrolled->{if(navigation!=null)navigation.setScrolled(scrolled);});}
    if(sharedLibrary.getParent() instanceof ViewGroup)((ViewGroup)sharedLibrary.getParent()).removeView(sharedLibrary);

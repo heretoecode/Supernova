@@ -55,7 +55,7 @@ public class EditPagePanelTest {
  @Test public void rowsAreInTheApprovedOrderAndSteppersEditTheDraft()throws Exception{
   CustomLibraryPage page=saved("Documentaries");page.language="fr";page.genres.add("Documentary");page.genres.add("Nature");page.genres.add("History");assertTrue(page.save(RuntimeEnvironment.getApplication()));
   var host=Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();try{CustomLibraryActivity a=host.get();ReflectionHelpers.callInstanceMethod(workspace(a),"edit",ReflectionHelpers.ClassParameter.from(int.class,0));layout(a.getWindow().getDecorView());layoutPanel(a.editor().dialog());
-   String[] tags={"edit.row.name","edit.row.type","edit.row.genres","edit.row.match","edit.row.year","edit.row.watched","edit.row.rating","edit.row.language","edit.row.view","edit.row.sort","edit.row.order","edit.row.delete"};int previous=-1;
+   String[] tags={"edit.row.name","edit.row.type","edit.row.genres","edit.row.match","edit.row.year","edit.row.watched","edit.row.rating","edit.row.language","edit.row.studio","edit.row.view","edit.row.sort","edit.row.order","edit.row.delete"};int previous=-1;
    for(String tag:tags){View row=in(a,tag);assertNotNull(tag,row);int top=row.getTop();assertTrue(tag,top>previous);previous=top;}
    assertEquals("Save Changes",((TextView)in(a,"edit.save")).getText().toString());assertEquals("Documentary, History +1",value(in(a,"edit.row.genres")));
    assertEquals("Order labels follow the title sort","A–Z",((TextView)PreviewPagesTest.findText(in(a,"edit.row.order"),"A–Z")).getText().toString());

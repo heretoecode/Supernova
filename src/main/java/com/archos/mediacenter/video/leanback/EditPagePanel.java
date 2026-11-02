@@ -270,7 +270,6 @@ public final class EditPagePanel extends LinearLayout {
     private void facet(String kind, String iconKind, String title) {
         CustomLibraryPage d = host.draft();
         List<String> values = facetValues(kind);
-        if (values.size() <= 1) return;   // nothing in the library to choose from, as before
         LinearLayout row = kit.row(body, "edit.row." + kind, iconKind, title, this::focusTop);
         TextView value = kit.opener(row);
         bindings.add(() -> {
