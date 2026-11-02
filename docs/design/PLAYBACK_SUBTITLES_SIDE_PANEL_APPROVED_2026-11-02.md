@@ -9,7 +9,7 @@
 On the Shield (owner photo, 2 Nov 2026) the centred panel covered ~60% of the width and ~85% of the height, hiding the picture whose subtitles are being adjusted.
 
 ## Layout (1920×1080 logical; scale with dp for other resolutions)
-- Panel docked **right**: 40px from top, bottom and right edges; **640px wide** (one third of the screen). Rounded corners ~26px, existing cyan outline and glow, existing navy panel colours.
+- Panel docked **top-right**: 40px from the top and right edges; **640px wide** (one third of the screen). **Height fits its rows** (owner, 2 Nov 2026): no empty space below Subtitle Delay, but not cramped — ~26–30px inner padding top and bottom, as drawn. Rounded corners ~26px, existing cyan outline and glow, existing navy panel colours.
 - A soft dark gradient (~90px) on the panel's left edge separates it from the video; **no** full-screen dim. Video keeps playing and stays visible on the left two thirds.
 - Header: gear icon + "Playback Settings". Tabs in one row of four equal widths: Subtitles · Audio · Video · More (active tab filled blue with glow, as today).
 - Section headings unchanged: SUBTITLE SELECTION, SUBTITLE APPEARANCE.
@@ -34,9 +34,11 @@ On the Shield (owner photo, 2 Nov 2026) the centred panel covered ~60% of the wi
 - Remote: Up/Down moves between rows; Left/Right changes the focused row's value (or moves between tabs on the tab row); OK toggles switches and opens Track/Download; Back closes the panel and restores HUD focus.
 - Toggles use the shared 44×26dp switch face (0.151).
 
-## Still to confirm with the owner before implementation
-- **Panel height:** keep full height (as drawn) or shrink to fit the rows and sit at the top.
-- **Subtitle position while the panel is open:** long subtitle lines may run under the panel. Option: offset subtitles into the visible area only while the panel is open (extra renderer work) vs leave as is.
+## Decided (2 Nov 2026)
+- **Panel height:** fitted to the rows (owner).
+- **Subtitles while the panel is open:** **not shifted** (owner delegated; decision recorded here). Subtitles stay exactly where the renderer normally draws them, so they never jump when the panel opens or closes, and the subtitle engine is untouched. Because the fitted panel ends above the usual bottom subtitle area, a normal bottom subtitle stays fully visible beneath it (as drawn). Very long two-line subtitles, or Middle/Top positions, may run under the panel's left edge while it is open; accepted.
+
+## Still to confirm before implementation
 - Audio, Video and More tabs: to be mocked up in the same side-panel style and approved separately before building.
 
 ## Acceptance (Shield)

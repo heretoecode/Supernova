@@ -38,13 +38,14 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
   radial-gradient(ellipse 900px 240px at 70% 40%,#22171c 98%,transparent 100%),#140f14}
 .film .figure{position:absolute;left:760px;bottom:300px;width:46px;height:150px;border-radius:23px 23px 6px 6px;background:#0b0809}
 .film .figure:before{content:"";position:absolute;left:5px;top:-40px;width:36px;height:36px;border-radius:50%;background:#0b0809}
-.dim{position:absolute;top:0;bottom:0;right:0;width:760px;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.45) 90px)}
-.subtitle{position:absolute;left:0;width:1240px;bottom:110px;text-align:center;font-size:44px;font-weight:500;color:#ffc93c;
+.dim{position:absolute;top:0;height:1000px;right:0;width:760px;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.45) 90px)}
+.subtitle{position:absolute;left:0;width:1920px;bottom:70px;text-align:center;font-size:44px;font-weight:500;color:#ffc93c;
   text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000,0 3px 8px #000}
-.preview-note{position:absolute;left:0;width:1240px;bottom:62px;text-align:center;font-size:18px;color:rgba(255,255,255,.75);letter-spacing:.3px}
-.panel{position:absolute;top:40px;bottom:40px;right:40px;width:640px;border-radius:26px;
+.preview-note{position:absolute;left:0;width:1240px;bottom:1000px;display:none;text-align:center;font-size:18px;color:rgba(255,255,255,.75);letter-spacing:.3px}
+.panel{position:absolute;top:40px;right:40px;width:640px;border-radius:26px;
   background:linear-gradient(180deg,rgba(26,31,92,.96),rgba(20,24,72,.96));border:2px solid #5fd0ff;
-  box-shadow:0 0 22px rgba(95,208,255,.35),0 20px 60px rgba(0,0,0,.55);padding:30px 30px 24px;display:flex;flex-direction:column}
+  box-shadow:0 0 22px rgba(95,208,255,.35),0 20px 60px rgba(0,0,0,.55);padding:30px 30px 26px;display:flex;flex-direction:column}
+.panel .row:last-child:after{display:none}
 .title{display:flex;align-items:center;gap:14px;font-size:30px;font-weight:700;margin-bottom:22px}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
 .tab{height:56px;border-radius:14px;border:2px solid #5a7bd8;display:flex;align-items:center;justify-content:center;gap:8px;font-size:19px;font-weight:600}
@@ -71,7 +72,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
 </style></head><body>
 <div class="film"><div class="sun"></div><div class="hills"></div><div class="figure"></div></div>
 <div class="dim"></div>
-<div class="label-tag">Approved direction · Option B side panel · Background Opacity stepper (dimmed while Background is off)</div>
+<div class="label-tag">Approved · Subtitles side panel · fitted to its rows · subtitle shown in its normal (unshifted) position</div>
 <div class="subtitle">I told you we'd make it back before dark.</div>
 <div class="preview-note">Subtitle preview stays visible while you adjust it</div>
 <div class="panel">
