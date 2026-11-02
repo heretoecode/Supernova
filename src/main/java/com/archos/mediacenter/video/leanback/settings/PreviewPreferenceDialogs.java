@@ -38,5 +38,9 @@ final class PreviewPreferenceDialogs {
   String key=preference.getKey();if(!"ui_lang".equals(key)&&!"favSubLang".equals(key)&&!"favAudioLang".equals(key)&&!com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG.equals(key)&&!"languages_list".equals(key))return;
   for(int i=0;i<values.length;i++)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(dialog,i,values[i]==null?null:com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(values[i].toString()));
  }
- private static void edit(PreferenceFragmentCompat f,EditTextPreference p){com.archos.mediacenter.video.leanback.PreviewTextInput.showValidated(f.requireContext(),String.valueOf(p.getTitle()),p.getText()==null?"":p.getText(),512,value->null,value->{if(p.callChangeListener(value))p.setText(value);});}
+ private static void edit(PreferenceFragmentCompat f,EditTextPreference p){
+  boolean omdb=com.archos.mediacenter.video.metadata.OmdbSupplement.PREF_API_KEY.equals(p.getKey());
+  java.util.function.Function<String,String> validate=omdb?com.archos.mediacenter.video.metadata.OmdbSupplement::keyProblem:value->null;
+  com.archos.mediacenter.video.leanback.PreviewTextInput.showValidated(f.requireContext(),String.valueOf(p.getTitle()),p.getText()==null?"":p.getText(),512,validate,value->{String stored=omdb?value.trim():value;if(p.callChangeListener(stored))p.setText(stored);});
+ }
 }

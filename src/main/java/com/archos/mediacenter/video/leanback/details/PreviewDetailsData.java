@@ -94,9 +94,10 @@ final class PreviewDetailsData {
         Result result=new Result();result.details=source.load("");
         publish(result,progress);
         try{result.credits=source.load("credits");publish(result,progress);}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");}
-        if(OmdbSupplement.PRODUCTION.enabled())try{
+        OmdbSupplement omdb=OmdbSupplement.production(c);
+        if(omdb.enabled())try{
             JSONObject ids=source.load("external_ids");
-            result.supplementary=OmdbSupplement.PRODUCTION.load(ids.optString("imdb_id"),"tv".equals(kind)?"series":"movie");
+            result.supplementary=omdb.load(ids.optString("imdb_id"),"tv".equals(kind)?"series":"movie");
         }catch(Exception unavailable){/* Supplementary data must never fail the primary metadata package. */}
         try{result.classification=source.load("tv".equals(kind)?"content_ratings":"release_dates");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("classification_metadata_unavailable");}
         try{result.alternatives=source.load("alternative_titles");}catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.event("alternative_titles_unavailable");}

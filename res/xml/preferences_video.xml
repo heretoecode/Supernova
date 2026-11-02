@@ -637,6 +637,18 @@
             android:title="@string/scraper_language_title"
             app:iconSpaceReserved="false"/>
 
+        <!-- Owner decision 2 Nov 2026: the owner's own free OMDb key enables IMDb, Rotten Tomatoes,
+             Metacritic and awards in Details > Reception. Stored on the device only. -->
+        <EditTextPreference
+            android:key="omdb_api_key"
+            android:title="Ratings key (OMDb)"
+            android:summary="Adds IMDb, Rotten Tomatoes, Metacritic and awards to Reception. Get a free key at omdbapi.com."
+            android:dialogTitle="OMDb API key"
+            android:dialogMessage="Enter the free key emailed to you by omdbapi.com. Leave blank to turn these ratings off."
+            android:inputType="textNoSuggestions"
+            android:persistent="true"
+            app:iconSpaceReserved="false"/>
+
         <CheckBoxPreference
             android:defaultValue="@bool/network_nfo_parse_default"
             android:key="@string/network_nfo_parse_prefkey"

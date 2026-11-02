@@ -27,7 +27,48 @@ public final class OmdbSupplement {
         public String value(int row){return row==0?imdb:row==1?rottenTomatoes:row==2?metacritic:awards;}
     }
     private static final Access DENIED=new Access(){public boolean permitted(){return false;}public boolean acquireRequest(){return false;}public String apiKey(){return "";}};
+    /** Kept for callers without a Context: always denied. App code uses {@link #production(android.content.Context)}. */
     public static final OmdbSupplement PRODUCTION=new OmdbSupplement(DENIED,new HttpsTransport());
+
+    /** Settings key holding the owner's own OMDb API key (entered on the device, never bundled in the APK). */
+    public static final String PREF_API_KEY="omdb_api_key";
+    /** Stay safely under OMDb's free tier of 1,000 requests per day. */
+    static final int DAILY_BUDGET=900;
+    private static final String PREF_BUDGET_DAY="omdb_budget_day",PREF_BUDGET_USED="omdb_budget_used";
+    private static final Transport SHARED_TRANSPORT=new HttpsTransport();
+
+    /**
+     * Owner decision 2 Nov 2026: Reception shows IMDb, Rotten Tomatoes, Metacritic and awards via
+     * OMDb using the owner's own key, typed once into Settings. Enabled only when a key is present.
+     */
+    public static OmdbSupplement production(android.content.Context context){
+        return new OmdbSupplement(new UserKeyAccess(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())),SHARED_TRANSPORT);
+    }
+
+    /** Per-device key from Settings, with a persisted per-day request budget. */
+    static final class UserKeyAccess implements Access {
+        private final android.content.SharedPreferences prefs;
+        UserKeyAccess(android.content.SharedPreferences prefs){this.prefs=prefs;}
+        @Override public boolean permitted(){return validKey(apiKey());}
+        @Override public String apiKey(){String key=prefs.getString(PREF_API_KEY,"");return key==null?"":key.trim();}
+        @Override public boolean acquireRequest(){
+            synchronized(UserKeyAccess.class){
+                // java.time is unavailable on API 23; use the legacy formatter in UTC.
+                java.text.SimpleDateFormat day=new java.text.SimpleDateFormat("yyyy-MM-dd",java.util.Locale.US);day.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                String today=day.format(new java.util.Date());
+                int used=today.equals(prefs.getString(PREF_BUDGET_DAY,""))?prefs.getInt(PREF_BUDGET_USED,0):0;
+                if(used>=DAILY_BUDGET)return false;
+                prefs.edit().putString(PREF_BUDGET_DAY,today).putInt(PREF_BUDGET_USED,used+1).apply();
+                return true;
+            }
+        }
+    }
+    static boolean validKey(String key){return key!=null&&key.matches("[A-Za-z0-9]{8,64}");}
+    /** Settings validation that catches remote-control typos; blank (ratings off) is allowed. Null means OK. */
+    public static String keyProblem(String value){
+        String key=value==null?"":value.trim();
+        return key.isEmpty()||validKey(key)?null:"That doesn't look like an OMDb key. It's the short code of letters and numbers in the omdbapi.com activation email.";
+    }
     private final Access access;private final Transport transport;
     public OmdbSupplement(Access access,Transport transport){this.access=access;this.transport=transport;}
     public boolean enabled(){return access.permitted();}
