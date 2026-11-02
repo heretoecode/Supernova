@@ -1,4 +1,5 @@
-{"purpose": "0.152 small fixes: HUD inset and button shapes, library toolbar centring",
- "tests": ["com.archos.mediacenter.video.player.NextHudTest",
-           "com.archos.mediacenter.video.leanback.NextQaWizardTest",
-           "com.archos.mediacenter.video.leanback.PreviewPagesTest"]}
+{"purpose": "0.152 Playback Settings side panel (3 tabs, in-panel track lists, download results) and custom-page blur",
+ "tests": ["com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+           "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
+           "com.archos.mediacenter.video.player.Playback141RenderTest",
+           "com.archos.mediacenter.video.leanback.NextQaWizardTest"]}

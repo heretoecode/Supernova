@@ -9,20 +9,195 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.tvmenu.*;
 import java.util.*;
 
-/** Presentation adapter: all track/provider operations remain existing native menu actions. */
+/**
+ * Presentation adapter for the Playback Settings side panel. Every track, toggle and mode change is
+ * the existing native menu action ({@link TVMenuItem#previewClick()}) or an existing PlayerActivity
+ * call; this class only reads their state and invokes them. Cards are looked up live on every call,
+ * because the player rebuilds its menus when tracks change.
+ */
 final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
-    private final Activity owner;private final TVCardView card;private int lastTrack=1;
-    SubtitlePlaybackBackend(Activity owner,TVCardView card){this.owner=owner;this.card=card;}
-    private SubtitleManager manager(){return owner instanceof PlayerActivity?((PlayerActivity)owner).subtitlePresentationManager():null;}
-    private List<TVMenuItem> items(){List<TVMenuItem> out=new ArrayList<>();TVMenu menu=card==null?null:card.previewMenu();if(menu!=null)for(int i=0;i<menu.getChildCount();i++)if(menu.getChildAt(i) instanceof TVMenuItem)out.add((TVMenuItem)menu.getChildAt(i));return out;}
-    private List<TVMenuItem> trackItems(){List<TVMenuItem> out=new ArrayList<>();for(TVMenuItem item:items())if(item.findViewById(R.id.info_text) instanceof Checkable)out.add(item);return out;}
-    public List<PlaybackSubtitlePanel.Track> tracks(){List<PlaybackSubtitlePanel.Track> out=new ArrayList<>();List<TVMenuItem> items=trackItems();for(int i=0;i<items.size();i++){TVMenuItem item=items.get(i);final int index=i;Object language=item.getTag(R.id.preview_track_language);out.add(new PlaybackSubtitlePanel.Track(androidx.core.text.HtmlCompat.fromHtml(item.getText(),0).toString(),language instanceof String?(String)language:null,item.isChecked(),item.isEnabled(),()->{if(index>0)lastTrack=index;item.previewClick();}));}return out;}
-    public int get(String key){SubtitleManager m=manager();if(key.equals("enabled")){List<TVMenuItem> items=trackItems();for(int i=1;i<items.size();i++)if(items.get(i).isChecked())return 1;return 0;}if(m==null)return 0;
-        switch(key){case "size":return m.getSize();case "colour":return m.getColor();case "position":return m.getVerticalPosition();case "outline":return m.getOutlineState()?1:0;case "background":return m.getBackgroundState()?1:0;case "opacity":return m.getBackgroundOpacity();case "delay":return ((PlayerActivity)owner).subtitlePresentationDelay();default:throw new IllegalArgumentException("Unknown subtitle control");}}
-    public boolean available(){return manager()!=null;}
-    public void set(String key,int value){if(key.equals("enabled")){List<TVMenuItem> items=trackItems();if(items.isEmpty())return;if(value==0){for(int i=1;i<items.size();i++)if(items.get(i).isChecked())lastTrack=i;items.get(0).previewClick();}else if(items.size()>1)items.get(Math.max(1,Math.min(lastTrack,items.size()-1))).previewClick();return;}SubtitleManager m=manager();if(m==null)return;
-        SharedPreferences.Editor prefs=PreferenceManager.getDefaultSharedPreferences(owner).edit();
-        switch(key){case "size":m.setSize(value);prefs.putInt(PlayerActivity.KEY_SUBTITLE_SIZE,m.getSize()).putInt(SubtitleManager.KEY_FONT_SIZE_PT,m.getFontSizePt());break;case "colour":m.setColor(value);prefs.putInt(PlayerActivity.KEY_SUBTITLE_COLOR,value);break;case "position":m.setVerticalPosition(value);prefs.putInt(PlayerActivity.KEY_SUBTITLE_VPOS,value);break;case "outline":m.setOutlineState(value!=0);prefs.putBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE,m.getOutlineState()).putFloat(SubtitleManager.KEY_OUTLINE_WIDTH,m.getOutlineWidth());break;case "background":m.setBackgroundState(value!=0);prefs.putBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND,m.getBackgroundState()).putInt(SubtitleManager.KEY_BG_MODE,m.getBgMode());break;case "opacity":m.setBackgroundOpacity(value);prefs.putInt(PlayerActivity.KEY_SUBTITLE_BG_OPACITY,value);break;case "delay":((PlayerActivity)owner).setSubtitleDelay(value-get("delay"));return;default:throw new IllegalArgumentException("Unknown subtitle control");}prefs.apply();}
-    public void download(){for(TVMenuItem item:items())if(owner.getString(R.string.get_subtitles_online).equals(item.getText())){item.previewClick();return;}}
-    public Runnable chooseFile(){for(TVMenuItem item:items())if(owner.getString(R.string.get_subtitles_on_drive).equals(item.getText()))return item::previewClick;return null;}
+    private final Activity owner;
+    private final TVMenuAdapter adapter;
+    private int lastTrack = 1;
+
+    SubtitlePlaybackBackend(Activity owner, TVMenuAdapter adapter) { this.owner = owner; this.adapter = adapter; }
+
+    private PlayerActivity player() { return owner instanceof PlayerActivity ? (PlayerActivity) owner : null; }
+    private SubtitleManager manager() { return player() == null ? null : player().subtitlePresentationManager(); }
+
+    private TVCardView card(int title) {
+        if (adapter == null) return null;
+        List<TVCardView> cards = adapter.previewCards();
+        if (cards == null) return null;
+        for (TVCardView c : cards) if (owner.getString(title).equals(c.previewTitle())) return c;
+        return null;
+    }
+
+    private List<TVMenuItem> items(int cardTitle) {
+        List<TVMenuItem> out = new ArrayList<>();
+        TVCardView card = card(cardTitle);
+        TVMenu menu = card == null ? null : card.previewMenu();
+        if (menu != null) for (int i = 0; i < menu.getChildCount(); i++) {
+            View child = menu.getChildAt(i);
+            if (child instanceof TVMenuItem && child.getVisibility() == View.VISIBLE) out.add((TVMenuItem) child);
+        }
+        return out;
+    }
+
+    /** Radio items of a card: checkable, not a switch. */
+    private List<TVMenuItem> radios(int cardTitle) {
+        List<TVMenuItem> out = new ArrayList<>();
+        for (TVMenuItem item : items(cardTitle)) if (item.findViewById(R.id.info_text) instanceof Checkable && !item.isSwitchable()) out.add(item);
+        return out;
+    }
+
+    private TVMenuItem item(int cardTitle, String text) {
+        for (TVMenuItem item : items(cardTitle)) if (text.equals(item.getText())) return item;
+        return null;
+    }
+
+    private static String plain(TVMenuItem item) { return androidx.core.text.HtmlCompat.fromHtml(item.getText(), 0).toString(); }
+
+    private List<PlaybackSubtitlePanel.Track> asTracks(List<TVMenuItem> items, boolean subtitles) {
+        List<PlaybackSubtitlePanel.Track> out = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            TVMenuItem item = items.get(i);
+            final int index = i;
+            Object language = item.getTag(R.id.preview_track_language);
+            out.add(new PlaybackSubtitlePanel.Track(plain(item), language instanceof String ? (String) language : null, item.isChecked(), item.isEnabled(),
+                    () -> { if (subtitles && index > 0) lastTrack = index; item.previewClick(); }));
+        }
+        return out;
+    }
+
+    // ---- Subtitles -------------------------------------------------------------------------
+
+    private List<TVMenuItem> subtitleTracks() { return radios(R.string.menu_subtitles); }
+
+    public List<PlaybackSubtitlePanel.Track> tracks() { return asTracks(subtitleTracks(), true); }
+
+    public int get(String key) {
+        SubtitleManager m = manager();
+        if (key.equals("enabled")) {
+            List<TVMenuItem> items = subtitleTracks();
+            for (int i = 1; i < items.size(); i++) if (items.get(i).isChecked()) return 1;
+            return 0;
+        }
+        if (m == null) return 0;
+        switch (key) {
+            case "size": return m.getSize();
+            case "colour": return m.getColor();
+            case "position": return m.getVerticalPosition();
+            case "outline": return m.getOutlineState() ? 1 : 0;
+            case "background": return m.getBackgroundState() ? 1 : 0;
+            case "opacity": return m.getBackgroundOpacity();
+            case "delay": return player().subtitlePresentationDelay();
+            default: throw new IllegalArgumentException("Unknown subtitle control");
+        }
+    }
+
+    public boolean available() { return manager() != null; }
+
+    public void set(String key, int value) {
+        if (key.equals("enabled")) {
+            List<TVMenuItem> items = subtitleTracks();
+            if (items.isEmpty()) return;
+            if (value == 0) {
+                for (int i = 1; i < items.size(); i++) if (items.get(i).isChecked()) lastTrack = i;
+                items.get(0).previewClick();
+            } else if (items.size() > 1) items.get(Math.max(1, Math.min(lastTrack, items.size() - 1))).previewClick();
+            return;
+        }
+        SubtitleManager m = manager();
+        if (m == null) return;
+        SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(owner).edit();
+        switch (key) {
+            case "size": m.setSize(value); prefs.putInt(PlayerActivity.KEY_SUBTITLE_SIZE, m.getSize()).putInt(SubtitleManager.KEY_FONT_SIZE_PT, m.getFontSizePt()); break;
+            case "colour": m.setColor(value); prefs.putInt(PlayerActivity.KEY_SUBTITLE_COLOR, value); break;
+            case "position": m.setVerticalPosition(value); prefs.putInt(PlayerActivity.KEY_SUBTITLE_VPOS, value); break;
+            case "outline": m.setOutlineState(value != 0); prefs.putBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, m.getOutlineState()).putFloat(SubtitleManager.KEY_OUTLINE_WIDTH, m.getOutlineWidth()); break;
+            case "background": m.setBackgroundState(value != 0); prefs.putBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, m.getBackgroundState()).putInt(SubtitleManager.KEY_BG_MODE, m.getBgMode()); break;
+            case "opacity": m.setBackgroundOpacity(value); prefs.putInt(PlayerActivity.KEY_SUBTITLE_BG_OPACITY, value); break;
+            case "delay": player().setSubtitleDelay(value - get("delay")); return;
+            default: throw new IllegalArgumentException("Unknown subtitle control");
+        }
+        prefs.apply();
+    }
+
+    public void download() {
+        TVMenuItem item = item(R.string.menu_subtitles, owner.getString(R.string.get_subtitles_online));
+        if (item != null) item.previewClick();
+    }
+
+    public Runnable chooseFile() {
+        TVMenuItem item = item(R.string.menu_subtitles, owner.getString(R.string.get_subtitles_on_drive));
+        return item == null ? null : item::previewClick;
+    }
+
+    // ---- Audio -----------------------------------------------------------------------------
+
+    public List<PlaybackSubtitlePanel.Track> audioTracks() { return asTracks(radios(R.string.menu_audio), false); }
+
+    public Integer audioDelay() {
+        if (player() == null || item(R.string.menu_audio, owner.getString(R.string.player_pref_audio_delay_title)) == null) return null;
+        return player().presentationAudioDelay();
+    }
+
+    public void stepAudioDelay(int direction) {
+        if (player() != null) player().stepAudioDelay(direction * PlayerActivity.AUDIO_DELAY_STEP_MS);
+    }
+
+    private TVMenuItem optionItem(String key) {
+        switch (key) {
+            case "boost": return item(R.string.menu_audio, owner.getString(R.string.pref_audio_filt_title));
+            case "night": return item(R.string.menu_audio, owner.getString(R.string.pref_audio_filt_night_mode));
+            case "spatial": return item(R.string.menu_audio, owner.getString(R.string.spatialization_capabilities));
+            case "skip":
+                for (TVMenuItem item : items(R.string.pref_play_mode_title)) if (item.isSwitchable()) return item;
+                return null;
+            default: return null;
+        }
+    }
+
+    public Boolean option(String key) {
+        TVMenuItem item = optionItem(key);
+        return item == null ? null : item.isChecked();
+    }
+
+    public boolean optionEnabled(String key) {
+        TVMenuItem item = optionItem(key);
+        return item != null && item.isEnabled();
+    }
+
+    public void toggleOption(String key) {
+        TVMenuItem item = optionItem(key);
+        if (item != null) item.previewClick();
+    }
+
+    // ---- Playback --------------------------------------------------------------------------
+
+    public List<PlaybackSubtitlePanel.Choice> choices(String key) {
+        int title;
+        switch (key) {
+            case "format": title = R.string.pref_format_mode_title; break;
+            case "s3d": title = R.string.pref_s3d_mode_title; break;
+            case "playmode": title = R.string.pref_play_mode_title; break;
+            default: return Collections.emptyList();
+        }
+        List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
+        for (TVMenuItem item : radios(title)) out.add(new PlaybackSubtitlePanel.Choice(plain(item), item.isChecked(), item.isEnabled(), item::previewClick));
+        return out;
+    }
+
+    public Float speed() {
+        if (player() == null || item(R.string.menu_audio, owner.getString(R.string.player_pref_audio_speed_title)) == null) return null;
+        return player().presentationAudioSpeed();
+    }
+
+    public void setSpeed(float speed) { if (player() != null) player().setPresentationAudioSpeed(speed); }
+
+    public Runnable pictureInPicture() {
+        TVMenuItem item = item(R.string.pref_format_mode_title, owner.getString(R.string.picture_in_picture));
+        return item == null || !item.isEnabled() ? null : item::previewClick;
+    }
 }

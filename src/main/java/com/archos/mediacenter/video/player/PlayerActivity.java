@@ -1880,6 +1880,41 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     SubtitleManager subtitlePresentationManager(){return mSubtitleManager;}
     int subtitlePresentationDelay(){return mVideoInfo==null?0:mVideoInfo.subtitleDelay;}
 
+    /*
+     * Inline Audio Delay / Playback Speed steppers for the approved Playback Settings side panel
+     * (owner, 2 Nov 2026). They call the same player paths as the old picker cards; a value is
+     * remembered across videos only when "Keep setting" was already on (a non-default saved value).
+     */
+    static final int AUDIO_DELAY_STEP_MS = 50, AUDIO_DELAY_LIMIT_MS = 10000;
+    static final float AUDIO_SPEED_MIN = 0.5f, AUDIO_SPEED_MAX = 2.0f, AUDIO_SPEED_STEP = 0.05f;
+
+    Integer presentationAudioDelay() {
+        if (PlayerService.sPlayerService == null) return null;
+        return clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay());
+    }
+
+    void stepAudioDelay(int deltaMs) {
+        Integer current = presentationAudioDelay();
+        if (current == null) return;
+        int delay = clampAudioDelayForPassthrough(Math.max(-AUDIO_DELAY_LIMIT_MS, Math.min(AUDIO_DELAY_LIMIT_MS, current + deltaMs)));
+        onAudioDelayChange(null, delay);
+        String key = getString(R.string.save_delay_setting_pref_key);
+        if (mPreferences.getInt(key, 0) != 0) mPreferences.edit().putInt(key, delay).apply();
+    }
+
+    Float presentationAudioSpeed() {
+        if (PlayerService.sPlayerService == null || !VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences)) return null;
+        return PlayerService.sPlayerService.getAudioSpeed();
+    }
+
+    void setPresentationAudioSpeed(float speed) {
+        if (presentationAudioSpeed() == null) return;
+        float clamped = Math.round(Math.max(AUDIO_SPEED_MIN, Math.min(AUDIO_SPEED_MAX, speed)) * 100f) / 100f;
+        onAudioSpeedChange(null, clamped);
+        String key = getString(R.string.save_audio_speed_setting_pref_key);
+        if (mPreferences.getFloat(key, 1.0f) != 1.0f) mPreferences.edit().putFloat(key, clamped).apply();
+    }
+
     private void createTVSubtitleSettingsDialog() {
         float density = getApplicationContext().getResources().getDisplayMetrics().density;
         float pickerWidth= (float)100 * density;

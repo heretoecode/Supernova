@@ -46,9 +46,11 @@ final class PreviewPlaybackMenus {
     }
     private static void flushNested(){if(nested!=null){TVCardDialog card=nested;nested=null;card.setPreviewDismiss(()->{});card.handleBackPressed();}}
     static void show(Activity activity,TVMenuAdapter source,String target){
-        close();owner=activity;adapter=source;origin=activity.getCurrentFocus();tab=1;rootFocus=-1;
-        if(activity.getString(R.string.menu_audio).equals(target))tab=0;
-        if(activity.getString(R.string.player_pref_audio_speed_title).equals(target))tab=3;
+        close();owner=activity;adapter=source;origin=activity.getCurrentFocus();rootFocus=-1;
+        // Owner 2 Nov 2026: the Settings button always opens on Subtitles; only a direct audio/speed shortcut opens elsewhere.
+        tab=PlaybackSubtitlePanel.TAB_SUBTITLES;
+        if(activity.getString(R.string.menu_audio).equals(target))tab=PlaybackSubtitlePanel.TAB_AUDIO;
+        if(activity.getString(R.string.player_pref_audio_speed_title).equals(target))tab=PlaybackSubtitlePanel.TAB_PLAYBACK;
         int selected=tab;switchingPresentation=true;try{shell();tab=selected;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}
     }
     private static void shell(){
@@ -83,7 +85,7 @@ final class PreviewPlaybackMenus {
     }
     /** Keep one window content root: replacing Dialog content can retain a transitioning old scene. */
     private static void present(View panel){presentationHost.removeAllViews();presentationHost.addView(panel,new FrameLayout.LayoutParams(-1,-1));}
-    private static void switchTab(int selected){if(closing||switchingPresentation)return;switchingPresentation=true;try{flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;present(legacyPanel);Window window=current.getWindow();window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f)),Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48)));}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}}
+    private static void switchTab(int selected){if(closing||switchingPresentation)return;switchingPresentation=true;try{flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;present(legacyPanel);placeLegacy();}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}}
     private static TVCardView card(int title){for(TVCardView c:adapter==null?Collections.<TVCardView>emptyList():adapter.previewCards())if(owner.getString(title).equals(c.previewTitle()))return c;return null;}
     private static void clear(){expansion=null;expansionAnchor=null;invokingRow=null;trackRows=adjustmentRows=null;flushNested();liveCard=null;if(content.hasFocus())tabs.getChildAt(tab).requestFocus();content.removeAllViews();scroll=new ScrollView(owner);scroll.setFillViewport(false);rows=new LinearLayout(owner);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);content.addView(scroll,new FrameLayout.LayoutParams(-1,-1));for(int i=0;i<4;i++)tabs.getChildAt(i).setSelected(i==tab);}
     private static void columns(){
@@ -93,7 +95,13 @@ final class PreviewPlaybackMenus {
     }
     private static void renderTab(){
         if(owner==null||closing)return;
-        if(tab==1){collapseExpansion(false);backAction=null;restoreParent=null;liveCard=card(R.string.menu_subtitles);subtitlePanel=new PlaybackSubtitlePanel(owner,new SubtitlePlaybackBackend(owner,liveCard),(index,enter)->{switchTab(index);if(enter)focusContent();});present(subtitlePanel);Window window=current.getWindow();window.setGravity(Gravity.CENTER);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=0;window.setAttributes(attrs);window.setLayout(subtitlePanel.panelWidth(),subtitlePanel.panelHeight());return;}
+        if(nested==null){
+            // The approved side panel (owner, 2 Nov 2026) presents all three tabs; the legacy list below is only
+            // used to host a native adjustment card that something else opens while the panel is showing.
+            collapseExpansion(false);backAction=null;restoreParent=null;liveCard=card(R.string.menu_subtitles);
+            int shown=tab==3?PlaybackSubtitlePanel.TAB_PLAYBACK:tab;
+            subtitlePanel=new PlaybackSubtitlePanel(owner,new SubtitlePlaybackBackend(owner,adapter),shown);present(subtitlePanel);subtitlePanel.place(current.getWindow());return;
+        }
         clear();backAction=null;restoreParent=PreviewPlaybackMenus::renderTab;
         if(tab==0||tab==1){TVCardView selected=card(tab==1?R.string.menu_subtitles:R.string.menu_audio);if(selected!=null){if(tab==0)columns();addNative(selected,true,false);}else heading(tab==1?"No subtitle tracks":"No audio tracks");if(tab==1)subtitlePreferences();}
         else {
@@ -159,7 +167,7 @@ final class PreviewPlaybackMenus {
             if(Objects.equals(key,row.getTag())&&occurrence--==0){row.requestFocus();break;}
         }
     }
-    static void refresh(Activity activity,TVCardView changed){if(isShowing()&&changed==liveCard&&nested==null){if(subtitlePanel!=null)subtitlePanel.refresh();else refreshChecks();}}
+    static void refresh(Activity activity,TVCardView changed){if(isShowing()&&nested==null){if(subtitlePanel!=null)subtitlePanel.refresh();else if(changed==liveCard)refreshChecks();}}
     private static void heading(String text){TextView heading=SharedThreePanel.text(owner,text,12);heading.setTextColor(0xffb7c0cc);heading.setPadding(0,dp(12),0,dp(5));heading.setFocusable(false);rows.addView(heading);}
     private static TextView action(String label,boolean checked,boolean enabled,String code,Runnable run){
         int index=rows.getChildCount();TextView text=SharedThreePanel.text(owner,(checked?"✓  ":"")+label+(enabled?"":" — unavailable"),14);text.setTag("playback.option:"+label);text.setFocusable(enabled);text.setFocusableInTouchMode(enabled);text.setEnabled(enabled);text.setGravity(Gravity.CENTER_VERTICAL);text.setPadding(dp(10),dp(9),dp(10),dp(9));text.setMinimumHeight(dp(40));text.setBackground(SharedThreePanel.accentFocus(owner));text.setOnClickListener(v->{invokingRow=text;run.run();});
@@ -184,12 +192,27 @@ final class PreviewPlaybackMenus {
     }
     static void showNested(Activity activity,TVCardDialog card){
         if(!isShowing()){owner=activity;origin=activity.getCurrentFocus();tab=1;shell();renderTab();}
+        if(subtitlePanel!=null){hostNestedOverPanel(activity,card);return;}
         Runnable parent=restoreParent;LinearLayout target=expandUnderInvoker();if(target==null)return;
         if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
         card.setAlpha(1f);card.setPadding(0,0,0,0);card.setBackgroundColor(android.graphics.Color.TRANSPARENT);compact(card,activity);nested=card;
         card.setPreviewDismiss(()->{nested=null;if(!closing){Object key=expansionAnchor==null?null:expansionAnchor.getTag();collapseExpansion(false);if(parent!=null)parent.run();View row=key==null?null:content.findViewWithTag(key);if(row!=null)row.requestFocus();}});
         target.addView(card,new LinearLayout.LayoutParams(-1,-2));backAction=null;
     }
+    /**
+     * A native adjustment card opened while the side panel is showing (for example by a remote shortcut):
+     * show it alone in the same window, then return to the tab that was open when it is dismissed.
+     */
+    private static void hostNestedOverPanel(Activity activity,TVCardDialog card){
+        int returnTab=subtitlePanel.currentTab();subtitlePanel.close();subtitlePanel=null;present(legacyPanel);placeLegacy();
+        clear();tabs.setVisibility(View.GONE);
+        if(card.getParent() instanceof ViewGroup)((ViewGroup)card.getParent()).removeView(card);
+        card.setAlpha(1f);card.setPadding(0,0,0,0);card.setBackgroundColor(android.graphics.Color.TRANSPARENT);compact(card,activity);nested=card;
+        card.setPreviewDismiss(()->{nested=null;if(!closing&&isShowing()){tabs.setVisibility(View.VISIBLE);tab=returnTab;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();}});
+        rows.addView(card,new LinearLayout.LayoutParams(-1,-2));backAction=null;
+        for(View view:card.getFocusables(View.FOCUS_FORWARD))if(view.isEnabled()&&view.requestFocus())break;
+    }
+    private static void placeLegacy(){Window window=current.getWindow();window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f)),Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48)));}
     /** Keep native callbacks and value ranges, changing only their presentation owner. */
     private static LinearLayout expandUnderInvoker(){
         View anchor=invokingRow;collapseExpansion(false);
