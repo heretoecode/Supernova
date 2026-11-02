@@ -22,6 +22,22 @@ public class PreviewPlaybackLoadingTest {
             info.scraperShowId="987124";loading.bind(info,"Fallback");assertEquals("",copy.getText().toString());assertEquals(android.view.View.GONE,copy.getVisibility());loading.measure(android.view.View.MeasureSpec.makeMeasureSpec(960,android.view.View.MeasureSpec.EXACTLY),android.view.View.MeasureSpec.makeMeasureSpec(540,android.view.View.MeasureSpec.EXACTLY));loading.layout(0,0,960,540);assertTrue(loading.getFocusables(android.view.View.FOCUS_FORWARD).isEmpty());loading.setVisibility(android.view.View.INVISIBLE);loading.begin();assertEquals(android.view.View.VISIBLE,loading.getVisibility());assertEquals(1f,loading.getAlpha(),0);
         }finally{host.pause().stop().destroy();com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();}
     }
+    /** Owner decision 2 Nov 2026: no tint/gradient layer may sit over the preparing-playback artwork. */
+    @Test public void artworkIsNotCoveredByAnyShadeLayer() {
+        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        try {
+            PreviewPlaybackLoading loading = new PreviewPlaybackLoading(host.get(), new android.content.Intent());
+            assertEquals("only artwork and the text block", 2, loading.getChildCount());
+            assertTrue(loading.getChildAt(0) instanceof android.widget.ImageView);
+            assertTrue(loading.getChildAt(1) instanceof android.widget.LinearLayout);
+            android.widget.ImageView artwork = (android.widget.ImageView) loading.getChildAt(0);
+            assertNull("artwork must not be tinted", artwork.getColorFilter());
+            assertEquals(1f, artwork.getAlpha(), 0f);
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
+
     @Test public void remoteArtworkIsStrictlyOfflineAndLocalArtworkUsesExistingFile(){
         Picasso picasso=mock(Picasso.class);RequestCreator request=mock(RequestCreator.class,RETURNS_SELF);
         Uri remote=Uri.parse("https://image.tmdb.org/t/p/w1280/backdrop.jpg");when(picasso.load(remote)).thenReturn(request);

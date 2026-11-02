@@ -3,7 +3,6 @@ package com.archos.mediacenter.video.player;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.view.*;
 import android.widget.*;
@@ -23,7 +22,8 @@ final class PreviewPlaybackLoading extends FrameLayout {
         super(context);setId(R.id.progress_indicator);setVisibility(VISIBLE);
         setBackground(new com.archos.mediacenter.video.leanback.PreviewUtilityBackground(context));setFocusable(false);setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         artwork=new ImageView(context);artwork.setScaleType(ImageView.ScaleType.CENTER_CROP);addView(artwork,new LayoutParams(-1,-1));
-        View shade=new View(context);shade.setBackground(new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xee071522,0x99071522,0x66071522}));addView(shade,new LayoutParams(-1,-1));
+        // Owner decision (2 Nov 2026): the artwork is shown crystal clear, with no tint or
+        // gradient over it. Text legibility comes from a shadow on the text itself (see text()).
         LinearLayout labels=new LinearLayout(context);labels.setOrientation(LinearLayout.VERTICAL);
         LayoutParams labelsParams=new LayoutParams(dp(570),-2,Gravity.START|Gravity.CENTER_VERTICAL);labelsParams.leftMargin=dp(48);addView(labels,labelsParams);
         title=text("",32);title.setTypeface(null,android.graphics.Typeface.BOLD);title.setMaxLines(2);title.setEllipsize(android.text.TextUtils.TruncateAt.END);labels.addView(title);
@@ -88,5 +88,13 @@ final class PreviewPlaybackLoading extends FrameLayout {
     @Override protected void onAttachedToWindow(){super.onAttachedToWindow();onVisibilityChanged(this,getVisibility());}
     @Override protected void onDetachedFromWindow(){generation++;Picasso.get().cancelRequest(artwork);super.onDetachedFromWindow();}
     private int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
-    private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextSize(size);t.setTextColor(Color.WHITE);return t;}
+    private TextView text(String value, int size) {
+        TextView t = new TextView(getContext());
+        t.setText(value);
+        t.setTextSize(size);
+        t.setTextColor(Color.WHITE);
+        // Soft shadow keeps white text readable on bright artwork without dimming the image.
+        t.setShadowLayer(dp(6), 0, dp(1), 0xCC000000);
+        return t;
+    }
 }
