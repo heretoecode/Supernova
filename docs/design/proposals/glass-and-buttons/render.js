@@ -246,6 +246,42 @@ const fitted = doc(`${details}<div class="tag" style="top:auto;bottom:24px">Menu
   ${menuHead('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}
 </div>`);
 
+
+// ---------- 13. Menu groups: every item under a heading; headings floating vs. divider between groups ----------
+const groupMenu = (dividers, x, caption) => {
+  const head = (t, first) => `${dividers && !first ? '<div style="height:1.5px;background:rgba(255,255,255,.18);margin:12px 16px 4px"></div>' : ''}<div style="color:#9cc9f0;font-size:19px;padding:${first ? 6 : (dividers ? 10 : 22)}px 16px 6px">${t}</div>`;
+  return `<div style="position:absolute;top:110px;left:${x}px">
+  <div style="font-size:18px;color:#b9c7e8;margin-bottom:12px">${caption}</div>
+  <div class="panel" style="position:relative;display:inline-block;width:auto;padding:26px 22px;background:rgba(26,31,92,0.97)">
+  <div style="font-size:30px;font-weight:500;padding:4px 16px 10px">Actions</div>
+  ${head('Playback', true)}${menuRow('play', 'Restart Movie', true)}
+  ${head('Library')}${menuRow('eye', 'Mark Watched')}${menuRow('list', 'Add to Row')}${menuRow('info', 'Report Incorrect Match')}${menuRow('list', 'Remove From Library')}
+  ${head('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}
+  </div></div>`;
+};
+const groups = doc(`${details}<div style="position:absolute;inset:0;background:rgba(0,0,0,.35)"></div>
+<div class="tag">Every item sits under a heading · Report Incorrect Match moves to Library · left: floating headings · right: thin line between groups</div>
+${groupMenu(false, 300, 'A · Floating headings (extra space above)')}${groupMenu(true, 1040, 'B · Thin line between groups')}`);
+
+// ---------- 14. Boxless buttons over the worst backgrounds ----------
+const worst = [
+  ['Pure white', 'background:#ffffff'],
+  ['Bright yellow', 'background:#ffd84a'],
+  ['Pale sky', 'background:linear-gradient(180deg,#cfe6f7,#eaf3fa)'],
+  ['Busy artwork', 'background:repeating-linear-gradient(115deg,#f4e2c4 0 22px,#2b6cb0 22px 30px,#ffffff 30px 46px,#e2583e 46px 52px)'],
+  ['Dark film', 'background:#0b0d12'],
+];
+const band = 'background:linear-gradient(180deg,rgba(5,8,13,0) 0%,rgba(5,8,13,.72) 30%,rgba(5,8,13,.78) 70%,rgba(5,8,13,0) 100%)';
+const worstSheet = doc(`<style>${bl}</style><div style="position:absolute;inset:0;background:#05080d;padding:36px 44px">
+<div style="font-size:32px;font-weight:700;margin-bottom:6px">Boxless buttons — worst-case backgrounds</div>
+<div style="font-size:19px;color:#b9c7e8;margin-bottom:22px">Left: soft shadow only (fails on bright backgrounds) · Right: the button row sits on a dark gradient band, as Netflix does</div>
+<div style="display:grid;grid-template-columns:200px 1fr 1fr;gap:14px;align-items:center">
+  <div></div><div style="color:#9cc9f0;font-size:16px;font-weight:700">SHADOW ONLY</div><div style="color:#9cc9f0;font-size:16px;font-weight:700">ON A DARK GRADIENT BAND</div>
+  ${worst.map(([n, bg]) => `<div style="font-size:20px;font-weight:600">${n}</div>
+    ${cell(bg, `<span class="bx big">${svg('play', 28)}Play</span><span class="bx big">${svg('info', 28)}More Info</span><span class="bx big focus">${svg('gear', 28)}Settings</span>`)}
+    ${cell(bg, `<div style="${band};display:flex;gap:16px;align-items:center;justify-content:center;width:100%;height:120px"><span class="bx big">${svg('play', 28)}Play</span><span class="bx big">${svg('info', 28)}More Info</span><span class="bx big focus">${svg('gear', 28)}Settings</span></div>`)}`).join('')}
+</div></div>`);
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
@@ -262,6 +298,8 @@ const fitted = doc(`${details}<div class="tag" style="top:auto;bottom:24px">Menu
     ['10-focus-options.png', focusSheet],
     ['11-boxless-buttons.png', boxlessSheet],
     ['12-context-menu-fitted-97.png', fitted],
+    ['13-menu-groups.png', groups],
+    ['14-boxless-worst-case.png', worstSheet],
   ];
   for (const [name, html] of shots) {
     await page.setContent(html);
