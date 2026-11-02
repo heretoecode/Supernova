@@ -1,4 +1,5 @@
 name: Supernova 0.152 unsigned conformance
+# Final 0.152 candidate: implementation trees frozen in .github/signing/supernova_0152_qa_signing.py.
 on:
   push:
     branches: [claude/supernova-github-access-yfhe89]
