@@ -116,3 +116,14 @@ Poster and artwork cards are not tiles: they keep their own focus treatment so a
   Providers) · Appearance · **Connections** (was Connections & Integrations) · **System** (was System & Maintenance) ·
   About Supernova. Streaming description: "Choose your streaming providers and how availability is shown."
   Renamed categories change everywhere their name appears (e.g. category headings, settings search).
+
+## 6. Page layout (approved 2 Nov 2026)
+([mock-up](proposals/settings-tiles/08-full-height-larger.png))
+- **No page titles on top-level pages** (e.g. "Settings"): the top navigation bar already shows where you are.
+  The top navigation bar itself is unchanged on every page.
+- **The Settings grid fills the space below the top bar**, within TV safe margins (≈56px sides, ≈54px bottom at 1080p).
+- **Tile text is sized to the tile:** titles as large as possible while staying on one line (35px at 1080p for the
+  Settings grid, measured), descriptions 25px, icons 44px; headings sit at a fixed height in every tile so each row
+  lines up regardless of description length. (This replaces the "descriptions at most two lines" rule.)
+
+**Implementation authorised by the owner on 2 Nov 2026 (target 0.153).**
