@@ -47,7 +47,11 @@ public class PreviewNextTest {
         try {
             View hud=LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental,null);
             ViewGroup transport=hud.findViewById(R.id.preview_transport);
-            assertEquals(7,transport.getChildCount());
+            // 2 Nov 2026: "·" separator between total runtime and Ends at adds an eighth child.
+            assertEquals(8,transport.getChildCount());
+            View dot=hud.findViewById(R.id.preview_end_separator);
+            assertEquals(transport.indexOfChild(hud.findViewById(R.id.time))+1,transport.indexOfChild(dot));
+            assertEquals(transport.indexOfChild(dot)+1,transport.indexOfChild(hud.findViewById(R.id.preview_end_time)));
             int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.preview_more};
             for(int i=0;i<ids.length;i++) {
                 View button=hud.findViewById(ids[i]);

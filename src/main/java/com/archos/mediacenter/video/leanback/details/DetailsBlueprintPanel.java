@@ -44,7 +44,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         tmdbScore=existingReception.containsKey("TMDB Rating")?existingReception.get("TMDB Rating").replace(" / ","/"):"";
         tmdbVotes=existingReception.getOrDefault("TMDb votes","");
         if(tmdbScore.isEmpty()&&existingReception.containsKey("Indexed Rating")&&!suppliedData){
-            TextView score=label("Rating "+existingReception.get("Indexed Rating"),16,true);score.setTag("details.reception.primary");score.setSingleLine(true);score.setEllipsize(android.text.TextUtils.TruncateAt.END);reception.addView(score,new LayoutParams(-1,-2));
+            TextView score=label("Indexed rating "+existingReception.get("Indexed Rating"),16,true);score.setTag("details.reception.primary");score.setSingleLine(true);score.setEllipsize(android.text.TextUtils.TruncateAt.END);reception.addView(score,new LayoutParams(-1,-2));
         }
         if(!hasReception){TextView unavailable=label("Ratings unavailable",14,false);unavailable.setTag("details.reception.unavailable");reception.addView(unavailable,new LayoutParams(-1,0,1));}
         if(suppliedData)reception.setContentDescription("Reception. Supplementary data via OMDb");
