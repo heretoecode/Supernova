@@ -319,6 +319,25 @@ const boxedSheet = doc(`<style>${bk}</style><div style="position:absolute;inset:
   ${bkPlaces.map(([n, bg, b]) => `<div style="font-size:19px;font-weight:600">${n}</div>${cell(bg, b('r1', 'focus')).replace('height:150px', 'height:128px')}${cell(bg, b('r2', 'focus')).replace('height:150px', 'height:128px')}`).join('')}
 </div></div>`);
 
+
+// ---------- 17. Menu title: none, or the item's name ----------
+const titleMenus = (() => {
+  const head = (t, first) => `<div style="display:flex;align-items:center;gap:14px;color:#9cc9f0;font-size:19px;padding:${first ? 6 : 18}px 16px 6px">${t}<span style="flex:1;height:1.5px;background:rgba(156,201,240,.35)"></span></div>`;
+  const body = `${head('Playback', true)}${menuRow('play', 'Restart Movie', true)}
+    ${head('Library')}${menuRow('eye', 'Mark Watched')}${menuRow('list', 'Add to Row')}${menuRow('info', 'Report Incorrect Match')}${menuRow('list', 'Remove From Library')}
+    ${head('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}`;
+  const menu = (x, caption, title) => `<div style="position:absolute;top:96px;left:${x}px">
+    <div style="font-size:18px;color:#e8eeff;background:rgba(0,0,0,.55);display:inline-block;padding:6px 12px;border-radius:8px;margin-bottom:12px">${caption}</div><br>
+    <div class="panel" style="position:relative;display:inline-block;width:auto;padding:${title ? 24 : 18}px 22px 22px;background:rgba(26,31,92,0.97)">${title}${body}</div></div>`;
+  const itemTitle = `<div style="display:flex;align-items:center;gap:16px;padding:2px 16px 14px">
+      <div style="width:44px;height:64px;border-radius:6px;background:linear-gradient(160deg,#3a5f8f,#0d1626);flex:none"></div>
+      <div><div style="font-size:24px;font-weight:600;max-width:380px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Terminator 2: Judgment Day</div>
+      <div style="font-size:17px;color:#b9c7e8;margin-top:4px">1991 · Movie</div></div></div>`;
+  return doc(`${details}<div style="position:absolute;inset:0;background:rgba(0,0,0,.35)"></div>
+  ${menu(240, 'A · No title — the group headings carry the menu', '')}
+  ${menu(1000, 'B · The item it acts on, small poster + name + year', itemTitle)}`);
+})();
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
@@ -339,6 +358,7 @@ const boxedSheet = doc(`<style>${bk}</style><div style="position:absolute;inset:
     ['14-boxless-worst-case.png', worstSheet],
     ['15-menu-heading-inline-line.png', inlineMenu],
     ['16-boxed-black-buttons.png', boxedSheet],
+    ['17-menu-title-options.png', titleMenus],
   ];
   for (const [name, html] of shots) {
     await page.setContent(html);
