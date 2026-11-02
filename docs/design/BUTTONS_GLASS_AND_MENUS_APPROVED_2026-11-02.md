@@ -37,6 +37,17 @@ Mock-ups (1920×1080, [render.js](proposals/glass-and-buttons/render.js)):
 - **Size never changes** between states — no scaling, no shrinking for glows (fixes the 0.152 Playback Settings tab).
 - One shape: rounded rectangle with 12dp corners. Two heights: large (e.g. HUD, hero) and standard (e.g. toolbars, tabs, dialog buttons).
 - Icon-only buttons (e.g. play/pause) follow the same states.
+- **Buttons fit their content.** Width = icon + label + the standard padding; no fixed widths, no stretching, no
+  layout weights that inflate a button. Buttons in the same row share one height.
+- **Icons are one size.** Every button icon, including **brand marks** (e.g. streaming-provider logos such as
+  Netflix), is drawn at the standard icon size for that button height — never larger than the text beside it.
+- **Icons invert with the text.** On focus, icons and brand marks must stay visible on the white box: monochrome icons
+  turn black with the text; a white brand mark switches to its dark or full-colour version. A mark that cannot be
+  shown legibly on both boxes is listed in the build notes.
+- **"Every button" includes buttons built by other components** — presenters, adapters, cards and dialogs — not only
+  buttons created directly by a screen. Example found 2 Nov 2026 (owner photo, Dune: Part Two details page): the
+  "Netflix" streaming button is built by a separate provider presenter and forced to a fixed 160dp width and Play's
+  height, so it renders far larger than Resume and More. Under these rules it must match them exactly.
 - Reason: owner's Netflix reference — white means focused, unmistakably; the black box keeps buttons readable on any
   background (tested on white, yellow, pale sky, busy artwork and dark film).
 
