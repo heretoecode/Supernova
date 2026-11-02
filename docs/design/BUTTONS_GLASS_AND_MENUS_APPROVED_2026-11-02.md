@@ -55,8 +55,19 @@ Mock-ups (1920×1080, [render.js](proposals/glass-and-buttons/render.js)):
   the button opens another app ([option A](proposals/streaming-button/01-icon-designs.png),
   [in context](proposals/streaming-button/02-in-context-A-B-C.png)). No provider logo on the button.
 - Same size, shape and states as every other button (matches Resume and More).
-- Provider logos elsewhere (badges, filters, settings): official one-colour versions only, never recoloured by us;
-  a provider without an official one-colour mark is shown by name.
+- Provider logos elsewhere (badges, filters, settings, pickers): see **Provider logos** below.
+
+### Provider logos (approved 2 Nov 2026 — option A)
+- Every provider shown with an icon (e.g. the My providers picker, provider filters, availability badges) uses its
+  **official single-colour logo**, drawn in the same colour as the row's text (white at rest, black inside a focused
+  white box), centred in a **uniform tile** so every row has the same visual weight
+  ([mock-up](proposals/provider-picker/01-monochrome-tiles.png)). Never full colour, never recoloured by us.
+- **Symbol, not word logo.** Where a provider has an official symbol (e.g. Netflix "N", the Prime Video smile,
+  the Disney+ arc), the tile uses the symbol, because the provider's name is already written beside it —
+  a word logo next to the same words says it twice and is unreadable at tile size.
+- **Coverage goal: every provider.** Official single-colour marks are sourced for every provider the app can list.
+  A monogram tile (initials in the same tile shape) is a last resort only where no official mark exists or it cannot
+  be used; each such provider is named in the build notes for the owner. The generic Wi-Fi-like fallback icon is removed.
 - Reason: owner's Netflix reference — white means focused, unmistakably; the black box keeps buttons readable on any
   background (tested on white, yellow, pale sky, busy artwork and dark film).
 
