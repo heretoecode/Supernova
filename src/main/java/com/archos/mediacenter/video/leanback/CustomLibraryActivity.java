@@ -4,106 +4,92 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.view.*;
 import android.widget.*;
-import androidx.recyclerview.widget.*;
-import androidx.leanback.widget.Presenter;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
-import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
-import java.util.*;
 import java.util.concurrent.*;
-/** Four-section editor and library view, backed by the ordinary library snapshot. */
+
+/**
+ * The user's custom library page, backed by the ordinary library snapshot.
+ *
+ * <p>Editing (owner, 2 Nov 2026): the approved {@link EditPagePanel} opens over the real page, and every
+ * change re-renders the page behind it — "the live preview is the page itself". The page name in the top
+ * navigation follows the draft. Nothing is stored until Save; Discard restores the previous page.
+ */
 public final class CustomLibraryActivity extends LeanbackActivity {
- private Workspace workspace;private TopNavigation navigation;private final ExecutorService worker=Executors.newSingleThreadExecutor();private volatile boolean closed;private boolean snapshotLoading=true,snapshotFailed;
+ static final String NEW_PAGE_NAME = "New Page";
+ static final String NEW_PAGE_PLACEHOLDER = "Choose what to show. Your page fills in here.";
+ private Workspace workspace;private TopNavigation navigation;private final ExecutorService worker=Executors.newSingleThreadExecutor();private volatile boolean closed;
  @Override public void onCreate(Bundle state){super.onCreate(state);workspace=new Workspace();navigation=new TopNavigation(this,workspace,this::navigate,()->workspace.atTop());navigation.selectTab(6);setContentView(navigation);
   getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){public void handleOnBackPressed(){workspace.back();}});
   Snapshot cache=PreviewLibraryLoader.memoryCache();if(cache!=null)workspace.snapshot=cache;
   workspace.freshEntry = state == null;
-  if(state!=null){CustomLibraryPage draft=CustomLibraryPage.decode(state.getString("draft","{}"));if(draft!=null)workspace.draft=draft;workspace.editing=state.getBoolean("editing");int oldStep=state.getInt("step");workspace.step=Math.max(0,Math.min(3,state.getInt("editor_sections_version",1)<2?Math.max(0,oldStep-1):oldStep));workspace.original=state.getString("original",workspace.original);workspace.restoreFocus=state.getString("focus","");if(state.getInt("editor_sections_version",1)<2){String savedFocus=workspace.restoreFocus;for(int legacy=1;legacy<=4;legacy++)if(savedFocus.equals("wizard.step."+legacy)||savedFocus.startsWith("wizard.option."+legacy+".")){workspace.restoreFocus=savedFocus.replace("wizard.step."+legacy,"wizard.step."+Math.max(0,legacy-1)).replace("wizard.option."+legacy+".","wizard.option."+Math.max(0,legacy-1)+".");break;}}workspace.restoreScroll=state.getParcelable("scroll");}
-  workspace.render();PreviewLibraryLoader loader=new PreviewLibraryLoader(this);worker.execute(()->{try(Cursor cursor=loader.loadInBackground()){Snapshot library=loader.snapshot;runOnUiThread(()->{if(!closed)applySnapshot(library);});}catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("custom_library_load",failure);runOnUiThread(()->{if(!closed){snapshotLoading=false;snapshotFailed=true;workspace.preview();}});}});
+  if(state!=null){CustomLibraryPage draft=CustomLibraryPage.decode(state.getString("draft","{}"));if(draft!=null)workspace.draft=draft;workspace.editing=state.getBoolean("editing");workspace.original=state.getString("original",workspace.original);workspace.restoreFocus=state.getString("focus","");}
+  workspace.render();PreviewLibraryLoader loader=new PreviewLibraryLoader(this);worker.execute(()->{try(Cursor cursor=loader.loadInBackground()){Snapshot library=loader.snapshot;runOnUiThread(()->{if(!closed)applySnapshot(library);});}catch(RuntimeException failure){com.archos.mediacenter.video.diagnostics.Diagnostics.error("custom_library_load",failure);}});
  }
  /** A snapshot update is a data refresh, not a new library view lifecycle. */
- void applySnapshot(Snapshot library){workspace.snapshot=library;snapshotLoading=false;snapshotFailed=false;workspace.preview();if(!workspace.editing&&workspace.sharedLibrary!=null)workspace.sharedLibrary.setSnapshot(library);}
+ void applySnapshot(Snapshot library){workspace.snapshot=library;if(workspace.sharedLibrary!=null)workspace.sharedLibrary.setSnapshot(library);if(workspace.editor!=null){workspace.editor.snapshotChanged();workspace.updatePlaceholder();}}
  private void navigate(int index){if(index==6)return;if(index==4)startActivity(new Intent(this,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));else if(index==5)startActivity(new Intent(this,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));else{startActivity(new Intent(this,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));finish();}}
- @Override protected void onSaveInstanceState(Bundle state){workspace.rememberFocus();state.putString("focus",workspace.restoreFocus);state.putParcelable("scroll",workspace.restoreScroll);state.putString("draft",workspace.draft.encode());state.putString("original",workspace.original);state.putBoolean("editing",workspace.editing);state.putInt("step",workspace.step);state.putInt("editor_sections_version",2);super.onSaveInstanceState(state);}
- @Override protected void onDestroy(){closed=true;worker.shutdownNow();super.onDestroy();}
- private final class Workspace extends FrameLayout implements PageExitGuard,TopNavigation.ContentFocus {
-  final String[] steps={"Page Details & Content Type","Filters","Display Options","Review"};CustomLibraryPage draft;String original;boolean editing;int step;Snapshot snapshot=new Snapshot();LinearLayout options,libraryBody;LinearLayout footer;boolean choice;TextView preview;RecyclerView grid;PreviewLibraryColumns columns;String restoreFocus="";android.os.Parcelable restoreScroll;String pendingFocus;PreviewPages sharedLibrary;String editorOpener="edit";LinearLayout wizardRail;ScrollView wizardPreview,wizardOptions;FrameLayout wizardPreviewFrame;String wizardCentreAnchor;LinearLayout previewItems;TextView sectionHeading;String choiceOpener;boolean editorReady;int formGeneration,renderedStep=-1;final Map<Integer,Integer> formScroll=new HashMap<>();
-  Workspace(){super(CustomLibraryActivity.this);setPadding(dp(24),dp(14),dp(24),dp(16));CustomLibraryPage saved=CustomLibraryPage.load(getContext());editing=saved==null;draft=saved==null?new CustomLibraryPage():CustomLibraryPage.decode(saved.encode());original=draft.encode();getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus,newFocus)->{
-   if(editing||navigation==null||newFocus==null)return;View target=newFocus;
-   while(target!=this&&!(target.getTag() instanceof String)&&target.getParent() instanceof View)target=(View)target.getParent();
-   if(!(target.getTag() instanceof String))return;
-   for(Entry entry:draft.entries(snapshot))if(entry.key().equals(target.getTag())){navigation.setArtwork(entry.backdrop);navigation.setScrolled(grid!=null&&grid.canScrollVertically(-1));break;}
-  });}
+ @Override protected void onSaveInstanceState(Bundle state){workspace.rememberFocus();state.putString("focus",workspace.restoreFocus);state.putString("draft",workspace.draft.encode());state.putString("original",workspace.original);state.putBoolean("editing",workspace.editing);super.onSaveInstanceState(state);}
+ @Override protected void onDestroy(){closed=true;worker.shutdownNow();workspace.dismissEditor();super.onDestroy();}
+ /** The open Edit Page panel, or null. */
+ EditPagePanel editor(){return workspace.editor;}
+
+ private final class Workspace extends FrameLayout implements PageExitGuard,TopNavigation.ContentFocus,EditPagePanel.Host {
+  CustomLibraryPage draft;String original;boolean editing;Snapshot snapshot=new Snapshot();LinearLayout libraryBody;String restoreFocus="";String pendingFocus;PreviewPages sharedLibrary;EditPagePanel editor;
+  /** The blank draft a new page starts from; until it changes, the page shows {@link #NEW_PAGE_PLACEHOLDER}. */
+  private final String blank;
+  Workspace(){super(CustomLibraryActivity.this);CustomLibraryPage saved=CustomLibraryPage.load(getContext());editing=saved==null;
+   CustomLibraryPage fresh=new CustomLibraryPage();fresh.name=NEW_PAGE_NAME;blank=fresh.encode();
+   draft=saved==null?fresh:CustomLibraryPage.decode(saved.encode());original=draft.encode();
+   getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus,newFocus)->{
+    if(editing||navigation==null||newFocus==null)return;View target=newFocus;
+    while(target!=this&&!(target.getTag() instanceof String)&&target.getParent() instanceof View)target=(View)target.getParent();
+    if(!(target.getTag() instanceof String))return;
+    for(Entry entry:draft.entries(snapshot))if(entry.key().equals(target.getTag())){navigation.setArtwork(entry.backdrop);break;}
+   });}
   /** True only for the first library mount of a newly opened page (not a restore or editor return). */
   boolean freshEntry;
-  @Override public boolean focusFromNavigation(){if(editing){View rail=findViewWithTag("wizard.step."+step);return rail!=null&&rail.requestFocus();}return sharedLibrary!=null&&sharedLibrary.focusFromNavigation();}
-  boolean atTop(){if(!editing&&sharedLibrary!=null)return sharedLibrary.atTop();return editing?wizardRail!=null&&findFocus()==findViewWithTag("wizard.step.0"):grid==null||!grid.canScrollVertically(-1);}
-  TextView action(String label,Runnable run){return SharedThreePanel.accentAction(getContext(),label,run);}
-  void footerAction(String label,Runnable run){TextView button=action(label,run);button.setTag("wizard.footer."+label);button.setMinHeight(dp(50));button.setBackground(SharedThreePanel.control(getContext(),10));LayoutParams size=new LayoutParams(-2,-2);size.topMargin=dp(6);footer.addView(button,size);}
-  TextView row(String label,Runnable run){TextView row=action(label,run);row.setTag("wizard.option."+step+"."+label.replaceFirst("^[✓○]\s*", "").split(":",2)[0].trim());row.setPadding(dp(8),dp(8),dp(8),dp(8));options.addView(row,new LayoutParams(-1,-2));return row;}
-  LinearLayout column(){LinearLayout view=new LinearLayout(getContext());view.setOrientation(LinearLayout.VERTICAL);return view;}
-  void rememberFocus(){View focused=findFocus();if(focused!=null&&focused.getTag() instanceof String)restoreFocus=(String)focused.getTag();if(grid!=null&&grid.getLayoutManager()!=null)restoreScroll=grid.getLayoutManager().onSaveInstanceState();}
-  void render(){rememberFocus();if(pendingFocus!=null){restoreFocus=pendingFocus;pendingFocus=null;}if(!editing){editorReady=false;if(previewItems!=null)cancelPreviewArtwork(previewItems);previewItems=null;removeAllViews();library();return;}
-   boolean saved=CustomLibraryPage.load(getContext())!=null;
-   if(editorReady){if(renderedStep>=0&&!choice)formScroll.put(renderedStep,wizardOptions.getScrollY());renderSection(saved);return;}
-   removeAllViews();setPadding(dp(24),dp(14),dp(24),dp(16));setBackground(null);
-   SharedThreePanel panels=new SharedThreePanel(getContext());LinearLayout left=column();options=column();LinearLayout right=column();ScrollView centreScroll=new ScrollView(getContext()),rightScroll=new ScrollView(getContext());wizardOptions=centreScroll;centreScroll.addView(options);LinearLayout centre=column();footer=column();SharedThreePanel.heading(centre,steps[step]);sectionHeading=(TextView)centre.getChildAt(0);centre.addView(centreScroll,new LinearLayout.LayoutParams(-1,0,1));centre.addView(footer,new LinearLayout.LayoutParams(-1,-2));wizardRail=left;wizardPreview=rightScroll;wizardPreviewFrame=new FrameLayout(getContext());wizardPreviewFrame.setTag("wizard.preview");wizardPreviewFrame.setFocusable(true);wizardPreviewFrame.setFocusableInTouchMode(true);rightScroll.setFocusable(false);rightScroll.setFocusableInTouchMode(false);wizardPreviewFrame.setOnFocusChangeListener((v,focused)->((FrameLayout)v).setForeground(focused?new PreviewFocusGlow(getContext(),16):null));wizardPreviewFrame.addView(right,new FrameLayout.LayoutParams(-1,-1));ScrollView railScroll=new ScrollView(getContext());railScroll.setVerticalScrollBarEnabled(false);railScroll.addView(left);panels.panels(railScroll,centre,wizardPreviewFrame);for(View panel:new View[]{railScroll,centre,wizardPreviewFrame}){android.graphics.drawable.GradientDrawable surface=new android.graphics.drawable.GradientDrawable(android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0xf0212c39,0xf00b121d});surface.setCornerRadius(dp(16));surface.setStroke(dp(1),0x887f8996);panel.setBackground(surface);}FrameLayout.LayoutParams panelSize=new FrameLayout.LayoutParams(-1,-1);addView(SharedThreePanel.viewport(panels),panelSize);
-   SharedThreePanel.heading(left,"Edit Library");for(int n=0;n<steps.length;n++){final int position=n;TextView entry=action((n+1)+". "+steps[n],()->{step=position;pendingFocus="wizard.step."+position;render();});entry.setTag("wizard.step."+n);SharedThreePanel.rowSeparator(entry);entry.setOnFocusChangeListener((v,focused)->{if(focused&&step!=position){step=position;pendingFocus="wizard.step."+position;post(this::render);}});entry.setMaxLines(3);entry.setPadding(dp(8),dp(10),dp(8),dp(10));left.addView(entry,new LayoutParams(-1,-2));}
+  @Override public boolean focusFromNavigation(){if(editing)return false;return sharedLibrary!=null&&sharedLibrary.focusFromNavigation();}
+  boolean atTop(){return sharedLibrary==null||sharedLibrary.atTop();}
+  void rememberFocus(){View focused=findFocus();if(focused!=null&&focused.getTag() instanceof String)restoreFocus=(String)focused.getTag();}
 
-   SharedThreePanel.heading(right,"Live Preview");preview=SharedThreePanel.text(getContext(),"",16);previewItems=column();previewItems.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);LinearLayout previewContent=column();previewContent.addView(preview);previewContent.addView(previewItems);rightScroll.addView(previewContent);right.addView(rightScroll,new LinearLayout.LayoutParams(-1,0,1));
-   editorReady=true;renderSection(saved);
-  }
-  void renderSection(boolean saved){
-   int expected=++formGeneration;
-   if(options.hasFocus()||footer.hasFocus()){View rail=findViewWithTag("wizard.step."+step);if(rail!=null)rail.requestFocus();}options.removeAllViews();footer.removeAllViews();choice=false;sectionHeading.setText(steps[step]);
-   for(int n=1;n<wizardRail.getChildCount();n++){View rail=wizardRail.getChildAt(n);if(rail.getTag() instanceof String){boolean selected=("wizard.step."+step).equals(rail.getTag());rail.setSelected(selected);((TextView)rail).setText((selected?"✓  ":"")+steps[n-2]);}}
-   switch(step){case 0:row("Name: "+draft.name,()->PreviewTextInput.show(getContext(),"Page Name",draft.name,40,value->{draft.name=value;render();}));if(saved)row("Delete Page",()->PreviewDialog.confirmPageDelete(getContext(),"Delete this page?","Your library media, watched state and playback progress are kept.",()->{if(CustomLibraryPage.delete(getContext()))finish();else PreviewDialog.read(getContext(),"Page not deleted","Retry after returning to the page.");}));
-     for(int type=0;type<3;type++){final int selected=type;String value=new String[]{"movies","tv","both"}[type];row((draft.type.equals(value)?"✓  ":"○  ")+new String[]{"Movies","TV Shows","Both"}[type],()->{draft.type=new String[]{"movies","tv","both"}[selected];render();});}break;
-    case 1:row("Genres: "+(draft.genres.isEmpty()?"All":android.text.TextUtils.join(", ",draft.genres)),()->{Set<String> available=new TreeSet<>();for(Entry entry:snapshot.movies)available.addAll(PreviewGenres.parse(entry.genres));for(Entry entry:snapshot.shows)available.addAll(PreviewGenres.parse(entry.genres));PreviewGenres.choose(getContext(),available,draft.genres,draft.allGenres,chosen->{draft.genres.clear();draft.genres.addAll(chosen);render();});});row("Genre matching: "+(draft.allGenres?"All":"Any"),()->{draft.allGenres=!draft.allGenres;render();});
-     row("Year: "+(draft.year==0?"All":draft.year),()->{TreeSet<Integer> years=new TreeSet<>(Comparator.reverseOrder());for(Entry entry:snapshot.movies)if(entry.year()>0)years.add(entry.year());for(Entry entry:snapshot.shows)if(entry.year()>0)years.add(entry.year());if(draft.year>0)years.add(draft.year);List<Integer> values=new ArrayList<>();values.add(0);values.addAll(years);String[] labels=values.stream().map(value->value==0?"All":String.valueOf(value)).toArray(String[]::new);choose("Year",labels,values.indexOf(draft.year),n->draft.year=values.get(n));});
-     row("Watched state: "+draft.watched,()->choose("Watched state",new String[]{"All","Watched","Unwatched","In Progress"},Arrays.asList("all","watched","unwatched","progress").indexOf(draft.watched),n->draft.watched=new String[]{"all","watched","unwatched","progress"}[n]));row("Minimum rating: "+(draft.rating==0?"Any":draft.rating),()->choose("Minimum rating",new String[]{"Any","5","6","7","8","9"},Arrays.asList(0d,5d,6d,7d,8d,9d).indexOf(draft.rating),n->draft.rating=n==0?0:n+4));
-     facet("Original Language",draft.language,0,value->draft.language=value);facet("Studio / Network",draft.studio,1,value->draft.studio=value);break;
-    case 2:row("View: "+draft.view,()->choose("Display",new String[]{"Grid","List"},draft.view.equals("grid")?0:1,n->draft.view=n==0?"grid":"list"));row("Sort: "+draft.sort,()->choose("Sort",new String[]{"Title","Year","Date Added"},Arrays.asList("title","year","added").indexOf(draft.sort),n->draft.sort=new String[]{"title","year","added"}[n]));row("Direction: "+(draft.descending?"Descending":"Ascending"),()->{draft.descending=!draft.descending;render();});break;
-    case 3:review(options);footerAction(saved?"Save Changes":"Save Page",this::save);break;
-   }
-   renderedStep=step;preview();
-   options.post(()->{if(expected!=formGeneration||!editing||!editorReady)return;wizardOptions.scrollTo(0,formScroll.getOrDefault(step,0));View target=findViewWithTag(restoreFocus);if(target==null)target=findViewWithTag("wizard.step."+step);if(target!=null)target.requestFocus();});
-  }
-  void choose(String title,String[] labels,int current,java.util.function.IntConsumer chosen){int expected=++formGeneration;View invoking=findFocus();choiceOpener=invoking!=null&&invoking.getTag() instanceof String?(String)invoking.getTag():null;formScroll.put(step,wizardOptions.getScrollY());choice=true;options.removeAllViews();String currentLabel=invoking instanceof TextView?((TextView)invoking).getText().toString():"";int colon=currentLabel.indexOf(':');if(colon>=0)currentLabel=currentLabel.substring(colon+1).trim();SharedThreePanel.heading(options,current<0&&!currentLabel.isEmpty()?title+" — Current: "+currentLabel:title);for(int n=0;n<labels.length;n++){final int selected=n;TextView option=row((n==current?"✓  ":"")+labels[n],()->{chosen.accept(selected);pendingFocus=choiceOpener;render();});option.setSelected(n==current);option.setContentDescription(labels[n]+(n==current?", selected":""));}options.post(()->{if(expected==formGeneration&&choice&&editing&&options.getChildCount()>2)options.getChildAt(2+Math.max(0,current)).requestFocus();});}
-  void facet(String title,String selected,int kind,java.util.function.Consumer<String> changed){
-   Set<String> available=new TreeSet<>();List<Entry> all=new ArrayList<>(snapshot.movies);all.addAll(snapshot.shows);
-   for(Entry entry:all){String value=kind==0?entry.language:kind==1?entry.studio:entry.collection;if(value==null||value.isEmpty()||kind==0&&"und".equals(value))continue;if(kind==1)available.addAll(PreviewGenres.parse(value));else available.add(value);}
-   if(available.isEmpty()&&selected.isEmpty())return;available.add(selected);available.remove("");List<String> choices=new ArrayList<>();choices.add("");choices.addAll(available);String[] labels=choices.stream().map(value->value.isEmpty()?"All":kind==0?java.util.Locale.forLanguageTag(value.replace('_','-')).getDisplayName():value).toArray(String[]::new);
-   row(title+": "+(selected.isEmpty()?"All":kind==0?Locale.forLanguageTag(selected.replace('_','-')).getDisplayName():selected),()->{choose(title,labels,choices.indexOf(selected),n->changed.accept(choices.get(n)));if(kind==0)for(int n=1;n<choices.size();n++){TextView row=(TextView)options.getChildAt(n+2);PreviewLanguageIcon icon=new PreviewLanguageIcon(row.getContext(),choices.get(n));icon.setBounds(0,0,dp(22),dp(22));row.setCompoundDrawables(icon,null,null,null);row.setCompoundDrawablePadding(dp(8));}});if(kind==0&&!selected.isEmpty())PreviewLanguageIcon.apply((TextView)options.getChildAt(options.getChildCount()-1),selected);
-  }
-  void review(LinearLayout target){String[] values={"Name: "+draft.name,"Content: "+(draft.type.equals("tv")?"TV Shows":draft.type.equals("movies")?"Movies":"Both"),"Genres: "+(draft.genres.isEmpty()?"All Genres":android.text.TextUtils.join(", ",draft.genres)),"Genre Match: "+(draft.allGenres?"All":"Any"),"Year: "+(draft.year==0?"All":draft.year),"Watched State: "+draft.watched,"Minimum Rating: "+(draft.rating==0?"Any":draft.rating),"Original Language: "+(draft.language.isEmpty()?"All":Locale.forLanguageTag(draft.language.replace('_','-')).getDisplayName()),"Studio / Network: "+(draft.studio.isEmpty()?"All":draft.studio),"Display: "+draft.view,"Sort: "+draft.sort+" · "+(draft.descending?"Descending":"Ascending")};if(!draft.collection.isEmpty()){TextView retained=SharedThreePanel.text(getContext(),"Retained collection filter: "+draft.collection,15);target.addView(retained);SharedThreePanel.divider(target);}for(String value:values){TextView text=SharedThreePanel.text(getContext(),value,15);if(value.startsWith("Original Language:")&&!draft.language.isEmpty())PreviewLanguageIcon.apply(text,draft.language);target.addView(text);SharedThreePanel.divider(target);}}
-  void preview(){if(preview==null)return;if(previewItems!=null){for(int i=0;i<previewItems.getChildCount();i++)cancelPreviewArtwork(previewItems.getChildAt(i));previewItems.removeAllViews();}List<Entry> entries=draft.entries(snapshot);if(snapshotLoading&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()){preview.setText("Loading indexed library…");return;}if(snapshotFailed&&snapshot.movies.isEmpty()&&snapshot.shows.isEmpty()){preview.setText("Could not load the indexed library. Your page settings are kept; reopen to retry.");return;}StringBuilder text=new StringBuilder(snapshotFailed?"Could not refresh. Showing cached indexed results.\n\n":"").append(draft.name).append("\n\n").append(entries.isEmpty()?emptySummary():PreviewLibrarySummary.describe(getContext(),snapshot,entries)).append("\n");if(entries.isEmpty())text.append("\nNo matching indexed items.");else text.append("\nShowing ").append(Math.min(20,entries.size())).append(" of ").append(entries.size()).append(" matching items.\n");preview.setText(text);if(previewItems!=null)for(int i=0;i<Math.min(20,entries.size());i++)previewItem(entries.get(i));}
-  void previewItem(Entry entry){
-   LinearLayout item=new LinearLayout(getContext());item.setGravity(Gravity.CENTER_VERTICAL);item.setTag("wizard.preview.item:"+entry.key());item.setPadding(0,dp(6),0,dp(6));
-   ImageView poster=new ImageView(getContext());poster.setScaleType(ImageView.ScaleType.FIT_CENTER);poster.setImageDrawable(new PreviewIcon(entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow?"tv":"movies"));item.addView(poster,new LinearLayout.LayoutParams(dp(50),dp(75)));
-   android.net.Uri artwork=entry.media.getPosterUri();if(artwork!=null)com.squareup.picasso.Picasso.get().load(artwork).resize(dp(50),dp(75)).centerInside().noFade().into(poster);
-   TextView title=SharedThreePanel.text(getContext(),PreviewPages.displayName(entry),15);title.setMaxLines(3);title.setEllipsize(android.text.TextUtils.TruncateAt.END);LinearLayout.LayoutParams copy=new LinearLayout.LayoutParams(0,-2,1);copy.leftMargin=dp(8);item.addView(title,copy);previewItems.addView(item,new LinearLayout.LayoutParams(-1,-2));
-  }
-  void cancelPreviewArtwork(View view){if(view instanceof ImageView)com.squareup.picasso.Picasso.get().cancelRequest((ImageView)view);if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)cancelPreviewArtwork(((ViewGroup)view).getChildAt(i));}
-  @Override protected void onDetachedFromWindow(){if(previewItems!=null)cancelPreviewArtwork(previewItems);super.onDetachedFromWindow();}
-  String emptySummary(){Snapshot empty=new Snapshot();if(draft.type.equals("tv"))return PreviewLibrarySummary.describe(getContext(),empty,true);if(draft.type.equals("movies"))return PreviewLibrarySummary.describe(getContext(),empty,false);return PreviewLibrarySummary.describe(getContext(),empty,false)+"\n\n"+PreviewLibrarySummary.describe(getContext(),empty,true);}
-  void save(){save(null);}
-  boolean save(Runnable leave){String validation=draft.validation();if(validation!=null){PreviewDialog.read(getContext(),"Review page settings",validation);return false;}if(!draft.save(getContext())){PreviewDialog.read(getContext(),"Page not saved","Keep editing and retry.");return false;}original=draft.encode();editing=false;pendingFocus="custom.control."+editorOpener;sharedLibrary=null;navigation.updateCustomPage();render();if(leave!=null)leave.run();return true;}
-  @Override public void requestExit(Runnable leave){if(!editing||draft.encode().equals(original)){leave.run();return;}PreviewDialog.message(getContext(),"Unsaved Changes","You've made changes to your custom library page that haven't been saved. What would you like to do?",false,new String[]{"Continue Editing","Save Page","Discard Changes"},0,n->{if(n==1)save(leave);else if(n==2){CustomLibraryPage clean=CustomLibraryPage.decode(original);if(clean!=null)draft=clean;choice=false;editing=CustomLibraryPage.load(getContext())==null;pendingFocus=editing?"wizard.step."+step:"custom.control."+editorOpener;sharedLibrary=null;render();leave.run();}});}
+  void render(){rememberFocus();if(pendingFocus!=null){restoreFocus=pendingFocus;pendingFocus=null;}removeAllViews();library();
+   if(editing)openEditor();else{dismissEditor();navigation.updateCustomPage();}}
 
-  void restoreCentreFocus(){View target=wizardCentreAnchor==null?null:findViewWithTag(wizardCentreAnchor);if(target!=null&&target.isShown()&&target.isFocusable()&&target.requestFocus())return;for(View field:options.getFocusables(FOCUS_FORWARD))if(field.isShown()&&field.requestFocus())return;View rail=findViewWithTag("wizard.step."+step);if(rail!=null)rail.requestFocus();}
-  void closeEditor(){CustomLibraryPage saved=CustomLibraryPage.load(getContext());if(saved!=null)draft=saved;original=draft.encode();editing=false;pendingFocus="custom.control."+editorOpener;sharedLibrary=null;render();}
-  void back(){if(editing){if(choice){pendingFocus=choiceOpener;render();return;}if(wizardPreviewFrame!=null&&wizardPreviewFrame.hasFocus()){restoreCentreFocus();return;}if((options!=null&&options.hasFocus()||footer!=null&&footer.hasFocus())||footer!=null&&footer.hasFocus()){View rail=findViewWithTag("wizard.step."+step);if(rail!=null)rail.requestFocus();return;}requestExit(CustomLibraryPage.load(getContext())==null?CustomLibraryActivity.this::finish:this::closeEditor);return;}requestExit(CustomLibraryActivity.this::finish);}
-  void persistDisplay(){if(!draft.save(getContext())){PreviewDialog.read(getContext(),"Page not saved","Retry after returning to the page.");return;}render();}
-  void control(LinearLayout controls,String key,String label,Runnable action){TextView button=TvButton.create(getContext(),label,action,true);button.setTag("custom.control."+key);LinearLayout.LayoutParams size=new LinearLayout.LayoutParams(-2,-2);size.leftMargin=dp(8);controls.addView(button,size);}
-  void edit(int selected){editorOpener="edit";editing=true;step=selected;original=draft.encode();pendingFocus="wizard.step."+step;render();}
+  // ---- Edit Page panel (EditPagePanel.Host) ----
+
+  void openEditor(){
+   updatePlaceholder();showDraftName();
+   if(editor==null||!editor.isShowing())editor=EditPagePanel.show(CustomLibraryActivity.this,this);
+  }
+  void dismissEditor(){if(editor!=null){editor.dismiss();editor=null;}}
+  @Override public CustomLibraryPage draft(){return draft;}
+  @Override public boolean isNew(){return CustomLibraryPage.load(getContext())==null;}
+  @Override public Snapshot snapshot(){return snapshot;}
+  @Override public void changed(){if(sharedLibrary!=null)sharedLibrary.configureCustomLibrary(draft,()->edit(0));updatePlaceholder();showDraftName();}
+  void updatePlaceholder(){if(sharedLibrary!=null)sharedLibrary.setCustomPlaceholder(editing&&isNew()&&draft.encode().equals(blank)?NEW_PAGE_PLACEHOLDER:null);}
+  void showDraftName(){navigation.previewCustomPage(draft.name.trim().isEmpty()?NEW_PAGE_NAME:draft.name.trim(),isNew());}
+  @Override public void save(){save(null);}
+  @Override public void back(){if(editing){requestExit(isNew()?CustomLibraryActivity.this::finish:this::closeEditor);return;}requestExit(CustomLibraryActivity.this::finish);}
+  @Override public void delete(){PreviewDialog.confirmPageDelete(getContext(),"Delete this page?","Removes this page only. Your media, watched state and playback progress are never deleted.",()->{if(CustomLibraryPage.delete(getContext())){dismissEditor();finish();}else PreviewDialog.read(getContext(),"Page not deleted","Retry after returning to the page.");});}
+
+  boolean save(Runnable leave){String validation=draft.validation();if(validation!=null){PreviewDialog.read(getContext(),"Check the page settings",validation);return false;}if(!draft.save(getContext())){PreviewDialog.read(getContext(),"Page not saved","Keep editing and retry.");return false;}original=draft.encode();editing=false;freshEntry=false;pendingFocus="custom.control.edit";sharedLibrary=null;render();if(leave!=null)leave.run();return true;}
+  @Override public void requestExit(Runnable leave){if(!editing||draft.encode().equals(original)){leave.run();return;}
+   PreviewDialog.message(getContext(),"Unsaved Changes","You've changed this page. Save the changes, discard them, or keep editing?",false,new String[]{"Keep Editing","Save","Discard"},0,n->{
+    if(n==1)save(leave);
+    else if(n==2){CustomLibraryPage clean=CustomLibraryPage.decode(original);if(clean!=null)draft=clean;boolean wasNew=isNew();editing=wasNew;if(!wasNew){pendingFocus="custom.control.edit";sharedLibrary=null;render();}leave.run();}
+   });}
+  void closeEditor(){CustomLibraryPage saved=CustomLibraryPage.load(getContext());if(saved!=null)draft=saved;original=draft.encode();editing=false;pendingFocus="custom.control.edit";sharedLibrary=null;render();}
+  void edit(int ignored){editing=true;original=draft.encode();render();}
+
   void library(){
-   editorReady=false;setBackground(null);setPadding(0,0,0,0);
-   libraryBody=column();addView(libraryBody,new FrameLayout.LayoutParams(-1,-1));options=null;preview=null;grid=null;
+   setBackground(null);setPadding(0,0,0,0);
+   libraryBody=new LinearLayout(getContext());libraryBody.setOrientation(LinearLayout.VERTICAL);addView(libraryBody,new FrameLayout.LayoutParams(-1,-1));
    if(sharedLibrary==null){sharedLibrary=new PreviewPages(getContext(),(holder,item)->new VideoViewClickedListener(CustomLibraryActivity.this).onItemClicked(holder,item,null,null));sharedLibrary.configureCustomLibrary(draft,()->edit(0));sharedLibrary.setArtworkListener(uri->{if(navigation!=null)navigation.setArtwork(uri);});
     // Owner 2 Nov 2026: like Movies/TV, scrolling content blurs and fades under the top bar.
     sharedLibrary.setScrollListener(scrolled->{if(navigation!=null)navigation.setScrolled(scrolled);});}
    if(sharedLibrary.getParent() instanceof ViewGroup)((ViewGroup)sharedLibrary.getParent()).removeView(sharedLibrary);
    sharedLibrary.setSnapshot(snapshot);libraryBody.addView(sharedLibrary,new LinearLayout.LayoutParams(-1,-1));
+   if(editing)return;
    if (freshEntry) {
        // Owner decision 2 Nov 2026: opening the custom page from the top bar behaves like
        // Movies/TV — focus stays visibly on this page's own tab; DOWN then enters the page
@@ -115,25 +101,5 @@ public final class CustomLibraryActivity extends LeanbackActivity {
    }
    if(restoreFocus!=null&&restoreFocus.startsWith("custom.control.")){String control=restoreFocus.substring("custom.control.".length());sharedLibrary.post(()->sharedLibrary.focusCustomControl(control));}
   }
-  @Override public boolean dispatchKeyEvent(KeyEvent event){
-   if(editing&&event.getAction()==KeyEvent.ACTION_DOWN){int key=event.getKeyCode();View focused=findFocus();
-    if(wizardRail!=null&&wizardRail.hasFocus()){
-     if(key==KeyEvent.KEYCODE_DPAD_LEFT)return true;
-     if(key==KeyEvent.KEYCODE_DPAD_RIGHT){boolean entered=false;for(int n=0;n<options.getChildCount();n++)if(options.getChildAt(n).isFocusable()){entered=options.getChildAt(n).requestFocus();break;}if(!entered&&footer.getChildCount()>0)footer.getChildAt(0).requestFocus();return true;}
-     if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){if(key==KeyEvent.KEYCODE_DPAD_UP&&focused==findViewWithTag("wizard.step.0"))return false;int position=wizardRail.indexOfChild(focused),next=position+(key==KeyEvent.KEYCODE_DPAD_UP?-1:1);if(next>=1&&next<wizardRail.getChildCount())wizardRail.getChildAt(next).requestFocus();return true;}
-    }else if((options!=null&&options.hasFocus()||footer!=null&&footer.hasFocus())){
-     wizardCentreAnchor=focused!=null&&focused.getTag() instanceof String?(String)focused.getTag():null;
-     if(key==KeyEvent.KEYCODE_DPAD_LEFT){View rail=findViewWithTag("wizard.step."+step);if(rail!=null)rail.requestFocus();return true;}
-     if(key==KeyEvent.KEYCODE_DPAD_RIGHT){wizardPreviewFrame.requestFocus();return true;}
-     if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){ViewGroup centre=(ViewGroup)wizardOptions.getParent();View next=FocusFinder.getInstance().findNextFocus(centre,focused,key==KeyEvent.KEYCODE_DPAD_UP?FOCUS_UP:FOCUS_DOWN);if(next!=null&&next!=focused)next.requestFocus();return true;}
-    }else if(wizardPreviewFrame!=null&&wizardPreviewFrame.hasFocus()){
-     if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){wizardPreview.smoothScrollBy(0,key==KeyEvent.KEYCODE_DPAD_UP?-dp(72):dp(72));return true;}
-     if(key==KeyEvent.KEYCODE_DPAD_RIGHT)return true;
-     if(key==KeyEvent.KEYCODE_DPAD_LEFT){restoreCentreFocus();return true;}
-    }
-   }return super.dispatchKeyEvent(event);
-  }
-  class Card extends RecyclerView.ViewHolder{final Presenter.ViewHolder nativeHolder;final boolean table;Card(Presenter.ViewHolder holder,boolean table){super(holder.view);nativeHolder=holder;this.table=table;}}
-  int dp(int n){return SharedThreePanel.dp(getContext(),n);}
  }
 }

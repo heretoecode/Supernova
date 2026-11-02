@@ -510,8 +510,8 @@ public final class PreviewPages extends FrameLayout {
         } else if(tab==1||tab==2) {
             cells.add(new Cell(HERO,customLibrary!=null?customLibrary.name:tab==1?"Movies":"TV Shows",featured()));
             header(tab==1?"Movie library":"TV show library",true);
-            List<Entry> entries=filtered(); for(Entry e:entries)cells.add(new Cell(POSTER,"",e));
-            if(loaded&&entries.isEmpty())header(providers[tab].isEmpty()?"No matching titles":"No known matches in cached provider availability",false);
+            List<Entry> entries=customPlaceholder!=null?java.util.Collections.<Entry>emptyList():filtered(); for(Entry e:entries)cells.add(new Cell(POSTER,"",e));
+            if(customPlaceholder!=null)header(customPlaceholder,false);else if(loaded&&entries.isEmpty())header(providers[tab].isEmpty()?"No matching titles":"No known matches in cached provider availability",false);
         } else {
             cells.add(new Cell(NETWORK,"Network & Files",null));
 
@@ -542,6 +542,9 @@ public final class PreviewPages extends FrameLayout {
     private static String entrySignature(Entry e){return e.key()+"|"+displayName(e)+"|"+e.backdrop+"|"+e.media.getPosterUri()+"|"+e.secondary+"|"+e.active+"|"+e.bytes+"|"+e.runtime+"|"+e.year()+"|"+e.resolution+"|"+e.audio+"|"+e.codec+"|"+e.hdr+"|"+e.tagline+"|"+(e.homeMetadata==null?"":SharedMetadata.primary(e.homeMetadata).toString()+e.homeMetadata.technical)+"|"+(e.media instanceof Video?((Video)e.media).getResumeMs():0);}
     private String signature(Cell c){String base=tab+":"+c.title+":"+c.headingIcon+":"+c.type+":"+(tab>0&&tab<3?listMode[tab]+":"+sorts[tab]+":"+ascending[tab]+":"+genres[tab]+":"+selectedYears[tab]+":"+unmatched[tab]+":"+providers[tab]+":"+columns[tab].sortColumn+":"+columns[tab].ascending+":"+columns[tab].visible():"");if(c.value instanceof Entry)base+=entrySignature((Entry)c.value);else if(c.type==RAIL){StringBuilder rail=new StringBuilder(base);for(Entry e:(List<Entry>)c.value)rail.append(entrySignature(e));base=rail.toString();}else base+=String.valueOf(c.value);if(c.type==HERO&&tab>0)base+=LibraryStatistics.calculate(snapshot,customLibrary!=null?customLibrary.entries(snapshot):tab==2?snapshot.shows:snapshot.movies,System.currentTimeMillis(),java.util.TimeZone.getDefault()).signature();if(c.type==NETWORK_PANEL||c.type==NETWORK){StringBuilder sources=new StringBuilder(base);for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:librarySources)sources.append(source.getName()).append(source.getUri());for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:savedLocations)sources.append(source.getName()).append(source.getUri());base=sources.append(files).toString();}return base;}
     private CustomLibraryPage customLibrary;private Runnable customEdit;
+    /** Text shown instead of results while a brand-new custom page has no settings yet (owner, 2 Nov 2026). */
+    private String customPlaceholder;
+    public void setCustomPlaceholder(String text){if(java.util.Objects.equals(text,customPlaceholder))return;customPlaceholder=text;render();}
     public void configureCustomLibrary(CustomLibraryPage page,Runnable edit){
         customLibrary=page;customEdit=edit;tab=1;listMode[1]="list".equals(page.view);sorts[1]="title".equals(page.sort)?1:"year".equals(page.sort)?2:0;ascending[1]=!page.descending;columns[1]=new PreviewLibraryColumns(getContext(),true,"custom_");
         android.content.SharedPreferences saved=preferences;genres[1]=saved.getString("preview_custom_genres","");selectedYears[1]=saved.getString("preview_custom_years","");providers[1]=saved.getString("preview_custom_providers","");render();

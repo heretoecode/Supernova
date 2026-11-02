@@ -44,7 +44,7 @@ jobs:
           git -C nova/MediaLib apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-medialib-test-fixtures.patch"
       - name: Run requested capture tests
         run: |
-          set -uo pipefail
+          set +e -uo pipefail
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' > /dev/null
           cd nova/Video
           filters=$(python3 -c "import json;print(' '.join('--tests '+t for t in json.load(open('.github/diagnostics/preview-request.json'))['tests']))")
@@ -52,6 +52,14 @@ jobs:
           ./gradlew testNoamazonReleaseUnitTest $filters -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --max-workers=4 \
             -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | grep -E "FAILED|PASSED|tests completed|BUILD" | tail -60
           echo "exit=${PIPESTATUS[0]}" > "$RUNNER_TEMP/test-exit"
+          # Failing assertions, so a red run still explains itself (renders are published either way).
+          python3 - <<'PY' | tee -a "$RUNNER_TEMP/test-exit"
+          import glob, xml.etree.ElementTree as ET
+          for path in glob.glob('build/test-results/**/*.xml', recursive=True):
+              for case in ET.parse(path).getroot().iter('testcase'):
+                  for bad in list(case.findall('failure')) + list(case.findall('error')):
+                      print(f"FAILED {case.get('classname')}.{case.get('name')}: {(bad.get('message') or '')[:400]}")
+          PY
       - name: Publish renders to previews/claude
         env:
           SOURCE_SHA: ${{ github.sha }}

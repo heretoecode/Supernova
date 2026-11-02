@@ -1,5 +1,8 @@
-{"purpose": "0.152 Playback Settings side panel (3 tabs, in-panel track lists, download results) and custom-page blur",
- "tests": ["com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+{"purpose": "0.152 Edit Page side panel over the live page; Playback Settings side panel fix-up",
+ "tests": ["com.archos.mediacenter.video.leanback.EditPagePanelTest",
+           "com.archos.mediacenter.video.leanback.NextQaWizardTest",
+           "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+           "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+           "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
            "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
-           "com.archos.mediacenter.video.player.Playback141RenderTest",
-           "com.archos.mediacenter.video.leanback.NextQaWizardTest"]}
+           "com.archos.mediacenter.video.player.Playback141RenderTest"]}

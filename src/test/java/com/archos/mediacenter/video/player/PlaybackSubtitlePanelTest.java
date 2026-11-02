@@ -82,7 +82,7 @@ public class PlaybackSubtitlePanelTest {
     }
     @Test public void opacityIsDimmedWhileBackgroundIsOff(){
         assertEquals(0,model.get("background"));assertFalse(row("opacity").isEnabled());assertTrue(row("opacity").getAlpha()<.5f);
-        key(row("opacity"),KeyEvent.KEYCODE_DPAD_LEFT);assertEquals("Dimmed stepper does not change",255,model.get("opacity"));
+        assertFalse("A dimmed row is skipped by the remote",row("opacity").requestFocus());row("opacity").dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_DPAD_LEFT));assertEquals("Dimmed stepper does not change",255,model.get("opacity"));
         row("background").performClick();assertTrue(row("opacity").isEnabled());assertEquals(1f,row("opacity").getAlpha(),.001f);
     }
     @Test public void subtitleTrackIsAStepperWithItsFlag(){

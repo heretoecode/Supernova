@@ -193,7 +193,9 @@ public final class TopNavigation extends LinearLayout {
         return null;
     }
     private static String customLabel(Context c){CustomLibraryPage page=CustomLibraryPage.load(c);return page==null?"+":page.name;}
-    public void updateCustomPage(){CustomLibraryPage page=CustomLibraryPage.load(getContext());PreviewIcon.apply(tabs[6],page==null?"plus":"",22);if(page!=null)tabs[6].setCompoundDrawables(null,null,null,null);tabs[6].setText(page==null?"":page.name);tabs[6].setContentDescription(CustomLibraryPage.load(getContext())==null?"Create a New Page":customLabel(getContext()));}
+    /** While a page is being edited the tab shows the draft name; a page never saved yet is dimmed with a draft dot. */
+    public void previewCustomPage(String name,boolean draft){tabs[6].setCompoundDrawables(null,null,null,null);tabs[6].setText(draft?name+"  •":name);tabs[6].setAlpha(draft?.6f:1f);tabs[6].setContentDescription(draft?name+", unsaved new page":name);}
+    public void updateCustomPage(){tabs[6].setAlpha(1f);CustomLibraryPage page=CustomLibraryPage.load(getContext());PreviewIcon.apply(tabs[6],page==null?"plus":"",22);if(page!=null)tabs[6].setCompoundDrawables(null,null,null,null);tabs[6].setText(page==null?"":page.name);tabs[6].setContentDescription(CustomLibraryPage.load(getContext())==null?"Create a New Page":customLabel(getContext()));}
     private static PageExitGuard editor(View view){if(!view.isShown())return null;if(view instanceof PageExitGuard)return (PageExitGuard)view;if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++){PageExitGuard found=editor(group.getChildAt(i));if(found!=null)return found;}}return null;}
     private static void requestBrowserExit(View content,Runnable action){
         PageExitGuard guard=editor(content);if(guard!=null){guard.requestExit(action);return;}
