@@ -143,7 +143,7 @@ final class PreviewPlaybackMenus {
     private static void switchState(TextView row,String label,boolean on){
         row.setText(label);row.setAlpha(row.isEnabled()?1f:.4f);row.setContentDescription(label+", "+(on?"On":"Off"));
         android.graphics.drawable.Drawable indicator=com.archos.mediacenter.video.leanback.StandardSwitchDrawable.snapshot(owner,on);
-        indicator.setBounds(0,0,dp(54),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
+        indicator.setBounds(0,0,com.archos.mediacenter.video.leanback.StandardSwitchDrawable.widthForHeight(dp(20)),dp(20));row.setCompoundDrawables(null,null,indicator,null);row.setCompoundDrawablePadding(dp(12));
     }
 
     private static void refreshChecks(){

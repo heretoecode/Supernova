@@ -8,7 +8,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 /** SwitchCompat gives thumbs the track's full height; keep the visible thumb circular. */
 final class SettingsSwitchThumb extends Drawable {
     private final int size;private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
-    SettingsSwitchThumb(Context context){size=PreviewDialog.dp(context,22);paint.setColor(Color.WHITE);}
+    SettingsSwitchThumb(Context context){size=PreviewDialog.dp(context,20); // two thumbs + padding = 44dp switch widthpaint.setColor(Color.WHITE);}
     @Override public int getIntrinsicWidth(){return size;}
     @Override public int getIntrinsicHeight(){return size;}
     @Override public void draw(Canvas canvas){Rect b=getBounds();canvas.drawCircle(b.exactCenterX(),b.exactCenterY(),Math.min(b.width(),b.height())/2f,paint);}
