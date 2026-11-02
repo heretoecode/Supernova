@@ -186,6 +186,34 @@ const actions = (glass, label) => doc(`${details}<div class="tag" style="top:aut
   ${menuHead('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}
 </div>`);
 
+
+// ---------- 10. Focused-button options (owner: the solid blue is not elegant enough) ----------
+const focusCss = `
+.f-a{background:#f4f6fb;color:#0d1240;border:3px solid #fff}
+.f-b{background:rgba(26,31,92,0.97);border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.2)}
+.f-c{background:rgba(255,255,255,.18);border:3px solid #fff;backdrop-filter:none}
+.f-d{background:#3d4f86;border:3px solid #fff}
+.f-a svg{color:#0d1240}`;
+const options = [
+  ['A · White', 'white fill, navy text', 'f-a'],
+  ['B · Outline only', 'resting glass + white outline', 'f-b'],
+  ['C · Frosted', 'soft white tint + white outline', 'f-c'],
+  ['D · Muted navy', 'lighter navy + white outline', 'f-d'],
+];
+const places = [
+  ['Playback HUD', 'background:linear-gradient(180deg,#9fc3dc,#d6a77e)', c => `<span class="btn big ${c}">${svg('gear', 28)}Settings</span>`],
+  ['Library toolbar', library, c => `<span class="btn ${c}">${svg('sort', 24)}Newest First</span>`],
+  ['Home hero', hero, c => `<span class="btn big ${c}">${svg('info', 28)}More Info</span>`],
+  ['Panel tabs', `background:rgba(26,31,92,0.97);border:2px solid ${EDGE}`, c => `<span class="btn ${c}" style="height:56px;font-size:19px;width:220px;justify-content:center">${svg('cc', 22)}Subtitles</span>`],
+];
+const focusSheet = doc(`<style>${focusCss}</style><div style="position:absolute;inset:0;background:#05080d;padding:36px 44px">
+<div style="font-size:32px;font-weight:700;margin-bottom:6px">Focused button — four calmer options</div>
+<div style="font-size:19px;color:#b9c7e8;margin-bottom:22px">Every option keeps the same size as resting and a white outline. Left column is the resting button for reference.</div>
+<div style="display:grid;grid-template-columns:200px repeat(5,1fr);gap:14px;align-items:center">
+  <div></div><div style="color:#9cc9f0;font-size:16px;font-weight:700">RESTING</div>${options.map(([t, d]) => `<div style="color:#9cc9f0;font-size:16px;font-weight:700">${t}<div style="color:#b9c7e8;font-weight:400;font-size:14px">${d}</div></div>`).join('')}
+  ${places.map(([name, bg, b]) => `<div style="font-size:20px;font-weight:600">${name}</div>${cell(bg, b(''))}${options.map(([, , c]) => cell(bg, b(c))).join('')}`).join('')}
+</div></div>`);
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
@@ -197,6 +225,9 @@ const actions = (glass, label) => doc(`${details}<div class="tag" style="top:aut
     ['05-edit-page-option-B-solid.png', editPage(true, 'Option B · same colour, solid over text-heavy pages')],
     ['06-context-menu-glass-88.png', actions('rgba(26,31,92,0.88)', 'Actions menu over the details page · shared glass at 88% (synopsis faintly visible)')],
     ['07-context-menu-glass-94.png', actions('rgba(26,31,92,0.94)', 'Actions menu over the details page · shared glass at 94%')],
+    ['08-context-menu-glass-97.png', actions('rgba(26,31,92,0.97)', 'Actions menu over the details page · shared glass at 97%')],
+    ['09-context-menu-glass-98.png', actions('rgba(26,31,92,0.98)', 'Actions menu over the details page · shared glass at 98%')],
+    ['10-focus-options.png', focusSheet],
   ];
   for (const [name, html] of shots) {
     await page.setContent(html);
