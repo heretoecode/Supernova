@@ -1,8 +1,7 @@
-{"purpose": "0.152 Edit Page solid fitted panel",
- "tests": ["com.archos.mediacenter.video.leanback.EditPagePanelTest",
-           "com.archos.mediacenter.video.leanback.NextQaWizardTest",
-           "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
-           "com.archos.mediacenter.video.leanback.PreviewPagesTest",
-           "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
-           "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
-           "com.archos.mediacenter.video.player.Playback141RenderTest"]}
+{
+ "purpose": "0.152 statistics layout test after toolbar centring",
+ "tests": [
+  "com.archos.mediacenter.video.leanback.LibraryStatisticsLayoutTest",
+  "com.archos.mediacenter.video.leanback.NextQaWizardTest"
+ ]
+}
