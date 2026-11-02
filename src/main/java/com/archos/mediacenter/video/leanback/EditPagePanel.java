@@ -54,7 +54,7 @@ public final class EditPagePanel extends LinearLayout {
         setOrientation(VERTICAL);
         setTag("edit.panel");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        int glow = kit.s(14);
+        int glow = kit.s(8);
         setBackground(kit.panelSurface(glow));
         setPadding(kit.s(30) + glow, kit.s(24) + glow, kit.s(30) + glow, kit.s(22) + glow);
 
@@ -135,7 +135,8 @@ public final class EditPagePanel extends LinearLayout {
     public boolean isShowing() { return dialog != null && dialog.isShowing(); }
     public Dialog dialog() { return dialog; }
     int panelWidth() { return Math.round(owner.getResources().getDisplayMetrics().widthPixels * 690f / 1920f); }
-    private int maxBodyHeight() { return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 28) - kit.s(90); }
+    /** Screen height less the 96px top and 40px bottom margins, the panel padding and the header. */
+    private int maxBodyHeight() { return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 16) - kit.s(84); }
 
     private void focusInitial() {
         View target = body.findViewWithTag(host.isNew() ? "edit.row.name" : "edit.row.name");
@@ -195,7 +196,7 @@ public final class EditPagePanel extends LinearLayout {
 
         if (!host.isNew()) {
             View gap = new View(owner);
-            body.addView(gap, new LayoutParams(-1, kit.s(12)));
+            body.addView(gap, new LayoutParams(-1, kit.s(4)));
             LinearLayout delete = new LinearLayout(owner);
             delete.setTag("edit.row.delete");
             delete.setGravity(Gravity.CENTER_VERTICAL);

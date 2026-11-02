@@ -20,7 +20,9 @@ public final class SidePanelKit {
     public static final int HEADING = 0xff9cc9f0, HEADING_RULE = 0xff3e5aa8, ROW_RULE = 0xff34479a;
     public static final int VALUE = 0xff3fb6ff, META = 0xffb9c7e8, BAR = 0xffcfd8ff, ICON = 0xffe8eeff;
     public static final int MATCH = 0xff4cd3a0, WARNING = 0xffffc04d, DANGER = 0xffff6b7a;
-    public static final int ROW_HEIGHT = 54;
+    public static final int ROW_HEIGHT = 52;
+    /** Edit Page is a solid panel (approved design); the page behind must not show through. */
+    public static final int SOLID_TOP = 0xff1a1f5c, SOLID_BOTTOM = 0xff141848;
 
     public interface Stepper { void step(int direction); }
 
@@ -57,7 +59,7 @@ public final class SidePanelKit {
     }
 
     public Drawable panelSurface(int glow) {
-        return new Surface(PANEL_TOP, PANEL_BOTTOM, PANEL_BORDER, s(26), Math.max(1, s(2)), 0x595fd0ff, glow);
+        return new Surface(SOLID_TOP, SOLID_BOTTOM, PANEL_BORDER, s(26), Math.max(1, s(2)), 0x595fd0ff, glow);
     }
 
     public Drawable rowFocus() {
@@ -79,7 +81,7 @@ public final class SidePanelKit {
     public void section(LinearLayout body, String title, boolean first) {
         TextView label = text(title, 15, HEADING, true);
         label.setLetterSpacing(.06f);
-        label.setPadding(s(4), s(first ? 6 : 18), 0, s(7));
+        label.setPadding(s(4), s(first ? 4 : 12), 0, s(6));
         body.addView(label);
         rule(body, HEADING_RULE);
     }
@@ -106,7 +108,7 @@ public final class SidePanelKit {
         row.setTag(tag);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setMinimumHeight(Math.round(s(ROW_HEIGHT) * context.getResources().getConfiguration().fontScale));
-        row.setPadding(s(6), 0, s(6), 0);
+        row.setPadding(s(6), 0, s(12), 0);
         row.setFocusable(true);
         row.setFocusableInTouchMode(true);
         row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);

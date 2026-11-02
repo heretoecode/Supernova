@@ -1,4 +1,4 @@
-{"purpose": "0.152 Edit Page draft-save fix; side panels re-render",
+{"purpose": "0.152 Edit Page solid fitted panel",
  "tests": ["com.archos.mediacenter.video.leanback.EditPagePanelTest",
            "com.archos.mediacenter.video.leanback.NextQaWizardTest",
            "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
