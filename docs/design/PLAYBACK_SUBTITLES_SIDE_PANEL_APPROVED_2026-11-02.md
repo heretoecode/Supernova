@@ -1,6 +1,7 @@
 # Playback Settings — Subtitles side panel (APPROVED 2 November 2026)
 
 **Status:** APPROVED by the owner (design only; not yet implemented). Target: 0.152.
+**See also:** the complete three-tab design in [PLAYBACK_SETTINGS_SIDE_PANEL_APPROVED_2026-11-02.md](PLAYBACK_SETTINGS_SIDE_PANEL_APPROVED_2026-11-02.md), which supersedes this file where they differ (Subtitle Track stepper, three tabs, in-panel lists).
 **Supersedes:** the *size and position* of the centred "Image B" Subtitles panel (`docs/design/2026-11-01-subtitles-implementation-blueprint.md` on `main`). Row content, order, icons, controls and colours from Image B are **kept**.
 
 **Approved image:** [subtitles-side-panel-approved-2026-11-02.png](approved-mockups/playback-settings/subtitles-side-panel-approved-2026-11-02.png) — rendered at 1920×1080 by [render-subtitles-side-panel.js](approved-mockups/playback-settings/render-subtitles-side-panel.js). The film scene and subtitle line are illustrative placeholders, not product content.
@@ -39,7 +40,7 @@ On the Shield (owner photo, 2 Nov 2026) the centred panel covered ~60% of the wi
 - **Subtitles while the panel is open:** **not shifted** (owner delegated; decision recorded here). Subtitles stay exactly where the renderer normally draws them, so they never jump when the panel opens or closes, and the subtitle engine is untouched. Because the fitted panel ends above the usual bottom subtitle area, a normal bottom subtitle stays fully visible beneath it (as drawn). Very long two-line subtitles, or Middle/Top positions, may run under the panel's left edge while it is open; accepted.
 
 ## Still to confirm before implementation
-- Audio, Video and More tabs: to be mocked up in the same side-panel style and approved separately before building.
+- Other tabs: approved — see the complete design file.
 
 ## Acceptance (Shield)
 Owner photo on the Shield matching this layout; picture visible on the left; Background Opacity stepper works and dims when Background is off; all ten rows reachable and working with the remote; no regression in subtitle rendering.
