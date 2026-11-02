@@ -8,18 +8,45 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.150",
-    "version_code": 150,
+    "version": "0.151",
+    "version_code": 151,
     "date": "2026-11-02",
-    "kind": "Shield QA candidate \u2014 consolidated corrections; physical verification pending",
+    "kind": "Shield QA candidate \u2014 owner Shield QA corrections; physical verification pending",
     "notes": [
-      "Continues completed corrections at 538cb869 on draft PR30: initial Custom Library statistics, global language icons, standard switches and original Reception layout.",
-      "Includes guarded playback-menu focus, episode metadata validation and diagnostic recorder corrections.",
-      "Movies/TV, approved Subtitles design, other functionality, package and existing upgrade certificate preserved.",
-      "Physical Shield testing, installed upgrade, real provider rendering/count completeness and playback acceptance remain pending."
+      "Clear preparing-playback artwork; HUD middle dot before Ends at and neutral scrim over letterbox bars.",
+      "Default language flags (en/eng shows GB; explicit regions win; ambiguous languages keep the globe).",
+      "Custom library page keeps visible focus on its tab; narrower shared toggles; Reception shows TMDb with the OMDb sources.",
+      "OMDb ratings use the owner's own key entered in Settings; physical Shield verification pending."
     ]
   },
   "history": [
+    {
+      "version": "0.150",
+      "version_code": 150,
+      "date": "2026-11-02",
+      "kind": "Shield QA candidate \u2014 consolidated corrections; physical verification pending",
+      "notes": [
+        "Continues completed corrections at 538cb869 on draft PR30: initial Custom Library statistics, global language icons, standard switches and original Reception layout.",
+        "Includes guarded playback-menu focus, episode metadata validation and diagnostic recorder corrections.",
+        "Movies/TV, approved Subtitles design, other functionality, package and existing upgrade certificate preserved.",
+        "Physical Shield testing, installed upgrade, real provider rendering/count completeness and playback acceptance remain pending."
+      ],
+      "source_sha": "8d3c46abd1baa25e912ca9b29a59e617f34beeea",
+      "evidence": "docs/0.150/SIGNED_QA_EVIDENCE.json",
+      "recorded_binary_verification": "docs/0.150/INDEPENDENT_SIGNED_APK_VERIFICATION.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "84b8eee6e8c8fc5b9b2f48cf3113b5e04e00e5a8f127590744ebf62eb2a01305",
+      "artifact_id": 13122913593,
+      "run_id": 41405684145,
+      "apks": [
+        {
+          "sha256": "26f23e7ff0203469f41dc49d24121a71be52227b78edda5a423af24b3848822e",
+          "size": 95606623,
+          "url": "https://drive.google.com/file/d/1wKejCBYoHvBft1HsuMXeOyIsoEwveVFi/view?usp=drivesdk",
+          "filename": "Supernova_0.150.apk"
+        }
+      ]
+    },
     {
       "version": "0.149",
       "version_code": 149,
