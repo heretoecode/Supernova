@@ -6,5 +6,5 @@
            "com.archos.mediacenter.video.leanback.details.PreviewMoreActionsTest",
            "com.archos.mediacenter.video.leanback.PreviewDialogStackTest",
            "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
-           "com.archos.mediacenter.video.leanback.SettingsWorkspaceTest",
+           "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
            "com.archos.mediacenter.video.leanback.NextQaWizardTest"]}
