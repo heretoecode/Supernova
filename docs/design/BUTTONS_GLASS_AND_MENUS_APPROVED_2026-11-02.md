@@ -100,3 +100,19 @@ The owner checks screens **not** used in the design discussion first: every butt
 sections 1–4 without exception. Then the discussed screens: HUD, library toolbars, home hero, details Play/More,
 Playback Settings (selected tab same size as the others; focused row with breathing room), Edit Page and the
 long-press/More menus (no title, inline group headings, fitted width); no readable text behind any panel.
+
+## 5. Tiles — every large boxed choice (approved 2 Nov 2026)
+Applies to the Settings category grid and **every similar boxed choice in the app** (e.g. Customise Home tiles).
+Poster and artwork cards are not tiles: they keep their own focus treatment so artwork is never covered.
+([mock-up](proposals/settings-tiles/06-single-line-titles.png))
+- **Resting:** navy glass (the same 97% material as panels), soft outline.
+- **Focused:** the same white box with black text and black icon as a focused button, soft shadow beneath.
+  Size never changes.
+- Principle: small buttons rest in black; large surfaces (tiles, buttons inside panels) rest in navy glass;
+  everything focused becomes the white box.
+- **Layout:** icon beside the title, pinned to the title's line; the description runs full width underneath.
+- **Titles fit on one line** (reword rather than wrap); descriptions at most two lines, so the headings in a row line up.
+- Settings category names: Playback & Video · Audio & Subtitles · Library & Home · **Streaming** (was Streaming &
+  Providers) · Appearance · **Connections** (was Connections & Integrations) · **System** (was System & Maintenance) ·
+  About Supernova. Streaming description: "Choose your streaming providers and how availability is shown."
+  Renamed categories change everywhere their name appears (e.g. category headings, settings search).
