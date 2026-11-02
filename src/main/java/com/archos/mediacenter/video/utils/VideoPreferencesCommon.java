@@ -1065,19 +1065,8 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         Preference novaVersion = (Preference) findPreference("preferences_version");
         novaVersion.setTitle("Build");
         novaVersion.setSummary(com.archos.mediacenter.video.BuildConfig.VERSION_NAME);
-        novaVersion.setOnPreferenceClickListener(preference -> {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
-                    .setTitle("SUPERNOVA Preview · Build")
-                    .setMessage("Version: " + com.archos.mediacenter.video.BuildConfig.VERSION_NAME
-                        + "\nVersion code: " + com.archos.mediacenter.video.BuildConfig.VERSION_CODE
-                        + "\nCustom Git SHA: " + com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA
-                        + "\nBuilt (UTC): " + com.archos.mediacenter.video.BuildConfig.PREVIEW_BUILD_UTC
-                        + "\nPackage: " + getActivity().getPackageName()
-                        + "\nBase NOVA: 6.4.63"
-                        + "\nSource: https://github.com/heretoecode/aos-Video")
-                    .setPositiveButton(android.R.string.ok, null).show();
-            return true;
-        });
+        // Approved 2 Nov 2026: the old build box (outdated aos-Video link and "Base NOVA 6.4.63") is removed;
+        // version and build information live in the About / Build information screens.
 
         if(com.archos.mediacenter.video.BuildConfig.FOUNDATION)com.archos.mediacenter.video.foundation.FoundationAboutEntry.install(mPreferencesFragment);
         mSmb2 = (CheckBoxPreference) findPreference(KEY_SMB2);

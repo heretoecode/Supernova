@@ -50,8 +50,11 @@ jobs:
           filters=$(python3 -c "import json;print(' '.join('--tests '+t for t in json.load(open('.github/diagnostics/preview-request.json'))['tests']))")
           chmod +x gradlew
           ./gradlew testNoamazonReleaseUnitTest $filters -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --max-workers=4 \
-            -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | grep -E "FAILED|PASSED|tests completed|BUILD" | tail -60
-          echo "exit=${PIPESTATUS[0]}" > "$RUNNER_TEMP/test-exit"
+            -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild > "$RUNNER_TEMP/gradle.log" 2>&1
+          echo "exit=$?" > "$RUNNER_TEMP/test-exit"
+          grep -E "FAILED|tests completed|BUILD" "$RUNNER_TEMP/gradle.log" | tail -40
+          # Compiler errors, so a broken build explains itself.
+          grep -E "\.java:[0-9]+: error:" -A3 "$RUNNER_TEMP/gradle.log" | head -120 | tee -a "$RUNNER_TEMP/test-exit"
           # Failing assertions, so a red run still explains itself (renders are published either way).
           python3 - <<'PY' | tee -a "$RUNNER_TEMP/test-exit"
           import glob, xml.etree.ElementTree as ET

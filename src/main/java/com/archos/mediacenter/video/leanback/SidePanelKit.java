@@ -66,13 +66,6 @@ public final class SidePanelKit {
     /** The shared row focus: white outline, no fill change. */
     public Drawable rowFocus() { return SupernovaStyle.rowFocus(context); }
 
-    /** Filled accent button (Save) with the focus glow when focused. */
-    public Drawable accentButton() {
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused}, new Surface(ACCENT, ACCENT, FOCUS_BORDER, s(10), Math.max(1, s(2.5f)), 0x995fd0ff, s(4)));
-        states.addState(new int[]{}, new Surface(ACCENT, ACCENT, 0xff4f8dff, s(10), Math.max(1, s(2)), 0, s(4)));
-        return states;
-    }
 
     public void section(LinearLayout body, String title, boolean first) {
         TextView label = text(title, 15, HEADING, true);

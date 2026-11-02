@@ -15,12 +15,12 @@ public final class PreviewProviderIcons {
   String key=name==null?"":name.toLowerCase(Locale.ROOT).trim().replaceAll("\\s+"," ");
   switch(key){
    case "netflix":case "netflix standard with ads":case "netflix basic with ads":return R.drawable.provider_netflix;
-   case "apple tv":case "apple tv+":case "apple tv plus":return R.drawable.provider_appletv;
+   case "apple tv":case "apple tv+":case "apple tv plus":case "apple tv store":return R.drawable.provider_appletv;
    case "paramount+":case "paramount plus":return R.drawable.provider_paramountplus;
    case "hbo":return R.drawable.provider_hbo;
    case "hbo max":return R.drawable.provider_hbomax;
-   case "disney+":case "disney plus":return R.drawable.provider_disneyplus;
-   case "amazon prime video":case "prime video":return R.drawable.provider_primevideo;
+   case "disney+":case "disney plus":return R.drawable.provider_disneyplus_symbol;
+   case "amazon prime video":case "prime video":case "amazon prime video with ads":return R.drawable.provider_primevideo_symbol;
    case "britbox":return R.drawable.provider_britbox;
    case "mubi":return R.drawable.provider_mubi;
    case "crunchyroll":return R.drawable.provider_crunchyroll;
@@ -41,7 +41,9 @@ public final class PreviewProviderIcons {
  public static void bindProvider(ImageView icon,StreamingRepository.Provider provider,long media,String surface){
   com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(icon);icon.clearColorFilter();icon.setBackground(null);icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
   int resource=provider==null?0:resource(provider.name);
-  if(resource!=0)icon.setImageResource(resource);else icon.setImageDrawable(new com.archos.mediacenter.video.leanback.PreviewIcon("streaming"));
+  // Approved 2 Nov 2026: official single-colour symbol in a uniform tile; a monogram tile is the last resort.
+  if(resource!=0)icon.setImageResource(resource);else icon.setImageDrawable(new com.archos.mediacenter.video.leanback.ProviderMonogram(provider==null?"":provider.name));
+  if("provider.choice".equals(surface)&&icon.getLayoutParams()!=null){float d=icon.getResources().getDisplayMetrics().density;icon.getLayoutParams().width=Math.round(28*d);icon.getLayoutParams().height=Math.round(17*d);icon.requestLayout();}
  }
  private PreviewProviderIcons(){}
 }

@@ -186,5 +186,6 @@ public final class PreviewDialog {
   // A focusable action container is a button: use SupernovaStyle.applyButton(view, STANDARD) so its content follows focus.
   return SupernovaStyle.button(c,SupernovaStyle.Surface.STANDARD);
  }
- public static GradientDrawable surface(Context c,boolean f){GradientDrawable g=new GradientDrawable();g.setColor(f?PreviewAccent.alpha(c,70):0xef0b1b29);g.setCornerRadius(dp(c,6));g.setStroke(dp(c,1),f?PreviewAccent.color(c):0x50426a80);return g;}
+ /** The shared glass as a GradientDrawable (approved 2 Nov 2026: one material for every pop-up and panel). */
+ public static GradientDrawable surface(Context c,boolean ignored){GradientDrawable g=new GradientDrawable();g.setColor(SupernovaStyle.GLASS);g.setCornerRadius(SupernovaStyle.dp(c,SupernovaStyle.PANEL_RADIUS_DP));g.setStroke(Math.max(1,SupernovaStyle.dp(c,1)),SupernovaStyle.GLASS_EDGE);return g;}
 }

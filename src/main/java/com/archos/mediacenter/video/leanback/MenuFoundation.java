@@ -52,7 +52,7 @@ public final class MenuFoundation {
         text.setFocusableInTouchMode(true);
         text.setClickable(true);
         if (icon != null) icon(text, icon);
-        text.setBackground(controlBackground(context));
+        SupernovaStyle.applyButton(text, SupernovaStyle.Surface.STANDARD);
         text.setOnClickListener(view -> action.run());
         return text;
     }
@@ -66,12 +66,8 @@ public final class MenuFoundation {
         target.setCompoundDrawablePadding(dp(target.getContext(), 9));
     }
 
-    public static Drawable controlBackground(Context context) {
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused}, new Outline(context));
-        states.addState(new int[]{}, surface(context, true));
-        return states;
-    }
+    /** Button background from the shared style. Prefer {@link SupernovaStyle#applyButton}, which also sets content colours. */
+    public static Drawable controlBackground(Context context) { return SupernovaStyle.button(context, SupernovaStyle.Surface.STANDARD); }
 
     /** Tracks the window boundary, so a covered parent never displays a second focus outline. */
     public static class WindowPanel extends android.widget.LinearLayout {
@@ -87,34 +83,4 @@ public final class MenuFoundation {
         }
     }
 
-    /** Focus adds only a soft-white perimeter. It never recolours text or fills with accent. */
-    private static final class Outline extends Drawable {
-        private final Drawable resting;
-        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final float radius, stroke;
-        Outline(Context context) {
-            resting = surface(context, true);
-            radius = dp(context, 6);
-            stroke = Math.max(1, context.getResources().getDisplayMetrics().density);
-            paint.setColor(0xddebf0f5);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(stroke);
-        }
-        @Override public void draw(Canvas canvas) {
-            resting.setBounds(getBounds()); resting.draw(canvas);
-            Drawable.Callback owner=getCallback();
-            while(owner instanceof Drawable)owner=((Drawable)owner).getCallback();
-            if(owner instanceof View){
-                View view=(View)owner; boolean tracked=false;
-                while(view!=null){if(view instanceof WindowPanel){tracked=true;if(!((WindowPanel)view).active)return;break;}
-                    view=view.getParent() instanceof View?(View)view.getParent():null;}
-                if(!tracked&&!((View)owner).hasWindowFocus())return;
-            }
-            RectF border = new RectF(getBounds()); border.inset(-stroke / 2, -stroke / 2);
-            canvas.drawRoundRect(border, radius, radius, paint);
-        }
-        @Override public void setAlpha(int alpha) { paint.setAlpha(alpha); resting.setAlpha(alpha); }
-        @Override public void setColorFilter(ColorFilter filter) { paint.setColorFilter(filter); }
-        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
-    }
 }

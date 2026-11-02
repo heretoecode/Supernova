@@ -624,7 +624,6 @@ public final class PreviewPages extends FrameLayout {
         return dialog[0];
     }
     private TextView text(String value,int size){TextView t=new TextView(getContext());t.setText(value);t.setTextColor(Color.WHITE);t.setTextSize(size);return t;}
-    private GradientDrawable background(boolean focus){GradientDrawable d=new GradientDrawable();d.setColor(focus?0x60416b84:0xc00b1b29);d.setCornerRadius(dp(5));d.setStroke(dp(focus?2:1),focus?PreviewAccent.color(getContext()):0xff304b60);return d;}
     private long heroWarmAt;
     private final Runnable warmHeroes=()->{if(!isAttachedToWindow()||tab!=0)return;heroWarmAt=android.os.SystemClock.elapsedRealtime();List<Entry> catalogue=featuredCandidates();for(int i=0;i<Math.min(8,catalogue.size());i++){Entry candidate=catalogue.get(Math.floorMod(featuredIndex+i,catalogue.size()));OfficialTitleArtwork.prefetch(getContext(),candidate.media);android.net.Uri uri=candidate.backdrop!=null?candidate.backdrop:candidate.media.getPosterUri();if(uri!=null){com.squareup.picasso.RequestCreator request=com.squareup.picasso.Picasso.get().load(uri).resize(dp(960),dp(540));if(candidate.backdrop!=null)request.centerCrop();else request.centerInside();request.fetch();}}};
     private final java.util.LinkedHashMap<String,PreviewFeaturedCard> heroWindow=new java.util.LinkedHashMap<>();

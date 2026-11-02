@@ -35,17 +35,12 @@ public final class StreamingActionPresenter extends Presenter {
         boolean preview=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui",false);
         frame.setLayoutParams(new ViewGroup.LayoutParams((int)((preview?160:180)*d), (int)((preview?38:56)*d)));
         frame.setFocusable(true); frame.setClickable(true);
-        android.graphics.drawable.StateListDrawable bg = new android.graphics.drawable.StateListDrawable();
-        android.graphics.drawable.GradientDrawable focused = new android.graphics.drawable.GradientDrawable();
-        focused.setColor(0xff345571); focused.setCornerRadius(6*d); focused.setStroke((int)(2*d), 0xff8fceff);
-        bg.addState(new int[]{android.R.attr.state_focused}, focused);
-        bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(0xff223b50));
-        frame.setBackground(preview||com.archos.mediacenter.video.BuildConfig.FOUNDATION?com.archos.mediacenter.video.leanback.SharedThreePanel.control(c,10):bg);
         ImageView image = new ImageView(c); image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         FrameLayout.LayoutParams ip = new FrameLayout.LayoutParams((int)(28*d), (int)(28*d),Gravity.START|Gravity.CENTER_VERTICAL); ip.leftMargin=(int)(6*d);
         frame.addView(image, ip);
         TextView fallback = new TextView(c); fallback.setGravity(Gravity.CENTER); fallback.setTextColor(Color.WHITE); fallback.setTextSize(13);
         fallback.setGravity(Gravity.CENTER_VERTICAL);fallback.setSingleLine(true);fallback.setEllipsize(android.text.TextUtils.TruncateAt.END);FrameLayout.LayoutParams labelParams=new FrameLayout.LayoutParams(-1,-1);labelParams.leftMargin=(int)(42*d);labelParams.rightMargin=(int)(8*d);frame.addView(fallback,labelParams);
+        com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(frame, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
         return new Holder(frame,image,fallback);
     }
     @Override public void onBindViewHolder(ViewHolder viewHolder, Object item) {

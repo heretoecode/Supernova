@@ -124,7 +124,7 @@ public final class SupernovaStyle {
     public static void tintIcons(TextView view) {
         Drawable[] d = view.getCompoundDrawablesRelative();
         boolean changed = false;
-        for (int i = 0; i < 4; i++) if (d[i] != null && !(d[i] instanceof StateIcon)) { d[i] = new StateIcon(d[i]); changed = true; }
+        for (int i = 0; i < 4; i++) if (isMonochromeIcon(d[i])) { d[i] = new StateIcon(d[i]); changed = true; }
         if (changed) view.setCompoundDrawablesRelative(d[0], d[1], d[2], d[3]);
     }
 
@@ -152,7 +152,7 @@ public final class SupernovaStyle {
                 child.setBackgroundColor(Color.TRANSPARENT);
                 ((android.widget.ImageView) child).setImageTintList(buttonContent());
                 Drawable d = ((android.widget.ImageView) child).getDrawable();
-                if (d != null && !(d instanceof StateIcon) && !d.isStateful() && d.getClass().getName().startsWith("com.archos")) ((android.widget.ImageView) child).setImageDrawable(new StateIcon(d));
+                if (isMonochromeIcon(d)) ((android.widget.ImageView) child).setImageDrawable(new StateIcon(d));
             } else if (child instanceof TextView && !child.isFocusable()) {
                 child.setDuplicateParentStateEnabled(true);
                 ((TextView) child).setTextColor(buttonContent());
@@ -173,7 +173,7 @@ public final class SupernovaStyle {
         } else if (view instanceof android.widget.ImageView) {
             android.widget.ImageView image = (android.widget.ImageView) view;
             Drawable d = image.getDrawable();
-            if (d != null && !(d instanceof StateIcon)) image.setImageDrawable(new StateIcon(d));
+            if (isMonochromeIcon(d)) image.setImageDrawable(new StateIcon(d));
         }
         if (view instanceof android.view.ViewGroup) {
             android.view.ViewGroup group = (android.view.ViewGroup) view;
@@ -190,6 +190,17 @@ public final class SupernovaStyle {
         @Override public void updateDrawState(android.text.TextPaint paint) {
             paint.setColor((paint.getColor() & 0x00FFFFFF) | 0xB8000000);
         }
+    }
+
+    /**
+     * True for single-colour line icons, which follow the button's content colour. Pictures (posters,
+     * artwork, bitmaps) and flags keep their own colours and are never recoloured.
+     */
+    static boolean isMonochromeIcon(Drawable d) {
+        if (d == null || d instanceof StateIcon) return false;
+        if (d instanceof PreviewLanguageIcon || d instanceof BitmapDrawable) return false;
+        return d instanceof PreviewIcon || d instanceof SubtitlePanelStyle.Icon || d instanceof ProviderMonogram
+                || d instanceof PreviewGenres.Icon || d instanceof VectorDrawable;
     }
 
     /** Marks a TextView inside a button or tile as secondary (description) text. */

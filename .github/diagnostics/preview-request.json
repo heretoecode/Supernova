@@ -1,4 +1,4 @@
-{"purpose": "0.153 shared style first render: HUD, side panels, Settings, details, menus",
+{"purpose": "0.153 shared style, round 2 (compile errors printed)",
  "tests": ["com.archos.mediacenter.video.player.NextHudTest",
            "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
            "com.archos.mediacenter.video.leanback.EditPagePanelTest",

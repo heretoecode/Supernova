@@ -59,7 +59,7 @@ final class PreviewPlaybackMenus {
         TextView title=SharedThreePanel.text(owner,"Playback Settings",20);title.setPadding(0,0,0,dp(12));panel.addView(title);
         tabs=new LinearLayout(owner);tabs.setBaselineAligned(false);panel.addView(tabs,new LinearLayout.LayoutParams(-1,-2));
         for(int i=0;i<TABS.length;i++){
-            final int index=i;TextView button=SharedThreePanel.text(owner,TABS[i],13);button.setGravity(Gravity.CENTER);button.setSingleLine(true);androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(button,10,13,1,android.util.TypedValue.COMPLEX_UNIT_SP);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setPadding(dp(4),dp(10),dp(4),dp(10));button.setBackground(tabBackground());button.setTag("playback.tab:"+i);
+            final int index=i;TextView button=SharedThreePanel.text(owner,TABS[i],13);button.setGravity(Gravity.CENTER);button.setSingleLine(true);androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(button,10,13,1,android.util.TypedValue.COMPLEX_UNIT_SP);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setPadding(dp(4),dp(10),dp(4),dp(10));button.setBackground(tabBackground());button.setTextColor(SupernovaStyle.buttonContent());button.setTag("playback.tab:"+i);
             button.setOnClickListener(v->switchTab(index));button.setOnFocusChangeListener((v,focused)->{if(focused&&!closing&&!switchingPresentation&&tab!=index)switchTab(index);});
             button.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN)return false;
                 if(key==KeyEvent.KEYCODE_DPAD_LEFT||key==KeyEvent.KEYCODE_DPAD_RIGHT){int next=Math.max(0,Math.min(3,index+(key==KeyEvent.KEYCODE_DPAD_LEFT?-1:1)));tabs.getChildAt(next).requestFocus();return true;}
@@ -76,13 +76,8 @@ final class PreviewPlaybackMenus {
         int width=Math.min(dp(620),Math.round(TvLayout.safeWidth(owner)*.72f));int height=Math.min(dp(360),TvLayout.safeHeight(owner)-dp(48));
         window.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=dp(24);window.setAttributes(attrs);window.setLayout(width,height);
     }
-    private static android.graphics.drawable.Drawable tabBackground(){
-        android.graphics.drawable.StateListDrawable states=new android.graphics.drawable.StateListDrawable();
-        for(int state:new int[]{android.R.attr.state_focused,android.R.attr.state_selected,0}){
-            android.graphics.drawable.GradientDrawable shape=new android.graphics.drawable.GradientDrawable();shape.setCornerRadius(dp(6));shape.setColor(state==0?android.graphics.Color.TRANSPARENT:0x343b6590);if(state!=0)shape.setStroke(Math.max(1,dp(1)),PreviewAccent.color(owner));states.addState(state==0?new int[]{}:new int[]{state},shape);
-        }
-        return states;
-    }
+    /** Tabs are buttons inside a panel (shared style). */
+    private static android.graphics.drawable.Drawable tabBackground(){ return SupernovaStyle.button(owner,SupernovaStyle.Surface.PANEL); }
     /** Keep one window content root: replacing Dialog content can retain a transitioning old scene. */
     private static void present(View panel){presentationHost.removeAllViews();presentationHost.addView(panel,new FrameLayout.LayoutParams(-1,-1));}
     private static void switchTab(int selected){if(closing||switchingPresentation)return;switchingPresentation=true;try{flushNested();if(subtitlePanel!=null){subtitlePanel.close();subtitlePanel=null;present(legacyPanel);placeLegacy();}tab=selected;rootFocus=-1;renderTab();if(subtitlePanel!=null)subtitlePanel.focusTab();else tabs.getChildAt(tab).requestFocus();}finally{switchingPresentation=false;}}
