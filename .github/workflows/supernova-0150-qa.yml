@@ -1,5 +1,8 @@
 name: Supernova 0.150 protected signed QA
 on:
+  push:
+    branches: [codex/agreed-fixes-2026-11-01]
+    paths: [.github/workflows/supernova-0150-qa.yml]
   workflow_dispatch:
     inputs:
       conformance_run_id:

@@ -1,5 +1,8 @@
 name: Supernova 0.150 PR30 unsigned conformance
 on:
+  push:
+    branches: [codex/agreed-fixes-2026-11-01]
+    paths: [.github/workflows/supernova-0150-conformance.yml]
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
