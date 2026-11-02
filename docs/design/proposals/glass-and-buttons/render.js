@@ -282,6 +282,43 @@ const worstSheet = doc(`<style>${bl}</style><div style="position:absolute;inset:
     ${cell(bg, `<div style="${band};display:flex;gap:16px;align-items:center;justify-content:center;width:100%;height:120px"><span class="bx big">${svg('play', 28)}Play</span><span class="bx big">${svg('info', 28)}More Info</span><span class="bx big focus">${svg('gear', 28)}Settings</span></div>`)}`).join('')}
 </div></div>`);
 
+
+// ---------- 15. Group heading with the line beside it, spanning the rest of the menu ----------
+const inlineMenu = (() => {
+  const head = (t, first) => `<div style="display:flex;align-items:center;gap:14px;color:#9cc9f0;font-size:19px;padding:${first ? 6 : 18}px 16px 6px">${t}<span style="flex:1;height:1.5px;background:rgba(156,201,240,.35)"></span></div>`;
+  return doc(`${details}<div style="position:absolute;inset:0;background:rgba(0,0,0,.35)"></div>
+<div class="tag">Group headings with the line beside the text, spanning the rest of the menu</div>
+<div class="panel" style="top:130px;left:820px;display:inline-block;width:auto;padding:26px 22px;background:rgba(26,31,92,0.97)">
+  <div style="font-size:30px;font-weight:500;padding:4px 16px 10px">Actions</div>
+  ${head('Playback', true)}${menuRow('play', 'Restart Movie', true)}
+  ${head('Library')}${menuRow('eye', 'Mark Watched')}${menuRow('list', 'Add to Row')}${menuRow('info', 'Report Incorrect Match')}${menuRow('list', 'Remove From Library')}
+  ${head('Files &amp; Media')}${menuRow('down', 'Delete')}${menuRow('cc', 'Subtitles and Artwork')}
+</div>`);
+})();
+
+// ---------- 16. Boxed resting buttons: black box + white text; focus: white box + black text ----------
+const bk = `
+.bk{display:inline-flex;align-items:center;gap:12px;height:64px;padding:0 26px;border-radius:${RADIUS}px;font-size:24px;font-weight:500;color:#fff;border:2px solid transparent}
+.bk.big{height:72px;font-size:26px}
+.bk.r1{background:rgba(0,0,0,.72)}
+.bk.r2{background:rgba(0,0,0,.72);border-color:rgba(255,255,255,.28)}
+.bk.focus{background:#f4f6fb;color:#0b0d12;border-color:#fff}`;
+const bkPlaces = [
+  ['Playback HUD', 'background:linear-gradient(180deg,#9fc3dc 0%,#d6a77e 55%,rgba(20,12,14,.9) 100%)', (r, f) => `<span class="bk big ${r}">${svg('pause', 28)}</span><span class="bk big ${f}">${svg('gear', 28)}Settings</span>`],
+  ['Library toolbar', library, (r, f) => `<span class="bk ${r}">${svg('sort', 24)}Newest First</span><span class="bk ${f}">${svg('list', 24)}List View</span>`],
+  ['Home hero', hero, (r, f) => `<span class="bk big ${r}">${svg('play', 28)}Play</span><span class="bk big ${f}">${svg('info', 28)}More Info</span>`],
+  ['Panel tabs', `background:rgba(26,31,92,0.97);border:2px solid ${EDGE}`, (r, f) => `<span class="bk ${r}" style="height:56px;font-size:19px">${svg('cc', 22)}Subtitles</span><span class="bk ${f}" style="height:56px;font-size:19px">${svg('speaker', 22)}Audio</span>`],
+  ['Pure white (worst)', 'background:#ffffff', (r, f) => `<span class="bk big ${r}">${svg('play', 28)}Play</span><span class="bk big ${f}">${svg('info', 28)}More Info</span>`],
+  ['Bright yellow (worst)', 'background:#ffd84a', (r, f) => `<span class="bk big ${r}">${svg('play', 28)}Play</span><span class="bk big ${f}">${svg('info', 28)}More Info</span>`],
+];
+const boxedSheet = doc(`<style>${bk}</style><div style="position:absolute;inset:0;background:#05080d;padding:30px 44px">
+<div style="font-size:32px;font-weight:700;margin-bottom:6px">Boxed buttons · black at rest, white on focus</div>
+<div style="font-size:19px;color:#b9c7e8;margin-bottom:18px">In each cell the first button is resting and the second is focused · same size in both states</div>
+<div style="display:grid;grid-template-columns:230px 1fr 1fr;gap:12px;align-items:center">
+  <div></div><div style="color:#9cc9f0;font-size:16px;font-weight:700">RESTING: BLACK 72%, NO OUTLINE</div><div style="color:#9cc9f0;font-size:16px;font-weight:700">RESTING: BLACK 72% + FAINT OUTLINE</div>
+  ${bkPlaces.map(([n, bg, b]) => `<div style="font-size:19px;font-weight:600">${n}</div>${cell(bg, b('r1', 'focus')).replace('height:150px', 'height:128px')}${cell(bg, b('r2', 'focus')).replace('height:150px', 'height:128px')}`).join('')}
+</div></div>`);
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
@@ -300,6 +337,8 @@ const worstSheet = doc(`<style>${bl}</style><div style="position:absolute;inset:
     ['12-context-menu-fitted-97.png', fitted],
     ['13-menu-groups.png', groups],
     ['14-boxless-worst-case.png', worstSheet],
+    ['15-menu-heading-inline-line.png', inlineMenu],
+    ['16-boxed-black-buttons.png', boxedSheet],
   ];
   for (const [name, html] of shots) {
     await page.setContent(html);
