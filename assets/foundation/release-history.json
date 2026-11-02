@@ -8,18 +8,43 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.151",
-    "version_code": 151,
+    "version": "0.152",
+    "version_code": 152,
     "date": "2026-11-02",
-    "kind": "Shield QA candidate \u2014 owner Shield QA corrections; physical verification pending",
+    "kind": "Shield QA candidate \u2014 owner-approved designs; physical verification pending",
     "notes": [
-      "Clear preparing-playback artwork; HUD middle dot before Ends at and neutral scrim over letterbox bars.",
-      "Default language flags (en/eng shows GB; explicit regions win; ambiguous languages keep the globe).",
-      "Custom library page keeps visible focus on its tab; narrower shared toggles; Reception shows TMDb with the OMDb sources.",
-      "OMDb ratings use the owner's own key entered in Settings; physical Shield verification pending."
+      "Playback Settings is one side panel with Subtitles, Audio and Playback tabs; track lists and subtitle downloads open inside it.",
+      "Edit Page is a side panel over the live custom page, which updates as settings change.",
+      "13 more language flags (Welsh, Scottish, Catalan, Galician, Basque, Arab League, Esperanto and others) and the Spanish/Arabic mappings.",
+      "HUD no longer jumps on first show; rounded-rectangle buttons; library toolbar centred; custom page blurs under the top bar."
     ]
   },
   "history": [
+    {
+      "version": "0.151",
+      "version_code": 151,
+      "date": "2026-11-02",
+      "kind": "Shield QA candidate \u2014 owner Shield QA corrections; physical verification pending",
+      "notes": [
+        "Clear preparing-playback artwork; HUD middle dot before Ends at and neutral scrim over letterbox bars.",
+        "Default language flags (en/eng shows GB; explicit regions win; ambiguous languages keep the globe).",
+        "Custom library page keeps visible focus on its tab; narrower shared toggles; Reception shows TMDb with the OMDb sources.",
+        "OMDb ratings use the owner's own key entered in Settings; physical Shield verification pending."
+      ],
+      "source_sha": "dfa3fafd8ef7581f10fed054ba15fc34ef2cb82a",
+      "evidence": "docs/0.151/SIGNED_QA_EVIDENCE.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "d7655ce84ac84457678895ce797c646ed012a0883d00ae7a633773bf6e1447ce",
+      "artifact_id": 13145987422,
+      "run_id": 41452783801,
+      "apks": [
+        {
+          "sha256": "0c62a04a12e82613449cc9c545cd9c4b8e727c15e7c762568190f30ca700be56",
+          "size": 95606709,
+          "filename": "Supernova_0.151.apk"
+        }
+      ]
+    },
     {
       "version": "0.150",
       "version_code": 150,
