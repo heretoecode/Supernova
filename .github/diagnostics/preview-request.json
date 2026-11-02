@@ -1,7 +1,10 @@
-{
- "purpose": "0.152 statistics layout test after toolbar centring",
- "tests": [
-  "com.archos.mediacenter.video.leanback.LibraryStatisticsLayoutTest",
-  "com.archos.mediacenter.video.leanback.NextQaWizardTest"
- ]
-}
+{"purpose": "0.153 shared style first render: HUD, side panels, Settings, details, menus",
+ "tests": ["com.archos.mediacenter.video.player.NextHudTest",
+           "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+           "com.archos.mediacenter.video.leanback.EditPagePanelTest",
+           "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+           "com.archos.mediacenter.video.leanback.details.PreviewMoreActionsTest",
+           "com.archos.mediacenter.video.leanback.PreviewDialogStackTest",
+           "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+           "com.archos.mediacenter.video.leanback.SettingsWorkspaceTest",
+           "com.archos.mediacenter.video.leanback.NextQaWizardTest"]}
