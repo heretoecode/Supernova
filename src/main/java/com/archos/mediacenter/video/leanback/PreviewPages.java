@@ -16,6 +16,8 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 
 /** Recycled native TV grids. Only visible artwork is decoded. Classic Browse remains untouched. */
 public final class PreviewPages extends FrameLayout {
+    /** Owner 2 Nov 2026: equal space above the library toolbar (to the statistics) and below it (to the separator). */
+    static final int TOOLBAR_TOP_GAP_DP=9;
     public interface Click { void open(Presenter.ViewHolder holder,Object item); }
     private final RecyclerView list;
     private final GridLayoutManager layout;
@@ -673,7 +675,7 @@ public final class PreviewPages extends FrameLayout {
             else if(c.type==NOTICE){v.setOrientation(LinearLayout.VERTICAL);TextView title=text(c.title,18);title.setTextColor(0xff8298aa);v.addView(title);TextView status=text((String)c.value,12);status.setTextColor(0xff8298aa);v.addView(status);v.setPadding(0,dp(12),0,dp(12));}
             else if(c.type==HEADER){
                 if(Boolean.TRUE.equals(c.value)){
-                    v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,0,0,dp(18));PreviewToolbar controls=new PreviewToolbar(getContext(),true);
+                    v.setOrientation(LinearLayout.VERTICAL);v.setPadding(0,dp(TOOLBAR_TOP_GAP_DP),0,dp(18));v.setTag("library.toolbar.row");PreviewToolbar controls=new PreviewToolbar(getContext(),true);
                     controls.addView(button("Filters"+(genres[tab].isEmpty()?"":": "+genres[tab])+(years[tab]==0?"":" · "+years[tab])+"  ▾",()->filter()));
                     String order=columns[tab].sortColumn!=null?(columns[tab].ascending?"Ascending":"Descending"):sorts[tab]==1?(ascending[tab]?"A → Z":"Z → A"):sorts[tab]>=3?(ascending[tab]?"Lowest Ranked First":"Highest Ranked First"):(ascending[tab]?"Oldest First":"Newest First");
                     for(TextView control:new TextView[]{button("Sort: "+(columns[tab].sortColumn!=null?columns[tab].sortColumn.label:sortLabels()[sorts[tab]])+"  ▾",()->sort()),button(order,()->{quietOrder.clear();boolean value=!(columns[tab].sortColumn==null?ascending[tab]:columns[tab].ascending);ascending[tab]=value;columns[tab].setAscending(value);render();}),button(listMode[tab]?"Grid View":"List View",()->{listMode[tab]=!listMode[tab];render();})}){LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(8);controls.addView(control,lp);}
@@ -681,7 +683,7 @@ public final class PreviewPages extends FrameLayout {
                     String[] controlIds={"filters","sort","order","view","columns"};
                     for(int i=0;i<controls.getChildCount();i++){View control=controls.getChildAt(i);control.setTag(customLibrary==null?"control:"+i:"custom.control."+controlIds[i]);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control,"library.toolbar."+controlIds[i]);}
                     if(customLibrary!=null){TextView edit=button("Edit Library",()->customEdit.run());edit.setTag("custom.control.edit");v.addView(PreviewToolbar.withTrailingAction(controls,edit));}else v.addView(PreviewToolbar.viewport(controls));
-                    View divider=new View(getContext());divider.setBackgroundColor(0x557f8996);LinearLayout.LayoutParams dividerSize=new LinearLayout.LayoutParams(-1,dp(1));dividerSize.topMargin=dp(12);v.addView(divider,dividerSize);
+                    View divider=new View(getContext());divider.setTag("library.toolbar.divider");divider.setBackgroundColor(0x557f8996);LinearLayout.LayoutParams dividerSize=new LinearLayout.LayoutParams(-1,dp(1));dividerSize.topMargin=dp(12);v.addView(divider,dividerSize);
                     if(listMode[tab])v.addView(columns[tab].header(this::refreshColumns));
                 }else{TextView title=text(c.title,tab==3&&c.title.equals("Network & files")?30:19);title.setTextColor(tab==0?android.graphics.Color.WHITE:0xff9ed4f7);if(tab==0&&!c.headingIcon.isEmpty())MenuFoundation.icon(title,c.headingIcon);v.addView(title);}
             }

@@ -11,6 +11,27 @@ import static org.junit.Assert.*;
 public class NextQaWizardTest {
  @Before public void offline(){Shadows.shadowOf(RuntimeEnvironment.getApplication()).grantPermissions("app.supernova.player.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");PreviewAsyncFixtures.offlineTransport();PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).putBoolean("supernova_onboarding_complete",true).remove(CustomLibraryPage.KEY).commit();}
  @After public void drain() throws Exception {PreviewAsyncFixtures.drain();}
+ /** Owner 2 Nov 2026: the toolbar sits centred between the statistics and the separator on every library page (shared code). */
+ @Test public void libraryToolbarIsCentredBetweenStatisticsAndSeparator() throws Exception {
+  CustomLibraryPage page = new CustomLibraryPage();
+  page.name = "Documentaries";
+  assertTrue(page.save(RuntimeEnvironment.getApplication()));
+  var host = Robolectric.buildActivity(CustomLibraryActivity.class).setup().visible();
+  try {
+   View root = host.get().findViewById(android.R.id.content);
+   PreviewPagesTest.layout(root);
+   View stats = root.findViewWithTag("library.statistics"), filters = root.findViewWithTag("custom.control.filters"), divider = root.findViewWithTag("library.toolbar.divider");
+   assertNotNull(stats); assertNotNull(filters); assertNotNull(divider);
+   int[] s = new int[2], f = new int[2], d = new int[2];
+   stats.getLocationInWindow(s); filters.getLocationInWindow(f); divider.getLocationInWindow(d);
+   int above = f[1] - (s[1] + stats.getHeight()), below = d[1] - (f[1] + filters.getHeight());
+   float density = root.getResources().getDisplayMetrics().density;
+   assertTrue("gap above " + above + "px vs below " + below + "px", Math.abs(above - below) <= Math.round(2 * density));
+   PreviewPagesTest.capture(root, "library-toolbar-centred");
+  } finally {
+   host.pause().stop().destroy();
+  }
+ }
  /** Owner report 2 Nov 2026: opening Documentaries left focus invisible. Like Movies/TV, it must sit on the page's own tab. */
  @Test public void openingCustomPageKeepsVisibleFocusOnItsOwnTab() {
   CustomLibraryPage page = new CustomLibraryPage();

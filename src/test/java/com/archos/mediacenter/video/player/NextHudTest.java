@@ -41,6 +41,33 @@ public class NextHudTest {
   TextView title=root.findViewById(R.id.preview_playback_title);title.setText("A long actual-title fallback for the constrained viewport");title.setVisibility(View.VISIBLE);TextView episode=root.findViewById(R.id.preview_playback_episode);episode.setText("S01 E01 · Indexed episode metadata");episode.setVisibility(View.VISIBLE);com.archos.mediacenter.video.utils.VideoMetadata metadata=mock(com.archos.mediacenter.video.utils.VideoMetadata.class);when(metadata.getChapters()).thenReturn(java.util.List.of(new PlaybackChapters.Chapter(0,"A long embedded opening chapter name")));when(player.getVideoMetadata()).thenReturn(metadata);when(player.getCurrentPosition()).thenReturn(0);((ProgressBar)root.findViewById(R.id.seek_progress)).setProgress(0);controller.updateClock();layout();ReflectionHelpers.callInstanceMethod(controller,"updatePreviewScrubber");layout();View bubble=root.findViewById(R.id.preview_scrub_time);int[] ep=new int[2],tip=new int[2];episode.getLocationInWindow(ep);bubble.getLocationInWindow(tip);assertTrue("Title metadata stays above the chapter bubble",ep[1]+episode.getHeight()<=tip[1]);assertEquals(0,((TextView)bubble).getLayout().getEllipsisCount(0));assertTrue("Fallback title fits its measured box",title.getLayout().getLineBottom(title.getLineCount()-1)<=title.getHeight());
  }
 
+ /** Owner report 2 Nov 2026: the controls appeared low on the first press and jumped up on the next. */
+ @Test public void controlsStartAtTheirFinalBottomInset() {
+  View bar = root.findViewById(R.id.control_bar);
+  int initial = ((ViewGroup.MarginLayoutParams) bar.getLayoutParams()).bottomMargin;
+  assertTrue("inset present before the first show", initial > 0);
+  layout();
+  ReflectionHelpers.callInstanceMethod(controller, "updatePreviewScrubber");
+  controller.updateClock();
+  layout();
+  assertEquals("no jump after the first update", initial, ((ViewGroup.MarginLayoutParams) bar.getLayoutParams()).bottomMargin);
+ }
+
+ /** Owner decision 2 Nov 2026: Play/Pause and Settings are rounded rectangles (corner 12), not a circle and a pill. */
+ @Test public void playPauseAndSettingsAreRoundedRectangles() {
+  ReflectionHelpers.callInstanceMethod(controller, "configurePreviewTransport");
+  float density = root.getResources().getDisplayMetrics().density;
+  for (int id : new int[]{R.id.preview_pause_group, R.id.preview_more_group}) {
+   android.graphics.drawable.Drawable background = root.findViewById(id).getBackground();
+   assertNotNull(background);
+   android.graphics.drawable.Drawable face = background instanceof android.graphics.drawable.StateListDrawable ? background.getCurrent() : background;
+   assertTrue(face instanceof android.graphics.drawable.GradientDrawable);
+   android.graphics.drawable.GradientDrawable shape = (android.graphics.drawable.GradientDrawable) face;
+   assertEquals("rectangle, not oval", android.graphics.drawable.GradientDrawable.RECTANGLE, shape.getShape());
+   assertEquals(12f * density, shape.getCornerRadius(), 0.5f);
+  }
+ }
+
  /** Owner decision 2 Nov 2026: "01:02:26 · Ends at 12:05" with a middle dot that follows Ends at visibility. */
  @Test public void middleDotSeparatesTotalRuntimeFromEndsAt() {
   controller.updateClock();
