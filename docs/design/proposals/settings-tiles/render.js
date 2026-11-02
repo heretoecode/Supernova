@@ -27,7 +27,7 @@ const styles = {
   outline: { rest: 'background:rgba(26,31,92,.97);border:2px solid rgba(255,255,255,.18);color:#fff', focus: 'background:rgba(26,31,92,.97);border:4px solid #fff;color:#fff', sub: ['#c9d3e6', '#c9d3e6'] },
   glasswhite: { rest: 'background:rgba(26,31,92,.97);border:2px solid rgba(255,255,255,.18);color:#fff', focus: 'background:#f4f6fb;color:#0b0d12;box-shadow:0 10px 28px rgba(0,0,0,.5)', sub: ['#c9d3e6', '#3a4256'] },
 };
-const page = (key, caption) => {
+const page = (key, caption, left = false) => {
   const s = styles[key];
   return `<!doctype html><html><head><meta charset="utf-8"><style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -43,7 +43,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
  <span style="border-bottom:3px solid #fff;padding-bottom:4px">${svg(ic.gear).replace('44', '36').replace('44', '36')}</span><span>23:01</span></div>
 <div style="position:absolute;left:56px;top:122px;font-size:36px;font-weight:500">Settings</div>
-<div class="grid">${tiles.map(([i, t, d], n) => { const f = n === 2; return `<div class="tile" style="${f ? s.focus : s.rest}">${svg(ic[i])}<div class="t">${t}</div><div class="d" style="color:${f ? s.sub[1] : s.sub[0]}">${d}</div></div>`; }).join('')}</div>
+<div class="grid">${tiles.map(([i, t, d], n) => { const f = n === 2; return `<div class="tile" style="${f ? s.focus : s.rest}${left ? ';flex-direction:row;align-items:center;gap:24px;justify-content:flex-start' : ''}">${left ? `<div style="flex:none">${svg(ic[i])}</div><div style="display:flex;flex-direction:column;gap:14px"><div class="t">${t}</div><div class="d" style="color:${f ? s.sub[1] : s.sub[0]}">${d}</div></div>` : `${svg(ic[i])}<div class="t">${t}</div><div class="d" style="color:${f ? s.sub[1] : s.sub[0]}">${d}</div>`}</div>`; }).join('')}</div>
 <div class="cap">${caption}</div></body></html>`;
 };
 (async () => {
@@ -52,6 +52,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
     ['01-button-style-black-white.png', page('black', 'Option 1 · Same as buttons: black at rest, white box with black text on focus')],
     ['02-row-style-outline.png', page('outline', 'Option 2 · Same as rows: navy glass at rest, white outline on focus (no fill change)')],
     ['03-hybrid-glass-white.png', page('glasswhite', 'Option 3 · Hybrid: navy glass at rest, white box with black text on focus')],
+    ['04-hybrid-icon-left.png', page('glasswhite', 'Option 3 with the icon to the left of the text', true)],
   ];
   for (const [n, h] of shots) { await p.setContent(h); await p.screenshot({ path: path.join(__dirname, n) }); }
   await b.close(); console.log('rendered', shots.length);
