@@ -50,12 +50,14 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:Roboto,"Noto Sans",A
 .tab{height:56px;border-radius:14px;border:2px solid #5a7bd8;display:flex;align-items:center;justify-content:center;gap:8px;font-size:19px;font-weight:600}
 .tab.active{background:#2f6df0;border-color:#7fd6ff;box-shadow:0 0 16px rgba(95,208,255,.55)}
 .head{font-size:17px;font-weight:700;color:#9cc9f0;letter-spacing:.6px;padding:10px 4px 8px;border-bottom:1.5px solid #3e5aa8}
-.row{display:flex;align-items:center;height:60px;padding:0 6px;border-bottom:1.5px solid #34479a;border-radius:10px}
+.row{display:flex;align-items:center;height:60px;padding:0 6px;position:relative}
+.row:after{content:'';position:absolute;left:0;right:0;bottom:0;height:1.5px;background:#34479a}
+.row.focus:after{display:none}
 .row .ic{width:44px;display:flex;color:#e8eeff}
 .row .label{flex:1;font-size:21px;font-weight:600}
 .row .value{display:flex;align-items:center;gap:10px;font-size:20px}
 .row.dimmed{opacity:.42}
-.row.focus{border:2.5px solid #7fd6ff;box-shadow:0 0 14px rgba(95,208,255,.6);background:rgba(95,208,255,.08)}
+.row.focus{border-radius:10px;border:2.5px solid #7fd6ff;box-shadow:0 0 14px rgba(95,208,255,.6);background:rgba(95,208,255,.08)}
 .chev{font-size:24px;margin-left:2px}
 .flag{width:30px;height:30px;border-radius:4px}
 .choices{display:flex;gap:9px;align-items:center}.choices .sel{color:#3fb6ff}.choices .bar{color:#cfd8ff}

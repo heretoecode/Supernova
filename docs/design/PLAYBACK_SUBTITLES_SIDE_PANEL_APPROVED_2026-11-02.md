@@ -13,7 +13,9 @@ On the Shield (owner photo, 2 Nov 2026) the centred panel covered ~60% of the wi
 - A soft dark gradient (~90px) on the panel's left edge separates it from the video; **no** full-screen dim. Video keeps playing and stays visible on the left two thirds.
 - Header: gear icon + "Playback Settings". Tabs in one row of four equal widths: Subtitles · Audio · Video · More (active tab filled blue with glow, as today).
 - Section headings unchanged: SUBTITLE SELECTION, SUBTITLE APPEARANCE.
-- Rows ~60px high, icon column ~44px, label left, value right, separator under each row. Focus = glowing outline around the whole row (as Text Colour in the image).
+- Rows ~60px high, icon column ~44px, label left, value right.
+- Separators are **straight, square-ended 1.5px lines** under each row (owner check, 2 Nov 2026: no curved ends).
+- Focus = glowing outline with **rounded corners** around the whole row (as Text Colour in the image); only the focus outline is rounded.
 
 ## Rows (order and controls unchanged except where noted)
 1. Subtitles — toggle
