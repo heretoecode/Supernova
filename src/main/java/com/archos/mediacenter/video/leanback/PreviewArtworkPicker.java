@@ -7,6 +7,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.view.*;
 import android.widget.*;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediascraper.ScraperImage;
 import com.squareup.picasso.Picasso;
 import java.io.File;
@@ -60,7 +62,7 @@ public final class PreviewArtworkPicker {
             card.setFocusable(true);
             card.setFocusableInTouchMode(true);
             card.setTag("artwork:" + i);
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
+            Diagnostics.semantic(
                 card, "details.artwork." + (posters ? "poster." : "backdrop.") + i);
             card.setClipChildren(false);
             card.setClipToPadding(false);
@@ -82,8 +84,8 @@ public final class PreviewArtworkPicker {
                                   : image.getLargeUrl() == null ? null
                                                                 : Uri.parse(image.getLargeUrl());
             if (uri != null)
-                com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(
-                    picture, uri, com.archos.mediacenter.video.diagnostics.Diagnostics.artworkMedia(),
+                ArtworkRequest.load(
+                    picture, uri, Diagnostics.artworkMedia(),
                     "details.artwork_picker", posters ? "poster" : "backdrop",
                     Picasso.get().load(uri).resize(cardWidth, cardHeight).centerCrop().noFade());
             TextView check = new TextView(context);
@@ -157,7 +159,7 @@ public final class PreviewArtworkPicker {
         dialog.setContentView(panel);
         dialog.setOnDismissListener(d -> {
             for (ImageView picture : pictures) {
-                com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(picture);
+                ArtworkRequest.cancel(picture);
                 picture.setImageDrawable(null);
             }
         });
