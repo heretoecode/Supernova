@@ -2,9 +2,15 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.leanback.search.PreviewSearch;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -50,9 +56,9 @@ public class PreviewSearchPresentationTest {
             var constructor = result.getDeclaredConstructor(
                 com.archos.mediacenter.video.browser.adapters.object.Video.class, String.class);
             constructor.setAccessible(true);
-            java.util.List items = org.robolectric.util.ReflectionHelpers.getField(search, "items");
+            List items = org.robolectric.util.ReflectionHelpers.getField(search, "items");
             items.add(constructor.newInstance(video, ""));
-            androidx.recyclerview.widget.RecyclerView results =
+            RecyclerView results =
                 org.robolectric.util.ReflectionHelpers.getField(search, "results");
             results.setVisibility(View.VISIBLE);
             results.getAdapter().notifyDataSetChanged();
@@ -63,9 +69,9 @@ public class PreviewSearchPresentationTest {
             assertNotNull(Shadows.shadowOf(host.get()).getNextStartedActivity());
             search.onWindowFocusChanged(false);
             search.onWindowFocusChanged(true);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             search.onWindowFocusChanged(true);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertSame(opener, search.findFocus());
             PreviewPagesTest.layout(shell);
             PreviewPagesTest.capture(shell, "search-populated-return-focused");
@@ -73,7 +79,7 @@ public class PreviewSearchPresentationTest {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
             var snapshot = flight.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
-            String evidence = (String) snapshot.invoke(flight, android.os.SystemClock.elapsedRealtime());
+            String evidence = (String) snapshot.invoke(flight, SystemClock.elapsedRealtime());
             String token = null;
             int entries = 0, returns = 0;
             for (String line : evidence.split("\n")) {
@@ -127,7 +133,7 @@ public class PreviewSearchPresentationTest {
             assertEquals("Search Movies and TV Shows", query.getHint().toString());
             assertNotNull(search.findViewWithTag("semantic:keyboard:Caps Lock"));
             assertEquals("ON",
-                ((android.widget.TextView) search.findViewWithTag("semantic:keyboard:Caps Lock")).getText().toString());
+                ((TextView) search.findViewWithTag("semantic:keyboard:Caps Lock")).getText().toString());
             assertNull(PreviewPagesTest.findText(search, "Shift"));
             PreviewPagesTest.capture(nav, "search-empty-next");
         } finally {
@@ -159,9 +165,9 @@ public class PreviewSearchPresentationTest {
     private static EditText findQuery(View view) {
         if (view instanceof EditText)
             return (EditText) view;
-        if (view instanceof android.view.ViewGroup)
-            for (int i = 0; i < ((android.view.ViewGroup) view).getChildCount(); i++) {
-                EditText found = findQuery(((android.view.ViewGroup) view).getChildAt(i));
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                EditText found = findQuery(((ViewGroup) view).getChildAt(i));
                 if (found != null)
                     return found;
             }
