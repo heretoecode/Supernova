@@ -15,6 +15,7 @@
 
 package com.archos.mediacenter.video.utils.oauth;
 
+import android.webkit.WebSettings;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -31,7 +32,6 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.RequiresApi;
 
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -120,7 +120,7 @@ public class OAuthDialog extends Dialog {
 		// Essential JavaScript for OAuth flow
 		mWebView.getSettings().setJavaScriptEnabled(true);
 		// Allow mixed content (for OAuth callback URL handling)
-		mWebView.getSettings().setMixedContentMode(android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+		mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 		// Enhanced security settings
 		mWebView.getSettings().setDomStorageEnabled(false);
 		mWebView.getSettings().setDatabaseEnabled(false);
@@ -142,7 +142,7 @@ public class OAuthDialog extends Dialog {
 		mWebView.getSettings().setUseWideViewPort(false);
 		mWebView.getSettings().setLoadWithOverviewMode(false);
 		// Scale content smaller for TV viewing
-		mWebView.getSettings().setDefaultZoom(android.webkit.WebSettings.ZoomDensity.FAR);
+		mWebView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
 		mWebView.setWebViewClient(new OAuthWebViewClient());
 		mWebView.setWebChromeClient(new WebChromeClient());
 
