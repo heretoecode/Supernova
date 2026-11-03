@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
 
 
+/** Builds and updates the actions shown for a collection. */
 public class CollectionActionAdapter extends SparseArrayObjectAdapter {
 
     public static final int ACTION_PLAY = 1;
