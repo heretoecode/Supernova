@@ -2,16 +2,21 @@
 package com.archos.mediacenter.video.streaming;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ObjectAdapter;
 import androidx.leanback.widget.SparseArrayObjectAdapter;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
@@ -216,11 +221,11 @@ public final class StreamingActions {
         CharSequence[] labels = new CharSequence[offers.size()];
         for (int i = 0; i < offers.size(); i++)
             labels[i] = offers.get(i).provider.name;
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
             String[] names = new String[labels.length];
             for (int i = 0; i < labels.length; i++)
                 names[i] = labels[i].toString();
-            android.app.Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(a,
+            Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(a,
                 app.getString(R.string.streaming_more) + " · " + region + " · JustWatch", names, -1,
                 i -> openOffer(offers.get(i), watchUrl, title));
             for (int i = 0; i < offers.size(); i++)
@@ -270,9 +275,9 @@ public final class StreamingActions {
         if (a == null)
             return;
         if (StreamingRepository.safeWebUrl(url)) {
-            android.util.Log.i("SupernovaHandoff",
+            Log.i("SupernovaHandoff",
                 "Provider=" + offer.provider.name + " host=" + Uri.parse(url).getHost()
-                    + " titlePathPresent=" + !android.text.TextUtils.isEmpty(Uri.parse(url).getPath()));
+                    + " titlePathPresent=" + !TextUtils.isEmpty(Uri.parse(url).getPath()));
             for (String pkg : packages(offer.provider.name)) {
                 if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(pkg)))
                     return;
@@ -280,7 +285,7 @@ public final class StreamingActions {
             if (start(a, new Intent(Intent.ACTION_VIEW, Uri.parse(url))))
                 return;
         }
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
             com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, offer.provider.name,
                 new String[] {
                     app.getString(R.string.streaming_open_app), app.getString(R.string.streaming_watch_page),
@@ -361,7 +366,7 @@ public final class StreamingActions {
             activity.startActivity(intent);
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_handoff_dispatched");
             return true;
-        } catch (android.content.ActivityNotFoundException | SecurityException e) {
+        } catch (ActivityNotFoundException | SecurityException e) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.error("provider_handoff_failed", e);
             return false;
         }
