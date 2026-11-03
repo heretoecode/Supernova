@@ -30,23 +30,42 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.filecorelibrary.ListingEngine;
 import com.archos.filecorelibrary.MetaFile2;
+import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
+import com.archos.filecorelibrary.samba.SambaDiscovery;
+import com.archos.filecorelibrary.samba.Share;
+import com.archos.filecorelibrary.samba.Workgroup;
 import com.archos.mediacenter.filecoreextension.upnp2.ListingEngineFactoryWithUpnp;
+import com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
+import com.archos.mediacenter.video.browser.ShortcutDb;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.loader.VideosInFolderLoader;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.foundation.DoubleRingDrawable;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import com.archos.mediacenter.video.leanback.details.PreviewMediaInfo;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsActivity;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
+import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
+import com.archos.mediacenter.video.streaming.putio.PutioAccountController;
+import com.archos.mediacenter.video.streaming.putio.PutioBrowserController;
 import com.archos.mediacenter.video.utils.PlayUtils;
 import com.archos.mediacenter.video.utils.VideoUtils;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.NetworkScannerUtil;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import org.jupnp.model.meta.Device;
 
 /** The TV browser used by Home, Network & Files, protocol activities and provider hosts.
  * It lists through the existing FileCore engine; it never scans or deletes physical files itself. */
@@ -106,7 +125,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private Consumer<Exception> credentials;
     private Consumer<Uri> locationChanged = ignored -> {
     };
-    private com.archos.mediacenter.video.streaming.putio.PutioBrowserController putioBrowser;
+    private PutioBrowserController putioBrowser;
     private View suppliedDock;
     private Consumer<Uri> directoryChoice;
     private boolean legacyRootsReady, legacyRootsLoading;
@@ -298,13 +317,13 @@ public final class UniversalFileBrowser extends LinearLayout {
                 centreAction("Connection Preferences",
                     ()
                         -> getContext().startActivity(new Intent(
-                            getContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class)
+                            getContext(), VideoSettingsActivity.class)
                                 .putExtra("supernova_settings_category", 5)
                                 .putExtra("supernova_settings_section", "Network connections")));
                 centreAction("Network Compatibility",
                     ()
                         -> getContext().startActivity(new Intent(
-                            getContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class)
+                            getContext(), VideoSettingsActivity.class)
                                 .putExtra("supernova_settings_category", 6)
                                 .putExtra("supernova_settings_section", "Network compatibility")));
                 break;
@@ -323,9 +342,9 @@ public final class UniversalFileBrowser extends LinearLayout {
     private final List<TextView> localChildren = new ArrayList<>(), healthChildren = new ArrayList<>();
     private boolean localExpanded, healthExpanded;
     private LibraryHealthPanel healthPanel;
-    private com.archos.filecorelibrary.samba.SambaDiscovery discovery;
-    private com.archos.filecorelibrary.samba.SambaDiscovery.Listener discoveryListener;
-    private com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager.Listener upnpListener;
+    private SambaDiscovery discovery;
+    private SambaDiscovery.Listener discoveryListener;
+    private UpnpServiceManager.Listener upnpListener;
     private final LinkedHashMap<String, String> discovered = new LinkedHashMap<>();
     private final String[] connection = new String[] {
         "", "", "/", "", "", ""
@@ -334,7 +353,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private boolean savePassword = true, showPassword;
     private final List<Shortcut> shares = new ArrayList<>();
     private ScrollView inlineScroll;
-    private com.archos.mediacenter.video.streaming.putio.PutioAccountController putioController;
+    private PutioAccountController putioController;
 
     public void onboarding(boolean value) {
         if (onboarding == value)
@@ -426,9 +445,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         status.setTag("browser.status");
         status.setMinHeight(dp(26));
         LinearLayout progress = new LinearLayout(c);
-        progress.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        progress.setGravity(Gravity.CENTER_VERTICAL);
         loading = new ProgressBar(c);
-        loading.setIndeterminateDrawable(new com.archos.mediacenter.video.foundation.DoubleRingDrawable());
+        loading.setIndeterminateDrawable(new DoubleRingDrawable());
         loading.setVisibility(INVISIBLE);
         progress.addView(loading, new LayoutParams(dp(26), dp(26)));
         progress.addView(status, new LayoutParams(0, -2, 1));
@@ -457,7 +476,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         };
         for (int i = 0; i < labels.length; i++) {
             LinearLayout row = new LinearLayout(c);
-            row.setGravity(android.view.Gravity.TOP);
+            row.setGravity(Gravity.TOP);
             TextView label = SharedThreePanel.text(c, labels[i], 16);
             label.setTextColor(0xffb7bdc6);
             row.addView(label, new LayoutParams(dp(92), -2));
@@ -685,7 +704,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if (putioController != null)
             putioController.close();
         putioController =
-            com.archos.mediacenter.video.streaming.putio.PutioAccountController.attach(getContext(), items);
+            PutioAccountController.attach(getContext(), items);
         if (putioController != null && networkLayout != null) {
             putioController.cancelWith(() -> {
                 if (putioController != null)
@@ -697,11 +716,11 @@ public final class UniversalFileBrowser extends LinearLayout {
             putioController.browseWith((account, folder, name) -> {
                 stopDiscovery();
                 workspaceMode(true);
-                android.content.Context owner = getContext();
+                Context owner = getContext();
                 while (owner instanceof ContextWrapper && !(owner instanceof Activity))
                     owner = ((ContextWrapper) owner).getBaseContext();
                 if (owner instanceof Activity)
-                    putioBrowser = new com.archos.mediacenter.video.streaming.putio.PutioBrowserController(
+                    putioBrowser = new PutioBrowserController(
                         (Activity) owner, this, account, folder, name,
                         ()
                             -> {
@@ -767,7 +786,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         legacyRootsLoading = true;
         metadata.execute(() -> {
             try {
-                Set<Uri> roots = com.archos.mediaprovider.video.SupernovaLibraryPolicy.historicalLocalRoots(
+                Set<Uri> roots = SupernovaLibraryPolicy.historicalLocalRoots(
                     getContext().getApplicationContext());
                 post(() -> {
                     if (!closed) {
@@ -778,7 +797,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 });
             } catch (RuntimeException failure) {
                 post(() -> legacyRootsLoading = false);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("browser_legacy_roots", failure);
+                Diagnostics.error("browser_legacy_roots", failure);
             }
         });
     }
@@ -806,11 +825,11 @@ public final class UniversalFileBrowser extends LinearLayout {
             heading.setText("Network Scanning");
             information.setText("Automatic checks use the existing scanner. Scans continue when you leave this page.");
             actions.removeAllViews();
-            int period = com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());
+            int period = NetworkAutoRefresh.getRescanPeriod(getContext());
             contextToggle("Automatic", period > 0, () -> {
                 if (period > 0)
                     prefs.edit().putInt("preview_scan_frequency", period).apply();
-                com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(
+                NetworkScannerUtil.scheduleNewRescan(
                     getContext(), 0, period > 0 ? 0 : prefs.getInt("preview_scan_frequency", 3600000), true);
                 scanControls();
                 actions.getChildAt(0).requestFocus();
@@ -831,7 +850,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                             }[n];
                             prefs.edit().putInt("preview_scan_frequency", value).apply();
                             if (period > 0)
-                                com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(
+                                NetworkScannerUtil.scheduleNewRescan(
                                     getContext(), 0, value, true);
                             scanControls();
                             actions.getChildAt(1).requestFocus();
@@ -941,14 +960,14 @@ public final class UniversalFileBrowser extends LinearLayout {
         information.setText(video.getFilenameNonCryptic());
         if (video.getPosterUri() != null) {
             poster.setVisibility(VISIBLE);
-            com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(poster, video.getPosterUri(), video.getId(),
+            ArtworkRequest.load(poster, video.getPosterUri(), video.getId(),
                 "network.browser", "poster",
-                com.squareup.picasso.Picasso.get().load(video.getPosterUri()).resize(dp(120), dp(120)).centerInside());
+                Picasso.get().load(video.getPosterUri()).resize(dp(120), dp(120)).centerInside());
         }
     }
 
     public void providerInformation(String title, String details, boolean folder, Runnable open) {
-        com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(poster);
+        ArtworkRequest.cancel(poster);
         poster.setVisibility(GONE);
         poster.setImageDrawable(null);
         facts.setVisibility(GONE);
@@ -1237,7 +1256,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         toggle.setFocusable(false);
         toggle.setClickable(false);
         toggle.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        com.archos.mediacenter.video.leanback.settings.PreviewSettings.styleSwitch(toggle);
+        PreviewSettings.styleSwitch(toggle);
         row.addView(toggle, new LayoutParams(dp(52), dp(48)));
         row.setContentDescription(name + ". " + (checked ? "On" : "Off"));
         Runnable change = () -> {
@@ -1346,7 +1365,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                                         : ""),
             "Connect", this::connect);
         centreHeading(networkLayout == null ? "Add Network Source" : "Add Connection");
-        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(items, "private.credentials");
+        Diagnostics.semantic(items, "private.credentials");
         String[] names = {
             "SMB", "WebDAV HTTPS", "WebDAV HTTP", "SFTP", "FTP", "FTP TLS"
         };
@@ -1431,10 +1450,10 @@ public final class UniversalFileBrowser extends LinearLayout {
                           .encodedAuthority(authority)
                           .path(connection[2].startsWith("/") ? connection[2] : "/" + connection[2])
                           .build();
-            com.archos.filecorelibrary.samba.NetworkCredentialsDatabase database =
-                com.archos.filecorelibrary.samba.NetworkCredentialsDatabase.getInstance();
-            com.archos.filecorelibrary.samba.NetworkCredentialsDatabase.Credential credential =
-                new com.archos.filecorelibrary.samba.NetworkCredentialsDatabase.Credential(
+            NetworkCredentialsDatabase database =
+                NetworkCredentialsDatabase.getInstance();
+            NetworkCredentialsDatabase.Credential credential =
+                new NetworkCredentialsDatabase.Credential(
                     (protocol == 1 || protocol == 2) && connection[3].isEmpty() && connection[4].isEmpty()
                         ? "anonymous"
                         : connection[3],
@@ -1464,8 +1483,8 @@ public final class UniversalFileBrowser extends LinearLayout {
         discovered.clear();
         status.setText("Discovering…");
         try {
-            discovery = new com.archos.filecorelibrary.samba.SambaDiscovery(getContext());
-            discoveryListener = new com.archos.filecorelibrary.samba.SambaDiscovery.Listener() {
+            discovery = new SambaDiscovery(getContext());
+            discoveryListener = new SambaDiscovery.Listener() {
                 public void onDiscoveryStart() {
                 }
                 public void onDiscoveryEnd() {
@@ -1476,26 +1495,26 @@ public final class UniversalFileBrowser extends LinearLayout {
                     if (!closed && discoveryToken == discoveryGeneration)
                         status.setText("SMB discovery unavailable. Direct connections remain available.");
                 }
-                public void onDiscoveryUpdate(List<com.archos.filecorelibrary.samba.Workgroup> groups) {
+                public void onDiscoveryUpdate(List<Workgroup> groups) {
                     if (closed || discoveryToken != discoveryGeneration)
                         return;
-                    for (com.archos.filecorelibrary.samba.Workgroup group : groups)
-                        for (com.archos.filecorelibrary.samba.Share share : group.getShares())
+                    for (Workgroup group : groups)
+                        for (Share share : group.getShares())
                             discovered.put(share.getAddress(), share.getDisplayName());
                     renderDiscovered();
                 }
             };
             discovery.addListener(discoveryListener);
             discovery.start();
-            com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager manager =
-                com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager.getSingleton(getContext());
+            UpnpServiceManager manager =
+                UpnpServiceManager.getSingleton(getContext());
             upnpListener = devices -> {
                 if (closed || discoveryToken != discoveryGeneration)
                     return;
-                for (org.jupnp.model.meta.Device device : devices) {
-                    Uri uri = com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager.getDeviceUri(device);
+                for (Device device : devices) {
+                    Uri uri = UpnpServiceManager.getDeviceUri(device);
                     discovered.put(uri.toString(),
-                        com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager.getDeviceFriendlyName(
+                        UpnpServiceManager.getDeviceFriendlyName(
                             device));
                 }
                 renderDiscovered();
@@ -1540,7 +1559,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             discovery = null;
         }
         if (upnpListener != null) {
-            com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager.getSingleton(getContext())
+            UpnpServiceManager.getSingleton(getContext())
                 .removeListener(upnpListener);
             upnpListener = null;
         }
@@ -1836,7 +1855,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 }
             }
         } catch (RuntimeException failure) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("browser_metadata_query", failure);
+            Diagnostics.error("browser_metadata_query", failure);
         }
         post(() -> {
             if (!closed && token == generation && target.equals(current)) {
@@ -1974,7 +1993,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         if (hadFocus)
             fileList.requestFocus();
         fileLayout.setSpanCount(prefs.getBoolean(GRID, false) ? 2 : 1);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_listing_render", "items", files.size(),
+        Diagnostics.event("browser_listing_render", "items", files.size(),
             "all_files", prefs.getBoolean(ALL_FILES, false), "grid", prefs.getBoolean(GRID, false), "generation",
             generation, "restore_focus", hadFocus);
         fileAdapter.notifyDataSetChanged();
@@ -2147,10 +2166,10 @@ public final class UniversalFileBrowser extends LinearLayout {
             if (width > 0 && height > 0)
                 body.append("\n\nResolution\n").append(width).append(" × ").append(height);
             String codec =
-                com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedVideoFormat());
+                PreviewMediaInfo.format(video.getCalculatedVideoFormat());
             if (!codec.isEmpty())
                 body.append("\n\nVideo codec\n").append(codec);
-            String audio = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(
+            String audio = PreviewMediaInfo.format(
                 video.getCalculatedBestAudioFormat());
             if (!audio.isEmpty())
                 body.append("\n\nAudio\n").append(audio);
@@ -2236,7 +2255,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                                 return;
                             int removed;
                             try {
-                                removed = com.archos.mediacenter.video.browser.ShortcutDb.STATIC.removeShortcut(
+                                removed = ShortcutDb.STATIC.removeShortcut(
                                     getContext(), uri);
                             } catch (RuntimeException failure) {
                                 removed = 0;
@@ -2553,7 +2572,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             if (focused)
                 revealContext(view);
         });
-        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
+        Diagnostics.semantic(
             row, "network.action." + label.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "_"));
         PreviewIcon.apply(row,
             label.contains("Library") ? "Library"
@@ -2589,7 +2608,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         stopDiscovery();
         scanHandler.removeCallbacks(scanRefresh);
         prefs.unregisterOnSharedPreferenceChangeListener(changes);
-        com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(poster);
+        ArtworkRequest.cancel(poster);
         stopListing();
         super.onDetachedFromWindow();
     }
