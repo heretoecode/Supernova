@@ -44,6 +44,7 @@ import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsTransitionBackdropCache;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsTransitionPosterCache;
 import com.archos.mediacenter.video.leanback.presenter.ListPresenter;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowActivity;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowMoreDetailsActivity;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowFragment;
@@ -117,8 +118,8 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         } else if (itemViewHolder instanceof ListPresenter.ListViewHolder){
             sourceView = ((ListPresenter.ListViewHolder)itemViewHolder).getImageView();
         }
-        if (itemViewHolder.view instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) {
-            sourceView = ((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card)itemViewHolder.view).image;
+        if (itemViewHolder.view instanceof PreviewCardPresenter.Card) {
+            sourceView = ((PreviewCardPresenter.Card)itemViewHolder.view).image;
         }
         boolean isPortraitPoster = false;
         if (sourceView instanceof ImageView) {
