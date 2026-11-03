@@ -1,10 +1,20 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -23,7 +33,7 @@ public class NextHudTest {
         ReflectionHelpers.setStaticField(PreviewPlaybackMenus.class, "owner", host.get());
         androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
-            .putInt("preview_accent41", android.graphics.Color.WHITE)
+            .putInt("preview_accent41", Color.WHITE)
             .commit();
         try {
             for (boolean on : new boolean[] {false, true}) {
@@ -107,7 +117,7 @@ public class NextHudTest {
             root.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
                          View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
             root.layout(0, 0, w, h);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
@@ -143,14 +153,14 @@ public class NextHudTest {
         assertNotNull(bubble.getLayout());
         assertEquals("Timestamp must actually fit its painted text layout", 0, bubble.getLayout().getEllipsisCount(0));
         assertTrue(bubble.getWidth() > bubble.getCompoundPaddingLeft() + bubble.getCompoundPaddingRight());
-        android.graphics.Bitmap image = android.graphics.Bitmap.createBitmap(root.getWidth(), root.getHeight(),
-                                                                             android.graphics.Bitmap.Config.ARGB_8888);
-        root.draw(new android.graphics.Canvas(image));
-        java.io.File out = new java.io.File("build/reports/preview-ui/next-hud-" + root.getWidth() + "-" +
+        Bitmap image = Bitmap.createBitmap(root.getWidth(), root.getHeight(),
+                                                                             Bitmap.Config.ARGB_8888);
+        root.draw(new Canvas(image));
+        File out = new File("build/reports/preview-ui/next-hud-" + root.getWidth() + "-" +
                                             root.getResources().getConfiguration().fontScale + ".png");
         out.getParentFile().mkdirs();
-        try (java.io.FileOutputStream f = new java.io.FileOutputStream(out)) {
-            image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, f);
+        try (FileOutputStream f = new FileOutputStream(out)) {
+            image.compress(Bitmap.CompressFormat.PNG, 100, f);
         }
         image.recycle();
     }
@@ -189,7 +199,7 @@ public class NextHudTest {
         com.archos.mediacenter.video.utils.VideoMetadata metadata =
             mock(com.archos.mediacenter.video.utils.VideoMetadata.class);
         when(metadata.getChapters())
-            .thenReturn(java.util.List.of(new PlaybackChapters.Chapter(0, "A long embedded opening chapter name")));
+            .thenReturn(List.of(new PlaybackChapters.Chapter(0, "A long embedded opening chapter name")));
         when(player.getVideoMetadata()).thenReturn(metadata);
         when(player.getCurrentPosition()).thenReturn(0);
         ((ProgressBar)root.findViewById(R.id.seek_progress)).setProgress(0);
@@ -227,9 +237,9 @@ public class NextHudTest {
         ReflectionHelpers.callInstanceMethod(controller, "configurePreviewTransport");
         float density = root.getResources().getDisplayMetrics().density;
         for (int id : new int[] {R.id.preview_pause_group, R.id.preview_more_group}) {
-            android.graphics.drawable.Drawable background = root.findViewById(id).getBackground();
+            Drawable background = root.findViewById(id).getBackground();
             assertNotNull(background);
-            android.graphics.drawable.Drawable face = background instanceof android.graphics.drawable.StateListDrawable
+            Drawable face = background instanceof StateListDrawable
                                                           ? background.getCurrent()
                                                           : background;
             assertTrue("shared rounded-rectangle button",
@@ -278,7 +288,7 @@ public class NextHudTest {
         layout();
         ReflectionHelpers.setField(controller, "mControlBarShowing", true);
         ReflectionHelpers.setField(controller, "mLastTouchEventTime", -1L);
-        ReflectionHelpers.setField(controller, "mHandler", mock(android.os.Handler.class));
+        ReflectionHelpers.setField(controller, "mHandler", mock(Handler.class));
         View seek = root.findViewById(R.id.seek_progress), settings = root.findViewById(R.id.preview_more),
              pause = root.findViewById(R.id.pause);
         seek.requestFocus();
@@ -301,7 +311,7 @@ public class NextHudTest {
         com.archos.mediacenter.video.utils.VideoMetadata metadata =
             mock(com.archos.mediacenter.video.utils.VideoMetadata.class);
         when(metadata.getChapters())
-            .thenReturn(java.util.List.of(
+            .thenReturn(List.of(
                 new PlaybackChapters.Chapter(0, "Opening"),
                 new PlaybackChapters.Chapter(6000000, "Final sequence with a long real chapter label")));
         when(player.getVideoMetadata()).thenReturn(metadata);
