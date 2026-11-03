@@ -9,25 +9,33 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.search.PreviewSearch;
+import com.squareup.picasso.Picasso;
 import java.util.List;
+import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSearchPresentationTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
@@ -37,29 +45,29 @@ public class PreviewSearchPresentationTest {
     })
     public void actualResultClickRetainsDiagnosticEntryTokenUntilWindowReturns() throws Exception {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(host.get(), true);
+        Diagnostics.setEnabled(host.get(), true);
         try {
             try {
-                com.squareup.picasso.Picasso.get();
+                Picasso.get();
             } catch (IllegalStateException missing) {
-                com.squareup.picasso.Picasso.setSingletonInstance(
-                    new com.squareup.picasso.Picasso.Builder(host.get().getApplicationContext()).build());
+                Picasso.setSingletonInstance(
+                    new Picasso.Builder(host.get().getApplicationContext()).build());
             }
             PreviewSearch search = new PreviewSearch(host.get(), 0, null);
             TopNavigation shell = new TopNavigation(host.get(), search, n -> {
             }, search::atTop);
             host.get().setContentView(shell);
-            var video = new com.archos.mediacenter.video.browser.adapters.object.Movie(1234, "/private-search-file",
+            var video = new Movie(1234, "/private-search-file",
                 "Private search result", 0, "", 2024, 0, "", null, 1000, 0, 0, 0, false, false, false, false, 0, 0,
                 1920, 1080, null, null, null, null, 0, 1, 1000, 0);
             Class<?> result = Class.forName(PreviewSearch.class.getName() + "$Result");
             var constructor = result.getDeclaredConstructor(
-                com.archos.mediacenter.video.browser.adapters.object.Video.class, String.class);
+                Video.class, String.class);
             constructor.setAccessible(true);
-            List items = org.robolectric.util.ReflectionHelpers.getField(search, "items");
+            List items = ReflectionHelpers.getField(search, "items");
             items.add(constructor.newInstance(video, ""));
             RecyclerView results =
-                org.robolectric.util.ReflectionHelpers.getField(search, "results");
+                ReflectionHelpers.getField(search, "results");
             results.setVisibility(View.VISIBLE);
             results.getAdapter().notifyDataSetChanged();
             PreviewPagesTest.layout(shell);
@@ -75,8 +83,8 @@ public class PreviewSearchPresentationTest {
             assertSame(opener, search.findFocus());
             PreviewPagesTest.layout(shell);
             PreviewPagesTest.capture(shell, "search-populated-return-focused");
-            Object flight = org.robolectric.util.ReflectionHelpers.getStaticField(
-                com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
+            Object flight = ReflectionHelpers.getStaticField(
+                Diagnostics.class, "FLIGHT");
             var snapshot = flight.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             String evidence = (String) snapshot.invoke(flight, SystemClock.elapsedRealtime());
@@ -85,7 +93,7 @@ public class PreviewSearchPresentationTest {
             for (String line : evidence.split("\n")) {
                 if (line.isEmpty())
                     continue;
-                org.json.JSONObject row = new org.json.JSONObject(line);
+                JSONObject row = new JSONObject(line);
                 if ("search.details".equals(row.optString("flow"))) {
                     entries++;
                     token = row.getString("operation_id");
@@ -96,7 +104,7 @@ public class PreviewSearchPresentationTest {
             for (String line : evidence.split("\n")) {
                 if (line.isEmpty())
                     continue;
-                org.json.JSONObject row = new org.json.JSONObject(line);
+                JSONObject row = new JSONObject(line);
                 if (token.equals(row.optString("operation_id")) && "focus_restoration".equals(row.optString("event"))) {
                     returns++;
                     assertTrue(row.getBoolean("success"));
@@ -109,7 +117,7 @@ public class PreviewSearchPresentationTest {
             assertEquals(1, entries);
             assertEquals(1, returns);
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(host.get(), false);
+            Diagnostics.setEnabled(host.get(), false);
             host.pause().stop().destroy();
         }
     }
@@ -128,7 +136,7 @@ public class PreviewSearchPresentationTest {
             assertTrue(search.findViewWithTag("semantic:keyboard:T").hasFocus());
             EditText query = findQuery(search);
             assertNotNull(query);
-            assertTrue(query.getFocusables(android.view.View.FOCUS_DOWN).isEmpty());
+            assertTrue(query.getFocusables(View.FOCUS_DOWN).isEmpty());
             assertTrue(query.isCursorVisible());
             assertEquals("Search Movies and TV Shows", query.getHint().toString());
             assertNotNull(search.findViewWithTag("semantic:keyboard:Caps Lock"));
