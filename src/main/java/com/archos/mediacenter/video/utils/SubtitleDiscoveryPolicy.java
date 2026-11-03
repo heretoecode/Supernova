@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.utils;
 
+import android.content.Context;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
@@ -64,7 +65,7 @@ public final class SubtitleDiscoveryPolicy {
         }
     }
 
-    public static List<Entry> remainingSeason(android.content.Context context, Entry playing, List<Entry> source) {
+    public static List<Entry> remainingSeason(Context context, Entry playing, List<Entry> source) {
         if (!(playing.media instanceof Episode))
             return Collections.emptyList();
         Episode selected = (Episode) playing.media;
