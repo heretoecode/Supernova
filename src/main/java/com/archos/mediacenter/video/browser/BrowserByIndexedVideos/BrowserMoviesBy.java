@@ -156,6 +156,7 @@ public abstract class BrowserMoviesBy extends CursorBrowserByVideo implements Lo
 	abstract protected Uri getCursorUri();
 
 
+    @Override
     public void setupThumbnail() {
         mThumbnailEngine.setThumbnailType(getThumbnailsType());
         mThumbnailRequester = new ThumbnailRequesterVideo(mThumbnailEngine,
@@ -279,6 +280,7 @@ public abstract class BrowserMoviesBy extends CursorBrowserByVideo implements Lo
         return R.string.scraper_no_movie_button_label;
     }
 
+    @Override
     public boolean showEmptyViewButton() {
         return true;
     }
