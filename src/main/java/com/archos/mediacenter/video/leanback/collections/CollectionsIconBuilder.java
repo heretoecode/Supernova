@@ -29,7 +29,6 @@ import android.widget.ImageView;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediascraper.GenreUtils;
-import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.ArrayList;
