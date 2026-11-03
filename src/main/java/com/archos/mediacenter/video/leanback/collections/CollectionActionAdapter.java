@@ -16,14 +16,11 @@ package com.archos.mediacenter.video.leanback.collections;
 
 import android.content.Context;
 import androidx.leanback.widget.Action;
-import androidx.leanback.widget.ObjectAdapter;
 import androidx.leanback.widget.SparseArrayObjectAdapter;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
-import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 
-import java.util.ArrayList;
 
 public class CollectionActionAdapter extends SparseArrayObjectAdapter {
 
