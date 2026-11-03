@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 
+/** Defines shared subtitle delay values and updates for playback pickers. */
 public abstract class SubtitleDelayPickerAbstract extends FrameLayout {
 
     /* UI Components */
