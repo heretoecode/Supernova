@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils;
 
 import android.content.*;
 import android.database.Cursor;
+import android.util.Log;
 import androidx.preference.PreferenceManager;
 import com.archos.mediascraper.*;
 import com.archos.mediaprovider.video.VideoStore;
@@ -123,7 +124,7 @@ public final class MigrationBackup {
                 if (complete)
                     p.edit().remove("preview_restore_artwork_pending").apply();
             } catch (Exception failure) {
-                android.util.Log.w("SupernovaBackup", "Artwork restoration will retry on return", failure);
+                Log.w("SupernovaBackup", "Artwork restoration will retry on return", failure);
             } finally {
                 RESTORING.set(false);
             }
