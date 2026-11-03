@@ -24,7 +24,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 
 import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 import androidx.leanback.widget.BaseCardView;
 import androidx.leanback.widget.ImageCardView;
 import androidx.leanback.widget.Presenter;
@@ -38,7 +37,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.archos.filecorelibrary.MetaFile2;
-import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.utils.trakt.Trakt;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
@@ -50,7 +48,6 @@ import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.leanback.UnavailablePosterBroadcastReceiver;
 import com.archos.mediacenter.video.picasso.ThumbnailRequestHandler;
 import com.archos.mediacenter.video.player.PlayerActivity;
-import com.archos.mediaprovider.video.VideoProvider;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
