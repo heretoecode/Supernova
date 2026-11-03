@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks viewing history identity, resume independence, tracking choices and safe backup selection. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
