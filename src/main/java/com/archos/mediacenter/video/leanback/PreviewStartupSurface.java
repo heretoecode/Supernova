@@ -19,6 +19,7 @@ public final class PreviewStartupSurface extends Drawable {
             : null;
     }
 
+    @Override
     public void draw(Canvas canvas) {
         Rect r = getBounds();
         if (foundation != null) {
@@ -35,14 +36,17 @@ public final class PreviewStartupSurface extends Drawable {
             "SUPERNOVA", r.exactCenterX(), r.exactCenterY() - (paint.ascent() + paint.descent()) / 2, paint);
     }
 
+    @Override
     public void setAlpha(int alpha) {
         paint.setAlpha(alpha);
     }
 
+    @Override
     public void setColorFilter(ColorFilter filter) {
         paint.setColorFilter(filter);
     }
 
+    @Override
     public int getOpacity() {
         return PixelFormat.OPAQUE;
     }
