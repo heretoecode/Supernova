@@ -17,7 +17,11 @@ import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.player.PrivateMode;
+import com.archos.mediacenter.video.utils.BackupPrivacy;
+import com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences;
+import com.archos.mediaprovider.video.VideoStore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.*;
 import java.util.function.BooleanSupplier;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Durable identity history, independent of file rows, cache eviction and source availability. */
 public final class ViewingHistory {
@@ -106,7 +112,7 @@ public final class ViewingHistory {
                 java.util.List<String> pairs = new ArrayList<>();
                 for (String pair : query.split("&", -1)) {
                     String name = Uri.decode(pair.split("=", 2)[0]);
-                    if (!com.archos.mediacenter.video.utils.BackupPrivacy.secretKey(name)
+                    if (!BackupPrivacy.secretKey(name)
                         && !name.matches("(?i)(auth|sig|signature|.*signature.*)"))
                         pairs.add(pair);
                 }
@@ -175,7 +181,7 @@ public final class ViewingHistory {
             info.scraperEpisodeNr, info.uri == null ? null : info.uri.toString());
         if (key == null
             || key.startsWith("file:")
-                && com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences.fingerprint(
+                && PortablePhysicalReferences.fingerprint(
                        info.uri == null ? null : info.uri.toString())
                     == null)
             return true;
@@ -210,10 +216,10 @@ public final class ViewingHistory {
     }
 
     /** Staged database primitive only: no legacy media flags, preference journal or external sync changes. */
-    static void replacePortable(Context context, org.json.JSONObject history, org.json.JSONObject positions,
-        BooleanSupplier cancel) throws IOException, org.json.JSONException {
+    static void replacePortable(Context context, JSONObject history, JSONObject positions,
+        BooleanSupplier cancel) throws IOException, JSONException {
         if (history == null && positions == null)
-            throw new org.json.JSONException("No viewing category selected");
+            throw new JSONException("No viewing category selected");
         if (history != null)
             PortableViewingState.validate(history, PortableViewingState.Kind.HISTORY);
         if (positions != null)
@@ -224,7 +230,7 @@ public final class ViewingHistory {
         restoreCancelled(cancel);
         synchronized (LOCK) {
             try (Store helper = new Store(context)) {
-                android.database.sqlite.SQLiteDatabase database = helper.getWritableDatabase();
+                SQLiteDatabase database = helper.getWritableDatabase();
                 Map<String, Record> existing = new LinkedHashMap<>();
                 try (Cursor rows = database.query("history", null, null, null, null, null, null)) {
                     while (rows.moveToNext())
@@ -265,8 +271,8 @@ public final class ViewingHistory {
     }
 
     /** Strict app-private image capture. Absent stores are read as empty without creating a database. */
-    public static org.json.JSONObject captureRecovery(Context context)
-        throws IOException, org.json.JSONException {
+    public static JSONObject captureRecovery(Context context)
+        throws IOException, JSONException {
         synchronized (LOCK) {
             Map<String, Record> records = new LinkedHashMap<>();
             if (context.getDatabasePath(DATABASE).exists()) {
@@ -302,8 +308,8 @@ public final class ViewingHistory {
     }
 
     /** Combined restore callers hold LOCK and coordinate a durable journal before invoking this primitive. */
-    public static void replaceRecovery(Context context, org.json.JSONObject snapshot,
-        BooleanSupplier cancel) throws IOException, org.json.JSONException {
+    public static void replaceRecovery(Context context, JSONObject snapshot,
+        BooleanSupplier cancel) throws IOException, JSONException {
         Map<String, Record> prepared = PortableViewingState.validateRecoverySnapshot(snapshot);
         restoreCancelled(cancel);
         if (!Thread.holdsLock(LOCK))
@@ -390,7 +396,7 @@ public final class ViewingHistory {
                 write(app, key, complete, true, position, duration, played, track, resume);
                 notifyChanged(app);
             } catch (RuntimeException failure) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("history_write_failed", failure);
+                Diagnostics.error("history_write_failed", failure);
             }
         });
     }
@@ -442,7 +448,7 @@ public final class ViewingHistory {
                 }
                 notifyChanged(app);
             } catch (RuntimeException failure) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_history_write_failed", failure);
+                Diagnostics.error("manual_history_write_failed", failure);
             }
         });
     }
@@ -485,15 +491,15 @@ public final class ViewingHistory {
         WRITER.execute(() -> {
             try {
                 // Update the existing local watched view too, without clearing positive resume or syncing remote accounts.
-                Uri media = com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI;
+                Uri media = VideoStore.Video.Media.EXTERNAL_CONTENT_URI;
                 ContentValues state = new ContentValues();
-                state.put(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.ARCHOS_TRAKT_SEEN, 0);
-                state.put(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED, 0);
+                state.put(VideoStore.Video.VideoColumns.ARCHOS_TRAKT_SEEN, 0);
+                state.put(VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED, 0);
                 app.getContentResolver().update(media, state, null, null);
                 ContentValues ended = new ContentValues();
-                ended.put(com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.BOOKMARK, 0);
+                ended.put(VideoStore.Video.VideoColumns.BOOKMARK, 0);
                 app.getContentResolver().update(
-                    media, ended, com.archos.mediaprovider.video.VideoStore.Video.VideoColumns.BOOKMARK + "<0", null);
+                    media, ended, VideoStore.Video.VideoColumns.BOOKMARK + "<0", null);
                 synchronized (LOCK) {
                     try (Store helper = new Store(app)) {
                         helper.getWritableDatabase().execSQL(
@@ -513,7 +519,7 @@ public final class ViewingHistory {
                 notifyChanged(app);
                 new Handler(Looper.getMainLooper()).post(done);
             } catch (RuntimeException failure) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("history_clear_failed", failure);
+                Diagnostics.error("history_clear_failed", failure);
                 new Handler(Looper.getMainLooper())
                     .post(()
                               -> Toast
