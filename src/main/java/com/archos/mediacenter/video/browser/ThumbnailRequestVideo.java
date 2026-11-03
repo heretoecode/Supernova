@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import com.archos.mediacenter.utils.ThumbnailRequest;
 
+/** Describes video and poster artwork requests for the thumbnail engine. */
 public class ThumbnailRequestVideo extends ThumbnailRequest {
 
 	/**
