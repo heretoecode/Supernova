@@ -2,92 +2,391 @@ package com.archos.mediacenter.video.leanback;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import java.util.Locale;
+
 /** Small outline icons shared by Nova menus, controls and preference categories. */
 public final class PreviewIcon extends Drawable {
- private final String kind;private final Paint p=new Paint(3);
- public PreviewIcon(String name){kind=name.toLowerCase(Locale.ROOT);p.setColor(0xffe1e9ef);p.setStyle(Paint.Style.STROKE);p.setStrokeWidth(1.6f);p.setStrokeCap(Paint.Cap.ROUND);p.setStrokeJoin(Paint.Join.ROUND);}
- public void focus(boolean focused,int accent){p.setColor(0xffe1e9ef);p.clearShadowLayer();invalidateSelf();}
- private void line(Canvas c,float... pts){Path q=new Path();q.moveTo(pts[0],pts[1]);for(int i=2;i<pts.length;i+=2)q.lineTo(pts[i],pts[i+1]);c.drawPath(q,p);}
- public void draw(Canvas c){c.save();c.translate(getBounds().left,getBounds().top);c.scale(getBounds().width()/24f,getBounds().height()/24f);
-  if(kind.startsWith("settings.radio")){c.drawCircle(12,12,8,p);if(kind.endsWith(".on")){p.setStyle(Paint.Style.FILL);c.drawCircle(12,12,4,p);p.setStyle(Paint.Style.STROKE);}}
-  else if(kind.equals("settings.nodes")){line(c,6,6,18,6,12,18,6,6);for(float[] point:new float[][]{{6,6},{18,6},{12,18}})c.drawCircle(point[0],point[1],3,p);}
-  else if(kind.equals("settings.gear")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,11,1,11,5);line(c,13,1,13,5);c.restore();}}
-  else if(kind.equals("external")){line(c,14,4,20,4,20,10);line(c,20,4,11,13);line(c,18,14,18,18.5f,16.5f,20,5.5f,20,4,18.5f,4,7.5f,5.5f,6,10,6);}
-  else if(kind.equals("health")){line(c,1,12,6,12,9,3,13,21,16,12,23,12);}
-  else if(kind.equals("eye")||kind.equals("eye-off")){c.drawOval(2,6,22,18,p);c.drawCircle(12,12,3,p);if(kind.equals("eye-off"))line(c,2,2,22,22);}
-  else if(kind.equals("bookmark")){line(c,6,2,18,2,18,22,12,17,6,22,6,2);}
-  else if(kind.equals("pin")){line(c,7,3,17,3,15,6,15,11,19,15,5,15,9,11,9,6,7,3);line(c,12,15,12,22);}
-  else if(kind.equals("integration")){c.drawOval(2,7,14,15,p);c.drawOval(10,9,22,17,p);line(c,8,12,16,12);}
-  else if(kind.equals("grip")){for(int x=9;x<=15;x+=6)for(int y=5;y<=19;y+=7)c.drawCircle(x,y,.8f,p);}
-  else if(kind.equals("chevrons")){line(c,8,9,12,5,16,9);line(c,8,15,12,19,16,15);}
-  else if(kind.equals("arrow-up")){line(c,12,21,12,3);line(c,5,10,12,3,19,10);}
-  else if(kind.equals("arrow-down")){line(c,12,3,12,21);line(c,5,14,12,21,19,14);}
-  else if(kind.equals("trophy")){line(c,6,3,18,3,17,10,15,14,9,14,7,10,6,3);line(c,6,5,2,5,2,10,7,12);line(c,18,5,22,5,22,10,17,12);line(c,12,14,12,20);line(c,8,20,16,20,17,22,7,22,8,20);}
-  else if(kind.equals("history")){c.drawArc(3,3,21,21,-90,290,false,p);line(c,3,4,3,10,8,10);line(c,12,7,12,12,16,15);}
-  else if(kind.equals("recommendation")){line(c,12,2,14,9,21,12,14,15,12,22,10,15,3,12,10,9,12,2);}
-  else if(kind.equals("custom row")){for(int y=5;y<=19;y+=7){c.drawCircle(4,y,1,p);line(c,9,y,21,y);}}
-  else if(kind.startsWith("checkbox")){c.drawRoundRect(3,3,21,21,2,2,p);if(kind.equals("checkbox checked"))line(c,6,12,10,16,18,7);}
-  else if(kind.equals("caps lock")){line(c,4,13,12,4,20,13,16,13,16,17,8,17,8,13,4,13);c.drawRect(8,20,16,22,p);}
-  else if(kind.equals("space")){line(c,4,10,4,17,20,17,20,10);}
-  else if(kind.equals("backspace")){line(c,9,5,22,5,22,19,9,19,2,12,9,5);line(c,12,9,18,15);line(c,18,9,12,15);}
-  else if(kind.equals("select")||kind.equals("done")){line(c,5,12,10,17,20,6);}
-  else if(kind.startsWith("edit")||kind.startsWith("rename")){line(c,4,16,16,4,20,8,8,20,4,20,4,16);line(c,14,6,18,10);}
-  else if(kind.equals("save")){line(c,3,3,18,3,21,6,21,21,3,21,3,3);c.drawRect(7,3,16,9,p);c.drawRect(7,14,17,21,p);}
-  else if(kind.equals("copy")){c.drawRoundRect(8,8,21,21,2,2,p);line(c,16,5,16,3,3,3,3,16,5,16);}
-  else if(kind.equals("discard")){line(c,5,7,6,21,18,21,19,7);line(c,3,5,21,5);line(c,9,5,9,2,15,2,15,5);}
-  else if(kind.startsWith("explore")||kind.startsWith("continue")){line(c,3,12,21,12);line(c,14,5,21,12,14,19);}
-  else if(kind.equals("cancel")){line(c,6,6,18,18);line(c,18,6,6,18);}
-  else if(kind.equals("people")){c.drawCircle(8,7,3,p);c.drawCircle(17,8,2.5f,p);c.drawArc(2,12,14,24,180,180,false,p);c.drawArc(13,13,23,23,180,180,false,p);}
-  else if(kind.equals("formatting")){for(int y=5;y<=19;y+=7){c.drawCircle(4,y,.7f,p);line(c,9,y,21,y);}}
-  else if(kind.equals("spelling")){line(c,3,12,7,3,11,12);line(c,4,9,10,9);c.drawCircle(16,15,4,p);line(c,19,18,23,22);}
-  else if(kind.equals("language")){c.drawCircle(12,12,9,p);c.drawOval(7,3,17,21,p);line(c,3,12,21,12);line(c,5,7,19,7);line(c,5,17,19,17);}
-  else if(kind.equals("search")){c.drawCircle(10,10,6,p);line(c,15,15,21,21);}
-  else if(kind.equals("cog")){c.drawCircle(12,12,7,p);c.drawCircle(12,12,3,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,2,12,5);c.restore();}}
-  else if(kind.equals("folder")){line(c,2,7,2,4,9,4,12,7,22,7,22,20,2,20,2,7);}
-  else if(kind.equals("files")||kind.equals("file")){line(c,5,2,15,2,20,7,20,22,5,22,5,2);line(c,15,2,15,7,20,7);line(c,9,12,16,12);line(c,9,17,16,17);}
-  else if(kind.equals("video-file")){line(c,5,2,15,2,20,7,20,22,5,22,5,2);line(c,15,2,15,7,20,7);line(c,9,11,16,15,9,19,9,11);}
-  else if(kind.contains("movie")||kind.equals("film")){c.drawRect(3,3,21,21,p);line(c,7,3,7,21);line(c,17,3,17,21);for(int y=7;y<21;y+=5){line(c,3,y,7,y);line(c,17,y,21,y);}}
-  else if(kind.contains("tv")||kind.contains("video")){c.drawRoundRect(2,4,22,18,2,2,p);line(c,8,22,16,22);line(c,12,18,12,22);}
-  else if(kind.contains("total size")||kind.equals("size")){c.drawOval(3,3,21,9,p);line(c,3,6,3,19);line(c,21,6,21,19);c.drawArc(3,15,21,22,0,180,false,p);c.drawArc(3,9,21,16,0,180,false,p);}
-  else if(kind.contains("local")){line(c,6,3,18,3,22,19,2,19,6,3);line(c,3,14,21,14);c.drawPoint(17,17,p);}
-  else if(kind.contains("columns")){c.drawRect(3,3,21,21,p);line(c,9,3,9,21);line(c,16,3,16,21);}
-  else if(kind.contains("delete")){line(c,5,7,6,21,18,21,19,7);line(c,3,5,21,5);line(c,9,5,9,2,15,2,15,5);line(c,10,10,10,17);line(c,14,10,14,17);}
-  else if(kind.contains("remove")&&kind.contains("info")){c.drawCircle(10,12,8,p);line(c,10,10,10,16);c.drawPoint(10,7,p);line(c,17,18,23,18);}
-  else if(kind.contains("remove")&&kind.contains("library")){line(c,3,3,3,21,18,21);line(c,8,3,8,16);line(c,13,3,13,16);line(c,16,10,23,10);}
-  else if(kind.contains("add to row")){line(c,3,5,16,5);line(c,3,11,13,11);line(c,3,17,11,17);line(c,18,13,18,23);line(c,13,18,23,18);}
-  else if(kind.contains("synopsis")){line(c,5,2,19,2,19,22,5,22,5,2);for(int y=7;y<=17;y+=5)line(c,8,y,16,y);}
-  else if(kind.equals("plus")){line(c,5,12,19,12);line(c,12,5,12,19);}
-  else if(kind.contains("check")){line(c,5,12,10,17,20,6);}
-  else if(kind.contains("clear")||kind.contains("close")||kind.contains("remove")||kind.contains("delete")){line(c,6,6,18,18);line(c,18,6,6,18);}
-  else if(kind.contains("home")||kind.contains("discovery")){line(c,2,11,12,3,22,11);line(c,5,10,5,21,10,21,10,15,14,15,14,21,19,21,19,10);}
-  else if(kind.equals("general")||kind.contains("settings")||kind.contains("advanced")){for(int y=5;y<=19;y+=7)line(c,3,y,21,y);c.drawCircle(8,5,2,p);c.drawCircle(16,12,2,p);c.drawCircle(10,19,2,p);}
-  else if(kind.contains("appearance")){c.drawCircle(12,12,9,p);c.drawCircle(8,8,1,p);c.drawCircle(15,7,1,p);c.drawCircle(18,13,1,p);line(c,6,16,10,16,12,20);}
-  else if(kind.contains("trakt")){c.drawCircle(12,12,9,p);line(c,5,12,9,16,17,8);}
-  else if(kind.contains("streaming")||kind.contains("integrations")){c.drawArc(2,3,22,23,205,100,false,p);c.drawArc(6,9,18,23,210,90,false,p);c.drawCircle(12,19,1,p);}
-  else if(kind.contains("library")){c.drawRect(3,4,8,21,p);c.drawRect(11,4,16,21,p);line(c,19,4,22,20);}
-  else if(kind.contains("play")||kind.contains("resume")||kind.contains("trailer")){line(c,8,4,20,12,8,20,8,4);}
-  else if(kind.contains("year")||kind.contains("date")||kind.contains("added")){c.drawRoundRect(3,5,21,21,2,2,p);line(c,3,10,21,10);line(c,8,3,8,7);line(c,16,3,16,7);}
-  else if(kind.contains("order")||kind.contains("ascending")||kind.contains("descending")||kind.contains("newest")||kind.contains("oldest")){line(c,7,3,7,21);line(c,3,7,7,3,11,7);line(c,17,3,17,21);line(c,13,17,17,21,21,17);}
-  else if(kind.contains("filter")||kind.contains("genre")){line(c,3,5,21,5,14,13,14,20,10,18,10,13,3,5);}
-  else if(kind.contains("time")||kind.contains("last")||kind.contains("runtime")||kind.contains("speed")){c.drawCircle(12,12,9,p);line(c,12,6,12,12,16,15);}
-  else if(kind.contains("audio")||kind.contains("sound")){line(c,3,9,7,9,12,5,12,19,7,15,3,15,3,9);c.drawArc(10,5,22,19,-65,130,false,p);}
-  else if(kind.contains("sub")){c.drawRoundRect(2,5,22,19,2,2,p);line(c,5,11,10,11);line(c,14,11,19,11);line(c,5,15,13,15);line(c,17,15,19,15);}
-  else if(kind.contains("network")||kind.contains("source")||kind.contains("storage")){c.drawRoundRect(3,3,21,10,2,2,p);c.drawRoundRect(3,14,21,21,2,2,p);c.drawPoint(7,7,p);c.drawPoint(7,18,p);}
-  else if(kind.contains("info")||kind.contains("about")||kind.contains("details")){c.drawCircle(12,12,9,p);line(c,12,11,12,17);c.drawPoint(12,7,p);}
-  else if(kind.contains("sort")){line(c,3,5,14,5);line(c,3,11,11,11);line(c,3,17,8,17);line(c,18,3,18,21);line(c,14,17,18,21,22,17);}
-  else if(kind.contains("cloud")){c.drawArc(2,9,12,21,80,210,false,p);c.drawArc(7,3,20,17,185,205,false,p);c.drawArc(15,10,24,21,260,190,false,p);line(c,6,21,19,21);}
-  else if(kind.contains("favourite")||kind.contains("favorite")){line(c,12,21,3,12,3,6,7,3,12,7,17,3,21,6,21,12,12,21);}
-  else if(kind.contains("hdr")){c.drawCircle(12,12,5,p);for(int i=0;i<8;i++){c.save();c.rotate(i*45,12,12);line(c,12,1,12,4);c.restore();}}
-  else if(kind.contains("resolution")){line(c,3,9,3,3,9,3);line(c,15,3,21,3,21,9);line(c,3,15,3,21,9,21);line(c,15,21,21,21,21,15);line(c,8,16,16,8);}
-  else if(kind.contains("codec")){c.drawRect(5,5,19,19,p);for(int n=8;n<=16;n+=4){line(c,n,2,n,5);line(c,n,19,n,22);line(c,2,n,5,n);line(c,19,n,22,n);}c.drawRect(9,9,15,15,p);}
-  else if(kind.contains("list")||kind.contains("title")||kind.contains("chapter")){for(int y=5;y<=19;y+=7){c.drawPoint(3,y,p);line(c,8,y,21,y);}}
-  else if(kind.contains("star")||kind.contains("rating")||kind.contains("popular")||kind.contains("trending")){line(c,12,2,15,9,22,9,17,14,19,21,12,17,5,21,7,14,2,9,9,9,12,2);}
-  else if(kind.contains("more")||kind.contains("actions")){c.drawCircle(4,12,1,p);c.drawCircle(12,12,1,p);c.drawCircle(20,12,1,p);}
-  else if(kind.contains("right")||kind.contains("next")){line(c,9,5,16,12,9,19);}
-  else if(kind.contains("grid")){for(int y=3;y<=14;y+=11)for(int x=3;x<=14;x+=11)c.drawRoundRect(x,y,x+7,y+7,1,1,p);}
-  else {c.drawCircle(12,12,8,p);line(c,8,12,16,12);}
-  c.restore();
- }
- public void setAlpha(int a){p.setAlpha(a);}public void setColorFilter(ColorFilter f){p.setColorFilter(f);}public int getOpacity(){return PixelFormat.TRANSLUCENT;}
- public static void apply(android.widget.TextView view,String kind,int size){PreviewIcon icon=new PreviewIcon(kind);int d=Math.round(size*view.getResources().getDisplayMetrics().density);icon.setBounds(0,0,d,d);view.setCompoundDrawables(icon,null,null,null);view.setCompoundDrawablePadding(Math.round(9*view.getResources().getDisplayMetrics().density));}
+    private final String kind;
+    private final Paint p = new Paint(3);
+
+    public PreviewIcon(String name) {
+        kind = name.toLowerCase(Locale.ROOT);
+        p.setColor(0xffe1e9ef);
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(1.6f);
+        p.setStrokeCap(Paint.Cap.ROUND);
+        p.setStrokeJoin(Paint.Join.ROUND);
+    }
+
+    public void focus(boolean focused, int accent) {
+        p.setColor(0xffe1e9ef);
+        p.clearShadowLayer();
+        invalidateSelf();
+    }
+
+    private void line(Canvas c, float... pts) {
+        Path q = new Path();
+        q.moveTo(pts[0], pts[1]);
+        for (int i = 2; i < pts.length; i += 2)
+            q.lineTo(pts[i], pts[i + 1]);
+        c.drawPath(q, p);
+    }
+
+    public void draw(Canvas c) {
+        c.save();
+        c.translate(getBounds().left, getBounds().top);
+        c.scale(getBounds().width() / 24f, getBounds().height() / 24f);
+        if (kind.startsWith("settings.radio")) {
+            c.drawCircle(12, 12, 8, p);
+            if (kind.endsWith(".on")) {
+                p.setStyle(Paint.Style.FILL);
+                c.drawCircle(12, 12, 4, p);
+                p.setStyle(Paint.Style.STROKE);
+            }
+        } else if (kind.equals("settings.nodes")) {
+            line(c, 6, 6, 18, 6, 12, 18, 6, 6);
+            for (float[] point : new float[][] {{6, 6}, {18, 6}, {12, 18}})
+                c.drawCircle(point[0], point[1], 3, p);
+        } else if (kind.equals("settings.gear")) {
+            c.drawCircle(12, 12, 7, p);
+            c.drawCircle(12, 12, 3, p);
+            for (int i = 0; i < 8; i++) {
+                c.save();
+                c.rotate(i * 45, 12, 12);
+                line(c, 11, 1, 11, 5);
+                line(c, 13, 1, 13, 5);
+                c.restore();
+            }
+        } else if (kind.equals("external")) {
+            line(c, 14, 4, 20, 4, 20, 10);
+            line(c, 20, 4, 11, 13);
+            line(c, 18, 14, 18, 18.5f, 16.5f, 20, 5.5f, 20, 4, 18.5f, 4, 7.5f, 5.5f, 6, 10, 6);
+        } else if (kind.equals("health")) {
+            line(c, 1, 12, 6, 12, 9, 3, 13, 21, 16, 12, 23, 12);
+        } else if (kind.equals("eye") || kind.equals("eye-off")) {
+            c.drawOval(2, 6, 22, 18, p);
+            c.drawCircle(12, 12, 3, p);
+            if (kind.equals("eye-off"))
+                line(c, 2, 2, 22, 22);
+        } else if (kind.equals("bookmark")) {
+            line(c, 6, 2, 18, 2, 18, 22, 12, 17, 6, 22, 6, 2);
+        } else if (kind.equals("pin")) {
+            line(c, 7, 3, 17, 3, 15, 6, 15, 11, 19, 15, 5, 15, 9, 11, 9, 6, 7, 3);
+            line(c, 12, 15, 12, 22);
+        } else if (kind.equals("integration")) {
+            c.drawOval(2, 7, 14, 15, p);
+            c.drawOval(10, 9, 22, 17, p);
+            line(c, 8, 12, 16, 12);
+        } else if (kind.equals("grip")) {
+            for (int x = 9; x <= 15; x += 6)
+                for (int y = 5; y <= 19; y += 7)
+                    c.drawCircle(x, y, .8f, p);
+        } else if (kind.equals("chevrons")) {
+            line(c, 8, 9, 12, 5, 16, 9);
+            line(c, 8, 15, 12, 19, 16, 15);
+        } else if (kind.equals("arrow-up")) {
+            line(c, 12, 21, 12, 3);
+            line(c, 5, 10, 12, 3, 19, 10);
+        } else if (kind.equals("arrow-down")) {
+            line(c, 12, 3, 12, 21);
+            line(c, 5, 14, 12, 21, 19, 14);
+        } else if (kind.equals("trophy")) {
+            line(c, 6, 3, 18, 3, 17, 10, 15, 14, 9, 14, 7, 10, 6, 3);
+            line(c, 6, 5, 2, 5, 2, 10, 7, 12);
+            line(c, 18, 5, 22, 5, 22, 10, 17, 12);
+            line(c, 12, 14, 12, 20);
+            line(c, 8, 20, 16, 20, 17, 22, 7, 22, 8, 20);
+        } else if (kind.equals("history")) {
+            c.drawArc(3, 3, 21, 21, -90, 290, false, p);
+            line(c, 3, 4, 3, 10, 8, 10);
+            line(c, 12, 7, 12, 12, 16, 15);
+        } else if (kind.equals("recommendation")) {
+            line(c, 12, 2, 14, 9, 21, 12, 14, 15, 12, 22, 10, 15, 3, 12, 10, 9, 12, 2);
+        } else if (kind.equals("custom row")) {
+            for (int y = 5; y <= 19; y += 7) {
+                c.drawCircle(4, y, 1, p);
+                line(c, 9, y, 21, y);
+            }
+        } else if (kind.startsWith("checkbox")) {
+            c.drawRoundRect(3, 3, 21, 21, 2, 2, p);
+            if (kind.equals("checkbox checked"))
+                line(c, 6, 12, 10, 16, 18, 7);
+        } else if (kind.equals("caps lock")) {
+            line(c, 4, 13, 12, 4, 20, 13, 16, 13, 16, 17, 8, 17, 8, 13, 4, 13);
+            c.drawRect(8, 20, 16, 22, p);
+        } else if (kind.equals("space")) {
+            line(c, 4, 10, 4, 17, 20, 17, 20, 10);
+        } else if (kind.equals("backspace")) {
+            line(c, 9, 5, 22, 5, 22, 19, 9, 19, 2, 12, 9, 5);
+            line(c, 12, 9, 18, 15);
+            line(c, 18, 9, 12, 15);
+        } else if (kind.equals("select") || kind.equals("done")) {
+            line(c, 5, 12, 10, 17, 20, 6);
+        } else if (kind.startsWith("edit") || kind.startsWith("rename")) {
+            line(c, 4, 16, 16, 4, 20, 8, 8, 20, 4, 20, 4, 16);
+            line(c, 14, 6, 18, 10);
+        } else if (kind.equals("save")) {
+            line(c, 3, 3, 18, 3, 21, 6, 21, 21, 3, 21, 3, 3);
+            c.drawRect(7, 3, 16, 9, p);
+            c.drawRect(7, 14, 17, 21, p);
+        } else if (kind.equals("copy")) {
+            c.drawRoundRect(8, 8, 21, 21, 2, 2, p);
+            line(c, 16, 5, 16, 3, 3, 3, 3, 16, 5, 16);
+        } else if (kind.equals("discard")) {
+            line(c, 5, 7, 6, 21, 18, 21, 19, 7);
+            line(c, 3, 5, 21, 5);
+            line(c, 9, 5, 9, 2, 15, 2, 15, 5);
+        } else if (kind.startsWith("explore") || kind.startsWith("continue")) {
+            line(c, 3, 12, 21, 12);
+            line(c, 14, 5, 21, 12, 14, 19);
+        } else if (kind.equals("cancel")) {
+            line(c, 6, 6, 18, 18);
+            line(c, 18, 6, 6, 18);
+        } else if (kind.equals("people")) {
+            c.drawCircle(8, 7, 3, p);
+            c.drawCircle(17, 8, 2.5f, p);
+            c.drawArc(2, 12, 14, 24, 180, 180, false, p);
+            c.drawArc(13, 13, 23, 23, 180, 180, false, p);
+        } else if (kind.equals("formatting")) {
+            for (int y = 5; y <= 19; y += 7) {
+                c.drawCircle(4, y, .7f, p);
+                line(c, 9, y, 21, y);
+            }
+        } else if (kind.equals("spelling")) {
+            line(c, 3, 12, 7, 3, 11, 12);
+            line(c, 4, 9, 10, 9);
+            c.drawCircle(16, 15, 4, p);
+            line(c, 19, 18, 23, 22);
+        } else if (kind.equals("language")) {
+            c.drawCircle(12, 12, 9, p);
+            c.drawOval(7, 3, 17, 21, p);
+            line(c, 3, 12, 21, 12);
+            line(c, 5, 7, 19, 7);
+            line(c, 5, 17, 19, 17);
+        } else if (kind.equals("search")) {
+            c.drawCircle(10, 10, 6, p);
+            line(c, 15, 15, 21, 21);
+        } else if (kind.equals("cog")) {
+            c.drawCircle(12, 12, 7, p);
+            c.drawCircle(12, 12, 3, p);
+            for (int i = 0; i < 8; i++) {
+                c.save();
+                c.rotate(i * 45, 12, 12);
+                line(c, 12, 2, 12, 5);
+                c.restore();
+            }
+        } else if (kind.equals("folder")) {
+            line(c, 2, 7, 2, 4, 9, 4, 12, 7, 22, 7, 22, 20, 2, 20, 2, 7);
+        } else if (kind.equals("files") || kind.equals("file")) {
+            line(c, 5, 2, 15, 2, 20, 7, 20, 22, 5, 22, 5, 2);
+            line(c, 15, 2, 15, 7, 20, 7);
+            line(c, 9, 12, 16, 12);
+            line(c, 9, 17, 16, 17);
+        } else if (kind.equals("video-file")) {
+            line(c, 5, 2, 15, 2, 20, 7, 20, 22, 5, 22, 5, 2);
+            line(c, 15, 2, 15, 7, 20, 7);
+            line(c, 9, 11, 16, 15, 9, 19, 9, 11);
+        } else if (kind.contains("movie") || kind.equals("film")) {
+            c.drawRect(3, 3, 21, 21, p);
+            line(c, 7, 3, 7, 21);
+            line(c, 17, 3, 17, 21);
+            for (int y = 7; y < 21; y += 5) {
+                line(c, 3, y, 7, y);
+                line(c, 17, y, 21, y);
+            }
+        } else if (kind.contains("tv") || kind.contains("video")) {
+            c.drawRoundRect(2, 4, 22, 18, 2, 2, p);
+            line(c, 8, 22, 16, 22);
+            line(c, 12, 18, 12, 22);
+        } else if (kind.contains("total size") || kind.equals("size")) {
+            c.drawOval(3, 3, 21, 9, p);
+            line(c, 3, 6, 3, 19);
+            line(c, 21, 6, 21, 19);
+            c.drawArc(3, 15, 21, 22, 0, 180, false, p);
+            c.drawArc(3, 9, 21, 16, 0, 180, false, p);
+        } else if (kind.contains("local")) {
+            line(c, 6, 3, 18, 3, 22, 19, 2, 19, 6, 3);
+            line(c, 3, 14, 21, 14);
+            c.drawPoint(17, 17, p);
+        } else if (kind.contains("columns")) {
+            c.drawRect(3, 3, 21, 21, p);
+            line(c, 9, 3, 9, 21);
+            line(c, 16, 3, 16, 21);
+        } else if (kind.contains("delete")) {
+            line(c, 5, 7, 6, 21, 18, 21, 19, 7);
+            line(c, 3, 5, 21, 5);
+            line(c, 9, 5, 9, 2, 15, 2, 15, 5);
+            line(c, 10, 10, 10, 17);
+            line(c, 14, 10, 14, 17);
+        } else if (kind.contains("remove") && kind.contains("info")) {
+            c.drawCircle(10, 12, 8, p);
+            line(c, 10, 10, 10, 16);
+            c.drawPoint(10, 7, p);
+            line(c, 17, 18, 23, 18);
+        } else if (kind.contains("remove") && kind.contains("library")) {
+            line(c, 3, 3, 3, 21, 18, 21);
+            line(c, 8, 3, 8, 16);
+            line(c, 13, 3, 13, 16);
+            line(c, 16, 10, 23, 10);
+        } else if (kind.contains("add to row")) {
+            line(c, 3, 5, 16, 5);
+            line(c, 3, 11, 13, 11);
+            line(c, 3, 17, 11, 17);
+            line(c, 18, 13, 18, 23);
+            line(c, 13, 18, 23, 18);
+        } else if (kind.contains("synopsis")) {
+            line(c, 5, 2, 19, 2, 19, 22, 5, 22, 5, 2);
+            for (int y = 7; y <= 17; y += 5)
+                line(c, 8, y, 16, y);
+        } else if (kind.equals("plus")) {
+            line(c, 5, 12, 19, 12);
+            line(c, 12, 5, 12, 19);
+        } else if (kind.contains("check")) {
+            line(c, 5, 12, 10, 17, 20, 6);
+        } else if (kind.contains("clear") || kind.contains("close") || kind.contains("remove") ||
+                   kind.contains("delete")) {
+            line(c, 6, 6, 18, 18);
+            line(c, 18, 6, 6, 18);
+        } else if (kind.contains("home") || kind.contains("discovery")) {
+            line(c, 2, 11, 12, 3, 22, 11);
+            line(c, 5, 10, 5, 21, 10, 21, 10, 15, 14, 15, 14, 21, 19, 21, 19, 10);
+        } else if (kind.equals("general") || kind.contains("settings") || kind.contains("advanced")) {
+            for (int y = 5; y <= 19; y += 7)
+                line(c, 3, y, 21, y);
+            c.drawCircle(8, 5, 2, p);
+            c.drawCircle(16, 12, 2, p);
+            c.drawCircle(10, 19, 2, p);
+        } else if (kind.contains("appearance")) {
+            c.drawCircle(12, 12, 9, p);
+            c.drawCircle(8, 8, 1, p);
+            c.drawCircle(15, 7, 1, p);
+            c.drawCircle(18, 13, 1, p);
+            line(c, 6, 16, 10, 16, 12, 20);
+        } else if (kind.contains("trakt")) {
+            c.drawCircle(12, 12, 9, p);
+            line(c, 5, 12, 9, 16, 17, 8);
+        } else if (kind.contains("streaming") || kind.contains("integrations")) {
+            c.drawArc(2, 3, 22, 23, 205, 100, false, p);
+            c.drawArc(6, 9, 18, 23, 210, 90, false, p);
+            c.drawCircle(12, 19, 1, p);
+        } else if (kind.contains("library")) {
+            c.drawRect(3, 4, 8, 21, p);
+            c.drawRect(11, 4, 16, 21, p);
+            line(c, 19, 4, 22, 20);
+        } else if (kind.contains("play") || kind.contains("resume") || kind.contains("trailer")) {
+            line(c, 8, 4, 20, 12, 8, 20, 8, 4);
+        } else if (kind.contains("year") || kind.contains("date") || kind.contains("added")) {
+            c.drawRoundRect(3, 5, 21, 21, 2, 2, p);
+            line(c, 3, 10, 21, 10);
+            line(c, 8, 3, 8, 7);
+            line(c, 16, 3, 16, 7);
+        } else if (kind.contains("order") || kind.contains("ascending") || kind.contains("descending") ||
+                   kind.contains("newest") || kind.contains("oldest")) {
+            line(c, 7, 3, 7, 21);
+            line(c, 3, 7, 7, 3, 11, 7);
+            line(c, 17, 3, 17, 21);
+            line(c, 13, 17, 17, 21, 21, 17);
+        } else if (kind.contains("filter") || kind.contains("genre")) {
+            line(c, 3, 5, 21, 5, 14, 13, 14, 20, 10, 18, 10, 13, 3, 5);
+        } else if (kind.contains("time") || kind.contains("last") || kind.contains("runtime") ||
+                   kind.contains("speed")) {
+            c.drawCircle(12, 12, 9, p);
+            line(c, 12, 6, 12, 12, 16, 15);
+        } else if (kind.contains("audio") || kind.contains("sound")) {
+            line(c, 3, 9, 7, 9, 12, 5, 12, 19, 7, 15, 3, 15, 3, 9);
+            c.drawArc(10, 5, 22, 19, -65, 130, false, p);
+        } else if (kind.contains("sub")) {
+            c.drawRoundRect(2, 5, 22, 19, 2, 2, p);
+            line(c, 5, 11, 10, 11);
+            line(c, 14, 11, 19, 11);
+            line(c, 5, 15, 13, 15);
+            line(c, 17, 15, 19, 15);
+        } else if (kind.contains("network") || kind.contains("source") || kind.contains("storage")) {
+            c.drawRoundRect(3, 3, 21, 10, 2, 2, p);
+            c.drawRoundRect(3, 14, 21, 21, 2, 2, p);
+            c.drawPoint(7, 7, p);
+            c.drawPoint(7, 18, p);
+        } else if (kind.contains("info") || kind.contains("about") || kind.contains("details")) {
+            c.drawCircle(12, 12, 9, p);
+            line(c, 12, 11, 12, 17);
+            c.drawPoint(12, 7, p);
+        } else if (kind.contains("sort")) {
+            line(c, 3, 5, 14, 5);
+            line(c, 3, 11, 11, 11);
+            line(c, 3, 17, 8, 17);
+            line(c, 18, 3, 18, 21);
+            line(c, 14, 17, 18, 21, 22, 17);
+        } else if (kind.contains("cloud")) {
+            c.drawArc(2, 9, 12, 21, 80, 210, false, p);
+            c.drawArc(7, 3, 20, 17, 185, 205, false, p);
+            c.drawArc(15, 10, 24, 21, 260, 190, false, p);
+            line(c, 6, 21, 19, 21);
+        } else if (kind.contains("favourite") || kind.contains("favorite")) {
+            line(c, 12, 21, 3, 12, 3, 6, 7, 3, 12, 7, 17, 3, 21, 6, 21, 12, 12, 21);
+        } else if (kind.contains("hdr")) {
+            c.drawCircle(12, 12, 5, p);
+            for (int i = 0; i < 8; i++) {
+                c.save();
+                c.rotate(i * 45, 12, 12);
+                line(c, 12, 1, 12, 4);
+                c.restore();
+            }
+        } else if (kind.contains("resolution")) {
+            line(c, 3, 9, 3, 3, 9, 3);
+            line(c, 15, 3, 21, 3, 21, 9);
+            line(c, 3, 15, 3, 21, 9, 21);
+            line(c, 15, 21, 21, 21, 21, 15);
+            line(c, 8, 16, 16, 8);
+        } else if (kind.contains("codec")) {
+            c.drawRect(5, 5, 19, 19, p);
+            for (int n = 8; n <= 16; n += 4) {
+                line(c, n, 2, n, 5);
+                line(c, n, 19, n, 22);
+                line(c, 2, n, 5, n);
+                line(c, 19, n, 22, n);
+            }
+            c.drawRect(9, 9, 15, 15, p);
+        } else if (kind.contains("list") || kind.contains("title") || kind.contains("chapter")) {
+            for (int y = 5; y <= 19; y += 7) {
+                c.drawPoint(3, y, p);
+                line(c, 8, y, 21, y);
+            }
+        } else if (kind.contains("star") || kind.contains("rating") || kind.contains("popular") ||
+                   kind.contains("trending")) {
+            line(c, 12, 2, 15, 9, 22, 9, 17, 14, 19, 21, 12, 17, 5, 21, 7, 14, 2, 9, 9, 9, 12, 2);
+        } else if (kind.contains("more") || kind.contains("actions")) {
+            c.drawCircle(4, 12, 1, p);
+            c.drawCircle(12, 12, 1, p);
+            c.drawCircle(20, 12, 1, p);
+        } else if (kind.contains("right") || kind.contains("next")) {
+            line(c, 9, 5, 16, 12, 9, 19);
+        } else if (kind.contains("grid")) {
+            for (int y = 3; y <= 14; y += 11)
+                for (int x = 3; x <= 14; x += 11)
+                    c.drawRoundRect(x, y, x + 7, y + 7, 1, 1, p);
+        } else {
+            c.drawCircle(12, 12, 8, p);
+            line(c, 8, 12, 16, 12);
+        }
+        c.restore();
+    }
+
+    public void setAlpha(int a) {
+        p.setAlpha(a);
+    }
+
+    public void setColorFilter(ColorFilter f) {
+        p.setColorFilter(f);
+    }
+
+    public int getOpacity() {
+        return PixelFormat.TRANSLUCENT;
+    }
+
+    public static void apply(android.widget.TextView view, String kind, int size) {
+        PreviewIcon icon = new PreviewIcon(kind);
+        int d = Math.round(size * view.getResources().getDisplayMetrics().density);
+        icon.setBounds(0, 0, d, d);
+        view.setCompoundDrawables(icon, null, null, null);
+        view.setCompoundDrawablePadding(Math.round(9 * view.getResources().getDisplayMetrics().density));
+    }
 }
