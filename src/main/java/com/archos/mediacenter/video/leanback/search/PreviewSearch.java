@@ -14,10 +14,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import androidx.recyclerview.widget.*;
 import androidx.leanback.widget.Presenter;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.loader.*;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.PreviewVariants;
+import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 import com.squareup.picasso.Picasso;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
@@ -100,7 +104,7 @@ public final class PreviewSearch extends LinearLayout {
         search.setGravity(Gravity.CENTER_VERTICAL);
         search.setPadding(dp(12), 0, dp(8), 0);
         ImageView icon = new ImageView(activity);
-        icon.setImageResource(com.archos.mediacenter.video.R.drawable.preview_search);
+        icon.setImageResource(R.drawable.preview_search);
         search.addView(icon, new LayoutParams(dp(20), dp(20)));
         query = new KeyboardInput(activity);
         query.setId(View.generateViewId());
@@ -283,7 +287,7 @@ public final class PreviewSearch extends LinearLayout {
 
     private void load(String value, int request) {
         final long started = SystemClock.elapsedRealtime();
-        final String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("search");
+        final String operation = Diagnostics.operation("search");
         VideoLoader loader;
         switch (mode) {
         case VideoSearchActivity.SEARCH_MODE_MOVIE:
@@ -378,8 +382,8 @@ public final class PreviewSearch extends LinearLayout {
                 try (Cursor shows = app.getContentResolver().query(showUri, showProjection, showSelection, showArgs,
                                                                    showSort, signal)) {
                     if (shows != null) {
-                        com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper mapper =
-                            new com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper();
+                        TvshowCursorMapper mapper =
+                            new TvshowCursorMapper();
                         mapper.bindColumns(shows);
                         while (shows.moveToNext()) {
                             signal.throwIfCanceled();
@@ -417,8 +421,8 @@ public final class PreviewSearch extends LinearLayout {
                                           -> item.show == null ? item.video.getName() : item.show.getName(),
                                           String.CASE_INSENSITIVE_ORDER));
             String message = error;
-            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation, "search", started);
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("search_results", "operation_id", operation,
+            Diagnostics.finishOperation(operation, "search", started);
+            Diagnostics.event("search_results", "operation_id", operation,
                                                                        "count", found.size());
             main.post(() -> {
                 if (request != generation || !isAttachedToWindow())
@@ -504,8 +508,8 @@ public final class PreviewSearch extends LinearLayout {
         Map<Long, String[]> result = new HashMap<>();
         String[] columns =
             shows ? new String[] {"_id", "original_title_show"} : new String[] {"_id", "original_title_movie"};
-        Uri uri = shows ? com.archos.mediaprovider.video.ScraperStore.Show.URI.ALL
-                                    : com.archos.mediaprovider.video.ScraperStore.Movie.URI.ALL;
+        Uri uri = shows ? ScraperStore.Show.URI.ALL
+                                    : ScraperStore.Movie.URI.ALL;
         try (Cursor cursor = context.getContentResolver().query(uri, columns, null, null, null, cancellation)) {
             if (cursor != null)
                 while (cursor.moveToNext()) {
@@ -645,7 +649,7 @@ public final class PreviewSearch extends LinearLayout {
                 Episode e = (Episode)video;
                 meta.add("S" + e.getSeasonNumber() + " E" + e.getEpisodeNumber());
             }
-            meta.add(com.archos.mediacenter.video.leanback.PreviewVariants.label(video));
+            meta.add(PreviewVariants.label(video));
             if (video.getDurationMs() > 0)
                 meta.add(video.getDurationMs() / 60000 + " min");
             h.metadata.setText(TextUtils.join("  ·  ", meta));
