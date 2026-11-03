@@ -57,7 +57,7 @@ public class BrowserByUpnp extends BrowserByNetwork {
         String friendlyUri = "upnp://";
         String friendlyName = UpnpServiceManager.getSingleton(getActivity()).getDeviceFriendlyName(Uri.parse(mShortcutPath).getHost());
         if(friendlyName != null) friendlyUri += friendlyName;
-        else friendlyUri += Uri.parse(mShortcutPath).getHost();
+            else friendlyUri += Uri.parse(mShortcutPath).getHost();
         friendlyUri += "/" + mShortcutName;
         if (log.isDebugEnabled()) log.debug("getFriendlyUri: mShortcutPath={}, mShortcutName={} -> friendlyName={}, friendlyUri={}", mShortcutPath, mShortcutName, friendlyName, friendlyUri);
         return friendlyUri;
