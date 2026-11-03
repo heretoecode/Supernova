@@ -62,6 +62,7 @@ public class BrowserByExtStorage extends BrowserByLocalFolder {
             });
 
     private final BroadcastReceiver mSdCardReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             // Remove "file://"
             final String path = removeFileSlashSlash(intent.getDataString());
@@ -147,6 +148,7 @@ public class BrowserByExtStorage extends BrowserByLocalFolder {
         super.onPause();
     }
 
+    @Override
     protected String getIndexableRootFolder() {
         if(UriUtils.isContentUri(mCurrentDirectory))
             return DocumentUriBuilder.buildDocumentUriUsingTree(mCurrentDirectory).toString();
