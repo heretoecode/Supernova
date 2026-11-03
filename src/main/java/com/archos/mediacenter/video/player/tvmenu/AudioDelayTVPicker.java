@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.ref.WeakReference;
 
 
+/** Provides a remote-controlled audio delay picker for TV playback menus. */
 public class AudioDelayTVPicker extends AudioDelayPickerAbstract implements TVSlaveView {
 
     private static final Logger log = LoggerFactory.getLogger(AudioDelayTVPicker.class);
