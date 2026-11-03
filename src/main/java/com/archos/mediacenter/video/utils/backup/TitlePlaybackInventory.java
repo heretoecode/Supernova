@@ -7,6 +7,7 @@ import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import org.json.*;
 
@@ -35,7 +36,7 @@ public final class TitlePlaybackInventory {
                              .toString()
                              .getBytes(StandardCharsets.UTF_8)))
                     hash.append(String.format(Locale.ROOT, "%02x", b & 255));
-            } catch (java.security.NoSuchAlgorithmException invalid) {
+            } catch (NoSuchAlgorithmException invalid) {
                 throw new IOException("Receiving identity guard unavailable", invalid);
             }
             if (!row.getString("guard").equals(hash.toString()))
@@ -75,7 +76,7 @@ public final class TitlePlaybackInventory {
                                          .toString()
                                          .getBytes(StandardCharsets.UTF_8)))
                                 hash.append(String.format(Locale.ROOT, "%02x", b & 255));
-                        } catch (java.security.NoSuchAlgorithmException invalid) {
+                        } catch (NoSuchAlgorithmException invalid) {
                             throw new IOException("Receiving identity guard unavailable", invalid);
                         }
                         if (guards.put(rows.getLong(0), hash.toString()) != null)
