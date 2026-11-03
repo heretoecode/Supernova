@@ -1,9 +1,13 @@
 package com.archos.mediacenter.video.streaming;
+import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.*;
+import androidx.preference.PreferenceManager;
 import com.squareup.picasso.Picasso;
+import java.util.Arrays;
 
 /** Real provider artwork with an accessible provider name and an offline text fallback. */
 public final class StreamingActionPresenter extends Presenter {
@@ -33,7 +37,7 @@ public final class StreamingActionPresenter extends Presenter {
         @Override
         public Presenter[] getPresenters() {
             Presenter[] original = normal.getPresenters();
-            Presenter[] all = java.util.Arrays.copyOf(original, original.length + 1);
+            Presenter[] all = Arrays.copyOf(original, original.length + 1);
             all[original.length] = logo;
             return all;
         }
@@ -52,11 +56,11 @@ public final class StreamingActionPresenter extends Presenter {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        android.content.Context c = parent.getContext();
+        Context c = parent.getContext();
         float d = c.getResources().getDisplayMetrics().density;
         FrameLayout frame = new FrameLayout(c);
         boolean preview =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui", false);
+            PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui", false);
         frame.setLayoutParams(
             new ViewGroup.LayoutParams((int)((preview ? 160 : 180) * d), (int)((preview ? 38 : 56) * d)));
         frame.setFocusable(true);
@@ -73,7 +77,7 @@ public final class StreamingActionPresenter extends Presenter {
         fallback.setTextSize(13);
         fallback.setGravity(Gravity.CENTER_VERTICAL);
         fallback.setSingleLine(true);
-        fallback.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        fallback.setEllipsize(TextUtils.TruncateAt.END);
         FrameLayout.LayoutParams labelParams = new FrameLayout.LayoutParams(-1, -1);
         labelParams.leftMargin = (int)(42 * d);
         labelParams.rightMargin = (int)(8 * d);
