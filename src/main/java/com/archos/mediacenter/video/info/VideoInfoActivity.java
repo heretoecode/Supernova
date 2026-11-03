@@ -42,6 +42,7 @@ import com.archos.mediacenter.video.utils.MiscUtils;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+/** Hosts paged video information and its backdrop. */
 public class VideoInfoActivity extends AppCompatActivity {
 
     private static final String TAG = "VideoInfoActivity";
