@@ -3,8 +3,10 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediaprovider.video.*;
+import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -57,7 +59,7 @@ public class WebdavReconciliationSelectionTest {
     private void check(boolean failed) throws Exception {
         Application app = RuntimeEnvironment.getApplication();
         com.archos.environment.ArchosUtils.setGlobalContext(app);
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .clear()
             .putBoolean("supernova_onboarding_complete", true)
@@ -89,7 +91,7 @@ public class WebdavReconciliationSelectionTest {
         when(root.getUri()).thenReturn(Uri.parse("webdav://fixture/root"));
         when(root.isDirectory()).thenReturn(true);
         if (failed)
-            listener.onListingError(root, new java.io.IOException("timeout"));
+            listener.onListingError(root, new IOException("timeout"));
         listener.onStop(root);
         List<Long> selected = new ArrayList<>();
         for (var call : mockingDetails(bulk).getInvocations())
