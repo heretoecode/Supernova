@@ -39,6 +39,7 @@ import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -126,7 +127,7 @@ public class DbUtils {
 
     public static void deleteScraperInfo(Context context,Video video) {
         try { com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context, video.getId()); }
-        catch (java.io.IOException failure) {
+        catch (IOException failure) {
             Log.e(TAG, "Cannot preserve manual identification choice", failure);
             Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
             return;
