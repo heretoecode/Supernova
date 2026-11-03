@@ -30,6 +30,7 @@ import com.archos.mediacenter.utils.videodb.IndexHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Hosts floating video playback and its service connection. */
 public class FloatingPlayerActivity extends FragmentActivity {
 
     private static final Logger log = LoggerFactory.getLogger(FloatingPlayerActivity.class);
