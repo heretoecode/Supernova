@@ -163,7 +163,7 @@ public abstract class WorkgroupShortcutAndServerAdapter extends RootFragmentAdap
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.browser_smb_worgroup_item, viewGroup, false);
             return new ShareViewHolder(v);
         }
-        else return super.onCreateViewHolder(viewGroup, viewType);
+            else return super.onCreateViewHolder(viewGroup, viewType);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
