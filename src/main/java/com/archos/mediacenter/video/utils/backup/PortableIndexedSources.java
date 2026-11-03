@@ -1,8 +1,11 @@
 package com.archos.mediacenter.video.utils.backup;
 
 import android.content.Context;
+import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import java.net.URI;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.json.*;
 
@@ -36,7 +39,7 @@ public final class PortableIndexedSources {
             || name.matches("(?is).*(?:password|passwd|token|secret|authorization|cookie|api[_-]?key)\\s*[:=].*"))
             throw new JSONException("Indexed-source label needs privacy review");
         try {
-            java.nio.charset.StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(name));
+            StandardCharsets.UTF_8.newEncoder().encode(CharBuffer.wrap(name));
         } catch (Exception invalid) {
             throw new JSONException("Invalid indexed-source label encoding");
         }
@@ -193,7 +196,7 @@ public final class PortableIndexedSources {
                              .put("ip", JSONObject.NULL)
                              .put("friendly", JSONObject.NULL);
             }
-            String name = row.isNull("name") ? android.net.Uri.parse(path).getLastPathSegment() : row.getString("name");
+            String name = row.isNull("name") ? Uri.parse(path).getLastPathSegment() : row.getString("name");
             if (name == null || name.isEmpty())
                 name = path;
             target.put("name", name).put("rescan", row.getBoolean("rescan") ? 1 : 0);
