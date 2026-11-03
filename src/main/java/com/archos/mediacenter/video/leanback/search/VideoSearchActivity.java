@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Hosts TV video search and preserves its navigation state. */
 public class VideoSearchActivity extends FragmentActivity {
 
     private PreviewSearch previewSearch;
