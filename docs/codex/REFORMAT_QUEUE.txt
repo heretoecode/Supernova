@@ -1,8 +1,6 @@
 # Overnight reformatting queue — work top to bottom (longest line first)
 # Format: <longest line in characters> <path>
-2797 src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java
-2695 src/test/java/com/archos/mediacenter/video/leanback/settings/ProductionBackupSettingsTest.java
-2555 src/test/java/com/archos/mediacenter/video/leanback/Supernova138UiTest.java
+# 307 files remain. Tonight's target: the first 154 (down to and including the line marked TARGET).
 2197 src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/UniversalFileBrowser.java
 2135 src/test/java/com/archos/mediacenter/video/leanback/FoundationHomeRegressionTest.java
 1825 src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackInfo.java
@@ -157,6 +155,7 @@
 518 src/test/java/com/archos/mediacenter/video/streaming/putio/PutioSnapshotReaderTest.java
 514 src/test/java/com/archos/mediacenter/video/leanback/PreviewSearchNativeIndexTest.java
 513 src/main/java/com/archos/mediacenter/video/leanback/settings/BackupOperationModel.java
+# ---- TARGET: tonight's run stops here ----
 513 src/test/java/com/archos/mediacenter/video/leanback/PreviewSearchPresentationTest.java
 511 src/main/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeRow.java
 510 src/test/java/com/archos/mediacenter/video/leanback/PortableViewingChoicesTest.java

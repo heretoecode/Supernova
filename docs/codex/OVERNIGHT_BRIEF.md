@@ -6,7 +6,8 @@ fails the check is thrown away, so there is nothing to gain by changing anything
 
 ## Setup
 1. Start from the tip of branch `claude/supernova-github-access-yfhe89`.
-2. Create a new branch named `codex/overnight-YYYY-MM-DD` (today's date). Push only to that branch.
+2. Create a new branch named `codex/overnight-YYYY-MM-DD` (today's date; if that branch already exists, add
+   `-2`, `-3`, …). Push only to that branch.
    **Never** push to `claude/supernova-github-access-yfhe89`, `main`, or any other existing branch.
    Do not open a pull request, merge, rebase or force-push.
 
@@ -18,6 +19,8 @@ Work through `docs/codex/REFORMAT_QUEUE.txt` from the top. For each file:
    - 4-space indentation, no tabs; aim for lines under 120 characters
      (break long argument lists and long `&&` / `||` / `?:` chains across lines);
    - one blank line between methods; keep the order of every member exactly as it is.
+   - an `if`/`else`/`for`/`while` body without braces goes on its own line, indented one level deeper than
+     the statement that owns it. Do **not** add braces — that would change tokens and fail the checker.
 2. Run the checker on just that file:
    ```
    python3 tools/check_format_only.py --base claude/supernova-github-access-yfhe89 --files <path>
@@ -26,9 +29,15 @@ Work through `docs/codex/REFORMAT_QUEUE.txt` from the top. For each file:
    revert the file with `git checkout claude/supernova-github-access-yfhe89 -- <path>` and move on.
 3. Commit that one file on its own, message: `Reformat <FileName>.java (layout only)`.
 
-## Pace
-Partial progress is fine: each file is its own commit, so stop whenever you run out of time and still do
-the "Before you finish" steps. Quality beats quantity — one clean file is worth more than ten that fail.
+## Target and pace
+**Tonight's target is half the queue: every file down to the `TARGET` marker in `REFORMAT_QUEUE.txt`
+(about 150 files).** Last night managed three, so work briskly:
+- Per file, run the checker once (after committing, with the `--files` command below). That is the proof;
+  extra hand-verification is not needed.
+- Do not run Gradle, tests or builds — layout-only changes cannot affect them, and the checker proves it.
+- If a file fights you for more than a few minutes, restore it, list it as skipped in the report, move on.
+- If you hit the marker with time to spare, carry on down the queue. If you run out of time first, stop
+  and still do the "Before you finish" steps — each file is its own commit, so partial progress is kept.
 
 ## Hard rules — breaking any of these means the whole night's work is discarded
 - **Change layout only.** Do not rename, reorder, add, remove or "improve" anything: no code, no
