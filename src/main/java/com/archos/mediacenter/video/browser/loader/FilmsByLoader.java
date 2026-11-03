@@ -24,6 +24,7 @@ import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Provides shared cursor loading and selection rules for grouped films. */
 public abstract class FilmsByLoader extends CursorLoader implements CompatAndSDKCursorLoaderFactory {
 
     public static final String COLUMN_COUNT = "count";
