@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.R;
 import android.content.Context;
 import android.content.res.Resources;
 
+/** Supplies default artwork and layout dimensions for browser grids. */
 public enum AdapterDefaultValuesGrid implements AdapterDefaultValues {
 
     INSTANCE;
