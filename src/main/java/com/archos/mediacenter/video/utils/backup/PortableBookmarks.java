@@ -3,6 +3,8 @@ package com.archos.mediacenter.video.utils.backup;
 import android.content.Context;
 import androidx.preference.PreferenceManager;
 import java.net.URI;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.json.*;
 
@@ -21,7 +23,7 @@ public final class PortableBookmarks {
             || text.matches("(?is).*(?:password|passwd|token|secret|authorization|cookie|api[_-]?key)\\s*[:=].*"))
             throw new JSONException("Bookmark label needs privacy review");
         try {
-            java.nio.charset.StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(text));
+            StandardCharsets.UTF_8.newEncoder().encode(CharBuffer.wrap(text));
         } catch (Exception invalid) {
             throw new JSONException("Invalid bookmark label encoding");
         }
