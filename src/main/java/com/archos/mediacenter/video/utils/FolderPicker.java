@@ -328,11 +328,13 @@ public class FolderPicker extends FragmentActivity {
                 builder.setTitle(R.string.choose_a_folder);
             }
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialog, int id) {
                     getActivity().setResult(RESULT_OK, new Intent().putExtra(EXTRA_SELECTED_FOLDER, mSelectedFolder.getPath()));
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialog, int id) {
                     // User cancelled the dialog
                     getActivity().setResult(RESULT_CANCELED);
@@ -496,6 +498,7 @@ public class FolderPicker extends FragmentActivity {
          * Update (un)mount sdcard/usb host/samba/upnp.
          */
         private final BroadcastReceiver mExternalStorageReceiver = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context context, Intent intent) {
                 final String path = intent.getDataString().substring(7);
                 if(DBG) Log.d(TAG, "mExternalStorageReceiver " + intent.getDataString());
