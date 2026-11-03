@@ -30,6 +30,7 @@ import com.archos.mediacenter.video.browser.loader.NonScrapedVideosLoader;
 import com.archos.mediascraper.AutoScrapeService;
 
 
+/** Displays library videos that lack scraped metadata. */
 public class BrowserNonScraped extends CursorBrowserByVideo {
     //private static final boolean DBG = false;
     //private static final String TAG = "BrowserNonScraped";
