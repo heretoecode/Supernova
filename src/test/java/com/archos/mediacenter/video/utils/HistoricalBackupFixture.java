@@ -14,12 +14,18 @@
 
 package com.archos.mediacenter.video.utils;
 import android.content.*;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.VideoDb;
 import com.archos.mediascraper.MediaScraper;
 import java.io.*;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+import java.util.UUID;
 import java.util.zip.*;
 
 /** Test-only historical1.0 fixture writer. Not packaged or reachable by application export. */
@@ -50,7 +56,7 @@ public final class HistoricalBackupFixture extends ContextWrapper {
     }
 
     private String exportMediaLibrary() throws IOException {
-        java.util.Set<String> reproducible = MigrationBackup.reproducibleFiles(this);
+        Set<String> reproducible = MigrationBackup.reproducibleFiles(this);
         DbHolder holder = VideoDb.getHolder(this);
         holder.get(); // Ensure even an empty library has its schema before snapshotting.
         synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
@@ -64,7 +70,7 @@ public final class HistoricalBackupFixture extends ContextWrapper {
         }
     }
 
-    private String exportLockedLibrary(java.util.Set<String> reproducible) throws IOException {
+    private String exportLockedLibrary(Set<String> reproducible) throws IOException {
         if (log.isDebugEnabled())
             log.debug("exportMediaLibrary: starting full library export");
 
@@ -97,32 +103,32 @@ public final class HistoricalBackupFixture extends ContextWrapper {
 
         VerifiedBackup.write(zipFile, zos -> {
             zos.putNextEntry(new ZipEntry("manifest.json"));
-            zos.write(BackupFormat.manifest().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            zos.write(BackupFormat.manifest().getBytes(StandardCharsets.UTF_8));
             zos.closeEntry();
             zos.putNextEntry(new ZipEntry("RESTORE_INSTRUCTIONS.txt"));
-            zos.write(BackupFormat.instructions().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            zos.write(BackupFormat.instructions().getBytes(StandardCharsets.UTF_8));
             zos.closeEntry();
             try {
                 byte[] settings =
                     BackupPrivacy
                         .selectedSettings(this,
                             SettingsBackup.encodePortable(
-                                androidx.preference.PreferenceManager.getDefaultSharedPreferences(this), false))
-                        .getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                                PreferenceManager.getDefaultSharedPreferences(this), false))
+                        .getBytes(StandardCharsets.UTF_8);
                 zos.putNextEntry(new ZipEntry("settings.json"));
                 zos.write(settings);
                 zos.closeEntry();
                 zos.putNextEntry(new ZipEntry("named_preferences.json"));
-                zos.write(MigrationBackup.settings(this).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                zos.write(MigrationBackup.settings(this).getBytes(StandardCharsets.UTF_8));
                 zos.closeEntry();
             } catch (org.json.JSONException e) {
                 throw new IOException("Could not export settings", e);
             }
-            File historyFile = new File(getCacheDir(), "history-export-" + java.util.UUID.randomUUID());
+            File historyFile = new File(getCacheDir(), "history-export-" + UUID.randomUUID());
             try {
                 com.archos.mediacenter.video.leanback.ViewingHistory.export(this, historyFile);
                 zos.putNextEntry(new ZipEntry(com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE));
-                try (java.io.InputStream history = new java.io.FileInputStream(historyFile)) {
+                try (InputStream history = new java.io.FileInputStream(historyFile)) {
                     byte[] bytes = new byte[65536];
                     int count;
                     while ((count = history.read(bytes)) != -1)
@@ -209,7 +215,7 @@ public final class HistoricalBackupFixture extends ContextWrapper {
                         // Checkpoint WAL to main database file
                         if (log.isDebugEnabled())
                             log.debug("flushDatabaseWAL: executing PRAGMA wal_checkpoint(FULL)");
-                        try (android.database.Cursor checkpoint = db.rawQuery("PRAGMA wal_checkpoint(FULL)", null)) {
+                        try (Cursor checkpoint = db.rawQuery("PRAGMA wal_checkpoint(FULL)", null)) {
                             if (!checkpoint.moveToFirst() || checkpoint.getInt(0) != 0)
                                 throw new IllegalStateException("Database is busy");
                         }
@@ -257,7 +263,7 @@ public final class HistoricalBackupFixture extends ContextWrapper {
     }
 
     private void addPersonalArtworkToZip(
-        ZipOutputStream zip, File dir, String prefix, java.util.Set<String> reproducible) throws IOException {
+        ZipOutputStream zip, File dir, String prefix, Set<String> reproducible) throws IOException {
         File[] files = dir.listFiles();
         if (files == null)
             throw new IOException("Cannot list personal artwork");
