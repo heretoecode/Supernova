@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
@@ -97,9 +98,9 @@ public class Supernova139SharedCardMetadataTest {
     private boolean contains(View view, String text) {
         if (view instanceof TextView && ((TextView) view).getText().toString().contains(text))
             return true;
-        if (view instanceof android.view.ViewGroup)
-            for (int i = 0; i < ((android.view.ViewGroup) view).getChildCount(); i++)
-                if (contains(((android.view.ViewGroup) view).getChildAt(i), text))
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++)
+                if (contains(((ViewGroup) view).getChildAt(i), text))
                     return true;
         return false;
     }
