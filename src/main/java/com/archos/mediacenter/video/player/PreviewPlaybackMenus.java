@@ -3,8 +3,16 @@ package com.archos.mediacenter.video.player;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
+import android.widget.Checkable;
+import androidx.core.text.HtmlCompat;
+import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
 import java.util.*;
 import com.archos.mediacenter.video.R;
@@ -137,7 +145,7 @@ final class PreviewPlaybackMenus {
         LinearLayout panel = new LinearLayout(owner);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(16), dp(16), dp(16), dp(16));
-        android.graphics.drawable.GradientDrawable surface = new android.graphics.drawable.GradientDrawable();
+        GradientDrawable surface = new GradientDrawable();
         surface.setColor(0xe615171b);
         surface.setCornerRadius(dp(10));
         panel.setBackground(surface);
@@ -152,8 +160,8 @@ final class PreviewPlaybackMenus {
             TextView button = SharedThreePanel.text(owner, TABS[i], 13);
             button.setGravity(Gravity.CENTER);
             button.setSingleLine(true);
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                button, 10, 13, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
+            TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                button, 10, 13, 1, TypedValue.COMPLEX_UNIT_SP);
             button.setFocusable(true);
             button.setFocusableInTouchMode(true);
             button.setPadding(dp(4), dp(10), dp(4), dp(10));
@@ -227,7 +235,7 @@ final class PreviewPlaybackMenus {
     }
 
     /** Tabs are buttons inside a panel (shared style). */
-    private static android.graphics.drawable.Drawable tabBackground() {
+    private static Drawable tabBackground() {
         return SupernovaStyle.button(owner, SupernovaStyle.Surface.PANEL);
     }
 
@@ -419,8 +427,8 @@ final class PreviewPlaybackMenus {
                 hasOther = true;
             if (other ? !otherTrack : otherTrack)
                 continue;
-            String label = androidx.core.text.HtmlCompat
-                               .fromHtml(item.getText(), androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY)
+            String label = HtmlCompat
+                               .fromHtml(item.getText(), HtmlCompat.FROM_HTML_MODE_LEGACY)
                                .toString();
             if (subs && owner.getString(R.string.get_subtitles_online).equals(item.getText()))
                 label = "Download Subtitles";
@@ -430,7 +438,7 @@ final class PreviewPlaybackMenus {
                 label = "Subtitle Appearance";
             if (subs || audio) {
                 String group =
-                    (item.findViewById(R.id.info_text) instanceof android.widget.Checkable)
+                    (item.findViewById(R.id.info_text) instanceof Checkable)
                         ? (audio && item.getText().equals(owner.getString(R.string.pref_audio_filt_title)) ||
                                    item.getText().equals(owner.getString(R.string.pref_audio_filt_night_mode)) ||
                                    item.getText().equals(owner.getString(R.string.spatialization_capabilities))
@@ -463,7 +471,7 @@ final class PreviewPlaybackMenus {
             label.equals(owner.getString(R.string.pref_audio_filt_night_mode)) ||
             label.equals(owner.getString(R.string.spatialization_capabilities)))
             return 2;
-        return item.findViewById(R.id.info_text) instanceof android.widget.Checkable ? 0 : 1;
+        return item.findViewById(R.id.info_text) instanceof Checkable ? 0 : 1;
     }
 
     private static void nativeRow(TVMenuItem item, String label, Runnable parent) {
@@ -483,7 +491,7 @@ final class PreviewPlaybackMenus {
         row.setText(label);
         row.setAlpha(row.isEnabled() ? 1f : .4f);
         row.setContentDescription(label + ", " + (on ? "On" : "Off"));
-        android.graphics.drawable.Drawable indicator =
+        Drawable indicator =
             com.archos.mediacenter.video.leanback.StandardSwitchDrawable.snapshot(owner, on);
         indicator.setBounds(0, 0, com.archos.mediacenter.video.leanback.StandardSwitchDrawable.widthForHeight(dp(20)),
                             dp(20));
@@ -661,7 +669,7 @@ final class PreviewPlaybackMenus {
             ((ViewGroup)card.getParent()).removeView(card);
         card.setAlpha(1f);
         card.setPadding(0, 0, 0, 0);
-        card.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        card.setBackgroundColor(Color.TRANSPARENT);
         compact(card, activity);
         nested = card;
         card.setPreviewDismiss(() -> {
@@ -696,7 +704,7 @@ final class PreviewPlaybackMenus {
             ((ViewGroup)card.getParent()).removeView(card);
         card.setAlpha(1f);
         card.setPadding(0, 0, 0, 0);
-        card.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        card.setBackgroundColor(Color.TRANSPARENT);
         compact(card, activity);
         nested = card;
         card.setPreviewDismiss(() -> {
@@ -803,8 +811,8 @@ final class PreviewPlaybackMenus {
             TextView text = (TextView)view;
             text.setTextSize(14);
             text.setMaxLines(3);
-            text.setEllipsize(android.text.TextUtils.TruncateAt.END);
-            text.setTextColor(android.graphics.Color.WHITE);
+            text.setEllipsize(TextUtils.TruncateAt.END);
+            text.setTextColor(Color.WHITE);
             text.setMinHeight(0);
         }
         if (view instanceof TVMenuItem)
