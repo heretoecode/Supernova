@@ -60,6 +60,7 @@ public class Jetty145SecurityTest {
                 return new String(socket.getInputStream().readAllBytes(), StandardCharsets.US_ASCII);
             }
         }
+        @Override
         public void close() { container.stopIfRunning(); }
     }
     private String request(String method, String headers, String body) {
