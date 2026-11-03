@@ -1,9 +1,12 @@
 package com.archos.mediacenter.video.player;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.widget.FrameLayout;
+import java.util.Map;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -14,7 +17,7 @@ import static org.junit.Assert.*;
 /** Native seek_pause_feed/style_resize_paused tests replace the retired Java cue
  * worker timing tests. These cases preserve its user-visible settings contract. */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 30, application = android.app.Application.class)
+@Config(sdk = 30, application = Application.class)
 public class SubtitleLegacyPreferencesTest {
     private SubtitleManager manager;
     private SharedPreferences prefs;
@@ -36,7 +39,7 @@ public class SubtitleLegacyPreferencesTest {
             .putBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, true)
             .putInt(SubtitleManager.KEY_BG_OPACITY, 99)
             .commit();
-        java.util.Map<String, ?> before = prefs.getAll();
+        Map<String, ?> before = prefs.getAll();
         manager.restoreStyle(prefs);
         assertEquals(73, manager.getSize());
         assertTrue(manager.getOutlineState());
@@ -78,8 +81,8 @@ public class SubtitleLegacyPreferencesTest {
                     metrics.widthPixels = shortSide * 16 / 9;
                     metrics.heightPixels = shortSide;
                     int pt = SubtitleManager.legacySizeToNativePt(value, metrics, shortSide);
-                    float expected = android.util.TypedValue.applyDimension(
-                        android.util.TypedValue.COMPLEX_UNIT_SP, SubtitleManager.calcTextSize(value), metrics);
+                    float expected = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP, SubtitleManager.calcTextSize(value), metrics);
                     assertEquals(expected, pt * shortSide / 720f, shortSide / 1440f + 0.01f);
                     int oldWidth = metrics.widthPixels;
                     metrics.widthPixels = metrics.heightPixels;
