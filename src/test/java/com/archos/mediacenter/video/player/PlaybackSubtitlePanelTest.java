@@ -45,6 +45,7 @@ public class PlaybackSubtitlePanelTest {
                                  List.of("Single", "Folder", "Repeat single", "Repeat folder", "Binge watching")));
         final Map<String, Integer> modeSelected = new HashMap<>(Map.of("format", 0, "s3d", 0, "playmode", 4));
         int selected = 1, audio = 0, downloads, trackCount = 15, disabledTrack = -1, audioDelay = 0, pip;
+        int subtitleWrites, optionWrites;
         float speed = 1f;
 
         @Override
@@ -59,6 +60,7 @@ public class PlaybackSubtitlePanelTest {
 
         @Override
         public void set(String key, int value) {
+            subtitleWrites++;
             values.put(key, value);
         }
 
@@ -112,6 +114,7 @@ public class PlaybackSubtitlePanelTest {
 
         @Override
         public void toggleOption(String key) {
+            optionWrites++;
             options.put(key, !options.get(key));
         }
 
@@ -206,6 +209,45 @@ public class PlaybackSubtitlePanelTest {
 
     private static String value(View row) {
         return ((TextView)row.findViewWithTag("value")).getText().toString();
+    }
+
+    @Test
+    public void switchDirectionsSetTheStateWithoutTogglingAgain() {
+        model.values.put("enabled", 0);
+        panel.refresh();
+        View subtitles = row("enabled");
+        int writes = model.subtitleWrites;
+        key(subtitles, KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertEquals(1, model.get("enabled"));
+        assertEquals(writes + 1, model.subtitleWrites);
+        key(subtitles, KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertEquals(1, model.get("enabled"));
+        assertEquals("Already On does not write again", writes + 1, model.subtitleWrites);
+        assertTrue(subtitles.hasFocus());
+        key(subtitles, KeyEvent.KEYCODE_DPAD_LEFT);
+        assertEquals(0, model.get("enabled"));
+        key(subtitles, KeyEvent.KEYCODE_DPAD_LEFT);
+        assertEquals("Already Off does not write again", writes + 2, model.subtitleWrites);
+        assertTrue(subtitles.hasFocus());
+        subtitles.performClick();
+        assertEquals("OK still flips", 1, model.get("enabled"));
+
+        open(PlaybackSubtitlePanel.TAB_AUDIO);
+        View boost = tagged("audio.row.boost");
+        writes = model.optionWrites;
+        key(boost, KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertTrue(model.options.get("boost"));
+        key(boost, KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertTrue(model.options.get("boost"));
+        assertEquals("Already On does not toggle the backend", writes + 1, model.optionWrites);
+        assertTrue(boost.hasFocus());
+        key(boost, KeyEvent.KEYCODE_DPAD_LEFT);
+        assertFalse(model.options.get("boost"));
+        key(boost, KeyEvent.KEYCODE_DPAD_LEFT);
+        assertEquals("Already Off does not toggle the backend", writes + 2, model.optionWrites);
+        assertTrue(boost.hasFocus());
+        boost.performClick();
+        assertTrue("OK still flips", model.options.get("boost"));
     }
 
     @Test
