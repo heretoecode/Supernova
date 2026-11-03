@@ -93,7 +93,6 @@ public final class PreviewSettings {
             String title = String.valueOf(c.getTitle()).toLowerCase(Locale.ROOT);
             if (!categories.containsValue(c)) {
                 PreferenceCategory dest = categories.get(title.contains("language") ? "Subtitles"
-                        : title.contains("torrent") ? "Advanced"
                                                                                     : "Sources & Storage");
                 while (c.getPreferenceCount() > 0) {
                     Preference p = c.getPreference(0);
