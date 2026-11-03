@@ -1,7 +1,9 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Application;
+import android.os.Looper;
 import android.view.*;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.BackupCategory;
@@ -34,7 +36,7 @@ public class BackupDirectOptionsTest {
                 .beginTransaction()
                 .replace(android.R.id.content, fragment)
                 .commitNow();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             View root = fragment.requireView();
             root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
@@ -42,7 +44,7 @@ public class BackupDirectOptionsTest {
             assertTrue(PreviewSettings.enterBackup(fragment));
             for (BackupCategory category : BackupCategory.ordered())
                 assertNotNull(category.name(), root.findViewWithTag("backup.category." + category.name()));
-            var model = new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class);
+            var model = new ViewModelProvider(host.get()).get(BackupOperationModel.class);
             assertEquals(BackupOperationModel.Phase.IDLE, model.current().phase);
             View choice = root.findViewWithTag("backup.category.APPEARANCE");
             boolean before =
