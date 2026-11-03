@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Displays scraper search results and updates their loaded item details. */
 public class ScraperResultsAdapter extends BaseAdapter {
     private final static String TAG = "ScraperResultsAdapter";
 
