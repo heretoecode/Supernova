@@ -14,7 +14,12 @@
 
 package com.archos.mediacenter.video.utils;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.preference.PreferenceManager;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.archos.filecorelibrary.ExtStorageManager;
@@ -60,6 +65,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import java.util.Set;
 
 public class FolderPicker extends FragmentActivity {
 
@@ -97,7 +103,7 @@ public class FolderPicker extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean shared=androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);
+        boolean shared=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);
         if(shared)setTheme(R.style.MyLeanbackTheme);
         super.onCreate(savedInstanceState);
         if(shared){
@@ -105,14 +111,14 @@ public class FolderPicker extends FragmentActivity {
             sharedBrowser.directoryPicker(uri->{setResult(RESULT_OK,new Intent().putExtra(EXTRA_SELECTED_FOLDER,uri.getPath()));finish();});
             java.util.List<com.archos.mediacenter.video.leanback.adapter.object.Box> volumes=new ArrayList<>();
             ExtStorageManager storage=ExtStorageManager.getExtStorageManager();
-            java.util.Set<String> paths=new java.util.LinkedHashSet<>();paths.addAll(storage.getExtSdcards());paths.addAll(storage.getExtUsbStorages());paths.addAll(storage.getExtOtherStorages());
-            for(String path:paths)volumes.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.OTHER,new java.io.File(path).getName(),0,path));
-            sharedBrowser.locations(volumes,java.util.Collections.emptyList(),java.util.Collections.emptyList(),ignored->{});setContentView(sharedBrowser);
+            Set<String> paths=new LinkedHashSet<>();paths.addAll(storage.getExtSdcards());paths.addAll(storage.getExtUsbStorages());paths.addAll(storage.getExtOtherStorages());
+            for(String path:paths)volumes.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.OTHER,new File(path).getName(),0,path));
+            sharedBrowser.locations(volumes,Collections.emptyList(),Collections.emptyList(),ignored->{});setContentView(sharedBrowser);
             String restored=savedInstanceState==null?null:savedInstanceState.getString("shared_directory");String selected=getIntent().getStringExtra(EXTRA_CURRENT_SELECTION);
             String path=restored!=null?Uri.parse(restored).getPath():selected==null?null:Uri.parse(selected).getPath();
-            java.io.File start=path==null||path.isEmpty()?Environment.getExternalStorageDirectory():restored!=null?new java.io.File(path):new java.io.File(path).getParentFile();
+            File start=path==null||path.isEmpty()?Environment.getExternalStorageDirectory():restored!=null?new File(path):new File(path).getParentFile();
             sharedBrowser.open(Uri.fromFile(start==null?Environment.getExternalStorageDirectory():start));
-            getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){public void handleOnBackPressed(){sharedBrowser.back(()->{setResult(RESULT_CANCELED);finish();});}});
+            getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true){public void handleOnBackPressed(){sharedBrowser.back(()->{setResult(RESULT_CANCELED);finish();});}});
             return;
         }
 
