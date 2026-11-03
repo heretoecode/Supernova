@@ -17,18 +17,19 @@ Each item: what the owner saw → what they want → status.
 ### 2. Focused button text looks grey, not black (design)
 - **Seen:** label on the focused button reads as grey.
 - **Cause:** colour is near-black (`#0B0D12`), but buttons use the *Light* font weight; thin strokes look grey on a TV.
-- **Proposal:** button labels in Medium weight, globally. Mock-up (Light / Regular / Medium, focused and at rest)
-  offered for the owner to choose.
-- **Status:** awaiting owner's choice.
+- **Decision (owner, 2026-11-03):** button labels in **Medium** weight, globally (every button, focused and at
+  rest). Mock-up: `docs/design/proposals/button-focus-polish/01-label-weight.png` (option C).
+- **Status:** approved design — awaiting go-ahead to code.
 
 ### 3. Grey "bleeding" round the focused button (design/bug)
 - **Seen (photo, 0.153):** grey smudge around the focused white button, mostly along the bottom edge, on the
   pale hero image.
 - **Cause:** the focus box's soft shadow (`SupernovaStyle.Box`, four stacked offset layers, shifted down). On
   light backgrounds it reads as a dirty halo; the layering also shows steps and is lopsided.
-- **Options for the mock-up:** (1) no shadow on focus — recommended; (2) much fainter, smooth, even shadow;
-  (3) thin darker outline instead of a shadow. Shown on a light and a dark background.
-- **Status:** awaiting owner's choice (mock-up batch).
+- **Decision (owner, 2026-11-03):** **no shadow** on the focus box, globally. Mock-up:
+  `docs/design/proposals/button-focus-polish/02-focus-shadow.png` (option 1); combined result in
+  `03-hero-today-vs-proposed.png`.
+- **Status:** approved design — awaiting go-ahead to code.
 
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
