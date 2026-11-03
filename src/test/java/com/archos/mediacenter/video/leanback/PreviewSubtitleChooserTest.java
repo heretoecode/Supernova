@@ -16,6 +16,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowDialog;
 import static org.junit.Assert.*;
 
+/** Checks subtitle selection, association, deletion permissions and cancellation of late results. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSubtitleChooserTest {
