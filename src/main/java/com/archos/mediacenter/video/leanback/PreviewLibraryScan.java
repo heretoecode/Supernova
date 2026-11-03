@@ -1,9 +1,13 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.*;
+import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.*;
-import com.archos.filecorelibrary.ExtStorageManager;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediaprovider.ImportState;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
@@ -79,7 +83,7 @@ public final class PreviewLibraryScan {
                         "sources_failed", progress.total(4), "metadata_outcome", metadataOutcome, "elapsed_ms",
                         SystemClock.elapsedRealtime() - requestedAt);
                     if (next.equals("complete") || next.equals("failed") || next.startsWith("batch_"))
-                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+                        PreferenceManager.getDefaultSharedPreferences(c)
                             .edit()
                             .putString("preview_scan_result",
                                 (progress.total(4) > 0 || next.equals("batch_failed") ? "Partial / failed sources"
@@ -113,9 +117,9 @@ public final class PreviewLibraryScan {
         if (!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(app))
             return;
         LinkedHashSet<String> roots = new LinkedHashSet<>();
-        for (String root : androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).getStringSet(
+        for (String root : PreferenceManager.getDefaultSharedPreferences(app).getStringSet(
                  "supernova_library_roots", Collections.emptySet())) {
-            android.net.Uri uri = android.net.Uri.parse(root);
+            Uri uri = Uri.parse(root);
             if ("file".equals(uri.getScheme()) && uri.getPath() != null)
                 roots.add(uri.getPath());
         }
@@ -241,7 +245,7 @@ public final class PreviewLibraryScan {
                 + (metadataRemaining >= 0 ? " · " + metadataRemaining + " remaining" : " · progress unavailable"));
         if (network != null && !network.isEmpty())
             stages.add(network);
-        return android.text.TextUtils.join("\n", stages);
+        return TextUtils.join("\n", stages);
     }
 
     public static synchronized String status(Context c) {
@@ -258,18 +262,18 @@ public final class PreviewLibraryScan {
             return "Scan requested · waiting for the scanner";
         if (phase.equals("not_started"))
             return "The requested scan has not started. Check the source selection and connectivity.";
-        android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         String result = prefs.getString("preview_scan_result", "");
         return result.isEmpty() ? PreviewNetworkScanning.lastResult(c) : result;
     }
 
     public static synchronized String overview(Context c) {
         long last =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time", 0);
+            PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time", 0);
         String ago = last == 0 ? "Not yet completed"
-                               : android.text.format.DateUtils
+                               : DateUtils
                                      .getRelativeTimeSpanString(last, System.currentTimeMillis(),
-                                         android.text.format.DateUtils.MINUTE_IN_MILLIS)
+                                         DateUtils.MINUTE_IN_MILLIS)
                                      .toString();
         boolean busy = NetworkScannerServiceVideo.isScannerAlive();
         return "Scan Overview\n\nStatus: "
