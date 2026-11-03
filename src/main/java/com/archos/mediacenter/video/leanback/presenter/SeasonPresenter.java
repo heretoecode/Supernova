@@ -40,6 +40,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+/** Binds season metadata, artwork and watched state to TV cards. */
 public class SeasonPresenter extends Presenter {
 
     final Drawable mErrorDrawable;
