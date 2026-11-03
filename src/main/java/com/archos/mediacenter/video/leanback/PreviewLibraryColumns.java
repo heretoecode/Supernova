@@ -12,6 +12,8 @@ import android.text.format.Formatter;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.squareup.picasso.Picasso;
@@ -324,7 +326,7 @@ public final class PreviewLibraryColumns {
         for (int i = 0; i < row.getChildCount(); i++) {
             View heading = row.getChildAt(i);
             heading.setFocusableInTouchMode(true);
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
+            Diagnostics.semantic(
                 heading, "library.header." + visible().get(i).name().toLowerCase(Locale.ROOT));
         }
         return row;
@@ -374,7 +376,7 @@ public final class PreviewLibraryColumns {
                     long media = entry.media instanceof Video ? ((Video) entry.media).getId()
                         : entry.media instanceof Tvshow ? ((Tvshow) entry.media).getTvshowId()
                                                               : 0;
-                    com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(image, uri, media, "library.list",
+                    ArtworkRequest.load(image, uri, media, "library.list",
                         entry.backdrop != null ? "landscape" : "poster",
                         Picasso.get().load(uri).resize(dp(58), dp(34)).centerInside().noFade());
                 }
@@ -397,7 +399,7 @@ public final class PreviewLibraryColumns {
 
     public void clear(View view) {
         if (view instanceof ImageView) {
-            com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel((ImageView) view);
+            ArtworkRequest.cancel((ImageView) view);
             ((ImageView) view).setImageDrawable(null);
         }
         if (view instanceof ViewGroup)
