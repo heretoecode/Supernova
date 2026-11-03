@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.leanback.MainActivityLeanback;
 import com.archos.mediacenter.video.utils.ThemeManager;
@@ -28,7 +29,6 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Locale;
 
 /**
  * Hub activity to launch either the leanback activity or the regular tablet/phone activity
@@ -50,7 +50,7 @@ public class EntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         // Apply window theme after super.onCreate()
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new com.archos.mediacenter.video.leanback.PreviewStartupSurface(this));else themeManager.applyWindowTheme(this);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new com.archos.mediacenter.video.leanback.PreviewStartupSurface(this));else themeManager.applyWindowTheme(this);
 
         if (log.isDebugEnabled()) log.debug("onCreate");
 
