@@ -3,8 +3,13 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import com.squareup.picasso.*;
+import java.util.Objects;
 
 /** One bounded artwork decode shared visually by the header and its navigation. */
 public final class PreviewBackdrop extends Drawable implements Target {
@@ -12,7 +17,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     private final float density;
     private final Context context;
     private Bitmap bitmap, previous;
-    private final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable pending;
     private long fadeStart;
     private Uri uri;
@@ -78,7 +83,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
     public void load(Uri next) {
         if (strictLibraryArtwork)
             return;
-        if (java.util.Objects.equals(uri, next)) {
+        if (Objects.equals(uri, next)) {
             pendingDirection = 0;
             return;
         }
@@ -90,7 +95,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
             handler.removeCallbacks(pending);
         uri = next;
         loading = next != null;
-        requestedAt = android.os.SystemClock.uptimeMillis();
+        requestedAt = SystemClock.uptimeMillis();
         requestSequence++;
         if (trace != null)
             trace.cancelled();
@@ -102,7 +107,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
             if (next == null) {
                 previous = bitmap;
                 bitmap = null;
-                fadeStart = android.os.SystemClock.uptimeMillis();
+                fadeStart = SystemClock.uptimeMillis();
                 invalidateSelf();
             } else {
                 final long sequence = requestSequence;
@@ -158,12 +163,12 @@ public final class PreviewBackdrop extends Drawable implements Target {
         } else
             canvas.drawColor(0xff0b1b2a);
         if (!foundationHome && bitmap == null && previous == null) {
-            android.graphics.drawable.GradientDrawable utility = PreviewAccent.utility(context);
+            GradientDrawable utility = PreviewAccent.utility(context);
             utility.setBounds(b);
             utility.draw(canvas);
         }
         paint.setShader(null);
-        float fade = Math.min(1f, (android.os.SystemClock.uptimeMillis() - fadeStart) / 180f);
+        float fade = Math.min(1f, (SystemClock.uptimeMillis() - fadeStart) / 180f);
         canvas.save();
         canvas.translate(-motionDirection * 20 * density * fade, 0);
         drawImage(canvas, previous, b.width(), h, 1 - fade);
@@ -219,7 +224,7 @@ public final class PreviewBackdrop extends Drawable implements Target {
         if (b != bitmap) {
             previous = bitmap;
             bitmap = b;
-            fadeStart = previous == null ? 0 : android.os.SystemClock.uptimeMillis();
+            fadeStart = previous == null ? 0 : SystemClock.uptimeMillis();
         }
         if (trace != null)
             trace.ready(String.valueOf(from));
