@@ -12,6 +12,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks that backdrop replacement failures preserve valid artwork without stale crossfades. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewBackdropTest {
     @Test public void failedReplacementKeepsDisplayedArtwork(){
