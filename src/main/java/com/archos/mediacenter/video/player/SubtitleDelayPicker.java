@@ -26,6 +26,7 @@ import java.util.Formatter;
 import java.util.Locale;
 
 
+/** Provides controls for adjusting subtitle delay during playback. */
 public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
 
     /* UI Components */
