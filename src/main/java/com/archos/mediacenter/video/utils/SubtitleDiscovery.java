@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.player.PrivateMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import org.json.*;
@@ -51,7 +52,7 @@ public final class SubtitleDiscovery {
     private static boolean enabled(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         return prefs.getBoolean(ENABLED, false) && prefs.getBoolean("supernova_integration_opensubtitles", true)
-            && !com.archos.mediacenter.video.player.PrivateMode.isActive();
+            && !PrivateMode.isActive();
     }
 
     public static String languages(Context c) {
@@ -246,7 +247,7 @@ public final class SubtitleDiscovery {
         if (!PreferenceManager.getDefaultSharedPreferences(c).getBoolean(
                 "supernova_integration_opensubtitles", true))
             throw new IOException("Subtitle integration disabled");
-        if (com.archos.mediacenter.video.player.PrivateMode.isActive())
+        if (PrivateMode.isActive())
             return OpenSubtitlesApiHelper.searchSubtitle(query, languages);
         String key = key(query, languages);
         QUEUE.remove(key);
