@@ -1,9 +1,16 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.time.Instant;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -23,7 +30,7 @@ public class SubtitleDiscoveryTest {
         app = RuntimeEnvironment.getApplication();
         requests = new AtomicInteger();
         app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).edit().clear().commit();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit();
+        PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit();
         app.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
             .edit()
             .clear()
@@ -72,17 +79,17 @@ public class SubtitleDiscoveryTest {
         app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).edit().remove("cache:" + key).commit();
         SubtitleDiscovery.setProviderForTests((c, q, l) -> {
             requests.incrementAndGet();
-            throw new java.io.IOException("429 fixture");
+            throw new IOException("429 fixture");
         });
         try {
             SubtitleDiscovery.manual(app, query(), "en");
             fail();
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
         try {
             SubtitleDiscovery.manual(app, query(), "en");
             fail();
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
         assertEquals(3, requests.get());
         assertFalse(app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).contains("cache:" + key));
@@ -97,7 +104,7 @@ public class SubtitleDiscoveryTest {
         try {
             SubtitleDiscovery.manual(app, query(), "en");
             fail();
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
         assertEquals(0, requests.get());
     }
@@ -156,7 +163,7 @@ public class SubtitleDiscoveryTest {
 
     @Test
     public void changedLanguagePreferenceDropsQueuedProviderRequest() {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .putBoolean(SubtitleDiscovery.ENABLED, true)
             .putStringSet("languages_list", new HashSet<>(Arrays.asList("fr")))
@@ -167,14 +174,14 @@ public class SubtitleDiscoveryTest {
         }
         queue.offer("stale", query(), "en", SubtitleDiscoveryPolicy.HERO);
         org.robolectric.util.ReflectionHelpers.callStaticMethod(SubtitleDiscovery.class, "drain",
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(android.content.Context.class, app));
+            org.robolectric.util.ReflectionHelpers.ClassParameter.from(Context.class, app));
         assertEquals(0, requests.get());
         assertEquals(0, queue.size());
     }
 
     @Test
     public void retryAfterSecondsAndHttpDateAndExponentialBackoffAreHonoured() {
-        long now = java.time.Instant.parse("2026-10-12T00:00:00Z").toEpochMilli();
+        long now = Instant.parse("2026-10-12T00:00:00Z").toEpochMilli();
         assertEquals(now + 120000, SubtitleDiscoveryPolicy.retryAfter("120", now));
         assertEquals(now + 60000, SubtitleDiscoveryPolicy.retryAfter("Mon, 12 Oct 2026 00:01:00 GMT", now));
         assertEquals(now + 600000, SubtitleDiscoveryPolicy.backoff(now, 1, now + 600000));
@@ -183,14 +190,14 @@ public class SubtitleDiscoveryTest {
 
     @Test
     public void localSidecarIsVerifiedWithoutCallingProviderAndLanguageIsNotGuessed() throws Exception {
-        java.io.File folder = new java.io.File(app.getCacheDir(), "sidecars");
+        File folder = new File(app.getCacheDir(), "sidecars");
         folder.mkdirs();
-        java.io.File file = new java.io.File(folder, "Film.mkv");
-        java.nio.file.Files.write(file.toPath(), new byte[] {
+        File file = new File(folder, "Film.mkv");
+        Files.write(file.toPath(), new byte[] {
             1
         });
-        java.nio.file.Files.write(new java.io.File(folder, "Film.en.srt").toPath(),
-            "1\n00:00:01,000 --> 00:00:02,000\nHello\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        Files.write(new File(folder, "Film.en.srt").toPath(),
+            "1\n00:00:01,000 --> 00:00:02,000\nHello\n".getBytes(StandardCharsets.UTF_8));
         Video video = new NonIndexedVideo(Uri.fromFile(file), Uri.fromFile(file), "Film", null);
         SubtitleDiscovery.recordLocal(app, video, null);
         assertTrue(SubtitleDiscovery.localMatches(app, video, "en"));
@@ -208,8 +215,8 @@ public class SubtitleDiscoveryTest {
 
     @Test
     public void measuredCaptionsAudioChannelsAndDescriptionStayFileScoped() throws Exception {
-        java.io.File file = new java.io.File(app.getCacheDir(), "measured.mkv");
-        java.nio.file.Files.write(file.toPath(), new byte[] {
+        File file = new File(app.getCacheDir(), "measured.mkv");
+        Files.write(file.toPath(), new byte[] {
             1
         });
         Video video = new NonIndexedVideo(Uri.fromFile(file), Uri.fromFile(file), "Measured", null);
@@ -255,8 +262,8 @@ public class SubtitleDiscoveryTest {
         assertTrue(SubtitleDiscovery.localMatches(app, video, "en"));
         assertEquals(Arrays.asList("AAC · 5.1", "Captions/SDH", "AD"),
             com.archos.mediacenter.video.leanback.SharedMetadata.technical(app, video));
-        Video other = new NonIndexedVideo(Uri.fromFile(new java.io.File(app.getCacheDir(), "other.mkv")),
-            Uri.fromFile(new java.io.File(app.getCacheDir(), "other.mkv")), "Other", null);
+        Video other = new NonIndexedVideo(Uri.fromFile(new File(app.getCacheDir(), "other.mkv")),
+            Uri.fromFile(new File(app.getCacheDir(), "other.mkv")), "Other", null);
         assertTrue(SubtitleDiscovery.localBadges(app, other).isEmpty());
         flags.set(0);
         VideoMetadata refreshed = new VideoMetadata();
