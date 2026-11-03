@@ -85,6 +85,7 @@ import java.util.concurrent.Executors;
 
 import static com.archos.filecorelibrary.FileUtils.removeFileSlashSlash;
 
+/** Displays subtitle search results and manages login and subtitle downloads. */
 public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
     private static final Logger log = LoggerFactory.getLogger(SubtitlesDownloaderActivity2.class);
 
