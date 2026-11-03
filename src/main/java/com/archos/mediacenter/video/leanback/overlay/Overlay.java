@@ -15,6 +15,10 @@
 package com.archos.mediacenter.video.leanback.overlay;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.app.DetailsSupportFragment;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -91,15 +95,15 @@ public class Overlay {
             View clock = mOverlayRoot.findViewById(R.id.clock);
             ((ViewGroup)clock.getParent()).removeView(clock);
             int clockPadding=Math.round(6*mContext.getResources().getDisplayMetrics().density);clock.setPadding(0,clockPadding,0,clockPadding);
-            ((android.widget.TextView)clock).setTextSize(19);((android.widget.TextView)clock).setIncludeFontPadding(true);
-            ((android.widget.TextView)clock).setGravity(android.view.Gravity.CENTER_VERTICAL|android.view.Gravity.END);
-            ((android.widget.TextView)clock).setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));
+            ((TextView)clock).setTextSize(19);((TextView)clock).setIncludeFontPadding(true);
+            ((TextView)clock).setGravity(Gravity.CENTER_VERTICAL|Gravity.END);
+            ((TextView)clock).setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));
             View fallbackClock=nav.getStatusContainer().findViewWithTag("preview-default-clock");if(fallbackClock!=null)nav.getStatusContainer().removeView(fallbackClock);
-            nav.getStatusContainer().addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));
+            nav.getStatusContainer().addView(clock, new FrameLayout.LayoutParams(-1, -1));
             mScanProgress.useFloatingStyle();
             View progress = mOverlayRoot.findViewById(R.id.progress_group);
             ((ViewGroup)progress.getParent()).removeView(progress);
-            nav.getScanContainer().addView(progress, new android.widget.FrameLayout.LayoutParams(-2, -2, android.view.Gravity.END | android.view.Gravity.BOTTOM));
+            nav.getScanContainer().addView(progress, new FrameLayout.LayoutParams(-2, -2, Gravity.END | Gravity.BOTTOM));
         }
     }
 
