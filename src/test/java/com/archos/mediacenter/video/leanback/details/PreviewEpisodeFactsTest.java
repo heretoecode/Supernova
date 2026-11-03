@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.details;
 
+import android.app.Activity;
 import android.app.Application;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ public class PreviewEpisodeFactsTest {
             com.squareup.picasso.Picasso.setSingletonInstance(
                 new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {
