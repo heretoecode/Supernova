@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+/** Provides video and subtitle file, format, language and library timestamp utilities. */
 public class VideoUtils {
     private final static String TAG = "VideoUtils";
     private final static boolean DBG = false;
