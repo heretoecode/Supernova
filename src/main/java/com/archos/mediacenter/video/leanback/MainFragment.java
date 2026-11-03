@@ -24,20 +24,26 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Bundle;
 import android.os.Process;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.leanback.widget.ClassPresenterSelector;
 import androidx.leanback.widget.CursorObjectAdapter;
+import androidx.leanback.widget.FocusHighlight;
 import androidx.leanback.widget.HeaderItem;
 import androidx.leanback.widget.IconItemRowPresenter;
 import androidx.leanback.widget.ListRow;
@@ -125,8 +131,9 @@ import com.archos.mediaprovider.ArchosMediaIntent;
 import com.archos.mediaprovider.ImportState;
 import com.archos.mediaprovider.video.NetworkScannerReceiver;
 import com.archos.mediaprovider.video.VideoStore;
-import com.archos.mediascraper.AutoScrapeService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -339,7 +346,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     private void refreshVisibleRows() {
         if (mPreviewPages != null && mFileBrowsingRowAdapter != null) {
-            java.util.List<Box> files = new java.util.ArrayList<>();
+            List<Box> files = new ArrayList<>();
             for (int i = 0; i < mFileBrowsingRowAdapter.size(); i++)
                 files.add((Box) mFileBrowsingRowAdapter.get(i));
             mPreviewPages.setFiles(files);
@@ -348,7 +355,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             return;
         int oldPosition = getSelectedPosition();
         Object selected = oldPosition >= 0 && oldPosition < mVisibleRows.size() ? mVisibleRows.get(oldPosition) : null;
-        java.util.List<Object> rows = new java.util.ArrayList<>();
+        List<Object> rows = new ArrayList<>();
         for (int i = 0; i < mRowsAdapter.size(); i++) {
             Object row = mRowsAdapter.get(i);
             if (row instanceof ListRow && belongsToTab(((ListRow) row).getId(), mActiveTab))
@@ -388,14 +395,14 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     @Override
-    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
+    public View onCreateView(LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
         mNavigation = null;
         mTopNavigation =
             PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
         View content = super.onCreateView(inflater, container, state);
         if (!mTopNavigation)
             return content;
-        android.widget.FrameLayout pages = new android.widget.FrameLayout(requireContext());
+        FrameLayout pages = new FrameLayout(requireContext());
         pages.addView(content);
         content.setVisibility(View.GONE);
         mPreviewPages = new PreviewPages(requireContext(),
@@ -419,7 +426,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                 }
             });
         }
-        pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        pages.addView(mPreviewPages, new FrameLayout.LayoutParams(-1, -1));
         mNavigation = new TopNavigation(
             requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         mPreviewPages.setArtworkListener(mNavigation::setArtwork);
@@ -432,12 +439,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             mNavigation.setEmbeddedScanStatus(requestedTab == 3);
         }
         requireActivity().getIntent().removeExtra("preview_tab");
-        android.widget.FrameLayout composed = new android.widget.FrameLayout(requireContext());
-        composed.addView(mNavigation, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        FrameLayout composed = new FrameLayout(requireContext());
+        composed.addView(mNavigation, new FrameLayout.LayoutParams(-1, -1));
         View launch = new View(requireContext());
         launch.setBackground(new PreviewStartupSurface(requireContext()));
         launch.setClickable(true);
-        composed.addView(launch, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        composed.addView(launch, new FrameLayout.LayoutParams(-1, -1));
         mPreviewPages.setReadyListener(() -> {
             if (launch.getParent() == null)
                 return;
@@ -450,7 +457,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                         return;
                     }
                     composed.getViewTreeObserver().addOnPreDrawListener(
-                        new android.view.ViewTreeObserver.OnPreDrawListener() {
+                        new ViewTreeObserver.OnPreDrawListener() {
                             public boolean onPreDraw() {
                                 composed.getViewTreeObserver().removeOnPreDrawListener(this);
                                 launch.animate()
@@ -465,9 +472,9 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                 }
             });
         });
-        new androidx.core.view.WindowInsetsControllerCompat(requireActivity().getWindow(), composed)
-            .hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
-        requireActivity().getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        new WindowInsetsControllerCompat(requireActivity().getWindow(), composed)
+            .hide(WindowInsetsCompat.Type.systemBars());
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         return composed;
     }
 
@@ -1127,8 +1134,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
         // Two different row presenters, one standard for regular cards, one special for the icon items
         ListRowPresenter listRowPresenter =
-            new ListRowPresenter(mTopNavigation ? androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_NONE
-                                                : androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_MEDIUM);
+            new ListRowPresenter(mTopNavigation ? FocusHighlight.ZOOM_FACTOR_NONE
+                                                : FocusHighlight.ZOOM_FACTOR_MEDIUM);
         if (mTopNavigation) {
             listRowPresenter.setShadowEnabled(false);
             listRowPresenter.setSelectEffectEnabled(false);
