@@ -34,6 +34,7 @@ import com.archos.mediacenter.video.player.AudioSpeedPickerAbstract;
 import com.archos.mediacenter.video.player.PreviewAdjustmentValue;
 
 
+/** Provides a remote-controlled audio speed picker for TV playback menus. */
 public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSlaveView {
 
     private final String TAG = "AudioSpeedTVPicker";
