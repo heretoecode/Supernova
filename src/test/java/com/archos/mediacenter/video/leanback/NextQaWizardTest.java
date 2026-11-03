@@ -15,6 +15,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks custom page statistics, toolbar placement and focus on initial entry. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = CustomApplication.class, sdk = 28,
         qualifiers = "w960dp-h540dp-land-mdpi")
