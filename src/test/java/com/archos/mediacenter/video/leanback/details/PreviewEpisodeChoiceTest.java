@@ -1,5 +1,8 @@
 package com.archos.mediacenter.video.leanback.details;
 
+import android.app.Activity;
+import android.app.Application;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import java.util.*;
 import org.json.*;
@@ -11,7 +14,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = android.app.Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28)
 public class PreviewEpisodeChoiceTest {
     @Test
     public void indexedFourEpisodesDoNotGrowIntoMetadataOnlySeasons() throws Exception {
@@ -40,8 +43,8 @@ public class PreviewEpisodeChoiceTest {
         "rawtypes", "unchecked"
     })
     public void providerMarkKeepsMonochromeShapeAndLocalRebindRestoresPlay() throws Exception {
-        android.app.Activity activity =
-            org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        Activity activity =
+            org.robolectric.Robolectric.buildActivity(Activity.class).setup().get();
         try {
             com.squareup.picasso.Picasso.get();
         } catch (IllegalStateException unset) {
@@ -63,8 +66,8 @@ public class PreviewEpisodeChoiceTest {
                 Collections.singletonList(new PreviewEpisodeChoice(
                     1, 2, null, new JSONObject("{id:99,name:'Episode',air_date:'2000-01-01'}"))),
                 42, exact);
-            androidx.recyclerview.widget.RecyclerView.Adapter adapter = row.getAdapter();
-            androidx.recyclerview.widget.RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(row, 0);
+            RecyclerView.Adapter adapter = row.getAdapter();
+            RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(row, 0);
             adapter.onBindViewHolder(holder, 0);
             PreviewLandscapeCard card = (PreviewLandscapeCard) holder.itemView;
             assertTrue(card.isClickable());
@@ -87,8 +90,8 @@ public class PreviewEpisodeChoiceTest {
         "rawtypes", "unchecked"
     })
     public void seasonOfferDoesNotMakeAnUnverifiedEpisodePlayable() throws Exception {
-        android.app.Activity activity =
-            org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        Activity activity =
+            org.robolectric.Robolectric.buildActivity(Activity.class).setup().get();
         try {
             com.squareup.picasso.Picasso.get();
         } catch (IllegalStateException unset) {
@@ -110,8 +113,8 @@ public class PreviewEpisodeChoiceTest {
             Collections.singletonList(
                 new PreviewEpisodeChoice(1, 2, null, new JSONObject("{id:99,name:'Episode',air_date:'2000-01-01'}"))),
             42, season);
-        androidx.recyclerview.widget.RecyclerView.Adapter adapter = row.getAdapter();
-        androidx.recyclerview.widget.RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(row, 0);
+        RecyclerView.Adapter adapter = row.getAdapter();
+        RecyclerView.ViewHolder holder = adapter.onCreateViewHolder(row, 0);
         adapter.onBindViewHolder(holder, 0);
         PreviewLandscapeCard card = (PreviewLandscapeCard) holder.itemView;
         assertEquals("Availability unknown", card.metadata.getText().toString());
