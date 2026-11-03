@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Adapts TV show cursor entries into video objects and cover artwork. */
 public class AllTvShowsAdapter extends PresenterAdapterByCursor  implements AdapterByVideoObjectsInterface{
     private final TvshowCursorMapper mVideoCursorMapper;
     public AllTvShowsAdapter(Context context, Cursor c) {
