@@ -2,6 +2,7 @@ package com.archos.mediaprovider.video;
 import android.app.Application;
 import android.content.*;
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import java.io.File;
 import java.lang.reflect.*;
 import java.util.*;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class SupernovaRetentionTest {
     @org.junit.Before
     public void confirmedSelectionFixture() {
-        androidx.preference.PreferenceManager
+        PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
@@ -64,7 +65,7 @@ public class SupernovaRetentionTest {
     @Test
     public void nativeAbsolutePathsMatchFileUriSelectionsAndOfflineVolumeRoots() {
         Context c = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+        PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .putBoolean("supernova_library_policy_initialized", true)
             .putStringSet("supernova_library_roots", Set.of("file:///storage/ABCD-1234"))
@@ -79,7 +80,7 @@ public class SupernovaRetentionTest {
     @Test
     public void exclusionsArePersistentAndFutureSiblingsRemainMonitored() {
         Context c = RuntimeEnvironment.getApplication();
-        var p = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
+        var p = PreferenceManager.getDefaultSharedPreferences(c);
         p.edit()
             .putBoolean("supernova_library_policy_initialized", true)
             .putStringSet("supernova_library_roots", Set.of("smb://nas/media"))
