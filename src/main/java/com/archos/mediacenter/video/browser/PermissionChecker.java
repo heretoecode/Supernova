@@ -321,15 +321,15 @@ public class PermissionChecker {
                                         // cf. https://sentry.io/organizations/nova-video-player/issues/3697512720
                                         log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_APPLICATION_DETAILS_SETTINGS trying ACTION_MANAGE_APPLICATIONS_SETTINGS", eanf);
                                         try {
-                                            mActivity.startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)); // since API3
+                                            mActivity.startActivity(new Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)); // since API3
                                         } catch (ActivityNotFoundException eanf2) {
                                             log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_MANAGE_APPLICATIONS_SETTINGS trying ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS", eanf2);
                                             try {
-                                                mActivity.startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS)); // since API9
+                                                mActivity.startActivity(new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS)); // since API9
                                             } catch (ActivityNotFoundException eanf3) {
                                                 log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS trying ACTION_APPLICATION_SETTINGS", eanf3);
                                                 try {
-                                                    mActivity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS)); // since API1
+                                                    mActivity.startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS)); // since API1
                                                 } catch (ActivityNotFoundException eanf4) {
                                                     log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_APPLICATION_SETTINGS: we are out of option...", eanf4);
                                                 }
