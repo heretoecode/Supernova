@@ -2,12 +2,16 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import android.content.*;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.json.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,18 +116,18 @@ public class PortableHiddenItemsTest {
             try {
                 PortableHiddenItems.read(db);
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             db.execSQL("UPDATE files SET Archos_hiddenByUser=1.5 WHERE _id=10");
             try {
                 PortableHiddenItems.read(db);
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         }
     }
 
-    private void seed(android.database.sqlite.SQLiteDatabase db) {
+    private void seed(SQLiteDatabase db) {
         db.execSQL(
             "INSERT INTO files(_id,media_type,Archos_hiddenByUser,_data,bookmark,title) VALUES(10,3,0,'file:///media/first.mkv',4444,'KEEP_FIRST'),(11,3,1,'file:///media/second.mkv',5555,'KEEP_SECOND')");
     }
@@ -175,23 +179,23 @@ public class PortableHiddenItemsTest {
                 HiddenItemReplacement.replace(db, plan, () -> true, count -> {
                 });
                 fail();
-            } catch (java.io.InterruptedIOException expected) {
+            } catch (InterruptedIOException expected) {
             }
             assertEquals(before, PortableHiddenItems.read(db));
             try {
                 HiddenItemReplacement.replace(db, plan,
                     () -> false, count -> {
-                        throw new java.io.IOException("Injected write checkpoint failure");
+                        throw new IOException("Injected write checkpoint failure");
                     });
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             assertEquals(before, PortableHiddenItems.read(db));
-            var cancelled = new java.util.concurrent.atomic.AtomicBoolean(false);
+            var cancelled = new AtomicBoolean(false);
             try {
                 HiddenItemReplacement.replace(db, plan, cancelled::get, count -> cancelled.set(true));
                 fail();
-            } catch (java.io.InterruptedIOException expected) {
+            } catch (InterruptedIOException expected) {
             }
             assertEquals(before, PortableHiddenItems.read(db));
             assertFalse(db.inTransaction());
@@ -217,7 +221,7 @@ public class PortableHiddenItemsTest {
                 try {
                     HiddenItemReplacement.replace(db, plan, () -> false, count -> fail("Stale preview must not write"));
                     fail();
-                } catch (java.io.IOException expected) {
+                } catch (IOException expected) {
                 }
                 assertEquals(afterUserChange, PortableHiddenItems.read(db));
             }
@@ -227,7 +231,7 @@ public class PortableHiddenItemsTest {
             try {
                 HiddenItemReplacement.prepare(db, payload(), receiving(context), true);
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             assertEquals(Map.of(10L, false, 11L, true), PortableHiddenItems.read(db));
         }
