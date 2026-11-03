@@ -1,5 +1,10 @@
 package com.archos.mediacenter.video.leanback.filebrowsing;
 
+import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.Presenter;
@@ -11,21 +16,21 @@ import com.archos.mediacenter.video.leanback.*;
 final class PreviewFilePresenter extends Presenter {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        android.content.Context c = parent.getContext();
+        Context c = parent.getContext();
         TextView row = new TextView(c);
         row.setTextSize(14);
         row.setTextColor(0xffd8e5ef);
         row.setSingleLine(true);
-        row.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+        row.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setPadding(PreviewDialog.dp(c, 8), 0, PreviewDialog.dp(c, 8), 0);
         row.setFocusable(true);
         row.setFocusableInTouchMode(true);
         row.setForeground(PreviewDialog.focus(c));
-        android.graphics.drawable.LayerDrawable separator = new android.graphics.drawable.LayerDrawable(
-            new android.graphics.drawable.Drawable[] {
-                new android.graphics.drawable.ColorDrawable(0x080c1722),
-                new android.graphics.drawable.ColorDrawable(0x30738696)
+        LayerDrawable separator = new LayerDrawable(
+            new Drawable[] {
+                new ColorDrawable(0x080c1722),
+                new ColorDrawable(0x30738696)
             });
         separator.setLayerHeight(1, PreviewDialog.dp(c, 1));
         separator.setLayerGravity(1, Gravity.BOTTOM);
