@@ -2,8 +2,11 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.*;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import com.archos.mediacenter.video.utils.OpenSubtitlesSearchResult;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,11 +52,11 @@ public class PreviewSubtitleResultsTest {
     }
 
     private static View exact(View view, String text) {
-        if (view instanceof android.widget.TextView && text.contentEquals(((android.widget.TextView) view).getText()))
+        if (view instanceof TextView && text.contentEquals(((TextView) view).getText()))
             return view;
-        if (view instanceof android.view.ViewGroup)
-            for (int i = 0; i < ((android.view.ViewGroup) view).getChildCount(); i++) {
-                View match = exact(((android.view.ViewGroup) view).getChildAt(i), text);
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View match = exact(((ViewGroup) view).getChildAt(i), text);
                 if (match != null)
                     return match;
             }
@@ -64,7 +67,7 @@ public class PreviewSubtitleResultsTest {
     public void approvedPlaybackRouteDoesNotReplaceTheDefaultSubtitleDialog() {
         Activity host = Robolectric.buildActivity(Activity.class).setup().get();
         android.app.Dialog approved = PreviewSubtitleResults.showPlayback(host,
-            java.util.List.of(new OpenSubtitlesSearchResult("fixture", "Fixture subtitle.srt", "en-GB")), r -> {
+            List.of(new OpenSubtitlesSearchResult("fixture", "Fixture subtitle.srt", "en-GB")), r -> {
             });
         org.junit.Assert.assertNotNull(approved.getWindow().getDecorView().findViewWithTag("subtitles.download"));
         org.junit.Assert.assertNotNull(approved.getWindow().getDecorView().findViewWithTag("subtitles.result.0"));
