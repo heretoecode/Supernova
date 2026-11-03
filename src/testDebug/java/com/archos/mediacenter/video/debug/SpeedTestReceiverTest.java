@@ -22,6 +22,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Looper;
 
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -45,8 +46,8 @@ public class SpeedTestReceiverTest {
         String action = "test.speed.CONFIGURE";
         // This manifest-free test exercises ordered results. Production access
         // is restricted separately by the debug manifest's DUMP permission.
-        androidx.core.content.ContextCompat.registerReceiver(context, receiver,
-                new IntentFilter(action), androidx.core.content.ContextCompat.RECEIVER_EXPORTED);
+        ContextCompat.registerReceiver(context, receiver,
+                new IntentFilter(action), ContextCompat.RECEIVER_EXPORTED);
         String[] reply = new String[1];
         Intent intent = new Intent(action).putExtra("operation", operation)
                 .putExtra("session", session).putExtra("backend", backend);
