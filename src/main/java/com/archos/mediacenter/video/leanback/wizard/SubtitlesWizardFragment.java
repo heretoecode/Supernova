@@ -117,7 +117,7 @@ public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
         worker.execute(() -> {
             boolean changed = actionData.delete
                 ? mWizardCommon.deleteFile(fileData.path, fileData.index, fileData.current)
-                : mWizardCommon.renameFile(fileData.path, fileData.index);
+                : mWizardCommon.associateFile(fileData.path, fileData.index);
             main.post(() -> {
                 busy = false;
                 if (!closed && isAdded()) {

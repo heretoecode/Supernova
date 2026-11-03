@@ -281,7 +281,7 @@ public class MiscUtils {
     public static boolean hasNavBar(Resources resources) {
         int id = resources.getIdentifier("config_showNavigationBar", "bool", "android");
         if (id > 0) return resources.getBoolean(id);
-        else return false;
+            else return false;
     }
 
     @SuppressLint({"InternalInsetResource", "DiscouragedApi"})

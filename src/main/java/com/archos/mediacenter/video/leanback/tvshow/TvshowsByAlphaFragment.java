@@ -55,7 +55,7 @@ public class TvshowsByAlphaFragment extends TvshowsByFragment {
     @Override
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie) return new TvshowsNoAnimeByAlphaLoader(context);
-        else return new TvshowsByAlphaLoader(context);
+            else return new TvshowsByAlphaLoader(context);
     }
 
     @Override

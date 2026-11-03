@@ -117,11 +117,11 @@ public class Delete {
                 boolean removed = isSuccess && (!isLocal(uri) || !new File(uri.getPath()).exists());
                 if (operationKind == OP_FOLDER) {
                     if (removed) deleteFolderOK(uri);
-                    else mHandler.post(() -> { if (mListener != null) mListener.onDeleteVideoFailed(uri); });
+                        else mHandler.post(() -> { if (mListener != null) mListener.onDeleteVideoFailed(uri); });
                 } else if (removed) {
                     if (isLocal(uri)) cleanupDeletedLocal(uri);
                     deleteOK(uri);
-                } else deleteNOK(uri);
+                    } else deleteNOK(uri);
             }
         }, "Nova-delete-cleanup").start();
     }
@@ -419,7 +419,7 @@ public class Delete {
                     if (result == null) return; // system result calls completeSystemDelete
                     for (Uri uri : deferredFiles) {
                         if (result && !new File(uri.getPath()).exists()) { cleanupDeletedLocal(uri); deleteOK(uri); }
-                        else deleteNOK(uri);
+                            else deleteNOK(uri);
                     }
                 } catch (Exception failure) { deleteNOK(deferredFiles); }
             }

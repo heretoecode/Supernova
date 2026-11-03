@@ -401,11 +401,8 @@
     <!-- torrent -->
     <string name="error">Hiba történt</string>
     <string name="error_protocol_not_supported">Hiba: nem támogatott protokoll</string>
-    <string name="error_loading_torrent">Hiba a torrent betöltésekor</string>
-    <string name="error_downloading_not_enough_space">Hiba a torrent letöltése során : nincs elég tárhely</string>
     <string name="loading_torrent">Torrent betöltése…</string>
     <string name="error_no_video_file">Nincs videó fájl</string>
-    <string name="torrent_file_to_play">Válasszon fájlt a lejátszáshoz</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Hálózati megosztás tallózása</string>
     <string name="add_ssh_server">FTP szerver tallózása</string>
@@ -707,16 +704,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Letöltési útvonal</string>
     <string name="torrent_blocklist">Tiltólista</string>
     <string name="blocklist_empty">Az URL cím nem lehet üres</string>
     <string name="blocklist_invalid">Érvénytelen tiltólista</string>
-    <string name="blocklist_file_not_found">Fájl nem található</string>
     <string name="blocklist_success">Tiltólista frissítése sikeres</string>
-    <string name="blocklist_unknown_error">Ismeretlen</string>
-    <string name="blocklist_not_loaded">Nincs betöltve</string>
-    <string name="torrent_blocklist_url">Tiltólista URL-je</string>
     <string name="sdk_not_supported">Az Android 4.3 még nem támogatott.\nKeményen dolgozunk azon, hogy ezt javítsuk, és reméljük, hogy nemsokára lesz erre frissítésünk!</string>
     <string name="manually_create_share">Indexelt mappák hozzáadása URI szerint</string>
     <string name="share_infos_incomplete">Elérési út megadása szükséges</string>

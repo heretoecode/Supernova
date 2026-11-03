@@ -374,11 +374,8 @@
     <!-- torrent -->
     <string name="error">Došlo k chybě</string>
     <string name="error_protocol_not_supported">Chyba: protokol není podporován</string>
-    <string name="error_loading_torrent">Chyba při načítání torrentu</string>
-    <string name="error_downloading_not_enough_space">Chyba při načítání torrentu: nedostatečná volná kapacita</string>
     <string name="loading_torrent">Načítám torrent…</string>
     <string name="error_no_video_file">Žádné video soubory</string>
-    <string name="torrent_file_to_play">Vyberte soubor k přehrání</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Procházet síťová sdílení</string>
     <string name="add_ssh_server">Procházet FTP server</string>
@@ -634,16 +631,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Cesta pro stahování</string>
     <string name="torrent_blocklist">Seznam blokací</string>
     <string name="blocklist_empty">URL adresa nesmí být prázdná</string>
     <string name="blocklist_invalid">Seznam blokací je neplatný</string>
-    <string name="blocklist_file_not_found">Soubor nebyl nalezen</string>
     <string name="blocklist_success">Aktualizace seznamu blokací dokončena</string>
-    <string name="blocklist_unknown_error">Neznámý</string>
-    <string name="blocklist_not_loaded">Nebylo načteno</string>
-    <string name="torrent_blocklist_url">URL adresa seznamu blokací</string>
     <string name="sdk_not_supported">Android 4.3 není zatím podporován.\nPracujeme na vylepšení a těšte se na brzké vydání nové verze!</string>
     <string name="manually_create_share">Přidat indexovanou složku pomocí URI</string>
     <string name="share_infos_incomplete">Musíte vyplnit cestu</string>

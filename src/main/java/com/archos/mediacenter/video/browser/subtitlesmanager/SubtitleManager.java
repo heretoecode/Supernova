@@ -496,7 +496,7 @@ public class SubtitleManager {
             List<MetaFile2> subs;
             // do not prefetch first level subs for local files to avoid duplicate on local videos since they are already captured afterwards
             if (FileUtils.isLocal(videoUri)) subs = getSubtitleListExcludingFirstLevelSubs(videoUri);
-            else subs = getSubtitleList(videoUri);
+                else subs = getSubtitleList(videoUri);
             if (!subs.isEmpty() && subsDir != null){
                 Uri target = Uri.fromFile(subsDir);
                 final CountDownLatch latch = new CountDownLatch(subs.size()); // Initialize the CountDownLatch with a count of 1
@@ -829,7 +829,7 @@ public class SubtitleManager {
         String lastPart = null;
         if (subFilenameWithoutExtension.startsWith(videoFilenameWithoutExtension + ".")) {
             lastPart = subFilenameWithoutExtension.substring(videoFilenameWithoutExtension.length() + 1);
-        } else lastPart = subFilenameWithoutExtension;
+            } else lastPart = subFilenameWithoutExtension;
         if (log.isDebugEnabled()) log.debug("getSubLanguageFromSubPathAndVideoPath: ({} - {})={}", subPath, videoPath, lastPart);
         // treat yts Simplified.chi.srt Traditional.chi.srt Latin American.spa.srt English.srt Brazilian.por.srt and reuse s_ special strings for this
         String lang = convertYTSSubNamingExceptions(lastPart);

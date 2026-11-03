@@ -223,7 +223,7 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
                 ? intent.getSerializableExtra(EXTRA_COLLECTION, Collection.class)
                 : (Collection) intent.getSerializableExtra(EXTRA_COLLECTION);
         if (mCollection != null) mCollectionId = mCollection.getCollectionId();
-        else mCollectionId = intent.getLongExtra(EXTRA_COLLECTION_ID, -1);
+            else mCollectionId = intent.getLongExtra(EXTRA_COLLECTION_ID, -1);
 
         refreshCollection();
 
@@ -496,7 +496,7 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
 
         // replace row if exists
         if (mRowsAdapter.size() <2 ) mRowsAdapter.add(row);
-        else mRowsAdapter.replace(1, row);
+            else mRowsAdapter.replace(1, row);
 
         if (movieCollectionAdapter != null) movieCollectionAdapter.changeCursor(cursor);
 
@@ -713,7 +713,7 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
                     else if (palette.getDarkMutedSwatch() != null)
                         mColor = palette.getDarkMutedSwatch().getRgb();
                     else
-                    mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
+                        mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
                     if (isWatched)
                         bitmap = PresenterUtils.addWatchedMark(bitmap, getContext());
                 }

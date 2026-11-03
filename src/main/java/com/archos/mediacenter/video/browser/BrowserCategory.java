@@ -723,7 +723,7 @@ abstract public class BrowserCategory extends ListFragment {
                 tv.setText(item.text);
                 if(item.icon!=-1)
                     tv.setCompoundDrawablesWithIntrinsicBounds(item.icon, 0 , 0 , 0);
-                else tv.setCompoundDrawablesWithIntrinsicBounds(0, 0 , 0 , 0);
+                    else tv.setCompoundDrawablesWithIntrinsicBounds(0, 0 , 0 , 0);
             }
             else {
                 tv.setText((CharSequence) mCategoryList.get(position));

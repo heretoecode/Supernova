@@ -385,11 +385,8 @@
     <!-- torrent -->
     <string name="error">發生錯誤</string>
     <string name="error_protocol_not_supported">錯誤：不支援的協定</string>
-    <string name="error_loading_torrent">載入種子時出現錯誤</string>
-    <string name="error_downloading_not_enough_space">下載種子時出現錯誤：空間不足</string>
     <string name="loading_torrent">正在載入種子&#8230;</string>
     <string name="error_no_video_file">沒有任何影片檔</string>
-    <string name="torrent_file_to_play">選擇要播放的檔案</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">瀏覽網路分享</string>
     <string name="add_ssh_server">瀏覽 FTP 伺服器</string>
@@ -657,16 +654,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">種子</string>
     <string name="torrent_path">儲存到</string>
     <string name="torrent_blocklist">黑名單</string>
     <string name="blocklist_empty">網址不能為空白</string>
     <string name="blocklist_invalid">黑名單無效</string>
-    <string name="blocklist_file_not_found">找不到檔案</string>
     <string name="blocklist_success">黑名單重新整理成功</string>
-    <string name="blocklist_unknown_error">未知</string>
-    <string name="blocklist_not_loaded">未載入</string>
-    <string name="torrent_blocklist_url">黑名單網址</string>
     <string name="sdk_not_supported">尚未支援安卓 4.3 版。\n我們正在努力修復它，希望很快有新版本推出。</string>
     <string name="manually_create_share">利用網址新增索引資料夾</string>
     <string name="share_infos_incomplete">必須填寫路徑</string>

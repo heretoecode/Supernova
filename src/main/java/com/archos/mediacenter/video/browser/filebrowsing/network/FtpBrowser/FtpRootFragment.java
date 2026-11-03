@@ -74,7 +74,7 @@ public class FtpRootFragment extends NewRootFragment implements View.OnClickList
             if(ShortcutDbAdapter.VIDEO.isShortcut(getActivity(), mSelectedUri.toString())<0)
                 menu.add(0, R.string.add_to_library, 0, R.string.add_to_library);
         }
-        else super.onCreateContextMenu(menu, v, menuInfo);
+            else super.onCreateContextMenu(menu, v, menuInfo);
 
     }
     @Override

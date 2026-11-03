@@ -141,6 +141,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         }
     };
 
+    @Override
     public void onCreate() {
         super.onCreate();
         sFloatingPlayerService = this;
@@ -195,6 +196,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         }
         return super.onStartCommand(intent,flags, startID);
     }
+    @Override
     public void onDestroy(){
         super.onDestroy();
         hideSkipPrompt();
@@ -207,11 +209,13 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     }
 
     private View.OnClickListener mVolumeUpListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             changeVolumeBy(1);
         }
     };
     private View.OnClickListener mVolumeDownListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             changeVolumeBy(-1);
         }
@@ -365,6 +369,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                         return (float) Math.sqrt(x * x + y * y);
                     }
 
+                    @Override
                     @SuppressLint("ClickableViewAccessibility")
                     @SuppressWarnings("deprecation") // getSize/getRealSize: API 30+ uses getCurrentWindowMetrics
                     public boolean onTouch(View v, MotionEvent event) {
@@ -886,6 +891,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private int mLastSeek;
     private int mNextSeek = -1;
     private SeekBar.OnSeekBarChangeListener mProgressListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
         public void onStartTrackingTouch(SeekBar bar) {
 
             mHandler.removeMessages(MSG_HIDE_CONTROLLER);
@@ -907,6 +913,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                 mSeekWasPlaying=false;
         }
 
+        @Override
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
             if (!fromuser) {
                 // We're not interested in programmatically generated changes to
@@ -942,6 +949,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
         }
 
+        @Override
         public void onStopTrackingTouch(SeekBar bar) {
             mHandler.sendEmptyMessageDelayed(MSG_HIDE_CONTROLLER, 3000);
             mDragging = false;
@@ -1013,6 +1021,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         }
     }
     private SeekBar.OnSeekBarChangeListener mVolumeLevelListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
             if( !fromuser || mAudioManager == null)
                 return;
@@ -1021,10 +1030,12 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             updateVolumeBar();
         }
 
+        @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             mHandler.removeMessages(MSG_HIDE_CONTROLLER);
         }
 
+        @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mHandler.sendEmptyMessageDelayed(MSG_HIDE_CONTROLLER, 3000);
         }

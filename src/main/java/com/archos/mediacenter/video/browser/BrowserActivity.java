@@ -74,6 +74,7 @@ abstract public class BrowserActivity extends AppCompatActivity {
 
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
+    @Override
     @SuppressWarnings("deprecation") // getLastCustomNonConfigurationInstance: CoverRoll GL context retention
     public void onCreate(Bundle savedInstanceState) {
         ThemeManager.getInstance(this).applyWindowTheme(this);
@@ -117,6 +118,7 @@ abstract public class BrowserActivity extends AppCompatActivity {
         ThemeManager.getInstance(this).registerThemeChangeListener(mThemeChangeListener);
     }
 
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -130,6 +132,7 @@ abstract public class BrowserActivity extends AppCompatActivity {
         if (mCoverRoll != null) mCoverRoll.onResumeGLDisplay();
     }
 
+    @Override
     public void onPause() {
         // CoverRoll must be pause ASAP, can't wait for the onVisibilityChanged callback, see #1566
         if (mCoverRoll != null) mCoverRoll.onPauseGLDisplay();
@@ -139,6 +142,7 @@ abstract public class BrowserActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
     public void onDestroy() {
         // There a things to free in the CoverRoll (cursors)
         if (mCoverRoll != null) {

@@ -174,7 +174,7 @@ public class BrowserByShow extends BrowserWithShowHeader {
             }
             return new EpisodesLoader(getContext(), mId, mSeason, true).getV4CursorLoader(true, false);//mPreferences.getBoolean(VideoPreferencesCommon.KEY_HIDE_WATCHED, false));
         }
-        else return super.onCreateLoader(id, args);
+            else return super.onCreateLoader(id, args);
     }
 
 

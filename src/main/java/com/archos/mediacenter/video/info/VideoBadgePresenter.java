@@ -140,7 +140,7 @@ public class VideoBadgePresenter implements Presenter {
             if(source.equals(mSelectedUri)){
                 ((CardView)mRootView).setCardBackgroundColor(mBackgroundColor);
             }
-            else ((CardView)mRootView).setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.transparent_grey));
+                else ((CardView)mRootView).setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.transparent_grey));
 
             if(FileUtils.isLocal(source)){
                 mSourceTextView.setText("Local");
@@ -192,7 +192,7 @@ public class VideoBadgePresenter implements Presenter {
         public void setSize(long size) {
             if(size>0)
                 mSizeTv.setText(Formatter.formatFileSize(mContext, size));
-            else mSizeTv.setVisibility(View.GONE);
+                else mSizeTv.setVisibility(View.GONE);
         }
     }
 

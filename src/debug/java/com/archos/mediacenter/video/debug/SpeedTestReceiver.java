@@ -60,10 +60,10 @@ public final class SpeedTestReceiver extends BroadcastReceiver {
             SharedPreferences.Editor restore = prefs.edit();
             for (String key : STRINGS) {
                 if (backup.contains(key)) restore.putString(key, backup.getString(key, null));
-                else restore.remove(key);
+                    else restore.remove(key);
             }
             if (backup.contains(SPEED)) restore.putFloat(SPEED, backup.getFloat(SPEED, 1.0f));
-            else restore.remove(SPEED);
+                else restore.remove(SPEED);
             if (!restore.commit() || !backup.edit().clear().commit()) {
                 reject("restore-failed");
                 return;

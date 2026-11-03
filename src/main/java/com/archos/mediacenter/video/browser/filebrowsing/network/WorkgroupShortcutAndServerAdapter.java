@@ -132,6 +132,7 @@ public abstract class WorkgroupShortcutAndServerAdapter extends RootFragmentAdap
      * Store the list (and possibly other things) in a bundle
      * @param outState
      */
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable("mShares", mShares);
         super.onSaveInstanceState(outState);
@@ -141,6 +142,7 @@ public abstract class WorkgroupShortcutAndServerAdapter extends RootFragmentAdap
      * Restore the state that has been saved in a bundle
      * @param inState
      */
+    @Override
     @SuppressWarnings({"unchecked", "deprecation"})
     public void onRestoreInstanceState(Bundle inState) {
         mShares = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
@@ -163,7 +165,7 @@ public abstract class WorkgroupShortcutAndServerAdapter extends RootFragmentAdap
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.browser_smb_worgroup_item, viewGroup, false);
             return new ShareViewHolder(v);
         }
-        else return super.onCreateViewHolder(viewGroup, viewType);
+            else return super.onCreateViewHolder(viewGroup, viewType);
     }
 
     // Replace the contents of a view (invoked by the layout manager)

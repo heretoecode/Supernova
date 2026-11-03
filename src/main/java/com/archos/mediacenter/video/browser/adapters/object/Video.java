@@ -330,7 +330,7 @@ public class Video extends Base implements Serializable {
 
     public void setStreamingUri(Uri uri) {
         if (uri != null) mStreamingUri = uri.toString();
-        else mStreamingUri = null;
+            else mStreamingUri = null;
     }
 
     public void setFriendlyPath(String friendlyUri){
@@ -339,7 +339,7 @@ public class Video extends Base implements Serializable {
     public String getFriendlyPath(){
         if(mFriendlyPath !=null)
             return mFriendlyPath;
-        else return getFilePath();
+            else return getFilePath();
     }
 
     public void setDuration(int duration) {

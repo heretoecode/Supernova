@@ -337,7 +337,7 @@ public class PermissionChecker {
                                         }
                                     }
                                 }
-                            } else checkAndRequestPermission(mActivity);
+                                } else checkAndRequestPermission(mActivity);
                         }
                     }
             ).setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {

@@ -79,7 +79,7 @@ public class PlayerBrightnessManager implements DefaultLifecycleObserver {
     public static int getLinearBrightness(Window window) { // get the brightness value between 0 and 30
         float currentBrightness = getBrightness(window);
         if (currentBrightness == -1) return 10; // when brightness is set to auto, return a default value
-        else return brightnessToLevelGamma(currentBrightness);
+            else return brightnessToLevelGamma(currentBrightness);
     }
 
     public static void setLinearBrightness(int level, boolean direction, Window window) {

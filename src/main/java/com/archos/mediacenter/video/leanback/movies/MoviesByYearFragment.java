@@ -67,7 +67,7 @@ public class MoviesByYearFragment extends VideosByFragment {
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie)
             return new FilmsByYearLoader(context);
-        else return new MoviesByYearLoader(context);
+            else return new MoviesByYearLoader(context);
     }
 
     @Override

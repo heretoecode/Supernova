@@ -100,7 +100,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
     public static final String CURRENT_DIRECTORY = "currentDirectory";
     public static final String TITLE = "title";
     protected static final String SHORTCUT_SELECTED = "shortcutSelected";
-    protected static final String FILTER = "video||application/x-bittorrent";
+    protected static final String FILTER = "video";
 
     // Sort constants
     protected static final int MENU_ITEM_SORT = 0x2000;
@@ -694,7 +694,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
                 else {
                     String mimeType = file.getMimeType();
                     if (mimeType!=null) {
-                        if (mimeType.startsWith("video/") ||mimeType.equals("application/x-bittorrent") ) {
+                        if (mimeType.startsWith("video/")) {
                             Uri thumbnailUri = null;// Get upnp thumbnail if available
                             if (file instanceof UpnpFile2) {
                                 thumbnailUri = ((UpnpFile2)file).getThumbnailUri();
@@ -704,7 +704,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
                             newObject = video;
                         }
                         else {
-                            newObject = file; // Add a regular MetaFile2 object for now, maybe later we'll create a dedicated torrent object?
+                            newObject = file;
                         }
                     }
                     else {
@@ -935,7 +935,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
     protected static ListingEngine.SortOrder getSortOrder(String sortOrder) {
         final int index = sortOrders.indexOf(sortOrder);
         if (index <0) return ListingEngine.SortOrder.SORT_BY_NAME_ASC;
-        else return sortOrdersListingEngine.get(index);
+            else return sortOrdersListingEngine.get(index);
     }
 
 }

@@ -77,7 +77,7 @@ public final class PreviewSubtitleChooser {
             }
             @Override
             public String associate(Entry entry) {
-                if (!common.renameFile(entry.path, entry.index))
+                if (!common.associateFile(entry.path, entry.index))
                     return null;
                 return common.getCurrentFile(common.getCurrentFilesCount() - 1);
             }
@@ -191,7 +191,7 @@ public final class PreviewSubtitleChooser {
                     return;
                 child = trackChild(PreviewDialog.review(host, "Associate Subtitle",
                     entry.name
-                        + "\n\nThis renames the subtitle file to associate it with this title. The media file is not changed.",
+                        + "\n\nThis renames the subtitle file, or copies it to the app subtitle cache if renaming fails. The media file is not changed.",
                     "Associate", () -> mutate(entry, false)));
             });
         }

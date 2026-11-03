@@ -332,7 +332,7 @@ public class AllAnimeShowsGridFragment extends MyVerticalGridFragment implements
                 return new AllAnimeShowsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"));
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override

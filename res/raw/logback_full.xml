@@ -42,7 +42,6 @@
 
     <logger name="com.archos.mediacenter.video.browser.FileManagerService" level="INFO"/>
     <logger name="com.archos.mediacenter.video.browser.NewVideosActionProvider" level="INFO"/>
-    <logger name="com.archos.mediacenter.video.browser.TorrentObserverService" level="INFO"/>
 
     <!-- Debug player -->
     <logger name="com.archos.mediacenter.video.player.Player" level="INFO"/>

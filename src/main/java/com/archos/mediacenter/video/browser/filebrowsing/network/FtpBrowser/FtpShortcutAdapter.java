@@ -114,7 +114,7 @@ public class FtpShortcutAdapter extends RootFragmentAdapter {
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.browser_ftp_button, viewGroup, false);
             return new BrowseViewHolder(v);
         }
-        else return super.onCreateViewHolder(viewGroup,viewType);
+            else return super.onCreateViewHolder(viewGroup,viewType);
 
     }
     public class FtpShortcutViewHolder extends RecyclerView.ViewHolder {

@@ -408,11 +408,8 @@
     <!-- torrent -->
     <string name="error">发生错误</string>
     <string name="error_protocol_not_supported">错误：协议不支持</string>
-    <string name="error_loading_torrent">加载种子出错</string>
-    <string name="error_downloading_not_enough_space">下载种子时出错：空间不足</string>
     <string name="loading_torrent">正在载入种子文件……</string>
     <string name="error_no_video_file">没有视频文件</string>
-    <string name="torrent_file_to_play">选择要播放的文件</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">浏览网络共享</string>
     <string name="add_ssh_server">浏览FTP服务器</string>
@@ -735,16 +732,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">种子</string>
     <string name="torrent_path">下载目录：</string>
     <string name="torrent_blocklist">屏蔽列表</string>
     <string name="blocklist_empty">URL不能为空</string>
     <string name="blocklist_invalid">屏蔽列表无效</string>
-    <string name="blocklist_file_not_found">找不到文件</string>
     <string name="blocklist_success">屏蔽列表刷新成功</string>
-    <string name="blocklist_unknown_error">未知</string>
-    <string name="blocklist_not_loaded">未加载</string>
-    <string name="torrent_blocklist_url">屏蔽列表 Url</string>
     <string name="sdk_not_supported">尚未支持 Android 4.3。\n我们正在努力修复它，希望很快会有新版本！</string>
     <string name="manually_create_share">通过 URI 添加索引文件夹</string>
     <string name="share_infos_incomplete">您需要填写路径</string>

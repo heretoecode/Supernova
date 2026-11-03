@@ -412,11 +412,8 @@
     <!-- torrent -->
     <string name="error">Se ha producido un error</string>
     <string name="error_protocol_not_supported">Error: Protocolo no soportado</string>
-    <string name="error_loading_torrent">Error al cargar torrent</string>
-    <string name="error_downloading_not_enough_space">Error al descargar torrent: no hay suficiente espacio</string>
     <string name="loading_torrent">Cargando torrent…</string>
     <string name="error_no_video_file">No hay archivos de vídeo</string>
-    <string name="torrent_file_to_play">Elija un archivo a reproducir</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Explorar un recurso compartido de red</string>
     <string name="add_ssh_server">Explorar un servidor FTP</string>
@@ -740,16 +737,11 @@ Experimental: puede no funcionar en todas las configuraciones.</string>
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Ruta de descarga</string>
     <string name="torrent_blocklist">Lista de bloqueo</string>
     <string name="blocklist_empty">La URL no debe estar vacía</string>
     <string name="blocklist_invalid">Lista de bloqueo no valida</string>
-    <string name="blocklist_file_not_found">Archivo no encontrado</string>
     <string name="blocklist_success">Actualización de lista de bloqueo realizado correctamente</string>
-    <string name="blocklist_unknown_error">Desconocido</string>
-    <string name="blocklist_not_loaded">No cargado</string>
-    <string name="torrent_blocklist_url">URL de lista de bloqueo</string>
     <string name="sdk_not_supported">Android 4.3 aún no es compatible.\n¡Estamos trabajando duro para solucionarlo y esperamos tener una nueva versión pronto!</string>
     <string name="manually_create_share">Añadir carpeta indexada por URI</string>
     <string name="share_infos_incomplete">Necesitas rellenar la ruta</string>

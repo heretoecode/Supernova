@@ -1,0 +1,515 @@
+# Bug hunt area 4 — partial semantic review
+
+Read-only findings against the source after Parts C and D. No code was changed for this review.
+
+Coverage limitation: every listed Java file was read in full by the inventory/risk-pattern pass and joined with its file-filtered lint findings. This is **not a completed every-line semantic review** of all files. Direct code review was concentrated on the evidence sites below and their callers; the remaining semantic review is outstanding. A file with no finding is not certified defect-free.
+
+The fetched reports/lint snapshot contains pre-edit line numbers; lint entries below retain those original coordinates. Findings use the current code coordinates. SuspiciousIndentation was addressed in Part A; no new lint run or tests were performed.
+
+Inventory: 494 files, 89546 lines, 68 lint entries.
+
+| ID | File:line | Kind | Severity (crash / user-visible / minor) | Confidence (high / medium / low) | What goes wrong, for whom, when | Evidence (lines and why) | Suggested fix (described, not applied) |
+|---|---|---|---|---|---|---|---|
+| L1 | `src/main/java/com/archos/mediacenter/video/leanback/search/VideoSearchProvider.java:85` | crash | crash | high | A caller querying the exported TV search provider with a one-element null selectionArgs array gets an unhandled NullPointerException. | The guard checks the array and its length but dereferences element zero without checking it. AndroidManifest.xml exports this provider; browser/SearchProviderVideo has the same unchecked element, though it is not exported. | Treat null elements as empty queries before dereferencing; return a documented empty result for invalid input. |
+| L2 | `src/main/java/com/archos/mediacenter/video/browser/SearchProviderVideo.java:82` | threading | user-visible | high | Concurrent searches through the classic provider can return results for another caller's query or mixed selection arguments. | One mSearchViewVideoLoader is shared across query calls. setQuery mutates SearchVideoLoader.mQuery; getSelectionArgs reads the mutable field five times without synchronization. ContentProvider query may run concurrently on Binder threads. | Build each query from local immutable arguments or use an independent loader/query description per request. |
+
+Lint triage: repeated view lookups in CustomImageCardview and the separate menu branches of PlayerController are not sufficient evidence of a cut-and-paste defect. PreviewVariants retains application context, rather than an Activity.
+
+## Files processed and filtered lint findings
+
+This is the full scan inventory, not an assertion of complete manual line-by-line review. Each lint entry is shown only with the file to which it belongs; “none” means no entry in the supplied snapshot.
+
+- `src/main/java/com/archos/mediacenter/video/CustomApplication.java` — 1884 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/DensityTweak.java` — 204 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/EntryActivity.java` — 107 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/UiChoiceDialog.java` — 147 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/autoscraper/AutoScraperActivity.java` — 1429 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/autoscraper/AutoScraperCache.java` — 142 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/autoscraper/PosterProcessor.java` — 86 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/autoscraper/VideoThumbProcessor.java` — 85 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BootupRecommandationService.java` — 74 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/Browser.java` — 1346 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserActivity.java` — 233 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserAdapterCommon.java` — 88 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/ArchosFadeView.java` — 63 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserAllMovies.java` — 56 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserAllTvShows.java` — 393 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserAllVideos.java` — 262 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserByQuery.java` — 91 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserBySeason.java` — 196 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserByShow.java` — 287 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserByVideoSelection.java` — 269 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserLastAdded.java` — 51 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserLastPlayed.java` — 53 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserListOfEpisodes.java` — 327 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserListOfSeasons.java` — 213 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserMoviesBy.java` — 320 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserMoviesByGenre2.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserMoviesByYear.java` — 61 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserNeverPlayed.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserNonScraped.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserPlaylists.java` — 147 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserVideosInPlaylist.java` — 154 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/BrowserWithShowHeader.java` — 544 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/CursorBrowserByVideo.java` — 249 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/lists/ListDialog.java` — 140 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByIndexedVideos/lists/NewListDialog.java` — 76 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserByVideoObjects.java` — 415 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserCategory.java` — 750 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserCategoryVideo.java` — 395 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/BrowserLayout.java` — 182 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/Delete.java` — 602 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/FileManagerService.java` — 590 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/HeaderGridView.java` — 439 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ItemData.java` — 62 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/MainActivity.java` — 1192 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/MetaFile2ItemData.java` — 68 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/NewVideosActionProvider.java` — 355 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/PermissionChecker.java` — 368 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/QueryBrowserActivityVideo.java` — 84 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/SearchProviderVideo.java` — 109 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ServerCredentialsDialog.java` — 283 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ShortcutDb.java` — 243 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ThumbnailAdapterVideo.java` — 29 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ThumbnailEngineVideo.java` — 400 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ThumbnailRequestVideo.java` — 98 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/ThumbnailRequesterVideo.java` — 48 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/UpdateRecommendationsService.java` — 375 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/VideoPicker.java` — 434 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/VideoProperties.java` — 231 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterByShow.java` — 92 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterByVideoObjectsInterface.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterDefaultValues.java` — 69 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterDefaultValuesDetails.java` — 86 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterDefaultValuesGrid.java` — 73 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterDefaultValuesGridShort.java` — 73 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AdapterDefaultValuesList.java` — 117 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/AllTvShowsAdapter.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/CollectionsAdapter.java` — 51 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/CursorAdapterByVideo.java` — 99 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/GroupOfMovieAdapter.java` — 163 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/ItemViewType.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/MovieCollectionAdapter.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/PresenterAdapterByCursor.java` — 235 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/PresenterAdapterInterface.java` — 24 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/RecyclerViewPresenterAdapterByCursor.java` — 255 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/SeasonsAdapter.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/AnimesNShowsMapper.java` — 286 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/CollectionCursorMapper.java` — 95 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/CompatibleCursorMapper.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/SeasonCursorMapper.java` — 70 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/SeasonHeaderCursorMapper.java` — 113 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/TvshowCursorMapper.java` — 114 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/mappers/VideoCursorMapper.java` — 288 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Base.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Collection.java` — 142 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Episode.java` — 131 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Movie.java` — 96 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/NonIndexedVideo.java` — 93 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Season.java` — 75 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Tvshow.java` — 176 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/adapters/object/Video.java` — 396 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/dialogs/DeleteDialog.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/dialogs/DialogRetrieveSubtitles.java` — 75 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/dialogs/Paste.java` — 150 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllAnimeCollectionsLoader.java` — 111 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllAnimeShowsLoader.java` — 113 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllAnimesLoader.java` — 93 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllCollectionsLoader.java` — 109 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllCollectionsNoAnimeLoader.java` — 110 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllTvshowsLoader.java` — 121 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllTvshowsNoAnimeLoader.java` — 121 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AllVideosLoader.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimeShowsByAlphaLoader.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimeShowsByLoader.java` — 74 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesByAlphaLoader.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesByGenreLoader.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesByLoader.java` — 79 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesByRatingLoader.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesByYearLoader.java` — 56 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesLoader.java` — 99 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesNShowsLoader.java` — 132 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/AnimesSelectionLoader.java` — 49 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/CollectionLoader.java` — 95 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/CompatAndSDKCursorLoaderFactory.java` — 24 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/DocumentaryTvshowsLoader.java` — 35 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/EpisodesByDateLoader.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/EpisodesLoader.java` — 92 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/EpisodesNoAnimeByDateLoader.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/EpisodesSelectionLoader.java` — 48 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsByAlphaLoader.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsByGenreLoader.java` — 58 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsByLoader.java` — 78 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsByRatingLoader.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsByYearLoader.java` — 56 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsLoader.java` — 99 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/FilmsNCollectionsLoader.java` — 128 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/LastAddedLoader.java` — 79 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/LastPlayedLoader.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/ListsLoader.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MovieCollectionLoader.java` — 70 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesByAlphaLoader.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesByGenreLoader.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesByLoader.java` — 78 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesByRatingLoader.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesByYearLoader.java` — 58 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesLoader.java` — 96 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/MoviesSelectionLoader.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/NextEpisodeLoader.java` — 82 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/NonScrapedVideosCountLoader.java` — 83 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/NonScrapedVideosLoader.java` — 69 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/SearchEpisodeLoader.java` — 69 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/SearchMovieLoader.java` — 66 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/SearchNonScrapedVideoLoader.java` — 67 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/SearchVideoLoader.java` — 70 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/SearchViewVideoLoader.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/SeasonsLoader.java` — 99 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowLoader.java` — 88 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsByAlphaLoader.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsByGenreLoader.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsByLoader.java` — 71 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsByRatingLoader.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsNoAnimeByAlphaLoader.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsNoAnimeByGenreLoader.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsNoAnimeByLoader.java` — 74 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsNoAnimeByRatingLoader.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/TvshowsSelectionLoader.java` — 111 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/UpNextLoader.java` — 83 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/VideoLoader.java` — 273 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/VideosByListLoader.java` — 101 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/VideosInFolderLoader.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/VideosSelectionInPlaylistLoader.java` — 51 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/VideosSelectionLoader.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/loader/WatchingUpNextLoader.java` — 88 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/CommonPresenter.java` — 155 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/EpisodeListDetailedPresenter.java` — 121 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/EpisodePresenter.java` — 106 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/HeaderShowPresenter.java` — 64 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/Metafile2GridPresenter.java` — 28 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/Metafile2ListPresenter.java` — 28 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/Metafile2Presenter.java` — 105 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/MovieByPresenter.java` — 96 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/MoviePresenter.java` — 21 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/Presenter.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/ScrapedVideoDetailedPresenter.java` — 146 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/SeasonGridPresenter.java` — 46 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/SeasonGridShortPresenter.java` — 28 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/SeasonListPresenter.java` — 57 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/SeasonPresenter.java` — 92 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/TvShowPresenter.java` — 99 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/TvshowDetailedPresenter.java` — 125 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/TvshowGridPresenter.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/TvshowGridShortPresenter.java` — 28 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/TvshowListPresenter.java` — 117 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/VideoGridPresenter.java` — 92 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/VideoGridShortPresenter.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/VideoListPresenter.java` — 104 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/presenter/VideoPresenter.java` — 148 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/subtitlesmanager/ISO639codes.java` — 87 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/subtitlesmanager/SubtitleManager.java` — 865 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/browser/tools/MultipleSelectionManager.java` — 256 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/collections/CollectionsSortOrderEntries.java` — 62 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/collections/UserCollectionStore.java` — 84 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/AllMoviesProvider.java` — 51 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/AllTVShowsProvider.java` — 124 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/AllVideosProvider.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/BaseVideoCover.java` — 110 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/CoverRoll3DVideo.java` — 436 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/EpisodeCover.java` — 191 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/MovieCover.java` — 204 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/RecentlyAddedVideosProvider.java` — 49 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/TvShowCover.java` — 260 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/VideoCover.java` — 159 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/cover/VideoSingleCursorCoverProvider.java` — 149 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/debug/Debug.java` — 101 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/ArtworkRequest.java` — 35 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/ArtworkTrace.java` — 25 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchive.java` — 144 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticExportActivity.java` — 37 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticFlightRecorder.java` — 91 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticReference.java` — 33 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java` — 1512 lines; lint: StaticFieldLeak@110: Do not place Android context classes in static fields; this is a memory leak; UsableSpace@1058: Consider also using `StorageManager#getAllocatableBytes` and `allocateBytes` which will consider clearable cached data
+- `src/main/java/com/archos/mediacenter/video/diagnostics/PlaybackDiagnosticState.java` — 54 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/ActionButton.java` — 108 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/FABAnimationManager.java` — 80 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/MultipleVideoLoader.java` — 101 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/SingleVideoLoader.java` — 84 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/SortByFavoriteSources.java` — 127 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoBadgePresenter.java` — 229 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoActivity.java` — 292 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoActivityFragment.java` — 2552 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoBackdropChooserFragment.java` — 390 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoCommonClass.java` — 257 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoPosterBackdropActivity.java` — 51 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoPosterChooserFragment.java` — 412 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoScraperActivity.java` — 68 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoScraperSearchFragment.java` — 835 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/info/VideoInfoShowScraperFragment.java` — 854 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/BackdropTask.java` — 253 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CategoryBrowseFragment.java` — 48 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CategoryRowsDiff.java` — 70 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CinematicCard.java` — 29 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CompatibleCursorLoaderConverter.java` — 22 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CompatibleCursorMapperConverter.java` — 43 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryActivity.java` — 384 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CustomLibraryPage.java` — 136 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/CustomiseHomeEditor.java` — 736 lines; lint: SetTextI18n@320: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@335: String literal in `setText` can not be translated. Use Android resources instead.
+- `src/main/java/com/archos/mediacenter/video/leanback/DetailsBackdropController.java` — 159 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/DisplayMode.java` — 23 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/EditPagePanel.java` — 653 lines; lint: ViewConstructor@22: Custom view `EditPagePanel` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`; SetTextI18n@615: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@619: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@622: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@631: Do not concatenate text displayed with `setText`. Use resource string with placeholders.
+- `src/main/java/com/archos/mediacenter/video/leanback/ExperimentalBrowseFragment.java` — 25 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/FullTextRow.java` — 36 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/FullTextRowPresenter.java` — 99 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/HeroEligibility.java` — 15 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/HeroPlaybackEligibility.java` — 32 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/HeroRotationPolicy.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/HomeGenrePicker.java` — 391 lines; lint: RtlHardcoded@201: Use "`Gravity.END`" instead of "`Gravity.RIGHT`" to ensure correct behavior in right-to-left locales
+- `src/main/java/com/archos/mediacenter/video/leanback/HomeIntentCodec.java` — 230 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/HomePlaceholder.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/IconListRow.java` — 43 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/InlineMenuSelector.java` — 101 lines; lint: ViewConstructor@13: Custom view `InlineMenuSelector` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`
+- `src/main/java/com/archos/mediacenter/video/leanback/KeyboardInput.java` — 54 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LeanbackActivity.java` — 103 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LegacyViewingSnapshot.java` — 78 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LibraryHealth.java` — 77 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthActivity.java` — 376 lines; lint: SetTextI18n@67: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@153: Do not concatenate text displayed with `setText`. Use resource string with placeholders.; SetTextI18n@280: Do not concatenate text displayed with `setText`. Use resource string with placeholders.; SetTextI18n@298: Do not concatenate text displayed with `setText`. Use resource string with placeholders.
+- `src/main/java/com/archos/mediacenter/video/leanback/LibraryHealthPanel.java` — 145 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LibraryPageHeader.java` — 179 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LibraryScanRecord.java` — 39 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/LibraryStatistics.java` — 48 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/MainActivityLeanback.java` — 271 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java` — 2648 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/MenuFoundation.java` — 98 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java` — 503 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PageExitGuard.java` — 3 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PicassoBackgroundManagerTarget.java` — 83 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PlaybackCompatibility.java` — 83 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PortablePreferredVersions.java` — 193 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PortableReviewNotes.java` — 146 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PortableViewingChoices.java` — 160 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PortableViewingState.java` — 246 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewAccent.java` — 122 lines; lint: SetTextI18n@74: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@108: String literal in `setText` can not be translated. Use Android resources instead.
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewArtworkPicker.java` — 184 lines; lint: SetTextI18n@115: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@128: String literal in `setText` can not be translated. Use Android resources instead.; RtlHardcoded@104: Use "`Gravity.END`" instead of "`Gravity.RIGHT`" to ensure correct behavior in right-to-left locales
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewAutoScanPolicy.java` — 24 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewBackdrop.java` — 271 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewContentFocus.java` — 14 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java` — 703 lines; lint: DiscouragedApi@222: Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier("bar", "foo", null)`).; RtlHardcoded@480: Use "`Gravity.START`" instead of "`Gravity.LEFT`" to ensure correct behavior in right-to-left locales
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewDiscovery.java` — 82 lines; lint: DiscouragedApi@34: Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier("bar", "foo", null)`).
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewEnrichmentQueue.java` — 307 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedCard.java` — 232 lines; lint: DrawAllocation@148: Avoid object allocations during draw/layout operations (preallocate and reuse instead); DrawAllocation@149: Avoid object allocations during draw/layout operations (preallocate and reuse instead); ViewConstructor@23: Custom view `PreviewFeaturedCard` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`; RtlHardcoded@39: Use "`Gravity.END`" instead of "`Gravity.RIGHT`" to ensure correct behavior in right-to-left locales; RtlHardcoded@39: Use "`Gravity.START`" instead of "`Gravity.LEFT`" to ensure correct behavior in right-to-left locales; RtlHardcoded@118: Use "`Gravity.START`" instead of "`Gravity.LEFT`" to ensure correct behavior in right-to-left locales
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedIndicators.java` — 46 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFocusGlow.java` — 35 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFocusRail.java` — 117 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFocusRecycler.java` — 124 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFocusUnderline.java` — 21 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFolderActions.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewFrost.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewGenres.java` — 260 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java` — 402 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewIcon.java` — 397 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java` — 251 lines; lint: ViewConstructor@14: Custom view `PreviewKeyboard` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java` — 255 lines; lint: DiscouragedApi@124: Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier("bar", "foo", null)`).
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryColumns.java` — 471 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryLoader.java` — 710 lines; lint: StaticFieldLeak@50: This `Loader` class should be static or leaks might occur (anonymous com.archos.mediacenter.video.browser.loader.AllTvshowsLoader)
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLibraryScan.java` — 300 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLibrarySummary.java` — 75 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewLocalScanState.java` — 90 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewMappingCursor.java` — 45 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java` — 237 lines; lint: ViewConstructor@15: Custom view `PreviewMatchSearch` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`; SetTextI18n@107: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@112: String literal in `setText` can not be translated. Use Android resources instead.
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewMediaClassification.java` — 82 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewMenuPlacement.java` — 18 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadata.java` — 210 lines; lint: ApplySharedPref@164: Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadataCache.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewNavigationShade.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkScanning.java` — 115 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java` — 76 lines; lint: ViewConstructor@13: Custom view `PreviewNetworkWorkspace` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewNotice.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewOperationDialog.java` — 43 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java` — 2700 lines; lint: ViewConstructor@66: Custom view `PreviewPages` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewReleaseOrder.java` — 24 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewScanProgress.java` — 21 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewSeriesJourney.java` — 70 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewSources.java` — 297 lines; lint: NotifyDataSetChanged@147: It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.; ViewConstructor@15: Custom view `PreviewSources` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewStartupSurface.java` — 53 lines; lint: UseCompatLoadingForDrawables@18: Use `AppCompatResources.getDrawable()`
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewSubtitleChooser.java` — 313 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewSubtitleResults.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewTextInput.java` — 128 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java` — 132 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewUtilityBackground.java` — 61 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewVariants.java` — 351 lines; lint: StaticFieldLeak@22: Do not place Android context classes in static fields; this is a memory leak
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialog.java` — 91 lines; lint: RtlHardcoded@46: Use "`Gravity.END`" instead of "`Gravity.RIGHT`" to ensure correct behavior in right-to-left locales
+- `src/main/java/com/archos/mediacenter/video/leanback/PreviewWatchedScopeDialog.java` — 24 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/ProviderMonogram.java` — 88 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/ShadowLessListRow.java` — 33 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SharedMetadata.java` — 307 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SharedThreePanel.java` — 191 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SidePanelKit.java` — 308 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SingleFragmentActivity.java` — 52 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/StandardSwitchDrawable.java` — 129 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SubtitlePanelStyle.java` — 403 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SubtitleResultsPanel.java` — 139 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/SupernovaStyle.java` — 553 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/ThinSpinner.java` — 70 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java` — 583 lines; lint: ViewConstructor@33: Custom view `TopNavigation` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`; SetTextI18n@98: String literal in `setText` can not be translated. Use Android resources instead.
+- `src/main/java/com/archos/mediacenter/video/leanback/TvButton.java` — 38 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/TvLayout.java` — 65 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/UnavailablePosterBroadcastReceiver.java` — 203 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/VideoViewClickedListener.java` — 225 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/VideosByFragment.java` — 495 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/VideosByListActivity.java` — 25 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/VideosByListFragment.java` — 115 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/ViewingHistory.java` — 628 lines; lint: ApplySharedPref@487: Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/FtpShortcutMapper.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/GenericNetworkShortcutMapper.java` — 47 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/NetworkShortcutMapper.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/PlaceholderCursorObjectAdapter.java` — 178 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/Box.java` — 106 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/EmptyView.java` — 31 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/FtpBrowse.java` — 41 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/FtpShortcut.java` — 40 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/GenericNetworkShortcut.java` — 40 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/Icon.java` — 76 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/NetworkBrowse.java` — 39 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/NetworkShortcut.java` — 40 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/NetworkSource.java` — 41 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/Shortcut.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/SmbShare.java` — 61 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/UpnpServer.java` — 56 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/adapter/object/WebPageLink.java` — 31 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AllAnimesGridActivity.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AllAnimesGridFragment.java` — 437 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AllAnimesIconBuilder.java` — 168 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByAlphaActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByAlphaFragment.java` — 86 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByFragment.java` — 381 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByGenreActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByGenreFragment.java` — 92 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByRatingActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByRatingFragment.java` — 90 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByYearActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesByYearFragment.java` — 90 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/animes/AnimesSortOrderEntry.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/channels/ChannelManager.java` — 887 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/AllAnimeCollectionsGridActivity.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/AllAnimeCollectionsGridFragment.java` — 408 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/AllCollectionsGridActivity.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/AllCollectionsGridFragment.java` — 428 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/AnimeCollectionsIconBuilder.java` — 166 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionActionAdapter.java` — 63 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionActivity.java` — 64 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionDetailsDescriptionPresenter.java` — 168 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionFragment.java` — 764 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionsIconBuilder.java` — 164 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionsMoviesIconBuilder.java` — 162 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionsSortOrderEntry.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/AllFilmsIconBuilder.java` — 168 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/AllMoviesGridActivity.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/AllMoviesGridFragment.java` — 447 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/AllMoviesIconBuilder.java` — 167 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByAlphaActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByAlphaFragment.java` — 94 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByFragment.java` — 410 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByGenreActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByGenreFragment.java` — 98 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByRatingActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByRatingFragment.java` — 98 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByYearActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesByYearFragment.java` — 98 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/movies/MoviesSortOrderEntry.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/nonscraped/NonScrapedSortOrderEntry.java` — 64 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/nonscraped/NonScrapedVideosActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/nonscraped/NonScrapedVideosFragment.java` — 323 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/overlay/Clock.java` — 133 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/overlay/Overlay.java` — 156 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/overlay/ScannerAndScraperProgress.java` — 264 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/BoxItemPresenter.java` — 88 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/CustomImageCardview.java` — 92 lines; lint: CutPasteId@60: The id `R.id.content_text` has already been looked up in this method; possible cut & paste error?; CutPasteId@65: The id `R.id.title_text` has already been looked up in this method; possible cut & paste error?
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/EmptyViewPresenter.java` — 67 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/IconItemPresenter.java` — 138 lines; lint: PrivateResource@57: The resource `@color/lb_basic_card_title_text_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ListPresenter.java` — 266 lines; lint: PrivateResource@65: The resource `@color/lb_basic_card_info_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/MetaFileListPresenter.java` — 53 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/NetworkShortcutPresenter.java` — 85 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/PosterImageCardPresenter.java` — 494 lines; lint: PrivateResource@93: The resource `@color/lb_basic_card_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/PresenterUtils.java` — 101 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java` — 442 lines; lint: ViewConstructor@51: Custom view `Card` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`; SetTextI18n@295: Do not concatenate text displayed with `setText`. Use resource string with placeholders.; RtlHardcoded@155: Use "`Gravity.END`" instead of "`Gravity.RIGHT`" to ensure correct behavior in right-to-left locales
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/RescanBoxItemPresenter.java` — 144 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ScraperBaseTagsPresenter.java` — 205 lines; lint: PrivateResource@57: The resource `@color/lb_basic_card_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ScraperImageBackdropPresenter.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ScraperImagePosterPresenter.java` — 65 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ScraperImagePresenter.java` — 249 lines; lint: PrivateResource@74: The resource `@color/lb_basic_card_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ScraperSearchResultPresenter.java` — 142 lines; lint: PrivateResource@51: The resource `@color/lb_basic_card_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/SeasonPresenter.java` — 268 lines; lint: PrivateResource@63: The resource `@color/lb_basic_card_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/ShortcutDetailsPresenter.java` — 36 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/SmbSharePresenter.java` — 92 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/TrailerPresenter.java` — 130 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/VideoBadgePresenter.java` — 241 lines; lint: PrivateResource@129: The resource `@color/lb_basic_card_info_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/VideoListPresenter.java` — 130 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/WebLinkPresenter.java` — 115 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/presenter/WebPageLinkPresenter.java` — 204 lines; lint: PrivateResource@64: The resource `@color/lb_basic_card_bg_color` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualScrappingSearchFragment.java` — 512 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualShowScrappingActivity.java` — 56 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualShowScrappingSearchFragment.java` — 513 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingActivity.java` — 55 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingSearchFragment.java` — 435 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/scrapping/SafeSearchSupportFragment.java` — 60 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java` — 689 lines; lint: NotifyDataSetChanged@282: It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.; NotifyDataSetChanged@446: It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.; ViewConstructor@34: Custom view `PreviewSearch` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`; SetTextI18n@329: String literal in `setText` can not be translated. Use Android resources instead.; SetTextI18n@619: Do not concatenate text displayed with `setText`. Use resource string with placeholders.; SetTextI18n@619: String literal in `setText` can not be translated. Use Android resources instead.
+- `src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearchText.java` — 85 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/search/VideoSearchActivity.java` — 150 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/search/VideoSearchFragment.java` — 275 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/search/VideoSearchProvider.java` — 145 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllAnimeShowsGridActivity.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllAnimeShowsGridFragment.java` — 416 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllAnimeShowsIconBuilder.java` — 162 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllTvshowNoAmimeIconBuilder.java` — 162 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllTvshowsGridActivity.java` — 50 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllTvshowsGridFragment.java` — 444 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AllTvshowsIconBuilder.java` — 160 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AnimeShowsByAlphaActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AnimeShowsByAlphaFragment.java` — 79 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/AnimeShowsSortOrderEntry.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/DocumentaryTvshowsGridActivity.java` — 13 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/DocumentaryTvshowsGridFragment.java` — 42 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/EpisodesByDateActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/EpisodesByDateFragment.java` — 136 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/SeasonActivity.java` — 29 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/SeasonFragment.java` — 510 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowActionAdapter.java` — 73 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowActivity.java` — 64 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowDetailsDescriptionPresenter.java` — 181 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowFragment.java` — 1286 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowMoreDetailsActivity.java` — 30 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowMoreDetailsDescriptionPresenter.java` — 116 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowMoreDetailsFragment.java` — 541 lines; lint: PrivateResource@164: The resource `@dimen/lb_details_v2_actions_height` is marked as private in androidx.leanback:leanback:1.2.0; PrivateResource@172: The resource `@dimen/lb_details_v2_actions_height` is marked as private in androidx.leanback:leanback:1.2.0
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByAlphaActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByAlphaFragment.java` — 86 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByFragment.java` — 434 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByGenreActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByGenreFragment.java` — 102 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByRatingActivity.java` — 27 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsByRatingFragment.java` — 89 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/tvshow/TvshowsSortOrderEntry.java` — 72 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/widget/HintView.java` — 82 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/wizard/SubtitlesWizardActivity.java` — 59 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/leanback/wizard/SubtitlesWizardFragment.java` — 267 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/metadata/OmdbSupplement.java` — 275 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/picasso/FidelityTransformation.java` — 105 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/picasso/SmbRequestHandler.java` — 93 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/picasso/ThumbnailRequestHandler.java` — 136 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/tvshow/AnimeShowSortOrderEntries.java` — 66 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/tvshow/TvshowSortOrderEntries.java` — 66 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/ui/NovaProgressDialog.java` — 531 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsFactoryAllVideos.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsFactoryBase.java` — 432 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsFactoryMovies.java` — 47 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsFactoryRecentlyAdded.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsFactoryRecentlyPlayed.java` — 44 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsFactoryTVShows.java` — 45 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsServiceAllVideos.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsServiceMovies.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsServiceRecentlyAdded.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsServiceRecentlyPlayed.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/RemoteViewsServiceTVShows.java` — 26 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/Utils.java` — 98 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/VideoWidgetConfigure.java` — 145 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/VideoWidgetServices.java` — 66 lines; lint: none
+- `src/main/java/com/archos/mediacenter/video/widget/WidgetProviderVideo.java` — 372 lines; lint: none

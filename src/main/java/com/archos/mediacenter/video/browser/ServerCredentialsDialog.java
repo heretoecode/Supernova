@@ -139,7 +139,7 @@ public abstract class ServerCredentialsDialog extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parentView) {
                 if (UriUtils.requiresDomain(mType))
                     v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
-                else v.findViewById(R.id.domain).setVisibility(View.GONE);
+                    else v.findViewById(R.id.domain).setVisibility(View.GONE);
             }
         });
         mAddressEt = (EditText)v.findViewById(R.id.remote);
