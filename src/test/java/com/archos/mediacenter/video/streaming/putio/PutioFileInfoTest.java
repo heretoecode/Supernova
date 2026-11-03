@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.app.Application;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioFileInfoTest {
     private static final String FILE="{id:42,parent_id:7,size:100,name:'Example.mkv',file_type:VIDEO}";
     @Test public void searchAcceptsDifferentParentsButFolderListingDoesNot()throws Exception {
