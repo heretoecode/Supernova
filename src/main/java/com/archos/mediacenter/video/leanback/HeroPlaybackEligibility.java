@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.content.Intent;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
@@ -24,7 +25,7 @@ public final class HeroPlaybackEligibility {
         if(identity==null||!identity.matches("(?:movie:|tv:|v|s)[1-9][0-9]*")||com.archos.mediacenter.video.player.PrivateMode.isActive())return;
         if(ESTABLISHED.add(identity)){
             GENERATION.incrementAndGet();
-            context.getApplicationContext().sendBroadcast(new android.content.Intent(context.getPackageName()+".VIEWING_STATE_CHANGED").setPackage(context.getPackageName()));
+            context.getApplicationContext().sendBroadcast(new Intent(context.getPackageName()+".VIEWING_STATE_CHANGED").setPackage(context.getPackageName()));
         }
     }
 }
