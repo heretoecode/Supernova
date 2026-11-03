@@ -141,6 +141,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays the TV home browser and coordinates rows, navigation and library loading. */
 public class MainFragment extends ExperimentalBrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final Logger log = LoggerFactory.getLogger(MainFragment.class);
 
