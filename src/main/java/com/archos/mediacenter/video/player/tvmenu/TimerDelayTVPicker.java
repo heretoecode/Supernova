@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.player.TimerPickerAbstract;
 
 
+/** Provides a remote-controlled timer delay picker for TV playback menus. */
 public class TimerDelayTVPicker extends TimerPickerAbstract implements TVSlaveView {
 
     private TimerDelayTVPicker slaveView;
