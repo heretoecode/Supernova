@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.diagnostics.ArtworkTrace;
+import com.archos.medialib.R;
 import com.archos.mediascraper.*;
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -33,7 +35,7 @@ public final class OfficialTitleArtwork {
                                                  .build();
     private static final Map<TextView, String> BOUND = new WeakHashMap<>();
     private static final Map<TextView, Boolean> READY = new WeakHashMap<>();
-    private static final Map<TextView, com.archos.mediacenter.video.diagnostics.ArtworkTrace> TRACES =
+    private static final Map<TextView, ArtworkTrace> TRACES =
         new WeakHashMap<>();
     private static final LruCache<String, Bitmap> ALIASES =
         new LruCache<String, Bitmap>(8 * 1024 * 1024) {
@@ -157,7 +159,7 @@ public final class OfficialTitleArtwork {
     }
 
     private static void clear(TextView view) {
-        com.archos.mediacenter.video.diagnostics.ArtworkTrace trace = TRACES.remove(view);
+        ArtworkTrace trace = TRACES.remove(view);
         if (trace != null)
             trace.cancelled();
         BOUND.remove(view);
@@ -186,9 +188,9 @@ public final class OfficialTitleArtwork {
                 media = Long.parseLong(identity.substring(identity.indexOf('/') + 1));
             } catch (NumberFormatException ignored) {
             }
-        com.archos.mediacenter.video.diagnostics.ArtworkTrace trace =
-            new com.archos.mediacenter.video.diagnostics.ArtworkTrace(media,
-                cachedOnly ? "playback_loading" : com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(),
+        ArtworkTrace trace =
+            new ArtworkTrace(media,
+                cachedOnly ? "playback_loading" : Diagnostics.artworkSurface(),
                 "title_logo", cachedOnly ? "cache_only" : "tmdb");
         TRACES.put(view, trace);
         String alias = identity + ":" + language;
@@ -231,7 +233,7 @@ public final class OfficialTitleArtwork {
                     Uri uri =
                         Uri.parse("https://api.themoviedb.org/3/" + key + "/images")
                             .buildUpon()
-                            .appendQueryParameter("api_key", app.getString(com.archos.medialib.R.string.tmdb_api_key))
+                            .appendQueryParameter("api_key", app.getString(R.string.tmdb_api_key))
                             .appendQueryParameter("include_image_language", language + ",en,null")
                             .build();
                     JSONObject result = new JSONObject(
