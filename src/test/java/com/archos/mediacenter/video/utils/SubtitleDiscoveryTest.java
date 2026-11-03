@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks subtitle discovery caching, queue priority, backoff and file-scoped metadata. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class SubtitleDiscoveryTest {
