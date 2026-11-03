@@ -1,8 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import androidx.appcompat.widget.AppCompatTextView;
 import java.util.function.IntConsumer;
 
@@ -22,11 +25,11 @@ final class InlineMenuSelector extends AppCompatTextView {
         this.commit = commit;
         setTextSize(14 * TvLayout.scale(context));
         setTextColor(MenuFoundation.TEXT);
-        setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         setIncludeFontPadding(false);
         setSingleLine(true);
-        setGravity(android.view.Gravity.CENTER_VERTICAL);
-        setId(android.view.View.generateViewId());
+        setGravity(Gravity.CENTER_VERTICAL);
+        setId(View.generateViewId());
         setFocusable(true);
         setFocusableInTouchMode(true);
         setClickable(true);
