@@ -4,6 +4,8 @@ import android.app.Application;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
+import com.archos.environment.ArchosUtils;
+import com.archos.filecorelibrary.FileUtils;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediaprovider.video.*;
 import java.io.IOException;
@@ -51,14 +53,14 @@ public class WebdavReconciliationSelectionTest {
         HashMap<String, Object> decoded = new HashMap<>();
         for (Object item : records.values()) {
             String path = ReflectionHelpers.getField(item, "_data");
-            decoded.put(com.archos.filecorelibrary.FileUtils.decodeUri(Uri.parse(path)), item);
+            decoded.put(FileUtils.decodeUri(Uri.parse(path)), item);
         }
         return decoded;
     }
 
     private void check(boolean failed) throws Exception {
         Application app = RuntimeEnvironment.getApplication();
-        com.archos.environment.ArchosUtils.setGlobalContext(app);
+        ArchosUtils.setGlobalContext(app);
         PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .clear()
