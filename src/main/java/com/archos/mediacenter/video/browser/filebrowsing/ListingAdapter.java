@@ -35,6 +35,7 @@ import com.archos.mediacenter.video.utils.VideoUtils;
 import java.util.HashMap;
 import java.util.List;
 
+/** Adapts file listings into browser rows with video objects and thumbnail requests. */
 public class ListingAdapter extends BaseAdapter implements AdapterByVideoObjectsInterface, PresenterAdapterInterface, ThumbnailAdapterVideo, SectionIndexer {
 
     protected final List<MetaFile2> mFilesFullList;
