@@ -15,7 +15,9 @@ import java.util.function.BooleanSupplier;
 
 /** Optional navigation shell; the same native BrowseSupportFragment owns all library rows. */
 public final class TopNavigation extends LinearLayout {
-    public interface ContentFocus { boolean focusFromNavigation(); }
+    public interface ContentFocus {
+        boolean focusFromNavigation();
+    }
     private final LinearLayout bar;
     private final TextView brand;
     private final android.widget.TextClock clock;
@@ -26,14 +28,27 @@ public final class TopNavigation extends LinearLayout {
     private final View content;
     private final android.widget.FrameLayout stage;
     private final boolean scrollingContent;
-    private final android.graphics.drawable.Drawable navigationScene=new android.graphics.drawable.Drawable(){
-        @Override public void draw(android.graphics.Canvas canvas){
-            android.graphics.drawable.Drawable background=getBackground();if(background!=null)background.draw(canvas);
-            int saved=canvas.save();canvas.translate(stage.getLeft(),stage.getTop());stage.draw(canvas);canvas.restoreToCount(saved);
+    private final android.graphics.drawable.Drawable navigationScene = new android.graphics.drawable.Drawable() {
+        @Override
+        public void draw(android.graphics.Canvas canvas) {
+            android.graphics.drawable.Drawable background = getBackground();
+            if (background != null)
+                background.draw(canvas);
+            int saved = canvas.save();
+            canvas.translate(stage.getLeft(), stage.getTop());
+            stage.draw(canvas);
+            canvas.restoreToCount(saved);
         }
-        @Override public void setAlpha(int alpha){}
-        @Override public void setColorFilter(android.graphics.ColorFilter filter){}
-        @Override public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+        @Override
+        public void setAlpha(int alpha) {
+        }
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+        }
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     };
     private final android.widget.FrameLayout scanStatus;
     private final android.widget.FrameLayout status;
@@ -41,52 +56,107 @@ public final class TopNavigation extends LinearLayout {
     private TextView selected;
     private int selectedIndex;
     private final TextView[] tabs = new TextView[7];
-    private final PreviewNavigationShade navigationShade=new PreviewNavigationShade();
+    private final PreviewNavigationShade navigationShade = new PreviewNavigationShade();
 
     public TopNavigation(Context c, View content, IntConsumer navigate, BooleanSupplier firstRow) {
         super(c);
-        this.content = content; this.firstRow = firstRow;
-        scanStatus = new android.widget.FrameLayout(c);scanStatus.setFocusable(false);scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-        setOrientation(VERTICAL);TvLayout.applyInsets(this);
+        this.content = content;
+        this.firstRow = firstRow;
+        scanStatus = new android.widget.FrameLayout(c);
+        scanStatus.setFocusable(false);
+        scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
+        setOrientation(VERTICAL);
+        TvLayout.applyInsets(this);
         setWillNotDraw(false);
-        artwork = new PreviewBackdrop(c); artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION); setBackground(artwork);
-        bar = new LinearLayout(c); bar.setClipChildren(true);bar.setClipToPadding(true); bar.setGravity(Gravity.CENTER_VERTICAL);
+        artwork = new PreviewBackdrop(c);
+        artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION);
+        setBackground(artwork);
+        bar = new LinearLayout(c);
+        bar.setClipChildren(true);
+        bar.setClipToPadding(true);
+        bar.setGravity(Gravity.CENTER_VERTICAL);
         bar.setPadding(dp(26), 0, dp(26), 0);
         bar.setBackgroundColor(Color.TRANSPARENT);
-        brand = new TextView(c);brand.setSingleLine(true);
-        brand.setText("SUPERNOVA"); brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)); brand.setTextSize(19*TvLayout.scale(c)); brand.setTextColor(Color.WHITE);
-        brand.setGravity(Gravity.CENTER_VERTICAL); brand.setPadding(0, 0, 0, 0); bar.addView(brand, new LayoutParams(dp(136), -1));
-        group = new PreviewFocusRail(c);group.useUnderline();group.setClipChildren(false);group.setClipToPadding(false); group.setGravity(Gravity.START|Gravity.CENTER_VERTICAL);
-        android.widget.HorizontalScrollView rail=new android.widget.HorizontalScrollView(c);rail.setHorizontalScrollBarEnabled(false);rail.setFillViewport(true);rail.setClipChildren(true);rail.setClipToPadding(true);rail.setFocusable(false);rail.addView(group,new android.widget.FrameLayout.LayoutParams(-2,-1));bar.addView(rail,new LayoutParams(0,-1,1));
+        brand = new TextView(c);
+        brand.setSingleLine(true);
+        brand.setText("SUPERNOVA");
+        brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        brand.setTextSize(19 * TvLayout.scale(c));
+        brand.setTextColor(Color.WHITE);
+        brand.setGravity(Gravity.CENTER_VERTICAL);
+        brand.setPadding(0, 0, 0, 0);
+        bar.addView(brand, new LayoutParams(dp(136), -1));
+        group = new PreviewFocusRail(c);
+        group.useUnderline();
+        group.setClipChildren(false);
+        group.setClipToPadding(false);
+        group.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        android.widget.HorizontalScrollView rail = new android.widget.HorizontalScrollView(c);
+        rail.setHorizontalScrollBarEnabled(false);
+        rail.setFillViewport(true);
+        rail.setClipChildren(true);
+        rail.setClipToPadding(true);
+        rail.setFocusable(false);
+        rail.addView(group, new android.widget.FrameLayout.LayoutParams(-2, -1));
+        bar.addView(rail, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
             final int index = i;
-            TextView tab = new TextView(c); tabs[i] = tab;
-            tab.setText(labels[i]); tab.setContentDescription(labels[i]); tab.setTag("semantic:topnav." + new String[]{"home","movies","tv","network","settings","search","custom"}[index]);
-            tab.setTextColor(Color.WHITE); tab.setTextSize(19*TvLayout.scale(c)); tab.setGravity(Gravity.CENTER);
+            TextView tab = new TextView(c);
+            tabs[i] = tab;
+            tab.setText(labels[i]);
+            tab.setContentDescription(labels[i]);
+            tab.setTag("semantic:topnav." +
+                       new String[] {"home", "movies", "tv", "network", "settings", "search", "custom"}[index]);
+            tab.setTextColor(Color.WHITE);
+            tab.setTextSize(19 * TvLayout.scale(c));
+            tab.setGravity(Gravity.CENTER);
             tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
-            if(index==6){tab.setMaxWidth(dp(140));tab.setEllipsize(android.text.TextUtils.TruncateAt.END);}
-            tab.setSingleLine(true); tab.setFocusable(true); tab.setFocusableInTouchMode(true); tab.setClickable(true);
+            if (index == 6) {
+                tab.setMaxWidth(dp(140));
+                tab.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            }
+            tab.setSingleLine(true);
+            tab.setFocusable(true);
+            tab.setFocusableInTouchMode(true);
+            tab.setClickable(true);
             // Compact gutters keep complete icon targets inside the 720p rail after pixel rounding.
-            int horizontal=TvLayout.width(c)<780?6:7;
+            int horizontal = TvLayout.width(c) < 780 ? 6 : 7;
             tab.setPadding(dp(horizontal), dp(6), dp(horizontal), dp(6));
             styleTab(tab);
-            tab.setOnClickListener(v -> {if(index==6&&getContext() instanceof CustomLibraryActivity)return;requestBrowserExit(content, () -> {
-                if(index==6){if(getContext() instanceof CustomLibraryActivity)return;Runnable open=()->getContext().startActivity(new android.content.Intent(getContext(),CustomLibraryActivity.class));open.run();return;}
-                selectTab(index);
-                navigate.accept(index);
-            });});
+            tab.setOnClickListener(v -> {
+                if (index == 6 && getContext() instanceof CustomLibraryActivity)
+                    return;
+                requestBrowserExit(content, () -> {
+                    if (index == 6) {
+                        if (getContext() instanceof CustomLibraryActivity)
+                            return;
+                        Runnable open = ()
+                            -> getContext().startActivity(
+                                new android.content.Intent(getContext(), CustomLibraryActivity.class));
+                        open.run();
+                        return;
+                    }
+                    selectTab(index);
+                    navigate.accept(index);
+                });
+            });
             tab.setOnKeyListener((v, key, event) -> {
                 if (key == KeyEvent.KEYCODE_DPAD_DOWN && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    if(!focusLibraryEntry(content))content.requestFocus(); return true;
+                    if (!focusLibraryEntry(content))
+                        content.requestFocus();
+                    return true;
                 }
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    if (key == KeyEvent.KEYCODE_DPAD_UP) return true;
+                    if (key == KeyEvent.KEYCODE_DPAD_UP)
+                        return true;
                     if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
                         for (int position = 0; position < VISUAL_ORDER.length; position++) {
-                            if (VISUAL_ORDER[position] != index) continue;
+                            if (VISUAL_ORDER[position] != index)
+                                continue;
                             int target = position + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
-                            if (target >= 0 && target < VISUAL_ORDER.length) tabs[VISUAL_ORDER[target]].requestFocus();
+                            if (target >= 0 && target < VISUAL_ORDER.length)
+                                tabs[VISUAL_ORDER[target]].requestFocus();
                             return true;
                         }
                     }
@@ -96,136 +166,401 @@ public final class TopNavigation extends LinearLayout {
             if (i == 5 || i == 4) {
                 tab.setText("");
                 // Custom drawables do not automatically apply Drawable.setTint to their Paint.
-                tab.setLayerType(View.LAYER_TYPE_SOFTWARE,null);
-                android.graphics.drawable.Drawable search = new PreviewIcon(i==4?"cog":"search");
-                search.setBounds(0, 0, dp(22), dp(22)); tab.setCompoundDrawables(search, null, null, null);
+                tab.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                android.graphics.drawable.Drawable search = new PreviewIcon(i == 4 ? "cog" : "search");
+                search.setBounds(0, 0, dp(22), dp(22));
+                tab.setCompoundDrawables(search, null, null, null);
             }
-            if(i==3){View gap=new View(c);group.addView(gap,new LayoutParams(0,1,1));}
+            if (i == 3) {
+                View gap = new View(c);
+                group.addView(gap, new LayoutParams(0, 1, 1));
+            }
             group.addView(tab, new LayoutParams(-2, dp(36)));
         }
-        group.removeView(tabs[6]);group.addView(tabs[6],group.indexOfChild(tabs[2])+1,new LayoutParams(-2,dp(36)));
-        group.removeView(tabs[5]);group.addView(tabs[5],group.indexOfChild(tabs[4]),new LayoutParams(-2,dp(36)));
+        group.removeView(tabs[6]);
+        group.addView(tabs[6], group.indexOfChild(tabs[2]) + 1, new LayoutParams(-2, dp(36)));
+        group.removeView(tabs[5]);
+        group.addView(tabs[5], group.indexOfChild(tabs[4]), new LayoutParams(-2, dp(36)));
         status = new android.widget.FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
-        clock=new android.widget.TextClock(c);clock.setSingleLine(true);clock.setTag("preview-default-clock");clock.setFormat12Hour("h:mm");clock.setFormat24Hour("HH:mm");clock.setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));clock.setTextSize(19*TvLayout.scale(c));clock.setTextColor(Color.WHITE);clock.setGravity(Gravity.CENTER_VERTICAL|Gravity.END);clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());clock.setPadding(0,dp(6),0,dp(6));status.addView(clock,new android.widget.FrameLayout.LayoutParams(-1,-1));
-        updateCustomPage();selected = tabs[0]; selected.setSelected(true);
+        clock = new android.widget.TextClock(c);
+        clock.setSingleLine(true);
+        clock.setTag("preview-default-clock");
+        clock.setFormat12Hour("h:mm");
+        clock.setFormat24Hour("HH:mm");
+        clock.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        clock.setTextSize(19 * TvLayout.scale(c));
+        clock.setTextColor(Color.WHITE);
+        clock.setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
+        clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());
+        clock.setPadding(0, dp(6), 0, dp(6));
+        status.addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        updateCustomPage();
+        selected = tabs[0];
+        selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
-        stage=new android.widget.FrameLayout(c);
-        navigationInset=dp(52);
-        scrollingContent=prepareScrollingContent(content);
-        stage.addView(content,new android.widget.FrameLayout.LayoutParams(-1,-1));
-        android.widget.FrameLayout.LayoutParams scanParams=new android.widget.FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.END);
-        scanParams.setMargins(dp(20),dp(12),dp(20),dp(16));stage.addView(scanStatus,scanParams);
-        addView(stage,new LayoutParams(-1,0,1));
+        stage = new android.widget.FrameLayout(c);
+        navigationInset = dp(52);
+        scrollingContent = prepareScrollingContent(content);
+        stage.addView(content, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        android.widget.FrameLayout.LayoutParams scanParams =
+            new android.widget.FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM | Gravity.END);
+        scanParams.setMargins(dp(20), dp(12), dp(20), dp(16));
+        stage.addView(scanStatus, scanParams);
+        addView(stage, new LayoutParams(-1, 0, 1));
         setChildrenDrawingOrderEnabled(true);
     }
+
     /** Insets belong to the scroll viewport so scrolled pixels can travel behind the bar. */
-    private boolean prepareScrollingContent(View view){
-        if(view.getVisibility()==GONE)return false;
-        if(view instanceof PreviewPages){((PreviewPages)view).setNavigationInset(dp(52));return true;}
-        if(view instanceof android.widget.ScrollView){view.setPadding(view.getPaddingLeft(),view.getPaddingTop()+dp(52),view.getPaddingRight(),view.getPaddingBottom());((android.widget.ScrollView)view).setClipToPadding(false);return true;}
-        if(view instanceof android.widget.FrameLayout){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++)if(prepareScrollingContent(group.getChildAt(i)))return true;}
+    private boolean prepareScrollingContent(View view) {
+        if (view.getVisibility() == GONE)
+            return false;
+        if (view instanceof PreviewPages) {
+            ((PreviewPages)view).setNavigationInset(dp(52));
+            return true;
+        }
+        if (view instanceof android.widget.ScrollView) {
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + dp(52), view.getPaddingRight(),
+                            view.getPaddingBottom());
+            ((android.widget.ScrollView)view).setClipToPadding(false);
+            return true;
+        }
+        if (view instanceof android.widget.FrameLayout) {
+            android.view.ViewGroup group = (android.view.ViewGroup)view;
+            for (int i = 0; i < group.getChildCount(); i++)
+                if (prepareScrollingContent(group.getChildAt(i)))
+                    return true;
+        }
         return false;
     }
-    @Override protected void onMeasure(int width,int height){
-        int tabHeight=Math.max(dp(36),Math.round(tabs[0].getPaint().getFontMetrics().bottom-tabs[0].getPaint().getFontMetrics().top)+tabs[0].getPaddingTop()+tabs[0].getPaddingBottom());
-        for(TextView tab:tabs)tab.getLayoutParams().height=tabHeight;
-        int inset=Math.max(dp(52),tabHeight+dp(12));bar.getLayoutParams().height=inset;
-        brand.getLayoutParams().width=Math.max(dp(136),(int)Math.ceil(brand.getPaint().measureText("SUPERNOVA"))+dp(8));
-        status.getLayoutParams().width=Math.max(dp(64),(int)Math.ceil(clock.getPaint().measureText("00:00"))+dp(8));status.getLayoutParams().height=Math.max(dp(46),tabHeight);
-        if(scrollingContent&&inset!=navigationInset)updateNavigationInset(content,inset,inset-navigationInset);navigationInset=inset;
-        super.onMeasure(width,height);if(scrollingContent)stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(),View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(),View.MeasureSpec.EXACTLY));
+
+    @Override
+    protected void onMeasure(int width, int height) {
+        int tabHeight = Math.max(
+            dp(36), Math.round(tabs[0].getPaint().getFontMetrics().bottom - tabs[0].getPaint().getFontMetrics().top) +
+                        tabs[0].getPaddingTop() + tabs[0].getPaddingBottom());
+        for (TextView tab : tabs)
+            tab.getLayoutParams().height = tabHeight;
+        int inset = Math.max(dp(52), tabHeight + dp(12));
+        bar.getLayoutParams().height = inset;
+        brand.getLayoutParams().width =
+            Math.max(dp(136), (int)Math.ceil(brand.getPaint().measureText("SUPERNOVA")) + dp(8));
+        status.getLayoutParams().width =
+            Math.max(dp(64), (int)Math.ceil(clock.getPaint().measureText("00:00")) + dp(8));
+        status.getLayoutParams().height = Math.max(dp(46), tabHeight);
+        if (scrollingContent && inset != navigationInset)
+            updateNavigationInset(content, inset, inset - navigationInset);
+        navigationInset = inset;
+        super.onMeasure(width, height);
+        if (scrollingContent)
+            stage.measure(View.MeasureSpec.makeMeasureSpec(getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                          View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(), View.MeasureSpec.EXACTLY));
     }
-    private boolean updateNavigationInset(View view,int inset,int delta){
-        if(view.getVisibility()==GONE)return false;
-        if(view instanceof PreviewPages){((PreviewPages)view).setNavigationInset(inset);return true;}
-        if(view instanceof android.widget.ScrollView){view.setPadding(view.getPaddingLeft(),view.getPaddingTop()+delta,view.getPaddingRight(),view.getPaddingBottom());return true;}
-        if(view instanceof android.widget.FrameLayout){android.view.ViewGroup children=(android.view.ViewGroup)view;for(int n=0;n<children.getChildCount();n++)if(updateNavigationInset(children.getChildAt(n),inset,delta))return true;}
+
+    private boolean updateNavigationInset(View view, int inset, int delta) {
+        if (view.getVisibility() == GONE)
+            return false;
+        if (view instanceof PreviewPages) {
+            ((PreviewPages)view).setNavigationInset(inset);
+            return true;
+        }
+        if (view instanceof android.widget.ScrollView) {
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + delta, view.getPaddingRight(),
+                            view.getPaddingBottom());
+            return true;
+        }
+        if (view instanceof android.widget.FrameLayout) {
+            android.view.ViewGroup children = (android.view.ViewGroup)view;
+            for (int n = 0; n < children.getChildCount(); n++)
+                if (updateNavigationInset(children.getChildAt(n), inset, delta))
+                    return true;
+        }
         return false;
     }
-    @Override protected void onLayout(boolean changed,int left,int top,int right,int bottom){super.onLayout(changed,left,top,right,bottom);if(scrollingContent)stage.layout(0,0,getWidth(),getHeight());}
-    @Override protected int getChildDrawingOrder(int count,int position){return count==2?1-position:position;}
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener=(prefs,key)->{if("preview_accent41".equals(key))refreshAccent();else if(CustomLibraryPage.KEY.equals(key))updateCustomPage();};
-    private void refreshAccent(){for(TextView tab:tabs)styleTab(tab);group.refreshColour();invalidate();}
-    private void styleTab(TextView tab){
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (scrollingContent)
+            stage.layout(0, 0, getWidth(), getHeight());
+    }
+
+    @Override
+    protected int getChildDrawingOrder(int count, int position) {
+        return count == 2 ? 1 - position : position;
+    }
+
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener = (prefs, key) -> {
+        if ("preview_accent41".equals(key))
+            refreshAccent();
+        else if (CustomLibraryPage.KEY.equals(key))
+            updateCustomPage();
+    };
+
+    private void refreshAccent() {
+        for (TextView tab : tabs)
+            styleTab(tab);
+        group.refreshColour();
+        invalidate();
+    }
+
+    private void styleTab(TextView tab) {
         tab.setTextColor(Color.WHITE);
-        tab.setShadowLayer(0,0,0,0);
+        tab.setShadowLayer(0, 0, 0, 0);
         tab.setBackground(null);
-        for(android.graphics.drawable.Drawable icon:tab.getCompoundDrawables())if(icon instanceof PreviewIcon)((PreviewIcon)icon).focus(false,0);
+        for (android.graphics.drawable.Drawable icon : tab.getCompoundDrawables())
+            if (icon instanceof PreviewIcon)
+                ((PreviewIcon)icon).focus(false, 0);
+    }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+            .registerOnSharedPreferenceChangeListener(accentListener);
+        for (TextView tab : tabs)
+            styleTab(tab);
     }
-    @Override protected void onAttachedToWindow(){super.onAttachedToWindow();androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(accentListener);for(TextView tab:tabs)styleTab(tab);}
-    private boolean scrolled;private android.animation.ValueAnimator scrimAnimation;private int scrimAlpha;
-    public void setScrolled(boolean value){
-        value=value&&(selectedIndex>=0&&selectedIndex<=2||selectedIndex==6);
-        if(value&&selectedIndex>=3&&selectedIndex<=5)value=false;
-        if(scrolled==value)return;scrolled=value;
-        if(scrimAnimation!=null)scrimAnimation.cancel();
-        scrimAnimation=android.animation.ValueAnimator.ofInt(scrimAlpha,value?255:0);scrimAnimation.setDuration(220);
-        scrimAnimation.addUpdateListener(animation->{scrimAlpha=(int)animation.getAnimatedValue();invalidate();});scrimAnimation.start();
-    }
-    @Override protected boolean drawChild(android.graphics.Canvas canvas,View child,long time){
-        if(child==stage){com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser=visibleBrowser(content);if(browser!=null){int visibility=browser.ownsScanStatus()?GONE:VISIBLE;if(scanStatus.getVisibility()!=visibility)scanStatus.setVisibility(visibility);}}
 
-        if(child==bar){navigationShade.invalidate();navigationShade.draw(canvas,navigationScene,getWidth(),dp(116)*.8f,scrimAlpha);if(scrimAlpha>0&&navigationShade.hasPendingSample())postInvalidateDelayed(100);}
-        return super.drawChild(canvas,child,time);
+    private boolean scrolled;
+    private android.animation.ValueAnimator scrimAnimation;
+    private int scrimAlpha;
+
+    public void setScrolled(boolean value) {
+        value = value && (selectedIndex >= 0 && selectedIndex <= 2 || selectedIndex == 6);
+        if (value && selectedIndex >= 3 && selectedIndex <= 5)
+            value = false;
+        if (scrolled == value)
+            return;
+        scrolled = value;
+        if (scrimAnimation != null)
+            scrimAnimation.cancel();
+        scrimAnimation = android.animation.ValueAnimator.ofInt(scrimAlpha, value ? 255 : 0);
+        scrimAnimation.setDuration(220);
+        scrimAnimation.addUpdateListener(animation -> {
+            scrimAlpha = (int)animation.getAnimatedValue();
+            invalidate();
+        });
+        scrimAnimation.start();
     }
-    @Override public void invalidateDrawable(android.graphics.drawable.Drawable who){super.invalidateDrawable(who);if(navigationShade!=null)navigationShade.invalidate();}
-    public void setArtwork(android.net.Uri uri) { artwork.load(uri); }
-    public void setFeaturedDirection(int direction){artwork.setMotionDirection(direction);}
-    public boolean readyForFirstFrame(){return artwork.readyForFirstFrame();}
+
+    @Override
+    protected boolean drawChild(android.graphics.Canvas canvas, View child, long time) {
+        if (child == stage) {
+            com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser = visibleBrowser(content);
+            if (browser != null) {
+                int visibility = browser.ownsScanStatus() ? GONE : VISIBLE;
+                if (scanStatus.getVisibility() != visibility)
+                    scanStatus.setVisibility(visibility);
+            }
+        }
+
+        if (child == bar) {
+            navigationShade.invalidate();
+            navigationShade.draw(canvas, navigationScene, getWidth(), dp(116) * .8f, scrimAlpha);
+            if (scrimAlpha > 0 && navigationShade.hasPendingSample())
+                postInvalidateDelayed(100);
+        }
+        return super.drawChild(canvas, child, time);
+    }
+
+    @Override
+    public void invalidateDrawable(android.graphics.drawable.Drawable who) {
+        super.invalidateDrawable(who);
+        if (navigationShade != null)
+            navigationShade.invalidate();
+    }
+
+    public void setArtwork(android.net.Uri uri) {
+        artwork.load(uri);
+    }
+
+    public void setFeaturedDirection(int direction) {
+        artwork.setMotionDirection(direction);
+    }
+
+    public boolean readyForFirstFrame() {
+        return artwork.readyForFirstFrame();
+    }
+
     /** Gives D-pad focus to the currently selected top-navigation tab. */
     public boolean focusSelectedTab() {
         return selected != null && selected.requestFocus();
     }
 
-    public void selectTab(int index) { if(index<0||index>=7)return;boolean moveNavigationFocus=bar.hasFocus()&&selectedIndex!=index;selectedIndex=index;artwork.setPage(index);artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION&&index==0);setBackground(index>=3&&index<=5?new PreviewUtilityBackground(getContext()):artwork); for(TextView t:tabs)t.setSelected(false); selected=tabs[index];selected.setSelected(true);for(TextView t:tabs)t.setAlpha(t==selected?1f:.78f);if(index>=3&&index<=5)setScrolled(false);if(moveNavigationFocus)selected.requestFocus(); }
-    @Override protected void onDetachedFromWindow() { androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(accentListener);if(scrimAnimation!=null)scrimAnimation.cancel();scrimAlpha=scrolled?255:0;navigationShade.release();artwork.release();super.onDetachedFromWindow(); }
+    public void selectTab(int index) {
+        if (index < 0 || index >= 7)
+            return;
+        boolean moveNavigationFocus = bar.hasFocus() && selectedIndex != index;
+        selectedIndex = index;
+        artwork.setPage(index);
+        artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION && index == 0);
+        setBackground(index >= 3 && index <= 5 ? new PreviewUtilityBackground(getContext()) : artwork);
+        for (TextView t : tabs)
+            t.setSelected(false);
+        selected = tabs[index];
+        selected.setSelected(true);
+        for (TextView t : tabs)
+            t.setAlpha(t == selected ? 1f : .78f);
+        if (index >= 3 && index <= 5)
+            setScrolled(false);
+        if (moveNavigationFocus)
+            selected.requestFocus();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+            .unregisterOnSharedPreferenceChangeListener(accentListener);
+        if (scrimAnimation != null)
+            scrimAnimation.cancel();
+        scrimAlpha = scrolled ? 255 : 0;
+        navigationShade.release();
+        artwork.release();
+        super.onDetachedFromWindow();
+    }
+
     /** Exactly one visible scan-status owner: the landing panel or this shell. */
-    public void setEmbeddedScanStatus(boolean embedded){scanStatus.setVisibility(embedded?GONE:VISIBLE);}
-    public android.widget.FrameLayout getScanContainer() { return scanStatus; }
-    public android.widget.FrameLayout getStatusContainer() { return status; }
-    private int dp(int n) { return TvLayout.dimension(getContext(),n); }
-    private static com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser visibleBrowser(View view){
-        if(!view.isShown())return null;
-        if(view instanceof com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)return (com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)view;
-        if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++){com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser result=visibleBrowser(group.getChildAt(i));if(result!=null)return result;}}
+    public void setEmbeddedScanStatus(boolean embedded) {
+        scanStatus.setVisibility(embedded ? GONE : VISIBLE);
+    }
+
+    public android.widget.FrameLayout getScanContainer() {
+        return scanStatus;
+    }
+
+    public android.widget.FrameLayout getStatusContainer() {
+        return status;
+    }
+
+    private int dp(int n) {
+        return TvLayout.dimension(getContext(), n);
+    }
+
+    private static com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser visibleBrowser(View view) {
+        if (!view.isShown())
+            return null;
+        if (view instanceof com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)
+            return (com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)view;
+        if (view instanceof android.view.ViewGroup) {
+            android.view.ViewGroup group = (android.view.ViewGroup)view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser result =
+                    visibleBrowser(group.getChildAt(i));
+                if (result != null)
+                    return result;
+            }
+        }
         return null;
     }
-    private static String customLabel(Context c){CustomLibraryPage page=CustomLibraryPage.load(c);return page==null?"+":page.name;}
-    /** While a page is being edited the tab shows the draft name; a page never saved yet is dimmed with a draft dot. */
-    public void previewCustomPage(String name,boolean draft){tabs[6].setCompoundDrawables(null,null,null,null);tabs[6].setText(draft?name+"  •":name);tabs[6].setAlpha(draft?.6f:1f);tabs[6].setContentDescription(draft?name+", unsaved new page":name);}
-    public void updateCustomPage(){tabs[6].setAlpha(1f);CustomLibraryPage page=CustomLibraryPage.load(getContext());PreviewIcon.apply(tabs[6],page==null?"plus":"",22);if(page!=null)tabs[6].setCompoundDrawables(null,null,null,null);tabs[6].setText(page==null?"":page.name);tabs[6].setContentDescription(CustomLibraryPage.load(getContext())==null?"Create a New Page":customLabel(getContext()));}
-    private static PageExitGuard editor(View view){if(!view.isShown())return null;if(view instanceof PageExitGuard)return (PageExitGuard)view;if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;for(int i=0;i<group.getChildCount();i++){PageExitGuard found=editor(group.getChildAt(i));if(found!=null)return found;}}return null;}
-    private static void requestBrowserExit(View content,Runnable action){
-        PageExitGuard guard=editor(content);if(guard!=null){guard.requestExit(action);return;}
 
-        com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser=visibleBrowser(content);
-        if(browser==null)action.run();else browser.requestExit(action);
+    private static String customLabel(Context c) {
+        CustomLibraryPage page = CustomLibraryPage.load(c);
+        return page == null ? "+" : page.name;
     }
+
+    /** While a page is being edited the tab shows the draft name; a page never saved yet is dimmed with a draft dot. */
+    public void previewCustomPage(String name, boolean draft) {
+        tabs[6].setCompoundDrawables(null, null, null, null);
+        tabs[6].setText(draft ? name + "  •" : name);
+        tabs[6].setAlpha(draft ? .6f : 1f);
+        tabs[6].setContentDescription(draft ? name + ", unsaved new page" : name);
+    }
+
+    public void updateCustomPage() {
+        tabs[6].setAlpha(1f);
+        CustomLibraryPage page = CustomLibraryPage.load(getContext());
+        PreviewIcon.apply(tabs[6], page == null ? "plus" : "", 22);
+        if (page != null)
+            tabs[6].setCompoundDrawables(null, null, null, null);
+        tabs[6].setText(page == null ? "" : page.name);
+        tabs[6].setContentDescription(CustomLibraryPage.load(getContext()) == null ? "Create a New Page"
+                                                                                   : customLabel(getContext()));
+    }
+
+    private static PageExitGuard editor(View view) {
+        if (!view.isShown())
+            return null;
+        if (view instanceof PageExitGuard)
+            return (PageExitGuard)view;
+        if (view instanceof android.view.ViewGroup) {
+            android.view.ViewGroup group = (android.view.ViewGroup)view;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                PageExitGuard found = editor(group.getChildAt(i));
+                if (found != null)
+                    return found;
+            }
+        }
+        return null;
+    }
+
+    private static void requestBrowserExit(View content, Runnable action) {
+        PageExitGuard guard = editor(content);
+        if (guard != null) {
+            guard.requestExit(action);
+            return;
+        }
+
+        com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser = visibleBrowser(content);
+        if (browser == null)
+            action.run();
+        else
+            browser.requestExit(action);
+    }
+
     /** FD-033 lower tabs retain the selected title, without the unrelated application bar. */
-    public void setDetailsExpanded(boolean expanded){int visibility=expanded?INVISIBLE:VISIBLE;if(bar.getVisibility()!=visibility)bar.setVisibility(visibility);}
-    public boolean focusNavigation() {
-        if (bar.hasFocus()) return false;
-        selected.requestFocus(); return true;
+    public void setDetailsExpanded(boolean expanded) {
+        int visibility = expanded ? INVISIBLE : VISIBLE;
+        if (bar.getVisibility() != visibility)
+            bar.setVisibility(visibility);
     }
-    @Override public boolean dispatchKeyEvent(KeyEvent event) {
-        if(event.getAction()==KeyEvent.ACTION_DOWN||event.getAction()==KeyEvent.ACTION_UP)homeInput(content);
-        View previous=findFocus();boolean consumed=routeKeyEvent(event);
-        if(event.getAction()==KeyEvent.ACTION_DOWN)com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous,findFocus(),event.getKeyCode(),consumed);
+
+    public boolean focusNavigation() {
+        if (bar.hasFocus())
+            return false;
+        selected.requestFocus();
+        return true;
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_UP)
+            homeInput(content);
+        View previous = findFocus();
+        boolean consumed = routeKeyEvent(event);
+        if (event.getAction() == KeyEvent.ACTION_DOWN)
+            com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous, findFocus(), event.getKeyCode(),
+                                                                            consumed);
         return consumed;
     }
-    private static boolean focusLibraryEntry(View view){
-        if(view instanceof ContentFocus)return ((ContentFocus)view).focusFromNavigation();
-        if(view instanceof PreviewPages)return ((PreviewPages)view).focusFromNavigation();
-        if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)if(focusLibraryEntry(((android.view.ViewGroup)view).getChildAt(i)))return true;
+
+    private static boolean focusLibraryEntry(View view) {
+        if (view instanceof ContentFocus)
+            return ((ContentFocus)view).focusFromNavigation();
+        if (view instanceof PreviewPages)
+            return ((PreviewPages)view).focusFromNavigation();
+        if (view instanceof android.view.ViewGroup)
+            for (int i = 0; i < ((android.view.ViewGroup)view).getChildCount(); i++)
+                if (focusLibraryEntry(((android.view.ViewGroup)view).getChildAt(i)))
+                    return true;
         return false;
     }
-    private static void homeInput(View view){if(view instanceof PreviewPages){((PreviewPages)view).recordRemoteInput();return;}if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)homeInput(((android.view.ViewGroup)view).getChildAt(i));}
+
+    private static void homeInput(View view) {
+        if (view instanceof PreviewPages) {
+            ((PreviewPages)view).recordRemoteInput();
+            return;
+        }
+        if (view instanceof android.view.ViewGroup)
+            for (int i = 0; i < ((android.view.ViewGroup)view).getChildCount(); i++)
+                homeInput(((android.view.ViewGroup)view).getChildAt(i));
+    }
+
     private boolean routeKeyEvent(KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP
-                && !bar.hasFocus() && firstRow.getAsBoolean()) {
-            selected.requestFocus(); return true;
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP &&
+            !bar.hasFocus() && firstRow.getAsBoolean()) {
+            selected.requestFocus();
+            return true;
         }
         return super.dispatchKeyEvent(event);
     }
