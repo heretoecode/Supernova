@@ -9,16 +9,31 @@ import android.widget.*;
 import android.widget.FrameLayout;
 import androidx.leanback.widget.*;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.foundation.BundledNoticeReader;
+import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
+import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.archos.mediacenter.video.leanback.details.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
+import com.archos.mediacenter.video.player.PlayerController;
+import com.archos.mediacenter.video.utils.VideoMetadata;
+import com.archos.medialib.IMediaPlayer;
+import com.archos.medialib.MediaMetadata;
+import com.archos.mediascraper.MovieTags;
+import com.squareup.picasso.Picasso;
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import java.util.*;
@@ -37,10 +52,10 @@ public class Supernova138UiTest {
             .putBoolean("supernova_welcome_dismissed", true)
             .commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -61,8 +76,8 @@ public class Supernova138UiTest {
             TopNavigation nav = new TopNavigation(host.get(), page, n -> {
             }, page::atTop);
             host.get().setContentView(nav);
-            org.json.JSONObject details =
-                new org.json.JSONObject()
+            JSONObject details =
+                new JSONObject()
                     .put("title", "A Long Official Movie Title")
                     .put("release_date", "2024-03-01")
                     .put("runtime", 134)
@@ -74,9 +89,9 @@ public class Supernova138UiTest {
                     .put("revenue", 87654321)
                     .put("overview", "An actual synopsis fixture.")
                     .put("production_countries",
-                        new org.json.JSONArray().put(new org.json.JSONObject().put("name", "United Kingdom")));
+                        new JSONArray().put(new JSONObject().put("name", "United Kingdom")));
             page.bindRemote(details, "movie", 0);
-            com.archos.mediascraper.MovieTags tags = new com.archos.mediascraper.MovieTags();
+            MovieTags tags = new MovieTags();
             for (int n = 1; n <= 12; n++) {
                 tags.addActorIfAbsent("Actor " + n, "Role " + n);
                 tags.addDirectorIfAbsent("Director " + n);
@@ -227,54 +242,54 @@ public class Supernova138UiTest {
             Movie movie =
                 new Movie(1, "smb://server/films/film.mkv", "Fixture", 7, "Synopsis", 2024, 7, null, null, 7200000, 0,
                     0, 0, false, false, false, false, 0, 0, 3840, 2160, "AAC", "h264", null, null, 0, 1, 1000000000, 0);
-            com.archos.medialib.MediaMetadata data = org.mockito.Mockito.mock(com.archos.medialib.MediaMetadata.class);
-            org.mockito.Mockito.when(data.has(org.mockito.ArgumentMatchers.anyInt())).thenReturn(true);
-            org.mockito.Mockito.when(data.getString(org.mockito.ArgumentMatchers.anyInt())).thenAnswer(call -> {
+            MediaMetadata data = Mockito.mock(MediaMetadata.class);
+            Mockito.when(data.has(ArgumentMatchers.anyInt())).thenReturn(true);
+            Mockito.when(data.getString(ArgumentMatchers.anyInt())).thenAnswer(call -> {
                 int key = call.getArgument(0);
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK_FORMAT)
+                    == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                        + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_FORMAT)
                     return "AAC";
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK_CHANNELS)
+                    == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                        + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_CHANNELS)
                     return "5.1";
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE)
+                    == IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
+                        + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE)
                     return "eng";
                 return "";
             });
-            org.mockito.Mockito.when(data.getInt(org.mockito.ArgumentMatchers.anyInt())).thenAnswer(call -> {
+            Mockito.when(data.getInt(ArgumentMatchers.anyInt())).thenAnswer(call -> {
                 int key = call.getArgument(0);
-                if (key == com.archos.medialib.IMediaPlayer.METADATA_KEY_NB_VIDEO_TRACK
-                    || key == com.archos.medialib.IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK
-                    || key == com.archos.medialib.IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK)
+                if (key == IMediaPlayer.METADATA_KEY_NB_VIDEO_TRACK
+                    || key == IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK
+                    || key == IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK)
                     return 1;
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK_FPS_SCALE)
+                    == IMediaPlayer.METADATA_KEY_VIDEO_TRACK
+                        + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_FPS_SCALE)
                     return 1001;
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK_FPS_RATE)
+                    == IMediaPlayer.METADATA_KEY_VIDEO_TRACK
+                        + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_FPS_RATE)
                     return 24000;
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK_BIT_RATE)
+                    == IMediaPlayer.METADATA_KEY_VIDEO_TRACK
+                        + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_BIT_RATE)
                     return 12000;
                 if (key
-                    == com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK
-                        + com.archos.medialib.IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC)
+                    == IMediaPlayer.METADATA_KEY_VIDEO_TRACK
+                        + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC)
                     return 16;
                 return 0;
             });
-            com.archos.mediacenter.video.utils.VideoMetadata metadata =
-                new com.archos.mediacenter.video.utils.VideoMetadata();
+            VideoMetadata metadata =
+                new VideoMetadata();
             metadata.setData(data);
             movie.setMetadata(metadata);
             page.bind(movie);
-            com.archos.mediascraper.MovieTags tags = new com.archos.mediascraper.MovieTags();
+            MovieTags tags = new MovieTags();
             tags.addGenreIfAbsent("Drama");
             for (int n = 1; n <= 12; n++) {
                 tags.addActorIfAbsent("Actor " + n, "Role " + n);
@@ -325,7 +340,7 @@ public class Supernova138UiTest {
             assertNotNull(filters);
             filters.requestFocus();
             filters.performClick();
-            Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog dialog = ShadowDialog.getLatestDialog();
             assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Clear Filters"));
             assertNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Page Details"));
             assertEquals(0, edited[0]);
@@ -343,12 +358,12 @@ public class Supernova138UiTest {
     public void breadcrumbUpdatesCannotStealLeftDeviceFocusAndAllFilesActuallyToggles() {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            var browser = new UniversalFileBrowser(host.get());
             host.get().setContentView(browser);
-            List<com.archos.mediacenter.video.leanback.adapter.object.Box> volumes = new ArrayList<>();
+            List<Box> volumes = new ArrayList<>();
             for (int n = 0; n < 10; n++) {
-                var box = new com.archos.mediacenter.video.leanback.adapter.object.Box(
-                    com.archos.mediacenter.video.leanback.adapter.object.Box.ID.USB, "USB " + n, 0, "/storage/usb" + n);
+                var box = new Box(
+                    Box.ID.USB, "USB " + n, 0, "/storage/usb" + n);
                 volumes.add(box);
             }
             browser.locations(volumes, Collections.emptyList(), Collections.emptyList(), s -> {
@@ -406,7 +421,7 @@ public class Supernova138UiTest {
             View licences = root.findViewWithTag("semantic:settings:about:Open-source Licences");
             licences.requestFocus();
             licences.performClick();
-            com.archos.mediacenter.video.foundation.FoundationAboutWorkspace workspace = findAbout(root);
+            FoundationAboutWorkspace workspace = findAbout(root);
             assertNotNull(workspace);
             ExecutorService reader = ReflectionHelpers.getField(workspace, "reader");
             reader.submit(() -> {
@@ -421,7 +436,7 @@ public class Supernova138UiTest {
             assertTrue(rows.get(0).getText().toString().startsWith("AndroidX"));
             assertEquals("Licence component labels use the approved single-line rows", 1, rows.get(0).getMaxLines());
             assertSame(rows.get(0), root.findFocus());
-            com.archos.mediacenter.video.foundation.BundledNoticeReader pager =
+            BundledNoticeReader pager =
                 ReflectionHelpers.getField(workspace, "noticeReader");
             assertNotNull("Actual large first notice opens bounded reader", pager);
             rows.get(0).dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
@@ -449,9 +464,9 @@ public class Supernova138UiTest {
         assertEquals(message, view.getHeight(), visible.height());
     }
 
-    private com.archos.mediacenter.video.foundation.FoundationAboutWorkspace findAbout(View root) {
-        if (root instanceof com.archos.mediacenter.video.foundation.FoundationAboutWorkspace)
-            return (com.archos.mediacenter.video.foundation.FoundationAboutWorkspace) root;
+    private FoundationAboutWorkspace findAbout(View root) {
+        if (root instanceof FoundationAboutWorkspace)
+            return (FoundationAboutWorkspace) root;
         if (root instanceof ViewGroup)
             for (int n = 0; n < ((ViewGroup) root).getChildCount(); n++) {
                 var found = findAbout(((ViewGroup) root).getChildAt(n));
@@ -465,7 +480,7 @@ public class Supernova138UiTest {
     public void overviewScanTextIsReadOnlyAndContained() {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            var browser = new UniversalFileBrowser(host.get());
             host.get().setContentView(browser);
             PreviewPagesTest.layout(browser);
             TextView scan = ReflectionHelpers.getField(browser, "scanOverview");
@@ -491,10 +506,10 @@ public class Supernova138UiTest {
             host.get().setContentView(root);
             View bar = root.findViewById(com.archos.mediacenter.video.R.id.control_bar);
             bar.setVisibility(View.VISIBLE);
-            com.archos.mediacenter.video.player.PlayerController controller = org.mockito.Mockito.mock(
-                com.archos.mediacenter.video.player.PlayerController.class, org.mockito.Mockito.CALLS_REAL_METHODS);
+            PlayerController controller = Mockito.mock(
+                PlayerController.class, Mockito.CALLS_REAL_METHODS);
             ReflectionHelpers.setField(controller, "mContext", host.get());
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean("try_new_ui", true)
                 .putString("uimode", "2")
