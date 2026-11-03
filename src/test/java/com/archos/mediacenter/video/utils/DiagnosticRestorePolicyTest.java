@@ -18,6 +18,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks restored diagnostic policy follows durable restore outcomes without deleting logs or credentials. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class DiagnosticRestorePolicyTest {
