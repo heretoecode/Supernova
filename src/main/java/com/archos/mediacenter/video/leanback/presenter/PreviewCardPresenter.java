@@ -1,7 +1,10 @@
 package com.archos.mediacenter.video.leanback.presenter;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.content.res.ColorStateList;
@@ -17,6 +20,8 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.squareup.picasso.Picasso;
+import java.util.Calendar;
+import java.util.Objects;
 
 /** Lightweight experimental cards: existing library objects and click actions are preserved. */
 public final class PreviewCardPresenter extends Presenter {
@@ -62,14 +67,14 @@ public final class PreviewCardPresenter extends Presenter {
             setClipChildren(false);
             setClipToPadding(false);
             FrameLayout body = new FrameLayout(c) {
-                private final android.graphics.Path clip = new android.graphics.Path();
+                private final Path clip = new Path();
                 @Override
-                protected void dispatchDraw(android.graphics.Canvas canvas) {
+                protected void dispatchDraw(Canvas canvas) {
                     int saved = canvas.save();
                     float inset = .5f * getResources().getDisplayMetrics().density;
                     clip.reset();
-                    clip.addRoundRect(new android.graphics.RectF(inset, inset, getWidth() - inset, getHeight() - inset),
-                        dp(6), dp(6), android.graphics.Path.Direction.CW);
+                    clip.addRoundRect(new RectF(inset, inset, getWidth() - inset, getHeight() - inset),
+                        dp(6), dp(6), Path.Direction.CW);
                     canvas.clipPath(clip);
                     super.dispatchDraw(canvas);
                     canvas.restoreToCount(saved);
@@ -232,7 +237,7 @@ public final class PreviewCardPresenter extends Presenter {
         Object identity = item instanceof Video ? "video:" + ((Video) item).getId()
             : item instanceof Tvshow ? "show:" + ((Tvshow) item).getTvshowId()
                                                 : item;
-        boolean sameItem = java.util.Objects.equals(identity, c.boundItem);
+        boolean sameItem = Objects.equals(identity, c.boundItem);
         c.boundItem = identity;
         com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind", "same_item", sameItem, "style",
             style.name(), "media_id", c.diagnosticMediaId, "reason", sameItem ? "metadata_rebind" : "identity_changed");
@@ -297,7 +302,7 @@ public final class PreviewCardPresenter extends Presenter {
             int year = item instanceof Movie ? ((Movie) item).getYear()
                 : item instanceof Tvshow ? ((Tvshow) item).getYear()
                                              : 0;
-            String detail = year >= 1800 && year <= java.util.Calendar.getInstance().get(java.util.Calendar.YEAR) + 5
+            String detail = year >= 1800 && year <= Calendar.getInstance().get(Calendar.YEAR) + 5
                 ? String.valueOf(year)
                 : "";
             // An end year / ongoing marker needs reliable series-status metadata.
