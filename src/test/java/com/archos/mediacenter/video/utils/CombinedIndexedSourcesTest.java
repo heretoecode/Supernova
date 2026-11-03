@@ -1,13 +1,17 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.zip.ZipFile;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -47,7 +51,7 @@ public class CombinedIndexedSourcesTest {
             db.execSQL(
                 "INSERT INTO video_list_table(_id,list_id,m_online_id,e_online_id,sync_status) VALUES(12,7,123,-1,1),(13,9,-1,456,0)");
         }
-        try (var db = android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(
+        try (var db = SQLiteDatabase.openOrCreateDatabase(
                  app.getDatabasePath(BookmarkStoreRecovery.DATABASE), null)) {
             db.execSQL(
                 "CREATE TABLE shortcuts(_id INTEGER PRIMARY KEY AUTOINCREMENT,uri TEXT NOT NULL,shortcut_name TEXT NOT NULL,friendly_uri TEXT)");
@@ -55,7 +59,7 @@ public class CombinedIndexedSourcesTest {
             db.execSQL(
                 "INSERT INTO shortcuts(uri,shortcut_name,friendly_uri) VALUES('smb://nas.example/Media','Original bookmark',NULL)");
         }
-        try (var db = android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(
+        try (var db = SQLiteDatabase.openOrCreateDatabase(
                  app.getDatabasePath(IndexedSourceStoreRecovery.DATABASE), null)) {
             db.execSQL(
                 "CREATE TABLE shortcuts_table_video(_id INTEGER PRIMARY KEY AUTOINCREMENT,path TEXT NOT NULL,name TEXT NOT NULL,ippath TEXT,friendly_url TEXT,rescan INTEGER DEFAULT(1))");
@@ -134,7 +138,7 @@ public class CombinedIndexedSourcesTest {
         assertEquals("AUTH_CANARY", fixture.prefs.getString("oauth_token", null));
         // The existing scanner reader, rather than only the backup implementation, sees the new choice.
         ShortcutDbAdapter.VIDEO.close();
-        assertTrue(ShortcutDbAdapter.VIDEO.getRescanUris(fixture.app).contains(android.net.Uri.parse(LOCATION)));
+        assertTrue(ShortcutDbAdapter.VIDEO.getRescanUris(fixture.app).contains(Uri.parse(LOCATION)));
         ShortcutDbAdapter.VIDEO.close();
     }
 
@@ -205,9 +209,9 @@ public class CombinedIndexedSourcesTest {
             fail();
         } catch (ProcessDeath expected) {
         }
-        try (var db = android.database.sqlite.SQLiteDatabase.openDatabase(
+        try (var db = SQLiteDatabase.openDatabase(
                  fixture.app.getDatabasePath(IndexedSourceStoreRecovery.DATABASE).getPath(), null,
-                 android.database.sqlite.SQLiteDatabase.OPEN_READWRITE)) {
+                 SQLiteDatabase.OPEN_READWRITE)) {
             db.execSQL("UPDATE shortcuts_table_video SET name='Later manual',rescan=0 WHERE _id=1");
         }
         String later = sources();
@@ -249,9 +253,9 @@ public class CombinedIndexedSourcesTest {
     @Test
     public void staleIndexedPreviewFailsBeforeAnyPreferenceOrJournalWrite() throws Exception {
         var plan = fixture.transaction.prepare(all(), null, fixture.physical());
-        try (var db = android.database.sqlite.SQLiteDatabase.openDatabase(
+        try (var db = SQLiteDatabase.openDatabase(
                  fixture.app.getDatabasePath(IndexedSourceStoreRecovery.DATABASE).getPath(), null,
-                 android.database.sqlite.SQLiteDatabase.OPEN_READWRITE)) {
+                 SQLiteDatabase.OPEN_READWRITE)) {
             db.execSQL("UPDATE shortcuts_table_video SET rescan=1 WHERE _id=1");
         }
         String later = sources();
@@ -279,16 +283,16 @@ public class CombinedIndexedSourcesTest {
     @Test
     public void realSourceExportArchiveImportDeclaresSchemaTwoAndPreservesPrivacyAndRescan() throws Exception {
         File archive = LogicalBackupExporter.preparePrivate(fixture.app, Set.of(BackupCategory.SOURCES), () -> false);
-        try (var zip = new java.util.zip.ZipFile(archive)) {
+        try (var zip = new ZipFile(archive)) {
             String text = new String(zip.getInputStream(zip.getEntry("categories/SOURCES.json")).readAllBytes(),
-                java.nio.charset.StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
             assertFalse(text.contains(LOCATION));
             assertFalse(text.contains("10.0.0.1"));
             assertFalse(text.contains("ACCOUNT_CANARY"));
             assertFalse(text.contains("AUTH_CANARY"));
             JSONObject manifest =
                 new JSONObject(new String(zip.getInputStream(zip.getEntry("manifest.json")).readAllBytes(),
-                    java.nio.charset.StandardCharsets.UTF_8));
+                    StandardCharsets.UTF_8));
             assertEquals(2, manifest.getJSONArray("categories").getJSONObject(0).getInt("schema"));
         }
         try (var imported = LogicalBackupImport.prepare(fixture.app, new FileInputStream(archive), () -> false)) {
