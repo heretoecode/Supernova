@@ -26,6 +26,7 @@ import com.archos.mediacenter.video.browser.filebrowsing.network.WorkgroupShortc
 import java.util.List;
 
 
+/** Displays discovered UPnP shares alongside network shortcuts. */
 public class UpnpShortcutAndServerAdapter extends WorkgroupShortcutAndServerAdapter {
     private boolean mDisplayWorkgroupSeparator;
 
