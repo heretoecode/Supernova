@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/** Adds view shadows and adjusts their focus level on Android Jelly Bean MR2. */
 class ShadowHelperJbmr2 {
 
     static class ShadowImpl {
