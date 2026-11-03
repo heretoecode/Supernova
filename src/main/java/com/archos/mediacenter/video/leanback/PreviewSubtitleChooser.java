@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.*;
 import androidx.fragment.app.FragmentActivity;
+import com.archos.filecorelibrary.MetaFile2Factory;
 import com.archos.mediacenter.video.utils.SubtitlesWizardCommon;
 import java.util.*;
 import java.util.concurrent.*;
@@ -63,7 +64,7 @@ public final class PreviewSubtitleChooser {
                         String path = associated ? common.getCurrentFile(i) : common.getAvailableFile(i);
                         boolean writable = false;
                         try {
-                            writable = com.archos.filecorelibrary.MetaFile2Factory.getMetaFileForUrl(Uri.parse(path))
+                            writable = MetaFile2Factory.getMetaFileForUrl(Uri.parse(path))
                                            .canWrite();
                         } catch (Exception ignored) {
                         }
