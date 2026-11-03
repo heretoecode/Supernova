@@ -1,11 +1,27 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.EditText;
 import androidx.preference.*;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -34,12 +50,12 @@ public class NextQaReliabilityTest {
         }
 
         @Override
-        public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(LayoutInflater i, ViewGroup p, Bundle s) {
+        public RecyclerView onCreateRecyclerView(LayoutInflater i, ViewGroup p, Bundle s) {
             return PreviewSettings.grid(requireContext());
         }
 
         @Override
-        protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen root) {
+        protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen root) {
             return PreviewSettings.adapter(root);
         }
 
@@ -135,23 +151,23 @@ public class NextQaReliabilityTest {
 
     @Test
     public void historyBroadcastFollowsCommittedEpisodeProgress() throws Exception {
-        android.content.Context c = RuntimeEnvironment.getApplication();
+        Context c = RuntimeEnvironment.getApplication();
         c.deleteDatabase(ViewingHistory.DATABASE);
         PreferenceManager.getDefaultSharedPreferences(c).edit().clear().commit();
         final int[] observed = {
             0
         };
-        android.content.BroadcastReceiver receiver = new android.content.BroadcastReceiver() {
-            public void onReceive(android.content.Context context, android.content.Intent intent) {
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
                 assertEquals(5000, ViewingHistory.read(context).get("tmdb:tv:123:2:1").position);
                 observed[0]++;
             }
         };
-        c.registerReceiver(receiver, new android.content.IntentFilter(c.getPackageName() + ".VIEWING_STATE_CHANGED"));
+        c.registerReceiver(receiver, new IntentFilter(c.getPackageName() + ".VIEWING_STATE_CHANGED"));
         try {
             com.archos.mediacenter.utils.videodb.VideoDbInfo info =
                 new com.archos.mediacenter.utils.videodb.VideoDbInfo(
-                    android.net.Uri.parse("file:///storage/TV/Vigil/S02E01.mkv"));
+                    Uri.parse("file:///storage/TV/Vigil/S02E01.mkv"));
             info.isShow = true;
             info.scraperShowId = "123";
             info.scraperSeasonNr = 2;
@@ -172,7 +188,7 @@ public class NextQaReliabilityTest {
     public void keyboardDoneEditsFieldAndCancelDoesNotCommitPage() {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            android.widget.EditText input = new KeyboardInput(host.get());
+            EditText input = new KeyboardInput(host.get());
             input.setText("Name");
             input.setSelection(4);
             PreviewKeyboard keyboard = new PreviewKeyboard(host.get(), input, null);
@@ -208,29 +224,29 @@ public class NextQaReliabilityTest {
 
     @Test(timeout = 20000)
     public void excludedFullPageCannotStarveLaterDriveRows() throws Exception {
-        android.content.Context c = RuntimeEnvironment.getApplication();
+        Context c = RuntimeEnvironment.getApplication();
         PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .putBoolean("supernova_library_policy_initialized", true)
-            .putStringSet("supernova_library_roots", java.util.Set.of("file:///storage/drive-b"))
+            .putStringSet("supernova_library_roots", Set.of("file:///storage/drive-b"))
             .commit();
-        android.content.ContentResolver resolver = org.mockito.Mockito.mock(android.content.ContentResolver.class);
-        final java.util.List<Long> pages = new java.util.ArrayList<>();
+        ContentResolver resolver = org.mockito.Mockito.mock(ContentResolver.class);
+        final List<Long> pages = new ArrayList<>();
         org.mockito.Mockito
-            .when(resolver.query(org.mockito.ArgumentMatchers.any(android.net.Uri.class),
+            .when(resolver.query(org.mockito.ArgumentMatchers.any(Uri.class),
                 org.mockito.ArgumentMatchers.any(String[].class),
                 org.mockito.ArgumentMatchers.any(android.os.Bundle.class), org.mockito.ArgumentMatchers.isNull()))
             .thenAnswer(call -> {
                 String selection = ((android.os.Bundle) call.getArgument(2))
-                                       .getString(android.content.ContentResolver.QUERY_ARG_SQL_SELECTION);
-                java.util.regex.Matcher match = java.util.regex.Pattern.compile("_id > (-?[0-9]+)").matcher(selection);
+                                       .getString(ContentResolver.QUERY_ARG_SQL_SELECTION);
+                Matcher match = Pattern.compile("_id > (-?[0-9]+)").matcher(selection);
                 long after = match.find() ? Long.parseLong(match.group(1)) : -1;
                 pages.add(after);
                 if (pages.size() > 4)
                     throw new AssertionError("Unscanned excluded page was revisited");
-                android.database.MatrixCursor rows =
-                    new android.database.MatrixCursor(new String[] {
+                MatrixCursor rows =
+                    new MatrixCursor(new String[] {
                         "_id", "_data", "scraper_id"
                     });
                 for (long id = Math.max(1, after + 1); id <= Math.min(2502, Math.max(1, after + 1) + 2499); id++)
@@ -244,20 +260,20 @@ public class NextQaReliabilityTest {
             });
         com.archos.mediaprovider.video.VideoStoreImportImpl importer = org.mockito.Mockito.mock(
             com.archos.mediaprovider.video.VideoStoreImportImpl.class, org.mockito.Mockito.CALLS_REAL_METHODS);
-        java.lang.reflect.Method scan = com.archos.mediaprovider.video.VideoStoreImportImpl.class.getDeclaredMethod(
-            "doScan", android.content.ContentResolver.class, android.content.Context.class,
+        Method scan = com.archos.mediaprovider.video.VideoStoreImportImpl.class.getDeclaredMethod(
+            "doScan", ContentResolver.class, Context.class,
             com.archos.mediaprovider.video.Blacklist.class);
         scan.setAccessible(true);
         scan.invoke(importer, resolver, c, org.mockito.Mockito.mock(com.archos.mediaprovider.video.Blacklist.class));
-        org.mockito.ArgumentCaptor<java.util.ArrayList<android.content.ContentProviderOperation>> batches =
-            org.mockito.ArgumentCaptor.forClass(java.util.ArrayList.class);
+        org.mockito.ArgumentCaptor<ArrayList<ContentProviderOperation>> batches =
+            org.mockito.ArgumentCaptor.forClass(ArrayList.class);
         org.mockito.Mockito.verify(resolver, org.mockito.Mockito.times(2))
             .applyBatch(org.mockito.ArgumentMatchers.anyString(), batches.capture());
         assertEquals(0, batches.getAllValues().get(0).size());
         assertEquals(2, batches.getAllValues().get(1).size());
-        assertEquals(java.util.List.of(-1L, 2500L), pages);
+        assertEquals(List.of(-1L, 2500L), pages);
         org.mockito.Mockito.verify(resolver, org.mockito.Mockito.never())
-            .delete(org.mockito.ArgumentMatchers.any(android.net.Uri.class), org.mockito.ArgumentMatchers.any(),
+            .delete(org.mockito.ArgumentMatchers.any(Uri.class), org.mockito.ArgumentMatchers.any(),
                 org.mockito.ArgumentMatchers.any());
     }
 }
