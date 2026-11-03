@@ -30,163 +30,299 @@ public final class StreamingRepository {
     public static final String PREFERRED = "streaming_preferred_";
     public static final ExecutorService IO = Executors.newFixedThreadPool(2);
     private static final OkHttpClient HTTP = new OkHttpClient.Builder()
-            .connectTimeout(8, TimeUnit.SECONDS).readTimeout(12, TimeUnit.SECONDS)
-            .callTimeout(20, TimeUnit.SECONDS).build();
+                                                 .connectTimeout(8, TimeUnit.SECONDS)
+                                                 .readTimeout(12, TimeUnit.SECONDS)
+                                                 .callTimeout(20, TimeUnit.SECONDS)
+                                                 .build();
+
     /** Shared trust/transport configuration; authentication belongs to each API request, never this client. */
-    public static OkHttpClient readOnlyNetworkClient(){return HTTP;}
+    public static OkHttpClient readOnlyNetworkClient() {
+        return HTTP;
+    }
+
     private static final long TTL = TimeUnit.HOURS.toMillis(6);
     private static final Map<String, Cached> CACHE = new LinkedHashMap<String, Cached>(32, .75f, true) {
-        @Override protected boolean removeEldestEntry(Map.Entry<String, Cached> e) { return size() > 80; }
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, Cached> e) {
+            return size() > 80;
+        }
     };
+
     private static class Cached {
-        final long at; final Availability value;
-        Cached(Availability value) { this(value,System.currentTimeMillis()); }
-        Cached(Availability value,long at) { this.value=value;this.at=at; }
+        final long at;
+        final Availability value;
+
+        Cached(Availability value) {
+            this(value, System.currentTimeMillis());
+        }
+
+        Cached(Availability value, long at) {
+            this.value = value;
+            this.at = at;
+        }
     }
+
     public static final class Provider {
-        public final int id; public final String name; public final String logo;
-        public Provider(int id, String name) { this(id, name, ""); }
-        public Provider(int id, String name, String logo) { this.id = id; this.name = name; this.logo = logo; }
+        public final int id;
+        public final String name;
+        public final String logo;
+
+        public Provider(int id, String name) {
+            this(id, name, "");
+        }
+
+        public Provider(int id, String name, String logo) {
+            this.id = id;
+            this.name = name;
+            this.logo = logo;
+        }
     }
+
     public static final class Offer {
-        public final Provider provider; public final String type;
+        public final Provider provider;
+        public final String type;
         public String url = "";
-        Offer(Provider provider, String type) { this.provider = provider; this.type = type; }
+
+        Offer(Provider provider, String type) {
+            this.provider = provider;
+            this.type = type;
+        }
     }
+
     public static final class Availability {
         public final List<Offer> offers;
         public final String watchUrl;
-        Availability(List<Offer> offers, String watchUrl) { this.offers = offers; this.watchUrl = watchUrl; }
+
+        Availability(List<Offer> offers, String watchUrl) {
+            this.offers = offers;
+            this.watchUrl = watchUrl;
+        }
     }
-    public static SharedPreferences prefs(Context c) { return PreferenceManager.getDefaultSharedPreferences(c); }
+
+    public static SharedPreferences prefs(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c);
+    }
+
     public static String country(Context c) {
         String country = prefs(c).getString(COUNTRY, "IE");
         return country != null && country.matches("[A-Z]{2}") ? country : "IE";
     }
+
     public static Set<String> selected(Context c) {
         return new HashSet<>(prefs(c).getStringSet(PROVIDERS + country(c), Collections.emptySet()));
     }
-    public static String preferred(Context c) { return prefs(c).getString(PREFERRED + country(c), ""); }
+
+    public static String preferred(Context c) {
+        return prefs(c).getString(PREFERRED + country(c), "");
+    }
+
     public static boolean allowedType(String type) {
         return "flatrate".equals(type) || "free".equals(type) || "ads".equals(type);
     }
+
     /** Narrow read-only metadata gateway using the existing TMDb client and credentials. */
-    public static JSONObject metadata(Context context,String kind,long id,String section)throws Exception{
-        if(!(kind.equals("movie")||kind.equals("tv"))||id<=0||!(Arrays.asList("","videos","recommendations","credits","images","external_ids","release_dates","content_ratings","alternative_titles").contains(section)||kind.equals("tv")&&(section.matches("season/[0-9]{1,4}")||section.matches("season/[0-9]{1,4}/episode/[0-9]{1,4}/external_ids"))))throw new IOException("Invalid metadata request");
-        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,kind,id,section,()->api(context,kind+"/"+id+(section.isEmpty()?"":"/"+section),null));
+    public static JSONObject metadata(Context context, String kind, long id, String section) throws Exception {
+        if (!(kind.equals("movie") || kind.equals("tv")) || id <= 0
+            || !(Arrays
+                     .asList("", "videos", "recommendations", "credits", "images", "external_ids", "release_dates",
+                         "content_ratings", "alternative_titles")
+                     .contains(section)
+                || kind.equals("tv")
+                    && (section.matches("season/[0-9]{1,4}")
+                        || section.matches("season/[0-9]{1,4}/episode/[0-9]{1,4}/external_ids"))))
+            throw new IOException("Invalid metadata request");
+        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context, kind, id, section,
+            () -> api(context, kind + "/" + id + (section.isEmpty() ? "" : "/" + section), null));
     }
+
     /** TMDB user reviews, existing application API access only. Bounded pages; no account flow. */
-    public static JSONObject reviews(Context context,String kind,long id,int page)throws Exception{
-        if(!Arrays.asList("movie","tv").contains(kind)||id<=0||page<1||page>5)throw new IOException("Invalid review request");
-        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context,kind,id,"reviews/page_"+page,
-                ()->{JSONObject result=api(context,kind+"/"+id+"/reviews",null,page);
-                    if(result.optInt("page",0)!=page)throw new IOException("Mismatched review page");return result;});
+    public static JSONObject reviews(Context context, String kind, long id, int page) throws Exception {
+        if (!Arrays.asList("movie", "tv").contains(kind) || id <= 0 || page < 1 || page > 5)
+            throw new IOException("Invalid review request");
+        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(
+            context, kind, id, "reviews/page_" + page, () -> {
+                JSONObject result = api(context, kind + "/" + id + "/reviews", null, page);
+                if (result.optInt("page", 0) != page)
+                    throw new IOException("Mismatched review page");
+                return result;
+            });
     }
+
     private static JSONObject api(Context context, String path, String country) throws Exception {
-        return api(context,path,country,0);
+        return api(context, path, country, 0);
     }
-    private static JSONObject api(Context context,String path,String country,int page)throws Exception{
-        Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path).buildUpon()
+
+    private static JSONObject api(Context context, String path, String country, int page) throws Exception {
+        Uri.Builder url =
+            Uri.parse("https://api.themoviedb.org/3/" + path)
+                .buildUpon()
                 .appendQueryParameter("api_key", context.getString(com.archos.medialib.R.string.tmdb_api_key))
                 .appendQueryParameter("language", Locale.getDefault().toLanguageTag());
-        if(page>0)url.appendQueryParameter("page",String.valueOf(page));
-        if (country != null) url.appendQueryParameter("watch_region", country);
-        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
-        long started=android.os.SystemClock.elapsedRealtime();
-        try(com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored=com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)){
-            String body=get(url.build().toString(),2*1024*1024,operation);
-            try{
-                JSONObject value=new JSONObject(body);validateMetadataResponse(path,value);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_validated","operation_id",operation);
+        if (page > 0)
+            url.appendQueryParameter("page", String.valueOf(page));
+        if (country != null)
+            url.appendQueryParameter("watch_region", country);
+        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
+        long started = android.os.SystemClock.elapsedRealtime();
+        try (com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored =
+                 com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)) {
+            String body = get(url.build().toString(), 2 * 1024 * 1024, operation);
+            try {
+                JSONObject value = new JSONObject(body);
+                validateMetadataResponse(path, value);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    "metadata_semantic_validated", "operation_id", operation);
                 return value;
-            }catch(org.json.JSONException|IOException invalid){
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_failed","operation_id",operation,"failure_category",invalid instanceof org.json.JSONException?"invalid_json":"invalid_payload");
-                throw new IOException("Invalid metadata response",invalid);
+            } catch (org.json.JSONException | IOException invalid) {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_failed", "operation_id",
+                    operation, "failure_category",
+                    invalid instanceof org.json.JSONException ? "invalid_json" : "invalid_payload");
+                throw new IOException("Invalid metadata response", invalid);
             }
-        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_request",started);}
+        } finally {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+                operation, "metadata_request", started);
+        }
     }
+
     /** A 200 transport response is not proof that a usable metadata package was returned. */
-    static void validateMetadataResponse(String path,JSONObject value)throws IOException{
-        if(value.has("success")&&!value.optBoolean("success",false))throw new IOException("Service rejected metadata request");
-        if(path.startsWith("watch/providers/")){
-            if(value.optJSONArray("results")==null)throw new IOException("Missing provider catalogue");return;
-        }
-        if(path.endsWith("/watch/providers")){
-            if(value.optJSONObject("results")==null)throw new IOException("Missing availability regions");return;
-        }
-        String[] parts=path.split("/");
-        if(parts.length<2||!parts[1].matches("[0-9]+"))throw new IOException("Invalid metadata identity");
-        if(parts.length==4&&"season".equals(parts[2])){
-            if(value.optInt("season_number",-1)!=Integer.parseInt(parts[3])||value.optJSONArray("episodes")==null)throw new IOException("Invalid season package");return;
-        }
-        // Episode external IDs identify the episode, not the show in the URL.
-        if(parts.length==7&&"tv".equals(parts[0])&&"season".equals(parts[2])&&"episode".equals(parts[4])&&"external_ids".equals(parts[6])){
-            if(!parts[3].matches("[0-9]{1,4}")||!parts[5].matches("[0-9]{1,4}")||value.optLong("id",0)<=0||!(value.has("imdb_id")||value.has("tvdb_id")||value.has("wikidata_id")))throw new IOException("Invalid episode external IDs");
+    static void validateMetadataResponse(String path, JSONObject value) throws IOException {
+        if (value.has("success") && !value.optBoolean("success", false))
+            throw new IOException("Service rejected metadata request");
+        if (path.startsWith("watch/providers/")) {
+            if (value.optJSONArray("results") == null)
+                throw new IOException("Missing provider catalogue");
             return;
         }
-        String section=parts.length==2?"":parts[2];
+        if (path.endsWith("/watch/providers")) {
+            if (value.optJSONObject("results") == null)
+                throw new IOException("Missing availability regions");
+            return;
+        }
+        String[] parts = path.split("/");
+        if (parts.length < 2 || !parts[1].matches("[0-9]+"))
+            throw new IOException("Invalid metadata identity");
+        if (parts.length == 4 && "season".equals(parts[2])) {
+            if (value.optInt("season_number", -1) != Integer.parseInt(parts[3])
+                || value.optJSONArray("episodes") == null)
+                throw new IOException("Invalid season package");
+            return;
+        }
+        // Episode external IDs identify the episode, not the show in the URL.
+        if (parts.length == 7 && "tv".equals(parts[0]) && "season".equals(parts[2]) && "episode".equals(parts[4])
+            && "external_ids".equals(parts[6])) {
+            if (!parts[3].matches("[0-9]{1,4}") || !parts[5].matches("[0-9]{1,4}") || value.optLong("id", 0) <= 0
+                || !(value.has("imdb_id") || value.has("tvdb_id") || value.has("wikidata_id")))
+                throw new IOException("Invalid episode external IDs");
+            return;
+        }
+        String section = parts.length == 2 ? "" : parts[2];
         // Recommendation pages carry result IDs, not a top-level source-title ID.
-        if("reviews".equals(section)){
-            if(value.optLong("id",-1)!=Long.parseLong(parts[1])||value.optJSONArray("results")==null||value.optInt("page",0)<1||value.optInt("total_pages",-1)<0)throw new IOException("Invalid review page");return;
+        if ("reviews".equals(section)) {
+            if (value.optLong("id", -1) != Long.parseLong(parts[1]) || value.optJSONArray("results") == null
+                || value.optInt("page", 0) < 1 || value.optInt("total_pages", -1) < 0)
+                throw new IOException("Invalid review page");
+            return;
         }
-        if("recommendations".equals(section)){
-            if(value.optJSONArray("results")==null)throw new IOException("Missing recommendations");return;
+        if ("recommendations".equals(section)) {
+            if (value.optJSONArray("results") == null)
+                throw new IOException("Missing recommendations");
+            return;
         }
-        if(value.optLong("id",-1)!=Long.parseLong(parts[1]))throw new IOException("Mismatched metadata identity");
-        if(Arrays.asList("videos","release_dates","content_ratings").contains(section)&&value.optJSONArray("results")==null)throw new IOException("Missing metadata results");
-        if("alternative_titles".equals(section)&&value.optJSONArray("titles")==null&&value.optJSONArray("results")==null)throw new IOException("Missing alternative titles");
-        if("credits".equals(section)&&(value.optJSONArray("cast")==null||value.optJSONArray("crew")==null))throw new IOException("Missing credit lists");
-        if("images".equals(section)&&value.optJSONArray("logos")==null&&value.optJSONArray("backdrops")==null&&value.optJSONArray("posters")==null)throw new IOException("Missing artwork lists");
+        if (value.optLong("id", -1) != Long.parseLong(parts[1]))
+            throw new IOException("Mismatched metadata identity");
+        if (Arrays.asList("videos", "release_dates", "content_ratings").contains(section)
+            && value.optJSONArray("results") == null)
+            throw new IOException("Missing metadata results");
+        if ("alternative_titles".equals(section) && value.optJSONArray("titles") == null
+            && value.optJSONArray("results") == null)
+            throw new IOException("Missing alternative titles");
+        if ("credits".equals(section) && (value.optJSONArray("cast") == null || value.optJSONArray("crew") == null))
+            throw new IOException("Missing credit lists");
+        if ("images".equals(section) && value.optJSONArray("logos") == null && value.optJSONArray("backdrops") == null
+            && value.optJSONArray("posters") == null)
+            throw new IOException("Missing artwork lists");
     }
+
     private static String get(String url, int limit) throws IOException {
-        return get(url,limit,"");
+        return get(url, limit, "");
     }
-    private static String get(String url,int limit,String parentOperation)throws IOException{
-        return get(url,limit,parentOperation,HTTP);
+
+    private static String get(String url, int limit, String parentOperation) throws IOException {
+        return get(url, limit, parentOperation, HTTP);
     }
-    static String get(String url,int limit,String parentOperation,OkHttpClient client)throws IOException{
-        if (Thread.currentThread().isInterrupted()) throw new IOException("Cancelled");
-        long started=android.os.SystemClock.elapsedRealtime();
-        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
-        String host=Uri.parse(url).getHost();
-        String service="api.themoviedb.org".equals(host)||"www.themoviedb.org".equals(host)?"tmdb":"www.youtube.com".equals(host)?"youtube":"other";
-        String kind="api.themoviedb.org".equals(host)?"metadata":"www.themoviedb.org".equals(host)?"title_links":"www.youtube.com".equals(host)?"extras_metadata":"read";
-        int status=0;String outcome="transport_failure";
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_started","operation_id",operation,"parent_operation_id",parentOperation);
-        try (Response response = client.newCall(new Request.Builder().url(url)
-                .header("User-Agent", "NOVA-Mark/2 (Android TV)").build()).execute()) {
-            status=response.code();
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response","operation_id",operation,"status",response.code(),"protocol",String.valueOf(response.protocol()));
-            if (!response.isSuccessful() || response.body() == null){outcome=response.isSuccessful()?"missing_body":"http_error";throw new IOException("Availability service unavailable");}
+
+    static String get(String url, int limit, String parentOperation, OkHttpClient client) throws IOException {
+        if (Thread.currentThread().isInterrupted())
+            throw new IOException("Cancelled");
+        long started = android.os.SystemClock.elapsedRealtime();
+        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
+        String host = Uri.parse(url).getHost();
+        String service = "api.themoviedb.org".equals(host) || "www.themoviedb.org".equals(host) ? "tmdb"
+            : "www.youtube.com".equals(host) ? "youtube"
+                                                                                                : "other";
+        String kind = "api.themoviedb.org".equals(host) ? "metadata"
+            : "www.themoviedb.org".equals(host) ? "title_links"
+            : "www.youtube.com".equals(host) ? "extras_metadata"
+                                                        : "read";
+        int status = 0;
+        String outcome = "transport_failure";
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            "metadata_network_started", "operation_id", operation, "parent_operation_id", parentOperation);
+        try (Response response =
+                 client.newCall(new Request.Builder().url(url).header("User-Agent", "NOVA-Mark/2 (Android TV)").build())
+                     .execute()) {
+            status = response.code();
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response", "operation_id",
+                operation, "status", response.code(), "protocol", String.valueOf(response.protocol()));
+            if (!response.isSuccessful() || response.body() == null) {
+                outcome = response.isSuccessful() ? "missing_body" : "http_error";
+                throw new IOException("Availability service unavailable");
+            }
             // Bound both API and HTML responses rather than loading an unlimited body.
             java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
             java.io.InputStream input = response.body().byteStream();
             byte[] chunk = new byte[8192];
             int count;
             while ((count = input.read(chunk)) != -1) {
-                if (Thread.currentThread().isInterrupted()){outcome="cancelled";throw new IOException("Cancelled");}
-                if (buffer.size() + count > limit){outcome="response_too_large";throw new IOException("Response too large");}
+                if (Thread.currentThread().isInterrupted()) {
+                    outcome = "cancelled";
+                    throw new IOException("Cancelled");
+                }
+                if (buffer.size() + count > limit) {
+                    outcome = "response_too_large";
+                    throw new IOException("Response too large");
+                }
                 buffer.write(chunk, 0, count);
             }
             byte[] data = buffer.toByteArray();
-            if (data.length > limit) throw new IOException("Response too large");
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_body","operation_id",operation,"bytes",data.length);
-            outcome="transport_complete";
+            if (data.length > limit)
+                throw new IOException("Response too large");
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                "metadata_http_body", "operation_id", operation, "bytes", data.length);
+            outcome = "transport_complete";
             return new String(data, StandardCharsets.UTF_8);
-        } catch(IOException error) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_failed","operation_id",operation,"type",error.getClass().getSimpleName());
+        } catch (IOException error) {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                "metadata_network_failed", "operation_id", operation, "type", error.getClass().getSimpleName());
             throw error;
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_outcome","operation_id",operation,"parent_operation_id",parentOperation,
-                    "service",service,"operation_type",kind,"status",status,"outcome",outcome,"retry_number",0,
-                    "duration_ms",android.os.SystemClock.elapsedRealtime()-started,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
-            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"metadata_network",started);
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_outcome", "operation_id",
+                operation, "parent_operation_id", parentOperation, "service", service, "operation_type", kind, "status",
+                status, "outcome", outcome, "retry_number", 0, "duration_ms",
+                android.os.SystemClock.elapsedRealtime() - started, "connectivity",
+                com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
+            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+                operation, "metadata_network", started);
         }
     }
+
     public static List<Provider> providers(Context context, String country) throws Exception {
         Map<Integer, Provider> result = new HashMap<>();
         Map<Integer, Integer> ranks = new HashMap<>();
-        for (String kind : new String[]{"movie", "tv"}) {
+        for (String kind : new String[] {
+            "movie", "tv"
+        }) {
             JSONArray entries = api(context, "watch/providers/" + kind, country).getJSONArray("results");
             for (int i = 0; i < entries.length(); i++) {
                 JSONObject p = entries.getJSONObject(i);
@@ -202,207 +338,349 @@ public final class StreamingRepository {
                 .thenComparing(p -> p.name.toLowerCase(Locale.ROOT)));
         return sorted;
     }
+
     public static Availability load(Context context, String kind, long id, String country) throws Exception {
         return load(context, kind, id, country, -1);
     }
-    public static Availability load(Context context, String kind, long id, String country, int season) throws Exception {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_metadata_lookup","media_kind",kind,"season",season);
-        if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0) throw new IOException("Missing title ID");
+
+    public static Availability load(Context context, String kind, long id, String country, int season)
+        throws Exception {
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            "provider_metadata_lookup", "media_kind", kind, "season", season);
+        if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0)
+            throw new IOException("Missing title ID");
         String key = kind + ":" + id + ":" + country + ":" + season;
         synchronized (CACHE) {
             Cached c = CACHE.get(key);
-            if (c != null && System.currentTimeMillis() - c.at < TTL) return c.value;
+            if (c != null && System.currentTimeMillis() - c.at < TTL)
+                return c.value;
         }
-        Availability persisted=cachedAvailability(context,kind,id,country,season);
-        if(persisted!=null){synchronized(CACHE){CACHE.put(key,new Cached(persisted,prefs(context).getLong("streaming_known_at:"+key,0)));}return persisted;}
-        JSONObject response = api(context, kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
+        Availability persisted = cachedAvailability(context, kind, id, country, season);
+        if (persisted != null) {
+            synchronized (CACHE) {
+                CACHE.put(key, new Cached(persisted, prefs(context).getLong("streaming_known_at:" + key, 0)));
+            }
+            return persisted;
+        }
+        JSONObject response = api(context,
+            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
         Availability availability = parseAvailability(response, country);
-        synchronized (CACHE) { CACHE.put(key, new Cached(availability)); }
-        Set<String> knownProviders=new HashSet<>();
-        for(Offer offer:availability.offers)knownProviders.add(Integer.toString(offer.provider.id));
-        prefs(context).edit().putStringSet("streaming_known:"+key,knownProviders)
-            .putLong("streaming_known_at:"+key,System.currentTimeMillis())
-            .putString("streaming_snapshot:"+key,new JSONObject().put("results",new JSONObject().put(country,response.getJSONObject("results").optJSONObject(country)==null?new JSONObject():response.getJSONObject("results").getJSONObject(country))).toString()).apply();
+        synchronized (CACHE) {
+            CACHE.put(key, new Cached(availability));
+        }
+        Set<String> knownProviders = new HashSet<>();
+        for (Offer offer : availability.offers)
+            knownProviders.add(Integer.toString(offer.provider.id));
+        prefs(context)
+            .edit()
+            .putStringSet("streaming_known:" + key, knownProviders)
+            .putLong("streaming_known_at:" + key, System.currentTimeMillis())
+            .putString("streaming_snapshot:" + key,
+                new JSONObject()
+                    .put("results",
+                        new JSONObject().put(country,
+                            response.getJSONObject("results").optJSONObject(country) == null
+                                ? new JSONObject()
+                                : response.getJSONObject("results").getJSONObject(country)))
+                    .toString())
+            .apply();
         return availability;
     }
+
     /** Disk-only availability; null means unknown/stale, not known unavailable. */
-    public static Availability cachedAvailability(Context context,String kind,long id,String country,int season){
-        String key=kind+":"+id+":"+country+":"+season;SharedPreferences preferences=prefs(context);
-        long age=System.currentTimeMillis()-preferences.getLong("streaming_known_at:"+key,0);
-        if(age<0||age>=TTL)return null;
-        try{String value=preferences.getString("streaming_snapshot:"+key,"");if(value.isEmpty())return null;JSONObject payload=new JSONObject(value);if(payload.optJSONObject("results")==null)return null;return parseAvailability(payload,country);}catch(Exception invalid){return null;}
+    public static Availability cachedAvailability(Context context, String kind, long id, String country, int season) {
+        String key = kind + ":" + id + ":" + country + ":" + season;
+        SharedPreferences preferences = prefs(context);
+        long age = System.currentTimeMillis() - preferences.getLong("streaming_known_at:" + key, 0);
+        if (age < 0 || age >= TTL)
+            return null;
+        try {
+            String value = preferences.getString("streaming_snapshot:" + key, "");
+            if (value.isEmpty())
+                return null;
+            JSONObject payload = new JSONObject(value);
+            if (payload.optJSONObject("results") == null)
+                return null;
+            return parseAvailability(payload, country);
+        } catch (Exception invalid) {
+            return null;
+        }
     }
+
     /** Only fresh, successfully returned availability is eligible; unknown is not a match. */
-    public static boolean knownOn(Context context,String kind,long id,String provider){
-        String key=kind+":"+id+":"+country(context)+":-1";
-        if(id<=0||System.currentTimeMillis()-prefs(context).getLong("streaming_known_at:"+key,0)>=TTL)return false;
-        return prefs(context).getStringSet("streaming_known:"+key,Collections.emptySet()).contains(provider);
+    public static boolean knownOn(Context context, String kind, long id, String provider) {
+        String key = kind + ":" + id + ":" + country(context) + ":-1";
+        if (id <= 0 || System.currentTimeMillis() - prefs(context).getLong("streaming_known_at:" + key, 0) >= TTL)
+            return false;
+        return prefs(context).getStringSet("streaming_known:" + key, Collections.emptySet()).contains(provider);
     }
-    public static List<Provider> selectedCatalogue(Context context){
-        List<Provider> result=new ArrayList<>();Set<String> selected=selected(context);
-        try{JSONArray rows=new JSONArray(prefs(context).getString("streaming_catalogue_"+country(context),"[]"));
-            for(int i=0;i<rows.length();i++){JSONObject p=rows.getJSONObject(i);if(selected.remove(Integer.toString(p.getInt("id"))))result.add(new Provider(p.getInt("id"),p.getString("name"),p.optString("logo")));}
-        }catch(Exception ignored){}
-        for(String id:selected)try{result.add(new Provider(Integer.parseInt(id),"Saved provider "+id));}catch(NumberFormatException ignored){}
-        result.sort(Comparator.comparing(p->p.name.toLowerCase(Locale.ROOT)));return result;
+
+    public static List<Provider> selectedCatalogue(Context context) {
+        List<Provider> result = new ArrayList<>();
+        Set<String> selected = selected(context);
+        try {
+            JSONArray rows = new JSONArray(prefs(context).getString("streaming_catalogue_" + country(context), "[]"));
+            for (int i = 0; i < rows.length(); i++) {
+                JSONObject p = rows.getJSONObject(i);
+                if (selected.remove(Integer.toString(p.getInt("id"))))
+                    result.add(new Provider(p.getInt("id"), p.getString("name"), p.optString("logo")));
+            }
+        } catch (Exception ignored) {
+        }
+        for (String id : selected)
+            try {
+                result.add(new Provider(Integer.parseInt(id), "Saved provider " + id));
+            } catch (NumberFormatException ignored) {
+            }
+        result.sort(Comparator.comparing(p -> p.name.toLowerCase(Locale.ROOT)));
+        return result;
     }
+
     /** Title-link enrichment happens on selection; availability is displayed immediately. */
-    public static String titleLink(Context context, String kind, long id, String country, Availability availability, int providerId) {
+    public static String titleLink(
+        Context context, String kind, long id, String country, Availability availability, int providerId) {
         if (!availability.offers.isEmpty() && isTmdbWatchUrl(availability.watchUrl, kind, id)) {
             try {
                 // The documented TMDb watch page contains the actual JustWatch title links.
                 // This enrichment is optional: a changed page must never break local playback.
-                String url = Uri.parse(availability.watchUrl).buildUpon().clearQuery()
-                        .appendQueryParameter("locale", country).build().toString();
+                String url = Uri.parse(availability.watchUrl)
+                                 .buildUpon()
+                                 .clearQuery()
+                                 .appendQueryParameter("locale", country)
+                                 .build()
+                                 .toString();
                 Map<String, Integer> providerIds = new HashMap<>();
-                for (Offer offer : availability.offers) providerIds.put(offer.provider.name, offer.provider.id);
+                for (Offer offer : availability.offers)
+                    providerIds.put(offer.provider.name, offer.provider.id);
                 Map<Integer, String> links = parseWatchLinks(get(url, 2 * 1024 * 1024), country, providerIds);
                 return links.getOrDefault(providerId, "");
-            } catch (Exception ignored) { /* use the explicitly labelled watch-page fallback */ }
+            } catch (Exception ignored) {
+                /* use the explicitly labelled watch-page fallback */
+            }
         }
 
         return "";
     }
-    public static void invalidate() { synchronized (CACHE) { CACHE.clear(); } }
-    /** Read only public duration metadata for an already authorised YouTube Extra. */
-    public static long extraDuration(String key)throws IOException{
-        if(key==null||!key.matches("[A-Za-z0-9_-]{11}"))throw new IOException("Invalid Extra identity");
-        return parseExtraDuration(get("https://www.youtube.com/watch?v="+key,2*1024*1024),key);
-    }
-    static long parseExtraDuration(String html,String key){
-        if(html==null||key==null||!key.matches("[A-Za-z0-9_-]{11}"))return 0;
-        String identity="",duration="";
-        Matcher tags=Pattern.compile("<meta\\s[^>]{0,4096}>",Pattern.CASE_INSENSITIVE).matcher(html);
-        Pattern attrs=Pattern.compile("([A-Za-z]+)\\s*=\\s*([\"'])(.*?)\\2");
-        while(tags.find()){
-            Map<String,String> values=new HashMap<>();Matcher fields=attrs.matcher(tags.group());
-            while(fields.find())values.put(fields.group(1).toLowerCase(Locale.ROOT),fields.group(3));
-            if("videoId".equals(values.get("itemprop")))identity=values.getOrDefault("content","");
-            if("duration".equals(values.get("itemprop")))duration=values.getOrDefault("content","");
+
+    public static void invalidate() {
+        synchronized (CACHE) {
+            CACHE.clear();
         }
-        if(!key.equals(identity))return 0;
-        Matcher iso=Pattern.compile("PT(?:(\\d{1,3})H)?(?:(\\d{1,5})M)?(?:(\\d{1,7})S)?").matcher(duration);
-        if(!iso.matches())return 0;
-        long seconds=(iso.group(1)==null?0:Long.parseLong(iso.group(1))*3600)+(iso.group(2)==null?0:Long.parseLong(iso.group(2))*60)+(iso.group(3)==null?0:Long.parseLong(iso.group(3)));
-        return seconds>0&&seconds<=86400?seconds:0;
     }
+
+    /** Read only public duration metadata for an already authorised YouTube Extra. */
+    public static long extraDuration(String key) throws IOException {
+        if (key == null || !key.matches("[A-Za-z0-9_-]{11}"))
+            throw new IOException("Invalid Extra identity");
+        return parseExtraDuration(get("https://www.youtube.com/watch?v=" + key, 2 * 1024 * 1024), key);
+    }
+
+    static long parseExtraDuration(String html, String key) {
+        if (html == null || key == null || !key.matches("[A-Za-z0-9_-]{11}"))
+            return 0;
+        String identity = "", duration = "";
+        Matcher tags = Pattern.compile("<meta\\s[^>]{0,4096}>", Pattern.CASE_INSENSITIVE).matcher(html);
+        Pattern attrs = Pattern.compile("([A-Za-z]+)\\s*=\\s*([\"'])(.*?)\\2");
+        while (tags.find()) {
+            Map<String, String> values = new HashMap<>();
+            Matcher fields = attrs.matcher(tags.group());
+            while (fields.find())
+                values.put(fields.group(1).toLowerCase(Locale.ROOT), fields.group(3));
+            if ("videoId".equals(values.get("itemprop")))
+                identity = values.getOrDefault("content", "");
+            if ("duration".equals(values.get("itemprop")))
+                duration = values.getOrDefault("content", "");
+        }
+        if (!key.equals(identity))
+            return 0;
+        Matcher iso = Pattern.compile("PT(?:(\\d{1,3})H)?(?:(\\d{1,5})M)?(?:(\\d{1,7})S)?").matcher(duration);
+        if (!iso.matches())
+            return 0;
+        long seconds = (iso.group(1) == null ? 0 : Long.parseLong(iso.group(1)) * 3600)
+            + (iso.group(2) == null ? 0 : Long.parseLong(iso.group(2)) * 60)
+            + (iso.group(3) == null ? 0 : Long.parseLong(iso.group(3)));
+        return seconds > 0 && seconds <= 86400 ? seconds : 0;
+    }
+
     static boolean isTmdbWatchUrl(String url, String kind, long id) {
-        if(url==null)return false;
+        if (url == null)
+            return false;
         Uri u = Uri.parse(url);
-        if (!"https".equals(u.getScheme()) || !"www.themoviedb.org".equals(u.getHost())) return false;
+        if (!"https".equals(u.getScheme()) || !"www.themoviedb.org".equals(u.getHost()))
+            return false;
         List<String> path = u.getPathSegments();
-        return (path.size() == 3 || "tv".equals(kind)&&path.size()==5&&"season".equals(path.get(2))&&path.get(3).matches("[0-9]{1,4}")
-                || "tv".equals(kind)&&path.size()==7&&"season".equals(path.get(2))&&path.get(3).matches("[0-9]{1,4}")&&"episode".equals(path.get(4))&&path.get(5).matches("[0-9]{1,4}")) && kind.equals(path.get(0))
-                && (path.get(1).equals(Long.toString(id)) || path.get(1).startsWith(id + "-"))
-                && "watch".equals(path.get(path.size()-1));
+        return (path.size() == 3
+                   || "tv".equals(kind) && path.size() == 5 && "season".equals(path.get(2))
+                       && path.get(3).matches("[0-9]{1,4}")
+                   || "tv".equals(kind) && path.size() == 7 && "season".equals(path.get(2))
+                       && path.get(3).matches("[0-9]{1,4}") && "episode".equals(path.get(4))
+                       && path.get(5).matches("[0-9]{1,4}"))
+            && kind.equals(path.get(0)) && (path.get(1).equals(Long.toString(id)) || path.get(1).startsWith(id + "-"))
+            && "watch".equals(path.get(path.size() - 1));
     }
+
     /** An API-supplied season/series offer cannot establish availability for an exact episode. */
-    public static boolean exactEpisodeAvailability(Availability availability,long showId,int season,int episode){
-        if(availability==null||!isTmdbWatchUrl(availability.watchUrl,"tv",showId))return false;
-        List<String> path=Uri.parse(availability.watchUrl).getPathSegments();
-        return path.size()==7&&Integer.toString(season).equals(path.get(3))&&Integer.toString(episode).equals(path.get(5));
+    public static boolean exactEpisodeAvailability(Availability availability, long showId, int season, int episode) {
+        if (availability == null || !isTmdbWatchUrl(availability.watchUrl, "tv", showId))
+            return false;
+        List<String> path = Uri.parse(availability.watchUrl).getPathSegments();
+        return path.size() == 7 && Integer.toString(season).equals(path.get(3))
+            && Integer.toString(episode).equals(path.get(5));
     }
-    public static String episodeLink(Context c,long showId,int season,int episode,Availability availability,int provider){
-        if(!exactEpisodeAvailability(availability,showId,season,episode))return "";
-        String link=titleLink(c,"tv",showId,country(c),availability,provider);
-        return safeWebUrl(link)?resolveTitleUrl(link):availability.watchUrl;
+
+    public static String episodeLink(
+        Context c, long showId, int season, int episode, Availability availability, int provider) {
+        if (!exactEpisodeAvailability(availability, showId, season, episode))
+            return "";
+        String link = titleLink(c, "tv", showId, country(c), availability, provider);
+        return safeWebUrl(link) ? resolveTitleUrl(link) : availability.watchUrl;
     }
+
     public static Availability parseAvailability(JSONObject root, String country) throws Exception {
         JSONObject regions = root.optJSONObject("results");
         JSONObject region = regions == null ? null : regions.optJSONObject(country);
-        if (region == null) return new Availability(Collections.emptyList(), "");
+        if (region == null)
+            return new Availability(Collections.emptyList(), "");
         Map<Integer, Offer> offers = new LinkedHashMap<>();
-        for (String type : new String[]{"flatrate", "free", "ads"}) {
+        for (String type : new String[] {
+            "flatrate", "free", "ads"
+        }) {
             JSONArray entries = region.optJSONArray(type);
-            if (entries == null) continue;
+            if (entries == null)
+                continue;
             for (int i = 0; i < entries.length(); i++) {
                 JSONObject p = entries.optJSONObject(i);
-                if (p == null || p.optInt("provider_id") <= 0 || p.optString("provider_name").isEmpty()) continue;
+                if (p == null || p.optInt("provider_id") <= 0 || p.optString("provider_name").isEmpty())
+                    continue;
                 int id = p.getInt("provider_id");
-                if (!offers.containsKey(id)) offers.put(id, new Offer(new Provider(id, p.getString("provider_name"),p.optString("logo_path")), type));
+                if (!offers.containsKey(id))
+                    offers.put(
+                        id, new Offer(new Provider(id, p.getString("provider_name"), p.optString("logo_path")), type));
             }
         }
         return new Availability(new ArrayList<>(offers.values()), region.optString("link"));
     }
+
     public static List<Offer> filter(Availability availability, Set<String> selected, String preferred) {
         List<Offer> result = new ArrayList<>();
-        for (Offer o : availability.offers) if (selected.contains(Integer.toString(o.provider.id))) result.add(o);
+        for (Offer o : availability.offers)
+            if (selected.contains(Integer.toString(o.provider.id)))
+                result.add(o);
         result.sort(Comparator.comparingInt((Offer o) -> Integer.toString(o.provider.id).equals(preferred) ? 0 : 1)
                 .thenComparing(o -> o.provider.name));
         return result;
     }
+
     private static final Pattern WATCH_LINK = Pattern.compile("https://click\\.justwatch\\.com/[^\\s\"'<>]+");
+
     /** Extract only country-matched, non-transactional links with explicit provider IDs. */
     public static Map<Integer, String> parseWatchLinks(String html, String country) {
         return parseWatchLinks(html, country, Collections.emptyMap());
     }
+
     static Map<Integer, String> parseWatchLinks(String html, String country, Map<String, Integer> providerIds) {
         Map<Integer, String> links = new HashMap<>();
         Matcher matcher = WATCH_LINK.matcher(html);
         while (matcher.find()) {
             try {
                 Uri link = Uri.parse(matcher.group().replace("&amp;", "&"));
-                if (!country.equalsIgnoreCase(link.getQueryParameter("uct_country"))) continue;
+                if (!country.equalsIgnoreCase(link.getQueryParameter("uct_country")))
+                    continue;
                 String target = link.getQueryParameter("r");
-                if (!safeWebUrl(target)) continue;
+                if (!safeWebUrl(target))
+                    continue;
                 String encoded = link.getQueryParameter("cx");
-                if (encoded == null || encoded.length() > 16000) continue;
-                JSONObject context = new JSONObject(new String(Base64.decode(encoded, Base64.URL_SAFE), StandardCharsets.UTF_8));
+                if (encoded == null || encoded.length() > 16000)
+                    continue;
+                JSONObject context =
+                    new JSONObject(new String(Base64.decode(encoded, Base64.URL_SAFE), StandardCharsets.UTF_8));
                 JSONArray data = context.getJSONArray("data");
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject item = data.getJSONObject(i);
-                    if (!item.optString("schema").contains("/clickout_context/")) continue;
+                    if (!item.optString("schema").contains("/clickout_context/"))
+                        continue;
                     JSONObject offer = item.getJSONObject("data");
                     if (allowedType(offer.optString("monetizationType")) && offer.optInt("providerId") > 0) {
                         // TMDb and JustWatch can assign different IDs to the same named provider.
                         String providerName = offer.optString("provider");
-                        if (!providerIds.isEmpty() && !providerIds.containsKey(providerName)) continue;
+                        if (!providerIds.isEmpty() && !providerIds.containsKey(providerName))
+                            continue;
                         int providerId = providerIds.getOrDefault(providerName, offer.getInt("providerId"));
                         links.putIfAbsent(providerId, target);
                     }
                 }
-            } catch (Exception ignored) { /* malformed individual offer: ignore it */ }
+            } catch (Exception ignored) {
+                /* malformed individual offer: ignore it */
+            }
         }
         return links;
     }
+
     /** Resolve an affiliate redirect only when the viewer selects the offer. */
     public static String resolveTitleUrl(String url) {
-        return resolveTitleUrl(url,HTTP);
+        return resolveTitleUrl(url, HTTP);
     }
-    static String resolveTitleUrl(String url,OkHttpClient client) {
-        if (!safeWebUrl(url)) return "";
+
+    static String resolveTitleUrl(String url, OkHttpClient client) {
+        if (!safeWebUrl(url))
+            return "";
         String host = Uri.parse(url).getHost();
         // Only known link redirectors need expansion; normal provider links are left intact.
-        if (host == null || !(host.endsWith(".bn5x.net") || host.endsWith(".pxf.io") || host.equals("click.justwatch.com"))) return url;
+        if (host == null
+            || !(host.endsWith(".bn5x.net") || host.endsWith(".pxf.io") || host.equals("click.justwatch.com")))
+            return url;
         OkHttpClient redirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build();
-        String operation=com.archos.mediacenter.video.diagnostics.Diagnostics.operation("provider_redirect");
-        long started=android.os.SystemClock.elapsedRealtime();
+        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("provider_redirect");
+        long started = android.os.SystemClock.elapsedRealtime();
         String current = url;
-        try{
-        for (int i = 0; i < 5; i++) {
-            long requestStarted=android.os.SystemClock.elapsedRealtime();int status=0;String outcome="transport_failed";
-            try (Response response = redirects.newCall(new Request.Builder().url(current).head().build()).execute()) {
-                status=response.code();
-                String location = response.header("Location");
-                if (response.code() < 300 || response.code() >= 400 || location == null){outcome=response.isSuccessful()?"resolved":"unresolved_http";return current;}
-                okhttp3.HttpUrl next = response.request().url().resolve(location);
-                if (next == null || !safeWebUrl(next.toString())){outcome="unsafe_redirect";return url;}
-                current = next.toString();outcome="redirect";
-            } catch (Exception e) { return url; }
-            finally{com.archos.mediacenter.video.diagnostics.Diagnostics.event("resolved".equals(outcome)||"redirect".equals(outcome)?"provider_request_complete":"provider_request_failed",
-                "operation_id",operation,"provider","provider_link","operation_type","title_redirect","status",status,"outcome",outcome,"redirect_index",i,
-                "duration_ms",android.os.SystemClock.elapsedRealtime()-requestStarted,"retry_number",0,"connectivity",com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());}
+        try {
+            for (int i = 0; i < 5; i++) {
+                long requestStarted = android.os.SystemClock.elapsedRealtime();
+                int status = 0;
+                String outcome = "transport_failed";
+                try (Response response =
+                         redirects.newCall(new Request.Builder().url(current).head().build()).execute()) {
+                    status = response.code();
+                    String location = response.header("Location");
+                    if (response.code() < 300 || response.code() >= 400 || location == null) {
+                        outcome = response.isSuccessful() ? "resolved" : "unresolved_http";
+                        return current;
+                    }
+                    okhttp3.HttpUrl next = response.request().url().resolve(location);
+                    if (next == null || !safeWebUrl(next.toString())) {
+                        outcome = "unsafe_redirect";
+                        return url;
+                    }
+                    current = next.toString();
+                    outcome = "redirect";
+                } catch (Exception e) {
+                    return url;
+                } finally {
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                        "resolved".equals(outcome) || "redirect".equals(outcome) ? "provider_request_complete"
+                                                                                 : "provider_request_failed",
+                        "operation_id", operation, "provider", "provider_link", "operation_type", "title_redirect",
+                        "status", status, "outcome", outcome, "redirect_index", i, "duration_ms",
+                        android.os.SystemClock.elapsedRealtime() - requestStarted, "retry_number", 0, "connectivity",
+                        com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
+                }
+            }
+            return current;
+        } finally {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+                operation, "provider_redirect", started);
         }
-        return current;
-        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation,"provider_redirect",started);}
     }
+
     public static boolean safeWebUrl(String url) {
-        if (url == null || url.length() > 12000) return false;
+        if (url == null || url.length() > 12000)
+            return false;
         Uri u = Uri.parse(url);
         String host = u.getHost();
-        return "https".equals(u.getScheme()) && host != null && host.contains(".")
-                && u.getUserInfo() == null && !host.equals("localhost")
-                && !host.matches("[0-9.]+") && !host.endsWith(".local");
+        return "https".equals(u.getScheme()) && host != null && host.contains(".") && u.getUserInfo() == null
+            && !host.equals("localhost") && !host.matches("[0-9.]+") && !host.endsWith(".local");
     }
-    private StreamingRepository() { }
+
+    private StreamingRepository() {
+    }
 }
