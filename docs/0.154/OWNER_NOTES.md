@@ -21,6 +21,15 @@ Each item: what the owner saw → what they want → status.
   offered for the owner to choose.
 - **Status:** awaiting owner's choice.
 
+### 3. Grey "bleeding" round the focused button (design/bug)
+- **Seen (photo, 0.153):** grey smudge around the focused white button, mostly along the bottom edge, on the
+  pale hero image.
+- **Cause:** the focus box's soft shadow (`SupernovaStyle.Box`, four stacked offset layers, shifted down). On
+  light backgrounds it reads as a dirty halo; the layering also shows steps and is lopsided.
+- **Options for the mock-up:** (1) no shadow on focus — recommended; (2) much fainter, smooth, even shadow;
+  (3) thin darker outline instead of a shadow. Shown on a light and a dark background.
+- **Status:** awaiting owner's choice (mock-up batch).
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
