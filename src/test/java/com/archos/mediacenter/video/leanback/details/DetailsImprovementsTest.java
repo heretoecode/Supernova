@@ -14,6 +14,7 @@ import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
+import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Future;
@@ -36,10 +37,10 @@ public class DetailsImprovementsTest {
         context = RuntimeEnvironment.getApplication();
         PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(context).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(context).build());
         }
     }
 
