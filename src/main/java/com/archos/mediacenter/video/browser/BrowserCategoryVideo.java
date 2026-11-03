@@ -17,7 +17,9 @@ package com.archos.mediacenter.video.browser;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.widget.BaseAdapter;
 import androidx.preference.PreferenceManager;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
@@ -138,7 +140,7 @@ public class BrowserCategoryVideo extends BrowserCategory implements androidx.ap
         // Apply theme colors to actionbar - safe to do here when ActionBar is initialized
         if (getActivity() != null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(
-                new android.graphics.drawable.ColorDrawable(ThemeManager.getInstance(getActivity()).getToolbarBackgroundColor())
+                new ColorDrawable(ThemeManager.getInstance(getActivity()).getToolbarBackgroundColor())
             );
         }
         super.onResume();
@@ -162,7 +164,7 @@ public class BrowserCategoryVideo extends BrowserCategory implements androidx.ap
         }
         // Notify adapter to refresh the UI
         if (getListAdapter() != null) {
-            ((android.widget.BaseAdapter) getListAdapter()).notifyDataSetChanged();
+            ((BaseAdapter) getListAdapter()).notifyDataSetChanged();
         }
     }
 
