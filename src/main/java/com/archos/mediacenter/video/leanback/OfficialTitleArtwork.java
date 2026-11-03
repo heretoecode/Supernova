@@ -1,8 +1,13 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.util.AtomicFile;
+import android.util.LruCache;
 import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
@@ -10,6 +15,7 @@ import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediascraper.*;
 import java.io.*;
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import okhttp3.*;
@@ -29,8 +35,8 @@ public final class OfficialTitleArtwork {
     private static final Map<TextView, Boolean> READY = new WeakHashMap<>();
     private static final Map<TextView, com.archos.mediacenter.video.diagnostics.ArtworkTrace> TRACES =
         new WeakHashMap<>();
-    private static final android.util.LruCache<String, Bitmap> ALIASES =
-        new android.util.LruCache<String, Bitmap>(8 * 1024 * 1024) {
+    private static final LruCache<String, Bitmap> ALIASES =
+        new LruCache<String, Bitmap>(8 * 1024 * 1024) {
             @Override
             protected int sizeOf(String key, Bitmap image) {
                 return image.getAllocationByteCount();
@@ -41,14 +47,14 @@ public final class OfficialTitleArtwork {
         return !Boolean.FALSE.equals(READY.get(view));
     }
 
-    private static final android.util.LruCache<String, Long> PREFETCHED = new android.util.LruCache<>(24);
+    private static final LruCache<String, Long> PREFETCHED = new LruCache<>(24);
 
     public static void prefetch(Context c, Base media) {
         String identity = identity(media) + ":" + Locale.getDefault().getLanguage();
         Long requested = PREFETCHED.get(identity);
-        if (requested != null && android.os.SystemClock.elapsedRealtime() - requested < 60000)
+        if (requested != null && SystemClock.elapsedRealtime() - requested < 60000)
             return;
-        PREFETCHED.put(identity, android.os.SystemClock.elapsedRealtime());
+        PREFETCHED.put(identity, SystemClock.elapsedRealtime());
         bind(new TextView(c), media, false);
     }
 
@@ -110,8 +116,8 @@ public final class OfficialTitleArtwork {
         request(view, key, false, () -> key, null);
     }
 
-    private static final android.util.LruCache<String, Bitmap> MEMORY =
-        new android.util.LruCache<String, Bitmap>(8 * 1024 * 1024) {
+    private static final LruCache<String, Bitmap> MEMORY =
+        new LruCache<String, Bitmap>(8 * 1024 * 1024) {
             @Override
             protected int sizeOf(String key, Bitmap image) {
                 return image.getAllocationByteCount();
@@ -217,20 +223,20 @@ public final class OfficialTitleArtwork {
                 if (bitmap != null)
                     bitmap = visibleArtwork(bitmap);
                 if (bitmap == null && !cachedOnly) {
-                    android.content.SharedPreferences cache = app.getSharedPreferences("preview_title_logos", 0);
+                    SharedPreferences cache = app.getSharedPreferences("preview_title_logos", 0);
                     long last = cache.getLong(diskKey, 0);
                     cacheLayer = "network";
                     if (System.currentTimeMillis() - last < 86400000L)
                         return;
-                    android.net.Uri uri =
-                        android.net.Uri.parse("https://api.themoviedb.org/3/" + key + "/images")
+                    Uri uri =
+                        Uri.parse("https://api.themoviedb.org/3/" + key + "/images")
                             .buildUpon()
                             .appendQueryParameter("api_key", app.getString(com.archos.medialib.R.string.tmdb_api_key))
                             .appendQueryParameter("include_image_language", language + ",en,null")
                             .build();
                     JSONObject result = new JSONObject(
                         new String(download(uri.toString(), 2 * 1024 * 1024, trace.operationId(), "logo_metadata"),
-                            java.nio.charset.StandardCharsets.UTF_8));
+                            StandardCharsets.UTF_8));
                     if (result.optLong("id", -1) != Long.parseLong(key.substring(key.indexOf('/') + 1))
                         || result.optJSONArray("logos") == null)
                         throw new IOException("Invalid artwork metadata");
@@ -255,7 +261,7 @@ public final class OfficialTitleArtwork {
                             throw new IOException("Artwork has no visible pixels");
                         if (bitmap != null) {
                             directory.mkdirs();
-                            android.util.AtomicFile atomic = new android.util.AtomicFile(file);
+                            AtomicFile atomic = new AtomicFile(file);
                             FileOutputStream out = null;
                             try {
                                 out = atomic.startWrite();
@@ -364,7 +370,7 @@ public final class OfficialTitleArtwork {
 
     static byte[] download(OkHttpClient client, String url, int limit, String parent, String kind) throws IOException {
         String operation = Diagnostics.operation("artwork_network"), outcome = "transport_failed";
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         int status = 0;
         try (Response response = client.newCall(new Request.Builder().url(url).build()).execute()) {
             status = response.code();
@@ -398,7 +404,7 @@ public final class OfficialTitleArtwork {
             Diagnostics.event(
                 "transport_complete".equals(outcome) ? "provider_request_complete" : "provider_request_failed",
                 "operation_id", operation, "parent_operation_id", parent, "provider", "tmdb", "operation_type", kind,
-                "status", status, "outcome", outcome, "duration_ms", android.os.SystemClock.elapsedRealtime() - started,
+                "status", status, "outcome", outcome, "duration_ms", SystemClock.elapsedRealtime() - started,
                 "retry_number", 0, "connectivity", Diagnostics.connectivity());
             Diagnostics.finishOperation(operation, "artwork_network", started);
         }
