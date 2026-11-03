@@ -1,7 +1,9 @@
 package com.archos.mediacenter.video.utils.backup;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.AtomicFile;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.CustomLibraryPage;
@@ -16,6 +18,7 @@ import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 import org.json.*;
 
@@ -24,8 +27,8 @@ public final class PreferenceRestoreTransaction {
     private static final String HOME = "preview_home_rows41";
     private static final int MAX_JOURNAL = 32 * 1024 * 1024;
     static final Object LOCK = new Object();
-    private static final java.util.concurrent.atomic.AtomicInteger MATCH_CURSOR =
-        new java.util.concurrent.atomic.AtomicInteger();
+    private static final AtomicInteger MATCH_CURSOR =
+        new AtomicInteger();
 
     public enum Recovery {
         NONE, ROLLED_BACK, COMPLETED
@@ -150,7 +153,7 @@ public final class PreferenceRestoreTransaction {
             destination.getContentResolver().notifyChange(
                 com.archos.mediaprovider.video.ScraperStore.ALL_CONTENT_URI, null);
             destination.sendBroadcast(
-                new android.content.Intent(destination.getPackageName() + ".VIEWING_STATE_CHANGED")
+                new Intent(destination.getPackageName() + ".VIEWING_STATE_CHANGED")
                     .setPackage(destination.getPackageName()));
         } catch (RuntimeException unavailable) {
             refreshFailed = true;
@@ -199,8 +202,8 @@ public final class PreferenceRestoreTransaction {
                         return;
                     JSONObject before;
                     Map<Long, PortableSavedPlaylists.Definition> local = new LinkedHashMap<>();
-                    try (var database = android.database.sqlite.SQLiteDatabase.openDatabase(
-                             file.getPath(), null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY)) {
+                    try (var database = SQLiteDatabase.openDatabase(
+                             file.getPath(), null, SQLiteDatabase.OPEN_READONLY)) {
                         database.execSQL("SAVEPOINT supernova_playlist_pending_read");
                         try {
                             before = PlaylistStateRecovery.capture(database);
