@@ -1,6 +1,9 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.graphics.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Arrays;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -52,7 +55,7 @@ public class StandardSwitchReferenceTest {
                 icon.draw(new Canvas(plain));
                 int[] pixels = new int[280 * 104];
                 plain.getPixels(pixels, 0, 280, 0, 0, 280, 104);
-                int[] focused = java.util.Arrays.copyOf(normal, normal.length + 1);
+                int[] focused = Arrays.copyOf(normal, normal.length + 1);
                 focused[normal.length] = android.R.attr.state_focused;
                 icon.setState(focused);
                 Bitmap focus = Bitmap.createBitmap(280, 104, Bitmap.Config.ARGB_8888);
@@ -90,9 +93,9 @@ public class StandardSwitchReferenceTest {
                 }
                 output.drawBitmap(plain, 40, 10 + row++ * 130, null);
             }
-        java.io.File file = new java.io.File("build/reports/reference-ui/gemini-switch-states-api30.png");
+        File file = new File("build/reports/reference-ui/gemini-switch-states-api30.png");
         file.getParentFile().mkdirs();
-        try (java.io.FileOutputStream stream = new java.io.FileOutputStream(file)) {
+        try (FileOutputStream stream = new FileOutputStream(file)) {
             sheet.compress(Bitmap.CompressFormat.PNG, 100, stream);
         }
     }
