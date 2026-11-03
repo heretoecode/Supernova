@@ -130,7 +130,7 @@ public class SubtitleColorPicker extends LinearLayout  {
     }
     public void setSelectedColor(int color){
         mColor=color;int index=colors.indexOf(color);if(index>=0)mCurrentlySelectedColor=index;
-        for(int i=0;i<colorBoxes.size();i++)colorBoxes.get(i).setBackgroundColor(i==mCurrentlySelectedColor&&hasFocus()?ContextCompat.getColor(getContext(),R.color.video_info_next_prev_button_pressed):android.graphics.Color.TRANSPARENT);
+        for(int i=0;i<colorBoxes.size();i++)colorBoxes.get(i).setBackgroundColor(i==mCurrentlySelectedColor&&hasFocus()?ContextCompat.getColor(getContext(),R.color.video_info_next_prev_button_pressed):Color.TRANSPARENT);
     }
     private void init() {
         setFocusable(true);
