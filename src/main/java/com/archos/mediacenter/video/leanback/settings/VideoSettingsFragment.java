@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
+/** Displays TV Settings preference screens and their dialogs. */
 public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     private PrefsFragment mPrefsFragment;
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
