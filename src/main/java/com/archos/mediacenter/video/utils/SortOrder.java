@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.utils;
 
 import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 
+/** Defines ascending and descending variants of video sort orders. */
 public enum SortOrder {
     DURATION(
         VideoColumns.DURATION,
