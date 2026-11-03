@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.archos.mediaprovider.video.*;
+import com.archos.mediascraper.OwnedCanonicalBatch;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -360,7 +361,7 @@ public final class MediaStateRecovery {
 
         /** Stage on the same connection as selected pins/hidden/playlists. Caller seals after all native writes. */
         public JSONObject stageCanonical(
-            Collection<Long> files, List<com.archos.mediascraper.OwnedCanonicalBatch> batches, BooleanSupplier cancel)
+            Collection<Long> files, List<OwnedCanonicalBatch> batches, BooleanSupplier cancel)
             throws IOException, JSONException {
             if (database == null || ended)
                 throw new IOException("Canonical receiving media store is unavailable");
