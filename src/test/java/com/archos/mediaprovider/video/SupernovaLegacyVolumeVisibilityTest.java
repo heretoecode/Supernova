@@ -15,6 +15,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks legacy storage imports keep upgraded hidden records visible without changing bookmarks. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 26)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
