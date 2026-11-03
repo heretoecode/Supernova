@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/** Connects cursor-backed browser rows to presenters, section indexes and thumbnails. */
 public abstract class PresenterAdapterByCursor extends CursorAdapter implements  SectionIndexer,
         ThumbnailAdapterVideo,PresenterAdapterInterface {
 
