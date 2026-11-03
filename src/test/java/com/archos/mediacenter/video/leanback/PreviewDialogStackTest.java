@@ -1,8 +1,12 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.*;
+import android.os.Looper;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.*;
+import java.util.Collections;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -37,8 +41,8 @@ public class PreviewDialogStackTest {
                     "15 minutes", "30 minutes", "1 hour", "6 hours", "24 hours"
                 }, 2, n -> {
                 });
-            android.view.WindowManager.LayoutParams position = choice.getWindow().getAttributes();
-            assertEquals(android.view.Gravity.TOP | android.view.Gravity.LEFT, position.gravity);
+            WindowManager.LayoutParams position = choice.getWindow().getAttributes();
+            assertEquals(Gravity.TOP | Gravity.LEFT, position.gravity);
             assertTrue(position.x > 0);
             assertTrue(position.y >= 0);
             View selected = choice.getWindow().getDecorView().findViewWithTag("preview-check:2");
@@ -66,7 +70,7 @@ public class PreviewDialogStackTest {
             controls.addView(hero);
             controls.addView(other);
             activity.setContentView(controls);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             hero.requestFocus();
             // ShadowActivity stubs getCurrentFocus with an explicitly supplied field.
             Shadows.shadowOf(activity).setCurrentFocus(hero);
@@ -74,7 +78,7 @@ public class PreviewDialogStackTest {
             Dialog parent = PreviewDialog.choose(activity, "More", new String[] {
                 "Versions", "Artwork"
             }, 0,
-                java.util.Collections.emptySet(), false, n -> {
+                Collections.emptySet(), false, n -> {
                 });
             other.requestFocus();
             assertFalse(hero.hasFocus());
@@ -82,11 +86,11 @@ public class PreviewDialogStackTest {
             assertTrue(opener.requestFocus());
             Dialog child = PreviewDialog.read(activity, "Artwork", "Fixture");
             child.dismiss();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(parent.isShowing());
             assertSame(opener, parent.getCurrentFocus());
             parent.dismiss();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertSame(hero, activity.getCurrentFocus());
             assertTrue(hero.hasFocus());
         } finally {
@@ -109,7 +113,7 @@ public class PreviewDialogStackTest {
             panel.addView(opener);
             parent.setContentView(panel);
             parent.show();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             opener.requestFocus();
             assertSame(opener, parent.getCurrentFocus());
             Dialog child = PreviewDialog.read(activity, "Edit", "Fixture");
@@ -118,9 +122,9 @@ public class PreviewDialogStackTest {
             replacement.setTag("semantic:child");
             replacement.setFocusableInTouchMode(true);
             panel.addView(replacement);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             child.dismiss();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertSame(replacement, parent.getCurrentFocus());
             parent.dismiss();
         } finally {
