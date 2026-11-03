@@ -53,6 +53,7 @@ import com.archos.mediaprovider.video.LoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Provides shared network-root browsing, shortcut actions and scanner lifecycle handling. */
 public abstract class NewRootFragment extends Fragment implements WorkgroupShortcutAndServerAdapter.OnShortcutTapListener,  WorkgroupShortcutAndServerAdapter.OnRefreshClickListener, NetworkScannerServiceVideo.ScannerListener {
 
     private static final Logger log = LoggerFactory.getLogger(NewRootFragment.class);
