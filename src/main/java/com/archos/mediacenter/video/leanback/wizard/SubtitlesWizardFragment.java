@@ -16,6 +16,8 @@ package com.archos.mediacenter.video.leanback.wizard;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -30,6 +32,8 @@ import com.archos.mediacenter.video.utils.SubtitlesWizardCommon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
 
@@ -46,8 +50,8 @@ public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
     private Overlay mOverlay;
 
     private SubtitlesWizardCommon mWizardCommon;
-    private final java.util.concurrent.ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
-    private final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final ExecutorService worker = Executors.newSingleThreadExecutor();
+    private final Handler main = new Handler(Looper.getMainLooper());
     private boolean closed;
     private boolean busy;
 
