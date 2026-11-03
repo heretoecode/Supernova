@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import com.archos.mediaprovider.video.*;
+import com.archos.mediascraper.BaseTags;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -106,11 +107,11 @@ public final class MediaMatchInventory {
                             if (match != null) {
                                 if (local <= 0)
                                     throw new IOException("Receiving identification has no owned metadata");
-                                String table = type == com.archos.mediascraper.BaseTags.MOVIE
+                                String table = type == BaseTags.MOVIE
                                     ? ScraperTables.MOVIE_TABLE_NAME
                                     : ScraperTables.EPISODE_TABLE_NAME;
                                 try (Cursor metadata = database.query(table,
-                                         type == com.archos.mediascraper.BaseTags.TV_SHOW
+                                         type == BaseTags.TV_SHOW
                                              ? new String[] {
                                                  "video_id", "e_online_id"
                                              }
@@ -124,7 +125,7 @@ public final class MediaMatchInventory {
                                         || metadata.getLong(0) != id)
                                         throw new IOException(
                                             "Receiving identification points outside its metadata owner");
-                                    if (type == com.archos.mediascraper.BaseTags.TV_SHOW && !metadata.isNull(1))
+                                    if (type == BaseTags.TV_SHOW && !metadata.isNull(1))
                                         episodeProviderRaw = integer(metadata, 1, 0);
                                     if (metadata.moveToNext())
                                         throw new IOException("Duplicate receiving metadata owner");
