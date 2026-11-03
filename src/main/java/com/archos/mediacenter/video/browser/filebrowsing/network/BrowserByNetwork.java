@@ -16,7 +16,6 @@ package com.archos.mediacenter.video.browser.filebrowsing.network;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
