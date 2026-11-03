@@ -8,27 +8,90 @@ import org.robolectric.annotation.Config;
 import java.util.*;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=30,qualifiers="w960dp-h540dp-land-mdpi")
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 public class BundledNoticePagerTest {
-    @Test public void completeActualNoticesAreLosslessAndEveryTextLayoutIsBounded()throws Exception{
-        org.json.JSONArray catalogue;try(java.io.InputStream input=RuntimeEnvironment.getApplication().getAssets().open("foundation/licences.json")){catalogue=new org.json.JSONObject(new String(input.readAllBytes(),java.nio.charset.StandardCharsets.UTF_8)).getJSONArray("components");}
-        assertTrue(catalogue.length()>=60);
-        for(int index=0;index<catalogue.length();index++){String asset=catalogue.getJSONObject(index).getString("text_asset");
-            String notice;try(java.io.InputStream in=RuntimeEnvironment.getApplication().getAssets().open(asset)){notice=new String(in.readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);}
-            List<String> pages=BundledNoticeReader.blocks(notice);assertEquals(notice,String.join("",pages));assertFalse(pages.isEmpty());for(String page:pages)assertTrue(page.length()<=BundledNoticeReader.BLOCK_CHARS);
+    @Test
+    public void completeActualNoticesAreLosslessAndEveryTextLayoutIsBounded() throws Exception {
+        org.json.JSONArray catalogue;
+        try (java.io.InputStream input =
+                 RuntimeEnvironment.getApplication().getAssets().open("foundation/licences.json")) {
+            catalogue =
+                new org.json.JSONObject(new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8))
+                    .getJSONArray("components");
+        }
+        assertTrue(catalogue.length() >= 60);
+        for (int index = 0; index < catalogue.length(); index++) {
+            String asset = catalogue.getJSONObject(index).getString("text_asset");
+            String notice;
+            try (java.io.InputStream in = RuntimeEnvironment.getApplication().getAssets().open(asset)) {
+                notice = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            }
+            List<String> pages = BundledNoticeReader.blocks(notice);
+            assertEquals(notice, String.join("", pages));
+            assertFalse(pages.isEmpty());
+            for (String page : pages)
+                assertTrue(page.length() <= BundledNoticeReader.BLOCK_CHARS);
         }
     }
-    @Test @Config(sdk=28) public void retainedLicenceEntryLoadsFullOfflineDisclosureOnShieldEraApi()throws Exception{
-        var host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();try{LicenseDisclosure disclosure=new LicenseDisclosure(host.get());host.get().setContentView(disclosure);java.util.concurrent.ExecutorService io=org.robolectric.util.ReflectionHelpers.getField(disclosure,"io");io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();io.submit(()->{}).get(5,java.util.concurrent.TimeUnit.SECONDS);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();assertNotNull(disclosure.findViewWithTag("licence.continuous.reader"));android.widget.LinearLayout catalogue=org.robolectric.util.ReflectionHelpers.getField(disclosure,"catalogue");assertTrue(catalogue.getChildCount()>=60);}finally{host.pause().stop().destroy();}
+
+    @Test
+    @Config(sdk = 28)
+    public void retainedLicenceEntryLoadsFullOfflineDisclosureOnShieldEraApi() throws Exception {
+        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        try {
+            LicenseDisclosure disclosure = new LicenseDisclosure(host.get());
+            host.get().setContentView(disclosure);
+            java.util.concurrent.ExecutorService io = org.robolectric.util.ReflectionHelpers.getField(disclosure, "io");
+            io.submit(() -> {
+            }).get(5, java.util.concurrent.TimeUnit.SECONDS);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            io.submit(() -> {
+            }).get(5, java.util.concurrent.TimeUnit.SECONDS);
+            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertNotNull(disclosure.findViewWithTag("licence.continuous.reader"));
+            android.widget.LinearLayout catalogue =
+                org.robolectric.util.ReflectionHelpers.getField(disclosure, "catalogue");
+            assertTrue(catalogue.getChildCount() >= 60);
+        } finally {
+            host.pause().stop().destroy();
+        }
     }
-    @Test public void pageBoundariesCannotSplitUnicodeSurrogatePairs(){String body="a".repeat(3999)+"😀"+"z".repeat(4001);List<String> pages=BundledNoticeReader.blocks(body);assertEquals(body,String.join("",pages));for(String page:pages)assertFalse(Character.isHighSurrogate(page.charAt(page.length()-1)));}
-    @Test public void continuousReaderHasNoPaginationAndReturnsToCatalogue(){
-        var host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();
-        try{int[] returned={0};BundledNoticeReader reader=new BundledNoticeReader(host.get(),"Notice\n".repeat(3000),()->returned[0]++);host.get().setContentView(reader);
-            reader.measure(android.view.View.MeasureSpec.makeMeasureSpec(400,android.view.View.MeasureSpec.EXACTLY),android.view.View.MeasureSpec.makeMeasureSpec(440,android.view.View.MeasureSpec.EXACTLY));reader.layout(0,0,400,440);
-            assertEquals(2,reader.getChildCount());assertTrue(reader.getChildAt(1) instanceof androidx.recyclerview.widget.RecyclerView);
-            var list=(androidx.recyclerview.widget.RecyclerView)reader.getChildAt(1);assertTrue(list.getAdapter().getItemCount()>1);reader.focusReader();assertTrue(list.hasFocus());
-            list.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,android.view.KeyEvent.KEYCODE_DPAD_LEFT));assertEquals(1,returned[0]);
-        }finally{host.pause().stop().destroy();}
+
+    @Test
+    public void pageBoundariesCannotSplitUnicodeSurrogatePairs() {
+        String body = "a".repeat(3999) + "😀"
+            + "z".repeat(4001);
+        List<String> pages = BundledNoticeReader.blocks(body);
+        assertEquals(body, String.join("", pages));
+        for (String page : pages)
+            assertFalse(Character.isHighSurrogate(page.charAt(page.length() - 1)));
+    }
+
+    @Test
+    public void continuousReaderHasNoPaginationAndReturnsToCatalogue() {
+        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        try {
+            int[] returned = {
+                0
+            };
+            BundledNoticeReader reader =
+                new BundledNoticeReader(host.get(), "Notice\n".repeat(3000), () -> returned[0]++);
+            host.get().setContentView(reader);
+            reader.measure(android.view.View.MeasureSpec.makeMeasureSpec(400, android.view.View.MeasureSpec.EXACTLY),
+                android.view.View.MeasureSpec.makeMeasureSpec(440, android.view.View.MeasureSpec.EXACTLY));
+            reader.layout(0, 0, 400, 440);
+            assertEquals(2, reader.getChildCount());
+            assertTrue(reader.getChildAt(1) instanceof androidx.recyclerview.widget.RecyclerView);
+            var list = (androidx.recyclerview.widget.RecyclerView) reader.getChildAt(1);
+            assertTrue(list.getAdapter().getItemCount() > 1);
+            reader.focusReader();
+            assertTrue(list.hasFocus());
+            list.dispatchKeyEvent(
+                new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DPAD_LEFT));
+            assertEquals(1, returned[0]);
+        } finally {
+            host.pause().stop().destroy();
+        }
     }
 }
