@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import java.io.File;
 
+/** Provides shared artwork and formatted detail fields for video information models. */
 abstract public class BaseInfo {
 
     protected final static String EMPTY = "";
