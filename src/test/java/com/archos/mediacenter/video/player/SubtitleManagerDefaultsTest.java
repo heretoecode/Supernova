@@ -13,6 +13,7 @@
 // limitations under the License.
 package com.archos.mediacenter.video.player;
 
+import android.app.Application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -28,7 +29,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33, application = android.app.Application.class)
+@Config(sdk = 33, application = Application.class)
 public class SubtitleManagerDefaultsTest {
     private SubtitleManager mManager;
     private SharedPreferences mPrefs;
