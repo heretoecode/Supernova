@@ -123,6 +123,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Initializes application services and exposes shared playback, version and audio capability state. */
 public class CustomApplication extends Application implements DefaultLifecycleObserver {
     private static final String LOGBACK_DIR_PROPERTY = "nova.logback.dir";
     private static final String LOGBACK_BOOTSTRAP_CONFIG = "logback.xml";
