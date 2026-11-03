@@ -3,6 +3,12 @@ import android.app.Dialog;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.*;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
+import com.archos.mediacenter.video.leanback.PreviewTextInput;
+import com.archos.mediacenter.video.metadata.OmdbSupplement;
+import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import java.util.*;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import java.util.function.Function;
@@ -80,11 +86,11 @@ final class PreviewPreferenceDialogs {
                 }
             });
         Map<String, String> logos =
-            com.archos.mediacenter.video.streaming.PreviewProviderIcons.catalogue(f.requireContext());
+            PreviewProviderIcons.catalogue(f.requireContext());
         for (int i = 0; i < ids.size(); i++)
             if (ids.get(i) != null)
-                com.archos.mediacenter.video.streaming.PreviewProviderIcons.bindProvider(dialog[0], i,
-                    new com.archos.mediacenter.video.streaming.StreamingRepository.Provider(
+                PreviewProviderIcons.bindProvider(dialog[0], i,
+                    new StreamingRepository.Provider(
                         Integer.parseInt(ids.get(i)), labels.get(i), logos.get(ids.get(i))),
                     "settings.providers");
     }
@@ -132,21 +138,21 @@ final class PreviewPreferenceDialogs {
     private static void languageIcons(Dialog dialog, Preference preference, CharSequence[] values) {
         String key = preference.getKey();
         if (!"ui_lang".equals(key) && !"favSubLang".equals(key) && !"favAudioLang".equals(key)
-            && !com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG.equals(key)
+            && !VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG.equals(key)
             && !"languages_list".equals(key))
             return;
         for (int i = 0; i < values.length; i++)
-            com.archos.mediacenter.video.leanback.PreviewLanguageIcon.bind(dialog, i,
+            PreviewLanguageIcon.bind(dialog, i,
                 values[i] == null
                     ? null
-                    : com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(values[i].toString()));
+                    : PreviewLanguageIcon.providerCode(values[i].toString()));
     }
 
     private static void edit(PreferenceFragmentCompat f, EditTextPreference p) {
-        boolean omdb = com.archos.mediacenter.video.metadata.OmdbSupplement.PREF_API_KEY.equals(p.getKey());
+        boolean omdb = OmdbSupplement.PREF_API_KEY.equals(p.getKey());
         Function<String, String> validate =
-            omdb ? com.archos.mediacenter.video.metadata.OmdbSupplement::keyProblem : value -> null;
-        com.archos.mediacenter.video.leanback.PreviewTextInput.showValidated(f.requireContext(),
+            omdb ? OmdbSupplement::keyProblem : value -> null;
+        PreviewTextInput.showValidated(f.requireContext(),
             String.valueOf(p.getTitle()), p.getText() == null ? "" : p.getText(), 512, validate, value -> {
                 String stored = omdb ? value.trim() : value;
                 if (p.callChangeListener(stored))
