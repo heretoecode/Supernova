@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.archos.mediacenter.utils.ActionBarSubmenu;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.Browser;
 import com.archos.mediacenter.video.browser.BrowserCategory;
 import com.archos.mediacenter.video.browser.ThumbnailEngineVideo;
 import com.archos.mediacenter.video.browser.adapters.PresenterAdapterByCursor;
