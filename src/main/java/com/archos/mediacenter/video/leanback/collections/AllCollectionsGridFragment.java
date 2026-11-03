@@ -337,13 +337,13 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
         if (id == ALL_COLLECTIONS_LOADER_ID) {
             if (args == null) {
                 if (mSeparateAnimeFromShowMovie) return new AllCollectionsNoAnimeLoader(getActivity());
-                else return new AllCollectionsLoader(getActivity());
+                    else return new AllCollectionsLoader(getActivity());
             } else {
                 if (mSeparateAnimeFromShowMovie) return new AllCollectionsNoAnimeLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
-                else return new AllCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
+                    else return new AllCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override
