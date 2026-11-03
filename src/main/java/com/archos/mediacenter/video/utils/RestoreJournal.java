@@ -4,16 +4,18 @@ import android.content.Context;
 import android.util.AtomicFile;
 import androidx.preference.PreferenceManager;
 import java.io.*;
+import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantLock;
 import org.json.*;
 
 /** Durable rollback intent, written before any live database/pref replacement. */
 public final class RestoreJournal {
-    private static final java.util.concurrent.locks.ReentrantLock PROCESS_LOCK=new java.util.concurrent.locks.ReentrantLock();
+    private static final ReentrantLock PROCESS_LOCK=new ReentrantLock();
     static final class Guard implements AutoCloseable {
-        private final RandomAccessFile handle;private final java.nio.channels.FileLock lock;
-        private Guard(RandomAccessFile handle,java.nio.channels.FileLock lock){this.handle=handle;this.lock=lock;}
+        private final RandomAccessFile handle;private final FileLock lock;
+        private Guard(RandomAccessFile handle,FileLock lock){this.handle=handle;this.lock=lock;}
         @Override public void close()throws IOException{try{lock.release();}finally{try{handle.close();}finally{PROCESS_LOCK.unlock();}}}
     }
     static Guard acquire(Context c)throws IOException{
