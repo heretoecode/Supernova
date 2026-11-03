@@ -35,6 +35,7 @@ import com.archos.mediacenter.video.player.tvmenu.TVCardView.onFocusOutListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Creates TV playback menu cards and manages their navigation and animations. */
 public class TVMenuAdapter {
     private String[] mDataset;
     private Context mActivity;
