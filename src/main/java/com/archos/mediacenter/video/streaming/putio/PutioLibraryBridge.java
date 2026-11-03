@@ -40,6 +40,7 @@ final class PutioLibraryBridge implements PutioSync.Library {
         }
         return builder.build();
     }
+    @Override
     public long insert(Uri source,PutioReconciliation.File file){
         Uri uri=playback(source,file.relativePath);ContentResolver resolver=context.getContentResolver();
         try(Cursor existing=resolver.query(FILES,new String[]{"_id"},"_data=?",new String[]{uri.toString()},null)){
@@ -59,6 +60,7 @@ final class PutioLibraryBridge implements PutioSync.Library {
             if(created==null||!created.moveToFirst()||created.getCount()!=1)throw new IllegalStateException("Library import requires review");return created.getLong(0);
         }
     }
+    @Override
     public void relocate(Uri source,PutioReconciliation.Existing old,PutioReconciliation.File file){
         move(old.mediaId,playback(source,file.relativePath));
     }
@@ -75,5 +77,6 @@ final class PutioLibraryBridge implements PutioSync.Library {
         ContentValues values=new ContentValues();values.put("_data",after.toString());
         if(resolver.update(VideoStoreInternal.FILES_SCANNED,values,"_data=?",new String[]{before.toString()})!=1)throw new IllegalStateException("Original indexed file is unavailable");
     }
+    @Override
     public void enrich(){AutoScrapeService.startService(context);}
 }
