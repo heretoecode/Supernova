@@ -51,6 +51,7 @@ import com.archos.mediacenter.video.browser.filebrowsing.network.UpnpBrowser.Upn
 
 import java.util.ArrayList;
 
+/** Connects video categories and navigation choices to their browser fragments. */
 @SuppressWarnings("deprecation") // ActionBar navigation mode: legacy list navigation
 public class BrowserCategoryVideo extends BrowserCategory implements ActionBar.OnNavigationListener {
     static final String TAG = "BrowserCategoryVideo";
