@@ -35,6 +35,7 @@ public final class PreviewLibraryScan {
         installed = true;
         Context app = context.getApplicationContext();
         BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context c, Intent intent) {
                 if ((c.getPackageName() + ".LOCAL_IMPORT_LIFECYCLE").equals(intent.getAction())) {
                     PreviewLocalScanState.accept(c, intent);
@@ -188,6 +189,7 @@ public final class PreviewLibraryScan {
             return;
         selectionScanPending = true;
         MAIN.postDelayed(new Runnable() {
+            @Override
             public void run() {
                 synchronized (PreviewLibraryScan.class) {
                     if (!selectionScanPending)
