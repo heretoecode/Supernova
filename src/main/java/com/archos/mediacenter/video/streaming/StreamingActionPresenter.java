@@ -6,6 +6,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.*;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.SupernovaStyle;
 import com.squareup.picasso.Picasso;
 import java.util.Arrays;
 
@@ -82,8 +83,8 @@ public final class StreamingActionPresenter extends Presenter {
         labelParams.leftMargin = (int)(42 * d);
         labelParams.rightMargin = (int)(8 * d);
         frame.addView(fallback, labelParams);
-        com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(
-            frame, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+        SupernovaStyle.applyButton(
+            frame, SupernovaStyle.Surface.STANDARD);
         return new Holder(frame, image, fallback);
     }
 
