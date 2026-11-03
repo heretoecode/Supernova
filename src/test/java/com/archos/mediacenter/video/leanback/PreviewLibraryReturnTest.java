@@ -11,24 +11,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
+import com.squareup.picasso.Picasso;
 import java.time.Duration;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(org.robolectric.RobolectricTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewLibraryReturnTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void gridReturnRetainsExactItemAndScrolledPositionAfterRefresh(){checkReturn(false);}
     @Test public void listReturnRetainsExactRowAndViewModeAfterRefresh(){checkReturn(true);}
 
     private void checkReturn(boolean table){
-        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+        try{Picasso.get();}catch(IllegalStateException missing){Picasso.setSingletonInstance(new Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("preview_library_1_list",table).apply();
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
@@ -50,7 +55,7 @@ public class PreviewLibraryReturnTest {
             assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
         }finally{host.pause().stop().destroy();}
     }
-    private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));}}
+    private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));}}
     private Snapshot snapshot(boolean updated){
         Snapshot result=new Snapshot();
         for(int id=1;id<=60;id++){
