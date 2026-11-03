@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 
 /** Small cached artwork sample, blurred without requiring Android 12 RenderEffect. */
 final class PreviewNavigationShade {
@@ -15,7 +16,7 @@ final class PreviewNavigationShade {
     void release(){if(sample!=null)sample.recycle();sample=null;source=null;dirty=true;}
     void draw(Canvas canvas,Drawable background,int width,float height,int alpha){
         if(alpha<=0||width<=0||height<=0)return;
-        long now=android.os.SystemClock.uptimeMillis();
+        long now=SystemClock.uptimeMillis();
         int smallWidth=Math.max(1,Math.min(240,width/8)),smallHeight=Math.max(1,Math.round(height*smallWidth/width));
         if(sample==null||sample.getWidth()!=smallWidth||sample.getHeight()!=smallHeight||source!=background){release();source=background;dirty=true;}
         if(background!=null&&dirty&&(sample==null||now-sampledAt>=100)){
