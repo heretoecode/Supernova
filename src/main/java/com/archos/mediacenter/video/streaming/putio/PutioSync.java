@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.streaming.putio;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import java.util.*;
 
@@ -63,7 +64,7 @@ final class PutioSync {
 
     static Review fetch(Context context, PutioReadClient client, long account, long folder, Uri source)
         throws Exception {
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                 "supernova_putio_enabled", true))
             throw new IllegalStateException("put.io integration disabled");
         List<String> rootPath = PutioRootLocation.readPath(context, client, folder);
