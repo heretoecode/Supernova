@@ -23,6 +23,7 @@ import android.content.Intent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads recently played video entries for the home-screen widget. */
 class RemoteViewsFactoryRecentlyPlayed extends RemoteViewsFactoryBase {
     private static final Logger log = LoggerFactory.getLogger(RemoteViewsFactoryRecentlyPlayed.class);
 
