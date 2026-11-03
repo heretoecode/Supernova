@@ -18,8 +18,17 @@ import androidx.leanback.widget.BaseCardView;
 import androidx.leanback.widget.Presenter;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.ArtworkTrace;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.LibraryHealth;
+import com.archos.mediacenter.video.leanback.PreviewAccent;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewFocusGlow;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -50,7 +59,7 @@ public final class PreviewCardPresenter extends Presenter {
         Object boundItem;
         long diagnosticMediaId;
         int artworkGeneration;
-        com.archos.mediacenter.video.diagnostics.ArtworkTrace artworkTrace;
+        ArtworkTrace artworkTrace;
         public boolean artworkReady = true;
         final int width, height;
 
@@ -149,7 +158,7 @@ public final class PreviewCardPresenter extends Presenter {
             progress = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
             progress.setMax(100);
             progress.setProgressTintList(
-                ColorStateList.valueOf(com.archos.mediacenter.video.leanback.PreviewAccent.color(c)));
+                ColorStateList.valueOf(PreviewAccent.color(c)));
             progress.setProgressBackgroundTintList(ColorStateList.valueOf(0xff627386));
             FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(-1, dp(3), Gravity.BOTTOM);
             pp.setMargins(dp(8), 0, dp(8), dp(5));
@@ -181,7 +190,7 @@ public final class PreviewCardPresenter extends Presenter {
         }
 
         private int dp(int n) {
-            return com.archos.mediacenter.video.leanback.PreviewDialog.dp(getContext(), n);
+            return PreviewDialog.dp(getContext(), n);
         }
 
         public TextView titleView() {
@@ -209,11 +218,11 @@ public final class PreviewCardPresenter extends Presenter {
 
         public void setPresentationFocus(boolean focused) {
             if (focused)
-                com.archos.mediacenter.video.diagnostics.Diagnostics.focusedMedia(diagnosticMediaId);
+                Diagnostics.focusedMedia(diagnosticMediaId);
             View unit = getChildAt(0);
             setForeground(null);
             unit.setForeground(
-                focused ? new com.archos.mediacenter.video.leanback.PreviewFocusGlow(getContext()) : null);
+                focused ? new PreviewFocusGlow(getContext()) : null);
             // Cheap GPU alpha keeps Shield scrolling fluid. Captions are never softened.
             image.setAlpha(1f);
             unit.animate().scaleX(focused ? 1.08f : 1f).scaleY(focused ? 1.08f : 1f).setDuration(140).start();
@@ -239,7 +248,7 @@ public final class PreviewCardPresenter extends Presenter {
                                                 : item;
         boolean sameItem = Objects.equals(identity, c.boundItem);
         c.boundItem = identity;
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("artwork_bind", "same_item", sameItem, "style",
+        Diagnostics.event("artwork_bind", "same_item", sameItem, "style",
             style.name(), "media_id", c.diagnosticMediaId, "reason", sameItem ? "metadata_rebind" : "identity_changed");
         if (!sameItem) {
             if (c.artworkTrace != null)
@@ -348,19 +357,19 @@ public final class PreviewCardPresenter extends Presenter {
                                                            : "tv.grid";
             if (c.artworkTrace != null)
                 c.artworkTrace.cancelled();
-            final com.archos.mediacenter.video.diagnostics.ArtworkTrace trace =
-                new com.archos.mediacenter.video.diagnostics.ArtworkTrace(mediaId, surface,
+            final ArtworkTrace trace =
+                new ArtworkTrace(mediaId, surface,
                     style == Style.POSTER ? "poster" : "landscape",
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri));
+                    Diagnostics.sourceType(uri));
             c.artworkTrace = trace;
-            com.squareup.picasso.RequestCreator request = Picasso.get().load(uri).resize(
+            RequestCreator request = Picasso.get().load(uri).resize(
                 style == Style.LIST ? Math.round(112 * c.getResources().getDisplayMetrics().density) : c.width,
                 c.height);
             if (letterbox)
                 request.centerInside();
             else
                 request.centerCrop();
-            request.noPlaceholder().noFade().into(c.image, new com.squareup.picasso.Callback() {
+            request.noPlaceholder().noFade().into(c.image, new Callback() {
                 @Override
                 public void onSuccess() {
                     if (generation == c.artworkGeneration) {
@@ -382,7 +391,7 @@ public final class PreviewCardPresenter extends Presenter {
         }
     }
 
-    public void bindEntry(ViewHolder holder, com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry) {
+    public void bindEntry(ViewHolder holder, PreviewLibraryLoader.Entry entry) {
         Card card = (Card) holder.view;
         card.preferredArtwork = entry.backdrop;
         try {
@@ -394,13 +403,13 @@ public final class PreviewCardPresenter extends Presenter {
     }
 
     public static void bindSecondary(
-        ViewHolder holder, com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry) {
+        ViewHolder holder, PreviewLibraryLoader.Entry entry) {
         Card c = (Card) holder.view;
         if (entry.media instanceof Video) {
-            com.archos.mediacenter.video.leanback.LibraryHealth.State state =
-                com.archos.mediacenter.video.leanback.LibraryHealth.state(c.getContext(), (Video) entry.media);
-            if (state != com.archos.mediacenter.video.leanback.LibraryHealth.State.AVAILABLE) {
-                c.subtitle.setText(com.archos.mediacenter.video.leanback.LibraryHealth.message(state));
+            LibraryHealth.State state =
+                LibraryHealth.state(c.getContext(), (Video) entry.media);
+            if (state != LibraryHealth.State.AVAILABLE) {
+                c.subtitle.setText(LibraryHealth.message(state));
                 c.subtitle.setVisibility(View.VISIBLE);
                 c.setContentDescription(c.title.getText() + ", " + c.subtitle.getText());
                 return;
