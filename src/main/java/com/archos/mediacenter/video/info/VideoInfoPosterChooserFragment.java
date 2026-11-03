@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays available posters and saves the user's artwork selection. */
 public class VideoInfoPosterChooserFragment extends Fragment implements
         AdapterView.OnItemClickListener,
         View.OnClickListener {
