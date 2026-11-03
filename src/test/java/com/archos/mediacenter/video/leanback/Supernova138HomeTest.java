@@ -1,10 +1,16 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.os.Looper;
+import android.view.View;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -21,7 +27,7 @@ public class Supernova138HomeTest {
     @Before
     public void before() {
         app = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .clear()
             .putBoolean("supernova_history_migrated", true)
@@ -104,8 +110,8 @@ public class Supernova138HomeTest {
                                     false, false, false, false, 0, 0, 0, 0, null, null, null, null, 0, 1, 0, 0),
                 0, 0, "");
             if (years[i] > 0)
-                e.releaseDate = String.valueOf(java.time.LocalDate.of(years[i], 1, 1)
-                        .atStartOfDay(java.time.ZoneOffset.UTC)
+                e.releaseDate = String.valueOf(LocalDate.of(years[i], 1, 1)
+                        .atStartOfDay(ZoneOffset.UTC)
                         .toInstant()
                         .toEpochMilli());
             titles.add(e);
@@ -172,11 +178,11 @@ public class Supernova138HomeTest {
                     .put("name", "Watch Next")
                     .put("members",
                         new org.json.JSONArray(
-                            snapshot.movies.stream().map(Entry::key).collect(java.util.stream.Collectors.toList()))));
+                            snapshot.movies.stream().map(Entry::key).collect(Collectors.toList()))));
         } catch (Exception impossible) {
             throw new AssertionError(impossible);
         }
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .putString("preview_home_rows41", rows.toString())
             .commit();
@@ -192,7 +198,7 @@ public class Supernova138HomeTest {
                 if ("continue".equals(cell.homeRowId) && cell.value instanceof List)
                     assertEquals(15, ((List<?>) cell.value).size());
             snapshot.continuingMovies.clear();
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+            PreferenceManager.getDefaultSharedPreferences(app)
                 .edit()
                 .putString("preview_home_rows41", rows.toString())
                 .commit();
@@ -237,19 +243,19 @@ public class Supernova138HomeTest {
             host.get().setContentView(pages);
             pages.setSnapshot(snapshot);
             for (int n = 0; n < 3; n++) {
-                pages.measure(android.view.View.MeasureSpec.makeMeasureSpec(960, 1073741824),
-                    android.view.View.MeasureSpec.makeMeasureSpec(540, 1073741824));
+                pages.measure(View.MeasureSpec.makeMeasureSpec(960, 1073741824),
+                    View.MeasureSpec.makeMeasureSpec(540, 1073741824));
                 pages.layout(0, 0, 960, 540);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
             }
-            android.view.View card = pages.findViewWithTag(entry.key());
+            View card = pages.findViewWithTag(entry.key());
             assertNotNull(card);
             assertTrue(card.requestFocus());
-            java.util.List<android.view.View> changes = new ArrayList<>();
+            java.util.List<View> changes = new ArrayList<>();
             pages.getViewTreeObserver().addOnGlobalFocusChangeListener((old, next) -> changes.add(next));
             pages.setSnapshot(snapshot);
             ReflectionHelpers.callInstanceMethod(pages, "renderFeatured");
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertSame(card, pages.findFocus());
             assertTrue("No transient focus transfers during unrelated refresh", changes.isEmpty());
         } finally {
