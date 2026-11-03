@@ -42,6 +42,21 @@ Each item: what the owner saw → what they want → status.
   existing enlargement), matching the global white-outline rule.
 - **Status:** approved design — awaiting go-ahead to code.
 
+### 5. Home hero: age rating box and text readability (design)
+- **Seen (photos, 0.153):** the boxed age rating ("12A") in the hero metadata row is too heavy and missing on
+  some titles (Kingdom, War, Mr. Robot); metadata and tagline are hard to read on bright or busy artwork
+  (Kingdom, Tulsa King, Mayday).
+- **Decision (owner, 2026-11-03):**
+  - **Remove the age rating from the hero metadata row.** Keep it on the Details page and in the playback-start
+    age overlay. The row starts with the year.
+  - **Readability: soft text shadow + gentle darkening** behind the left third of the hero (option 2):
+    shadow under the metadata and tagline; a left-to-right shade (~42% → 0 by ~58% of the width) so the right
+    side of the artwork is untouched. Mock-ups: `docs/design/proposals/hero-readability/01–04-*.png`
+    (bottom-left in each).
+- **Follow-up to check while coding:** why some titles had no rating (likely UK certificate missing in TMDb) —
+  matters for the Details page and overlay, which keep it.
+- **Status:** approved design — awaiting go-ahead to code.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
