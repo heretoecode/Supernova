@@ -10,6 +10,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import java.util.concurrent.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30)
@@ -40,7 +41,7 @@ public class SubtitleReplacementTest {
                 Dialog dialog = null;
                 while (dialog == null || !dialog.isShowing()) {
                     Shadows.shadowOf(Looper.getMainLooper()).idle();
-                    dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+                    dialog = ShadowDialog.getLatestDialog();
                     if (System.nanoTime() > end)
                         throw new AssertionError("Replacement review did not appear");
                     Thread.sleep(2);
