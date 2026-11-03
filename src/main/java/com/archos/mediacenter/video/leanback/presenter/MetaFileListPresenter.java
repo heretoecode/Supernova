@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.MetaFile2;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
 /**
@@ -44,7 +45,7 @@ public class MetaFileListPresenter extends ListPresenter {
         if (PreferenceManager.getDefaultSharedPreferences(viewHolder.view.getContext())
                 .getBoolean("try_new_ui", false)) {
             vh.getImageView().setBackgroundColor(Color.TRANSPARENT);
-            int pad = com.archos.mediacenter.video.leanback.PreviewDialog.dp(viewHolder.view.getContext(), 16);
+            int pad = PreviewDialog.dp(viewHolder.view.getContext(), 16);
             vh.getImageView().setPadding(pad, pad, pad, pad);
         }
         vh.setContentTextVisibility(View.GONE);
