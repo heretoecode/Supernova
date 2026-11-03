@@ -149,6 +149,6 @@ public class BrowserVideosInPlaylist extends BrowserByVideoSelection {
 			else{
 				return false;
 			}
-		}else return true;
+    		}else return true;
 	}
 }
