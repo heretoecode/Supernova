@@ -25,7 +25,6 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -35,6 +34,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.IBinder;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Pair;
@@ -137,6 +137,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -1295,7 +1296,7 @@ public class VideoInfoActivityFragment extends Fragment
             if (log.isDebugEnabled())
                 log.debug("updateSubtitleInfo: showing subtitle track with {} lines", lines.size());
             mSubtitleTrack.setVisibility(View.VISIBLE);
-            android.text.SpannableStringBuilder text = new android.text.SpannableStringBuilder();
+            SpannableStringBuilder text = new SpannableStringBuilder();
             for (CharSequence line : lines) {
                 if (text.length() > 0)
                     text.append("\n");
@@ -1731,7 +1732,7 @@ public class VideoInfoActivityFragment extends Fragment
                 // Pick up any HTTP headers forwarded from the external player intent (e.g. Stremio/debrid)
                 android.os.Bundle headersBundle =
                     getActivity() != null ? getActivity().getIntent().getBundleExtra("headers") : null;
-                java.util.Map<String, String> headers = null;
+                Map<String, String> headers = null;
                 if (headersBundle != null && !headersBundle.isEmpty()) {
                     headers = new java.util.HashMap<>();
                     for (String key : headersBundle.keySet()) {
