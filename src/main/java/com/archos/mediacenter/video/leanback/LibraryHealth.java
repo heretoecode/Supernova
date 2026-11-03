@@ -1,7 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediaprovider.ImportState;
+import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.util.*;
 
@@ -51,17 +55,17 @@ public final class LibraryHealth {
         SharedPreferences health = c.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
         if (!health.getAll().isEmpty())
             return true;
-        if (com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()
-            || com.archos.mediaprovider.ImportState.VIDEO.isRegularImport()
-            || com.archos.mediaprovider.video.LoaderUtils.getScrapeInProgress())
+        if (ImportState.VIDEO.isInitialImport()
+            || ImportState.VIDEO.isRegularImport()
+            || LoaderUtils.getScrapeInProgress())
             return false;
         if (!snapshot.unmatched.isEmpty())
             return true;
         for (PreviewLibraryLoader.Entry entry : snapshot.technical)
             if (entry.media instanceof Video) {
                 Video video = (Video) entry.media;
-                if ((video instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
-                        || video instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)
+                if ((video instanceof Movie
+                        || video instanceof Episode)
                     && (video.getPosterUri() == null || LibraryHealthActivity.plot(video).trim().isEmpty()))
                     return true;
             }
