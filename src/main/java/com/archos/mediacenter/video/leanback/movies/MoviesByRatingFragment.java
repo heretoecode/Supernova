@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays movies grouped by rating with sorting controls. */
 public class MoviesByRatingFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = MoviesByRatingFragment.class.getName() + "_SORT";
