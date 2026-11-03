@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
+/** Hosts the additional TV Settings screen. */
 public class VideoSettingsMoreLeanbackActivity extends LeanbackActivity {
 
     @Override
