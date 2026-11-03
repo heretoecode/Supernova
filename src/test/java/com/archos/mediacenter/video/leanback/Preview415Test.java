@@ -9,24 +9,32 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.view.View;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
+import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.player.PlayerService;
 import com.archos.mediacenter.video.utils.PlayUtils;
 import com.archos.mediacenter.video.utils.SettingsBackup;
 import com.archos.filecorelibrary.sftp.SftpHostTrust;
+import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.*;
+import org.json.JSONException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class Preview415Test {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     private Video movie(long id,int width,int resume){return new Movie(id,"/storage/version-"+id+".mkv","Film",1,"Plot",2024,7,"",null,100000,resume,0,0,false,false,false,false,1,resume>0?50:0,width,1080,null,null,null,null,0,1,900000,0);}
     private Entry episode(long id,int season,int number,int width){return new Entry(new Episode(id,7,season,number,"Episode",0,0,"","","Show","/storage/v"+id+".mkv",null,null,100000,0,0,0,false,false,false,false,1,0,width,1080,null,null,null,null,0,1,1000),0,7,"");}
     @Test public void automaticVersionResumeReachesLaunchBoundaryButDoesNotOverrideExplicitChoice(){
@@ -58,7 +66,7 @@ public class Preview415Test {
         prefs.edit().putBoolean("old",true).commit();
         SettingsBackup.decode(prefs,"{\"new\":{\"type\":\"int\",\"value\":7}}").commit();
         assertFalse(prefs.contains("old"));assertEquals(7,prefs.getInt("new",0));
-        try{SettingsBackup.decode(prefs,"{\"bad\":{\"type\":\"unknown\"}}");fail();}catch(org.json.JSONException expected){}
+        try{SettingsBackup.decode(prefs,"{\"bad\":{\"type\":\"unknown\"}}");fail();}catch(JSONException expected){}
         assertEquals(7,prefs.getInt("new",0));
     }
     @Test public void sftpTrustInitialisesBeforeApplicationContextExists(){
@@ -80,9 +88,9 @@ public class Preview415Test {
     }
     @Test public void sourceInclusionUsesIdentityDespiteDuplicateNames(){
         Context context=RuntimeEnvironment.getApplication();
-        com.archos.mediacenter.utils.ShortcutDbAdapter adapter=com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO;
-        com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut first=new com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut("Films","smb://one/films");
-        com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut second=new com.archos.mediacenter.utils.ShortcutDbAdapter.Shortcut("Films","smb://two/films");
+        ShortcutDbAdapter adapter=ShortcutDbAdapter.VIDEO;
+        ShortcutDbAdapter.Shortcut first=new ShortcutDbAdapter.Shortcut("Films","smb://one/films");
+        ShortcutDbAdapter.Shortcut second=new ShortcutDbAdapter.Shortcut("Films","smb://two/films");
         assertTrue(adapter.addShortcut(context,first));assertTrue(adapter.addShortcut(context,second));
         long selected=adapter.isShortcut(context,"smb://one/films");
         adapter.setRescanShortcut(context,true,"Films");adapter.setRescanShortcutById(context,false,selected);
@@ -92,13 +100,13 @@ public class Preview415Test {
     }
     @Test public void detailsWithoutAnAttachedLegacyImageNeedNoTransition(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
-        assertNull(com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment.detailsTransition(activity,null));
-        assertNull(com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment.detailsTransition(activity,new View(activity)));
+        assertNull(ListingFragment.detailsTransition(activity,null));
+        assertNull(ListingFragment.detailsTransition(activity,new View(activity)));
         activity.finish();
     }
     @Test public void modernLibraryPreferencesReachFilterAndTitleSort(){
         Context context=RuntimeEnvironment.getApplication();SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(context);
-        Entry entry=new Entry(movie(9,1920,com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END),0,0,"");entry.sortTitle="Film, The";
+        Entry entry=new Entry(movie(9,1920,PlayerActivity.LAST_POSITION_END),0,0,"");entry.sortTitle="Film, The";
         prefs.edit().putBoolean("sort_ignore_articles",true).putBoolean("hide_watched",true).commit();
         assertEquals("Film, The",PreviewPages.titleForSort(context,entry));assertTrue(PreviewPages.hiddenByWatchedPreference(context,entry));
         prefs.edit().putBoolean("sort_ignore_articles",false).putBoolean("hide_watched",false).commit();
@@ -107,9 +115,9 @@ public class Preview415Test {
     @Test public void backdropFailureRetainsDisplayedArtworkWithoutStaleCrossfade(){
         PreviewBackdrop backdrop=new PreviewBackdrop(RuntimeEnvironment.getApplication());
         Bitmap image=Bitmap.createBitmap(16,9,Bitmap.Config.ARGB_8888);
-        backdrop.onBitmapLoaded(image,com.squareup.picasso.Picasso.LoadedFrom.MEMORY);
+        backdrop.onBitmapLoaded(image,Picasso.LoadedFrom.MEMORY);
         backdrop.onBitmapFailed(new IOException(),null);
-        assertSame(image,org.robolectric.util.ReflectionHelpers.getField(backdrop,"bitmap"));
-        assertNull(org.robolectric.util.ReflectionHelpers.getField(backdrop,"previous"));
+        assertSame(image,ReflectionHelpers.getField(backdrop,"bitmap"));
+        assertNull(ReflectionHelpers.getField(backdrop,"previous"));
     }
 }
