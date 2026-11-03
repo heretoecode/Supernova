@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
+/** Creates and adjusts elevation shadows for focused views on Android API 21 and later. */
 class ShadowHelperApi21 {
 
     static class ShadowImpl {
