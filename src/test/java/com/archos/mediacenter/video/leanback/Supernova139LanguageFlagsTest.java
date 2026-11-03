@@ -2,8 +2,13 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.graphics.*;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
+import android.view.View;
+import android.widget.ImageView;
 import java.util.*;
 import java.io.*;
+import java.util.TreeSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -19,9 +24,9 @@ public class Supernova139LanguageFlagsTest {
         Application c = RuntimeEnvironment.getApplication();
         for (String code : new String[] {null, "", "und", "ab", "tp", "unknown"}) {
             CharSequence value = PreviewLanguageIcon.inline(c, code, "Track label");
-            assertTrue(value instanceof android.text.Spanned);
-            android.text.style.ImageSpan[] icons =
-                ((android.text.Spanned)value).getSpans(0, value.length(), android.text.style.ImageSpan.class);
+            assertTrue(value instanceof Spanned);
+            ImageSpan[] icons =
+                ((Spanned)value).getSpans(0, value.length(), ImageSpan.class);
             assertEquals(1, icons.length);
             assertTrue(icons[0].getDrawable().getBounds().width() > 0);
             assertNull(org.robolectric.util.ReflectionHelpers.getField(icons[0].getDrawable(), "flag"));
@@ -32,10 +37,10 @@ public class Supernova139LanguageFlagsTest {
     public void imageViewRendersRegionalAndNeutralIconsWithoutManualDrawableBounds() {
         Application c = RuntimeEnvironment.getApplication();
         for (String code : new String[] {"en-GB", "eng", "pt_BR", "zh-ca", "cy", null}) {
-            android.widget.ImageView image = new android.widget.ImageView(c);
+            ImageView image = new ImageView(c);
             image.setImageDrawable(new PreviewLanguageIcon(c, code));
-            image.measure(android.view.View.MeasureSpec.makeMeasureSpec(80, 1073741824),
-                          android.view.View.MeasureSpec.makeMeasureSpec(48, 1073741824));
+            image.measure(View.MeasureSpec.makeMeasureSpec(80, 1073741824),
+                          View.MeasureSpec.makeMeasureSpec(48, 1073741824));
             image.layout(0, 0, 80, 48);
             Bitmap pixels = Bitmap.createBitmap(80, 48, Bitmap.Config.ARGB_8888);
             image.draw(new Canvas(pixels));
@@ -52,7 +57,7 @@ public class Supernova139LanguageFlagsTest {
     @Test
     public void everyMappedFlagKeyHasBundledArtwork() {
         Application context = RuntimeEnvironment.getApplication();
-        java.util.Set<String> keys = new java.util.TreeSet<>(PreviewLanguageIcon.DEFAULT_COUNTRY.values());
+        java.util.Set<String> keys = new TreeSet<>(PreviewLanguageIcon.DEFAULT_COUNTRY.values());
         for (String code : new String[] {"sp", "ea", "ze", "ex", "zh-ca", "me", "pm", "pr", "ma"})
             keys.add(PreviewLanguageIcon.country(code));
         for (String key : keys) {
