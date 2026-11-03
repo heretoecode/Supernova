@@ -26,8 +26,17 @@ import android.os.Looper;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.PreviewMatchSearch;
+import com.archos.mediacenter.video.leanback.PreviewOperationDialog;
 import com.archos.mediacenter.video.ui.NovaProgressDialog;
+import com.archos.mediacenter.video.utils.DirectEpisodeLookup;
+import com.archos.mediacenter.video.utils.DirectMovieLookup;
+import com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediascraper.BaseTags;
 import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.MovieTags;
@@ -35,6 +44,7 @@ import com.archos.mediascraper.NfoParser;
 import com.archos.mediascraper.NfoWriter;
 import com.archos.mediascraper.ScrapeDetailResult;
 import com.archos.mediascraper.ScrapeSearchResult;
+import com.archos.mediascraper.ScrapeStatus;
 import com.archos.mediascraper.Scraper;
 import com.archos.mediascraper.SearchResult;
 import com.archos.mediascraper.ShowTags;
@@ -71,24 +81,24 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         mSearchInfo = SearchPreprocessor.instance().parseFileBased(mVideo.getUri(),
             mVideo.getName() != null && !mVideo.getName().isEmpty() ? Uri.parse("/" + mVideo.getName())
                                                                     : mVideo.getUri());
-        previewEpisode = mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode
+        previewEpisode = mVideo instanceof Episode
             && PreferenceManager.getDefaultSharedPreferences(requireContext())
                    .getBoolean("try_new_ui", false);
 
         // Start a search using the search suggestion. It makes it easy for the user to edit it for typo if needed
         // Allow often the second or third suggestion is the right one
         setInitialQuery(previewEpisode
-                ? "S" + ((com.archos.mediacenter.video.browser.adapters.object.Episode) mVideo).getSeasonNumber() + " E"
-                    + ((com.archos.mediacenter.video.browser.adapters.object.Episode) mVideo).getEpisodeNumber()
+                ? "S" + ((Episode) mVideo).getSeasonNumber() + " E"
+                    + ((Episode) mVideo).getEpisodeNumber()
                 : mSearchInfo.getSearchSuggestion());
 
         setTitle(getString(R.string.leanback_video_info_custom_search_file_hint));
     }
 
     @Override
-    protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search) {
+    protected void configurePreviewSearch(PreviewMatchSearch search) {
         if (previewEpisode)
-            search.parentSeries(((com.archos.mediacenter.video.browser.adapters.object.Episode) mVideo).getShowName(),
+            search.parentSeries(((Episode) mVideo).getShowName(),
                 this::changeSeriesMatch);
     }
 
@@ -98,7 +108,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         worker.execute(() -> {
             EpisodeTags tags = null;
             try {
-                tags = com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app, mVideo.getId());
+                tags = DirectEpisodeLookup.current(app, mVideo.getId());
             } catch (Exception ignored) {
             } finally {
                 worker.shutdown();
@@ -108,7 +118,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 if (!isAdded() || getView() == null)
                     return;
                 if (parent == null || parent.getShowId() < 0) {
-                    com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),
+                    PreviewOperationDialog.notice(requireContext(),
                         "Find a Match", "The current series could not be read. Please reopen this title and try again.",
                         () -> {
                         });
@@ -161,27 +171,27 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         mTagsToSearchResultMap.clear();
         if (previewEpisode) {
             try {
-                EpisodeTags current = com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(
+                EpisodeTags current = DirectEpisodeLookup.current(
                     requireContext().getApplicationContext(), mVideo.getId());
-                return com.archos.mediacenter.video.utils.DirectEpisodeLookup.find(
+                return DirectEpisodeLookup.find(
                     requireContext().getApplicationContext(), current.getShowTags(), text, mVideo.getFileUri(),
                     SEARCH_RESULT_MAX_ITEMS);
             } catch (Exception failed) {
                 return new ScrapeSearchResult(
-                    Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
+                    Collections.emptyList(), false, ScrapeStatus.ERROR, failed);
             }
         }
-        if (mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
-            || !(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)
+        if (mVideo instanceof Movie
+            || !(mVideo instanceof Episode)
                 && !(mSearchInfo instanceof TvShowSearchInfo)) {
             try {
-                ScrapeSearchResult direct = com.archos.mediacenter.video.utils.DirectMovieLookup.find(
+                ScrapeSearchResult direct = DirectMovieLookup.find(
                     requireContext().getApplicationContext(), text, mVideo.getFileUri());
                 if (direct != null)
                     return direct;
             } catch (Exception failed) {
                 return new ScrapeSearchResult(
-                    Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
+                    Collections.emptyList(), false, ScrapeStatus.ERROR, failed);
             }
         }
         mSearchInfo.setUserInput(text);
@@ -312,14 +322,14 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 // saving will trigger database change notification and reloading in
                 // VideoInfoActivity
                 try {
-                    com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(
+                    MediaMatchManualChanges.mark(
                         getActivity(), mVideo.getId());
                 } catch (IOException unavailable) {
                     log.warn("Manual matching protection unavailable", unavailable);
                     if (getActivity() != null)
                         getActivity().runOnUiThread(() -> {
                             progressDialog.dismiss();
-                            com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(getActivity(),
+                            PreviewOperationDialog.notice(getActivity(),
                                 "Find a Match", "The match could not be saved. Check the current match and try again.",
                                 () -> {
                                 });
@@ -350,7 +360,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
             return;
         final BaseTags choice = accepted;
         final Context app = requireContext().getApplicationContext();
-        final Dialog progress = com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(
+        final Dialog progress = PreviewOperationDialog.waiting(
             requireContext(), "Find a Match", "Saving the selected match…");
         ExecutorService worker = Executors.newSingleThreadExecutor();
         worker.execute(() -> {
@@ -358,7 +368,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
             try {
                 if (previewEpisode) {
                     EpisodeTags current =
-                        com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app, mVideo.getId());
+                        DirectEpisodeLookup.current(app, mVideo.getId());
                     EpisodeTags episode = (EpisodeTags) choice;
                     if (current.getShowTags() == null || episode.getShowTags() == null
                         || current.getShowTags().getOnlineId() != episode.getShowTags().getOnlineId())
@@ -376,7 +386,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                     } catch (IOException ignored) {
                     }
             } catch (Exception failed) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                Diagnostics.event(
                     "match_save_failed", "category", "metadata_save");
             } finally {
                 worker.shutdown();
@@ -389,7 +399,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 if (complete)
                     getActivity().finish();
                 else
-                    com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),
+                    PreviewOperationDialog.notice(requireContext(),
                         "Find a Match", "The match could not be saved. Check the current match and try again.",
                         () -> {
                         });
@@ -398,10 +408,10 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     }
 
     static void persistAcceptedMatch(Context context, BaseTags tags, long videoId) throws IOException {
-        com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context, videoId);
+        MediaMatchManualChanges.mark(context, videoId);
         if (tags.save(context, videoId) < 0)
             throw new IOException("Metadata persistence failed");
-        context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+        context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
             .edit()
             .remove("incorrect:" + videoId)
             .apply();
