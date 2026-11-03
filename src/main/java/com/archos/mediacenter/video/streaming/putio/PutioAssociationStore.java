@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import java.util.*;
 
 /** Sidecar identities only. Never updates/deletes a Video row, file or playback history. */
@@ -97,8 +98,8 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
         try (Cursor c = db.rawQuery("SELECT source FROM scopes", null)) {
             while (c.moveToNext()) {
                 Uri previous = Uri.parse(c.getString(0));
-                if (com.archos.mediaprovider.video.ProviderDiscoveryGate.contains(previous, source)
-                    || com.archos.mediaprovider.video.ProviderDiscoveryGate.contains(source, previous))
+                if (ProviderDiscoveryGate.contains(previous, source)
+                    || ProviderDiscoveryGate.contains(source, previous))
                     throw new IllegalStateException("Overlapping source requires reassignment review");
             }
         }
@@ -109,7 +110,7 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
 
     /** A new generation invalidates every earlier in-flight result for this folder. */
     public synchronized Session begin(long account, long folder) {
-        synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
+        synchronized (ProviderDiscoveryGate.LOCK) {
             SQLiteDatabase db = getWritableDatabase();
             db.beginTransaction();
             try {
@@ -137,7 +138,7 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
 
     /** Reconnect keeps mappings but requires a fresh complete snapshot before API ownership. */
     public synchronized void resume(long account, long folder) {
-        synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
+        synchronized (ProviderDiscoveryGate.LOCK) {
             if (ownership(account, folder) == Ownership.REASSIGNING)
                 throw new IllegalStateException("Finish the pending source change first");
             begin(account, folder);
@@ -241,7 +242,7 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
 
     /** Persist scanner exclusion while holding the same lock as an entire generic scan. */
     public synchronized boolean activate(Session session) {
-        synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
+        synchronized (ProviderDiscoveryGate.LOCK) {
             SQLiteDatabase db = getWritableDatabase();
             db.beginTransaction();
             try {
@@ -258,7 +259,7 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
                     source = c.getString(0);
                 }
                 // Exclusion first: interruption can leave a source inactive, never double-owned.
-                com.archos.mediaprovider.video.ProviderDiscoveryGate.exclude(
+                ProviderDiscoveryGate.exclude(
                     context, "putio:" + session.scope, Uri.parse(source));
                 ContentValues values = new ContentValues();
                 values.put("ownership", Ownership.API.name());
@@ -275,13 +276,13 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
     public synchronized void disconnect(long account, long folder, DisconnectChoice choice) {
         if (choice == null)
             throw new IllegalArgumentException("Discovery choice is required");
-        synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
+        synchronized (ProviderDiscoveryGate.LOCK) {
             Session invalidate = begin(account, folder);
             if (choice == DisconnectChoice.KEEP_INACTIVE) {
                 try (Cursor c = getReadableDatabase().rawQuery(
                          "SELECT source FROM scopes WHERE account_id=? AND folder_id=?", args(account, folder))) {
                     if (c.moveToFirst())
-                        com.archos.mediaprovider.video.ProviderDiscoveryGate.exclude(
+                        ProviderDiscoveryGate.exclude(
                             context, "putio:" + invalidate.scope, Uri.parse(c.getString(0)));
                 }
             }
@@ -293,14 +294,14 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
                     "" + account, "" + folder, "" + invalidate.generation
                 });
             if (choice == DisconnectChoice.REVERT_TO_GENERIC)
-                com.archos.mediaprovider.video.ProviderDiscoveryGate.release(context, "putio:" + invalidate.scope);
+                ProviderDiscoveryGate.release(context, "putio:" + invalidate.scope);
         }
     }
 
     public synchronized void disconnectAccount(long account, DisconnectChoice choice) {
         if (choice == null)
             throw new IllegalArgumentException("Discovery choice is required");
-        synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
+        synchronized (ProviderDiscoveryGate.LOCK) {
             SQLiteDatabase db = getWritableDatabase();
             db.beginTransaction();
             try {
@@ -320,7 +321,7 @@ public final class PutioAssociationStore extends SQLiteOpenHelper {
                          })) {
                     while (c.moveToNext())
                         if (choice == DisconnectChoice.REVERT_TO_GENERIC)
-                            com.archos.mediaprovider.video.ProviderDiscoveryGate.release(context, c.getString(0));
+                            ProviderDiscoveryGate.release(context, c.getString(0));
                 }
                 if (choice == DisconnectChoice.REVERT_TO_GENERIC)
                     db.delete("retired_sources", "account_id=?", new String[] {
