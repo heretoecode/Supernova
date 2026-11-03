@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import okhttp3.*;
 
+/** Resolves TV show identifiers through metadata searches for manual show matching. */
 public final class DirectShowLookup {
     private static final OkHttpClient HTTP = new OkHttpClient.Builder()
         .connectTimeout(8, TimeUnit.SECONDS).callTimeout(20, TimeUnit.SECONDS).build();
