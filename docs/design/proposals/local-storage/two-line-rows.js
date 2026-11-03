@@ -19,12 +19,12 @@ const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</sp
 const head = `<div class="head"><div class="crumb"><span>Local Storage</span><b>›</b><span>Backup #2</span><b>›</b><span>TV</span><b>›</b><span class="last">1883 – The Bass Reeves Story</span></div>
   <div class="tools">${btn('grid', 'Grid')}${btn('sort', 'Sort: Name')}${btn('filter', 'Videos only')}</div></div>`;
 const eps = [['S01E01 - PART I', '52m', 'watched'], ['S01E02 - PART II', '48m', 'progress'], ['S01E03 - PART III', '51m'], ['S01E04 - PART IV', '47m'], ['S01E05 - PART V', '50m'], ['S01E06 - PART VI', '49m']];
-const mark = st => st === 'watched' ? `<span class="st ok">${ic('check', 26)}</span>` : st === 'progress' ? '<span class="st"><span class="prog"><i></i></span></span>' : '<span class="st"></span>';
+const mark = st => st === 'watched' ? `<span class="st ok">${ic('check', 26)}</span>` : '<span class="st"></span>';
 const rowBtns = state => `<span class="ibtns">${btn('play', 'Resume', state === 'actions')}${btn('info', 'Details')}${btn('lib', 'Exclude')}${btn('save', 'Save')}</span>`;
 const sizes = ['335 MB', '312 MB', '330 MB', '301 MB', '322 MB', '316 MB'];
 const line2 = (i, d, extra) => `<span class="l2">Lawmen: Bass Reeves · S1 E${i + 1} · ${d.replace('m', ' min')} · 1080p · English 5.1 · ${sizes[i]}${extra || ''}</span>`;
 const list = state => eps.map(([n, d, st], i) => `<div class="row${i === 1 ? (state === 'list' ? ' focus' : ' sel') : ''}">${ic('video')}
-  <span class="two"><span class="name1">Lawmen - Bass Reeves - ${n}</span>${line2(i, d, i === 1 ? ' · <span class="res">Resume at 19:42</span>' : st === 'watched' ? ' · Watched' : '')}</span>
+  <span class="two"><span class="name1">Lawmen - Bass Reeves - ${n}</span>${line2(i, d, i === 1 ? ' · <span class="res">Resume at 19:42 (40%)</span>' : st === 'watched' ? ' · Watched' : '')}</span>
   ${i === 1 ? rowBtns(state) : ''}${mark(st)}</div>`).join('');
 const poster = `<div class="poster"><div>LAWMEN<br><small>BASS REEVES</small></div></div>`;
 const strip = state => `<div class="strip">${poster}<div class="si"><div class="t">Lawmen: Bass Reeves · Season 1 · Episode 2 · Part II</div>
