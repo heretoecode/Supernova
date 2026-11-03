@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import com.squareup.picasso.Picasso;
 
+/** Loads and caches cast and crew portraits for the Details page. */
 final class PreviewPeople {
     private static final ExecutorService worker = Executors.newSingleThreadExecutor();
 
