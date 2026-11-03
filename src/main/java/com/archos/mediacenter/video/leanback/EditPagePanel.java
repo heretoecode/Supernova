@@ -28,12 +28,16 @@ public final class EditPagePanel extends LinearLayout {
         /** Back with nothing left to close inside the panel. */
         void back();
         void delete();
+
         /** A new page whose settings have not been touched yet. */
-        default boolean untouched() { return false; }
+        default boolean untouched() {
+            return false;
+        }
     }
 
     static final String[] TYPES = {"movies", "tv", "both"}, TYPE_LABELS = {"Movies", "TV Shows", "Both"};
-    static final String[] WATCHED = {"all", "watched", "unwatched", "progress"}, WATCHED_LABELS = {"All", "Watched", "Unwatched", "In Progress"};
+    static final String[] WATCHED = {"all", "watched", "unwatched", "progress"},
+                          WATCHED_LABELS = {"All", "Watched", "Unwatched", "In Progress"};
     static final double[] RATINGS = {0, 5, 6, 7, 8, 9};
     static final String[] VIEWS = {"grid", "list"}, VIEW_LABELS = {"Grid", "List"};
     static final String[] SORTS = {"title", "year", "added"}, SORT_LABELS = {"Title", "Year", "Date Added"};
@@ -45,13 +49,14 @@ public final class EditPagePanel extends LinearLayout {
     private final TextView title, matches, save;
     private final SidePanelKit.FittedScroll scroll;
     private final List<Runnable> bindings = new ArrayList<>();
-    private String page;          // null on the main list; "genres", "language" or "studio" on a pick list
+    private String page; // null on the main list; "genres", "language" or "studio" on a pick list
     private String returnTo;
     private Dialog dialog;
 
     EditPagePanel(Activity owner, Host host) {
         super(owner);
-        this.owner = owner; this.host = host;
+        this.owner = owner;
+        this.host = host;
         kit = new SidePanelKit(owner);
         setOrientation(VERTICAL);
         setTag("edit.panel");
@@ -84,9 +89,14 @@ public final class EditPagePanel extends LinearLayout {
         save.setCompoundDrawablePadding(kit.s(10));
         save.setOnClickListener(v -> host.save());
         save.setOnKeyListener((v, key, event) -> {
-            if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
-            if (key == KeyEvent.KEYCODE_DPAD_DOWN) { focusFirst(); return true; }
-            return key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT;
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return false;
+            if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                focusFirst();
+                return true;
+            }
+            return key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_LEFT ||
+                key == KeyEvent.KEYCODE_DPAD_RIGHT;
         });
         header.addView(save, new LayoutParams(-2, kit.s(46)));
         LayoutParams headerSize = new LayoutParams(-1, -2);
@@ -113,7 +123,8 @@ public final class EditPagePanel extends LinearLayout {
         dialog.setCancelable(false);
         dialog.setOnKeyListener((d, key, event) -> {
             if (key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_ESCAPE || key == KeyEvent.KEYCODE_BUTTON_B) {
-                if (event.getAction() == KeyEvent.ACTION_UP && !panel.closePage()) host.back();
+                if (event.getAction() == KeyEvent.ACTION_UP && !panel.closePage())
+                    host.back();
                 return true;
             }
             return false;
@@ -134,28 +145,50 @@ public final class EditPagePanel extends LinearLayout {
         return panel;
     }
 
-    public void dismiss() { if (dialog != null && dialog.isShowing()) dialog.dismiss(); dialog = null; }
-    public boolean isShowing() { return dialog != null && dialog.isShowing(); }
-    public Dialog dialog() { return dialog; }
-    int panelWidth() { return Math.round(owner.getResources().getDisplayMetrics().widthPixels * 690f / 1920f); }
+    public void dismiss() {
+        if (dialog != null && dialog.isShowing())
+            dialog.dismiss();
+        dialog = null;
+    }
+
+    public boolean isShowing() {
+        return dialog != null && dialog.isShowing();
+    }
+
+    public Dialog dialog() {
+        return dialog;
+    }
+
+    int panelWidth() {
+        return Math.round(owner.getResources().getDisplayMetrics().widthPixels * 690f / 1920f);
+    }
+
     /** Screen height less the 96px top and 40px bottom margins, the panel padding and the header. */
-    private int maxBodyHeight() { return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 16) - kit.s(84); }
+    private int maxBodyHeight() {
+        return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 16) - kit.s(84);
+    }
 
     private void focusInitial() {
         View target = body.findViewWithTag(host.isNew() ? "edit.row.name" : "edit.row.name");
-        if (target != null) target.requestFocus();
+        if (target != null)
+            target.requestFocus();
     }
 
     private void focusFirst() {
         for (int i = 0; i < body.getChildCount(); i++) {
             View child = body.getChildAt(i);
-            if (child.isFocusable() && child.requestFocus()) return;
+            if (child.isFocusable() && child.requestFocus())
+                return;
         }
     }
 
     private void focusTop() {
-        if (page != null) { View back = findViewWithTag("edit.page.back"); if (back != null) back.requestFocus(); }
-        else save.requestFocus();
+        if (page != null) {
+            View back = findViewWithTag("edit.page.back");
+            if (back != null)
+                back.requestFocus();
+        } else
+            save.requestFocus();
     }
 
     // ---- main list -------------------------------------------------------------------------
@@ -165,7 +198,8 @@ public final class EditPagePanel extends LinearLayout {
         body.removeAllViews();
         bindings.clear();
         View oldBack = findViewWithTag("edit.page.back");
-        if (oldBack != null) removeView(oldBack);
+        if (oldBack != null)
+            removeView(oldBack);
         header.setVisibility(VISIBLE);
         scroll.setMax(maxBodyHeight());
         CustomLibraryPage d = host.draft();
@@ -173,22 +207,40 @@ public final class EditPagePanel extends LinearLayout {
         kit.section(body, "PAGE", true);
         LinearLayout name = kit.row(body, "edit.row.name", "edit", "Page Name", this::focusTop);
         TextView nameValue = kit.opener(name);
-        bindings.add(() -> { nameValue.setText(d.name); name.setContentDescription("Page Name, " + d.name); });
-        name.setOnClickListener(v -> PreviewTextInput.show(owner, "Page Name", d.name, 40, value -> { d.name = value; changed(); }));
+        bindings.add(() -> {
+            nameValue.setText(d.name);
+            name.setContentDescription("Page Name, " + d.name);
+        });
+        name.setOnClickListener(v -> PreviewTextInput.show(owner, "Page Name", d.name, 40, value -> {
+            d.name = value;
+            changed();
+        }));
 
         choices("edit.row.type", "film", "Includes", TYPE_LABELS, () -> index(TYPES, d.type), n -> d.type = TYPES[n]);
 
         kit.section(body, "WHAT TO SHOW", false);
         LinearLayout genres = kit.row(body, "edit.row.genres", "genre", "Genres", this::focusTop);
         TextView genreValue = kit.opener(genres);
-        bindings.add(() -> { genreValue.setText(genreSummary(d.genres)); genres.setContentDescription("Genres, " + genreSummary(d.genres)); });
+        bindings.add(() -> {
+            genreValue.setText(genreSummary(d.genres));
+            genres.setContentDescription("Genres, " + genreSummary(d.genres));
+        });
         genres.setOnClickListener(v -> openGenres());
-        choices("edit.row.match", "filter", "Match", new String[]{"Any", "All"}, () -> d.allGenres ? 1 : 0, n -> d.allGenres = n == 1);
+        choices("edit.row.match", "filter", "Match", new String[] {"Any", "All"},
+                () -> d.allGenres ? 1 : 0, n -> d.allGenres = n == 1);
 
         List<Integer> years = years();
-        stepper("edit.row.year", "date", "Year", () -> years.indexOf(d.year), years.size(), n -> d.year = years.get(n), n -> years.get(n) == 0 ? "Any" : String.valueOf(years.get(n)));
-        stepper("edit.row.watched", "eye", "Watched", () -> index(WATCHED, d.watched), WATCHED.length, n -> d.watched = WATCHED[n], n -> WATCHED_LABELS[n]);
-        stepper("edit.row.rating", "star", "Minimum Rating", () -> ratingIndex(d.rating), RATINGS.length, n -> d.rating = RATINGS[n], n -> n == 0 ? "Any" : String.valueOf((int) RATINGS[n]));
+        stepper("edit.row.year", "date", "Year",
+                ()
+                    -> years.indexOf(d.year),
+                years.size(),
+                n -> d.year = years.get(n), n -> years.get(n) == 0 ? "Any" : String.valueOf(years.get(n)));
+        stepper("edit.row.watched", "eye", "Watched",
+                () -> index(WATCHED, d.watched), WATCHED.length, n -> d.watched = WATCHED[n], n -> WATCHED_LABELS[n]);
+        stepper("edit.row.rating", "star", "Minimum Rating",
+                ()
+                    -> ratingIndex(d.rating),
+                RATINGS.length, n -> d.rating = RATINGS[n], n -> n == 0 ? "Any" : String.valueOf((int)RATINGS[n]));
         facet("language", "language", "Original Language");
         facet("studio", "network", "Studio / Network");
 
@@ -213,7 +265,8 @@ public final class EditPagePanel extends LinearLayout {
             TextView label = kit.text("Delete Page", 19, SidePanelKit.DANGER, true);
             label.setPadding(kit.s(14), 0, kit.s(18), 0);
             delete.addView(label);
-            TextView note = kit.text("Removes this page only. Your media is never deleted.", 15, SidePanelKit.META, false);
+            TextView note =
+                kit.text("Removes this page only. Your media is never deleted.", 15, SidePanelKit.META, false);
             note.setSingleLine(true);
             note.setEllipsize(android.text.TextUtils.TruncateAt.END);
             delete.addView(note, new LayoutParams(0, -2, 1));
@@ -221,39 +274,65 @@ public final class EditPagePanel extends LinearLayout {
             delete.setOnClickListener(v -> host.delete());
             kit.attach(body, delete, null);
             body.addView(delete, new LayoutParams(-1, -2));
-        } else SidePanelKit.dropTrailingRule(body);
+        } else
+            SidePanelKit.dropTrailingRule(body);
         refresh();
     }
 
-    private interface IntSource { int get(); }
-    private interface IntSink { void set(int n); }
-    private interface Label { String of(int n); }
+    private interface IntSource {
+        int get();
+    }
+    private interface IntSink {
+        void set(int n);
+    }
+    private interface Label {
+        String of(int n);
+    }
 
     private void choices(String tag, String iconKind, String title, String[] labels, IntSource current, IntSink set) {
         LinearLayout row = kit.row(body, tag, iconKind, title, this::focusTop);
         TextView[] texts = kit.choices(row, labels);
-        bindings.add(() -> { int n = current.get(); SidePanelKit.select(texts, n); row.setContentDescription(title + ", " + (n >= 0 && n < labels.length ? labels[n] : "")); });
+        bindings.add(() -> {
+            int n = current.get();
+            SidePanelKit.select(texts, n);
+            row.setContentDescription(title + ", " + (n >= 0 && n < labels.length ? labels[n] : ""));
+        });
         SidePanelKit.Stepper step = direction -> {
             int n = current.get(), next = Math.max(0, Math.min(labels.length - 1, (n < 0 ? 0 : n) + direction));
-            if (next != n) { set.set(next); changed(); }
+            if (next != n) {
+                set.set(next);
+                changed();
+            }
         };
         kit.attach(body, row, step);
-        row.setOnClickListener(v -> { int n = current.get(); set.set((n + 1) % labels.length); changed(); });
+        row.setOnClickListener(v -> {
+            int n = current.get();
+            set.set((n + 1) % labels.length);
+            changed();
+        });
     }
 
-    private void stepper(String tag, String iconKind, String title, IntSource current, int count, IntSink set, Label label) {
+    private void stepper(String tag, String iconKind, String title, IntSource current, int count, IntSink set,
+                         Label label) {
         LinearLayout row = kit.row(body, tag, iconKind, title, this::focusTop);
         TextView value = kit.stepper(body, row, 70, direction -> {
             int n = Math.max(0, current.get()), next = Math.max(0, Math.min(count - 1, n + direction));
-            if (next != n) { set.set(next); changed(); }
+            if (next != n) {
+                set.set(next);
+                changed();
+            }
         });
-        bindings.add(() -> { int n = Math.max(0, current.get()); value.setText(label.of(n)); row.setContentDescription(title + ", " + label.of(n)); });
+        bindings.add(() -> {
+            int n = Math.max(0, current.get());
+            value.setText(label.of(n));
+            row.setContentDescription(title + ", " + label.of(n));
+        });
     }
 
     private void orderRow() {
         CustomLibraryPage d = host.draft();
         LinearLayout row = kit.row(body, "edit.row.order", "order", "Order", this::focusTop);
-        TextView[] texts = kit.choices(row, new String[]{"", ""});
+        TextView[] texts = kit.choices(row, new String[] {"", ""});
         // Persisted value stays ascending/descending; the labels follow the sort (title: A–Z first).
         bindings.add(() -> {
             boolean title = d.sort.equals("title");
@@ -266,9 +345,15 @@ public final class EditPagePanel extends LinearLayout {
         kit.attach(body, row, direction -> {
             boolean title = d.sort.equals("title");
             boolean descending = title ? direction > 0 : direction < 0;
-            if (descending != d.descending) { d.descending = descending; changed(); }
+            if (descending != d.descending) {
+                d.descending = descending;
+                changed();
+            }
         });
-        row.setOnClickListener(v -> { d.descending = !d.descending; changed(); });
+        row.setOnClickListener(v -> {
+            d.descending = !d.descending;
+            changed();
+        });
     }
 
     private void facet(String kind, String iconKind, String title) {
@@ -279,26 +364,37 @@ public final class EditPagePanel extends LinearLayout {
         bindings.add(() -> {
             String current = kind.equals("language") ? d.language : d.studio;
             value.setText(facetLabel(kind, current));
-            if (kind.equals("language")) PreviewLanguageIcon.apply(value, current.isEmpty() ? null : current, kit.s(26));
-            if (current.isEmpty()) value.setCompoundDrawables(null, null, null, null);
+            if (kind.equals("language"))
+                PreviewLanguageIcon.apply(value, current.isEmpty() ? null : current, kit.s(26));
+            if (current.isEmpty())
+                value.setCompoundDrawables(null, null, null, null);
             value.setCompoundDrawablePadding(kit.s(10));
             row.setContentDescription(title + ", " + facetLabel(kind, current));
         });
         kit.attach(body, row, direction -> {
             String current = kind.equals("language") ? d.language : d.studio;
-            int n = Math.max(0, values.indexOf(current)), next = Math.max(0, Math.min(values.size() - 1, n + direction));
-            if (next != n) { setFacet(kind, values.get(next)); changed(); }
+            int n = Math.max(0, values.indexOf(current)), next =
+                                                              Math.max(0, Math.min(values.size() - 1, n + direction));
+            if (next != n) {
+                setFacet(kind, values.get(next));
+                changed();
+            }
         });
         row.setOnClickListener(v -> openFacet(kind, title));
     }
 
     private void setFacet(String kind, String value) {
-        if (kind.equals("language")) host.draft().language = value; else host.draft().studio = value;
+        if (kind.equals("language"))
+            host.draft().language = value;
+        else
+            host.draft().studio = value;
     }
 
     private static String facetLabel(String kind, String value) {
-        if (value == null || value.isEmpty()) return "Any";
-        if (!kind.equals("language")) return value;
+        if (value == null || value.isEmpty())
+            return "Any";
+        if (!kind.equals("language"))
+            return value;
         String name = Locale.forLanguageTag(value.replace('_', '-')).getDisplayName();
         return name.isEmpty() ? value : name;
     }
@@ -313,8 +409,11 @@ public final class EditPagePanel extends LinearLayout {
 
     List<Integer> years() {
         TreeSet<Integer> years = new TreeSet<>(Comparator.reverseOrder());
-        for (Entry entry : everything()) if (entry.year() > 0) years.add(entry.year());
-        if (host.draft().year > 0) years.add(host.draft().year);
+        for (Entry entry : everything())
+            if (entry.year() > 0)
+                years.add(entry.year());
+        if (host.draft().year > 0)
+            years.add(host.draft().year);
         List<Integer> values = new ArrayList<>();
         values.add(0);
         values.addAll(years);
@@ -325,11 +424,16 @@ public final class EditPagePanel extends LinearLayout {
         Set<String> available = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (Entry entry : everything()) {
             String value = kind.equals("language") ? entry.language : entry.studio;
-            if (value == null || value.isEmpty() || kind.equals("language") && "und".equals(value)) continue;
-            if (kind.equals("studio")) available.addAll(PreviewGenres.parse(value)); else available.add(value);
+            if (value == null || value.isEmpty() || kind.equals("language") && "und".equals(value))
+                continue;
+            if (kind.equals("studio"))
+                available.addAll(PreviewGenres.parse(value));
+            else
+                available.add(value);
         }
         String current = kind.equals("language") ? host.draft().language : host.draft().studio;
-        if (!current.isEmpty()) available.add(current);
+        if (!current.isEmpty())
+            available.add(current);
         List<String> values = new ArrayList<>();
         values.add("");
         values.addAll(available);
@@ -338,20 +442,31 @@ public final class EditPagePanel extends LinearLayout {
 
     private Set<String> genres() {
         Set<String> available = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        for (Entry entry : everything()) available.addAll(PreviewGenres.parse(entry.genres));
+        for (Entry entry : everything())
+            available.addAll(PreviewGenres.parse(entry.genres));
         available.addAll(host.draft().genres);
         return available;
     }
 
     static String genreSummary(Set<String> genres) {
-        if (genres.isEmpty()) return "Any";
+        if (genres.isEmpty())
+            return "Any";
         List<String> list = new ArrayList<>(genres);
-        if (list.size() <= 2) return android.text.TextUtils.join(", ", list);
+        if (list.size() <= 2)
+            return android.text.TextUtils.join(", ", list);
         return list.get(0) + ", " + list.get(1) + " +" + (list.size() - 2);
     }
 
-    private static int index(String[] values, String value) { return Arrays.asList(values).indexOf(value); }
-    private static int ratingIndex(double rating) { for (int i = 0; i < RATINGS.length; i++) if (RATINGS[i] == rating) return i; return 0; }
+    private static int index(String[] values, String value) {
+        return Arrays.asList(values).indexOf(value);
+    }
+
+    private static int ratingIndex(double rating) {
+        for (int i = 0; i < RATINGS.length; i++)
+            if (RATINGS[i] == rating)
+                return i;
+        return 0;
+    }
 
     // ---- in-panel pick lists ---------------------------------------------------------------
 
@@ -374,8 +489,10 @@ public final class EditPagePanel extends LinearLayout {
         back.addView(label);
         back.setContentDescription("Back, " + heading);
         back.setOnClickListener(v -> closePage());
-        back.setOnKeyListener((v, key, event) -> event.getAction() == KeyEvent.ACTION_DOWN
-                && (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT));
+        back.setOnKeyListener((v, key, event)
+                                  -> event.getAction() == KeyEvent.ACTION_DOWN &&
+                                         (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_LEFT ||
+                                          key == KeyEvent.KEYCODE_DPAD_RIGHT));
         LayoutParams size = new LayoutParams(-1, -2);
         size.bottomMargin = kit.s(12);
         addView(back, 1, size);
@@ -411,7 +528,7 @@ public final class EditPagePanel extends LinearLayout {
         tick.setVisibility(ticked ? VISIBLE : INVISIBLE);
         row.addView(tick, new LayoutParams(kit.s(28), -2));
         row.setContentDescription(label + (ticked ? ", selected" : ""));
-        row.setTag(com.archos.mediacenter.video.R.id.preview_row_top, (Runnable) this::focusTop);
+        row.setTag(com.archos.mediacenter.video.R.id.preview_row_top, (Runnable)this::focusTop);
         kit.attach(body, row, null);
         body.addView(row, new LayoutParams(-1, -2));
         kit.rule(body, SidePanelKit.ROW_RULE);
@@ -426,16 +543,22 @@ public final class EditPagePanel extends LinearLayout {
         for (String genre : genres()) {
             LinearLayout row = pickRow("edit.genre." + i++, genre, null, chosen.contains(genre));
             row.setOnClickListener(v -> {
-                if (!chosen.remove(genre)) chosen.add(genre);
+                if (!chosen.remove(genre))
+                    chosen.add(genre);
                 row.findViewWithTag("tick").setVisibility(chosen.contains(genre) ? VISIBLE : INVISIBLE);
                 row.setContentDescription(genre + (chosen.contains(genre) ? ", selected" : ""));
                 host.changed();
             });
-            if (first == null) first = row;
+            if (first == null)
+                first = row;
         }
-        if (first == null) body.addView(kit.text("No genres in your library yet", 19, SidePanelKit.META, false));
+        if (first == null)
+            body.addView(kit.text("No genres in your library yet", 19, SidePanelKit.META, false));
         SidePanelKit.dropTrailingRule(body);
-        if (first != null) first.requestFocus(); else back.requestFocus();
+        if (first != null)
+            first.requestFocus();
+        else
+            back.requestFocus();
     }
 
     private void openFacet(String kind, String title) {
@@ -445,21 +568,33 @@ public final class EditPagePanel extends LinearLayout {
         View initial = null;
         for (int i = 0; i < values.size(); i++) {
             String value = values.get(i);
-            LinearLayout row = pickRow("edit." + kind + "." + i, facetLabel(kind, value), kind.equals("language") && !value.isEmpty() ? value : null, value.equals(current));
-            row.setOnClickListener(v -> { setFacet(kind, value); closePage(); changed(); });
-            if (initial == null || value.equals(current)) initial = row;
+            LinearLayout row =
+                pickRow("edit." + kind + "." + i, facetLabel(kind, value),
+                        kind.equals("language") && !value.isEmpty() ? value : null, value.equals(current));
+            row.setOnClickListener(v -> {
+                setFacet(kind, value);
+                closePage();
+                changed();
+            });
+            if (initial == null || value.equals(current))
+                initial = row;
         }
         SidePanelKit.dropTrailingRule(body);
-        if (initial != null) initial.requestFocus(); else back.requestFocus();
+        if (initial != null)
+            initial.requestFocus();
+        else
+            back.requestFocus();
     }
 
     /** Closes an open pick list and returns to its row. False when the main list is showing. */
     public boolean closePage() {
-        if (page == null) return false;
+        if (page == null)
+            return false;
         String row = returnTo;
         showMain();
         View target = body.findViewWithTag(row);
-        if (target != null) target.requestFocus();
+        if (target != null)
+            target.requestFocus();
         return true;
     }
 
@@ -472,7 +607,8 @@ public final class EditPagePanel extends LinearLayout {
 
     /** Library snapshot or draft changed elsewhere: rebind values (and rebuild lists that depend on the library). */
     public void refresh() {
-        if (page != null) return;
+        if (page != null)
+            return;
         title.setText("Edit Page");
         save.setText(host.isNew() ? "Save Page" : "Save Changes");
         List<Entry> shown = host.draft().entries(host.snapshot());
@@ -483,24 +619,32 @@ public final class EditPagePanel extends LinearLayout {
             matches.setText("No titles match these settings");
             matches.setTextColor(SidePanelKit.WARNING);
         } else {
-            LibraryStatistics stats = LibraryStatistics.calculate(host.snapshot(), shown, System.currentTimeMillis(), TimeZone.getDefault());
+            LibraryStatistics stats =
+                LibraryStatistics.calculate(host.snapshot(), shown, System.currentTimeMillis(), TimeZone.getDefault());
             long bytes = stats.localBytes + stats.networkBytes;
-            String size = bytes > 0 ? " · " + (stats.unknownLocal + stats.unknownNetwork > 0 ? "≥ " : "") + android.text.format.Formatter.formatShortFileSize(owner, bytes) : "";
+            String size = bytes > 0 ? " · " + (stats.unknownLocal + stats.unknownNetwork > 0 ? "≥ " : "") +
+                                          android.text.format.Formatter.formatShortFileSize(owner, bytes)
+                                    : "";
             matches.setText(shown.size() + (shown.size() == 1 ? " title matches" : " titles match") + size);
             matches.setTextColor(SidePanelKit.MATCH);
         }
-        for (Runnable binding : bindings) binding.run();
+        for (Runnable binding : bindings)
+            binding.run();
     }
 
     /** A new library snapshot arrived: year and facet lists may have changed. */
     public void snapshotChanged() {
-        if (page != null) return;
+        if (page != null)
+            return;
         View focused = body.findFocus();
         Object tag = focused == null ? null : focused.getTag();
         showMain();
         View target = tag == null ? null : body.findViewWithTag(tag);
-        if (target != null) target.requestFocus();
+        if (target != null)
+            target.requestFocus();
     }
 
-    boolean pageOpen() { return page != null; }
+    boolean pageOpen() {
+        return page != null;
+    }
 }
