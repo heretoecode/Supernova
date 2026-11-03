@@ -14,6 +14,7 @@ import org.robolectric.shadows.MediaCodecInfoBuilder;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks playback compatibility against source Dolby Vision profiles and actual HDR capabilities. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PlaybackCompatibilityTest {
