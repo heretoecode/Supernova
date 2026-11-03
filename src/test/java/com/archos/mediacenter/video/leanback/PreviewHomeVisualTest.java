@@ -11,11 +11,13 @@ import androidx.preference.PreferenceManager;
 import androidx.test.platform.app.InstrumentationRegistry;
 import java.time.Duration;
 import org.junit.*;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import java.util.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 /** Capture the production Home child controls, including their focused viewport bounds. */
 @RunWith(RobolectricTestRunner.class)
@@ -24,12 +26,12 @@ import static org.junit.Assert.*;
 public class PreviewHomeVisualTest {
     @org.junit.Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Before
@@ -44,7 +46,7 @@ public class PreviewHomeVisualTest {
         try {
             PreviewGenres.choose(host.get(), Arrays.asList(PreviewGenres.NAMES),
                                  new HashSet<>(Arrays.asList("Drama", "Science Fiction")), values -> {});
-            Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog dialog = ShadowDialog.getLatestDialog();
             View root = measure(dialog);
             assertNull("no visible title", PreviewPagesTest.findText(root, "Genres · Match Any Selected"));
             assertNotNull("title kept for accessibility", findDescription(root, "Genres · Match Any Selected"));
