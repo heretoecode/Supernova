@@ -6,6 +6,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks diagnostic QR references against allowed fields, categories and timestamps. */
 public class DiagnosticReferenceTest {
     @Test public void qrRoundTripContainsOnlyAllowListedReferenceFields()throws Exception{
         String id="d78c2515-1009",category="UI";long time=1790410000123L;
