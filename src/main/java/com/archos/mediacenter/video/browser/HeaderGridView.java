@@ -431,6 +431,7 @@ public class HeaderGridView extends GridView {
         public ListAdapter getWrappedAdapter() {
             return mAdapter;
         }
+        @Override
         public void notifyDataSetChanged() {
             mDataSetObservable.notifyChanged();
         }
