@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import com.archos.customizedleanback.app.MyVerticalGridFragment;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.TopNavigation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class Overlay {
             throw new IllegalStateException("Overlay is not compatible with this fragment: "+fragment);
         }
 
-        com.archos.mediacenter.video.leanback.TopNavigation previewNav=findPreviewNavigation(fragmentView);
+        TopNavigation previewNav=findPreviewNavigation(fragmentView);
         ViewGroup parentView = previewNav!=null
             ? previewNav.getStatusContainer()
             : (ViewGroup)fragmentView.findViewById(parentViewId);
@@ -91,7 +92,7 @@ public class Overlay {
         mScanProgress = new ScannerAndScraperProgress(mContext, mOverlayRoot);
         mClock = new Clock(mContext, mOverlayRoot);
         if (previewNav!=null) {
-            com.archos.mediacenter.video.leanback.TopNavigation nav = previewNav;
+            TopNavigation nav = previewNav;
             View clock = mOverlayRoot.findViewById(R.id.clock);
             ((ViewGroup)clock.getParent()).removeView(clock);
             int clockPadding=Math.round(6*mContext.getResources().getDisplayMetrics().density);clock.setPadding(0,clockPadding,0,clockPadding);
@@ -107,9 +108,9 @@ public class Overlay {
         }
     }
 
-    private static com.archos.mediacenter.video.leanback.TopNavigation findPreviewNavigation(View view){
-        if(view instanceof com.archos.mediacenter.video.leanback.TopNavigation)return (com.archos.mediacenter.video.leanback.TopNavigation)view;
-        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){com.archos.mediacenter.video.leanback.TopNavigation found=findPreviewNavigation(group.getChildAt(i));if(found!=null)return found;}}
+    private static TopNavigation findPreviewNavigation(View view){
+        if(view instanceof TopNavigation)return (TopNavigation)view;
+        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){TopNavigation found=findPreviewNavigation(group.getChildAt(i));if(found!=null)return found;}}
         return null;
     }
 
