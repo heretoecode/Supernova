@@ -3,7 +3,9 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.app.Application;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.utils.HistoricalBackupFixture;
 import com.archos.mediacenter.video.utils.backup.*;
+import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -99,7 +101,7 @@ public class BackupOperationModelTest {
 
     @Test
     public void matchesProductionExportImportUsesRealReceivingInventoryWithoutChangingOtherState() throws Exception {
-        try (var helper = new com.archos.mediaprovider.video.VideoOpenHelper(app)) {
+        try (var helper = new VideoOpenHelper(app)) {
             var db = helper.getWritableDatabase();
             db.execSQL(
                 "INSERT INTO files(_id,remote_id,media_type,_data,bookmark) VALUES(10,10,3,'file:///fixture.mkv',5432)");
@@ -132,7 +134,7 @@ public class BackupOperationModelTest {
         phase(BackupOperationModel.Phase.RESTORED);
         assertEquals(7, prefs.getInt("preview_accent41", 0));
         assertEquals("AUTH_CANARY", prefs.getString("oauth_token", null));
-        try (var helper = new com.archos.mediaprovider.video.VideoOpenHelper(app);
+        try (var helper = new VideoOpenHelper(app);
             var row = helper.getReadableDatabase().rawQuery(
                 "SELECT bookmark,m_online_id,Nova_pinned FROM video WHERE _id=10", null)) {
             assertTrue(row.moveToFirst());
@@ -244,12 +246,12 @@ public class BackupOperationModelTest {
     @Test
     public void legacySelectionGetsSeparateWholeReplacementPreviewAndNeverLogicalCategoryConfirmation()
         throws Exception {
-        try (com.archos.mediaprovider.video.VideoOpenHelper helper =
-                 new com.archos.mediaprovider.video.VideoOpenHelper(app)) {
+        try (VideoOpenHelper helper =
+                 new VideoOpenHelper(app)) {
             helper.getWritableDatabase().execSQL(
                 "INSERT INTO files(_id,media_type,_data,bookmark) VALUES(77,3,'file:///fixture.mkv',4444)");
         }
-        File file = new File(com.archos.mediacenter.video.utils.HistoricalBackupFixture.export(app));
+        File file = new File(HistoricalBackupFixture.export(app));
         model.open(new FileInputStream(file));
         phase(BackupOperationModel.Phase.LEGACY_PREVIEW);
         assertTrue(model.current().message.contains("authentication is cleared"));
