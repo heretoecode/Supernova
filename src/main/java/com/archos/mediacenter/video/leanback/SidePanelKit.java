@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
+import com.archos.mediacenter.video.R;
 
 /**
  * Building blocks for the approved side panels (owner, 2 Nov 2026): rows of icon · label · value,
@@ -122,7 +123,7 @@ public final class SidePanelKit {
         label.setEllipsize(TextUtils.TruncateAt.END);
         row.addView(label, new LinearLayout.LayoutParams(0, -2, 1));
         row.setContentDescription(title);
-        row.setTag(com.archos.mediacenter.video.R.id.preview_row_top, top);
+        row.setTag(R.id.preview_row_top, top);
         attach(body, row, null);
         body.addView(row, new LinearLayout.LayoutParams(-1, -2));
         rule(body, ROW_RULE);
@@ -143,7 +144,7 @@ public final class SidePanelKit {
                 View next = FocusFinder.getInstance().findNextFocus(
                     body, row, key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
                 if (next == null || next == row) {
-                    Object top = row.getTag(com.archos.mediacenter.video.R.id.preview_row_top);
+                    Object top = row.getTag(R.id.preview_row_top);
                     if (key == KeyEvent.KEYCODE_DPAD_UP && top instanceof Runnable)
                         ((Runnable)top).run();
                     return true;
