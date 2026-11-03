@@ -47,6 +47,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.loader.MoviesByLoader;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
@@ -158,7 +159,7 @@ public abstract class VideosByFragment extends CategoryBrowseFragment implements
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSortOrder = mPrefs.getString(getSortOrderParamKey(), mDefaultSort);
-        mSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         Resources r = getResources();
         updateBackground();
@@ -215,7 +216,7 @@ public abstract class VideosByFragment extends CategoryBrowseFragment implements
         }
         mOverlay.resume();
         boolean newSortIgnoreArticles =
-            com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+            SortUtils.isIgnoreArticlesEnabled(getActivity());
         if (newSortIgnoreArticles != mSortIgnoreArticles) {
             mSortIgnoreArticles = newSortIgnoreArticles;
             if (mCurrentCategoriesCursor != null) {
