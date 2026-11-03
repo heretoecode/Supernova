@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import com.archos.mediacenter.video.browser.loader.CollectionLoader;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Maps collection cursor columns into collection objects. */
 public class CollectionCursorMapper implements CompatibleCursorMapper {
 
     private static final String TAG = "CollectionCursorMapper";
