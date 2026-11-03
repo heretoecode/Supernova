@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.diagnostics;
 
 import android.app.Application;
 import android.net.Uri;
+import android.os.SystemClock;
 import com.archos.filecorelibrary.TransportReadObserver;
 import com.archos.filecorelibrary.TransportReadObserver.*;
 import com.archos.filecorelibrary.webdav.*;
@@ -41,7 +42,7 @@ public class TransportReadDiagnosticsTest {
     private List<JSONObject> records() throws Exception {
         DiagnosticFlightRecorder recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
         List<JSONObject> result = new ArrayList<>();
-        for (String line : recorder.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n"))
+        for (String line : recorder.snapshot(SystemClock.elapsedRealtime()).split("\n"))
             if (!line.isEmpty()) {
                 JSONObject row = new JSONObject(line);
                 if (row.optString("event").equals("transport_read"))
