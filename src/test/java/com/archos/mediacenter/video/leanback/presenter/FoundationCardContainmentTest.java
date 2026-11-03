@@ -19,12 +19,13 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.annotation.GraphicsMode;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class FoundationCardContainmentTest {
     @Test
-    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void artworkPixelsStayInsideRoundedBody() {
         PreviewCardPresenter.Card card =
             new PreviewCardPresenter.Card(RuntimeEnvironment.getApplication(), PreviewCardPresenter.Style.CONTINUE);
@@ -43,7 +44,7 @@ public class FoundationCardContainmentTest {
     }
 
     @Test
-    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void focusedArtworkAndBoundaryEnlargeTogetherInRenderedPixels() throws Exception {
         Activity host = Robolectric.buildActivity(Activity.class).setup().visible().get();
         FrameLayout root = new FrameLayout(host);
