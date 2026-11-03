@@ -57,7 +57,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NetworkShortcutDetailsFragment extends DetailsSupportFragment implements OnActionClickedListener {
-
     private static final Logger log = LoggerFactory.getLogger(NetworkShortcutDetailsFragment.class);
 
     public static final String SHARED_ELEMENT_NAME = "hero";
@@ -71,16 +70,15 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
 
     protected Shortcut mShortcut;
 
-    private final ActivityResultLauncher<Intent> browsingLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                // If the shortcut has been modified (removed) from the NetworkListingActivity launched by ACTION_OPEN,
-                // we must forward the info to the root fragment
-                if (result.getResultCode() == NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED) {
-                    getActivity().setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);
-                }
-                getActivity().finish();
-            });
+    private final ActivityResultLauncher<Intent> browsingLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            // If the shortcut has been modified (removed) from the NetworkListingActivity launched by ACTION_OPEN,
+            // we must forward the info to the root fragment
+            if (result.getResultCode() == NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED) {
+                getActivity().setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);
+            }
+            getActivity().finish();
+        });
 
     public boolean isHimselfIndexedFolder = false;
     public boolean isCurrentDirectoryShortcut = false;
@@ -88,10 +86,14 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
 
     public void checkIfIsShortcut(Uri uri) {
         String uriStringWithoutCred = uri.toString();
-        isCurrentDirectoryIndexed = ShortcutDbAdapter.VIDEO.isHimselfOrAncestorShortcut(getActivity(), uriStringWithoutCred);
+        isCurrentDirectoryIndexed =
+            ShortcutDbAdapter.VIDEO.isHimselfOrAncestorShortcut(getActivity(), uriStringWithoutCred);
         isHimselfIndexedFolder = ShortcutDbAdapter.VIDEO.isShortcut(getActivity(), uriStringWithoutCred) > 0;
         isCurrentDirectoryShortcut = (ShortcutDb.STATIC.isShortcut(getContext(), uriStringWithoutCred) != -1);
-        if (log.isDebugEnabled()) log.debug("checkIfIsShortcut: isCurrentDirectoryIndexed={}, isHimselfIndexedFolder={}, isCurrentDirectoryShortcut={}", isCurrentDirectoryIndexed, isHimselfIndexedFolder, isCurrentDirectoryShortcut);
+        if (log.isDebugEnabled())
+            log.debug(
+                "checkIfIsShortcut: isCurrentDirectoryIndexed={}, isHimselfIndexedFolder={}, isCurrentDirectoryShortcut={}",
+                isCurrentDirectoryIndexed, isHimselfIndexedFolder, isCurrentDirectoryShortcut);
     }
 
     private ArchosDetailsOverviewRowPresenter mDetailsRowPresenter;
@@ -112,8 +114,8 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
         bgMngr.setColor(backgroundColor);
 
         mShortcut = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                ? getActivity().getIntent().getSerializableExtra(EXTRA_SHORTCUT, Shortcut.class)
-                : (Shortcut) getActivity().getIntent().getSerializableExtra(EXTRA_SHORTCUT);
+            ? getActivity().getIntent().getSerializableExtra(EXTRA_SHORTCUT, Shortcut.class)
+            : (Shortcut) getActivity().getIntent().getSerializableExtra(EXTRA_SHORTCUT);
 
         DetailsOverviewRow detailRow = new DetailsOverviewRow(mShortcut);
         detailRow.setImageScaleUpAllowed(false);
@@ -147,7 +149,8 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (VideoPreferencesCommon.KEY_APP_THEME.equals(key)) {
-                    if (log.isDebugEnabled()) log.debug("Theme changed, updating colors");
+                    if (log.isDebugEnabled())
+                        log.debug("Theme changed, updating colors");
                     // Update background
                     BackgroundManager bgMngr = BackgroundManager.getInstance(getActivity());
                     int backgroundColor = themeManager.getLeanbackBackgroundColor();
@@ -169,7 +172,7 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
         return Color.HSVToColor(hsv);
     }
 
-    public void addActions(DetailsOverviewRow detailRow){
+    public void addActions(DetailsOverviewRow detailRow) {
         // here either shortcut or indexed folder opened
         // if shortcut
         // -> if ancestor or himself indexed
@@ -179,49 +182,84 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
         // else (implicitly indexed) (open/rescan/remove indexed)
         detailRow.setActionsAdapter(new SparseArrayObjectAdapter() {
             @Override
-            public int size() { return 3; }
+            public int size() {
+                return 3;
+            }
             @Override
             public Object get(int position) {
-                switch(position) {
-                    case 0: return new Action(ACTION_OPEN, getResources().getString(R.string.open_indexed_folder));
+                switch (position) {
+                    case 0:
+                        return new Action(ACTION_OPEN, getResources().getString(R.string.open_indexed_folder));
                     case 1: // add or rescan
                         if (isCurrentDirectoryShortcut) {
-                            if (isCurrentDirectoryIndexed) { // ancestor or current indexed -> rescan folder
+                            if (isCurrentDirectoryIndexed) {
+                                // ancestor or current indexed -> rescan folder
                                 return new Action(ACTION_REINDEX, getResources().getString(R.string.network_reindex));
-                            } else { // ancestor or current not indexed -> index folder
-                                return new Action(ACTION_ADD_INDEX, getResources().getString(R.string.add_to_indexed_folders));
+                            } else {
+                                // ancestor or current not indexed -> index folder
+                                return new Action(
+                                    ACTION_ADD_INDEX, getResources().getString(R.string.add_to_indexed_folders));
                             }
-                        } else { // implicitly indexed -> rescan
+                        } else {
+                            // implicitly indexed -> rescan
                             return new Action(ACTION_REINDEX, getResources().getString(R.string.network_reindex));
                         }
                     case 2: // remove
                         if (isCurrentDirectoryShortcut) {
-                            if (isCurrentDirectoryIndexed) { // ancestor or current indexed
+                            if (isCurrentDirectoryIndexed) {
+                                // ancestor or current indexed
                                 if (isHimselfIndexedFolder) // indexed folder -> remove from library
-                                    return new Action(ACTION_REMOVE, getResources().getString(R.string.remove_from_indexed_folders));
+                                    return new Action(
+                                        ACTION_REMOVE, getResources().getString(R.string.remove_from_indexed_folders));
                                 else // shortcut and not indexed folder -> remove shortcut
-                                    return new Action(ACTION_REMOVE, getResources().getString(R.string.remove_from_shortcuts));
-                            } else { // ancestor or current not indexed -> remove shortcut
-                                return new Action(ACTION_REMOVE, getResources().getString(R.string.remove_from_shortcuts));
+                                    return new Action(
+                                        ACTION_REMOVE, getResources().getString(R.string.remove_from_shortcuts));
+                            } else {
+                                // ancestor or current not indexed -> remove shortcut
+                                return new Action(
+                                    ACTION_REMOVE, getResources().getString(R.string.remove_from_shortcuts));
                             }
-                        } else { // implicitly indexed -> remove from library
-                            return new Action(ACTION_REMOVE, getResources().getString(R.string.remove_from_indexed_folders));
+                        } else {
+                            // implicitly indexed -> remove from library
+                            return new Action(
+                                ACTION_REMOVE, getResources().getString(R.string.remove_from_indexed_folders));
                         }
-                    default: return null;
+                    default:
+                        return null;
                 }
             }
         });
         detailRow.setImageDrawable(ContextCompat.getDrawable(getActivity(),
-                (isHimselfIndexedFolder) ?
-                        R.drawable.filetype_new_folder_indexed :
-                        VideoUtils.getShortcutImageLeanback(mShortcut.getUri())));
+            (isHimselfIndexedFolder) ? R.drawable.filetype_new_folder_indexed
+                                     : VideoUtils.getShortcutImageLeanback(mShortcut.getUri())));
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mOverlay = new Overlay(this);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){view.setAlpha(0f);view.post(()->{if(!isAdded())return;DetailsOverviewRow row=(DetailsOverviewRow)getAdapter().get(0);java.util.List<Action> actions=new java.util.ArrayList<>();java.util.List<String> labels=new java.util.ArrayList<>();for(int i=0;i<row.getActionsAdapter().size();i++){Action a=(Action)row.getActionsAdapter().get(i);actions.add(a);labels.add(String.valueOf(a.getLabel1()));}android.app.Dialog dialog=com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),mShortcut.getName(),labels.toArray(new String[0]),0,n->onActionClicked(actions.get(n)));dialog.setOnCancelListener(d->{if(isAdded())requireActivity().finish();});});}
+        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("try_new_ui", false)) {
+            view.setAlpha(0f);
+            view.post(() -> {
+                if (!isAdded())
+                    return;
+                DetailsOverviewRow row = (DetailsOverviewRow) getAdapter().get(0);
+                java.util.List<Action> actions = new java.util.ArrayList<>();
+                java.util.List<String> labels = new java.util.ArrayList<>();
+                for (int i = 0; i < row.getActionsAdapter().size(); i++) {
+                    Action a = (Action) row.getActionsAdapter().get(i);
+                    actions.add(a);
+                    labels.add(String.valueOf(a.getLabel1()));
+                }
+                android.app.Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                    mShortcut.getName(), labels.toArray(new String[0]), 0, n -> onActionClicked(actions.get(n)));
+                dialog.setOnCancelListener(d -> {
+                    if (isAdded())
+                        requireActivity().finish();
+                });
+            });
+        }
     }
 
     @Override
@@ -251,7 +289,8 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
             @Override
             public void run() {
                 Activity activity = getActivity();
-                if (activity != null) activity.finish(); // better safe than sorry
+                if (activity != null)
+                    activity.finish(); // better safe than sorry
             }
         }, 200);
     }
@@ -263,18 +302,17 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
             intent.putExtra(ListingActivity.EXTRA_ROOT_URI, mShortcut.getUri());
             intent.putExtra(ListingActivity.EXTRA_ROOT_NAME, mShortcut.getName());
             browsingLauncher.launch(intent);
-        }
-        else if (action.getId() == ACTION_REINDEX) {
+        } else if (action.getId() == ACTION_REINDEX) {
             //If we are scraping, we need to stop that.
             if (LoaderUtils.getScrapeInProgress()) {
                 //Stop the scrape.
                 LoaderUtils.setScrapeInProgress(false);
             }
             NetworkScanner.scanVideos(getActivity(), mShortcut.getUri());
-            com.archos.mediacenter.video.leanback.PreviewNotice.show(getActivity(),"Folder scan requested",false);
+            com.archos.mediacenter.video.leanback.PreviewNotice.show(getActivity(), "Folder scan requested", false);
             slightlyDelayedFinish();
-        }
-        else if (action.getId() == ACTION_ADD_INDEX) { // can be indexed or shortcut
+        } else if (action.getId() == ACTION_ADD_INDEX) {
+            // can be indexed or shortcut
             //If we are scraping, we need to stop that.
             if (LoaderUtils.getScrapeInProgress()) {
                 //Stop the scrape.
@@ -286,21 +324,27 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
             // -> else index folder
             // else: do nothing
             boolean updateShortcuts = false;
-            if (! isCurrentDirectoryIndexed) { // ancestor folder not indexed
-                if (isCurrentDirectoryShortcut) { // remove shortcut since it gets indexed
+            if (!isCurrentDirectoryIndexed) {
+                // ancestor folder not indexed
+                if (isCurrentDirectoryShortcut) {
+                    // remove shortcut since it gets indexed
                     ShortcutDb.STATIC.removeShortcut(getContext(), mShortcut.getUri());
                     updateShortcuts = true;
                 }
-                if (ShortcutDbAdapter.VIDEO.addShortcut(getActivity(), new ShortcutDbAdapter.Shortcut(mShortcut.getName(), mShortcut.getUri().toString()))) {
-                    Toast.makeText(getActivity(), getString(R.string.indexed_folder_added, mShortcut.getName()), Toast.LENGTH_SHORT).show();
+                if (ShortcutDbAdapter.VIDEO.addShortcut(getActivity(),
+                        new ShortcutDbAdapter.Shortcut(mShortcut.getName(), mShortcut.getUri().toString()))) {
+                    Toast
+                        .makeText(getActivity(), getString(R.string.indexed_folder_added, mShortcut.getName()),
+                            Toast.LENGTH_SHORT)
+                        .show();
                     NetworkScanner.scanVideos(getActivity(), mShortcut.getUri());
                     updateShortcuts = true;
                 }
             }
-            if (updateShortcuts) getActivity().setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);
+            if (updateShortcuts)
+                getActivity().setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);
             slightlyDelayedFinish();
-        }
-        else if (action.getId() == ACTION_REMOVE) {
+        } else if (action.getId() == ACTION_REMOVE) {
             //If we are scraping, we need to stop that.
             if (LoaderUtils.getScrapeInProgress()) {
                 //Stop the scrape.
@@ -312,23 +356,29 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
             boolean result = false;
 
             if (isCurrentDirectoryShortcut)
-                result = ShortcutDb.STATIC.removeShortcut(getContext(), mShortcut.getUri())>0;
+                result = ShortcutDb.STATIC.removeShortcut(getContext(), mShortcut.getUri()) > 0;
             if (isHimselfIndexedFolder)
                 result = ShortcutDbAdapter.VIDEO.deleteShortcut(getActivity(), mShortcut.getId());
             if (result) {
-                if (isCurrentDirectoryShortcut) Toast.makeText(getActivity(), getString(R.string.shortcut_removed, mShortcut.getName()), Toast.LENGTH_SHORT).show();
-                if (isHimselfIndexedFolder) Toast.makeText(getActivity(), getString(R.string.indexed_folder_removed, mShortcut.getName()), Toast.LENGTH_SHORT).show();
+                if (isCurrentDirectoryShortcut)
+                    Toast
+                        .makeText(getActivity(), getString(R.string.shortcut_removed, mShortcut.getName()),
+                            Toast.LENGTH_SHORT)
+                        .show();
+                if (isHimselfIndexedFolder)
+                    Toast
+                        .makeText(getActivity(), getString(R.string.indexed_folder_removed, mShortcut.getName()),
+                            Toast.LENGTH_SHORT)
+                        .show();
                 // Send a delete request to MediaScanner
                 if (isHimselfIndexedFolder) // only if indexed
                     NetworkScanner.removeIndexedVideos(getActivity(), mShortcut.getUri());
                 // set caller result
                 getActivity().setResult(NetworkRootFragment.RESULT_CODE_SHORTCUTS_MODIFIED);
-            }
-            else {
+            } else {
                 Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
             }
             slightlyDelayedFinish();
         }
-
     }
 }
