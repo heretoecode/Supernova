@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Hosts the video Details page and handles playback navigation. */
 public class VideoDetailsActivity extends LeanbackActivity {
 
     private static final Logger log = LoggerFactory.getLogger(VideoDetailsActivity.class);
