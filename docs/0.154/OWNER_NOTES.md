@@ -84,6 +84,21 @@ Each item: what the owner saw → what they want → status.
   glass colour today — owner to confirm whether they turn charcoal too.
 - **Status:** approved design — awaiting go-ahead to code (tile question open).
 
+### 8. Playback Settings (and all side panels) follow the More-menu structure (design)
+- **Seen (photo, 0.153):** panel "very blue"; tabs look like pills; focused row (Text Colour) outline too curvy
+  and too tight round the swatches.
+- **Cause:** same 24 px (12dp) corner as everywhere, but on shorter boxes (56 px tabs, 60 px rows vs the More
+  menu's 74 px rows), so it looks curvier and pinches the content.
+- **Decision (owner, 2026-11-03):** approved as mocked in
+  `docs/design/proposals/playback-panel-charcoal/01-panel-today-vs-proposed.png` (right):
+  - charcoal glass (item 7); **no "Playback Settings" title**;
+  - tabs 72 px tall (button proportions; selected = thin white outline, focused = white box);
+  - rows 74 px, same as the More menu, with the same breathing room; **no divider lines between rows**;
+  - section headings in the More-menu style (sentence case, soft grey, line alongside);
+  - applies to all three tabs and to the Edit Page side panel, so every side panel matches the menus.
+  - Fits without scrolling (tallest tab ends ≈ 75 px above the screen edge).
+- **Status:** approved design — awaiting go-ahead to code.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
