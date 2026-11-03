@@ -15,9 +15,13 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceFragmentCompat;
@@ -26,7 +30,6 @@ import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
@@ -109,24 +112,24 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
 
         @Override
         public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(
-            android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+            LayoutInflater inflater, ViewGroup parent, Bundle state) {
             return SettingsWorkspace.enabled(requireContext()) ? PreviewSettings.grid(requireContext())
                                                                : super.onCreateRecyclerView(inflater, parent, state);
         }
 
         @Override
         public android.view.View onCreateView(
-            android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
+            LayoutInflater inflater, ViewGroup container, Bundle state) {
             android.view.View nativeView = super.onCreateView(inflater, container, state);
             if (!SettingsWorkspace.enabled(requireContext()))
                 return nativeView;
             androidx.recyclerview.widget.RecyclerView list = getListView();
-            if (list.getParent() instanceof android.view.ViewGroup)
-                ((android.view.ViewGroup) list.getParent()).removeView(list);
-            android.widget.FrameLayout full = new android.widget.FrameLayout(requireContext());
+            if (list.getParent() instanceof ViewGroup)
+                ((ViewGroup) list.getParent()).removeView(list);
+            FrameLayout full = new FrameLayout(requireContext());
             int pad = Math.round(28 * getResources().getDisplayMetrics().density);
             full.setPadding(pad, 0, pad, pad);
-            full.addView(list, new android.widget.FrameLayout.LayoutParams(-1, -1));
+            full.addView(list, new FrameLayout.LayoutParams(-1, -1));
             return full;
         }
 
@@ -153,7 +156,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             final RecyclerView list = getListView();
             if (list != null) {
                 list.setBackgroundColor(SettingsWorkspace.enabled(requireContext())
-                        ? android.graphics.Color.TRANSPARENT
+                        ? Color.TRANSPARENT
                         : ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
             if (!SettingsWorkspace.enabled(requireContext())
@@ -162,11 +165,11 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }
             if (SettingsWorkspace.enabled(requireContext())) {
-                android.view.ViewGroup host = (android.view.ViewGroup) getListView().getParent();
+                ViewGroup host = (ViewGroup) getListView().getParent();
                 host.setPadding(0, 0, 0, 0);
                 getListView().setVisibility(android.view.View.GONE);
                 workspace = new SettingsWorkspace(this, backupController, workspaceState);
-                host.addView(workspace, new android.widget.FrameLayout.LayoutParams(-1, -1));
+                host.addView(workspace, new FrameLayout.LayoutParams(-1, -1));
                 workspaceState = null;
             }
             if (backupController != null && backupViewState != null) {
