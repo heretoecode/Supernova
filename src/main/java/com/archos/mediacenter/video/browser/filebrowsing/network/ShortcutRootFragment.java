@@ -42,6 +42,7 @@ import com.archos.mediaprovider.NetworkScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays network shortcuts and handles adding and indexing them. */
 public class ShortcutRootFragment extends NewRootFragment implements View.OnClickListener, ShortcutAdapter.OnShortcutAddListener {
 
     private static final Logger log = LoggerFactory.getLogger(ShortcutRootFragment.class);
