@@ -63,6 +63,7 @@ import com.archos.mediacenter.video.utils.PrivateModeUIHelper;
 
 import java.util.ArrayList;
 
+/** Provides shared loading, sorting and row presentation for grouped anime movie browsers. */
 public abstract class AnimesByFragment extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "AnimesByFragment";
