@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -132,7 +133,7 @@ public class BackupSettingsControllerTest {
     }
 
     private View operation(Settings settings) {
-        View frame = org.robolectric.util.ReflectionHelpers.getField(settings.backup, "frame");
+        View frame = ReflectionHelpers.getField(settings.backup, "frame");
         layoutOperation(frame);
         return frame;
     }
@@ -239,7 +240,7 @@ public class BackupSettingsControllerTest {
             Settings settings = add(host.get());
             enter(settings);
             // Read the selected workspace through its enclosing view without assuming the category-row structure.
-            BackupWorkspace choices = org.robolectric.util.ReflectionHelpers.getField(settings.backup, "exportChoices");
+            BackupWorkspace choices = ReflectionHelpers.getField(settings.backup, "exportChoices");
             Set<BackupCategory> selected = choices.selection();
             assertTrue(selected.contains(BackupCategory.MATCHES));
             assertFalse(selected.contains(BackupCategory.LOCATIONS));
