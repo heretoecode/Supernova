@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback.network;
 import android.app.Activity;
 import android.view.View;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
 import com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface;
 import java.util.*;
@@ -16,7 +17,7 @@ final class PreviewSourceManagement {
             indexed ? Collections.singletonList(source) : Collections.emptyList(),
             indexed ? Collections.emptyList() : Collections.singletonList(source),
             kind
-            -> com.archos.mediacenter.video.leanback.PreviewDialog.read(
+            -> PreviewDialog.read(
                 activity, "Connect a source", "Open Network & Files to add a connection."));
         surface.browser().open(source.getUri());
         return surface;
