@@ -17,6 +17,8 @@ package com.archos.mediacenter.video.leanback.network;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
@@ -24,14 +26,14 @@ public class NetworkShortcutDetailsActivity extends LeanbackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
             Object source = getIntent().getSerializableExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT);
             if (source instanceof com.archos.mediacenter.video.leanback.adapter.object.Shortcut) {
                 com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface browser =
                     (com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface) PreviewSourceManagement
                         .create(this, (com.archos.mediacenter.video.leanback.adapter.object.Shortcut) source);
                 setContentView(browser);
-                getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+                getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                     public void handleOnBackPressed() {
                         browser.browser().back(() -> {
                             browser.browser().close();
@@ -47,7 +49,7 @@ public class NetworkShortcutDetailsActivity extends LeanbackActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)
+        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)
             && keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
             return true;
 
