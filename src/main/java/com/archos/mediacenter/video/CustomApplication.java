@@ -16,6 +16,8 @@ package com.archos.mediacenter.video;
 
 import android.annotation.SuppressLint;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import static com.archos.filecorelibrary.FileUtils.getPermissions;
 import static com.archos.filecorelibrary.FileUtils.hasPermission;
@@ -57,23 +59,37 @@ import com.archos.filecorelibrary.FileUtilsQ;
 import com.archos.filecorelibrary.NetworkInitialization;
 import com.archos.filecorelibrary.jcifs.JcifsUtils;
 import com.archos.filecorelibrary.samba.SambaDiscovery;
+import com.archos.filecorelibrary.sftp.SftpHostTrust;
 import com.archos.filecorelibrary.smbj.SmbjUtils;
 import com.archos.filecorelibrary.sshj.SshjUtils;
 import com.archos.filecorelibrary.webdav.WebdavUtils;
 import com.archos.mediacenter.utils.trakt.Trakt;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.foundation.FoundationUiPolicy;
+import com.archos.mediacenter.video.foundation.FoundationVersion;
+import com.archos.mediacenter.video.leanback.PreviewAutoScanPolicy;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewLibraryScan;
 import com.archos.mediacenter.video.picasso.SmbRequestHandler;
 import com.archos.mediacenter.video.picasso.ThumbnailRequestHandler;
+import com.archos.mediacenter.video.player.Player;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.CodecDiscovery;
 import com.archos.mediacenter.video.utils.LocaleConfigParser;
+import com.archos.mediacenter.video.utils.MigrationBackup;
 import com.archos.mediacenter.video.utils.OpenSubtitlesApiHelper;
+import com.archos.mediacenter.video.utils.RestoreJournal;
 import com.archos.mediacenter.video.utils.TrustingOkHttp3Downloader;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
+import com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction;
 import com.archos.medialib.LibAvos;
 import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.NetworkScannerServiceVideo;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediaprovider.video.VideoStoreImportReceiver;
+import com.archos.mediascraper.AutoScrapeService;
 import com.archos.mediascraper.MediaScraper;
 import com.archos.mediascraper.ScraperImage;
 import com.jakewharton.threetenabp.AndroidThreeTen;
@@ -138,9 +154,9 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     private static boolean audioRouteResolved;
     private static final long AUDIO_ROUTE_SETTLE_MS = 500;
     private String pendingAudioOutputSignature;
-    private final android.os.Handler audioRouteHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Handler audioRouteHandler = new Handler(Looper.getMainLooper());
     private final Runnable notifyAudioRoute = () -> {
-        com.archos.mediacenter.video.player.Player player = com.archos.mediacenter.video.player.Player.sPlayer;
+        Player player = Player.sPlayer;
         if (player != null)
             player.onAudioOutputChanged();
     };
@@ -161,7 +177,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // A TV's speaker endpoint can represent a shared speaker/ARC output.
         if (!"trackRoute".equals(reason) && Build.VERSION.SDK_INT >= 33) {
             try {
-                java.util.List<AudioDeviceInfo> selected =
+                List<AudioDeviceInfo> selected =
                     mAudioManager.getAudioDevicesForAttributes(new AudioAttributes.Builder()
                             .setUsage(AudioAttributes.USAGE_MEDIA)
                             .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
@@ -231,7 +247,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     public static void applyAudioOutputToNative(Context context) {
         if (!LibAvos.isAvailable())
             return;
-        android.content.SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int mode =
             isPassthroughSupported() ? Integer.parseInt(prefs.getString("force_audio_passthrough_multiple", "0")) : 0;
         long codecs = getNativeAudioCodecsFlag();
@@ -423,7 +439,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
      * the actual audio route.
      */
     private void refreshAudioOutputCapabilities(String reason) {
-        if (android.os.Looper.myLooper() != android.os.Looper.getMainLooper()) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
             audioRouteHandler.post(() -> refreshAudioOutputCapabilities(reason));
             return;
         }
@@ -640,13 +656,13 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         try {
-            com.archos.mediacenter.video.utils.RestoreJournal.recover(base);
-            com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction.recoverAtStartup(base);
+            RestoreJournal.recover(base);
+            PreferenceRestoreTransaction.recoverAtStartup(base);
         } catch (Exception recovery) {
             throw new IllegalStateException(
                 "Interrupted library restore requires recovery; original copies retained", recovery);
         }
-        com.archos.filecorelibrary.sftp.SftpHostTrust.initialise(base);
+        SftpHostTrust.initialise(base);
         if (BuildConfig.ENABLE_BUG_REPORT) {
             SentryAndroid.init(this, options -> {
                 options.setDsn(BuildConfig.SENTRY_DSN);
@@ -834,8 +850,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     public void onCreate() {
         super.onCreate();
-        com.archos.mediacenter.video.foundation.FoundationUiPolicy.apply(this);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.install(this);
+        FoundationUiPolicy.apply(this);
+        Diagnostics.install(this);
 
         /*
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -890,7 +906,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // init application context to make it available to all static methods
         mContext = getApplicationContext();
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false))
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.warmCache(this);
+            PreviewLibraryLoader.warmCache(this);
         // restore persisted private mode state so it survives process restarts for all UIs
         PrivateMode.init(mContext);
         // must be done after context is available
@@ -1001,9 +1017,9 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             new HttpImageManager(HttpImageManager.createDefaultMemoryCache(), new FileSystemPersistence(BASEDIR));
 
         // NetworkAutoRefresh.init requires main thread (LifecycleRegistry.addObserver)
-        com.archos.mediacenter.video.leanback.PreviewAutoScanPolicy.initialise(this);
+        PreviewAutoScanPolicy.initialise(this);
         NetworkAutoRefresh.init(this);
-        com.archos.mediacenter.video.leanback.PreviewLibraryScan.install(this);
+        PreviewLibraryScan.install(this);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(
             previewScanPreferences);
 
@@ -1014,9 +1030,9 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         new Thread("nova-deferred-init") {
             public void run() {
                 try {
-                    com.archos.mediaprovider.video.SupernovaLibraryPolicy.initialiseSetup(appContext);
+                    SupernovaLibraryPolicy.initialiseSetup(appContext);
                 } catch (RuntimeException unavailable) {
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.error("setup_migration_deferred", unavailable);
+                    Diagnostics.error("setup_migration_deferred", unavailable);
                 }
                 Trakt.initApiKeys(appContext);
                 launchSambaDiscovery();
@@ -1040,10 +1056,10 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         // But anyway we can allow IEC61937 @ 8 channels by removing this thing
         try {
             Class<?> fireOSInit = Class.forName("com.amazon.fireos.FireOSInit");
-            java.lang.reflect.Field f = fireOSInit.getDeclaredField("sVendorCallbacks");
+            Field f = fireOSInit.getDeclaredField("sVendorCallbacks");
             f.setAccessible(true);
             Object o = f.get(null);
-            java.util.Map<?, ?> m = (java.util.Map<?, ?>) o;
+            Map<?, ?> m = (Map<?, ?>) o;
             m.remove(Class.forName("android.media.VendorAudioTrackCallback"));
         } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException | NullPointerException e) {
         }
@@ -1138,7 +1154,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     }
 
     private void launchSambaDiscovery() {
-        if (BuildConfig.FOUNDATION && !com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(this))
+        if (BuildConfig.FOUNDATION && !SupernovaLibraryPolicy.configured(this))
             return;
         if (networkState.hasLocalConnection()) {
             if (log.isDebugEnabled())
@@ -1208,7 +1224,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             previewForegroundTrigger = previewHasForegrounded ? "resume" : "startup";
             previewHasForegrounded = true;
             requestPreviewNetworkRefresh();
-            com.archos.mediacenter.video.utils.MigrationBackup.resumeArtwork(this);
+            MigrationBackup.resumeArtwork(this);
             launchSambaDiscovery();
             // Trigger an incremental Trakt sync when returning to foreground if signed in and not in private mode
             if (Trakt.isTraktV2Enabled(this, PreferenceManager.getDefaultSharedPreferences(this))) {
@@ -1479,7 +1495,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             requestPreviewNetworkRefresh();
     };
     private boolean previewScanOnReturn;
-    private final android.os.Handler previewRefreshHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Handler previewRefreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable previewRefresh = new Runnable() {
         public void run() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CustomApplication.this);
@@ -1489,22 +1505,22 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             if (previewScanOnReturn && previewRefreshRequestedWallTime > 0
                 && prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN, 0) >= previewRefreshRequestedWallTime)
                 previewScanOnReturn = false;
-            android.util.Log.d("SupernovaScan",
+            Log.d("SupernovaScan",
                 "foreground due-check: startup=" + previewScanOnReturn + " periodMs=" + period
                     + " lastScan=" + prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN, 0)
-                    + " busy=" + com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive());
+                    + " busy=" + NetworkScannerServiceVideo.isScannerAlive());
             boolean due = previewScanOnReturn && NetworkAutoRefresh.autoRescanAtStart(CustomApplication.this)
                 || period > 0 && now - prefs.getLong(NetworkAutoRefresh.AUTO_RESCAN_LAST_SCAN, 0) >= period;
             if (due
                 && (NetworkState.isLocalNetworkConnectedOrVpnMobileEnabled(CustomApplication.this)
                     || NetworkState.isNetworkConnected(CustomApplication.this))
-                && !com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()
-                && com.archos.mediascraper.AutoScrapeService.getNetworkScanCount() == 0
+                && !NetworkScannerServiceVideo.isScannerAlive()
+                && AutoScrapeService.getNetworkScanCount() == 0
                 && (previewRefreshAt == 0 || SystemClock.elapsedRealtime() - previewRefreshAt >= 60000)) {
                 previewRefreshAt = SystemClock.elapsedRealtime();
                 previewRefreshRequestedWallTime = now;
-                android.util.Log.i("SupernovaScan", "Requesting configured automatic indexed-source scan");
-                com.archos.mediacenter.video.leanback.PreviewLibraryScan.requestNetwork(
+                Log.i("SupernovaScan", "Requesting configured automatic indexed-source scan");
+                PreviewLibraryScan.requestNetwork(
                     CustomApplication.this, previewScanOnReturn ? previewForegroundTrigger : "scheduled");
             }
             // Retry after an offline/busy launch and honour the existing periodic schedule while open.
@@ -1514,7 +1530,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     };
 
     private void requestPreviewNetworkRefresh() {
-        if (!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(this))
+        if (!SupernovaLibraryPolicy.configured(this))
             return;
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false))
             return;
@@ -1564,7 +1580,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             novaVersionName = info.versionName;
             try {
                 if (BuildConfig.FOUNDATION) {
-                    novaVersionArray = com.archos.mediacenter.video.foundation.FoundationVersion.array(novaVersionName);
+                    novaVersionArray = FoundationVersion.array(novaVersionName);
                     novaLongVersion = "Supernova " + novaVersionName;
                     novaShortVersion = "v" + novaVersionName;
                 } else {
@@ -1592,7 +1608,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
             try {
                 novaPreviousVersionArray = BuildConfig.FOUNDATION
                     ? (previousVersion > 0
-                              ? com.archos.mediacenter.video.foundation.FoundationVersion.array(previousVersionName)
+                              ? FoundationVersion.array(previousVersionName)
                               : emptyVersionArray())
                     : splitVersion(previousVersionName);
             } catch (IllegalArgumentException ie) {
