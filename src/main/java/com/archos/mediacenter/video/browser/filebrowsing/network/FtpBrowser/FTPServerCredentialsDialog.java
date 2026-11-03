@@ -24,6 +24,7 @@ import com.archos.filecorelibrary.MetaFile2Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects FTP server credentials and builds a connection URI. */
 public class FTPServerCredentialsDialog extends ServerCredentialsDialog {
 
     private static final Logger log = LoggerFactory.getLogger(FTPServerCredentialsDialog.class);
