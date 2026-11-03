@@ -5,16 +5,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Base64;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -42,8 +46,8 @@ public class StreamingRepositoryTest {
 
     @Test
     public void metadataTransportReportsSafeServiceStatusBoundsAndParent() throws Exception {
-        android.app.Application app = org.robolectric.RuntimeEnvironment.getApplication();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app, true);
+        Application app = RuntimeEnvironment.getApplication();
+        Diagnostics.setEnabled(app, true);
         try {
             for (int code : new int[] {
                 200, 404
@@ -67,8 +71,8 @@ public class StreamingRepositoryTest {
                 } catch (IOException expected) {
                 }
             }
-            Object recorder = org.robolectric.util.ReflectionHelpers.getStaticField(
-                com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
+            Object recorder = ReflectionHelpers.getStaticField(
+                Diagnostics.class, "FLIGHT");
             Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             String evidence = (String) snapshot.invoke(recorder, SystemClock.elapsedRealtime());
@@ -94,14 +98,14 @@ public class StreamingRepositoryTest {
             }
             assertEquals(2, outcomes);
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app, false);
+            Diagnostics.setEnabled(app, false);
         }
     }
 
     @Test
     public void providerRedirectRejectsUnsafeTargetAndDoesNotLogPrivateQuery() throws Exception {
-        Application app = org.robolectric.RuntimeEnvironment.getApplication();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app, true);
+        Application app = RuntimeEnvironment.getApplication();
+        Diagnostics.setEnabled(app, true);
         try {
             okhttp3.OkHttpClient fake = new okhttp3.OkHttpClient.Builder()
                                             .addInterceptor(chain
@@ -116,8 +120,8 @@ public class StreamingRepositoryTest {
                                             .build();
             String original = "https://click.justwatch.com/fixture?token=fixture-private-query";
             assertEquals(original, StreamingRepository.resolveTitleUrl(original, fake));
-            Object recorder = org.robolectric.util.ReflectionHelpers.getStaticField(
-                com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
+            Object recorder = ReflectionHelpers.getStaticField(
+                Diagnostics.class, "FLIGHT");
             Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             String evidence = (String) snapshot.invoke(recorder, SystemClock.elapsedRealtime());
@@ -136,13 +140,13 @@ public class StreamingRepositoryTest {
             }
             assertEquals(1, failures);
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app, false);
+            Diagnostics.setEnabled(app, false);
         }
     }
 
     @Test
     public void persistedAvailabilityDistinguishesUnknownEmptyAndStale() throws Exception {
-        Context context = org.robolectric.RuntimeEnvironment.getApplication();
+        Context context = RuntimeEnvironment.getApplication();
         assertNull(StreamingRepository.cachedAvailability(context, "tv", 987, "IE", 1));
         StreamingRepository.prefs(context)
             .edit()
@@ -239,10 +243,10 @@ public class StreamingRepositoryTest {
 
     @Test
     public void rejectedMetadataCannotBecomeAFreshCachedPackage() throws Exception {
-        Context context = org.robolectric.RuntimeEnvironment.getApplication();
+        Context context = RuntimeEnvironment.getApplication();
         long id = System.nanoTime();
         try {
-            com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(
+            PreviewMetadataCache.load(
                 context, "movie", id, "recommendations", () -> {
                     JSONObject payload = new JSONObject("{page:1}");
                     StreamingRepository.validateMetadataResponse("movie/" + id + "/recommendations", payload);
@@ -252,19 +256,19 @@ public class StreamingRepositoryTest {
         } catch (IOException expected) {
         }
         assertFalse(
-            com.archos.mediacenter.video.leanback.PreviewMetadataCache.fresh(context, "movie", id, "recommendations"));
+            PreviewMetadataCache.fresh(context, "movie", id, "recommendations"));
         assertNull(
-            com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(context, "movie", id, "recommendations"));
+            PreviewMetadataCache.read(context, "movie", id, "recommendations"));
     }
 
     @Test
     public void detailsReviewsDoNotCacheAResponseForTheWrongRequestedPage() throws Exception {
         okhttp3.OkHttpClient client =
-            org.robolectric.util.ReflectionHelpers.getStaticField(StreamingRepository.class, "HTTP");
+            ReflectionHelpers.getStaticField(StreamingRepository.class, "HTTP");
         List<okhttp3.Interceptor> previous = client.interceptors();
         long id = 987654321;
         try {
-            org.robolectric.util.ReflectionHelpers.setField(
+            ReflectionHelpers.setField(
                 client, "interceptors", List.<okhttp3.Interceptor>of(chain -> {
                     assertEquals("2", chain.request().url().queryParameter("page"));
                     return new okhttp3.Response.Builder()
@@ -276,16 +280,16 @@ public class StreamingRepositoryTest {
                             "{id:987654321,page:1,total_pages:3,results:[]}"))
                         .build();
                 }));
-            Context app = org.robolectric.RuntimeEnvironment.getApplication();
+            Context app = RuntimeEnvironment.getApplication();
             try {
                 StreamingRepository.reviews(app, "movie", id, 2);
                 fail("Mismatched response accepted");
             } catch (IOException expected) {
             }
             assertNull(
-                com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(app, "movie", id, "reviews/page_2"));
+                PreviewMetadataCache.read(app, "movie", id, "reviews/page_2"));
         } finally {
-            org.robolectric.util.ReflectionHelpers.setField(client, "interceptors", previous);
+            ReflectionHelpers.setField(client, "interceptors", previous);
         }
     }
 
@@ -312,12 +316,12 @@ public class StreamingRepositoryTest {
             0, 6
         })
             try {
-                StreamingRepository.reviews(org.robolectric.RuntimeEnvironment.getApplication(), "movie", 42, page);
+                StreamingRepository.reviews(RuntimeEnvironment.getApplication(), "movie", 42, page);
                 fail("Unbounded review page");
             } catch (IOException expected) {
             }
         try {
-            StreamingRepository.reviews(org.robolectric.RuntimeEnvironment.getApplication(), "episode", 42, 1);
+            StreamingRepository.reviews(RuntimeEnvironment.getApplication(), "episode", 42, 1);
             fail("Unsupported review scope");
         } catch (IOException expected) {
         }
