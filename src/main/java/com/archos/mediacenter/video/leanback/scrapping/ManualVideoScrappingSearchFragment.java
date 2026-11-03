@@ -203,6 +203,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         return result;
     }
 
+    @Override
     protected BaseTags getTagFromSearchResult(SearchResult result) {
         // Get the details for this match
         Bundle b = new Bundle();
