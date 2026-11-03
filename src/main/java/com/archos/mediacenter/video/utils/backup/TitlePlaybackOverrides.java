@@ -5,6 +5,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.VideoMetadata;
+import com.archos.mediaprovider.video.VideoStore;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -292,7 +293,7 @@ public final class TitlePlaybackOverrides {
                 language = null;
             Integer params = info.audioTrack < 0
                 ? null
-                : com.archos.mediaprovider.video.VideoStore.paramsFromTracks(info.audioTrack, info.subtitleTrack);
+                : VideoStore.paramsFromTracks(info.audioTrack, info.subtitleTrack);
             if (info.audioTrack > 1023 || info.subtitleTrack > 1022 || info.subtitleTrack < -1)
                 throw new JSONException("Manual playback index exceeds saved format");
             Boolean none = params == null || info.subtitleTrack < 0 ? null : info.subtitleTrack == info.nbSubtitles;
