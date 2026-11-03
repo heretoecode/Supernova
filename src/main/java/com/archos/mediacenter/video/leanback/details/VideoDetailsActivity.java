@@ -14,13 +14,16 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
-import android.os.Build;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.transition.Slide;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
 import com.archos.mediacenter.video.R;
@@ -65,7 +68,7 @@ public class VideoDetailsActivity extends LeanbackActivity {
         }
 
         setContentView(R.layout.androidtv_details_activity);
-        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
                 Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
                 if(fragment instanceof VideoDetailsFragment&&((VideoDetailsFragment)fragment).closePreviewNativeDetails())return;
@@ -74,16 +77,16 @@ public class VideoDetailsActivity extends LeanbackActivity {
             }
         });
 
-        android.widget.ImageView backdropView = findViewById(R.id.details_backdrop);
+        ImageView backdropView = findViewById(R.id.details_backdrop);
         if (backdropView != null) {
             long launchUptimeMs = getIntent().getLongExtra(VideoDetailsFragment.EXTRA_DETAILS_LAUNCH_UPTIME_MS, -1);
             if (launchUptimeMs != -1) {
                 VideoDetailsTransitionBackdropCache.Entry entry = VideoDetailsTransitionBackdropCache.takeEntry(launchUptimeMs);
                 if (entry != null) {
-                    android.graphics.Bitmap transitionBackdrop = entry.getBitmap();
+                    Bitmap transitionBackdrop = entry.getBitmap();
                     if (transitionBackdrop != null && !transitionBackdrop.isRecycled()) {
                         backdropView.setImageBitmap(transitionBackdrop);
-                        backdropView.setVisibility(android.view.View.VISIBLE);
+                        backdropView.setVisibility(View.VISIBLE);
                         backdropView.setAlpha(1.0f);
                     }
                     if (entry.file != null) {
