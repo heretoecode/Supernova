@@ -29,6 +29,7 @@ import com.archos.mediacenter.video.R;
 
 import java.util.List;
 
+/** Displays guided choices for scheduling network share rescans. */
 public class ScheduledRescanShares extends GuidedStepSupportFragment {
 
     private static final String TAG = "ScheduledRescanShares";
