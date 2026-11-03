@@ -99,6 +99,18 @@ Each item: what the owner saw → what they want → status.
   - Fits without scrolling (tallest tab ends ≈ 75 px above the screen edge).
 - **Status:** approved design — awaiting go-ahead to code.
 
+### 9. Settings and Network & Files landing pages unified (design + 2 bugs)
+- **Seen (photos, 0.153):** the two landing pages use different tile styles; Network & Files keeps its page
+  title, unequal columns, icons above titles, smaller text. **Bugs:** focused "Add Connection" and focused
+  "Playback & Video" tiles show near-invisible text (white on the white focus box).
+- **Proposed:** one tile design for both — no page title; tiles fill the page in equal columns (Settings 4×2,
+  Network & Files 3×2, same height); icon left of a single-line title, description below (Settings 0.153 sizes);
+  white focus box with dark text; **charcoal** tiles at rest (owner leaning charcoal). Network & Files wording:
+  Local Storage · Network Shares · Add Connection · Saved Connections · Library Scanning · Advanced (descriptions
+  in the mock-up). Mock-ups: `docs/design/proposals/landing-tiles/`.
+- **Status:** awaiting owner's approval of the mock-ups; the two bugs are fixed by the redesign and covered by
+  extending the white-on-white test to tiles.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
