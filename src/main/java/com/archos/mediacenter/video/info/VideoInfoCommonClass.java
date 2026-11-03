@@ -31,6 +31,7 @@ import com.archos.mediacenter.filecoreextension.upnp2.StreamUriFinder;
 import com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.medialib.IMediaPlayer;
 import com.archos.medialib.LibAvos;
@@ -208,7 +209,7 @@ public class VideoInfoCommonClass {
                 if (audio.vbr) {
                     sb.append(resources.getText(R.string.info_audio_vbr)).append(SEP);
                 }
-                lines.append(com.archos.mediacenter.video.leanback.PreviewLanguageIcon.inline(c,audio.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
+                lines.append(PreviewLanguageIcon.inline(c,audio.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
             }
             return lines;
         } else {
