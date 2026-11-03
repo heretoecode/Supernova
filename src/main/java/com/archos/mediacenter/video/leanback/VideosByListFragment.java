@@ -34,6 +34,7 @@ import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.ArrayList;
 
+/** Displays video lists and loads their contents with sorting controls. */
 public class VideosByListFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = VideosByListFragment.class.getName() + "_SORT";
