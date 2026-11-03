@@ -29,6 +29,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Manages a shared connection to the additional media service. */
 public class AdditionalServiceSingleton {
 
     private static final String TAG = "AdditionalServiceSingleton";
