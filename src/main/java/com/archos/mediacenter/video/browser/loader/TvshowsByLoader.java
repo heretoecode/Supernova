@@ -21,6 +21,7 @@ import androidx.loader.content.Loader;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Provides shared cursor loading and selection rules for grouped TV shows. */
 public abstract class TvshowsByLoader extends CursorLoader implements CompatAndSDKCursorLoaderFactory {
 
     public static final String COLUMN_COUNT = "count";
