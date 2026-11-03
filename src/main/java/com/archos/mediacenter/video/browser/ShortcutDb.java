@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Stores and queries saved browsing shortcuts in a database. */
 public enum ShortcutDb {
 
     STATIC();
