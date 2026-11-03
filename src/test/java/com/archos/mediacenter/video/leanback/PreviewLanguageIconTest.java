@@ -1,5 +1,10 @@
 package com.archos.mediacenter.video.leanback;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -94,9 +99,9 @@ public class PreviewLanguageIconTest {
 
     @Test
     public void everyDefaultFlagKeyIsWellFormed() {
-        java.util.Set<String> countries =
-            new java.util.HashSet<>(java.util.Arrays.asList(java.util.Locale.getISOCountries()));
-        for (java.util.Map.Entry<String, String> entry : PreviewLanguageIcon.DEFAULT_COUNTRY.entrySet()) {
+        Set<String> countries =
+            new HashSet<>(Arrays.asList(Locale.getISOCountries()));
+        for (Map.Entry<String, String> entry : PreviewLanguageIcon.DEFAULT_COUNTRY.entrySet()) {
             String key = entry.getValue();
             assertTrue(entry.getKey() + " → " + key,
                        countries.contains(key) || key.matches("[A-Z]{2}-[A-Z]{2,3}|ARAB|L-[A-Z]{2,3}"));
