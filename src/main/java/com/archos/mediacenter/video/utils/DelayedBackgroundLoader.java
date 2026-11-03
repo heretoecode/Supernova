@@ -27,6 +27,7 @@ import com.archos.mediascraper.ScraperImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads background artwork through the image processing pipeline. */
 public class DelayedBackgroundLoader extends ImageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DelayedBackgroundLoader.class);
