@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/** Reads the application's configured locales. */
 public class LocaleConfigParser {
 
     public static List<Locale> getLocales(Context context) {
