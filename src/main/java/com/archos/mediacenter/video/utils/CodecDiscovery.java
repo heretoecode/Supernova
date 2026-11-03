@@ -34,6 +34,7 @@ import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.Player;
 
+/** Discovers audio codec, spatializer and display HDR capabilities. */
 public class CodecDiscovery {
 
 	private static final Logger log = LoggerFactory.getLogger(CodecDiscovery.class);
