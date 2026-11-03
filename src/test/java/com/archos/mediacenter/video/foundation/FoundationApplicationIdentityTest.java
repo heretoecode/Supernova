@@ -27,6 +27,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.slf4j.LoggerFactory;
 
+/** Checks Foundation application identity and preferences without legacy version migrations or resets. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class FoundationApplicationIdentityTest {
