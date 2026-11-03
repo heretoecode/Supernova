@@ -6,6 +6,7 @@ import android.net.Uri;
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediaprovider.ArchosMediaFile;
 import com.archos.mediaprovider.video.*;
+import com.archos.mediascraper.AutoScrapeService;
 import java.util.*;
 
 /** Native scanned-file ingestion; never synthesises scraper matches or edits playback history. */
@@ -74,5 +75,5 @@ final class PutioLibraryBridge implements PutioSync.Library {
         ContentValues values=new ContentValues();values.put("_data",after.toString());
         if(resolver.update(VideoStoreInternal.FILES_SCANNED,values,"_data=?",new String[]{before.toString()})!=1)throw new IllegalStateException("Original indexed file is unavailable");
     }
-    public void enrich(){com.archos.mediascraper.AutoScrapeService.startService(context);}
+    public void enrich(){AutoScrapeService.startService(context);}
 }
