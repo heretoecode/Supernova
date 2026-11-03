@@ -15,6 +15,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks missing or offline video sources retain stable records, bookmarks and persistent exclusions. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class SupernovaRetentionTest {
