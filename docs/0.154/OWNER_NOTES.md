@@ -203,6 +203,17 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
   Local Storage-style page to add folders to the library.
 - **Status:** approved; built after 0.154.
 
+### 16. Network & Files: Saved Connections merged; Library Health gets a tile (for the version after 0.154)
+- **Seen:** "Manage Connections" opens the same screen as Network Locations (both call `networkShares()`).
+- **Decision (owner, 3 Nov 2026):** merge Saved Connections into Network Shares — each share row gets Edit
+  (address/password), Test and Remove; the Put.io row's **Account** opens library folders, sync and disconnect.
+  The freed tile becomes **Library Health** (missing, unmatched, duplicate files). Tiles: Local Storage · Network
+  Shares · Add Connection · Library Health · Library Scanning · Advanced.
+- **Bug to trace (Codex):** the Put.io part of library scanning never finishes — "Status: Requested · 0 checked ·
+  0/2 sources · 4,977 seconds · last completed 4 hours ago", "Scanning indexed sources · queued", while the local
+  part restarts every 15 minutes.
+- **Status:** approved; built after 0.154.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
