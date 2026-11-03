@@ -42,6 +42,7 @@ import okhttp3.Request;
 
 // okhttp3 downloader that trusts letsencrypt certificates added manually
 // because on android 7.1 and below platform certificates are not up to date
+/** Downloads images using OkHttp with system and bundled certificate authorities. */
 public class TrustingOkHttp3Downloader implements Downloader {
     private final Context context;
 
