@@ -23,6 +23,7 @@ import android.view.Surface;
 import 	java.util.concurrent.ArrayBlockingQueue;
 
 
+/** Renders video effects on a texture surface and responds to new video frames. */
 public class VideoEffectRenderer extends TextureSurfaceRenderer implements SurfaceTexture.OnFrameAvailableListener
 {
 
