@@ -10,9 +10,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
+import com.archos.environment.ArchosUtils;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.*;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -20,12 +22,14 @@ import java.time.Duration;
 import java.util.*;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
+import org.slf4j.LoggerFactory;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -40,9 +44,9 @@ public class ProductionBackupSettingsTest {
             ViewModelProvider.AndroidViewModelFactory.class, "_instance", null);
         PreviewAsyncFixtures.offlineTransport();
         ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
-        com.archos.environment.ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
+        ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         ReflectionHelpers.setStaticField(
-            CustomApplication.class, "log", org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
+            CustomApplication.class, "log", LoggerFactory.getLogger(CustomApplication.class));
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", RuntimeEnvironment.getApplication());
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
@@ -50,10 +54,10 @@ public class ProductionBackupSettingsTest {
             .putBoolean("try_new_ui", true)
             .commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException missing) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -219,17 +223,17 @@ public class ProductionBackupSettingsTest {
             var prefs = PreferenceManager.getDefaultSharedPreferences(host.get());
             prefs.edit().putInt("preview_accent41", 7).putString("oauth_token", "AUTH_CANARY").commit();
             File source = new File(host.get().getCacheDir(), "review-source.zip");
-            org.json.JSONObject appearance =
-                                    new org.json.JSONObject()
+            JSONObject appearance =
+                                    new JSONObject()
                                         .put("schema", 1)
                                         .put("category", "APPEARANCE")
                                         .put("values",
-                                            new org.json.JSONObject().put("preview_accent41",
-                                                new org.json.JSONObject().put("type", "INT").put("value", 19))),
-                                audio = new org.json.JSONObject()
+                                            new JSONObject().put("preview_accent41",
+                                                new JSONObject().put("type", "INT").put("value", 19))),
+                                audio = new JSONObject()
                                             .put("schema", 1)
                                             .put("category", "AUDIO")
-                                            .put("values", new org.json.JSONObject());
+                                            .put("values", new JSONObject());
             LogicalBackupArchive.writeCategories(
                 source, Map.of(BackupCategory.APPEARANCE, appearance, BackupCategory.AUDIO, audio), () -> false);
             model.open(new FileInputStream(source));
