@@ -16,9 +16,16 @@ package com.archos.mediacenter.video.leanback.overlay;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -90,24 +97,24 @@ public class ScannerAndScraperProgress {
     public void useFloatingStyle() {
         floating = true;
         int pad = Math.round(10 * mContext.getResources().getDisplayMetrics().density);
-        android.graphics.drawable.GradientDrawable background = new android.graphics.drawable.GradientDrawable();
+        GradientDrawable background = new GradientDrawable();
         background.setColor(0xd9102638);
         background.setCornerRadius(pad);
         background.setStroke(1, 0x554b738f);
         mProgressGroup.setBackground(background);
         mProgressGroup.setPadding(pad, pad / 2, pad, pad / 2);
-        mBadge.setTypeface(null, android.graphics.Typeface.NORMAL);
+        mBadge.setTypeface(null, Typeface.NORMAL);
         mBadge.setTextSize(12);
         mBadge.setMaxWidth(pad * 36);
-        mBadge.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        mBadge.setEllipsize(TextUtils.TruncateAt.END);
         mProgressWheel.setIndeterminateDrawable(com.archos.mediacenter.video.BuildConfig.FOUNDATION
                 ? new com.archos.mediacenter.video.foundation.DoubleRingDrawable()
                 : new com.archos.mediacenter.video.leanback.ThinSpinner());
-        android.view.ViewGroup.LayoutParams wheel = mProgressWheel.getLayoutParams();
+        ViewGroup.LayoutParams wheel = mProgressWheel.getLayoutParams();
         wheel.width = wheel.height = pad * 2;
         mProgressWheel.setLayoutParams(wheel);
         if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION)
-            mProgressWheel.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xff85c9f5));
+            mProgressWheel.setIndeterminateTintList(ColorStateList.valueOf(0xff85c9f5));
     }
 
     public void destroy() {
@@ -116,8 +123,8 @@ public class ScannerAndScraperProgress {
         mRepeatHandler.removeCallbacks(mRepeatRunnable);
         if (com.archos.mediacenter.video.BuildConfig.FOUNDATION) {
             mProgressGroup.setVisibility(View.GONE);
-            if (mProgressWheel.getIndeterminateDrawable() instanceof android.graphics.drawable.Animatable)
-                ((android.graphics.drawable.Animatable) mProgressWheel.getIndeterminateDrawable()).stop();
+            if (mProgressWheel.getIndeterminateDrawable() instanceof Animatable)
+                ((Animatable) mProgressWheel.getIndeterminateDrawable()).stop();
         }
     }
 
@@ -182,8 +189,8 @@ public class ScannerAndScraperProgress {
 
     private void updateCount() {
         if (com.archos.mediacenter.video.diagnostics.Diagnostics.enabled()
-            && android.os.SystemClock.elapsedRealtime() - diagnosticSampleAt >= 5000) {
-            diagnosticSampleAt = android.os.SystemClock.elapsedRealtime();
+            && SystemClock.elapsedRealtime() - diagnosticSampleAt >= 5000) {
+            diagnosticSampleAt = SystemClock.elapsedRealtime();
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("scanner_state", "network_active",
                 NetworkScannerReceiver.isScannerWorking(), "network_files",
                 NetworkScannerServiceVideo.getFilesFoundCount(), "local_import",
