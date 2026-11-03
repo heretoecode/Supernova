@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.leanback.details;
 
 import android.text.SpannableStringBuilder;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.generateTrackName;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import static com.archos.mediascraper.StringUtils.capitalizeFirstLetter;
 
 import android.content.Context;
@@ -221,7 +222,7 @@ public class SubtitlesDetailsRowPresenter extends FullWidthRowPresenter implemen
             String format = VideoUtils.getSubtitleFormatLabel(c, track.format);
             sb.append(Integer.toString(index + 1)).append(".").append(SEP)
               .append(generateTrackName(c, track.name, track.language, format, track.disposition, false)).append(SEP);
-            lines.append(com.archos.mediacenter.video.leanback.PreviewLanguageIcon.inline(c,track.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
+            lines.append(PreviewLanguageIcon.inline(c,track.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
         }
 
         return lines;
