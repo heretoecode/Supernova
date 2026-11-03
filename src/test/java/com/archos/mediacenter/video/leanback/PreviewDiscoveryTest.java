@@ -14,6 +14,7 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import static org.junit.Assert.*;
 
+/** Checks discovery identity matching, release sorting and safe source labels. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewDiscoveryTest {
