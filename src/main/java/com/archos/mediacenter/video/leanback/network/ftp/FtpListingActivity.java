@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.leanback.network.ftp;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 
+/** Hosts FTP file listings in the TV file browser. */
 public class FtpListingActivity extends ListingActivity {
 
     @Override
