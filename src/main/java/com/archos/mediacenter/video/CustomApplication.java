@@ -939,6 +939,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         }).start();
 
         new Thread() {
+            @Override
             public void run() {
                 this.setPriority(Thread.MIN_PRIORITY);
                 LibAvos.initAsync(mContext);
@@ -1029,6 +1030,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
         final CustomApplication app = this;
         updateVersionState(appContext);
         new Thread("nova-deferred-init") {
+            @Override
             public void run() {
                 try {
                     SupernovaLibraryPolicy.initialiseSetup(appContext);
@@ -1498,6 +1500,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     private boolean previewScanOnReturn;
     private final Handler previewRefreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable previewRefresh = new Runnable() {
+        @Override
         public void run() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CustomApplication.this);
             if (!isForeground || !prefs.getBoolean("try_new_ui", false))
