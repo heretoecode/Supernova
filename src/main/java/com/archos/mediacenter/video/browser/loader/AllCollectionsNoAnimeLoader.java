@@ -26,6 +26,7 @@ import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.Arrays;
 
+/** Loads collection entries while excluding anime collections. */
 public class AllCollectionsNoAnimeLoader extends VideoLoader {
 
     private static final String TAG = AllCollectionsNoAnimeLoader.class.getSimpleName();
