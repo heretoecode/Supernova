@@ -23,6 +23,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.PreviewArtworkPicker;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewVariants;
+import com.archos.mediacenter.video.leanback.PreviewVersionsDialog;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
+import com.archos.mediacenter.video.picasso.FidelityTransformation;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +58,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import java.io.File;
 import java.util.Locale;
 
@@ -208,9 +219,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     private PreviewMoviePage mPreviewMovie;
     private BaseTags mPreviewTags;
     private ScraperImage mPreviewPosterSelection, mPreviewBackdropSelection;
-    private com.archos.mediacenter.video.leanback.TopNavigation mPreviewNavigation;
+    private TopNavigation mPreviewNavigation;
     private View mNativeDetails;
-    private java.util.concurrent.ExecutorService mPreviewWorker;
+    private ExecutorService mPreviewWorker;
     private boolean mPreviewAutoPlayed;
 
     @Override
@@ -239,16 +250,16 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             });
         container.addView(mPreviewMovie, new FrameLayout.LayoutParams(-1, -1));
         mPreviewNavigation =
-            new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(), container, tab -> {
+            new TopNavigation(requireContext(), container, tab -> {
                 if (tab == 4)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                        requireContext(), VideoSettingsActivity.class));
                 else if (tab == 5)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                        requireContext(), VideoSearchActivity.class));
                 else {
                     Intent home =
-                        new Intent(requireContext(), com.archos.mediacenter.video.leanback.MainActivityLeanback.class);
+                        new Intent(requireContext(), MainActivityLeanback.class);
                     home.putExtra("preview_tab", tab);
                     home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(home);
@@ -266,9 +277,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     }
 
     private void showPreviewVersions() {
-        java.util.List<Video> variants = new java.util.ArrayList<>(mVideoList);
-        variants.sort(com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-        com.archos.mediacenter.video.leanback.PreviewVersionsDialog.show(requireActivity(), variants, mVideo, video -> {
+        List<Video> variants = new ArrayList<>(mVideoList);
+        variants.sort(PreviewVariants.BEST_FIRST);
+        PreviewVersionsDialog.show(requireActivity(), variants, mVideo, video -> {
             // Switching encode keeps the already selected title's playback position.
             video.setAutomaticResumeMs(mVideo.getResumeMs());
             video.setRemoteResumeMs(mVideo.getRemoteResumeMs());
@@ -279,18 +290,18 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     }
 
     private void showPreviewTools() {
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(), "Subtitles and artwork",
+        PreviewDialog.choose(requireContext(), "Subtitles and artwork",
             new String[] {
                 "Download subtitles", "Choose subtitles", "Posters", "Backdrops", "Subtitle Settings"
             }, -1,
-            java.util.Collections.emptySet(), false, n -> {
+            Collections.emptySet(), false, n -> {
                 if (n == 0)
                     performSubtitleDownload();
                 else if (n == 1)
                     performSubtitleChoose();
                 else if (n == 4)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class)
+                        requireContext(), VideoSettingsActivity.class)
                             .putExtra("preview_settings_category", "Subtitles"));
                 else
                     showPreviewArtwork(n == 2 ? mPostersRow : mBackdropsRow);
@@ -300,17 +311,17 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     private void showPreviewArtwork(Row sourceRow) {
         ListRow row = sourceRow instanceof ListRow ? (ListRow) sourceRow : null;
         if (row == null || row.getAdapter().size() == 0) {
-            com.archos.mediacenter.video.leanback.PreviewDialog.read(
+            PreviewDialog.read(
                 requireContext(), "Artwork", "No artwork available");
             return;
         }
         boolean posters = sourceRow == mPostersRow;
-        java.util.List<ScraperImage> images = new java.util.ArrayList<>();
+        List<ScraperImage> images = new ArrayList<>();
         for (int i = 0; i < row.getAdapter().size(); i++)
             if (row.getAdapter().get(i) instanceof ScraperImage)
                 images.add((ScraperImage) row.getAdapter().get(i));
         ScraperImage selected = posters ? mPreviewPosterSelection : mPreviewBackdropSelection;
-        com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(
+        PreviewArtworkPicker.show(
             requireContext(), posters ? "Posters" : "Backdrops", images, selected, posters, (image, done) -> {
                 Consumer<Boolean> complete = saved -> {
                     if (saved) {
@@ -518,7 +529,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         Intent launchIntent = getActivity().getIntent();
         boolean cinematic = launchIntent.getSerializableExtra(EXTRA_VIDEO) instanceof Video
             && !launchIntent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false)
-            && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+            && PreferenceManager.getDefaultSharedPreferences(requireContext())
                    .getBoolean("try_new_ui", false);
         if (cinematic) {
             getActivity().getWindow().setSharedElementEnterTransition(null);
@@ -753,13 +764,13 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         super.onViewCreated(view, savedInstanceState);
         mOverlay = new Overlay(this);
         if (mPreviewMovie != null) {
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader loader =
-                new com.archos.mediacenter.video.leanback.PreviewLibraryLoader(
+            PreviewLibraryLoader loader =
+                new PreviewLibraryLoader(
                     requireContext().getApplicationContext());
             final PreviewMoviePage page = mPreviewMovie;
-            mPreviewWorker = java.util.concurrent.Executors.newSingleThreadExecutor();
+            mPreviewWorker = Executors.newSingleThreadExecutor();
             mPreviewWorker.execute(() -> {
-                try (android.database.Cursor cursor = loader.loadInBackground()) {
+                try (Cursor cursor = loader.loadInBackground()) {
                     if (cursor != null)
                         page.post(() -> {
                             if (mPreviewMovie == page && page.isAttachedToWindow())
@@ -1055,14 +1066,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             } else if (action.getId() == VideoActionAdapter.ACTION_UNINDEX) {
                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
             } else if (action.getId() == VideoActionAdapter.ACTION_DELETE) {
-                if (com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(
+                if (ProviderDiscoveryGate.protects(
                         requireContext(), mVideo.getFileUri())) {
-                    com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(), "Manage put.io file",
+                    PreviewDialog.read(requireContext(), "Manage put.io file",
                         "This file is managed by put.io. Use put.io to delete it; Supernova will not send destructive operations through WebDAV.");
                     return;
                 }
                 if (mPreviewMovie != null) {
-                    com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                    PreviewDialog.choose(requireContext(),
                         "Remove or delete file",
                         new String[] {
                             getString(android.R.string.cancel), "Remove from Library (keep file)",
@@ -1074,7 +1085,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                             if (choice == 1)
                                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
                             if (choice == 2)
-                                com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                                PreviewDialog.choose(requireContext(),
                                     "Delete source file permanently?",
                                     new String[] {
                                         getString(android.R.string.cancel), "Delete source file"
@@ -1296,8 +1307,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             } while (cursor.moveToNext());
             if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
                 Video history = mVideo;
-                Collections.sort(mVideoList, com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-                mVideo = com.archos.mediacenter.video.leanback.PreviewVariants.choose(requireContext(), mVideoList);
+                Collections.sort(mVideoList, PreviewVariants.BEST_FIRST);
+                mVideo = PreviewVariants.choose(requireContext(), mVideoList);
                 if (history != null && history.getResumeMs() > 0) {
                     mVideo.setAutomaticResumeMs(history.getResumeMs());
                     mVideo.setRemoteResumeMs(history.getRemoteResumeMs());
@@ -1309,7 +1320,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             if (mVideo == null)
                 mVideo = mVideoList.get(0);
             if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
-                com.archos.mediacenter.video.leanback.PreviewVariants.restoreTitleResume(mVideoList, mVideo);
+                PreviewVariants.restoreTitleResume(mVideoList, mVideo);
             if (mVideoList.size() > 1) {
                 int i = 0;
                 for (Video video : mVideoList) {
@@ -1640,7 +1651,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                         bitmap = Picasso.get()
                                      .load(imageUri)
                                      .config(Bitmap.Config.ARGB_8888)
-                                     .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(
+                                     .transform(new FidelityTransformation(
                                          getResources().getDimensionPixelSize(R.dimen.details_poster_width),
                                          getResources().getDimensionPixelSize(R.dimen.details_poster_height)))
                                      .noFade()
@@ -1812,7 +1823,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             getView().post(() -> {
                 if (!isAdded() || mDetailsOverviewRow == null)
                     return;
-                androidx.leanback.widget.ObjectAdapter actions = mDetailsOverviewRow.getActionsAdapter();
+                ObjectAdapter actions = mDetailsOverviewRow.getActionsAdapter();
                 for (int id : new int[] {
                     VideoActionAdapter.ACTION_RESUME, VideoActionAdapter.ACTION_LOCAL_RESUME,
                          VideoActionAdapter.ACTION_PLAY, VideoActionAdapter.ACTION_PLAY_FROM_BEGIN,
@@ -1964,7 +1975,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                                     .centerCrop()
                                     .onlyScaleDown()
                                     .transform(
-                                        new com.archos.mediacenter.video.picasso.FidelityTransformation(width, height))
+                                        new FidelityTransformation(width, height))
                                     .get();
                             traceDetails("details-poster-decode-finished");
                             if (bitmap != null) {
@@ -2038,7 +2049,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             // Keep fragment cache access on the main thread.
             final VideoMetadata cachedMetadata = mVideoMetadateCache.get(startingPath);
             final VideoMetadata playerMetadata = mLaunchedFromPlayer ? mVideoMetadataFromPlayer : null;
-            final android.os.Bundle headersBundle = activity.getIntent().getBundleExtra("headers");
+            final Bundle headersBundle = activity.getIntent().getBundleExtra("headers");
             executor.execute(() -> {
                 VideoMetadata result = null;
                 try {
@@ -2054,7 +2065,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                         // Pick up any HTTP headers forwarded from the external player intent (e.g. Stremio/debrid)
                         Map<String, String> headers = null;
                         if (headersBundle != null && !headersBundle.isEmpty()) {
-                            headers = new java.util.HashMap<>();
+                            headers = new HashMap<>();
                             for (String key : headersBundle.keySet()) {
                                 String val = headersBundle.getString(key);
                                 if (val != null)
@@ -2116,8 +2127,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         if (mVideo.getMetadata() != null) {
             // Tell presenter to update the badges according to the metadata
             mDescriptionPresenter.displayActualVideoBadges(mVideo);
-            if (mPreviewMovie != null && mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)
-                mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie) mVideo);
+            if (mPreviewMovie != null && mVideo instanceof Movie)
+                mPreviewMovie.bind((Movie) mVideo);
 
             // update the details row and replace it in the adapter
             mFileDetailsRow = new FileDetailsRow(getActivity(), mVideo, mPlayerType);
