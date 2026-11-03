@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
+/** Displays video playlists and handles playlist creation and context actions. */
 public class BrowserPlaylists extends BrowserMoviesBy {
 
     private boolean mHasLaunchedTrakt = false;
