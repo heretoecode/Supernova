@@ -21,6 +21,7 @@ import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads anime movie entries for the video library. */
 public class AllAnimesLoader extends VideoLoader {
 
     private static final String TAG = "AllAnimesLoader";
