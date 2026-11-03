@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks custom library page statistics, filters, saved drafts and manual membership. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class CustomLibraryPageTest {
