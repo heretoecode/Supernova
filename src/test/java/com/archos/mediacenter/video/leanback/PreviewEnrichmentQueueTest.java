@@ -8,13 +8,19 @@ import android.view.View;
 import android.widget.Button;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
@@ -23,20 +29,20 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewEnrichmentQueueTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
@@ -69,21 +75,21 @@ public class PreviewEnrichmentQueueTest {
     @Test
     public void horizontalViewportUsesScrolledCardsRatherThanFirstSix() {
         RecyclerView rail =
-            org.mockito.Mockito.mock(RecyclerView.class);
-        org.mockito.Mockito.when(rail.getWidth()).thenReturn(300);
-        org.mockito.Mockito.when(rail.getChildCount()).thenReturn(3);
+            Mockito.mock(RecyclerView.class);
+        Mockito.when(rail.getWidth()).thenReturn(300);
+        Mockito.when(rail.getChildCount()).thenReturn(3);
         List<PreviewLibraryLoader.Entry> entries = new ArrayList<>(),
                                                    visible = new ArrayList<>(),
                                                    next = new ArrayList<>();
         for (int i = 0; i < 20; i++)
             entries.add(new PreviewLibraryLoader.Entry(
-                org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class), 0, 0, ""));
+                Mockito.mock(Movie.class), 0, 0, ""));
         for (int i = 0; i < 3; i++) {
-            View child = org.mockito.Mockito.mock(View.class);
-            org.mockito.Mockito.when(rail.getChildAt(i)).thenReturn(child);
-            org.mockito.Mockito.when(rail.getChildAdapterPosition(child)).thenReturn(i + 7);
-            org.mockito.Mockito.when(child.getLeft()).thenReturn(i * 100 - 100);
-            org.mockito.Mockito.when(child.getRight()).thenReturn(i * 100);
+            View child = Mockito.mock(View.class);
+            Mockito.when(rail.getChildAt(i)).thenReturn(child);
+            Mockito.when(rail.getChildAdapterPosition(child)).thenReturn(i + 7);
+            Mockito.when(child.getLeft()).thenReturn(i * 100 - 100);
+            Mockito.when(child.getRight()).thenReturn(i * 100);
         }
         PreviewPages.collectVisibleRail(rail, entries, visible, next);
         assertEquals(Arrays.asList(entries.get(8), entries.get(9)), visible);
@@ -156,9 +162,9 @@ public class PreviewEnrichmentQueueTest {
         try {
             SQLiteDatabase db = helper.getWritableDatabase();
             db.execSQL("INSERT INTO jobs VALUES('tv:42:test','tv',42,40,3,0,0,2)");
-            com.archos.mediacenter.video.browser.adapters.object.Episode episode =
-                org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Episode.class);
-            org.mockito.Mockito.when(episode.getOnlineId()).thenReturn(999L);
+            Episode episode =
+                Mockito.mock(Episode.class);
+            Mockito.when(episode.getOnlineId()).thenReturn(999L);
             PreviewLibraryLoader.Entry entry = new PreviewLibraryLoader.Entry(episode, 0, 7, "");
             entry.onlineId = 42;
             ReflectionHelpers.callStaticMethod(PreviewEnrichmentQueue.class, "offerEntry",
@@ -217,7 +223,7 @@ public class PreviewEnrichmentQueueTest {
             });
             host.get().setContentView(page);
             page.setDiscovery(new PreviewDiscovery());
-            var movie = new com.archos.mediacenter.video.browser.adapters.object.Movie(1, "/fixture/movie",
+            var movie = new Movie(1, "/fixture/movie",
                 "Indexed fixture", 42, "Indexed synopsis", 2024, 7, "", null, 100000, 0, 0, 0, false, false, false,
                 false, 1, 0, 1920, 1080, null, null, null, null, 0, 1, 1000, 0);
             PreviewLibraryLoader.Entry entry = new PreviewLibraryLoader.Entry(movie, 1, 0, "Drama");
@@ -261,7 +267,7 @@ public class PreviewEnrichmentQueueTest {
             }, () -> true);
             host.get().setContentView(nav);
             page.setDiscovery(new PreviewDiscovery());
-            var movie = new com.archos.mediacenter.video.browser.adapters.object.Movie(1, "/fixture/movie",
+            var movie = new Movie(1, "/fixture/movie",
                 "Indexed fixture", 42, "Indexed synopsis", 2024, 7, "", null, 100000, 0, 0, 0, false, false, false,
                 false, 1, 0, 1920, 1080, null, null, null, null, 0, 1, 1000, 0);
             PreviewLibraryLoader.Entry entry = new PreviewLibraryLoader.Entry(movie, 1, 0, "Drama");
