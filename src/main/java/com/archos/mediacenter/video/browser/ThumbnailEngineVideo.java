@@ -16,8 +16,6 @@ package com.archos.mediacenter.video.browser;
 
 import android.annotation.SuppressLint;
 
-import com.archos.filecorelibrary.MetaFile2;
-import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediacenter.utils.ThumbnailEngine;
 import com.archos.mediacenter.utils.ThumbnailRequest;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.util.Log;
