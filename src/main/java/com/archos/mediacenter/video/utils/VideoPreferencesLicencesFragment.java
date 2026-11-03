@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
-import androidx.preference.PreferenceFragmentCompat;
 
 import com.archos.mediacenter.video.R;
 
