@@ -8,14 +8,18 @@ import android.util.LruCache;
 import android.view.View;
 import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediascraper.MovieTags;
+import com.archos.mediascraper.ShowTags;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.*;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
@@ -25,11 +29,11 @@ import static org.mockito.Mockito.*;
 @Config(application = Application.class, sdk = 28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class OfficialTitleBindingTest {
-    private org.robolectric.android.controller.ActivityController<Activity> host;
+    private ActivityController<Activity> host;
     private Locale previous;
     private TextView title;
     private int captures;
-    @Rule public org.junit.rules.TestName name = new org.junit.rules.TestName();
+    @Rule public TestName name = new TestName();
 
     @Before
     public void setup() throws Exception {
@@ -168,10 +172,10 @@ public class OfficialTitleBindingTest {
         settle();
         OfficialTitleArtwork.bindRemote(title, "tv", 456);
         settle();
-        com.archos.mediacenter.video.browser.adapters.object.Tvshow show =
-            mock(com.archos.mediacenter.video.browser.adapters.object.Tvshow.class);
-        com.archos.mediascraper.ShowTags first = new com.archos.mediascraper.ShowTags(),
-                                         later = new com.archos.mediascraper.ShowTags();
+        Tvshow show =
+            mock(Tvshow.class);
+        ShowTags first = new ShowTags(),
+                                         later = new ShowTags();
         first.setOnlineId(123);
         later.setOnlineId(456);
         when(show.getShowTags()).thenReturn(first, later);
