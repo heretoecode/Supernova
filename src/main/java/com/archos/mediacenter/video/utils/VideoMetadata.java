@@ -29,6 +29,8 @@ import com.archos.medialib.MediaFactory;
 import com.archos.medialib.MediaMetadata;
 import com.archos.mediaprovider.video.VideoStore;
 
+import java.util.Collections;
+import java.util.List;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +52,8 @@ public class VideoMetadata implements Serializable {
     private AudioTrack[] mAudioTrackList;
     private SubtitleTrack[] mSubtitleTrackList;
     private int mDuration;
-    private java.util.List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> mChapters=java.util.Collections.emptyList();
-    public java.util.List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> getChapters(){return mChapters==null?java.util.Collections.emptyList():mChapters;}
+    private List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> mChapters=Collections.emptyList();
+    public List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> getChapters(){return mChapters==null?Collections.emptyList():mChapters;}
     private int mVideoWidth;
     private int mVideoHeight;
     private long mFileSize;
@@ -243,7 +245,7 @@ public class VideoMetadata implements Serializable {
         mAudioTrackList = null;
         mSubtitleTrackList = null;
         mDuration = 0;
-        mChapters=java.util.Collections.emptyList();
+        mChapters=Collections.emptyList();
         mVideoWidth = 0;
         mVideoHeight = 0;
         mFileSize = 0;
