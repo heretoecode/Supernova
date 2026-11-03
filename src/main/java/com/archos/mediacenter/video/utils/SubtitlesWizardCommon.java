@@ -31,6 +31,7 @@ import com.archos.mediacenter.utils.MediaUtils;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -274,14 +275,14 @@ public class SubtitlesWizardCommon {
         String newFilePath = buildSubtitlesFilename(oldFilePath);
 
         Uri oldUri = Uri.parse(oldFilePath);
-        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),oldUri))return false;
+        if(ProviderDiscoveryGate.protects(getActivity(),oldUri))return false;
         FileEditor oldFile = FileEditorFactory.getFileEditorForUrl(oldUri, getActivity());
         Uri newUri = Uri.parse(newFilePath);
         String newName = FileUtils.getName(newUri);
         // Rename the file
         try {
-            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),oldUri)||com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),newUri))return false;
+            synchronized(ProviderDiscoveryGate.LOCK){
+                if(ProviderDiscoveryGate.protects(getActivity(),oldUri)||ProviderDiscoveryGate.protects(getActivity(),newUri))return false;
                 fileRenamed = oldFile.rename(newName);
             }
             if (log.isDebugEnabled()) log.debug("onItemClick : selected file renamed as {}", newFilePath);
@@ -341,11 +342,11 @@ public class SubtitlesWizardCommon {
         boolean fileDeleted = false;
         
         Uri uri = Uri.parse(path);
-        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),uri))return false;
+        if(ProviderDiscoveryGate.protects(getActivity(),uri))return false;
         FileEditor file = FileEditorFactory.getFileEditorForUrl(uri, getActivity());
         try {
-            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),uri))return false;
+            synchronized(ProviderDiscoveryGate.LOCK){
+                if(ProviderDiscoveryGate.protects(getActivity(),uri))return false;
                 file.delete();
             }
             if (log.isDebugEnabled()) log.debug("deleteFile : file {} deleted", path);
