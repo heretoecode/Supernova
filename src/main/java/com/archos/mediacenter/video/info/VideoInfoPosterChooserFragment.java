@@ -192,6 +192,7 @@ public class VideoInfoPosterChooserFragment extends Fragment implements
 
 
     // ---------------------- EVENT HANDLER IMPLEMENTATION ------------------ //
+    @Override
     public void onClick(View v) {
         if (DBG) Log.d(TAG, "onClick - cancel");
         stop();
@@ -318,21 +319,25 @@ public class VideoInfoPosterChooserFragment extends Fragment implements
             notifyDataSetChanged();
         }
 
+        @Override
         public int getCount() {
             if (DBG) Log.d(TAG, "getCount = " + mList.size());
             return mList.size();
         }
 
+        @Override
         public Object getItem(int position) {
             if (DBG) Log.d(TAG, "getItem " + position);
             return mList.get(position);
         }
 
+        @Override
         public long getItemId(int position) {
             if (DBG) Log.d(TAG, "getItemId " + position);
             return position;
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (DBG) Log.d(TAG, "getView " + position);
 
