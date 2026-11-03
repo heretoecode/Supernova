@@ -22,12 +22,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
 import android.database.ContentObserver;
@@ -82,7 +80,7 @@ import com.archos.mediascraper.BaseTags;
 import com.archos.mediascraper.ScrapeDetailResult;
 import com.archos.environment.ArchosUtils;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -95,10 +93,10 @@ import java.util.concurrent.ExecutionException;
 import static com.archos.filecorelibrary.FileUtils.removeFileSlashSlash;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.generateTrackName;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager.getSubLanguageFromSubPathAndVideoPath;
-import com.archos.medialib.LibAvos;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import static com.archos.mediascraper.StringUtils.stringContainsForced;
 
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -833,7 +831,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             try {
                 restoredPosition =
                     com.archos.mediacenter.video.leanback.ViewingHistory.applyRestoredPosition(this, localInfo);
-            } catch (java.io.IOException invalid) {
+            } catch (IOException invalid) {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_position_invalid", invalid);
             }
             boolean eligible = PlaybackResumePolicy.isDatabaseResumeEligible(
@@ -1054,7 +1052,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         log.debug("onStreamingUriOK: waiting for subtitles enumeration (timeout={}ms)",
                             SUBTITLE_ENUMERATION_TIMEOUT_MS);
                     boolean finished = subtitlesReady.await(
-                        SUBTITLE_ENUMERATION_TIMEOUT_MS, java.util.concurrent.TimeUnit.MILLISECONDS);
+                        SUBTITLE_ENUMERATION_TIMEOUT_MS, TimeUnit.MILLISECONDS);
                     if (finished) {
                         if (log.isDebugEnabled())
                             log.debug("onStreamingUriOK: subtitles enumeration completed successfully");
@@ -1654,7 +1652,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private void applyRestoredTitle(VideoMetadata metadata) {
         try {
             restoredTitle.metadata(this, mVideoInfo, metadata, mPlayer);
-        } catch (org.json.JSONException | java.io.IOException invalid) {
+        } catch (org.json.JSONException | IOException invalid) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_pending", invalid);
         }
     }
@@ -1663,7 +1661,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         try {
             com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this, info);
             restoredTitle.manual(this, info);
-        } catch (org.json.JSONException | java.io.IOException invalid) {
+        } catch (org.json.JSONException | IOException invalid) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.error(
                 "manual_title_choice_persistence_failed", invalid);
         }
@@ -2738,7 +2736,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void onAudioTrackSelectionCompleted(int track, boolean success) {
         try {
             restoredTitle.selection(this, mVideoInfo, true, track, success);
-        } catch (org.json.JSONException | java.io.IOException invalid) {
+        } catch (org.json.JSONException | IOException invalid) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.error(
                 "restored_title_acknowledgement_failed", invalid);
         }
@@ -3114,7 +3112,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void onSubtitleTrackSelectionCompleted(int track, boolean success) {
         try {
             restoredTitle.selection(this, mVideoInfo, false, track, success);
-        } catch (org.json.JSONException | java.io.IOException invalid) {
+        } catch (org.json.JSONException | IOException invalid) {
             com.archos.mediacenter.video.diagnostics.Diagnostics.error(
                 "restored_title_acknowledgement_failed", invalid);
         }
