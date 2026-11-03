@@ -100,6 +100,7 @@ public abstract class BrowserByVideoObjects extends Browser implements CommonPre
         mAdapterByVideoObjects = (AdapterByVideoObjectsInterface) mBrowserAdapter;
     }
 
+    @Override
     public Uri getRealPathUriFromPosition(int position){
         return Uri.parse(getFilePath(position));
     }
@@ -109,6 +110,7 @@ public abstract class BrowserByVideoObjects extends Browser implements CommonPre
         return mAdapterByVideoObjects.getVideoItem(pos).getFilePath();
     }
 
+    @Override
     public void displayInfo(int position){
         Video video = mAdapterByVideoObjects.getVideoItem(position);
         int firstFilePosition = getFirstFilePosition();
@@ -203,6 +205,7 @@ public abstract class BrowserByVideoObjects extends Browser implements CommonPre
         if(!isNetwork)
             menu.add(R.string.get_subtitles_on_drive).setOnMenuItemClickListener(
                     new OnMenuItemClickListener() {
+                        @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             Intent intent = new Intent(Intent.ACTION_MAIN);
                             intent.setClass(mContext, SubtitlesWizardActivity.class);
@@ -336,6 +339,7 @@ public abstract class BrowserByVideoObjects extends Browser implements CommonPre
         return ret;
     }
 
+    @Override
     protected void syncTrakt(final int position) {
         Video video = mAdapterByVideoObjects.getVideoItem(position);
         int flags = TraktService.FLAG_SYNC_TO_TRAKT_WATCHED|TraktService.FLAG_SYNC_NOW;
@@ -398,6 +402,7 @@ public abstract class BrowserByVideoObjects extends Browser implements CommonPre
     }
 
 
+    @Override
     public void onExtendedClick(View image,Object v, int positionInAdapter){
         displayInfo(positionInAdapter);
     }
