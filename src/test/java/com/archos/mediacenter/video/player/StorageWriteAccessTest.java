@@ -16,6 +16,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.shadows.ShadowEnvironment;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 30, application = Application.class, shadows = StorageWriteAccessTest.DeniedStorage.class)
@@ -23,7 +24,7 @@ public class StorageWriteAccessTest {
     // Model denied all-files access explicitly. SDK 30's unshadowed no-arg
     // framework method indexes an external-volume array absent in this fixture.
     @Implements(Environment.class)
-    public static class DeniedStorage extends org.robolectric.shadows.ShadowEnvironment {
+    public static class DeniedStorage extends ShadowEnvironment {
         @Implementation protected static boolean isExternalStorageManager() { return false; }
     }
     @Rule public TemporaryFolder temporary = new TemporaryFolder();
