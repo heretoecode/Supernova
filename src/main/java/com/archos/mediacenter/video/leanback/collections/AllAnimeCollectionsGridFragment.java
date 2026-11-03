@@ -22,8 +22,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -31,7 +29,6 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.widget.CursorObjectAdapter;
 import androidx.leanback.widget.FocusHighlight;
