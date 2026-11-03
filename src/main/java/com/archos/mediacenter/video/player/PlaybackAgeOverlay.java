@@ -2,10 +2,15 @@ package com.archos.mediacenter.video.player;
 
 import android.content.Context;
 import android.graphics.*;
+import android.os.SystemClock;
 import android.view.View;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.Callable;
 import org.json.JSONObject;
 
 /** Passive FD-001 overlay, using only territory-scoped cached provider classification. */
@@ -72,7 +77,7 @@ final class PlaybackAgeOverlay extends View {
     }
 
     /** Direct playback may precede the background queue's last (classification) stage. */
-    static String loadCertificate(JSONObject cached, String country, java.util.concurrent.Callable<JSONObject> fetch) {
+    static String loadCertificate(JSONObject cached, String country, Callable<JSONObject> fetch) {
         JSONObject data = cached == null ? null : cached.optJSONObject("data");
         if (data == null)
             try {
@@ -87,7 +92,7 @@ final class PlaybackAgeOverlay extends View {
         org.json.JSONArray regions = data == null ? null : data.optJSONArray("results");
         if (regions == null || country == null || country.isEmpty())
             return "";
-        java.util.Set<String> primary = new java.util.HashSet<>(), fallback = new java.util.HashSet<>();
+        Set<String> primary = new HashSet<>(), fallback = new HashSet<>();
         for (int n = 0; n < regions.length(); n++) {
             JSONObject region = regions.optJSONObject(n);
             if (region == null || !country.equalsIgnoreCase(region.optString("iso_3166_1")))
@@ -111,7 +116,7 @@ final class PlaybackAgeOverlay extends View {
                     fallback.add(value);
             }
         }
-        java.util.Set<String> chosen = primary.isEmpty() ? fallback : primary;
+        Set<String> chosen = primary.isEmpty() ? fallback : primary;
         return chosen.size() == 1 ? chosen.iterator().next() : "";
     }
 
@@ -120,13 +125,13 @@ final class PlaybackAgeOverlay extends View {
             return false;
         String text = value.trim();
         return text.matches("[A-Za-z0-9][A-Za-z0-9 +/.-]{0,23}")
-            && !text.toUpperCase(java.util.Locale.ROOT)
+            && !text.toUpperCase(Locale.ROOT)
                     .matches("N/?A|NR|UNRATED|NOT(?: [A-Z]+)* RATED|UNKNOWN|NULL|NONE|TBC|TBD|NO RATING AVAILABLE");
     }
 
     void playbackStarted() {
         if (!output)
-            outputAt = android.os.SystemClock.uptimeMillis();
+            outputAt = SystemClock.uptimeMillis();
         output = true;
         showIfReady();
     }
@@ -134,7 +139,7 @@ final class PlaybackAgeOverlay extends View {
     private void showIfReady() {
         if (!output || consumed || classification.isEmpty() || !isAttachedToWindow())
             return;
-        long remaining = DWELL_MS - (android.os.SystemClock.uptimeMillis() - outputAt);
+        long remaining = DWELL_MS - (SystemClock.uptimeMillis() - outputAt);
         consumed = true;
         if (remaining <= 0)
             return;
