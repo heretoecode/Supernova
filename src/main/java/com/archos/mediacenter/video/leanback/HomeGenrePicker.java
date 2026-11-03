@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import com.archos.mediacenter.video.foundation.DoubleRingDrawable;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import com.archos.mediaprovider.ImportState;
@@ -63,7 +64,7 @@ final class HomeGenrePicker {
         LinearLayout scanning = new LinearLayout(context);
         scanning.setGravity(Gravity.CENTER_VERTICAL);
         ImageView spinner = new ImageView(context);
-        Drawable animation = new com.archos.mediacenter.video.foundation.DoubleRingDrawable();
+        Drawable animation = new DoubleRingDrawable();
         spinner.setImageDrawable(animation);
         scanning.addView(spinner, new LinearLayout.LayoutParams(dp(context, 20), dp(context, 20)));
         TextView status = MenuFoundation.text(context, "Scanning library…", 12);
