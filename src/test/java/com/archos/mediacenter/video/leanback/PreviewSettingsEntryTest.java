@@ -16,6 +16,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks Settings shortcuts and child returns preserve the correct rail and opener identity. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSettingsEntryTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
