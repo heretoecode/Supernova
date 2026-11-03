@@ -2,9 +2,12 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.InputFilter;
+import android.text.method.PasswordTransformationMethod;
 import android.view.*;
 import android.widget.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /** Small remote-operated keyboard; hardware keyboard editing remains available. */
 public final class PreviewTextInput {
@@ -17,7 +20,7 @@ public final class PreviewTextInput {
     }
 
     public static void showValidated(Context c, String title, String previous, int limit,
-                                     java.util.function.Function<String, String> validate, Consumer<String> accept) {
+                                     Function<String, String> validate, Consumer<String> accept) {
         showInput(c, title, previous, limit, validate, accept, false);
     }
 
@@ -26,13 +29,13 @@ public final class PreviewTextInput {
     }
 
     private static void showInput(Context c, String title, String previous, int limit,
-                                  java.util.function.Function<String, String> validate, Consumer<String> accept,
+                                  Function<String, String> validate, Consumer<String> accept,
                                   boolean secret) {
         showInput(c, title, previous, limit, validate, accept, secret, false);
     }
 
     private static void showInput(Context c, String title, String previous, int limit,
-                                  java.util.function.Function<String, String> validate, Consumer<String> accept,
+                                  Function<String, String> validate, Consumer<String> accept,
                                   boolean secret, boolean foundation) {
         Dialog d = PreviewDialog.create(c);
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -53,7 +56,7 @@ public final class PreviewTextInput {
         input.setShowSoftInputOnFocus(false);
         input.setText(previous);
         if (secret) {
-            input.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
+            input.setTransformationMethod(PasswordTransformationMethod.getInstance());
             com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(input, "private.credential");
         }
         input.setTextSize(16);
@@ -67,7 +70,7 @@ public final class PreviewTextInput {
             input.setHint("Name your library page");
             input.setHintTextColor(0xff8197a8);
         }
-        input.setFilters(new android.text.InputFilter[] {new android.text.InputFilter.LengthFilter(limit)});
+        input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(limit)});
         panel.addView(input, new LinearLayout.LayoutParams(-1, KeyboardInput.compactHeight(c)));
         input.setSelection(input.length());
         PreviewKeyboard keyboard = new PreviewKeyboard(c, input, null);
