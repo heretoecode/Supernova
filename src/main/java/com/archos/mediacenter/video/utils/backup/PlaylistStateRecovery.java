@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils.backup;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import com.archos.mediaprovider.video.*;
 import java.io.*;
 import java.util.*;
@@ -331,7 +332,7 @@ public final class PlaylistStateRecovery {
         }
     }
 
-    private static void bind(android.database.sqlite.SQLiteStatement statement, int index, JSONObject row, String key)
+    private static void bind(SQLiteStatement statement, int index, JSONObject row, String key)
         throws JSONException {
         if (row.isNull(key))
             statement.bindNull(index);
