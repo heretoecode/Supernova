@@ -65,6 +65,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays an anime movie grid with loading, sorting and selection handling. */
 public class AllAnimesGridFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "AllAnimesGridFragment";
