@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+/** Checks setup preserves source inventory and requires confirmation before enabling automation. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class SetupPolicyTest {
  private Context context;private ContentResolver resolver;
