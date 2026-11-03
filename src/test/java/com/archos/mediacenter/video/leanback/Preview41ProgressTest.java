@@ -6,6 +6,7 @@ import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import java.util.*;
 import org.junit.*;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
@@ -16,12 +17,12 @@ import static org.junit.Assert.*;
 public class Preview41ProgressTest {
     @org.junit.Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     Application context;
