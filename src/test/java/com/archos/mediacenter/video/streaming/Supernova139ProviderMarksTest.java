@@ -4,6 +4,8 @@ import android.app.Application;
 import android.graphics.*;
 import android.view.View;
 import android.widget.ImageView;
+import com.archos.mediacenter.video.leanback.ProviderMonogram;
+import com.squareup.picasso.Picasso;
 import java.io.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -18,10 +20,10 @@ public class Supernova139ProviderMarksTest {
     @Before
     public void images() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -87,7 +89,7 @@ public class Supernova139ProviderMarksTest {
         assertEquals(0, PreviewProviderIcons.resource("Unverified service"));
         PreviewProviderIcons.bind(icon, "/opaque-square.png", 1, "provider.choice");
         assertTrue("approved 2 Nov 2026: uniform initials tile for providers without a logo",
-                   icon.getDrawable() instanceof com.archos.mediacenter.video.leanback.ProviderMonogram);
+                   icon.getDrawable() instanceof ProviderMonogram);
         assertNull(icon.getBackground());
         assertNull(icon.getColorFilter());
     }
