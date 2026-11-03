@@ -15,8 +15,10 @@ import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 /**
  * The approved Playback Settings side panel (docs/design/PLAYBACK_SETTINGS_SIDE_PANEL_APPROVED_2026-11-02.md).
@@ -26,7 +28,7 @@ import static org.junit.Assert.*;
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class PlaybackSubtitlePanelTest {
-    private org.robolectric.android.controller.ActivityController<PreviewPlaybackMenusTest.TopNavigationTestHost> host;
+    private ActivityController<PreviewPlaybackMenusTest.TopNavigationTestHost> host;
     private Dialog main;
     private PlaybackSubtitlePanel panel;
     private Model model;
@@ -291,10 +293,10 @@ public class PlaybackSubtitlePanelTest {
 
     @Test
     public void okOpensTheTrackListInsideThePanelAndBackReturns() throws Exception {
-        Dialog before = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog before = ShadowDialog.getLatestDialog();
         row("track").performClick();
         layout(main);
-        assertSame("No second pop-up", before, org.robolectric.shadows.ShadowDialog.getLatestDialog());
+        assertSame("No second pop-up", before, ShadowDialog.getLatestDialog());
         assertTrue(panel.pageOpen());
         assertFalse("Tabs hidden on the list page", tagged("playback.tab:1").isShown());
         assertNotNull(tagged("playback.page.back"));
