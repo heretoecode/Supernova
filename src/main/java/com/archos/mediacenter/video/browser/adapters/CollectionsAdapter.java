@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.CollectionCursorMap
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Adapts collection cursor entries into video objects and cover artwork. */
 public class CollectionsAdapter extends PresenterAdapterByCursor  implements AdapterByVideoObjectsInterface{
     private final CollectionCursorMapper mCollectionsCursorMapper;
     public CollectionsAdapter(Context context, Cursor c) {
