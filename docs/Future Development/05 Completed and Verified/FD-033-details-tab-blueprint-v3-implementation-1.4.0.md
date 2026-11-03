@@ -1,4 +1,5 @@
 # FD-033 — Blueprint v3 approval notes, visual QA and 0.140 implementation scope
+> **Status (2026-11-04): BUILT** — Details redesign (0.140): `leanback/details/PreviewMoviePage.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 
 **Recorded:** 14 October 2026. **Owner decision:** The revised annotated v3 blueprint is visually much improved and approved to be included in the **0.140 implementation scope**; owner may still provide further visual corrections. Do not misstate this as final pixel-perfect approval or completed implementation. Earlier planning documents used **0.140**; owner confirms the target is **0.140**. Codex must verify the project's versioning convention before changing release identifiers; do not silently rename the in-progress 0.139 release.
 

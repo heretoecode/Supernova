@@ -1,10 +1,11 @@
-# FD-003 — Preparing Playback screen
+# FD-006 — Settings and context menus
+> **Status (2026-11-04): BUILT** — Settings rebuilt (0.143) `leanback/settings/SettingsWorkspace.java`; Edit Page side panel (0.152) `leanback/EditPagePanel.java`; global menu style (0.153) `leanback/SupernovaStyle.java`. Moved from "02 Parked Ideas". Original text below unchanged.
 
 **Status:** PARKED / HISTORICAL DISCUSSION ONLY.
 **Release:** Unassigned. **Coding authorisation:** None from this record.
 
 ## Preserved discussion and constraints
-Separate screen before actual playback; future visual redesign parked. Age overlay starts only after video begins. No redesign approved.
+Remaining Settings and context menu redesigns parked. Preserve functionality and D-pad; do not duplicate 0.139 Backup & Restore implementation or Stage D shared-component consolidation.
 
 ## Evidence and references
 - [Historical future design and approval notes](../../design/PARKED_FUTURE.md)

@@ -1,4 +1,5 @@
 # FD-002 — Playback HUD / playback card redesign — needs further discussion
+> **Status (2026-11-04): BUILT** — Playback HUD redesigned (0.141–0.152): `player/PlayerController.java`, `player/PlaybackSubtitlePanel.java`. Moved from "01 Under Discussion". Original text below unchanged.
 
 **Status:** UNDER DISCUSSION — NOT APPROVED. **Release:** unassigned. **Implementation:** not authorised. Updated 13 October 2026.
 

@@ -1,4 +1,5 @@
 # FD-005 — Network & Files visual redesign
+> **Status (2026-11-04): BUILT** — Network & Files workspace (0.142/0.147): `leanback/filebrowsing/UniversalFileBrowser.java`. Moved from "02 Parked Ideas". Original text below unchanged.
 
 > Execution update (2026-10-23): the owner subsequently authorised this work in the current release-preparation instruction. Candidate 0.142 implementation is on `codex/supernova-0.142-implementation-2026-10-23`; see [release evidence](../../0.142/RELEASE_REPORT.md). The planning-only restrictions below are historical. Physical acceptance and signed delivery remain open; no main merge is authorised.
 

@@ -1,4 +1,5 @@
 # FD-031 — Settings > About (existing implementation; historical approved design)
+> **Status (2026-11-04): BUILT** — `foundation/FoundationAboutWorkspace.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 
 **Owner-confirmed 13 October 2026: IMPLEMENTED AND WORKING. NOT FUTURE DEVELOPMENT.** The spacious centred Supernova branding, Release Notes and Open-source Licences are present in the app; the previously recurring Open-source Licences crash is now fixed. The owner considers further About adjustments routine day-to-day usability refinements, not a new feature or outstanding redesign.
 

@@ -6,3 +6,5 @@ Rejected does not mean erase the record. Preserve original proposal, rationale, 
 - **FD-009 — Additional custom Home row icons: CLOSED / NO ACTION.** No extra essential icon types identified; existing 0.139 icon catalogue remains. This is **closed rather than a rejection of all future icons**. Source: [post-0.139 backlog](../../project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md).
 
 If any historical image isn't available in GitHub, say so explicitly rather than claiming full archival.
+
+- **FD-012 — FD-012 — Smart Collections (closed; superseded)**: Closed and superseded (stated in the file itself). [FD-012.md](FD-012.md)

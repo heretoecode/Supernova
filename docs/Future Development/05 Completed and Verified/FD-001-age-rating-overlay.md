@@ -1,4 +1,5 @@
 # FD-001 — Playback age-classification overlay
+> **Status (2026-11-04): BUILT** — `player/PlaybackAgeOverlay.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 
 **Status: OWNER APPROVED DESIGN — AWAITING SCHEDULING.** **Release: UNASSIGNED.** This is *not* permission to implement or add to 0.140 automatically.
 

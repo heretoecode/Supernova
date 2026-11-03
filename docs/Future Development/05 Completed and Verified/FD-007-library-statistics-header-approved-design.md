@@ -1,4 +1,5 @@
 # FD-007 — Library statistics/header redesign — owner-approved design and meaning
+> **Status (2026-11-04): BUILT** — `leanback/LibraryStatistics.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 
 **Decision date:** 14 October 2026. **Status:** Visual design and intended metric definitions approved; awaiting source-backed Codex feasibility/implementation planning. **Not included in active 0.139, nor automatically scheduled for 0.140.** Supersedes older parked FD-007 proposal that rejected horizontal cards. This is a single continuous full-width statistics panel, NOT four disconnected cards.
 

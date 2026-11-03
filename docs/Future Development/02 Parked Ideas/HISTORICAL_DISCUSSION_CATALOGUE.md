@@ -6,14 +6,14 @@ These were identified from the [10 October future discussion backlog](../../proj
 |---|---|---|
 | FD-011 | Profiles | Separate history, Continue Watching, settings and perhaps libraries; switching and migration need definition; parked |
 | FD-013 | Discovery / Coming Soon | Dedicated Discovery page parked; do not turn Home into recommendation advertising without approval |
-| FD-015 | Library Health | Unmatched metadata, missing artwork, inaccessible sources, duplicates, stale metadata, safe review rather than destructive repair; parked |
+| FD-015 | Library Health | **BUILT** — leanback/LibraryHealth.java. Unmatched metadata, missing artwork, inaccessible sources, duplicates, stale metadata, safe review rather than destructive repair; parked |
 | FD-016 | Person pages | Cast and crew profile navigation, filmographies; parked |
 | FD-017 | Multiple custom Library Pages | Future revisit of one-page limit; do not conflate with already approved one-page wizard |
 | FD-018 | Anime | Specialised metadata, seasons/episodes and navigation; concept only |
 | FD-019 | Seek thumbnails | Generate thumbnails, performance and storage tradeoffs; concept only |
 | FD-020 | Subtitle presets | Saved subtitle appearance and granular settings; concept only |
 | FD-021 | Playback intelligence | Further version selection and playback decisions; concept only |
-| FD-022 | Expanded ratings | IMDb, Rotten Tomatoes and other ratings; API and licensing questions; distinct from age classification |
+| FD-022 | Expanded ratings | **PARTLY BUILT** — IMDb, Rotten Tomatoes and Metacritic via the owner's OMDb key (0.151). IMDb, Rotten Tomatoes and other ratings; API and licensing questions; distinct from age classification |
 | FD-023 | Trakt community reviews | Reviews, social/community features and ratings; concept only |
 | FD-024 | AI features | Metadata matching, recommendations, natural-language search; cost and privacy concerns; concept only |
 | FD-025 | Personalisation | Additional layout, theme and navigation settings; concept only |

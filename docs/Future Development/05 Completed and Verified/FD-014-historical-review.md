@@ -1,4 +1,5 @@
 # FD-014 — Existing custom Library Page (historical implementation tracking)
+> **Status (2026-11-04): BUILT** — Custom library pages: `leanback/PreviewPages.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 
 **Owner clarification 2026-10-13:** The third Library page and its five-step Edit Library creation/editing workflow **already exist in the app**. This is **not an unscheduled new feature**, and should not appear in the approved-awaiting-scheduling queue. It was previously approved for **0.135**; actual current version, remaining bugs and owner QA must be tracked separately. No new coding request.
 

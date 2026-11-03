@@ -1,10 +1,11 @@
-# FD-006 — Settings and context menus
+# FD-003 — Preparing Playback screen
+> **Status (2026-11-04): BUILT** — `player/PreviewPlaybackLoading.java` (owner-confirmed implemented, see Parked README). Moved from "02 Parked Ideas". Original text below unchanged.
 
 **Status:** PARKED / HISTORICAL DISCUSSION ONLY.
 **Release:** Unassigned. **Coding authorisation:** None from this record.
 
 ## Preserved discussion and constraints
-Remaining Settings and context menu redesigns parked. Preserve functionality and D-pad; do not duplicate 0.139 Backup & Restore implementation or Stage D shared-component consolidation.
+Separate screen before actual playback; future visual redesign parked. Age overlay starts only after video begins. No redesign approved.
 
 ## Evidence and references
 - [Historical future design and approval notes](../../design/PARKED_FUTURE.md)

@@ -1,4 +1,5 @@
 # FD-033 — Details tab: owner-approved visual and interaction specification
+> **Status (2026-11-04): BUILT** — Details redesign (0.140): `leanback/details/PreviewMoviePage.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 **Approved:** 13 October 2026
 **Status:** APPROVED — AWAITING RELEASE SCHEDULING. **Not implemented by this documentation change.**
 **Scope:** Details tab beneath the existing movie/TV hero; not a new full-screen details page, not the hero card, and not a top navigation bar.

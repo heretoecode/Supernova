@@ -1,4 +1,5 @@
 # FD-033 — measured reference blueprint and implementation handover (0.140)
+> **Status (2026-11-04): BUILT** — Details redesign (0.140): `leanback/details/PreviewMoviePage.java`. Moved from "03 Approved - Awaiting Scheduling". Original text below unchanged.
 
 **Status:** Design approved; blueprint geometry prepared for Codex; actual Android implementation and visual QA **not performed**. **Source:** Owner-supplied final *The Goonies* image, 1536×864 pixels, 14 October 2026. The source raster was measured locally; the raster itself has **not been committed to GitHub**. The companion [SVG geometry trace](FD-033-details-approved-reference-geometry.svg) is a tracing/guide **not a substitute for the source image**. Source SHA-256 to be recorded upon binary archival.
 

@@ -1,4 +1,5 @@
 # FD-006 — Edit Library opacity and readability correction
+> **Status (2026-11-04): BUILT** — Settings rebuilt (0.143) `leanback/settings/SettingsWorkspace.java`; Edit Page side panel (0.152) `leanback/EditPagePanel.java`; global menu style (0.153) `leanback/SupernovaStyle.java`. Moved from "02 Parked Ideas". Original text below unchanged.
 
 > Execution update (2026-10-23): the owner subsequently authorised this work in the current release-preparation instruction. Candidate 0.142 implementation is on `codex/supernova-0.142-implementation-2026-10-23`; see [release evidence](../../0.142/RELEASE_REPORT.md). The planning-only restrictions below are historical. Physical acceptance and signed delivery remain open; no main merge is authorised.
 

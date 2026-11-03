@@ -1,4 +1,5 @@
 # Supernova Playback HUD — complete functionality audit
+> **Status (2026-11-04): BUILT** — Playback HUD redesigned (0.141–0.152): `player/PlayerController.java`, `player/PlaybackSubtitlePanel.java`. Moved from "01 Under Discussion". Original text below unchanged.
 
 **Date:** 16 October 2026. **Status:** investigation/documentation only. **Related work:** FD-002, under discussion. No redesign, implementation, APK, release, signing, merge or 0.140 scope change is authorised by this report.
 
