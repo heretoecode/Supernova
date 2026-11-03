@@ -90,12 +90,15 @@ public final class PreviewAccent {
             slider.setMax(255);
             slider.setProgress(rgb[i]);
             slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
                 public void onProgressChanged(SeekBar b, int value, boolean user) {
                     rgb[channel] = value;
                     title.setTextColor(Color.rgb(rgb[0], rgb[1], rgb[2]));
                 }
+                @Override
                 public void onStartTrackingTouch(SeekBar b) {
                 }
+                @Override
                 public void onStopTrackingTouch(SeekBar b) {
                 }
             });
