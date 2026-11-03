@@ -19,8 +19,11 @@ import androidx.leanback.widget.SparseArrayObjectAdapter;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.player.PrivateMode;
+import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediascraper.BaseTags;
 import com.archos.mediascraper.EpisodeTags;
 import java.lang.ref.WeakReference;
@@ -225,7 +228,7 @@ public final class StreamingActions {
             String[] names = new String[labels.length];
             for (int i = 0; i < labels.length; i++)
                 names[i] = labels[i].toString();
-            Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(a,
+            Dialog dialog = PreviewDialog.choose(a,
                 app.getString(R.string.streaming_more) + " · " + region + " · JustWatch", names, -1,
                 i -> openOffer(offers.get(i), watchUrl, title));
             for (int i = 0; i < offers.size(); i++)
@@ -234,7 +237,7 @@ public final class StreamingActions {
         }
         new AlertDialog
             .Builder(a,
-                com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme()
+                ThemeManager.getInstance(a).isSlateTheme()
                     ? R.style.Theme_AlertDialog_Slate
                     : 0)
             .setTitle(app.getString(R.string.streaming_more) + " · " + region + " · JustWatch")
@@ -244,7 +247,7 @@ public final class StreamingActions {
     }
 
     private void openOffer(StreamingRepository.Offer offer, String watchUrl, String title) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "provider_handoff_requested", "provider_id", offer.provider.id);
         Activity a = active();
         if (a == null || opening)
@@ -286,7 +289,7 @@ public final class StreamingActions {
                 return;
         }
         if (PreferenceManager.getDefaultSharedPreferences(a).getBoolean("try_new_ui", false)) {
-            com.archos.mediacenter.video.leanback.PreviewDialog.choose(a, offer.provider.name,
+            PreviewDialog.choose(a, offer.provider.name,
                 new String[] {
                     app.getString(R.string.streaming_open_app), app.getString(R.string.streaming_watch_page),
                     app.getString(android.R.string.cancel)
@@ -311,7 +314,7 @@ public final class StreamingActions {
         }
         new AlertDialog
             .Builder(a,
-                com.archos.mediacenter.video.utils.ThemeManager.getInstance(a).isSlateTheme()
+                ThemeManager.getInstance(a).isSlateTheme()
                     ? R.style.Theme_AlertDialog_Slate
                     : 0)
             .setTitle(offer.provider.name)
@@ -364,10 +367,10 @@ public final class StreamingActions {
     private static boolean start(Activity activity, Intent intent) {
         try {
             activity.startActivity(intent);
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("provider_handoff_dispatched");
+            Diagnostics.event("provider_handoff_dispatched");
             return true;
         } catch (ActivityNotFoundException | SecurityException e) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("provider_handoff_failed", e);
+            Diagnostics.error("provider_handoff_failed", e);
             return false;
         }
     }
