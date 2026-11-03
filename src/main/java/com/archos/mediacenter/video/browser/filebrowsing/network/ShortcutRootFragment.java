@@ -103,6 +103,7 @@ public class ShortcutRootFragment extends NewRootFragment implements View.OnClic
 
         return super.onContextItemSelected(item);
     }
+    @Override
     public RootFragmentAdapter getAdapter(){
         mAdapter  = new ShortcutAdapter(getActivity());
         ((ShortcutAdapter)mAdapter).setOnBrowseClickListener(this);
@@ -213,6 +214,7 @@ public class ShortcutRootFragment extends NewRootFragment implements View.OnClic
         rescanAction.setTitle(getString(R.string.add_to_library));
         rescanAction.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_add));
         rescanAction.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 addToIndexed(uri, name);
                 mQuickAction.dismiss();
