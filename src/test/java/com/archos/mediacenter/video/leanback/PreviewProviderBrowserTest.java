@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -47,8 +48,8 @@ public class PreviewProviderBrowserTest {
             int[] selectedAncestor = {
                 -1
             };
-            browser.providerPath(java.util.List.of("put.io", "Movies", "Family"),
-                java.util.List.of(
+            browser.providerPath(List.of("put.io", "Movies", "Family"),
+                List.of(
                     () -> selectedAncestor[0] = 0, () -> selectedAncestor[0] = 1, () -> selectedAncestor[0] = 2));
             browser.providerItem("Example.mkv", "Video · 1 GB", false, () -> opened[0]++);
             PreviewPagesTest.layout(browser);
