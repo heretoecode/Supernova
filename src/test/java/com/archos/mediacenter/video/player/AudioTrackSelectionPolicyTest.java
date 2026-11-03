@@ -42,7 +42,7 @@ import java.util.Locale;
 
 /**
  * Dedicated unit tests verifying the Audio Track Selection specification
- * defined in Video/doc/AUDIO_TRACK_SELECTION.md.
+ * defined in Video/docs/nova/AUDIO_TRACK_SELECTION.md.
  */
 @RunWith(RobolectricTestRunner.class)
 // Selection policy does not need production HDMI/bootstrap workers. Their

@@ -44,7 +44,7 @@ import org.robolectric.util.ReflectionHelpers;
 
 /**
  * Dedicated unit tests verifying the Subtitle Display & Track Selection specification
- * defined in Video/doc/SUBTITLES.md.
+ * defined in Video/docs/nova/SUBTITLES.md.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 33)
@@ -76,7 +76,7 @@ public class SubtitleTrackSelectionPolicyTest {
     }
 
     // -------------------------------------------------------------------------
-    // Specification Examples Table (Video/doc/SUBTITLES.md lines 201-213)
+    // Specification Examples Table (Video/docs/nova/SUBTITLES.md lines 201-213)
     // -------------------------------------------------------------------------
 
     @Test
