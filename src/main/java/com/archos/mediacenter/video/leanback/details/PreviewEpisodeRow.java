@@ -6,12 +6,15 @@ import android.view.ViewTreeObserver;
 import androidx.recyclerview.widget.*;
 import androidx.leanback.widget.Presenter;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import com.archos.mediacenter.video.streaming.*;
 import android.net.Uri;
 import java.util.Locale;
+import org.json.JSONObject;
 
 /** Recycled season rail; long seasons do not inflate or request all artwork at once. */
 final class PreviewEpisodeRow extends PreviewFocusRecycler {
@@ -55,7 +58,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                         "details.episodes", "episode_still");
                     card.setTag("episode:" + ep.getId());
                     card.progress.setProgress(
-                        com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(
+                        PreviewCardPresenter.progress(
                             ep.getResumeMs(), ep.getDurationMs()));
                     card.progress.setVisibility(ep.getResumeMs() > 0 ? View.VISIBLE : View.GONE);
                     card.setOnClickListener(v
@@ -63,7 +66,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                             new Presenter.ViewHolder(v), ep, null, null));
                     return;
                 }
-                org.json.JSONObject remote = choice.remote;
+                JSONObject remote = choice.remote;
                 String name = choice.number + " · " + remote.optString("name", "Episode " + choice.number),
                        still = remote.optString("still_path");
                 int runtime = remote.optInt("runtime");
@@ -95,7 +98,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
                         PreviewDialog.choose(activity, name, labels, 0, index -> StreamingRepository.IO.submit(() -> {
                             String resolved = StreamingRepository.episodeLink(activity.getApplicationContext(), showId,
                                 choice.season, choice.number, availability, offers.get(index).provider.id);
-                            com.archos.mediacenter.video.diagnostics.Diagnostics.event("episode_provider_link",
+                            Diagnostics.event("episode_provider_link",
                                 "season", choice.season, "episode", choice.number, "exact_scope", true);
                             activity.runOnUiThread(() -> {
                                 if (!activity.isFinishing() && !activity.isDestroyed())
