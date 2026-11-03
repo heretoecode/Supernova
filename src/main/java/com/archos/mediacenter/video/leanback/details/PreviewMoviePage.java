@@ -1548,6 +1548,7 @@ public final class PreviewMoviePage extends ScrollView {
         portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);
         portrait.setBackground(new ColorDrawable(0xff1d2936));
         portrait.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
             public void getOutline(View view, Outline outline) {
                 outline.setOval(0, 0, view.getWidth(), view.getHeight());
             }
