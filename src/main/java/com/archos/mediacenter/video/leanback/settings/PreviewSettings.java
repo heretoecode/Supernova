@@ -420,16 +420,16 @@ public final class PreviewSettings {
                 "favAudioLang", "prefer_original_audio_track",
                  "force_audio_passthrough_multiple", "player_spatialization_enabled"
             })
-            move(root, audio, key);
+                move(root, audio, key);
             for (String key : new String[] {
                 "allow_3rd_party_player", "network_bookmarks",
                  fragment.getString(R.string.reset_brightness_on_start_key)
             })
-            move(root, categories.get("Playback"), key);
+                move(root, categories.get("Playback"), key);
             for (String key : new String[] {
                  "hide_watched", "sort_ignore_articles", "preference_display_all_files", "pref_create_remote_thumbs"
             })
-            move(root, categories.get("Library"), key);
+                move(root, categories.get("Library"), key);
             PreferenceCategory advanced = categories.get("Advanced");
             String[][] compatibility = {
                 {
@@ -455,7 +455,7 @@ public final class PreviewSettings {
                 section.setTitle(group[0]);
                 advanced.addPreference(section);
                 for (int i = 1; i < group.length; i++)
-                move(root, section, group[i]);
+                    move(root, section, group[i]);
             }
             PreferenceCategory backupGroup = new PreferenceCategory(fragment.requireContext());
             backupGroup.setKey("preview_backup_restore");
@@ -465,7 +465,7 @@ public final class PreviewSettings {
                 "media_library_export_prefkey", "media_library_import_prefkey",
                  "supernova_backup_history", "supernova_backup_resume"
             })
-            move(root, backupGroup, key);
+                move(root, backupGroup, key);
             PreferenceCategory diagnosticGroup = new PreferenceCategory(fragment.requireContext());
             diagnosticGroup.setKey("preview_diagnostics_group");
             diagnosticGroup.setTitle("Diagnostics");
@@ -476,7 +476,7 @@ public final class PreviewSettings {
                  "preview_diagnostic_Report a Problem", "preview_diagnostic_Show Latest Reference",
                  "export_diagnostic_report"
             })
-            move(root, diagnosticGroup, key);
+                move(root, diagnosticGroup, key);
             PreferenceCategory integrations = categories.get("Integrations"), trakt = categories.get("Trakt");
             root.removePreference(trakt);
             integrations.addPreference(trakt);
@@ -529,7 +529,7 @@ public final class PreviewSettings {
                 positive.setOnPreferenceChangeListener((p, value) -> {
                     boolean inverse = !(Boolean) value;
                     if (!original.callChangeListener(inverse))
-                    return false;
+                        return false;
                     original.setChecked(inverse);
                     return true;
                 });
@@ -542,7 +542,7 @@ public final class PreviewSettings {
             }) {
                 Preference p = root.findPreference(key);
                 if (p != null)
-                p.setVisible(false);
+                    p.setVisible(false);
             }
             categories.get("Legacy").setVisible(false);
         }
@@ -776,7 +776,7 @@ public final class PreviewSettings {
                                 ((Runnable) back).run();
                                 View restored = getRootView().findFocus();
                                 if (restored != null)
-                                return restored;
+                                    return restored;
                             }
                             return (View) getTag();
                         }
@@ -986,7 +986,7 @@ public final class PreviewSettings {
                                     return true;
                                 }
                                 if (key == KeyEvent.KEYCODE_DPAD_DOWN)
-                                return true;
+                                    return true;
                             }
                         if (helpScroll.hasFocus()) {
                             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -1017,7 +1017,7 @@ public final class PreviewSettings {
             split.panels(navigationScroll, middle, helpScroll);
             split.widths(.28f, .46f, .26f);
             if (backup != null)
-            backup.attach(split, middle, helpScroll);
+                backup.attach(split, middle, helpScroll);
             final FoundationAboutWorkspace about =
             BuildConfig.FOUNDATION
             ? new FoundationAboutWorkspace(
@@ -1034,11 +1034,11 @@ public final class PreviewSettings {
             };
             final Runnable collapse = () -> {
                 for (TextView child : nested)
-                links.removeView(child);
+                    links.removeView(child);
                 nested.clear();
                 expanded[0] = null;
                 if (about != null)
-                about.collapseNavigation();
+                    about.collapseNavigation();
             };
             String requested = fragment.requireActivity().getIntent().getStringExtra("preview_settings_category");
             boolean streaming = fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false);
@@ -1055,7 +1055,7 @@ public final class PreviewSettings {
                 TextView button = sidebarButton(c, name, false);
                 button.setTag("semantic:settings:category:" + name);
                 if (Arrays.asList("Advanced", "Integrations", "About").contains(name))
-                button.setText(name + "  ›");
+                    button.setText(name + "  ›");
                 links.addView(button,
                 new LinearLayout.LayoutParams(-1,
                     Math.max(dp(fragment, 32),
@@ -1063,7 +1063,7 @@ public final class PreviewSettings {
                 parents.add(button);
                 Runnable show = () -> {
                     if (backup != null)
-                    backup.hide();
+                        backup.hide();
                     rememberedLeft[0] = button;
                     list.setTag(button);
                     list.setVisibility(View.VISIBLE);
@@ -1071,14 +1071,14 @@ public final class PreviewSettings {
                     helpScroll.setVisibility(View.VISIBLE);
                     split.widths(.28f, .46f, .26f);
                     for (int i = 0; i < root.getPreferenceCount(); i++)
-                    root.getPreference(i).setVisible(root.getPreference(i) == category);
+                        root.getPreference(i).setVisible(root.getPreference(i) == category);
                     if (category != null)
-                    for (int k = 0; k < category.getPreferenceCount(); k++) {
-                        Preference p = category.getPreference(k);
-                        if (p instanceof PreferenceGroup)
-                            restoreVisibility((PreferenceGroup) p, visibility);
-                        p.setVisible(Boolean.TRUE.equals(visibility.get(p)) && !(p instanceof PreferenceCategory));
-                    }
+                        for (int k = 0; k < category.getPreferenceCount(); k++) {
+                            Preference p = category.getPreference(k);
+                            if (p instanceof PreferenceGroup)
+                                restoreVisibility((PreferenceGroup) p, visibility);
+                            p.setVisible(Boolean.TRUE.equals(visibility.get(p)) && !(p instanceof PreferenceCategory));
+                        }
                     choices.removeAllViews();
                     help.setText(name + "\n\n"
                     + (name.equals("Advanced")
@@ -1091,9 +1091,9 @@ public final class PreviewSettings {
                         if ("About".equals(name)) {
                             about.show(button);
                             if (expanded[0] != button)
-                            about.collapseNavigation();
+                                about.collapseNavigation();
                         } else
-                        about.hide();
+                            about.hide();
                     }
                     if ("Advanced".equals(name)) {
                         list.setVisibility(View.GONE);
@@ -1136,7 +1136,7 @@ public final class PreviewSettings {
                             toggle.setBackground(SharedThreePanel.accentFocus(c));
                             toggle.setOnFocusChangeListener((v, yes) -> {
                                 if (yes)
-                                help.setText(explanations[integrationIndex]);
+                                    help.setText(explanations[integrationIndex]);
                             });
                             toggle.setOnCheckedChangeListener((v, enabled) -> {
                                 PreferenceManager.getDefaultSharedPreferences(c)
@@ -1145,13 +1145,13 @@ public final class PreviewSettings {
                                 .apply();
                                 Preference model = root.findPreference(keys[integrationIndex]);
                                 if (model instanceof TwoStatePreference)
-                                ((TwoStatePreference) model).setChecked(enabled);
+                                    ((TwoStatePreference) model).setChecked(enabled);
                                 for (TextView child : nested) {
                                     String tag = String.valueOf(child.getTag());
                                     if (tag.endsWith(integrationIndex == 0 ? "trakt_category"
                                             : integrationIndex == 1 ? "preview_introdb"
                                                                        : "preview_opensubtitles"))
-                                    child.setVisibility(enabled ? View.VISIBLE : View.GONE);
+                                        child.setVisibility(enabled ? View.VISIBLE : View.GONE);
                                 }
                             });
                             overviewBody.addView(toggle, new LinearLayout.LayoutParams(-1, dp(fragment, 46)));
@@ -1172,7 +1172,7 @@ public final class PreviewSettings {
                             finished.removeListener(this);
                             View selected = rememberedLeft[0];
                             if (selected != null && selected.getParent() == links)
-                            revealSidebarChild(selected, () -> rememberedLeft[0] == selected);
+                                revealSidebarChild(selected, () -> rememberedLeft[0] == selected);
                         }
                         public void onTransitionStart(Transition started) {
                         }
@@ -1199,136 +1199,136 @@ public final class PreviewSettings {
                     }
                     int childIndex = links.indexOfChild(button) + 1;
                     if (category != null)
-                    for (int k = 0; k < category.getPreferenceCount(); k++) {
-                        Preference p = category.getPreference(k);
-                        if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p)))
-                            continue;
-                        String integration = "trakt_category".equals(p.getKey()) ? "supernova_integration_trakt"
-                            : "preview_introdb".equals(p.getKey())
-                            ? SegmentSkippingPolicy.MASTER
-                            : "preview_opensubtitles".equals(p.getKey()) ? "supernova_integration_opensubtitles"
-                                                                         : null;
-                        if (integration != null
-                            && !PreferenceManager.getDefaultSharedPreferences(c).getBoolean(integration, true))
-                            continue;
-                        TextView child = sidebarButton(c, String.valueOf(p.getTitle()), true);
-                        child.setTag("semantic:settings:section:" + p.getKey());
-                        links.addView(child, childIndex++, new LinearLayout.LayoutParams(-1, dp(fragment, 34)));
-                        nested.add(child);
-                        Runnable select = () -> {
-                            if (backup != null)
-                                backup.hide();
-                            if (about != null)
-                                about.hide();
-                            for (int i = 0; i < root.getPreferenceCount(); i++)
-                                root.getPreference(i).setVisible(root.getPreference(i) == category);
-                            list.setVisibility(View.VISIBLE);
-                            overviewBody.setVisibility(View.GONE);
-                            helpScroll.setVisibility(View.VISIBLE);
-                            split.widths(.28f, .46f, .26f);
-                            rememberedLeft[0] = child;
-                            list.setTag(child);
-                            for (int n = 0; n < category.getPreferenceCount(); n++)
-                                category.getPreference(n).setVisible(category.getPreference(n) == p);
-                            restoreVisibility((PreferenceGroup) p, visibility);
-                            choices.removeAllViews();
-                            help.setText(String.valueOf(p.getTitle()));
-                            list.scrollToPosition(0);
-                            if ("preview_opensubtitles".equals(p.getKey())) {
-                                list.setVisibility(View.GONE);
-                                overviewBody.setVisibility(View.VISIBLE);
-                                new InlineOpenSubtitles(c, overviewBody, help);
-                            }
-                            if (backup != null && "preview_backup_restore".equals(p.getKey())) {
-                                backup.show(child);
-                            }
-                        };
-                        child.setOnFocusChangeListener((v, yes) -> {
-                            if (yes) {
+                        for (int k = 0; k < category.getPreferenceCount(); k++) {
+                            Preference p = category.getPreference(k);
+                            if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p)))
+                                continue;
+                            String integration = "trakt_category".equals(p.getKey()) ? "supernova_integration_trakt"
+                                : "preview_introdb".equals(p.getKey())
+                                ? SegmentSkippingPolicy.MASTER
+                                : "preview_opensubtitles".equals(p.getKey()) ? "supernova_integration_opensubtitles"
+                                                                             : null;
+                            if (integration != null
+                                && !PreferenceManager.getDefaultSharedPreferences(c).getBoolean(integration, true))
+                                continue;
+                            TextView child = sidebarButton(c, String.valueOf(p.getTitle()), true);
+                            child.setTag("semantic:settings:section:" + p.getKey());
+                            links.addView(child, childIndex++, new LinearLayout.LayoutParams(-1, dp(fragment, 34)));
+                            nested.add(child);
+                            Runnable select = () -> {
+                                if (backup != null)
+                                    backup.hide();
+                                if (about != null)
+                                    about.hide();
+                                for (int i = 0; i < root.getPreferenceCount(); i++)
+                                    root.getPreference(i).setVisible(root.getPreference(i) == category);
+                                list.setVisibility(View.VISIBLE);
+                                overviewBody.setVisibility(View.GONE);
+                                helpScroll.setVisibility(View.VISIBLE);
+                                split.widths(.28f, .46f, .26f);
+                                rememberedLeft[0] = child;
+                                list.setTag(child);
+                                for (int n = 0; n < category.getPreferenceCount(); n++)
+                                    category.getPreference(n).setVisible(category.getPreference(n) == p);
+                                restoreVisibility((PreferenceGroup) p, visibility);
+                                choices.removeAllViews();
+                                help.setText(String.valueOf(p.getTitle()));
+                                list.scrollToPosition(0);
+                                if ("preview_opensubtitles".equals(p.getKey())) {
+                                    list.setVisibility(View.GONE);
+                                    overviewBody.setVisibility(View.VISIBLE);
+                                    new InlineOpenSubtitles(c, overviewBody, help);
+                                }
+                                if (backup != null && "preview_backup_restore".equals(p.getKey())) {
+                                    backup.show(child);
+                                }
+                            };
+                            child.setOnFocusChangeListener((v, yes) -> {
+                                if (yes) {
+                                    select.run();
+                                    revealSidebarChild(v, () -> rememberedLeft[0] == v);
+                                }
+                            });
+                            child.setOnClickListener(v -> {
                                 select.run();
                                 revealSidebarChild(v, () -> rememberedLeft[0] == v);
-                            }
-                        });
-                        child.setOnClickListener(v -> {
-                            select.run();
-                            revealSidebarChild(v, () -> rememberedLeft[0] == v);
-                            if (backup != null && backup.isVisible())
-                                backup.enter();
-                            else if (overviewBody.getVisibility() == View.VISIBLE)
-                                focusFirstView(overviewBody);
-                            else
-                                focusFirst(list);
-                        });
-                        child.setOnKeyListener((v, key, event) -> {
-                            if (event.getAction() != KeyEvent.ACTION_DOWN)
-                                return false;
-                            if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
                                 if (backup != null && backup.isVisible())
                                     backup.enter();
                                 else if (overviewBody.getVisibility() == View.VISIBLE)
                                     focusFirstView(overviewBody);
                                 else
                                     focusFirst(list);
-                                return true;
-                            }
-                            if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
-                                button.requestFocus();
-                                return true;
-                            }
-                            return false;
-                        });
-                    }
+                            });
+                            child.setOnKeyListener((v, key, event) -> {
+                                if (event.getAction() != KeyEvent.ACTION_DOWN)
+                                    return false;
+                                if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                    if (backup != null && backup.isVisible())
+                                        backup.enter();
+                                    else if (overviewBody.getVisibility() == View.VISIBLE)
+                                        focusFirstView(overviewBody);
+                                    else
+                                        focusFirst(list);
+                                    return true;
+                                }
+                                if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                    button.requestFocus();
+                                    return true;
+                                }
+                                return false;
+                            });
+                        }
                     if (nested.isEmpty()) {
                         expanded[0] = null;
                         if (overviewBody.getVisibility() == View.VISIBLE)
-                        focusFirstView(overviewBody);
+                            focusFirstView(overviewBody);
                         else
-                        focusFirst(list);
+                            focusFirst(list);
                     } else
-                    button.requestFocus();
+                        button.requestFocus();
                 };
                 button.setOnFocusChangeListener((v, yes) -> {
                     if (yes) {
                         if (rememberedLeft[0] != button)
-                        show.run();
+                            show.run();
                     }
                 });
                 button.setOnClickListener(v -> toggle.run());
                 button.setOnKeyListener((v, key, event) -> {
                     if (event.getAction() != KeyEvent.ACTION_DOWN)
-                    return false;
+                        return false;
                     if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
                         if ("About".equals(name) || "Advanced".equals(name) || "Integrations".equals(name)) {
                             if (expanded[0] != button)
-                            toggle.run();
+                                toggle.run();
                         } else if (overviewBody.getVisibility() == View.VISIBLE)
-                        focusFirstView(overviewBody);
+                            focusFirstView(overviewBody);
                         else
-                        focusFirst(list);
+                            focusFirst(list);
                         return true;
                     }
                     if (key == KeyEvent.KEYCODE_DPAD_LEFT)
-                    return true;
+                        return true;
                     if (key == KeyEvent.KEYCODE_DPAD_DOWN && expanded[0] == button) {
                         if (about != null && "About".equals(name))
-                        about.enter();
+                            about.enter();
                         else if (!nested.isEmpty())
-                        nested.get(0).requestFocus();
+                            nested.get(0).requestFocus();
                         return true;
                     }
                     return false;
                 });
                 if (initial == null || name.equals(requested) || requested == null && streaming && name.equals("Streaming"))
-                initial = button;
+                    initial = button;
             }
             OnBackPressedCallback back = new OnBackPressedCallback(false) {
                 public void handleOnBackPressed() {
                     if (backup != null && backup.isVisible() && backup.back())
-                    return;
+                        return;
                     if (about != null && about.handleBack())
-                    return;
+                        return;
                     if (rememberedLeft[0] != null)
-                    rememberedLeft[0].requestFocus();
+                        rememberedLeft[0].requestFocus();
                 }
             };
             fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
@@ -1343,7 +1343,7 @@ public final class PreviewSettings {
                 @Override
                 public void onViewDetachedFromWindow(View v) {
                     if (v.getViewTreeObserver().isAlive())
-                    v.getViewTreeObserver().removeOnGlobalFocusChangeListener(focus);
+                        v.getViewTreeObserver().removeOnGlobalFocusChangeListener(focus);
                 }
             });
             if (initial != null && !restoringBackup) {
