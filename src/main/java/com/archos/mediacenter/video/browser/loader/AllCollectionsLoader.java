@@ -26,6 +26,7 @@ import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.Arrays;
 
+/** Loads collection entries for the video library. */
 public class AllCollectionsLoader extends VideoLoader {
 
     private static final String TAG = AllCollectionsLoader.class.getSimpleName();
