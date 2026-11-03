@@ -21,6 +21,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks cast and crew cards preserve individual names, shared spacing and focus scrolling. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewPeopleRailTest {
     @Test public void nativePrincipalCrewRetainsIndividualNamesWithoutInformationFocus(){
