@@ -22,14 +22,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.annotation.GraphicsMode;
 
 /** The approved button rule: content is black on the white focus box and white at rest — never white on white. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
-@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class SupernovaStyleTest {
     private ActivityController<Activity> host;
     private FrameLayout root;
@@ -132,7 +134,7 @@ public class SupernovaStyleTest {
                            "Add to Row", "Report Incorrect Match", "Remove From Library", "— Files & Media",
                            "Delete",     "Subtitles and Artwork"};
         Dialog dialog = PreviewDialog.choose(host.get(), "Actions", labels, 1, i -> {});
-        org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         View decor = dialog.getWindow().getDecorView();
         assertNull("no menu title", PreviewPagesTest.findText(decor, "Actions"));
         assertNotNull("group heading present", PreviewPagesTest.findText(decor, "Library"));
