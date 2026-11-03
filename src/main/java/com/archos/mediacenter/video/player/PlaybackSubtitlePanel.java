@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
+import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import com.archos.mediacenter.video.leanback.StandardSwitchDrawable;
 import com.archos.mediacenter.video.leanback.SubtitlePanelStyle;
@@ -892,7 +893,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         row.setBackground(rowFocus());
         row.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        row.setTag(com.archos.mediacenter.video.R.id.preview_track_language, track.language);
+        row.setTag(R.id.preview_track_language, track.language);
         ImageView flag = new ImageView(owner);
         flag.setImageDrawable(new PreviewLanguageIcon(owner, PreviewLanguageIcon.providerCode(track.language)));
         flag.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -983,7 +984,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 row.setFocusable(track.enabled);
                 row.setFocusableInTouchMode(track.enabled);
                 row.setAlpha(track.enabled ? 1f : .42f);
-                row.setTag(com.archos.mediacenter.video.R.id.preview_track_language, track.language);
+                row.setTag(R.id.preview_track_language, track.language);
                 ((ImageView)row.getChildAt(0))
                     .setImageDrawable(new PreviewLanguageIcon(owner, PreviewLanguageIcon.providerCode(track.language)));
                 ((TextView)row.getChildAt(1)).setText(track.label);
