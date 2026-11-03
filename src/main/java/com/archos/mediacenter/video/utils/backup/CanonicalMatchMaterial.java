@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.*;
 import java.io.File;
@@ -94,7 +95,7 @@ public final class CanonicalMatchMaterial {
                                      .prepareOwnedRestore(context, owner.videoId, owner.localId,
                                          Long.parseLong(owner.match.identity.split(":")[2]), receivingPin),
                         owner);
-                File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+                File store = VideoOpenHelper.getDatabaseFile(context);
                 if (store.exists())
                     try (SQLiteDatabase database =
                              SQLiteDatabase.openDatabase(
@@ -133,7 +134,7 @@ public final class CanonicalMatchMaterial {
                     return guard(episode.prepareOwnedRestore(context, owner.videoId, owner.localId,
                                      owner.match.episodeProvider, receivingShowId, receivingShowProvider, receivingPin),
                         owner);
-                File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+                File store = VideoOpenHelper.getDatabaseFile(context);
                 if (store.exists())
                     try (SQLiteDatabase database =
                              SQLiteDatabase.openDatabase(
@@ -223,7 +224,7 @@ public final class CanonicalMatchMaterial {
                 throw new IOException("Receiving canonical target is unavailable");
             ScrapeDetailResult resolved = resolver.resolve(context, requested, file);
             BaseTags material = verify(requested, resolved);
-            File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+            File store = VideoOpenHelper.getDatabaseFile(context);
             if (!store.exists())
                 throw new IOException("Receiving media store is unavailable");
             try (SQLiteDatabase database = SQLiteDatabase.openDatabase(
