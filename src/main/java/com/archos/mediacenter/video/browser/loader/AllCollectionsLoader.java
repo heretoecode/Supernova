@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.archos.mediacenter.video.collections.CollectionsSortOrderEntries;
 import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
@@ -63,7 +64,7 @@ public class AllCollectionsLoader extends VideoLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.COLLECTION, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.COLLECTION, mSortOrder);
     }
 
     @Override
