@@ -1,12 +1,22 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.os.Looper;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.*;
 import android.widget.*;
+import android.widget.TextView;
+import androidx.leanback.widget.ArrayObjectAdapter;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -22,7 +32,7 @@ public class Supernova141UiTest {
     @Before
     public void setup() {
         PreviewAsyncFixtures.offlineTransport();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -58,7 +68,7 @@ public class Supernova141UiTest {
     private void settle(View root) {
         for (int i = 0; i < 6; i++) {
             PreviewPagesTest.layout(root);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
         }
     }
 
@@ -80,10 +90,10 @@ public class Supernova141UiTest {
             View caps = panel.findViewWithTag("semantic:keyboard:Caps Lock");
             assertEquals(0, ((ViewGroup)caps.getParent()).indexOfChild(caps));
             assertTrue(keyboard.capsLocked());
-            assertEquals("ON", ((android.widget.TextView)caps).getText().toString());
+            assertEquals("ON", ((TextView)caps).getText().toString());
             caps.performClick();
             assertFalse(keyboard.capsLocked());
-            assertEquals("OFF", ((android.widget.TextView)caps).getText().toString());
+            assertEquals("OFF", ((TextView)caps).getText().toString());
             panel.findViewWithTag("semantic:keyboard:A").performClick();
             assertEquals(".,/\\a", input.getText().toString());
             caps.performClick();
@@ -138,7 +148,7 @@ public class Supernova141UiTest {
         for (boolean listMode : new boolean[] {false, true}) {
             var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
             try {
-                androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+                PreferenceManager.getDefaultSharedPreferences(host.get())
                     .edit()
                     .putBoolean("preview_library_1_list", listMode)
                     .commit();
@@ -149,7 +159,7 @@ public class Supernova141UiTest {
                 settle(pages);
                 RecyclerView list = (RecyclerView)pages.getChildAt(0);
                 GridLayoutManager manager = (GridLayoutManager)list.getLayoutManager();
-                java.util.List<PreviewPages.Cell> cells = ReflectionHelpers.getField(pages, "cells");
+                List<PreviewPages.Cell> cells = ReflectionHelpers.getField(pages, "cells");
                 for (int position : new int[] {Math.min(cells.size() - 1, 25), cells.size() - 1}) {
                     list.scrollToPosition(position);
                     settle(pages);
@@ -204,8 +214,8 @@ public class Supernova141UiTest {
     public void editRemainsVisibleAtSmallViewportWithLargeText() throws Exception {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            android.content.res.Configuration config =
-                new android.content.res.Configuration(host.get().getResources().getConfiguration());
+            Configuration config =
+                new Configuration(host.get().getResources().getConfiguration());
             config.fontScale = 1.5f;
             host.get().getResources().updateConfiguration(config, host.get().getResources().getDisplayMetrics());
             PreviewPages pages = new PreviewPages(host.get(), (h, item) -> {});
@@ -216,7 +226,7 @@ public class Supernova141UiTest {
                 pages.measure(View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
                               View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY));
                 pages.layout(0, 0, 640, 360);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
             }
             View edit = pages.findViewWithTag("custom.control.edit");
             Rect bounds = new Rect();
@@ -238,7 +248,7 @@ public class Supernova141UiTest {
         try {
             for (boolean television : new boolean[] {false, true}) {
                 var page = new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(
-                    host.get(), androidx.leanback.widget.ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
+                    host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
                 host.get().setContentView(page);
                 if (television)
                     page.bindShow(new com.archos.mediacenter.video.browser.adapters.object.Tvshow(7, "Series", null, 1,
@@ -265,20 +275,20 @@ public class Supernova141UiTest {
 
     @Test
     public void mixedMetadataPreservesNamesAndUsesNeutralIconsForUnknownLanguages() {
-        android.content.Context context = RuntimeEnvironment.getApplication();
-        android.text.SpannableStringBuilder text = new android.text.SpannableStringBuilder();
+        Context context = RuntimeEnvironment.getApplication();
+        SpannableStringBuilder text = new SpannableStringBuilder();
         text.append(PreviewLanguageIcon.inline(context, "en-GB", "English (United Kingdom) · AAC"));
         text.append("\n");
         text.append(PreviewLanguageIcon.inline(context, "pt", "Portuguese · text"));
-        assertEquals(2, text.getSpans(0, text.length(), android.text.style.ImageSpan.class).length);
+        assertEquals(2, text.getSpans(0, text.length(), ImageSpan.class).length);
         assertTrue(text.toString().contains("English (United Kingdom) · AAC"));
         assertTrue(text.toString().endsWith("Portuguese · text"));
         for (String[] sample : new String[][] {{"commentary", "Commentary"}, {"und", "Unknown"}}) {
             CharSequence label = PreviewLanguageIcon.inline(context, sample[0], sample[1]);
             assertTrue(label.toString().endsWith(sample[1]));
-            assertTrue(label instanceof android.text.Spanned);
-            android.text.style.ImageSpan[] icons =
-                ((android.text.Spanned)label).getSpans(0, label.length(), android.text.style.ImageSpan.class);
+            assertTrue(label instanceof Spanned);
+            ImageSpan[] icons =
+                ((Spanned)label).getSpans(0, label.length(), ImageSpan.class);
             assertEquals(1, icons.length);
             assertNull(org.robolectric.util.ReflectionHelpers.getField(icons[0].getDrawable(), "flag"));
         }
