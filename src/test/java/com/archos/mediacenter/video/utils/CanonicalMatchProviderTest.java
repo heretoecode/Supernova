@@ -2,13 +2,20 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import android.content.*;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediascraper.MovieTags;
 import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.ShowTags;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -247,7 +254,7 @@ public class CanonicalMatchProviderTest {
         db.execSQL("UPDATE MOVIE SET Nova_pinned=NULL WHERE _id=100");
         db.execSQL("UPDATE files SET duration=0 WHERE _id=10");
         MovieTags canonical = tags();
-        canonical.setRuntime(5, java.util.concurrent.TimeUnit.MINUTES);
+        canonical.setRuntime(5, TimeUnit.MINUTES);
         db.beginTransaction();
         try {
             assertEquals(100, canonical.savePreservingOwnedIdentity(app, 10, 100, 123, null));
@@ -315,7 +322,7 @@ public class CanonicalMatchProviderTest {
         episode.setTitle("Fresh episode");
         episode.setPlot("Fresh episode facts");
         episode.addActorIfAbsent("Fresh guest", "Fresh role");
-        episode.setRuntime(5, java.util.concurrent.TimeUnit.MINUTES);
+        episode.setRuntime(5, TimeUnit.MINUTES);
         return episode;
     }
 
@@ -445,7 +452,7 @@ public class CanonicalMatchProviderTest {
         var db = holder.get();
         db.beginTransaction();
         try {
-            app.getContentResolver().applyBatch(ScraperStore.AUTHORITY, new java.util.ArrayList<>(batch.operations));
+            app.getContentResolver().applyBatch(ScraperStore.AUTHORITY, new ArrayList<>(batch.operations));
             try (var row = db.rawQuery("SELECT m_online_id,name_movie,Nova_pinned FROM MOVIE WHERE _id=100", null)) {
                 assertTrue(row.moveToFirst());
                 assertEquals(789, row.getLong(0));
@@ -476,7 +483,7 @@ public class CanonicalMatchProviderTest {
             try {
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(episode, wrong);
                 fail("Wrong provider material accepted");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         }
         var changed = episodeTags(666);
@@ -485,7 +492,7 @@ public class CanonicalMatchProviderTest {
             com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.verify(
                 episode, new com.archos.mediascraper.ScrapeDetailResult(changed, false, null, okay, null));
             fail("Wrong episode provider accepted");
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
     }
 
@@ -496,7 +503,7 @@ public class CanonicalMatchProviderTest {
         int[] notifications = {
             0
         };
-        android.database.ContentObserver observer = new android.database.ContentObserver(null) {
+        ContentObserver observer = new ContentObserver(null) {
             @Override
             public void onChange(boolean self, Uri uri) {
                 notifications[0]++;
@@ -507,7 +514,7 @@ public class CanonicalMatchProviderTest {
             try {
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
                 fail("Missing transaction accepted");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             db.beginTransaction();
             try {
@@ -546,7 +553,7 @@ public class CanonicalMatchProviderTest {
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(
                     app, db, batch, () -> ++operations[0] > 4);
                 fail("Cancellation ignored");
-            } catch (java.io.InterruptedIOException expected) {
+            } catch (InterruptedIOException expected) {
             }
         } finally {
             db.endTransaction();
@@ -577,7 +584,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(10L), java.util.List.of(batch), () -> false);
+                db, List.of(10L), List.of(batch), () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
         } finally {
@@ -617,7 +624,7 @@ public class CanonicalMatchProviderTest {
                 com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.replay(
                     app, db, record, true, () -> false);
                 fail("Later receiving graph overwritten");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
                 assertTrue(expected.getMessage().contains("independently"));
             }
         } finally {
@@ -635,7 +642,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(20L), java.util.List.of(batch), () -> false);
+                db, List.of(20L), List.of(batch), () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
         } finally {
@@ -647,7 +654,7 @@ public class CanonicalMatchProviderTest {
             var corrupt = new org.json.JSONObject(record.getJSONArray("batches").getJSONObject(0).toString());
             corrupt.put(field,
                 field.equals("sha256") ? "0".repeat(64)
-                    : field.equals("sdk") ? android.os.Build.VERSION.SDK_INT + 1
+                    : field.equals("sdk") ? Build.VERSION.SDK_INT + 1
                     : field.equals("primary") ? Long.MAX_VALUE
                                               : "1");
             try {
@@ -691,7 +698,7 @@ public class CanonicalMatchProviderTest {
         var batch = tags().prepareOwnedRestore(app, 10, 100, 123, 9L);
         org.json.JSONObject canonical;
         try (var session = com.archos.mediacenter.video.utils.backup.MediaStateRecovery.begin(app, before, false)) {
-            canonical = session.stageCanonical(java.util.List.of(10L), java.util.List.of(batch), () -> false);
+            canonical = session.stageCanonical(List.of(10L), List.of(batch), () -> false);
             session.write(after, () -> false);
             session.sealCanonical(canonical, () -> false);
         }
@@ -745,7 +752,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(20L), java.util.List.of(batch), () -> false);
+                db, List.of(20L), List.of(batch), () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
             try (var row = db.query(VideoOpenHelper.VIDEO_VIEW_NAME,
@@ -793,7 +800,7 @@ public class CanonicalMatchProviderTest {
             try {
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
                 fail("Stale receiving target pin accepted");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             try (var row = db.rawQuery("SELECT show_episode,e_online_id FROM EPISODE WHERE _id=400", null)) {
                 assertTrue(row.moveToFirst());
@@ -817,7 +824,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(10L, 20L), java.util.List.of(movie, episode), () -> false);
+                db, List.of(10L, 20L), List.of(movie, episode), () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, movie, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, episode, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
@@ -1028,7 +1035,7 @@ public class CanonicalMatchProviderTest {
             try {
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
                 fail("Changed receiving identification overwritten");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             try (
                 var row = db.rawQuery(
@@ -1056,7 +1063,7 @@ public class CanonicalMatchProviderTest {
         assertNull(owner.match);
         var request = new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789", null);
         MovieTags material = tags();
-        material.setRuntime(5, java.util.concurrent.TimeUnit.MINUTES);
+        material.setRuntime(5, TimeUnit.MINUTES);
         var batch = com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.prepare(app, owner, request,
             Uri.parse("file:///unmatched.mkv"), 0, null,
             (context, requested, file)
@@ -1068,7 +1075,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(20L), java.util.List.of(batch), () -> false);
+                db, List.of(20L), List.of(batch), () -> false);
             assertEquals(201,
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false));
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
@@ -1111,7 +1118,7 @@ public class CanonicalMatchProviderTest {
             try {
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
                 fail("Occupied reserved identity replaced");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             try (var row = db.rawQuery("SELECT m_online_id,Nova_pinned,video_id FROM MOVIE WHERE _id=201", null)) {
                 assertTrue(row.moveToFirst());
@@ -1181,7 +1188,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(10L), batches, () -> false);
+                db, List.of(10L), batches, () -> false);
             for (var batch : batches)
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
@@ -1280,7 +1287,7 @@ public class CanonicalMatchProviderTest {
         var inventory = com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app);
         var request = new com.archos.mediacenter.video.utils.backup.PortableMediaMatches.Match("tmdb:movie:789", null);
         var preparation = new com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.Preparation(app);
-        java.util.List<com.archos.mediascraper.OwnedCanonicalBatch> batches = new java.util.ArrayList<>();
+        List<com.archos.mediascraper.OwnedCanonicalBatch> batches = new ArrayList<>();
         for (long id : new long[] {
             20, 21
         })
@@ -1332,7 +1339,7 @@ public class CanonicalMatchProviderTest {
             "INSERT INTO files(_id,remote_id,media_type,_data,bookmark) VALUES(20,20,3,'file:///new-episode-one.mkv',4321),(21,21,3,'file:///new-episode-two.mkv',5432)");
         var inventory = com.archos.mediacenter.video.utils.backup.MediaMatchInventory.capture(app);
         var preparation = new com.archos.mediacenter.video.utils.backup.CanonicalMatchMaterial.Preparation(app);
-        java.util.List<com.archos.mediascraper.OwnedCanonicalBatch> batches = new java.util.ArrayList<>();
+        List<com.archos.mediascraper.OwnedCanonicalBatch> batches = new ArrayList<>();
         for (long id : new long[] {
             20, 21
         }) {
@@ -1351,7 +1358,7 @@ public class CanonicalMatchProviderTest {
         try {
             record
             = com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.begin(
-                db, java.util.List.of(20L, 21L), batches, () -> false);
+                db, List.of(20L, 21L), batches, () -> false);
             for (var batch : batches)
                 com.archos.mediacenter.video.utils.backup.CanonicalMatchExecutor.apply(app, db, batch, () -> false);
             com.archos.mediacenter.video.utils.backup.CanonicalNativeRecovery.seal(db, record, () -> false);
