@@ -9,6 +9,7 @@ import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.utils.backup.PortableTitlePlayback.State;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
+import java.io.IOException;
 import java.util.*;
 import org.json.*;
 import org.junit.Test;
@@ -148,7 +149,7 @@ public class PortableTitlePlaybackTest {
             try {
                 PortableTitlePlayback.read(db);
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         }
     }
