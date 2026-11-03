@@ -14,10 +14,16 @@
 
 package com.archos.mediacenter.video.leanback.scrapping;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Looper;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
@@ -36,6 +42,9 @@ import com.archos.mediascraper.preprocess.SearchInfo;
 import com.archos.mediascraper.preprocess.SearchPreprocessor;
 import com.archos.mediascraper.preprocess.TvShowSearchInfo;
 
+import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +72,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
             mVideo.getName() != null && !mVideo.getName().isEmpty() ? Uri.parse("/" + mVideo.getName())
                                                                     : mVideo.getUri());
         previewEpisode = mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode
-            && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+            && PreferenceManager.getDefaultSharedPreferences(requireContext())
                    .getBoolean("try_new_ui", false);
 
         // Start a search using the search suggestion. It makes it easy for the user to edit it for typo if needed
@@ -84,8 +93,8 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     }
 
     private void changeSeriesMatch() {
-        final android.content.Context app = requireContext().getApplicationContext();
-        java.util.concurrent.ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
+        final Context app = requireContext().getApplicationContext();
+        ExecutorService worker = Executors.newSingleThreadExecutor();
         worker.execute(() -> {
             EpisodeTags tags = null;
             try {
@@ -95,7 +104,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 worker.shutdown();
             }
             final EpisodeTags parent = tags;
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 if (!isAdded() || getView() == null)
                     return;
                 if (parent == null || parent.getShowId() < 0) {
@@ -106,7 +115,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                     return;
                 }
                 returningFromSeries = true;
-                startActivity(new android.content.Intent(requireContext(), ManualShowScrappingActivity.class)
+                startActivity(new Intent(requireContext(), ManualShowScrappingActivity.class)
                         .putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_ID, parent.getShowId())
                         .putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_NAME, parent.getShowTitle()));
             });
@@ -159,7 +168,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                     SEARCH_RESULT_MAX_ITEMS);
             } catch (Exception failed) {
                 return new ScrapeSearchResult(
-                    java.util.Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
+                    Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
             }
         }
         if (mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
@@ -172,7 +181,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                     return direct;
             } catch (Exception failed) {
                 return new ScrapeSearchResult(
-                    java.util.Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
+                    Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
             }
         }
         mSearchInfo.setUserInput(text);
@@ -233,7 +242,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     protected void saveTagsAndFinish(final BaseTags fTags) {
         if (previewEpisode
             || fTags instanceof MovieTags
-                && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                && PreferenceManager.getDefaultSharedPreferences(requireContext())
                     .getBoolean("try_new_ui", false)) {
             savePreviewMatch(fTags);
             return;
@@ -340,10 +349,10 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         if (accepted == null || !isAdded() || previewEpisode && !(accepted instanceof EpisodeTags))
             return;
         final BaseTags choice = accepted;
-        final android.content.Context app = requireContext().getApplicationContext();
-        final android.app.Dialog progress = com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(
+        final Context app = requireContext().getApplicationContext();
+        final Dialog progress = com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(
             requireContext(), "Find a Match", "Saving the selected match…");
-        java.util.concurrent.ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
+        ExecutorService worker = Executors.newSingleThreadExecutor();
         worker.execute(() -> {
             boolean saved = false;
             try {
@@ -373,7 +382,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 worker.shutdown();
             }
             final boolean complete = saved;
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 progress.dismiss();
                 if (!isAdded() || getActivity() == null || getActivity().isFinishing() || getActivity().isDestroyed())
                     return;
@@ -388,7 +397,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         });
     }
 
-    static void persistAcceptedMatch(android.content.Context context, BaseTags tags, long videoId) throws IOException {
+    static void persistAcceptedMatch(Context context, BaseTags tags, long videoId) throws IOException {
         com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context, videoId);
         if (tags.save(context, videoId) < 0)
             throw new IOException("Metadata persistence failed");
