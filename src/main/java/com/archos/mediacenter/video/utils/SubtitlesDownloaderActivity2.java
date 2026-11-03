@@ -78,11 +78,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 import static com.archos.filecorelibrary.FileUtils.removeFileSlashSlash;
 
 public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
-
     private static final Logger log = LoggerFactory.getLogger(SubtitlesDownloaderActivity2.class);
 
     public static final String PLAYBACK_SETTINGS_POPUP = "playback_settings_subtitle_popup";
@@ -104,17 +102,24 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
     private volatile String previewNotice;
 
     private OpenSubtitlesTask mOpenSubtitlesTask = null;
-    private boolean previewUi(){return getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP,false)||PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);}
+
+    private boolean previewUi() {
+        return getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP, false)
+            || PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false);
+    }
 
     private static class NonConfigurationInstance {
         public NovaProgressDialog progressDialog;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({
+        "unchecked"
+    })
     @Override
     public void onStart() {
         super.onStart();
-        if (log.isDebugEnabled()) log.debug("onStart");
+        if (log.isDebugEnabled())
+            log.debug("onStart");
         mHandler = new Handler(getMainLooper());
         final NonConfigurationInstance nci = (NonConfigurationInstance) getLastNonConfigurationInstance();
         subsDir = MediaUtils.getSubsDir(this);
@@ -122,13 +127,13 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             // The activity is created again after a rotation => just restore the state of the dialogs
             // as the OpenSubtitlesTask is still running in the background
             mDialog = nci.progressDialog;
-        }  else {
+        } else {
             // Normal start of the activity
-            if(NetworkState.isNetworkConnected(this)){
+            if (NetworkState.isNetworkConnected(this)) {
                 sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                 final Intent intent = getIntent();
                 String fileUrl = null;
-                if (intent.hasExtra(FILE_URL)){
+                if (intent.hasExtra(FILE_URL)) {
                     fileUrl = intent.getStringExtra(FILE_URL);
                 } else {
                     finish();
@@ -147,17 +152,16 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 fileUrls.add(fileUrl);
                 mOpenSubtitlesTask.execute(fileUrls, getSubLangValue());
             } else {
-                if (log.isDebugEnabled()) log.debug("onStart: no network");
-                if(previewUi()){
+                if (log.isDebugEnabled())
+                    log.debug("onStart: no network");
+                if (previewUi()) {
                     showPreviewMessage(getString(R.string.dialog_subloader_nonetwork_message));
                     return;
                 }
                 Builder dialogNoNetwork;
                 dialogNoNetwork = new AlertDialog.Builder(this);
                 dialogNoNetwork.setCancelable(true);
-                dialogNoNetwork.setOnCancelListener(dialog ->
-                        finish()
-                );
+                dialogNoNetwork.setOnCancelListener(dialog -> finish());
                 dialogNoNetwork.setTitle(R.string.dialog_subloader_nonetwork_title);
                 dialogNoNetwork.setMessage(getString(R.string.dialog_subloader_nonetwork_message));
                 Dialog d = dialogNoNetwork.create();
@@ -173,20 +177,26 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        if (log.isDebugEnabled()) log.debug("onStop");
+        if (log.isDebugEnabled())
+            log.debug("onStop");
         if (mOpenSubtitlesTask != null) {
-            if (log.isDebugEnabled()) log.debug("mOpenSubtitlesTask.cancel");
+            if (log.isDebugEnabled())
+                log.debug("mOpenSubtitlesTask.cancel");
             mOpenSubtitlesTask.cancel();
             mOpenSubtitlesTask = null;
         }
         logOut();
         closeDialog();
-        if(previewMessage!=null){previewMessage.setOnDismissListener(null);previewMessage.dismiss();previewMessage=null;}
+        if (previewMessage != null) {
+            previewMessage.setOnDismissListener(null);
+            previewMessage.dismiss();
+            previewMessage = null;
+        }
         finish();
         super.onStop();
     }
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         // Check if there are some dialogs to restore after a device rotation
         // or after the backlight was turned off and on
@@ -194,28 +204,29 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             // The results dialog was not visible but the progress dialog was => show the progress dialog
             mDialog.show();
         }
-
     }
 
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         closeDialog();
-
     }
 
     private ArrayList<String> getSubLangValue() {
-        Set<String> existingLanguages = new HashSet<>(sharedPreferences.getStringSet("languages_list", new HashSet<>()));
+        Set<String> existingLanguages =
+            new HashSet<>(sharedPreferences.getStringSet("languages_list", new HashSet<>()));
         if (existingLanguages.isEmpty()) {
             // if no language is set, add default locale at least
             String defaultLanguage = Locale.getDefault().getLanguage();
             // if defaultLanguage is not equal ignoring case zh-cn or zh-tw replace by zh-cn since zh-cn and zh-tw are the only two known by opensubtitles
-            if (defaultLanguage.toLowerCase(Locale.ROOT).startsWith("zh") && !defaultLanguage.equalsIgnoreCase("zh-cn") && !defaultLanguage.equalsIgnoreCase("zh-tw")) {
+            if (defaultLanguage.toLowerCase(Locale.ROOT).startsWith("zh") && !defaultLanguage.equalsIgnoreCase("zh-cn")
+                && !defaultLanguage.equalsIgnoreCase("zh-tw")) {
                 log.warn("getSubLangValue: curing defaultLanguage={} to zh-cn", defaultLanguage);
-                defaultLanguage = "zh-cn";  // Simplified Chinese
+                defaultLanguage = "zh-cn"; // Simplified Chinese
             }
-            if (defaultLanguage.toLowerCase(Locale.ROOT).startsWith("pt") && !defaultLanguage.equalsIgnoreCase("pt-br") && !defaultLanguage.equalsIgnoreCase("pt-pt")) {
+            if (defaultLanguage.toLowerCase(Locale.ROOT).startsWith("pt") && !defaultLanguage.equalsIgnoreCase("pt-br")
+                && !defaultLanguage.equalsIgnoreCase("pt-pt")) {
                 log.warn("getSubLangValue: curing defaultLanguage={} to pt-pt", defaultLanguage);
-                defaultLanguage = "pt-pt";  // Portuguese
+                defaultLanguage = "pt-pt"; // Portuguese
             }
             existingLanguages.add(defaultLanguage);
             sharedPreferences.edit().putStringSet("languages_list", existingLanguages).apply();
@@ -225,12 +236,14 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         Set<String> toAdd = new HashSet<>();
         boolean modifiedList = false;
         for (String lang : existingLanguages) {
-            if (lang.toLowerCase(Locale.ROOT).startsWith("zh") && !lang.equalsIgnoreCase("zh-cn") && !lang.equalsIgnoreCase("zh-tw")) {
+            if (lang.toLowerCase(Locale.ROOT).startsWith("zh") && !lang.equalsIgnoreCase("zh-cn")
+                && !lang.equalsIgnoreCase("zh-tw")) {
                 toRemove.add(lang);
                 toAdd.add("zh-cn");
                 modifiedList = true;
             }
-            if (lang.toLowerCase(Locale.ROOT).startsWith("pt") && !lang.equalsIgnoreCase("pt-pt") && !lang.equalsIgnoreCase("pt-br")) {
+            if (lang.toLowerCase(Locale.ROOT).startsWith("pt") && !lang.equalsIgnoreCase("pt-pt")
+                && !lang.equalsIgnoreCase("pt-br")) {
                 toRemove.add(lang);
                 toAdd.add("pt-pt");
                 modifiedList = true;
@@ -243,7 +256,8 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             sharedPreferences.edit().putStringSet("languages_list", existingLanguages).apply();
         }
         ArrayList<String> languageList = new ArrayList<>(existingLanguages);
-        if (log.isDebugEnabled()) log.debug("getSubLangValue: langDefault={}", languageList);
+        if (log.isDebugEnabled())
+            log.debug("getSubLangValue: langDefault={}", languageList);
         return languageList;
     }
 
@@ -255,7 +269,8 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         ArrayList<OpenSubtitlesSearchResult> searchResults = null;
 
         void execute(ArrayList<String> fileUrls, ArrayList<String> languages) {
-            if (log.isDebugEnabled()) log.debug("OpenSubtitlesTask: onPreExecute");
+            if (log.isDebugEnabled())
+                log.debug("OpenSubtitlesTask: onPreExecute");
             setInitDialog();
 
             executor.execute(() -> {
@@ -265,29 +280,37 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                         getSubtitle(fileUrl, languages);
                     }
                 } catch (Exception e) {
-                    log.warn("OpenSubtitlesTask failed ({})",e.getClass().getSimpleName());
-                    if(previewUi())previewNotice=getString(R.string.toast_subloader_service_unreachable);
+                    log.warn("OpenSubtitlesTask failed ({})", e.getClass().getSimpleName());
+                    if (previewUi())
+                        previewNotice = getString(R.string.toast_subloader_service_unreachable);
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 handler.post(() -> {
-                    if(previewUi()){
+                    if (previewUi()) {
                         dismissPreviewProgress();
-                        if(isCancelled||isFinishing()||isDestroyed())return;
-                        if(searchResults!=null&&!searchResults.isEmpty())askSubChoice(fileUrls.get(0),searchResults,languages.size()>1,true);
-                        else showPreviewMessage(previewNotice==null?getString(R.string.dialog_subloader_fails):previewNotice);
+                        if (isCancelled || isFinishing() || isDestroyed())
+                            return;
+                        if (searchResults != null && !searchResults.isEmpty())
+                            askSubChoice(fileUrls.get(0), searchResults, languages.size() > 1, true);
+                        else
+                            showPreviewMessage(
+                                previewNotice == null ? getString(R.string.dialog_subloader_fails) : previewNotice);
                         return;
                     }
                     // Close the progress dialog
                     if (mDialog != null) {
-                        mDoNotFinish = mDoNotFinish &&
-                                searchResults != null &&
-                                !searchResults.isEmpty() &&
-                                (OpenSubtitlesApiHelper.getLastQueryResult() == OpenSubtitlesApiHelper.RESULT_CODE_OK);
-                        if (log.isDebugEnabled()) log.debug("OpenSubtitlesTask: onPostExecute: mDoNotFinish={}", mDoNotFinish);
-                        if (searchResults != null) if (log.isDebugEnabled()) log.debug("OpenSubtitlesTask: onPostExecute: found {} subs", searchResults.size());
-                        else if (log.isDebugEnabled()) log.debug("OpenSubtitlesTask: onPostExecute: searchResults=null");
+                        mDoNotFinish = mDoNotFinish && searchResults != null && !searchResults.isEmpty()
+                            && (OpenSubtitlesApiHelper.getLastQueryResult() == OpenSubtitlesApiHelper.RESULT_CODE_OK);
+                        if (log.isDebugEnabled())
+                            log.debug("OpenSubtitlesTask: onPostExecute: mDoNotFinish={}", mDoNotFinish);
+                        if (searchResults != null)
+                            if (log.isDebugEnabled())
+                                log.debug("OpenSubtitlesTask: onPostExecute: found {} subs", searchResults.size());
+                            else if (log.isDebugEnabled())
+                                log.debug("OpenSubtitlesTask: onPostExecute: searchResults=null");
                         mDialog.dismiss();
                     }
                 });
@@ -304,7 +327,8 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
          *************************************************/
         @SuppressWarnings("unchecked")
         public boolean logIn() {
-            SharedPreferences mPreferences = getApplicationContext().getSharedPreferences("opensubtitles_credentials", Context.MODE_PRIVATE);
+            SharedPreferences mPreferences =
+                getApplicationContext().getSharedPreferences("opensubtitles_credentials", Context.MODE_PRIVATE);
             String mUsername = mPreferences.getString(OpenSubtitlesCredentialsDialog.OPENSUBTITLES_USERNAME, "");
             String mPassword = mPreferences.getString(OpenSubtitlesCredentialsDialog.OPENSUBTITLES_PASSWORD, "");
 
@@ -312,22 +336,31 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 if (mUsername.isEmpty() || mPassword.isEmpty()) {
                     displayToast(getString(R.string.toast_subloader_credentials_empty));
                 }
-                boolean loginOk = OpenSubtitlesApiHelper.login(getApplicationContext().getString(R.string.opensubtitles_api_key), mUsername, mPassword);
+                boolean loginOk = OpenSubtitlesApiHelper.login(
+                    getApplicationContext().getString(R.string.opensubtitles_api_key), mUsername, mPassword);
                 if (!loginOk && !mUsername.isEmpty()) {
-                    OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_BAD_CREDENTIALS, -1, -1, "");
-                    displayToast(getString(R.string.toast_subloader_login_failed) + " (ERR " + OpenSubtitlesApiHelper.getLastQueryResult() + ")");
+                    OpenSubtitlesApiHelper.persistStatus(
+                        getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_BAD_CREDENTIALS, -1, -1, "");
+                    displayToast(getString(R.string.toast_subloader_login_failed) + " (ERR "
+                        + OpenSubtitlesApiHelper.getLastQueryResult() + ")");
                     return false;
                 }
             } catch (IOException e) {
                 log.warn("logIn failed: result={}", OpenSubtitlesApiHelper.getLastQueryResult());
-                OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
-                displayToast(getString(R.string.toast_subloader_login_failed) + " (ERR " + OpenSubtitlesApiHelper.getLastQueryResult() + ")");
+                OpenSubtitlesApiHelper.persistStatus(
+                    getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
+                displayToast(getString(R.string.toast_subloader_login_failed) + " (ERR "
+                    + OpenSubtitlesApiHelper.getLastQueryResult() + ")");
                 closeDialog();
                 return false;
-            } catch (Throwable e) { //for various service outages
-                log.warn("logIn failed: result={} ({})", OpenSubtitlesApiHelper.getLastQueryResult(),e.getClass().getSimpleName());
-                OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
-                displayToast(getString(R.string.toast_subloader_service_unreachable) + " (ERR " + OpenSubtitlesApiHelper.getLastQueryResult() + ")");
+            } catch (Throwable e) {
+                //for various service outages
+                log.warn("logIn failed: result={} ({})", OpenSubtitlesApiHelper.getLastQueryResult(),
+                    e.getClass().getSimpleName());
+                OpenSubtitlesApiHelper.persistStatus(
+                    getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
+                displayToast(getString(R.string.toast_subloader_service_unreachable) + " (ERR "
+                    + OpenSubtitlesApiHelper.getLastQueryResult() + ")");
                 closeDialog();
                 return false;
             }
@@ -339,14 +372,17 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
          * @param fileUrl
          * @return
          */
-        public String getFriendlyFilename(String fileUrl){
-            if (mFriendlyFileName != null) return mFriendlyFileName;
-            else return FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl));
+        public String getFriendlyFilename(String fileUrl) {
+            if (mFriendlyFileName != null)
+                return mFriendlyFileName;
+            else
+                return FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl));
         }
 
         public void getSubtitle(final String fileUrl, final ArrayList<String> languages) {
-            if (log.isDebugEnabled()) log.debug("getSubtitle: fileUrl {}, language={}", fileUrl, String.join(",", languages));
-            if (fileUrl == null || fileUrl.isEmpty() || languages == null || languages.isEmpty()){
+            if (log.isDebugEnabled())
+                log.debug("getSubtitle: fileUrl {}, language={}", fileUrl, String.join(",", languages));
+            if (fileUrl == null || fileUrl.isEmpty() || languages == null || languages.isEmpty()) {
                 return;
             }
             mDoNotFinish = true;
@@ -354,35 +390,45 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             ArrayList<String> subLanguageId = new ArrayList<String>(languages);
             String languagesString = TextUtils.join(",", subLanguageId);
             OpenSubtitlesQueryParams fileInfo = getFileInfo(fileUrl);
-            if (fileInfo != null) if (log.isDebugEnabled()) log.debug("getSubtitle: tmdbId={}, imdbId={}, videoHash={}, fileName={}, languages={}", fileInfo.getTmdbId(), fileInfo.getImdbId(), fileInfo.getFileHash(), fileInfo.getFileName(), languagesString);
-            else if (log.isDebugEnabled()) log.debug("getSubtitle: fileInfo is null for {}", fileUrl);
+            if (fileInfo != null)
+                if (log.isDebugEnabled())
+                    log.debug("getSubtitle: tmdbId={}, imdbId={}, videoHash={}, fileName={}, languages={}",
+                        fileInfo.getTmdbId(), fileInfo.getImdbId(), fileInfo.getFileHash(), fileInfo.getFileName(),
+                        languagesString);
+                else if (log.isDebugEnabled())
+                    log.debug("getSubtitle: fileInfo is null for {}", fileUrl);
             try {
-                searchResults = SubtitleDiscovery.manual(getApplicationContext(),fileInfo,languagesString);
-            } catch (Throwable e) { //for various service outages
+                searchResults = SubtitleDiscovery.manual(getApplicationContext(), fileInfo, languagesString);
+            } catch (Throwable e) {
+                //for various service outages
                 log.error("getSubtitles: caught Throwable ", e);
-                OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
+                OpenSubtitlesApiHelper.persistStatus(
+                    getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
                 displayToast(getString(R.string.toast_subloader_service_unreachable));
                 mDoNotFinish = false;
                 return;
             }
             // when there is one sub only directly download it
             if (!previewUi() && searchResults != null && searchResults.size() == 1) {
-                if (log.isDebugEnabled()) log.debug("getSubtitles: one sub found for {}", fileUrl);
+                if (log.isDebugEnabled())
+                    log.debug("getSubtitles: one sub found for {}", fileUrl);
                 getSub(fileUrl, searchResults.get(0));
                 mDoNotFinish = false; // one sub only, we are done
                 return;
             }
             if (searchResults != null && !searchResults.isEmpty()) {
-                if(!previewUi())mHandler.post(() -> askSubChoice(fileUrl, searchResults,languages.size()>1, !searchResults.isEmpty()));
+                if (!previewUi())
+                    mHandler.post(
+                        () -> askSubChoice(fileUrl, searchResults, languages.size() > 1, !searchResults.isEmpty()));
             } else {
                 if (searchResults == null) {
                     int qr = OpenSubtitlesApiHelper.getLastQueryResult();
                     final int osStatus;
                     if (qr == OpenSubtitlesApiHelper.RESULT_CODE_BAD_CREDENTIALS
-                            || qr == OpenSubtitlesApiHelper.RESULT_CODE_TOKEN_EXPIRED) {
+                        || qr == OpenSubtitlesApiHelper.RESULT_CODE_TOKEN_EXPIRED) {
                         osStatus = OpenSubtitlesApiHelper.OS_STATUS_BAD_CREDENTIALS;
                     } else if (qr == OpenSubtitlesApiHelper.RESULT_CODE_QUOTA_EXCEEDED
-                            || qr == OpenSubtitlesApiHelper.RESULT_CODE_TOO_MANY_REQUESTS) {
+                        || qr == OpenSubtitlesApiHelper.RESULT_CODE_TOO_MANY_REQUESTS) {
                         osStatus = OpenSubtitlesApiHelper.OS_STATUS_QUOTA_EXCEEDED;
                     } else if (qr != OpenSubtitlesApiHelper.RESULT_CODE_OK) {
                         osStatus = OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR;
@@ -393,15 +439,18 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                         OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), osStatus, -1, -1, "");
                 }
                 log.warn("getSubtitles: no subs found on opensubtitles for {}", fileUrl);
-                if(previewUi()&&searchResults!=null&&searchResults.isEmpty())previewNotice="No subtitles found for the selected reading languages.";
-                else displayToast(getString(R.string.dialog_subloader_fails));
+                if (previewUi() && searchResults != null && searchResults.isEmpty())
+                    previewNotice = "No subtitles found for the selected reading languages.";
+                else
+                    displayToast(getString(R.string.dialog_subloader_fails));
                 mDoNotFinish = false;
                 return;
             }
             // Preview search/review is not a completed download and must not disturb existing subtitles.
-            if(!previewUi()){
+            if (!previewUi()) {
                 MediaUtils.removeLastSubs(SubtitlesDownloaderActivity2.this);
-                if (!isCancelled && !searchResults.isEmpty()) setResult(AppCompatActivity.RESULT_OK);
+                if (!isCancelled && !searchResults.isEmpty())
+                    setResult(AppCompatActivity.RESULT_OK);
             }
         }
 
@@ -411,9 +460,11 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 subUrl = OpenSubtitlesApiHelper.getDownloadSubtitleLink(searchResult.getFileId());
                 if (OpenSubtitlesApiHelper.getLastQueryResult() == OpenSubtitlesApiHelper.RESULT_CODE_QUOTA_EXCEEDED) {
                     log.warn("getSub: quota exceeded, quota resets in {}", OpenSubtitlesApiHelper.getTimeRemaining());
-                    OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_QUOTA_EXCEEDED);
+                    OpenSubtitlesApiHelper.persistStatus(
+                        getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_QUOTA_EXCEEDED);
                     displayToast(getString(R.string.toast_subloader_quota_exceeded));
-                    displayToast(getString(R.string.opensubtitles_quota_reset_time_remaining, OpenSubtitlesApiHelper.getTimeRemaining()));
+                    displayToast(getString(
+                        R.string.opensubtitles_quota_reset_time_remaining, OpenSubtitlesApiHelper.getTimeRemaining()));
                     mDoNotFinish = false;
                     finishDownload(false);
                     return;
@@ -426,11 +477,15 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                     return;
                 }
                 OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_OK);
-                if(!previewUi())displayToast(getString(R.string.opensubtitles_quota_download_remaining, OpenSubtitlesApiHelper.getRemainingDownloads(), OpenSubtitlesApiHelper.getAllowedDownloads()));
+                if (!previewUi())
+                    displayToast(getString(R.string.opensubtitles_quota_download_remaining,
+                        OpenSubtitlesApiHelper.getRemainingDownloads(), OpenSubtitlesApiHelper.getAllowedDownloads()));
             } catch (IOException e) {
                 log.warn("getSub: download link unavailable");
-                if(previewUi())previewNotice=getString(R.string.toast_subloader_service_unreachable);
-                OpenSubtitlesApiHelper.persistStatus(getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
+                if (previewUi())
+                    previewNotice = getString(R.string.toast_subloader_service_unreachable);
+                OpenSubtitlesApiHelper.persistStatus(
+                    getApplicationContext(), OpenSubtitlesApiHelper.OS_STATUS_NETWORK_ERROR, -1, -1, "");
                 mDoNotFinish = false;
                 finishDownload(false);
                 return;
@@ -438,35 +493,43 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             // The friendly name is for the OpenSubtitles query only.  Saved subtitles
             // must retain the video URL's basename so SubtitleManager can associate
             // them with the currently playing video.
-            boolean saved=downloadSubtitles(subUrl, fileUrl,
-                    FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl)),
-                    searchResult.getLanguage());
+            boolean saved = downloadSubtitles(
+                subUrl, fileUrl, FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl)), searchResult.getLanguage());
             finishDownload(saved);
         }
 
         private OpenSubtitlesQueryParams getFileInfo(String fileUrl) {
             OpenSubtitlesQueryParams openSubtitlesQueryParams = new OpenSubtitlesQueryParams();
             MetaFile2 mf2 = null;
-            if (log.isDebugEnabled()) log.debug("getFileInfo: {}", fileUrl);
-            if (!fileUrl.startsWith("http://")) { // if not http, we will need metafile2 even for upnp (file length + streaming uri)
+            if (log.isDebugEnabled())
+                log.debug("getFileInfo: {}", fileUrl);
+            if (!fileUrl.startsWith(
+                    "http://")) {
+                // if not http, we will need metafile2 even for upnp (file length + streaming uri)
                 try {
                     mf2 = MetaFileFactoryWithUpnp.getMetaFileForUrl(Uri.parse(fileUrl));
                 } catch (Exception e) {
                     log.error("getFileInfo: caught Exception", e);
                 }
-                if (mf2 == null) return null;
+                if (mf2 == null)
+                    return null;
             }
             String newFileUrl = fileUrl;
-            if (newFileUrl.startsWith("upnp://")) { //request streaming uri that will start with http
+            if (newFileUrl.startsWith("upnp://")) {
+                //request streaming uri that will start with http
                 Uri newUri = mf2.getStreamingUri();
                 if (newUri != null) {
                     newFileUrl = newUri.toString();
-                    if (log.isDebugEnabled()) log.debug("getFileInfo: shorten fileUrl to get fileName = {}", FileUtils.getName(Uri.parse(fileUrl)));
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "getFileInfo: shorten fileUrl to get fileName = {}", FileUtils.getName(Uri.parse(fileUrl)));
                     openSubtitlesQueryParams.setFileName(FileUtils.getName(Uri.parse(fileUrl)));
                     Long fileLength = mf2.length();
                     // fileLength can be null (seen on google play console)
                     openSubtitlesQueryParams.setFileLength(fileLength != null ? fileLength : 0); // Add null check here
-                    if (log.isDebugEnabled()) log.debug("getFileInfo: consider {} -> openSubtitlesQueryParams =(fileName={}, size={})", fileUrl, openSubtitlesQueryParams.getFileName(), openSubtitlesQueryParams.getFileLength());
+                    if (log.isDebugEnabled())
+                        log.debug("getFileInfo: consider {} -> openSubtitlesQueryParams =(fileName={}, size={})",
+                            fileUrl, openSubtitlesQueryParams.getFileName(), openSubtitlesQueryParams.getFileLength());
                 }
             }
             if (newFileUrl.startsWith("http://")) {
@@ -475,43 +538,61 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 try {
                     url = new URL(newFileUrl);
                     urlConnection = (HttpURLConnection) url.openConnection();
-                    if (openSubtitlesQueryParams.getFileLength() != null && openSubtitlesQueryParams.getFileLength() > 0 && (urlConnection == null || !"bytes".equalsIgnoreCase(urlConnection.getHeaderField("Accept-Ranges"))))
-                        openSubtitlesQueryParams.setFileHash(OpenSubtitlesHasher.computeHash(urlConnection, openSubtitlesQueryParams.getFileLength()));
+                    if (openSubtitlesQueryParams.getFileLength() != null && openSubtitlesQueryParams.getFileLength() > 0
+                        && (urlConnection == null
+                            || !"bytes".equalsIgnoreCase(urlConnection.getHeaderField("Accept-Ranges"))))
+                        openSubtitlesQueryParams.setFileHash(
+                            OpenSubtitlesHasher.computeHash(urlConnection, openSubtitlesQueryParams.getFileLength()));
                 } catch (MalformedURLException e) {
                     log.error("getFileInfo: caught MalformedURLException for fileUrl {}", newFileUrl, e);
                 } catch (IOException e) {
                     log.error("getFileInfo: caught IOException for fileUrl {}", newFileUrl, e);
                 } finally {
-                    if (urlConnection != null) urlConnection.disconnect();
+                    if (urlConnection != null)
+                        urlConnection.disconnect();
                     openSubtitlesQueryParams.setFileHash(null);
                 }
             } else {
                 try {
                     Long fileLength = mf2.length();
                     openSubtitlesQueryParams.setFileLength(fileLength != null ? fileLength : 0);
-                    if (openSubtitlesQueryParams.getFileLength() != null && openSubtitlesQueryParams.getFileLength() > 0) openSubtitlesQueryParams.setFileHash(OpenSubtitlesHasher.computeHash(Uri.parse(fileUrl), openSubtitlesQueryParams.getFileLength()));
-                } catch (Exception e) { // failure for this file
+                    if (openSubtitlesQueryParams.getFileLength() != null
+                        && openSubtitlesQueryParams.getFileLength() > 0)
+                        openSubtitlesQueryParams.setFileHash(OpenSubtitlesHasher.computeHash(
+                            Uri.parse(fileUrl), openSubtitlesQueryParams.getFileLength()));
+                } catch (Exception e) {
+                    // failure for this file
                     openSubtitlesQueryParams.setFileHash(null);
                 }
             }
             openSubtitlesQueryParams.setFileName(getFriendlyFilename(fileUrl));
             ContentResolver resolver = getContentResolver();
-            if (log.isDebugEnabled()) log.debug("getFileInfo: trying to get VideoDbInfo for {}", Uri.parse(fileUrl));
+            if (log.isDebugEnabled())
+                log.debug("getFileInfo: trying to get VideoDbInfo for {}", Uri.parse(fileUrl));
             VideoDbInfo videoDbInfo = VideoDbInfo.fromUri(resolver, Uri.parse(removeFileSlashSlash(fileUrl)));
             if (videoDbInfo != null) {
                 // index is used to find back fileUrl, to allow search on query or imdbid do not put the moviebytesize otherwise it is the only search criteria
-                if (log.isDebugEnabled()) log.debug("getFileInfo: (fileHash,url) <- ({},{})", openSubtitlesQueryParams.getFileHash(), fileUrl);
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "getFileInfo: (fileHash,url) <- ({},{})", openSubtitlesQueryParams.getFileHash(), fileUrl);
                 // try to use imdbId since the title can be translated...
                 openSubtitlesQueryParams.setOnlineId(OnlineIdUtils.getOnlineId(fileUrl, getContentResolver()));
-                if (log.isDebugEnabled()) log.debug("getFileInfo: imdbid={}", openSubtitlesQueryParams.getImdbId());
-                if (openSubtitlesQueryParams.getImdbId() == null) { log.warn("getFileInfo: imdbId null for fileUrl {}!!!", fileUrl);}
+                if (log.isDebugEnabled())
+                    log.debug("getFileInfo: imdbid={}", openSubtitlesQueryParams.getImdbId());
+                if (openSubtitlesQueryParams.getImdbId() == null) {
+                    log.warn("getFileInfo: imdbId null for fileUrl {}!!!", fileUrl);
+                }
                 openSubtitlesQueryParams.setIsShow(videoDbInfo.isShow);
-                if (openSubtitlesQueryParams.isShow()) { // this is a show
+                if (openSubtitlesQueryParams.isShow()) {
+                    // this is a show
                     // remove date from scraperTitle \([0-9]*\) because match does not work with e.g. The Flash (2015) or Doctor Who (2005)
                     openSubtitlesQueryParams.setShowTitle(videoDbInfo.scraperTitle.replaceAll(" *\\(\\d*?\\)", ""));
                     openSubtitlesQueryParams.setSeasonNumber(videoDbInfo.scraperSeasonNr);
                     openSubtitlesQueryParams.setEpisodeNumber(videoDbInfo.scraperEpisodeNr);
-                    if (log.isDebugEnabled()) log.debug("getFileInfo: replacing {}, by {} season={}, episode={}", videoDbInfo.scraperTitle, openSubtitlesQueryParams.getShowTitle(), openSubtitlesQueryParams.getSeasonNumber(), openSubtitlesQueryParams.getEpisodeNumber());
+                    if (log.isDebugEnabled())
+                        log.debug("getFileInfo: replacing {}, by {} season={}, episode={}", videoDbInfo.scraperTitle,
+                            openSubtitlesQueryParams.getShowTitle(), openSubtitlesQueryParams.getSeasonNumber(),
+                            openSubtitlesQueryParams.getEpisodeNumber());
                 }
             } else {
                 log.warn("getFileInfo: cannot rely on scrape data for fileUrl {}", fileUrl);
@@ -519,65 +600,94 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             return openSubtitlesQueryParams;
         }
 
-        @SuppressLint("InflateParams") // Custom title view for AlertDialog.Builder.setCustomTitle() has no parent container at inflation
-        private void askSubChoice(final String videoFilePath, final ArrayList<OpenSubtitlesSearchResult> searchResults, final boolean displayLang, final boolean hasSuccess) {
-            if(previewUi()){
-                if(isCancelled||isFinishing()||isDestroyed())return;
-                java.util.function.Consumer<OpenSubtitlesSearchResult> accept=
-                        selected->{
-                            previewNotice=null;
-                            showPreviewProgress("Downloading selected subtitle…");
-                            new Thread(()->{
-                                try {if(!isCancelled)getSub(videoFilePath,selected);}
-                                catch(RuntimeException failure){previewNotice=getString(R.string.dialog_subloader_fails);finishDownload(false);}
-                            },"preview-subtitle-download").start();
-                        };
-                Dialog choices=getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP,false)?com.archos.mediacenter.video.leanback.PreviewSubtitleResults.showPlayback(SubtitlesDownloaderActivity2.this,searchResults,accept):com.archos.mediacenter.video.leanback.PreviewSubtitleResults.show(SubtitlesDownloaderActivity2.this,searchResults,accept);
-                choices.setOnCancelListener(dialog->finish());return;
+        @SuppressLint("InflateParams")
+        // Custom title view for AlertDialog.Builder.setCustomTitle() has no parent container at inflation
+        private void askSubChoice(final String videoFilePath, final ArrayList<OpenSubtitlesSearchResult> searchResults,
+            final boolean displayLang, final boolean hasSuccess) {
+            if (previewUi()) {
+                if (isCancelled || isFinishing() || isDestroyed())
+                    return;
+                java.util.function.Consumer<OpenSubtitlesSearchResult> accept = selected -> {
+                    previewNotice = null;
+                    showPreviewProgress("Downloading selected subtitle…");
+                    new Thread(() -> {
+                        try {
+                            if (!isCancelled)
+                                getSub(videoFilePath, selected);
+                        } catch (RuntimeException failure) {
+                            previewNotice = getString(R.string.dialog_subloader_fails);
+                            finishDownload(false);
+                        }
+                    }, "preview-subtitle-download").start();
+                };
+                Dialog choices = getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP, false)
+                    ? com.archos.mediacenter.video.leanback.PreviewSubtitleResults.showPlayback(
+                          SubtitlesDownloaderActivity2.this, searchResults, accept)
+                    : com.archos.mediacenter.video.leanback.PreviewSubtitleResults.show(
+                          SubtitlesDownloaderActivity2.this, searchResults, accept);
+                choices.setOnCancelListener(dialog -> finish());
+                return;
             }
-            View view = LayoutInflater.from(SubtitlesDownloaderActivity2.this).inflate(R.layout.subtitle_chooser_title_layout, null);
-            ((TextView) view.findViewById(R.id.video_name)).setText(HtmlCompat.fromHtml(getString(R.string.select_sub_file, getFriendlyFilename(videoFilePath)), HtmlCompat.FROM_HTML_MODE_LEGACY));
-            final AlertDialog subChoiceDialog = new AlertDialog.Builder(SubtitlesDownloaderActivity2.this)
+            View view = LayoutInflater.from(SubtitlesDownloaderActivity2.this)
+                            .inflate(R.layout.subtitle_chooser_title_layout, null);
+            ((TextView) view.findViewById(R.id.video_name))
+                .setText(HtmlCompat.fromHtml(getString(R.string.select_sub_file, getFriendlyFilename(videoFilePath)),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY));
+            final AlertDialog subChoiceDialog =
+                new AlertDialog.Builder(SubtitlesDownloaderActivity2.this)
                     .setCustomTitle(view)
-                    .setAdapter(new BaseAdapter() {
-                        @Override
-                        public int getCount() {
-                            return searchResults.size();
-                        }
-
-                        @Override
-                        public Object getItem(int i) {
-                            return null;
-                        }
-
-                        @Override
-                        public long getItemId(int i) {
-                            return 0;
-                        }
-
-                        @Override
-                        public View getView(int i, View view, ViewGroup viewGroup) {
-                            if (view == null) {
-                                view = LayoutInflater.from(SubtitlesDownloaderActivity2.this).inflate(R.layout.subtitle_item_layout, viewGroup, false);
+                    .setAdapter(
+                        new BaseAdapter() {
+                            @Override
+                            public int getCount() {
+                                return searchResults.size();
                             }
-                            ((TextView) view.findViewById(R.id.video_name)).setText(searchResults.get(i).getFileName());
-                            // use bold font for subs with hash match
-                            if (searchResults.get(i).getMoviehashMatch())
-                                ((TextView) view.findViewById(R.id.video_name)).setTypeface(null, Typeface.BOLD);
-                            else
-                                ((TextView) view.findViewById(R.id.video_name)).setTypeface(null, Typeface.NORMAL);
-                            if (displayLang) {
-                                TextView language=(TextView)view.findViewById(R.id.lang);language.setVisibility(View.VISIBLE);language.setText(searchResults.get(i).getLanguage());com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply(language,com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(searchResults.get(i).getLanguage()));
+
+                            @Override
+                            public Object getItem(int i) {
+                                return null;
                             }
-                            else view.findViewById(R.id.lang).setVisibility(View.GONE);
-                            return view;
-                        }
-                    }, (dialogInterface, i) -> new Thread() {
-                        public void run() {
-                            if (log.isDebugEnabled()) log.debug("askSubChoice: entry {} selected -> download sub {} for {} fileID={}  lang={}", i, searchResults.get(i).getFileName(), videoFilePath, searchResults.get(i).getFileId(), searchResults.get(i).getLanguage());
-                            getSub(videoFilePath, searchResults.get(i));
-                        }
-                    }.start())
+
+                            @Override
+                            public long getItemId(int i) {
+                                return 0;
+                            }
+
+                            @Override
+                            public View getView(int i, View view, ViewGroup viewGroup) {
+                                if (view == null) {
+                                    view = LayoutInflater.from(SubtitlesDownloaderActivity2.this)
+                                               .inflate(R.layout.subtitle_item_layout, viewGroup, false);
+                                }
+                                ((TextView) view.findViewById(R.id.video_name))
+                                    .setText(searchResults.get(i).getFileName());
+                                // use bold font for subs with hash match
+                                if (searchResults.get(i).getMoviehashMatch())
+                                    ((TextView) view.findViewById(R.id.video_name)).setTypeface(null, Typeface.BOLD);
+                                else
+                                    ((TextView) view.findViewById(R.id.video_name)).setTypeface(null, Typeface.NORMAL);
+                                if (displayLang) {
+                                    TextView language = (TextView) view.findViewById(R.id.lang);
+                                    language.setVisibility(View.VISIBLE);
+                                    language.setText(searchResults.get(i).getLanguage());
+                                    com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply(language,
+                                        com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(
+                                            searchResults.get(i).getLanguage()));
+                                } else
+                                    view.findViewById(R.id.lang).setVisibility(View.GONE);
+                                return view;
+                            }
+                        },
+                        (dialogInterface, i) -> new Thread() {
+                            public void run() {
+                                if (log.isDebugEnabled())
+                                    log.debug(
+                                        "askSubChoice: entry {} selected -> download sub {} for {} fileID={}  lang={}",
+                                        i, searchResults.get(i).getFileName(), videoFilePath,
+                                        searchResults.get(i).getFileId(), searchResults.get(i).getLanguage());
+                                getSub(videoFilePath, searchResults.get(i));
+                            }
+                        }.start())
                     .setCancelable(true)
                     .setOnCancelListener(dialog -> finish())
                     .create();
@@ -592,9 +702,11 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             }
         }
 
-        public boolean downloadSubtitles(String subUrl, String fileUrl, String name, String language){
-            if (log.isDebugEnabled()) log.debug("downloadSubtitles: starting subtitle transfer");
-            if (fileUrl == null) return false;
+        public boolean downloadSubtitles(String subUrl, String fileUrl, String name, String language) {
+            if (log.isDebugEnabled())
+                log.debug("downloadSubtitles: starting subtitle transfer");
+            if (fileUrl == null)
+                return false;
             // Complete the response in private temporary storage BEFORE probing or opening a
             // destination. The legacy probe truncates files and must never precede a download.
             File staged;
@@ -606,136 +718,183 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 return false;
             }
             try {
-            if (isCancelled) return false;
-            boolean canWrite = false;
-            Uri parentUri = null;
-            if(UriUtils.isImplementedByFileCore(Uri.parse(fileUrl))&&!FileUtils.isSlowRemote(Uri.parse(fileUrl))){ // do not write subs on slow remote when downloading
-                parentUri = FileUtils.getParentUrl(Uri.parse(fileUrl));
-                if(parentUri!=null){
-                    try {
-                        MetaFile2 metaFile2 = MetaFile2Factory.getMetaFileForUrl(parentUri);
-                        canWrite = metaFile2.canWrite();
-                    } catch (Exception e) {
-                        log.error("downloadSubtitles: caught Exception", e);
+                if (isCancelled)
+                    return false;
+                boolean canWrite = false;
+                Uri parentUri = null;
+                if (UriUtils.isImplementedByFileCore(Uri.parse(fileUrl))
+                    && !FileUtils.isSlowRemote(
+                        Uri.parse(fileUrl))) {
+                    // do not write subs on slow remote when downloading
+                    parentUri = FileUtils.getParentUrl(Uri.parse(fileUrl));
+                    if (parentUri != null) {
+                        try {
+                            MetaFile2 metaFile2 = MetaFile2Factory.getMetaFileForUrl(parentUri);
+                            canWrite = metaFile2.canWrite();
+                        } catch (Exception e) {
+                            log.error("downloadSubtitles: caught Exception", e);
+                        }
                     }
+                    if (log.isDebugEnabled())
+                        log.debug("downloadSubtitles: we are not on slow remote try to write to {} and canWrite={}",
+                            parentUri, canWrite);
+                } else {
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "downloadSubtitles: we are on slow remote or not implemented by filecore, do not try to write sub on remote");
                 }
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: we are not on slow remote try to write to {} and canWrite={}", parentUri, canWrite);
-            } else {
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: we are on slow remote or not implemented by filecore, do not try to write sub on remote");
-            }
-            StringBuilder localSb = null;
-            StringBuilder sb = null;
+                StringBuilder localSb = null;
+                StringBuilder sb = null;
 
-            if (canWrite) {
-                sb = new StringBuilder();
-                sb.append(fileUrl.substring(0,fileUrl.lastIndexOf('.')+1)).append(language).append('.').append("srt");
-                /* Check we can really create the file */
-                try {
-                    if (log.isDebugEnabled()) log.debug("downloadSubtitles: test we can write to {}", sb);
-                    FileEditor editor = FileEditorFactory.getFileEditorForUrl(Uri.parse(sb.toString()), SubtitlesDownloaderActivity2.this);
-                    if(editor.exists()&&!confirmReplacement())return false;
-                    if (!editor.exists()) {
-                    OutputStream tmp = editor.getOutputStream();
-                    // on the nvidia shield canWrite is reported to be false on exfat/ntfs external HDD USB storage /storage/XXX/serie but true on deeper directory levels e.g. /storage/XXX/serie/season1
-                    // thus sadly to know if we can write we need to test writing on the file
-                    tmp.write(0);
-                    tmp.flush();
-                    tmp.close();
-                    // test if file is present otherwise set canWrite to false
-                    if (!editor.exists()) {
-                        if (log.isDebugEnabled()) log.debug("downloadSubtitles: file does not exist after real write test, canWrite=false");
+                if (canWrite) {
+                    sb = new StringBuilder();
+                    sb.append(fileUrl.substring(0, fileUrl.lastIndexOf('.') + 1))
+                        .append(language)
+                        .append('.')
+                        .append("srt");
+                    /* Check we can really create the file */
+                    try {
+                        if (log.isDebugEnabled())
+                            log.debug("downloadSubtitles: test we can write to {}", sb);
+                        FileEditor editor = FileEditorFactory.getFileEditorForUrl(
+                            Uri.parse(sb.toString()), SubtitlesDownloaderActivity2.this);
+                        if (editor.exists() && !confirmReplacement())
+                            return false;
+                        if (!editor.exists()) {
+                            OutputStream tmp = editor.getOutputStream();
+                            // on the nvidia shield canWrite is reported to be false on exfat/ntfs external HDD USB storage /storage/XXX/serie but true on deeper directory levels e.g. /storage/XXX/serie/season1
+                            // thus sadly to know if we can write we need to test writing on the file
+                            tmp.write(0);
+                            tmp.flush();
+                            tmp.close();
+                            // test if file is present otherwise set canWrite to false
+                            if (!editor.exists()) {
+                                if (log.isDebugEnabled())
+                                    log.debug(
+                                        "downloadSubtitles: file does not exist after real write test, canWrite=false");
+                                canWrite = false;
+                            }
+                        }
+                    } catch (FileNotFoundException e) {
+                        /* Fallback to subsDir */
+                        if (log.isDebugEnabled())
+                            log.debug("downloadSubtitles: caught FileNotFoundException, fallback to subsDir");
+                        canWrite = false;
+                    } catch (Exception e) {
+                        if (log.isDebugEnabled())
+                            log.debug("downloadSubtitles: caught Exception, fallback to subsDir");
                         canWrite = false;
                     }
-                    }
-                } catch (FileNotFoundException e) {
-                    /* Fallback to subsDir */
-                    if (log.isDebugEnabled()) log.debug("downloadSubtitles: caught FileNotFoundException, fallback to subsDir");
-                    canWrite = false;
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) log.debug("downloadSubtitles: caught Exception, fallback to subsDir");
-                    canWrite = false;
                 }
-            }
-            if (name == null || name.isEmpty())
-                name = FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl));
-            localSb = new StringBuilder();
-            localSb.append(subsDir.getPath()).append('/').append(name).append('.').append(language).append('.').append("srt");
-            if(!canWrite)
-                sb = localSb;
-            if (log.isDebugEnabled()) log.debug("downloadSubtitles: writable destination={}", canWrite);
-            String srtURl = sb.toString();
-            // Confirm every pre-existing destination before writing either the sidecar or cache.
-            if(!canWrite&&FileEditorFactory.getFileEditorForUrl(Uri.parse(srtURl),SubtitlesDownloaderActivity2.this).exists()&&!confirmReplacement())return false;
-            if(canWrite&&!FileUtils.isLocal(Uri.parse(fileUrl))&&FileEditorFactory.getFileEditorForUrl(Uri.parse(localSb.toString()),SubtitlesDownloaderActivity2.this).exists()&&!confirmReplacement())return false;
-            sb = null;
-            OutputStream f =null;
-            InputStream in = null;
-            boolean saved=false;
-            try {
-                if(isCancelled)return false;
-                in = new FileInputStream(staged);
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: successfully got input stream, will now create/write subtitle file");
-
-                // We get the first matching subtitle
-                FileEditor editor = FileEditorFactory.getFileEditorForUrl(Uri.parse(srtURl), SubtitlesDownloaderActivity2.this);
-                f = editor.getOutputStream();
-                int l = 0;
-                int totalBytesWritten = 0;
-                byte[] buffer = new byte[1024];
-                while ((l = in.read(buffer)) != -1) {
-                    f.write(buffer, 0, l);
-                    totalBytesWritten += l;
-                }
-                // f needs to be closed before the copy otherwise STATUS_SHARING_VIOLATION with smbj
-                f.close();
-                if (log.isDebugEnabled()) log.debug("downloadSubtitles: successfully wrote {} bytes to {}", totalBytesWritten, srtURl);
-                if(fileUrl != null) {
-                    ContentResolver resolver = getContentResolver();
-                    VideoDbInfo videoDbInfo = VideoDbInfo.fromUri(resolver, Uri.parse(fileUrl));
-                    if (videoDbInfo != null) {
-                        if (log.isDebugEnabled()) log.debug("downloadSubtitles: update subtitle count videoDbInfo for {}", videoDbInfo.id);
-                        final String where = VideoStore.Video.VideoColumns._ID + " = " + videoDbInfo.id;
-                        videoDbInfo.nbSubtitles = videoDbInfo.nbSubtitles == -1 ? 1 : videoDbInfo.nbSubtitles + 1;
-                        ContentValues values = new ContentValues(1);
-                        values.put(VideoStore.Video.VideoColumns.SUBTITLE_COUNT_EXTERNAL, videoDbInfo.nbSubtitles);
-                        resolver.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,
-                                values, where, null);
-                    }
-                }
+                if (name == null || name.isEmpty())
+                    name = FileUtils.getFileNameWithoutExtension(Uri.parse(fileUrl));
+                localSb = new StringBuilder();
+                localSb.append(subsDir.getPath())
+                    .append('/')
+                    .append(name)
+                    .append('.')
+                    .append(language)
+                    .append('.')
+                    .append("srt");
+                if (!canWrite)
+                    sb = localSb;
+                if (log.isDebugEnabled())
+                    log.debug("downloadSubtitles: writable destination={}", canWrite);
+                String srtURl = sb.toString();
+                // Confirm every pre-existing destination before writing either the sidecar or cache.
+                if (!canWrite
+                    && FileEditorFactory.getFileEditorForUrl(Uri.parse(srtURl), SubtitlesDownloaderActivity2.this)
+                        .exists()
+                    && !confirmReplacement())
+                    return false;
+                if (canWrite && !FileUtils.isLocal(Uri.parse(fileUrl))
+                    && FileEditorFactory
+                        .getFileEditorForUrl(Uri.parse(localSb.toString()), SubtitlesDownloaderActivity2.this)
+                        .exists()
+                    && !confirmReplacement())
+                    return false;
+                sb = null;
+                OutputStream f = null;
+                InputStream in = null;
+                boolean saved = false;
                 try {
-                    //catching all exceptions for now for quick release
-                    if (log.isDebugEnabled()) log.debug("downloadSubtitles: index {}", fileUrl);
-                    Intent intent = new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_METADATA_UPDATE, Uri.parse(fileUrl));
-                    intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
-                    sendBroadcast(intent);
-                } catch (Exception e){
-                }
-                if (canWrite) {
-                    if(!FileUtils.isLocal(Uri.parse(fileUrl))){ // when not local, we need to copy our file
-                        if (log.isDebugEnabled()) log.debug("downloadSubtitles: copy file {}->{}", fileUrl, localSb);
-                        editor.copyFileTo(Uri.parse(localSb.toString()),SubtitlesDownloaderActivity2.this);
+                    if (isCancelled)
+                        return false;
+                    in = new FileInputStream(staged);
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "downloadSubtitles: successfully got input stream, will now create/write subtitle file");
+
+                    // We get the first matching subtitle
+                    FileEditor editor =
+                        FileEditorFactory.getFileEditorForUrl(Uri.parse(srtURl), SubtitlesDownloaderActivity2.this);
+                    f = editor.getOutputStream();
+                    int l = 0;
+                    int totalBytesWritten = 0;
+                    byte[] buffer = new byte[1024];
+                    while ((l = in.read(buffer)) != -1) {
+                        f.write(buffer, 0, l);
+                        totalBytesWritten += l;
                     }
+                    // f needs to be closed before the copy otherwise STATUS_SHARING_VIOLATION with smbj
+                    f.close();
+                    if (log.isDebugEnabled())
+                        log.debug("downloadSubtitles: successfully wrote {} bytes to {}", totalBytesWritten, srtURl);
+                    if (fileUrl != null) {
+                        ContentResolver resolver = getContentResolver();
+                        VideoDbInfo videoDbInfo = VideoDbInfo.fromUri(resolver, Uri.parse(fileUrl));
+                        if (videoDbInfo != null) {
+                            if (log.isDebugEnabled())
+                                log.debug(
+                                    "downloadSubtitles: update subtitle count videoDbInfo for {}", videoDbInfo.id);
+                            final String where = VideoStore.Video.VideoColumns._ID + " = " + videoDbInfo.id;
+                            videoDbInfo.nbSubtitles = videoDbInfo.nbSubtitles == -1 ? 1 : videoDbInfo.nbSubtitles + 1;
+                            ContentValues values = new ContentValues(1);
+                            values.put(VideoStore.Video.VideoColumns.SUBTITLE_COUNT_EXTERNAL, videoDbInfo.nbSubtitles);
+                            resolver.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, null);
+                        }
+                    }
+                    try {
+                        //catching all exceptions for now for quick release
+                        if (log.isDebugEnabled())
+                            log.debug("downloadSubtitles: index {}", fileUrl);
+                        Intent intent =
+                            new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_METADATA_UPDATE, Uri.parse(fileUrl));
+                        intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
+                        sendBroadcast(intent);
+                    } catch (Exception e) {
+                    }
+                    if (canWrite) {
+                        if (!FileUtils.isLocal(Uri.parse(fileUrl))) {
+                            // when not local, we need to copy our file
+                            if (log.isDebugEnabled())
+                                log.debug("downloadSubtitles: copy file {}->{}", fileUrl, localSb);
+                            editor.copyFileTo(Uri.parse(localSb.toString()), SubtitlesDownloaderActivity2.this);
+                        }
+                    }
+                    selectedDownloadPath =
+                        canWrite && !FileUtils.isLocal(Uri.parse(fileUrl)) ? localSb.toString() : srtURl;
+                    saved = true;
+                } catch (FileNotFoundException e) {
+                    log.warn("downloadSubtitles: destination unavailable");
+                    displayToast(getString(R.string.dialog_subloader_fails));
+                } catch (IOException e) {
+                    log.warn("downloadSubtitles: destination write failed");
+                    displayToast(getString(R.string.dialog_subloader_fails));
+                } catch (Throwable e) {
+                    //for various service outages
+                    log.warn("downloadSubtitles: save failed ({})", e.getClass().getSimpleName());
+                    displayToast(getString(R.string.dialog_subloader_fails));
+                } finally {
+                    MediaUtils.closeSilently(f);
+                    MediaUtils.closeSilently(in);
+                    f = null;
+                    in = null;
                 }
-                selectedDownloadPath=canWrite&&!FileUtils.isLocal(Uri.parse(fileUrl))?localSb.toString():srtURl;
-                saved=true;
-            } catch (FileNotFoundException e) {
-                log.warn("downloadSubtitles: destination unavailable");
-                displayToast(getString(R.string.dialog_subloader_fails));
-            } catch (IOException e) {
-                log.warn("downloadSubtitles: destination write failed");
-                displayToast(getString(R.string.dialog_subloader_fails));
-            } catch (Throwable e){ //for various service outages
-                log.warn("downloadSubtitles: save failed ({})", e.getClass().getSimpleName());
-                displayToast(getString(R.string.dialog_subloader_fails));
-            }finally{
-                MediaUtils.closeSilently(f);
-                MediaUtils.closeSilently(in);
-                f = null;
-                in = null;
-            }
-            return saved;
+                return saved;
             } finally {
-                if (!staged.delete()) log.warn("downloadSubtitles: temporary staging cleanup deferred");
+                if (!staged.delete())
+                    log.warn("downloadSubtitles: temporary staging cleanup deferred");
             }
         }
 
@@ -748,16 +907,20 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 connection.setReadTimeout(30000);
                 String userAgent = OpenSubtitlesApiHelper.getUserAgent();
                 String apiKey = OpenSubtitlesApiHelper.getApiKey();
-                if (userAgent != null) connection.setRequestProperty("User-Agent", userAgent);
-                if (apiKey != null) connection.setRequestProperty("Api-Key", apiKey);
+                if (userAgent != null)
+                    connection.setRequestProperty("User-Agent", userAgent);
+                if (apiKey != null)
+                    connection.setRequestProperty("Api-Key", apiKey);
                 if (OpenSubtitlesApiHelper.isAuthenticated()) {
                     String authToken = OpenSubtitlesApiHelper.getAuthToken();
-                    if (authToken != null) connection.setRequestProperty("Authorization", "Bearer " + authToken);
+                    if (authToken != null)
+                        connection.setRequestProperty("Authorization", "Bearer " + authToken);
                 }
                 if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                     throw new IOException("Subtitle HTTP response rejected");
                 staged = File.createTempFile("subtitle-transfer-", ".tmp", getCacheDir());
-                try (InputStream source = connection.getInputStream(); OutputStream target = new FileOutputStream(staged)) {
+                try (InputStream source = connection.getInputStream();
+                    OutputStream target = new FileOutputStream(staged)) {
                     long received = SubtitleTransfer.stage(source, target, () -> isCancelled);
                     long expected = connection.getContentLength();
                     if (expected >= 0 && expected != received)
@@ -773,56 +936,83 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         }
 
         private void setInitDialog() {
-            if (log.isDebugEnabled()) log.debug("OpenSubtitlesTask: setInitDialog");
+            if (log.isDebugEnabled())
+                log.debug("OpenSubtitlesTask: setInitDialog");
             mHandler.post(() -> {
-                if(previewUi()){
-                    if(!isCancelled&&!isFinishing()&&!isDestroyed())showPreviewProgress("Searching OpenSubtitles…");
+                if (previewUi()) {
+                    if (!isCancelled && !isFinishing() && !isDestroyed())
+                        showPreviewProgress("Searching OpenSubtitles…");
                     return;
                 }
-                mDialog = NovaProgressDialog.show(SubtitlesDownloaderActivity2.this, "", getString(R.string.dialog_subloader_connecting), true, true, dialog -> {
-                    dialog.cancel();
-                    if (mOpenSubtitlesTask != null) mOpenSubtitlesTask.cancel();
-                    finish();
-                });
+                mDialog = NovaProgressDialog.show(SubtitlesDownloaderActivity2.this, "",
+                    getString(R.string.dialog_subloader_connecting), true, true, dialog -> {
+                        dialog.cancel();
+                        if (mOpenSubtitlesTask != null)
+                            mOpenSubtitlesTask.cancel();
+                        finish();
+                    });
                 mDialog.setCanceledOnTouchOutside(false); // to not cancel when tapping the screen out of dialog zone
                 mDialog.setOnDismissListener(dialog -> {
-                    if(!mDoNotFinish) {
+                    if (!mDoNotFinish) {
                         dialog.cancel();
-                        if (mOpenSubtitlesTask != null) mOpenSubtitlesTask.cancel();
+                        if (mOpenSubtitlesTask != null)
+                            mOpenSubtitlesTask.cancel();
                         finish();
                     }
                     mDoNotFinish = false;
                 });
-                if (log.isDebugEnabled()) log.debug("OpenSubtitlesTask: setInitDialog setMessage {}", getString(R.string.dialog_subloader_connecting));
+                if (log.isDebugEnabled())
+                    log.debug("OpenSubtitlesTask: setInitDialog setMessage {}",
+                        getString(R.string.dialog_subloader_connecting));
             });
         }
 
-        private void displayToast(final String message){
-            if(previewUi()){
-                previewNotice=previewNotice==null?message:previewNotice+"\n"+message;
+        private void displayToast(final String message) {
+            if (previewUi()) {
+                previewNotice = previewNotice == null ? message : previewNotice + "\n" + message;
                 return;
             }
             mHandler.post(() -> Toast.makeText(SubtitlesDownloaderActivity2.this, message, Toast.LENGTH_SHORT).show());
         }
 
-        private boolean confirmReplacement(){return SubtitleReplacement.confirm(SubtitlesDownloaderActivity2.this,handler,()->isCancelled);}
-        private void finishDownload(boolean saved){
-            if(!previewUi()){setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED,saved?new Intent().putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,selectedDownloadPath):null);finish();return;}
-            handler.post(()->{
-                dismissPreviewProgress();
-                if(isCancelled||isFinishing()||isDestroyed())return;
-                setResult(saved?Activity.RESULT_OK:Activity.RESULT_CANCELED,saved?new Intent().putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,selectedDownloadPath):null);
-                if(saved)finish();
-                else showPreviewMessage(previewNotice==null?getString(R.string.dialog_subloader_fails):previewNotice);
-            });
+        private boolean confirmReplacement() {
+            return SubtitleReplacement.confirm(SubtitlesDownloaderActivity2.this, handler, () -> isCancelled);
         }
 
+        private void finishDownload(boolean saved) {
+            if (!previewUi()) {
+                setResult(saved ? Activity.RESULT_OK : Activity.RESULT_CANCELED,
+                    saved ? new Intent().putExtra(
+                                com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,
+                                selectedDownloadPath)
+                          : null);
+                finish();
+                return;
+            }
+            handler.post(() -> {
+                dismissPreviewProgress();
+                if (isCancelled || isFinishing() || isDestroyed())
+                    return;
+                setResult(saved ? Activity.RESULT_OK : Activity.RESULT_CANCELED,
+                    saved ? new Intent().putExtra(
+                                com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,
+                                selectedDownloadPath)
+                          : null);
+                if (saved)
+                    finish();
+                else
+                    showPreviewMessage(
+                        previewNotice == null ? getString(R.string.dialog_subloader_fails) : previewNotice);
+            });
+        }
     }
 
     private void closeDialog() {
-        if(previewUi()){
-            if(Looper.myLooper()==Looper.getMainLooper())dismissPreviewProgress();
-            else mHandler.post(this::dismissPreviewProgress);
+        if (previewUi()) {
+            if (Looper.myLooper() == Looper.getMainLooper())
+                dismissPreviewProgress();
+            else
+                mHandler.post(this::dismissPreviewProgress);
             return;
         }
         if (mDialog != null) {
@@ -831,23 +1021,32 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         }
     }
 
-    private void showPreviewProgress(String message){
+    private void showPreviewProgress(String message) {
         dismissPreviewProgress();
-        if(isFinishing()||isDestroyed())return;
-        previewProgress=com.archos.mediacenter.video.leanback.PreviewOperationDialog.show(this,"Download Subtitles",message,()->{
-            if(mOpenSubtitlesTask!=null)mOpenSubtitlesTask.cancel();
-            setResult(Activity.RESULT_CANCELED);finish();
-        });
+        if (isFinishing() || isDestroyed())
+            return;
+        previewProgress = com.archos.mediacenter.video.leanback.PreviewOperationDialog.show(
+            this, "Download Subtitles", message, () -> {
+                if (mOpenSubtitlesTask != null)
+                    mOpenSubtitlesTask.cancel();
+                setResult(Activity.RESULT_CANCELED);
+                finish();
+            });
     }
 
-    private void dismissPreviewProgress(){
-        if(previewProgress!=null){previewProgress.dismiss();previewProgress=null;}
+    private void dismissPreviewProgress() {
+        if (previewProgress != null) {
+            previewProgress.dismiss();
+            previewProgress = null;
+        }
     }
 
-    private void showPreviewMessage(String message){
+    private void showPreviewMessage(String message) {
         dismissPreviewProgress();
-        if(isFinishing()||isDestroyed())return;
-        previewMessage=com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(this,"Download Subtitles",message,this::finish);
+        if (isFinishing() || isDestroyed())
+            return;
+        previewMessage = com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(
+            this, "Download Subtitles", message, this::finish);
     }
 
     @SuppressWarnings("unchecked")
@@ -857,10 +1056,10 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                 OpenSubtitlesApiHelper.logout();
             } catch (IOException e1) {
                 log.error("logOut: caught IOException", e1);
-            } catch (Throwable e) { //for various service outages
+            } catch (Throwable e) {
+                //for various service outages
                 log.error("logOut: caught Exception", e);
             }
         }).start();
     }
-
 }
