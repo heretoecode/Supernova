@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.*;
+import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.*;
 import java.io.IOException;
@@ -103,7 +104,7 @@ final class InlineOpenSubtitles {
             boolean valid = false;
             try {
                 valid = OpenSubtitlesApiHelper.login(
-                    context.getString(com.archos.mediacenter.video.R.string.opensubtitles_api_key), user, secret);
+                    context.getString(R.string.opensubtitles_api_key), user, secret);
             } catch (IOException failure) {
                 /* Never retain exception bodies or credential-bearing URLs. */
             }
