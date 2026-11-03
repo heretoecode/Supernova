@@ -12,12 +12,16 @@ import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.SupernovaStyle;
+import com.archos.mediacenter.video.utils.VideoMetadata;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 import org.junit.*;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
@@ -31,7 +35,7 @@ public class NextHudTest {
     @Test
     public void ordinaryPlaybackSwitchHasNoRedundantStateText() {
         ReflectionHelpers.setStaticField(PreviewPlaybackMenus.class, "owner", host.get());
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
             .putInt("preview_accent41", Color.WHITE)
             .commit();
@@ -58,10 +62,10 @@ public class NextHudTest {
         }
     }
 
-    @Rule public org.junit.rules.TestName testName = new org.junit.rules.TestName();
+    @Rule public TestName testName = new TestName();
     private Player previous, player;
     private PlayerService previousService;
-    private org.robolectric.android.controller.ActivityController<Activity> host;
+    private ActivityController<Activity> host;
     private View root;
     private PlayerController controller;
 
@@ -196,8 +200,8 @@ public class NextHudTest {
         TextView episode = root.findViewById(R.id.preview_playback_episode);
         episode.setText("S01 E01 · Indexed episode metadata");
         episode.setVisibility(View.VISIBLE);
-        com.archos.mediacenter.video.utils.VideoMetadata metadata =
-            mock(com.archos.mediacenter.video.utils.VideoMetadata.class);
+        VideoMetadata metadata =
+            mock(VideoMetadata.class);
         when(metadata.getChapters())
             .thenReturn(List.of(new PlaybackChapters.Chapter(0, "A long embedded opening chapter name")));
         when(player.getVideoMetadata()).thenReturn(metadata);
@@ -243,8 +247,8 @@ public class NextHudTest {
                                                           ? background.getCurrent()
                                                           : background;
             assertTrue("shared rounded-rectangle button",
-                       face instanceof com.archos.mediacenter.video.leanback.SupernovaStyle.Box);
-            assertEquals(12f * density, ((com.archos.mediacenter.video.leanback.SupernovaStyle.Box)face).radius(),
+                       face instanceof SupernovaStyle.Box);
+            assertEquals(12f * density, ((SupernovaStyle.Box)face).radius(),
                          0.5f);
         }
     }
@@ -308,8 +312,8 @@ public class NextHudTest {
 
     @Test
     public void chapterBubbleTracksCandidateAndStaysInsideSeekAtBothEnds() {
-        com.archos.mediacenter.video.utils.VideoMetadata metadata =
-            mock(com.archos.mediacenter.video.utils.VideoMetadata.class);
+        VideoMetadata metadata =
+            mock(VideoMetadata.class);
         when(metadata.getChapters())
             .thenReturn(List.of(
                 new PlaybackChapters.Chapter(0, "Opening"),
