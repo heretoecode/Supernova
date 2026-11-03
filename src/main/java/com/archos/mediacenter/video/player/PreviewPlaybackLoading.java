@@ -16,10 +16,19 @@ import android.util.Log;
 import android.view.*;
 import android.view.PixelCopy;
 import android.widget.*;
+import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.foundation.DoubleRingDrawable;
+import com.archos.mediacenter.video.leanback.OfficialTitleArtwork;
+import com.archos.mediacenter.video.leanback.PreviewAccent;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewUtilityBackground;
+import com.archos.mediacenter.video.leanback.ThinSpinner;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 /** Cached artwork only. Visibility follows the existing player preparation timer. */
 final class PreviewPlaybackLoading extends FrameLayout {
@@ -32,7 +41,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         super(context);
         setId(R.id.progress_indicator);
         setVisibility(VISIBLE);
-        setBackground(new com.archos.mediacenter.video.leanback.PreviewUtilityBackground(context));
+        setBackground(new PreviewUtilityBackground(context));
         setFocusable(false);
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         artwork = new ImageView(context);
@@ -60,12 +69,12 @@ final class PreviewPlaybackLoading extends FrameLayout {
         status.setPadding(0, dp(18), 0, 0);
         labels.addView(status);
         ProgressBar spinner = new ProgressBar(context, null, android.R.attr.progressBarStyleSmall);
-        spinner.setIndeterminateDrawable(com.archos.mediacenter.video.BuildConfig.FOUNDATION
-                ? new com.archos.mediacenter.video.foundation.DoubleRingDrawable()
-                : new com.archos.mediacenter.video.leanback.ThinSpinner());
-        if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION)
+        spinner.setIndeterminateDrawable(BuildConfig.FOUNDATION
+                ? new DoubleRingDrawable()
+                : new ThinSpinner());
+        if (!BuildConfig.FOUNDATION)
             spinner.setIndeterminateTintList(ColorStateList.valueOf(
-                com.archos.mediacenter.video.leanback.PreviewAccent.color(context)));
+                PreviewAccent.color(context)));
         status.addView(spinner, new LinearLayout.LayoutParams(dp(28), dp(28)));
         TextView starting = text("Preparing playback…", 16);
         starting.setPadding(dp(14), 0, dp(8), 0);
@@ -79,13 +88,13 @@ final class PreviewPlaybackLoading extends FrameLayout {
             source = video.getUri();
             fileSource = video.getFileUri();
             cachedArtwork = video.getPreviewBackdrop();
-            com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title, video, true);
+            OfficialTitleArtwork.bind(title, video, true);
             title.setText(video instanceof Episode ? ((Episode) video).getShowName() : video.getName());
             long online = video instanceof Movie ? ((Movie) video).getOnlineId() : 0;
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library =
-                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            PreviewLibraryLoader.Snapshot library =
+                PreviewLibraryLoader.memoryCache();
             if (online <= 0 && library != null)
-                for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : library.episodes)
+                for (PreviewLibraryLoader.Entry entry : library.episodes)
                     if (((Video) entry.media).getId() == video.getId()) {
                         online = entry.onlineId;
                         break;
@@ -147,8 +156,8 @@ final class PreviewPlaybackLoading extends FrameLayout {
                                 for (int y = 0; y < 18; y++)
                                     for (int x = 0; x < 32; x++) {
                                         int pixel = probe.getPixel(x, y),
-                                            l = (android.graphics.Color.red(pixel) + android.graphics.Color.green(pixel)
-                                                    + android.graphics.Color.blue(pixel))
+                                            l = (Color.red(pixel) + Color.green(pixel)
+                                                    + Color.blue(pixel))
                                             / 3;
                                         min = Math.min(min, l);
                                         max = Math.max(max, l);
@@ -203,7 +212,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
                 title.setText(fallback);
             return;
         }
-        com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title, info);
+        OfficialTitleArtwork.bind(title, info);
         title.setText(info.isScraped && info.scraperTitle != null ? info.scraperTitle : fallback);
         boolean show = info.isShow && info.scraperSeasonNr >= 0 && info.scraperEpisodeNr >= 0;
         long id = 0;
@@ -228,7 +237,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         if (artwork == null)
             return;
         if (visibility == VISIBLE && !requestedArtwork && cachedArtwork != null) {
-            com.squareup.picasso.RequestCreator request = cachedRequest(Picasso.get(), cachedArtwork);
+            RequestCreator request = cachedRequest(Picasso.get(), cachedArtwork);
             if (request != null) {
                 requestedArtwork = true;
                 request.into(artwork);
@@ -240,14 +249,14 @@ final class PreviewPlaybackLoading extends FrameLayout {
     }
 
     /** A remote artwork URI may already exist in Picasso's disk cache. Never fetch it at Play time. */
-    static com.squareup.picasso.RequestCreator cachedRequest(Picasso picasso, Uri uri) {
+    static RequestCreator cachedRequest(Picasso picasso, Uri uri) {
         String scheme = uri == null ? null : uri.getScheme();
         boolean remote = "https".equals(scheme) || "http".equals(scheme);
         if (!remote && !"file".equals(scheme) && !"content".equals(scheme))
             return null;
-        com.squareup.picasso.RequestCreator request = picasso.load(uri).resize(1280, 720).centerCrop().noFade();
+        RequestCreator request = picasso.load(uri).resize(1280, 720).centerCrop().noFade();
         if (remote)
-            request.networkPolicy(com.squareup.picasso.NetworkPolicy.OFFLINE);
+            request.networkPolicy(NetworkPolicy.OFFLINE);
         return request;
     }
 
