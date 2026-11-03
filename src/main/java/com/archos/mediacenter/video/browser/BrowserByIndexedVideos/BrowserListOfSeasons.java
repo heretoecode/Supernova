@@ -41,6 +41,7 @@ import com.archos.mediacenter.video.browser.presenter.SeasonListPresenter;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays the seasons of a TV show with its poster and header. */
 public class BrowserListOfSeasons extends BrowserWithShowHeader  {
 
     private static final String TAG = "BrowserListOfSeasons";
