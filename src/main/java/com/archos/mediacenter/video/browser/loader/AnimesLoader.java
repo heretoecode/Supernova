@@ -21,6 +21,7 @@ import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads anime videos using the requested projection, selection and sort order. */
 public class AnimesLoader extends VideoLoader {
 
     static public String DEFAULT_SORT = "name COLLATE LOCALIZED ASC";
