@@ -17,6 +17,7 @@ import org.robolectric.annotation.*;
 import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.shadows.ShadowDialog;
 
 /** Native Android view render over a labelled synthetic scene, not hardware playback evidence. */
 @RunWith(RobolectricTestRunner.class)
@@ -74,7 +75,7 @@ public class Playback141RenderTest {
             TVMenuAdapter adapter = mock(TVMenuAdapter.class);
             when(adapter.previewCards()).thenReturn(cards);
             PreviewPlaybackMenus.show(activity, adapter, null);
-            Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog dialog = ShadowDialog.getLatestDialog();
             // Approved side panel (owner, 2 Nov 2026): three tabs, one third wide, top-right, fitted height.
             for (int tab : new int[] {PlaybackSubtitlePanel.TAB_SUBTITLES, PlaybackSubtitlePanel.TAB_AUDIO,
                                       PlaybackSubtitlePanel.TAB_PLAYBACK}) {
