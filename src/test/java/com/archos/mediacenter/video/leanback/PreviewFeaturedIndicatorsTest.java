@@ -9,6 +9,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks featured carousel indicator animation, retargeting and wrap behavior. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewFeaturedIndicatorsTest {
     @Test public void rapidRetargetKeepsCurrentWidthsAndOnePillOfTotalEmphasis(){
