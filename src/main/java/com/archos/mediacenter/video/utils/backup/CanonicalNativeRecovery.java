@@ -8,6 +8,7 @@ import com.archos.mediascraper.OwnedCanonicalBatch;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import org.json.*;
@@ -100,7 +101,7 @@ public final class CanonicalNativeRecovery {
             for (byte value : digest.digest())
                 hash.append(String.format(Locale.ROOT, "%02x", value & 255));
             return hash.toString();
-        } catch (java.security.NoSuchAlgorithmException | RuntimeException invalid) {
+        } catch (NoSuchAlgorithmException | RuntimeException invalid) {
             throw new IOException("Canonical recovery inventory unavailable", invalid);
         }
     }
