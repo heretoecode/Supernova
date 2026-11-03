@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser.adapters;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 
 
+/** Defines access to a video object at an adapter position. */
 public interface AdapterByVideoObjectsInterface  {
 
 
