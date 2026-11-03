@@ -29,7 +29,9 @@ import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.player.AudioSpeedPickerAbstract;
+import com.archos.mediacenter.video.player.PreviewAdjustmentValue;
 
 
 public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSlaveView {
@@ -89,7 +91,7 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
 
     public void setFocus(boolean hasFocus) {
         if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if (hasFocus) {
@@ -199,8 +201,8 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
     }
 
     public void updateTextViewSpeed() {
-        setText(com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
-                ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.speed(getSpeed()):getFormattedSpeed().toString());
+        setText(PreviewAdjustmentValue.enabled(mContext)
+                ?PreviewAdjustmentValue.speed(getSpeed()):getFormattedSpeed().toString());
     }
 
     public void setTextSize(int size) {
