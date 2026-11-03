@@ -1,6 +1,9 @@
 package com.archos.mediacenter.video.leanback;
 import android.net.Uri;
+import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
 import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
@@ -14,14 +17,14 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewDiscoveryTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     private Entry movie(long id, String title, String date) {
@@ -75,7 +78,7 @@ public class PreviewDiscoveryTest {
 
     @Test
     public void sourceLabelsNeverExposeEmbeddedCredentials() {
-        String label = com.archos.mediacenter.video.leanback.details.PreviewMoviePage.source(
+        String label = PreviewMoviePage.source(
             Uri.parse("smb://user:password@server/film.mkv"));
         assertEquals("NAS / SMB", label);
     }
