@@ -15,6 +15,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks reception scores, counts, logos and attribution preserve genuinely supplied data. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class ReceptionSupplementTest {
