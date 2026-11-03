@@ -4,6 +4,15 @@ import android.app.Application;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.*;
+import android.view.View;
+import android.widget.Button;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -59,25 +68,25 @@ public class PreviewEnrichmentQueueTest {
 
     @Test
     public void horizontalViewportUsesScrolledCardsRatherThanFirstSix() {
-        androidx.recyclerview.widget.RecyclerView rail =
-            org.mockito.Mockito.mock(androidx.recyclerview.widget.RecyclerView.class);
+        RecyclerView rail =
+            org.mockito.Mockito.mock(RecyclerView.class);
         org.mockito.Mockito.when(rail.getWidth()).thenReturn(300);
         org.mockito.Mockito.when(rail.getChildCount()).thenReturn(3);
-        java.util.List<PreviewLibraryLoader.Entry> entries = new java.util.ArrayList<>(),
-                                                   visible = new java.util.ArrayList<>(),
-                                                   next = new java.util.ArrayList<>();
+        List<PreviewLibraryLoader.Entry> entries = new ArrayList<>(),
+                                                   visible = new ArrayList<>(),
+                                                   next = new ArrayList<>();
         for (int i = 0; i < 20; i++)
             entries.add(new PreviewLibraryLoader.Entry(
                 org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class), 0, 0, ""));
         for (int i = 0; i < 3; i++) {
-            android.view.View child = org.mockito.Mockito.mock(android.view.View.class);
+            View child = org.mockito.Mockito.mock(View.class);
             org.mockito.Mockito.when(rail.getChildAt(i)).thenReturn(child);
             org.mockito.Mockito.when(rail.getChildAdapterPosition(child)).thenReturn(i + 7);
             org.mockito.Mockito.when(child.getLeft()).thenReturn(i * 100 - 100);
             org.mockito.Mockito.when(child.getRight()).thenReturn(i * 100);
         }
         PreviewPages.collectVisibleRail(rail, entries, visible, next);
-        assertEquals(java.util.Arrays.asList(entries.get(8), entries.get(9)), visible);
+        assertEquals(Arrays.asList(entries.get(8), entries.get(9)), visible);
         assertEquals(entries.subList(10, 16), next);
     }
 
@@ -92,7 +101,7 @@ public class PreviewEnrichmentQueueTest {
             db.execSQL("INSERT INTO jobs VALUES('movie:1:test','movie',1,10,3,1234,0,2)");
             db.execSQL("INSERT INTO jobs VALUES('movie:2:test','movie',2,0,4,0,0,0)");
             db.execSQL("INSERT INTO jobs VALUES('tv:3:test','tv',3,10,2,0,0,0)");
-            java.util.Map<String, Integer> baseline = new java.util.HashMap<>();
+            Map<String, Integer> baseline = new HashMap<>();
             baseline.put("movie:1:test", PreviewEnrichmentQueue.CURRENT_PAGE);
             baseline.put("movie:2:test", PreviewEnrichmentQueue.CURRENT_PAGE);
             PreviewEnrichmentQueue.restorePagePriorities(db, baseline);
@@ -124,7 +133,7 @@ public class PreviewEnrichmentQueueTest {
             SQLiteDatabase db = helper.getWritableDatabase();
             db.execSQL("INSERT INTO jobs VALUES('movie:1:test','movie',1,5,1,0,0,0)");
             db.execSQL("INSERT INTO jobs VALUES('movie:2:test','movie',2,0,2,0,0,0)");
-            PreviewEnrichmentQueue.restorePagePriorities(db, java.util.Map.of("movie:1:test", 20));
+            PreviewEnrichmentQueue.restorePagePriorities(db, Map.of("movie:1:test", 20));
             try (Cursor rows = db.rawQuery("SELECT priority,stage FROM jobs ORDER BY media", null)) {
                 assertTrue(rows.moveToNext());
                 assertEquals(20, rows.getInt(0));
@@ -198,7 +207,7 @@ public class PreviewEnrichmentQueueTest {
     @Config(qualifiers = "w960dp-h540dp-land-mdpi")
     public void settledPreparationResolvesNestedHomeCardsAndClearsObsoleteFocus() {
         Context c = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+        PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -218,17 +227,17 @@ public class PreviewEnrichmentQueueTest {
             snapshot.recent.add(entry);
             page.setSnapshot(snapshot);
             PreviewPagesTest.layout(page);
-            android.view.View card = page.findViewWithTag(entry.key());
+            View card = page.findViewWithTag(entry.key());
             assertNotNull("Actual nested Recently Added card", card);
-            android.widget.Button outside = new android.widget.Button(host.get());
+            Button outside = new Button(host.get());
             ReflectionHelpers.callInstanceMethod(
-                page, "prepareDetails", ReflectionHelpers.ClassParameter.from(android.view.View.class, outside));
+                page, "prepareDetails", ReflectionHelpers.ClassParameter.from(View.class, outside));
             assertNull(ReflectionHelpers.getField(page, "preparingDetails"));
             ReflectionHelpers.callInstanceMethod(
-                page, "prepareDetails", ReflectionHelpers.ClassParameter.from(android.view.View.class, card));
+                page, "prepareDetails", ReflectionHelpers.ClassParameter.from(View.class, card));
             assertSame(entry, ReflectionHelpers.getField(page, "preparingDetails"));
             ReflectionHelpers.callInstanceMethod(
-                page, "prepareDetails", ReflectionHelpers.ClassParameter.from(android.view.View.class, outside));
+                page, "prepareDetails", ReflectionHelpers.ClassParameter.from(View.class, outside));
             assertNull("Pending old item cannot survive focus leaving media",
                 ReflectionHelpers.getField(page, "preparingDetails"));
         } finally {
@@ -240,7 +249,7 @@ public class PreviewEnrichmentQueueTest {
     @Config(qualifiers = "w960dp-h540dp-land-mdpi")
     public void leavingMediaForGlobalNavigationClearsPreparationAndReturningReschedules() {
         Context c = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+        PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -262,7 +271,7 @@ public class PreviewEnrichmentQueueTest {
             snapshot.recent.add(entry);
             page.setSnapshot(snapshot);
             PreviewPagesTest.layout(nav);
-            android.view.View card = page.findViewWithTag(entry.key());
+            View card = page.findViewWithTag(entry.key());
             assertNotNull(card);
             assertTrue("Real nested card takes focus", card.requestFocus());
             assertSame(entry, ReflectionHelpers.getField(page, "preparingDetails"));
