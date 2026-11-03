@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
@@ -21,10 +23,10 @@ import static org.junit.Assert.*;
 public class PreviewMatchFragmentTest {
     @Test public void negativeNativeSaveResultCannotReportAcceptedMatchSuccess()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
-        for(BaseTags tags:new BaseTags[]{org.mockito.Mockito.mock(MovieTags.class),org.mockito.Mockito.mock(EpisodeTags.class)}){
-            org.mockito.Mockito.when(tags.save(context,12L)).thenReturn(-1L);
+        for(BaseTags tags:new BaseTags[]{Mockito.mock(MovieTags.class),Mockito.mock(EpisodeTags.class)}){
+            Mockito.when(tags.save(context,12L)).thenReturn(-1L);
             try{ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);fail("Failed native save must remain a failed match");}catch(IOException expected){}
-            org.mockito.Mockito.when(tags.save(context,12L)).thenReturn(42L);
+            Mockito.when(tags.save(context,12L)).thenReturn(42L);
             ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);
         }
     }
@@ -39,7 +41,7 @@ public class PreviewMatchFragmentTest {
     }
     @Test public void previewViewSurvivesNativeSearchLifecycleWithoutStartingSpeech(){
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).commit();
-        org.robolectric.android.controller.ActivityController<FragmentActivity> host=Robolectric.buildActivity(FragmentActivity.class).setup();
+        ActivityController<FragmentActivity> host=Robolectric.buildActivity(FragmentActivity.class).setup();
         try{
             Fixture fragment=new Fixture();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();root.measure(View.MeasureSpec.makeMeasureSpec(960,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(540,View.MeasureSpec.EXACTLY));root.layout(0,0,960,540);
