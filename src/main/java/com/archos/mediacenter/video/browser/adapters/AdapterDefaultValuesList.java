@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 
+/** Supplies default artwork and layout dimensions for browser lists. */
 public enum AdapterDefaultValuesList implements AdapterDefaultValues {
 
     INSTANCE;
