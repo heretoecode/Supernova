@@ -16,6 +16,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks a changed staged backup is rejected before replacing live state. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class BackupStageRevalidationTest {
     @Test public void changedStagingCopyIsRefusedBeforeAnyLiveStateReplacement()throws Exception {
