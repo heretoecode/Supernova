@@ -97,6 +97,12 @@ public final class PreviewIcon extends Drawable {
             line(c, 18, 5, 22, 5, 22, 10, 17, 12);
             line(c, 12, 14, 12, 20);
             line(c, 8, 20, 16, 20, 17, 22, 7, 22, 8, 20);
+        } else if (kind.equals("scan")) {
+            // two circling arrows: scan for new videos
+            c.drawArc(4, 4, 20, 20, 200, 130, false, p);
+            c.drawArc(4, 4, 20, 20, 20, 130, false, p);
+            line(c, 18, 3, 18, 7, 14, 7);
+            line(c, 6, 21, 6, 17, 10, 17);
         } else if (kind.equals("history")) {
             c.drawArc(3, 3, 21, 21, -90, 290, false, p);
             line(c, 3, 4, 3, 10, 8, 10);

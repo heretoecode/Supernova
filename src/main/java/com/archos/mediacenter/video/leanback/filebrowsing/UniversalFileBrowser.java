@@ -201,7 +201,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             "Library Health, file browsing and compatibility options."
         };
         String[] icons = {
-            "local", "network", "plus", "settings.nodes", "refresh", "settings"
+            "local", "network", "plus", "settings.nodes", "scan", "settings"
         };
         landingCards.clear();
         for (int r = 0; r < 2; r++) {
