@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.archos.mediacenter.video.R;
 
+/** Displays a dialog for an unsupported Android SDK. */
 public class SDKNotSupportedDialogActivity extends FragmentActivity {
 
     @Override
