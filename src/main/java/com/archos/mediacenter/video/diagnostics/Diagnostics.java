@@ -1,10 +1,36 @@
 package com.archos.mediacenter.video.diagnostics;
 
 import android.app.*;
+import android.app.ApplicationExitInfo;
 import android.content.*;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Process;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import android.util.AtomicFile;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import androidx.preference.PreferenceManager;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import org.json.JSONObject;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -15,24 +41,24 @@ import java.util.zip.*;
 /** Bounded structured instrumentation. Never pass user text, headers or credentials here. */
 public final class Diagnostics {
     public static final String LEVEL = "supernova_diagnostic_level";
-    private static final java.util.concurrent.atomic.AtomicLong DROPPED = new java.util.concurrent.atomic.AtomicLong(),
+    private static final AtomicLong DROPPED = new AtomicLong(),
                                                                 WRITE_ERRORS =
-                                                                    new java.util.concurrent.atomic.AtomicLong(),
-                                                                SEQUENCE = new java.util.concurrent.atomic.AtomicLong();
+                                                                    new AtomicLong(),
+                                                                SEQUENCE = new AtomicLong();
     private static final DiagnosticFlightRecorder FLIGHT = new DiagnosticFlightRecorder(252 * 1024, 60000);
     private static String activeIncident;
     // Producer-time routing survives delayed writers and later manual/automatic windows.
     private static long captureUntil;
     private static String captureIncident;
     private static DiagnosticFlightRecorder.Capture captureFlight;
-    private static final java.util.concurrent.atomic.AtomicLong ROUTINE_REJECTED =
-                                                                    new java.util.concurrent.atomic.AtomicLong(),
+    private static final AtomicLong ROUTINE_REJECTED =
+                                                                    new AtomicLong(),
                                                                 IMPORTANT_REJECTED =
-                                                                    new java.util.concurrent.atomic.AtomicLong();
+                                                                    new AtomicLong();
     private static final Map<String, Long> incidentCounts = new HashMap<>();
     private static String incidentId = "";
     private static volatile boolean qa;
-    private static volatile long freezeUntil, mainAck = android.os.SystemClock.elapsedRealtime();
+    private static volatile long freezeUntil, mainAck = SystemClock.elapsedRealtime();
     private static volatile int foreground;
     private static final Set<String> COVERAGE = java.util.Collections.synchronizedSet(new TreeSet<>());
     private static final ScheduledExecutorService HEARTBEAT = Executors.newSingleThreadScheduledExecutor(r -> {
@@ -44,8 +70,8 @@ public final class Diagnostics {
     public static final String KEY = "supernova_diagnostic_logging";
     static final int LIMIT = 256 * 1024, ROTATIONS = 4;
     static final int STORAGE_LIMIT = 8 * 1024 * 1024;
-    private static final java.util.concurrent.atomic.AtomicLong RETENTION_PRUNED_BYTES =
-        new java.util.concurrent.atomic.AtomicLong();
+    private static final AtomicLong RETENTION_PRUNED_BYTES =
+        new AtomicLong();
     private static final Object LOCK = new Object();
     private static final Object EXPORT_LOCK = new Object();
     private static final ThreadPoolExecutor WORK =
@@ -106,7 +132,7 @@ public final class Diagnostics {
                 modalKinds = uiModalKinds;
                 media = uiMedia;
                 utc = System.currentTimeMillis();
-                elapsed = android.os.SystemClock.elapsedRealtime();
+                elapsed = SystemClock.elapsedRealtime();
                 modals = uiModals;
                 foregroundCount = foreground;
                 playbackSession = playback;
@@ -166,8 +192,8 @@ public final class Diagnostics {
                     genreSet.add(genre.trim());
             String digest = "none";
             if (!genreSet.isEmpty()) {
-                byte[] hash = java.security.MessageDigest.getInstance("SHA-256").digest(
-                    android.text.TextUtils.join("|", genreSet).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                byte[] hash = MessageDigest.getInstance("SHA-256").digest(
+                    TextUtils.join("|", genreSet).getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 StringBuilder value = new StringBuilder();
                 for (byte b : hash)
                     value.append(String.format(java.util.Locale.ROOT, "%02x", b));
@@ -225,9 +251,9 @@ public final class Diagnostics {
         if (context == null)
             return "unknown";
         try {
-            android.net.ConnectivityManager manager =
-                (android.net.ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            android.net.NetworkInfo active = manager == null ? null : manager.getActiveNetworkInfo();
+            ConnectivityManager manager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo active = manager == null ? null : manager.getActiveNetworkInfo();
             return active == null ? "disconnected" : active.isConnected() ? "connected" : "disconnected";
         } catch (RuntimeException unavailable) {
             return "unknown";
@@ -236,7 +262,7 @@ public final class Diagnostics {
 
     private static volatile String lastOperation = "startup";
     private static SharedPreferences sessionState;
-    private static final Map<Activity, android.view.ViewTreeObserver.OnGlobalFocusChangeListener> FOCUS =
+    private static final Map<Activity, ViewTreeObserver.OnGlobalFocusChangeListener> FOCUS =
         new WeakHashMap<>();
 
     static SharedPreferences processSessionState(Context c, String processName) {
@@ -245,7 +271,7 @@ public final class Diagnostics {
     }
 
     private static String currentProcessName(Context c) {
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
+        if (Build.VERSION.SDK_INT >= 28) {
             String name = Application.getProcessName();
             if (name != null && !name.isEmpty())
                 return name;
@@ -257,11 +283,11 @@ public final class Diagnostics {
                 manager.getRunningAppProcesses();
             if (processes != null)
                 for (android.app.ActivityManager.RunningAppProcessInfo process : processes)
-                    if (process.pid == android.os.Process.myPid())
+                    if (process.pid == Process.myPid())
                         return process.processName;
         }
         // Unknown roles must not overwrite another process's crash/clean marker.
-        return "unknown_" + android.os.Process.myPid();
+        return "unknown_" + Process.myPid();
     }
 
     public static void install(Application app) {
@@ -285,7 +311,7 @@ public final class Diagnostics {
                     sessionState.getString("last_focus", "unknown"));
             sessionState.edit()
                 .putString("process", PROCESS)
-                .putInt("pid", android.os.Process.myPid())
+                .putInt("pid", Process.myPid())
                 .putBoolean("clean", false)
                 .apply();
         }
@@ -295,7 +321,7 @@ public final class Diagnostics {
                 if (enabled) {
                     System.err.println("Supernova uncaught exception: " + trace(error));
                     String line = record("uncaught_exception", "thread", thread.getName(), "trace", trace(error));
-                    FLIGHT.add(android.os.SystemClock.elapsedRealtime(), line);
+                    FLIGHT.add(SystemClock.elapsedRealtime(), line);
                     write(line, playback);
                     writeImportant(line);
                     freeze("uncaught_exception");
@@ -304,7 +330,7 @@ public final class Diagnostics {
                 if (previous != null)
                     previous.uncaughtException(thread, error);
                 else {
-                    android.os.Process.killProcess(android.os.Process.myPid());
+                    Process.killProcess(Process.myPid());
                     System.exit(10);
                 }
             }
@@ -324,19 +350,19 @@ public final class Diagnostics {
                 life(a, "started");
             }
             public void onActivityResumed(Activity a) {
-                mainAck = android.os.SystemClock.elapsedRealtime();
+                mainAck = SystemClock.elapsedRealtime();
                 resumeUi(a);
                 life(a, "resumed");
                 if (enabled && sessionState != null)
                     sessionState.edit().putBoolean("clean", false).apply();
-                android.view.ViewTreeObserver.OnGlobalFocusChangeListener listener = (old, next) -> {
+                ViewTreeObserver.OnGlobalFocusChangeListener listener = (old, next) -> {
                     uiFocus = viewId(next);
                     if (enabled && sessionState != null)
                         sessionState.edit()
                             .putString("last_screen", a.getClass().getSimpleName())
                             .putString("last_focus", uiFocus)
                             .apply();
-                    long now = android.os.SystemClock.elapsedRealtime();
+                    long now = SystemClock.elapsedRealtime();
                     if (!enabled || now - focusAt < 100)
                         return;
                     focusAt = now;
@@ -350,7 +376,7 @@ public final class Diagnostics {
             public void onActivityPaused(Activity a) {
                 life(a, "paused");
                 pauseUi(a);
-                android.view.ViewTreeObserver.OnGlobalFocusChangeListener l = FOCUS.remove(a);
+                ViewTreeObserver.OnGlobalFocusChangeListener l = FOCUS.remove(a);
                 if (l != null)
                     a.getWindow().getDecorView().getViewTreeObserver().removeOnGlobalFocusChangeListener(l);
             }
@@ -379,7 +405,7 @@ public final class Diagnostics {
         if (enabled)
             HEARTBEAT.execute(Diagnostics::previousExitEvidence);
         event("startup", "default_logging", defaultEnabled(), "version",
-            com.archos.mediacenter.video.BuildConfig.VERSION_NAME, "sdk", android.os.Build.VERSION.SDK_INT);
+            com.archos.mediacenter.video.BuildConfig.VERSION_NAME, "sdk", Build.VERSION.SDK_INT);
     }
 
     private static String viewId(View view) {
@@ -402,14 +428,14 @@ public final class Diagnostics {
         if (view.getId() != View.NO_ID)
             try {
                 id = view.getResources().getResourceEntryName(view.getId());
-            } catch (android.content.res.Resources.NotFoundException ignored) {
+            } catch (Resources.NotFoundException ignored) {
             }
         // Programmatic TV controls often have no resource ID. Structural child
         // positions distinguish them without recording titles or user-entered text.
         StringBuilder position = new StringBuilder();
         View cursor = view;
-        for (int depth = 0; depth < 4 && cursor.getParent() instanceof android.view.ViewGroup; depth++) {
-            android.view.ViewGroup parent = (android.view.ViewGroup) cursor.getParent();
+        for (int depth = 0; depth < 4 && cursor.getParent() instanceof ViewGroup; depth++) {
+            ViewGroup parent = (ViewGroup) cursor.getParent();
             position.insert(0, "/" + parent.indexOfChild(cursor));
             cursor = parent;
         }
@@ -465,7 +491,7 @@ public final class Diagnostics {
     private static int unhandledNavigation;
 
     public static void navigation(View previous, View next, int key, boolean consumed) {
-        if (!enabled || key < android.view.KeyEvent.KEYCODE_DPAD_UP || key > android.view.KeyEvent.KEYCODE_DPAD_CENTER)
+        if (!enabled || key < KeyEvent.KEYCODE_DPAD_UP || key > KeyEvent.KEYCODE_DPAD_CENTER)
             return;
         event("focus_navigation", "screen", uiScreen, "input", key, "from", viewId(previous), "to", viewId(next),
             "consumed", consumed, "edge_held", previous == next && consumed);
@@ -473,11 +499,11 @@ public final class Diagnostics {
             event("focus_anomaly_suspected", "kind", "missing_focus", "screen", uiScreen, "input", key);
             return;
         }
-        android.graphics.Rect bounds = new android.graphics.Rect();
+        Rect bounds = new Rect();
         boolean visible = next.getGlobalVisibleRect(bounds);
         if (!visible || bounds.width() <= 0 || bounds.height() <= 0)
             event("focus_anomaly_suspected", "kind", "offscreen_focus", "screen", uiScreen, "target", viewId(next));
-        if (previous == next && !consumed && key != android.view.KeyEvent.KEYCODE_DPAD_CENTER) {
+        if (previous == next && !consumed && key != KeyEvent.KEYCODE_DPAD_CENTER) {
             if (++unhandledNavigation == 4)
                 event("focus_anomaly_suspected", "kind", "repeated_unhandled_navigation", "screen", uiScreen, "target",
                     viewId(next));
@@ -489,7 +515,7 @@ public final class Diagnostics {
         if (!enabled || target instanceof com.archos.mediacenter.video.leanback.PreviewPages
             || !target.isAttachedToWindow() || !target.hasFocus() || target.getWidth() == 0 || target.getHeight() == 0)
             return;
-        android.graphics.Rect visible = new android.graphics.Rect();
+        Rect visible = new Rect();
         if (!target.getGlobalVisibleRect(visible))
             return;
         // Sample after focus scrolling settles. Small rounding and deliberate card zoom are ignored.
@@ -499,7 +525,7 @@ public final class Diagnostics {
                 target.getWidth(), "control_height", target.getHeight(), "evidence", "geometry_heuristic");
         View header = target.getRootView().findViewWithTag("semantic:topnav.home");
         if (header != null && !viewId(target).startsWith("semantic:topnav.")) {
-            android.graphics.Rect navigation = new android.graphics.Rect();
+            Rect navigation = new Rect();
             if (header.getGlobalVisibleRect(navigation) && visible.top < navigation.bottom
                 && visible.bottom > navigation.top)
                 event("focus_anomaly_suspected", "kind", "navigation_overlap", "target", viewId(target), "evidence",
@@ -528,7 +554,7 @@ public final class Diagnostics {
             enabled = value;
         }
         installTransportReads();
-        mainAck = android.os.SystemClock.elapsedRealtime();
+        mainAck = SystemClock.elapsedRealtime();
         if (!value) {
             FLIGHT.clear();
             captureUntil = 0;
@@ -538,7 +564,7 @@ public final class Diagnostics {
         if (sessionState != null)
             sessionState.edit()
                 .putString("process", PROCESS)
-                .putInt("pid", android.os.Process.myPid())
+                .putInt("pid", Process.myPid())
                 .putBoolean("clean", !value)
                 .apply();
         if (value)
@@ -563,7 +589,7 @@ public final class Diagnostics {
         file.delete();
     }
 
-    public static void chooseDisable(Context c, java.util.function.Consumer<Boolean> changed) {
+    public static void chooseDisable(Context c, Consumer<Boolean> changed) {
         com.archos.mediacenter.video.leanback.PreviewDialog.choose(c, "Turn diagnostic logging off?",
             new String[] {
                 "Cancel", "Keep saved logs", "Delete saved logs"
@@ -575,7 +601,7 @@ public final class Diagnostics {
             });
     }
 
-    public static void beginPlayback(android.net.Uri source) {
+    public static void beginPlayback(Uri source) {
         playback = UUID.randomUUID().toString();
         event("playback_begin", "source", sourceType(source));
     }
@@ -585,7 +611,7 @@ public final class Diagnostics {
         playback = "";
     }
 
-    public static String sourceType(android.net.Uri uri) {
+    public static String sourceType(Uri uri) {
         if (uri == null)
             return "unknown";
         String scheme = uri.getScheme();
@@ -647,7 +673,7 @@ public final class Diagnostics {
             this.parent = parent == null ? "" : parent.id;
             playbackSession = playback;
             id = PROCESS + ":playback:" + SEQUENCE.incrementAndGet();
-            started = android.os.SystemClock.elapsedRealtime();
+            started = SystemClock.elapsedRealtime();
             this.target = Math.max(-1, target);
         }
     }
@@ -672,7 +698,7 @@ public final class Diagnostics {
                 "playback_session", attempt.playbackSession, "operation", attempt.operation.name(), "boundary",
                 boundary.name(), "outcome", outcome.name(), "measurement_quality", quality.name(), "target_ms",
                 attempt.target, "achieved_ms", Math.max(-1, achieved), "backend", backend, "attempt_elapsed_ms",
-                Math.max(0, android.os.SystemClock.elapsedRealtime() - attempt.started));
+                Math.max(0, SystemClock.elapsedRealtime() - attempt.started));
         }
     }
 
@@ -688,7 +714,7 @@ public final class Diagnostics {
             return;
         try {
             String line = record(event, fields), session = playback;
-            long now = android.os.SystemClock.elapsedRealtime();
+            long now = SystemClock.elapsedRealtime();
             FLIGHT.add(now, line);
             if (COVERAGE.size() < 256)
                 COVERAGE.add(event);
@@ -763,7 +789,7 @@ public final class Diagnostics {
                 File dir = directory();
                 if (!dir.isDirectory() && !dir.mkdirs())
                     return;
-                java.text.SimpleDateFormat day = new java.text.SimpleDateFormat("yyyyMMdd", Locale.ROOT);
+                SimpleDateFormat day = new SimpleDateFormat("yyyyMMdd", Locale.ROOT);
                 day.setTimeZone(TimeZone.getTimeZone("UTC"));
                 append(dir, "important-" + day.format(new Date()) + ".jsonl", 3, line.getBytes(StandardCharsets.UTF_8));
                 long oldest = System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000;
@@ -819,10 +845,10 @@ public final class Diagnostics {
 
     public static void finishOperation(String id, String kind, long started) {
         event("operation_end", "operation_id", id, "kind", kind, "latency_ms",
-            android.os.SystemClock.elapsedRealtime() - started);
+            SystemClock.elapsedRealtime() - started);
     }
 
-    private static long lastStall, lastCpu = android.os.Process.getElapsedCpuTime();
+    private static long lastStall, lastCpu = Process.getElapsedCpuTime();
     private static int trendSamples;
     private static long heapMin = Long.MAX_VALUE, heapMax, heapTotal, nativeMax;
 
@@ -830,19 +856,19 @@ public final class Diagnostics {
         try {
             if (!enabled || context == null)
                 return;
-            long now = android.os.SystemClock.elapsedRealtime();
+            long now = SystemClock.elapsedRealtime();
             if (foreground > 0 && now - mainAck > 15000 && now - lastStall > 60000) {
                 lastStall = now;
-                Thread main = android.os.Looper.getMainLooper().getThread();
+                Thread main = Looper.getMainLooper().getThread();
                 event("main_thread_stall_suspected", "unresponsive_ms", now - mainAck, "screen", uiScreen, "focus",
                     uiFocus, "trace", stack(main.getStackTrace()), "evidence", "watchdog_heuristic");
             }
-            new android.os.Handler(android.os.Looper.getMainLooper())
-                .post(() -> mainAck = android.os.SystemClock.elapsedRealtime());
+            new Handler(Looper.getMainLooper())
+                .post(() -> mainAck = SystemClock.elapsedRealtime());
             Runtime runtime = Runtime.getRuntime();
             long heap = runtime.totalMemory() - runtime.freeMemory(),
-                 nativeHeap = android.os.Debug.getNativeHeapAllocatedSize(),
-                 cpu = android.os.Process.getElapsedCpuTime();
+                 nativeHeap = Debug.getNativeHeapAllocatedSize(),
+                 cpu = Process.getElapsedCpuTime();
             heapMin = Math.min(heapMin, heap);
             heapMax = Math.max(heapMax, heap);
             heapTotal += heap;
@@ -856,11 +882,11 @@ public final class Diagnostics {
                 qa ? "QA_SOAK" : "NORMAL");
             lastCpu = cpu;
             if (trendSamples >= 6) {
-                android.os.Debug.MemoryInfo memory = new android.os.Debug.MemoryInfo();
-                android.os.Debug.getMemoryInfo(memory);
+                Debug.MemoryInfo memory = new Debug.MemoryInfo();
+                Debug.getMemoryInfo(memory);
                 event("performance_trend", "samples", trendSamples, "heap_min", heapMin, "heap_max", heapMax,
                     "heap_average", heapTotal / trendSamples, "native_max", nativeMax, "pss_kb", memory.getTotalPss(),
-                    "gc_count", android.os.Debug.getRuntimeStat("art.gc.gc-count"), "classification",
+                    "gc_count", Debug.getRuntimeStat("art.gc.gc-count"), "classification",
                     "observed_trend_not_leak_diagnosis");
                 heapMin = Long.MAX_VALUE;
                 heapMax = heapTotal = nativeMax = 0;
@@ -884,13 +910,13 @@ public final class Diagnostics {
     }
 
     private static void previousExitEvidence() {
-        if (!enabled || android.os.Build.VERSION.SDK_INT < 30)
+        if (!enabled || Build.VERSION.SDK_INT < 30)
             return;
         try {
             android.app.ActivityManager manager =
                 (android.app.ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             long since = sessionState.getLong("exit_evidence_time", 0), latest = since;
-            for (android.app.ApplicationExitInfo info :
+            for (ApplicationExitInfo info :
                 manager.getHistoricalProcessExitReasons(context.getPackageName(), 0, 4)) {
                 if (info.getTimestamp() <= since)
                     continue;
@@ -899,11 +925,11 @@ public final class Diagnostics {
                     info.getImportance(), "pss_kb", info.getPss(), "rss_kb", info.getRss(), "exit_utc_ms",
                     info.getTimestamp(), "exit_pid", info.getPid(), "evidence", "android_os");
                 // OS ANR/native trace streams may contain file paths and account data. Export bounded method frames only.
-                if (info.getReason() == android.app.ApplicationExitInfo.REASON_ANR)
+                if (info.getReason() == ApplicationExitInfo.REASON_ANR)
                     try (java.io.InputStream input = info.getTraceInputStream()) {
                         if (input != null) {
-                            java.io.BufferedReader reader = new java.io.BufferedReader(
-                                new java.io.InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
+                            BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
                             String line;
                             StringBuilder frames = new StringBuilder();
                             int bytes = 0, count = 0;
@@ -930,7 +956,7 @@ public final class Diagnostics {
     }
 
     private static synchronized void freeze(String reason) {
-        freeze(reason, new UiSnapshot(), FLIGHT.capture(android.os.SystemClock.elapsedRealtime()));
+        freeze(reason, new UiSnapshot(), FLIGHT.capture(SystemClock.elapsedRealtime()));
     }
 
     private static synchronized void freeze(String reason, UiSnapshot state, DiagnosticFlightRecorder.Capture flight) {
@@ -960,7 +986,7 @@ public final class Diagnostics {
             state.operation, "reason", reason, "completeness", retained.isEmpty() ? "RECOVERY_DATA_MISSING" : "PARTIAL",
             "dropped", DROPPED.get(), "write_errors", WRITE_ERRORS.get(), "flight_evicted", flight.evicted,
             "post_window_until_elapsed_ms", state.elapsed + 60000, "captured_elapsed_ms", flight.elapsed,
-            "writer_delay_ms", Math.max(0, android.os.SystemClock.elapsedRealtime() - flight.elapsed));
+            "writer_delay_ms", Math.max(0, SystemClock.elapsedRealtime() - flight.elapsed));
         synchronized (LOCK) {
             try {
                 if (!enabled)
@@ -974,7 +1000,7 @@ public final class Diagnostics {
                 // Append protected copies instead of replacing the previous incident window.
                 // Manual windows have a separate daily budget from automatic failures.
                 append(dir, activeIncident, 3, (incident + snapshot + retained).getBytes(StandardCharsets.UTF_8));
-                android.util.AtomicFile file = new android.util.AtomicFile(new File(dir, "flight.jsonl"));
+                AtomicFile file = new AtomicFile(new File(dir, "flight.jsonl"));
                 FileOutputStream out = null;
                 try {
                     out = file.startWrite();
@@ -997,7 +1023,7 @@ public final class Diagnostics {
     }
 
     static String incidentContext(String reason, UiSnapshot state) {
-        long sampledUtc = System.currentTimeMillis(), sampledElapsed = android.os.SystemClock.elapsedRealtime();
+        long sampledUtc = System.currentTimeMillis(), sampledElapsed = SystemClock.elapsedRealtime();
         long available = -1;
         boolean lowMemory = false;
         try {
@@ -1020,12 +1046,12 @@ public final class Diagnostics {
             "active_filters", state.filters, "filter_state", state.filterDetails, "media_id", state.media,
             "modal_depth", state.modals, "modal_kinds", state.modalKinds, "heap_used",
             runtime.totalMemory() - runtime.freeMemory(), "heap_max", runtime.maxMemory(), "native_heap",
-            android.os.Debug.getNativeHeapAllocatedSize(), "available_memory", available, "low_memory", lowMemory,
+            Debug.getNativeHeapAllocatedSize(), "available_memory", available, "low_memory", lowMemory,
             "storage_free", context.getFilesDir().getUsableSpace(), "thread_count", Thread.activeCount());
     }
 
     private static String incidentFile(boolean manual, long utc) {
-        java.text.SimpleDateFormat day = new java.text.SimpleDateFormat("yyyyMMdd", Locale.ROOT);
+        SimpleDateFormat day = new SimpleDateFormat("yyyyMMdd", Locale.ROOT);
         day.setTimeZone(TimeZone.getTimeZone("UTC"));
         return "incident-" + (manual ? "manual-" : "auto-") + day.format(new Date(utc)) + ".jsonl";
     }
@@ -1086,7 +1112,7 @@ public final class Diagnostics {
     public static void showDigest(Context c) {
         WORK.execute(() -> {
             String digest = summary();
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 if (c instanceof Activity && (((Activity) c).isFinishing() || ((Activity) c).isDestroyed()))
                     return;
                 com.archos.mediacenter.video.leanback.PreviewDialog.read(c, "Issues Digest", digest);
@@ -1114,12 +1140,12 @@ public final class Diagnostics {
                 c, title, "The saved reference is unavailable. Record a new problem to create a reference.");
             return;
         }
-        java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS 'UTC'", Locale.UK);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS 'UTC'", Locale.UK);
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         String confirmation = "Reference: " + id + "\nCategory: " + category
             + "\nTime: " + format.format(new Date(time))
             + "\n\nUse this reference with your screenshot or video. Export Diagnostic Report to preserve the evidence.";
-        android.graphics.Bitmap qr = null;
+        Bitmap qr = null;
         try {
             qr = DiagnosticReference.bitmap(id, category, time, 512);
         } catch (com.google.zxing.WriterException | RuntimeException failure) {
@@ -1173,10 +1199,10 @@ public final class Diagnostics {
         try {
             JSONObject json = new JSONObject();
             json.put("utc_ms", System.currentTimeMillis());
-            json.put("elapsed_ms", android.os.SystemClock.elapsedRealtime());
+            json.put("elapsed_ms", SystemClock.elapsedRealtime());
             json.put("severity", severity(event));
             json.put("sequence", SEQUENCE.incrementAndGet());
-            json.put("pid", android.os.Process.myPid());
+            json.put("pid", Process.myPid());
             json.put("last_operation", capturedOperation);
             json.put("process", PROCESS);
             json.put("session", capturedSession);
@@ -1335,11 +1361,11 @@ public final class Diagnostics {
                     info.put("version_code", com.archos.mediacenter.video.BuildConfig.VERSION_CODE);
                     info.put("source_commit", com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA);
                     info.put("build_utc", com.archos.mediacenter.video.BuildConfig.PREVIEW_BUILD_UTC);
-                    info.put("manufacturer", safe(android.os.Build.MANUFACTURER));
-                    info.put("model", safe(android.os.Build.MODEL));
-                    info.put("android_release", safe(android.os.Build.VERSION.RELEASE));
-                    info.put("sdk", android.os.Build.VERSION.SDK_INT);
-                    info.put("abis", Arrays.toString(android.os.Build.SUPPORTED_ABIS));
+                    info.put("manufacturer", safe(Build.MANUFACTURER));
+                    info.put("model", safe(Build.MODEL));
+                    info.put("android_release", safe(Build.VERSION.RELEASE));
+                    info.put("sdk", Build.VERSION.SDK_INT);
+                    info.put("abis", Arrays.toString(Build.SUPPORTED_ABIS));
                     info.put("logging_enabled", enabled);
                     info.put("utc_ms", System.currentTimeMillis());
                 } catch (org.json.JSONException failure) {
@@ -1348,8 +1374,8 @@ public final class Diagnostics {
                 entry(zip, "build-device.json", info.toString(2).getBytes(StandardCharsets.UTF_8));
                 StringBuilder decoders = new StringBuilder();
                 try {
-                    for (android.media.MediaCodecInfo codec :
-                        new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())
+                    for (MediaCodecInfo codec :
+                        new MediaCodecList(MediaCodecList.ALL_CODECS).getCodecInfos())
                         if (!codec.isEncoder())
                             decoders.append(safe(codec.getName()))
                                 .append(" ")
@@ -1463,7 +1489,7 @@ public final class Diagnostics {
             + "\nBuild: " + com.archos.mediacenter.video.BuildConfig.VERSION_NAME
             + "\nSource: " + com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA
             + "\nPlayback sessions retained: " + sessions.size() + "\nEvent counts: " + counts
-            + "\nRecent significant events (UTC milliseconds):\n" + android.text.TextUtils.join("\n", timeline)
+            + "\nRecent significant events (UTC milliseconds):\n" + TextUtils.join("\n", timeline)
             + "\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
     }
 
