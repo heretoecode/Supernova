@@ -13,6 +13,8 @@ import android.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.details.PreviewMediaInfo;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import java.io.Serializable;
 import org.json.*;
@@ -165,7 +167,7 @@ public final class SharedMetadata {
             JSONObject ratings = PreviewMetadataCache.read(
                 c, kind, entry.onlineId, kind.equals("tv") ? "content_ratings" : "release_dates");
             String local = certificate(ratings == null ? null : ratings.optJSONObject("data"),
-                com.archos.mediacenter.video.streaming.StreamingRepository.country(c));
+                StreamingRepository.country(c));
             if (!local.isEmpty())
                 facts.certificate = local;
         }
@@ -228,7 +230,7 @@ public final class SharedMetadata {
             badges.add(subtitleLabel(sdh, captions));
         if (ad)
             badges.add("AD");
-        for (String local : com.archos.mediacenter.video.utils.SubtitleDiscovery.localBadges(c, video))
+        for (String local : SubtitleDiscovery.localBadges(c, video))
             if (!badges.contains(local)
                 && !(local.equals("Subtitles")
                     && (badges.contains("SDH") || badges.contains("Captions") || badges.contains("Captions/SDH"))))
