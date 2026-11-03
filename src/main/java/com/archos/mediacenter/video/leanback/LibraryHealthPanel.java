@@ -8,6 +8,9 @@ import android.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.details.*;
+import com.archos.mediaprovider.ImportState;
+import com.archos.mediaprovider.video.LoaderUtils;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.util.*;
 import com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity;
 
@@ -53,7 +56,7 @@ public final class LibraryHealthPanel {
             return;
         }
         SharedPreferences health =
-            context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0);
+            context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
         if (category == 4) {
             int count = 0;
             for (String key : health.getAll().keySet())
@@ -72,9 +75,9 @@ public final class LibraryHealthPanel {
                 empty();
             return;
         }
-        boolean importing = com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()
-            || com.archos.mediaprovider.ImportState.VIDEO.isRegularImport()
-            || com.archos.mediaprovider.video.LoaderUtils.getScrapeInProgress();
+        boolean importing = ImportState.VIDEO.isInitialImport()
+            || ImportState.VIDEO.isRegularImport()
+            || LoaderUtils.getScrapeInProgress();
         int count = 0;
         for (Entry entry : snapshot.technical) {
             if (!(entry.media instanceof Video))
@@ -119,7 +122,7 @@ public final class LibraryHealthPanel {
     private void review(Video video, int category) {
         information(video.getName(),
             "Filename\n" + video.getFilenameNonCryptic() + "\n\nLocation\n"
-                + com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(video.getFileUri())
+                + SupernovaLibraryPolicy.canonical(video.getFileUri())
                 + "\n\nMatch Status\n" + (video instanceof Movie || video instanceof Episode ? "Matched" : "Unmatched")
                 + "\n\nAvailability\n" + LibraryHealth.message(LibraryHealth.state(context, video)));
         right.addView(action("View Details",
@@ -132,7 +135,7 @@ public final class LibraryHealthPanel {
                         .putExtra(ManualVideoScrappingActivity.EXTRA_VIDEO, video))));
         if (category == 1)
             right.addView(action("Match Is Correct", () -> {
-                context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+                context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
                     .edit()
                     .remove("incorrect:" + video.getId())
                     .apply();
