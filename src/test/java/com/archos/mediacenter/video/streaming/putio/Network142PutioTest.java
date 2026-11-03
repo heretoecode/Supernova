@@ -9,7 +9,9 @@ import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import java.util.*;
 import java.util.concurrent.*;
@@ -19,7 +21,7 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 public class Network142PutioTest {
-    private org.robolectric.android.controller.ActivityController<Activity> host;
+    private ActivityController<Activity> host;
     private UniversalFileBrowser browser;
     private PutioBrowserController controller;
 
@@ -112,7 +114,7 @@ public class Network142PutioTest {
         release.countDown();
         drain();
         assertNull(browser.findViewWithTag("semantic:putio.file.10"));
-        Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog dialog = ShadowDialog.getLatestDialog();
         assertTrue(dialog == null || !dialog.isShowing());
     }
 
@@ -128,7 +130,7 @@ public class Network142PutioTest {
         assertTrue("Navigation re-entry chooses the visible provider toolbar control",
             browser.findViewWithTag("browser.provider_options").hasFocus());
         browser.findViewWithTag("browser.provider_options").performClick();
-        Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog dialog = ShadowDialog.getLatestDialog();
         assertTrue(dialog.isShowing());
         controller.close();
         assertFalse(dialog.isShowing());
