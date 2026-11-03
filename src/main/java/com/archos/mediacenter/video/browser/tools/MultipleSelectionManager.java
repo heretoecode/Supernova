@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.browser.tools;
 
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.Menu;
@@ -25,7 +24,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.view.ActionMode;
-import androidx.core.view.MenuItemCompat;
 import androidx.preference.PreferenceManager;
 
 import com.archos.filecorelibrary.FileUtils;
