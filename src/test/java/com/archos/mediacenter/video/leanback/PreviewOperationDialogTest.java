@@ -3,16 +3,19 @@ package com.archos.mediacenter.video.leanback;
 import android.app.*;
 import android.os.Looper;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowToast;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewOperationDialogTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void completionDismissalDoesNotCancelTheOperation(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();AtomicInteger cancelled=new AtomicInteger();
         Dialog dialog=PreviewOperationDialog.show(host,"Download Subtitles","Downloading…",cancelled::incrementAndGet);
@@ -31,7 +34,7 @@ public class PreviewOperationDialogTest {
         Dialog dialog=PreviewOperationDialog.notice(host,"Download Subtitles","No subtitles found.",closed::incrementAndGet);
         assertEquals("semantic:operation:close",dialog.getCurrentFocus().getTag());
         assertNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(),"Copy"));
-        int before=org.robolectric.shadows.ShadowToast.shownToastCount();dialog.getCurrentFocus().performClick();
-        Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(1,closed.get());assertEquals(before,org.robolectric.shadows.ShadowToast.shownToastCount());
+        int before=ShadowToast.shownToastCount();dialog.getCurrentFocus().performClick();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();assertEquals(1,closed.get());assertEquals(before,ShadowToast.shownToastCount());
     }
 }
