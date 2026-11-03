@@ -30,6 +30,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 
 public class CredentialsEditorDialog extends DialogFragment {
 
@@ -89,7 +90,7 @@ public class CredentialsEditorDialog extends DialogFragment {
         })
         .setNegativeButton(getText(android.R.string.cancel), null)
         .create();
-        dialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(dialog));
+        dialog.setOnShowListener(ignored -> PreviewDialog.styleNative(dialog));
         return dialog;
     }
 
