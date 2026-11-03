@@ -3,6 +3,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.ImageView;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 import com.archos.mediascraper.*;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import org.json.*;
@@ -70,13 +72,13 @@ final class PreviewPeople {
         if (!path.matches("/[A-Za-z0-9._-]+"))
             return;
         Uri uri = Uri.parse("https://image.tmdb.org/t/p/w185" + path);
-        com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(view, uri, media, "details.people", "portrait",
+        ArtworkRequest.load(view, uri, media, "details.people", "portrait",
             Picasso.get()
                 .load(uri)
                 .fit()
                 .centerCrop()
-                .placeholder(com.archos.mediacenter.video.R.drawable.preview_person)
-                .error(com.archos.mediacenter.video.R.drawable.preview_person),
+                .placeholder(R.drawable.preview_person)
+                .error(R.drawable.preview_person),
             true);
     }
 }
