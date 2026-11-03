@@ -17,9 +17,19 @@ public final class PreviewFocusRail extends LinearLayout {
     private ValueAnimator movement;
     private boolean visible;
     private boolean underline;
-    private boolean animateMovement=true;
-    public void setAnimateFocus(boolean animate){animateMovement=animate;moveTo(findFocus());}
-    public void useUnderline(){underline=true;moveTo(findFocus());invalidate();}
+    private boolean animateMovement = true;
+
+    public void setAnimateFocus(boolean animate) {
+        animateMovement = animate;
+        moveTo(findFocus());
+    }
+
+    public void useUnderline() {
+        underline = true;
+        moveTo(findFocus());
+        invalidate();
+    }
+
     private final ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, next) -> moveTo(next);
 
     public PreviewFocusRail(Context context) {
@@ -35,7 +45,8 @@ public final class PreviewFocusRail extends LinearLayout {
     }
 
     private void moveTo(View next) {
-        if (movement != null) movement.cancel();
+        if (movement != null)
+            movement.cancel();
         if (next == null || next.getParent() != this) {
             visible = false;
             invalidate();
@@ -45,9 +56,10 @@ public final class PreviewFocusRail extends LinearLayout {
         next.getDrawingRect(bounds);
         offsetDescendantRectToMyCoords(next, bounds);
         RectF destination = new RectF(bounds);
-        if(underline){
-            destination.left+=next.getPaddingLeft();destination.right-=next.getPaddingRight();
-            destination.top=destination.bottom-2*getResources().getDisplayMetrics().density;
+        if (underline) {
+            destination.left += next.getPaddingLeft();
+            destination.right -= next.getPaddingRight();
+            destination.top = destination.bottom - 2 * getResources().getDisplayMetrics().density;
         }
         if (!animateMovement || !visible || current.isEmpty()) {
             current.set(destination);
@@ -59,34 +71,44 @@ public final class PreviewFocusRail extends LinearLayout {
         movement = ValueAnimator.ofFloat(0f, 1f);
         movement.setDuration(160);
         movement.addUpdateListener(animation -> {
-            float progress = (float) animation.getAnimatedValue();
+            float progress = (float)animation.getAnimatedValue();
             current.set(origin.left + (destination.left - origin.left) * progress,
-                    origin.top + (destination.top - origin.top) * progress,
-                    origin.right + (destination.right - origin.right) * progress,
-                    origin.bottom + (destination.bottom - origin.bottom) * progress);
+                        origin.top + (destination.top - origin.top) * progress,
+                        origin.right + (destination.right - origin.right) * progress,
+                        origin.bottom + (destination.bottom - origin.bottom) * progress);
             invalidate();
         });
         movement.start();
     }
 
-    @Override protected void dispatchDraw(Canvas canvas) {
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
         if (visible) {
-            boundary.setBounds(Math.round(current.left), Math.round(current.top),
-                    Math.round(current.right), Math.round(current.bottom));
-            if(underline){android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);paint.setColor(PreviewAccent.color(getContext()));canvas.drawRoundRect(current,getResources().getDisplayMetrics().density,getResources().getDisplayMetrics().density,paint);}else boundary.draw(canvas);
+            boundary.setBounds(Math.round(current.left), Math.round(current.top), Math.round(current.right),
+                               Math.round(current.bottom));
+            if (underline) {
+                android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                paint.setColor(PreviewAccent.color(getContext()));
+                canvas.drawRoundRect(current, getResources().getDisplayMetrics().density,
+                                     getResources().getDisplayMetrics().density, paint);
+            } else
+                boundary.draw(canvas);
         }
     }
 
-    @Override protected void onAttachedToWindow() {
+    @Override
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
         post(() -> moveTo(findFocus()));
     }
 
-    @Override protected void onDetachedFromWindow() {
+    @Override
+    protected void onDetachedFromWindow() {
         getViewTreeObserver().removeOnGlobalFocusChangeListener(focusListener);
-        if (movement != null) movement.cancel();
+        if (movement != null)
+            movement.cancel();
         visible = false;
         super.onDetachedFromWindow();
     }
