@@ -2,13 +2,13 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import android.content.*;
+import android.database.sqlite.SQLiteDatabase;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.*;
 import org.json.*;
@@ -207,8 +207,8 @@ public class LogicalBackupExporterTest {
     public void settingsOnlyExportDoesNotOpenOrMigrateAnIncompatibleMediaStore() throws Exception {
         seed();
         try (
-            var db = android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),
-                null, android.database.sqlite.SQLiteDatabase.OPEN_READWRITE)) {
+            var db = SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),
+                null, SQLiteDatabase.OPEN_READWRITE)) {
             db.setVersion(900);
         }
         File file = LogicalBackupExporter.preparePrivate(app, Set.of(BackupCategory.APPEARANCE), () -> false);
@@ -219,8 +219,8 @@ public class LogicalBackupExporterTest {
         } catch (IOException expected) {
         }
         try (
-            var db = android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),
-                null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY)) {
+            var db = SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),
+                null, SQLiteDatabase.OPEN_READONLY)) {
             assertEquals(900, db.getVersion());
         }
     }
