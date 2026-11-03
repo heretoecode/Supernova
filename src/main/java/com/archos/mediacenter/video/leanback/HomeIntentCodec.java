@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import com.archos.mediacenter.video.utils.backup.PortableTitleReferences;
 import java.util.*;
@@ -51,7 +52,7 @@ public final class HomeIntentCodec {
             rows.put(item);
         }
         String saved =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString(PENDING, null);
+            PreferenceManager.getDefaultSharedPreferences(context).getString(PENDING, null);
         if (saved != null) {
             JSONObject pending = new JSONObject(saved);
             validatePending(pending);
