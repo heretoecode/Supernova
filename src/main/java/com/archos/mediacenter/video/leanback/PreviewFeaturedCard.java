@@ -1,11 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Outline;
+import android.graphics.Path;
+import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
+import androidx.appcompat.widget.AppCompatImageView;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.squareup.picasso.Picasso;
@@ -47,7 +53,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         title.setTag("semantic:featured.title");
         title.setSingleLine(true);
         title.setShadowLayer(dp(2), 0, dp(1), Color.BLACK);
-        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setTypeface(null, Typeface.BOLD);
         copy.addView(title, new LinearLayout.LayoutParams(-1, dp(86)));
         if (entry != null)
             OfficialTitleArtwork.bindStable(title, entry.media);
@@ -80,7 +86,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         synopsis.setSingleLine(true);
         if (plot.trim().isEmpty())
             synopsis.setVisibility(GONE);
-        synopsis.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        synopsis.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         synopsis.setShadowLayer(dp(2), 0, dp(1), Color.BLACK);
         synopsis.setTag("semantic:featured.synopsis");
         LinearLayout.LayoutParams synopsisSize = new LinearLayout.LayoutParams(-1, dp(26));
@@ -118,9 +124,9 @@ final class PreviewFeaturedCard extends FrameLayout {
     }
 
     private ImageView art(Context c, Entry e) {
-        android.net.Uri uri = e == null ? null : e.backdrop != null ? e.backdrop : e.media.getPosterUri();
+        Uri uri = e == null ? null : e.backdrop != null ? e.backdrop : e.media.getPosterUri();
         boolean backdrop = e != null && e.backdrop != null;
-        ImageView image = new androidx.appcompat.widget.AppCompatImageView(c) {
+        ImageView image = new AppCompatImageView(c) {
             private boolean detached;
             @Override
             protected void onAttachedToWindow() {
@@ -135,11 +141,11 @@ final class PreviewFeaturedCard extends FrameLayout {
                 super.onDetachedFromWindow();
             }
             @Override
-            protected void onDraw(android.graphics.Canvas canvas) {
+            protected void onDraw(Canvas canvas) {
                 int saved = canvas.save();
-                android.graphics.Path mask = new android.graphics.Path();
-                mask.addRoundRect(new android.graphics.RectF(0, 0, getWidth(), getHeight()), dp(12), dp(12),
-                    android.graphics.Path.Direction.CW);
+                Path mask = new Path();
+                mask.addRoundRect(new RectF(0, 0, getWidth(), getHeight()), dp(12), dp(12),
+                    Path.Direction.CW);
                 canvas.clipPath(mask);
                 super.onDraw(canvas);
                 canvas.restoreToCount(saved);
@@ -152,7 +158,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         return image;
     }
 
-    private void loadArtwork(ImageView image, android.net.Uri uri, boolean backdrop) {
+    private void loadArtwork(ImageView image, Uri uri, boolean backdrop) {
         com.squareup.picasso.RequestCreator request = Picasso.get().load(uri).resize(dp(960), dp(540)).noFade();
         if (backdrop)
             request.centerCrop();
@@ -196,7 +202,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         t.setTextColor(Color.WHITE);
         t.setIncludeFontPadding(false);
         t.setShadowLayer(dp(3), 0, dp(1), Color.BLACK);
-        t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        t.setEllipsize(TextUtils.TruncateAt.END);
         return t;
     }
 
