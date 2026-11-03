@@ -17,6 +17,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.annotation.GraphicsMode;
 
+/** Checks metadata search query coalescing, result focus and explicit review selection. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMatchSearchTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
