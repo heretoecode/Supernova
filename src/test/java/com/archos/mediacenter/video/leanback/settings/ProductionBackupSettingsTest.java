@@ -31,6 +31,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import org.slf4j.LoggerFactory;
 
+/** Checks backup Settings recreation preserves layout, private reviews and temporary category selections. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
