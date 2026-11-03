@@ -13,7 +13,6 @@
  */
 package com.archos.customizedleanback.widget;
 
-import androidx.leanback.R;
 
 import android.graphics.Outline;
 import android.view.ViewGroup;
