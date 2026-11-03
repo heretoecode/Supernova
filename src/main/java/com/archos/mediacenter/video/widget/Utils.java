@@ -26,6 +26,7 @@ import android.util.Log;
 
 
 
+/** Scales and center-crops thumbnails for video widgets. */
 public class Utils {
     private final static String TAG = "Utils";
     private final static boolean DBG = false;
