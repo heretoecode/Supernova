@@ -1,4 +1,6 @@
 package com.archos.mediacenter.video.metadata;
+import android.app.Application;
+import java.io.IOException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -7,7 +9,7 @@ import org.json.*;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = android.app.Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28)
 public class OmdbSupplementTest {
     @Test
     public void reviewCountsAreProviderSuppliedAndNeverDerivedFromScores() throws Exception {
@@ -106,7 +108,7 @@ public class OmdbSupplementTest {
             assertEquals("tt0089218", url.queryParameter("i"));
             assertEquals("movie", url.queryParameter("type"));
             assertNull(url.queryParameter("t"));
-            throw new java.io.IOException("fixture unavailable");
+            throw new IOException("fixture unavailable");
         });
         assertSame(OmdbSupplement.Ratings.EMPTY, client.load("tt0089218", "movie"));
         assertEquals(1, calls[0]);
