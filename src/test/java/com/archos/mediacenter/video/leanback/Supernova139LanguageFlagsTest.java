@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -29,7 +30,7 @@ public class Supernova139LanguageFlagsTest {
                 ((Spanned)value).getSpans(0, value.length(), ImageSpan.class);
             assertEquals(1, icons.length);
             assertTrue(icons[0].getDrawable().getBounds().width() > 0);
-            assertNull(org.robolectric.util.ReflectionHelpers.getField(icons[0].getDrawable(), "flag"));
+            assertNull(ReflectionHelpers.getField(icons[0].getDrawable(), "flag"));
         }
     }
 
