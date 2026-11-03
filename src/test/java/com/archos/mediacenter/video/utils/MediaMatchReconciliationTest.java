@@ -18,6 +18,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks pending media corrections reconcile only when exact provider and physical identity become available. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
