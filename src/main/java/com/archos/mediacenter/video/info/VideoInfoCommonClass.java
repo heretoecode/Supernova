@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.info;
 
+import android.text.SpannableStringBuilder;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.generateTrackName;
 
 import android.content.Context;
@@ -178,7 +179,7 @@ public class VideoInfoCommonClass {
         // Audio track(s)
         int audioTrackNb = videoMetadata.getAudioTrackNb();
         if (audioTrackNb > 0) {
-            android.text.SpannableStringBuilder lines=new android.text.SpannableStringBuilder();
+            SpannableStringBuilder lines=new SpannableStringBuilder();
             boolean isRtl = c.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             String dirMarker = isRtl ? "\u200F" : "\u200E";
 
