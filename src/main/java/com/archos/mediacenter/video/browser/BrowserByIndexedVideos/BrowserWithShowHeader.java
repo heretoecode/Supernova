@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.loader.app.LoaderManager;
-import androidx.core.content.ContextCompat;
 import androidx.loader.content.Loader;
 import androidx.palette.graphics.Palette;
 import android.view.ContextMenu;
