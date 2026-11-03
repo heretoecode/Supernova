@@ -17,6 +17,11 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceFragmentCompat;
@@ -53,7 +58,7 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
     }
 
     @Override
-    public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Note: Don't apply window theme for leanback preferences
@@ -83,7 +88,7 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
         @Override
         public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(
-            android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+            LayoutInflater inflater, ViewGroup parent, Bundle state) {
             return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
                 ? PreviewSettings.grid(requireContext())
                 : super.onCreateRecyclerView(inflater, parent, state);
@@ -97,26 +102,26 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
         }
 
         @Override
-        public android.view.View onCreateView(
-            android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
-            android.view.View original = super.onCreateView(inflater, container, state);
+        public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle state) {
+            View original = super.onCreateView(inflater, container, state);
             if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
                 return original;
             androidx.recyclerview.widget.RecyclerView list = getListView();
-            if (list.getParent() instanceof android.view.ViewGroup)
-                ((android.view.ViewGroup) list.getParent()).removeView(list);
-            android.widget.LinearLayout panel = new android.widget.LinearLayout(requireContext());
-            panel.setOrientation(android.widget.LinearLayout.VERTICAL);
+            if (list.getParent() instanceof ViewGroup)
+                ((ViewGroup) list.getParent()).removeView(list);
+            LinearLayout panel = new LinearLayout(requireContext());
+            panel.setOrientation(LinearLayout.VERTICAL);
             int pad = com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(), 28);
             panel.setPadding(pad, pad / 2, pad, pad);
             panel.setBackgroundColor(0xff0b1b29);
-            android.widget.TextView title = new android.widget.TextView(requireContext());
+            TextView title = new TextView(requireContext());
             title.setText("Licences & acknowledgements");
             title.setTextColor(0xffc8e2f3);
             title.setTextSize(20);
             title.setPadding(0, 0, 0, pad / 2);
             panel.addView(title);
-            panel.addView(list, new android.widget.LinearLayout.LayoutParams(-1, 0, 1));
+            panel.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
             return panel;
         }
 
@@ -128,7 +133,7 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
         }
 
         @Override
-        public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+        public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
