@@ -39,6 +39,7 @@ public final class HomePlaceholder {
                 holder.itemView.setContentDescription("Library placeholder. Add media folders to see details.");
                 holder.itemView.setOnClickListener(v -> explain.run());
             }
+            @Override
             public int getItemCount() {
                 return 6;
             }
@@ -49,6 +50,7 @@ public final class HomePlaceholder {
     public static final class Skeleton extends Drawable {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
+        @Override
         public void draw(Canvas canvas) {
             Rect b = getBounds();
             paint.setColor(0x284d6984);
@@ -57,14 +59,17 @@ public final class HomePlaceholder {
             canvas.drawRoundRect(x, y + h * 2.5f, x + b.width() * .4f, y + h * 3.5f, h / 2, h / 2, paint);
         }
 
+        @Override
         public void setAlpha(int a) {
             paint.setAlpha(a);
         }
 
+        @Override
         public void setColorFilter(ColorFilter f) {
             paint.setColorFilter(f);
         }
 
+        @Override
         public int getOpacity() {
             return PixelFormat.TRANSLUCENT;
         }
