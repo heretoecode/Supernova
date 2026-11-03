@@ -209,6 +209,7 @@ public class Delete {
     public void startMultipleDeleteProcess(final List<Uri> toDelete) { // Uri are only video files
         if (log.isDebugEnabled()) log.debug("startMultipleDeleteProcess: {}", ((toDelete != null) ? toDelete.size() : 0));
         new Thread(){
+            @Override
             public void run() {
                 if (toDelete != null) {
                     synchronized(Delete.this) { counter = toDelete.size(); firstFailure = null; }
@@ -261,6 +262,7 @@ public class Delete {
     public void deleteAssociatedNfoFiles(final Uri fileUri){ //when deleting a description, also delete Nfo
         if (log.isDebugEnabled()) log.debug("deleteAssociatedNfoFiles: {}", sourceKind(fileUri));
         new Thread(){
+            @Override
             public void run(){
                 if(!UriUtils.isImplementedByFileCore(fileUri)||"upnp".equals(fileUri.getScheme())) //we can't delete files on upnp
                     return;
@@ -286,6 +288,7 @@ public class Delete {
         if (log.isDebugEnabled()) log.debug("startDeleteProcess: {}", sourceKind(fileUri));
         synchronized(this) { counter = 1; firstFailure = null; } // one fileUri
         new Thread(){
+            @Override
             public void run(){
                 currentVideoFileToDeleteSize = 0;
                 //retieve video size
@@ -309,6 +312,7 @@ public class Delete {
         if (! ("upnp".equals(fileUri.getScheme()) || "http".equals(fileUri.getScheme())) ) { // no delete with upnp or http
             if (log.isDebugEnabled()) log.debug("deleteFileAndAssociatedFiles: {}", sourceKind(fileUri));
             new Thread() {
+                @Override
                 public void run() {
                     Boolean isDeleteOK;
                     // TODO if directory do not get associate files....
@@ -425,6 +429,7 @@ public class Delete {
     public void deleteFolder(final Uri uri){
         if (log.isDebugEnabled()) log.debug("deleteFolder: {}", sourceKind(uri));
         new Thread(){
+            @Override
             public void run() {
                 try {
                     synchronized(ProviderDiscoveryGate.LOCK){
