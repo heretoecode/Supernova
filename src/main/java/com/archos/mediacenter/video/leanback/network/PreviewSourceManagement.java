@@ -1,7 +1,6 @@
 package com.archos.mediacenter.video.leanback.network;
 import android.app.Activity;
 import android.view.View;
-import android.net.Uri;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
 import com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface;
