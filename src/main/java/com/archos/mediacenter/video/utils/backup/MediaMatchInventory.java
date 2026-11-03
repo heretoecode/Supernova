@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils.backup;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import com.archos.mediaprovider.video.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -98,7 +99,7 @@ public final class MediaMatchInventory {
                                 || !rows.isNull(1) && rows.getType(1) != Cursor.FIELD_TYPE_STRING)
                                 throw new IOException("Invalid receiving identification owner");
                             String uri = rows.isNull(1) ? null : rows.getString(1);
-                            if (uri != null && "putio".equalsIgnoreCase(android.net.Uri.parse(uri).getScheme()))
+                            if (uri != null && "putio".equalsIgnoreCase(Uri.parse(uri).getScheme()))
                                 continue;
                             PortableMediaMatches.Match match = matches.get(id);
                             Long episodeProviderRaw = null;
