@@ -8,16 +8,19 @@ import com.archos.mediascraper.*;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.annotation.GraphicsMode;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMatchSearchTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void appendingResultsPreservesFocusAndSelectionRequiresReviewClick(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();
         AtomicReference<BaseTags> chosen=new AtomicReference<>();
@@ -41,7 +44,7 @@ public class PreviewMatchSearchTest {
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1));assertEquals(Collections.singletonList("TT0137523"),queries);
         input.setText("550");host.setContentView(new View(host));Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1));assertEquals(1,queries.size());
     }
-    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void resultDirectionStaysInListAndReturnsToKeyboard()throws Exception{
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();PreviewMatchSearch page=new PreviewMatchSearch(host,"Example",q->{},t->{});host.setContentView(page);
         page.setResults(Arrays.asList(movie("Example",2024),movie("Another",2025)));PreviewPagesTest.layout(page);
