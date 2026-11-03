@@ -14,6 +14,8 @@ import android.widget.Checkable;
 import androidx.core.text.HtmlCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.StandardSwitchDrawable;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
 import java.util.*;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.*;
@@ -492,8 +494,8 @@ final class PreviewPlaybackMenus {
         row.setAlpha(row.isEnabled() ? 1f : .4f);
         row.setContentDescription(label + ", " + (on ? "On" : "Off"));
         Drawable indicator =
-            com.archos.mediacenter.video.leanback.StandardSwitchDrawable.snapshot(owner, on);
-        indicator.setBounds(0, 0, com.archos.mediacenter.video.leanback.StandardSwitchDrawable.widthForHeight(dp(20)),
+            StandardSwitchDrawable.snapshot(owner, on);
+        indicator.setBounds(0, 0, StandardSwitchDrawable.widthForHeight(dp(20)),
                             dp(20));
         row.setCompoundDrawables(null, null, indicator, null);
         row.setCompoundDrawablePadding(dp(12));
@@ -592,8 +594,8 @@ final class PreviewPlaybackMenus {
         action("Reading language", false, !preferences().getBoolean("subtitles_hide_default", false), null,
                () -> languages(false));
         action("Download languages", false, true, null, () -> languages(true));
-        toggle("Prepare Subtitle Searches", com.archos.mediacenter.video.utils.SubtitleDiscovery.ENABLED, false, false);
-        toggle("Prepare Current Season", com.archos.mediacenter.video.utils.SubtitleDiscovery.PREFETCH, true, false);
+        toggle("Prepare Subtitle Searches", SubtitleDiscovery.ENABLED, false, false);
+        toggle("Prepare Current Season", SubtitleDiscovery.PREFETCH, true, false);
         toggle("Subtitles by Default", "subtitles_hide_default", false, true);
     }
 
