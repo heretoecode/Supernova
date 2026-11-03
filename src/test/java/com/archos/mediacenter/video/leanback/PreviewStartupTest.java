@@ -16,8 +16,11 @@ import android.widget.TextView;
 import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.ExtStorageManager;
 import com.archos.mediacenter.video.CustomApplication;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.overlay.Clock;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
+import com.squareup.picasso.Picasso;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -25,18 +28,21 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import org.robolectric.shadows.ShadowContentResolver;
 import java.time.Duration;
 import java.util.Locale;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.util.ReflectionHelpers;
+import org.slf4j.LoggerFactory;
 
 /** Real MainFragment lifecycle, overlay and SQL schema; no device scanner or native playback. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewStartupTest {
- @org.junit.Before public void configuredLibraryFixture(){androidx.preference.PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
+ @org.junit.Before public void configuredLibraryFixture(){PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
 
     private VideoOpenHelper database;
     private boolean failQuery, failScraperRead;
@@ -44,13 +50,13 @@ public class PreviewStartupTest {
     @Before public void setUp() throws Exception {
         Context context=RuntimeEnvironment.getApplication();
         Shadows.shadowOf((Application)context).grantPermissions(context.getPackageName()+".DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
-        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"log",org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
-        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",context);
-        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"systemLocale",Locale.UK);
+        ReflectionHelpers.setStaticField(CustomApplication.class,"log",LoggerFactory.getLogger(CustomApplication.class));
+        ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",context);
+        ReflectionHelpers.setStaticField(CustomApplication.class,"systemLocale",Locale.UK);
         storage=mockStatic(ExtStorageManager.class);
         storage.when(ExtStorageManager::getExtStorageManager).thenReturn(mock(ExtStorageManager.class));
-        try { com.squareup.picasso.Picasso.get(); } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(context).build());
+        try { Picasso.get(); } catch (IllegalStateException e) {
+            Picasso.setSingletonInstance(new Picasso.Builder(context).build());
         }
         database=new VideoOpenHelper(context);
         SQLiteDatabase db=database.getWritableDatabase();
@@ -92,7 +98,7 @@ public class PreviewStartupTest {
     }
     @Test public void savedPreviewPreferenceSurvivesStartupAndRecreation(){
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).commit();
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             MainFragment fragment=new MainFragment();
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
@@ -115,14 +121,14 @@ public class PreviewStartupTest {
         FrameLayout root=new FrameLayout(context);
         TextView text=new TextView(context);
         text.setId(com.archos.mediacenter.video.R.id.clock);root.addView(text);
-        com.archos.mediacenter.video.leanback.overlay.Clock clock=new com.archos.mediacenter.video.leanback.overlay.Clock(context,root);
+        Clock clock=new Clock(context,root);
         // An early activity recreation can skip resume, yet still invoke pause.
         clock.pause();clock.resume();clock.pause();clock.pause();clock.destroy();
     }
     @Test public void switchingFromClassicToPreviewCanPauseForRecreation() {
         SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         prefs.edit().putBoolean("try_new_ui",false).commit();
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             MainFragment fragment=new MainFragment();
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
@@ -151,7 +157,7 @@ public class PreviewStartupTest {
         ContentValues bad=new ContentValues();bad.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE,new byte[]{1,2});
         database.getWritableDatabase().update(VideoOpenHelper.FILES_TABLE_NAME,bad,"_id=?",new String[]{"10"});
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
-        try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());assertEquals(11,((com.archos.mediacenter.video.browser.adapters.object.Video)loader.snapshot.recent.get(0).media).getId());}
+        try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());assertEquals(11,((Video)loader.snapshot.recent.get(0).media).getId());}
     }
     @Test public void failedDatabaseQueryReturnsVisibleErrorWithoutWritingEmptyCache(){
         failQuery=true;PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
