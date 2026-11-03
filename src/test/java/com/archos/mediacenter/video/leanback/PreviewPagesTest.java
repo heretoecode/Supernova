@@ -1,10 +1,33 @@
 package com.archos.mediacenter.video.leanback;
+import android.app.Activity;
 import android.app.Application;
+import android.app.Dialog;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Shader;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
+import android.os.Looper;
+import android.text.format.Formatter;
 import android.view.*;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.widget.*;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.reflect.Method;
+import java.time.Duration;
+import java.util.Calendar;
+import java.util.TimeZone;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -27,7 +50,7 @@ public class PreviewPagesTest {
 
     @org.junit.Before
     public void configuredLibraryFixture() {
-        androidx.preference.PreferenceManager
+        PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
@@ -43,7 +66,7 @@ public class PreviewPagesTest {
 
     @Test
     public void tvPremiereUses64BitDateInsteadOfTruncatedTimestamp() {
-        java.util.Calendar c = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         c.clear();
         c.set(2022, 0, 17);
         assertEquals(2022,
@@ -98,7 +121,7 @@ public class PreviewPagesTest {
         assertEquals(6000, show.bytes);
         assertEquals(2, show.knownSizes);
         PreviewLibraryColumns columns = new PreviewLibraryColumns(RuntimeEnvironment.getApplication(), true);
-        assertEquals(android.text.format.Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(), 3000),
+        assertEquals(Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(), 3000),
             columns.value(show, PreviewLibraryColumns.Column.AVERAGE));
         Entry incomplete = new Entry(new Tvshow(8, "Unknown size", null, 1, 2, 0, "/unknown"), 21, 8, "");
         incomplete.bytes = 99999;
@@ -165,7 +188,7 @@ public class PreviewPagesTest {
                     nav.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
                         View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
                     nav.layout(0, 0, 960, 540);
-                    Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));
+                    Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
                 }
                 if (tab == 3) {
                     assertNotNull(nav.findViewWithTag("network.landing"));
@@ -181,14 +204,14 @@ public class PreviewPagesTest {
                 decorateCards(nav);
                 if (tab != 3)
                     addTestArtwork(nav);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
-                android.graphics.Bitmap bitmap =
-                    android.graphics.Bitmap.createBitmap(960, 540, android.graphics.Bitmap.Config.ARGB_8888);
-                nav.draw(new android.graphics.Canvas(bitmap));
-                java.io.File file = new java.io.File("build/reports/preview-ui/page-" + tab + ".png");
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(210));
+                Bitmap bitmap =
+                    Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);
+                nav.draw(new Canvas(bitmap));
+                File file = new File("build/reports/preview-ui/page-" + tab + ".png");
                 file.getParentFile().mkdirs();
-                try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
-                    bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out);
+                try (FileOutputStream out = new FileOutputStream(file)) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                 }
             }
             pages.setTab(1);
@@ -206,7 +229,7 @@ public class PreviewPagesTest {
                 columnsControl.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
             assertTrue(columnsControl.requestFocus());
             nav.dispatchKeyEvent(
-                new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DPAD_RIGHT));
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
             assertSame(columnsControl, nav.findFocus());
             for (int control = 0; control < 5; control++) {
                 View opener = nav.findViewWithTag("control:" + control);
@@ -221,7 +244,7 @@ public class PreviewPagesTest {
                 assertTrue(below.requestFocus(View.FOCUS_DOWN));
                 assertSame(below, nav.findFocus());
             }
-            android.app.Dialog dialog = PreviewDialog.choose(host.get(), "Sort",
+            Dialog dialog = PreviewDialog.choose(host.get(), "Sort",
                 new String[] {
                     "Date Added", "Title", "Release Date", "Trakt Trending — unavailable"
                 }, 1, n -> {
@@ -235,14 +258,14 @@ public class PreviewPagesTest {
             dialog.dismiss();
             nav.focusNavigation();
             assertTrue(nav.hasFocus());
-            android.widget.FrameLayout hudHost = new android.widget.FrameLayout(host.get());
-            hudHost.setBackground(new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+            FrameLayout hudHost = new FrameLayout(host.get());
+            hudHost.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
                 new int[] {
                     0xff294a55, 0xff6d8a85, 0xff223d46
                 }));
             View hud =
-                android.view.LayoutInflater.from(host.get())
+                LayoutInflater.from(host.get())
                     .inflate(com.archos.mediacenter.video.R.layout.player_controller_experimental, hudHost, false);
             hudHost.addView(hud);
             host.get().setContentView(hudHost);
@@ -259,7 +282,7 @@ public class PreviewPagesTest {
             ((android.widget.TextView) hud.findViewById(com.archos.mediacenter.video.R.id.time_current))
                 .setText("22:14");
             ((android.widget.TextView) hud.findViewById(com.archos.mediacenter.video.R.id.time)).setText("53:27");
-            android.widget.ProgressBar progress = hud.findViewById(com.archos.mediacenter.video.R.id.seek_progress);
+            ProgressBar progress = hud.findViewById(com.archos.mediacenter.video.R.id.seek_progress);
             progress.setMax(100);
             progress.setProgress(42);
             android.view.View pause = hud.findViewById(com.archos.mediacenter.video.R.id.pause);
@@ -267,25 +290,25 @@ public class PreviewPagesTest {
             pause.requestFocus();
             layout(hudHost);
             capture(hudHost, "playback-hud");
-            android.app.Dialog audio = PreviewDialog.choose(
+            Dialog audio = PreviewDialog.choose(
                 host.get(), "Audio", new String[] {
                     "English (Original)", "English (DD+ 5.1)", "French"
                 }, 0, n -> {
                 });
             captureMenu(audio, "playback-audio");
-            android.app.Dialog more = PreviewDialog.choose(
+            Dialog more = PreviewDialog.choose(
                 host.get(), "More", new String[] {
                     "Audio", "Subtitles", "Playback Speed", "More Info"
                 }, 0, n -> {
                 });
             captureMenu(more, "playback-more");
             Class<?> info = Class.forName("com.archos.mediacenter.video.player.PreviewTechnicalInfo");
-            java.lang.reflect.Method showInfo = info.getDeclaredMethod("show", android.app.Activity.class,
-                com.archos.mediacenter.video.utils.VideoMetadata.class, android.net.Uri.class, int.class);
+            Method showInfo = info.getDeclaredMethod("show", Activity.class,
+                com.archos.mediacenter.video.utils.VideoMetadata.class, Uri.class, int.class);
             showInfo.setAccessible(true);
             showInfo.invoke(null, host.get(), new com.archos.mediacenter.video.utils.VideoMetadata(),
-                android.net.Uri.parse("webdavs://example.invalid/private-file.mkv"), 0);
-            android.app.Dialog infoDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+                Uri.parse("webdavs://example.invalid/private-file.mkv"), 0);
+            Dialog infoDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
             View infoView = infoDialog.getWindow().getDecorView();
             for (String label : new String[] {
                 "Video", "Audio", "File", "Source"
@@ -301,7 +324,7 @@ public class PreviewPagesTest {
         }
     }
 
-    static void captureMenu(android.app.Dialog d, String name) throws Exception {
+    static void captureMenu(Dialog d, String name) throws Exception {
         View v = d.getWindow().getDecorView();
         int w = d.getWindow().getAttributes().width, h = d.getWindow().getAttributes().height;
         v.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
@@ -316,7 +339,7 @@ public class PreviewPagesTest {
             v.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
             v.layout(0, 0, 960, 540);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(60));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(60));
         }
     }
 
@@ -333,28 +356,28 @@ public class PreviewPagesTest {
     }
 
     public static void capture(View v, String name) throws Exception {
-        android.graphics.Bitmap b =
-            android.graphics.Bitmap.createBitmap(v.getWidth(), v.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
-        v.draw(new android.graphics.Canvas(b));
-        java.io.File f = new java.io.File("build/reports/preview-ui/" + name + ".png");
+        Bitmap b =
+            Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        v.draw(new Canvas(b));
+        File f = new File("build/reports/preview-ui/" + name + ".png");
         f.getParentFile().mkdirs();
-        try (java.io.FileOutputStream o = new java.io.FileOutputStream(f)) {
-            b.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, o);
+        try (FileOutputStream o = new FileOutputStream(f)) {
+            b.compress(Bitmap.CompressFormat.PNG, 100, o);
         }
     }
 
     static void decorateCards(View v) {
         if (v instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) {
-            android.graphics.Bitmap b =
-                android.graphics.Bitmap.createBitmap(200, 300, android.graphics.Bitmap.Config.ARGB_8888);
-            android.graphics.Canvas c = new android.graphics.Canvas(b);
+            Bitmap b =
+                Bitmap.createBitmap(200, 300, Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b);
             c.drawColor(0xff233b52);
-            android.graphics.Paint p = new android.graphics.Paint();
+            Paint p = new Paint();
             p.setColor(0xff62cfea);
-            p.setStyle(android.graphics.Paint.Style.STROKE);
+            p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(5);
             c.drawRect(3, 3, 197, 297, p);
-            p.setStyle(android.graphics.Paint.Style.FILL);
+            p.setStyle(Paint.Style.FILL);
             p.setTextSize(20);
             c.drawText("POSTER TOP", 20, 25, p);
             c.drawText("FULL FRAME", 20, 280, p);
@@ -365,18 +388,18 @@ public class PreviewPagesTest {
     }
 
     static void addTestArtwork(TopNavigation nav) {
-        android.graphics.Bitmap art =
-            android.graphics.Bitmap.createBitmap(1600, 900, android.graphics.Bitmap.Config.ARGB_8888);
-        android.graphics.Canvas canvas = new android.graphics.Canvas(art);
-        android.graphics.Paint paint = new android.graphics.Paint();
-        paint.setShader(new android.graphics.LinearGradient(0, 0, 1600, 900,
+        Bitmap art =
+            Bitmap.createBitmap(1600, 900, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(art);
+        Paint paint = new Paint();
+        paint.setShader(new LinearGradient(0, 0, 1600, 900,
             new int[] {
                 0xff39586e, 0xffaf8b66, 0xff203c4e
-            }, null, android.graphics.Shader.TileMode.CLAMP));
+            }, null, Shader.TileMode.CLAMP));
         canvas.drawPaint(paint);
         paint.setShader(null);
         paint.setColor(0xff203d4c);
-        android.graphics.Path mountain = new android.graphics.Path();
+        Path mountain = new Path();
         mountain.moveTo(650, 900);
         mountain.lineTo(1180, 180);
         mountain.lineTo(1600, 770);
