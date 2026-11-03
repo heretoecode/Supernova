@@ -8,10 +8,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import org.eclipse.jetty.client.api.Authentication;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.http.*;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.servlet.*;
+import org.eclipse.jetty.util.Promise;
+import org.eclipse.jetty.util.SocketAddressResolver;
 import org.eclipse.jetty.util.security.Credential;
+import org.eclipse.jetty.util.thread.api23.LongAccumulator;
+import org.eclipse.jetty.util.thread.api23.LongAdder;
 import org.junit.Test;
 import javax.servlet.http.*;
 import java.nio.ByteBuffer;
@@ -175,8 +182,8 @@ public class Jetty146BackportTest {
             new AtomicReference<>();
         AtomicReference<Throwable> failure =
             new AtomicReference<>();
-        new org.eclipse.jetty.util.SocketAddressResolver.Sync().resolve(
-            "[fe80::1%251]", 123, new org.eclipse.jetty.util.Promise<List<InetSocketAddress>>() {
+        new SocketAddressResolver.Sync().resolve(
+            "[fe80::1%251]", 123, new Promise<List<InetSocketAddress>>() {
                 public void succeeded(List<InetSocketAddress> result) {
                     addresses.set(result);
                 }
@@ -279,20 +286,20 @@ public class Jetty146BackportTest {
         for (String password : new String[] {
             "p?ss", "p\u00e4ss", "p\u0100ss"
         }) {
-            org.eclipse.jetty.client.util.DigestAuthentication auth =
-                new org.eclipse.jetty.client.util.DigestAuthentication(
+            DigestAuthentication auth =
+                new DigestAuthentication(
                     URI.create("http://localhost/"), "realm", "user", password);
             Class<?> type = Class.forName("org.eclipse.jetty.client.util.DigestAuthentication$DigestResult");
             Constructor<?> constructor = type.getDeclaredConstructors()[0];
             constructor.setAccessible(true);
-            org.eclipse.jetty.client.api.Authentication.Result result =
-                (org.eclipse.jetty.client.api.Authentication.Result) constructor.newInstance(
+            Authentication.Result result =
+                (Authentication.Result) constructor.newInstance(
                     auth, HttpHeader.AUTHORIZATION, new byte[0], "realm", "user", password, "MD5", "nonce", null, null);
             AtomicInteger headers = new AtomicInteger();
-            org.eclipse.jetty.client.api.Request request =
-                (org.eclipse.jetty.client.api.Request) Proxy.newProxyInstance(getClass().getClassLoader(),
+            Request request =
+                (Request) Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class[] {
-                        org.eclipse.jetty.client.api.Request.class
+                        Request.class
                     }, (proxy, method, args) -> {
                         if (method.getName().equals("getMethod"))
                             return "GET";
@@ -322,9 +329,9 @@ public class Jetty146BackportTest {
 
     @Test
     public void api23CountersRetainConcurrentUpdatesAndMax() throws Exception {
-        org.eclipse.jetty.util.thread.api23.LongAdder sum = new org.eclipse.jetty.util.thread.api23.LongAdder();
-        org.eclipse.jetty.util.thread.api23.LongAccumulator max =
-            new org.eclipse.jetty.util.thread.api23.LongAccumulator(Math::max, 0);
+        LongAdder sum = new LongAdder();
+        LongAccumulator max =
+            new LongAccumulator(Math::max, 0);
         Thread[] threads = new Thread[4];
         for (int t = 0; t < 4; t++) {
             final int n = t;
