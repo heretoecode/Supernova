@@ -39,6 +39,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesActivity;
 
 import java.io.File;
 
+/** Browses the local video folder and provides its menu actions. */
 public class BrowserByVideoFolder extends BrowserByLocalFolder {
 
     private static final String TAG = "BrowserByVideoFolder";
