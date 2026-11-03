@@ -72,6 +72,7 @@ import java.util.List;
 
 import httpimage.HttpImageManager;
 
+/** Provides video item browsing, context actions and playback launching. */
 public abstract class BrowserByVideoObjects extends Browser implements CommonPresenter.ExtendedClickListener, ExternalPlayerWithResultStarter {
 
     private static final Logger log = LoggerFactory.getLogger(BrowserByVideoObjects.class);
