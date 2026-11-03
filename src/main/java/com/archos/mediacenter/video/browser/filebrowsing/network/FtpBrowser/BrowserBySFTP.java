@@ -47,6 +47,7 @@ import com.archos.mediacenter.video.browser.filebrowsing.network.BrowserByNetwor
 import java.util.ArrayList;
 import java.util.List;
 
+/** Lists SFTP files and handles connection failures and credential requests. */
 public class BrowserBySFTP extends BrowserByNetwork implements ListingEngine.Listener,LoaderManager.LoaderCallbacks<Cursor> {
     public static final long LONG_CONNECTION_DELAY = 8000; //delay before proposing to reset connection
 
