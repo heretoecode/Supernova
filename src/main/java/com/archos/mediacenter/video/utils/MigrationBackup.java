@@ -4,8 +4,16 @@ import android.content.*;
 import android.database.Cursor;
 import android.util.Log;
 import androidx.preference.PreferenceManager;
+import com.archos.environment.NetworkState;
+import com.archos.medialib.R;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediascraper.*;
 import com.archos.mediaprovider.video.VideoStore;
+import com.archos.mediascraper.themoviedb3.MyTmdb;
+import com.archos.mediascraper.themoviedb3.ShowIdSeasonSearch;
+import com.archos.mediascraper.themoviedb3.ShowIdSeasonSearchResult;
+import com.uwetrottmann.tmdb2.entities.TvEpisode;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -90,7 +98,7 @@ public final class MigrationBackup {
             boolean complete = true;
             Set<String> seen = new HashSet<>();
             try {
-                com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(c);
+                NetworkAutoRefresh.forceRescan(c);
                 String id = VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID,
                        type = VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE;
                 try (Cursor cursor = c.getContentResolver().query(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -99,7 +107,7 @@ public final class MigrationBackup {
                          }, id + " > 0", null, null)) {
                     if (cursor != null)
                         while (cursor.moveToNext()) {
-                            if (!com.archos.environment.NetworkState.isNetworkConnected(c)) {
+                            if (!NetworkState.isNetworkConnected(c)) {
                                 complete = false;
                                 break;
                             }
@@ -152,18 +160,18 @@ public final class MigrationBackup {
             return true;
         String language = Locale.getDefault().getLanguage(),
                key = show.getOnlineId() + "|" + tags.getSeason() + "|" + language;
-        com.archos.mediascraper.themoviedb3.ShowIdSeasonSearchResult result =
-            com.archos.mediascraper.themoviedb3.ShowIdSeasonSearch.getSeasonShowResponse(key, (int) show.getOnlineId(),
+        ShowIdSeasonSearchResult result =
+            ShowIdSeasonSearch.getSeasonShowResponse(key, (int) show.getOnlineId(),
                 tags.getSeason(), language, false,
-                new com.archos.mediascraper.themoviedb3.MyTmdb(
-                    c.getString(com.archos.medialib.R.string.tmdb_api_key), null));
+                new MyTmdb(
+                    c.getString(R.string.tmdb_api_key), null));
         if (result == null)
             return false;
         if (result.tvSeason == null)
             return result.status == ScrapeStatus.NOT_FOUND;
         if (result.tvSeason.episodes == null)
             return true;
-        for (com.uwetrottmann.tmdb2.entities.TvEpisode episode : result.tvSeason.episodes) {
+        for (TvEpisode episode : result.tvSeason.episodes) {
             if (episode.episode_number == null || episode.episode_number != tags.getEpisode()
                 || episode.still_path == null || episode.still_path.isEmpty())
                 continue;
@@ -172,9 +180,9 @@ public final class MigrationBackup {
             if (!picture.download(c))
                 return false;
             ContentValues values = new ContentValues();
-            values.put(com.archos.mediaprovider.video.ScraperStore.Episode.PICTURE, picture.getLargeFile());
-            c.getContentResolver().update(com.archos.mediaprovider.video.ScraperStore.Episode.URI.BASE, values,
-                com.archos.mediaprovider.video.ScraperStore.Episode.ID + "=?",
+            values.put(ScraperStore.Episode.PICTURE, picture.getLargeFile());
+            c.getContentResolver().update(ScraperStore.Episode.URI.BASE, values,
+                ScraperStore.Episode.ID + "=?",
                 new String[] {
                     Long.toString(tags.getId())
                 });
