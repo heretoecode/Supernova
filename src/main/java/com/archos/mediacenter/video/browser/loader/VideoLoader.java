@@ -261,6 +261,7 @@ public abstract class VideoLoader extends CursorLoader implements CompatAndSDKCu
         return sb.toString();
     }
 
+    @Override
     public Loader<Cursor> getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mIsDetailed = detailed;
         mForceHideVideos = hideWatchedVideos;
