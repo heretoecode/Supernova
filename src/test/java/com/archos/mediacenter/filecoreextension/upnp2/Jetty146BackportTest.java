@@ -1,5 +1,13 @@
 package com.archos.mediacenter.filecoreextension.upnp2;
 
+import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jetty.http.*;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.servlet.*;
@@ -163,13 +171,13 @@ public class Jetty146BackportTest {
             } catch (IllegalArgumentException expected) {
             }
         }
-        java.util.concurrent.atomic.AtomicReference<java.util.List<java.net.InetSocketAddress>> addresses =
-            new java.util.concurrent.atomic.AtomicReference<>();
-        java.util.concurrent.atomic.AtomicReference<Throwable> failure =
-            new java.util.concurrent.atomic.AtomicReference<>();
+        AtomicReference<List<InetSocketAddress>> addresses =
+            new AtomicReference<>();
+        AtomicReference<Throwable> failure =
+            new AtomicReference<>();
         new org.eclipse.jetty.util.SocketAddressResolver.Sync().resolve(
-            "[fe80::1%251]", 123, new org.eclipse.jetty.util.Promise<java.util.List<java.net.InetSocketAddress>>() {
-                public void succeeded(java.util.List<java.net.InetSocketAddress> result) {
+            "[fe80::1%251]", 123, new org.eclipse.jetty.util.Promise<List<InetSocketAddress>>() {
+                public void succeeded(List<InetSocketAddress> result) {
                     addresses.set(result);
                 }
                 public void failed(Throwable error) {
@@ -178,7 +186,7 @@ public class Jetty146BackportTest {
             });
         assertNull(failure.get());
         assertNotNull(addresses.get());
-        assertEquals(1, ((java.net.Inet6Address) addresses.get().get(0).getAddress()).getScopeId());
+        assertEquals(1, ((Inet6Address) addresses.get().get(0).getAddress()).getScopeId());
     }
 
     @Test
@@ -191,7 +199,7 @@ public class Jetty146BackportTest {
             0
         };
         context.addServlet(new ServletHolder(new HttpServlet() {
-            protected void service(HttpServletRequest q, HttpServletResponse p) throws java.io.IOException {
+            protected void service(HttpServletRequest q, HttpServletResponse p) throws IOException {
                 calls[0]++;
                 p.getWriter().print("ok");
             }
@@ -225,7 +233,7 @@ public class Jetty146BackportTest {
         byte[] digest = MessageDigest.getInstance("MD5").digest(value.getBytes(StandardCharsets.ISO_8859_1));
         StringBuilder s = new StringBuilder();
         for (byte b : digest)
-            s.append(String.format(java.util.Locale.ROOT, "%02x", b & 255));
+            s.append(String.format(Locale.ROOT, "%02x", b & 255));
         return s.toString();
     }
 
@@ -273,14 +281,14 @@ public class Jetty146BackportTest {
         }) {
             org.eclipse.jetty.client.util.DigestAuthentication auth =
                 new org.eclipse.jetty.client.util.DigestAuthentication(
-                    java.net.URI.create("http://localhost/"), "realm", "user", password);
+                    URI.create("http://localhost/"), "realm", "user", password);
             Class<?> type = Class.forName("org.eclipse.jetty.client.util.DigestAuthentication$DigestResult");
             Constructor<?> constructor = type.getDeclaredConstructors()[0];
             constructor.setAccessible(true);
             org.eclipse.jetty.client.api.Authentication.Result result =
                 (org.eclipse.jetty.client.api.Authentication.Result) constructor.newInstance(
                     auth, HttpHeader.AUTHORIZATION, new byte[0], "realm", "user", password, "MD5", "nonce", null, null);
-            java.util.concurrent.atomic.AtomicInteger headers = new java.util.concurrent.atomic.AtomicInteger();
+            AtomicInteger headers = new AtomicInteger();
             org.eclipse.jetty.client.api.Request request =
                 (org.eclipse.jetty.client.api.Request) Proxy.newProxyInstance(getClass().getClassLoader(),
                     new Class[] {
