@@ -1,7 +1,6 @@
 package com.archos.mediacenter.video.leanback.filebrowsing;
 import android.app.Application;
 import android.database.Cursor;
-import android.net.Uri;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import java.util.*;
 import org.junit.*;
