@@ -15,7 +15,10 @@ import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import com.squareup.picasso.Picasso;
 import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -37,10 +40,10 @@ public class Supernova141UiTest {
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException ignored) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -247,11 +250,11 @@ public class Supernova141UiTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             for (boolean television : new boolean[] {false, true}) {
-                var page = new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(
+                var page = new PreviewMoviePage(
                     host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
                 host.get().setContentView(page);
                 if (television)
-                    page.bindShow(new com.archos.mediacenter.video.browser.adapters.object.Tvshow(7, "Series", null, 1,
+                    page.bindShow(new Tvshow(7, "Series", null, 1,
                                                                                                   2, 0, "/series"),
                                   () -> {});
                 else
@@ -290,7 +293,7 @@ public class Supernova141UiTest {
             ImageSpan[] icons =
                 ((Spanned)label).getSpans(0, label.length(), ImageSpan.class);
             assertEquals(1, icons.length);
-            assertNull(org.robolectric.util.ReflectionHelpers.getField(icons[0].getDrawable(), "flag"));
+            assertNull(ReflectionHelpers.getField(icons[0].getDrawable(), "flag"));
         }
     }
 
