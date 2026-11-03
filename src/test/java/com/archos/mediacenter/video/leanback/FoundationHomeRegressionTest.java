@@ -14,7 +14,10 @@ import android.widget.*;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
+import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -22,27 +25,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class FoundationHomeRegressionTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
-    @org.junit.Before
+    @Before
     public void configuredLibraryFixture() {
         PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
@@ -72,10 +78,10 @@ public class FoundationHomeRegressionTest {
 
     private void init() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -101,7 +107,7 @@ public class FoundationHomeRegressionTest {
             snapshot.featured.add(another);
             pages.setSnapshot(snapshot);
             List<Entry> candidates =
-                org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages, "featuredCandidates");
+                ReflectionHelpers.callInstanceMethod(pages, "featuredCandidates");
             assertEquals(10, candidates.size());
             assertFalse(candidates.contains(next));
             assertFalse(candidates.contains(another));
@@ -186,7 +192,7 @@ public class FoundationHomeRegressionTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             Snapshot s = source();
-            s.movies.add(new Entry(new com.archos.mediacenter.video.browser.adapters.object.Tvshow(
+            s.movies.add(new Entry(new Tvshow(
                                        99, "TV fixture", null, 2, 10, 0, "/show"),
                 99, 99, "Drama"));
             int baseline = -1;
@@ -208,9 +214,9 @@ public class FoundationHomeRegressionTest {
                 Bitmap logoBitmap = Bitmap.createBitmap(dimensions[0], dimensions[1], Bitmap.Config.ARGB_8888);
                 logoBitmap.eraseColor(Color.WHITE);
                 Drawable logo =
-                    (Drawable) org.robolectric.util.ReflectionHelpers.callConstructor(
+                    (Drawable) ReflectionHelpers.callConstructor(
                         Class.forName("com.archos.mediacenter.video.leanback.OfficialTitleArtwork$Logo"),
-                        org.robolectric.util.ReflectionHelpers.ClassParameter.from(Bitmap.class, logoBitmap));
+                        ReflectionHelpers.ClassParameter.from(Bitmap.class, logoBitmap));
                 title.setForeground(logo);
                 title.setTextColor(Color.TRANSPARENT);
                 card.measure(View.MeasureSpec.makeMeasureSpec(904, View.MeasureSpec.EXACTLY),
@@ -273,8 +279,8 @@ public class FoundationHomeRegressionTest {
             rail.scrollBy(90, 0);
             PreviewPagesTest.layout(pages);
             for (int i = 0; i < rail.getChildCount(); i++) {
-                com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card card =
-                    (com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) rail.getChildAt(i);
+                PreviewCardPresenter.Card card =
+                    (PreviewCardPresenter.Card) rail.getChildAt(i);
                 card.image.setImageDrawable(new ColorDrawable(Color.MAGENTA));
             }
             View first = rail.findViewHolderForAdapterPosition(0).itemView;
@@ -298,7 +304,7 @@ public class FoundationHomeRegressionTest {
                 View unit = ((ViewGroup) item).getChildAt(0);
                 assertEquals(1.08f, unit.getScaleX(), .001f);
                 assertSame(unit,
-                    ((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) item)
+                    ((PreviewCardPresenter.Card) item)
                         .image.getParent());
                 paintArtwork(rail);
                 PreviewPagesTest.capture(pages, "foundation-home-focus-position-" + position);
@@ -380,7 +386,7 @@ public class FoundationHomeRegressionTest {
             pages.setTab(1);
             PreviewPagesTest.layout(pages);
             List<Entry> displayed =
-                org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages, "filtered");
+                ReflectionHelpers.callInstanceMethod(pages, "filtered");
             assertNull("Library focus must not request scene artwork", artwork.get(artwork.size() - 1));
             pages.setTab(0);
             for (int i = 0; i < 5; i++)
@@ -393,19 +399,19 @@ public class FoundationHomeRegressionTest {
     }
 
     private String heroMetrics(PreviewPages pages) {
-        HeroRotationPolicy.Clock clock = org.robolectric.util.ReflectionHelpers.getField(pages, "heroClock");
+        HeroRotationPolicy.Clock clock = ReflectionHelpers.getField(pages, "heroClock");
         return "attached=" + pages.isAttachedToWindow() + ", windowFocus=" + pages.hasWindowFocus()
             + ", shown=" + pages.isShown() + ", scroll=" + ((RecyclerView) pages.getChildAt(0)).canScrollVertically(-1)
             + ", motion=" + ValueAnimator.areAnimatorsEnabled()
             + ", elapsed=" + SystemClock.elapsedRealtime()
-            + ", active=" + org.robolectric.util.ReflectionHelpers.getField(clock, "active")
-            + ", input=" + org.robolectric.util.ReflectionHelpers.getField(clock, "inputAt")
-            + ", next=" + org.robolectric.util.ReflectionHelpers.getField(clock, "nextAt")
-            + ", moving=" + org.robolectric.util.ReflectionHelpers.getField(pages, "featuredMoving");
+            + ", active=" + ReflectionHelpers.getField(clock, "active")
+            + ", input=" + ReflectionHelpers.getField(clock, "inputAt")
+            + ", next=" + ReflectionHelpers.getField(clock, "nextAt")
+            + ", moving=" + ReflectionHelpers.getField(pages, "featuredMoving");
     }
 
     private int heroIndex(PreviewPages pages) {
-        return org.robolectric.util.ReflectionHelpers.getField(pages, "featuredIndex");
+        return ReflectionHelpers.getField(pages, "featuredIndex");
     }
 
     private void heroLayout(View root) {
@@ -416,9 +422,9 @@ public class FoundationHomeRegressionTest {
     }
 
     private void beforeHeroDeadline(PreviewPages pages, View root) {
-        HeroRotationPolicy.Clock clock = org.robolectric.util.ReflectionHelpers.getField(pages, "heroClock");
-        long input = org.robolectric.util.ReflectionHelpers.getField(clock, "inputAt"),
-             next = org.robolectric.util.ReflectionHelpers.getField(clock, "nextAt");
+        HeroRotationPolicy.Clock clock = ReflectionHelpers.getField(pages, "heroClock");
+        long input = ReflectionHelpers.getField(clock, "inputAt"),
+             next = ReflectionHelpers.getField(clock, "nextAt");
         assertEquals(30000, next - input);
         heroTime(root, Math.max(0, next - SystemClock.elapsedRealtime() - 1));
     }
@@ -434,9 +440,9 @@ public class FoundationHomeRegressionTest {
         init();
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         okhttp3.OkHttpClient http =
-            org.robolectric.util.ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "HTTP");
+            ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "HTTP");
         var old = http.interceptors();
-        org.robolectric.util.ReflectionHelpers.setField(http, "interceptors",
+        ReflectionHelpers.setField(http, "interceptors",
             List.<okhttp3.Interceptor>of(
                 chain -> {
                     throw new IOException("Offline hero fixture");
@@ -481,14 +487,14 @@ public class FoundationHomeRegressionTest {
         } finally {
             host.pause().stop().destroy();
             ThreadPoolExecutor io =
-                org.robolectric.util.ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "IO");
+                ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "IO");
             long end = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
             while (io.getActiveCount() != 0 || !io.getQueue().isEmpty()) {
                 if (System.nanoTime() > end)
                     throw new AssertionError("Artwork worker did not finish");
                 Thread.sleep(2);
             }
-            org.robolectric.util.ReflectionHelpers.setField(http, "interceptors", old);
+            ReflectionHelpers.setField(http, "interceptors", old);
         }
     }
 
@@ -497,9 +503,9 @@ public class FoundationHomeRegressionTest {
         init();
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         okhttp3.OkHttpClient http =
-            org.robolectric.util.ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "HTTP");
+            ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "HTTP");
         var old = http.interceptors();
-        org.robolectric.util.ReflectionHelpers.setField(http, "interceptors",
+        ReflectionHelpers.setField(http, "interceptors",
             List.<okhttp3.Interceptor>of(
                 chain -> {
                     throw new IOException("Offline hero fixture");
@@ -534,14 +540,14 @@ public class FoundationHomeRegressionTest {
         } finally {
             host.pause().stop().destroy();
             ThreadPoolExecutor io =
-                org.robolectric.util.ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "IO");
+                ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "IO");
             long end = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
             while (io.getActiveCount() != 0 || !io.getQueue().isEmpty()) {
                 if (System.nanoTime() > end)
                     throw new AssertionError("Artwork worker did not finish");
                 Thread.sleep(2);
             }
-            org.robolectric.util.ReflectionHelpers.setField(http, "interceptors", old);
+            ReflectionHelpers.setField(http, "interceptors", old);
         }
     }
 }
