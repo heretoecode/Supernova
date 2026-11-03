@@ -156,6 +156,7 @@ public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
         }
     }
 
+    @Override
     public int getDelay() {
         return mSign * (mMinute * 60 * 1000 + mSecond * 1000 + mDeciSecond * 100);
     }
@@ -168,6 +169,7 @@ public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
         mDeciSecondPicker.setEnabled(enabled);
     }
 
+    @Override
     public void updateDelay(int delay) {
         mSign = (delay >= 0 ? 1 : -1);
         delay *= mSign;
