@@ -7,6 +7,7 @@ import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewAsyncFixtures;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import com.squareup.picasso.Picasso;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -21,10 +22,10 @@ public class StreamingProviderFocusTest {
     public void setup() {
         PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
