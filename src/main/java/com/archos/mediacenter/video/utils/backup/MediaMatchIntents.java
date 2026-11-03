@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils.backup;
 
 import android.content.Context;
 import androidx.preference.PreferenceManager;
+import java.io.IOException;
 import java.util.*;
 import org.json.*;
 
@@ -112,12 +113,12 @@ public final class MediaMatchIntents {
 
     /** Selected replacement also expresses explicit clearing of receiving matches omitted by the payload. */
     public static Prepared prepare(Map<String, ?> preferences, JSONObject payload, MediaMatchInventory inventory,
-        PortablePhysicalReferences physical) throws java.io.IOException, JSONException {
+        PortablePhysicalReferences physical) throws IOException, JSONException {
         return prepare(preferences, payload, inventory, physical, MediaMatchManualChanges.epoch(preferences));
     }
 
     static Prepared prepare(Map<String, ?> preferences, JSONObject payload, MediaMatchInventory inventory,
-        PortablePhysicalReferences physical, long manualAt) throws java.io.IOException, JSONException {
+        PortablePhysicalReferences physical, long manualAt) throws IOException, JSONException {
         PortableMediaMatches.validate(payload);
         inventory.validatePhysical(physical);
         Set<String> keys = new LinkedHashSet<>();
