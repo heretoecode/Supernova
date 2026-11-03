@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.archos.mediacenter.video.R;
 
+/** Hosts video preferences and handles account and metadata service settings actions. */
 public class VideoPreferencesActivity extends AppCompatActivity {
 
 	final public static String ALLOW_3RD_PARTY_PLAYER = "allow_3rd_party_player";
