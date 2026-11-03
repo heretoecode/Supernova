@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import java.util.*;
@@ -42,7 +43,7 @@ public class VersionPreferenceTest {
                     .get(0)
                     .media)
                 .getId());
-        assertTrue(androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).contains(
+        assertTrue(PreferenceManager.getDefaultSharedPreferences(c).contains(
             "preview_version_choice:movie:550"));
     }
 
