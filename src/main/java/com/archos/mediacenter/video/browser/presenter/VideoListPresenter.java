@@ -15,8 +15,6 @@
 package com.archos.mediacenter.video.browser.presenter;
 
 import android.content.Context;
-import android.os.Build;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
