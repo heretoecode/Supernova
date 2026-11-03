@@ -24,6 +24,7 @@ import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.BrowserAllTvS
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads TV show entries for the video home-screen widget. */
 class RemoteViewsFactoryTVShows extends RemoteViewsFactoryBase {
     private static final Logger log = LoggerFactory.getLogger(RemoteViewsFactoryTVShows.class);
 
