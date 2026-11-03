@@ -15,13 +15,9 @@
 package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.archos.mediaprovider.video.VideoStore;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by vapillon on 10/04/15.
