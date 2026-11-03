@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.json.*;
 
+/** Creates and validates backup manifests and supplies restore instructions. */
 public final class BackupFormat {
     private static final String[] CATEGORIES = {
         "library", "viewing history", "settings", "sources", "custom rows", "personal artwork"
