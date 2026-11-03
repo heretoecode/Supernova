@@ -5,6 +5,9 @@ import android.app.Application;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.leanback.widget.ArrayObjectAdapter;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediascraper.MovieTags;
 import java.util.Arrays;
 import java.util.Collections;
 import org.json.JSONObject;
@@ -18,12 +21,12 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewPeopleRailTest {
     @Test public void nativePrincipalCrewRetainsIndividualNamesWithoutInformationFocus(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().visible().get();
         PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);page.bindRemote(new JSONObject(),"movie",0);
-        com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();
+        MovieTags tags=new MovieTags();
         tags.setDirectors(Arrays.asList("Director One","Director Two"));tags.setWriters(Collections.singletonList("Writer, Jr."));
         page.setTags(tags,Collections.emptyList(),Collections.emptyList());
         View second=page.findViewWithTag("person:Director Two:Director");assertNotNull(second);assertNotNull(page.findViewWithTag("person:Director One:Director"));
@@ -40,8 +43,8 @@ public class PreviewPeopleRailTest {
         assertNotNull(page.findViewWithTag("person:Actor One:Lead"));
         View first=page.findViewWithTag("person:Director One:Director"),second=page.findViewWithTag("person:Director Two:Director");
         assertNotNull(first);assertNotNull(second);assertNotSame(first,second);
-        assertEquals("semantic:details.crew.person.2",first.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
-        assertEquals("semantic:details.crew.person.3",second.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
+        assertEquals("semantic:details.crew.person.2",first.getTag(R.id.preview_diagnostic_semantic));
+        assertEquals("semantic:details.crew.person.3",second.getTag(R.id.preview_diagnostic_semantic));
         assertNull(page.findViewWithTag("person:Crew Other:Production Assistant"));
         assertTrue(first.getParent() instanceof LinearLayout);
         assertEquals(LinearLayout.VERTICAL,((LinearLayout)first.getParent()).getOrientation());
@@ -58,12 +61,12 @@ public class PreviewPeopleRailTest {
     @Test public void awkwardViewportWidthKeepsWholeCardsOnFocusScroll(){
         Activity activity=Robolectric.buildActivity(Activity.class).setup().get();
         PreviewPeopleRail rail=new PreviewPeopleRail(activity);LinearLayout row=new LinearLayout(activity);rail.addView(row);activity.setContentView(rail);
-        int margin=com.archos.mediacenter.video.leanback.PreviewDialog.dp(activity,10);
+        int margin=PreviewDialog.dp(activity,10);
         for(int n=0;n<12;n++){View card=new View(activity);card.setFocusable(true);card.setFocusableInTouchMode(true);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(96,108);lp.rightMargin=margin;row.addView(card,lp);}
-        int width=com.archos.mediacenter.video.leanback.PreviewDialog.dp(activity,651)+1;
+        int width=PreviewDialog.dp(activity,651)+1;
         rail.measure(View.MeasureSpec.makeMeasureSpec(width,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(160,View.MeasureSpec.EXACTLY));rail.layout(0,0,width,160);
         int available=width-rail.getPaddingLeft()-rail.getPaddingRight();
-        int count=Math.max(1,available/com.archos.mediacenter.video.leanback.PreviewDialog.dp(activity,106));
+        int count=Math.max(1,available/PreviewDialog.dp(activity,106));
         assertEquals(available,row.getChildAt(count).getLeft());
         row.getChildAt(count).requestFocus();
         assertEquals(row.getChildAt(1).getLeft(),rail.getScrollX());
