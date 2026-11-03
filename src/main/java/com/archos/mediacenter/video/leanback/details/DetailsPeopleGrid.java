@@ -1,7 +1,9 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.*;
+import android.view.ViewGroup;
 import android.widget.*;
 
 /** Eight flat children, four columns and two rows, with no independent focus or scrolling. */
@@ -15,7 +17,7 @@ final class DetailsPeopleGrid extends LinearLayout {
 
     static int minimumHeight(Context c) {
         TextView label = new TextView(c);
-        label.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        label.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         label.setTextSize(9 * DetailsDimensions.scale(c));
         int caption = Math.max(DetailsDimensions.px(c, 12),
             (int) Math.ceil(label.getPaint().getFontMetrics().descent - label.getPaint().getFontMetrics().ascent));
@@ -34,8 +36,8 @@ final class DetailsPeopleGrid extends LinearLayout {
         int cellWidth = Math.max(1, width / 4), cellHeight = Math.max(1, (height - rowGap()) / 2);
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
-            if (child instanceof android.view.ViewGroup) {
-                android.view.ViewGroup group = (android.view.ViewGroup) child;
+            if (child instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) child;
                 int captions = 0;
                 for (int n = 1; n < group.getChildCount(); n++)
                     if (group.getChildAt(n) instanceof TextView) {
