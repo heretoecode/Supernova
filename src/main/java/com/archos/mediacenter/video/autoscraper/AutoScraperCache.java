@@ -41,6 +41,7 @@ import android.util.Log;
 import java.util.HashMap;
 
 
+/** Caches thumbnails and posters for the automatic metadata scraper. */
 public class AutoScraperCache {
     private final static String TAG = "AutoScraperCache";
     private final static boolean DBG = false;
