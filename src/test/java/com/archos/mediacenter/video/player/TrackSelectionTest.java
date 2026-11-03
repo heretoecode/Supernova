@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/** Checks audio and subtitle track selection against the CSV selection cases. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33)
 public class TrackSelectionTest {
