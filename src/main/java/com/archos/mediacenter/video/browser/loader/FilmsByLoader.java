@@ -68,6 +68,7 @@ public abstract class FilmsByLoader extends CursorLoader implements CompatAndSDK
         return sb.toString();
     }
 
+    @Override
     public Loader<Cursor> getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mForceHideVideos = hideWatchedVideos;
         return new CursorLoader(getContext(),
