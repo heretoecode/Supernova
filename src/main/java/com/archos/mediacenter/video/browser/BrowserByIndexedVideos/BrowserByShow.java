@@ -51,6 +51,7 @@ import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Browses a TV show with its poster, seasons and episode information. */
 public class BrowserByShow extends BrowserWithShowHeader {
 
     private static final String TAG = "BrowserByShow";
