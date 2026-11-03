@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.player;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks playback adjustment labels use explicit signs, units and unambiguous speed values. */
 public class PreviewAdjustmentValueTest {
     @Test public void valuesUseExplicitSignsUnitsAndUnambiguousSpeed(){
         assertEquals("1.00×",PreviewAdjustmentValue.speed(1f));assertEquals("0.75×",PreviewAdjustmentValue.speed(.75f));
