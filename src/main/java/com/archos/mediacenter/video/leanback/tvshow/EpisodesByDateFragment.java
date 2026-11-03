@@ -39,6 +39,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays episodes grouped by date with loading and sorting controls. */
 public class EpisodesByDateFragment extends VideosByFragment {
 
     private static final Logger log = LoggerFactory.getLogger(EpisodesByDateFragment.class);
