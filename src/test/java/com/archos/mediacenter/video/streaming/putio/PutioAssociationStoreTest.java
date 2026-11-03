@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.streaming.putio;
 
 import android.app.Application;
 import android.net.Uri;
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -54,7 +55,7 @@ public class PutioAssociationStoreTest {
         assertTrue(store.commit(
             first, snapshot(first, file(30, "a.mkv")), Collections.singletonList(existing(5, "a.mkv", 0))));
         assertTrue(store.activate(first));
-        assertTrue(com.archos.mediaprovider.video.ProviderDiscoveryGate.excludes(
+        assertTrue(ProviderDiscoveryGate.excludes(
             RuntimeEnvironment.getApplication(), Uri.parse("https://webdav.put.io/Films/a.mkv")));
         assertEquals(PutioAssociationStore.Ownership.API, store.ownership(10, 20));
         PutioAssociationStore.Session rename = store.begin(10, 20);
