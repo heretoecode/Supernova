@@ -3,7 +3,9 @@ package com.archos.mediacenter.video.utils;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import com.archos.medialib.R;
 import com.archos.mediascraper.*;
+import com.archos.mediascraper.ShowUtils;
 import com.archos.mediascraper.xml.ShowScraper4;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -45,8 +47,8 @@ public final class DirectShowLookup {
         result.setOriginSearchSeason(1); result.setOriginSearchEpisode(1);
         if (!show.isNull("poster_path")) result.setPosterPath(show.getString("poster_path"));
         Bundle extra = new Bundle();
-        extra.putString(com.archos.mediascraper.ShowUtils.SEASON, "1");
-        extra.putString(com.archos.mediascraper.ShowUtils.EPNUM, "1");
+        extra.putString(ShowUtils.SEASON, "1");
+        extra.putString(ShowUtils.EPNUM, "1");
         result.setExtra(extra);
         return new ScrapeSearchResult(Collections.singletonList(result), false, ScrapeStatus.OKAY, null);
     }
@@ -74,7 +76,7 @@ public final class DirectShowLookup {
 
     static JSONObject request(Context c, String path, boolean find) throws Exception {
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path).buildUpon()
-            .appendQueryParameter("api_key", c.getString(com.archos.medialib.R.string.tmdb_api_key))
+            .appendQueryParameter("api_key", c.getString(R.string.tmdb_api_key))
             .appendQueryParameter("language", Scraper.getLanguage(c));
         if (find) url.appendQueryParameter("external_source", "imdb_id");
         try (Response r = HTTP.newCall(new Request.Builder().url(url.build().toString()).build()).execute()) {
