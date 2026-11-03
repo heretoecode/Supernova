@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.robolectric.annotation.SQLiteMode;
 
+/** Checks portable hidden-item state remaps exact files and replaces flags transactionally. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortableHiddenItemsTest {
