@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.R;
 import android.content.Context;
 import android.content.res.Resources;
 
+/** Supplies default artwork and layout dimensions for detailed browser rows. */
 public enum AdapterDefaultValuesDetails implements AdapterDefaultValues {
 
     INSTANCE;
