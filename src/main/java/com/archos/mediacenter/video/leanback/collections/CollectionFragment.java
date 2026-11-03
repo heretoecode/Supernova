@@ -106,6 +106,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+/** Displays collection details and handles video actions, loading and deletion events. */
 public class CollectionFragment extends DetailsFragmentWithLessTopOffset implements LoaderManager.LoaderCallbacks<Cursor>, Delete.DeleteListener {
 
     private static final Logger log = LoggerFactory.getLogger(CollectionFragment.class);
