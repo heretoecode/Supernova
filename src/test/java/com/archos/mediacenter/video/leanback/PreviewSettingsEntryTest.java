@@ -7,16 +7,19 @@ import android.widget.LinearLayout;
 import androidx.preference.*;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSettingsEntryTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     public static class Settings extends PreferenceFragmentCompat {
         @Override public void onCreatePreferences(Bundle state,String rootKey){
             PreferenceScreen root=getPreferenceManager().createPreferenceScreen(requireContext());setPreferenceScreen(root);
@@ -31,7 +34,7 @@ public class PreviewSettingsEntryTest {
         @Override public void onViewCreated(View view,Bundle state){super.onViewCreated(view,state);PreviewSettings.sidebar(this);}
     }
     @Test public void subtitleShortcutTargetsRailWithoutChangingSettingsOrEnteringOptions(){
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{
             host.get().getIntent().putExtra("preview_settings_category","Subtitles");Settings fragment=new Settings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);View subtitles=root.findViewWithTag("semantic:settings:category:Subtitles");
@@ -56,7 +59,7 @@ public class PreviewSettingsEntryTest {
         }
     }
     @Test public void childReturnUsesStableIdentityWhenLabelsMatch(){
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{
             NestedSettings fragment=new NestedSettings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);
