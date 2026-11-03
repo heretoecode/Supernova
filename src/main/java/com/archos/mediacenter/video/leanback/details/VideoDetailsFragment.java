@@ -1033,6 +1033,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                         // Delay the finish the "old" activity, else it breaks the animation
                         mHandler.postDelayed(new Runnable() {
+                            @Override
                             public void run() {
                                 Activity activity = getActivity();
                                 if (activity != null)
@@ -1367,6 +1368,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                 if (UriUtils.isIndexable(mVideo.getFileUri())) {
                     final Uri uri = mVideo.getFileUri();
                     new Thread() {
+                        @Override
                         public void run() {
                             if (!VideoStoreImportImpl.isNoMediaPath(uri))
                                 VideoStore.requestIndexing(uri, getActivity(), false);
@@ -3003,6 +3005,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                     startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                     // Delay the finish the "old" activity, else it breaks the animation
                     mHandler.postDelayed(new Runnable() {
+                        @Override
                         public void run() {
                             if (getActivity() != null) // better safe than sorry
                                 getActivity().finish();
