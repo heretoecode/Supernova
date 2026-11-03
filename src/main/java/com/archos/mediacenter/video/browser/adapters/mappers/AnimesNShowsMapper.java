@@ -15,13 +15,11 @@
 package com.archos.mediacenter.video.browser.adapters.mappers;
 
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 
 import com.archos.mediacenter.utils.trakt.Trakt;
-import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
@@ -29,6 +27,7 @@ import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.BaseTags;
 
+import java.lang.NumberFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,35 +149,35 @@ public class AnimesNShowsMapper implements CompatibleCursorMapper {
         if(mBestAudioFormatColumn >=0){
             try {
                 bestAudioFormat = c.getString(mBestAudioFormatColumn);
-            } catch (java.lang.NumberFormatException e){}
+            } catch (NumberFormatException e){}
         }
         if(mVideoFormatColumn >=0){
             try {
                 videoFormat = c.getString(mVideoFormatColumn);
-            } catch (java.lang.NumberFormatException e){}
+            } catch (NumberFormatException e){}
         }
 
         if(mGuessedAudioFormatColumn >=0){
             try {
                 guessedAudioFormat = c.getString(mGuessedAudioFormatColumn);
-            } catch (java.lang.NumberFormatException e){}
+            } catch (NumberFormatException e){}
         }
         if(mGuessedVideoFormatColumn >=0){
             try {
                 guessedVideoFormat = c.getString(mGuessedVideoFormatColumn);
-            } catch (java.lang.NumberFormatException e){}
+            } catch (NumberFormatException e){}
         }
 
         if(mCalculatedHeightColumn>=0){
             try {
                 calculatedHeight = Integer.valueOf(c.getString(mCalculatedHeightColumn));
-            } catch (java.lang.NumberFormatException e){}
+            } catch (NumberFormatException e){}
 
         }
         if(mCalculatedWidthColumn>=0){
             try {
                 calculatedWidth = Integer.valueOf(c.getString(mCalculatedWidthColumn));
-            } catch (java.lang.NumberFormatException e){}
+            } catch (NumberFormatException e){}
         }
         int count = 1;
         if(mCountColumn>=0){
