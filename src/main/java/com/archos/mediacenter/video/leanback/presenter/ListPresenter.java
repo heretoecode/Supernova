@@ -40,7 +40,6 @@ import com.squareup.picasso.Target;
  * Created by vapillon on 10/04/15.
  */
 public abstract class ListPresenter extends Presenter {
-
     private Context mContext;
 
     public class ListViewHolder extends ViewHolder {
@@ -55,16 +54,16 @@ public abstract class ListPresenter extends Presenter {
 
         public ListViewHolder(Context context) {
             super(new BaseCardView(context));
-            mBaseCardView = (BaseCardView)view;
+            mBaseCardView = (BaseCardView) view;
             mBaseCardView.setBackgroundColor(ContextCompat.getColor(context, R.color.lb_basic_card_info_bg_color));
             mBaseCardView.setFocusable(true);
             mBaseCardView.setFocusableInTouchMode(true);
             mBaseCardView.setCardType(BaseCardView.CARD_TYPE_MAIN_ONLY);
 
             LayoutInflater.from(context).inflate(R.layout.leanback_listitem_cardview_content, mBaseCardView, true);
-            mImageView = (ImageView)mBaseCardView.findViewById(R.id.image);
-            mTitleTv = (TextView)mBaseCardView.findViewById(R.id.title);
-            mContentTv = (TextView)mBaseCardView.findViewById(R.id.content);
+            mImageView = (ImageView) mBaseCardView.findViewById(R.id.image);
+            mTitleTv = (TextView) mBaseCardView.findViewById(R.id.title);
+            mContentTv = (TextView) mBaseCardView.findViewById(R.id.content);
             mProgressBar = mBaseCardView.findViewById(R.id.resume_bar);
             mWatchedIcon = mBaseCardView.findViewById(R.id.watched_icon);
             mPinnedIcon = mBaseCardView.findViewById(R.id.pinned_icon);
@@ -73,12 +72,34 @@ public abstract class ListPresenter extends Presenter {
             mWatchedIcon.setVisibility(View.GONE);
             mPinnedIcon.setVisibility(View.GONE);
 
-            if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("try_new_ui",false)){
-                float density=context.getResources().getDisplayMetrics().density;
-                View content=mBaseCardView.findViewById(R.id.myroot);content.getLayoutParams().width=Math.min((int)(820*density),context.getResources().getDisplayMetrics().widthPixels-(int)(100*density));content.getLayoutParams().height=(int)(54*density);content.setBackgroundColor(0x240a1420);
-                mImageView.getLayoutParams().width=(int)(82*density);mImageView.getLayoutParams().height=(int)(54*density);mImageView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-                mTitleTv.setTextSize(14);mTitleTv.setSingleLine(true);mTitleTv.setTypeface(android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.NORMAL));mContentTv.setTextSize(11);mContentTv.setTextColor(0xffa4b6c7);mBaseCardView.setBackgroundColor(0xbb192f45);
-                android.graphics.drawable.LayerDrawable separated=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{new android.graphics.drawable.ColorDrawable(0x1809131c),new android.graphics.drawable.ColorDrawable(0x40708695)});separated.setLayerHeight(1,Math.max(1,(int)density));separated.setLayerGravity(1,android.view.Gravity.BOTTOM);mBaseCardView.setBackground(separated);mBaseCardView.setForeground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(context));mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                    "try_new_ui", false)) {
+                float density = context.getResources().getDisplayMetrics().density;
+                View content = mBaseCardView.findViewById(R.id.myroot);
+                content.getLayoutParams().width = Math.min((int) (820 * density),
+                    context.getResources().getDisplayMetrics().widthPixels - (int) (100 * density));
+                content.getLayoutParams().height = (int) (54 * density);
+                content.setBackgroundColor(0x240a1420);
+                mImageView.getLayoutParams().width = (int) (82 * density);
+                mImageView.getLayoutParams().height = (int) (54 * density);
+                mImageView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                mTitleTv.setTextSize(14);
+                mTitleTv.setSingleLine(true);
+                mTitleTv.setTypeface(
+                    android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+                mContentTv.setTextSize(11);
+                mContentTv.setTextColor(0xffa4b6c7);
+                mBaseCardView.setBackgroundColor(0xbb192f45);
+                android.graphics.drawable.LayerDrawable separated = new android.graphics.drawable.LayerDrawable(
+                    new android.graphics.drawable.Drawable[] {
+                        new android.graphics.drawable.ColorDrawable(0x1809131c),
+                        new android.graphics.drawable.ColorDrawable(0x40708695)
+                    });
+                separated.setLayerHeight(1, Math.max(1, (int) density));
+                separated.setLayerGravity(1, android.view.Gravity.BOTTOM);
+                mBaseCardView.setBackground(separated);
+                mBaseCardView.setForeground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(context));
+                mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             }
             mImageViewTarget = new PicassoImageViewTarget(mImageView);
         }
@@ -90,9 +111,11 @@ public abstract class ListPresenter extends Presenter {
         public void setTitleText(String title) {
             mTitleTv.setText(title);
         }
+
         public void setContentText(String content) {
             mContentTv.setText(content);
         }
+
         public void setContentTextVisibility(int visibility) {
             mContentTv.setVisibility(visibility);
         }
@@ -111,47 +134,50 @@ public abstract class ListPresenter extends Presenter {
          * @param posterUri
          */
         protected void updateImageViewPoster(Uri posterUri, long videoId) {
-
             //setting fallback : when fail to load poster (for example when file doesn't exist), try to load thumbnail
             mImageViewTarget.setVideoId(videoId);
-            Picasso.get()
-                    // must use an Uri here, does not work with path only
-                    .load(posterUri)
-                    .resize(getWidth(mContext), getHeight(mContext))
-                    .centerCrop()
-                    .error(R.drawable.filetype_new_video)
-                    .into(mImageViewTarget);
+            Picasso
+                .get()
+                // must use an Uri here, does not work with path only
+                .load(posterUri)
+                .resize(getWidth(mContext), getHeight(mContext))
+                .centerCrop()
+                .error(R.drawable.filetype_new_video)
+                .into(mImageViewTarget);
         }
 
         protected void updateImageViewThumbnail(long videoId) {
             mImageViewTarget.setVideoId(-1);
-            Picasso.get()
-                    // must use an Uri here, does not work with path only
-                    .load(ThumbnailRequestHandler.buildUri(videoId))
-                    .resize(getWidth(mContext), getHeight(mContext))
-                    .centerCrop()
-                    .error(R.drawable.filetype_new_video)
-                    .into(mImageViewTarget);
+            Picasso
+                .get()
+                // must use an Uri here, does not work with path only
+                .load(ThumbnailRequestHandler.buildUri(videoId))
+                .resize(getWidth(mContext), getHeight(mContext))
+                .centerCrop()
+                .error(R.drawable.filetype_new_video)
+                .into(mImageViewTarget);
         }
+
         /**
          * empty is 0, full is 100, one third is 33.333333f
          * @param resumePointInPercent
          */
         public void setResumeInPercent(float resumePointInPercent) {
-            if (resumePointInPercent==0f) {
+            if (resumePointInPercent == 0f) {
                 mProgressBar.setVisibility(View.GONE);
             } else {
                 mProgressBar.setVisibility(View.VISIBLE);
-                mProgressBar.getLayoutParams().width = (int)(getWidth(mContext) * resumePointInPercent / 100f);
+                mProgressBar.getLayoutParams().width = (int) (getWidth(mContext) * resumePointInPercent / 100f);
                 mProgressBar.requestLayout();
             }
         }
+
         public void setWatched(boolean value) {
-            mWatchedIcon.setVisibility( value ? View.VISIBLE : View.GONE);
+            mWatchedIcon.setVisibility(value ? View.VISIBLE : View.GONE);
         }
 
         public void setPinned(boolean value) {
-            mPinnedIcon.setVisibility( value ? View.VISIBLE : View.GONE);
+            mPinnedIcon.setVisibility(value ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -172,7 +198,7 @@ public abstract class ListPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        ListViewHolder vh = (ListViewHolder)viewHolder;
+        ListViewHolder vh = (ListViewHolder) viewHolder;
 
         onBindListViewHolder(vh, item); // Call the version that must be implemented by child classes
     }
@@ -182,8 +208,8 @@ public abstract class ListPresenter extends Presenter {
     @Override
     public void onUnbindViewHolder(ViewHolder viewHolder) {
         // Rest visibilities and image to default that each subclasses do not have to care about it
-        ((ListViewHolder)viewHolder).getImageView().setImageDrawable(null);
-        ((ListViewHolder)viewHolder).setContentTextVisibility(View.VISIBLE);
+        ((ListViewHolder) viewHolder).getImageView().setImageDrawable(null);
+        ((ListViewHolder) viewHolder).setContentTextVisibility(View.VISIBLE);
     }
 
     public class PicassoImageViewTarget implements Target {
@@ -193,11 +219,11 @@ public abstract class ListPresenter extends Presenter {
         // Picasso documentation: Objects implementing this class must have a working implementation of Object.equals(Object) and Object.hashCode() for proper storage internally.
         @Override
         public boolean equals(Object other) {
-            if (other==null || !(other instanceof PicassoImageViewTarget)) {
+            if (other == null || !(other instanceof PicassoImageViewTarget)) {
                 return false;
             }
             // mImageView must never be null, no need to check it!
-            return mImageView.equals( ((PicassoImageViewTarget)other).mImageView );
+            return mImageView.equals(((PicassoImageViewTarget) other).mImageView);
         }
 
         public PicassoImageViewTarget(ImageView imageView) {
@@ -211,11 +237,11 @@ public abstract class ListPresenter extends Presenter {
         }
 
         @Override
-        public void onBitmapFailed(Exception e,Drawable drawable){
-            if( mVideoId!=-1){
+        public void onBitmapFailed(Exception e, Drawable drawable) {
+            if (mVideoId != -1) {
                 UnavailablePosterBroadcastReceiver.sendBroadcast(mContext, mVideoId);
                 mVideoId = -1;
-            }else {
+            } else {
                 mImageView.setScaleType(ImageView.ScaleType.CENTER);
                 mImageView.setImageDrawable(drawable);
             }
@@ -225,7 +251,6 @@ public abstract class ListPresenter extends Presenter {
         public void onPrepareLoad(Drawable drawable) {
             // Do nothing
         }
-
 
         public void setVideoId(long videoId) {
             mVideoId = videoId;
