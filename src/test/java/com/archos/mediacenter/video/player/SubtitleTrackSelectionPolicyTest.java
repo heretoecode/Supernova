@@ -15,6 +15,8 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.Application;
+import com.archos.environment.ArchosUtils;
+import com.archos.mediacenter.video.CustomApplication;
 import static org.junit.Assert.assertEquals;
 
 import android.net.Uri;
@@ -29,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.lang.reflect.Constructor;
@@ -37,6 +40,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.robolectric.util.ReflectionHelpers;
 
 /**
  * Dedicated unit tests verifying the Subtitle Display & Track Selection specification
@@ -55,9 +59,9 @@ public class SubtitleTrackSelectionPolicyTest {
         mOriginalLocale = Locale.getDefault();
         // Track policy uses an attached service/context, not deferred production
         // discovery/HDMI startup that can outlive a Robolectric test sandbox.
-        Application app = org.robolectric.RuntimeEnvironment.getApplication();
-        com.archos.environment.ArchosUtils.setGlobalContext(app);
-        org.robolectric.util.ReflectionHelpers.setStaticField(com.archos.mediacenter.video.CustomApplication.class,"mContext",app);
+        Application app = RuntimeEnvironment.getApplication();
+        ArchosUtils.setGlobalContext(app);
+        ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",app);
         mService = Robolectric.buildService(PlayerService.class).get();
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
