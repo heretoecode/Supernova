@@ -4,6 +4,11 @@ import android.content.Context;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.json.*;
 import java.nio.charset.StandardCharsets;
 
@@ -11,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 public final class LicenseDisclosure extends LinearLayout {
     private final LinearLayout catalogue;
     private final FrameLayout detail;
-    private final java.util.concurrent.ExecutorService io = java.util.concurrent.Executors.newSingleThreadExecutor();
+    private final ExecutorService io = Executors.newSingleThreadExecutor();
     private int generation;
 
     public LicenseDisclosure(Context context) {
@@ -55,16 +60,16 @@ public final class LicenseDisclosure extends LinearLayout {
         });
     }
 
-    private String read(String asset) throws java.io.IOException {
+    private String read(String asset) throws IOException {
         if (!asset.startsWith("foundation/") || asset.contains(".."))
-            throw new java.io.IOException("Invalid notice asset");
-        try (java.io.InputStream input = getContext().getAssets().open(asset)) {
-            java.io.ByteArrayOutputStream output = new java.io.ByteArrayOutputStream();
+            throw new IOException("Invalid notice asset");
+        try (InputStream input = getContext().getAssets().open(asset)) {
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
             int count;
             while ((count = input.read(buffer)) != -1) {
                 if (output.size() + count > 8 * 1024 * 1024)
-                    throw new java.io.IOException("Notice exceeds reader limit");
+                    throw new IOException("Notice exceeds reader limit");
                 output.write(buffer, 0, count);
             }
             return output.toString(StandardCharsets.UTF_8.name());
