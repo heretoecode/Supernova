@@ -1,7 +1,9 @@
 package com.archos.mediacenter.video.streaming.putio;
+import android.app.Application;
 import android.net.Uri;
 import android.content.Context;
 import com.archos.mediaprovider.video.ProviderDiscoveryGate;
+import java.lang.reflect.Method;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -10,7 +12,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = android.app.Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28)
 public class ProviderDiscoveryGateTest {
     private Context context;
 
@@ -55,7 +57,7 @@ public class ProviderDiscoveryGateTest {
         ProviderDiscoveryGate.exclude(context, "putio:10:20", Uri.parse("https://webdav.put.io/Films"));
         com.archos.mediacenter.video.browser.Delete operation =
             new com.archos.mediacenter.video.browser.Delete(null, context);
-        java.lang.reflect.Method method =
+        Method method =
             operation.getClass().getDeclaredMethod("deletePhysicalFile", Context.class, Uri.class);
         method.setAccessible(true);
         assertEquals(
