@@ -15,12 +15,8 @@
 package com.archos.mediacenter.video.browser.presenter;
 
 import android.content.Context;
-import android.view.View;
 
-import com.archos.mediacenter.utils.ThumbnailEngine;
-import com.archos.mediacenter.video.browser.adapters.AdapterDefaultValuesGrid;
 import com.archos.mediacenter.video.browser.adapters.AdapterDefaultValuesGridShort;
-import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 
 /**
  * Created by alexandre on 27/10/15.
