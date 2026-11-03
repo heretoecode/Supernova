@@ -614,6 +614,7 @@ public final class PreviewSettings {
     private static void focusFirst(RecyclerView list) {
         list.post(new Runnable() {
             int attempts;
+            @Override
             public void run() {
                 if (!list.isAttachedToWindow())
                     return;
@@ -1336,8 +1337,10 @@ public final class PreviewSettings {
                 || backup != null && backup.hasFocus());
             split.getViewTreeObserver().addOnGlobalFocusChangeListener(focus);
             split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
                 public void onViewAttachedToWindow(View v) {
                 }
+                @Override
                 public void onViewDetachedFromWindow(View v) {
                     if (v.getViewTreeObserver().isAlive())
                     v.getViewTreeObserver().removeOnGlobalFocusChangeListener(focus);
@@ -1375,6 +1378,7 @@ public final class PreviewSettings {
         };
         child.post(reveal);
         child.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
             public void onGlobalLayout() {
                 if (child.getViewTreeObserver().isAlive())
                     child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
