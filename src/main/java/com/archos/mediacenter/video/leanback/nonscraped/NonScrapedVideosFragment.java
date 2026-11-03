@@ -57,6 +57,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.AutoScrapeService;
 
 
+/** Displays videos without scraped metadata and handles loading, sorting and selection. */
 public class NonScrapedVideosFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "NonScrapedVideosFragment";
