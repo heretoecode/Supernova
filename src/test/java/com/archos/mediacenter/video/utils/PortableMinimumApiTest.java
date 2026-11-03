@@ -9,6 +9,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks portable data retains Unicode labels and rejects unsafe locators on the minimum supported API. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 23)
 public class PortableMinimumApiTest {
