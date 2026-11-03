@@ -30,7 +30,6 @@ import android.widget.ImageView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediaprovider.video.VideoStore;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
