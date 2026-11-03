@@ -23,7 +23,6 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,7 +30,6 @@ import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.AudioDelayPickerAbstract;
-import com.archos.mediacenter.video.player.PlayerService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
