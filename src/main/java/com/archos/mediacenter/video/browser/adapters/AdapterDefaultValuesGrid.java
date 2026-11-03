@@ -25,32 +25,39 @@ public enum AdapterDefaultValuesGrid implements AdapterDefaultValues {
 
     INSTANCE;
 
+    @Override
     public int getDefaultDirectoryThumbnail() {
         return R.drawable.filetype_video_folder_vertical;
     }
 
+    @Override
     public int getDefaultShortcutThumbnail() {
         return R.drawable.filetype_video_folder_indexed_vertical;
     }
 
+    @Override
     public int getDefaultVideoThumbnail() {
         return R.drawable.filetype_video_large;
     }
 
+    @Override
     public int getMediaSyncIcon(int state) {
         return R.drawable.label_video_disabled; // not required here
     }
 
+    @Override
     public int getLayoutId() {
         return R.layout.browser_item_grid;
     }
 
+    @Override
     public int getLayoutId(int itemType) {
         // This method is only needed for compatibility,
         // there is only one possible layout anyway
         return R.layout.browser_item_grid;
     }
 
+    @Override
     public int[] getThumnailHeightWidth(Context context) {
         Resources res = context.getResources();
         return new int[] {
@@ -59,6 +66,7 @@ public enum AdapterDefaultValuesGrid implements AdapterDefaultValues {
         };
     }
 
+    @Override
     public int getExpandedZone() {
         return R.id.expanded;
     }
