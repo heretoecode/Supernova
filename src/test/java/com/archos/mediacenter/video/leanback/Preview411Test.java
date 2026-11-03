@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.search.PreviewSearchText;
 import com.archos.mediacenter.video.player.PreviewTrackLabel;
@@ -37,7 +38,7 @@ public class Preview411Test {
     @Test
     public void explicitScanOffIsPreserved() {
         Application c = RuntimeEnvironment.getApplication();
-        android.content.SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(c);
         p.edit()
             .clear()
             .putBoolean("try_new_ui", true)
