@@ -14,7 +14,6 @@
 
 package com.archos.mediacenter.video.leanback.collections;
 
-import android.annotation.SuppressLint;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -59,7 +58,6 @@ import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 import android.transition.Slide;
 import android.transition.Transition;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -102,7 +100,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
