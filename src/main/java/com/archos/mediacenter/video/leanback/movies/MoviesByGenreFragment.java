@@ -62,7 +62,7 @@ public class MoviesByGenreFragment extends VideosByFragment {
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie)
             return new FilmsByGenreLoader(context);
-        else return new MoviesByGenreLoader(context);
+            else return new MoviesByGenreLoader(context);
     }
 
     @Override
