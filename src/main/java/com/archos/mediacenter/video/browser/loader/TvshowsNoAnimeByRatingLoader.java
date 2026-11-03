@@ -34,6 +34,7 @@ public class TvshowsNoAnimeByRatingLoader extends TvshowsNoAnimeByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         return "SELECT\n" +
                 "    CAST(s_rating as int) AS _id,\n" +
