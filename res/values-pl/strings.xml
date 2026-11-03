@@ -420,11 +420,8 @@
     <!-- torrent -->
     <string name="error">Wystąpił błąd</string>
     <string name="error_protocol_not_supported">Błąd: protokół nie jest obsługiwany</string>
-    <string name="error_loading_torrent">Wystąpił błąd podczas ładowania torrenta</string>
-    <string name="error_downloading_not_enough_space">Wystąpił błąd podczas pobierania torrenta: brak miejsca na dysku</string>
     <string name="loading_torrent">Ładowanie torrenta…</string>
     <string name="error_no_video_file">Brak pliku wideo</string>
-    <string name="torrent_file_to_play">Wybierz plik do odtworzenia</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Przeglądaj udziały sieciowe</string>
     <string name="add_ssh_server">Przeglądaj serwer FTP</string>
@@ -747,16 +744,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Ścieżka pobierania</string>
     <string name="torrent_blocklist">Czarna lista</string>
     <string name="blocklist_empty">Adres URL nie może być pusty</string>
     <string name="blocklist_invalid">Nieprawidłowa czarna lista</string>
-    <string name="blocklist_file_not_found">Nie znaleziono pliku</string>
     <string name="blocklist_success">Czarna lista została zaktualizowana</string>
-    <string name="blocklist_unknown_error">Nieznany</string>
-    <string name="blocklist_not_loaded">Niezaładowany</string>
-    <string name="torrent_blocklist_url">Adres URL czarnej listy</string>
     <string name="sdk_not_supported">Android 4.3 nie jest jeszcze obsługiwany.\nCiężko pracujemy, aby to zmienić i mamy nadzieję, że nowa wersja pojawi się wkrótce!</string>
     <string name="manually_create_share">Dodaj zindeksowany folder przez URI</string>
     <string name="share_infos_incomplete">Musisz wypełnić ścieżkę</string>
