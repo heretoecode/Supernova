@@ -26,6 +26,7 @@ import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays the library's movies using a cursor-backed browser. */
 public class BrowserAllMovies extends BrowserByVideoSelection {
 
 	private static final boolean DBG = false;
