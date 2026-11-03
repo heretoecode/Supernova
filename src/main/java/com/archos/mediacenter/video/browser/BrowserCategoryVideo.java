@@ -52,7 +52,7 @@ import com.archos.mediacenter.video.browser.filebrowsing.network.UpnpBrowser.Upn
 import java.util.ArrayList;
 
 @SuppressWarnings("deprecation") // ActionBar navigation mode: legacy list navigation
-public class BrowserCategoryVideo extends BrowserCategory implements androidx.appcompat.app.ActionBar.OnNavigationListener {
+public class BrowserCategoryVideo extends BrowserCategory implements ActionBar.OnNavigationListener {
     static final String TAG = "BrowserCategoryVideo";
 
     static final String KEY_ACTIONBAR_NAVIGATION_MODE = "KEY_ACTIONBAR_NAVIGATION_MODE";
@@ -261,7 +261,7 @@ public class BrowserCategoryVideo extends BrowserCategory implements androidx.ap
      * @param setupTheFragmentAsWell: if true, the fragment corresponding to the selected drop-down item will also be created
      */
     private void setupMovieActionBarNavigation(boolean setupTheFragmentAsWell) {
-         androidx.appcompat.app.ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
+         ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
         // no title in that case
         ab.setTitle("");
         // navigation drop-down instead
