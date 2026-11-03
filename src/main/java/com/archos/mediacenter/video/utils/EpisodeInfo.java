@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/** Exposes episode and show metadata as formatted video information. */
 public class EpisodeInfo extends BaseInfo {
 
     private final static String TITLE_FORMAT = "%s  S%dE%d";
