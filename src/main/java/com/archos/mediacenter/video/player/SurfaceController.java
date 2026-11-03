@@ -32,6 +32,7 @@ import android.widget.Toast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Coordinates playback surfaces, video sizing and subtitle layout. */
 public class SurfaceController {
 
     private static final Logger log = LoggerFactory.getLogger(SurfaceController.class);
