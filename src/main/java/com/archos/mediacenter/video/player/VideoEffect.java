@@ -80,7 +80,7 @@ public class VideoEffect {
     
     public int getEffectMode() {
         if (isInForcedMode()) return getForcedMode();
-        else return mMode;
+            else return mMode;
     }
     
     public static int getDefaultMode() {
