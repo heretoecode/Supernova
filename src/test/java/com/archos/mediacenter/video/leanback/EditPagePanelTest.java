@@ -1,9 +1,16 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Dialog;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.os.Bundle;
+import android.os.Looper;
 import android.view.*;
 import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -43,7 +50,7 @@ public class EditPagePanelTest {
             view.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
                          View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
             view.layout(0, 0, 1920, 1080);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(40));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(40));
         }
     }
 
@@ -54,7 +61,7 @@ public class EditPagePanelTest {
             decor.measure(View.MeasureSpec.makeMeasureSpec(a.width, View.MeasureSpec.EXACTLY),
                           View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.AT_MOST));
             decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
@@ -66,19 +73,19 @@ public class EditPagePanelTest {
         layoutPanel(d);
         View panel = d.getWindow().getDecorView();
         WindowManager.LayoutParams a = d.getWindow().getAttributes();
-        android.graphics.Bitmap image =
-            android.graphics.Bitmap.createBitmap(1920, 1080, android.graphics.Bitmap.Config.ARGB_8888);
-        android.graphics.Canvas canvas = new android.graphics.Canvas(image);
+        Bitmap image =
+            Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(image);
         canvas.drawColor(0xff05080d);
         root.draw(canvas);
         canvas.save();
         canvas.translate(1920 - a.x - a.width, a.y);
         panel.draw(canvas);
         canvas.restore();
-        java.io.File file = new java.io.File("build/reports/preview-ui/" + name + ".png");
+        File file = new File("build/reports/preview-ui/" + name + ".png");
         file.getParentFile().mkdirs();
-        try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
-            image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out);
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            image.compress(Bitmap.CompressFormat.PNG, 100, out);
         }
         image.recycle();
     }
@@ -267,7 +274,7 @@ public class EditPagePanelTest {
             assertNotNull(PreviewPagesTest.findText(decor, "Keep Editing"));
             assertNotNull(PreviewPagesTest.findText(decor, "Save"));
             PreviewPagesTest.findText(decor, "Discard").performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals("Kept page", draft(a).name);
             assertFalse(ReflectionHelpers.getField(w, "editing"));
             assertNull(a.editor());
@@ -309,7 +316,7 @@ public class EditPagePanelTest {
     @Test
     public void restoredStateReopensTheEditorWithItsDraft() {
         saved("Saved name");
-        android.os.Bundle state = new android.os.Bundle();
+        Bundle state = new Bundle();
         CustomLibraryPage page = CustomLibraryPage.load(RuntimeEnvironment.getApplication());
         String original = page.encode();
         page.name = "Draft name";
