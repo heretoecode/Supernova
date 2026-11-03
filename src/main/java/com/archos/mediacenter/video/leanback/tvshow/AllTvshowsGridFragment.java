@@ -347,11 +347,11 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
         if (args == null) {
             if (mSeparateAnimeFromShowMovie)
                 return new AllTvshowsNoAnimeLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-            else return new AllTvshowsLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+                else return new AllTvshowsLoader(getActivity(), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
         }
         if (mSeparateAnimeFromShowMovie)
             return new AllTvshowsNoAnimeLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-        else return new AllTvshowsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+            else return new AllTvshowsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
     }
 
     @Override
@@ -359,7 +359,7 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
         if (id == 0) {
             return createTvshowsLoader(args);
         }
-        else return null;
+            else return null;
     }
 
     @Override
