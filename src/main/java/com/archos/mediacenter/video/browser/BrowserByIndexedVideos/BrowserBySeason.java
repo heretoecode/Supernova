@@ -43,6 +43,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Browses a show's seasons with a shared show header. */
 public class BrowserBySeason extends BrowserWithShowHeader  {
 
     private static final Logger log = LoggerFactory.getLogger(BrowserBySeason.class);
