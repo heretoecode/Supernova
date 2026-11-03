@@ -9,6 +9,10 @@ import android.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.utils.introdb.IntroSegments;
+import com.archos.mediacenter.video.leanback.SharedThreePanel;
+import com.archos.mediacenter.video.leanback.SupernovaStyle;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 /** In-player presentation over the existing next-episode engine; never fabricates completion. */
 final class PreviewUpNext {
@@ -90,11 +94,11 @@ final class PreviewUpNext {
             LinearLayout.LayoutParams frame = new LinearLayout.LayoutParams(-1, dp(90));
             frame.topMargin = dp(8);
             panel.addView(still, frame);
-            com.squareup.picasso.Picasso.get()
+            Picasso.get()
                 .load(next.getPictureUri())
                 .resize(dp(283), dp(90))
                 .centerCrop()
-                .networkPolicy(com.squareup.picasso.NetworkPolicy.OFFLINE)
+                .networkPolicy(NetworkPolicy.OFFLINE)
                 .noFade()
                 .into(still);
         }
@@ -136,14 +140,14 @@ final class PreviewUpNext {
             return;
         removeSkip();
         skipExpires = prompt.expires;
-        skipPill = com.archos.mediacenter.video.leanback.SharedThreePanel.action(
+        skipPill = SharedThreePanel.action(
             activity, "Skip " + PlayerService.introLabels(activity).get(prompt.type), () -> {
                 service.skipPrompt();
                 removeSkip();
             });
         skipPill.setTag("playback.segment.skip");
-        com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(
-            skipPill, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+        SupernovaStyle.applyButton(
+            skipPill, SupernovaStyle.Surface.STANDARD);
         skipPill.setElevation(dp(4));
         FrameLayout root = activity.findViewById(android.R.id.content);
         FrameLayout.LayoutParams frame = new FrameLayout.LayoutParams(-2, dp(50), Gravity.END | Gravity.BOTTOM);
