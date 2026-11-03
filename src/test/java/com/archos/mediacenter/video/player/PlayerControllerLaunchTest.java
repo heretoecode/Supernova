@@ -2,9 +2,11 @@ package com.archos.mediacenter.video.player;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import androidx.appcompat.app.ActionBar;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import org.junit.Test;
@@ -30,9 +32,9 @@ public class PlayerControllerLaunchTest {
             when(player.getDuration()).thenReturn(20000);when(player.getCurrentPosition()).thenReturn(0);
             PlayerController controller=mock(PlayerController.class,CALLS_REAL_METHODS);
             ReflectionHelpers.setField(controller,"mContext",activity);
-            ReflectionHelpers.setField(controller,"mAudioManager",activity.getSystemService(android.content.Context.AUDIO_SERVICE));
+            ReflectionHelpers.setField(controller,"mAudioManager",activity.getSystemService(Context.AUDIO_SERVICE));
             ReflectionHelpers.setField(controller,"mSurfaceController",mock(SurfaceController.class));
-            ReflectionHelpers.setField(controller,"mActionBar",mock(androidx.appcompat.app.ActionBar.class));
+            ReflectionHelpers.setField(controller,"mActionBar",mock(ActionBar.class));
             ReflectionHelpers.setField(controller,"mNextSeek",-1);
             // Do not inject formatters: initialization must own them before its first clock update.
             View first=controllerView(activity);
