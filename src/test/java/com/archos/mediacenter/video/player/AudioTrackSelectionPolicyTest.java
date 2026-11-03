@@ -15,6 +15,7 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.Application;
+import com.archos.environment.ArchosUtils;
 import static org.junit.Assert.assertEquals;
 
 import android.net.Uri;
@@ -29,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.lang.reflect.Constructor;
@@ -55,7 +57,7 @@ public class AudioTrackSelectionPolicyTest {
     @Before
     public void setUp() throws Exception {
         mOriginalLocale = Locale.getDefault();
-        com.archos.environment.ArchosUtils.setGlobalContext(org.robolectric.RuntimeEnvironment.getApplication());
+        ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         mService = Robolectric.buildService(PlayerService.class).get();
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
