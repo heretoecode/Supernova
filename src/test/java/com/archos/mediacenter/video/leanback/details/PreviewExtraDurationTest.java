@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback.details;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks extra-video durations use actual seconds and omit unknown values. */
 public class PreviewExtraDurationTest {
     @Test public void formatsActualSecondsWithoutInventingUnknownDuration(){
         assertEquals("",PreviewExtraDuration.label(0));assertEquals("",PreviewExtraDuration.label(-1));
