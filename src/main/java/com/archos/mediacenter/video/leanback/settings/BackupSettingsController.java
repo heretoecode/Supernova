@@ -1,11 +1,25 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.*;
+import android.view.Window;
 import android.widget.*;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.view.ViewCompat;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceFragmentCompat;
 import com.archos.mediacenter.video.leanback.*;
@@ -26,7 +40,7 @@ public final class BackupSettingsController {
     private boolean noticeActive, visible, exportSelection;
     private LinearLayout landing;
     private TextView description, exportAction, restoreAction, selectedAction;
-    private android.app.Dialog operation;
+    private Dialog operation;
     private final Map<View, Integer> hidden = new IdentityHashMap<>();
     private Set<BackupCategory> selectedRestore;
     private int viewportWidth;
@@ -42,9 +56,9 @@ public final class BackupSettingsController {
             TextView label = (TextView) view;
             float size = label.getTextSize();
             int lines = label.getMaxLines();
-            android.text.TextUtils.TruncateAt ellipsis = label.getEllipsize();
+            TextUtils.TruncateAt ellipsis = label.getEllipsize();
             restoreRail.add(() -> {
-                label.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, size);
+                label.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
                 label.setSingleLine(lines == 1);
                 label.setMaxLines(lines);
                 label.setEllipsize(ellipsis);
@@ -93,7 +107,7 @@ public final class BackupSettingsController {
             });
     }
 
-    private androidx.lifecycle.Observer<BackupOperationModel.State> stateObserver;
+    private Observer<BackupOperationModel.State> stateObserver;
     private boolean twoColumn;
 
     /** Same backup engine/pickers/privacy model, presented inside the new right column. */
@@ -107,7 +121,7 @@ public final class BackupSettingsController {
         landingScroll.setVerticalScrollBarEnabled(false);
         landingScroll.setSmoothScrollingEnabled(false);
         TextView title = SharedThreePanel.text(fragment.requireContext(), "Backup & Restore", 24);
-        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setTypeface(null, Typeface.BOLD);
         landing.addView(title, 0);
         TextView introduction = SharedThreePanel.text(fragment.requireContext(),
             "Choose export categories below, or open a backup to review it before restoring. Backups are unencrypted; media and credentials are excluded.",
@@ -127,10 +141,10 @@ public final class BackupSettingsController {
     }
 
     private void present(TextView view, String title, String explanation) {
-        android.text.SpannableString label = new android.text.SpannableString(title + "\n" + explanation);
-        label.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, title.length(), 0);
-        label.setSpan(new android.text.style.RelativeSizeSpan(.79f), title.length() + 1, label.length(), 0);
-        label.setSpan(new android.text.style.ForegroundColorSpan(0xffbcc9d9), title.length() + 1, label.length(), 0);
+        SpannableString label = new SpannableString(title + "\n" + explanation);
+        label.setSpan(new StyleSpan(Typeface.BOLD), 0, title.length(), 0);
+        label.setSpan(new RelativeSizeSpan(.79f), title.length() + 1, label.length(), 0);
+        label.setSpan(new ForegroundColorSpan(0xffbcc9d9), title.length() + 1, label.length(), 0);
         view.setText(label);
         view.setSingleLine(false);
         view.setEllipsize(null);
@@ -205,9 +219,9 @@ public final class BackupSettingsController {
                 render(state);
         };
         model.states().observe(fragment.getViewLifecycleOwner(), stateObserver);
-        fragment.getViewLifecycleOwner().getLifecycle().addObserver(new androidx.lifecycle.DefaultLifecycleObserver() {
+        fragment.getViewLifecycleOwner().getLifecycle().addObserver(new DefaultLifecycleObserver() {
             @Override
-            public void onDestroy(androidx.lifecycle.LifecycleOwner owner) {
+            public void onDestroy(LifecycleOwner owner) {
                 dismissOperation();
             }
         });
@@ -344,7 +358,7 @@ public final class BackupSettingsController {
     private void showOperation() {
         if (operation != null)
             return;
-        operation = new android.app.Dialog(fragment.requireContext());
+        operation = new Dialog(fragment.requireContext());
         if (frame.getParent() instanceof ViewGroup)
             ((ViewGroup) frame.getParent()).removeView(frame);
         operation.setContentView(frame);
@@ -358,7 +372,7 @@ public final class BackupSettingsController {
             return false;
         });
         operation.show();
-        android.view.Window window = operation.getWindow();
+        Window window = operation.getWindow();
         if (window != null) {
             window.setBackgroundDrawableResource(android.R.color.transparent);
             window.setLayout(TvLayout.safeWidth(fragment.requireContext()),
@@ -368,8 +382,8 @@ public final class BackupSettingsController {
         focusFirst(frame);
     }
 
-    public android.os.Bundle saveViewState() {
-        android.os.Bundle saved = new android.os.Bundle();
+    public Bundle saveViewState() {
+        Bundle saved = new Bundle();
         saved.putBoolean("visible", isVisible());
         saved.putBoolean("export_selection", exportSelection);
         if (workspace != null) {
@@ -384,7 +398,7 @@ public final class BackupSettingsController {
         return saved;
     }
 
-    public void restoreViewState(android.os.Bundle saved) {
+    public void restoreViewState(Bundle saved) {
         if (saved == null || !saved.getBoolean("visible", false) || frame == null)
             return;
         ArrayList<String> selection = saved.getStringArrayList("selection");
@@ -411,7 +425,7 @@ public final class BackupSettingsController {
                     workspace.restoreInformationPage(page);
             }
         };
-        if (androidx.core.view.ViewCompat.isLaidOut(root) && root.getWidth() > 0)
+        if (ViewCompat.isLaidOut(root) && root.getWidth() > 0)
             restore.run();
         else
             root.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -547,7 +561,7 @@ public final class BackupSettingsController {
         if (!unsupported.isEmpty()) {
             notice("Backup could not be created",
                 "The selected categories are unsupported by this build: "
-                    + android.text.TextUtils.join(", ", unsupported)
+                    + TextUtils.join(", ", unsupported)
                     + ". No category was silently omitted and no backup was created.");
             return;
         }
@@ -649,7 +663,7 @@ public final class BackupSettingsController {
         for (BackupCategory category : BackupCategory.ordered())
             if (categories.contains(category))
                 labels.add(category.label);
-        return android.text.TextUtils.join(", ", labels);
+        return TextUtils.join(", ", labels);
     }
 
     private LinearLayout panel(String title, String message) {
