@@ -18,6 +18,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.annotation.SQLiteMode;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -125,7 +126,7 @@ public class PortableTitlePlaybackTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void nativeReaderKeepsSignedDelaysAndExplicitZeroTracksWithoutExportingPlaybackTimestamps()
         throws Exception {
@@ -154,7 +155,7 @@ public class PortableTitlePlaybackTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void nativeNoneSentinelIsExportedAsIntentRatherThanAnAmbiguousReceivingIndex() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -206,7 +207,7 @@ public class PortableTitlePlaybackTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void putioPlaybackAssociationsHaveNoNativeOrPublicExportWhileReceivingRowsRemainUntouched()
         throws Exception {
