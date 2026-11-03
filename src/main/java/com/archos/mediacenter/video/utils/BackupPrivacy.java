@@ -10,6 +10,9 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Explicit known-choice allowlist plus value sanitisation. Recovery journals use raw private state. */
 public final class BackupPrivacy {
@@ -113,21 +116,21 @@ public final class BackupPrivacy {
             return value;
         String text = (String) value, safe = cleanText(text);
         try {
-            Object json = text.trim().startsWith("{") ? new org.json.JSONObject(safe)
-                : text.trim().startsWith("[") ? new org.json.JSONArray(safe)
+            Object json = text.trim().startsWith("{") ? new JSONObject(safe)
+                : text.trim().startsWith("[") ? new JSONArray(safe)
                                                       : null;
             if (json != null && cleanJson(json))
                 return json.toString();
-        } catch (org.json.JSONException plainText) {
+        } catch (JSONException plainText) {
             /* Ordinary labels are not JSON documents. */
         }
         return safe;
     }
 
-    private static boolean cleanJson(Object json) throws org.json.JSONException {
+    private static boolean cleanJson(Object json) throws JSONException {
         boolean changed = false;
-        if (json instanceof org.json.JSONObject) {
-            org.json.JSONObject object = (org.json.JSONObject) json;
+        if (json instanceof JSONObject) {
+            JSONObject object = (JSONObject) json;
             List<String> remove = new ArrayList<>();
             for (Iterator<String> keys = object.keys(); keys.hasNext();) {
                 String key = keys.next();
@@ -139,8 +142,8 @@ public final class BackupPrivacy {
             for (String key : remove)
                 object.remove(key);
             changed |= !remove.isEmpty();
-        } else if (json instanceof org.json.JSONArray) {
-            org.json.JSONArray array = (org.json.JSONArray) json;
+        } else if (json instanceof JSONArray) {
+            JSONArray array = (JSONArray) json;
             for (int n = 0; n < array.length(); n++)
                 changed |= cleanJson(array.get(n));
         }
@@ -258,8 +261,8 @@ public final class BackupPrivacy {
         }
     }
 
-    public static String selectedSettings(Context context, String json) throws org.json.JSONException {
-        org.json.JSONObject data = new org.json.JSONObject(json);
+    public static String selectedSettings(Context context, String json) throws JSONException {
+        JSONObject data = new JSONObject(json);
         SharedPreferences p =
             PreferenceManager.getDefaultSharedPreferences(context);
         boolean history = p.getBoolean("supernova_backup_history", true),
