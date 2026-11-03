@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
+/** Hosts the TV collection details screen. */
 public class CollectionActivity extends LeanbackActivity {
 
     public static final String SLIDE_TRANSITION_EXTRA = "slide_transition";
