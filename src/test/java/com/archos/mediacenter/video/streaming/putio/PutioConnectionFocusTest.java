@@ -1,10 +1,16 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.app.*;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
-import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.function.IntConsumer;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -19,13 +25,13 @@ import static org.mockito.Mockito.*;
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PutioConnectionFocusTest {
     private void drain(Object owner) throws Exception {
-        java.util.concurrent.Future<?> task = ReflectionHelpers.getField(owner, "task");
+        Future<?> task = ReflectionHelpers.getField(owner, "task");
         if (task != null)
             try {
                 task.get(5, TimeUnit.SECONDS);
-            } catch (java.util.concurrent.CancellationException expected) {
+            } catch (CancellationException expected) {
             }
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
     @Test
@@ -96,11 +102,11 @@ public class PutioConnectionFocusTest {
             };
             PutioAuthFlow flow = PutioAuthFlow.open(host.get(), () -> returned[0]++);
             drain(flow);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(5));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(5));
             drain(flow);
             assertEquals(1, returned[0]);
             verify(stores.constructed().get(0)).save("fixture-authorisation-only");
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(20));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(20));
             drain(flow);
             assertEquals(1, returned[0]);
             flow.close();
@@ -125,21 +131,21 @@ public class PutioConnectionFocusTest {
             drain(flow);
             org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss();
             flow.close();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(30));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(30));
             drain(flow);
             assertEquals(0, returned[0]);
             verify(clients.constructed().get(0), never()).poll(any());
             verify(stores.constructed().get(0), never()).save(any());
             PutioAuthFlow approved = PutioAuthFlow.open(host.get(), () -> returned[0]++);
             drain(approved);
-            java.util.concurrent.CountDownLatch polling = new java.util.concurrent.CountDownLatch(1),
-                                                release = new java.util.concurrent.CountDownLatch(1);
+            CountDownLatch polling = new CountDownLatch(1),
+                                                release = new CountDownLatch(1);
             when(clients.constructed().get(1).poll(any())).thenAnswer(call -> {
                 polling.countDown();
                 release.await(5, TimeUnit.SECONDS);
                 return "fixture-authorisation-only";
             });
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(5));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(5));
             assertTrue(polling.await(5, TimeUnit.SECONDS));
             approved.close();
             release.countDown();
@@ -157,7 +163,7 @@ public class PutioConnectionFocusTest {
         var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try (var stores = mockConstruction(PutioTokenStore.class);
             var clients = mockConstruction(PutioOAuthClient.class,
-                (client, context) -> when(client.begin()).thenThrow(new java.io.IOException("fixture-unavailable")))) {
+                (client, context) -> when(client.begin()).thenThrow(new IOException("fixture-unavailable")))) {
             PutioAuthFlow flow = PutioAuthFlow.open(host.get(), () -> fail("Failed link cannot return as authorised"));
             drain(flow);
             Dialog error = org.robolectric.shadows.ShadowDialog.getLatestDialog();
@@ -197,7 +203,7 @@ public class PutioConnectionFocusTest {
                     }),
                     ReflectionHelpers.ClassParameter.from(int.class, 0),
                     ReflectionHelpers.ClassParameter.from(
-                        java.util.function.IntConsumer.class, (java.util.function.IntConsumer) index -> accepted[0]++));
+                        IntConsumer.class, (IntConsumer) index -> accepted[0]++));
                 ReflectionHelpers.callInstanceMethod(
                     controller, "replace", ReflectionHelpers.ClassParameter.from(Dialog.class, choice));
                 find(target, label).performClick();
