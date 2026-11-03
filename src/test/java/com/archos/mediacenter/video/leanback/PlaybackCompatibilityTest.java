@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
 import android.view.Display;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import java.util.*;
@@ -31,7 +32,7 @@ public class PlaybackCompatibilityTest {
         MediaCodecInfo.CodecProfileLevel level = new MediaCodecInfo.CodecProfileLevel();
         level.profile = profile;
         level.level = 1 << 20;
-        android.media.MediaFormat format = android.media.MediaFormat.createVideoFormat(mime, maximumWidth, 2160);
+        MediaFormat format = MediaFormat.createVideoFormat(mime, maximumWidth, 2160);
         MediaCodecInfo.CodecCapabilities codec =
             org.robolectric.shadows.MediaCodecInfoBuilder.CodecCapabilitiesBuilder.newBuilder()
                 .setMediaFormat(format)
