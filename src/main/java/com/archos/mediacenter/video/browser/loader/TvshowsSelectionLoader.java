@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Loads selected TV shows with their metadata and sort order. */
 public class TvshowsSelectionLoader extends VideoLoader {
 
     private static final String TAG = "TvshowsSelectionLoader";
