@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+/** Loads TV show covers for the cover browser. */
 public class AllTVShowsProvider extends SingleCursorCoverProvider {
 
 	private final static String TAG = "AllTVShowsProvider";
