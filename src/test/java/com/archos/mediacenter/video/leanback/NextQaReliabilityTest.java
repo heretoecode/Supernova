@@ -167,6 +167,7 @@ public class NextQaReliabilityTest {
             0
         };
         BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context context, Intent intent) {
                 assertEquals(5000, ViewingHistory.read(context).get("tmdb:tv:123:2:1").position);
                 observed[0]++;
