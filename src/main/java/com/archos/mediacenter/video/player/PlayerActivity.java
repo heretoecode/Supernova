@@ -186,6 +186,7 @@ import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_PARS
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_STREAM_BUFFER_SIZE;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_STREAM_MAX_IFRAME_SIZE;
 
+/** Coordinates video playback, player controls, surfaces and audio and subtitle settings. */
 public class PlayerActivity extends AppCompatActivity
     implements PlayerController.Settings, SubtitleDelayPickerDialog.OnDelayChangeListener,
                AudioDelayPickerDialog.OnAudioDelayChangeListener, AudioSpeedPickerDialog.OnAudioSpeedChangeListener,
