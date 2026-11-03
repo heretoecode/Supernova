@@ -28,6 +28,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediascraper.NfoExportService;
 
+/** Adds local file context actions to folder browsing. */
 public abstract class BrowserByLocalFolder extends BrowserByFolder {
 
     private static final String TAG = "BrowserByLocalFolder";
