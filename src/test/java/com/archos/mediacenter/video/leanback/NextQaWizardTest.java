@@ -1,6 +1,12 @@
 package com.archos.mediacenter.video.leanback;
+import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -45,8 +51,8 @@ public class NextQaWizardTest {
             assertFalse("not scrolled at the top", (boolean)ReflectionHelpers.getField(navigation, "scrolled"));
             Object workspace = ReflectionHelpers.getField(host.get(), "workspace");
             PreviewPages pages = ReflectionHelpers.getField(workspace, "sharedLibrary");
-            androidx.recyclerview.widget.RecyclerView list =
-                (androidx.recyclerview.widget.RecyclerView)pages.getChildAt(0);
+            RecyclerView list =
+                (RecyclerView)pages.getChildAt(0);
             list.scrollBy(0, Math.round(160 * root.getResources().getDisplayMetrics().density));
             PreviewPagesTest.layout(root);
             if (list.canScrollVertically(-1)) {
@@ -54,7 +60,7 @@ public class NextQaWizardTest {
                            (boolean)ReflectionHelpers.getField(navigation, "scrolled"));
             }
             // Deterministic wiring check, independent of how much fixture content there is to scroll.
-            java.util.function.Consumer<Boolean> listener = ReflectionHelpers.getField(pages, "scrollListener");
+            Consumer<Boolean> listener = ReflectionHelpers.getField(pages, "scrollListener");
             assertNotNull("custom page reports scrolling to the top bar", listener);
             listener.accept(true);
             assertTrue((boolean)ReflectionHelpers.getField(navigation, "scrolled"));
@@ -111,7 +117,7 @@ public class NextQaWizardTest {
             assertSame("focus starts on the Documentaries tab", tab, root.findFocus());
             assertTrue(tab.isSelected());
             View statistics = root.findViewWithTag("library.statistics");
-            android.graphics.Rect visible = new android.graphics.Rect();
+            Rect visible = new Rect();
             assertNotNull(statistics);
             assertTrue("statistics still visible without scrolling", statistics.getGlobalVisibleRect(visible));
             root.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
@@ -136,7 +142,7 @@ public class NextQaWizardTest {
             PreviewPagesTest.layout(root);
             View statistics = root.findViewWithTag("library.statistics");
             assertNotNull(statistics);
-            android.graphics.Rect visible = new android.graphics.Rect();
+            Rect visible = new Rect();
             assertTrue(statistics.getGlobalVisibleRect(visible));
             assertEquals(statistics.getHeight(), visible.height());
             assertTrue(visible.height() > 0);
@@ -169,8 +175,8 @@ public class NextQaWizardTest {
     // Wait for the real initial snapshot before installing this test's indexed-media fixture.
     // Otherwise its posted completion can replace the fixture while layout drains the looper.
     private static void finishInitialLibraryLoad(CustomLibraryActivity activity) throws Exception {
-        java.util.concurrent.ExecutorService worker = ReflectionHelpers.getField(activity, "worker");
-        worker.submit(() -> {}).get(15, java.util.concurrent.TimeUnit.SECONDS);
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        ExecutorService worker = ReflectionHelpers.getField(activity, "worker");
+        worker.submit(() -> {}).get(15, TimeUnit.SECONDS);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 }
