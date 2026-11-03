@@ -33,6 +33,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+/** Exposes movie metadata as formatted video information. */
 public class MovieInfo extends BaseInfo {
 
     private static final String TAG = "MovieInfo";
