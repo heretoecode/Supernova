@@ -1,7 +1,6 @@
 package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.util.*;
