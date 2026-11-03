@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import androidx.core.graphics.ColorUtils;
 
 /** Persistent carousel state: retarget from the visible pill widths, never flash replacement dots. */
 final class PreviewFeaturedIndicators extends View {
@@ -36,7 +37,7 @@ final class PreviewFeaturedIndicators extends View {
         float total=weights.length*11*density+19*density,left=(getWidth()-total)/2+3*density;
         float top=(getHeight()-5*density)/2;
         for(float weight:weights){float width=(5+19*weight)*density;
-            paint.setColor(androidx.core.graphics.ColorUtils.blendARGB(0x7792aabd,PreviewAccent.color(getContext()),weight));
+            paint.setColor(ColorUtils.blendARGB(0x7792aabd,PreviewAccent.color(getContext()),weight));
             canvas.drawRoundRect(left,top,left+width,top+5*density,2.5f*density,2.5f*density,paint);
             left+=width+6*density;
         }
