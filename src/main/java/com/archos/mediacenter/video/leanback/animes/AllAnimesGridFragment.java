@@ -346,7 +346,7 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
                 return new AnimesLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override
