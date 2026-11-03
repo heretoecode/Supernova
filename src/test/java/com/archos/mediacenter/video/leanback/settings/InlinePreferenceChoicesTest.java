@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.settings;
 import android.app.Application;
+import android.os.Looper;
 import android.view.View;
 import android.widget.*;
 import androidx.preference.*;
@@ -41,14 +42,14 @@ public class InlinePreferenceChoicesTest {
             View alpha = target.findViewWithTag("a");
             assertTrue(alpha.requestFocus());
             alpha.performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals(Set.of("a"), pref.getValues());
             assertSame(alpha, target.findViewWithTag("a"));
             assertTrue(alpha.hasFocus());
             assertEquals(Set.of("a"),
                 PreferenceManager.getDefaultSharedPreferences(host.get()).getStringSet(pref.getKey(), Set.of()));
             target.findViewWithTag("a").performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(pref.getValues().isEmpty());
             assertSame(alpha, target.findViewWithTag("a"));
             assertTrue(alpha.hasFocus());
