@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.streaming.putio;
 import android.app.Application;
 import android.net.Uri;
 import android.content.Context;
+import com.archos.mediacenter.video.browser.Delete;
 import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import java.lang.reflect.Method;
 import org.junit.*;
@@ -55,8 +56,8 @@ public class ProviderDiscoveryGateTest {
     @Test
     public void nativeDeleteCannotReachWebdavForManagedFile() throws Exception {
         ProviderDiscoveryGate.exclude(context, "putio:10:20", Uri.parse("https://webdav.put.io/Films"));
-        com.archos.mediacenter.video.browser.Delete operation =
-            new com.archos.mediacenter.video.browser.Delete(null, context);
+        Delete operation =
+            new Delete(null, context);
         Method method =
             operation.getClass().getDeclaredMethod("deletePhysicalFile", Context.class, Uri.class);
         method.setAccessible(true);
