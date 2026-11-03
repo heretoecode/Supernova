@@ -2,11 +2,15 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.net.Uri;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import java.io.File;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -30,7 +34,7 @@ public class PreviewNetworkSemanticsTest {
 
     @org.junit.Before
     public void configuredLibraryFixture() {
-        androidx.preference.PreferenceManager
+        PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
@@ -58,14 +62,14 @@ public class PreviewNetworkSemanticsTest {
             lower.requestFocus();
             assertFalse(pages.atTop());
             nav.dispatchKeyEvent(
-                new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DPAD_UP));
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
             assertSame(first, nav.findFocus());
             assertTrue(pages.atTop());
             nav.dispatchKeyEvent(
-                new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DPAD_UP));
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
             assertSame(nav.findViewWithTag("semantic:topnav.network"), nav.findFocus());
             nav.dispatchKeyEvent(
-                new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DPAD_DOWN));
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertSame(first, nav.findFocus());
         } finally {
             host.pause().stop().destroy();
@@ -105,7 +109,7 @@ public class PreviewNetworkSemanticsTest {
             assertFalse(browser.selections().included(source.getUri()));
             java.util.List<Shortcut> shares = ReflectionHelpers.getField(browser, "shares");
             assertEquals("A library selection retains the browsing source", 1, shares.size());
-            java.util.Map<String, Shortcut> saved = ReflectionHelpers.getField(browser, "savedSources");
+            Map<String, Shortcut> saved = ReflectionHelpers.getField(browser, "savedSources");
             assertTrue(saved.containsKey(
                 com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(source.getUri())));
             for (int i = 0; i < actions.getChildCount(); i++)
@@ -144,8 +148,8 @@ public class PreviewNetworkSemanticsTest {
             var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
             browser.onboarding(true);
             host.get().setContentView(browser);
-            java.io.File root = new java.io.File(host.get().getFilesDir(), "drive-one"),
-                         child = new java.io.File(root, "Movies");
+            File root = new File(host.get().getFilesDir(), "drive-one"),
+                         child = new File(root, "Movies");
             assertTrue(child.mkdirs());
             Uri rootUri = Uri.fromFile(root), childUri = Uri.fromFile(child);
             ReflectionHelpers.setField(browser, "current", rootUri);
@@ -165,7 +169,7 @@ public class PreviewNetworkSemanticsTest {
             assertNotNull(browse);
             browse.performClick();
             assertEquals(childUri, ReflectionHelpers.getField(browser, "current"));
-            Uri other = Uri.fromFile(new java.io.File(host.get().getFilesDir(), "drive-two"));
+            Uri other = Uri.fromFile(new File(host.get().getFilesDir(), "drive-two"));
             browser.open(other);
             Uri second = other.buildUpon().appendPath("TV Shows").build();
             browser.selections().include(second);
@@ -173,7 +177,7 @@ public class PreviewNetworkSemanticsTest {
             assertEquals(2, browser.selections().roots.size());
             assertTrue(browser.selections().included(childUri));
             assertTrue(browser.selections().changed());
-            assertFalse(androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            assertFalse(PreferenceManager.getDefaultSharedPreferences(host.get())
                     .getStringSet("supernova_library_roots", Set.of())
                     .contains(childUri.toString()));
             browser.selections().discard();
@@ -188,7 +192,7 @@ public class PreviewNetworkSemanticsTest {
     public void unconfirmedHomeCannotBeReplacedByUnexpectedIndexedMedia() {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean("supernova_onboarding_complete", false)
                 .commit();
