@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.leanback.filebrowsing;
 
 import android.net.Uri;
 
+/** Opens the TV file browser at external storage. */
 public class ExtStorageListingActivity extends ListingActivity {
     public static String MOUNT_POINT = "mount_point";
     public static String STORAGE_NAME = "name";
