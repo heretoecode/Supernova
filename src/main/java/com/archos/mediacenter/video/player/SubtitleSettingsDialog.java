@@ -43,6 +43,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
 
+/** Displays subtitle styling controls and applies color and size selections. */
 public class SubtitleSettingsDialog extends AlertDialog implements
         SeekBar.OnSeekBarChangeListener, View.OnTouchListener, SubtitleColorPicker.ColorPickListener {
 
