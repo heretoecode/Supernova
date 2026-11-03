@@ -5,6 +5,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.ShowScraper4;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
 import org.json.*;
 import java.io.IOException;
 import java.util.Collections;
@@ -53,17 +58,17 @@ public final class DirectShowLookup {
         if(input==null)return null;
         String s = input.trim();
         if (s.matches("[1-9][0-9]{0,9}")) return s;
-        if(s.matches("(?i)tt[0-9]{5,12}"))return s.toLowerCase(java.util.Locale.ROOT);
+        if(s.matches("(?i)tt[0-9]{5,12}"))return s.toLowerCase(Locale.ROOT);
         Uri u = Uri.parse(s);
         String host = u.getHost();
         if (!("https".equals(u.getScheme()) || "http".equals(u.getScheme())) || host == null) return null;
-        java.util.List<String> parts = u.getPathSegments();
+        List<String> parts = u.getPathSegments();
         if ((host.equals("themoviedb.org") || host.equals("www.themoviedb.org")) && parts.size() >= 2 && parts.get(0).equals(kind)) {
             String id = parts.get(1).split("-")[0];
             return id.matches("[1-9][0-9]{0,9}") ? id : null;
         }
         if ((host.equals("imdb.com") || host.equals("www.imdb.com") || host.equals("m.imdb.com"))
-                && parts.size() >= 2 && parts.get(0).equals("title") && parts.get(1).matches("(?i)tt[0-9]{5,12}")) return parts.get(1).toLowerCase(java.util.Locale.ROOT);
+                && parts.size() >= 2 && parts.get(0).equals("title") && parts.get(1).matches("(?i)tt[0-9]{5,12}")) return parts.get(1).toLowerCase(Locale.ROOT);
         return null;
     }
 
@@ -76,9 +81,9 @@ public final class DirectShowLookup {
             if (r.code() == 404) throw new IOException("Metadata ID not found.");
             if (!r.isSuccessful() || r.body() == null) throw new IOException("Could not connect to TMDb. Please retry.");
             if (r.body().contentLength() > 2097152) throw new IOException("Unexpected TMDb response.");
-            try(java.io.InputStream input=r.body().byteStream();java.io.ByteArrayOutputStream output=new java.io.ByteArrayOutputStream()){
+            try(InputStream input=r.body().byteStream();ByteArrayOutputStream output=new ByteArrayOutputStream()){
                 byte[] buffer=new byte[8192];int count;while((count=input.read(buffer))!=-1){if(output.size()+count>2097152)throw new IOException("Unexpected TMDb response.");output.write(buffer,0,count);}
-                return new JSONObject(output.toString(java.nio.charset.StandardCharsets.UTF_8.name()));
+                return new JSONObject(output.toString(StandardCharsets.UTF_8.name()));
             }
         }
     }
