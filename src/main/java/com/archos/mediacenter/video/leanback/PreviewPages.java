@@ -28,9 +28,31 @@ import androidx.recyclerview.widget.*;
 import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.AdapterListUpdateCallback;
 import androidx.recyclerview.widget.ListUpdateCallback;
+import com.archos.mediacenter.utils.ShortcutDbAdapter;
+import com.archos.mediacenter.video.browser.ShortcutDb;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper;
+import com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import com.archos.mediacenter.video.leanback.network.NetworkRootActivity;
+import com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsActivity;
+import com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsFragment;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
+import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.player.PlayerService;
+import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.archos.mediacenter.video.utils.PlayUtils;
+import com.archos.mediacenter.video.utils.SortUtils;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.NetworkScannerReceiver;
+import com.archos.mediaprovider.video.NetworkScannerServiceVideo;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import java.util.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import java.util.Iterator;
@@ -53,7 +75,7 @@ public final class PreviewPages extends FrameLayout {
     private final Click click;
     private Snapshot snapshot = new Snapshot();
     private List<Box> files = new ArrayList<>();
-    private final List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> librarySources =
+    private final List<Shortcut> librarySources =
                                                                                           new ArrayList<>(),
                                                                                       savedLocations =
                                                                                           new ArrayList<>();
@@ -68,31 +90,31 @@ public final class PreviewPages extends FrameLayout {
         final int sourceRequest = ++sourceGeneration;
         Context app = getContext().getApplicationContext();
         new Thread(() -> {
-            List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> indexed = new ArrayList<>(),
+            List<Shortcut> indexed = new ArrayList<>(),
                                                                                 saved = new ArrayList<>();
             try (Cursor c =
-                     com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO.getAllShortcuts(app, null, null)) {
+                     ShortcutDbAdapter.VIDEO.getAllShortcuts(app, null, null)) {
                 if (c != null) {
-                    com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper m =
-                        new com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper();
+                    NetworkShortcutMapper m =
+                        new NetworkShortcutMapper();
                     m.bindColumns(c);
                     while (c.moveToNext())
-                        indexed.add((com.archos.mediacenter.video.leanback.adapter.object.Shortcut)m.bind(c));
+                        indexed.add((Shortcut)m.bind(c));
                 }
             } catch (Exception e) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_summary_unavailable", e);
+                Diagnostics.error("source_summary_unavailable", e);
             }
             try (Cursor c =
-                     com.archos.mediacenter.video.browser.ShortcutDb.STATIC.getCursorAllShortcuts(app)) {
+                     ShortcutDb.STATIC.getCursorAllShortcuts(app)) {
                 if (c != null) {
-                    com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper m =
-                        new com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper();
+                    GenericNetworkShortcutMapper m =
+                        new GenericNetworkShortcutMapper();
                     m.bindColumns(c);
                     while (c.moveToNext())
-                        saved.add((com.archos.mediacenter.video.leanback.adapter.object.Shortcut)m.bind(c));
+                        saved.add((Shortcut)m.bind(c));
                 }
             } catch (Exception e) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("saved_locations_unavailable", e);
+                Diagnostics.error("saved_locations_unavailable", e);
             }
             post(() -> {
                 if (sourceRequest != sourceGeneration || !isAttachedToWindow())
@@ -109,11 +131,11 @@ public final class PreviewPages extends FrameLayout {
         }, "SupernovaSourceSummary").start();
     }
 
-    private void openSource(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source) {
+    private void openSource(Shortcut source) {
         getContext().startActivity(
             new Intent(getContext(),
-                        com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsActivity.class)
-                .putExtra(com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsFragment.EXTRA_SHORTCUT,
+                        NetworkShortcutDetailsActivity.class)
+                .putExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT,
                           source));
     }
 
@@ -454,7 +476,7 @@ public final class PreviewPages extends FrameLayout {
                 } else
                     list.requestFocus();
                 if (anchor != null && !anchor.token.isEmpty()) {
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(
+                    Diagnostics.focusRestored(
                         anchor.token, null, list.findFocus(), exact == null, list.findFocus() != null);
                     anchor.token = "";
                     if (anchors[tab] != null)
@@ -547,7 +569,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private List<Entry> featuredCandidates() {
-        if (!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))
+        if (!SupernovaLibraryPolicy.configured(getContext()))
             return Collections.emptyList();
         String choices = (preferences == null || preferences.getBoolean("preview_featured_recent", true)) + ":" +
                          (preferences != null && preferences.getBoolean("preview_featured_trending", true)) + ":" +
@@ -654,7 +676,7 @@ public final class PreviewPages extends FrameLayout {
 
     private void prioritiseVisibleEntries() {
         if (!loaded || !isAttachedToWindow() || tab == 3 ||
-            !com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))
+            !SupernovaLibraryPolicy.configured(getContext()))
             return;
         List<Entry> visible = new ArrayList<>(), next = new ArrayList<>();
         int last = -1;
@@ -744,7 +766,7 @@ public final class PreviewPages extends FrameLayout {
     private boolean requestedDiscovery;
     private final Runnable providerRefresh = () -> {
         if (isAttachedToWindow() && (tab == 1 || tab == 2) && !providers[tab].isEmpty()) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("library_filter_refresh", "reason",
+            Diagnostics.event("library_filter_refresh", "reason",
                                                                        "provider_cache_changed", "tab", tab);
             render("provider_cache_changed"); // Diff the existing snapshot; never re-query the media library here.
         }
@@ -765,7 +787,7 @@ public final class PreviewPages extends FrameLayout {
             PreviewEnrichmentQueue.library(getContext(), snapshot, tab);
         if (scope || key.startsWith("streaming_providers_") ||
             providerCacheAffectsPage(key, tab,
-                                     com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext()),
+                                     StreamingRepository.country(getContext()),
                                      tab > 0 && tab < 3 && !providers[tab].isEmpty())) {
             removeCallbacks(providerRefresh);
             postDelayed(providerRefresh, 500);
@@ -816,7 +838,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private void requestDiscovery() {
-        if (!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()) || requestedDiscovery ||
+        if (!SupernovaLibraryPolicy.configured(getContext()) || requestedDiscovery ||
             !isAttachedToWindow() || snapshot.movies.isEmpty() && snapshot.shows.isEmpty())
             return;
         requestedDiscovery = true;
@@ -898,7 +920,7 @@ public final class PreviewPages extends FrameLayout {
     private void open(Entry e, View v) {
         rememberFocus();
         if (anchors[tab] != null)
-            anchors[tab].token = com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(v, "details");
+            anchors[tab].token = Diagnostics.focusEntry(v, "details");
         click.open(new Presenter.ViewHolder(v), e.media);
     }
 
@@ -915,9 +937,9 @@ public final class PreviewPages extends FrameLayout {
             }
         }
         if (e.media instanceof Video && getContext() instanceof Activity) {
-            com.archos.mediacenter.video.utils.PlayUtils.startVideo(
+            PlayUtils.startVideo(
                 (Activity)getContext(), (Video)e.media,
-                com.archos.mediacenter.video.player.PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+                PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
         } else
             open(e, v);
     }
@@ -990,7 +1012,7 @@ public final class PreviewPages extends FrameLayout {
         list.setLayoutManager(layout);
         list.setAdapter(adapter);
         list.setItemAnimator(null);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list, "library.adapter", "adapter_created", 0,
+        Diagnostics.uiRebuild(list, "library.adapter", "adapter_created", 0,
                                                                        adapter.getItemCount(), true);
         addView(list, new FrameLayout.LayoutParams(-1, -1));
         preferences = PreferenceManager.getDefaultSharedPreferences(c);
@@ -1156,9 +1178,9 @@ public final class PreviewPages extends FrameLayout {
                 }
         }
         if (tab == 0)
-            com.archos.mediacenter.video.utils.SubtitleDiscovery.home(getContext(), s);
+            SubtitleDiscovery.home(getContext(), s);
         render("indexed_snapshot");
-        if (com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext())) {
+        if (SupernovaLibraryPolicy.configured(getContext())) {
             PreviewEnrichmentQueue.library(getContext(), s, tab);
             PreviewMetadata.library(getContext(), s, tab);
             postDelayed(this::requestDiscovery, 750);
@@ -1385,14 +1407,14 @@ public final class PreviewPages extends FrameLayout {
     private void render(String reason) {
         setNavigationInset(navigationInset);
         if (tab == 1 || tab == 2)
-            com.archos.mediacenter.video.diagnostics.Diagnostics.libraryState(
+            Diagnostics.libraryState(
                 tab == 1 ? "movies" : "tv", listMode[tab] ? "list" : "grid",
                 (columns[tab].sortColumn == null ? "preset_" + sorts[tab] : columns[tab].sortColumn.name()) + ":" +
                     ((columns[tab].sortColumn == null ? ascending[tab] : columns[tab].ascending) ? "ascending"
                                                                                                  : "descending"),
                 genres[tab], selectedYears[tab], providers[tab], unmatched[tab]);
         else
-            com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(tab == 0 ? "home" : "network", "none", "grid",
+            Diagnostics.uiState(tab == 0 ? "home" : "network", "none", "grid",
                                                                          "none", "none", 0);
         long started = SystemClock.elapsedRealtime();
         List<Cell> previous = new ArrayList<>(cells);
@@ -1419,7 +1441,7 @@ public final class PreviewPages extends FrameLayout {
             continuing.removeIf(home::dismissed);
             home.supersedeWatchNext(continuingKeys);
             for (PreviewHomeRows.Row row : home.rows) {
-                if (!row.visible || !com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))
+                if (!row.visible || !SupernovaLibraryPolicy.configured(getContext()))
                     continue;
                 List<Entry> entries = new ArrayList<>();
                 String name = row.name;
@@ -1468,13 +1490,13 @@ public final class PreviewPages extends FrameLayout {
             boolean recentVisible = home.rows.stream().anyMatch(row -> row.id.equals("recent") && row.visible);
             if (recentVisible && !recentPresent &&
                 (snapshot.recent.isEmpty() ||
-                 !com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))) {
+                 !SupernovaLibraryPolicy.configured(getContext()))) {
                 header("Recently Added", false);
                 cells.get(cells.size() - 1).headingIcon = "date added";
                 cells.add(new Cell(PLACEHOLDERS, "Recently Added", HomePlaceholder.Kind.RECENT));
             }
             if (loaded && !emptyHome() &&
-                com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))
+                SupernovaLibraryPolicy.configured(getContext()))
                 cells.add(new Cell(CUSTOMISE, "Customise Home", null));
         } else if (tab == 1 || tab == 2) {
             cells.add(new Cell(HERO,
@@ -1554,11 +1576,11 @@ public final class PreviewPages extends FrameLayout {
                     updates.onChanged(position, count, payload);
                 }
             });
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "home_page_render", "reason", reason, "tab", tab, "previous_cells", previous.size(), "cells", cells.size(),
             "inserted", changes[0], "removed", changes[1], "moved", changes[2], "rebound", changes[3],
             "adapter_recreated", false, "elapsed_ms", SystemClock.elapsedRealtime() - started);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,
+        Diagnostics.uiRebuild(list,
                                                                        tab == 0   ? "home.rows"
                                                                        : tab == 1 ? "movies.library"
                                                                        : tab == 2 ? "tv.library"
@@ -1610,9 +1632,9 @@ public final class PreviewPages extends FrameLayout {
                         .signature();
         if (c.type == NETWORK_PANEL || c.type == NETWORK) {
             StringBuilder sources = new StringBuilder(base);
-            for (com.archos.mediacenter.video.leanback.adapter.object.Shortcut source : librarySources)
+            for (Shortcut source : librarySources)
                 sources.append(source.getName()).append(source.getUri());
-            for (com.archos.mediacenter.video.leanback.adapter.object.Shortcut source : savedLocations)
+            for (Shortcut source : savedLocations)
                 sources.append(source.getName()).append(source.getUri());
             base = sources.append(files).toString();
         }
@@ -1685,7 +1707,7 @@ public final class PreviewPages extends FrameLayout {
 
     private void networkSection(String section) {
         getContext().startActivity(
-            new Intent(getContext(), com.archos.mediacenter.video.leanback.network.NetworkRootActivity.class)
+            new Intent(getContext(), NetworkRootActivity.class)
                 .putExtra("preview_source_section", section));
     }
 
@@ -1723,7 +1745,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     public static String titleForSort(Context context, Entry entry) {
-        return com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(context) &&
+        return SortUtils.isIgnoreArticlesEnabled(context) &&
                 entry.sortTitle != null && !entry.sortTitle.isEmpty()
             ? entry.sortTitle
             : displayName(entry);
@@ -1751,9 +1773,9 @@ public final class PreviewPages extends FrameLayout {
                      .stream()
                      .anyMatch(
                          provider
-                         -> com.archos.mediacenter.video.streaming.StreamingRepository.selected(getContext())
+                         -> StreamingRepository.selected(getContext())
                                     .contains(provider) &&
-                                com.archos.mediacenter.video.streaming.StreamingRepository.knownOn(
+                                StreamingRepository.knownOn(
                                     getContext(), e.media instanceof Movie ? "movie" : "tv", e.onlineId, provider))))
                 entries.add(e);
         entries = sortEntries(entries, sorts[tab], ascending[tab], discovery);
@@ -1828,10 +1850,10 @@ public final class PreviewPages extends FrameLayout {
                     return;
                 }
                 if (n == 2) {
-                    java.util.List<com.archos.mediacenter.video.streaming.StreamingRepository.Provider> selected =
-                        com.archos.mediacenter.video.streaming.StreamingRepository.selectedCatalogue(getContext());
+                    java.util.List<StreamingRepository.Provider> selected =
+                        StreamingRepository.selectedCatalogue(getContext());
                     List<String> names = new ArrayList<>(), ids = new ArrayList<>();
-                    for (com.archos.mediacenter.video.streaming.StreamingRepository.Provider provider : selected) {
+                    for (StreamingRepository.Provider provider : selected) {
                         names.add(provider.name);
                         ids.add(String.valueOf(provider.id));
                     }
@@ -1841,7 +1863,7 @@ public final class PreviewPages extends FrameLayout {
                         render();
                     });
                     for (int i = 0; i < selected.size(); i++)
-                        com.archos.mediacenter.video.streaming.PreviewProviderIcons.bindProvider(
+                        PreviewProviderIcons.bindProvider(
                             menu, i, selected.get(i), "library.filters");
                     return;
                 }
@@ -1919,8 +1941,8 @@ public final class PreviewPages extends FrameLayout {
             OfficialTitleArtwork.prefetch(getContext(), candidate.media);
             Uri uri = candidate.backdrop != null ? candidate.backdrop : candidate.media.getPosterUri();
             if (uri != null) {
-                com.squareup.picasso.RequestCreator request =
-                    com.squareup.picasso.Picasso.get().load(uri).resize(dp(960), dp(540));
+                RequestCreator request =
+                    Picasso.get().load(uri).resize(dp(960), dp(540));
                 if (candidate.backdrop != null)
                     request.centerCrop();
                 else
@@ -1932,7 +1954,7 @@ public final class PreviewPages extends FrameLayout {
     private final LinkedHashMap<String, PreviewFeaturedCard> heroWindow = new LinkedHashMap<>();
 
     private PreviewFeaturedCard preparedHero(Entry e, View opener) {
-        com.archos.mediacenter.video.utils.SubtitleDiscovery.hero(getContext(), e, snapshot);
+        SubtitleDiscovery.hero(getContext(), e, snapshot);
         long preparedAt = SystemClock.elapsedRealtime();
         if (preparedAt - heroWarmAt > 30000) {
             removeCallbacks(warmHeroes);
@@ -1955,8 +1977,8 @@ public final class PreviewPages extends FrameLayout {
             OfficialTitleArtwork.prefetch(getContext(), candidate.media);
             Uri uri = candidate.backdrop != null ? candidate.backdrop : candidate.media.getPosterUri();
             if (uri != null) {
-                com.squareup.picasso.RequestCreator request =
-                    com.squareup.picasso.Picasso.get().load(uri).resize(dp(960), dp(540));
+                RequestCreator request =
+                    Picasso.get().load(uri).resize(dp(960), dp(540));
                 if (candidate.backdrop != null)
                     request.centerCrop();
                 else
@@ -1989,7 +2011,7 @@ public final class PreviewPages extends FrameLayout {
         card.resetMotion();
         if (card.getParent() instanceof ViewGroup)
             ((ViewGroup)card.getParent()).removeView(card);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "hero_window_prepared", "cards", heroWindow.size(), "elapsed_ms",
             SystemClock.elapsedRealtime() - preparedAt);
         return card;
@@ -2014,7 +2036,7 @@ public final class PreviewPages extends FrameLayout {
 
     private void placeholderInfo() {
         boolean firstRun =
-            !com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()) || emptyHome();
+            !SupernovaLibraryPolicy.configured(getContext()) || emptyHome();
         PreviewDialog.message(
             getContext(), firstRun ? "No Media Details Yet" : "No Details for This Placeholder",
             firstRun
@@ -2028,7 +2050,7 @@ public final class PreviewPages extends FrameLayout {
 
     private void showWelcome() {
         if (tab != 0 || !isAttachedToWindow() || preferences.getBoolean("supernova_welcome_dismissed", false) ||
-            com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))
+            SupernovaLibraryPolicy.configured(getContext()))
             return;
         Dialog dialog = PreviewDialog.message(
             getContext(), "Welcome to Supernova",
@@ -2285,7 +2307,7 @@ public final class PreviewPages extends FrameLayout {
                     for (int i = 0; i < controls.getChildCount(); i++) {
                         View control = controls.getChildAt(i);
                         control.setTag(customLibrary == null ? "control:" + i : "custom.control." + controlIds[i]);
-                        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(control, "library.toolbar." +
+                        Diagnostics.semantic(control, "library.toolbar." +
                                                                                                    controlIds[i]);
                     }
                     if (customLibrary != null) {
@@ -2304,7 +2326,7 @@ public final class PreviewPages extends FrameLayout {
                         v.addView(columns[tab].header(this::refreshColumns));
                 } else {
                     TextView title = text(c.title, tab == 3 && c.title.equals("Network & files") ? 30 : 19);
-                    title.setTextColor(tab == 0 ? android.graphics.Color.WHITE : 0xff9ed4f7);
+                    title.setTextColor(tab == 0 ? Color.WHITE : 0xff9ed4f7);
                     if (tab == 0 && !c.headingIcon.isEmpty())
                         MenuFoundation.icon(title, c.headingIcon);
                     v.addView(title);
@@ -2318,7 +2340,7 @@ public final class PreviewPages extends FrameLayout {
                 rail.setPadding(list.getPaddingLeft(), dp(10), list.getPaddingRight(), dp(10));
                 rail.setItemAnimator(null);
                 rail.setAdapter(new RailAdapter((List<Entry>)c.value, "Continue Watching".equals(c.title)));
-                com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(rail, "home.rail", "row_bound", 0,
+                Diagnostics.uiRebuild(rail, "home.rail", "row_bound", 0,
                                                                                rail.getAdapter().getItemCount(), true);
                 rail.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
@@ -2407,9 +2429,9 @@ public final class PreviewPages extends FrameLayout {
                         if (!status.isAttachedToWindow())
                             return;
                         status.setText(
-                            com.archos.mediaprovider.video.NetworkScannerReceiver.isScannerWorking()
+                            NetworkScannerReceiver.isScannerWorking()
                                 ? "Scanning network sources · " +
-                                      com.archos.mediaprovider.video.NetworkScannerServiceVideo.getFilesFoundCount() +
+                                      NetworkScannerServiceVideo.getFilesFoundCount() +
                                       " files found"
                                 : PreviewNetworkScanning.lastResult(getContext()));
                         status.postDelayed(this, 1000);
@@ -2417,7 +2439,7 @@ public final class PreviewPages extends FrameLayout {
                 });
             } else if (c.title.equals("Network Scanning")) {
                 v.addView(text("Automatic scanning for your network sources.", 12));
-                int period = com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(getContext());
+                int period = NetworkAutoRefresh.getRescanPeriod(getContext());
                 TextView schedule = text(
                     "Automatic: " + (period > 0 ? "On" : "Off") +
                         "\nFrequency: " + (period > 0 ? period / 60000 + " minutes" : "Not scheduled") +
@@ -2441,10 +2463,10 @@ public final class PreviewPages extends FrameLayout {
                                    ? "Indexed network sources appearing in Movies and TV Shows."
                                    : "Saved browsing locations.",
                                12));
-                List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> sourceList =
+                List<Shortcut> sourceList =
                     c.title.equals("Library Sources") ? librarySources : savedLocations;
                 for (int i = 0; i < Math.min(2, sourceList.size()); i++) {
-                    com.archos.mediacenter.video.leanback.adapter.object.Shortcut source = sourceList.get(i);
+                    Shortcut source = sourceList.get(i);
                     TextView item =
                         button(source.getName() + " · " + source.getUri().getScheme(), () -> openSource(source));
                     item.setSingleLine(true);
@@ -2612,8 +2634,8 @@ public final class PreviewPages extends FrameLayout {
                 new PreviewHomeRows(getContext()).dismiss(entry);
                 render();
             } else if (entry.media instanceof Video && getContext() instanceof Activity)
-                com.archos.mediacenter.video.utils.PlayUtils.startVideo(
-                    getContext(), (Video)entry.media, com.archos.mediacenter.video.player.PlayerService.RESUME_NO,
+                PlayUtils.startVideo(
+                    getContext(), (Video)entry.media, PlayerService.RESUME_NO,
                     false, -1, null, -1);
         });
     }
