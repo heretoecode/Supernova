@@ -5,7 +5,10 @@ import android.database.Cursor;
 import android.view.*;
 import android.widget.*;
 import androidx.activity.OnBackPressedCallback;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import java.util.concurrent.*;
 
 /**
@@ -57,7 +60,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
                         applySnapshot(library);
                 });
             } catch (RuntimeException failure) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("custom_library_load", failure);
+                Diagnostics.error("custom_library_load", failure);
             }
         });
     }
@@ -77,9 +80,9 @@ public final class CustomLibraryActivity extends LeanbackActivity {
         if (index == 6)
             return;
         if (index == 4)
-            startActivity(new Intent(this, com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+            startActivity(new Intent(this, VideoSettingsActivity.class));
         else if (index == 5)
-            startActivity(new Intent(this, com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+            startActivity(new Intent(this, VideoSearchActivity.class));
         else {
             startActivity(new Intent(this, MainActivityLeanback.class)
                               .putExtra("preview_tab", index)
