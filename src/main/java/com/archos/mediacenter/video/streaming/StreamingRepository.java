@@ -7,9 +7,13 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Base64;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
+import com.archos.medialib.R;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -134,7 +138,7 @@ public final class StreamingRepository {
                     && (section.matches("season/[0-9]{1,4}")
                         || section.matches("season/[0-9]{1,4}/episode/[0-9]{1,4}/external_ids"))))
             throw new IOException("Invalid metadata request");
-        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(context, kind, id, section,
+        return PreviewMetadataCache.load(context, kind, id, section,
             () -> api(context, kind + "/" + id + (section.isEmpty() ? "" : "/" + section), null));
     }
 
@@ -142,7 +146,7 @@ public final class StreamingRepository {
     public static JSONObject reviews(Context context, String kind, long id, int page) throws Exception {
         if (!Arrays.asList("movie", "tv").contains(kind) || id <= 0 || page < 1 || page > 5)
             throw new IOException("Invalid review request");
-        return com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(
+        return PreviewMetadataCache.load(
             context, kind, id, "reviews/page_" + page, () -> {
                 JSONObject result = api(context, kind + "/" + id + "/reviews", null, page);
                 if (result.optInt("page", 0) != page)
@@ -159,31 +163,31 @@ public final class StreamingRepository {
         Uri.Builder url =
             Uri.parse("https://api.themoviedb.org/3/" + path)
                 .buildUpon()
-                .appendQueryParameter("api_key", context.getString(com.archos.medialib.R.string.tmdb_api_key))
+                .appendQueryParameter("api_key", context.getString(R.string.tmdb_api_key))
                 .appendQueryParameter("language", Locale.getDefault().toLanguageTag());
         if (page > 0)
             url.appendQueryParameter("page", String.valueOf(page));
         if (country != null)
             url.appendQueryParameter("watch_region", country);
-        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
+        String operation = Diagnostics.operation("metadata_request");
         long started = SystemClock.elapsedRealtime();
-        try (com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored =
-                 com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)) {
+        try (Diagnostics.OperationScope ignored =
+                 Diagnostics.operationScope(operation)) {
             String body = get(url.build().toString(), 2 * 1024 * 1024, operation);
             try {
                 JSONObject value = new JSONObject(body);
                 validateMetadataResponse(path, value);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                Diagnostics.event(
                     "metadata_semantic_validated", "operation_id", operation);
                 return value;
-            } catch (org.json.JSONException | IOException invalid) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_semantic_failed", "operation_id",
+            } catch (JSONException | IOException invalid) {
+                Diagnostics.event("metadata_semantic_failed", "operation_id",
                     operation, "failure_category",
-                    invalid instanceof org.json.JSONException ? "invalid_json" : "invalid_payload");
+                    invalid instanceof JSONException ? "invalid_json" : "invalid_payload");
                 throw new IOException("Invalid metadata response", invalid);
             }
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+            Diagnostics.finishOperation(
                 operation, "metadata_request", started);
         }
     }
@@ -259,7 +263,7 @@ public final class StreamingRepository {
         if (Thread.currentThread().isInterrupted())
             throw new IOException("Cancelled");
         long started = SystemClock.elapsedRealtime();
-        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
+        String operation = Diagnostics.operation("metadata_network");
         String host = Uri.parse(url).getHost();
         String service = "api.themoviedb.org".equals(host) || "www.themoviedb.org".equals(host) ? "tmdb"
             : "www.youtube.com".equals(host) ? "youtube"
@@ -270,13 +274,13 @@ public final class StreamingRepository {
                                                         : "read";
         int status = 0;
         String outcome = "transport_failure";
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "metadata_network_started", "operation_id", operation, "parent_operation_id", parentOperation);
         try (Response response =
                  client.newCall(new Request.Builder().url(url).header("User-Agent", "NOVA-Mark/2 (Android TV)").build())
                      .execute()) {
             status = response.code();
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_http_response", "operation_id",
+            Diagnostics.event("metadata_http_response", "operation_id",
                 operation, "status", response.code(), "protocol", String.valueOf(response.protocol()));
             if (!response.isSuccessful() || response.body() == null) {
                 outcome = response.isSuccessful() ? "missing_body" : "http_error";
@@ -301,21 +305,21 @@ public final class StreamingRepository {
             byte[] data = buffer.toByteArray();
             if (data.length > limit)
                 throw new IOException("Response too large");
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            Diagnostics.event(
                 "metadata_http_body", "operation_id", operation, "bytes", data.length);
             outcome = "transport_complete";
             return new String(data, StandardCharsets.UTF_8);
         } catch (IOException error) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            Diagnostics.event(
                 "metadata_network_failed", "operation_id", operation, "type", error.getClass().getSimpleName());
             throw error;
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_outcome", "operation_id",
+            Diagnostics.event("metadata_network_outcome", "operation_id",
                 operation, "parent_operation_id", parentOperation, "service", service, "operation_type", kind, "status",
                 status, "outcome", outcome, "retry_number", 0, "duration_ms",
                 SystemClock.elapsedRealtime() - started, "connectivity",
-                com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
-            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+                Diagnostics.connectivity());
+            Diagnostics.finishOperation(
                 operation, "metadata_network", started);
         }
     }
@@ -348,7 +352,7 @@ public final class StreamingRepository {
 
     public static Availability load(Context context, String kind, long id, String country, int season)
         throws Exception {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "provider_metadata_lookup", "media_kind", kind, "season", season);
         if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0)
             throw new IOException("Missing title ID");
@@ -633,7 +637,7 @@ public final class StreamingRepository {
             || !(host.endsWith(".bn5x.net") || host.endsWith(".pxf.io") || host.equals("click.justwatch.com")))
             return url;
         OkHttpClient redirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build();
-        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("provider_redirect");
+        String operation = Diagnostics.operation("provider_redirect");
         long started = SystemClock.elapsedRealtime();
         String current = url;
         try {
@@ -659,18 +663,18 @@ public final class StreamingRepository {
                 } catch (Exception e) {
                     return url;
                 } finally {
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    Diagnostics.event(
                         "resolved".equals(outcome) || "redirect".equals(outcome) ? "provider_request_complete"
                                                                                  : "provider_request_failed",
                         "operation_id", operation, "provider", "provider_link", "operation_type", "title_redirect",
                         "status", status, "outcome", outcome, "redirect_index", i, "duration_ms",
                         SystemClock.elapsedRealtime() - requestStarted, "retry_number", 0, "connectivity",
-                        com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
+                        Diagnostics.connectivity());
                 }
             }
             return current;
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+            Diagnostics.finishOperation(
                 operation, "provider_redirect", started);
         }
     }
