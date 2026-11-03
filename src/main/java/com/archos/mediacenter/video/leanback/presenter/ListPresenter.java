@@ -35,6 +35,7 @@ import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.UnavailablePosterBroadcastReceiver;
 import com.archos.mediacenter.video.picasso.ThumbnailRequestHandler;
 import com.squareup.picasso.Picasso;
@@ -97,14 +98,14 @@ public abstract class ListPresenter extends Presenter {
                 mContentTv.setTextColor(0xffa4b6c7);
                 mBaseCardView.setBackgroundColor(0xbb192f45);
                 LayerDrawable separated = new LayerDrawable(
-                    new android.graphics.drawable.Drawable[] {
+                    new Drawable[] {
                         new ColorDrawable(0x1809131c),
                         new ColorDrawable(0x40708695)
                     });
                 separated.setLayerHeight(1, Math.max(1, (int) density));
                 separated.setLayerGravity(1, Gravity.BOTTOM);
                 mBaseCardView.setBackground(separated);
-                mBaseCardView.setForeground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(context));
+                mBaseCardView.setForeground(PreviewDialog.focus(context));
                 mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             }
             mImageViewTarget = new PicassoImageViewTarget(mImageView);
