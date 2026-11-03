@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.utils.backup;
 
 import java.net.URI;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.*;
@@ -14,7 +15,7 @@ public final class PortableLocations {
         try {
             if(value==null||value.isEmpty()||value.length()>8192||value.indexOf('\\')>=0||
                     controls(value))throw new IllegalArgumentException();
-            StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(value));
+            StandardCharsets.UTF_8.newEncoder().encode(CharBuffer.wrap(value));
             // Raw local paths are supported by the current scanner; URI encoding preserves their segments.
             URI uri=value.startsWith("/")?new URI("file","",value,null):new URI(value);
             String scheme=uri.getScheme()==null?null:uri.getScheme().toLowerCase(Locale.ROOT);
