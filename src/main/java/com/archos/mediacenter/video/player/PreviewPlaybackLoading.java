@@ -2,15 +2,24 @@ package com.archos.mediacenter.video.player;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
+import android.view.PixelCopy;
 import android.widget.*;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.squareup.picasso.Picasso;
-import java.util.Locale;
 
 /** Cached artwork only. Visibility follows the existing player preparation timer. */
 final class PreviewPlaybackLoading extends FrameLayout {
@@ -37,13 +46,13 @@ final class PreviewPlaybackLoading extends FrameLayout {
         labelsParams.leftMargin = dp(48);
         addView(labels, labelsParams);
         title = text("", 32);
-        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setTypeface(null, Typeface.BOLD);
         title.setMaxLines(2);
-        title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        title.setEllipsize(TextUtils.TruncateAt.END);
         labels.addView(title);
         episode = text("", 16);
         episode.setMaxLines(2);
-        episode.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        episode.setEllipsize(TextUtils.TruncateAt.END);
         episode.setPadding(0, dp(10), 0, dp(20));
         labels.addView(episode);
         LinearLayout status = new LinearLayout(context);
@@ -55,7 +64,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
                 ? new com.archos.mediacenter.video.foundation.DoubleRingDrawable()
                 : new com.archos.mediacenter.video.leanback.ThinSpinner());
         if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION)
-            spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(
+            spinner.setIndeterminateTintList(ColorStateList.valueOf(
                 com.archos.mediacenter.video.leanback.PreviewAccent.color(context)));
         status.addView(spinner, new LinearLayout.LayoutParams(dp(28), dp(28)));
         TextView starting = text("Preparing playback…", 16);
@@ -107,7 +116,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         if (waitingForFrame || getVisibility() != VISIBLE)
             return;
         waitingForFrame = true;
-        final long started = android.os.SystemClock.uptimeMillis();
+        final long started = SystemClock.uptimeMillis();
         final int expected = generation;
         final SurfaceView surface = root.findViewById(R.id.surface_view);
         post(new Runnable() {
@@ -122,18 +131,18 @@ final class PreviewPlaybackLoading extends FrameLayout {
                     reveal();
                     return;
                 }
-                if (android.os.Build.VERSION.SDK_INT >= 26 && surface != null && surface.isShown()
+                if (Build.VERSION.SDK_INT >= 26 && surface != null && surface.isShown()
                     && surface.getHolder().getSurface().isValid()) {
-                    android.graphics.Bitmap probe =
-                        android.graphics.Bitmap.createBitmap(32, 18, android.graphics.Bitmap.Config.ARGB_8888);
+                    Bitmap probe =
+                        Bitmap.createBitmap(32, 18, Bitmap.Config.ARGB_8888);
                     try {
-                        android.view.PixelCopy.request(surface, probe, result -> {
+                        PixelCopy.request(surface, probe, result -> {
                             if (expected != generation) {
                                 probe.recycle();
                                 return;
                             }
                             boolean frame = false;
-                            if (result == android.view.PixelCopy.SUCCESS) {
+                            if (result == PixelCopy.SUCCESS) {
                                 int min = 255, max = 0;
                                 for (int y = 0; y < 18; y++)
                                     for (int x = 0; x < 32; x++) {
@@ -151,7 +160,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
                                 reveal();
                             else
                                 retry(this, started);
-                        }, new android.os.Handler(android.os.Looper.getMainLooper()));
+                        }, new Handler(Looper.getMainLooper()));
                         return;
                     } catch (IllegalArgumentException invalid) {
                         probe.recycle();
@@ -163,13 +172,13 @@ final class PreviewPlaybackLoading extends FrameLayout {
     }
 
     private void retry(Runnable check, long started) {
-        if (android.os.SystemClock.uptimeMillis() - started > 600 && Player.sPlayer != null
+        if (SystemClock.uptimeMillis() - started > 600 && Player.sPlayer != null
             && Player.sPlayer.isPlaying() && Player.sPlayer.getCurrentPosition() > 250) {
             reveal();
             return;
         }
-        if (android.os.SystemClock.uptimeMillis() - started > 8000) {
-            android.util.Log.w(
+        if (SystemClock.uptimeMillis() - started > 8000) {
+            Log.w(
                 "NovaPreview", "No first-frame signal; releasing loading overlay to preserve playback controls");
             reveal();
         } else
