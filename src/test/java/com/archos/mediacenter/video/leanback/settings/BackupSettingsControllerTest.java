@@ -1,13 +1,17 @@
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.graphics.*;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.*;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.*;
 import java.io.*;
@@ -51,13 +55,13 @@ public class BackupSettingsControllerTest {
         }
 
         @Override
-        public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(
+        public RecyclerView onCreateRecyclerView(
             LayoutInflater inflater, ViewGroup parent, Bundle state) {
             return PreviewSettings.grid(requireContext());
         }
 
         @Override
-        protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
+        protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
             return PreviewSettings.adapter(screen);
         }
 
@@ -89,7 +93,7 @@ public class BackupSettingsControllerTest {
         view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
         view.layout(0, 0, width, height);
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
     private void capture(View view, String name) throws Exception {
@@ -139,7 +143,7 @@ public class BackupSettingsControllerTest {
         frame.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
         frame.layout(0, 0, w, h);
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
     private void export(Settings settings) {
@@ -171,10 +175,10 @@ public class BackupSettingsControllerTest {
         while ((model.current().phase != phase || model.isBusy() || model.states().getValue() == null
                    || model.states().getValue().phase != phase)
             && System.nanoTime() < deadline) {
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             Thread.sleep(5);
         }
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(model.current().message, phase, model.current().phase);
         assertFalse(model.isBusy());
         assertNotNull("Published UI state", model.states().getValue());
@@ -306,7 +310,7 @@ public class BackupSettingsControllerTest {
             File exported = newExport(model, before);
             assertEquals(
                 Set.of(BackupCategory.APPEARANCE), LogicalBackupArchive.readCategories(exported, () -> false).keySet());
-            Shadows.shadowOf(host.get()).receiveResult(request.intent, android.app.Activity.RESULT_CANCELED, null);
+            Shadows.shadowOf(host.get()).receiveResult(request.intent, Activity.RESULT_CANCELED, null);
             await(model, BackupOperationModel.Phase.CANCELLED);
             assertTrue(model.current().retryExport);
             assertTrue(exported.exists());
@@ -422,8 +426,8 @@ public class BackupSettingsControllerTest {
                 TextView option = root.findViewWithTag("backup.category." + category.name());
                 assertTrue(category.name(), option.requestFocus());
                 layout(root);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
+                Rect visible = new Rect();
                 assertTrue(category.name(), option.getGlobalVisibleRect(visible));
                 assertEquals(category.name(), option.getHeight(), visible.height());
                 assertEquals(category.name(), option.getWidth(), visible.width());
