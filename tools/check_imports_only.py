@@ -132,13 +132,14 @@ def compare(before, after, path='T.java', package_types=(), allow_new_comments=F
     b = canonical(new_body, resolver(new_pkg, new_imports, new_body, path, package_types))
     i = j = 0
     while i < len(a) or j < len(b):
-        if i < len(a) and j < len(b) and a[i] == b[j]:
+        added_override = (allow_added_override and b[j:j + 2] == [('op', '@'), ('word', 'Override')]
+                          and a[i:i + 2] != b[j:j + 2] and (j + 2 >= len(b) or b[j + 2] != ('op', '.')))
+        if added_override:
+            j += 2  # checked first, so a new @Override before an existing annotation is not mis-paired
+        elif i < len(a) and j < len(b) and a[i] == b[j]:
             i, j = i + 1, j + 1
         elif allow_new_comments and j < len(b) and b[j][0] == 'comment':
             j += 1
-        elif allow_added_override and b[j:j + 2] == [('op', '@'), ('word', 'Override')] and \
-                (j + 2 >= len(b) or b[j + 2] != ('op', '.')):
-            j += 2
         else:
             x = a[i][1][:60] if i < len(a) else '<end>'
             y = b[j][1][:60] if j < len(b) else '<end>'

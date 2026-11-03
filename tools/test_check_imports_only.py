@@ -118,5 +118,12 @@ class T {
         self.assertIsNotNone(compare(before, before.replace('@Override ', ''), allow_added_override=True))
 
 
+    def test_override_added_above_an_existing_annotation_passes(self):
+        before = 'package a;\nclass T implements Runnable { @SuppressWarnings("x") public void run() { } }\n'
+        after = 'package a;\nclass T implements Runnable { @Override @SuppressWarnings("x") public void run() { } }\n'
+        self.assertIsNone(compare(before, after, allow_added_override=True))
+        self.assertIsNotNone(compare(before, after.replace('"x"', '"y"'), allow_added_override=True))
+
+
 if __name__ == '__main__':
     unittest.main()
