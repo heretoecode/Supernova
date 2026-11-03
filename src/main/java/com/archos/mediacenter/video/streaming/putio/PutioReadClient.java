@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.os.SystemClock;
 import okhttp3.*;
 import org.json.*;
 import java.io.*;
@@ -249,7 +250,7 @@ public final class PutioReadClient {
 
     private <T> T request(Request request, String kind, Parser<T> parser) throws Unavailable {
         String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("putio_" + kind);
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         int status = 0;
         String outcome = "cancelled";
         try {
@@ -298,7 +299,7 @@ public final class PutioReadClient {
             com.archos.mediacenter.video.diagnostics.Diagnostics.event(
                 "validated_complete".equals(outcome) ? "provider_request_complete" : "provider_request_failed",
                 "operation_id", operation, "provider", "putio", "operation_type", kind, "status", status, "outcome",
-                outcome, "duration_ms", android.os.SystemClock.elapsedRealtime() - started, "retry_number", 0,
+                outcome, "duration_ms", SystemClock.elapsedRealtime() - started, "retry_number", 0,
                 "connectivity", com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
             com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation, "putio_" + kind, started);
         }
