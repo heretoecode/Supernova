@@ -5,6 +5,9 @@ import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
+import com.archos.mediascraper.MovieTags;
+import com.archos.mediascraper.ScrapeDetailResult;
+import com.archos.mediascraper.ScrapeStatus;
 import java.util.*;
 import org.json.*;
 import org.junit.*;
@@ -136,13 +139,13 @@ public class CombinedCurrentRestoreTest {
     private PreferenceRestoreTransaction.Plan canonicalPlan() throws Exception {
         return fixture.transaction.prepareCanonicalMatches(
             all(), null, fixture.physical(), (context, request, file) -> {
-                var tags = new com.archos.mediascraper.MovieTags();
+                var tags = new MovieTags();
                 tags.setOnlineId(789);
                 tags.setTitle("Canonical combined title");
                 tags.setPlot("Canonical combined facts");
                 tags.addGenreIfAbsent("Drama");
-                return new com.archos.mediascraper.ScrapeDetailResult(
-                    tags, true, null, com.archos.mediascraper.ScrapeStatus.OKAY, null);
+                return new ScrapeDetailResult(
+                    tags, true, null, ScrapeStatus.OKAY, null);
             }, () -> false);
     }
 
