@@ -36,17 +36,20 @@ public class PreviewSubtitleChooserTest {
         int associations, deletions;
         boolean fail;
 
+        @Override
         public List<PreviewSubtitleChooser.Entry> load() {
             if (fail)
                 throw new IllegalStateException();
             return new ArrayList<>(files);
         }
 
+        @Override
         public String associate(PreviewSubtitleChooser.Entry e) {
             associations++;
             return PATH;
         }
 
+        @Override
         public boolean delete(PreviewSubtitleChooser.Entry e) {
             deletions++;
             files.clear();
