@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Updates video recommendations and their notification artwork. */
 public class UpdateRecommendationsService extends Service implements DefaultLifecycleObserver {
 	private static final String TAG = "UpdateRecommendationsService";
 	public static class Columns {
