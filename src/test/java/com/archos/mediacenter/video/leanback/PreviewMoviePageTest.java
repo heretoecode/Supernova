@@ -155,6 +155,11 @@ public class PreviewMoviePageTest {
             assertTrue("Initial hero leaves at least 32dp of lower content visible",page.getPaddingTop()+hero.getBottom()<=page.getHeight()-32);
             PreviewPagesTest.addTestArtwork(nav);Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
             android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(960,540,android.graphics.Bitmap.Config.ARGB_8888);nav.draw(new android.graphics.Canvas(bitmap));java.io.File out=new java.io.File("build/reports/preview-ui/movie-details.png");out.getParentFile().mkdirs();try(java.io.FileOutputStream stream=new java.io.FileOutputStream(out)){bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,stream);}
+            {TextView playButton=(TextView)page.findViewWithTag("action:Play");
+                assertNotNull(playButton);
+                StringBuilder chain=new StringBuilder();for(View v=playButton;v!=null;v=v.getParent() instanceof View?(View)v.getParent():null)chain.append(v.getClass().getSimpleName()).append(" a=").append(v.getAlpha()).append(v.getForeground()!=null?" fg="+v.getForeground().getClass().getSimpleName():"").append("; ");
+                if(playButton.hasFocus())assertEquals("Focused Resume must be black on white. state="+java.util.Arrays.toString(playButton.getDrawableState())+" colour="+Integer.toHexString(playButton.getCurrentTextColor())+" paintAlpha="+playButton.getPaint().getAlpha()+" chain="+chain,SupernovaStyle.FOCUS_TEXT,playButton.getCurrentTextColor());
+                else fail("Resume shows the focus box without focus? state="+java.util.Arrays.toString(playButton.getDrawableState())+" chain="+chain);}
             View tab=page.findViewWithTag("section:Details");assertNotNull(tab);tab.requestFocus();
             page.setTags(cast,java.util.Collections.emptyList(),java.util.Collections.emptyList());
             View restored=page.findViewWithTag("section:Details");assertTrue(restored.isSelected());assertTrue(restored.hasFocus());

@@ -1,5 +1,5 @@
 {
- "purpose": "0.153 shared style, round 4 (content follows focus, white rail outline)",
+ "purpose": "0.153 shared style, round 5 (diagnose details Resume colour)",
  "tests": [
   "com.archos.mediacenter.video.leanback.SupernovaStyleTest",
   "com.archos.mediacenter.video.leanback.SupernovaStyleConformanceTest",
