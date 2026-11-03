@@ -68,6 +68,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Searches TV show metadata and saves tags for the selected result. */
 public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFragment {
 
     private static final Logger log = LoggerFactory.getLogger(ManualShowScrappingSearchFragment.class);
