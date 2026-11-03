@@ -1,5 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.text.format.Formatter;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import java.util.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
@@ -7,11 +13,11 @@ import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 
 /** Real indexed measurements only; unknown measurements sort after known values. */
 public final class PreviewVariants {
-    private static volatile android.content.Context policyContext;
+    private static volatile Context policyContext;
     private static volatile PlaybackCompatibility compatibility;
 
-    public static synchronized void initialize(android.content.Context context) {
-        android.content.Context app = context.getApplicationContext();
+    public static synchronized void initialize(Context context) {
+        Context app = context.getApplicationContext();
         if (policyContext != app || compatibility == null) {
             policyContext = app;
             compatibility = PlaybackCompatibility.read(app);
@@ -29,7 +35,7 @@ public final class PreviewVariants {
             .thenComparingLong(Video::getId);
 
     private static int availabilityRank(Video video) {
-        android.content.Context c = policyContext;
+        Context c = policyContext;
         return c != null && LibraryHealth.state(c, video) != LibraryHealth.State.AVAILABLE ? 1 : 0;
     }
 
@@ -66,11 +72,11 @@ public final class PreviewVariants {
         return "file:" + video.getFilePath();
     }
 
-    public static void remember(android.content.Context context, Video video) {
+    public static void remember(Context context, Video video) {
         initialize(context);
-        android.content.SharedPreferences prefs =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
-        android.content.SharedPreferences.Editor edit = prefs.edit().putString(
+        SharedPreferences prefs =
+            PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = prefs.edit().putString(
             "preview_version_choice:" + choiceKey(video),
             video.getId() + "|"
                 + com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(video.getFileUri()));
@@ -89,16 +95,16 @@ public final class PreviewVariants {
     }
 
     private static boolean manuallySelected(Video video) {
-        android.content.Context context = policyContext;
+        Context context = policyContext;
         if (context == null || availabilityRank(video) > 0)
             return false;
-        String selection = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString(
+        String selection = PreferenceManager.getDefaultSharedPreferences(context).getString(
             "preview_version_choice:" + choiceKey(video), "");
         return selection.equals(video.getId() + "|"
             + com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(video.getFileUri()));
     }
 
-    public static Video resolve(android.content.Context context, Video requested) {
+    public static Video resolve(Context context, Video requested) {
         initialize(context);
         PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
         if (snapshot == null)
@@ -113,7 +119,7 @@ public final class PreviewVariants {
     }
 
     /** Same persisted selection policy for native Details lists and snapshot entry routes. */
-    public static Video choose(android.content.Context context, List<? extends Video> variants) {
+    public static Video choose(Context context, List<? extends Video> variants) {
         initialize(context);
         if (variants.isEmpty())
             return null;
@@ -153,7 +159,7 @@ public final class PreviewVariants {
     }
 
     /** Describe this physical encode using measured metadata, never the title or filename. */
-    public static String fileBadge(android.content.Context context, Video video) {
+    public static String fileBadge(Context context, Video video) {
         if (video == null)
             return "";
         int width = video.getMeasuredWidth(), height = video.getMeasuredHeight();
@@ -185,7 +191,7 @@ public final class PreviewVariants {
     }
 
     /** Cached/indexed facts only: opening Versions never probes a network file. */
-    public static String details(android.content.Context context, Video video) {
+    public static String details(Context context, Video video) {
         List<String> facts = new ArrayList<>();
         if (video.getMeasuredWidth() > 0 && video.getMeasuredHeight() > 0)
             facts.add(video.getMeasuredWidth() + " × " + video.getMeasuredHeight());
@@ -209,24 +215,24 @@ public final class PreviewVariants {
                 }
             }
             if (!tracks.isEmpty())
-                audio = android.text.TextUtils.join(" / ", tracks);
+                audio = TextUtils.join(" / ", tracks);
         }
         if (!codec.isEmpty())
             facts.add(codec);
         if (!audio.isEmpty())
             facts.add(audio);
         if (video.getSize() > 0)
-            facts.add(android.text.format.Formatter.formatShortFileSize(context, video.getSize()));
-        return video.getFilenameNonCryptic() + (facts.isEmpty() ? "" : "\n" + android.text.TextUtils.join(" · ", facts))
+            facts.add(Formatter.formatShortFileSize(context, video.getSize()));
+        return video.getFilenameNonCryptic() + (facts.isEmpty() ? "" : "\n" + TextUtils.join(" · ", facts))
             + "\n" + safeLocation(video.getFileUri());
     }
 
     /** Never render URI user-info, query credentials or fragments in the picker. */
-    public static String dynamicRange(android.content.Context context, Video video) {
+    public static String dynamicRange(Context context, Video video) {
         return dynamicRange(context, video, PreviewLibraryLoader.memoryCache());
     }
 
-    static String dynamicRange(android.content.Context context, Video video, PreviewLibraryLoader.Snapshot snapshot) {
+    static String dynamicRange(Context context, Video video, PreviewLibraryLoader.Snapshot snapshot) {
         if (video.getMetadata() != null && video.getMetadata().getVideoTrack() != null) {
             com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack track = video.getMetadata().getVideoTrack();
             String measured = track.dynamicRange();
@@ -251,7 +257,7 @@ public final class PreviewVariants {
         return "";
     }
 
-    public static String safeLocation(android.net.Uri uri) {
+    public static String safeLocation(Uri uri) {
         if (uri == null)
             return "Location unavailable";
         String scheme = uri.getScheme(), path = uri.getPath();
