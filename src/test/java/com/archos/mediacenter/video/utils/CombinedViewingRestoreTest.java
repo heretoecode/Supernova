@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.*;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.*;
@@ -102,7 +103,7 @@ public class CombinedViewingRestoreTest {
         try{transaction.apply(plan,()->false,at->{if(at==PreferenceRestoreTransaction.Checkpoint.VIEWING_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
         assertTrue(app.getDatabasePath(ViewingHistory.DATABASE).exists());new PreferenceRestoreTransaction(app).recover();assertFalse(app.getDatabasePath(ViewingHistory.DATABASE).exists());assertEquals(7,prefs.getInt("preview_accent41",0));
     }
-    public static class Bootstrap extends com.archos.mediacenter.video.CustomApplication {
+    public static class Bootstrap extends CustomApplication {
         public void attach(Context base){super.attachBaseContext(base);}
     }
     @Test public void applicationAttachmentRecoversBeforeInitializationWithNoApplicationContextYet()throws Exception {
