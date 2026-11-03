@@ -145,17 +145,20 @@ public class PutioSyncTest {
             return result;
         }
 
+        @Override
         public long insert(Uri source, PutioReconciliation.File file) {
             long id = 100 + (++inserts);
             rows.put(id, new PutioReconciliation.Existing(id, file.relativePath, file.size, 0));
             return id;
         }
 
+        @Override
         public void relocate(Uri source, PutioReconciliation.Existing old, PutioReconciliation.File file) {
             rows.put(old.mediaId,
                 new PutioReconciliation.Existing(old.mediaId, file.relativePath, file.size, old.providerFileId));
         }
 
+        @Override
         public void enrich() {
         }
     }
