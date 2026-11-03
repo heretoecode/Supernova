@@ -1,12 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.app.Dialog;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.adapter.object.*;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import com.archos.filecorelibrary.MetaFile2;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -27,7 +32,7 @@ public class Network142Test {
     public void setup() {
         PreviewAsyncFixtures.offlineTransport();
         host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -52,7 +57,7 @@ public class Network142Test {
             browser.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
             browser.layout(0, 0, 1920, 1080);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(30));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(30));
         }
     }
 
@@ -240,13 +245,13 @@ public class Network142Test {
         List<MetaFile2> files = ReflectionHelpers.getField(browser, "files");
         files.add(a);
         files.add(z);
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
             .putInt("supernova_browser_sort", 1)
             .commit();
         ReflectionHelpers.callInstanceMethod(browser, "sortFiles");
         assertSame(z, files.get(0));
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
             .putInt("supernova_browser_sort", 4)
             .commit();
@@ -268,7 +273,7 @@ public class Network142Test {
         assertTrue(browser.findViewWithTag("network.back").isShown());
         View username = PreviewPagesTest.findText(browser, "Username: ");
         username.performClick();
-        android.app.Dialog keyboard = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog keyboard = org.robolectric.shadows.ShadowDialog.getLatestDialog();
         keyboard.getWindow().getDecorView().findViewWithTag("semantic:keyboard:Done").performClick();
         layout();
         assertSame("Keyboard Done returns to the edited field", PreviewPagesTest.findText(browser, "Username: "),
@@ -309,7 +314,7 @@ public class Network142Test {
 
     @Test
     public void absentScanOnReturnPreferenceMatchesRuntimeOffDefault() {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
             .remove("auto_rescan_on_app_restart")
             .commit();
@@ -321,7 +326,7 @@ public class Network142Test {
         toggle.requestFocus();
         toggle.performClick();
         layout();
-        assertTrue(androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        assertTrue(PreferenceManager.getDefaultSharedPreferences(host.get())
                 .getBoolean("auto_rescan_on_app_restart", false));
         assertTrue(((View) PreviewPagesTest.findText(browser, "On Open / Return: On").getParent()).hasFocus());
     }
@@ -347,7 +352,7 @@ public class Network142Test {
         }
         PreviewPagesTest.capture(browser, "0142-form-connect-focus");
         assertTrue("D-pad reaches Connect below form controls: " + trace, connect.hasFocus());
-        android.graphics.Rect visible = new android.graphics.Rect();
+        Rect visible = new Rect();
         assertTrue(connect.getGlobalVisibleRect(visible));
         assertEquals("Focused action is fully revealed", connect.getHeight(), visible.height());
     }
