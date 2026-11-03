@@ -110,6 +110,25 @@ public class SupernovaStyleTest {
         assertEquals(View.VISIBLE, button.getVisibility());
     }
 
+    /** 0.154: labels in Medium weight; the white focus box has no shadow; button icons turn black on focus. */
+    @Test
+    public void labelsAreMediumFocusBoxHasNoShadowAndIconsTurnBlack() {
+        TextView button = TvButton.create(host.get(), "More Info", () -> {}, false);
+        TextView other = new TextView(host.get());
+        other.setFocusable(true);
+        other.setFocusableInTouchMode(true);
+        root.addView(button);
+        root.addView(other, new FrameLayout.LayoutParams(10, 10, Gravity.END));
+        assertSame(SupernovaStyle.LABEL, button.getTypeface());
+        assertTrue(button.requestFocus());
+        assertEquals(0, ((SupernovaStyle.Box)button.getBackground().getCurrent()).shadow());
+        android.graphics.drawable.Drawable icon = button.getCompoundDrawables()[0];
+        assertTrue(icon instanceof SupernovaStyle.StateIcon);
+        assertEquals(SupernovaStyle.FOCUS_TEXT, ((SupernovaStyle.StateIcon)icon).colour());
+        assertTrue(other.requestFocus());
+        assertEquals(SupernovaStyle.TEXT, ((SupernovaStyle.StateIcon)icon).colour());
+    }
+
     /** A screen that sets a flat colour after styling must still not end up white on white. */
     @Test
     public void flatColourSetLaterIsMadeReadableAgain() {

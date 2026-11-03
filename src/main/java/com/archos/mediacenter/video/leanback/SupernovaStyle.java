@@ -49,6 +49,8 @@ public final class SupernovaStyle {
     public static final int HEADING_LINE = 0x599CC9F0;
     public static final int DISABLED_ALPHA = 102; // 40%
 
+    /** Button and tile labels: Medium weight (Light strokes read as grey on a TV). */
+    public static final Typeface LABEL = Typeface.create("sans-serif-medium", Typeface.NORMAL);
     public static final float RADIUS_DP = 12f;
     public static final float PANEL_RADIUS_DP = 13f;
     public static final float ROW_FOCUS_STROKE_DP = 1.5f;
@@ -76,7 +78,7 @@ public final class SupernovaStyle {
     // ---- buttons and tiles ---------------------------------------------------------------------
 
     /**
-     * Button/tile background. States: focused or pressed = white box with a soft shadow;
+     * Button/tile background. States: focused or pressed = white box (no shadow: it smudged on pale artwork);
      * selected (not focused) = resting box + thin white outline; disabled = resting at 40%;
      * otherwise resting. The box never changes size between states.
      */
@@ -85,7 +87,7 @@ public final class SupernovaStyle {
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
         int edge = surface == Surface.TILE ? 0x2EFFFFFF : 0;
         StateListDrawable states = new ButtonStates();
-        Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, dp(c, 6));
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);
         states.addState(new int[] {android.R.attr.state_pressed}, focused);
         states.addState(new int[] {-android.R.attr.state_enabled},
@@ -177,6 +179,7 @@ public final class SupernovaStyle {
         Context c = view.getContext();
         view.setBackground(button(c, surface));
         view.setTextColor(buttonContent());
+        view.setTypeface(LABEL);
         tintIcons(view);
         view.setAllCaps(false);
         view.setGravity(Gravity.CENTER);
@@ -237,6 +240,7 @@ public final class SupernovaStyle {
                 child.setDuplicateParentStateEnabled(false);
                 child.setTag(com.archos.mediacenter.video.R.id.supernova_group_label, Boolean.TRUE);
                 ((TextView)child).setTextColor(groupLabelContent());
+                ((TextView)child).setTypeface(LABEL);
             }
         }
     }
@@ -254,6 +258,8 @@ public final class SupernovaStyle {
             boolean secondary =
                 Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
             text.setTextColor(secondary ? secondaryContent() : buttonContent());
+            if (!secondary)
+                text.setTypeface(LABEL);
             tintIcons(text);
         } else if (view instanceof ImageView) {
             ImageView image = (ImageView)view;
@@ -315,6 +321,11 @@ public final class SupernovaStyle {
 
         public Drawable icon() {
             return icon;
+        }
+
+        /** The colour the icon is drawn in right now (for tests). */
+        public int colour() {
+            return current;
         }
 
         private void apply(int colour) {
@@ -492,6 +503,10 @@ public final class SupernovaStyle {
 
         public int fill() {
             return fill;
+        }
+
+        public int shadow() {
+            return shadow;
         }
 
         public int edge() {
