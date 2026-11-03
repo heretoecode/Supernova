@@ -1,7 +1,13 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Application;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -10,6 +16,8 @@ import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -201,7 +209,7 @@ public class DetailsImprovementsTest {
                 root.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
                 root.layout(0, 0, 1920, 1080);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
             }
             View tab = page.findViewWithTag("section:Details");
             assertTrue(tab.requestFocus());
@@ -222,15 +230,15 @@ public class DetailsImprovementsTest {
         });
         page.bind(movie(1, "First"));
         ImageView art = ReflectionHelpers.getField(page, "cardArtwork");
-        android.graphics.drawable.Drawable known =
-            new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLUE);
+        Drawable known =
+            new ColorDrawable(Color.BLUE);
         art.setImageDrawable(known);
-        android.net.Uri pending = android.net.Uri.parse("file:///missing-details-fixture.png");
+        Uri pending = Uri.parse("file:///missing-details-fixture.png");
         ReflectionHelpers.callInstanceMethod(
-            page, "cardArtwork", ReflectionHelpers.ClassParameter.from(android.net.Uri.class, pending));
+            page, "cardArtwork", ReflectionHelpers.ClassParameter.from(Uri.class, pending));
         assertSame("Loading replacement must not clear known image", known, art.getDrawable());
         ReflectionHelpers.callInstanceMethod(
-            page, "cardArtwork", ReflectionHelpers.ClassParameter.from(android.net.Uri.class, pending));
+            page, "cardArtwork", ReflectionHelpers.ClassParameter.from(Uri.class, pending));
         assertSame(known, art.getDrawable());
         page.bind(movie(2, "Second"));
         assertNull("No artwork from previous title", art.getDrawable());
@@ -285,7 +293,7 @@ public class DetailsImprovementsTest {
             });
             reader.show();
             finish(reader);
-            android.app.Dialog dialog = ReflectionHelpers.getField(reader, "dialog");
+            Dialog dialog = ReflectionHelpers.getField(reader, "dialog");
             assertNotNull(find(dialog.getWindow().getDecorView(), "Retained review"));
             find(dialog.getWindow().getDecorView(), "Next").performClick();
             finish(reader);
@@ -318,9 +326,9 @@ public class DetailsImprovementsTest {
     }
 
     private void finish(DetailsReviews reader) throws Exception {
-        java.util.concurrent.Future<?> task = ReflectionHelpers.getField(reader, "task");
-        task.get(10, java.util.concurrent.TimeUnit.SECONDS);
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Future<?> task = ReflectionHelpers.getField(reader, "task");
+        task.get(10, TimeUnit.SECONDS);
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
     private void apply(PreviewMoviePage page, PreviewDetailsData.Result result, int generation) {
