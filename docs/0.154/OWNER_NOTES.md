@@ -120,6 +120,21 @@ Each item: what the owner saw → what they want → status.
   The manifest must keep declaring TV-only (leanback required, touchscreen not required).
 - **Status:** decided — removal plan to be drafted.
 
+### 11. Five confirmed bugs from Codex's bug hunt (fix in 0.154, each with a test)
+Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); approved for fixing by the owner.
+- **U1** `utils/SubtitlesWizardCommon.java:~295` — cache folder built as a `file:///` URI string, then used as a
+  plain path, so the cached copy of a renamed subtitle is never renamed.
+- **N1** `leanback/network/ftp/FtpServerCredentialsDialog.java:~172` — an unparseable port shows "invalid port"
+  but the connection proceeds on the default port; it must stop instead.
+- **N2** same dialog `~210` — with debug logging on, usernames and server/folder paths are logged (no passwords);
+  redact.
+- **L1** `leanback/search/VideoSearchProvider.java:85` — exported search provider dereferences a null first
+  selection argument; add the guard.
+- **P1** `player/PlayerService.java:~1733` — a pending skip prompt stays actionable ≤5 s after skipping is
+  switched off; recheck the master setting.
+- U2 and L2 are in phone-only screens and disappear with the TV-only removal (item 10).
+- **Status:** approved — awaiting go-ahead to code.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
