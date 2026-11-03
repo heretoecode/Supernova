@@ -3,6 +3,9 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
+import android.text.TextUtils;
+import android.text.format.Formatter;
+import android.util.DisplayMetrics;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
@@ -135,7 +138,7 @@ public final class EditPagePanel extends LinearLayout {
         window.setBackgroundDrawableResource(android.R.color.transparent);
         window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         window.setGravity(Gravity.TOP | Gravity.END);
-        android.util.DisplayMetrics m = owner.getResources().getDisplayMetrics();
+        DisplayMetrics m = owner.getResources().getDisplayMetrics();
         WindowManager.LayoutParams attrs = window.getAttributes();
         attrs.x = Math.round(m.widthPixels * 40f / 1920f);
         attrs.y = Math.round(m.heightPixels * 96f / 1080f);
@@ -268,7 +271,7 @@ public final class EditPagePanel extends LinearLayout {
             TextView note =
                 kit.text("Removes this page only. Your media is never deleted.", 15, SidePanelKit.META, false);
             note.setSingleLine(true);
-            note.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            note.setEllipsize(TextUtils.TruncateAt.END);
             delete.addView(note, new LayoutParams(0, -2, 1));
             delete.setContentDescription("Delete Page. Removes this page only. Your media is never deleted.");
             delete.setOnClickListener(v -> host.delete());
@@ -453,7 +456,7 @@ public final class EditPagePanel extends LinearLayout {
             return "Any";
         List<String> list = new ArrayList<>(genres);
         if (list.size() <= 2)
-            return android.text.TextUtils.join(", ", list);
+            return TextUtils.join(", ", list);
         return list.get(0) + ", " + list.get(1) + " +" + (list.size() - 2);
     }
 
@@ -521,7 +524,7 @@ public final class EditPagePanel extends LinearLayout {
         }
         TextView text = kit.text(label, 21, Color.WHITE, true);
         text.setSingleLine(true);
-        text.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        text.setEllipsize(TextUtils.TruncateAt.END);
         row.addView(text, new LayoutParams(0, -2, 1));
         TextView tick = kit.text("✓", 24, SidePanelKit.VALUE, false);
         tick.setTag("tick");
@@ -623,7 +626,7 @@ public final class EditPagePanel extends LinearLayout {
                 LibraryStatistics.calculate(host.snapshot(), shown, System.currentTimeMillis(), TimeZone.getDefault());
             long bytes = stats.localBytes + stats.networkBytes;
             String size = bytes > 0 ? " · " + (stats.unknownLocal + stats.unknownNetwork > 0 ? "≥ " : "") +
-                                          android.text.format.Formatter.formatShortFileSize(owner, bytes)
+                                          Formatter.formatShortFileSize(owner, bytes)
                                     : "";
             matches.setText(shown.size() + (shown.size() == 1 ? " title matches" : " titles match") + size);
             matches.setTextColor(SidePanelKit.MATCH);
