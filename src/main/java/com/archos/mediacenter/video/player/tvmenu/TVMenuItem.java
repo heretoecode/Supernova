@@ -115,6 +115,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
             ((Checkable)findViewById(R.id.info_text)).setChecked(checked);
     }
 
+    @Override
     public boolean isChecked(){
         if(findViewById(R.id.info_text)!=null && findViewById(R.id.info_text) instanceof Checkable)
             return ((Checkable)findViewById(R.id.info_text)).isChecked();
