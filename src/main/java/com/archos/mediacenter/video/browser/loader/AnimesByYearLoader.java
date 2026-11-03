@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 
 
+/** Loads anime movies filtered by year. */
 public class AnimesByYearLoader extends AnimesByLoader {
 
     private static final String DEFAULT_SORT = "m_release_date DESC, "+COLUMN_SUBSET_NAME+" COLLATE LOCALIZED ASC";
