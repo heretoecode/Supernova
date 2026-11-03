@@ -3,6 +3,7 @@ import android.content.SharedPreferences;
 import org.json.*;
 import java.util.*;
 
+/** Encodes and decodes settings for backups, including portable settings representations. */
 public final class SettingsBackup {
     public static String encodePortable(SharedPreferences prefs, String name) throws JSONException {
         return filterNamed(encodePortable(prefs, true), name, false);
