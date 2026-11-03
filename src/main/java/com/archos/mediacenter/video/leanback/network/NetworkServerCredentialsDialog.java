@@ -23,6 +23,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -139,8 +140,8 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
                                                 0, 1, 2, 3, 4, 5, 6, 7
                                             };
         if (preview) {
-            android.widget.ArrayAdapter<String> adapter =
-                new android.widget.ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item,
+            ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item,
                     new String[] {
                         "SMB", "WebDAV (HTTPS)", "WebDAV (HTTP)", "SFTP", "FTP", "FTP (TLS)"
                     });
