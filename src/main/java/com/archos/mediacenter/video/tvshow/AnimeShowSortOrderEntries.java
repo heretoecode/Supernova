@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Supplies anime show sorting labels and their stored values. */
 public class AnimeShowSortOrderEntries {
 
     public final static String DEFAULT_SORT = VideoStore.Video.VideoColumns.SCRAPER_TITLE + " COLLATE LOCALIZED ASC";
