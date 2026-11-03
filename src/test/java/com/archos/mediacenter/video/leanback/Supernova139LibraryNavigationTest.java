@@ -3,9 +3,11 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.view.*;
 import android.widget.TextView;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -18,7 +20,7 @@ import static org.junit.Assert.*;
 public class Supernova139LibraryNavigationTest {
     @Before
     public void offline() {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -89,7 +91,7 @@ public class Supernova139LibraryNavigationTest {
                 assertEquals(first, nav.findFocus().getTag());
                 key(nav, KeyEvent.KEYCODE_DPAD_RIGHT);
                 assertNotEquals(first, nav.findFocus().getTag());
-                java.util.List<PreviewPages.Cell> cells =
+                List<PreviewPages.Cell> cells =
                     org.robolectric.util.ReflectionHelpers.getField(pages, "cells");
                 String firstPoster = ((Entry) cells.stream()
                                           .filter(cell -> cell.value instanceof Entry && cell.title.isEmpty())
