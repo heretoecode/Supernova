@@ -7,6 +7,7 @@ import java.io.File;
 import java.lang.reflect.*;
 import java.util.*;
 import org.junit.*;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
@@ -17,7 +18,7 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class SupernovaRetentionTest {
-    @org.junit.Before
+    @Before
     public void confirmedSelectionFixture() {
         PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
