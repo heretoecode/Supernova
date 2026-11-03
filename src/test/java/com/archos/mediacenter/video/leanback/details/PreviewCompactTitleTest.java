@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.details;
 
+import android.app.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -7,7 +8,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application=android.app.Application.class,sdk=28)
+@Config(application=Application.class,sdk=28)
 public class PreviewCompactTitleTest {
     @Test public void compactTitleAppearsOnlyAfterHeroTitleLeavesAndReversesWithScroll() {
         assertEquals(0f,PreviewMoviePage.compactTitleProgress(0,120,40),0f);
