@@ -4,6 +4,7 @@ import android.app.Application;
 import android.net.Uri;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.time.Instant;
 import java.util.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class LibraryStatisticsTest {
-    private final long now = java.time.Instant.parse("2026-10-16T18:00:00Z").toEpochMilli();
+    private final long now = Instant.parse("2026-10-16T18:00:00Z").toEpochMilli();
 
     private Entry movie(long file, long title, long added, String uri, long bytes, int resume, boolean watched) {
         Movie video = mock(Movie.class);
@@ -108,7 +109,7 @@ public class LibraryStatisticsTest {
     @Test
     public void calendarMonthUsesLocalBoundaryAndExcludesFutureAndUnknownDates() {
         Snapshot s = new Snapshot();
-        long boundary = java.time.Instant.parse("2026-10-01T00:00:00Z").getEpochSecond();
+        long boundary = Instant.parse("2026-10-01T00:00:00Z").getEpochSecond();
         s.technical.addAll(List.of(movie(1, 1, boundary, "file:///1", 0, 0, false),
             movie(2, 2, boundary - 1, "file:///2", 0, 0, false), movie(3, 3, now / 1000 + 1, "file:///3", 0, 0, false),
             movie(4, 4, 0, "file:///4", 0, 0, false)));
