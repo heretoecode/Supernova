@@ -1,12 +1,20 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.util.Locale;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -134,14 +142,14 @@ public class DetailsReferenceRenderTest {
             layout(root);
             assertSame(tab, root.findFocus());
             assertFalse(root.findViewWithTag("semantic:topnav.home").isShown());
-            android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(
-                root.getWidth(), root.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
-            root.draw(new android.graphics.Canvas(bitmap));
-            java.io.File out = new java.io.File("build/reports/preview-ui/0140-reference-fixture-" + root.getWidth()
+            Bitmap bitmap = Bitmap.createBitmap(
+                root.getWidth(), root.getHeight(), Bitmap.Config.ARGB_8888);
+            root.draw(new Canvas(bitmap));
+            File out = new File("build/reports/preview-ui/0140-reference-fixture-" + root.getWidth()
                 + "-" + root.getResources().getConfiguration().fontScale + ".png");
             out.getParentFile().mkdirs();
-            try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) {
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+            try (FileOutputStream stream = new FileOutputStream(out)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             }
             bitmap.recycle();
             writeMetrics(root, page);
@@ -168,7 +176,7 @@ public class DetailsReferenceRenderTest {
             view.measure(View.MeasureSpec.makeMeasureSpec(Math.round(c.screenWidthDp * d), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(Math.round(c.screenHeightDp * d), View.MeasureSpec.EXACTLY));
             view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
@@ -187,15 +195,15 @@ public class DetailsReferenceRenderTest {
             View region = page.findViewWithTag("details.region." + name);
             if (region == null)
                 region = page.findViewWithTag(
-                    "semantic:details.panel." + name.toLowerCase(java.util.Locale.ROOT).replace(' ', '.'));
+                    "semantic:details.panel." + name.toLowerCase(Locale.ROOT).replace(' ', '.'));
             metrics.put(name, rectangle(region));
         }
         TextView actor = find(page, "Sean Astin");
         metrics.put("cast_name_text_px", actor.getTextSize())
             .put("portrait_diameter_px", ((ViewGroup) actor.getParent()).getChildAt(0).getHeight());
-        java.io.File file = new java.io.File("build/reports/preview-ui/0140-reference-fixture-" + root.getWidth() + "-"
+        File file = new File("build/reports/preview-ui/0140-reference-fixture-" + root.getWidth() + "-"
             + root.getResources().getConfiguration().fontScale + ".json");
-        try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
+        try (FileWriter writer = new FileWriter(file)) {
             writer.write(metrics.toString(2));
         }
     }
@@ -213,7 +221,7 @@ public class DetailsReferenceRenderTest {
     private void assertVisibleText(View view, String text) {
         TextView match = find(view, text);
         assertNotNull(text, match);
-        android.graphics.Rect bounds = new android.graphics.Rect();
+        Rect bounds = new Rect();
         assertTrue(text, match.getGlobalVisibleRect(bounds));
         assertEquals(text, match.getHeight(), bounds.height());
         assertFalse(text, match.isFocusable());
@@ -228,7 +236,7 @@ public class DetailsReferenceRenderTest {
         ImageView logo = root.findViewWithTag("details.reception.logo." + slot);
         assertNotNull(logo);
         assertNotNull(logo.getDrawable());
-        android.graphics.Rect bounds = new android.graphics.Rect();
+        Rect bounds = new Rect();
         assertTrue(logo.getGlobalVisibleRect(bounds));
         assertEquals(logo.getHeight(), bounds.height());
         assertTrue(logo.getWidth() > 0);
@@ -237,7 +245,7 @@ public class DetailsReferenceRenderTest {
     private void assertWholeText(View root, String text) {
         TextView view = find(root, text);
         assertNotNull(text, view);
-        android.graphics.Rect bounds = new android.graphics.Rect();
+        Rect bounds = new Rect();
         assertTrue(text, view.getGlobalVisibleRect(bounds));
         assertEquals("No clipped rating/provider: " + text, view.getHeight(), bounds.height());
         assertNotNull(view.getLayout());
