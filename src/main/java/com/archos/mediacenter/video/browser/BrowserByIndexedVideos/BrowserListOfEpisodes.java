@@ -53,6 +53,7 @@ import com.archos.mediacenter.video.utils.MiscUtils;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays a show's episodes with its poster, header and playback actions. */
 public class BrowserListOfEpisodes extends BrowserWithShowHeader {
 
     private static final String TAG = "BrowserByShow";
