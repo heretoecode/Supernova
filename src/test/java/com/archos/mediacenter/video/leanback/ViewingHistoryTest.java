@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import java.io.IOException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -204,7 +205,7 @@ public class ViewingHistoryTest {
         try {
             ViewingHistory.validate(file);
             fail("Unknown tables must be rejected before restore");
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
     }
 
