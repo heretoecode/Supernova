@@ -21,6 +21,7 @@ import com.archos.mediaprovider.ImportState;
 import android.content.Context;
 import androidx.loader.content.CursorLoader;
 
+/** Loads indexed video covers for the cover browser. */
 public class AllVideosProvider extends VideoSingleCursorCoverProvider {
 
 	private final static String TAG = "AllVideosProvider";
