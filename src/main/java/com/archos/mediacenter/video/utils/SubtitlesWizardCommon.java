@@ -17,7 +17,6 @@ package com.archos.mediacenter.video.utils;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.StrictMode;
 import android.text.format.Formatter;
 
 import androidx.fragment.app.FragmentActivity;
