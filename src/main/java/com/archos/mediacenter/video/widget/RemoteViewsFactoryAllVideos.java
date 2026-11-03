@@ -19,7 +19,6 @@ import com.archos.mediaprovider.video.VideoStore;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
