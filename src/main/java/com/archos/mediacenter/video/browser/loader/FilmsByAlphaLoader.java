@@ -18,6 +18,7 @@ import android.content.Context;
 import com.archos.mediacenter.video.utils.SortUtils;
 
 
+/** Loads films filtered by an alphabetical selection. */
 public class FilmsByAlphaLoader extends FilmsByLoader {
 
     private static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED ASC";
