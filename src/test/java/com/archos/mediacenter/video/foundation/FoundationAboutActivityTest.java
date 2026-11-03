@@ -4,10 +4,12 @@ import android.app.Application;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.archos.mediacenter.video.BuildConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
@@ -16,9 +18,9 @@ import static org.junit.Assert.*;
 public class FoundationAboutActivityTest {
     @Test
     public void classicAboutHostUsesActualIdentityAndSurvivesRecreation() {
-        org.robolectric.android.controller.ActivityController<FoundationAboutActivity> controller =
+        ActivityController<FoundationAboutActivity> controller =
             Robolectric.buildActivity(FoundationAboutActivity.class).setup();
-        if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION) {
+        if (!BuildConfig.FOUNDATION) {
             assertTrue(controller.get().isFinishing());
             return;
         }
