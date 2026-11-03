@@ -112,6 +112,14 @@ Each item: what the owner saw → what they want → status.
 - **Status:** approved design — awaiting go-ahead to code. The two bugs are fixed by the redesign and covered by
   extending the white-on-white test to tiles.
 
+### 10. Supernova is TV-only (product decision)
+- **Decision (owner, 2026-11-03):** Supernova is an Android TV app only. NOVA's phone/tablet interface (routed to
+  by `EntryActivity` when not in leanback mode) and the legacy classic-UI paths are therefore removable.
+- **Plan:** extend Codex's dead-code map (`docs/codex/findings/dead-code-map.md`) with the TV-only assumption,
+  then remove in safe stages (each proven by the full build + tests), with the owner approving each stage.
+  The manifest must keep declaring TV-only (leanback required, touchscreen not required).
+- **Status:** decided — removal plan to be drafted.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
