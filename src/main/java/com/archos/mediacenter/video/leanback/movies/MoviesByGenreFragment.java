@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.utils.SortOrder;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays movies grouped by genre with sorting controls. */
 public class MoviesByGenreFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = MoviesByGenreFragment.class.getName() + "_SORT";
