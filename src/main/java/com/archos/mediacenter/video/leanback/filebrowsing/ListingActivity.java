@@ -179,6 +179,7 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
      * Imlements SingleFragmentActivity
      * @return
      */
+    @Override
     public Fragment getFragmentInstance() {
         ListingFragment frag = getStartingFragment();
         Bundle args = new Bundle();
