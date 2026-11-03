@@ -157,6 +157,7 @@ public class FileManagerService extends Service implements OperationEngineListen
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
     }
 
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         if (log.isDebugEnabled()) log.debug("onStartCommand");
