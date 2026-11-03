@@ -340,6 +340,11 @@ android {
                          "**/libc++_shared.so",
                          "**/libtorrentd.so"
                         ]
+            if (project.hasProperty("arm64only")) {
+                // Supernova targets the NVIDIA Shield (64-bit ARM): only the arm64-v8a engines are packaged
+                // (owner decision, 3 Nov 2026). Rebuild without -Parm64only for other devices.
+                excludes += ['lib/armeabi-v7a/**', 'lib/x86/**', 'lib/x86_64/**']
+            }
                          
             pickFirsts += ['lib/x86/libnvpnativehelper.so',
                            'lib/x86_64/libnvpnativehelper.so',
