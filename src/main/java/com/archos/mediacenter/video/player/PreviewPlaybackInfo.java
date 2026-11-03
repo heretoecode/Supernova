@@ -6,6 +6,7 @@ import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediascraper.BaseTags;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,7 +36,7 @@ final class PreviewPlaybackInfo {
                     Executors.newSingleThreadExecutor();
                 metadata.execute(() -> {
                     try {
-                        com.archos.mediascraper.BaseTags tags = v.getFullScraperTags(a.getApplicationContext());
+                        BaseTags tags = v.getFullScraperTags(a.getApplicationContext());
                         if (tags != null)
                             text.post(() -> {
                                 if (!d.isShowing())
