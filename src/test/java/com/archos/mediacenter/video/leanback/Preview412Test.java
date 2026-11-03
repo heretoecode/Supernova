@@ -1,9 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.util.Collections;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -35,11 +37,11 @@ public class Preview412Test {
     @Test
     public void providerFilterRequiresFreshCountrySpecificEvidence() {
         Application c = RuntimeEnvironment.getApplication();
-        android.content.SharedPreferences p = StreamingRepository.prefs(c);
+        SharedPreferences p = StreamingRepository.prefs(c);
         p.edit().clear().putString(StreamingRepository.COUNTRY, "IE").commit();
         assertFalse(StreamingRepository.knownOn(c, "movie", 42, "8"));
         p.edit()
-            .putStringSet("streaming_known:movie:42:IE:-1", java.util.Collections.singleton("8"))
+            .putStringSet("streaming_known:movie:42:IE:-1", Collections.singleton("8"))
             .putLong("streaming_known_at:movie:42:IE:-1", System.currentTimeMillis())
             .commit();
         assertTrue(StreamingRepository.knownOn(c, "movie", 42, "8"));
