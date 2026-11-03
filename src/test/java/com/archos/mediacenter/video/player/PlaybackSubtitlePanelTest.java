@@ -47,22 +47,27 @@ public class PlaybackSubtitlePanelTest {
         int selected = 1, audio = 0, downloads, trackCount = 15, disabledTrack = -1, audioDelay = 0, pip;
         float speed = 1f;
 
+        @Override
         public boolean available() {
             return true;
         }
 
+        @Override
         public int get(String key) {
             return values.get(key);
         }
 
+        @Override
         public void set(String key, int value) {
             values.put(key, value);
         }
 
+        @Override
         public void download() {
             downloads++;
         }
 
+        @Override
         public List<PlaybackSubtitlePanel.Track> tracks() {
             List<PlaybackSubtitlePanel.Track> out = new ArrayList<>();
             for (int i = 0; i < trackCount; i++) {
@@ -78,6 +83,7 @@ public class PlaybackSubtitlePanelTest {
             return out;
         }
 
+        @Override
         public List<PlaybackSubtitlePanel.Track> audioTracks() {
             List<PlaybackSubtitlePanel.Track> out = new ArrayList<>();
             String[] names = {"English · 5.1", "French · Stereo", "German · Stereo"};
@@ -89,22 +95,27 @@ public class PlaybackSubtitlePanelTest {
             return out;
         }
 
+        @Override
         public Integer audioDelay() {
             return audioDelay;
         }
 
+        @Override
         public void stepAudioDelay(int direction) {
             audioDelay += direction * 50;
         }
 
+        @Override
         public Boolean option(String key) {
             return options.get(key);
         }
 
+        @Override
         public void toggleOption(String key) {
             options.put(key, !options.get(key));
         }
 
+        @Override
         public List<PlaybackSubtitlePanel.Choice> choices(String key) {
             List<PlaybackSubtitlePanel.Choice> out = new ArrayList<>();
             List<String> labels = modes.get(key);
@@ -118,14 +129,17 @@ public class PlaybackSubtitlePanelTest {
             return out;
         }
 
+        @Override
         public Float speed() {
             return speed;
         }
 
+        @Override
         public void setSpeed(float value) {
             speed = Math.round(value * 100f) / 100f;
         }
 
+        @Override
         public Runnable pictureInPicture() {
             return () -> pip++;
         }
