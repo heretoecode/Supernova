@@ -1,5 +1,5 @@
 {
- "purpose": "Full unit suite after Codex @Override labels (620) and test-class summaries (226)",
+ "purpose": "Full unit suite after Codex combined run (torrent removal, NOVA ports, indentation, @Override)",
  "tests": [
   "com.archos.*"
  ]
