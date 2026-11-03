@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.R;
 import android.content.Context;
 import androidx.loader.content.CursorLoader;
 
+/** Loads recently added video covers for the cover browser. */
 public class RecentlyAddedVideosProvider extends VideoSingleCursorCoverProvider {
 
 	private final static String TAG = "RecentlyAddedVideosProvider";
