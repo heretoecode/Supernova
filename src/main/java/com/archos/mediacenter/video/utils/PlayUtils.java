@@ -32,9 +32,13 @@ import com.archos.filecorelibrary.StreamOverHttp;
 import com.archos.mediacenter.filecoreextension.upnp2.StreamUriFinder;
 import com.archos.mediacenter.utils.videodb.IndexHelper;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
+import com.archos.mediacenter.video.leanback.LibraryHealth;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewVariants;
 import com.archos.mediacenter.video.player.ExternalPlayerService;
 import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.player.PlayerService;
@@ -105,15 +109,15 @@ public class PlayUtils implements IndexHelper.Listener {
         final ExternalPlayerWithResultStarter
             externalPlayerWithResultStarter, //mxplayer will call onResult after playing video
         final long playlistId) {
-        final Video video = com.archos.mediacenter.video.BuildConfig.FOUNDATION && requested != null
-            ? com.archos.mediacenter.video.leanback.PreviewVariants.resolve(context, requested)
+        final Video video = BuildConfig.FOUNDATION && requested != null
+            ? PreviewVariants.resolve(context, requested)
             : requested;
-        if (com.archos.mediacenter.video.BuildConfig.FOUNDATION && video != null) {
-            com.archos.mediacenter.video.leanback.LibraryHealth.State state =
-                com.archos.mediacenter.video.leanback.LibraryHealth.state(context, video);
-            if (state != com.archos.mediacenter.video.leanback.LibraryHealth.State.AVAILABLE) {
-                com.archos.mediacenter.video.leanback.PreviewDialog.read(context,
-                    com.archos.mediacenter.video.leanback.LibraryHealth.message(state),
+        if (BuildConfig.FOUNDATION && video != null) {
+            LibraryHealth.State state =
+                LibraryHealth.state(context, video);
+            if (state != LibraryHealth.State.AVAILABLE) {
+                PreviewDialog.read(context,
+                    LibraryHealth.message(state),
                     "Reconnect the source and scan to check this item again. Your library, watched state and playback progress are retained.");
                 return;
             }
@@ -244,8 +248,8 @@ public class PlayUtils implements IndexHelper.Listener {
             log.debug("prepareSubs");
         if (!mIsPreparingSubs) {
             mIsPreparingSubs = true;
-            com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager subtitleManager =
-                new com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager(
+            SubtitleManager subtitleManager =
+                new SubtitleManager(
                     mContext, new SubtitleManager.Listener() {
                         @Override
                         public void onAbort() {
@@ -326,7 +330,7 @@ public class PlayUtils implements IndexHelper.Listener {
                 log.debug("onResumeReady: nova player");
             intent.putExtra(PlayerService.VIDEO, video);
             intent.setClass(context, PlayerActivity.class);
-            if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                     "try_new_ui", false))
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             intent.setDataAndType(dataUri, mimeType);
@@ -414,7 +418,7 @@ public class PlayUtils implements IndexHelper.Listener {
                         // TODO FIXME passing file to 3rd party player is not working
                         subFile = new File(subPath);
                         subUri = FileProvider.getUriForFile(context,
-                            com.archos.mediacenter.video.BuildConfig.FOUNDATION ? context.getPackageName() + ".provider"
+                            BuildConfig.FOUNDATION ? context.getPackageName() + ".provider"
                                                                                 : "org.courville.nova.provider",
                             subFile);
                         MxSubPaths.add(subUri);
