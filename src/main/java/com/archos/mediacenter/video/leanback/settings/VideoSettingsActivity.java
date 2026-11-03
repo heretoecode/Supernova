@@ -32,10 +32,13 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
 public class VideoSettingsActivity extends LeanbackActivity {
-    private com.archos.mediacenter.video.leanback.TopNavigation previewNavigation;
+    private TopNavigation previewNavigation;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -52,16 +55,16 @@ public class VideoSettingsActivity extends LeanbackActivity {
         if (SettingsWorkspace.enabled(this)) {
             FrameLayout full = new FrameLayout(this);
             full.setId(R.id.settingsFragment);
-            previewNavigation = new com.archos.mediacenter.video.leanback.TopNavigation(this, full,
+            previewNavigation = new TopNavigation(this, full,
                 index
                 -> {
                     if (index == 4)
                         return;
                     if (index == 5)
                         startActivity(new Intent(
-                            this, com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                            this, VideoSearchActivity.class));
                     else {
-                        startActivity(new Intent(this, com.archos.mediacenter.video.leanback.MainActivityLeanback.class)
+                        startActivity(new Intent(this, MainActivityLeanback.class)
                                 .putExtra("preview_tab", index)
                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                         finish();
