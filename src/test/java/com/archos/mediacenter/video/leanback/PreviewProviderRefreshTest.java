@@ -1,12 +1,13 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.app.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewProviderRefreshTest {
  @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
