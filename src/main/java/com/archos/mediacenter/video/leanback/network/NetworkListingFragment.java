@@ -228,7 +228,7 @@ public class NetworkListingFragment extends ListingFragment {
                 if (isHimselfIndexedFolder) {
                     titleView.setOnOrb3Description(getString(R.string.remove_from_indexed_folders));
                     removeFromLibrary = true;
-                } else titleView.setOnOrb3Description(getString(R.string.remove_from_shortcuts));
+                    } else titleView.setOnOrb3Description(getString(R.string.remove_from_shortcuts));
             } else
                 titleView.setOnOrb3Description(getString(R.string.remove_from_shortcuts));
         } else {
@@ -332,7 +332,7 @@ public class NetworkListingFragment extends ListingFragment {
         String shortcutName = getArguments().getString(ARG_TITLE)!=null?getArguments().getString(ARG_TITLE):FileUtils.getName(mUri); //to avoid name like "33" in upnp
         boolean result = false;
         if (removeFromLibrary) result = ShortcutDbAdapter.VIDEO.deleteShortcut(getActivity(), mUri.toString());
-        else result = ShortcutDb.STATIC.removeShortcut(getActivity(), mUri) > 0;
+            else result = ShortcutDb.STATIC.removeShortcut(getActivity(), mUri) > 0;
         if (result) {
             if (removeFromLibrary) {
                 Toast.makeText(getActivity(), getString(R.string.indexed_folder_removed, shortcutName), Toast.LENGTH_SHORT).show();
