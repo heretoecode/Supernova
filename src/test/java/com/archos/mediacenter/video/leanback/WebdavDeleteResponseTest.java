@@ -1,11 +1,13 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import com.archos.filecorelibrary.webdav.*;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -24,8 +26,8 @@ public class WebdavDeleteResponseTest {
             204, 404, 401, 403, 405, 423, 500, 503
         }) {
             try (ServerSocket server = new ServerSocket(0, 8, InetAddress.getByName("127.0.0.1"))) {
-                java.util.concurrent.atomic.AtomicReference<String> method =
-                    new java.util.concurrent.atomic.AtomicReference<>();
+                AtomicReference<String> method =
+                    new AtomicReference<>();
                 Thread responder = new Thread(() -> {
                     while (!server.isClosed())
                         try (Socket socket = server.accept()) {
@@ -57,7 +59,7 @@ public class WebdavDeleteResponseTest {
                         com.archos.mediacenter.video.browser.Delete deletion =
                             new com.archos.mediacenter.video.browser.Delete(null, RuntimeEnvironment.getApplication());
                         var physical = deletion.getClass().getDeclaredMethod(
-                            "deletePhysicalFile", android.content.Context.class, Uri.class);
+                            "deletePhysicalFile", Context.class, Uri.class);
                         physical.setAccessible(true);
                         assertEquals(Boolean.TRUE,
                             physical.invoke(deletion, RuntimeEnvironment.getApplication(),
