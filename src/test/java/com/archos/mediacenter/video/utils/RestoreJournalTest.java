@@ -4,6 +4,11 @@ import android.content.*;
 import androidx.preference.PreferenceManager;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.json.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,15 +21,15 @@ public class RestoreJournalTest {
     @Test public void committedSwapSurvivesInterruptedCleanup()throws Exception{exercise(true);}
     @Test public void recoveryWaitsForActiveRestoreGuard()throws Exception{
         Context context=RuntimeEnvironment.getApplication();
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
-        java.util.concurrent.CountDownLatch entered=new java.util.concurrent.CountDownLatch(1);
-        java.util.concurrent.Future<?> recovery;
+        ExecutorService worker=Executors.newSingleThreadExecutor();
+        CountDownLatch entered=new CountDownLatch(1);
+        Future<?> recovery;
         try{
             try(RestoreJournal.Guard guard=RestoreJournal.acquire(context)){
                 recovery=worker.submit(()->{entered.countDown();try{RestoreJournal.recover(context);}catch(Exception e){throw new RuntimeException(e);}});
-                assertTrue(entered.await(2,java.util.concurrent.TimeUnit.SECONDS));assertFalse(recovery.isDone());
+                assertTrue(entered.await(2,TimeUnit.SECONDS));assertFalse(recovery.isDone());
             }
-            recovery.get(2,java.util.concurrent.TimeUnit.SECONDS);
+            recovery.get(2,TimeUnit.SECONDS);
         }finally{worker.shutdownNow();}
     }
     private void exercise(boolean commit)throws Exception{
