@@ -7,7 +7,8 @@ Allowed, and nothing else:
     class in that file: through an existing or newly added single-type import, or because the class is in
     the same package (`com.archos.x.Foo` -> `Foo`, `android.view.View` -> `View` + `import android.view.View;`);
   * removing an import whose name is used nowhere in the file (code or comments);
-  * with --allow-new-comments: adding comments; existing comments must stay unchanged.
+  * with --allow-new-comments: adding comments; existing comments must stay unchanged;
+  * with --allow-added-override: adding `@Override` annotations (the compiler rejects a wrong one).
 
 How it is proved, per file (base -> head):
   1. Each version is put in canonical form: every bare type name that the version's own imports or package
@@ -102,7 +103,7 @@ def comment_words(body):
     return words
 
 
-def compare(before, after, path='T.java', package_types=(), allow_new_comments=False):
+def compare(before, after, path='T.java', package_types=(), allow_new_comments=False, allow_added_override=False):
     """Returns None when the change only tidies imports/layout (and adds comments if allowed), else a problem."""
     old_pkg, old_imports, old_body = split_imports(tokens(before))
     new_pkg, new_imports, new_body = split_imports(tokens(after))
@@ -135,6 +136,9 @@ def compare(before, after, path='T.java', package_types=(), allow_new_comments=F
             i, j = i + 1, j + 1
         elif allow_new_comments and j < len(b) and b[j][0] == 'comment':
             j += 1
+        elif allow_added_override and b[j:j + 2] == [('op', '@'), ('word', 'Override')] and \
+                (j + 2 >= len(b) or b[j + 2] != ('op', '.')):
+            j += 2
         else:
             x = a[i][1][:60] if i < len(a) else '<end>'
             y = b[j][1][:60] if j < len(b) else '<end>'
@@ -158,6 +162,7 @@ def main():
     p.add_argument('--head', default='HEAD')
     p.add_argument('--files', nargs='*', help='limit to these paths (default: every changed .java file)')
     p.add_argument('--allow-new-comments', action='store_true', help='also permit added comments')
+    p.add_argument('--allow-added-override', action='store_true', help='also permit added @Override annotations')
     args = p.parse_args()
     changed = git('diff', '--name-only', args.base, args.head).splitlines()
     paths = args.files or [line for line in changed if line.endswith('.java')]
@@ -172,7 +177,7 @@ def main():
         try:
             package = split_imports(tokens(before))[0]
             types = package_types(args.base, path, package) & package_types(args.head, path, package)
-            problem = compare(before, after, path, types, args.allow_new_comments)
+            problem = compare(before, after, path, types, args.allow_new_comments, args.allow_added_override)
         except ValueError as error:
             problem = str(error)
         if problem:
@@ -184,7 +189,8 @@ def main():
         print('FAIL files outside the allowed areas changed: ' + ', '.join(other))
         failures += 1
     print(f'{len(paths) - min(failures, len(paths))} of {len(paths)} files only tidy imports/layout'
-          + (' (comments may be added)' if args.allow_new_comments else ''))
+          + (' (comments may be added)' if args.allow_new_comments else '')
+          + (' (@Override may be added)' if args.allow_added_override else ''))
     return 1 if failures else 0
 
 

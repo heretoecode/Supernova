@@ -102,5 +102,21 @@ class T {
         self.assertIsNotNone(compare(before, before.replace('Old.', 'New.'), allow_new_comments=True))
 
 
+    def test_added_override_only_when_allowed(self):
+        before = 'package a;\nclass T implements Runnable { public void run() { } }\n'
+        after = 'package a;\nclass T implements Runnable { @Override public void run() { } }\n'
+        self.assertIsNotNone(compare(before, after))
+        self.assertIsNone(compare(before, after, allow_added_override=True))
+
+    def test_other_annotations_still_fail_with_override_allowed(self):
+        before = 'package a;\nclass T { void f() { } }\n'
+        after = 'package a;\nclass T { @Deprecated void f() { } }\n'
+        self.assertIsNotNone(compare(before, after, allow_added_override=True))
+
+    def test_removing_override_fails(self):
+        before = 'package a;\nclass T implements Runnable { @Override public void run() { } }\n'
+        self.assertIsNotNone(compare(before, before.replace('@Override ', ''), allow_added_override=True))
+
+
 if __name__ == '__main__':
     unittest.main()
