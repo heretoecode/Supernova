@@ -47,6 +47,7 @@ import java.util.ArrayList;
  * must handle animation (growing of cards, rescaling, transparency)
  * 
  */
+/** Provides a checkable TV playback card with focus and expandable controls. */
 public class TVCardView extends FrameLayout implements Checkable, FocusableTVCardView, TVSlaveView {
     private static final float MIN_FOCUSED_CARDVIEW_HEIGHT_COEFF = (float) 1.1;
     private int pos;
