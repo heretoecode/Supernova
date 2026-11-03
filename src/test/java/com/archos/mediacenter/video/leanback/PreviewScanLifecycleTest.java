@@ -7,12 +7,17 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediaprovider.video.PreviewLocalImportTrace;
 import com.archos.mediascraper.AutoScrapeService;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
+import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
@@ -35,7 +40,7 @@ public class PreviewScanLifecycleTest {
         assertFalse(PreviewNetworkWorkspace.scanStatus(context, false).contains("23 media rows checked"));
     }
 
-    @org.junit.Before
+    @Before
     public void registerReceiverForThisTestApplication() {
         // Robolectric replaces the Application/registered receivers between tests;
         // the production process-wide installation guard otherwise retains the old registration.
@@ -46,17 +51,17 @@ public class PreviewScanLifecycleTest {
     public void nativeLocalTraceReportsMeasuredCountsAndPartialOutcome() {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.begin(context, true);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.reconciled(3, 2);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.checked();
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.problem();
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
+        PreviewLocalImportTrace.begin(context, true);
+        PreviewLocalImportTrace.reconciled(3, 2);
+        PreviewLocalImportTrace.checked();
+        PreviewLocalImportTrace.problem();
+        PreviewLocalImportTrace.finish(true, false);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         String result = PreviewLocalScanState.status(context);
         assertTrue(result.contains("partial"));
         assertTrue(result.contains("1 media rows checked"));
         assertTrue(result.contains("3 new · 2 updated"));
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
+        PreviewLocalImportTrace.finish(true, false);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(result, PreviewLocalScanState.status(context));
     }
@@ -68,17 +73,17 @@ public class PreviewScanLifecycleTest {
         Handler handler = new Handler(Looper.getMainLooper());
         Message message = Message.obtain();
         message.getData().putString("preview_trigger", "resume");
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.queued(context, handler, message, true);
+        PreviewLocalImportTrace.queued(context, handler, message, true);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertTrue(PreviewLocalScanState.status(context).contains("queued"));
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.starting(message);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.begin(context, true);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
+        PreviewLocalImportTrace.starting(message);
+        PreviewLocalImportTrace.begin(context, true);
+        PreviewLocalImportTrace.finish(true, false);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertTrue(PreviewLocalScanState.status(context).contains("complete"));
         Message abandoned = Message.obtain();
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.queued(context, handler, abandoned, false);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.cancelQueued(handler);
+        PreviewLocalImportTrace.queued(context, handler, abandoned, false);
+        PreviewLocalImportTrace.cancelQueued(handler);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertTrue(PreviewLocalScanState.status(context).contains("cancelled"));
     }
@@ -90,11 +95,11 @@ public class PreviewScanLifecycleTest {
         Handler handler = new Handler(Looper.getMainLooper());
         Message message = Message.obtain();
         message.getData().putString("preview_trigger", "resume");
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.queued(context, handler, message, true);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.starting(message);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.begin(context, true);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
-        org.mockito.ArgumentCaptor<Intent> sent = org.mockito.ArgumentCaptor.forClass(Intent.class);
+        PreviewLocalImportTrace.queued(context, handler, message, true);
+        PreviewLocalImportTrace.starting(message);
+        PreviewLocalImportTrace.begin(context, true);
+        PreviewLocalImportTrace.finish(true, false);
+        ArgumentCaptor<Intent> sent = ArgumentCaptor.forClass(Intent.class);
         verify(context, times(4)).sendBroadcast(sent.capture());
         List<Intent> rows = sent.getAllValues();
         String batch = rows.get(0).getStringExtra("batch_id");
@@ -125,8 +130,8 @@ public class PreviewScanLifecycleTest {
     public void interruptedLocalImportCannotReportCompletionOrInventCounts() {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.begin(context, false);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, true);
+        PreviewLocalImportTrace.begin(context, false);
+        PreviewLocalImportTrace.finish(true, true);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         String result = PreviewLocalScanState.status(context);
         assertTrue(result.contains("cancelled"));
@@ -139,9 +144,9 @@ public class PreviewScanLifecycleTest {
         Context context = mock(Context.class);
         when(context.getPackageName()).thenReturn("test");
         doThrow(new IllegalStateException("receiver unavailable")).when(context).sendBroadcast(any(Intent.class));
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.begin(context, true);
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.checked();
-        com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
+        PreviewLocalImportTrace.begin(context, true);
+        PreviewLocalImportTrace.checked();
+        PreviewLocalImportTrace.finish(true, false);
     }
 
     @Test
@@ -196,7 +201,7 @@ public class PreviewScanLifecycleTest {
     public void batchTerminalClosesOperationOnceNotAtIndividualSourceCompletion() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(context, true);
+        Diagnostics.setEnabled(context, true);
         try {
             String source = "aaaaaaaaaaaaaaaaaaaaaaaa";
             event(context, source, "queued", 0);
@@ -207,7 +212,7 @@ public class PreviewScanLifecycleTest {
             event(context, source, "batch_complete", 10);
             assertTrue((boolean) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operationEnded"));
             Object recorder =
-                ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
+                ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
             Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             int ends = 0;
@@ -215,13 +220,13 @@ public class PreviewScanLifecycleTest {
                 ((String) snapshot.invoke(recorder, SystemClock.elapsedRealtime())).split("\n")) {
                 if (line.isEmpty())
                     continue;
-                org.json.JSONObject row = new org.json.JSONObject(line);
+                JSONObject row = new JSONObject(line);
                 if (operation.equals(row.optString("operation_id")) && "operation_end".equals(row.optString("event")))
                     ends++;
             }
             assertEquals(1, ends);
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(context, false);
+            Diagnostics.setEnabled(context, false);
         }
     }
 
