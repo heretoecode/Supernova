@@ -4,28 +4,33 @@ import android.content.Context;
 import android.view.*;
 import androidx.preference.PreferenceManager;
 import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class Preview41RowsTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
-    @org.junit.Before
+    @Before
     public void configuredLibraryFixture() {
         PreferenceManager
-            .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
+            .getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -34,7 +39,7 @@ public class Preview41RowsTest {
     @Test
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void watchNextMembershipSurvivesHidingAndReorder() throws Exception {
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             Context c = host.get();
@@ -46,7 +51,7 @@ public class Preview41RowsTest {
             PreviewLibraryLoader.Entry e = new PreviewPagesTest().episode(1, 0, false, 0, 0);
             PreviewHomeRows.add(c, e, () -> {
             });
-            Dialog chooser = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog chooser = ShadowDialog.getLatestDialog();
             View label = PreviewPagesTest.findText(chooser.getWindow().getDecorView(), "Watch Next");
             assertNotNull(label);
             ((View) label.getParent()).performClick();
@@ -57,7 +62,7 @@ public class Preview41RowsTest {
                 rows.rows.stream().filter(r -> r.id.equals("watchnext")).findFirst().get().members.contains(e.key()));
             PreviewHomeRows.customise(c, () -> {
             });
-            Dialog editor = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog editor = ShadowDialog.getLatestDialog();
             View root = editor.getWindow().getDecorView();
             View watched = root.findViewWithTag("watchnext");
             assertNotNull(watched);
