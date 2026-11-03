@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.graphics.*;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.*;
 import android.widget.FrameLayout;
@@ -13,7 +14,7 @@ public final class CinematicCard extends FrameLayout {
     @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);setForeground(new PreviewFocusGlow(getContext(),12));}
     @Override public void clearChildFocus(View child){super.clearChildFocus(child);post(()->{if(!hasFocus())setForeground(null);});}
     /** Details keeps artwork colour outside the text column. Home retains its own scrim. */
-    public void addTextScrim(){View shade=new View(getContext());shade.setTag("details.text.scrim");shade.setBackground(new android.graphics.drawable.Drawable(){
+    public void addTextScrim(){View shade=new View(getContext());shade.setTag("details.text.scrim");shade.setBackground(new Drawable(){
         private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
         public void draw(Canvas canvas){Rect b=getBounds();paint.setShader(new LinearGradient(b.left,0,b.right,0,new int[]{0xd9000000,0x80000000,0x00000000},new float[]{0,.35f,.68f},Shader.TileMode.CLAMP));canvas.drawRect(b,paint);}
         public void setAlpha(int alpha){paint.setAlpha(alpha);}public void setColorFilter(ColorFilter filter){paint.setColorFilter(filter);}public int getOpacity(){return PixelFormat.TRANSLUCENT;}
