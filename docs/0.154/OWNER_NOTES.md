@@ -177,6 +177,20 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
   (planned as 0.155)**, together with the MediaLib fix, the three HDR app commits and permanent storage of the
   rebuilt engine. Codex prepares the plan first.
 
+### 14. Network & Files › Network Shares (design, for the version after 0.154)
+- **Seen (photos, 0.153):** heading "Network Locations" (tile says Network Shares); Films and TV shown as
+  "WebDAV · HTTPS · Library source · Status not checked" (never checked); Put.io shown twice (WebDAV shares and
+  a separate account with "Needs review"); duplicate actions (Add Network Source, Discover Devices, Network
+  Scanning); Discover lists Sonos speakers and a printer; browsing shows hostnames and raw release names.
+- **Decision (owner, 3 Nov 2026), mock-ups `docs/design/proposals/network-shares/01–04`:** Put.io is **one service
+  row** (account, storage bar, real reachability and library-sync status; buttons Sync now · Search · Account) with
+  **Films** and **TV** as its folders (WebDAV underneath, never named); an **Other shares** section for a future NAS
+  or PC; **Add share** top right; no duplicate actions; browsing reuses the new Local Storage page; **matched title
+  first** on both pages (file name only until matched); Put.io unreachable is said once, on the service row, with
+  Retry, folders dimmed. Discover Devices moves under Add Connection, filtered to video sources; Put.io account
+  settings move to Saved Connections.
+- **Status:** approved; built after 0.154.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
