@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.leanback.CustomLibraryPage;
-import com.archos.mediacenter.video.leanback.PortableReviewNotes;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import android.net.Uri;
