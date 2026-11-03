@@ -1,10 +1,26 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Looper;
+import android.text.format.Formatter;
 import android.view.*;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.leanback.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.details.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -31,19 +47,19 @@ public class PreviewMoviePageTest {
         try {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
-            android.widget.LinearLayout people = new android.widget.LinearLayout(host.get());
+            LinearLayout people = new LinearLayout(host.get());
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(
                 page, "person",
-                org.robolectric.util.ReflectionHelpers.ClassParameter.from(android.widget.LinearLayout.class, people),
+                org.robolectric.util.ReflectionHelpers.ClassParameter.from(LinearLayout.class, people),
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class, "Actor"),
                 org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class, "Role"));
             assertFalse(people.getChildAt(0).isFocusable());
             assertNull(people.getChildAt(0).getBackground());
             var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
-            android.graphics.drawable.Drawable navigation =
+            Drawable navigation =
                 browser.findViewWithTag("semantic:network.category.overview").getBackground();
             navigation.setState(new int[] {android.R.attr.state_focused});
-            assertEquals("browser keeps a focus outline, now the shared white one", android.graphics.Color.WHITE,
+            assertEquals("browser keeps a focus outline, now the shared white one", Color.WHITE,
                          ((SupernovaStyle.Box)navigation.getCurrent()).edge());
         } finally {
             host.pause().stop().destroy();
@@ -76,7 +92,7 @@ public class PreviewMoviePageTest {
                 if (complete) {
                     assertNull(PreviewPagesTest.findText(panel, "≥ "));
                     assertNotNull(PreviewPagesTest.findText(
-                        panel, android.text.format.Formatter.formatShortFileSize(host.get(), 2000)));
+                        panel, Formatter.formatShortFileSize(host.get(), 2000)));
                     assertNotNull(PreviewPagesTest.findText(panel, "avg "));
                 } else {
                     assertNotNull(PreviewPagesTest.findText(panel, "≥ "));
@@ -98,7 +114,7 @@ public class PreviewMoviePageTest {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), () -> actions, a -> chosen[0] = a.getId(), () -> {}, uri -> {});
             host.get().setContentView(page);
-            android.net.Uri file = android.net.Uri.parse("file:///storage/unmatched.mkv");
+            Uri file = Uri.parse("file:///storage/unmatched.mkv");
             page.bind(new com.archos.mediacenter.video.browser.adapters.object.NonIndexedVideo(
                 file, file, "Unmatched fixture", null));
             PreviewPagesTest.layout(page);
@@ -144,14 +160,14 @@ public class PreviewMoviePageTest {
             View detailsTab = page.findViewWithTag("section:Details");
             assertTrue(detailsTab.requestFocus());
             page.scrollTo(0, 250);
-            android.graphics.Bitmap bitmap =
-                android.graphics.Bitmap.createBitmap(960, 540, android.graphics.Bitmap.Config.ARGB_8888);
-            nav.draw(new android.graphics.Canvas(bitmap));
+            Bitmap bitmap =
+                Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);
+            nav.draw(new Canvas(bitmap));
             assertSame(detailsTab, page.findFocus());
-            java.io.File out = new java.io.File("build/reports/preview-ui/details-compact-title.png");
+            File out = new File("build/reports/preview-ui/details-compact-title.png");
             out.getParentFile().mkdirs();
-            try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) {
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+            try (FileOutputStream stream = new FileOutputStream(out)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             }
             bitmap.recycle();
             page.scrollTo(0, 0);
@@ -225,12 +241,12 @@ public class PreviewMoviePageTest {
             host.get().setContentView(page);
             page.setTags(
                 null,
-                java.util.Arrays.asList(
+                Arrays.asList(
                     new com.archos.mediascraper.ScraperTrailer(com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER,
                                                                "Official Trailer", "abcdefghijk", "YouTube", ""),
                     new com.archos.mediascraper.ScraperTrailer(com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER,
                                                                "Official Teaser", "lmnopqrstuv", "YouTube", "")),
-                java.util.Collections.emptyList());
+                Collections.emptyList());
             assertNotNull(PreviewPagesTest.findText(page, "Trailers"));
             assertNotNull(PreviewPagesTest.findText(page, "Teasers"));
             assertNull(PreviewPagesTest.findText(page, "Interviews"));
@@ -267,15 +283,15 @@ public class PreviewMoviePageTest {
             series.setRating(9.8f);
             series.addGenreIfAbsent("Drama");
             com.archos.mediascraper.EpisodeTags tags = new com.archos.mediascraper.EpisodeTags(series, 1, 1);
-            tags.setRuntime(45, java.util.concurrent.TimeUnit.MINUTES);
+            tags.setRuntime(45, TimeUnit.MINUTES);
             page.bind(episode);
-            page.setTags(tags, java.util.Collections.emptyList(), java.util.Collections.emptyList());
+            page.setTags(tags, Collections.emptyList(), Collections.emptyList());
             assertNotNull(PreviewPagesTest.findText(page, "S1 E1"));
             assertNotNull(PreviewPagesTest.findText(page, "45m"));
             assertNotNull(PreviewPagesTest.findText(page, "Drama"));
             assertNull(PreviewPagesTest.findText(page, "9.8"));
             tags.setRating(7.4f);
-            page.setTags(tags, java.util.Collections.emptyList(), java.util.Collections.emptyList());
+            page.setTags(tags, Collections.emptyList(), Collections.emptyList());
             assertNotNull(PreviewPagesTest.findText(page, "Indexed rating 7.4"));
             assertNull(PreviewPagesTest.findText(page, "9.8"));
             PreviewPagesTest.layout(shell);
@@ -332,9 +348,9 @@ public class PreviewMoviePageTest {
             com.archos.mediascraper.ShowTags cast = new com.archos.mediascraper.ShowTags();
             for (int person = 1; person <= 10; person++)
                 cast.addActorIfAbsent("Fixture Person " + person, "Role " + person);
-            page.setTags(cast, java.util.Collections.emptyList(), java.util.Collections.emptyList());
-            android.view.ViewGroup body = (android.view.ViewGroup)page.getChildAt(0);
-            android.view.ViewGroup hero = (android.view.ViewGroup)body.getChildAt(0);
+            page.setTags(cast, Collections.emptyList(), Collections.emptyList());
+            ViewGroup body = (ViewGroup)page.getChildAt(0);
+            ViewGroup hero = (ViewGroup)body.getChildAt(0);
             assertNotNull("Card and connected section frame are retained",
                           page.findViewWithTag("details.connected.frame"));
             assertNull(PreviewPagesTest.findText(page, "See All"));
@@ -348,19 +364,19 @@ public class PreviewMoviePageTest {
                 nav.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
                             View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
                 nav.layout(0, 0, 960, 540);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
             }
             assertTrue("Initial hero leaves at least 32dp of lower content visible",
                        page.getPaddingTop() + hero.getBottom() <= page.getHeight() - 32);
             PreviewPagesTest.addTestArtwork(nav);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(210));
-            android.graphics.Bitmap bitmap =
-                android.graphics.Bitmap.createBitmap(960, 540, android.graphics.Bitmap.Config.ARGB_8888);
-            nav.draw(new android.graphics.Canvas(bitmap));
-            java.io.File out = new java.io.File("build/reports/preview-ui/movie-details.png");
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(210));
+            Bitmap bitmap =
+                Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);
+            nav.draw(new Canvas(bitmap));
+            File out = new File("build/reports/preview-ui/movie-details.png");
             out.getParentFile().mkdirs();
-            try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) {
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+            try (FileOutputStream stream = new FileOutputStream(out)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             }
             {
                 TextView playButton = (TextView)page.findViewWithTag("action:Play");
@@ -374,18 +390,18 @@ public class PreviewMoviePageTest {
                         .append("; ");
                 if (playButton.hasFocus())
                     assertEquals("Focused Resume must be black on white. state=" +
-                                     java.util.Arrays.toString(playButton.getDrawableState()) +
+                                     Arrays.toString(playButton.getDrawableState()) +
                                      " colour=" + Integer.toHexString(playButton.getCurrentTextColor()) +
                                      " paintAlpha=" + playButton.getPaint().getAlpha() + " chain=" + chain,
                                  SupernovaStyle.FOCUS_TEXT, playButton.getCurrentTextColor());
                 else
                     fail("Resume shows the focus box without focus? state=" +
-                         java.util.Arrays.toString(playButton.getDrawableState()) + " chain=" + chain);
+                         Arrays.toString(playButton.getDrawableState()) + " chain=" + chain);
             }
             View tab = page.findViewWithTag("section:Details");
             assertNotNull(tab);
             tab.requestFocus();
-            page.setTags(cast, java.util.Collections.emptyList(), java.util.Collections.emptyList());
+            page.setTags(cast, Collections.emptyList(), Collections.emptyList());
             View restored = page.findViewWithTag("section:Details");
             assertTrue(restored.isSelected());
             assertTrue(restored.hasFocus());
@@ -402,7 +418,7 @@ public class PreviewMoviePageTest {
                 page.computeScroll();
                 PreviewPagesTest.layout(nav);
             }
-            android.graphics.Rect visible = new android.graphics.Rect();
+            Rect visible = new Rect();
             assertTrue("Information fixture must actually show its panel", keyPanel.getGlobalVisibleRect(visible));
             assertEquals("Entire compact information panel must be visible", keyPanel.getHeight(), visible.height());
             assertNotNull(PreviewPagesTest.findText(keyPanel, "Release Date"));
