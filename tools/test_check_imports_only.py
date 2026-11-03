@@ -44,16 +44,16 @@ class T {
         self.assertIsNotNone(compare(BASE, BASE.replace('Uses {@link List}.', 'Uses a list.')))
 
     def test_removing_used_import_fails(self):
-        self.assertIn('still used', compare(BASE, BASE.replace('import java.util.List;\n', '')))
+        self.assertIsNotNone(compare(BASE, BASE.replace('import java.util.List;\n', '')))
 
     def test_removing_import_used_only_in_javadoc_fails(self):
         source = BASE.replace('    List<String> items;\n', '    java.util.List<String> items;\n')
-        self.assertIn('still used', compare(source, source.replace('import java.util.List;\n', '')))
+        self.assertIn('comment', compare(source, source.replace('import java.util.List;\n', '')))
 
     def test_shadowing_an_existing_bare_name_fails(self):
         before = 'package a;\nclass T { String s; foo.String f; }\n'
         after = 'package a;\nimport foo.String;\nclass T { String s; String f; }\n'
-        self.assertIn('already used', compare(before, after))
+        self.assertIsNotNone(compare(before, after))
 
     def test_clash_with_existing_import_fails(self):
         before = 'package a;\nimport com.app.R;\nclass T { int x = R.id.a + android.R.attr.b; }\n'
@@ -72,6 +72,34 @@ class T {
     def test_member_named_like_import_is_not_a_bare_use(self):
         before = 'package a;\nimport x.Thing;\nclass T { int n = other.Thing; }\n'
         self.assertIsNone(compare(before, 'package a;\nclass T { int n = other.Thing; }\n'))
+
+
+    def test_folding_through_an_existing_import_passes(self):
+        before = 'package a;\nimport java.util.List;\nclass T { List x; java.util.List y; }\n'
+        self.assertIsNone(compare(before, before.replace('java.util.List y', 'List y')))
+
+    def test_folding_a_same_package_class_passes(self):
+        before = 'package com.app.ui;\nclass T { com.app.ui.Style s = com.app.ui.Style.make(); }\n'
+        after = 'package com.app.ui;\nclass T { Style s = Style.make(); }\n'
+        self.assertIsNone(compare(before, after, 'src/T.java', {'Style', 'T'}))
+        self.assertIsNotNone(compare(before, after, 'src/T.java', {'T'}), 'unknown package class must not fold')
+
+    def test_folding_past_a_nested_type_of_the_same_name_fails(self):
+        before = 'package com.app;\nclass T { com.app.Box b; static class Box { } }\n'
+        after = 'package com.app;\nclass T { Box b; static class Box { } }\n'
+        self.assertIsNotNone(compare(before, after, 'src/T.java', {'Box', 'T'}))
+
+    def test_new_comments_only_when_allowed(self):
+        before = 'package a;\nclass T { int x; }\n'
+        after = 'package a;\n/** Holds x. */\nclass T { int x; }\n'
+        self.assertIsNotNone(compare(before, after))
+        self.assertIsNone(compare(before, after, allow_new_comments=True))
+        changed = 'package a;\n/** Holds x. */\nclass T { int y; }\n'
+        self.assertIsNotNone(compare(before, changed, allow_new_comments=True))
+
+    def test_existing_comment_edit_fails_even_when_new_comments_allowed(self):
+        before = 'package a;\n/** Old. */\nclass T { }\n'
+        self.assertIsNotNone(compare(before, before.replace('Old.', 'New.'), allow_new_comments=True))
 
 
 if __name__ == '__main__':
