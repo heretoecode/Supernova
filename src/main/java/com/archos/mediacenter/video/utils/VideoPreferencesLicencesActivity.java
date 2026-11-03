@@ -19,13 +19,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.foundation.LicenseDisclosure;
 
 public class VideoPreferencesLicencesActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(new com.archos.mediacenter.video.foundation.LicenseDisclosure(this));
+        setContentView(new LicenseDisclosure(this));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
     }
