@@ -1,12 +1,12 @@
 package com.archos.mediacenter.video.leanback.filebrowsing;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.SharedThreePanel;
-import com.archos.mediacenter.video.leanback.TvLayout;
 
 /** Full-width Settings-style landing and dedicated browser workspace; no persistent rail. */
 final class NetworkFilesLayout extends LinearLayout {
@@ -69,7 +69,7 @@ final class NetworkFilesLayout extends LinearLayout {
     int scrollPosition(){return scroll.getScrollY();}
     void restoreScroll(int position){scroll.post(()->scroll.scrollTo(0,position));}
     boolean browsing(){return browsing;}
-    void reveal(View target){target.post(()->target.requestRectangleOnScreen(new android.graphics.Rect(0,0,target.getWidth(),target.getHeight()),false));}
+    void reveal(View target){target.post(()->target.requestRectangleOnScreen(new Rect(0,0,target.getWidth(),target.getHeight()),false));}
     static void detach(View view){if(view.getParent() instanceof ViewGroup)((ViewGroup)view.getParent()).removeView(view);}
     static void surface(View view,int radius){
         GradientDrawable background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0xe609111a,0xf00b121d});
