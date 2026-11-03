@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.database.AbstractWindowedCursor;
 import android.database.Cursor;
+import android.database.CursorWindow;
 import android.database.CursorWrapper;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 
@@ -28,8 +30,8 @@ final class PreviewMappingCursor extends CursorWrapper {
         int windowStart=-1,windowRows=-1;
         try {
             Cursor raw=getWrappedCursor();while(raw instanceof CursorWrapper)raw=((CursorWrapper)raw).getWrappedCursor();
-            if(raw instanceof android.database.AbstractWindowedCursor){
-                android.database.CursorWindow window=((android.database.AbstractWindowedCursor)raw).getWindow();
+            if(raw instanceof AbstractWindowedCursor){
+                CursorWindow window=((AbstractWindowedCursor)raw).getWindow();
                 if(window!=null){windowStart=window.getStartPosition();windowRows=window.getNumRows();}
             }
         } catch(RuntimeException unavailable) { /* Window coordinates may themselves be unavailable. */ }
