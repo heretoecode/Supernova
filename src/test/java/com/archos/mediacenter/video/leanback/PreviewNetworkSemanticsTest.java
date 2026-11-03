@@ -6,36 +6,45 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import androidx.preference.PreferenceManager;
+import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection;
+import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import java.io.File;
 import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import java.util.*;
 import static org.junit.Assert.*;
 
-@RunWith(org.robolectric.RobolectricTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewNetworkSemanticsTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
-    @org.junit.Before
+    @Before
     public void configuredLibraryFixture() {
         PreferenceManager
-            .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
+            .getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -111,7 +120,7 @@ public class PreviewNetworkSemanticsTest {
             assertEquals("A library selection retains the browsing source", 1, shares.size());
             Map<String, Shortcut> saved = ReflectionHelpers.getField(browser, "savedSources");
             assertTrue(saved.containsKey(
-                com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(source.getUri())));
+                BrowserSelection.canonical(source.getUri())));
             for (int i = 0; i < actions.getChildCount(); i++)
                 assertFalse(String.valueOf(identity(actions.getChildAt(i))).contains("private"));
 
@@ -124,11 +133,11 @@ public class PreviewNetworkSemanticsTest {
     public void authenticationRecoveryKeepsTheSharedInlineFormAndOriginalFolder() {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            var browser = new UniversalFileBrowser(host.get());
             host.get().setContentView(browser);
             ReflectionHelpers.callInstanceMethod(browser, "launchCredentials",
                 ReflectionHelpers.ClassParameter.from(Uri.class, Uri.parse("smb://NAS:445/Shows/Season%201")));
-            assertNull(org.robolectric.Shadows.shadowOf(host.get()).getNextStartedActivity());
+            assertNull(Shadows.shadowOf(host.get()).getNextStartedActivity());
             String[] fields = ReflectionHelpers.getField(browser, "connection");
             assertEquals("NAS", fields[0]);
             assertEquals("445", fields[1]);
@@ -145,7 +154,7 @@ public class PreviewNetworkSemanticsTest {
     public void onboardingCanSelectAndBrowseNestedFoldersWhileStagingAcrossDrives() throws Exception {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            var browser = new UniversalFileBrowser(host.get());
             browser.onboarding(true);
             host.get().setContentView(browser);
             File root = new File(host.get().getFilesDir(), "drive-one"),
@@ -153,11 +162,11 @@ public class PreviewNetworkSemanticsTest {
             assertTrue(child.mkdirs());
             Uri rootUri = Uri.fromFile(root), childUri = Uri.fromFile(child);
             ReflectionHelpers.setField(browser, "current", rootUri);
-            var folder = org.mockito.Mockito.mock(com.archos.filecorelibrary.MetaFile2.class);
-            org.mockito.Mockito.when(folder.isDirectory()).thenReturn(true);
-            org.mockito.Mockito.when(folder.getUri()).thenReturn(childUri);
-            org.mockito.Mockito.when(folder.getName()).thenReturn("Movies");
-            java.util.List<com.archos.filecorelibrary.MetaFile2> files = ReflectionHelpers.getField(browser, "files");
+            var folder = Mockito.mock(MetaFile2.class);
+            Mockito.when(folder.isDirectory()).thenReturn(true);
+            Mockito.when(folder.getUri()).thenReturn(childUri);
+            Mockito.when(folder.getName()).thenReturn("Movies");
+            java.util.List<MetaFile2> files = ReflectionHelpers.getField(browser, "files");
             files.add(folder);
             ReflectionHelpers.callInstanceMethod(browser, "renderItems");
             PreviewPagesTest.layout(browser);
