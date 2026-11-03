@@ -2,11 +2,13 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.view.*;
 import android.widget.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /** Shared TV keyboard. Spatial movement is explicit and cannot escape through an empty result pane. */
 public final class PreviewKeyboard extends LinearLayout {
@@ -31,7 +33,7 @@ public final class PreviewKeyboard extends LinearLayout {
         for (int r = 1; r < ROWS.length; r++)
             for (TextView key : keys.get(r)) {
                 String value = key.getTag().toString().substring("semantic:keyboard:".length());
-                key.setText(caps ? value : value.toLowerCase(java.util.Locale.ROOT));
+                key.setText(caps ? value : value.toLowerCase(Locale.ROOT));
             }
         capsState(keys.get(4).get(0));
     }
@@ -53,7 +55,7 @@ public final class PreviewKeyboard extends LinearLayout {
             row.setClipToPadding(false);
             LayoutParams lp = new LayoutParams(-1, dp(32));
             if (r >= 4) {
-                android.graphics.Paint metrics = new android.graphics.Paint();
+                Paint metrics = new Paint();
                 metrics.setTextSize(12 * context.getResources().getDisplayMetrics().scaledDensity);
                 lp.height = Math.max(lp.height, Math.round(metrics.getFontSpacing()) + dp(10));
             }
@@ -79,7 +81,7 @@ public final class PreviewKeyboard extends LinearLayout {
                 final int col = rowKeys.size();
                 TextView key = key(label, () -> {
                     if (r < 4)
-                        replace(input, caps ? label : label.toLowerCase(java.util.Locale.ROOT));
+                        replace(input, caps ? label : label.toLowerCase(Locale.ROOT));
                     else if (label.equals("Caps Lock"))
                         toggleCaps();
                     else if (label.equals("Clear"))
