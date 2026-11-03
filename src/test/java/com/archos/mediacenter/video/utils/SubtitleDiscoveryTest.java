@@ -5,7 +5,12 @@ import android.content.Context;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import com.archos.mediacenter.video.leanback.SharedMetadata;
+import com.archos.medialib.IMediaPlayer;
+import com.archos.medialib.MediaMetadata;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,11 +18,14 @@ import java.nio.file.Files;
 import java.time.Instant;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -31,7 +39,7 @@ public class SubtitleDiscoveryTest {
         requests = new AtomicInteger();
         app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).edit().clear().commit();
         PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit();
-        app.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+        app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
             .edit()
             .clear()
             .commit();
@@ -153,7 +161,7 @@ public class SubtitleDiscoveryTest {
     @Test
     public void currentSeasonSkipsKnownMissingFiles() {
         Entry playing = episode(1, 1, false), missing = episode(1, 2, false), next = episode(1, 3, false);
-        app.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+        app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
             .edit()
             .putString("media:" + ((Video) missing.media).getId(), "Missing file")
             .commit();
@@ -169,12 +177,12 @@ public class SubtitleDiscoveryTest {
             .putStringSet("languages_list", new HashSet<>(Arrays.asList("fr")))
             .commit();
         SubtitleDiscoveryPolicy.Queue queue =
-            org.robolectric.util.ReflectionHelpers.getStaticField(SubtitleDiscovery.class, "QUEUE");
+            ReflectionHelpers.getStaticField(SubtitleDiscovery.class, "QUEUE");
         while (queue.take() != null) {
         }
         queue.offer("stale", query(), "en", SubtitleDiscoveryPolicy.HERO);
-        org.robolectric.util.ReflectionHelpers.callStaticMethod(SubtitleDiscovery.class, "drain",
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(Context.class, app));
+        ReflectionHelpers.callStaticMethod(SubtitleDiscovery.class, "drain",
+            ReflectionHelpers.ClassParameter.from(Context.class, app));
         assertEquals(0, requests.get());
         assertEquals(0, queue.size());
     }
@@ -209,7 +217,7 @@ public class SubtitleDiscoveryTest {
     @Test
     public void importingAndOptingOutCannotStartProviderRequests() {
         SubtitleDiscovery.offer(app, episode(1, 1, false), SubtitleDiscoveryPolicy.PLAYBACK);
-        SubtitleDiscovery.home(app, new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot());
+        SubtitleDiscovery.home(app, new PreviewLibraryLoader.Snapshot());
         assertEquals(0, requests.get());
     }
 
@@ -220,37 +228,37 @@ public class SubtitleDiscoveryTest {
             1
         });
         Video video = new NonIndexedVideo(Uri.fromFile(file), Uri.fromFile(file), "Measured", null);
-        com.archos.medialib.MediaMetadata source = org.mockito.Mockito.mock(com.archos.medialib.MediaMetadata.class);
-        org.mockito.Mockito.when(source.has(org.mockito.ArgumentMatchers.anyInt())).thenReturn(true);
+        MediaMetadata source = Mockito.mock(MediaMetadata.class);
+        Mockito.when(source.has(ArgumentMatchers.anyInt())).thenReturn(true);
         AtomicInteger flags = new AtomicInteger((1 << 16) | 128);
-        org.mockito.Mockito.when(source.getInt(org.mockito.ArgumentMatchers.anyInt())).thenAnswer(call -> {
+        Mockito.when(source.getInt(ArgumentMatchers.anyInt())).thenAnswer(call -> {
             int key = call.getArgument(0);
-            if (key == com.archos.medialib.IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK
-                || key == com.archos.medialib.IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK)
+            if (key == IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK
+                || key == IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK)
                 return 1;
             if (key
-                == com.archos.medialib.IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
-                    + com.archos.medialib.IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_DISPOSITION)
+                == IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
+                    + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_DISPOSITION)
                 return flags.get();
             if (key
-                == com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK
-                    + com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK_DISPOSITION)
+                == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                    + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_DISPOSITION)
                 return flags.get() == 0 ? 0 : 256;
             return 0;
         });
-        org.mockito.Mockito.when(source.getString(org.mockito.ArgumentMatchers.anyInt())).thenAnswer(call -> {
+        Mockito.when(source.getString(ArgumentMatchers.anyInt())).thenAnswer(call -> {
             int key = call.getArgument(0);
             if (key
-                == com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK
-                    + com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK_FORMAT)
+                == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                    + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_FORMAT)
                 return "AAC";
             if (key
-                == com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK
-                    + com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK_CHANNELS)
+                == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                    + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_CHANNELS)
                 return "5.1";
             if (key
-                == com.archos.medialib.IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
-                    + com.archos.medialib.IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE)
+                == IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
+                    + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE)
                 return "eng";
             return "";
         });
@@ -261,7 +269,7 @@ public class SubtitleDiscoveryTest {
         assertEquals(Arrays.asList("Captions/SDH", "AD"), SubtitleDiscovery.localBadges(app, video));
         assertTrue(SubtitleDiscovery.localMatches(app, video, "en"));
         assertEquals(Arrays.asList("AAC · 5.1", "Captions/SDH", "AD"),
-            com.archos.mediacenter.video.leanback.SharedMetadata.technical(app, video));
+            SharedMetadata.technical(app, video));
         Video other = new NonIndexedVideo(Uri.fromFile(new File(app.getCacheDir(), "other.mkv")),
             Uri.fromFile(new File(app.getCacheDir(), "other.mkv")), "Other", null);
         assertTrue(SubtitleDiscovery.localBadges(app, other).isEmpty());
