@@ -1,25 +1,36 @@
 package com.archos.mediacenter.video.player;
 
+import android.app.Activity;
+import android.app.Application;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import androidx.preference.PreferenceManager;
+import java.text.SimpleDateFormat;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import org.junit.Test;
 import org.json.JSONObject;
 import static org.junit.Assert.*;
 
 @org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
-@org.robolectric.annotation.Config(application = android.app.Application.class, sdk = 28)
+@org.robolectric.annotation.Config(application = Application.class, sdk = 28)
 public class Supernova138PlaybackTest {
     @Test
     public void realHudUpdateMethodsShowTooltipOnSeekAndRemainingFinishTime() throws Exception {
-        var host = org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = org.robolectric.Robolectric.buildActivity(Activity.class).setup().visible();
         Player old = Player.sPlayer;
         try {
             var activity = host.get();
-            var prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity);
+            var prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             prefs.edit().putBoolean("try_new_ui", true).putString("uimode", "2").commit();
-            android.view.View root = android.view.LayoutInflater.from(activity).inflate(
+            View root = LayoutInflater.from(activity).inflate(
                 com.archos.mediacenter.video.R.layout.player_controller_experimental, null);
             activity.setContentView(root);
-            android.view.View bar = root.findViewById(com.archos.mediacenter.video.R.id.control_bar);
-            bar.setVisibility(android.view.View.VISIBLE);
+            View bar = root.findViewById(com.archos.mediacenter.video.R.id.control_bar);
+            bar.setVisibility(View.VISIBLE);
             PlayerController controller =
                 org.mockito.Mockito.mock(PlayerController.class, org.mockito.Mockito.CALLS_REAL_METHODS);
             Player player = org.mockito.Mockito.mock(Player.class);
@@ -27,7 +38,7 @@ public class Supernova138PlaybackTest {
             org.mockito.Mockito.when(player.getDuration()).thenReturn(100000);
             org.mockito.Mockito.when(player.getCurrentPosition()).thenReturn(20000);
             org.mockito.Mockito.when(player.isPlaying()).thenReturn(true);
-            java.util.Map<String, Object> fields = new java.util.HashMap<>();
+            Map<String, Object> fields = new HashMap<>();
             fields.put("mContext", activity);
             fields.put("mControllerViewLeft", root);
             fields.put("mControlBar", bar);
@@ -36,52 +47,52 @@ public class Supernova138PlaybackTest {
             fields.put("mCurrentTime", root.findViewById(com.archos.mediacenter.video.R.id.time_current));
             fields.put("mEndTime", root.findViewById(com.archos.mediacenter.video.R.id.time));
             fields.put("mClock", root.findViewById(com.archos.mediacenter.video.R.id.clock));
-            fields.put("mDateFormat", new java.text.SimpleDateFormat("HH:mm", java.util.Locale.ROOT));
+            fields.put("mDateFormat", new SimpleDateFormat("HH:mm", Locale.ROOT));
             fields.put("mNextSeek", -1);
             StringBuilder formatter = new StringBuilder();
             fields.put("mFormatBuilder", formatter);
-            fields.put("mFormatter", new java.util.Formatter(formatter, java.util.Locale.ROOT));
+            fields.put("mFormatter", new Formatter(formatter, Locale.ROOT));
             for (var field : fields.entrySet())
                 org.robolectric.util.ReflectionHelpers.setField(controller, field.getKey(), field.getValue());
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(controller, "configurePreviewTransport");
-            root.measure(android.view.View.MeasureSpec.makeMeasureSpec(960, android.view.View.MeasureSpec.EXACTLY),
-                android.view.View.MeasureSpec.makeMeasureSpec(540, android.view.View.MeasureSpec.EXACTLY));
+            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
             root.layout(0, 0, 960, 540);
-            android.widget.TextView pill = root.findViewById(com.archos.mediacenter.video.R.id.preview_scrub_time);
-            ((android.widget.TextView) root.findViewById(com.archos.mediacenter.video.R.id.time_current))
+            TextView pill = root.findViewById(com.archos.mediacenter.video.R.id.preview_scrub_time);
+            ((TextView) root.findViewById(com.archos.mediacenter.video.R.id.time_current))
                 .setText("00:20");
             root.findViewById(com.archos.mediacenter.video.R.id.pause).requestFocus();
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(controller, "updatePreviewScrubber");
-            assertEquals(android.view.View.VISIBLE, pill.getVisibility());
+            assertEquals(View.VISIBLE, pill.getVisibility());
             root.findViewById(com.archos.mediacenter.video.R.id.seek_progress).requestFocus();
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(controller, "updatePreviewScrubber");
-            assertEquals(android.view.View.VISIBLE, pill.getVisibility());
+            assertEquals(View.VISIBLE, pill.getVisibility());
             assertEquals("00:00:20", pill.getText().toString());
             assertFalse(
                 root.findViewById(com.archos.mediacenter.video.R.id.seek_progress).getDefaultFocusHighlightEnabled());
             assertNull(bar.getForeground());
             controller.updateClock();
             assertEquals("00:01:40",
-                ((android.widget.TextView) root.findViewById(com.archos.mediacenter.video.R.id.time))
+                ((TextView) root.findViewById(com.archos.mediacenter.video.R.id.time))
                     .getText()
                     .toString());
-            assertTrue(((android.widget.TextView) root.findViewById(com.archos.mediacenter.video.R.id.preview_end_time))
+            assertTrue(((TextView) root.findViewById(com.archos.mediacenter.video.R.id.preview_end_time))
                     .getText()
                     .toString()
                     .startsWith("Ends at "));
-            assertFalse(((android.widget.TextView) root.findViewById(com.archos.mediacenter.video.R.id.clock))
+            assertFalse(((TextView) root.findViewById(com.archos.mediacenter.video.R.id.clock))
                     .getText()
                     .toString()
                     .contains("Ends"));
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(controller, "updatePausePlay");
             assertEquals("Pause",
-                ((android.widget.TextView) root.findViewById(com.archos.mediacenter.video.R.id.preview_pause_label))
+                ((TextView) root.findViewById(com.archos.mediacenter.video.R.id.preview_pause_label))
                     .getText()
                     .toString());
             org.mockito.Mockito.when(player.isPlaying()).thenReturn(false);
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(controller, "updatePausePlay");
             assertEquals("Play",
-                ((android.widget.TextView) root.findViewById(com.archos.mediacenter.video.R.id.preview_pause_label))
+                ((TextView) root.findViewById(com.archos.mediacenter.video.R.id.preview_pause_label))
                     .getText()
                     .toString());
         } finally {
