@@ -1,8 +1,10 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.text.format.DateFormat;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediaprovider.video.NetworkAutoRefresh;
@@ -20,8 +22,8 @@ public final class PreviewNetworkScanning {
         String result = error == NetworkAutoRefresh.AUTO_RESCAN_ERROR_NO_WIFI ? "Network unavailable"
             : error == NetworkAutoRefresh.AUTO_RESCAN_ERROR_UNABLE_TO_REACH_HOST ? "Source unreachable"
                                                                                  : "Scan recorded";
-        return android.text.format.DateFormat.getDateFormat(c).format(new Date(time)) + " · "
-            + android.text.format.DateFormat.getTimeFormat(c).format(new Date(time)) + "\n" + result;
+        return DateFormat.getDateFormat(c).format(new Date(time)) + " · "
+            + DateFormat.getTimeFormat(c).format(new Date(time)) + "\n" + result;
     }
 
     public static void show(Context c) {
@@ -97,7 +99,7 @@ public final class PreviewNetworkScanning {
                 c, "Sources Included", "Add a Library Source before choosing sources for automatic scanning.");
             return;
         }
-        android.app.Dialog[] dialog = {
+        Dialog[] dialog = {
             null
         };
         dialog[0] = PreviewDialog.choose(c, "Sources Included", names.toArray(new String[0]), 0, checked, false, n -> {
