@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteDatabase;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
@@ -40,7 +41,7 @@ public class CombinedPlaylistJournalTest {
             db.execSQL(
                 "INSERT INTO video_list_table(_id,list_id,m_online_id,e_online_id,sync_status) VALUES(12,7,123,-1,1),(13,9,-1,456,0),(14,NULL,NULL,NULL,NULL)");
         }
-        try (var db = android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(
+        try (var db = SQLiteDatabase.openOrCreateDatabase(
                  app.getDatabasePath(BookmarkStoreRecovery.DATABASE), null)) {
             db.execSQL(
                 "CREATE TABLE shortcuts(_id INTEGER PRIMARY KEY AUTOINCREMENT,uri TEXT NOT NULL,shortcut_name TEXT NOT NULL,friendly_uri TEXT)");
