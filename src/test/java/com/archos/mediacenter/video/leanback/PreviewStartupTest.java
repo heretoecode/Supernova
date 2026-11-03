@@ -2,16 +2,25 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.content.*;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.CursorWrapper;
+import android.database.MatrixCursor;
 import android.database.sqlite.*;
 import android.net.Uri;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.ExtStorageManager;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
@@ -52,7 +61,7 @@ public class PreviewStartupTest {
                 if(failQuery)throw new SQLiteException("Injected unavailable database");
                 Cursor result=builder.query(db,projection,selection,args,null,null,order);
                 if(!failScraperRead)return result;
-                return new android.database.CursorWrapper(result){@Override public int getInt(int column){
+                return new CursorWrapper(result){@Override public int getInt(int column){
                     if(getColumnName(column).equals(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE))throw new IllegalStateException("Injected window read failure");
                     return super.getInt(column);
                 }};
@@ -71,14 +80,14 @@ public class PreviewStartupTest {
     }
     @Test public void previewQueriesRunOnWorkerWithoutLooper() throws Exception {
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+        ExecutorService worker=Executors.newSingleThreadExecutor();
         try {
             worker.submit(() -> {
                 assertNull(Looper.myLooper());
                 try(Cursor c=loader.loadInBackground()) {
                     assertNotNull(c);assertNotNull(loader.snapshot);
                 }
-            }).get(15,java.util.concurrent.TimeUnit.SECONDS);
+            }).get(15,TimeUnit.SECONDS);
         } finally { worker.shutdownNow(); }
     }
     @Test public void savedPreviewPreferenceSurvivesStartupAndRecreation(){
@@ -103,15 +112,15 @@ public class PreviewStartupTest {
     }
     @Test public void clockCleanupHandlesUiSwitchBeforeResume() {
         Context context=RuntimeEnvironment.getApplication();
-        android.widget.FrameLayout root=new android.widget.FrameLayout(context);
-        android.widget.TextView text=new android.widget.TextView(context);
+        FrameLayout root=new FrameLayout(context);
+        TextView text=new TextView(context);
         text.setId(com.archos.mediacenter.video.R.id.clock);root.addView(text);
         com.archos.mediacenter.video.leanback.overlay.Clock clock=new com.archos.mediacenter.video.leanback.overlay.Clock(context,root);
         // An early activity recreation can skip resume, yet still invoke pause.
         clock.pause();clock.resume();clock.pause();clock.pause();clock.destroy();
     }
     @Test public void switchingFromClassicToPreviewCanPauseForRecreation() {
-        android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+        SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         prefs.edit().putBoolean("try_new_ui",false).commit();
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
@@ -133,8 +142,8 @@ public class PreviewStartupTest {
     @Test public void badScraperReadIsContainedOnAsynchronousWorker()throws Exception{
         insertUnmatched(1);failScraperRead=true;
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
-        try{worker.submit(()->{try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.snapshot);assertNotNull(loader.loadWarning);assertTrue(loader.snapshot.recent.isEmpty());}}).get(15,java.util.concurrent.TimeUnit.SECONDS);}
+        ExecutorService worker=Executors.newSingleThreadExecutor();
+        try{worker.submit(()->{try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.snapshot);assertNotNull(loader.loadWarning);assertTrue(loader.snapshot.recent.isEmpty());}}).get(15,TimeUnit.SECONDS);}
         finally{worker.shutdownNow();}
     }
     @Test public void binaryScraperTypeIsIsolatedWhileHealthyRecordsRemain(){
@@ -153,13 +162,13 @@ public class PreviewStartupTest {
     @Test public void nullAndBoundaryNumericValuesRemainReadable(){
         insertUnmatched(2);PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
         try(Cursor cursor=loader.loadInBackground()){assertNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());}
-        android.database.MatrixCursor raw=new android.database.MatrixCursor(new String[]{"numeric"});
+        MatrixCursor raw=new MatrixCursor(new String[]{"numeric"});
         raw.addRow(new Object[]{null});raw.addRow(new Object[]{Integer.MAX_VALUE});raw.addRow(new Object[]{Integer.MIN_VALUE});
         try(PreviewMappingCursor cursor=new PreviewMappingCursor(raw)){assertTrue(cursor.moveToNext());assertEquals(0,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MAX_VALUE,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MIN_VALUE,cursor.getInt(0));}
     }
     private TopNavigation navigation(View root){
         if(root instanceof TopNavigation)return (TopNavigation)root;
-        if(root instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)root;for(int i=0;i<group.getChildCount();i++){TopNavigation found=navigation(group.getChildAt(i));if(found!=null)return found;}}
+        if(root instanceof ViewGroup){ViewGroup group=(ViewGroup)root;for(int i=0;i<group.getChildCount();i++){TopNavigation found=navigation(group.getChildAt(i));if(found!=null)return found;}}
         return null;
     }
     private void draw(MainFragment fragment){
