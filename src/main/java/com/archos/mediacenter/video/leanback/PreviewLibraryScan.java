@@ -8,9 +8,12 @@ import android.os.*;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediaprovider.ImportState;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import com.archos.mediascraper.AutoScrapeService;
 import java.util.*;
 
 /** One manual/foreground scheduler entry, with lifecycle independent of any particular page. */
@@ -114,7 +117,7 @@ public final class PreviewLibraryScan {
         Context app = context.getApplicationContext();
         if (active())
             return;
-        if (!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(app))
+        if (!SupernovaLibraryPolicy.configured(app))
             return;
         LinkedHashSet<String> roots = new LinkedHashSet<>();
         for (String root : PreferenceManager.getDefaultSharedPreferences(app).getStringSet(
@@ -133,12 +136,12 @@ public final class PreviewLibraryScan {
 
     public static synchronized void requestNetwork(Context context, String requestedTrigger) {
         install(context);
-        if (!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(context))
+        if (!SupernovaLibraryPolicy.configured(context))
             return;
         String origin = Arrays.asList("manual", "startup", "resume", "scheduled").contains(requestedTrigger)
             ? requestedTrigger
             : "unknown";
-        com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler.request(context, origin);
+        PutioSyncScheduler.request(context, origin);
         // Do not confuse metadata/import activity with an active network traversal.
         boolean busy = active();
         if (busy) {
@@ -177,7 +180,7 @@ public final class PreviewLibraryScan {
     public static synchronized void requestAfterChanges(Context c) {
         Context app = c.getApplicationContext();
         if (!NetworkScannerServiceVideo.isScannerAlive()
-            && com.archos.mediascraper.AutoScrapeService.getNetworkScanCount() == 0) {
+            && AutoScrapeService.getNetworkScanCount() == 0) {
             request(app);
             return;
         }
@@ -190,7 +193,7 @@ public final class PreviewLibraryScan {
                     if (!selectionScanPending)
                         return;
                     if (NetworkScannerServiceVideo.isScannerAlive()
-                        || com.archos.mediascraper.AutoScrapeService.getNetworkScanCount() > 0) {
+                        || AutoScrapeService.getNetworkScanCount() > 0) {
                         MAIN.postDelayed(this, 500);
                         return;
                     }
@@ -215,7 +218,7 @@ public final class PreviewLibraryScan {
 
     public static synchronized boolean active() {
         return !operationEnded && phase.equals("queued") || NetworkScannerServiceVideo.isScannerAlive()
-            || com.archos.mediascraper.AutoScrapeService.getNetworkScanCount() > 0;
+            || AutoScrapeService.getNetworkScanCount() > 0;
     }
 
     public static boolean building() {
@@ -226,11 +229,11 @@ public final class PreviewLibraryScan {
     public static String libraryStatus(Context c) {
         String nativeState = PreviewLocalScanState.status(c);
         String live = formatLibraryStatus(status(c),
-            com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()
-                || com.archos.mediaprovider.ImportState.VIDEO.isRegularImport(),
-            com.archos.mediaprovider.ImportState.VIDEO.getNumberOfFilesRemainingToImport(),
+            ImportState.VIDEO.isInitialImport()
+                || ImportState.VIDEO.isRegularImport(),
+            ImportState.VIDEO.getNumberOfFilesRemainingToImport(),
             LoaderUtils.getScrapeInProgress(),
-            com.archos.mediascraper.AutoScrapeService.getNumberOfFilesRemainingToProcess());
+            AutoScrapeService.getNumberOfFilesRemainingToProcess());
         return nativeState.isEmpty() ? live : nativeState + "\n" + live;
     }
 
