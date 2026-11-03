@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback.search;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks search normalization and ranking of exact, prefix and typo matches. */
 public class PreviewSearchTextTest {
     @Test
     public void accentsPunctuationAndLeadingArticlesMatch() {
