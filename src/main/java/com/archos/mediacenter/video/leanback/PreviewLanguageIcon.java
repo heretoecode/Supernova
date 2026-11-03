@@ -1,8 +1,13 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
+import android.util.LruCache;
 import android.view.*;
 import android.widget.*;
 import java.util.*;
@@ -99,7 +104,7 @@ public final class PreviewLanguageIcon extends Drawable {
         map.put("zh-ca", "HK"); // OpenSubtitles Cantonese (not Canada)
         PROVIDER_COUNTRY = Collections.unmodifiableMap(map);
     }
-    private static final android.util.LruCache<String, Bitmap> FLAGS = new android.util.LruCache<>(32);
+    private static final LruCache<String, Bitmap> FLAGS = new LruCache<>(32);
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
     private final PreviewIcon neutral = new PreviewIcon("language");
     private final Bitmap flag;
@@ -109,7 +114,7 @@ public final class PreviewLanguageIcon extends Drawable {
         this(null, code);
     }
 
-    public PreviewLanguageIcon(android.content.Context context, String code) {
+    public PreviewLanguageIcon(Context context, String code) {
         String country = country(providerCode(code));
         Bitmap bitmap = null;
         if (context != null && !country.isEmpty()) {
@@ -227,13 +232,13 @@ public final class PreviewLanguageIcon extends Drawable {
     }
 
     /** Inline icon for legacy/mixed metadata text; keep each track's own reliable locale. */
-    public static CharSequence inline(android.content.Context context, String code, CharSequence label) {
+    public static CharSequence inline(Context context, String code, CharSequence label) {
         PreviewLanguageIcon icon = new PreviewLanguageIcon(context, providerCode(code));
         int size = PreviewDialog.dp(context, 18);
         icon.setBounds(0, 0, size, size);
-        android.text.SpannableStringBuilder text = new android.text.SpannableStringBuilder("\uFFFC ");
-        text.setSpan(new android.text.style.ImageSpan(icon, android.text.style.ImageSpan.ALIGN_BASELINE), 0, 1,
-                     android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableStringBuilder text = new SpannableStringBuilder("\uFFFC ");
+        text.setSpan(new ImageSpan(icon, ImageSpan.ALIGN_BASELINE), 0, 1,
+                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return text.append(label);
     }
 
