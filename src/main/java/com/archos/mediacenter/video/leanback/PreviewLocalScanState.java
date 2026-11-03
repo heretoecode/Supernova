@@ -2,18 +2,23 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 /** Native importer evidence, independent of which Preview page is attached. */
 final class PreviewLocalScanState {
     private static String summary = "";
-    private static final java.util.Map<String, State> active = new java.util.LinkedHashMap<>();
-    private static final java.util.LinkedHashSet<String> ended = new java.util.LinkedHashSet<>();
+    private static final Map<String, State> active = new LinkedHashMap<>();
+    private static final LinkedHashSet<String> ended = new LinkedHashSet<>();
 
     private static final class State {
         final String operation = Diagnostics.operation("local_import");
-        final long started = android.os.SystemClock.elapsedRealtime();
+        final long started = SystemClock.elapsedRealtime();
         long lastProgress = started;
     }
 
@@ -37,7 +42,7 @@ final class PreviewLocalScanState {
             state = new State();
             active.put(id, state);
         }
-        state.lastProgress = android.os.SystemClock.elapsedRealtime();
+        state.lastProgress = SystemClock.elapsedRealtime();
         long checked = Math.max(0, intent.getLongExtra("checked", 0)),
              added = Math.max(0, intent.getLongExtra("added", 0)),
              updated = Math.max(0, intent.getLongExtra("updated", 0)),
@@ -54,7 +59,7 @@ final class PreviewLocalScanState {
             + elapsed / 1000 + " seconds";
         if (Arrays.asList("complete", "partial", "failed", "cancelled").contains(phase)) {
             LibraryScanRecord.record(context, "local", phase);
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+            PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
                 .putString("preview_local_scan_result", summary)
                 .apply();
@@ -71,11 +76,11 @@ final class PreviewLocalScanState {
             long latest = 0;
             for (State state : active.values())
                 latest = Math.max(latest, state.lastProgress);
-            long idle = (android.os.SystemClock.elapsedRealtime() - latest) / 1000;
+            long idle = (SystemClock.elapsedRealtime() - latest) / 1000;
             if (idle >= 30)
                 return summary + "\nWaiting For Native Importer · Last Progress " + idle + " Seconds Ago";
         }
-        return summary.isEmpty() ? androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getString(
+        return summary.isEmpty() ? PreferenceManager.getDefaultSharedPreferences(context).getString(
                                        "preview_local_scan_result", "")
                                  : summary;
     }
