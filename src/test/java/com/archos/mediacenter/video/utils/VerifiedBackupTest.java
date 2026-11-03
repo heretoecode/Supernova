@@ -5,6 +5,7 @@ import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.*;
 
+/** Checks verified backups publish readable archives and reject failed generation or missing libraries. */
 public class VerifiedBackupTest {
     @Rule public TemporaryFolder folder = new TemporaryFolder();
 
