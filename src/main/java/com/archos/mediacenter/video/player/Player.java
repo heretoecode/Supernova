@@ -199,7 +199,7 @@ public class Player implements IPlayerControl,
                 if (mRestoringSession) {
                     mRestoringSession = false;
                     if (mTargetState == STATE_PLAYING) start(PlayerController.STATE_OTHER);
-                    else pause(PlayerController.STATE_OTHER);
+                        else pause(PlayerController.STATE_OTHER);
                     if (mPlayerListener != null) mPlayerListener.onOSDUpdate();
                 } else {
                     mSessionPrepared = true;
@@ -440,7 +440,7 @@ public class Player implements IPlayerControl,
         if(surfaceController == mSurfaceController)
             return;
         if (mDisplayTexture != null) onSurfaceTextureDestroyed(mDisplayTexture);
-        else suspendForSurface();
+            else suspendForSurface();
         if (mSurfaceController != null) mSurfaceController.clearCallbacks(this, this);
         mSurfaceHolder = null;
         mDisplayTexture = null;
@@ -466,13 +466,13 @@ public class Player implements IPlayerControl,
     public int getEffectType() {
         if (mEffectRenderer != null)
             return mEffectRenderer.getEffectType();
-        else return VideoEffect.getDefaultType();
+            else return VideoEffect.getDefaultType();
     }
     
     public int getEffectMode() {
         if (mEffectRenderer != null)
             return mEffectRenderer.getEffectMode();
-        else return VideoEffect.getDefaultMode();
+            else return VideoEffect.getDefaultMode();
     }
     
     public void setEffect(int type, int mode) {
@@ -488,7 +488,7 @@ public class Player implements IPlayerControl,
 
     public int getUIMode() {
         if (mEffectRenderer != null) return mEffectRenderer.getUIMode();
-        else return VideoEffect.NORMAL_2D_MODE;
+            else return VideoEffect.NORMAL_2D_MODE;
     }
 
     public void setVideoURI(Uri uri, Map<String, String> extraMap) {
@@ -729,7 +729,7 @@ public class Player implements IPlayerControl,
                 // Back/Stop or opening another video invalidates this request, not shared startup.
                 if (generation != mOpenGeneration) return;
                 if (headers != null) player.setDataSource(mContext, uri, headers);
-                else player.setDataSource(mContext, uri);
+                    else player.setDataSource(mContext, uri);
                 mHandler.post(() -> {
                     if (generation != mOpenGeneration || player != mMediaPlayer) return;
                     try {
