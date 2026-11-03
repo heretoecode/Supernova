@@ -39,7 +39,6 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import com.archos.mediacenter.utils.ActionBarSubmenu;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.Browser;
 import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.ThumbnailRequesterVideo;
 import com.archos.mediacenter.video.browser.adapters.AdapterByShow;
