@@ -7,12 +7,14 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.squareup.picasso.Picasso;
 import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -26,10 +28,10 @@ public class Supernova139LibraryNavigationTest {
             .commit();
         PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -92,7 +94,7 @@ public class Supernova139LibraryNavigationTest {
                 key(nav, KeyEvent.KEYCODE_DPAD_RIGHT);
                 assertNotEquals(first, nav.findFocus().getTag());
                 List<PreviewPages.Cell> cells =
-                    org.robolectric.util.ReflectionHelpers.getField(pages, "cells");
+                    ReflectionHelpers.getField(pages, "cells");
                 String firstPoster = ((Entry) cells.stream()
                                           .filter(cell -> cell.value instanceof Entry && cell.title.isEmpty())
                                           .findFirst()
