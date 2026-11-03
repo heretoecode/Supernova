@@ -33,6 +33,7 @@ import com.archos.mediascraper.ShowTags;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/** Binds TV show descriptions to their views on the Details page. */
 public class TvshowDetailsDescriptionPresenter extends Presenter {
 
     private static final String TAG = "TvshowDetailsDescriptionPresenter";
