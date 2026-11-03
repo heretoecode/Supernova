@@ -28,7 +28,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import java.io.File;
