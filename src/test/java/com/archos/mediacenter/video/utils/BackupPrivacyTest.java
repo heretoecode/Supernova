@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.zip.*;
 import static org.junit.Assert.*;
 
+/** Checks backup export removes secrets and restore rejects unsafe formats and injected authentication. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class BackupPrivacyTest {
