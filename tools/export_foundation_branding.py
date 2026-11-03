@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 ROOT=Path(__file__).resolve().parents[1]
 
 def export(font_path):
-    source=ROOT/'assets/branding'
+    source=ROOT/'design/branding'  # source artwork lives outside assets/ so it is not packed into the APK
     background=Image.open(source/'Supernova_Space_Black_Blend_4K_UHD.png').convert('RGBA')
     ring=Image.open(source/'Supernova_Double_Ring_Final_Visual_Reference.png').convert('RGBA')
     if ring.getchannel('A').getextrema() != (0,254): raise ValueError('Approved ring alpha changed; review source before exporting')

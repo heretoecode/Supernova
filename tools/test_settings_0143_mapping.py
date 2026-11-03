@@ -21,7 +21,7 @@ class Settings143Mapping(unittest.TestCase):
         self.assertEqual(26,sum(r['id']>='S140' for r in runtime))
     def test_official_background_bytes_remain_canonical(self):
         expected='09c25a2f1a4419f0ed0c73a1b0f664d3936ee93b12d69a9e18a960fd786c96d4'
-        for path in ['assets/branding/Supernova_Space_Black_Blend_4K_UHD.png','res/drawable-nodpi/foundation_space_black.png']:
+        for path in ['design/branding/Supernova_Space_Black_Blend_4K_UHD.png','res/drawable-nodpi/foundation_space_black.png']:
             self.assertEqual(expected,hashlib.sha256((ROOT/path).read_bytes()).hexdigest())
     def test_release_history_preserves_previous_delivered_identity(self):
         history=json.loads((ROOT/'assets/foundation/release-history.json').read_text())
