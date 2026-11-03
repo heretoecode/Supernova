@@ -1,5 +1,9 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.app.Application;
+import android.os.SystemClock;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,10 +11,10 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioOAuthClientTest {
     @Test public void oauthDiagnosticsIncludeSemanticFailureButNeverPayloadOrLinkCode()throws Exception{
-        android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();
+        Application app=org.robolectric.RuntimeEnvironment.getApplication();
         com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
         try{
             PutioOAuthClient client=new PutioOAuthClient("1","https://put.io/test-only/{code}");
@@ -18,10 +22,10 @@ public class PutioOAuthClientTest {
                     .request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK")
                     .body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("application/json"),"{status:OK,private_data:'fixture-private-payload'}")).build()).build();
             org.robolectric.util.ReflectionHelpers.setField(client,"http",fake);
-            try{client.poll(new PutioOAuthClient.Code("fixture-private-code","unused"));fail();}catch(java.io.IOException expected){}
+            try{client.poll(new PutioOAuthClient.Code("fixture-private-code","unused"));fail();}catch(IOException expected){}
             Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");
-            java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
-            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());
+            Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,SystemClock.elapsedRealtime());
             assertFalse(evidence.contains("fixture-private-payload"));assertFalse(evidence.contains("fixture-private-code"));
             String operation=null;
             for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
@@ -49,7 +53,7 @@ public class PutioOAuthClientTest {
         assertNull(PutioOAuthClient.parseToken(new JSONObject("{status:OK,oauth_token:null}")));
         assertEquals("test-only-credential",PutioOAuthClient.parseToken(new JSONObject("{status:OK,oauth_token:'test-only-credential'}")));
         for(String data:new String[]{"{status:OK}","{status:OK,oauth_token:123}","{status:ERROR,error_message:'private-response'}"}){
-            try{PutioOAuthClient.parseToken(new JSONObject(data));fail();}catch(java.io.IOException expected){assertFalse(expected.getMessage().contains("private-response"));}
+            try{PutioOAuthClient.parseToken(new JSONObject(data));fail();}catch(IOException expected){assertFalse(expected.getMessage().contains("private-response"));}
         }
     }
 }
