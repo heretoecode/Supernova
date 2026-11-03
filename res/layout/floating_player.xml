@@ -77,15 +77,6 @@
                     android:textSize="14sp"
                     android:textColor="#ffffffff" />
             </LinearLayout>
-            <TextView
-                android:id="@+id/torrent_status"
-                android:paddingTop="5dip"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:textSize="14sp"
-                android:textColor="#ffffffff" />
         </LinearLayout>
 
     </RelativeLayout>
