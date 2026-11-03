@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 
 
+/** Loads movies filtered by rating. */
 public class MoviesByRatingLoader extends MoviesByLoader {
 
     private static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED DESC";
