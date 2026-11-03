@@ -39,6 +39,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Finds available subtitle files and supports subtitle naming, renaming and deletion. */
 public class SubtitlesWizardCommon {
 
     private static final Logger log = LoggerFactory.getLogger(SubtitlesWizardCommon.class);
