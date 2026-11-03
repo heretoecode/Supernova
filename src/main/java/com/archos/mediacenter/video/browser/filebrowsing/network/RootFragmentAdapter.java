@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Provides network-root rows for shortcuts, separators and refresh actions. */
 public abstract class RootFragmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "WorkgroupAndServerAdapter";
