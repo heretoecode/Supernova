@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.metadata;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import java.io.ByteArrayOutputStream;
@@ -89,7 +90,7 @@ public final class OmdbSupplement {
      * Owner decision 2 Nov 2026: Reception shows IMDb, Rotten Tomatoes, Metacritic and awards via
      * OMDb using the owner's own key, typed once into Settings. Enabled only when a key is present.
      */
-    public static OmdbSupplement production(android.content.Context context) {
+    public static OmdbSupplement production(Context context) {
         return new OmdbSupplement(new UserKeyAccess(PreferenceManager.getDefaultSharedPreferences(
                                       context.getApplicationContext())),
             SHARED_TRANSPORT);
