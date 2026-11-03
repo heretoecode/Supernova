@@ -16,6 +16,10 @@ package com.archos.mediacenter.video.leanback.tvshow;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.loader.app.LoaderManager;
@@ -92,7 +96,11 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.ShowTags;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -109,11 +117,11 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     }
 
     @Override
-    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state) {
         View nativeView = super.onCreateView(inflater, parent, state);
         if (!isPreview() || mTvshow == null)
             return nativeView;
-        android.widget.FrameLayout container = new android.widget.FrameLayout(requireContext());
+        FrameLayout container = new FrameLayout(requireContext());
         container.addView(nativeView);
         nativeView.setVisibility(View.GONE);
         mDetailsOverviewRow = new DetailsOverviewRow(mTvshow);
@@ -157,11 +165,11 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         previewWatchedBusy = true;
         Tvshow target = mTvshow;
         com.archos.mediacenter.video.leanback.details.PreviewMoviePage page = preview;
-        android.content.Context app = requireContext().getApplicationContext();
+        Context app = requireContext().getApplicationContext();
         Handler main = new Handler(Looper.getMainLooper());
         artworkWorker().execute(() -> {
-            java.util.List<com.archos.mediacenter.video.browser.adapters.object.Season> seasons =
-                new java.util.ArrayList<>();
+            List<com.archos.mediacenter.video.browser.adapters.object.Season> seasons =
+                new ArrayList<>();
             try (Cursor cursor = new SeasonsLoader(app, target.getTvshowId()).loadInBackground()) {
                 if (cursor != null) {
                     com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper mapper =
@@ -243,10 +251,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         previewArtworkLoading = true;
         Tvshow target = mTvshow;
         com.archos.mediacenter.video.leanback.details.PreviewMoviePage page = preview;
-        android.content.Context app = requireContext().getApplicationContext();
+        Context app = requireContext().getApplicationContext();
         Handler main = new Handler(Looper.getMainLooper());
         artworkWorker().execute(() -> {
-            java.util.List<com.archos.mediascraper.ScraperImage> found = java.util.Collections.emptyList();
+            List<com.archos.mediascraper.ScraperImage> found = Collections.emptyList();
             com.archos.mediascraper.ScraperImage current = null;
             try {
                 com.archos.mediascraper.BaseTags tags = target.getFullScraperTags(app);
@@ -257,7 +265,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             } catch (Exception failed) {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("artwork_choices_unavailable", failed);
             }
-            final java.util.List<com.archos.mediascraper.ScraperImage> images = found;
+            final List<com.archos.mediascraper.ScraperImage> images = found;
             final com.archos.mediascraper.ScraperImage selected = current;
             main.post(() -> {
                 previewArtworkLoading = false;
@@ -531,8 +539,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         });
     }
 
-    private java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> journeyEntries(
-        java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries) {
+    private List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> journeyEntries(
+        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries) {
         if (mTvshow.getShowTags() != null)
             for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : entries)
                 entry.onlineId = mTvshow.getShowTags().getOnlineId();
@@ -541,8 +549,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
     private void playEpisode() {
         if (preview != null && mSeasonAdapters != null) {
-            java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries =
-                new java.util.ArrayList<>();
+            List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries =
+                new ArrayList<>();
             for (int i = 0; i < mSeasonAdapters.size(); i++) {
                 CursorObjectAdapter a = mSeasonAdapters.valueAt(i);
                 for (int j = 0; j < a.size(); j++)
@@ -556,7 +564,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             if (next == null && !entries.isEmpty())
                 next = entries.get(0);
             if (next != null && mTvshow.getShowTags() != null && mTvshow.getShowTags().getDefaultBackdrop() != null) {
-                java.io.File backdrop = mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();
+                File backdrop = mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();
                 if (backdrop != null && backdrop.exists())
                     ((Video) next.media).setPreviewBackdrop(android.net.Uri.fromFile(backdrop).toString());
             }
@@ -608,8 +616,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     private void updatePreviewPlaybackTarget() {
         if (preview == null || mSeasonAdapters == null || mTvshow == null)
             return;
-        java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries =
-            new java.util.ArrayList<>();
+        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries =
+            new ArrayList<>();
         for (int i = 0; i < mSeasonAdapters.size(); i++) {
             CursorObjectAdapter adapter = mSeasonAdapters.valueAt(i);
             for (int j = 0; j < adapter.size(); j++)
@@ -834,20 +842,20 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                         preview.bindShow(finalResult, TvshowFragment.this::playEpisode);
                         // Tags are already local; trailer/artwork database reads stay on the worker.
                         com.archos.mediascraper.ShowTags showTags = finalResult.getShowTags();
-                        android.content.Context app = requireContext().getApplicationContext();
+                        Context app = requireContext().getApplicationContext();
                         ExecutorService metadata = Executors.newSingleThreadExecutor();
                         metadata.execute(() -> {
                             try {
-                                java.util.List<com.archos.mediascraper.ScraperTrailer> trailers =
+                                List<com.archos.mediascraper.ScraperTrailer> trailers =
                                     showTags.getAllTrailersInDb(app);
-                                java.util.List<com.archos.mediascraper.ScraperImage> backdrops =
+                                List<com.archos.mediascraper.ScraperImage> backdrops =
                                     showTags.getAllBackdropsInDb(app);
                                 handler.post(() -> {
                                     if (preview != null && isAdded())
                                         preview.setTags(showTags, trailers, backdrops);
                                 });
                                 if (trailers.isEmpty()) {
-                                    java.util.List<com.archos.mediascraper.ScraperTrailer> tvTrailers =
+                                    List<com.archos.mediascraper.ScraperTrailer> tvTrailers =
                                         com.archos.mediacenter.video.leanback.details.PreviewTvTrailers.load(
                                             app, showTags);
                                     if (!tvTrailers.isEmpty())
@@ -966,7 +974,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                 if (seasonAdapter != null) {
                     seasonAdapter.changeCursor(cursor);
                     if (preview != null) {
-                        java.util.List<Episode> episodes = new java.util.ArrayList<>();
+                        List<Episode> episodes = new ArrayList<>();
                         for (int i = 0; i < seasonAdapter.size(); i++)
                             episodes.add((Episode) seasonAdapter.get(i));
                         preview.setSeason(cursorLoader.getId(), episodes);
