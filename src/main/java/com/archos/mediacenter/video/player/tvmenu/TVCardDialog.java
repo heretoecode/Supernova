@@ -108,6 +108,7 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
         requestFocus();
     }
 
+    @Override
     public TVCardDialog getSlaveView(){ return slaveView; }
 
     public void setOnSwitchClickListener(OnClickListener ocl) {
@@ -115,6 +116,7 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
             findViewById(R.id.imageView).setOnClickListener(ocl);
         this.ocl = ocl;
     }
+    @Override
     public void setSlaveView(View slaveView){
         if(slaveView instanceof TVCardDialog){
             this.slaveView=(TVCardDialog)slaveView;
