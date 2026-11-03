@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+/** Displays indexed video search results for a query. */
 public class BrowserByQuery extends CursorBrowserByVideo {
 
     @Override
