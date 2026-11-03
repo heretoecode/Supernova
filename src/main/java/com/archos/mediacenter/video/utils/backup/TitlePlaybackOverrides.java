@@ -5,8 +5,10 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.VideoMetadata;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import org.json.*;
 
@@ -40,7 +42,7 @@ public final class TitlePlaybackOverrides {
                          .getBytes(StandardCharsets.UTF_8)))
                 value.append(String.format(Locale.ROOT, "%02x", b & 255));
             return value.toString();
-        } catch (java.security.NoSuchAlgorithmException invalid) {
+        } catch (NoSuchAlgorithmException invalid) {
             throw new JSONException("Playback identity guard unavailable");
         }
     }
@@ -264,7 +266,7 @@ public final class TitlePlaybackOverrides {
 
     /** Callback acknowledgement is conditional on the exact prepared choice, never a later manual edit. */
     public static String pending(Context context, VideoDbInfo info, String expected, boolean pending)
-        throws JSONException, java.io.IOException {
+        throws JSONException, IOException {
         synchronized (PreferenceRestoreTransaction.LOCK) {
             JSONObject saved = receiving(context, info);
             if (saved == null || !saved.toString().equals(expected))
@@ -274,13 +276,13 @@ public final class TitlePlaybackOverrides {
             saved.put("pending", pending);
             String value = saved.toString();
             if (!PreferenceManager.getDefaultSharedPreferences(context).edit().putString(key(info.id), value).commit())
-                throw new java.io.IOException("Explicit playback acknowledgement could not be saved");
+                throw new IOException("Explicit playback acknowledgement could not be saved");
             return value;
         }
     }
 
     /** Only explicit user controls supersede restoration; decoder defaults must not erase pending intent. */
-    public static boolean supersede(Context context, VideoDbInfo info) throws JSONException, java.io.IOException {
+    public static boolean supersede(Context context, VideoDbInfo info) throws JSONException, IOException {
         synchronized (PreferenceRestoreTransaction.LOCK) {
             JSONObject previous = receiving(context, info);
             if (previous == null)
@@ -310,7 +312,7 @@ public final class TitlePlaybackOverrides {
                     .edit()
                     .putString(key(info.id), record.toString())
                     .commit())
-                throw new java.io.IOException("Manual playback choice could not supersede restoration");
+                throw new IOException("Manual playback choice could not supersede restoration");
             return true;
         }
     }
