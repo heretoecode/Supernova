@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.archos.mediacenter.video.R;
 
+/** Displays configuration choices for a video home-screen widget. */
 public class VideoWidgetConfigure extends AppCompatActivity {
     private static final String TAG = "VideoWidgetConfigure";
 
