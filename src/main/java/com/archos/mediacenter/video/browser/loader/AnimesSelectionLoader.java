@@ -19,6 +19,7 @@ import android.content.Context;
 import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads selected anime videos with their sort and selection rules. */
 public class AnimesSelectionLoader extends VideosSelectionLoader {
 
 
