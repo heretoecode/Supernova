@@ -28,7 +28,6 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.core.view.MenuItemCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
