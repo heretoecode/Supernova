@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import androidx.preference.PreferenceManager;
+import com.archos.environment.ArchosUtils;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediascraper.*;
@@ -35,7 +36,7 @@ public class MediaMatchReconciliationTest {
             .clear()
             .putString("oauth_token", "AUTH_CANARY")
             .commit();
-        com.archos.environment.ArchosUtils.setGlobalContext(app);
+        ArchosUtils.setGlobalContext(app);
     }
 
     @After
