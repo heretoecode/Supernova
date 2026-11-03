@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.filecoreextension.UriUtils;
+import com.archos.mediacenter.video.player.PlaybackChapters;
 import com.archos.medialib.IMediaMetadataRetriever;
 import com.archos.medialib.IMediaPlayer;
 import com.archos.medialib.LibAvos;
@@ -52,8 +53,8 @@ public class VideoMetadata implements Serializable {
     private AudioTrack[] mAudioTrackList;
     private SubtitleTrack[] mSubtitleTrackList;
     private int mDuration;
-    private List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> mChapters=Collections.emptyList();
-    public List<com.archos.mediacenter.video.player.PlaybackChapters.Chapter> getChapters(){return mChapters==null?Collections.emptyList():mChapters;}
+    private List<PlaybackChapters.Chapter> mChapters=Collections.emptyList();
+    public List<PlaybackChapters.Chapter> getChapters(){return mChapters==null?Collections.emptyList():mChapters;}
     private int mVideoWidth;
     private int mVideoHeight;
     private long mFileSize;
@@ -266,7 +267,7 @@ public class VideoMetadata implements Serializable {
             mFileSize = data.getLong(IMediaPlayer.METADATA_KEY_FILE_SIZE);
         if (data.has(IMediaPlayer.METADATA_KEY_DURATION))
             mDuration = data.getInt(IMediaPlayer.METADATA_KEY_DURATION);
-        mChapters=com.archos.mediacenter.video.player.PlaybackChapters.read(data,mDuration);
+        mChapters=PlaybackChapters.read(data,mDuration);
         if (data.has(IMediaPlayer.METADATA_KEY_VIDEO_WIDTH))
             mVideoWidth = data.getInt(IMediaPlayer.METADATA_KEY_VIDEO_WIDTH);
         if (data.has(IMediaPlayer.METADATA_KEY_VIDEO_HEIGHT))
