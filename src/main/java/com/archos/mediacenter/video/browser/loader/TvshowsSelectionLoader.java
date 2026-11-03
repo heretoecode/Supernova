@@ -17,7 +17,6 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 import android.provider.BaseColumns;
 
-import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
 import com.archos.mediaprovider.video.VideoStore;
 
