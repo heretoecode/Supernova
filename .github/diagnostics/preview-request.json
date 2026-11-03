@@ -1,5 +1,5 @@
 {
- "purpose": "Full unit suite after Codex imports round 2 (337 files) and 359 class summaries",
+ "purpose": "Full unit suite after Codex @Override labels (620) and test-class summaries (226)",
  "tests": [
   "com.archos.*"
  ]
