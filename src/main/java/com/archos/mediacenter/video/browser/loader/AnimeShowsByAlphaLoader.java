@@ -16,8 +16,6 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
-import com.archos.mediaprovider.video.VideoStore;
 
 public class AnimeShowsByAlphaLoader extends AnimeShowsByLoader {
 
