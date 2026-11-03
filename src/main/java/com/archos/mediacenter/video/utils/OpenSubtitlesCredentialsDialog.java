@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays the OpenSubtitles credentials dialog. */
 public class OpenSubtitlesCredentialsDialog extends DialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSubtitlesCredentialsDialog.class);
