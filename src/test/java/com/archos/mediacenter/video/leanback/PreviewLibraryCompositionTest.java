@@ -6,8 +6,12 @@ import android.view.View;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediaprovider.ImportState;
+import com.squareup.picasso.Picasso;
 import java.time.Duration;
 import java.util.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -18,31 +22,31 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewLibraryCompositionTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
     public void firstImportUsesNativeProgressAndOnlyIndexedMediaEnablesCustomization() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException missing) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             PreviewPages pages = new PreviewPages(host.get(), (holder, item) -> {
             });
             host.get().setContentView(pages);
-            com.archos.mediaprovider.ImportState.VIDEO.setState(
-                com.archos.mediaprovider.ImportState.State.INITIAL_IMPORT);
+            ImportState.VIDEO.setState(
+                ImportState.State.INITIAL_IMPORT);
             PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean("supernova_welcome_dismissed", true)
@@ -57,7 +61,7 @@ public class PreviewLibraryCompositionTest {
             List<PreviewPages.Cell> cells = ReflectionHelpers.getField(pages, "cells");
             assertTrue(cells.stream().anyMatch(cell -> cell.value == HomePlaceholder.Kind.HERO));
             assertFalse(cells.stream().anyMatch(cell -> "Continue Watching".equals(cell.title)));
-            com.archos.mediaprovider.ImportState.VIDEO.setState(com.archos.mediaprovider.ImportState.State.IDLE);
+            ImportState.VIDEO.setState(ImportState.State.IDLE);
             Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
             PreviewPagesTest.layout(pages);
             assertSame("Progress refresh retains More Info", info, pages.findFocus());
@@ -73,7 +77,7 @@ public class PreviewLibraryCompositionTest {
             assertTrue(cells.stream().anyMatch(cell -> "Customise Home".equals(cell.title)));
             assertFalse(cells.stream().anyMatch(cell -> "Build Your Library".equals(cell.title)));
         } finally {
-            com.archos.mediaprovider.ImportState.VIDEO.setState(com.archos.mediaprovider.ImportState.State.IDLE);
+            ImportState.VIDEO.setState(ImportState.State.IDLE);
             host.pause().stop().destroy();
         }
     }
@@ -81,10 +85,10 @@ public class PreviewLibraryCompositionTest {
     @Test
     public void moviesAndTvRetainLibrariesWithoutHomeContinueWatching() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException missing) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
