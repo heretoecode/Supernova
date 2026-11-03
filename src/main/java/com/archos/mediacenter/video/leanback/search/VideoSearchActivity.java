@@ -33,10 +33,13 @@ import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.TopNavigation;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsActivity;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.info.SingleVideoLoader;
 
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +95,10 @@ public class VideoSearchActivity extends FragmentActivity {
         if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
             previewSearch=new PreviewSearch(this,getIntent().getIntExtra(EXTRA_SEARCH_MODE,SEARCH_MODE_ALL),savedInstanceState);
-            com.archos.mediacenter.video.leanback.TopNavigation nav=new com.archos.mediacenter.video.leanback.TopNavigation(this,previewSearch,index->{
+            TopNavigation nav=new TopNavigation(this,previewSearch,index->{
                 if(index==5){previewSearch.focusQuery();return;}
-                if(index==4){startActivity(new Intent(this,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));return;}
-                Intent home=new Intent(this,com.archos.mediacenter.video.leanback.MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);finish();
+                if(index==4){startActivity(new Intent(this,VideoSettingsActivity.class));return;}
+                Intent home=new Intent(this,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);finish();
             },previewSearch::atTop);nav.selectTab(5);nav.setScrolled(true);setContentView(nav);getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);return;
         }
 
