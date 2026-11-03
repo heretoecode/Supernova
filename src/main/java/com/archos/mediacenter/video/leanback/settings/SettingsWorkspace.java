@@ -1,10 +1,18 @@
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.annotation.SuppressLint;
 import android.content.*;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.*;
 import android.widget.*;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.*;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.leanback.*;
@@ -264,9 +272,9 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                 heading.addView(icon, new LayoutParams(dp(22), dp(22)));
                 TextView title = text(SettingsRegistry.LABELS[index], 18);
                 title.setTextSize(TILE_TITLE_SP * scale());
-                title.setTypeface(null, android.graphics.Typeface.BOLD);
+                title.setTypeface(null, Typeface.BOLD);
                 title.setSingleLine(true);
-                title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                title.setEllipsize(TextUtils.TruncateAt.END);
                 title.setTag("settings.grid.title");
                 LayoutParams titleSize = new LayoutParams(0, -2, 1);
                 titleSize.leftMargin = dp(9);
@@ -340,7 +348,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         leftSize.rightMargin = dp(12);
         columns.addView(left, leftSize);
         TextView identity = text(SettingsRegistry.LABELS[index], 22);
-        identity.setTypeface(null, android.graphics.Typeface.BOLD);
+        identity.setTypeface(null, Typeface.BOLD);
         PreviewIcon.apply(identity, SettingsRegistry.ICONS[index], 28);
         rail.addView(identity);
         TextView copy = text(SettingsRegistry.DESCRIPTIONS[index], 15);
@@ -354,9 +362,9 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         for (String name : names) {
             TextView link = text(name, 18);
             String explanation = subsectionDescription(name);
-            android.text.SpannableString caption = new android.text.SpannableString(name + "\n" + explanation);
-            caption.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, name.length(), 0);
-            caption.setSpan(new android.text.style.RelativeSizeSpan(.8f), name.length() + 1, caption.length(), 0);
+            SpannableString caption = new SpannableString(name + "\n" + explanation);
+            caption.setSpan(new StyleSpan(Typeface.BOLD), 0, name.length(), 0);
+            caption.setSpan(new RelativeSizeSpan(.8f), name.length() + 1, caption.length(), 0);
             caption.setSpan(new SupernovaStyle.FadedSpan(), name.length() + 1, caption.length(), 0);
             link.setText(caption);
             PreviewIcon.apply(link, subsectionIcon(name), Math.round(26 * scale()));
@@ -429,15 +437,15 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             v.setSelected(selected);
             v.setTextColor(Color.WHITE);
             v.setBackground(SupernovaStyle.selectedRow(getContext(), selected));
-            if (android.os.Build.VERSION.SDK_INT >= 26)
+            if (Build.VERSION.SDK_INT >= 26)
                 v.setDefaultFocusHighlightEnabled(false);
             v.setForeground(null);
             String label = String.valueOf(v.getTag()).substring("settings.section.".length());
             String caption = label + "\n" + subsectionDescription(label);
-            android.text.SpannableString copy = new android.text.SpannableString(caption);
+            SpannableString copy = new SpannableString(caption);
             int split = caption.indexOf('\n');
-            copy.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, split, 0);
-            copy.setSpan(new android.text.style.RelativeSizeSpan(.8f), split + 1, caption.length(), 0);
+            copy.setSpan(new StyleSpan(Typeface.BOLD), 0, split, 0);
+            copy.setSpan(new RelativeSizeSpan(.8f), split + 1, caption.length(), 0);
             copy.setSpan(new SupernovaStyle.FadedSpan(), split + 1, caption.length(), 0);
             v.setText(copy);
         }
@@ -461,7 +469,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             return;
         }
         TextView heading = text(section, 24);
-        heading.setTypeface(null, android.graphics.Typeface.BOLD);
+        heading.setTypeface(null, Typeface.BOLD);
         right.addView(heading);
         TextView description = text(sectionDescription(), 15);
         description.setTextColor(0xffbcc9d9);
@@ -675,10 +683,10 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         final SettingsRegistry.Entry entry;
         final Preference preference;
         final TextView title, description, value;
-        final androidx.appcompat.widget.SwitchCompat toggle;
+        final SwitchCompat toggle;
 
         // Intentional bridge to the pinned AndroidX 1.2.1 model: preserve its native click/dependency/action semantics.
-        @android.annotation.SuppressLint("RestrictedApi")
+        @SuppressLint("RestrictedApi")
         Row(SettingsRegistry.Entry entry, Preference preference) {
             super(SettingsWorkspace.this.getContext());
             this.entry = entry;
@@ -697,7 +705,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             LinearLayout copy = new LinearLayout(getContext());
             copy.setOrientation(VERTICAL);
             title = text("", 19);
-            title.setTypeface(null, android.graphics.Typeface.BOLD);
+            title.setTypeface(null, Typeface.BOLD);
             description = text("", 15);
             description.setTextColor(0xffbcc9d9);
             description.setPadding(0, dp(5), 0, 0);
@@ -709,7 +717,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             value.setPadding(dp(12), 0, 0, 0);
             value.setMaxWidth(dp(170));
             addView(value, new LayoutParams(-2, -2));
-            toggle = new androidx.appcompat.widget.SwitchCompat(getContext());
+            toggle = new SwitchCompat(getContext());
             toggle.setShowText(false);
             toggle.setTextOn("");
             toggle.setTextOff("");
