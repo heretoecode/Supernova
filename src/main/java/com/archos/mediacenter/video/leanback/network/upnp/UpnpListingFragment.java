@@ -69,7 +69,7 @@ public class UpnpListingFragment extends NetworkListingFragment {
         String friendlyUri = "upnp://";
         String friendlyName = UpnpServiceManager.getSingleton(getActivity()).getDeviceFriendlyName(mUri.getHost());
         if(friendlyName!=null) friendlyUri += friendlyName;
-        else friendlyUri += mUri.getHost();
+            else friendlyUri += mUri.getHost();
         friendlyUri += "/" + shortcutName;
         if (log.isDebugEnabled()) log.debug("getFriendlyUri={}", friendlyUri);
         return friendlyUri;
