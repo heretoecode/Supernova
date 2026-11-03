@@ -15,6 +15,7 @@
 package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
+import com.archos.mediacenter.video.utils.SortUtils;
 
 
 public class TvshowsNoAnimeByAlphaLoader extends TvshowsNoAnimeByLoader {
@@ -34,7 +35,7 @@ public class TvshowsNoAnimeByAlphaLoader extends TvshowsNoAnimeByLoader {
     }
 
     public String getSelection(Context context) {
-        String col = com.archos.mediacenter.video.utils.SortUtils.getAlphaBucketColumn(context, com.archos.mediacenter.video.utils.SortUtils.SortScope.SHOW);
+        String col = SortUtils.getAlphaBucketColumn(context, SortUtils.SortScope.SHOW);
         return "SELECT\n" +
                 "    UNICODE(SUBSTR(" + col + ",1,1)) AS _id,\n" +
                 "    UPPER(SUBSTR(" + col + ",1,1)) AS name,\n" +
