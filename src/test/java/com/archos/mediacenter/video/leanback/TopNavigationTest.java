@@ -1,12 +1,24 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
+import android.widget.HorizontalScrollView;
+import android.widget.SeekBar;
 import androidx.fragment.app.FragmentActivity;
 import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.widget.*;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -29,19 +41,19 @@ public class TopNavigationTest {
                 nav.measure(View.MeasureSpec.makeMeasureSpec(1280, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(720, View.MeasureSpec.EXACTLY));
                 nav.layout(0, 0, 1280, 720);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
             }
-            android.graphics.Rect clock = new android.graphics.Rect();
+            Rect clock = new Rect();
             assertTrue(nav.findViewWithTag("preview-default-clock").getGlobalVisibleRect(clock));
             View rail = ((android.view.ViewGroup) nav.getChildAt(0)).getChildAt(1);
-            android.graphics.Bitmap bitmap =
-                android.graphics.Bitmap.createBitmap(1280, 720, android.graphics.Bitmap.Config.ARGB_8888);
+            Bitmap bitmap =
+                Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
             int[] normal = new int[clock.width() * clock.height()], withoutRail = new int[normal.length];
-            nav.draw(new android.graphics.Canvas(bitmap));
+            nav.draw(new Canvas(bitmap));
             bitmap.getPixels(normal, 0, clock.width(), clock.left, clock.top, clock.width(), clock.height());
             rail.setVisibility(View.INVISIBLE);
-            bitmap.eraseColor(android.graphics.Color.TRANSPARENT);
-            nav.draw(new android.graphics.Canvas(bitmap));
+            bitmap.eraseColor(Color.TRANSPARENT);
+            nav.draw(new Canvas(bitmap));
             bitmap.getPixels(withoutRail, 0, clock.width(), clock.left, clock.top, clock.width(), clock.height());
             rail.setVisibility(View.VISIBLE);
             bitmap.recycle();
@@ -50,19 +62,19 @@ public class TopNavigationTest {
                 "home", "movies", "tv", "custom", "network", "search", "settings"
             }) {
                 View tab = nav.findViewWithTag("semantic:topnav." + tag);
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 if (tab.getGlobalVisibleRect(visible))
                     assertTrue("Overflow must not draw over clock: " + tag, visible.right <= clock.left);
             }
             assertTrue(nav.findViewWithTag("semantic:topnav.home").requestFocus());
             for (int step = 0; step < 7; step++) {
                 View tab = nav.findFocus();
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 assertTrue(tab.getGlobalVisibleRect(visible));
                 assertEquals("Focused action is wholly visible", tab.getWidth(), visible.width());
                 assertTrue("Focused action clears clock", visible.right <= clock.left);
                 nav.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
             }
         } finally {
             host.pause().stop().destroy();
@@ -108,7 +120,7 @@ public class TopNavigationTest {
 
     @Test
     public void topShellWorksWithNativeBrowseAndCanFocusNavigation() {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("try_new_ui", true)
             .commit();
@@ -120,7 +132,7 @@ public class TopNavigationTest {
             assertTrue(browse.getView() instanceof TopNavigation);
             browse.showTitle(true);
             assertNull("Legacy branding and search must not be installed", browse.getTitleView());
-            android.util.TypedValue spacing = new android.util.TypedValue();
+            TypedValue spacing = new TypedValue();
             assertTrue(
                 host.get().getTheme().resolveAttribute(androidx.leanback.R.attr.browseRowsMarginTop, spacing, true));
             assertEquals(40f,
@@ -141,7 +153,7 @@ public class TopNavigationTest {
             Robolectric.buildActivity(Host.class).setup();
         try {
             View hud = LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental, null);
-            assertTrue(hud.findViewById(R.id.seek_progress) instanceof android.widget.SeekBar);
+            assertTrue(hud.findViewById(R.id.seek_progress) instanceof SeekBar);
             assertTrue(hud.findViewById(R.id.pause) instanceof ImageButton);
             assertNotNull(hud.findViewById(R.id.my_recycler_view));
             assertNotNull(hud.findViewById(R.id.time_current));
@@ -162,7 +174,7 @@ public class TopNavigationTest {
 
     @Test
     public void classicBrowseRetainsItsTitle() {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("try_new_ui", false)
             .commit();
@@ -207,7 +219,7 @@ public class TopNavigationTest {
     @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
     @Config(qualifiers = "w960dp-h540dp-land-mdpi")
     public void renderPreviewHomeAndCheckRemoteTabSelection() throws Exception {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("try_new_ui", true)
             .commit();
@@ -246,22 +258,22 @@ public class TopNavigationTest {
                     View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
                 root.layout(0, 0, 960, 540);
                 root.getViewTreeObserver().dispatchOnPreDraw();
-                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                    .idleFor(java.time.Duration.ofMillis(100));
+                org.robolectric.Shadows.shadowOf(Looper.getMainLooper())
+                    .idleFor(Duration.ofMillis(100));
             }
             assertNotNull(browse.getRowsSupportFragment());
             assertTrue("Render must include populated library rows",
                 browse.getRowsSupportFragment().getVerticalGridView().getChildCount() > 0);
-            android.graphics.Bitmap bitmap =
-                android.graphics.Bitmap.createBitmap(960, 540, android.graphics.Bitmap.Config.ARGB_8888);
-            root.draw(new android.graphics.Canvas(bitmap));
-            java.io.File out = new java.io.File("build/reports/preview-ui/home.png");
+            Bitmap bitmap =
+                Bitmap.createBitmap(960, 540, Bitmap.Config.ARGB_8888);
+            root.draw(new Canvas(bitmap));
+            File out = new File("build/reports/preview-ui/home.png");
             out.getParentFile().mkdirs();
-            try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) {
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream);
+            try (FileOutputStream stream = new FileOutputStream(out)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             }
             LinearLayout bar = (LinearLayout) ((TopNavigation) root).getChildAt(0);
-            LinearLayout group = (LinearLayout) ((android.widget.HorizontalScrollView) bar.getChildAt(1)).getChildAt(0);
+            LinearLayout group = (LinearLayout) ((HorizontalScrollView) bar.getChildAt(1)).getChildAt(0);
             TextView movies = (TextView) group.getChildAt(1);
             movies.performClick();
             assertTrue(movies.isSelected());
