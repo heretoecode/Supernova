@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.utils;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
