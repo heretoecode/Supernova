@@ -13,6 +13,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks that metadata match previews stay read-only until explicit acceptance. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMatchReviewTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
