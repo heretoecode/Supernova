@@ -20,8 +20,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaScannerConnection;
 
+import android.util.Log;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -41,9 +43,10 @@ import android.provider.MediaStore;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -51,6 +54,7 @@ import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
@@ -86,11 +90,15 @@ import com.archos.mediascraper.AutoScrapeService;
 import com.archos.mediaprovider.video.LoaderUtils;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -363,7 +371,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                     getContext().getContentResolver().takePersistableUriPermission(
                         uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 } catch (SecurityException transientGrant) {
-                    android.util.Log.d("NovaPreview", "Backup provider offers a temporary grant");
+                    Log.d("NovaPreview", "Backup provider offers a temporary grant");
                 }
                 Intent intent = new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(),
                                            MediaLibraryBackupService.class);
@@ -376,9 +384,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                     return;
                 reviewBackup(uri);
             });
-        preferencesFragment.getLifecycle().addObserver(new androidx.lifecycle.DefaultLifecycleObserver() {
+        preferencesFragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
             @Override
-            public void onCreate(androidx.lifecycle.LifecycleOwner owner) {
+            public void onCreate(LifecycleOwner owner) {
                 if (!androidx.preference.PreferenceManager
                          .getDefaultSharedPreferences(preferencesFragment.requireContext())
                          .getBoolean("try_new_ui", false))
@@ -646,7 +654,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         return mPreferencesFragment.getPreferenceScreen();
     }
 
-    private static void addOwned(androidx.preference.PreferenceGroup group, Preference item) {
+    private static void addOwned(PreferenceGroup group, Preference item) {
         if (item.getParent() == group)
             return;
         if (item.getParent() != null)
@@ -1194,7 +1202,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             Toast.makeText(getActivity(), R.string.recreate_sort_titles_in_progress, Toast.LENGTH_SHORT).show();
             new Thread(() -> {
                 try {
-                    android.database.sqlite.SQLiteDatabase db = com.archos.mediaprovider.VideoDb.get(getContext());
+                    SQLiteDatabase db = com.archos.mediaprovider.VideoDb.get(getContext());
                     com.archos.mediaprovider.video.ScraperTables.recreateSortNames(db);
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
@@ -1288,8 +1296,8 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                         try {
                             backupDestination.launch(
                                 "nova-backup-" +
-                                new java.text.SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT)
-                                    .format(new java.util.Date()) +
+                                new SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT)
+                                    .format(new Date()) +
                                 ".zip.in-progress");
                         } catch (android.content.ActivityNotFoundException missing) {
                             new androidx.appcompat.app.AlertDialog.Builder(getActivity())
@@ -1904,10 +1912,10 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         buildLanguageList(getActivity(), languages, entries, values);
     }
 
-    public static java.util.Map<String, String> subtitleLanguageChoices(Context context) {
+    public static Map<String, String> subtitleLanguageChoices(Context context) {
         List<String> entries = new java.util.ArrayList<>(), values = new java.util.ArrayList<>();
         buildLanguageList(context, OPENSUBTITLES_LANGUAGES, entries, values);
-        java.util.Map<String, String> result = new java.util.LinkedHashMap<>();
+        Map<String, String> result = new LinkedHashMap<>();
         for (int i = 0; i < values.size(); i++)
             result.put(values.get(i), entries.get(i));
         return result;
@@ -1972,7 +1980,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     }
 
     /** Languages Java cannot name, which would otherwise show their raw code (owner 2 Nov 2026: "kmr (Turkey)"). */
-    private static final java.util.Map<String, String> UNNAMED_LANGUAGES = java.util.Map.of("kmr", "Kurmanji");
+    private static final Map<String, String> UNNAMED_LANGUAGES = Map.of("kmr", "Kurmanji");
 
     /** Display name for an interface language, replacing a raw ISO code with a readable name where Java has none. */
     static String uiLanguageName(Locale locale) {
