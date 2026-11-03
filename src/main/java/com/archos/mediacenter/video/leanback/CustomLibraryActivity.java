@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.view.*;
 import android.widget.*;
+import androidx.activity.OnBackPressedCallback;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import java.util.concurrent.*;
 
@@ -29,7 +30,7 @@ public final class CustomLibraryActivity extends LeanbackActivity {
         navigation = new TopNavigation(this, workspace, this::navigate, () -> workspace.atTop());
         navigation.selectTab(6);
         setContentView(navigation);
-        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             public void handleOnBackPressed() {
                 workspace.back();
             }
