@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.FolderPicker;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import java.io.File;
@@ -31,7 +32,7 @@ public class SharedDirectoryPickerTest {
     @Test
     public void nativeDownloadPickerUsesSharedBrowserAndPreservesResultPath() throws Exception {
         Application app = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .putBoolean("try_new_ui", true)
             .commit();
