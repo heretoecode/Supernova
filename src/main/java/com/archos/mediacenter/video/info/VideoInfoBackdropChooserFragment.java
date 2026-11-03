@@ -33,6 +33,7 @@ import android.widget.ImageView.ScaleType;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediacenter.utils.imageview.ImageProcessor;
 import com.archos.mediacenter.utils.imageview.ImageViewSetter;
 import com.archos.mediacenter.utils.imageview.LoadResult.Status;
@@ -352,7 +353,7 @@ public class VideoInfoBackdropChooserFragment extends Fragment implements
                     String file = image.getThumbFile();
                     if (file != null) {
                         image.downloadThumb(mContext, mWidth, mHeight);
-                        taskItem.result.bitmap = com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(file, mWidth, mHeight);
+                        taskItem.result.bitmap = BitmapUtils.decodeSampledBitmapFromFile(file, mWidth, mHeight);
                     }
                     taskItem.result.status = taskItem.result.bitmap != null ?
                             Status.LOAD_OK : Status.LOAD_ERROR;
