@@ -38,7 +38,6 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.File;
 import java.util.HashMap;
 
 
