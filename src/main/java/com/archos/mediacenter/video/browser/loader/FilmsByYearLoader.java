@@ -16,7 +16,6 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
 
 public class FilmsByYearLoader extends FilmsByLoader {
 
