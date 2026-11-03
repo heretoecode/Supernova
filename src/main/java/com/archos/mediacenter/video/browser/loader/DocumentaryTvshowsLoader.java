@@ -4,7 +4,6 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 /** Lists scraped TV shows whose existing metadata identifies them as documentaries. */
