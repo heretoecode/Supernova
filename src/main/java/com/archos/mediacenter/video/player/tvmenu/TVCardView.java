@@ -15,16 +15,14 @@
 package com.archos.mediacenter.video.player.tvmenu;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.archos.environment.ArchosFeatures;
+import android.view.ViewGroup;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.FocusableTVCardView;
 
@@ -99,7 +97,7 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
     }
 
     private void init() {
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false)) minAlpha = 230;
+        if (PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false)) minAlpha = 230;
         this.isChecked = false;
         this.others = new ArrayList<View>();
         this.lastFocused = 0;
@@ -112,24 +110,24 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
     //dimensions for animations
 
     private int expandedHeightLimit() {
-        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false)
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false)
             ? (int)(getResources().getDisplayMetrics().heightPixels * .8f) : originalHeight * 2;
     }
     public TVCardView getSlaveView(){return slaveView;}
     public int getCurrentWidth() {
-        android.view.ViewGroup.LayoutParams lp = getLayoutParams();
+        ViewGroup.LayoutParams lp = getLayoutParams();
         return lp.width;
     }
 
     public int getCurrentHeight() {
-        android.view.ViewGroup.LayoutParams lp = getLayoutParams();
+        ViewGroup.LayoutParams lp = getLayoutParams();
         return lp.height;
     }
 
     public int getImageViewCurrentWidth() {
         View v = (View) findViewById(R.id.topView);
         if (v != null) {
-            android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
+            ViewGroup.LayoutParams lp = v.getLayoutParams();
             return lp.width > 0 ? lp.width : getCurrentWidth();
         }
         return 0;
@@ -138,7 +136,7 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
     public int getImageViewCurrentHeight() {
         View v = (View) findViewById(R.id.topView);
         if (v != null) {
-            android.view.ViewGroup.LayoutParams lp = v.getLayoutParams();
+            ViewGroup.LayoutParams lp = v.getLayoutParams();
             return lp.height > 0 ? lp.height : getCurrentHeight();
         }
         return 0;
@@ -368,7 +366,7 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
     }
     public void originalSetX(float x){
         this.originalX = x;
-        android.view.ViewGroup.LayoutParams lp = getLayoutParams();
+        ViewGroup.LayoutParams lp = getLayoutParams();
         originalHeight = lp.height;
         originalWidth = lp.width;
         if(slaveView!=null)
@@ -551,7 +549,7 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
         @Override
         protected void applyTransformation(float interpolatedTime,
                 Transformation t) {
-            android.view.ViewGroup.LayoutParams lp = getLayoutParams();
+            ViewGroup.LayoutParams lp = getLayoutParams();
             lp.height = (int) (mStartHeight + mDeltaHeight * interpolatedTime);
             lp.width = (int) (mStartWidth + mDeltaWidth * interpolatedTime);
             setLayoutParams(lp);
@@ -600,7 +598,7 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
     public View createSlaveView() {
         // TODO Auto-generated method stub
         
-        View v = (View)LayoutInflater.from(mContext).inflate(androidx.preference.PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false) ? R.layout.card_layout_experimental : R.layout.card_layout, null);
+        View v = (View)LayoutInflater.from(mContext).inflate(PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false) ? R.layout.card_layout_experimental : R.layout.card_layout, null);
         TVCardView tvcv =(TVCardView) v.findViewById(R.id.card_view);
         tvcv.setParentView(v);
         setSlaveView(tvcv);
