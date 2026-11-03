@@ -33,6 +33,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
 
+/** Displays an audio speed picker dialog and reports speed changes. */
 public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListener,
         AudioSpeedPicker.OnAudioSpeedChangedListener, AudioSpeedPickerDialogInterface {
 
