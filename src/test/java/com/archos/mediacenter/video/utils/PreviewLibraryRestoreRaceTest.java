@@ -29,6 +29,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import org.slf4j.LoggerFactory;
 
+/** Checks stale library queries cannot republish old snapshots after a pin restore. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
