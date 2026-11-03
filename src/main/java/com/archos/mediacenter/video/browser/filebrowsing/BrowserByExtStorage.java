@@ -41,6 +41,7 @@ import java.io.File;
 
 import static com.archos.filecorelibrary.FileUtils.removeFileSlashSlash;
 
+/** Browses external storage and responds to storage availability changes. */
 public class BrowserByExtStorage extends BrowserByLocalFolder {
 
     protected String currentMountPoint;
