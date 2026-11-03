@@ -66,6 +66,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import java.util.ArrayList;
 
+/** Provides shared loading, sorting and row presentation for grouped movie browsers. */
 public abstract class MoviesByFragment extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "MoviesByFragment";
