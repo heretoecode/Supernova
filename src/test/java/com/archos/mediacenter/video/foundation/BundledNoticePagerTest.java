@@ -21,6 +21,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks lossless bundled licence reading, bounded text layout and safe Unicode page boundaries. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 public class BundledNoticePagerTest {
