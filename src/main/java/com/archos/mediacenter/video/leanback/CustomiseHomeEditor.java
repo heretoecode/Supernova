@@ -1,24 +1,27 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import androidx.core.view.ViewCompat;
 import com.archos.mediacenter.video.leanback.PreviewHomeRows.Row;
-import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
-import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -114,8 +117,8 @@ final class CustomiseHomeEditor {
     }
 
     void show() {
-        if (android.os.Build.VERSION.SDK_INT < 31 && context instanceof android.app.Activity)
-            releaseBackdrop = PreviewFrost.show((android.app.Activity) context);
+        if (Build.VERSION.SDK_INT < 31 && context instanceof Activity)
+            releaseBackdrop = PreviewFrost.show((Activity) context);
         dialog.setCancelable(false);
         dialog.show();
         Window window = dialog.getWindow();
@@ -123,7 +126,7 @@ final class CustomiseHomeEditor {
         window.setDimAmount(.58f);
         window.setLayout(
             Math.min(dp(900), TvLayout.safeWidth(context)), Math.min(dp(468), TvLayout.safeHeight(context)));
-        if (android.os.Build.VERSION.SDK_INT >= 31) {
+        if (Build.VERSION.SDK_INT >= 31) {
             window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
             WindowManager.LayoutParams blur = window.getAttributes();
             blur.setBlurBehindRadius(dp(8));
@@ -300,7 +303,7 @@ final class CustomiseHomeEditor {
     }
 
     private boolean motion() {
-        return android.os.Build.VERSION.SDK_INT < 26 || android.animation.ValueAnimator.areAnimatorsEnabled();
+        return Build.VERSION.SDK_INT < 26 || ValueAnimator.areAnimatorsEnabled();
     }
 
     private void startOrPlace(Row row) {
@@ -341,7 +344,7 @@ final class CustomiseHomeEditor {
         view.requestFocus();
         // A rebuilt row has no bounds yet. Recheck after layout if focus fell back
         // to a container; never take focus from a later deliberate control choice.
-        if (!androidx.core.view.ViewCompat.isLaidOut(view))
+        if (!ViewCompat.isLaidOut(view))
             view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
                 public void onLayoutChange(View target, int left, int top, int right, int bottom, int oldLeft,
@@ -507,12 +510,12 @@ final class CustomiseHomeEditor {
         Set<String> selectedGenres = PreviewGenres.parse(row.genreRule);
         String summary = selectedGenres.isEmpty()
             ? "All Genres"
-            : android.text.TextUtils.join(", ", selectedGenres) + " · " + selectedGenres.size() + " selected";
+            : TextUtils.join(", ", selectedGenres) + " · " + selectedGenres.size() + " selected";
         TextView genres = field(MenuFoundation.control(context, summary,
                                     selectedGenres.isEmpty() ? "genres" : selectedGenres.iterator().next(),
                                     () -> {
                                         HomeGenrePicker.show(context, row, namesSelected -> {
-                                            row.genreRule = android.text.TextUtils.join("|", namesSelected);
+                                            row.genreRule = TextUtils.join("|", namesSelected);
                                             saveRow(row);
                                             // Do not silently re-enable automatic additions when the user froze this row.
                                             renderRows();
@@ -596,10 +599,10 @@ final class CustomiseHomeEditor {
             new LinearLayout.LayoutParams(Math.max(dp(88), maximum.contentWidth()), -2);
         limitSize.leftMargin = dp(8);
         display.addView(maximum, limitSize);
-        android.widget.HorizontalScrollView displayViewport = new android.widget.HorizontalScrollView(context);
+        HorizontalScrollView displayViewport = new HorizontalScrollView(context);
         displayViewport.setClipToPadding(false);
         displayViewport.setHorizontalScrollBarEnabled(false);
-        displayViewport.addView(display, new android.widget.HorizontalScrollView.LayoutParams(-2, -2));
+        displayViewport.addView(display, new HorizontalScrollView.LayoutParams(-2, -2));
         editor.addView(displayViewport, new LinearLayout.LayoutParams(-1, -2));
         TextView automatic = field(MenuFoundation.control(context, "Automatically include new matching media",
                                        row.dynamic ? "checkbox checked" : "checkbox",
