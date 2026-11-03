@@ -33,6 +33,7 @@ import com.archos.mediacenter.video.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays web content and handles navigation and WebView lifecycle events. */
 public class WebViewActivity extends AppCompatActivity {
 
     private static final Logger log = LoggerFactory.getLogger(WebViewActivity.class);
