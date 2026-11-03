@@ -19,6 +19,7 @@ import android.view.View;
 import androidx.preference.PreferenceFragmentCompat;
 
 
+/** Displays video preference screens and forwards their lifecycle events. */
 public class VideoPreferencesFragment extends PreferenceFragmentCompat {
 
     private VideoPreferencesCommon mPreferencesCommon = new VideoPreferencesCommon(this);
