@@ -135,6 +135,27 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
 - U2 and L2 are in phone-only screens and disappear with the TV-only removal (item 10).
 - **Status:** approved — awaiting go-ahead to code.
 
+### 12. Network & Files › Local Storage and the file browser (design)
+- **Seen (photos, 0.153):** drive list shows raw paths (`/storage/D4A7-6CC3`), "External drive:" prefixes, an
+  "All Files" row, a near-empty right panel, heading inside the focus outline; browsing shows `file://…%20…`
+  addresses, nameless path parts, system folders, an unclear "All Files: Off" filter, plain file names, no
+  watched state, no Play action; two-panel desktop-style layout.
+- **Decision (owner, 2026-11-03):**
+  - **Layout C:** one full-width list + a **details strip** at the bottom for the focused item; **OK** does the
+    obvious thing (open folder / play video); the **menu button / long-press opens the approved pop-up menu**
+    (Play, Play from beginning, Details, Exclude/Add to Library, Save Location). **Grid** button switches to a
+    poster grid (layout B). Mock-ups: `docs/design/proposals/local-storage/04–06-*.png` (C = 06).
+  - Drive list: friendly names ("Backup #2 · USB drive · Micron"), free-space bars, no raw paths, no "All Files".
+  - **"All Files" removed** as a place (its contents live under Local Storage and Network Shares).
+  - Filter renamed **"Showing: Videos only / All files"**; system folders hidden unless "All files".
+  - Video rows: name without extension, duration · resolution, watched ✓ / progress bar; strip shows what it
+    is matched to, poster, details and library status.
+- **Proposed, awaiting approval:** clickable **path bar** (Up from the toolbar; OK jumps to that level; Back
+  still goes up one) and **library markers** — "Library folder" tag on folders you added, excluded items dimmed
+  with an "Excluded" tag, inherited items untagged, the strip states the reason ("Excluded by you · inside the
+  TV library folder"). Mock-ups: `07–09-*.png`. List rows use the approved white-outline row focus.
+- **Status:** layout approved; path bar and markers awaiting approval.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
