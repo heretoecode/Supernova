@@ -31,6 +31,7 @@ import com.archos.mediacenter.video.utils.VideoUtils;
 
 import java.util.List;
 
+/** Displays saved network shortcuts and an entry for adding a shortcut. */
 public class ShortcutAdapter extends RootFragmentAdapter {
     List<ShortcutDb.Shortcut> mShorcuts;
     protected static final int TYPE_SHORTCUT = 1;
