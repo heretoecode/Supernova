@@ -2,13 +2,16 @@ package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Activity;
 import android.view.*;
+import android.view.ViewTreeObserver;
 import androidx.recyclerview.widget.*;
 import androidx.leanback.widget.Presenter;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import com.archos.mediacenter.video.streaming.*;
 import android.net.Uri;
+import java.util.Locale;
 
 /** Recycled season rail; long seasons do not inflate or request all artwork at once. */
 final class PreviewEpisodeRow extends PreviewFocusRecycler {
@@ -111,7 +114,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
 
     static boolean aired(String date) {
         return date != null && date.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")
-            && date.compareTo(new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ROOT).format(new Date()))
+            && date.compareTo(new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date()))
             <= 0;
     }
 
@@ -160,8 +163,8 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
             return;
         scrollToPosition(remembered);
         // Wait for layout, not an arbitrary time delay: off-screen cards do not exist yet.
-        final android.view.ViewTreeObserver.OnGlobalLayoutListener listener =
-            new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+        final ViewTreeObserver.OnGlobalLayoutListener listener =
+            new ViewTreeObserver.OnGlobalLayoutListener() {
                 public void onGlobalLayout() {
                     RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(remembered);
                     if (holder != null) {
