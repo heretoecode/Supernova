@@ -23,6 +23,7 @@ import android.view.ViewParent;
 
 import com.archos.environment.ArchosFeatures;
 
+/** Routes TV playback key events to enclosing cards and identifies TV and confirmation-key modes. */
 public class TVUtils {
     /**
      * Propagate an unhandled key event to the enclosing TVCardView/TVCardDialog.
