@@ -23,6 +23,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads films and collections using a shared video projection. */
 public class FilmsNCollectionsLoader extends VideoLoader {
 
     private static final Logger log = LoggerFactory.getLogger(FilmsNCollectionsLoader.class);
