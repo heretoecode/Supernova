@@ -27,6 +27,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Exposes TV video search results through an Android content provider. */
 public class VideoSearchProvider extends ContentProvider {
 
     // primary text, = scraper title with fallback to plain filename based title
