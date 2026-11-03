@@ -28,7 +28,9 @@ import androidx.preference.PreferenceManager;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
 
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
@@ -85,7 +87,7 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
         @Override
-        public void onDisplayPreferenceDialog(androidx.preference.Preference pref) {
+        public void onDisplayPreferenceDialog(Preference pref) {
             if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
                 && PreviewPreferenceDialogs.show(this, pref))
                 return;
@@ -93,7 +95,7 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
         }
 
         @Override
-        public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(
+        public RecyclerView onCreateRecyclerView(
             LayoutInflater inflater, ViewGroup parent, Bundle state) {
             return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
                 ? PreviewSettings.grid(requireContext())
@@ -106,12 +108,12 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
             View original = super.onCreateView(inflater, container, state);
             if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
                 return original;
-            androidx.recyclerview.widget.RecyclerView list = getListView();
+            RecyclerView list = getListView();
             if (list.getParent() instanceof ViewGroup)
                 ((ViewGroup) list.getParent()).removeView(list);
             LinearLayout panel = new LinearLayout(requireContext());
             panel.setOrientation(LinearLayout.VERTICAL);
-            int pad = com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(), 28);
+            int pad = PreviewDialog.dp(requireContext(), 28);
             panel.setPadding(pad, pad / 2, pad, pad);
             panel.setBackgroundColor(0xff0b1b29);
             TextView title = new TextView(requireContext());
@@ -125,7 +127,7 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
         }
 
         @Override
-        protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
+        protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
             return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
                 ? PreviewSettings.adapter(screen)
                 : super.onCreateAdapter(screen);
