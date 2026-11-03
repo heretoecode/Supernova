@@ -33,6 +33,7 @@ import com.archos.mediacenter.video.browser.filebrowsing.network.WorkgroupShortc
 import java.util.List;
 
 
+/** Displays SMB workgroups alongside network shortcuts and servers. */
 public class SmbWorkgroupShortcutAndServerAdapter extends WorkgroupShortcutAndServerAdapter {
     private boolean mDisplayWorkgroupSeparator;
     protected static final int TYPE_WORKGROUP_SEPARATOR = 0;
