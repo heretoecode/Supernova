@@ -78,6 +78,7 @@ public class Preview417NavigationTest {
         PreviewFocusRecycler grid = new PreviewFocusRecycler(host);
         grid.setLayoutManager(new GridLayoutManager(host, 3));
         grid.setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            @Override
             public int getItemCount() { return 5; }
             public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
                 TextView card = new TextView(host); card.setFocusable(true); card.setFocusableInTouchMode(true);
