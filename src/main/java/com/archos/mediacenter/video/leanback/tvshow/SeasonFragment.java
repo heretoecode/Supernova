@@ -21,8 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,8 +31,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -48,6 +44,7 @@ import androidx.leanback.widget.RowPresenter;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.FileUtilsQ;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.Delete;
@@ -70,7 +67,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -221,7 +217,7 @@ public class SeasonFragment
                                 delete.startMultipleDeleteProcess(uris);
                             }
                         };
-                        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                                 .getBoolean("try_new_ui", false))
                             com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(requireContext(),
                                 "Delete episodes?",
@@ -271,7 +267,7 @@ public class SeasonFragment
                             delete.startMultipleDeleteProcess(uris);
                         }
                     };
-                    if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                             .getBoolean("try_new_ui", false))
                         com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(requireContext(),
                             "Delete episodes?",
