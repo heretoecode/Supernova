@@ -9,6 +9,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
+/** Checks Details enrichment merges current sections and rejects obsolete title deliveries. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DetailsEnrichmentDeliveryTest {
  @Test public void firstColdDeliveryDoesNotRequireAnExistingOptionalPackage()throws Exception{
