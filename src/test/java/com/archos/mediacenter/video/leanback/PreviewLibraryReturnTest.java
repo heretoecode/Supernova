@@ -1,14 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.os.Looper;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
+import java.time.Duration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -26,7 +29,7 @@ public class PreviewLibraryReturnTest {
 
     private void checkReturn(boolean table){
         try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("preview_library_1_list",table).apply();
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("preview_library_1_list",table).apply();
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             long[] opened={-1};PreviewPages pages=new PreviewPages(host.get(),(holder,item)->opened[0]=((Movie)item).getId());
@@ -47,7 +50,7 @@ public class PreviewLibraryReturnTest {
             assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
         }finally{host.pause().stop().destroy();}
     }
-    private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));}}
+    private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));}}
     private Snapshot snapshot(boolean updated){
         Snapshot result=new Snapshot();
         for(int id=1;id<=60;id++){
