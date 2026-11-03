@@ -5,7 +5,9 @@ import android.content.Context;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.player.PlayerService;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
@@ -14,9 +16,12 @@ import java.util.*;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -90,7 +95,7 @@ public class LegacyViewingRestoreTest {
         assertEquals(0, record.played);
         assertEquals(4444, record.position);
         assertFalse(
-            ((com.archos.mediacenter.video.browser.adapters.object.Video) snapshot.movies.get(0).media).isWatched());
+            ((Video) snapshot.movies.get(0).media).isWatched());
         assertEquals(nativeBefore, nativeState());
         assertEquals("AUTH_CANARY", PreferenceManager.getDefaultSharedPreferences(app).getString("oauth_token", null));
     }
@@ -134,51 +139,51 @@ public class LegacyViewingRestoreTest {
         payload.getJSONArray("rows").put(
             new JSONObject().put("identity", "tmdb:movie:123").put("position", 7777).put("duration", 12000));
         transaction.apply(transaction.prepare(Map.of(BackupCategory.POSITIONS, payload), null), () -> false);
-        var service = org.mockito.Mockito.mock(
-            com.archos.mediacenter.video.player.PlayerService.class, org.mockito.Mockito.CALLS_REAL_METHODS);
-        org.mockito.Mockito.doReturn(app.getPackageName()).when(service).getPackageName();
-        org.mockito.Mockito.doReturn(app.getDatabasePath(ViewingHistory.DATABASE))
+        var service = Mockito.mock(
+            PlayerService.class, Mockito.CALLS_REAL_METHODS);
+        Mockito.doReturn(app.getPackageName()).when(service).getPackageName();
+        Mockito.doReturn(app.getDatabasePath(ViewingHistory.DATABASE))
             .when(service)
             .getDatabasePath(ViewingHistory.DATABASE);
-        org.mockito.Mockito.doAnswer(call -> app.getSharedPreferences(call.getArgument(0), call.getArgument(1)))
+        Mockito.doAnswer(call -> app.getSharedPreferences(call.getArgument(0), call.getArgument(1)))
             .when(service)
-            .getSharedPreferences(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyInt());
+            .getSharedPreferences(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt());
         var constructor =
             Class.forName("com.archos.mediacenter.video.player.PlayerService$PlaybackSession").getDeclaredConstructor();
         constructor.setAccessible(true);
-        org.robolectric.util.ReflectionHelpers.setField(service, "mPlaybackSession", constructor.newInstance());
+        ReflectionHelpers.setField(service, "mPlaybackSession", constructor.newInstance());
         var local = info();
         local.duration = 10000;
         local.traktResume = 25;
         var network = new VideoDbInfo(Uri.parse("file:///network.mkv"));
         network.resume = 2222;
         network.lastTimePlayed = 100;
-        org.robolectric.util.ReflectionHelpers.callInstanceMethod(service, "updateResumeCandidates",
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, local),
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, network));
+        ReflectionHelpers.callInstanceMethod(service, "updateResumeCandidates",
+            ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, local),
+            ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, network));
         assertEquals(
-            7777, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.LOCAL));
+            7777, service.getResumeCandidate(PlayerService.ResumeSource.LOCAL));
         assertEquals(
-            0, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.BOOKMARK));
+            0, service.getResumeCandidate(PlayerService.ResumeSource.BOOKMARK));
         assertEquals(
-            2500, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.TRAKT));
+            2500, service.getResumeCandidate(PlayerService.ResumeSource.TRAKT));
         assertEquals(
-            2222, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.NETWORK));
+            2222, service.getResumeCandidate(PlayerService.ResumeSource.NETWORK));
         assertEquals(0, local.lastTimePlayed);
         assertEquals(7654, local.bookmark);
         transaction.apply(plan(BackupCategory.POSITIONS), () -> false);
         local.lastTimePlayed = 100;
-        org.robolectric.util.ReflectionHelpers.callInstanceMethod(service, "updateResumeCandidates",
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, local),
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, network));
+        ReflectionHelpers.callInstanceMethod(service, "updateResumeCandidates",
+            ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, local),
+            ReflectionHelpers.ClassParameter.from(VideoDbInfo.class, network));
         assertEquals(
-            0, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.LOCAL));
+            0, service.getResumeCandidate(PlayerService.ResumeSource.LOCAL));
         assertEquals(
-            7654, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.BOOKMARK));
+            7654, service.getResumeCandidate(PlayerService.ResumeSource.BOOKMARK));
         assertEquals(
-            2500, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.TRAKT));
+            2500, service.getResumeCandidate(PlayerService.ResumeSource.TRAKT));
         assertEquals(
-            2222, service.getResumeCandidate(com.archos.mediacenter.video.player.PlayerService.ResumeSource.NETWORK));
+            2222, service.getResumeCandidate(PlayerService.ResumeSource.NETWORK));
     }
 
     @Test
