@@ -19,6 +19,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.annotation.SQLiteMode;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -102,7 +103,7 @@ public class PortableHiddenItemsTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void actualDatabaseReaderIncludesHiddenVideoRowsAndExcludesAudioWithoutReadingPaths() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -143,7 +144,7 @@ public class PortableHiddenItemsTest {
             new PortablePhysicalReferences(source, List.of(video(100, "file:///media/first.mkv"))));
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void nativeReplacementChangesOnlyHiddenFlagsWithoutPublishingPendingPreferences() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -166,7 +167,7 @@ public class PortableHiddenItemsTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void nativeCancellationAndCheckpointFailureRollBackAllHiddenFlags() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -202,7 +203,7 @@ public class PortableHiddenItemsTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void pathRelationshipHiddenStateOrInventoryChangesRejectStalePreviewAndStaleMatchingInput()
         throws Exception {
