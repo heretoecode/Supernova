@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+/** Converts video cursor entries into cover-browser artwork items. */
 public abstract class VideoSingleCursorCoverProvider extends SingleCursorCoverProvider {
 
 	private final static String TAG = "VideoSingleCursorCoverProvider";
