@@ -64,14 +64,14 @@ public class ISO639codes {
         String result = com.archos.mediacenter.utils.ISO639codes.getLanguageNameForLetterCode(code);
         if (result.startsWith("s_"))
             return VideoUtils.getLanguageString(context, result).toString();
-        else return result;
+            else return result;
     }
 
     static public String getLanguageNameFor2LetterCode(Context context, String code) {
         String result = com.archos.mediacenter.utils.ISO639codes.getLanguageNameFor2LetterCode(code);
         if (result.startsWith("s_"))
             return VideoUtils.getLanguageString(context, result).toString();
-        else return result;
+            else return result;
     }
 
     static public String getLanguageNameOrStringFor2LetterCode(Context context, String code) {
@@ -82,6 +82,6 @@ public class ISO639codes {
         String result = com.archos.mediacenter.utils.ISO639codes.getLanguageNameFor3LetterCode(code);
         if (result.startsWith("s_"))
             return VideoUtils.getLanguageString(context, result).toString();
-        else return result;
+            else return result;
     }
 }
