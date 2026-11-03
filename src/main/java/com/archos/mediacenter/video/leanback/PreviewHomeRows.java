@@ -3,8 +3,10 @@ import android.app.*;
 import android.content.*;
 import android.view.*;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import java.util.*;
+import java.util.function.Consumer;
 import org.json.*;
 
 /** Home presentation and explicit row membership. Never changes playback or watched state. */
@@ -44,7 +46,7 @@ public final class PreviewHomeRows {
 
     public PreviewHomeRows(Context c) {
         context = c;
-        prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
+        prefs = PreferenceManager.getDefaultSharedPreferences(c);
         try {
             JSONArray data = new JSONArray(prefs.getString("preview_home_rows41", "[]"));
             for (int i = 0; i < data.length(); i++) {
@@ -264,7 +266,7 @@ public final class PreviewHomeRows {
         PreviewDialog.updateMembership(menu[0], checks, choices.size());
     }
 
-    private void name(String title, String previous, java.util.function.Consumer<String> accept) {
+    private void name(String title, String previous, Consumer<String> accept) {
         PreviewTextInput.show(context, title, previous, 40, accept);
     }
 
