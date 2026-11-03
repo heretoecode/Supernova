@@ -18,7 +18,6 @@ package com.archos.mediacenter.video.widget;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.BrowserByVideoSelection;
 
