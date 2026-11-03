@@ -31,6 +31,7 @@ import java.lang.NumberFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Maps cursor columns into anime and TV show objects and their Trakt state. */
 public class AnimesNShowsMapper implements CompatibleCursorMapper {
 
     private static final Logger log = LoggerFactory.getLogger(AnimesNShowsMapper.class);
