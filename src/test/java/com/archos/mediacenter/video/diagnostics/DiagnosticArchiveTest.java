@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.diagnostics;
 
+import android.app.Application;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import org.junit.*;
@@ -10,7 +11,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application=android.app.Application.class,sdk=28)
+@Config(application=Application.class,sdk=28)
 public class DiagnosticArchiveTest {
     @Test public void operationDurationNeedsBothBoundariesAndUsesMonotonicTime()throws Exception{
         write("events.jsonl","{process:'p',sequence:1,event:'artwork_operation_begin',utc_ms:9000,elapsed_ms:100,operation_id:'art'}\n"
