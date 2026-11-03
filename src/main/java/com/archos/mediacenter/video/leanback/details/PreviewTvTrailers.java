@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.details;
 import android.content.Context;
+import android.content.SharedPreferences;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.MovieScraper3;
 import com.uwetrottmann.tmdb2.entities.Videos;
@@ -12,7 +13,7 @@ public final class PreviewTvTrailers {
         List<ScraperTrailer> result = new ArrayList<>();
         if (show == null || show.getOnlineId() <= 0)
             return result;
-        android.content.SharedPreferences cache = context.getSharedPreferences("preview_tv_trailers", 0);
+        SharedPreferences cache = context.getSharedPreferences("preview_tv_trailers", 0);
         String key = String.valueOf(show.getOnlineId());
         try {
             JSONArray rows = new JSONArray(cache.getString(key, "[]"));
