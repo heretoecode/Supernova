@@ -57,6 +57,7 @@ import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.DbUtils;
 import com.archos.mediacenter.video.utils.PrivateModeUIHelper;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
@@ -116,7 +117,7 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
 
         mCollectionWatched = mPrefs.getBoolean(COLLECTION_WATCHED_KEY, true);
         mSeparateAnimeFromShowMovie = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
-        mSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         updateBackground();
 
@@ -312,7 +313,7 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
         super.onResume();
         mOverlay.resume();
         updateBackground();
-        boolean newSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        boolean newSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
         if (newSortIgnoreArticles != mSortIgnoreArticles) {
             mSortIgnoreArticles = newSortIgnoreArticles;
             Bundle args = new Bundle();
