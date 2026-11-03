@@ -3,13 +3,17 @@ package com.archos.mediacenter.video.leanback.details;
 import android.content.Context;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.io.InterruptedIOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import org.json.*;
 import java.util.*;
 
 /** Bounded metadata enrichment. Availability is checked against configured providers and country. */
 final class PreviewDetailsData {
-    static final java.util.concurrent.ExecutorService IO =
-        java.util.concurrent.Executors.newFixedThreadPool(2, r -> new Thread(r, "SupernovaDetails"));
+    static final ExecutorService IO =
+        Executors.newFixedThreadPool(2, r -> new Thread(r, "SupernovaDetails"));
     interface Metadata {
         JSONObject load(String section) throws Exception;
     }
@@ -113,7 +117,7 @@ final class PreviewDetailsData {
         }
     }
 
-    private static void publish(Result result, java.util.function.Consumer<Result> progress) {
+    private static void publish(Result result, Consumer<Result> progress) {
         progress.accept(copy(result));
     }
 
@@ -212,12 +216,12 @@ final class PreviewDetailsData {
     }
 
     static Result load(Context c, String kind, long id, Set<Long> localIds,
-        java.util.function.Consumer<Result> progress) throws Exception {
+        Consumer<Result> progress) throws Exception {
         return load(c, kind, id, localIds, progress, section -> StreamingRepository.metadata(c, kind, id, section));
     }
 
     static Result load(Context c, String kind, long id, Set<Long> localIds,
-        java.util.function.Consumer<Result> progress, Metadata source) throws Exception {
+        Consumer<Result> progress, Metadata source) throws Exception {
         Result result = new Result();
         result.details = source.load("");
         publish(result, progress);
@@ -258,7 +262,7 @@ final class PreviewDetailsData {
             if (seasons != null)
                 for (int i = 0; i < seasons.length(); i++) {
                     if (Thread.currentThread().isInterrupted())
-                        throw new java.io.InterruptedIOException();
+                        throw new InterruptedIOException();
                     JSONObject season = seasons.optJSONObject(i);
                     int number = season == null ? -1 : season.optInt("season_number", -1);
                     if (number < 0 || number > 9999)
@@ -343,7 +347,7 @@ final class PreviewDetailsData {
         });
     }
 
-    static Result loadSeason(Context c, long id, int number, java.util.function.Consumer<Result> progress)
+    static Result loadSeason(Context c, long id, int number, Consumer<Result> progress)
         throws Exception {
         Result result = new Result();
         result.details = StreamingRepository.metadata(c, "tv", id, "season/" + number);
