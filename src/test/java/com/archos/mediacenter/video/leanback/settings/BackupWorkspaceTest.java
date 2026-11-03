@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -227,7 +228,7 @@ public class BackupWorkspaceTest {
             TextView locations = workspace.findViewWithTag("backup.category.LOCATIONS");
             locations.requestFocus();
             locations.performClick();
-            var dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            var dialog = ShadowDialog.getLatestDialog();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertFalse(workspace.included(BackupCategory.LOCATIONS));
             assertEquals("Cancel", ((TextView) dialog.getWindow().getDecorView().findFocus()).getText().toString());
@@ -237,7 +238,7 @@ public class BackupWorkspaceTest {
             assertFalse(workspace.included(BackupCategory.LOCATIONS));
             assertSame(locations, workspace.findFocus());
             locations.performClick();
-            dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            dialog = ShadowDialog.getLatestDialog();
             text(dialog.getWindow().getDecorView(), "Include locations").performClick();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(workspace.included(BackupCategory.LOCATIONS));
@@ -246,7 +247,7 @@ public class BackupWorkspaceTest {
             TextView history = workspace.findViewWithTag("backup.category.HISTORY");
             history.requestFocus();
             history.performClick();
-            dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            dialog = ShadowDialog.getLatestDialog();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(workspace.included(BackupCategory.HISTORY));
             assertEquals("Cancel", ((TextView) dialog.getWindow().getDecorView().findFocus()).getText().toString());
@@ -255,7 +256,7 @@ public class BackupWorkspaceTest {
             assertTrue(workspace.included(BackupCategory.HISTORY));
             assertSame(history, workspace.findFocus());
             history.performClick();
-            dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            dialog = ShadowDialog.getLatestDialog();
             text(dialog.getWindow().getDecorView(), "Exclude history").performClick();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertFalse(workspace.included(BackupCategory.HISTORY));
@@ -276,7 +277,7 @@ public class BackupWorkspaceTest {
             TextView bookmark = workspace.findViewWithTag("backup.category.BOOKMARKS");
             bookmark.requestFocus();
             bookmark.performClick();
-            var dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            var dialog = ShadowDialog.getLatestDialog();
             assertFalse(workspace.included(BackupCategory.BOOKMARKS));
             assertFalse(workspace.included(BackupCategory.LOCATIONS));
             text(dialog.getWindow().getDecorView(), "Keep locations Off").performClick();
