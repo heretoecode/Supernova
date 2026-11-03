@@ -43,6 +43,8 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.ShortcutDb;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewNotice;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
 import com.archos.mediacenter.video.leanback.details.ArchosDetailsOverviewRowPresenter;
@@ -255,7 +257,7 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
                     actions.add(a);
                     labels.add(String.valueOf(a.getLabel1()));
                 }
-                Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                Dialog dialog = PreviewDialog.choose(requireContext(),
                     mShortcut.getName(), labels.toArray(new String[0]), 0, n -> onActionClicked(actions.get(n)));
                 dialog.setOnCancelListener(d -> {
                     if (isAdded())
@@ -312,7 +314,7 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
                 LoaderUtils.setScrapeInProgress(false);
             }
             NetworkScanner.scanVideos(getActivity(), mShortcut.getUri());
-            com.archos.mediacenter.video.leanback.PreviewNotice.show(getActivity(), "Folder scan requested", false);
+            PreviewNotice.show(getActivity(), "Folder scan requested", false);
             slightlyDelayedFinish();
         } else if (action.getId() == ACTION_ADD_INDEX) {
             // can be indexed or shortcut
