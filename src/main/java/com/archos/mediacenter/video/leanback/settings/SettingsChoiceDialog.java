@@ -1,12 +1,14 @@
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.ListPreference;
 import com.archos.mediacenter.video.leanback.*;
+import java.util.Arrays;
 
 /** Settings radio selector: fixed heading/footer and independently scrolling choices. */
 final class SettingsChoiceDialog {
@@ -93,7 +95,7 @@ final class SettingsChoiceDialog {
         window.setDimAmount(.32f);
         window.setGravity(Gravity.CENTER);
         // Approved global rule: width fitted to the longest choice (radio + optional flag + text), 360px–40% of the screen.
-        android.graphics.Paint measurePaint = new android.graphics.Paint();
+        Paint measurePaint = new Paint();
         measurePaint.setTextSize(16 * TvLayout.scale(context) *
                                  context.getResources().getDisplayMetrics().scaledDensity);
         int longest = 0;
@@ -112,7 +114,7 @@ final class SettingsChoiceDialog {
         scroll.setLayoutParams(new LinearLayout.LayoutParams(-1, height));
         window.setLayout(width, height + chrome);
         View opener =
-            context instanceof android.app.Activity ? ((android.app.Activity)context).getCurrentFocus() : null;
+            context instanceof Activity ? ((Activity)context).getCurrentFocus() : null;
         if (opener != null) {
             View category = opener.getRootView().findViewWithTag("settings.category");
             if (category instanceof LinearLayout) {
@@ -131,7 +133,7 @@ final class SettingsChoiceDialog {
     }
 
     private static boolean language(String key) {
-        return java.util.Arrays
+        return Arrays
             .asList("ui_lang", "favSubLang", "favAudioLang", "languages_list",
                     com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG)
             .contains(key);
