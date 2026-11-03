@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.utils.VideoUtils;
 
 import java.io.Serializable;
 
+/** Represents a network shortcut with its URI and artwork. */
 public class GenericNetworkShortcut extends Shortcut implements Serializable {
 
     public GenericNetworkShortcut(long id, String fullPath, String name, String friendlyUri) {
