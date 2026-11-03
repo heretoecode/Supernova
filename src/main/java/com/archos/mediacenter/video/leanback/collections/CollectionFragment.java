@@ -649,6 +649,7 @@ public class CollectionFragment extends DetailsFragmentWithLessTopOffset impleme
                     startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                     // Delay the finish the "old" activity, else it breaks the animation
                     mHandler.postDelayed(new Runnable() {
+                        @Override
                         public void run() {
                             Activity activity = getActivity();
                             if (activity != null) activity.finish(); // better safe than sorry
