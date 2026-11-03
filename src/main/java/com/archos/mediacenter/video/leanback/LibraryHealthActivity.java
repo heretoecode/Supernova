@@ -1,5 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.content.Intent;
 import android.view.*;
@@ -47,7 +49,7 @@ public final class LibraryHealthActivity extends LeanbackActivity {
     private void reload() {
         PreviewLibraryLoader loader = new PreviewLibraryLoader(this);
         worker.execute(() -> {
-            try (android.database.Cursor cursor = loader.loadInBackground()) {
+            try (Cursor cursor = loader.loadInBackground()) {
                 Snapshot snapshot = loader.snapshot;
                 runOnUiThread(() -> {
                     if (!closed && !isFinishing())
@@ -122,7 +124,7 @@ public final class LibraryHealthActivity extends LeanbackActivity {
             boolean importing = com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()
                 || com.archos.mediaprovider.ImportState.VIDEO.isRegularImport()
                 || com.archos.mediaprovider.video.LoaderUtils.getScrapeInProgress();
-            android.content.SharedPreferences health =
+            SharedPreferences health =
                 getContext().getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0);
             for (Entry entry : next.technical) {
                 if (!(entry.media instanceof Video))
