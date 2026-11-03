@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils;
 import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
+import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -103,23 +104,23 @@ public class MediaMatchDependencyTest {
                 db.delete("MOVIE", null, null);
                 ContentValues first = new ContentValues();
                 first.put("_id", 1);
-                first.put(com.archos.mediaprovider.video.ScraperStore.Show.ONLINE_ID, 123);
-                first.put(com.archos.mediaprovider.video.ScraperStore.Show.NAME, "Original show");
+                first.put(ScraperStore.Show.ONLINE_ID, 123);
+                first.put(ScraperStore.Show.NAME, "Original show");
                 first.put("Nova_pinned", 9);
                 db.insertOrThrow("SHOW", null, first);
                 ContentValues other = new ContentValues(first);
                 other.put("_id", 2);
-                other.put(com.archos.mediaprovider.video.ScraperStore.Show.ONLINE_ID, 456);
-                other.put(com.archos.mediaprovider.video.ScraperStore.Show.NAME, "Other show");
+                other.put(ScraperStore.Show.ONLINE_ID, 456);
+                other.put(ScraperStore.Show.NAME, "Other show");
                 other.put("Nova_pinned", 8);
                 db.insertOrThrow("SHOW", null, other);
                 for (int index = 0; index < 2; index++) {
                     ContentValues episode = new ContentValues();
                     episode.put("_id", 300 + index);
-                    episode.put(com.archos.mediaprovider.video.ScraperStore.Episode.VIDEO_ID, 10 + index);
-                    episode.put(com.archos.mediaprovider.video.ScraperStore.Episode.SHOW, 1 + index);
-                    episode.put(com.archos.mediaprovider.video.ScraperStore.Episode.SEASON, 1);
-                    episode.put(com.archos.mediaprovider.video.ScraperStore.Episode.NUMBER, 1);
+                    episode.put(ScraperStore.Episode.VIDEO_ID, 10 + index);
+                    episode.put(ScraperStore.Episode.SHOW, 1 + index);
+                    episode.put(ScraperStore.Episode.SEASON, 1);
+                    episode.put(ScraperStore.Episode.NUMBER, 1);
                     db.insertOrThrow("EPISODE", null, episode);
                 }
                 db.execSQL(
