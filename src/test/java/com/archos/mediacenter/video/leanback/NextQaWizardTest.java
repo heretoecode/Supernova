@@ -152,8 +152,10 @@ public class NextQaWizardTest {
             View parent = (View)pages.getParent();
             final int[] detaches = {0};
             pages.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
                 public void onViewAttachedToWindow(View v) {
                 }
+                @Override
                 public void onViewDetachedFromWindow(View v) {
                     detaches[0]++;
                 }
