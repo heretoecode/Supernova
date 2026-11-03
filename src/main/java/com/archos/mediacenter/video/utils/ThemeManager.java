@@ -17,6 +17,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
@@ -29,6 +32,7 @@ import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.UiChoiceDialog;
+import java.lang.reflect.Method;
 
 /**
  * ThemeManager handles programmatic theme switching between Blue and Black themes.
@@ -222,9 +226,9 @@ public class ThemeManager {
      * Get phone-specific category gradient for black theme
      * Returns gradient from black to grey
      */
-    public android.graphics.drawable.Drawable getPhoneCategoryGradient() {
-        android.graphics.drawable.GradientDrawable gradient = new android.graphics.drawable.GradientDrawable(
-            android.graphics.drawable.GradientDrawable.Orientation.BOTTOM_TOP,
+    public Drawable getPhoneCategoryGradient() {
+        GradientDrawable gradient = new GradientDrawable(
+            GradientDrawable.Orientation.BOTTOM_TOP,
             new int[] { getGradientStartColor(), getGradientEndColor() }
         );
         return gradient;
@@ -241,8 +245,8 @@ public class ThemeManager {
         int gradientStart = getGradientStartColor();
         int gradientEnd = getGradientEndColor();
         
-        android.graphics.drawable.GradientDrawable gradient = new android.graphics.drawable.GradientDrawable(
-            android.graphics.drawable.GradientDrawable.Orientation.BOTTOM_TOP,
+        GradientDrawable gradient = new GradientDrawable(
+            GradientDrawable.Orientation.BOTTOM_TOP,
             new int[] { gradientStart, gradientEnd }
         );
         
@@ -289,8 +293,8 @@ public class ThemeManager {
         if (activity == null) return;
 
         // BOTTOM_TO_TOP to match fork's angle=90
-        android.graphics.drawable.GradientDrawable gradient = new android.graphics.drawable.GradientDrawable(
-            android.graphics.drawable.GradientDrawable.Orientation.BOTTOM_TOP,
+        GradientDrawable gradient = new GradientDrawable(
+            GradientDrawable.Orientation.BOTTOM_TOP,
             new int[] { getGradientStartColor(), getGradientEndColor() }
         );
         activity.getWindow().setBackgroundDrawable(gradient);
@@ -311,7 +315,7 @@ public class ThemeManager {
     public void applyToolbarTheme(ActionBar actionBar, Context context) {
         if (actionBar != null) {
             actionBar.setBackgroundDrawable(
-                new android.graphics.drawable.ColorDrawable(getToolbarBackgroundColor())
+                new ColorDrawable(getToolbarBackgroundColor())
             );
         }
     }
@@ -324,8 +328,8 @@ public class ThemeManager {
         // Reflection or interface needed for leanback components
         try {
             Class<?> clazz = detailsRowPresenter.getClass();
-            java.lang.reflect.Method setBg = clazz.getMethod("setBackgroundColor", int.class);
-            java.lang.reflect.Method setActionsBg = clazz.getMethod("setActionsBackgroundColor", int.class);
+            Method setBg = clazz.getMethod("setBackgroundColor", int.class);
+            Method setActionsBg = clazz.getMethod("setActionsBackgroundColor", int.class);
             
             setBg.invoke(detailsRowPresenter, getDetailsPrimaryColor());
             setActionsBg.invoke(detailsRowPresenter, getDarkerColor(getDetailsPrimaryColor()));
@@ -349,8 +353,8 @@ public class ThemeManager {
         
         if (!isLeanback) {
             // Phone mode: Set window background gradient
-            android.graphics.drawable.GradientDrawable gradient = new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.BOTTOM_TOP,
+            GradientDrawable gradient = new GradientDrawable(
+                GradientDrawable.Orientation.BOTTOM_TOP,
                 new int[] { getGradientStartColor(), getGradientEndColor() }
             );
             window.setBackgroundDrawable(gradient);
