@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.Assert.*;
 
+/** Checks portable viewing state selection, validation and transactional replacement. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortableViewingStateTest {
