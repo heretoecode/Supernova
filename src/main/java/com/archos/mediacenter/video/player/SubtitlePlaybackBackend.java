@@ -101,10 +101,12 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         return radios(R.string.menu_subtitles);
     }
 
+    @Override
     public List<PlaybackSubtitlePanel.Track> tracks() {
         return asTracks(subtitleTracks(), true);
     }
 
+    @Override
     public int get(String key) {
         SubtitleManager m = manager();
         if (key.equals("enabled")) {
@@ -136,10 +138,12 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         }
     }
 
+    @Override
     public boolean available() {
         return manager() != null;
     }
 
+    @Override
     public void set(String key, int value) {
         if (key.equals("enabled")) {
             List<TVMenuItem> items = subtitleTracks();
@@ -195,12 +199,14 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         prefs.apply();
     }
 
+    @Override
     public void download() {
         TVMenuItem item = item(R.string.menu_subtitles, owner.getString(R.string.get_subtitles_online));
         if (item != null)
             item.previewClick();
     }
 
+    @Override
     public Runnable chooseFile() {
         TVMenuItem item = item(R.string.menu_subtitles, owner.getString(R.string.get_subtitles_on_drive));
         return item == null ? null : item::previewClick;
@@ -208,10 +214,12 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
 
     // ---- Audio -----------------------------------------------------------------------------
 
+    @Override
     public List<PlaybackSubtitlePanel.Track> audioTracks() {
         return asTracks(radios(R.string.menu_audio), false);
     }
 
+    @Override
     public Integer audioDelay() {
         if (player() == null ||
             item(R.string.menu_audio, owner.getString(R.string.player_pref_audio_delay_title)) == null)
@@ -219,6 +227,7 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         return player().presentationAudioDelay();
     }
 
+    @Override
     public void stepAudioDelay(int direction) {
         if (player() != null)
             player().stepAudioDelay(direction * PlayerActivity.AUDIO_DELAY_STEP_MS);
@@ -242,16 +251,19 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         }
     }
 
+    @Override
     public Boolean option(String key) {
         TVMenuItem item = optionItem(key);
         return item == null ? null : item.isChecked();
     }
 
+    @Override
     public boolean optionEnabled(String key) {
         TVMenuItem item = optionItem(key);
         return item != null && item.isEnabled();
     }
 
+    @Override
     public void toggleOption(String key) {
         TVMenuItem item = optionItem(key);
         if (item != null)
@@ -260,6 +272,7 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
 
     // ---- Playback --------------------------------------------------------------------------
 
+    @Override
     public List<PlaybackSubtitlePanel.Choice> choices(String key) {
         int title;
         switch (key) {
@@ -282,6 +295,7 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         return out;
     }
 
+    @Override
     public Float speed() {
         if (player() == null ||
             item(R.string.menu_audio, owner.getString(R.string.player_pref_audio_speed_title)) == null)
@@ -289,11 +303,13 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         return player().presentationAudioSpeed();
     }
 
+    @Override
     public void setSpeed(float speed) {
         if (player() != null)
             player().setPresentationAudioSpeed(speed);
     }
 
+    @Override
     public Runnable pictureInPicture() {
         TVMenuItem item = item(R.string.pref_format_mode_title, owner.getString(R.string.picture_in_picture));
         return item == null || !item.isEnabled() ? null : item::previewClick;
