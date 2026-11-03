@@ -14,6 +14,9 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.content.res.ColorStateList;
+import android.os.SystemClock;
+import android.util.TypedValue;
 import static androidx.core.content.ContextCompat.getDrawable;
 
 import android.annotation.SuppressLint;
@@ -33,6 +36,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.ActionBar;
 
@@ -74,13 +78,16 @@ import com.archos.mediacenter.video.utils.MiscUtils;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Locale;
 
 import com.archos.environment.ArchosFeatures;
 import static com.archos.environment.ArchosFeatures.isChromeOS;
 
+import java.util.TimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -857,7 +864,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                     }
                 });
             }
-            mProgress.setProgressTintList(android.content.res.ColorStateList.valueOf(
+            mProgress.setProgressTintList(ColorStateList.valueOf(
                 com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext)));
             View more = mControllerViewLeft.findViewById(R.id.preview_more);
             if (more != null)
@@ -1760,8 +1767,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
         TextView title = mControllerViewLeft.findViewById(R.id.preview_playback_title);
         if (title != null)
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                title, 16, 23, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
+            TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                title, 16, 23, 1, TypedValue.COMPLEX_UNIT_SP);
         for (int id :
              new int[] {R.id.preview_previous, R.id.preview_next, R.id.backward, R.id.forward, R.id.preview_speed}) {
             View v = mControllerViewLeft.findViewById(id);
@@ -1849,8 +1856,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         long position = Player.sPlayer == null ? 0 : mNextSeek >= 0 ? mNextSeek : Player.sPlayer.getCurrentPosition();
         com.archos.mediacenter.video.utils.VideoMetadata metadata =
             Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
-        java.util.List<PlaybackChapters.Chapter> chapters =
-            metadata == null ? java.util.Collections.emptyList() : metadata.getChapters();
+        List<PlaybackChapters.Chapter> chapters =
+            metadata == null ? Collections.emptyList() : metadata.getChapters();
         if (mContext instanceof PlayerActivity)
             chapters = ((PlayerActivity)mContext)
                            .previewChapters(chapters, Player.sPlayer == null ? 0 : Player.sPlayer.getDuration());
@@ -2084,7 +2091,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     private void advancePreviewKeySeek() {
-        int delta = mPreviewSeekPolicy.next(mSeekKeyDirection, android.os.SystemClock.elapsedRealtime());
+        int delta = mPreviewSeekPolicy.next(mSeekKeyDirection, SystemClock.elapsedRealtime());
         mNextSeek = PreviewSeekPolicy.position(mNextSeek, delta, Player.sPlayer.getDuration());
         setProgress();
     }
@@ -3495,7 +3502,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (mClock == null)
             return;
         long now = System.currentTimeMillis();
-        getDateFormat().setTimeZone(java.util.TimeZone.getDefault());
+        getDateFormat().setTimeZone(TimeZone.getDefault());
         String currentClockText = getDateFormat().format(new Date(now));
         mClock.setText(currentClockText);
         if (Player.sPlayer == null)
