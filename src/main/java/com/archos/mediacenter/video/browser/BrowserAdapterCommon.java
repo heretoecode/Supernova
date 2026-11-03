@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser;
 
 import android.widget.ImageView;
 
+/** Defines access to video browser item metadata, artwork and playback state. */
 public interface BrowserAdapterCommon {
 
     boolean hasBookmark();
