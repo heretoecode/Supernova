@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.Checkable;
+import androidx.core.text.HtmlCompat;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.tvmenu.*;
@@ -75,7 +76,7 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     }
 
     private static String plain(TVMenuItem item) {
-        return androidx.core.text.HtmlCompat.fromHtml(item.getText(), 0).toString();
+        return HtmlCompat.fromHtml(item.getText(), 0).toString();
     }
 
     private List<PlaybackSubtitlePanel.Track> asTracks(List<TVMenuItem> items, boolean subtitles) {
