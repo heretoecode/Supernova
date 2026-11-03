@@ -37,9 +37,11 @@ public class PreviewPutioNativeImportTest {
         app.getSharedPreferences("provider-discovery-ownership-v1", 0).edit().clear().commit();
         database = new DbHolder(new VideoOpenHelper(app, "putio-native.db", VideoOpenHelper.getDatabaseVersion()));
         ContentProvider provider = new ContentProvider() {
+            @Override
             public boolean onCreate() {
                 return true;
             }
+            @Override
             public String getType(Uri uri) {
                 return null;
             }
@@ -49,12 +51,15 @@ public class PreviewPutioNativeImportTest {
                     throw new IllegalArgumentException();
                 return name;
             }
+            @Override
             public Cursor query(Uri uri, String[] projection, String selection, String[] args, String order) {
                 return database.get().query(table(uri), projection, selection, args, null, null, order);
             }
+            @Override
             public Uri insert(Uri uri, ContentValues values) {
                 return ContentUris.withAppendedId(uri, database.get().insertOrThrow(table(uri), null, values));
             }
+            @Override
             public int update(Uri uri, ContentValues values, String selection, String[] args) {
                 int changed = database.get().update(table(uri), values, selection, args);
                 if (failAfterMove) {
@@ -63,6 +68,7 @@ public class PreviewPutioNativeImportTest {
                 }
                 return changed;
             }
+            @Override
             public int delete(Uri uri, String selection, String[] args) {
                 throw new AssertionError("Native sync must not delete library records");
             }
