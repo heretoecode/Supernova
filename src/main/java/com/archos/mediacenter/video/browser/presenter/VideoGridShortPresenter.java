@@ -15,20 +15,8 @@
 package com.archos.mediacenter.video.browser.presenter;
 
 import android.content.Context;
-import android.content.res.Configuration;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
-import android.view.View;
 
-import com.archos.mediacenter.utils.ThumbnailEngine;
-import com.archos.mediacenter.video.browser.adapters.AdapterDefaultValues;
-import com.archos.mediacenter.video.browser.adapters.AdapterDefaultValuesGrid;
 import com.archos.mediacenter.video.browser.adapters.AdapterDefaultValuesGridShort;
-import com.archos.mediacenter.video.browser.adapters.object.Episode;
-import com.archos.mediacenter.video.browser.adapters.object.Video;
-import com.archos.mediacenter.video.player.PlayerActivity;
-import com.archos.mediacenter.video.player.TextShadowSpan;
-import com.archos.mediacenter.video.player.tvmenu.TVUtils;
 
 import httpimage.HttpImageManager;
 
