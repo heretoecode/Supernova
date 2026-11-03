@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -67,7 +68,7 @@ public class PrivateModeUIHelper {
         if (rootViewGroup instanceof FrameLayout) {
             // FrameLayout supports gravity for positioning
             FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(sizePx, sizePx);
-            frameParams.gravity = android.view.Gravity.BOTTOM | android.view.Gravity.END;
+            frameParams.gravity = Gravity.BOTTOM | Gravity.END;
             frameParams.setMargins(0, 0, marginPx, marginPx);
             params = frameParams;
         } else if (rootViewGroup instanceof android.widget.RelativeLayout) {
