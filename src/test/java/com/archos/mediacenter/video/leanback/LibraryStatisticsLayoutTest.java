@@ -1,10 +1,16 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
+import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -49,8 +55,8 @@ public class LibraryStatisticsLayoutTest {
     }
 
     private void assertWholeMetricText(View view) {
-        if (view instanceof android.widget.TextView) {
-            android.widget.TextView text = (android.widget.TextView)view;
+        if (view instanceof TextView) {
+            TextView text = (TextView)view;
             assertNotNull(text.getText().toString(), text.getLayout());
             for (int line = 0; line < text.getLineCount(); line++) {
                 assertEquals("Complete metric: " + text.getText(), 0, text.getLayout().getEllipsisCount(line));
@@ -73,9 +79,9 @@ public class LibraryStatisticsLayoutTest {
                 for (int c = 0; c < row.getChildCount(); c++)
                     if (row.getChildAt(c) instanceof ViewGroup) {
                         ViewGroup cell = (ViewGroup)row.getChildAt(c);
-                        android.widget.TextView value = (android.widget.TextView)cell.getChildAt(1);
+                        TextView value = (TextView)cell.getChildAt(1);
                         assertEquals(Gravity.CENTER_VERTICAL, value.getGravity() & Gravity.VERTICAL_GRAVITY_MASK);
-                        android.graphics.Paint.FontMetrics font = value.getPaint().getFontMetrics();
+                        Paint.FontMetrics font = value.getPaint().getFontMetrics();
                         float middle = value.getBaseline() + (font.ascent + font.descent) / 2;
                         assertEquals(value.getText().toString(), value.getHeight() / 2f, middle, 2f);
                     }
@@ -117,7 +123,7 @@ public class LibraryStatisticsLayoutTest {
                 nav.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
                             View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
                 nav.layout(0, 0, width, height);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
             }
             View panel = nav.findViewWithTag("library.statistics"), filters = nav.findViewWithTag("control:0");
             assertNotNull(panel);
@@ -143,13 +149,13 @@ public class LibraryStatisticsLayoutTest {
             assertValuesCentred((ViewGroup)panel);
             assertTrue(filters.requestFocus());
             assertSame(filters, nav.findFocus());
-            java.util.List<View> focusChanges = new java.util.ArrayList<>();
+            List<View> focusChanges = new ArrayList<>();
             nav.getViewTreeObserver().addOnGlobalFocusChangeListener((old, next) -> focusChanges.add(next));
             pages.setSnapshot(snapshot);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue("No-op refresh keeps the actual Filters view", filters.hasFocus());
             assertTrue("No transient page focus during no-op refresh", focusChanges.isEmpty());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(100));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(100));
             assertTrue(panel.getGlobalVisibleRect(panelBounds));
             assertEquals("Statistics stay below navigation after focus", gap,
                          panelBounds.top - nav.getChildAt(0).getBottom());
