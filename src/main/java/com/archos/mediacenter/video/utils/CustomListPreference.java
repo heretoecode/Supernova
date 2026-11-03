@@ -16,7 +16,6 @@ package com.archos.mediacenter.video.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.ListPreference;
 import android.util.AttributeSet;
