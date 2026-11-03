@@ -59,7 +59,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     }
 
     @Override
-    public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Note: Don't apply window theme for leanback preferences
@@ -104,26 +104,26 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
         }
 
         @Override
-        public void onDisplayPreferenceDialog(androidx.preference.Preference pref) {
+        public void onDisplayPreferenceDialog(Preference pref) {
             if (SettingsWorkspace.enabled(requireContext()) && PreviewPreferenceDialogs.show(this, pref))
                 return;
             super.onDisplayPreferenceDialog(pref);
         }
 
         @Override
-        public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(
+        public RecyclerView onCreateRecyclerView(
             LayoutInflater inflater, ViewGroup parent, Bundle state) {
             return SettingsWorkspace.enabled(requireContext()) ? PreviewSettings.grid(requireContext())
                                                                : super.onCreateRecyclerView(inflater, parent, state);
         }
 
         @Override
-        public android.view.View onCreateView(
+        public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle state) {
-            android.view.View nativeView = super.onCreateView(inflater, container, state);
+            View nativeView = super.onCreateView(inflater, container, state);
             if (!SettingsWorkspace.enabled(requireContext()))
                 return nativeView;
-            androidx.recyclerview.widget.RecyclerView list = getListView();
+            RecyclerView list = getListView();
             if (list.getParent() instanceof ViewGroup)
                 ((ViewGroup) list.getParent()).removeView(list);
             FrameLayout full = new FrameLayout(requireContext());
@@ -134,7 +134,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
         }
 
         @Override
-        protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
+        protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
             return SettingsWorkspace.enabled(requireContext()) ? PreviewSettings.adapter(screen)
                                                                : super.onCreateAdapter(screen);
         }
@@ -149,7 +149,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
         }
 
         @Override
-        public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+        public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
@@ -167,7 +167,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             if (SettingsWorkspace.enabled(requireContext())) {
                 ViewGroup host = (ViewGroup) getListView().getParent();
                 host.setPadding(0, 0, 0, 0);
-                getListView().setVisibility(android.view.View.GONE);
+                getListView().setVisibility(View.GONE);
                 workspace = new SettingsWorkspace(this, backupController, workspaceState);
                 host.addView(workspace, new FrameLayout.LayoutParams(-1, -1));
                 workspaceState = null;
