@@ -34,6 +34,7 @@ import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/** Binds collection descriptions to their views on the Details page. */
 public class CollectionDetailsDescriptionPresenter extends Presenter {
 
     private static final String TAG = "CollectionDetailsDescriptionPresenter";
