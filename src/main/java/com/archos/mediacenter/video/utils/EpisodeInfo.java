@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.text.Html;
 import android.text.TextUtils.TruncateAt;
 import android.util.Log;
 import android.widget.TextView;
