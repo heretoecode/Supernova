@@ -59,6 +59,7 @@ public class FtpShortcutAdapter extends RootFragmentAdapter {
     public void setOnFtpShortcutAddListener(OnFtpShortcutAddListener listener){
         mOnFtpShortcutAddListener = listener;
     }
+    @Override
     public void resetData() {
         mData.clear();
         mTypes.clear();
