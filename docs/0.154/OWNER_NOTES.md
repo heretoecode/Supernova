@@ -72,6 +72,18 @@ Each item: what the owner saw → what they want → status.
   - buttons by job: More Info on Home; Play and More on Details.
 - **Status:** approved design — awaiting go-ahead to code.
 
+### 7. Menu and panel background: navy glass → charcoal (design)
+- **Seen (photo, 0.153):** owner likes the More menu's size and readability; questioned the navy colour.
+- **Decision (owner, 2026-11-03):** **charcoal at 97%** (≈ `#16181C` at 97% opacity, faint white edge ≈ 22%)
+  replaces the navy glass, **globally** — every pop-up menu, Playback Settings, Edit Page, pickers and dialogs
+  (all share `SupernovaStyle.GLASS`). Group headings and their lines turn from light blue to soft grey
+  (≈ `#B7BFCC`, line ≈ 22% white). Mock-up: `docs/design/proposals/menu-black/01-menu-background.png`
+  (right-hand option). The 72% button black was rejected for menus (text behind shows through).
+- **Knock-ons to settle when coding:** buttons/tabs inside panels (`PANEL_REST`, navy today) need a lighter
+  charcoal step so they still show on the charcoal panel; Settings tiles and source cards rest on the same
+  glass colour today — owner to confirm whether they turn charcoal too.
+- **Status:** approved design — awaiting go-ahead to code (tile question open).
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
