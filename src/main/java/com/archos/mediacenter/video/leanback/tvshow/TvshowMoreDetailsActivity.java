@@ -19,6 +19,7 @@ import android.os.Bundle;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
+/** Hosts the additional TV show details screen. */
 public class TvshowMoreDetailsActivity extends LeanbackActivity {
 
     @Override
