@@ -1,6 +1,9 @@
 package com.archos.mediacenter.video.utils;
 import com.archos.mediacenter.video.BuildConfig;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.json.*;
 
 public final class BackupFormat {
@@ -33,11 +36,11 @@ public final class BackupFormat {
             if (!root.getString("applicationVersion").matches("0\\.[1-9][0-9]*") || root.getLong("createdUtc") <= 0)
                 throw new IOException("Invalid backup origin");
             JSONArray categories = root.getJSONArray("categories");
-            java.util.Set<String> actual = new java.util.HashSet<>();
+            Set<String> actual = new HashSet<>();
             for (int i = 0; i < categories.length(); i++)
                 if (!actual.add(categories.getString(i)))
                     throw new IOException("Duplicate backup category");
-            if (!actual.equals(new java.util.HashSet<>(java.util.Arrays.asList(CATEGORIES))))
+            if (!actual.equals(new HashSet<>(Arrays.asList(CATEGORIES))))
                 throw new IOException("Unsupported backup categories");
         } catch (JSONException error) {
             throw new IOException("Invalid backup manifest", error);
