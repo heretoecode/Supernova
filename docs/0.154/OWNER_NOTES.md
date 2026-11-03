@@ -211,7 +211,11 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
   Shares · Add Connection · Library Health · Library Scanning · Advanced.
 - **Bug to trace (Codex):** the Put.io part of library scanning never finishes — "Status: Requested · 0 checked ·
   0/2 sources · 4,977 seconds · last completed 4 hours ago", "Scanning indexed sources · queued", while the local
-  part restarts every 15 minutes.
+  part restarts every 15 minutes. Owner, 21:44: pressing **Scan Now** or **Scan Library** changes nothing. Lead
+  (Claude, from the code): `PreviewLibraryScan.requestNetwork` silently drops a request while `active()` is true
+  ("scan_request_coalesced"); `active()` is true while the network scanner service is alive or AutoScrape's network
+  count is above zero — if either is stuck, every scan request is swallowed and indexed sources stay "queued".
+  Scan Now = network sources (+ Put.io sync); Scan Library = local library folders + the same network request.
 - **Status:** approved; built after 0.154.
 
 ## Already queued for 0.154 (decided earlier)
