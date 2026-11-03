@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.squareup.picasso.Picasso;
 import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 
@@ -17,7 +18,7 @@ final class PreviewLandscapeCard extends LinearLayout {
     final ImageView image, availability;
     final TextView title, metadata;
     final ProgressBar progress;
-    private final com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card visual;
+    private final PreviewCardPresenter.Card visual;
 
     PreviewLandscapeCard(Context c) {
         super(c);
@@ -27,8 +28,8 @@ final class PreviewLandscapeCard extends LinearLayout {
         setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setClipChildren(false);
         setClipToPadding(false);
-        visual = new com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card(
-            c, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CONTINUE);
+        visual = new PreviewCardPresenter.Card(
+            c, PreviewCardPresenter.Style.CONTINUE);
         visual.setFocusable(false);
         visual.setFocusableInTouchMode(false);
         visual.setLandscapeAspect(16f / 9);
