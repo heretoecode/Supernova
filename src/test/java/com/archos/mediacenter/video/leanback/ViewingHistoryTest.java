@@ -7,8 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
 import java.io.IOException;
 import org.junit.*;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
@@ -22,12 +24,12 @@ import static org.junit.Assert.*;
 public class ViewingHistoryTest {
     @org.junit.Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     private Context context;
@@ -86,7 +88,7 @@ public class ViewingHistoryTest {
         assertEquals(local, ViewingHistory.identity(false, null, -1, -1, "file:///storage/Movies/unmatched.mkv"));
         assertEquals(ViewingHistory.identity(false, null, -1, -1, "/storage/a?cut#name.mkv"),
             ViewingHistory.identity(
-                false, null, -1, -1, Uri.fromFile(new java.io.File("/storage/a?cut#name.mkv")).toString()));
+                false, null, -1, -1, Uri.fromFile(new File("/storage/a?cut#name.mkv")).toString()));
         String first =
             ViewingHistory.identity(false, null, -1, -1, "https://user:password@nas/play?id=1&token=old&signature=old");
         assertEquals(
@@ -145,10 +147,10 @@ public class ViewingHistoryTest {
         unfinished.onlineId = 123;
         ViewingHistory.reconcile(context, List.of(watched, unfinished));
         assertFalse(
-            PreviewSeriesJourney.completed((com.archos.mediacenter.video.browser.adapters.object.Video) watched.media));
+            PreviewSeriesJourney.completed((Video) watched.media));
         assertEquals(0, watched.playedAt);
         assertEquals(
-            5000, ((com.archos.mediacenter.video.browser.adapters.object.Video) unfinished.media).getResumeMs());
+            5000, ((Video) unfinished.media).getResumeMs());
         assertTrue(ViewingHistory.read(context).isEmpty());
     }
 
@@ -223,7 +225,7 @@ public class ViewingHistoryTest {
         var next = fixture.episode(2, 0, false, 0, 101);
         var snapshot = PreviewLibraryLoader.build(List.of(previous, next), List.of());
         assertTrue("Unstarted next episode belongs to hero, not Continue Watching", snapshot.continuingShows.isEmpty());
-        ((com.archos.mediacenter.video.browser.adapters.object.Video) next.media)
+        ((Video) next.media)
             .applyIdentityHistory(false, 102, 2000);
         snapshot = PreviewLibraryLoader.build(List.of(previous, next), List.of());
         assertEquals(1, snapshot.continuingShows.size());
