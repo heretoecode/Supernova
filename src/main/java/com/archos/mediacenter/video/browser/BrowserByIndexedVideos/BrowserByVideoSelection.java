@@ -22,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.core.view.MenuItemCompat;
 import androidx.core.view.MenuProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
