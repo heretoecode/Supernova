@@ -18,6 +18,7 @@ import android.content.Context;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads videos for a movie collection. */
 public class MovieCollectionLoader extends VideoLoader {
 
     private static final String TAG = "MovieCollectionLoader";
