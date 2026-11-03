@@ -78,6 +78,7 @@ import java.util.concurrent.Executors;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/** Provides a shared show header, poster and loading behavior for TV show browsers. */
 public abstract class BrowserWithShowHeader extends CursorBrowserByVideo  {
 
     private static final Logger log = LoggerFactory.getLogger(BrowserWithShowHeader.class);
