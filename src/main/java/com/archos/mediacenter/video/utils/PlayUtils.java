@@ -40,6 +40,7 @@ import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.player.PlayerService;
 import com.archos.mediascraper.ScrapeDetailResult;
 
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +89,7 @@ public class PlayUtils implements IndexHelper.Listener {
         if ("magnet".equalsIgnoreCase(uri.getScheme()))
             return true;
         String filename = uri.getLastPathSegment();
-        return filename != null && filename.toLowerCase(java.util.Locale.ROOT).endsWith(".torrent");
+        return filename != null && filename.toLowerCase(Locale.ROOT).endsWith(".torrent");
     }
 
     /**
