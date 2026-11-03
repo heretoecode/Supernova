@@ -21,6 +21,8 @@ import android.provider.BaseColumns;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.browser.loader.AllTvshowsLoader;
 import com.archos.mediaprovider.video.VideoStore;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * Created by vapillon on 10/04/15.
@@ -92,10 +94,10 @@ public class TvshowCursorMapper implements CompatibleCursorMapper {
     /** ShowTags persists Date.getTime(), not a year or a 32-bit integer. */
     public static int premiereYear(long millis) {
         if (millis == 0) return 0; // missing-date sentinel used by the scraper
-        java.util.Calendar date = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+        Calendar date = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         date.setTimeInMillis(millis);
-        int year = date.get(java.util.Calendar.YEAR);
-        int latest = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR) + 5;
+        int year = date.get(Calendar.YEAR);
+        int latest = Calendar.getInstance().get(Calendar.YEAR) + 5;
         return year >= 1800 && year <= latest ? year : 0;
     }
 
