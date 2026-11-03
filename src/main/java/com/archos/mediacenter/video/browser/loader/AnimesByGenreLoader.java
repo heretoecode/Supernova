@@ -18,6 +18,7 @@ import android.content.Context;
 
 import com.archos.mediascraper.GenreUtils;
 
+/** Loads anime movies filtered by genre. */
 public class AnimesByGenreLoader extends AnimesByLoader {
 
     private static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED";
