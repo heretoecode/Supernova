@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.webkit.*;
 import android.view.*;
 import android.widget.*;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewIcon;
 import com.archos.mediascraper.ScraperTrailer;
 
 /** Official embedded player, with an explicit fallback on devices without a WebView provider. */
@@ -22,7 +24,7 @@ public final class PreviewTrailer {
         try {
             web = new WebView(activity);
         } catch (RuntimeException unavailable) {
-            com.archos.mediacenter.video.leanback.PreviewDialog.choose(activity,
+            PreviewDialog.choose(activity,
                 "In-app trailers are unavailable on this device.", new String[] {
                     "Open YouTube", "Cancel"
                 }, 0, n -> {
@@ -44,7 +46,7 @@ public final class PreviewTrailer {
                 return host == null || !(host.equals("www.youtube.com") || host.equals("www.youtube-nocookie.com"));
             }
         });
-        Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.create(activity, "trailer");
+        Dialog dialog = PreviewDialog.create(activity, "trailer");
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -68,9 +70,9 @@ public final class PreviewTrailer {
             button.setTextColor(0xffffffff);
             button.setTextSize(12);
             button.setPadding(dp(activity, 12), dp(activity, 8), dp(activity, 12), dp(activity, 8));
-            com.archos.mediacenter.video.leanback.PreviewIcon.apply(button, label, 16);
+            PreviewIcon.apply(button, label, 16);
             button.setFocusable(true);
-            button.setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(activity));
+            button.setBackground(PreviewDialog.focus(activity));
             button.setOnClickListener(v -> {
                 dialog.dismiss();
                 if (label.equals("Open YouTube"))
