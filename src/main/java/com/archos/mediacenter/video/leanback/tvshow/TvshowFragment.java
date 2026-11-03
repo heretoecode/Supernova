@@ -121,6 +121,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays TV show details, loads their contents and handles item actions. */
 public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements LoaderManager.LoaderCallbacks<Cursor> {
     private PreviewMoviePage preview;
     private TopNavigation previewNavigation;
