@@ -454,6 +454,7 @@ public final class OfficialTitleArtwork {
             this.contrast = contrast;
         }
 
+        @Override
         public void draw(Canvas canvas) {
             Rect b = getBounds();
             float scale = Math.min(b.width() / (float) bitmap.getWidth(), b.height() / (float) bitmap.getHeight());
@@ -481,14 +482,17 @@ public final class OfficialTitleArtwork {
             canvas.drawBitmap(bitmap, null, new RectF(b.left, b.top, b.left + width, b.top + height), paint);
         }
 
+        @Override
         public void setAlpha(int alpha) {
             paint.setAlpha(alpha);
         }
 
+        @Override
         public void setColorFilter(ColorFilter filter) {
             paint.setColorFilter(filter);
         }
 
+        @Override
         public int getOpacity() {
             return PixelFormat.TRANSLUCENT;
         }
