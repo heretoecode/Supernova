@@ -1,10 +1,14 @@
 package com.archos.mediacenter.video.diagnostics;
 
+import android.app.Activity;
 import android.app.Application;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.RequestCreator;
+import java.io.IOException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,10 +33,10 @@ public class ArtworkRequestTest {
             ArgumentCaptor<Callback> oldCallback=ArgumentCaptor.forClass(Callback.class);verify(first).into(eq(view),oldCallback.capture());
             ArtworkRequest.load(view,Uri.parse("file:///private/title.jpg"),78124,"details.people","portrait",second,true);
             ArgumentCaptor<Callback> callback=ArgumentCaptor.forClass(Callback.class);verify(second).into(eq(view),callback.capture());
-            oldCallback.getValue().onSuccess();callback.getValue().onError(new java.io.IOException("secret private failure"));
+            oldCallback.getValue().onSuccess();callback.getValue().onError(new IOException("secret private failure"));
             DiagnosticFlightRecorder recorder=ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");
             int cancelled=0,failed=0,late=0;
-            for(String line:recorder.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n")){
+            for(String line:recorder.snapshot(SystemClock.elapsedRealtime()).split("\n")){
                 if(line.isEmpty())continue;JSONObject row=new JSONObject(line);long media=row.optLong("media_id");if(media!=78123&&media!=78124)continue;
                 assertFalse(line.contains("private"));assertFalse(line.contains("secret"));assertFalse(line.contains("art.jpg"));
                 String event=row.optString("event");
@@ -46,7 +50,7 @@ public class ArtworkRequestTest {
     @Test public void actualLibraryListBindingCorrelatesAndCancelsPrivateArtwork()throws Exception{
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
         com.archos.mediacenter.video.leanback.PreviewLibraryColumns columns=new com.archos.mediacenter.video.leanback.PreviewLibraryColumns(app,false);
-        android.widget.LinearLayout row=columns.newRow();
+        LinearLayout row=columns.newRow();
         try{
             com.archos.mediacenter.video.browser.adapters.object.Video media=mock(com.archos.mediacenter.video.browser.adapters.object.Video.class);
             when(media.getId()).thenReturn(78125L);when(media.getName()).thenReturn("private-title");when(media.getFilenameNonCryptic()).thenReturn("private-file.mkv");when(media.getFilePath()).thenReturn("/private/path.mkv");
@@ -57,9 +61,9 @@ public class ArtworkRequestTest {
     }
     @Test public void actualBrowserSelectionTerminatesPosterOnProviderTransition()throws Exception{
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
-        var host=Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host=Robolectric.buildActivity(Activity.class).setup().visible();
         try{
-            var browser=new com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface(host.get(),new android.widget.LinearLayout(host.get()),Uri.parse("file:///private/"),()->{});host.get().setContentView(browser);
+            var browser=new com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface(host.get(),new LinearLayout(host.get()),Uri.parse("file:///private/"),()->{});host.get().setContentView(browser);
             com.archos.mediacenter.video.browser.adapters.object.Video media=mock(com.archos.mediacenter.video.browser.adapters.object.Video.class);
             when(media.getId()).thenReturn(78126L);when(media.getName()).thenReturn("private-title");when(media.getFilenameNonCryptic()).thenReturn("private-file.mkv");when(media.getPosterUri()).thenReturn(Uri.parse("file:///private/poster.jpg"));
             ReflectionHelpers.callInstanceMethod(browser,"focusItem",ReflectionHelpers.ClassParameter.from(Object.class,media),ReflectionHelpers.ClassParameter.from(Runnable.class,(Runnable)()->{}));
@@ -69,7 +73,7 @@ public class ArtworkRequestTest {
     }
     private void assertRoute(long media,String surface)throws Exception{
         DiagnosticFlightRecorder recorder=ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");int requested=0,cancelled=0;String operation=null;
-        String evidence=recorder.snapshot(android.os.SystemClock.elapsedRealtime());
+        String evidence=recorder.snapshot(SystemClock.elapsedRealtime());
         for(String line:evidence.split("\n")){
             if(line.isEmpty())continue;JSONObject row=new JSONObject(line);if(row.optLong("media_id")!=media)continue;
             assertFalse(line.contains("private"));assertEquals(surface,row.getString("surface"));assertEquals("local",row.getString("source"));
