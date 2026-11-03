@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViewsService;
 
+/** Groups services that supply row factories for the different video widget categories. */
 public class VideoWidgetServices {
 
 	private final static String TAG = "VideoWidgetServices";
