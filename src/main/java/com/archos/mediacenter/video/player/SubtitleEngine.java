@@ -391,8 +391,11 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     // Surface -- exactly what onFrameAvailable() does per video frame, minus the video frame.
     private void pull3DSubtitles() {
         Surface surface = mLast3DSurface;
-        if (!is3DMode() || surface == null) return;
+        if (mReleased || !is3DMode() || surface == null) return;
         draw3DSubtitlesInternal(surface, mLast3DWidth, mLast3DHeight, /*forceSync=*/false);
+        if (!mReleased && Player.sPlayer != null && Player.sPlayer.getEffectRenderer() != null) {
+            Player.sPlayer.getEffectRenderer().wakeDrawLoop();
+        }
     }
 
     private void redraw3DIfNeeded() {
