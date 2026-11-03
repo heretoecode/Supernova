@@ -90,6 +90,7 @@ public class VideosByListLoader extends CursorLoader implements CompatAndSDKCurs
         return cmd;
     }
 
+    @Override
     public Loader<Cursor> getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mForceHideVideos = hideWatchedVideos;
         return  new CursorLoader(getContext(),
