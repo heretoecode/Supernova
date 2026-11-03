@@ -1,10 +1,14 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.app.Dialog;
 import android.net.Uri;
 import android.view.View;
-import android.widget.LinearLayout;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -28,7 +32,7 @@ public class PreviewSourceRemovalTest {
 
     @org.junit.Before
     public void configuredLibraryFixture() {
-        androidx.preference.PreferenceManager
+        PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
@@ -58,11 +62,11 @@ public class PreviewSourceRemovalTest {
                     return 0;
                 }
             };
-            java.util.List<Shortcut> rows = new java.util.ArrayList<>();
+            List<Shortcut> rows = new ArrayList<>();
             rows.add(source);
             PreviewNetworkWorkspace workspace = new PreviewNetworkWorkspace(host.get(),
-                java.util.Collections.emptyList(), bookmark ? new java.util.ArrayList<>() : rows,
-                bookmark ? rows : new java.util.ArrayList<>(), box -> {
+                Collections.emptyList(), bookmark ? new ArrayList<>() : rows,
+                bookmark ? rows : new ArrayList<>(), box -> {
                 }, kind -> {
                 });
             host.get().setContentView(workspace);
@@ -77,10 +81,10 @@ public class PreviewSourceRemovalTest {
             if (bookmark) {
                 assertFalse(browser.selections().changed());
                 PreviewPagesTest.findText(browser, "Remove Saved Location").performClick();
-                android.app.Dialog confirm = ShadowDialog.getLatestDialog();
+                Dialog confirm = ShadowDialog.getLatestDialog();
                 View label = confirm.getWindow().getDecorView().findViewWithTag("preview-label:1");
                 ((View) label.getParent()).performClick();
-                android.app.Dialog error = ShadowDialog.getLatestDialog();
+                Dialog error = ShadowDialog.getLatestDialog();
                 assertNotSame(confirm, error);
                 assertTrue(error.isShowing());
                 assertFalse(browser.selections().changed());
@@ -89,7 +93,7 @@ public class PreviewSourceRemovalTest {
                 PreviewPagesTest.findText(browser, "Remove from Library").performClick();
                 assertTrue(browser.selections().changed());
                 PreviewPagesTest.findText(browser, "Save Changes & Scan").performClick();
-                android.app.Dialog error = ShadowDialog.getLatestDialog();
+                Dialog error = ShadowDialog.getLatestDialog();
                 assertTrue(error.isShowing());
                 assertTrue("An unconfirmed commit remains editable", browser.selections().changed());
                 error.dismiss();
