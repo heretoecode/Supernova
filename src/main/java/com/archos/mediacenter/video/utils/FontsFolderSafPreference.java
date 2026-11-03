@@ -28,6 +28,7 @@ import android.util.Log;
 
 import com.archos.mediacenter.video.R;
 
+/** Launches a storage-access tree picker for the fonts folder preference. */
 public class FontsFolderSafPreference extends Preference {
 
     private static final String TAG = "FontsFolderSafPreference";
