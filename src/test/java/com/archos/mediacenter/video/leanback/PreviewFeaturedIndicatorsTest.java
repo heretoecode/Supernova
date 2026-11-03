@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.animation.ValueAnimator;
+import android.app.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -8,7 +9,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewFeaturedIndicatorsTest {
     @Test public void rapidRetargetKeepsCurrentWidthsAndOnePillOfTotalEmphasis(){
         PreviewFeaturedIndicators view=new PreviewFeaturedIndicators(RuntimeEnvironment.getApplication());
