@@ -18,6 +18,7 @@ import androidx.leanback.R;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
+/** Clips views to rounded rectangular outlines on Android API 21 and later. */
 class RoundedRectHelperApi21 {
 
     private static int sCornerRadius;
