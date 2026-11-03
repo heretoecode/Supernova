@@ -61,8 +61,6 @@ import com.archos.medialib.MediaMetadata;
 import com.archos.mediaprovider.ArchosMediaCommon;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
