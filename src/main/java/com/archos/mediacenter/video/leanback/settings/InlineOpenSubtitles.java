@@ -34,8 +34,10 @@ final class InlineOpenSubtitles {
         username = prefs.getString(OpenSubtitlesCredentialsDialog.OPENSUBTITLES_USERNAME, "");
         password = prefs.getString(OpenSubtitlesCredentialsDialog.OPENSUBTITLES_PASSWORD, "");
         target.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
             public void onViewAttachedToWindow(View v) {
             }
+            @Override
             public void onViewDetachedFromWindow(View v) {
                 generation++;
                 if (work != null)
