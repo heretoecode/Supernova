@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.loader.content.Loader;
 
+/** Loads and displays movies grouped by genre. */
 public class BrowserMoviesByGenre2 extends BrowserMoviesBy {
 
     @Override
