@@ -21,6 +21,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks coordinated viewing restore rolls back incomplete changes and replays durable completion. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class CombinedViewingRestoreTest {
     protected Context app;protected SharedPreferences prefs,health;protected File journal;protected PreferenceRestoreTransaction transaction;
