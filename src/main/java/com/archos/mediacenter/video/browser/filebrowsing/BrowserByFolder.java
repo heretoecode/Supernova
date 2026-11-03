@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -188,7 +189,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
         // Apply theme colors to actionbar - safe to do here when ActionBar is initialized
         if (getActivity() != null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setBackgroundDrawable(
-                new android.graphics.drawable.ColorDrawable(ThemeManager.getInstance(getActivity()).getToolbarBackgroundColor())
+                new ColorDrawable(ThemeManager.getInstance(getActivity()).getToolbarBackgroundColor())
             );
         }
         mIsActive = true;
