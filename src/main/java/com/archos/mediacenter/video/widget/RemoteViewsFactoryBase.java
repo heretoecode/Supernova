@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 /*
  * Implementation of RemoteViewsService common to all the video services
  */
+/** Builds video widget rows and reloads their data when content changes. */
 abstract class RemoteViewsFactoryBase implements RemoteViewsService.RemoteViewsFactory {
     private static final Logger log = LoggerFactory.getLogger(RemoteViewsFactoryBase.class);
 
