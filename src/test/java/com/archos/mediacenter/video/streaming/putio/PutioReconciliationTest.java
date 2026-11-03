@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static com.archos.mediacenter.video.streaming.putio.PutioReconciliation.*;
 
+/** Checks put.io reconciliation preserves library records and requires complete, unambiguous file evidence. */
 public class PutioReconciliationTest {
     private static Snapshot complete(File... files) {
         Snapshot s = new Snapshot("account:folder", "root");
