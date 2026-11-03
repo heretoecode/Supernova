@@ -16,9 +16,14 @@ package com.archos.mediacenter.video.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 
+import android.view.Gravity;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.widget.BaseCardView;
 import androidx.leanback.widget.Presenter;
@@ -28,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.UnavailablePosterBroadcastReceiver;
 import com.archos.mediacenter.video.picasso.ThumbnailRequestHandler;
@@ -72,7 +78,7 @@ public abstract class ListPresenter extends Presenter {
             mWatchedIcon.setVisibility(View.GONE);
             mPinnedIcon.setVisibility(View.GONE);
 
-            if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                     "try_new_ui", false)) {
                 float density = context.getResources().getDisplayMetrics().density;
                 View content = mBaseCardView.findViewById(R.id.myroot);
@@ -82,21 +88,21 @@ public abstract class ListPresenter extends Presenter {
                 content.setBackgroundColor(0x240a1420);
                 mImageView.getLayoutParams().width = (int) (82 * density);
                 mImageView.getLayoutParams().height = (int) (54 * density);
-                mImageView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                mImageView.setBackgroundColor(Color.TRANSPARENT);
                 mTitleTv.setTextSize(14);
                 mTitleTv.setSingleLine(true);
                 mTitleTv.setTypeface(
-                    android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+                    Typeface.create("sans-serif-medium", Typeface.NORMAL));
                 mContentTv.setTextSize(11);
                 mContentTv.setTextColor(0xffa4b6c7);
                 mBaseCardView.setBackgroundColor(0xbb192f45);
-                android.graphics.drawable.LayerDrawable separated = new android.graphics.drawable.LayerDrawable(
+                LayerDrawable separated = new LayerDrawable(
                     new android.graphics.drawable.Drawable[] {
-                        new android.graphics.drawable.ColorDrawable(0x1809131c),
-                        new android.graphics.drawable.ColorDrawable(0x40708695)
+                        new ColorDrawable(0x1809131c),
+                        new ColorDrawable(0x40708695)
                     });
                 separated.setLayerHeight(1, Math.max(1, (int) density));
-                separated.setLayerGravity(1, android.view.Gravity.BOTTOM);
+                separated.setLayerGravity(1, Gravity.BOTTOM);
                 mBaseCardView.setBackground(separated);
                 mBaseCardView.setForeground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(context));
                 mBaseCardView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
