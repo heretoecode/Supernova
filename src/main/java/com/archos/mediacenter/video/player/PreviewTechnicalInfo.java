@@ -8,8 +8,10 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.VideoMetadata;
+import com.archos.mediacenter.video.utils.VideoUtils;
 import java.util.Locale;
 
 /** Read-only snapshot of the active decoder. Never starts a second metadata probe/player. */
@@ -83,15 +85,15 @@ final class PreviewTechnicalInfo {
 
     static void show(Activity activity, VideoMetadata metadata, Uri uri, int backend, Runnable restoreHud) {
         View origin = activity.getCurrentFocus();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "playback_technical_snapshot", "metadata_present", metadata != null, "backend", backend);
         if (uri != null && "content".equals(uri.getScheme())) {
             String path =
-                com.archos.mediacenter.video.utils.VideoUtils.getFileUriStringFromContentUri(activity, uri.toString());
+                VideoUtils.getFileUriStringFromContentUri(activity, uri.toString());
             if (path != null)
                 uri = Uri.parse(path);
         }
-        String full = describe(metadata, com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri), backend);
+        String full = describe(metadata, Diagnostics.sourceType(uri), backend);
         Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = new LinearLayout(activity);
@@ -103,13 +105,13 @@ final class PreviewTechnicalInfo {
             "Source", "Video", "Audio", "File"
         };
         String[] bodies = {
-            "Source: " + com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri),
+            "Source: " + Diagnostics.sourceType(uri),
             "Not available", "Not available",
             metadata == null ? "Not available" : "File size: " + metadata.getFileSize() + " bytes"
         };
         String[] parts = full.split("\\n\\n(?=VIDEO|AUDIO|SUBTITLES)");
         bodies[0] = parts[0];
-        bodies[0] = "Source: " + com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri)
+        bodies[0] = "Source: " + Diagnostics.sourceType(uri)
             + "\nPlayer backend: " + backend;
         for (int i = 1; i < parts.length; i++) {
             String value = parts[i];
@@ -152,7 +154,7 @@ final class PreviewTechnicalInfo {
                 if (origin != null && origin.isAttachedToWindow())
                     origin.requestFocus();
             }
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_closed");
+            Diagnostics.event("playback_technical_closed");
         });
     }
 }
