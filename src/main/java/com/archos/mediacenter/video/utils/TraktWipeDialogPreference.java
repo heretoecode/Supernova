@@ -18,7 +18,6 @@ import com.archos.mediacenter.utils.trakt.Trakt;
 
 import android.content.Context;
 
-import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
