@@ -36,6 +36,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
 import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase.Credential;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 
 public class SmbServerCredentialsDialog extends DialogFragment {
 
@@ -158,7 +159,7 @@ public class SmbServerCredentialsDialog extends DialogFragment {
             }});
         mDialog = builder.create();
 
-        mDialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(mDialog));
+        mDialog.setOnShowListener(ignored -> PreviewDialog.styleNative(mDialog));
         return mDialog;
     }
 
