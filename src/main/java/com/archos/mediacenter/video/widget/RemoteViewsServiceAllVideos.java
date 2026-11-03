@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.widget;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 
+/** Supplies the row factory for an all-videos home-screen widget. */
 public class RemoteViewsServiceAllVideos extends RemoteViewsService {
 	@Override
 	public RemoteViewsFactory onGetViewFactory(Intent intent) {
