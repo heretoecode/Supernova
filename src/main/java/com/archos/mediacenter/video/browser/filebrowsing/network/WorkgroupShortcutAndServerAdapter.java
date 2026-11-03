@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Provides network-root rows for discovered shares, workgroups and shortcuts. */
 public abstract class WorkgroupShortcutAndServerAdapter extends RootFragmentAdapter {
 
     private static final String TAG = "WorkgroupAndServerAdapter";
