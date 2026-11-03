@@ -4,12 +4,16 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.os.Build;
 import android.os.StatFs;
+import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -17,12 +21,19 @@ import android.widget.TextView;
 import androidx.preference.PreferenceFragmentCompat;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.leanback.PreviewAccent;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.TreeSet;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /** About alone uses the approved four-child rail and flexible centre/right panels. */
 public final class FoundationAboutWorkspace extends LinearLayout {
@@ -59,7 +69,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private ExecutorService reader;
     private boolean licencesOpened, licenceEntryPending;
     private BundledNoticeReader noticeReader;
-    private final Map<String, String> legalCache = new java.util.LinkedHashMap<String, String>() {
+    private final Map<String, String> legalCache = new LinkedHashMap<String, String>() {
         protected boolean removeEldestEntry(Map.Entry<String, String> entry) {
             return size() > 4;
         }
@@ -156,7 +166,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                 final int position = index;
                 TextView child = text(name, 16);
                 child.setSingleLine(true);
-                child.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                child.setEllipsize(TextUtils.TruncateAt.END);
                 child.setPadding(dp(24), 0, dp(6), 0);
                 child.setGravity(Gravity.CENTER_VERTICAL);
                 child.setFocusable(true);
@@ -173,7 +183,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                 Runnable reveal = () -> {
                     if (!child.hasFocus() || child.getWidth() == 0 || child.getHeight() == 0)
                         return;
-                    android.view.ViewParent ancestor = child.getParent();
+                    ViewParent ancestor = child.getParent();
                     while (ancestor != null && !(ancestor instanceof ScrollView))
                         ancestor = ancestor.getParent();
                     if (ancestor instanceof ScrollView) {
@@ -526,12 +536,12 @@ public final class FoundationAboutWorkspace extends LinearLayout {
 
     private ExecutorService reader() {
         if (reader == null || reader.isShutdown())
-            reader = new java.util.concurrent.ThreadPoolExecutor(
-                1, 1, 0, java.util.concurrent.TimeUnit.SECONDS, new java.util.concurrent.ArrayBlockingQueue<>(2), r -> {
+            reader = new ThreadPoolExecutor(
+                1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(2), r -> {
                     Thread t = new Thread(r, "SupernovaLegalReader");
                     t.setDaemon(true);
                     return t;
-                }, new java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy());
+                }, new ThreadPoolExecutor.DiscardOldestPolicy());
         return reader;
     }
 
@@ -556,7 +566,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                                version = component.optString("version", "Version unavailable");
                         TextView componentRow = row(name, () -> loadLegal(component, name + " · " + version), null);
                         componentRow.setSingleLine(true);
-                        componentRow.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                        componentRow.setEllipsize(TextUtils.TruncateAt.END);
                         componentRow.setMinimumHeight(dp(44));
                     }
                     if (!rows.isEmpty()) {
@@ -641,22 +651,22 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                 -> showDetails("Device & Android TV",
                     "Manufacturer: " + Build.MANUFACTURER + "\nModel: " + Build.MODEL
                         + "\nAndroid: " + Build.VERSION.RELEASE + "\nAPI: " + Build.VERSION.SDK_INT
-                        + "\nDevice ABIs: " + android.text.TextUtils.join(", ", Build.SUPPORTED_ABIS),
+                        + "\nDevice ABIs: " + TextUtils.join(", ", Build.SUPPORTED_ABIS),
                     null, null),
             null);
         row("Playback & Media Capabilities", () -> {
-            Set<String> types = new java.util.TreeSet<>();
+            Set<String> types = new TreeSet<>();
             try {
-                for (android.media.MediaCodecInfo codec :
-                    new android.media.MediaCodecList(android.media.MediaCodecList.ALL_CODECS).getCodecInfos())
+                for (MediaCodecInfo codec :
+                    new MediaCodecList(MediaCodecList.ALL_CODECS).getCodecInfos())
                     if (!codec.isEncoder())
-                        java.util.Collections.addAll(types, codec.getSupportedTypes());
+                        Collections.addAll(types, codec.getSupportedTypes());
             } catch (RuntimeException unavailable) {
                 types.clear();
             }
             showDetails("Playback & Media Capabilities",
                 "Android-reported decoder types:\n"
-                    + (types.isEmpty() ? "Unavailable" : android.text.TextUtils.join("\n", types))
+                    + (types.isEmpty() ? "Unavailable" : TextUtils.join("\n", types))
                     + "\n\nReported support is not a playback guarantee. File-specific information remains in the existing media Technical Information view.",
                 null, null);
         }, null);
@@ -667,8 +677,8 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             String free = "Unavailable", capacity = "Unavailable";
             try {
                 StatFs fs = new StatFs(getContext().getFilesDir().getAbsolutePath());
-                free = android.text.format.Formatter.formatFileSize(getContext(), fs.getAvailableBytes());
-                capacity = android.text.format.Formatter.formatFileSize(getContext(), fs.getTotalBytes());
+                free = Formatter.formatFileSize(getContext(), fs.getAvailableBytes());
+                capacity = Formatter.formatFileSize(getContext(), fs.getTotalBytes());
             } catch (RuntimeException unavailable) {
                 /* Keep this read-only view usable when storage is unavailable. */
             }
@@ -765,12 +775,12 @@ public final class FoundationAboutWorkspace extends LinearLayout {
 
     private Bitmap qr(String url) {
         try {
-            java.net.URI parsed = java.net.URI.create(url);
+            URI parsed = URI.create(url);
             if (!"https".equals(parsed.getScheme()) || parsed.getHost() == null || parsed.getUserInfo() != null
                 || parsed.getQuery() != null || parsed.getFragment() != null)
                 return null;
             BitMatrix matrix = new QRCodeWriter().encode(
-                url, BarcodeFormat.QR_CODE, 256, 256, java.util.Collections.singletonMap(EncodeHintType.MARGIN, 4));
+                url, BarcodeFormat.QR_CODE, 256, 256, Collections.singletonMap(EncodeHintType.MARGIN, 4));
             Bitmap bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888);
             int[] pixels = new int[256 * 256];
             for (int y = 0; y < 256; y++)
@@ -796,7 +806,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             int n;
             while ((n = in.read(buffer)) != -1) {
                 if (bytes.size() + n > 8 * 1024 * 1024)
-                    throw new java.io.IOException("Bundled information exceeds the reader limit");
+                    throw new IOException("Bundled information exceeds the reader limit");
                 bytes.write(buffer, 0, n);
             }
             return bytes.toString(StandardCharsets.UTF_8.name());
