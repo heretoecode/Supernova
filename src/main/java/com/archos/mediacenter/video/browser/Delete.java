@@ -33,6 +33,7 @@ import com.archos.filecorelibrary.MetaFile2;
 import com.archos.filecorelibrary.RawLister;
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.filecorelibrary.localstorage.LocalStorageFileEditor;
+import com.archos.filecorelibrary.webdav.WebdavFileEditor;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.filecoreextension.upnp2.MetaFileFactoryWithUpnp;
 import com.archos.mediacenter.filecoreextension.upnp2.RawListerFactoryWithUpnp;
@@ -48,6 +49,7 @@ import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.info.SingleVideoLoader;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediaprovider.NetworkScanner;
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.NfoParser;
 import com.jcraft.jsch.JSchException;
@@ -246,7 +248,7 @@ public class Delete {
 
     private static String sourceKind(Uri uri){
         String scheme=uri==null?null:uri.getScheme();
-        return scheme!=null&&java.util.Arrays.asList("file","content","webdav","webdavs","smb","smbj","sshj","sftp","ftp","ftps","http","https","upnp").contains(scheme.toLowerCase(Locale.ROOT))?scheme.toLowerCase(Locale.ROOT):"other";
+        return scheme!=null&&Arrays.asList("file","content","webdav","webdavs","smb","smbj","sshj","sftp","ftp","ftps","http","https","upnp").contains(scheme.toLowerCase(Locale.ROOT))?scheme.toLowerCase(Locale.ROOT):"other";
     }
     private final ThreadLocal<Boolean> absentRemoteSource=new ThreadLocal<Boolean>(){@Override protected Boolean initialValue(){return false;}};
     private boolean sourceWasAbsent(){boolean absent=Boolean.TRUE.equals(absentRemoteSource.get());absentRemoteSource.remove();return absent;}
@@ -262,14 +264,14 @@ public class Delete {
             public void run(){
                 if(!UriUtils.isImplementedByFileCore(fileUri)||"upnp".equals(fileUri.getScheme())) //we can't delete files on upnp
                     return;
-                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,fileUri))return;
+                if(ProviderDiscoveryGate.protects(mContext,fileUri))return;
                 List<Uri> toDelete = getAssociatedFiles(fileUri);
                 if(toDelete!=null){
                     if (log.isDebugEnabled()) log.debug("deleteAssociatedNfoFiles: counter {}", counter);
                     for(Uri uri : toDelete){
                         try {
-                            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-                                if(!com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,uri))FileEditorFactory.getFileEditorForUrl(uri,mContext).delete();
+                            synchronized(ProviderDiscoveryGate.LOCK){
+                                if(!ProviderDiscoveryGate.protects(mContext,uri))FileEditorFactory.getFileEditorForUrl(uri,mContext).delete();
                             }
                         } catch (Exception e) {
                             log.error("deleteAssociatedNfoFiles: error_class={}", e.getClass().getSimpleName());
@@ -355,13 +357,13 @@ public class Delete {
      * only after the physical delete succeeds. FileCore's remote null return means
      * success; its local null return means a pending system permission request. */
     private Boolean deletePhysicalFile(Context context, Uri uri) throws Exception {
-        synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(context,uri))return false;
+        synchronized(ProviderDiscoveryGate.LOCK){
+        if(ProviderDiscoveryGate.protects(context,uri))return false;
         absentRemoteSource.set(false);
         FileEditor editor = FileEditorFactory.getFileEditorForUrl(uri, context);
         Boolean result = editor.delete();
-        if(editor instanceof com.archos.filecorelibrary.webdav.WebdavFileEditor)
-            absentRemoteSource.set(((com.archos.filecorelibrary.webdav.WebdavFileEditor)editor).wasAlreadyAbsent());
+        if(editor instanceof WebdavFileEditor)
+            absentRemoteSource.set(((WebdavFileEditor)editor).wasAlreadyAbsent());
         if (editor instanceof LocalStorageFileEditor) {
             if (result == null) return null;
             if (!result || new File(uri.getPath()).exists()) return false;
@@ -425,8 +427,8 @@ public class Delete {
         new Thread(){
             public void run() {
                 try {
-                    synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-                    if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(mContext,uri))throw new IOException("Use the provider API to manage this folder");
+                    synchronized(ProviderDiscoveryGate.LOCK){
+                    if(ProviderDiscoveryGate.protects(mContext,uri))throw new IOException("Use the provider API to manage this folder");
                     FileEditor editor = FileEditorFactory.getFileEditorForUrl(uri, mContext);
                     Boolean result = editor.delete();
                     if (result == null && editor instanceof LocalStorageFileEditor) return;
