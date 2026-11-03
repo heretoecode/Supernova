@@ -45,6 +45,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.archos.mediacenter.video.R;
 
+/** Displays subtitle files and handles their selection and context actions. */
 public class SubtitlesWizardActivity extends AppCompatActivity implements OnItemClickListener, View.OnCreateContextMenuListener {
     private final static String TAG = "SubtitlesWizardActivity";
     private final static boolean DBG = false;
