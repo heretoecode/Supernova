@@ -9,49 +9,96 @@ import com.squareup.picasso.Picasso;
 public final class StreamingActionPresenter extends Presenter {
     public static final class LogoAction extends StreamingActions.StreamingAction {
         public final StreamingRepository.Provider provider;
+
         LogoAction(StreamingRepository.Provider provider, Runnable click) {
-            super(50000, provider.name, "", click); this.provider = provider;
+            super(50000, provider.name, "", click);
+            this.provider = provider;
         }
     }
+
     public static final class Selector extends PresenterSelector {
         private final PresenterSelector normal;
-        public Selector(PresenterSelector normal) { this.normal = normal; }
+
+        public Selector(PresenterSelector normal) {
+            this.normal = normal;
+        }
+
         private final Presenter logo = new StreamingActionPresenter();
-        @Override public Presenter getPresenter(Object item) { return item instanceof LogoAction ? logo : normal.getPresenter(item); }
-        @Override public Presenter[] getPresenters() {
+
+        @Override
+        public Presenter getPresenter(Object item) {
+            return item instanceof LogoAction ? logo : normal.getPresenter(item);
+        }
+
+        @Override
+        public Presenter[] getPresenters() {
             Presenter[] original = normal.getPresenters();
             Presenter[] all = java.util.Arrays.copyOf(original, original.length + 1);
-            all[original.length] = logo; return all;
+            all[original.length] = logo;
+            return all;
         }
     }
+
     static final class Holder extends ViewHolder {
-        final ImageView image; final TextView fallback;
-        Holder(FrameLayout frame, ImageView image, TextView fallback) { super(frame); this.image = image; this.fallback = fallback; }
+        final ImageView image;
+        final TextView fallback;
+
+        Holder(FrameLayout frame, ImageView image, TextView fallback) {
+            super(frame);
+            this.image = image;
+            this.fallback = fallback;
+        }
     }
-    @Override public ViewHolder onCreateViewHolder(ViewGroup parent) {
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent) {
         android.content.Context c = parent.getContext();
         float d = c.getResources().getDisplayMetrics().density;
         FrameLayout frame = new FrameLayout(c);
-        boolean preview=androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui",false);
-        frame.setLayoutParams(new ViewGroup.LayoutParams((int)((preview?160:180)*d), (int)((preview?38:56)*d)));
-        frame.setFocusable(true); frame.setClickable(true);
-        ImageView image = new ImageView(c); image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        FrameLayout.LayoutParams ip = new FrameLayout.LayoutParams((int)(28*d), (int)(28*d),Gravity.START|Gravity.CENTER_VERTICAL); ip.leftMargin=(int)(6*d);
+        boolean preview =
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui", false);
+        frame.setLayoutParams(
+            new ViewGroup.LayoutParams((int)((preview ? 160 : 180) * d), (int)((preview ? 38 : 56) * d)));
+        frame.setFocusable(true);
+        frame.setClickable(true);
+        ImageView image = new ImageView(c);
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        FrameLayout.LayoutParams ip =
+            new FrameLayout.LayoutParams((int)(28 * d), (int)(28 * d), Gravity.START | Gravity.CENTER_VERTICAL);
+        ip.leftMargin = (int)(6 * d);
         frame.addView(image, ip);
-        TextView fallback = new TextView(c); fallback.setGravity(Gravity.CENTER); fallback.setTextColor(Color.WHITE); fallback.setTextSize(13);
-        fallback.setGravity(Gravity.CENTER_VERTICAL);fallback.setSingleLine(true);fallback.setEllipsize(android.text.TextUtils.TruncateAt.END);FrameLayout.LayoutParams labelParams=new FrameLayout.LayoutParams(-1,-1);labelParams.leftMargin=(int)(42*d);labelParams.rightMargin=(int)(8*d);frame.addView(fallback,labelParams);
-        com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(frame, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
-        return new Holder(frame,image,fallback);
+        TextView fallback = new TextView(c);
+        fallback.setGravity(Gravity.CENTER);
+        fallback.setTextColor(Color.WHITE);
+        fallback.setTextSize(13);
+        fallback.setGravity(Gravity.CENTER_VERTICAL);
+        fallback.setSingleLine(true);
+        fallback.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        FrameLayout.LayoutParams labelParams = new FrameLayout.LayoutParams(-1, -1);
+        labelParams.leftMargin = (int)(42 * d);
+        labelParams.rightMargin = (int)(8 * d);
+        frame.addView(fallback, labelParams);
+        com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(
+            frame, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+        return new Holder(frame, image, fallback);
     }
-    @Override public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        Holder h = (Holder)viewHolder; LogoAction a = (LogoAction)item;
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, Object item) {
+        Holder h = (Holder)viewHolder;
+        LogoAction a = (LogoAction)item;
         h.view.setContentDescription("Open " + a.provider.name);
-        h.fallback.setText(a.provider.name); h.fallback.setVisibility(View.VISIBLE);
+        h.fallback.setText(a.provider.name);
+        h.fallback.setVisibility(View.VISIBLE);
         h.view.setOnClickListener(v -> a.click.run());
-        PreviewProviderIcons.bindProvider(h.image,a.provider,0,"details.actions");
+        PreviewProviderIcons.bindProvider(h.image, a.provider, 0, "details.actions");
     }
-    @Override public void onUnbindViewHolder(ViewHolder viewHolder) {
-        Holder h = (Holder)viewHolder; Picasso.get().cancelRequest(h.image);
-        h.image.setImageDrawable(null); h.view.setOnClickListener(null);
+
+    @Override
+    public void onUnbindViewHolder(ViewHolder viewHolder) {
+        Holder h = (Holder)viewHolder;
+        Picasso.get().cancelRequest(h.image);
+        h.image.setImageDrawable(null);
+        h.view.setOnClickListener(null);
     }
 }
