@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.content.*;
 import android.os.Bundle;
 import androidx.leanback.widget.ArrayObjectAdapter;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
+import org.json.JSONObject;
 
 /** Provider-only discovery opens a Supernova Details page without creating a fake local file. */
 public final class PreviewRemoteDetailsActivity extends Activity {
@@ -41,11 +46,11 @@ public final class PreviewRemoteDetailsActivity extends Activity {
         navigation = new TopNavigation(this, page, index -> {
             Intent intent;
             if (index == 4)
-                intent = new Intent(this, com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class);
+                intent = new Intent(this, VideoSettingsActivity.class);
             else if (index == 5)
-                intent = new Intent(this, com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class);
+                intent = new Intent(this, VideoSearchActivity.class);
             else
-                intent = new Intent(this, com.archos.mediacenter.video.leanback.MainActivityLeanback.class)
+                intent = new Intent(this, MainActivityLeanback.class)
                              .putExtra("preview_tab", index);
             startActivity(intent);
         }, page::atTop);
@@ -53,7 +58,7 @@ public final class PreviewRemoteDetailsActivity extends Activity {
         setContentView(navigation);
         work = StreamingRepository.IO.submit(() -> {
             try {
-                org.json.JSONObject details = StreamingRepository.metadata(getApplicationContext(), kind, id, "");
+                JSONObject details = StreamingRepository.metadata(getApplicationContext(), kind, id, "");
                 StreamingRepository.Availability availability =
                     StreamingRepository.load(getApplicationContext(), kind, id, StreamingRepository.country(this));
                 List<StreamingRepository.Offer> offers =
@@ -74,7 +79,7 @@ public final class PreviewRemoteDetailsActivity extends Activity {
                         PreviewNotice.show(this, "No availability on your configured services", false);
                 });
             } catch (Exception error) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("remote_details_unavailable", error);
+                Diagnostics.error("remote_details_unavailable", error);
                 runOnUiThread(() -> {
                     if (!isFinishing())
                         PreviewDialog.read(
