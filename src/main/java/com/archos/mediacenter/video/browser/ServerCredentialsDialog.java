@@ -43,6 +43,7 @@ import com.archos.mediacenter.video.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects server connection credentials and reports connect or cancel actions. */
 public abstract class ServerCredentialsDialog extends DialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(ServerCredentialsDialog.class);
