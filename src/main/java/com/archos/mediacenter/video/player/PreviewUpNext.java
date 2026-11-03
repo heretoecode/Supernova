@@ -195,13 +195,13 @@ final class PreviewUpNext {
                     return true;
                 }
                 if (key == KeyEvent.KEYCODE_DPAD_DOWN || key == KeyEvent.KEYCODE_DPAD_LEFT ||
-                    key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    key == KeyEvent.KEYCODE_DPAD_RIGHT || key == KeyEvent.KEYCODE_BACK) {
                     if (skipOrigin != null)
                         skipOrigin.requestFocus();
                     consumeKeyUp = key;
                     return true;
                 }
-                if (key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_DPAD_UP) {
+                if (key == KeyEvent.KEYCODE_DPAD_UP) {
                     consumeKeyUp = key;
                     return true;
                 }

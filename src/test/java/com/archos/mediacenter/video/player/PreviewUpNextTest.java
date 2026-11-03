@@ -19,6 +19,40 @@ import org.robolectric.util.ReflectionHelpers;
 @Config(application = Application.class, sdk = 28)
 public class PreviewUpNextTest {
     @Test
+    public void backFromSkipPillRestoresOriginAndConsumesRelease() {
+        ActivityController<Activity> host = Robolectric.buildActivity(Activity.class).setup();
+        PreviewUpNext prompt = new PreviewUpNext(host.get());
+        try {
+            LinearLayout root = new LinearLayout(host.get());
+            root.setOrientation(LinearLayout.VERTICAL);
+            TextView origin = new TextView(host.get());
+            origin.setFocusableInTouchMode(true);
+            root.addView(origin);
+            TextView pill = new TextView(host.get());
+            pill.setFocusableInTouchMode(true);
+            root.addView(pill);
+            host.get().setContentView(root);
+            ReflectionHelpers.setField(prompt, "skipPill", pill);
+            ReflectionHelpers.setField(prompt, "skipOrigin", origin);
+            assertTrue(pill.requestFocus());
+            assertTrue(prompt.handleKey(
+                    new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP), () -> {}));
+            assertTrue(pill.hasFocus());
+            assertTrue(prompt.handleKey(
+                    new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_UP), () -> {}));
+            assertTrue(prompt.handleKey(
+                    new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK), () -> {}));
+            assertTrue(origin.hasFocus());
+            assertTrue(prompt.handleKey(
+                    new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK), () -> {}));
+            assertTrue(origin.hasFocus());
+        } finally {
+            prompt.stop();
+            host.pause().stop().destroy();
+        }
+    }
+
+    @Test
     public void creditsAndUnknownMarkersCannotAdvancePastUnseenPostCredits() {
         IntroSegments segments = new IntroSegments();
         segments.add(IntroSegments.Type.CREDITS, new IntroSegments.Segment(1700000L, 1800000L, 0, 0, "fixture"));
