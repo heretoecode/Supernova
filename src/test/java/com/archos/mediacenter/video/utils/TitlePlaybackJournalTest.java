@@ -1,12 +1,15 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.database.Cursor;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.zip.ZipFile;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -57,7 +60,7 @@ public class TitlePlaybackJournalTest {
                 JSONArray row = new JSONArray();
                 for (int i = 0; i < rows.getColumnCount(); i++)
                     row.put(rows.isNull(i) ? JSONObject.NULL
-                            : rows.getType(i) == android.database.Cursor.FIELD_TYPE_STRING ? rows.getString(i)
+                            : rows.getType(i) == Cursor.FIELD_TYPE_STRING ? rows.getString(i)
                                                                                            : rows.getLong(i));
                 result.put(row);
             }
@@ -260,15 +263,15 @@ public class TitlePlaybackJournalTest {
         throws Exception {
         File archive =
             LogicalBackupExporter.preparePrivate(fixture.app, Set.of(BackupCategory.TITLE_PLAYBACK), () -> false);
-        try (var zip = new java.util.zip.ZipFile(archive)) {
+        try (var zip = new ZipFile(archive)) {
             String text = new String(zip.getInputStream(zip.getEntry("categories/TITLE_PLAYBACK.json")).readAllBytes(),
-                java.nio.charset.StandardCharsets.UTF_8);
+                StandardCharsets.UTF_8);
             for (String excluded :
                 List.of("PATH_CANARY", "ACCOUNT_CANARY", "AUTH_CANARY", "guard", "played", "bookmark", "_data"))
                 assertFalse(excluded, text.contains(excluded));
             JSONObject manifest =
                 new JSONObject(new String(zip.getInputStream(zip.getEntry("manifest.json")).readAllBytes(),
-                    java.nio.charset.StandardCharsets.UTF_8));
+                    StandardCharsets.UTF_8));
             assertEquals(2, manifest.getJSONArray("categories").getJSONObject(0).getInt("schema"));
         }
         String before = nativeState();
