@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import org.json.*;
+import org.json.JSONException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -314,7 +315,7 @@ public class PortableBookmarksTest {
             try {
                 transaction.prepare(Map.of(BackupCategory.BOOKMARKS, invalid), null);
                 fail();
-            } catch (org.json.JSONException expected) {
+            } catch (JSONException expected) {
             }
         }
         JSONObject invalid = payload();
@@ -322,7 +323,7 @@ public class PortableBookmarksTest {
         try {
             PortableBookmarks.validate(invalid);
             fail();
-        } catch (org.json.JSONException expected) {
+        } catch (JSONException expected) {
         }
         assertFalse(app.getDatabasePath(BookmarkStoreRecovery.DATABASE).exists());
     }
