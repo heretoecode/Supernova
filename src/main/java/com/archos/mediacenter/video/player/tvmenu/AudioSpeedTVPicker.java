@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.AudioSpeedPickerAbstract;
 
@@ -87,7 +88,7 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
     }
 
     public void setFocus(boolean hasFocus) {
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
             setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
             return;
         }
