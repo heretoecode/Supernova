@@ -32,6 +32,7 @@ import com.archos.mediacenter.utils.trakt.Trakt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Starts Trakt device authentication from a preference and handles completion. */
 public class TraktSigninDialogPreference extends Preference {
 
     private static final Logger log = LoggerFactory.getLogger(TraktSigninDialogPreference.class);
