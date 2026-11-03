@@ -1,7 +1,11 @@
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.app.Dialog;
 import android.content.*;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.*;
+import android.view.Window;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.*;
@@ -147,7 +151,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
     }
 
     private void decorate(TextView view, BackupCategory category) {
-        android.graphics.drawable.Drawable meaning = new PreviewIcon(category.icon),
+        Drawable meaning = new PreviewIcon(category.icon),
                                            check =
                                                new PreviewIcon(included(category) ? "checkbox checked" : "checkbox");
         meaning.setBounds(0, 0, dp(compact ? 12 : 17), dp(compact ? 12 : 17));
@@ -235,7 +239,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
         view.setMinHeight(dp(54));
         view.setPadding(dp(12), dp(12), dp(12), dp(12));
         view.setSingleLine(true);
-        view.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        view.setEllipsize(TextUtils.TruncateAt.END);
         view.setBackground(SharedThreePanel.accentFocus(getContext()));
         view.setOnFocusChangeListener((v, yes) -> {
             if (yes) {
@@ -562,7 +566,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
 
     private void privacy(String title, String message, String accept, Runnable confirm) {
         View opener = directFocus != null ? directFocus : findFocus();
-        android.app.Dialog dialog = new android.app.Dialog(getContext());
+        Dialog dialog = new Dialog(getContext());
         MenuFoundation.WindowPanel panel = new MenuFoundation.WindowPanel(getContext());
         panel.setOrientation(VERTICAL);
         panel.setPadding(dp(18), dp(18), dp(18), dp(18));
@@ -586,7 +590,7 @@ public final class BackupWorkspace extends MenuFoundation.WindowPanel {
         actions.addView(positive, positiveSize);
         panel.addView(actions);
         dialog.setContentView(panel);
-        android.view.Window window = dialog.getWindow();
+        Window window = dialog.getWindow();
         if (window != null) {
             window.setBackgroundDrawableResource(android.R.color.transparent);
             window.setLayout(Math.min(TvLayout.safeWidth(getContext()), dp(600)), -2);
