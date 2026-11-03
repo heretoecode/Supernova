@@ -35,7 +35,10 @@ import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Season;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.PreviewSeriesJourney;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges;
 import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 
@@ -61,7 +64,7 @@ public class DbUtils {
             return;
         }
 
-        com.archos.mediacenter.video.leanback.PreviewSeriesJourney.explicitlyWatched(context,video);
+        PreviewSeriesJourney.explicitlyWatched(context,video);
         final boolean traktSync = Trakt.isTraktV2Enabled(context, prefs);
 
         final ContentValues values = new ContentValues();
@@ -76,7 +79,7 @@ public class DbUtils {
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values,
                 VideoStore.Video.VideoColumns._ID + " =?",
                 new String[]{Long.toString(video.getId())});
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,"_id=?",new String[]{Long.toString(video.getId())},values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
+        ViewingHistory.manualChange(context,"_id=?",new String[]{Long.toString(video.getId())},values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, video);
@@ -104,7 +107,7 @@ public class DbUtils {
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values,
                 VideoStore.Video.VideoColumns._ID + " =?",
                 new String[]{Long.toString(video.getId())});
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,"_id=?",new String[]{Long.toString(video.getId())},values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
+        ViewingHistory.manualChange(context,"_id=?",new String[]{Long.toString(video.getId())},values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, video);
@@ -126,7 +129,7 @@ public class DbUtils {
     }
 
     public static void deleteScraperInfo(Context context,Video video) {
-        try { com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context, video.getId()); }
+        try { MediaMatchManualChanges.mark(context, video.getId()); }
         catch (IOException failure) {
             Log.e(TAG, "Cannot preserve manual identification choice", failure);
             Toast.makeText(context, R.string.error, Toast.LENGTH_SHORT).show();
@@ -200,7 +203,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(season.getShowId()), Integer.toString(season.getSeasonNumber())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
+        ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, season);
@@ -229,7 +232,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(season.getShowId()), Integer.toString(season.getSeasonNumber())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
+        ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, season);
@@ -261,7 +264,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(collection.getCollectionId())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
+        ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, collection);
@@ -291,7 +294,7 @@ public class DbUtils {
         final String[] selectionArgs = new String[]{Long.toString(collection.getCollectionId())};
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, where, selectionArgs);
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
+        ViewingHistory.manualChange(context,where,selectionArgs,values.getAsInteger(VideoStore.Video.VideoColumns.BOOKMARK)==PlayerActivity.LAST_POSITION_END);
 
         if (traktSync) {
             syncTrakt(context, collection);
@@ -381,7 +384,7 @@ public class DbUtils {
         values.put(VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED, 0);
 
         cr.update(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, values, null, null);
-        com.archos.mediacenter.video.leanback.ViewingHistory.manualChange(context,null,null,false);
+        ViewingHistory.manualChange(context,null,null,false);
 
         if (traktSync) {
             syncTrakt(context);
