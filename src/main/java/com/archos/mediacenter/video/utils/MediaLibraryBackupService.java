@@ -57,6 +57,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/** Runs media library backup operations as an Android service. */
 public class MediaLibraryBackupService extends Service {
     private static final Logger log = LoggerFactory.getLogger(MediaLibraryBackupService.class);
 
