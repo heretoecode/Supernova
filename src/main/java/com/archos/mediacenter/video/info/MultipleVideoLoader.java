@@ -21,6 +21,7 @@ import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Loads metadata for multiple selected videos. */
 public class MultipleVideoLoader extends VideoLoader {
 
     private final long mId;
