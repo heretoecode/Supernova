@@ -37,11 +37,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import java.util.Formatter;
-import java.util.Locale;
 
 /**
  * This class is used TV Show
