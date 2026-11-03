@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
+import android.text.SpannableStringBuilder;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.generateTrackName;
 import static com.archos.mediascraper.StringUtils.capitalizeFirstLetter;
 
@@ -23,7 +24,6 @@ import androidx.leanback.widget.RowHeaderPresenter;
 import androidx.leanback.widget.RowPresenter;
 
 import androidx.core.text.HtmlCompat;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +35,6 @@ import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoUtils;
-import com.archos.mediascraper.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -208,7 +207,7 @@ public class SubtitlesDetailsRowPresenter extends FullWidthRowPresenter implemen
 
     private CharSequence getFormattedSubList(Context c, int number, int offset, List<VideoMetadata.SubtitleTrack> list) {
         final String SEP = "  ";
-        android.text.SpannableStringBuilder lines=new android.text.SpannableStringBuilder();
+        SpannableStringBuilder lines=new SpannableStringBuilder();
         boolean isRtl = c.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
         String dirMarker = isRtl ? "\u200F" : "\u200E";
         for (int i=0 ; i<number ; i++) {
