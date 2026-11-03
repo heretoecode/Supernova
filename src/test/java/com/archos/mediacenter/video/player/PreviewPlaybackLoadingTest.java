@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks playback loading uses cached text and artwork without shade layers or remote artwork requests. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewPlaybackLoadingTest {
