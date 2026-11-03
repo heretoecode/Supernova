@@ -14,12 +14,20 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -49,7 +57,7 @@ public class NextQaUiTest {
             pages.setSnapshot(new PreviewLibraryLoader.Snapshot());
             PreviewPagesTest.layout(pages);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            Dialog welcome = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog welcome = ShadowDialog.getLatestDialog();
             assertNotNull("First-run welcome exists", welcome);
             assertTrue("Welcome is visible", welcome.isShowing());
             PreviewPagesTest.findText(welcome.getWindow().getDecorView(), "Explore Supernova").performClick();
@@ -59,7 +67,7 @@ public class NextQaUiTest {
             assertTrue(info.requestFocus());
             Shadows.shadowOf(host.get()).setCurrentFocus(info);
             info.performClick();
-            Dialog explanation = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog explanation = ShadowDialog.getLatestDialog();
             assertTrue(explanation.isShowing());
             explanation.dismiss();
             assertSame(info, pages.findFocus());
@@ -71,9 +79,9 @@ public class NextQaUiTest {
             for (PreviewHomeRows.Row row : rows.rows)
                 if (row.id.equals("recent"))
                     row.visible = false;
-            org.robolectric.util.ReflectionHelpers.callInstanceMethod(rows, "save");
+            ReflectionHelpers.callInstanceMethod(rows, "save");
             PreviewPagesTest.layout(pages);
-            List<PreviewPages.Cell> cells = org.robolectric.util.ReflectionHelpers.getField(pages, "cells");
+            List<PreviewPages.Cell> cells = ReflectionHelpers.getField(pages, "cells");
             assertFalse("Placeholder respects a hidden Recently Added row",
                 cells.stream().anyMatch(cell -> cell.value == HomePlaceholder.Kind.RECENT));
         } finally {
@@ -112,7 +120,7 @@ public class NextQaUiTest {
                 "Previous"
             };
             PreviewTextInput.show(host.get(), "Page Name", value[0], 40, v -> value[0] = v);
-            Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog dialog = ShadowDialog.getLatestDialog();
             View root = dialog.getWindow().getDecorView();
             root.findViewWithTag("semantic:keyboard:Clear").performClick();
             root.findViewWithTag("semantic:keyboard:A").performClick();
@@ -120,7 +128,7 @@ public class NextQaUiTest {
             assertEquals("Previous", value[0]);
             assertNull(CustomLibraryPage.load(host.get()));
             PreviewTextInput.show(host.get(), "Page Name", value[0], 40, v -> value[0] = v);
-            dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            dialog = ShadowDialog.getLatestDialog();
             root = dialog.getWindow().getDecorView();
             root.findViewWithTag("semantic:keyboard:Clear").performClick();
             root.findViewWithTag("semantic:keyboard:A").performClick();
@@ -165,7 +173,7 @@ public class NextQaUiTest {
             welcome.dismiss();
             PreviewTextInput.show(host.get(), "Page Name", "", 40, value -> {
             });
-            Dialog keyboard = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog keyboard = ShadowDialog.getLatestDialog();
             root = PreviewHomeVisualTest.measure(keyboard);
             assertTrue(
                 keyboard.getWindow().getAttributes().height <= Math.round(TvLayout.safeHeight(host.get()) * .9f));
@@ -185,16 +193,16 @@ public class NextQaUiTest {
     @Test
     public void cachedHeroRestartsCancelledColdArtworkAndRetainsReadyFrame() {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        var picasso = org.mockito.Mockito.mock(com.squareup.picasso.Picasso.class);
+        var picasso = Mockito.mock(Picasso.class);
         var request =
-            org.mockito.Mockito.mock(com.squareup.picasso.RequestCreator.class, org.mockito.Mockito.RETURNS_SELF);
-        try (var singleton = org.mockito.Mockito.mockStatic(com.squareup.picasso.Picasso.class)) {
-            singleton.when(com.squareup.picasso.Picasso::get).thenReturn(picasso);
-            org.mockito.Mockito.when(picasso.load(org.mockito.ArgumentMatchers.any(Uri.class)))
+            Mockito.mock(RequestCreator.class, Mockito.RETURNS_SELF);
+        try (var singleton = Mockito.mockStatic(Picasso.class)) {
+            singleton.when(Picasso::get).thenReturn(picasso);
+            Mockito.when(picasso.load(ArgumentMatchers.any(Uri.class)))
                 .thenReturn(request);
             try {
-                var movie = org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class);
-                org.mockito.Mockito.when(movie.getName()).thenReturn("Cold fixture");
+                var movie = Mockito.mock(Movie.class);
+                Mockito.when(movie.getName()).thenReturn("Cold fixture");
                 var entry = new PreviewLibraryLoader.Entry(movie, 1, 0, "");
                 entry.backdrop = Uri.parse("file:///fixture/backdrop.jpg");
                 PreviewFeaturedCard card =
@@ -203,15 +211,15 @@ public class NextQaUiTest {
                     });
                 host.get().setContentView(card);
                 PreviewPagesTest.layout(card);
-                org.mockito.Mockito.verify(request).into(
-                    org.mockito.ArgumentMatchers.any(ImageView.class),
-                    org.mockito.ArgumentMatchers.any(com.squareup.picasso.Callback.class));
+                Mockito.verify(request).into(
+                    ArgumentMatchers.any(ImageView.class),
+                    ArgumentMatchers.any(Callback.class));
                 host.get().setContentView(new FrameLayout(host.get()));
                 host.get().setContentView(card);
                 PreviewPagesTest.layout(card);
-                org.mockito.Mockito.verify(request, org.mockito.Mockito.times(2))
-                    .into(org.mockito.ArgumentMatchers.any(ImageView.class),
-                        org.mockito.ArgumentMatchers.any(com.squareup.picasso.Callback.class));
+                Mockito.verify(request, Mockito.times(2))
+                    .into(ArgumentMatchers.any(ImageView.class),
+                        ArgumentMatchers.any(Callback.class));
                 ImageView artwork =
                     (ImageView) ((ViewGroup) card.findViewWithTag(
                                                     "semantic:featured.active"))
@@ -222,9 +230,9 @@ public class NextQaUiTest {
                 host.get().setContentView(card);
                 PreviewPagesTest.layout(card);
                 assertSame(ready, artwork.getDrawable());
-                org.mockito.Mockito.verify(request, org.mockito.Mockito.times(2))
-                    .into(org.mockito.ArgumentMatchers.any(ImageView.class),
-                        org.mockito.ArgumentMatchers.any(com.squareup.picasso.Callback.class));
+                Mockito.verify(request, Mockito.times(2))
+                    .into(ArgumentMatchers.any(ImageView.class),
+                        ArgumentMatchers.any(Callback.class));
             } finally {
                 host.pause().stop().destroy();
             }
