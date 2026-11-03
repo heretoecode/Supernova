@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import org.robolectric.annotation.GraphicsMode;
 import org.robolectric.shadows.ShadowDialog;
 
+/** Checks home row count input, unlimited choices and rejection of invalid limits. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewHomeMaximumTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
