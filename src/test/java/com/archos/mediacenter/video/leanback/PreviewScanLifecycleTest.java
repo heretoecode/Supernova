@@ -2,8 +2,15 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.content.*;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
+import androidx.preference.PreferenceManager;
 import com.archos.mediascraper.AutoScrapeService;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -20,7 +27,7 @@ public class PreviewScanLifecycleTest {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLocalScanState.accept(context,
             new Intent()
-                .putExtra("batch_id", java.util.UUID.randomUUID().toString())
+                .putExtra("batch_id", UUID.randomUUID().toString())
                 .putExtra("mode", "full")
                 .putExtra("phase", "complete")
                 .putExtra("checked", 23L));
@@ -58,8 +65,8 @@ public class PreviewScanLifecycleTest {
     public void queuedLocalImportReportsStartAndCancellation() {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
-        android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
-        android.os.Message message = android.os.Message.obtain();
+        Handler handler = new Handler(Looper.getMainLooper());
+        Message message = Message.obtain();
         message.getData().putString("preview_trigger", "resume");
         com.archos.mediaprovider.video.PreviewLocalImportTrace.queued(context, handler, message, true);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -69,7 +76,7 @@ public class PreviewScanLifecycleTest {
         com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertTrue(PreviewLocalScanState.status(context).contains("complete"));
-        android.os.Message abandoned = android.os.Message.obtain();
+        Message abandoned = Message.obtain();
         com.archos.mediaprovider.video.PreviewLocalImportTrace.queued(context, handler, abandoned, false);
         com.archos.mediaprovider.video.PreviewLocalImportTrace.cancelQueued(handler);
         Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -80,8 +87,8 @@ public class PreviewScanLifecycleTest {
     public void localQueueBoundariesShareBatchAndObservedTrigger() {
         Context context = mock(Context.class);
         when(context.getPackageName()).thenReturn("test");
-        android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
-        android.os.Message message = android.os.Message.obtain();
+        Handler handler = new Handler(Looper.getMainLooper());
+        Message message = Message.obtain();
         message.getData().putString("preview_trigger", "resume");
         com.archos.mediaprovider.video.PreviewLocalImportTrace.queued(context, handler, message, true);
         com.archos.mediaprovider.video.PreviewLocalImportTrace.starting(message);
@@ -89,7 +96,7 @@ public class PreviewScanLifecycleTest {
         com.archos.mediaprovider.video.PreviewLocalImportTrace.finish(true, false);
         org.mockito.ArgumentCaptor<Intent> sent = org.mockito.ArgumentCaptor.forClass(Intent.class);
         verify(context, times(4)).sendBroadcast(sent.capture());
-        java.util.List<Intent> rows = sent.getAllValues();
+        List<Intent> rows = sent.getAllValues();
         String batch = rows.get(0).getStringExtra("batch_id");
         String[] phases = {
             "requested", "queued", "started", "complete"
@@ -180,7 +187,7 @@ public class PreviewScanLifecycleTest {
         assertEquals(2L, (long) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "completed"));
         assertEquals(14L, (long) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "checked"));
         assertEquals("metadata_queued", ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "metadataOutcome"));
-        assertTrue(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+        assertTrue(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString("preview_scan_result", "")
                 .contains("14 checked"));
     }
@@ -201,11 +208,11 @@ public class PreviewScanLifecycleTest {
             assertTrue((boolean) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operationEnded"));
             Object recorder =
                 ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
-            java.lang.reflect.Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
+            Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             int ends = 0;
             for (String line :
-                ((String) snapshot.invoke(recorder, android.os.SystemClock.elapsedRealtime())).split("\n")) {
+                ((String) snapshot.invoke(recorder, SystemClock.elapsedRealtime())).split("\n")) {
                 if (line.isEmpty())
                     continue;
                 org.json.JSONObject row = new org.json.JSONObject(line);
@@ -225,7 +232,7 @@ public class PreviewScanLifecycleTest {
         when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
         when(context.getPackageName()).thenReturn(RuntimeEnvironment.getApplication().getPackageName());
         var app = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
