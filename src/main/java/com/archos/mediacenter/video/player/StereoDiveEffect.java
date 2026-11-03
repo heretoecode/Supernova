@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+/** Renders stereoscopic playback with head and video transforms. */
 public class StereoDiveEffect extends VideoEffect {
     private final static String TAG="StereoDiveEffect";
     
