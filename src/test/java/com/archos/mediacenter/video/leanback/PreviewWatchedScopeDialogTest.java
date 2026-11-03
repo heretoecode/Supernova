@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.*;
 
+/** Checks watched-state changes stay within the selected season or series scope. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewWatchedScopeDialogTest {
     @Test public void seasonSelectionChangesOnlyThatScopeAndBackDoesNothing(){
