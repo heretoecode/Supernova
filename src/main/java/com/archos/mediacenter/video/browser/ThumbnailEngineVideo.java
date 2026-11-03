@@ -294,7 +294,7 @@ public class ThumbnailEngineVideo extends ThumbnailEngine {
 			if (poster.length() != 0) {
 				if (DBG)
 					Log.d(TAG, "decodeCover before for " + poster + " of length " + poster.length());
-				java.io.File f = new java.io.File(poster);
+				File f = new File(poster);
 				if (DBG) Log.d(TAG, "decodeCover: file exists=" + f.exists() + ", canRead=" + f.canRead() + ", size=" + f.length());
 				Bitmap coverBitmap = BitmapUtils.decodeSampledBitmapFromFile(poster, mThumbnailWidth, mThumbnailHeight);
 				if (DBG) Log.d(TAG, "decodeCover after, bitmap=" + coverBitmap);
