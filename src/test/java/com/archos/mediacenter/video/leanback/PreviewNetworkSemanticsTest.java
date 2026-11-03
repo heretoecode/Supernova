@@ -28,6 +28,7 @@ import org.robolectric.util.ReflectionHelpers;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks network navigation, private location semantics, credential recovery and staged source setup. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewNetworkSemanticsTest {
