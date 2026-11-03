@@ -8,6 +8,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.preference.ListPreference;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import java.util.Arrays;
 
 /** Settings radio selector: fixed heading/footer and independently scrolling choices. */
@@ -135,7 +136,7 @@ final class SettingsChoiceDialog {
     private static boolean language(String key) {
         return Arrays
             .asList("ui_lang", "favSubLang", "favAudioLang", "languages_list",
-                    com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG)
+                    VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG)
             .contains(key);
     }
 
