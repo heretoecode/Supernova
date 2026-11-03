@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /** Passive FD-001 overlay, using only territory-scoped cached provider classification. */
@@ -89,7 +90,7 @@ final class PlaybackAgeOverlay extends View {
     }
 
     static String certificate(JSONObject data, String country) {
-        org.json.JSONArray regions = data == null ? null : data.optJSONArray("results");
+        JSONArray regions = data == null ? null : data.optJSONArray("results");
         if (regions == null || country == null || country.isEmpty())
             return "";
         Set<String> primary = new HashSet<>(), fallback = new HashSet<>();
@@ -100,7 +101,7 @@ final class PlaybackAgeOverlay extends View {
             String rating = region.optString("rating").trim();
             if (valid(rating))
                 primary.add(rating);
-            org.json.JSONArray releases = region.optJSONArray("release_dates");
+            JSONArray releases = region.optJSONArray("release_dates");
             if (releases == null)
                 continue;
             for (int i = 0; i < releases.length(); i++) {
