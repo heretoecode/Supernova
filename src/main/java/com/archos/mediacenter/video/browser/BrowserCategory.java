@@ -125,6 +125,7 @@ abstract public class BrowserCategory extends ListFragment {
         // The fragment to start when the callback is called.
         Fragment fragment;
 
+        @Override
         public void onLayoutChanged() {
             // Always update the category content when the application layout has changed
             // (i.e. after switching between the cover roll and the category content)
@@ -133,6 +134,7 @@ abstract public class BrowserCategory extends ListFragment {
                 fragment = null;
             }
         }
+        @Override
         public void onGoHome() {
             ((BrowserActivity) getActivity()).goHome();
         }
@@ -142,6 +144,7 @@ abstract public class BrowserCategory extends ListFragment {
      * Update (un)mount sdcard/usb host/samba/upnp.
      */
     private final BroadcastReceiver mExternalStorageReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             if (DBG) Log.d(TAG, "mExternalStorageReceiver: intent " + intent);
             String action = intent.getAction();
@@ -167,6 +170,7 @@ abstract public class BrowserCategory extends ListFragment {
         }
     };
 
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         if (mSelectedItemId != 0) {
             outState.putInt(SELECTED_ID, mSelectedItemId);
@@ -174,6 +178,7 @@ abstract public class BrowserCategory extends ListFragment {
         }
     }
 
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ListView categoryView = (ListView) inflater.inflate(R.layout.browser_category, container, false);
         categoryView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -309,6 +314,7 @@ abstract public class BrowserCategory extends ListFragment {
             });
     }
 
+    @Override
     public void onResume() {
         if (DBG) Log.d(TAG, "onResume");
         super.onResume();
@@ -326,6 +332,7 @@ abstract public class BrowserCategory extends ListFragment {
         updateExternalStorage();
     }
 
+    @Override
     public void onPause() {
         if (DBG) Log.d(TAG, "onPause");
         getActivity().unregisterReceiver(mExternalStorageReceiver);
@@ -645,25 +652,31 @@ abstract public class BrowserCategory extends ListFragment {
             inflater = LayoutInflater.from(context);
         }
 
+        @Override
         public boolean areAllItemsEnabled() {
             return false;
         }
+        @Override
         public int getCount() {
             return mCategoryList.size();
         }
 
+        @Override
         public Object getItem(int position) {
             return mCategoryList.get(position);
         }
 
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
+        @Override
         public int getViewTypeCount() {
             return ITEM_VIEW_TYPE_COUNT;
         }
 
+        @Override
         public int getItemViewType(int position) {
             int type;
             Object v = mCategoryList.get(position);
@@ -676,11 +689,13 @@ abstract public class BrowserCategory extends ListFragment {
             return type;
         }
 
+        @Override
         public boolean isEnabled(int position) {
             // A separator cannot be clicked !
             return getItemViewType(position) == ITEM_VIEW_TYPE_CATEGORY;
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final int type = getItemViewType(position);
             if (convertView == null) {
