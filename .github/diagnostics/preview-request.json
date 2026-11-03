@@ -1,11 +1,6 @@
 {
- "purpose": "0.154 five bug fixes: new tests plus neighbours",
+ "purpose": "0.154 batch 1: bugs, buttons, charcoal, panels, landing tiles, heroes - full unit suite",
  "tests": [
-  "com.archos.mediacenter.video.utils.SubtitleCacheRenameTest",
-  "com.archos.mediacenter.video.leanback.network.FtpPortInputTest",
-  "com.archos.mediacenter.video.leanback.network.NetworkCredentialFlowTest",
-  "com.archos.mediacenter.video.leanback.search.VideoSearchProviderInputTest",
-  "com.archos.mediacenter.video.player.SkipPromptMasterSwitchTest",
-  "com.archos.mediacenter.video.player.SegmentSkippingPolicyTest"
+  "com.archos.*"
  ]
 }

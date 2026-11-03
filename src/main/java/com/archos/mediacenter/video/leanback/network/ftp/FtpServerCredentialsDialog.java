@@ -270,7 +270,7 @@ public class FtpServerCredentialsDialog extends DialogFragment {
 
 
     /** Port field: empty means "default port" (-1); anything else must be a whole number, or null (invalid). */
-    static Integer parsePort(String text) {
+    public static Integer parsePort(String text) {
         String value = text == null ? "" : text.trim();
         if (value.isEmpty())
             return -1;
