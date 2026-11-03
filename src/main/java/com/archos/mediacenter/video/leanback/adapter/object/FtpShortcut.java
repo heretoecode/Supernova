@@ -29,6 +29,7 @@ public class FtpShortcut extends Shortcut implements Serializable {
        super(id, fullPath, fullPath, name);
     }
 
+    @Override
     public Uri getUri() {
         return Uri.parse(mFullPath);
     }
