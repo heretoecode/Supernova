@@ -10,12 +10,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -23,11 +26,11 @@ public class PreviewTechnicalInfoTest {
     @Test
     @Config(qualifiers = "w960dp-h540dp-land-mdpi")
     public void readPanelsFitShortContentAndCapLongContent() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup();
         try {
             Dialog small =
-                com.archos.mediacenter.video.leanback.PreviewDialog.read(host.get(), "Information", "One short line");
+                PreviewDialog.read(host.get(), "Information", "One short line");
             int shortHeight = small.getWindow().getAttributes().height;
             assertTrue(shortHeight < 200);
             small.dismiss();
@@ -35,7 +38,7 @@ public class PreviewTechnicalInfoTest {
             for (int i = 0; i < 100; i++)
                 lines.append("A technical line\n");
             Dialog large =
-                com.archos.mediacenter.video.leanback.PreviewDialog.read(host.get(), "Information", lines.toString());
+                PreviewDialog.read(host.get(), "Information", lines.toString());
             assertTrue(large.getWindow().getAttributes().height <= 360);
             assertTrue(large.getWindow().getAttributes().height > shortHeight);
             large.dismiss();
@@ -58,7 +61,7 @@ public class PreviewTechnicalInfoTest {
 
     @Test
     public void dismissRevealsHiddenHudBeforeRestoringExactInfoOpener() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             Activity activity = host.get();
@@ -82,7 +85,7 @@ public class PreviewTechnicalInfoTest {
                 hud.setVisibility(View.VISIBLE);
                 pause.requestFocus();
             });
-            Dialog technical = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog technical = ShadowDialog.getLatestDialog();
             hud.setVisibility(View.GONE); // The player's inactivity fade while Info is open.
             technical.dismiss();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -96,14 +99,14 @@ public class PreviewTechnicalInfoTest {
 
     @Test
     public void episodeInformationToTechnicalPanelKeepsOwningActivity() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup();
         try {
             Activity activity = host.get();
             activity.setContentView(new TextView(activity));
             PreviewTechnicalInfo.show(
                 activity, new VideoMetadata(), Uri.parse("webdavs://example/file.mkv"), 0);
-            Dialog technical = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog technical = ShadowDialog.getLatestDialog();
             assertTrue(technical.isShowing());
             for (String label : new String[] {
                 "Video", "Audio", "File", "Source"
