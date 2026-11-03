@@ -1,11 +1,11 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
-import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediascraper.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -181,6 +181,6 @@ public class MediaMatchReconciliationTest {
         } catch (IOException expected) {
         }
         assertEquals(123, provider(10));
-        assertFalse(new java.io.File(app.getFilesDir(), "supernova-restore/preferences-v1.json").exists());
+        assertFalse(new File(app.getFilesDir(), "supernova-restore/preferences-v1.json").exists());
     }
 }
