@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import java.util.Locale;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -1278,7 +1279,7 @@ public class VideoInfoActivityFragment extends Fragment
                             log.debug("updateSubtitleInfo: int subtitleTrack {} {} {} {}", i, subTrack.name,
                                 subTrack.language, subTrack.format);
                         String format = VideoUtils.getSubtitleFormatLabel(getContext(), subTrack.format);
-                        lines.add(com.archos.mediacenter.video.leanback.PreviewLanguageIcon.inline(getContext(),
+                        lines.add(PreviewLanguageIcon.inline(getContext(),
                             subTrack.language,
                             dirMarker + (totSubs + 1) + ": "
                                 + StringUtils.removeHtmlTags(generateTrackName(getContext(), subTrack.name,
@@ -1730,11 +1731,11 @@ public class VideoInfoActivityFragment extends Fragment
                 return mVideoMetadateCache.get(startingPath);
             } else {
                 // Pick up any HTTP headers forwarded from the external player intent (e.g. Stremio/debrid)
-                android.os.Bundle headersBundle =
+                Bundle headersBundle =
                     getActivity() != null ? getActivity().getIntent().getBundleExtra("headers") : null;
                 Map<String, String> headers = null;
                 if (headersBundle != null && !headersBundle.isEmpty()) {
-                    headers = new java.util.HashMap<>();
+                    headers = new HashMap<>();
                     for (String key : headersBundle.keySet()) {
                         Object val = headersBundle.get(key);
                         if (val instanceof String)
