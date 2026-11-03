@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.*;
 import static org.junit.Assert.*;
 
+/** Checks metadata cache reads avoid network waits and incomplete fetches do not become complete packages. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class PreviewMetadataCacheTest {
