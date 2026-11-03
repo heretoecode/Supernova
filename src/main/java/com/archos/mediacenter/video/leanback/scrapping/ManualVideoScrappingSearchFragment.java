@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 
+/** Searches video metadata and saves tags for the selected result. */
 public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFragment {
     private static final Logger log = LoggerFactory.getLogger(ManualVideoScrappingSearchFragment.class);
 
