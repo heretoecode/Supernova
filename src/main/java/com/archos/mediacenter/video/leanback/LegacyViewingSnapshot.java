@@ -5,6 +5,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
+import com.archos.mediacenter.video.player.PlayerActivity;
 import java.util.*;
 import org.json.JSONException;
 
@@ -39,7 +40,7 @@ public final class LegacyViewingSnapshot {
                 throw new JSONException("Legacy viewing values need review");
             boolean complete = !historyCleared
                 && (video.isWatched()
-                    || nativePosition == com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END);
+                    || nativePosition == PlayerActivity.LAST_POSITION_END);
             long played;
             // PlayerService, ViewingHistory and series activity use epoch seconds, never milliseconds.
             if (nativePlayed > Long.MAX_VALUE / 1000L)
