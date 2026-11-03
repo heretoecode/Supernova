@@ -1,6 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import java.util.*;
@@ -61,7 +66,7 @@ final class PreviewMetadata {
     }
 
     private static void drain(Context app) {
-        android.content.SharedPreferences state = app.getSharedPreferences("preview-technical-v1", 0);
+        SharedPreferences state = app.getSharedPreferences("preview-technical-v1", 0);
         long now = System.currentTimeMillis(), earliest = Long.MAX_VALUE;
         Iterator<Map.Entry<String, PreviewLibraryLoader.Entry>> iterator = jobs.entrySet().iterator();
         while (iterator.hasNext()) {
@@ -100,7 +105,7 @@ final class PreviewMetadata {
 
     /** Loader-side cached HDR field; core codec/bitrate/dimensions remain in the native index. */
     static void hydrate(Context context, List<PreviewLibraryLoader.Entry> entries) {
-        android.content.SharedPreferences state = context.getSharedPreferences("preview-technical-v1", 0);
+        SharedPreferences state = context.getSharedPreferences("preview-technical-v1", 0);
         for (PreviewLibraryLoader.Entry entry : entries)
             if (entry.media instanceof Video) {
                 entry.hdr = state.getString("hdr:" + key(entry), entry.hdr);
@@ -126,7 +131,7 @@ final class PreviewMetadata {
                 VideoMetadata result = null;
                 boolean complete = false;
                 String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("technical_metadata");
-                long started = android.os.SystemClock.elapsedRealtime();
+                long started = SystemClock.elapsedRealtime();
                 try {
                     result = com.archos.mediacenter.video.info.VideoInfoCommonClass.retrieveMetadata(video, app);
                     if (result != null && result.getVideoTrack() != null && result.getVideoWidth() > 0
@@ -142,7 +147,7 @@ final class PreviewMetadata {
                         pending.remove(key);
                     }
                 }
-                android.content.SharedPreferences.Editor state =
+                SharedPreferences.Editor state =
                     app.getSharedPreferences("preview-technical-v1", 0).edit();
                 if (complete) {
                     state.putBoolean("complete:" + key, true)
@@ -158,7 +163,7 @@ final class PreviewMetadata {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
                     operation, "technical_metadata", started);
                 VideoMetadata ready = result;
-                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                new Handler(Looper.getMainLooper()).post(() -> {
                     if (ready != null)
                         apply(entry, ready);
                     refreshed.run();
@@ -196,6 +201,6 @@ final class PreviewMetadata {
                 audio.add(a.format + (a.channels == null ? "" : " · " + a.channels));
         }
         if (!audio.isEmpty())
-            entry.audio = android.text.TextUtils.join(" · ", audio);
+            entry.audio = TextUtils.join(" · ", audio);
     }
 }
