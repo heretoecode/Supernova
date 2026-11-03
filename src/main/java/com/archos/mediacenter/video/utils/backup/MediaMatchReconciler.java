@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils.backup;
 import android.content.Context;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,12 +18,12 @@ public final class MediaMatchReconciler {
         try{for(var entry:PreferenceManager.getDefaultSharedPreferences(context).getAll().entrySet()){
             if(entry.getKey().equals(PortableMediaMatches.PENDING)&&entry.getValue() instanceof String&&PortableMediaMatches.pendingPayload(new JSONObject((String)entry.getValue())).getJSONArray("rows").length()>0)return true;
             if(MediaMatchIntents.owns(entry.getKey())&&entry.getValue() instanceof String&&new JSONObject((String)entry.getValue()).getBoolean("pending"))return true;
-        }}catch(Exception invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("match_restore_pending_state",invalid);}return false;
+        }}catch(Exception invalid){Diagnostics.error("match_restore_pending_state",invalid);}return false;
     }
     public static void request(Context context){
         Context app=context.getApplicationContext();if(SystemClock.elapsedRealtime()<retryAt||!pending(app)||!RUNNING.compareAndSet(false,true))return;
         WORKER.execute(()->{boolean changed=false;try{changed=new PreferenceRestoreTransaction(app).reconcileMatches(CanonicalMatchMaterial.PROVIDER,()->Thread.currentThread().isInterrupted());}
-            catch(Exception unavailable){com.archos.mediacenter.video.diagnostics.Diagnostics.error("match_restore_pending",unavailable);}
+            catch(Exception unavailable){Diagnostics.error("match_restore_pending",unavailable);}
             finally{retryAt=changed?0:SystemClock.elapsedRealtime()+30000;RUNNING.set(false);}
             if(changed&&pending(app))WORKER.schedule(()->request(app),250,TimeUnit.MILLISECONDS);
         });
