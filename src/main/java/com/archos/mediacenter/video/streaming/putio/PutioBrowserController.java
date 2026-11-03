@@ -7,6 +7,7 @@ import android.text.format.Formatter;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.SharedThreePanel;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import android.app.Activity;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
@@ -303,7 +304,7 @@ public final class PutioBrowserController implements AutoCloseable {
     }
 
     private TextView label(String text) {
-        TextView v = com.archos.mediacenter.video.leanback.SharedThreePanel.text(activity, text, 18);
+        TextView v = SharedThreePanel.text(activity, text, 18);
         v.setPadding(dp(10), dp(10), dp(10), dp(10));
         return v;
     }
