@@ -26,7 +26,7 @@ Status: signed development/QA build **delivered and independently verified**, ex
 
 ## Visual dependencies
 
-The approved overall FD-033 JPEG is now archived byte-for-byte at [references/FD-033-approved-goonies.jpg](references/FD-033-approved-goonies.jpg), with dimensions/provenance/checksum in [references/README.md](references/README.md). The received copy is 1280×720; earlier planning describes a 1536×864 copy. The separately annotated v3 PNG and FD-007 reference images are still missing and are not replaced by this JPEG. Native comparisons use the recovered reference plus written v3 corrections, including 4% margins; physical/device and pixel-perfect acceptance remain unclaimed. See [visual register](VISUAL_QA.md).
+The approved overall FD-033 JPEG is now archived byte-for-byte at (image removed 2026-11; in git history: docs/0.140/references/FD-033-approved-goonies.jpg), with dimensions/provenance/checksum in [references/README.md](references/README.md). The received copy is 1280×720; earlier planning describes a 1536×864 copy. The separately annotated v3 PNG and FD-007 reference images are still missing and are not replaced by this JPEG. Native comparisons use the recovered reference plus written v3 corrections, including 4% margins; physical/device and pixel-perfect acceptance remain unclaimed. See [visual register](VISUAL_QA.md).
 
 Draft PR: https://github.com/heretoecode/Supernova/pull/18 (base is the preserved 0.139 implementation branch; no main merge).
 

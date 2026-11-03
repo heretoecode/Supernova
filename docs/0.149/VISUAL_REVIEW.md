@@ -6,11 +6,11 @@
 
 | Surface | Approved reference | Actual software render | Side-by-side |
 |---|---|---|---|
-| Main | Image B only | [main](software-renders/subtitles-main-1920x1080.png) | [comparison](software-renders/main-comparison.png) |
-| Track | Image A right-hand top only | [Track](software-renders/subtitles-track-1920x1080.png) | [comparison](software-renders/track-comparison.png) |
-| Download | Image A right-hand bottom only | [Download](software-renders/subtitles-download-1920x1080.png) | [comparison](software-renders/download-comparison.png) |
+| Main | Image B only | (image removed 2026-11; in git history: docs/0.149/software-renders/subtitles-main-1920x1080.png) | (image removed 2026-11; in git history: docs/0.149/software-renders/main-comparison.png) |
+| Track | Image A right-hand top only | (image removed 2026-11; in git history: docs/0.149/software-renders/subtitles-track-1920x1080.png) | (image removed 2026-11; in git history: docs/0.149/software-renders/track-comparison.png) |
+| Download | Image A right-hand bottom only | (image removed 2026-11; in git history: docs/0.149/software-renders/subtitles-download-1920x1080.png) | (image removed 2026-11; in git history: docs/0.149/software-renders/download-comparison.png) |
 
-The historical [before main-panel software capture](software-renders/before-playback-subtitles.png) is from the preserved ten-fix source, with its exact provenance recorded. Before popup device captures are unavailable; no replacement is fabricated. Actual before/after captures of all three surfaces on Shield or a 1920×1080 emulator remain pending.
+The historical (image removed 2026-11; in git history: docs/0.149/software-renders/before-playback-subtitles.png) is from the preserved ten-fix source, with its exact provenance recorded. Before popup device captures are unavailable; no replacement is fabricated. Actual before/after captures of all three surfaces on Shield or a 1920×1080 emulator remain pending.
 
 ## Inspection and differences
 
