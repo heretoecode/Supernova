@@ -24,7 +24,7 @@ public final class KeyboardInput extends AppCompatEditText {
     }
 
     public static int compactHeight(Context c) {
-        android.graphics.Paint p = new android.graphics.Paint();
+        Paint p = new Paint();
         p.setTextSize(16 * c.getResources().getDisplayMetrics().scaledDensity);
         return Math.round(p.getFontSpacing()) + PreviewDialog.dp(c, 8);
     }
