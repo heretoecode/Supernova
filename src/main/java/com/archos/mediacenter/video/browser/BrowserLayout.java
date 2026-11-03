@@ -31,6 +31,7 @@ import com.archos.medialib.R;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
+/** Arranges browser categories, content and resume views and reports layout changes. */
 public class BrowserLayout extends DrawerLayout {
 
     public interface Callback {
