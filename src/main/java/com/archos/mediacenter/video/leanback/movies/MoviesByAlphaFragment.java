@@ -63,7 +63,7 @@ public class MoviesByAlphaFragment extends VideosByFragment {
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie)
             return new FilmsByAlphaLoader(context);
-        else return new MoviesByAlphaLoader(context);
+            else return new MoviesByAlphaLoader(context);
     }
 
     @Override
