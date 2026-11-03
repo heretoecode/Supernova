@@ -3,6 +3,8 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.R;
 
 /** One launch surface, shared by Entry and the first composed Home frame. No timer. */
 public final class PreviewStartupSurface extends Drawable {
@@ -12,8 +14,8 @@ public final class PreviewStartupSurface extends Drawable {
 
     public PreviewStartupSurface(Context c) {
         density = c.getResources().getDisplayMetrics().density;
-        foundation = com.archos.mediacenter.video.BuildConfig.FOUNDATION
-            ? c.getDrawable(com.archos.mediacenter.video.R.drawable.foundation_splash)
+        foundation = BuildConfig.FOUNDATION
+            ? c.getDrawable(R.drawable.foundation_splash)
             : null;
     }
 
