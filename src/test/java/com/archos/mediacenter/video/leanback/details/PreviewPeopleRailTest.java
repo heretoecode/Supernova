@@ -2,7 +2,11 @@ package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Activity;
 import android.app.Application;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.leanback.widget.ArrayObjectAdapter;
+import java.util.Arrays;
+import java.util.Collections;
 import org.json.JSONObject;
 import org.robolectric.util.ReflectionHelpers;
 import android.view.View;
@@ -20,11 +24,11 @@ public class PreviewPeopleRailTest {
         Activity activity=Robolectric.buildActivity(Activity.class).setup().visible().get();
         PreviewMoviePage page=new PreviewMoviePage(activity,ArrayObjectAdapter::new,a->{},()->{},uri->{});activity.setContentView(page);page.bindRemote(new JSONObject(),"movie",0);
         com.archos.mediascraper.MovieTags tags=new com.archos.mediascraper.MovieTags();
-        tags.setDirectors(java.util.Arrays.asList("Director One","Director Two"));tags.setWriters(java.util.Collections.singletonList("Writer, Jr."));
-        page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+        tags.setDirectors(Arrays.asList("Director One","Director Two"));tags.setWriters(Collections.singletonList("Writer, Jr."));
+        page.setTags(tags,Collections.emptyList(),Collections.emptyList());
         View second=page.findViewWithTag("person:Director Two:Director");assertNotNull(second);assertNotNull(page.findViewWithTag("person:Director One:Director"));
         assertNotNull(page.findViewWithTag("person:Writer, Jr.:Writer"));assertFalse(second.requestFocus());
-        page.setTags(tags,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+        page.setTags(tags,Collections.emptyList(),Collections.emptyList());
         assertNotNull(page.findViewWithTag("person:Director Two:Director"));assertFalse(page.findViewWithTag("person:Director Two:Director").isFocusable());
     }
     @Test public void creditsCreateIndividualPrincipalCrewAndRemoteCast()throws Exception{
@@ -42,11 +46,11 @@ public class PreviewPeopleRailTest {
         assertTrue(first.getParent() instanceof LinearLayout);
         assertEquals(LinearLayout.VERTICAL,((LinearLayout)first.getParent()).getOrientation());
         assertTrue(first instanceof LinearLayout);assertEquals(3,((LinearLayout)first).getChildCount());
-        assertTrue(((LinearLayout)first).getChildAt(0) instanceof android.widget.ImageView);
-        assertEquals("Director One",((android.widget.TextView)((LinearLayout)first).getChildAt(1)).getText().toString());
-        assertEquals("Director",((android.widget.TextView)((LinearLayout)first).getChildAt(2)).getText().toString());
+        assertTrue(((LinearLayout)first).getChildAt(0) instanceof ImageView);
+        assertEquals("Director One",((TextView)((LinearLayout)first).getChildAt(1)).getText().toString());
+        assertEquals("Director",((TextView)((LinearLayout)first).getChildAt(2)).getText().toString());
         assertFalse(first.isFocusable());assertFalse(first.isClickable());
-        page.setTags(null,java.util.Collections.emptyList(),java.util.Collections.emptyList());
+        page.setTags(null,Collections.emptyList(),Collections.emptyList());
         assertNotNull("A local tag refresh must retain cached individual crew",page.findViewWithTag("person:Director One:Director"));
         assertNotNull(page.findViewWithTag("person:Director Two:Director"));
         assertNotNull(page.findViewWithTag("person:Actor One:Lead"));
