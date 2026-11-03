@@ -1,8 +1,10 @@
 package com.archos.mediacenter.video.utils;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -37,7 +39,7 @@ public final class BackupReview implements DefaultLifecycleObserver {
     @Override public void onStart(LifecycleOwner owner){render(model.current());}
     private void dismiss(){if(privacy!=null){privacy.dismiss();privacy=null;}if(dialog!=null){dialog.dismiss();dialog=null;}}
     private void render(BackupOperationModel.State state) {
-        if(!fragment.isAdded()||!fragment.getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED))return;
+        if(!fragment.isAdded()||!fragment.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED))return;
         if(state!=model.current()||state==rendered&&dialog!=null&&dialog.isShowing())return;
         dismiss();rendered=state;if(state.phase==BackupOperationModel.Phase.IDLE)return;
         AlertDialog.Builder builder=new AlertDialog.Builder(fragment.requireContext());
@@ -76,5 +78,5 @@ public final class BackupReview implements DefaultLifecycleObserver {
         dismiss();render(model.current());if(dialog!=null&&dialog.getListView()!=null){dialog.getListView().setSelection(index);dialog.getListView().requestFocus();}
     }
     private void updateContinue(){if(dialog!=null&&model.current().phase==BackupOperationModel.Phase.REVIEW)dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(selection.categories!=null&&!selection.categories.isEmpty());}
-    private static String labels(Set<BackupCategory> categories){List<String> labels=new ArrayList<>();for(BackupCategory category:BackupCategory.ordered())if(categories.contains(category))labels.add(category.label);return android.text.TextUtils.join(", ",labels);}
+    private static String labels(Set<BackupCategory> categories){List<String> labels=new ArrayList<>();for(BackupCategory category:BackupCategory.ordered())if(categories.contains(category))labels.add(category.label);return TextUtils.join(", ",labels);}
 }
