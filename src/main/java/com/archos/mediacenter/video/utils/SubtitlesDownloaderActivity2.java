@@ -54,6 +54,10 @@ import com.archos.mediacenter.utils.MediaUtils;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
+import com.archos.mediacenter.video.leanback.PreviewOperationDialog;
+import com.archos.mediacenter.video.leanback.PreviewSubtitleChooser;
+import com.archos.mediacenter.video.leanback.PreviewSubtitleResults;
 import com.archos.mediacenter.video.ui.NovaProgressDialog;
 import com.archos.mediaprovider.ArchosMediaIntent;
 import com.archos.mediaprovider.video.VideoStore;
@@ -622,9 +626,9 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                     }, "preview-subtitle-download").start();
                 };
                 Dialog choices = getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP, false)
-                    ? com.archos.mediacenter.video.leanback.PreviewSubtitleResults.showPlayback(
+                    ? PreviewSubtitleResults.showPlayback(
                           SubtitlesDownloaderActivity2.this, searchResults, accept)
-                    : com.archos.mediacenter.video.leanback.PreviewSubtitleResults.show(
+                    : PreviewSubtitleResults.show(
                           SubtitlesDownloaderActivity2.this, searchResults, accept);
                 choices.setOnCancelListener(dialog -> finish());
                 return;
@@ -671,8 +675,8 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                                     TextView language = (TextView) view.findViewById(R.id.lang);
                                     language.setVisibility(View.VISIBLE);
                                     language.setText(searchResults.get(i).getLanguage());
-                                    com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply(language,
-                                        com.archos.mediacenter.video.leanback.PreviewLanguageIcon.providerCode(
+                                    PreviewLanguageIcon.apply(language,
+                                        PreviewLanguageIcon.providerCode(
                                             searchResults.get(i).getLanguage()));
                                 } else
                                     view.findViewById(R.id.lang).setVisibility(View.GONE);
@@ -984,7 +988,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             if (!previewUi()) {
                 setResult(saved ? Activity.RESULT_OK : Activity.RESULT_CANCELED,
                     saved ? new Intent().putExtra(
-                                com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,
+                                PreviewSubtitleChooser.SELECTED_PATH,
                                 selectedDownloadPath)
                           : null);
                 finish();
@@ -996,7 +1000,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                     return;
                 setResult(saved ? Activity.RESULT_OK : Activity.RESULT_CANCELED,
                     saved ? new Intent().putExtra(
-                                com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH,
+                                PreviewSubtitleChooser.SELECTED_PATH,
                                 selectedDownloadPath)
                           : null);
                 if (saved)
@@ -1026,7 +1030,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         dismissPreviewProgress();
         if (isFinishing() || isDestroyed())
             return;
-        previewProgress = com.archos.mediacenter.video.leanback.PreviewOperationDialog.show(
+        previewProgress = PreviewOperationDialog.show(
             this, "Download Subtitles", message, () -> {
                 if (mOpenSubtitlesTask != null)
                     mOpenSubtitlesTask.cancel();
@@ -1046,7 +1050,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         dismissPreviewProgress();
         if (isFinishing() || isDestroyed())
             return;
-        previewMessage = com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(
+        previewMessage = PreviewOperationDialog.notice(
             this, "Download Subtitles", message, this::finish);
     }
 
