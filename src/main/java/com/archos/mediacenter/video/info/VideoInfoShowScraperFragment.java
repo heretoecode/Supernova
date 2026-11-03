@@ -255,6 +255,7 @@ public class VideoInfoShowScraperFragment extends Fragment implements
     }
 
     // ---------------------- IMPLEMENTS Handler.Callback ------------------- //
+    @Override
     public boolean handleMessage(Message msg) {
         // the only message we ever get is send once saving is complete
         if (isVisible()) {
@@ -286,6 +287,7 @@ public class VideoInfoShowScraperFragment extends Fragment implements
     }
 
     // ---------------------- IMPLEMENTS OnClickListener -------------------- //
+    @Override
     public void onClick(View v) {
         if (log.isDebugEnabled()) log.debug("onClick");
 
@@ -303,6 +305,7 @@ public class VideoInfoShowScraperFragment extends Fragment implements
     }
 
     // ---------------------- IMPLEMENTS OnEditorActionListener ------------- //
+    @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (log.isDebugEnabled()) log.debug("onEditorAction");
         mSearchButton.callOnClick();
