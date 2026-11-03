@@ -31,7 +31,11 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.foundation.DoubleRingDrawable;
+import com.archos.mediacenter.video.leanback.ThinSpinner;
 import com.archos.mediacenter.video.utils.ActiveOperationMonitor;
 import com.archos.mediaprovider.ImportState;
 import com.archos.mediaprovider.video.LoaderUtils;
@@ -107,13 +111,13 @@ public class ScannerAndScraperProgress {
         mBadge.setTextSize(12);
         mBadge.setMaxWidth(pad * 36);
         mBadge.setEllipsize(TextUtils.TruncateAt.END);
-        mProgressWheel.setIndeterminateDrawable(com.archos.mediacenter.video.BuildConfig.FOUNDATION
-                ? new com.archos.mediacenter.video.foundation.DoubleRingDrawable()
-                : new com.archos.mediacenter.video.leanback.ThinSpinner());
+        mProgressWheel.setIndeterminateDrawable(BuildConfig.FOUNDATION
+                ? new DoubleRingDrawable()
+                : new ThinSpinner());
         ViewGroup.LayoutParams wheel = mProgressWheel.getLayoutParams();
         wheel.width = wheel.height = pad * 2;
         mProgressWheel.setLayoutParams(wheel);
-        if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION)
+        if (!BuildConfig.FOUNDATION)
             mProgressWheel.setIndeterminateTintList(ColorStateList.valueOf(0xff85c9f5));
     }
 
@@ -121,7 +125,7 @@ public class ScannerAndScraperProgress {
         if (log.isDebugEnabled())
             log.debug("destroy");
         mRepeatHandler.removeCallbacks(mRepeatRunnable);
-        if (com.archos.mediacenter.video.BuildConfig.FOUNDATION) {
+        if (BuildConfig.FOUNDATION) {
             mProgressGroup.setVisibility(View.GONE);
             if (mProgressWheel.getIndeterminateDrawable() instanceof Animatable)
                 ((Animatable) mProgressWheel.getIndeterminateDrawable()).stop();
@@ -188,10 +192,10 @@ public class ScannerAndScraperProgress {
     private long diagnosticSampleAt;
 
     private void updateCount() {
-        if (com.archos.mediacenter.video.diagnostics.Diagnostics.enabled()
+        if (Diagnostics.enabled()
             && SystemClock.elapsedRealtime() - diagnosticSampleAt >= 5000) {
             diagnosticSampleAt = SystemClock.elapsedRealtime();
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("scanner_state", "network_active",
+            Diagnostics.event("scanner_state", "network_active",
                 NetworkScannerReceiver.isScannerWorking(), "network_files",
                 NetworkScannerServiceVideo.getFilesFoundCount(), "local_import",
                 ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport(), "metadata_remaining",
