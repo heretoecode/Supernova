@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.player.TimerPickerAbstract;
 
 
@@ -83,7 +84,7 @@ public class TimerDelayTVPicker extends TimerPickerAbstract implements TVSlaveVi
 
     public void setFocus(boolean hasFocus) {
         if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if (hasFocus) {
