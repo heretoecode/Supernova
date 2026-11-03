@@ -4,6 +4,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.*;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
 
@@ -42,7 +45,7 @@ public final class SubtitlePanelStyle {
 
     /** Places a window as the side panel: top-right, 40px (at 1080p) from the edges, fitted height, no full-screen dim. */
     public void placeSide(Window window) {
-        android.util.DisplayMetrics m = context.getResources().getDisplayMetrics();
+        DisplayMetrics m = context.getResources().getDisplayMetrics();
         window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         window.setGravity(Gravity.TOP | Gravity.END);
         WindowManager.LayoutParams attrs = window.getAttributes();
@@ -72,7 +75,7 @@ public final class SubtitlePanelStyle {
         TextView v = new TextView(context);
         v.setText(label);
         v.setTextColor(Color.WHITE);
-        v.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,
+        v.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                       size * scale * context.getResources().getConfiguration().fontScale);
         v.setIncludeFontPadding(false);
         return v;
@@ -140,7 +143,7 @@ public final class SubtitlePanelStyle {
 
     public void scrollbar(ScrollView view) {
         view.setScrollBarSize(px(6));
-        if (android.os.Build.VERSION.SDK_INT >= 29) {
+        if (Build.VERSION.SDK_INT >= 29) {
             view.setVerticalScrollbarThumbDrawable(surface(0xb36e7f90, 0, 3));
             view.setVerticalScrollbarTrackDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
