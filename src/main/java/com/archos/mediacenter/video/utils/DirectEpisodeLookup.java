@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.ShowScraper4;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
@@ -17,7 +18,7 @@ import java.io.IOException;
 public final class DirectEpisodeLookup {
     /** Resolve from the physical media record after series correction, not a stale Episode object. */
     public static EpisodeTags current(Context context,long mediaId)throws IOException{
-        try(Cursor cursor=context.getContentResolver().query(com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI,TagsFactory.VIDEO_COLUMNS,"_id=?",new String[]{String.valueOf(mediaId)},null)){
+        try(Cursor cursor=context.getContentResolver().query(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,TagsFactory.VIDEO_COLUMNS,"_id=?",new String[]{String.valueOf(mediaId)},null)){
             if(cursor!=null){List<BaseTags> tags=TagsFactory.buildTagsFromVideoCursor(cursor);if(tags!=null&&tags.size()==1&&tags.get(0) instanceof EpisodeTags)return (EpisodeTags)tags.get(0);}
         }
         throw new IOException("Current episode metadata is unavailable.");
