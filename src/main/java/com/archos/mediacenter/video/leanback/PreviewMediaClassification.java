@@ -1,5 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.content.SharedPreferences;
+import android.net.Uri;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /** Classification is a hint only. It never assigns a metadata identity or rewrites a library record. */
@@ -22,28 +28,28 @@ public final class PreviewMediaClassification {
         return Kind.UNKNOWN;
     }
 
-    public static java.util.Map<android.net.Uri, Kind> hints(android.content.SharedPreferences preferences) {
-        java.util.Map<android.net.Uri, Kind> hints = new java.util.HashMap<>();
-        for (java.util.Map.Entry<String, ?> entry : preferences.getAll().entrySet())
+    public static Map<Uri, Kind> hints(SharedPreferences preferences) {
+        Map<Uri, Kind> hints = new HashMap<>();
+        for (Map.Entry<String, ?> entry : preferences.getAll().entrySet())
             if (entry.getKey().startsWith("preview_source_kind:")) {
                 Kind kind = "movie".equals(entry.getValue()) ? Kind.MOVIE
                     : "tv".equals(entry.getValue()) ? Kind.TV
                                                              : Kind.UNKNOWN;
                 if (kind != Kind.UNKNOWN)
-                    hints.put(android.net.Uri.parse(entry.getKey().substring("preview_source_kind:".length())), kind);
+                    hints.put(Uri.parse(entry.getKey().substring("preview_source_kind:".length())), kind);
             }
         return hints;
     }
 
-    public static Kind classify(String filename, android.net.Uri file, java.util.Map<android.net.Uri, Kind> hints) {
+    public static Kind classify(String filename, Uri file, Map<Uri, Kind> hints) {
         int longest = -1;
         Kind result = Kind.UNKNOWN;
         if (file != null && file.getPath() != null)
-            for (java.util.Map.Entry<android.net.Uri, Kind> entry : hints.entrySet()) {
-                android.net.Uri folder = entry.getKey();
+            for (Map.Entry<Uri, Kind> entry : hints.entrySet()) {
+                Uri folder = entry.getKey();
                 String path = folder.getPath();
                 if (path == null || !scheme(folder).equals(scheme(file))
-                    || !java.util.Objects.equals(folder.getAuthority(), file.getAuthority()))
+                    || !Objects.equals(folder.getAuthority(), file.getAuthority()))
                     continue;
                 if (!path.endsWith("/"))
                     path += "/";
@@ -55,11 +61,11 @@ public final class PreviewMediaClassification {
         return longest >= 0 ? result : classify(filename);
     }
 
-    private static String scheme(android.net.Uri uri) {
+    private static String scheme(Uri uri) {
         String scheme = uri.getScheme();
         if (scheme == null)
             return "file";
-        switch (scheme.toLowerCase(java.util.Locale.ROOT)) {
+        switch (scheme.toLowerCase(Locale.ROOT)) {
             case "webdav":
             case "dav":
                 return "http";
@@ -67,7 +73,7 @@ public final class PreviewMediaClassification {
             case "davs":
                 return "https";
             default:
-                return scheme.toLowerCase(java.util.Locale.ROOT);
+                return scheme.toLowerCase(Locale.ROOT);
         }
     }
 
