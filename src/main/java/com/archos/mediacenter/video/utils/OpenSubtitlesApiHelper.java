@@ -387,11 +387,11 @@ public class OpenSubtitlesApiHelper {
         urlBuilder.addQueryParameter("order_by", "from_trusted,ratings,download_count");
         if (fileInfo.getTmdbId() != null) {
             if (fileInfo.isShow()) urlBuilder.addQueryParameter("parent_tmdb_id", fileInfo.getTmdbId());
-            else urlBuilder.addQueryParameter("tmdb_id", fileInfo.getTmdbId());
+                else urlBuilder.addQueryParameter("tmdb_id", fileInfo.getTmdbId());
         } else {
             if (fileInfo.getImdbId() != null) {
                 if (fileInfo.isShow()) urlBuilder.addQueryParameter("parent_imdb_id", fileInfo.getImdbId());
-                else urlBuilder.addQueryParameter("imdb_id", fileInfo.getImdbId());
+                    else urlBuilder.addQueryParameter("imdb_id", fileInfo.getImdbId());
             }
             else {
                 if (fileInfo.getFileName() != null) urlBuilder.addQueryParameter("query", fileInfo.getFileName());
