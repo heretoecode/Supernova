@@ -23,6 +23,7 @@ import android.media.MediaCodecList;
 import android.media.Spatializer;
 import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -363,7 +364,7 @@ public class CodecDiscovery {
 		return technicalInfo;
 	}
 
-	@androidx.annotation.RequiresApi(32)
+	@RequiresApi(32)
 	private static final class Api32 {
 		private static int getSpatializerCapabilities(AudioManager audioManager) {
 			Spatializer spatializer = audioManager.getSpatializer();
