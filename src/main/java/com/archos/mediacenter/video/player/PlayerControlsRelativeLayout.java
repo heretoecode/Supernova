@@ -22,6 +22,7 @@ import android.view.View;
 import com.archos.mediacenter.video.R;
 import android.widget.RelativeLayout;
 
+/** Arranges playback controls in top-and-bottom or side-by-side layouts. */
 public class PlayerControlsRelativeLayout extends RelativeLayout {
     int mState;
     int mPos;
