@@ -1,13 +1,18 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Activity;
+import android.app.Application;
 import android.graphics.*;
+import android.os.Looper;
+import android.util.LruCache;
+import android.view.View;
 import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediascraper.MovieTags;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -17,7 +22,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = android.app.Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class OfficialTitleBindingTest {
     private org.robolectric.android.controller.ActivityController<Activity> host;
@@ -32,7 +37,7 @@ public class OfficialTitleBindingTest {
         Locale.setDefault(Locale.US);
         settle();
         for (String cache : List.of("ALIASES", "MEMORY", "PREFETCHED")) {
-            android.util.LruCache<?, ?> value = ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, cache);
+            LruCache<?, ?> value = ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, cache);
             value.evictAll();
         }
         for (String map : List.of("BOUND", "READY", "TRACES")) {
@@ -43,8 +48,8 @@ public class OfficialTitleBindingTest {
         title = new TextView(host.get());
         title.setText("Official artwork fallback title");
         host.get().setContentView(title);
-        title.measure(android.view.View.MeasureSpec.makeMeasureSpec(240, android.view.View.MeasureSpec.EXACTLY),
-            android.view.View.MeasureSpec.makeMeasureSpec(80, android.view.View.MeasureSpec.EXACTLY));
+        title.measure(View.MeasureSpec.makeMeasureSpec(240, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(80, View.MeasureSpec.EXACTLY));
         title.layout(0, 0, 240, 80);
     }
 
@@ -60,7 +65,7 @@ public class OfficialTitleBindingTest {
         long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         // Executor counters are approximate; a dequeued task can still be awaiting its UI callback.
         do {
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             if (io.getActiveCount() == 0 && io.getQueue().isEmpty()
                 && (title == null || OfficialTitleArtwork.readyForFirstFrame(title)))
                 return;
@@ -205,7 +210,7 @@ public class OfficialTitleBindingTest {
     public void failedImageDownloadDoesNotNegativeCacheTheProviderAndSameViewCanRetry() throws Exception {
         okhttp3.OkHttpClient client = ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "HTTP");
         var old = client.interceptors();
-        java.util.concurrent.atomic.AtomicInteger images = new java.util.concurrent.atomic.AtomicInteger();
+        AtomicInteger images = new AtomicInteger();
         Bitmap bitmap = Bitmap.createBitmap(24, 8, Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(Color.BLUE);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -252,7 +257,7 @@ public class OfficialTitleBindingTest {
     public void verifiedAbsentLogoUsesNegativeCacheUntilExpiryAndPlaybackNeverRequestsNetwork() throws Exception {
         okhttp3.OkHttpClient client = ReflectionHelpers.getStaticField(OfficialTitleArtwork.class, "HTTP");
         var old = client.interceptors();
-        java.util.concurrent.atomic.AtomicInteger requests = new java.util.concurrent.atomic.AtomicInteger();
+        AtomicInteger requests = new AtomicInteger();
         ReflectionHelpers.setField(client, "interceptors", List.<okhttp3.Interceptor>of(chain -> {
             requests.incrementAndGet();
             return new okhttp3.Response.Builder()
