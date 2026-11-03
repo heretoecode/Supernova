@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
+import com.archos.mediaprovider.video.VideoStore;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +33,7 @@ public final class MediaMatchManualChanges {
     }
     public static void mark(Context context,Uri uri)throws IOException {
         if(uri==null)throw new IOException("Manual match file is unavailable");
-        try(Cursor row=context.getContentResolver().query(com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI,new String[]{"_id"},"_data=?",new String[]{uri.toString()},null)){
+        try(Cursor row=context.getContentResolver().query(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,new String[]{"_id"},"_data=?",new String[]{uri.toString()},null)){
             if(row==null||!row.moveToFirst())throw new IOException("Manual match owner is unavailable");long id=row.getLong(0);if(row.moveToNext())throw new IOException("Manual match owner is ambiguous");mark(context,id);
         }
     }
