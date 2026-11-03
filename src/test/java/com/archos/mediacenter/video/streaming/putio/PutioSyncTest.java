@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 import java.util.*;
@@ -11,7 +12,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = android.app.Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28)
 public class PutioSyncTest {
     Context context;
     Uri source = Uri.parse("https://webdav.put.io/Films");
