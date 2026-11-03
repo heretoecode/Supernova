@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
 
+/** Collects video, audio, subtitle and chapter metadata and saves it to the media library. */
 public class VideoMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
 
