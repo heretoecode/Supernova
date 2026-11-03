@@ -8,20 +8,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.leanback.PreviewAsyncFixtures;
+import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
 import com.squareup.picasso.*;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewPlaybackLoadingTest {
     @Test
     public void actualLoadingViewUsesOnlyCachedProviderTaglineAndCollapsesMissingCopy() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
         var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             try {
@@ -30,15 +35,15 @@ public class PreviewPlaybackLoadingTest {
                 Picasso.setSingletonInstance(new Picasso.Builder(host.get()).build());
             }
             long id = 987123;
-            com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(host.get(), "tv", id, "",
+            PreviewMetadataCache.load(host.get(), "tv", id, "",
                 ()
-                    -> new org.json.JSONObject()
+                    -> new JSONObject()
                         .put("tagline", "Verified series tagline")
                         .put("overview", "Never substitute this synopsis"));
             PreviewPlaybackLoading loading = new PreviewPlaybackLoading(host.get(), new Intent());
             host.get().setContentView(loading);
-            com.archos.mediacenter.utils.videodb.VideoDbInfo info =
-                new com.archos.mediacenter.utils.videodb.VideoDbInfo();
+            VideoDbInfo info =
+                new VideoDbInfo();
             info.isShow = true;
             info.isScraped = true;
             info.scraperTitle = "Provider Series";
@@ -47,7 +52,7 @@ public class PreviewPlaybackLoadingTest {
             info.scraperEpisodeNr = 1;
             info.duration = 3600000;
             loading.bind(info, "Fallback");
-            TextView copy = org.robolectric.util.ReflectionHelpers.getField(loading, "episode");
+            TextView copy = ReflectionHelpers.getField(loading, "episode");
             assertEquals("Verified series tagline", copy.getText().toString());
             assertEquals(View.VISIBLE, copy.getVisibility());
             info.scraperShowId = "987124";
@@ -64,7 +69,7 @@ public class PreviewPlaybackLoadingTest {
             assertEquals(1f, loading.getAlpha(), 0);
         } finally {
             host.pause().stop().destroy();
-            com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+            PreviewAsyncFixtures.drain();
         }
     }
 
