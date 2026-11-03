@@ -12,6 +12,13 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.loader.*;
 import com.archos.mediacenter.video.browser.adapters.mappers.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.details.PreviewMediaInfo;
+import com.archos.mediacenter.video.player.PrivateMode;
+import com.archos.mediacenter.video.utils.backup.MediaMatchReconciler;
+import com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction;
+import com.archos.mediaprovider.video.LoaderUtils;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediaprovider.video.VideoStore;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,6 +34,7 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
+import org.json.JSONObject;
 
 /** Builds an immutable UI snapshot on the loader worker, never querying per card. */
 public final class PreviewLibraryLoader extends AllVideosLoader {
@@ -43,7 +51,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             @Override
             public String getSelection() {
                 return super.getSelection().replace(
-                    com.archos.mediaprovider.video.LoaderUtils.HIDE_WATCHED_FILTER, "1");
+                    LoaderUtils.HIDE_WATCHED_FILTER, "1");
             }
         };
     }
@@ -110,8 +118,8 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     : w > 0 && h > 0 ? "SD"
                                                     : "";
                 codec =
-                    com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(v.getCalculatedVideoFormat());
-                audio = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(
+                    PreviewMediaInfo.format(v.getCalculatedVideoFormat());
+                audio = PreviewMediaInfo.format(
                     v.getCalculatedBestAudioFormat());
                 String name = v.getFilenameNonCryptic();
                 int dot = name == null ? -1 : name.lastIndexOf('.');
@@ -174,8 +182,8 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
 
     @Override
     public String getSelection() {
-        return com.archos.mediaprovider.video.LoaderUtils.mustHideUserHiddenObjects()
-            ? com.archos.mediaprovider.video.LoaderUtils.HIDE_USER_HIDDEN_FILTER
+        return LoaderUtils.mustHideUserHiddenObjects()
+            ? LoaderUtils.HIDE_USER_HIDDEN_FILTER
             : "";
     }
 
@@ -346,7 +354,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         cacheWriter.execute(() -> {
             synchronized (CACHE_LOCK) {
                 Snapshot value = readCache(context);
-                if (value != null && cached == null && !com.archos.mediacenter.video.player.PrivateMode.isActive()) {
+                if (value != null && cached == null && !PrivateMode.isActive()) {
                     cachePrivate = false;
                     cached = value;
                 }
@@ -358,13 +366,13 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     private static boolean cachePrivate;
 
     public static Snapshot memoryCache() {
-        return cachePrivate == com.archos.mediacenter.video.player.PrivateMode.isActive() ? cached : null;
+        return cachePrivate == PrivateMode.isActive() ? cached : null;
     }
 
     public static Snapshot readCache(Context c) {
         if (memoryCache() != null)
             return memoryCache();
-        if (com.archos.mediacenter.video.player.PrivateMode.isActive())
+        if (PrivateMode.isActive())
             return null;
         try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(
                  new FileInputStream(new File(c.getCacheDir(), "preview-library-v42"))))) {
@@ -381,7 +389,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     }
 
     private void writeCache(Snapshot value) {
-        if (com.archos.mediacenter.video.player.PrivateMode.isActive())
+        if (PrivateMode.isActive())
             return;
         synchronized (CACHE_LOCK) {
             if (value == cached)
@@ -514,7 +522,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             if (entry.onlineId <= 0)
                 continue;
             try {
-                org.json.JSONObject cache = com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(
+                JSONObject cache = PreviewMetadataCache.read(
                     getContext(), entry.media instanceof Movie ? "movie" : "tv", entry.onlineId, "");
                 if (cache != null)
                     entry.tagline =
@@ -532,31 +540,31 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
 
     @Override
     public Cursor loadInBackground() {
-        String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("indexed_library_load");
+        String operation = Diagnostics.operation("indexed_library_load");
         long started = SystemClock.elapsedRealtime();
         Cursor c = null;
         loadWarning = null;
         try {
             try {
-                new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext())
+                new PreferenceRestoreTransaction(getContext())
                     .reconcilePlaylists();
             } catch (IOException pending) {
                 loadWarning = "Some restored saved playlists are still pending. Refresh after source setup to retry.";
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("playlist_restore_pending", pending);
+                Diagnostics.error("playlist_restore_pending", pending);
             }
             try {
-                new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext())
+                new PreferenceRestoreTransaction(getContext())
                     .reconcileSources();
             } catch (IOException pending) {
                 loadWarning = "Some restored sources are still pending. Refresh after source setup to retry.";
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_restore_pending", pending);
+                Diagnostics.error("source_restore_pending", pending);
             }
             try {
-                new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext())
+                new PreferenceRestoreTransaction(getContext())
                     .reconcileTitlePlayback();
             } catch (IOException pending) {
                 loadWarning = "Some restored title choices are still pending. Refresh after source setup to retry.";
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("title_restore_pending", pending);
+                Diagnostics.error("title_restore_pending", pending);
             }
             long generation = CACHE_GENERATION.get();
             Cursor loaded = super.loadInBackground();
@@ -575,7 +583,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 visited++;
                 try {
                     Video v = (Video) mapper.bind(c);
-                    if (com.archos.mediaprovider.video.SupernovaLibraryPolicy.excluded(getContext(), v.getFileUri()))
+                    if (SupernovaLibraryPolicy.excluded(getContext(), v.getFileUri()))
                         continue;
                     String backdrop =
                         c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE));
@@ -663,15 +671,15 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 if (generation != CACHE_GENERATION.get() || isLoadInBackgroundCanceled())
                     throw new android.os.OperationCanceledException("Library changed during loading");
                 if (rejected == 0) {
-                    cachePrivate = com.archos.mediacenter.video.player.PrivateMode.isActive();
+                    cachePrivate = PrivateMode.isActive();
                     cached = result;
                     if (!cachePrivate)
                         cacheWriter.execute(() -> writeCache(result));
                 }
                 snapshot = result;
             }
-            com.archos.mediacenter.video.utils.backup.MediaMatchReconciler.request(getContext());
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("indexed_library_counts", "operation_id",
+            MediaMatchReconciler.request(getContext());
+            Diagnostics.event("indexed_library_counts", "operation_id",
                 operation, "visited", visited, "rejected", rejected, "movies", result.movies.size(), "shows",
                 result.shows.size(), "episodes", result.episodes.size());
             c.moveToPosition(-1);
@@ -681,12 +689,12 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                 c.close();
             throw cancelled;
         } catch (RuntimeException e) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("indexed_library_load_failed", e);
+            Diagnostics.error("indexed_library_load_failed", e);
             if (c != null)
                 try {
                     c.close();
                 } catch (RuntimeException closeFailure) {
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+                    Diagnostics.error(
                         "indexed_library_close_failed", closeFailure);
                 }
             loadWarning =
@@ -695,7 +703,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             snapshot = previous != null ? previous : new Snapshot();
             return null;
         } finally {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+            Diagnostics.finishOperation(
                 operation, "indexed_library_load", started);
         }
     }
