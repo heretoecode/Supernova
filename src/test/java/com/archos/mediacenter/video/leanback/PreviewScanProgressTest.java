@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks scan progress coalescing, accumulated source counts and resets between batches. */
 public class PreviewScanProgressTest {
     @Test public void unstartedAndCoalescedSourcesReleaseTheirProgressSlots(){
         PreviewScanProgress state=new PreviewScanProgress();
