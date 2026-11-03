@@ -28,7 +28,6 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentCompat {
-
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
     @Override
@@ -66,7 +65,7 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
             }
         };
         PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .registerOnSharedPreferenceChangeListener(mThemeChangeListener);
+            .registerOnSharedPreferenceChangeListener(mThemeChangeListener);
     }
 
     @Override
@@ -74,34 +73,64 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    .unregisterOnSharedPreferenceChangeListener(mThemeChangeListener);
+                .unregisterOnSharedPreferenceChangeListener(mThemeChangeListener);
         }
         super.onDestroyView();
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
-        @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
+        @Override
+        public void onDisplayPreferenceDialog(androidx.preference.Preference pref) {
+            if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
+                && PreviewPreferenceDialogs.show(this, pref))
+                return;
             super.onDisplayPreferenceDialog(pref);
         }
-        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);
+
+        @Override
+        public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(
+            android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
+                ? PreviewSettings.grid(requireContext())
+                : super.onCreateRecyclerView(inflater, parent, state);
         }
 
-        @Override public android.view.View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup container,Bundle state){
-            android.view.View original=super.onCreateView(inflater,container,state);
-            if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return original;
-            androidx.recyclerview.widget.RecyclerView list=getListView();if(list.getParent() instanceof android.view.ViewGroup)((android.view.ViewGroup)list.getParent()).removeView(list);
-            android.widget.LinearLayout panel=new android.widget.LinearLayout(requireContext());panel.setOrientation(android.widget.LinearLayout.VERTICAL);int pad=com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(),28);panel.setPadding(pad,pad/2,pad,pad);panel.setBackgroundColor(0xff0b1b29);
-            android.widget.TextView title=new android.widget.TextView(requireContext());title.setText("Home & Discovery · More options");title.setTextColor(0xffc8e2f3);title.setTextSize(20);title.setPadding(0,0,0,pad/2);panel.addView(title);panel.addView(list,new android.widget.LinearLayout.LayoutParams(-1,0,1));return panel;
+        @Override
+        public android.view.View onCreateView(
+            android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
+            android.view.View original = super.onCreateView(inflater, container, state);
+            if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
+                return original;
+            androidx.recyclerview.widget.RecyclerView list = getListView();
+            if (list.getParent() instanceof android.view.ViewGroup)
+                ((android.view.ViewGroup) list.getParent()).removeView(list);
+            android.widget.LinearLayout panel = new android.widget.LinearLayout(requireContext());
+            panel.setOrientation(android.widget.LinearLayout.VERTICAL);
+            int pad = com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(), 28);
+            panel.setPadding(pad, pad / 2, pad, pad);
+            panel.setBackgroundColor(0xff0b1b29);
+            android.widget.TextView title = new android.widget.TextView(requireContext());
+            title.setText("Home & Discovery · More options");
+            title.setTextColor(0xffc8e2f3);
+            title.setTextSize(20);
+            title.setPadding(0, 0, 0, pad / 2);
+            panel.addView(title);
+            panel.addView(list, new android.widget.LinearLayout.LayoutParams(-1, 0, 1));
+            return panel;
         }
 
-        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.adapter(screen):super.onCreateAdapter(screen);}
-
+        @Override
+        protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
+            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
+                ? PreviewSettings.adapter(screen)
+                : super.onCreateAdapter(screen);
+        }
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            addPreferencesFromResource(R.xml.preferences_more_leanback);if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.auditPresentation(getPreferenceScreen());
+            addPreferencesFromResource(R.xml.preferences_more_leanback);
+            if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
+                PreviewSettings.auditPresentation(getPreferenceScreen());
         }
 
         @Override
@@ -110,7 +139,8 @@ public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentC
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
             if (getListView() != null) {
-                getListView().setBackgroundColor(ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
+                getListView().setBackgroundColor(
+                    ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
         }
