@@ -64,6 +64,7 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
      */
 
     Handler mHandler = new Handler(Looper.getMainLooper()){
+        @Override
         public void handleMessage(Message msg){
             if(msg.what==INCREASE_STEPS&&mLeftIsDown||mRightIsDown){
                 removeMessages(INCREASE_STEPS);
