@@ -37,6 +37,7 @@ import com.archos.mediacenter.video.leanback.TopNavigation;
 import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
+/** Hosts the TV Settings screen and handles returning from it. */
 public class VideoSettingsActivity extends LeanbackActivity {
     private TopNavigation previewNavigation;
 
