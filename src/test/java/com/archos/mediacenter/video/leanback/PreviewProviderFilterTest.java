@@ -5,6 +5,9 @@ import android.graphics.*;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -23,7 +26,7 @@ public class PreviewProviderFilterTest {
             try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(host.get().getApplicationContext()).build());}
             var prefs=StreamingRepository.prefs(host.get());
             prefs.edit().clear().putString(StreamingRepository.COUNTRY,"IE")
-                .putStringSet(StreamingRepository.PROVIDERS+"IE",new java.util.HashSet<>(java.util.Arrays.asList("8","9")))
+                .putStringSet(StreamingRepository.PROVIDERS+"IE",new HashSet<>(Arrays.asList("8","9")))
                 // Known provider names use bundled original white marks even without remote logo data.
                 // This persistence test makes no live artwork requests.
                 .putString("streaming_catalogue_IE","[{\"id\":8,\"name\":\"Netflix\",\"logo\":\"\"},{\"id\":9,\"name\":\"Prime Video\",\"logo\":\"\"}]")
@@ -35,7 +38,7 @@ public class PreviewProviderFilterTest {
             row(menu,0).performClick();row(menu,1).performClick();
             assertTrue(menu.isShowing());assertChecked(menu,0,true);assertChecked(menu,1,true);
             row(menu,3).performClick();assertFalse(menu.isShowing());
-            assertEquals(java.util.Set.of("8","9"),PreviewGenres.parse(prefs.getString("preview_library_1_providers","")));
+            assertEquals(Set.of("8","9"),PreviewGenres.parse(prefs.getString("preview_library_1_providers","")));
             assertEquals("9",prefs.getString("preview_library_2_providers",""));
             menu=providers(pages);assertChecked(menu,0,true);assertChecked(menu,1,true);menu.dismiss();
             pages=page(host.get());pages.setTab(1);menu=providers(pages);
