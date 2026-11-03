@@ -38,6 +38,9 @@ import androidx.core.app.ServiceCompat;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.utils.backup.BackupCategory;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupExporter;
 import com.archos.mediaprovider.VideoDb;
 import com.archos.mediascraper.MediaScraper;
 
@@ -110,8 +113,8 @@ public class MediaLibraryBackupService extends Service {
         if (log.isDebugEnabled())
             log.debug("onStartCommand: intent={}", intent);
 
-        androidx.core.app.ServiceCompat.startForeground(this, NOTIFICATION_ID, nb.build(),
-            android.os.Build.VERSION.SDK_INT >= 29 ? android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        ServiceCompat.startForeground(this, NOTIFICATION_ID, nb.build(),
+            Build.VERSION.SDK_INT >= 29 ? ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
                                                    : 0);
         if (intent != null) {
             String action = intent.getAction();
@@ -132,7 +135,7 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private void startExport(final String destination) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_export_requested");
+        Diagnostics.event("backup_export_requested");
         if (mThread != null && mThread.isAlive()) {
             log.warn("startExport: export already in progress");
             return;
@@ -210,11 +213,11 @@ public class MediaLibraryBackupService extends Service {
                 }
 
                 showToast(getString(R.string.media_library_export_success, exportPath));
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_export_verified");
+                Diagnostics.event("backup_export_verified");
                 nm.cancel(NOTIFICATION_ID);
             } catch (Exception e) {
                 log.error("startExport: error exporting media library", e);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("backup_export_failed", e);
+                Diagnostics.error("backup_export_failed", e);
                 // A picker may select an existing document; never infer deletion ownership.
                 if (destination != null)
                     showToast(
@@ -230,7 +233,7 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private void startImport(String importFilePath) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_restore_requested");
+        Diagnostics.event("backup_restore_requested");
         if (mThread != null && mThread.isAlive()) {
             log.warn("startImport: import already in progress");
             return;
@@ -242,7 +245,7 @@ public class MediaLibraryBackupService extends Service {
                 nm.notify(NOTIFICATION_ID, nb.build());
 
                 importMediaLibrary(importFilePath);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("backup_restore_completed");
+                Diagnostics.event("backup_restore_completed");
 
                 nm.cancel(NOTIFICATION_ID);
                 showToast(getString(R.string.media_library_import_success));
@@ -255,7 +258,7 @@ public class MediaLibraryBackupService extends Service {
                 restartApplication();
             } catch (Exception e) {
                 log.error("startImport: error importing media library", e);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("backup_restore_failed", e);
+                Diagnostics.error("backup_restore_failed", e);
                 showToast(getString(R.string.media_library_import_error));
             } finally {
                 ServiceCompat.stopForeground(MediaLibraryBackupService.this, ServiceCompat.STOP_FOREGROUND_REMOVE);
@@ -266,19 +269,19 @@ public class MediaLibraryBackupService extends Service {
     }
 
     private String exportMediaLibrary() throws IOException {
-        Set<com.archos.mediacenter.video.utils.backup.BackupCategory> selected =
-            EnumSet.noneOf(com.archos.mediacenter.video.utils.backup.BackupCategory.class);
+        Set<BackupCategory> selected =
+            EnumSet.noneOf(BackupCategory.class);
         var preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        for (var category : com.archos.mediacenter.video.utils.backup.BackupCategory.values()) {
-            boolean fallback = category == com.archos.mediacenter.video.utils.backup.BackupCategory.HISTORY
+        for (var category : BackupCategory.values()) {
+            boolean fallback = category == BackupCategory.HISTORY
                 ? preferences.getBoolean("supernova_backup_history", true)
-                : category == com.archos.mediacenter.video.utils.backup.BackupCategory.POSITIONS
+                : category == BackupCategory.POSITIONS
                 ? preferences.getBoolean("supernova_backup_resume", true)
                 : category.defaultIncluded;
             if (preferences.getBoolean(category.preference(), fallback))
                 selected.add(category);
         }
-        return com.archos.mediacenter.video.utils.backup.LogicalBackupExporter
+        return LogicalBackupExporter
             .preparePrivate(this, selected, () -> Thread.currentThread().isInterrupted())
             .getAbsolutePath();
     }
