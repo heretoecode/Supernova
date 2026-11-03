@@ -7,6 +7,10 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.info.VideoInfoCommonClass;
+import com.archos.mediacenter.video.leanback.details.PreviewMediaInfo;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import java.util.*;
 import java.util.concurrent.*;
@@ -130,18 +134,18 @@ final class PreviewMetadata {
             worker.execute(() -> {
                 VideoMetadata result = null;
                 boolean complete = false;
-                String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("technical_metadata");
+                String operation = Diagnostics.operation("technical_metadata");
                 long started = SystemClock.elapsedRealtime();
                 try {
-                    result = com.archos.mediacenter.video.info.VideoInfoCommonClass.retrieveMetadata(video, app);
+                    result = VideoInfoCommonClass.retrieveMetadata(video, app);
                     if (result != null && result.getVideoTrack() != null && result.getVideoWidth() > 0
                         && video.isIndexed()) {
                         result.save(app, video.getFilePath());
-                        com.archos.mediacenter.video.utils.SubtitleDiscovery.recordLocal(app, video, result);
+                        SubtitleDiscovery.recordLocal(app, video, result);
                         complete = true;
                     }
                 } catch (Exception | LinkageError e) {
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.error("list_metadata_unavailable", e);
+                    Diagnostics.error("list_metadata_unavailable", e);
                 } finally {
                     synchronized (pending) {
                         pending.remove(key);
@@ -158,9 +162,9 @@ final class PreviewMetadata {
                 } else
                     state.putLong("retry:" + key, System.currentTimeMillis() + RETRY);
                 state.commit();
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("technical_metadata_result", "operation_id",
+                Diagnostics.event("technical_metadata_result", "operation_id",
                     operation, "media_id", video.getId(), "complete", complete);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
+                Diagnostics.finishOperation(
                     operation, "technical_metadata", started);
                 VideoMetadata ready = result;
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -182,7 +186,7 @@ final class PreviewMetadata {
         ((Video) entry.media).setMetadata(metadata);
         VideoMetadata.VideoTrack track = metadata.getVideoTrack();
         if (track != null) {
-            entry.codec = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(track.format);
+            entry.codec = PreviewMediaInfo.format(track.format);
             entry.bitrate = 1000L * Math.max(0, track.bitRate);
             entry.hdr = track.dynamicRange();
             ((Video) entry.media).setPreviewDolbyVision(track.dolbyVisionProfile, track.dolbyVisionCompatibility);
