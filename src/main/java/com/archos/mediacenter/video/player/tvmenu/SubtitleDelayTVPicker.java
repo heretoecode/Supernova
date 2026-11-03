@@ -29,6 +29,8 @@ import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.player.PreviewAdjustmentValue;
 import com.archos.mediacenter.video.player.SubtitleDelayPickerAbstract;
 import com.archos.mediacenter.video.player.SubtitleDelayPickerDialog;
 import java.util.Formatter;
@@ -125,7 +127,7 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
     }
     public void setFocus(boolean hasFocus){
         if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if(hasFocus){
@@ -237,8 +239,8 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
     }
    public void updateTextViewDelay(int delay){
        
-       setText(mHourFormat&&com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
-               ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.delay(delay)
+       setText(mHourFormat&&PreviewAdjustmentValue.enabled(mContext)
+               ?PreviewAdjustmentValue.delay(delay)
                :mHourFormat? SubtitleDelayPickerDialog.getFormattedDelay(mContext, delay).toString():""+(delay/100));
        
    }
