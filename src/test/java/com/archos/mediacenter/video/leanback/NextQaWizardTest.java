@@ -4,6 +4,7 @@ import android.os.Looper;
 import android.view.*;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.archos.mediacenter.video.CustomApplication;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -15,7 +16,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = com.archos.mediacenter.video.CustomApplication.class, sdk = 28,
+@Config(application = CustomApplication.class, sdk = 28,
         qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class NextQaWizardTest {
