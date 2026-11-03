@@ -19,6 +19,7 @@ import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 
 import com.archos.mediacenter.video.leanback.network.smb.SmbListingFragment;
 
+/** Hosts SMBJ file listings in the TV file browser. */
 public class SmbjListingActivity extends ListingActivity {
 
     @Override
