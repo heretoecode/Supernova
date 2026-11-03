@@ -15,13 +15,14 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
-import android.annotation.SuppressLint;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +48,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Locale;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -152,6 +154,8 @@ import com.archos.mediascraper.ShowTags;
 import com.archos.mediascraper.VideoTags;
 import com.squareup.picasso.Picasso;
 
+import java.util.Map;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -210,13 +214,13 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     private boolean mPreviewAutoPlayed;
 
     @Override
-    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state) {
         View nativeView = super.onCreateView(inflater, parent, state);
         if (mVideo == null || mLaunchedFromPlayer
             || !PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
             return nativeView;
         mNativeDetails = nativeView;
-        android.widget.FrameLayout container = new android.widget.FrameLayout(requireContext());
+        FrameLayout container = new FrameLayout(requireContext());
         container.addView(nativeView);
         nativeView.setVisibility(View.GONE);
         mPreviewMovie = new PreviewMoviePage(requireActivity(),
@@ -233,7 +237,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                 if (mPreviewNavigation != null)
                     mPreviewNavigation.setArtwork(uri);
             });
-        container.addView(mPreviewMovie, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        container.addView(mPreviewMovie, new FrameLayout.LayoutParams(-1, -1));
         mPreviewNavigation =
             new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(), container, tab -> {
                 if (tab == 4)
@@ -308,7 +312,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         ScraperImage selected = posters ? mPreviewPosterSelection : mPreviewBackdropSelection;
         com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(
             requireContext(), posters ? "Posters" : "Backdrops", images, selected, posters, (image, done) -> {
-                java.util.function.Consumer<Boolean> complete = saved -> {
+                Consumer<Boolean> complete = saved -> {
                     if (saved) {
                         if (posters)
                             mPreviewPosterSelection = image;
@@ -388,7 +392,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     private DetailRowBuilderTask mDetailRowBuilderTask;
     private DetailsBackdropController mBackdropController;
 
-    public void setCurrentlyDisplayedBackdropFile(java.io.File file) {
+    public void setCurrentlyDisplayedBackdropFile(File file) {
         if (mBackdropController != null) {
             mBackdropController.setCurrentlyDisplayedFile(file);
         }
@@ -955,7 +959,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
         @Override
         public void onActionClicked(Action action) {
             if (mVideo != null && mBackdropController != null) {
-                java.io.File cached = mBackdropController.getCurrentlyDisplayedFile();
+                File cached = mBackdropController.getCurrentlyDisplayedFile();
                 if (cached != null)
                     mVideo.setPreviewBackdrop(Uri.fromFile(cached).toString());
             }
@@ -2048,7 +2052,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                         result = cachedMetadata;
                     } else {
                         // Pick up any HTTP headers forwarded from the external player intent (e.g. Stremio/debrid)
-                        java.util.Map<String, String> headers = null;
+                        Map<String, String> headers = null;
                         if (headersBundle != null && !headersBundle.isEmpty()) {
                             headers = new java.util.HashMap<>();
                             for (String key : headersBundle.keySet()) {
@@ -2515,7 +2519,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             execute(poster, null);
         }
 
-        void execute(ScraperImage poster, java.util.function.Consumer<Boolean> completed) {
+        void execute(ScraperImage poster, Consumer<Boolean> completed) {
             executor.execute(() -> {
                 Bitmap result = null;
                 boolean applied = false;
@@ -2626,7 +2630,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             execute(backdrop, null);
         }
 
-        void execute(ScraperImage backdrop, java.util.function.Consumer<Boolean> completed) {
+        void execute(ScraperImage backdrop, Consumer<Boolean> completed) {
             executor.execute(() -> {
                 boolean applied = false;
                 try {
@@ -2660,7 +2664,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
                         Toast.makeText(getActivity(), R.string.leanback_backdrop_changed, Toast.LENGTH_SHORT).show();
                     else {
                         if (saved && mPreviewMovie != null) {
-                            java.io.File file = backdrop.getLargeFileF();
+                            File file = backdrop.getLargeFileF();
                             if (file != null && file.isFile()) {
                                 mVideo.setPreviewBackdrop(Uri.fromFile(file).toString());
                                 mPreviewMovie.bind(mVideo);
