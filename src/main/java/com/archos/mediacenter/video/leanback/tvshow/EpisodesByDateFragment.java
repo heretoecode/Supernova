@@ -105,7 +105,7 @@ public class EpisodesByDateFragment extends VideosByFragment {
     @Override
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie) return new EpisodesNoAnimeByDateLoader(context, EpisodesNoAnimeByDateLoader.DateView.values()[mDateView]);
-        else return new EpisodesByDateLoader(context, EpisodesByDateLoader.DateView.values()[mDateView]);
+            else return new EpisodesByDateLoader(context, EpisodesByDateLoader.DateView.values()[mDateView]);
     }
 
     @Override
