@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.player;
 import android.app.Application;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.introdb.IntroSegments;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -13,7 +14,7 @@ public class SegmentSkippingPolicyTest {
     @Test
     public void defaultsAreIndependentAndMasterIsOn() {
         var prefs =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+            PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         assertTrue(prefs.getBoolean(SegmentSkippingPolicy.MASTER, true));
         assertEquals(SegmentSkippingPolicy.Mode.PROMPT, SegmentSkippingPolicy.mode(prefs, IntroSegments.Type.INTRO));
         assertEquals(SegmentSkippingPolicy.Mode.SMART, SegmentSkippingPolicy.mode(prefs, IntroSegments.Type.RECAP));
