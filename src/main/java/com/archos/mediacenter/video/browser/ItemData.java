@@ -15,6 +15,7 @@
 package com.archos.mediacenter.video.browser;
 
 
+/** Stores a file item's name, path, directory flag and additional information for browsing. */
 public class ItemData implements Comparable<ItemData> {
 
     // Add here all the available item types (each item type can have its own layout)
