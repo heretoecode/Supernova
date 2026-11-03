@@ -8,17 +8,21 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Looper;
 import android.view.View;
+import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.leanback.PreviewPagesTest;
 import java.io.IOException;
 import java.time.Duration;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
-@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(application = Application.class, sdk = 28)
 public class PlaybackAgeOverlayTest {
     @Test
@@ -38,7 +42,7 @@ public class PlaybackAgeOverlayTest {
     public void changingTitleRequiresANewPlaybackEstablishedSignal() {
         PlaybackAgeOverlay view = new PlaybackAgeOverlay(RuntimeEnvironment.getApplication(), null);
         view.playbackStarted();
-        com.archos.mediacenter.utils.videodb.VideoDbInfo info = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
+        VideoDbInfo info = new VideoDbInfo();
         info.id = 2;
         view.bind(info);
         assertFalse((Boolean) ReflectionHelpers.getField(view, "output"));
@@ -47,7 +51,7 @@ public class PlaybackAgeOverlayTest {
     @Test
     public void establishedOutputCannotBeBorrowedFromAnotherLaunchOrMetadataInstance() {
         PlayerService service = Robolectric.buildService(PlayerService.class).get();
-        var info = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
+        var info = new VideoDbInfo();
         info.uri = Uri.parse("file:///fixture/current");
         Object session = ReflectionHelpers.getField(service, "mPlaybackSession");
         ReflectionHelpers.setField(service, "mVideoInfo", info);
@@ -55,7 +59,7 @@ public class PlaybackAgeOverlayTest {
         assertFalse(service.hasEstablishedOutputFor(info));
         ReflectionHelpers.setField(session, "outputEstablished", true);
         assertTrue(service.hasEstablishedOutputFor(info));
-        assertFalse(service.hasEstablishedOutputFor(new com.archos.mediacenter.utils.videodb.VideoDbInfo()));
+        assertFalse(service.hasEstablishedOutputFor(new VideoDbInfo()));
         ReflectionHelpers.setField(session, "uri", Uri.parse("file:///fixture/previous"));
         assertFalse(service.hasEstablishedOutputFor(info));
         ReflectionHelpers.setField(session, "uri", info.uri);
@@ -102,7 +106,7 @@ public class PlaybackAgeOverlayTest {
 
     @Test
     public void territorySelectionNeverFallsBackToAnotherRegion() throws Exception {
-        var data = new org.json.JSONObject(
+        var data = new JSONObject(
             "{\"results\":[{\"iso_3166_1\":\"US\",\"rating\":\"TV-MA\"},{\"iso_3166_1\":\"GB\",\"rating\":\"15\"}]}");
         assertEquals("15", PlaybackAgeOverlay.certificate(data, "GB"));
         assertEquals("TV-MA", PlaybackAgeOverlay.certificate(data, "US"));
@@ -112,11 +116,11 @@ public class PlaybackAgeOverlayTest {
     @Test
     public void rapidUnindexedFileSwitchResetsOutputEvenWhenDatabaseIdsMatch() {
         PlaybackAgeOverlay view = new PlaybackAgeOverlay(RuntimeEnvironment.getApplication(), null);
-        var first = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
+        var first = new VideoDbInfo();
         first.uri = Uri.parse("file:///one.mkv");
         view.bind(first);
         view.playbackStarted();
-        var second = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
+        var second = new VideoDbInfo();
         second.uri = Uri.parse("file:///two.mkv");
         view.bind(second);
         assertFalse((Boolean) ReflectionHelpers.getField(view, "output"));
@@ -124,10 +128,10 @@ public class PlaybackAgeOverlayTest {
 
     @Test
     public void conflictingRegionalRatingsAreHiddenAndTheatricalRatingHasPriority() throws Exception {
-        var conflict = new org.json.JSONObject(
+        var conflict = new JSONObject(
             "{\"results\":[{\"iso_3166_1\":\"GB\",\"rating\":\"15\"},{\"iso_3166_1\":\"GB\",\"rating\":\"18\"}]}");
         assertEquals("", PlaybackAgeOverlay.certificate(conflict, "GB"));
-        var movie = new org.json.JSONObject(
+        var movie = new JSONObject(
             "{\"results\":[{\"iso_3166_1\":\"GB\",\"release_dates\":[{\"type\":1,\"certification\":\"18\"},{\"type\":3,\"certification\":\"15\"}]}]}");
         assertEquals("15", PlaybackAgeOverlay.certificate(movie, "GB"));
         assertEquals("", PlaybackAgeOverlay.certificate(movie, "US"));
@@ -167,7 +171,7 @@ public class PlaybackAgeOverlayTest {
             assertNull(view.getBackground());
             assertFalse(view.isFocusable());
             assertFalse(view.isClickable());
-            com.archos.mediacenter.video.leanback.PreviewPagesTest.capture(view, "0147-age-rating-" + suffix);
+            PreviewPagesTest.capture(view, "0147-age-rating-" + suffix);
             Bitmap bitmap = BitmapFactory.decodeFile(
                 "build/reports/preview-ui/0147-age-rating-" + suffix + ".png");
             int red = 0;
@@ -204,7 +208,7 @@ public class PlaybackAgeOverlayTest {
 
     @Test
     public void coldDirectPlaybackLoadsClassificationButCachedMissingRegionStaysHidden() throws Exception {
-        org.json.JSONObject data = new org.json.JSONObject("{results:[{iso_3166_1:'GB',rating:'15'}]}");
+        JSONObject data = new JSONObject("{results:[{iso_3166_1:'GB',rating:'15'}]}");
         int[] requests = {
             0
         };
@@ -213,7 +217,7 @@ public class PlaybackAgeOverlayTest {
             return data;
         }));
         assertEquals(1, requests[0]);
-        org.json.JSONObject cached = new org.json.JSONObject().put("data", data);
+        JSONObject cached = new JSONObject().put("data", data);
         assertEquals("", PlaybackAgeOverlay.loadCertificate(cached, "IE", () -> {
             fail("A complete cached response must not trigger a regional guess or retry");
             return data;
