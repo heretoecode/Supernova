@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.MediaCodecInfoBuilder;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
@@ -34,7 +35,7 @@ public class PlaybackCompatibilityTest {
         level.level = 1 << 20;
         MediaFormat format = MediaFormat.createVideoFormat(mime, maximumWidth, 2160);
         MediaCodecInfo.CodecCapabilities codec =
-            org.robolectric.shadows.MediaCodecInfoBuilder.CodecCapabilitiesBuilder.newBuilder()
+            MediaCodecInfoBuilder.CodecCapabilitiesBuilder.newBuilder()
                 .setMediaFormat(format)
                 .setProfileLevels(new MediaCodecInfo.CodecProfileLevel[] {
                     level
