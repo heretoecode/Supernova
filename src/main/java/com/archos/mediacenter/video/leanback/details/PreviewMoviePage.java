@@ -25,12 +25,27 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.widget.TextViewCompat;
 import androidx.leanback.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.LibraryHealthActivity;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
+import com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter;
+import com.archos.mediacenter.video.metadata.OmdbSupplement;
+import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity;
+import com.archos.mediacenter.video.streaming.StreamingActionPresenter;
+import com.archos.mediacenter.video.streaming.StreamingActions;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
+import com.archos.mediacenter.video.utils.PlayUtils;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
+import com.archos.mediacenter.video.utils.VideoMetadata;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediascraper.*;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.*;
@@ -38,6 +53,8 @@ import java.util.SortedMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** Presentation over the existing details fragment: playback, edits and deletion keep native handlers. */
 public final class PreviewMoviePage extends ScrollView {
@@ -64,8 +81,8 @@ public final class PreviewMoviePage extends ScrollView {
     private Dialog moreDialog;
     private final Map<Integer, Action> moreRows = new HashMap<>();
     private ObjectAdapter observedActions;
-    private final com.archos.mediacenter.video.streaming.StreamingActionPresenter providerPresenter =
-        new com.archos.mediacenter.video.streaming.StreamingActionPresenter();
+    private final StreamingActionPresenter providerPresenter =
+        new StreamingActionPresenter();
     private final List<Presenter.ViewHolder> providerHolders = new ArrayList<>();
     private final ObjectAdapter.DataObserver actionObserver = new ObjectAdapter.DataObserver() {
         public void onChanged() {
@@ -101,7 +118,7 @@ public final class PreviewMoviePage extends ScrollView {
     private Future<?> enrichmentTask;
     private String enrichmentKey = "";
     private int enrichmentGeneration;
-    private org.json.JSONObject remoteDetails;
+    private JSONObject remoteDetails;
     private String remoteKind;
     private long remoteId;
     private final List<Presenter.ViewHolder> cards = new ArrayList<>();
@@ -132,7 +149,7 @@ public final class PreviewMoviePage extends ScrollView {
 
     private String informationSignature = "", peopleSignature = "", receptionSignature = "";
     private DetailsBlueprintPanel informationPanel;
-    private com.squareup.picasso.Picasso artworkLoader;
+    private Picasso artworkLoader;
     private String artworkUri, failedArtworkUri;
     private boolean artworkReady;
     private long openedAt, artworkRetryAfter;
@@ -490,7 +507,7 @@ public final class PreviewMoviePage extends ScrollView {
     }
 
     private void showSection(String label, boolean enter) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("details", label, "details", "none", "none",
+        Diagnostics.uiState("details", label, "details", "none", "none",
                                                                      movie != null  ? movie.getId()
                                                                      : show != null ? show.getTvshowId()
                                                                                     : remoteId);
@@ -757,7 +774,7 @@ public final class PreviewMoviePage extends ScrollView {
     private TextView button(String s, Runnable run) {
         TextView t = TvButton.create(getContext(), s, run, false);
         t.setTag("action:" + s);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
+        Diagnostics.semantic(
             t, "details.action." + s.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]+", "."));
         PreviewIcon.apply(t, s, 16);
         t.setGravity(Gravity.CENTER);
@@ -848,7 +865,7 @@ public final class PreviewMoviePage extends ScrollView {
         seasonNumber = -1;
         freshTitle("video:" + value.getId() + ":" + (value instanceof Movie ? ((Movie)value).getOnlineId() : 0));
         movie = value;
-        com.archos.mediacenter.video.utils.SubtitleDiscovery.details(
+        SubtitleDiscovery.details(
             getContext(), value, snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache());
         title.setText(movie instanceof Episode
                           ? safe(((Episode)movie).getShowName()) + " — " + safe(((Episode)movie).getEpisodeName())
@@ -955,9 +972,9 @@ public final class PreviewMoviePage extends ScrollView {
         LinearLayout key = factPanel(panels, "Key Information"), reception = factPanel(panels, "Reception"),
                      technical =
                          factPanel(panels, remoteDetails != null ? "Streaming Availability" : "Technical Information");
-        org.json.JSONObject enriched = enrichment != null ? enrichment.details : remoteDetails;
+        JSONObject enriched = enrichment != null ? enrichment.details : remoteDetails;
         Episode selectedEpisode = movie instanceof Episode ? (Episode)movie : null;
-        org.json.JSONObject episodeFacts =
+        JSONObject episodeFacts =
             selectedEpisode != null && enrichment != null
                 ? PreviewDetailsFacts.episode(enrichment.episodes, selectedEpisode.getSeasonNumber(),
                                               selectedEpisode.getEpisodeNumber())
@@ -1002,7 +1019,7 @@ public final class PreviewMoviePage extends ScrollView {
         if (runtime <= 0 && selectedEpisode != null && tags instanceof EpisodeTags)
             runtime = tags.getRuntime(TimeUnit.MINUTES);
         if (runtime <= 0) {
-            org.json.JSONObject runtimeFacts = selectedEpisode != null ? episodeFacts : enriched;
+            JSONObject runtimeFacts = selectedEpisode != null ? episodeFacts : enriched;
             if (runtimeFacts != null)
                 runtime = runtimeFacts.optLong("runtime");
         }
@@ -1066,7 +1083,7 @@ public final class PreviewMoviePage extends ScrollView {
             }
             fact(key, "Countries", jsonNames(enriched.optJSONArray("production_countries"), "name"));
             fact(key, selectedEpisode != null ? "Series tagline" : "Tagline", enriched.optString("tagline"));
-            org.json.JSONObject collection = enriched.optJSONObject("belongs_to_collection");
+            JSONObject collection = enriched.optJSONObject("belongs_to_collection");
             if (collection != null)
                 fact(key, "Collection", collection.optString("name"));
             for (String field : new String[] {"budget", "revenue"})
@@ -1097,8 +1114,8 @@ public final class PreviewMoviePage extends ScrollView {
             if (extension >= 0 && filename.length() - extension <= 6)
                 fact(technical, "Container", filename.substring(extension + 1).toUpperCase(Locale.ROOT));
             if (movie.getMetadata() != null) {
-                com.archos.mediacenter.video.utils.VideoMetadata data = movie.getMetadata();
-                com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack video = data.getVideoTrack();
+                VideoMetadata data = movie.getMetadata();
+                VideoMetadata.VideoTrack video = data.getVideoTrack();
                 if (video != null) {
                     if (video.bitRate > 0)
                         fact(technical, "Video bitrate", video.bitRate + " kb/s");
@@ -1109,7 +1126,7 @@ public final class PreviewMoviePage extends ScrollView {
                 LinkedHashSet<String> subtitles = new LinkedHashSet<>();
                 LinkedHashSet<String> audioTracks = new LinkedHashSet<>();
                 for (int n = 0; n < data.getAudioTrackNb(); n++) {
-                    com.archos.mediacenter.video.utils.VideoMetadata.AudioTrack track = data.getAudioTrack(n);
+                    VideoMetadata.AudioTrack track = data.getAudioTrack(n);
                     if (track != null) {
                         String format = PreviewMediaInfo.audioTrack(track.format, track.channels, track.sampleRate);
                         if (!format.isEmpty())
@@ -1118,7 +1135,7 @@ public final class PreviewMoviePage extends ScrollView {
                 }
                 fact(technical, "Audio tracks", TextUtils.join("\n", audioTracks));
                 for (int n = 0; n < data.getSubtitleTrackNb(); n++) {
-                    com.archos.mediacenter.video.utils.VideoMetadata.SubtitleTrack track = data.getSubtitleTrack(n);
+                    VideoMetadata.SubtitleTrack track = data.getSubtitleTrack(n);
                     if (track != null && !safe(track.language).isEmpty())
                         subtitles.add(track.language);
                 }
@@ -1153,7 +1170,7 @@ public final class PreviewMoviePage extends ScrollView {
                                 knownSizes++;
                             if (episode.getSeasonNumber() == 0)
                                 specials++;
-                            android.net.Uri uri = episode.getFileUri();
+                            Uri uri = episode.getFileUri();
                             if (uri != null) {
                                 String path = uri.getPath();
                                 int slash = path == null ? -1 : path.lastIndexOf('/');
@@ -1197,12 +1214,12 @@ public final class PreviewMoviePage extends ScrollView {
                              .format(new Date(firstAdded * 1000L)));
             }
         } else {
-            fact(technical, "Region", com.archos.mediacenter.video.streaming.StreamingRepository.country(getContext()));
+            fact(technical, "Region", StreamingRepository.country(getContext()));
             if (observedActions != null)
                 for (int n = 0; n < observedActions.size(); n++) {
                     Object item = observedActions.get(n);
                     if (item instanceof Action &&
-                        com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))
+                        StreamingActions.isAvailableOffer((Action)item))
                         fact(technical, "Available on", String.valueOf(((Action)item).getLabel1()));
                 }
         }
@@ -1238,10 +1255,10 @@ public final class PreviewMoviePage extends ScrollView {
                                                    technicalFacts.get("Average file size"));
         Map<String, String> keyFacts = DetailsBlueprintPanel.facts(key), receptionFacts =
                                                                              DetailsBlueprintPanel.facts(reception);
-        com.archos.mediacenter.video.metadata.OmdbSupplement.Ratings supplied =
+        OmdbSupplement.Ratings supplied =
             enrichment != null && selectedEpisode == null && seasonNumber < 0
                 ? enrichment.supplementary
-                : com.archos.mediacenter.video.metadata.OmdbSupplement.Ratings.EMPTY;
+                : OmdbSupplement.Ratings.EMPTY;
         String receptionKey = new TreeMap<>(receptionFacts).toString() + supplied.countsSignature();
         for (int slot = 0; slot < 4; slot++)
             receptionKey += "|" + supplied.value(slot);
@@ -1251,7 +1268,7 @@ public final class PreviewMoviePage extends ScrollView {
             signature += "|" + supplied.value(slot);
         if (!signature.equals(informationSignature)) {
             informationSignature = signature;
-            com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(details, "details.information", reason,
+            Diagnostics.uiRebuild(details, "details.information", reason,
                                                                            previous, 1, false);
             if (informationPanel != null && receptionKey.equals(receptionSignature)) {
                 informationPanel.updateText(synopsis, keyFacts, technicalFacts);
@@ -1263,7 +1280,7 @@ public final class PreviewMoviePage extends ScrollView {
                 informationPanel = blueprint;
                 receptionSignature = receptionKey;
             }
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            Diagnostics.event(
                 "details_information_ready", "media_id", diagnosticMedia(), "elapsed_ms",
                 SystemClock.elapsedRealtime() - openedAt);
         }
@@ -1275,7 +1292,7 @@ public final class PreviewMoviePage extends ScrollView {
         summary.year = year > 0 ? String.valueOf(year) : "";
         summary.genres = safe(genre);
         summary.rating = tmdbRating ? rating : 0;
-        org.json.JSONObject votesSource = selectedEpisode == null ? enriched : episodeFacts;
+        JSONObject votesSource = selectedEpisode == null ? enriched : episodeFacts;
         summary.votes = votesSource == null ? 0 : votesSource.optLong("vote_count");
         if (show != null || "tv".equals(remoteKind)) {
             Snapshot library = snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache();
@@ -1332,12 +1349,12 @@ public final class PreviewMoviePage extends ScrollView {
         plot.setVisibility(plot.length() == 0 ? GONE : VISIBLE);
     }
 
-    private static String jsonNames(org.json.JSONArray values, String key) {
+    private static String jsonNames(JSONArray values, String key) {
         if (values == null)
             return "";
         List<String> names = new ArrayList<>();
         for (int n = 0; n < values.length(); n++) {
-            org.json.JSONObject item = values.optJSONObject(n);
+            JSONObject item = values.optJSONObject(n);
             if (item != null && !item.optString(key).isEmpty())
                 names.add(item.optString(key));
         }
@@ -1390,15 +1407,15 @@ public final class PreviewMoviePage extends ScrollView {
             return;
         artworkUri = uri.toString();
         String identity = boundTitle, requested = artworkUri;
-        artworkLoader = com.squareup.picasso.Picasso.get();
+        artworkLoader = Picasso.get();
         artworkLoader.load(uri).fit().centerCrop().noPlaceholder().noFade().into(
-            cardArtwork, new com.squareup.picasso.Callback() {
+            cardArtwork, new Callback() {
                 public void onSuccess() {
                     if (!identity.equals(boundTitle) || !requested.equals(artworkUri))
                         return;
                     artworkReady = true;
                     failedArtworkUri = null;
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    Diagnostics.event(
                         "details_artwork_ready", "media_id", diagnosticMedia(), "elapsed_ms",
                         SystemClock.elapsedRealtime() - openedAt);
                 }
@@ -1407,7 +1424,7 @@ public final class PreviewMoviePage extends ScrollView {
                         artworkUri = null;
                         failedArtworkUri = requested;
                         artworkRetryAfter = SystemClock.elapsedRealtime() + 30000;
-                        com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_artwork_unavailable",
+                        Diagnostics.event("details_artwork_unavailable",
                                                                                    "media_id", diagnosticMedia());
                     }
                 }
@@ -1446,7 +1463,7 @@ public final class PreviewMoviePage extends ScrollView {
         for (int i = 0; i < observedActions.size(); i++) {
             Object item = observedActions.get(i);
             if (item instanceof Action &&
-                com.archos.mediacenter.video.streaming.StreamingActions.isAvailableOffer((Action)item))
+                StreamingActions.isAvailableOffer((Action)item))
                 offers.add((Action)item);
             else if (item instanceof Action && "•••".contentEquals(((Action)item).getLabel1()))
                 extraOptions.add((Action)item);
@@ -1456,8 +1473,8 @@ public final class PreviewMoviePage extends ScrollView {
             Action offer = offers.get(0);
             // Approved 2 Nov 2026: provider name + one generic "open externally" icon, same size and style as Resume/More.
             String provider =
-                offer instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction
-                    ? ((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)offer).provider.name
+                offer instanceof StreamingActionPresenter.LogoAction
+                    ? ((StreamingActionPresenter.LogoAction)offer).provider.name
                     : String.valueOf(offer.getLabel1());
             TextView open = button(provider, () -> action.accept(offer));
             PreviewIcon.apply(open, "external", 16);
@@ -1556,7 +1573,7 @@ public final class PreviewMoviePage extends ScrollView {
             return;
         peopleSignature = signature;
         for (String section : new String[] {"cast", "crew"}) {
-            org.json.JSONArray values = enrichment.credits.optJSONArray(section);
+            JSONArray values = enrichment.credits.optJSONArray(section);
             if (values == null)
                 continue;
             LinearLayout target = section.equals("cast") ? cast : crew;
@@ -1566,7 +1583,7 @@ public final class PreviewMoviePage extends ScrollView {
             LinearLayout people = new DetailsPeopleGrid(getContext());
             Set<String> seen = new HashSet<>();
             for (int n = 0; n < values.length() && people.getChildCount() < 8; n++) {
-                org.json.JSONObject value = values.optJSONObject(n);
+                JSONObject value = values.optJSONObject(n);
                 if (value == null)
                     continue;
                 String name = value.optString("name"),
@@ -1582,16 +1599,16 @@ public final class PreviewMoviePage extends ScrollView {
                     continue;
                 person(people, name, role);
                 long personId = value.optLong("id");
-                com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
+                Diagnostics.semantic(
                     people.getChildAt(people.getChildCount() - 1),
                     "details." + section + (personId > 0 ? ".person." + personId : ".slot." + n));
                 ImageView portrait = portraits.get(name);
                 String path = value.optString("profile_path");
                 if (portrait != null && path.matches("/[A-Za-z0-9._-]+")) {
                     Uri uri = Uri.parse("https://image.tmdb.org/t/p/w185" + path);
-                    com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(
+                    ArtworkRequest.load(
                         portrait, uri, diagnosticMedia(), "details." + section, "portrait",
-                        com.squareup.picasso.Picasso.get()
+                        Picasso.get()
                             .load(uri)
                             .fit()
                             .centerCrop()
@@ -1609,7 +1626,7 @@ public final class PreviewMoviePage extends ScrollView {
     public void bindShow(Tvshow value, Runnable playAction) {
         freshTitle("show:" + value.getTvshowId() + ":" + seasonNumber);
         show = value;
-        com.archos.mediacenter.video.utils.SubtitleDiscovery.details(
+        SubtitleDiscovery.details(
             getContext(), value, snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache());
         showPlay = playAction;
         OfficialTitleArtwork.bind(title, value, false);
@@ -1773,7 +1790,7 @@ public final class PreviewMoviePage extends ScrollView {
                     shown.add("id:" + id);
                     shown.add(entry.key());
                 } else if (recommendation.provider != null) {
-                    org.json.JSONObject value = recommendation.title;
+                    JSONObject value = recommendation.title;
                     String name = value.optString("title", value.optString("name"));
                     String backdrop = value.optString("backdrop_path");
                     PreviewLandscapeCard card = new PreviewLandscapeCard(getContext());
@@ -1787,13 +1804,13 @@ public final class PreviewMoviePage extends ScrollView {
                                                       "details.related");
                     card.availability.setImageAlpha(205);
                     card.setTag("remote:" + id);
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card, "details.related.remote." + id);
+                    Diagnostics.semantic(card, "details.related.remote." + id);
                     card.setContentDescription(name + " · " + recommendation.provider.name);
                     card.setOnClickListener(
                         v
                         -> getContext().startActivity(
                             new Intent(getContext(),
-                                       com.archos.mediacenter.video.streaming.PreviewRemoteDetailsActivity.class)
+                                       PreviewRemoteDetailsActivity.class)
                                 .putExtra("kind", television ? "tv" : "movie")
                                 .putExtra("tmdb_id", id)));
                     addRecommendation(card);
@@ -1831,7 +1848,7 @@ public final class PreviewMoviePage extends ScrollView {
                                                   : 0,
                   "details.related", "landscape");
         card.setTag("related:" + entry.key());
-        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card, "details.related." + entry.key());
+        Diagnostics.semantic(card, "details.related." + entry.key());
         card.setOnClickListener(v
                                 -> new VideoViewClickedListener((Activity)getContext())
                                        .onItemClicked(new Presenter.ViewHolder(v), entry.media, null, null));
@@ -1928,7 +1945,7 @@ public final class PreviewMoviePage extends ScrollView {
                           Uri.parse("https://i.ytimg.com/vi/" + extra.mVideoKey + "/hqdefault.jpg"), true,
                           diagnosticMedia(), "details.extras", "video_thumbnail");
                 card.setTag("extra:" + extra.mVideoKey);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(card, "details.extra." + extra.mVideoKey);
+                Diagnostics.semantic(card, "details.extra." + extra.mVideoKey);
                 card.setOnClickListener(v -> PreviewTrailer.show((Activity)getContext(), extra));
                 View.OnFocusChangeListener focus = card.getOnFocusChangeListener();
                 card.setOnFocusChangeListener((v, active) -> {
@@ -1951,7 +1968,7 @@ public final class PreviewMoviePage extends ScrollView {
         restoreRowFocus(trailers, focusKey, y);
     }
 
-    public void bindRemote(org.json.JSONObject details, String kind, long id) {
+    public void bindRemote(JSONObject details, String kind, long id) {
         freshTitle(kind + ":" + id);
         remoteDetails = details;
         remoteKind = kind;
@@ -1974,7 +1991,7 @@ public final class PreviewMoviePage extends ScrollView {
         super.onDraw(canvas);
         if (!boundTitle.isEmpty() && !boundTitle.equals(firstPaintTitle)) {
             firstPaintTitle = boundTitle;
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            Diagnostics.event(
                 "details_first_paint", "media_id", diagnosticMedia(), "elapsed_ms",
                 SystemClock.elapsedRealtime() - openedAt);
         }
@@ -2028,14 +2045,14 @@ public final class PreviewMoviePage extends ScrollView {
         final int requestedSeason = seasonNumber;
         enrichmentTask = PreviewDetailsData.IO.submit(() -> {
             long start = SystemClock.elapsedRealtime();
-            String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("details_enrichment");
-            try (com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored =
-                     com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)) {
+            String operation = Diagnostics.operation("details_enrichment");
+            try (Diagnostics.OperationScope ignored =
+                     Diagnostics.operationScope(operation)) {
                 if (requestedSeason < 0) {
                     PreviewDetailsData.Result core = PreviewDetailsData.cachedCore(app, kind, id);
                     if (core != null)
                         post(() -> enqueueEnrichment(core, generation));
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    Diagnostics.event(
                         "details_core_cache_ready", "media_id", id, "elapsed_ms",
                         SystemClock.elapsedRealtime() - start, "cached", core != null);
                 }
@@ -2051,7 +2068,7 @@ public final class PreviewMoviePage extends ScrollView {
                                          : PreviewDetailsData.load(app, kind, id, local, progress);
                 post(() -> enqueueEnrichment(result, generation));
             } catch (Exception error) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                Diagnostics.event(
                     "details_enrichment_unavailable", "operation_id", operation, "media_id", id, "failure_category",
                     error.getClass().getSimpleName());
                 post(() -> {
@@ -2059,10 +2076,10 @@ public final class PreviewMoviePage extends ScrollView {
                         enrichmentKey = "";
                 });
             } finally {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                Diagnostics.event(
                     "details_enrichment", "operation_id", operation, "elapsed_ms",
                     SystemClock.elapsedRealtime() - start);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation, "details_enrichment",
+                Diagnostics.finishOperation(operation, "details_enrichment",
                                                                                      start);
             }
         });
@@ -2168,7 +2185,7 @@ public final class PreviewMoviePage extends ScrollView {
             target = play.getVisibility() == VISIBLE ? play : sectionTabs.isEmpty() ? null : sectionTabs.get(0);
         }
         boolean success = target != null && target.requestFocus();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(requested, findFocus(), fallback, success);
+        Diagnostics.focusRestored(requested, findFocus(), fallback, success);
         scrollTo(0, y);
         final View restored = target;
         post(() -> {
@@ -2277,7 +2294,7 @@ public final class PreviewMoviePage extends ScrollView {
         back.setPadding(0, dp(26), 0, 0);
         back.setTextColor(0xff8da9bb);
         page.addView(back);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(scroll, "details.reader");
+        Diagnostics.semantic(scroll, "details.reader");
         Runnable removeFrost = PreviewFrost.show((Activity)getContext());
         dialog.setContentView(scroll);
         dialog.setOnDismissListener(d -> removeFrost.run());
@@ -2361,7 +2378,7 @@ public final class PreviewMoviePage extends ScrollView {
     private static boolean isRemoveFromLibrary(Action a) {
         long id = a.getId();
         return id == VideoActionAdapter.ACTION_UNINDEX ||
-            id == com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter.ACTION_UNINDEX;
+            id == TvshowActionAdapter.ACTION_UNINDEX;
     }
 
     private void more() {
@@ -2389,20 +2406,20 @@ public final class PreviewMoviePage extends ScrollView {
         if (movie != null && getContext() instanceof Activity) {
             restartLabel = movie instanceof Episode ? "Restart Episode" : "Restart Movie";
             restart = (()
-                           -> com.archos.mediacenter.video.utils.PlayUtils.startVideo(
+                           -> PlayUtils.startVideo(
                                (Activity)getContext(), movie,
-                               com.archos.mediacenter.video.player.PlayerActivity.RESUME_NO, false, -1, null, -1));
+                               PlayerActivity.RESUME_NO, false, -1, null, -1));
         }
 
         if (movie != null && movie.hasScraperData()) {
             report = (() -> {
                 getContext()
-                    .getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+                    .getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
                     .edit()
                     .putBoolean("incorrect:" + movie.getId(), true)
                     .apply();
                 getContext().startActivity(new android.content.Intent(
-                    getContext(), com.archos.mediacenter.video.leanback.LibraryHealthActivity.class));
+                    getContext(), LibraryHealthActivity.class));
             });
         }
         String[] groups = {"Playback", "Library", "Streaming Services", "Files & Media"};
