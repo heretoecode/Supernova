@@ -3,15 +3,18 @@ import android.app.Application;
 import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
@@ -22,8 +25,8 @@ public class BackupCycleTest {
         Context context = RuntimeEnvironment.getApplication();
         File providerToken = new File(context.getNoBackupFilesDir(), "putio-oauth-v1.bin");
         providerToken.getParentFile().mkdirs();
-        java.nio.file.Files.write(providerToken.toPath(),
-            "planted-encrypted-provider-envelope".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        Files.write(providerToken.toPath(),
+            "planted-encrypted-provider-envelope".getBytes(StandardCharsets.UTF_8));
         VideoOpenHelper helper = new VideoOpenHelper(context);
         SQLiteDatabase db = helper.getWritableDatabase();
         db.execSQL(
@@ -36,13 +39,13 @@ public class BackupCycleTest {
         }
         try (com.archos.mediacenter.video.streaming.putio.PutioAssociationStore associations =
                  new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
-            associations.prepare(10, 20, android.net.Uri.parse("https://webdav.put.io/Films"));
+            associations.prepare(10, 20, Uri.parse("https://webdav.put.io/Films"));
         }
         context.getSharedPreferences("provider-discovery-ownership-v1", 0)
             .edit()
             .putString("putio:10:20", "https://webdav.put.io/Films")
             .commit();
-        var preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        var preferences = PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit()
             .putString("preview_home_rows41", "[{\"name\":\"Saved Row\"}]")
             .putStringSet("supernova_library_exclusions", Set.of("smb://nas/Movies/omit"))
@@ -50,14 +53,14 @@ public class BackupCycleTest {
             .putString("trakt_access_token", "planted-token-secret")
             .commit();
         var resume =
-            new com.archos.mediacenter.utils.videodb.VideoDbInfo(android.net.Uri.parse("smb://nas/Movies/film.mkv"));
+            new com.archos.mediacenter.utils.videodb.VideoDbInfo(Uri.parse("smb://nas/Movies/film.mkv"));
         resume.scraperMovieId = "99";
         resume.duration = 100000;
         resume.resume = 12345;
         resume.lastTimePlayed = 100;
         com.archos.mediacenter.video.leanback.ViewingHistory.record(context, resume, false);
         var completed = new com.archos.mediacenter.utils.videodb.VideoDbInfo(
-            android.net.Uri.parse("file:///removed-drive/ep1.mkv"));
+            Uri.parse("file:///removed-drive/ep1.mkv"));
         completed.isShow = true;
         completed.scraperShowId = "123";
         completed.scraperSeasonNr = 1;
@@ -128,17 +131,17 @@ public class BackupCycleTest {
             }) {
                 zip.putNextEntry(new ZipEntry(name));
                 if (name.equals("media.db"))
-                    java.nio.file.Files.copy(database.toPath(), zip);
+                    Files.copy(database.toPath(), zip);
                 else
                     zip.write((name.equals("manifest.json") ? BackupFormat.manifest()
                             : name.equals("db_version.txt") ? String.valueOf(VideoOpenHelper.getDatabaseVersion())
                             : name.equals("settings.json") ? "{}"
                                                             : "Restore guide")
-                            .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                            .getBytes(StandardCharsets.UTF_8));
                 zip.closeEntry();
             }
         }
-        var preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        var preferences = PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit().putString("sentinel", "unchanged").commit();
         try {
             SafeBackup.stage(context, new ByteArrayInputStream(bytes.toByteArray()));
@@ -163,14 +166,14 @@ public class BackupCycleTest {
             }
         try (com.archos.mediacenter.video.streaming.putio.PutioAssociationStore store =
                  new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
-            store.prepare(10, 20, android.net.Uri.parse("https://webdav.put.io/Films"));
+            store.prepare(10, 20, Uri.parse("https://webdav.put.io/Films"));
         }
         File poster =
             new File(com.archos.mediascraper.MediaScraper.getPosterDirectory(context), "destination-keep.png");
         poster.getParentFile().mkdirs();
-        java.nio.file.Files.writeString(poster.toPath(), "ART_KEEP");
+        Files.writeString(poster.toPath(), "ART_KEEP");
         var info =
-            new com.archos.mediacenter.utils.videodb.VideoDbInfo(android.net.Uri.parse("file:///storage/fixture.mkv"));
+            new com.archos.mediacenter.utils.videodb.VideoDbInfo(Uri.parse("file:///storage/fixture.mkv"));
         info.scraperMovieId = "99";
         info.resume = 3333;
         info.duration = 100000;
@@ -212,6 +215,6 @@ public class BackupCycleTest {
                  new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
             assertEquals(1, store.scopes(10).size());
         }
-        assertEquals("ART_KEEP", java.nio.file.Files.readString(poster.toPath()));
+        assertEquals("ART_KEEP", Files.readString(poster.toPath()));
     }
 }
