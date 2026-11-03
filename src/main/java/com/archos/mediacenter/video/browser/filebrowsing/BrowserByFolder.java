@@ -935,7 +935,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
     protected static ListingEngine.SortOrder getSortOrder(String sortOrder) {
         final int index = sortOrders.indexOf(sortOrder);
         if (index <0) return ListingEngine.SortOrder.SORT_BY_NAME_ASC;
-        else return sortOrdersListingEngine.get(index);
+            else return sortOrdersListingEngine.get(index);
     }
 
 }
