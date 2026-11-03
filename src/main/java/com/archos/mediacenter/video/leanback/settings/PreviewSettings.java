@@ -49,6 +49,7 @@ import java.util.WeakHashMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+/** Organizes and styles TV Settings preferences, navigation and focus handling. */
 public final class PreviewSettings {
     private static final WeakHashMap<Context, WeakReference<TextView>> HELP =
         new WeakHashMap<>();
