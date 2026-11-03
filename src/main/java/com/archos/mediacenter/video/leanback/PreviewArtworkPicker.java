@@ -17,7 +17,7 @@ public final class PreviewArtworkPicker {
         Dialog dialog=PreviewDialog.create(context,"artwork_picker");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel=new LinearLayout(context);panel.setOrientation(LinearLayout.VERTICAL);
         int gap=PreviewDialog.dp(context,12);panel.setPadding(gap,gap,gap,gap);panel.setBackground(PreviewDialog.menuSurface(context));
-        TextView title=new TextView(context);title.setText(heading);title.setTextColor(Color.WHITE);title.setTextSize(19);panel.addView(title);
+        TextView title=new TextView(context);title.setText(heading);title.setTextColor(Color.WHITE);title.setTextSize(19);/* Approved global rule: no title on pop-up menus. */panel.setContentDescription(heading);
         TextView status=new TextView(context);status.setTextColor(Color.WHITE);status.setTextSize(12);status.setMinHeight(PreviewDialog.dp(context,24));panel.addView(status);
         ScrollView scroll=new ScrollView(context);scroll.setClipChildren(false);scroll.setClipToPadding(false);scroll.setPadding(gap,gap,gap,gap);
         GridLayout grid=new GridLayout(context);grid.setColumnCount(posters?5:3);grid.setClipChildren(false);grid.setClipToPadding(false);scroll.addView(grid);

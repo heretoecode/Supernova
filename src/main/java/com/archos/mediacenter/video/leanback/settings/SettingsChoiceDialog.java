@@ -16,7 +16,8 @@ final class SettingsChoiceDialog {
         Dialog dialog=PreviewDialog.create(context,"choice");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel=new LinearLayout(context);panel.setOrientation(LinearLayout.VERTICAL);
         int padding=dp(context,16);panel.setPadding(padding,dp(context,14),padding,dp(context,12));panel.setBackground(PreviewDialog.dialogSurface(context));
-        TextView title=SharedThreePanel.text(context,String.valueOf(preference.getTitle()),21);title.setTypeface(null,android.graphics.Typeface.BOLD);panel.addView(title);
+        // Approved global rule (2 Nov 2026): pop-up menus have no title; the user has just chosen this setting.
+        TextView title=SharedThreePanel.text(context,String.valueOf(preference.getTitle()),21);panel.setContentDescription(title.getText());
         TextView explanation=SharedThreePanel.text(context,"",15);explanation.setVisibility(View.GONE);explanation.setTextColor(0xffbcc9d9);explanation.setPadding(0,dp(context,5),0,dp(context,10));panel.addView(explanation);
         ScrollView scroll=new ScrollView(context);scroll.setVerticalScrollBarEnabled(false);scroll.setSmoothScrollingEnabled(false);
         LinearLayout rows=new LinearLayout(context);rows.setOrientation(LinearLayout.VERTICAL);scroll.addView(rows);panel.addView(scroll);
@@ -31,9 +32,11 @@ final class SettingsChoiceDialog {
         }
         divider(panel,context);LinearLayout footer=new LinearLayout(context);footer.setGravity(Gravity.RIGHT);TextView cancel=TvButton.create(context,"Cancel",dialog::dismiss,false);cancel.setTag("settings.choice.cancel");cancel.setMinHeight(dp(context,48));footer.addView(cancel);panel.addView(footer);
         dialog.setContentView(panel);dialog.show();Window window=dialog.getWindow();window.setBackgroundDrawableResource(android.R.color.transparent);window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);window.setDimAmount(.32f);window.setGravity(Gravity.CENTER);
-        int width=Math.min(dp(context,360),Math.max(dp(context,270),Math.round(context.getResources().getDisplayMetrics().widthPixels*.28f)));width=Math.min(width,context.getResources().getDisplayMetrics().widthPixels-dp(context,48));
-        int measure=View.MeasureSpec.makeMeasureSpec(width-padding*2,View.MeasureSpec.EXACTLY),free=View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);title.measure(measure,free);explanation.measure(measure,free);footer.measure(measure,free);rows.measure(measure,free);
-        int chrome=dp(context,27)+title.getMeasuredHeight()+explanation.getMeasuredHeight()+footer.getMeasuredHeight();int available=Math.max(dp(context,48),TvLayout.safeHeight(context)-dp(context,48)-chrome);int height=Math.min(rows.getMeasuredHeight(),available);scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,height));window.setLayout(width,height+chrome);
+        // Approved global rule: width fitted to the longest choice (radio + optional flag + text), 360px–40% of the screen.
+        android.graphics.Paint measurePaint=new android.graphics.Paint();measurePaint.setTextSize(16*TvLayout.scale(context)*context.getResources().getDisplayMetrics().scaledDensity);int longest=0;for(CharSequence label:labels)longest=Math.max(longest,(int)Math.ceil(measurePaint.measureText(label.toString())));
+        int width=SupernovaStyle.menuWidth(context,longest+dp(context,20+10+(language(preference.getKey())?28:0)),padding*2);
+        int measure=View.MeasureSpec.makeMeasureSpec(width-padding*2,View.MeasureSpec.EXACTLY),free=View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED);explanation.measure(measure,free);footer.measure(measure,free);rows.measure(measure,free);
+        int chrome=dp(context,27)+explanation.getMeasuredHeight()+footer.getMeasuredHeight();int available=Math.max(dp(context,48),TvLayout.safeHeight(context)-dp(context,48)-chrome);int height=Math.min(rows.getMeasuredHeight(),available);scroll.setLayoutParams(new LinearLayout.LayoutParams(-1,height));window.setLayout(width,height+chrome);
         View opener=context instanceof android.app.Activity?((android.app.Activity)context).getCurrentFocus():null;
         if(opener!=null){View category=opener.getRootView().findViewWithTag("settings.category");if(category instanceof LinearLayout){View content=((LinearLayout)category).getChildAt(1);int[] position=new int[2];content.getLocationOnScreen(position);WindowManager.LayoutParams attrs=window.getAttributes();attrs.x=position[0]+content.getWidth()/2-context.getResources().getDisplayMetrics().widthPixels/2;window.setAttributes(attrs);}}
         if(initial!=null)initial.requestFocus();return dialog;

@@ -37,7 +37,7 @@ final class HomeGenrePicker {
         Dialog dialog = PreviewDialog.create(context, "choice"); dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = new MenuFoundation.WindowPanel(context); panel.setOrientation(LinearLayout.VERTICAL);
         panel.setTag("home.genres.panel"); panel.setPadding(dp(context, 16), dp(context, 14), dp(context, 16), dp(context, 18));
-        panel.setBackground(MenuFoundation.surface(context, false));
+        panel.setBackground(SupernovaStyle.glass(context));
         panel.addView(MenuFoundation.text(context, "Genres", 21));
         TextView explanation = MenuFoundation.text(context, "Counts reflect your currently indexed library and can change. Zero-count genres can be selected before scanning.", 12);
         explanation.setTextColor(MenuFoundation.SECONDARY); explanation.setPadding(0, dp(context, 10), 0, dp(context, 12)); panel.addView(explanation);

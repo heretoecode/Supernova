@@ -20,7 +20,8 @@ public final class PreviewVersionsDialog {
         panel.setPadding(pad, pad, pad, pad);
         panel.setBackground(PreviewDialog.menuSurface(activity));
         TextView title = text(activity, "Versions", 19);
-        panel.addView(title);
+        // Approved global rule (2 Nov 2026): pop-up menus have no title.
+        panel.setContentDescription(title.getText());
         ScrollView scroll = new ScrollView(activity);
         LinearLayout rows = new LinearLayout(activity);
         rows.setOrientation(LinearLayout.VERTICAL);
