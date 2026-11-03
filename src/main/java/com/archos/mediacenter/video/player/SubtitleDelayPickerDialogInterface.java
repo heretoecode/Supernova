@@ -18,6 +18,7 @@ import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 
+/** Defines subtitle delay dialog callbacks, updates and item selection handling. */
 public interface SubtitleDelayPickerDialogInterface {
 
 
