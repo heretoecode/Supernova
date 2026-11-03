@@ -90,9 +90,11 @@ public class PreviewNetworkSemanticsTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             Shortcut source = new Shortcut(72, "https://private-host/private-path", null, "Private source") {
+                @Override
                 public Uri getUri() {
                     return Uri.parse(getFullPath());
                 }
+                @Override
                 public int getImage() {
                     return 0;
                 }
