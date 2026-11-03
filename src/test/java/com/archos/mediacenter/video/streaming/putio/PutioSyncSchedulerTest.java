@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.app.Application;
+import android.os.SystemClock;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorder;
 import org.json.JSONObject;
@@ -24,7 +26,7 @@ public class PutioSyncSchedulerTest {
     @After public void teardown(){Thread.interrupted();Diagnostics.setEnabled(app,false);}
 
     @Test public void disabledIntegrationMakesNoAccountRequest()throws Exception{
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("supernova_putio_enabled",false).commit();
+        PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("supernova_putio_enabled",false).commit();
         PutioReadClient client=mock(PutioReadClient.class);PutioSyncScheduler.sync(app,"manual",client);verifyNoInteractions(client);
     }
     @Test public void transportInheritsSyncAndScopeDoesNotLeak()throws Exception{
@@ -52,10 +54,10 @@ public class PutioSyncSchedulerTest {
         when(client.account()).thenThrow(new IllegalStateException("private fixture detail"));
         PutioSyncScheduler.sync(app,"scheduled",client);
         List<JSONObject> rows=rows();assertTerminal(rows,kind(rows,"putio_sync").getString("operation_id"),"putio_sync_incomplete");
-        assertFalse(flight.snapshot(android.os.SystemClock.elapsedRealtime()).contains("private fixture detail"));
+        assertFalse(flight.snapshot(SystemClock.elapsedRealtime()).contains("private fixture detail"));
     }
     private List<JSONObject> rows()throws Exception{
-        List<JSONObject> rows=new ArrayList<>();for(String line:flight.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n"))if(!line.isEmpty())rows.add(new JSONObject(line));return rows;
+        List<JSONObject> rows=new ArrayList<>();for(String line:flight.snapshot(SystemClock.elapsedRealtime()).split("\n"))if(!line.isEmpty())rows.add(new JSONObject(line));return rows;
     }
     private JSONObject kind(List<JSONObject> rows,String kind){return rows.stream().filter(r->"operation_begin".equals(r.optString("event"))&&kind.equals(r.optString("kind"))).findFirst().orElseThrow(AssertionError::new);}
     private void assertTerminal(List<JSONObject> rows,String operation,String expected){
