@@ -1,15 +1,23 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -27,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 
@@ -106,7 +115,7 @@ final class HomeGenrePicker {
             target.setFocusable(true);
             target.setFocusableInTouchMode(true);
             target.setClickable(true);
-            target.setDescendantFocusability(android.view.ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            target.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             target.setPadding(dp(context, 10), dp(context, 8), dp(context, 10), dp(context, 8));
             target.setMinimumHeight(dp(context, 44));
             SupernovaStyle.applyButton(target, SupernovaStyle.Surface.STANDARD);
@@ -164,9 +173,9 @@ final class HomeGenrePicker {
                 boolean active = NetworkScannerReceiver.isScannerWorking() || ImportState.VIDEO.isInitialImport() ||
                                  ImportState.VIDEO.isRegularImport() || LoaderUtils.getScrapeInProgress();
                 scanning.setVisibility(active ? View.VISIBLE : View.GONE);
-                android.graphics.drawable.Animatable rotating = (android.graphics.drawable.Animatable)animation;
+                Animatable rotating = (Animatable)animation;
                 if (active &&
-                    (android.os.Build.VERSION.SDK_INT < 26 || android.animation.ValueAnimator.areAnimatorsEnabled()))
+                    (Build.VERSION.SDK_INT < 26 || ValueAnimator.areAnimatorsEnabled()))
                     rotating.start();
                 else
                     rotating.stop();
@@ -177,7 +186,7 @@ final class HomeGenrePicker {
         dialog.setContentView(panel);
         dialog.setOnDismissListener(window -> {
             handler.removeCallbacks(refresh);
-            ((android.graphics.drawable.Animatable)animation).stop();
+            ((Animatable)animation).stop();
             for (RollingCount count : counts)
                 count.cancel();
         });
@@ -215,11 +224,11 @@ final class HomeGenrePicker {
             public void setAlpha(int value) {
             }
             @Override
-            public void setColorFilter(android.graphics.ColorFilter filter) {
+            public void setColorFilter(ColorFilter filter) {
             }
             @Override
             public int getOpacity() {
-                return android.graphics.PixelFormat.TRANSLUCENT;
+                return PixelFormat.TRANSLUCENT;
             }
         };
         int size = dp(view.getContext(), 19), total = Math.min(3, genres.size());
@@ -240,17 +249,17 @@ final class HomeGenrePicker {
                 text.setAlpha(value);
             }
             @Override
-            public void setColorFilter(android.graphics.ColorFilter filter) {
+            public void setColorFilter(ColorFilter filter) {
                 text.setColorFilter(filter);
             }
             @Override
             public int getOpacity() {
-                return android.graphics.PixelFormat.TRANSLUCENT;
+                return PixelFormat.TRANSLUCENT;
             }
         };
         count.setBounds(0, 0, (int)Math.ceil(text.measureText(label)) + dp(view.getContext(), 8), size);
-        view.setText(android.text.TextUtils.join(", ", genres));
-        view.setContentDescription("Genres, " + android.text.TextUtils.join(", ", genres) + ", " + label);
+        view.setText(TextUtils.join(", ", genres));
+        view.setContentDescription("Genres, " + TextUtils.join(", ", genres) + ", " + label);
         view.setCompoundDrawables(icons, null, count, null);
     }
 
@@ -280,12 +289,12 @@ final class HomeGenrePicker {
     }
 
     static final class Counts {
-        private final Map<String, Integer> genres = new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        private final Map<String, Integer> genres = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         private final int all;
 
         Counts(Snapshot snapshot, PreviewHomeRows.Row row) {
             Set<String> titles = new LinkedHashSet<>();
-            Map<String, Set<String>> members = new java.util.TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            Map<String, Set<String>> members = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             if (row.movies)
                 add(snapshot.movies, "movie:", titles, members);
             if (row.tv)
@@ -318,13 +327,13 @@ final class HomeGenrePicker {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private String value = "—", before = "—";
         private float progress = 1;
-        private android.animation.ValueAnimator animator;
+        private ValueAnimator animator;
 
         RollingCount(Context context) {
             super(context);
             paint.setColor(MenuFoundation.SECONDARY);
             paint.setTextSize(14 * TvLayout.scale(context) * context.getResources().getDisplayMetrics().scaledDensity);
-            paint.setTypeface(android.graphics.Typeface.MONOSPACE);
+            paint.setTypeface(Typeface.MONOSPACE);
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         }
 
@@ -347,8 +356,8 @@ final class HomeGenrePicker {
             value = next;
             progress = 1;
             if (!before.equals("—") && !value.equals("—") &&
-                (android.os.Build.VERSION.SDK_INT < 26 || android.animation.ValueAnimator.areAnimatorsEnabled())) {
-                animator = android.animation.ValueAnimator.ofFloat(0, 1);
+                (Build.VERSION.SDK_INT < 26 || ValueAnimator.areAnimatorsEnabled())) {
+                animator = ValueAnimator.ofFloat(0, 1);
                 animator.setDuration(180);
                 animator.addUpdateListener(frame -> {
                     progress = (float)frame.getAnimatedValue();
