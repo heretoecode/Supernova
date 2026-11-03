@@ -1,7 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.os.Looper;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -36,8 +46,8 @@ public class CustomLibraryPageTest {
             library.movies.add(new Entry(movie, i, 0, "Drama"));
         }
         PreviewLibraryLoader.cached = library;
-        android.content.SharedPreferences prefs =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+        SharedPreferences prefs =
+            PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         String savedPage = prefs.getString(CustomLibraryPage.KEY, null);
         CustomLibraryPage custom = new CustomLibraryPage();
         custom.name = "QA Library";
@@ -50,7 +60,7 @@ public class CustomLibraryPageTest {
                 com.squareup.picasso.Picasso.setSingletonInstance(
                     new com.squareup.picasso.Picasso.Builder(host.get()).build());
             }
-            android.widget.FrameLayout workspace = new android.widget.FrameLayout(host.get());
+            FrameLayout workspace = new FrameLayout(host.get());
             TopNavigation root = new TopNavigation(host.get(), workspace, i -> {
             }, () -> true);
             root.selectTab(6);
@@ -60,23 +70,23 @@ public class CustomLibraryPageTest {
             pages.configureCustomLibrary(custom, () -> {
             });
             pages.setSnapshot(library);
-            android.widget.LinearLayout body = new android.widget.LinearLayout(host.get());
-            body.addView(pages, new android.widget.LinearLayout.LayoutParams(-1, -1));
-            workspace.addView(body, new android.widget.FrameLayout.LayoutParams(-1, -1));
+            LinearLayout body = new LinearLayout(host.get());
+            body.addView(pages, new LinearLayout.LayoutParams(-1, -1));
+            workspace.addView(body, new FrameLayout.LayoutParams(-1, -1));
             pages.focusFromNavigation();
             layoutCustomViewport(root);
-            android.view.View stats = root.findViewWithTag("library.statistics");
-            android.graphics.Rect visible = new android.graphics.Rect();
+            View stats = root.findViewWithTag("library.statistics");
+            Rect visible = new Rect();
             assertNotNull(stats);
             assertTrue(stats.getGlobalVisibleRect(visible));
             assertEquals(stats.getHeight(), visible.height());
             assertNotNull(PreviewPagesTest.findText(stats, "45"));
             PreviewPagesTest.capture(root, "custom-populated-first-frame-api30");
-            androidx.recyclerview.widget.RecyclerView list =
-                (androidx.recyclerview.widget.RecyclerView) pages.getChildAt(0);
+            RecyclerView list =
+                (RecyclerView) pages.getChildAt(0);
             assertFalse("No initial scroll past statistics", list.canScrollVertically(-1));
             pages.post(() -> pages.setSnapshot(library));
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             layoutCustomViewport(root);
             stats = root.findViewWithTag("library.statistics");
             assertTrue(stats.getGlobalVisibleRect(visible));
@@ -94,15 +104,15 @@ public class CustomLibraryPageTest {
         }
     }
 
-    private static void layoutCustomViewport(android.view.View root) {
-        android.content.res.Resources resources = root.getResources();
+    private static void layoutCustomViewport(View root) {
+        Resources resources = root.getResources();
         int width = Math.round(resources.getConfiguration().screenWidthDp * resources.getDisplayMetrics().density),
             height = Math.round(resources.getConfiguration().screenHeightDp * resources.getDisplayMetrics().density);
         for (int i = 0; i < 4; i++) {
-            root.measure(android.view.View.MeasureSpec.makeMeasureSpec(width, android.view.View.MeasureSpec.EXACTLY),
-                android.view.View.MeasureSpec.makeMeasureSpec(height, android.view.View.MeasureSpec.EXACTLY));
+            root.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
             root.layout(0, 0, width, height);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(60));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(60));
         }
     }
 
@@ -115,8 +125,8 @@ public class CustomLibraryPageTest {
         });
         pages.setSnapshot(new Snapshot());
         assertTrue(pages.focusFromNavigation());
-        androidx.recyclerview.widget.RecyclerView list =
-            (androidx.recyclerview.widget.RecyclerView) pages.getChildAt(0);
+        RecyclerView list =
+            (RecyclerView) pages.getChildAt(0);
         assertEquals("Pending initial scroll must retain statistics at adapter row zero", 0,
             (int) org.robolectric.util.ReflectionHelpers.getField(list.getLayoutManager(), "mPendingScrollPosition"));
     }
@@ -216,7 +226,7 @@ public class CustomLibraryPageTest {
     @Test
     public void customPageInitialArtworkComesFromDisplayedOrderRatherThanMovies() {
         Application c = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+        PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .clear()
             .putBoolean("supernova_onboarding_complete", true)
@@ -250,7 +260,7 @@ public class CustomLibraryPageTest {
     @Test
     public void customTvStatisticsRebindWhenOnlyEpisodeStorageChanges() {
         Application c = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+        PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -270,13 +280,13 @@ public class CustomLibraryPageTest {
         pages.configureCustomLibrary(page, () -> {
         });
         pages.setSnapshot(snapshot);
-        androidx.recyclerview.widget.RecyclerView list =
-            (androidx.recyclerview.widget.RecyclerView) pages.getChildAt(0);
+        RecyclerView list =
+            (RecyclerView) pages.getChildAt(0);
         int[] changes = {
             0
         };
         list.getAdapter().registerAdapterDataObserver(
-            new androidx.recyclerview.widget.RecyclerView.AdapterDataObserver() {
+            new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeChanged(int start, int count, Object payload) {
                     if (start == 0)
