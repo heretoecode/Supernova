@@ -26,20 +26,25 @@ import com.archos.mediacenter.video.utils.ThemeManager;
  * Created by vapillon on 10/04/15.
  */
 public class MetaFileListPresenter extends ListPresenter {
-
     private Context mContext;
 
     @Override
     public void onBindListViewHolder(ListViewHolder viewHolder, Object item) {
-        ListViewHolder vh = (ListViewHolder)viewHolder;
-        MetaFile2 file = (MetaFile2)item;
+        ListViewHolder vh = (ListViewHolder) viewHolder;
+        MetaFile2 file = (MetaFile2) item;
 
         vh.setTitleText(file.getName());
         // Apply theme background color for folders to override blue background in drawable
-        vh.getImageView().setBackgroundColor(ThemeManager.getInstance(viewHolder.view.getContext()).getLeanbackHeaderColor());
+        vh.getImageView().setBackgroundColor(
+            ThemeManager.getInstance(viewHolder.view.getContext()).getLeanbackHeaderColor());
         vh.getImageView().setImageResource(PresenterUtils.getIconResIdFor(file));
         vh.getImageView().setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(viewHolder.view.getContext()).getBoolean("try_new_ui",false)){vh.getImageView().setBackgroundColor(android.graphics.Color.TRANSPARENT);int pad=com.archos.mediacenter.video.leanback.PreviewDialog.dp(viewHolder.view.getContext(),16);vh.getImageView().setPadding(pad,pad,pad,pad);}
+        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(viewHolder.view.getContext())
+                .getBoolean("try_new_ui", false)) {
+            vh.getImageView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            int pad = com.archos.mediacenter.video.leanback.PreviewDialog.dp(viewHolder.view.getContext(), 16);
+            vh.getImageView().setPadding(pad, pad, pad, pad);
+        }
         vh.setContentTextVisibility(View.GONE);
     }
 }
