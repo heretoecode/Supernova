@@ -68,6 +68,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+/** Displays additional TV show details and their backdrop. */
 public class TvshowMoreDetailsFragment extends DetailsFragmentWithLessTopOffset {
 
     private static final String TAG = "TvshowMoreDetails";
