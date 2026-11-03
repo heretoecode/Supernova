@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.archos.mediacenter.video.leanback.SingleFragmentActivity;
 
+/** Hosts the TV screen for browsing TV shows by genre. */
 public class TvshowsByGenreActivity extends SingleFragmentActivity {
     @Override
     public Fragment getFragmentInstance() {
