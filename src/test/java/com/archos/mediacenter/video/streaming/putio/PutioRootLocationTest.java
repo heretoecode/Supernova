@@ -1,5 +1,7 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import java.util.*;
 import org.junit.Test;
@@ -9,7 +11,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioRootLocationTest {
     @Test public void stableIdWalkBuildsCurrentFolderPath()throws Exception {
         Map<Long,PutioReadClient.Item> folders=new HashMap<>();folders.put(7L,new PutioReadClient.Item(7,8,0,"Films","FOLDER"));folders.put(8L,new PutioReadClient.Item(8,0,0,"Archive","FOLDER"));
@@ -23,7 +25,7 @@ public class PutioRootLocationTest {
         try{PutioRootLocation.rebase(source,Arrays.asList("Other"),Arrays.asList("Archive"));fail();}catch(IllegalStateException expected){}
     }
     @Test public void mappingIsBoundToAccountFolderAndSource()throws Exception {
-        android.content.Context c=RuntimeEnvironment.getApplication();c.getSharedPreferences("putio-library-selection-v1",0).edit().clear().commit();
+        Context c=RuntimeEnvironment.getApplication();c.getSharedPreferences("putio-library-selection-v1",0).edit().clear().commit();
         Uri source=Uri.parse("https://webdav.put.io/Films");PutioRootLocation.remember(c,1,7,source,Arrays.asList("Films"));
         assertEquals("https://webdav.put.io/Archive/Films",PutioRootLocation.target(c,1,7,source,Arrays.asList("Archive","Films")).toString());
         assertEquals(source,PutioRootLocation.target(c,2,7,source,Arrays.asList("Archive","Films")));
