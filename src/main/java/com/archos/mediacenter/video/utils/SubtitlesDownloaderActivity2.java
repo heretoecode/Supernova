@@ -202,6 +202,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         super.onStop();
     }
 
+    @Override
     public void onResume() {
         super.onResume();
         // Check if there are some dialogs to restore after a device rotation
@@ -212,6 +213,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         }
     }
 
+    @Override
     public void onPause() {
         super.onPause();
         closeDialog();
@@ -685,6 +687,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
                             }
                         },
                         (dialogInterface, i) -> new Thread() {
+                            @Override
                             public void run() {
                                 if (log.isDebugEnabled())
                                     log.debug(
