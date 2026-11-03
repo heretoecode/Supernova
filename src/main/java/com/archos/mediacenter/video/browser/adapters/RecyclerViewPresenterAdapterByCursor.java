@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/** Connects cursor-backed RecyclerView items to presenters, section indexes and thumbnails. */
 public abstract class RecyclerViewPresenterAdapterByCursor extends RecyclerView.Adapter implements  SectionIndexer,
         ThumbnailAdapterVideo,PresenterAdapterInterface {
 
