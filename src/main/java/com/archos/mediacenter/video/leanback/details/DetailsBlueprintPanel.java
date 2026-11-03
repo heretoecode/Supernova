@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.TypedValue;
 import androidx.core.widget.TextViewCompat;
+import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import android.graphics.Typeface;
 import android.view.*;
@@ -267,7 +268,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         ImageView logo = new ImageView(getContext());
         logo.setTag("details.reception.logo." + row);
         if (row == 0) {
-            logo.setImageResource(com.archos.mediacenter.video.R.drawable.imdb_logo);
+            logo.setImageResource(R.drawable.imdb_logo);
             GradientDrawable tile = new GradientDrawable();
             tile.setColor(0xffeead3d);
             tile.setCornerRadius(dp(2));
@@ -278,11 +279,11 @@ final class DetailsBlueprintPanel extends LinearLayout {
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, 1, 0
                 })));
         } else if (row == 1)
-            logo.setImageResource(com.archos.mediacenter.video.R.drawable.reception_rotten_tomatoes);
+            logo.setImageResource(R.drawable.reception_rotten_tomatoes);
         else if (row == 2)
-            logo.setImageResource(com.archos.mediacenter.video.R.drawable.reception_metacritic);
+            logo.setImageResource(R.drawable.reception_metacritic);
         else
-            logo.setImageResource(com.archos.mediacenter.video.R.drawable.reception_awards);
+            logo.setImageResource(R.drawable.reception_awards);
         logo.setScaleType(ImageView.ScaleType.FIT_CENTER);
         logo.setContentDescription(name);
         FrameLayout.LayoutParams size =
