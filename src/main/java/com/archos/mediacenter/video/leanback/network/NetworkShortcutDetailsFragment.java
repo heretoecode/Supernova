@@ -15,6 +15,7 @@
 package com.archos.mediacenter.video.leanback.network;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -33,12 +34,12 @@ import androidx.leanback.widget.Action;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.leanback.widget.DetailsOverviewRow;
 import androidx.leanback.widget.OnActionClickedListener;
-import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.SparseArrayObjectAdapter;
 
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.ShortcutDb;
@@ -53,6 +54,8 @@ import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediaprovider.NetworkScanner;
 
 import com.archos.mediaprovider.video.LoaderUtils;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,21 +241,21 @@ public class NetworkShortcutDetailsFragment extends DetailsSupportFragment imple
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mOverlay = new Overlay(this);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+        if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("try_new_ui", false)) {
             view.setAlpha(0f);
             view.post(() -> {
                 if (!isAdded())
                     return;
                 DetailsOverviewRow row = (DetailsOverviewRow) getAdapter().get(0);
-                java.util.List<Action> actions = new java.util.ArrayList<>();
-                java.util.List<String> labels = new java.util.ArrayList<>();
+                List<Action> actions = new ArrayList<>();
+                List<String> labels = new ArrayList<>();
                 for (int i = 0; i < row.getActionsAdapter().size(); i++) {
                     Action a = (Action) row.getActionsAdapter().get(i);
                     actions.add(a);
                     labels.add(String.valueOf(a.getLabel1()));
                 }
-                android.app.Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
                     mShortcut.getName(), labels.toArray(new String[0]), 0, n -> onActionClicked(actions.get(n)));
                 dialog.setOnCancelListener(d -> {
                     if (isAdded())
