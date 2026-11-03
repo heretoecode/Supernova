@@ -1,12 +1,21 @@
 package com.archos.mediacenter.video.leanback.details;
 
+import android.text.TextUtils;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.LinkedHashSet;
 
 /** Read only applicable published facts; absence must not become a guessed classification/runtime. */
 final class PreviewDetailsFacts {
-    static JSONObject episode(java.util.Map<Integer, JSONArray> seasons, int season, int number) {
+    static JSONObject episode(Map<Integer, JSONArray> seasons, int season, int number) {
         JSONArray episodes = seasons.get(season);
         if (episodes == null)
             return null;
@@ -21,17 +30,17 @@ final class PreviewDetailsFacts {
     static int dateYear(long date) {
         if (date <= 0)
             return 0;
-        java.util.Calendar calendar = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         calendar.setTimeInMillis(date);
-        return calendar.get(java.util.Calendar.YEAR);
+        return calendar.get(Calendar.YEAR);
     }
 
     static String date(long date) {
         if (date <= 0)
             return "";
-        java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ROOT);
-        format.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-        return format.format(new java.util.Date(date));
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return format.format(new Date(date));
     }
 
     static String certificate(JSONObject classification, String country) {
@@ -86,8 +95,8 @@ final class PreviewDetailsFacts {
             else
                 other.add(name);
         }
-        java.util.List<String> names = new java.util.ArrayList<>(local.isEmpty() ? other : local);
-        return android.text.TextUtils.join(", ", names.subList(0, Math.min(3, names.size())));
+        List<String> names = new ArrayList<>(local.isEmpty() ? other : local);
+        return TextUtils.join(", ", names.subList(0, Math.min(3, names.size())));
     }
 
     static int year(JSONObject details) {
@@ -107,7 +116,7 @@ final class PreviewDetailsFacts {
                 if (value > 0)
                     minutes.add(value + " min");
             }
-        return android.text.TextUtils.join(", ", minutes);
+        return TextUtils.join(", ", minutes);
     }
 
     private PreviewDetailsFacts() {
