@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays playback information and actions for restarting or opening full details. */
 final class PreviewPlaybackInfo {
     static void show(Activity a, String title, String episode, Object media, Runnable restart, Runnable full) {
         Dialog d = new Dialog(a);
