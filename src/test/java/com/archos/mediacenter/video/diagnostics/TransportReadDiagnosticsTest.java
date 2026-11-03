@@ -112,6 +112,7 @@ public class TransportReadDiagnosticsTest {
     public void originalTimeoutAndCloseExceptionsPropagateWithoutTheirMessagesEnteringRecorder() throws Exception {
         IOException timeout = new SocketTimeoutException("TIMEOUT_CANARY password=SECRET_CANARY");
         InputStream failing = new InputStream() {
+            @Override
             public int read() throws IOException {
                 throw timeout;
             }
