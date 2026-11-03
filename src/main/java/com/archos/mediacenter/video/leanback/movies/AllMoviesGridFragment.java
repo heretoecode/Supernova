@@ -66,6 +66,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays a movie grid with loading, sorting and selection handling. */
 public class AllMoviesGridFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "AllMoviesGridFragment";
