@@ -8,18 +8,44 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.153",
-    "version_code": 153,
+    "version": "0.154",
+    "version_code": 154,
     "date": "2026-11-03",
-    "kind": "Shield QA candidate \u2014 one global style for buttons, menus and panels; physical verification pending",
+    "kind": "Shield QA candidate \u2014 0.153 walk-through improvements and the new Local Storage page; physical verification pending",
     "notes": [
-      "Every button: black at rest, white box with black text and icon on focus, sized to its content; one shared style app-wide.",
-      "Menus and panels share 97% navy glass; rows focus with a white outline; pop-up menus lose their titles, gain inline group headings and fit their content.",
-      "Streaming button shows the provider name with an open-externally icon; providers use official single-colour logos or a uniform initials tile.",
-      "Settings grid fills the page with larger tiles, icons beside single-line titles and no page title; old build box removed."
+      "Charcoal menus and panels; Medium-weight button labels; no shadow round the focus box; focused cards have one crisp outline.",
+      "Home and Details heroes match: year, runtime and genres, tagline, a soft shadow and gentle left shade; no age rating, score or badges.",
+      "Playback Settings and Edit Page follow the More menu; Settings and Network & Files share one tile design.",
+      "New Local Storage: friendly drive names, path chips, two-line rows with buttons on the focused row, remembered folders.",
+      "Five bug fixes (subtitle cache rename, FTP port and logs, search provider, skip prompt); arm64-only Shield build."
     ]
   },
   "history": [
+    {
+      "version": "0.153",
+      "version_code": 153,
+      "date": "2026-11-03",
+      "kind": "Shield QA candidate \u2014 one global style for buttons, menus and panels; physical verification pending",
+      "notes": [
+        "Every button: black at rest, white box with black text and icon on focus, sized to its content; one shared style app-wide.",
+        "Menus and panels share 97% navy glass; rows focus with a white outline; pop-up menus lose their titles, gain inline group headings and fit their content.",
+        "Streaming button shows the provider name with an open-externally icon; providers use official single-colour logos or a uniform initials tile.",
+        "Settings grid fills the page with larger tiles, icons beside single-line titles and no page title; old build box removed."
+      ],
+      "source_sha": "38c2be745e45c9c0686fad5d07d8bcbd30255bf0",
+      "evidence": "docs/0.153/SIGNED_QA_EVIDENCE.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "65a614fb03593c7583aedbcd4e14b0957795f97c5ad65014d732fd0390b37f74",
+      "artifact_id": 13203682246,
+      "run_id": 41575981322,
+      "apks": [
+        {
+          "sha256": "2193daae817b55c2ae33de320dc6c778b846436ccfd51aabfe24e530302c2987",
+          "size": 95660933,
+          "filename": "Supernova_0.153.apk"
+        }
+      ]
+    },
     {
       "version": "0.152",
       "version_code": 152,
