@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Displays TV shows grouped by genre with sorting controls. */
 public class TvshowsByGenreFragment extends TvshowsByFragment {
 
     private static final Logger log = LoggerFactory.getLogger(TvshowsByGenreFragment.class);
