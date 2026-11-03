@@ -42,17 +42,30 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private static final int ROW_HEIGHT = 60, LIST_ROWS_VISIBLE = 7;
 
     static final class Track {
-        final String label, language; final boolean selected, enabled; final Runnable select;
+        final String label, language;
+        final boolean selected, enabled;
+        final Runnable select;
+
         Track(String label, String language, boolean selected, boolean enabled, Runnable select) {
-            this.label = label; this.language = language; this.selected = selected; this.enabled = enabled; this.select = select;
+            this.label = label;
+            this.language = language;
+            this.selected = selected;
+            this.enabled = enabled;
+            this.select = select;
         }
     }
 
     /** One value of a native single-choice menu (Format, 3D Mode, Play Mode). */
     static final class Choice {
-        final String label; final boolean selected, enabled; final Runnable select;
+        final String label;
+        final boolean selected, enabled;
+        final Runnable select;
+
         Choice(String label, boolean selected, boolean enabled, Runnable select) {
-            this.label = label; this.selected = selected; this.enabled = enabled; this.select = select;
+            this.label = label;
+            this.selected = selected;
+            this.enabled = enabled;
+            this.select = select;
         }
     }
 
@@ -67,17 +80,47 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         List<Track> tracks();
         void download();
         boolean available();
-        default Runnable chooseFile() { return null; }
-        default List<Track> audioTracks() { return Collections.emptyList(); }
-        default Integer audioDelay() { return null; }
-        default void stepAudioDelay(int direction) {}
-        default Boolean option(String key) { return null; }
-        default boolean optionEnabled(String key) { return true; }
-        default void toggleOption(String key) {}
-        default List<Choice> choices(String key) { return Collections.emptyList(); }
-        default Float speed() { return null; }
-        default void setSpeed(float speed) {}
-        default Runnable pictureInPicture() { return null; }
+
+        default Runnable chooseFile() {
+            return null;
+        }
+
+        default List<Track> audioTracks() {
+            return Collections.emptyList();
+        }
+
+        default Integer audioDelay() {
+            return null;
+        }
+
+        default void stepAudioDelay(int direction) {
+        }
+
+        default Boolean option(String key) {
+            return null;
+        }
+
+        default boolean optionEnabled(String key) {
+            return true;
+        }
+
+        default void toggleOption(String key) {
+        }
+
+        default List<Choice> choices(String key) {
+            return Collections.emptyList();
+        }
+
+        default Float speed() {
+            return null;
+        }
+
+        default void setSpeed(float speed) {
+        }
+
+        default Runnable pictureInPicture() {
+            return null;
+        }
     }
 
     private final Activity owner;
@@ -89,19 +132,21 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private final TextView more;
     private final List<Runnable> bindings = new ArrayList<>();
     private int tab;
-    private String page;            // null on a tab; "subtitles" or "audio" while a track list is open
+    private String page; // null on a tab; "subtitles" or "audio" while a track list is open
     private boolean closed, building;
 
     PlaybackSubtitlePanel(Activity owner, Backend backend, int initialTab) {
         super(owner);
-        this.owner = owner; this.backend = backend;
+        this.owner = owner;
+        this.backend = backend;
         style = new SubtitlePanelStyle(owner, true, true);
         k = style.width / 640f;
         setOrientation(VERTICAL);
         setTag("subtitles.main");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         int glow = s(14);
-        setBackground(new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26), Math.max(1, s(2)), 0x66000000, glow));
+        setBackground(new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26),
+                                  Math.max(1, s(2)), 0x66000000, glow));
         setPadding(s(30) + glow, s(30) + glow, s(30) + glow, s(26) + glow);
 
         header = new LinearLayout(owner);
@@ -121,7 +166,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         tabs.setBaselineAligned(false);
         String[] names = {"Subtitles", "Audio", "Playback"}, icons = {"cc", "sound", "play"};
         int[] ids = {TAB_SUBTITLES, TAB_AUDIO, TAB_PLAYBACK};
-        for (int i = 0; i < ids.length; i++) tabs.addView(tab(i, ids[i], names[i], icons[i]), tabSize(i));
+        for (int i = 0; i < ids.length; i++)
+            tabs.addView(tab(i, ids[i], names[i], icons[i]), tabSize(i));
         LayoutParams tabsSize = new LayoutParams(-1, s(56));
         tabsSize.bottomMargin = s(12);
         header.addView(tabs, tabsSize);
@@ -151,12 +197,29 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     // ---- geometry --------------------------------------------------------------------------
 
     /** Mock-up pixels (1080p) to device pixels. */
-    int s(float px) { return Math.max(1, Math.round(px * k)); }
-    int panelWidth() { return style.width; }
-    int panelHeight() { return style.height; }
-    void place(Window window) { style.placeSide(window); }
-    int currentTab() { return tab; }
-    boolean pageOpen() { return page != null; }
+    int s(float px) {
+        return Math.max(1, Math.round(px * k));
+    }
+
+    int panelWidth() {
+        return style.width;
+    }
+
+    int panelHeight() {
+        return style.height;
+    }
+
+    void place(Window window) {
+        style.placeSide(window);
+    }
+
+    int currentTab() {
+        return tab;
+    }
+
+    boolean pageOpen() {
+        return page != null;
+    }
 
     private int maxPanelHeight() {
         return owner.getResources().getDisplayMetrics().heightPixels - s(80);
@@ -170,7 +233,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         v.setTextColor(colour);
         v.setIncludeFontPadding(false);
         v.setTextSize(TypedValue.COMPLEX_UNIT_PX, px * k * owner.getResources().getConfiguration().fontScale);
-        if (bold) v.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
+        if (bold)
+            v.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
         return v;
     }
 
@@ -186,11 +250,14 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     /** Approved global row focus: white outline, no fill change. */
-    private Drawable rowFocus() { return SupernovaStyle.rowFocus(owner); }
+    private Drawable rowFocus() {
+        return SupernovaStyle.rowFocus(owner);
+    }
 
     private LayoutParams tabSize(int index) {
         LayoutParams size = new LayoutParams(0, -1, 1);
-        if (index > 0) size.leftMargin = s(10);
+        if (index > 0)
+            size.leftMargin = s(10);
         return size;
     }
 
@@ -207,16 +274,28 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         label.setPadding(s(8), 0, 0, 0);
         t.addView(label);
         t.setContentDescription(name + " tab");
-        t.setOnFocusChangeListener((v, focused) -> { if (focused && !building && tab != id) showTab(id); });
-        t.setOnClickListener(v -> { v.requestFocus(); if (tab != id) showTab(id); });
+        t.setOnFocusChangeListener((v, focused) -> {
+            if (focused && !building && tab != id)
+                showTab(id);
+        });
+        t.setOnClickListener(v -> {
+            v.requestFocus();
+            if (tab != id)
+                showTab(id);
+        });
         t.setOnKeyListener((v, key, event) -> {
-            if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return false;
             if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 int next = index + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
-                if (next >= 0 && next < tabs.getChildCount()) tabs.getChildAt(next).requestFocus();
+                if (next >= 0 && next < tabs.getChildCount())
+                    tabs.getChildAt(next).requestFocus();
                 return true;
             }
-            if (key == KeyEvent.KEYCODE_DPAD_DOWN) { focusBody(); return true; }
+            if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                focusBody();
+                return true;
+            }
             return key == KeyEvent.KEYCODE_DPAD_UP;
         });
         return t;
@@ -277,22 +356,30 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     /** Left/Right is consumed by every row so focus never wanders sideways out of the panel. */
     private boolean rowKeys(View row, int key, KeyEvent event, Stepper stepper) {
-        if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+        if (event.getAction() != KeyEvent.ACTION_DOWN)
+            return false;
         if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            if (stepper != null && row.isEnabled()) { stepper.step(key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1); refresh(); }
+            if (stepper != null && row.isEnabled()) {
+                stepper.step(key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
+                refresh();
+            }
             return true;
         }
         if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View next = FocusFinder.getInstance().findNextFocus(body, row, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
+            View next = FocusFinder.getInstance().findNextFocus(
+                body, row, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
             if (next == null || next == row) {
-                if (key == KeyEvent.KEYCODE_DPAD_UP) focusTop();
+                if (key == KeyEvent.KEYCODE_DPAD_UP)
+                    focusTop();
                 return true;
             }
         }
         return false;
     }
 
-    interface Stepper { void step(int direction); }
+    interface Stepper {
+        void step(int direction);
+    }
 
     private TextView chevron(String c) {
         TextView v = text(c, 26, Color.WHITE, false);
@@ -313,7 +400,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         value.setMaxWidth(s(300));
         value.setTag("value");
         LayoutParams v = new LayoutParams(-2, -2);
-        v.leftMargin = s(18); v.rightMargin = s(18);
+        v.leftMargin = s(18);
+        v.rightMargin = s(18);
         box.addView(value, v);
         box.addView(chevron("›"));
         row.addView(box);
@@ -351,7 +439,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     // ---- tabs ------------------------------------------------------------------------------
 
     void showTab(int id) {
-        if (closed) return;
+        if (closed)
+            return;
         building = true;
         try {
             page = null;
@@ -361,9 +450,12 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             body.removeAllViews();
             bindings.clear();
             scroll.setMax(maxPanelHeight() - s(30 + 36 + 22 + 56 + 12 + 26) - s(28));
-            if (id == TAB_AUDIO) buildAudio();
-            else if (id == TAB_PLAYBACK) buildPlayback();
-            else buildSubtitles();
+            if (id == TAB_AUDIO)
+                buildAudio();
+            else if (id == TAB_PLAYBACK)
+                buildPlayback();
+            else
+                buildSubtitles();
             dropTrailingRule();
             if (body.getChildCount() == 0) {
                 TextView none = text("No options available for this video", 19, META, false);
@@ -380,26 +472,31 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     private void dropTrailingRule() {
         int last = body.getChildCount() - 1;
-        if (last >= 0 && !(body.getChildAt(last) instanceof LinearLayout) && !(body.getChildAt(last) instanceof TextView))
+        if (last >= 0 && !(body.getChildAt(last) instanceof LinearLayout) &&
+            !(body.getChildAt(last) instanceof TextView))
             body.removeViewAt(last);
     }
 
     void focusTab() {
         View t = tabs.findViewWithTag("playback.tab:" + tab);
-        if (t != null) t.requestFocus();
+        if (t != null)
+            t.requestFocus();
     }
 
     private void focusTop() {
         if (page != null) {
             View back = findViewWithTag("playback.page.back");
-            if (back != null) back.requestFocus();
-        } else focusTab();
+            if (back != null)
+                back.requestFocus();
+        } else
+            focusTab();
     }
 
     private void focusBody() {
         for (int i = 0; i < body.getChildCount(); i++) {
             View child = body.getChildAt(i);
-            if (child.isFocusable() && child.isEnabled() && child.requestFocus()) return;
+            if (child.isFocusable() && child.isEnabled() && child.requestFocus())
+                return;
         }
     }
 
@@ -420,9 +517,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         download.setOnClickListener(v -> backend.download());
 
         section("SUBTITLE APPEARANCE", false);
-        choices("size", "size", "Text Size", new String[]{"Small", "Medium", "Large"}, new int[]{25, 50, 75});
+        choices("size", "size", "Text Size", new String[] {"Small", "Medium", "Large"}, new int[] {25, 50, 75});
         swatches();
-        choices("position", "position", "Vertical Position", new String[]{"Bottom", "Middle", "Top"}, new int[]{0, 128, 255});
+        choices("position", "position", "Vertical Position", new String[] {"Bottom", "Middle", "Top"},
+                new int[] {0, 128, 255});
         toggle("outline", "outline", "Outline");
         toggle("background", "background", "Background");
 
@@ -435,16 +533,22 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         });
 
         LinearLayout delay = row("subtitles.row.delay", "time", "Subtitle Delay");
-        TextView ms = plusMinus(delay, direction -> backend.set("delay", backend.get("delay") + direction * SUBTITLE_DELAY_STEP_MS));
+        TextView ms = plusMinus(
+            delay, direction -> backend.set("delay", backend.get("delay") + direction * SUBTITLE_DELAY_STEP_MS));
         bindings.add(() -> {
             ms.setText(String.format(Locale.ROOT, "%d ms", backend.get("delay")));
-            delay.setContentDescription("Subtitle Delay, " + backend.get("delay") + " milliseconds. Left decreases and Right increases by 100 milliseconds.");
+            delay.setContentDescription("Subtitle Delay, " + backend.get("delay") +
+                                        " milliseconds. Left decreases and Right increases by 100 milliseconds.");
         });
-        delay.setOnClickListener(v -> { backend.set("delay", backend.get("delay") + SUBTITLE_DELAY_STEP_MS); refresh(); });
+        delay.setOnClickListener(v -> {
+            backend.set("delay", backend.get("delay") + SUBTITLE_DELAY_STEP_MS);
+            refresh();
+        });
 
         bindings.add(() -> {
             boolean available = backend.available(), on = backend.get("enabled") != 0;
-            for (String key : new String[]{"size", "colour", "position", "outline", "background"}) dim(body.findViewWithTag("subtitles.row." + key), available);
+            for (String key : new String[] {"size", "colour", "position", "outline", "background"})
+                dim(body.findViewWithTag("subtitles.row." + key), available);
             dim(opacity, available && backend.get("background") != 0);
             dim(delay, available && on);
         });
@@ -459,9 +563,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             bindings.add(() -> bindTrack(track, current, backend.audioTracks(), "Audio Track", "—"));
             track.setOnClickListener(v -> openTracks("audio"));
         }
-        boolean adjustments = backend.audioDelay() != null || backend.option("boost") != null
-                || backend.option("night") != null || backend.option("spatial") != null;
-        if (!adjustments) return;
+        boolean adjustments = backend.audioDelay() != null || backend.option("boost") != null ||
+                              backend.option("night") != null || backend.option("spatial") != null;
+        if (!adjustments)
+            return;
         section("AUDIO ADJUSTMENTS", tracks.isEmpty());
         if (backend.audioDelay() != null) {
             LinearLayout delay = row("audio.row.delay", "time", "Audio Delay");
@@ -471,7 +576,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 ms.setText(String.format(Locale.ROOT, "%d ms", value == null ? 0 : value));
                 delay.setContentDescription("Audio Delay, " + (value == null ? 0 : value) + " milliseconds");
             });
-            delay.setOnClickListener(v -> { backend.stepAudioDelay(1); refresh(); });
+            delay.setOnClickListener(v -> {
+                backend.stepAudioDelay(1);
+                refresh();
+            });
         }
         option("boost", "boost", "Audio Boost");
         option("night", "moon", "Night Mode");
@@ -479,7 +587,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     private void buildPlayback() {
-        boolean picture = !backend.choices("format").isEmpty() || !backend.choices("s3d").isEmpty() || backend.pictureInPicture() != null;
+        boolean picture = !backend.choices("format").isEmpty() || !backend.choices("s3d").isEmpty() ||
+                          backend.pictureInPicture() != null;
         if (picture) {
             section("PICTURE", true);
             choiceStepper("format", "aspect", "Format");
@@ -492,17 +601,24 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 arrow.setPadding(s(12), 0, 0, 0);
                 row.addView(arrow);
                 row.setContentDescription("Picture in Picture, Start");
-                row.setOnClickListener(v -> { Runnable action = backend.pictureInPicture(); if (action != null) action.run(); });
+                row.setOnClickListener(v -> {
+                    Runnable action = backend.pictureInPicture();
+                    if (action != null)
+                        action.run();
+                });
             }
         }
-        boolean playback = backend.speed() != null || !backend.choices("playmode").isEmpty() || backend.option("skip") != null;
-        if (!playback) return;
+        boolean playback =
+            backend.speed() != null || !backend.choices("playmode").isEmpty() || backend.option("skip") != null;
+        if (!playback)
+            return;
         section("PLAYBACK", !picture);
         if (backend.speed() != null) {
             LinearLayout row = row("playback.row.speed", "speed", "Playback Speed");
             TextView value = stepper(row, 70, direction -> {
                 Float speed = backend.speed();
-                if (speed != null) backend.setSpeed(speed + direction * SPEED_STEP);
+                if (speed != null)
+                    backend.setSpeed(speed + direction * SPEED_STEP);
             });
             bindings.add(() -> {
                 Float speed = backend.speed();
@@ -517,7 +633,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     static String formatSpeed(float speed) {
         float rounded = Math.round(speed * 100f) / 100f;
-        return (Math.round(rounded * 100) % 10 == 0 ? String.format(Locale.ROOT, "%.1f×", rounded) : String.format(Locale.ROOT, "%.2f×", rounded));
+        return (Math.round(rounded * 100) % 10 == 0 ? String.format(Locale.ROOT, "%.1f×", rounded)
+                                                    : String.format(Locale.ROOT, "%.2f×", rounded));
     }
 
     // ---- row kinds -------------------------------------------------------------------------
@@ -530,11 +647,15 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, on));
             row.setContentDescription(label + ", " + (on ? "On" : "Off"));
         });
-        row.setOnClickListener(v -> { backend.set(key, backend.get(key) == 0 ? 1 : 0); refresh(); });
+        row.setOnClickListener(v -> {
+            backend.set(key, backend.get(key) == 0 ? 1 : 0);
+            refresh();
+        });
     }
 
     private void option(String key, String iconKind, String label) {
-        if (backend.option(key) == null) return;
+        if (backend.option(key) == null)
+            return;
         String tag = (key.equals("skip") ? "playback" : "audio") + ".row." + key;
         LinearLayout row = row(tag, iconKind, label);
         ImageView value = switchView(row);
@@ -545,7 +666,12 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             row.setContentDescription(label + ", " + (checked ? "On" : "Off"));
             dim(row, on != null && backend.optionEnabled(key));
         });
-        row.setOnClickListener(v -> { if (row.isEnabled()) { backend.toggleOption(key); refresh(); } });
+        row.setOnClickListener(v -> {
+            if (row.isEnabled()) {
+                backend.toggleOption(key);
+                refresh();
+            }
+        });
     }
 
     private void choices(String key, String iconKind, String title, String[] labels, int[] values) {
@@ -565,13 +691,20 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
         bindings.add(() -> {
             int value = backend.get(key);
-            for (int i = 0; i < values.length; i++) texts[i].setTextColor(value == values[i] ? VALUE : Color.WHITE);
+            for (int i = 0; i < values.length; i++)
+                texts[i].setTextColor(value == values[i] ? VALUE : Color.WHITE);
             String spoken = "Custom (" + value + ")";
-            for (int i = 0; i < values.length; i++) if (value == values[i]) spoken = labels[i];
+            for (int i = 0; i < values.length; i++)
+                if (value == values[i])
+                    spoken = labels[i];
             row.setContentDescription(title + ", " + spoken);
         });
-        row.setOnClickListener(v -> { stepValue(key, values, 1); refresh(); });
-        row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> stepValue(key, values, direction)));
+        row.setOnClickListener(v -> {
+            stepValue(key, values, 1);
+            refresh();
+        });
+        row.setOnKeyListener(
+            (v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> stepValue(key, values, direction)));
     }
 
     private void swatches() {
@@ -580,34 +713,50 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         for (int i = 0; i < COLOURS.length; i++) {
             dots[i] = new ImageView(owner);
             LayoutParams size = new LayoutParams(s(38), s(38));
-            if (i > 0) size.leftMargin = s(3);
+            if (i > 0)
+                size.leftMargin = s(3);
             row.addView(dots[i], size);
         }
         bindings.add(() -> {
             int selected = backend.get("colour");
             String spoken = "Custom colour";
-            for (int n = 0; n < COLOURS.length; n++) if (selected == COLOURS[n]) spoken = COLOUR_NAMES[n];
+            for (int n = 0; n < COLOURS.length; n++)
+                if (selected == COLOURS[n])
+                    spoken = COLOUR_NAMES[n];
             row.setContentDescription("Text Colour, " + spoken);
-            for (int i = 0; i < COLOURS.length; i++) dots[i].setImageDrawable(new Swatch(COLOURS[i], COLOURS[i] == selected));
+            for (int i = 0; i < COLOURS.length; i++)
+                dots[i].setImageDrawable(new Swatch(COLOURS[i], COLOURS[i] == selected));
         });
-        row.setOnClickListener(v -> { stepValue("colour", COLOURS, 1); refresh(); });
-        row.setOnKeyListener((v, key, event) -> rowKeys(row, key, event, direction -> stepValue("colour", COLOURS, direction)));
+        row.setOnClickListener(v -> {
+            stepValue("colour", COLOURS, 1);
+            refresh();
+        });
+        row.setOnKeyListener(
+            (v, key, event) -> rowKeys(row, key, event, direction -> stepValue("colour", COLOURS, direction)));
     }
 
     private void choiceStepper(String key, String iconKind, String title) {
-        if (backend.choices(key).isEmpty()) return;
+        if (backend.choices(key).isEmpty())
+            return;
         LinearLayout row = row("playback.row." + key, iconKind, title);
         TextView value = stepper(row, 70, direction -> {
             List<Choice> options = backend.choices(key);
             int current = -1;
-            for (int i = 0; i < options.size(); i++) if (options.get(i).selected) current = i;
+            for (int i = 0; i < options.size(); i++)
+                if (options.get(i).selected)
+                    current = i;
             for (int i = current + direction; i >= 0 && i < options.size(); i += direction) {
-                if (options.get(i).enabled) { options.get(i).select.run(); return; }
+                if (options.get(i).enabled) {
+                    options.get(i).select.run();
+                    return;
+                }
             }
         });
         bindings.add(() -> {
             String label = "—";
-            for (Choice c : backend.choices(key)) if (c.selected) label = c.label;
+            for (Choice c : backend.choices(key))
+                if (c.selected)
+                    label = c.label;
             value.setText(label);
             row.setContentDescription(title + ", " + label);
         });
@@ -615,37 +764,51 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     private void stepValue(String key, int[] values, int direction) {
         int n = -1, current = backend.get(key);
-        for (int i = 0; i < values.length; i++) if (current == values[i]) n = i;
-        int target = n < 0 ? (direction > 0 ? 0 : values.length - 1) : Math.max(0, Math.min(values.length - 1, n + direction));
+        for (int i = 0; i < values.length; i++)
+            if (current == values[i])
+                n = i;
+        int target =
+            n < 0 ? (direction > 0 ? 0 : values.length - 1) : Math.max(0, Math.min(values.length - 1, n + direction));
         backend.set(key, values[target]);
     }
 
     private static String labelFor(int value, int[] values, String[] labels) {
-        for (int i = 0; i < values.length; i++) if (values[i] == value) return labels[i];
+        for (int i = 0; i < values.length; i++)
+            if (values[i] == value)
+                return labels[i];
         return Math.round(value * 100f / 255f) + "%";
     }
 
     private void stepTrack(List<Track> tracks, int direction) {
         int current = -1;
-        for (int i = 0; i < tracks.size(); i++) if (tracks.get(i).selected) current = i;
+        for (int i = 0; i < tracks.size(); i++)
+            if (tracks.get(i).selected)
+                current = i;
         for (int i = current + direction; i >= 0 && i < tracks.size(); i += direction) {
-            if (tracks.get(i).enabled) { tracks.get(i).select.run(); return; }
+            if (tracks.get(i).enabled) {
+                tracks.get(i).select.run();
+                return;
+            }
         }
     }
 
     private void bindTrack(LinearLayout row, TextView value, List<Track> tracks, String title, String none) {
         Track selected = null;
-        for (Track t : tracks) if (t.selected) selected = t;
+        for (Track t : tracks)
+            if (t.selected)
+                selected = t;
         value.setText(selected == null ? none : selected.label);
         PreviewLanguageIcon.apply(value, selected == null ? null : selected.language, s(30));
         value.setCompoundDrawablePadding(s(10));
-        row.setContentDescription(title + ", " + value.getText() + ". Left and Right change track; OK shows all tracks.");
+        row.setContentDescription(title + ", " + value.getText() +
+                                  ". Left and Right change track; OK shows all tracks.");
     }
 
     // ---- in-panel track list ---------------------------------------------------------------
 
     private void openTracks(String which) {
-        if (closed) return;
+        if (closed)
+            return;
         building = true;
         try {
             page = which;
@@ -669,8 +832,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             back.addView(heading);
             back.setContentDescription("Back, " + title);
             back.setOnClickListener(v -> dismissPopup());
-            back.setOnKeyListener((v, key, event) -> event.getAction() == KeyEvent.ACTION_DOWN
-                    && (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT));
+            back.setOnKeyListener((v, key, event)
+                                      -> event.getAction() == KeyEvent.ACTION_DOWN &&
+                                             (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_LEFT ||
+                                              key == KeyEvent.KEYCODE_DPAD_RIGHT));
             LayoutParams backSize = new LayoutParams(-1, -2);
             backSize.bottomMargin = s(14);
             removeHeaderPage();
@@ -681,10 +846,12 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             View initial = null;
             for (int i = 0; i < tracks.size(); i++) {
                 View row = trackRow(which, i, tracks.get(i));
-                if (initial == null && tracks.get(i).enabled || tracks.get(i).selected && tracks.get(i).enabled) initial = row;
+                if (initial == null && tracks.get(i).enabled || tracks.get(i).selected && tracks.get(i).enabled)
+                    initial = row;
             }
             if (tracks.isEmpty()) {
-                TextView none = text(subtitles ? "No subtitle tracks available" : "No audio tracks available", 19, META, false);
+                TextView none =
+                    text(subtitles ? "No subtitle tracks available" : "No audio tracks available", 19, META, false);
                 none.setPadding(s(4), s(18), 0, s(18));
                 body.addView(none);
             }
@@ -695,7 +862,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             }
             dropTrailingRule();
             scroll.scrollTo(0, 0);
-            if (initial != null) initial.requestFocus(); else back.requestFocus();
+            if (initial != null)
+                initial.requestFocus();
+            else
+                back.requestFocus();
         } finally {
             building = false;
         }
@@ -704,7 +874,8 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     private void removeHeaderPage() {
         View old = findViewWithTag("playback.page.back");
-        if (old != null) removeView(old);
+        if (old != null)
+            removeView(old);
     }
 
     private View trackRow(String which, int index, Track track) {
@@ -746,47 +917,62 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     private void updateMore() {
-        if (page == null || closed) { more.setVisibility(GONE); return; }
+        if (page == null || closed) {
+            more.setVisibility(GONE);
+            return;
+        }
         int bottom = scroll.getScrollY() + scroll.getHeight(), hidden = 0;
         for (int i = 0; i < body.getChildCount(); i++) {
             View child = body.getChildAt(i);
             Object tag = child.getTag();
-            if (tag instanceof String && ((String) tag).startsWith(page + ".track.") && child.getBottom() > bottom + 1) hidden++;
+            if (tag instanceof String && ((String)tag).startsWith(page + ".track.") && child.getBottom() > bottom + 1)
+                hidden++;
         }
-        if (scroll.getHeight() == 0) hidden = 0;
+        if (scroll.getHeight() == 0)
+            hidden = 0;
         more.setText("▾ " + hidden + " more");
         more.setVisibility(hidden > 0 ? VISIBLE : GONE);
     }
 
     /** Closes an open track list and returns to its tab row. False when no list is open. */
     boolean dismissPopup() {
-        if (page == null || closed) return false;
+        if (page == null || closed)
+            return false;
         String was = page;
         removeHeaderPage();
         showTab(was.equals("audio") ? TAB_AUDIO : TAB_SUBTITLES);
         View row = body.findViewWithTag(was.equals("audio") ? "audio.row.track" : "subtitles.row.track");
-        if (row != null) row.requestFocus();
+        if (row != null)
+            row.requestFocus();
         return true;
     }
 
     void refresh() {
-        if (closed) return;
+        if (closed)
+            return;
         if (page != null) {
             List<Track> tracks = page.equals("audio") ? backend.audioTracks() : backend.tracks();
             int shown = 0;
             for (int i = 0; i < body.getChildCount(); i++) {
                 Object tag = body.getChildAt(i).getTag();
-                if (tag instanceof String && ((String) tag).startsWith(page + ".track.")) shown++;
+                if (tag instanceof String && ((String)tag).startsWith(page + ".track."))
+                    shown++;
             }
             if (shown != tracks.size()) {
                 View focused = body.findFocus();
                 String label = null;
-                if (focused instanceof ViewGroup && ((ViewGroup) focused).getChildCount() > 1)
-                    label = ((TextView) ((ViewGroup) focused).getChildAt(1)).getText().toString();
+                if (focused instanceof ViewGroup && ((ViewGroup)focused).getChildCount() > 1)
+                    label = ((TextView)((ViewGroup)focused).getChildAt(1)).getText().toString();
                 openTracks(page);
-                if (label != null) for (int i = 0; i < tracks.size(); i++) {
-                    if (label.equals(tracks.get(i).label)) { View row = body.findViewWithTag(page + ".track." + i); if (row != null && row.isFocusable()) row.requestFocus(); break; }
-                }
+                if (label != null)
+                    for (int i = 0; i < tracks.size(); i++) {
+                        if (label.equals(tracks.get(i).label)) {
+                            View row = body.findViewWithTag(page + ".track." + i);
+                            if (row != null && row.isFocusable())
+                                row.requestFocus();
+                            break;
+                        }
+                    }
                 return;
             }
             for (int i = 0; i < tracks.size(); i++) {
@@ -797,18 +983,26 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 row.setFocusableInTouchMode(track.enabled);
                 row.setAlpha(track.enabled ? 1f : .42f);
                 row.setTag(com.archos.mediacenter.video.R.id.preview_track_language, track.language);
-                ((ImageView) row.getChildAt(0)).setImageDrawable(new PreviewLanguageIcon(owner, PreviewLanguageIcon.providerCode(track.language)));
-                ((TextView) row.getChildAt(1)).setText(track.label);
+                ((ImageView)row.getChildAt(0))
+                    .setImageDrawable(new PreviewLanguageIcon(owner, PreviewLanguageIcon.providerCode(track.language)));
+                ((TextView)row.getChildAt(1)).setText(track.label);
                 row.getChildAt(2).setVisibility(track.selected ? VISIBLE : INVISIBLE);
                 row.setContentDescription(track.label + (track.selected ? ", selected" : ""));
-                row.setOnClickListener(v -> { track.select.run(); dismissPopup(); });
+                row.setOnClickListener(v -> {
+                    track.select.run();
+                    dismissPopup();
+                });
             }
             return;
         }
-        for (Runnable binding : bindings) binding.run();
+        for (Runnable binding : bindings)
+            binding.run();
     }
 
-    void close() { closed = true; bindings.clear(); }
+    void close() {
+        closed = true;
+        bindings.clear();
+    }
 
     // ---- drawing ---------------------------------------------------------------------------
 
@@ -816,10 +1010,19 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private static final class Surface extends Drawable {
         private final int top, bottom, border, radius, stroke, glow, blur;
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
         Surface(int top, int bottom, int border, int radius, int stroke, int glow, int blur) {
-            this.top = top; this.bottom = bottom; this.border = border; this.radius = radius; this.stroke = stroke; this.glow = glow; this.blur = blur;
+            this.top = top;
+            this.bottom = bottom;
+            this.border = border;
+            this.radius = radius;
+            this.stroke = stroke;
+            this.glow = glow;
+            this.blur = blur;
         }
-        @Override public void draw(Canvas canvas) {
+
+        @Override
+        public void draw(Canvas canvas) {
             RectF r = new RectF(getBounds());
             r.inset(blur + stroke / 2f, blur + stroke / 2f);
             if (glow != 0 && blur > 0) {
@@ -832,8 +1035,13 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 paint.clearShadowLayer();
             }
             paint.setStyle(Paint.Style.FILL);
-            if (top == bottom) { paint.setShader(null); paint.setColor(top); }
-            else { paint.setColor(Color.WHITE); paint.setShader(new LinearGradient(0, r.top, 0, r.bottom, top, bottom, Shader.TileMode.CLAMP)); }
+            if (top == bottom) {
+                paint.setShader(null);
+                paint.setColor(top);
+            } else {
+                paint.setColor(Color.WHITE);
+                paint.setShader(new LinearGradient(0, r.top, 0, r.bottom, top, bottom, Shader.TileMode.CLAMP));
+            }
             canvas.drawRoundRect(r, radius, radius, paint);
             paint.setShader(null);
             if (border != 0) {
@@ -843,17 +1051,38 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 canvas.drawRoundRect(r, radius, radius, paint);
             }
         }
-        @Override public void setAlpha(int a) { paint.setAlpha(a); invalidateSelf(); }
-        @Override public void setColorFilter(ColorFilter f) { paint.setColorFilter(f); invalidateSelf(); }
-        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
+
+        @Override
+        public void setAlpha(int a) {
+            paint.setAlpha(a);
+            invalidateSelf();
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter f) {
+            paint.setColorFilter(f);
+            invalidateSelf();
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 
     /** A colour dot; the selected one has a white ring with a small gap. */
     private final class Swatch extends Drawable {
-        private final int colour; private final boolean selected;
+        private final int colour;
+        private final boolean selected;
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        Swatch(int colour, boolean selected) { this.colour = colour; this.selected = selected; }
-        @Override public void draw(Canvas canvas) {
+
+        Swatch(int colour, boolean selected) {
+            this.colour = colour;
+            this.selected = selected;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
             Rect b = getBounds();
             float cx = b.exactCenterX(), cy = b.exactCenterY();
             paint.setStyle(Paint.Style.FILL);
@@ -866,17 +1095,38 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 canvas.drawCircle(cx, cy, s(15) + s(2) + s(1.5f), paint);
             }
         }
-        @Override public void setAlpha(int a) { paint.setAlpha(a); }
-        @Override public void setColorFilter(ColorFilter f) { paint.setColorFilter(f); }
-        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
+
+        @Override
+        public void setAlpha(int a) {
+            paint.setAlpha(a);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter f) {
+            paint.setColorFilter(f);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 
     /** Wraps its content up to a maximum height, then scrolls; this is what fits the panel to its rows. */
     private static final class MaxHeightScroll extends ScrollView {
         private int max = Integer.MAX_VALUE;
-        MaxHeightScroll(android.content.Context c) { super(c); }
-        void setMax(int px) { max = Math.max(1, px); requestLayout(); }
-        @Override protected void onMeasure(int widthSpec, int heightSpec) {
+
+        MaxHeightScroll(android.content.Context c) {
+            super(c);
+        }
+
+        void setMax(int px) {
+            max = Math.max(1, px);
+            requestLayout();
+        }
+
+        @Override
+        protected void onMeasure(int widthSpec, int heightSpec) {
             int mode = MeasureSpec.getMode(heightSpec), size = MeasureSpec.getSize(heightSpec);
             int limit = mode == MeasureSpec.UNSPECIFIED ? max : Math.min(max, size);
             super.onMeasure(widthSpec, MeasureSpec.makeMeasureSpec(limit, MeasureSpec.AT_MOST));
