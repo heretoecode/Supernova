@@ -120,7 +120,7 @@ public class AllMoviesGridFragment extends MyVerticalGridFragment implements Loa
 
         mSeparateAnimeFromShowMovie = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
         if (mSeparateAnimeFromShowMovie) mSortOrder = mPrefs.getString(SORT_PARAM_KEY, FilmsLoader.DEFAULT_SORT);
-        else mSortOrder = mPrefs.getString(SORT_PARAM_KEY, MoviesLoader.DEFAULT_SORT);
+            else mSortOrder = mPrefs.getString(SORT_PARAM_KEY, MoviesLoader.DEFAULT_SORT);
         mSortOrderEntries = MoviesSortOrderEntry.getSortOrderEntries(getActivity(), sortOrderIndexer);
 
         mShowWatched = mPrefs.getBoolean(SHOW_WATCHED_KEY, true);
@@ -349,14 +349,14 @@ public class AllMoviesGridFragment extends MyVerticalGridFragment implements Loa
             if (args == null) {
                 if (mSeparateAnimeFromShowMovie)
                     return new FilmsLoader(getActivity(), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-                else return new MoviesLoader(getActivity(), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+                    else return new MoviesLoader(getActivity(), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             } else {
                 if (mSeparateAnimeFromShowMovie)
                     return new FilmsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-                else return new MoviesLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+                    else return new MoviesLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"), true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override
