@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.utils;
 
+import android.app.Application;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -7,7 +8,7 @@ import org.robolectric.annotation.Config;
 import org.json.*;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DirectEpisodeLookupTest {
     @Test public void coordinatesKeepSpecialsAndDoNotGuessTitlesOrUnboundedNumbers(){
         assertArrayEquals(new int[]{0,2},DirectEpisodeLookup.coordinates("S00 E02"));
