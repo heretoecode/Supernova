@@ -55,6 +55,7 @@ public class CredentialsManagerAdapter extends RecyclerView.Adapter<RecyclerView
             mRoot = v;
             // Define click listener for the ViewHolder's View.
             v.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     mOnItemClickListener.onItemClick(mCredentialList.get(getBindingAdapterPosition()));
                 }
