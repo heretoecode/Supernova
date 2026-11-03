@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
@@ -29,7 +30,7 @@ public class Preview41ProgressTest {
     @Before
     public void setup() {
         context = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
     }
 
     Entry episode(int n, int resume, boolean watched, long time) {
