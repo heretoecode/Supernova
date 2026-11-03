@@ -41,6 +41,8 @@ import androidx.leanback.widget.ShadowLessRowPresenter;
 
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewMatchSearch;
 import com.archos.mediacenter.video.leanback.ShadowLessListRow;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
@@ -49,10 +51,14 @@ import com.archos.mediacenter.video.leanback.presenter.EmptyViewPresenter;
 import com.archos.mediacenter.video.leanback.presenter.ScraperBaseTagsPresenter;
 import com.archos.mediacenter.video.leanback.presenter.ScraperSearchResultPresenter;
 import com.archos.mediascraper.BaseTags;
+import com.archos.mediascraper.EpisodeTags;
+import com.archos.mediascraper.MovieTags;
 import com.archos.mediascraper.ScrapeSearchResult;
+import com.archos.mediascraper.ScrapeStatus;
 import com.archos.mediascraper.Scraper;
 import com.archos.mediascraper.SearchResult;
 
+import com.archos.mediascraper.ShowTags;
 import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +89,7 @@ public abstract class ManualScrappingSearchFragment
     private NfoTask mNfoTask;
 
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
-    private com.archos.mediacenter.video.leanback.PreviewMatchSearch previewSearch;
+    private PreviewMatchSearch previewSearch;
     private String initialQuery = "";
 
     protected void setInitialQuery(String query) {
@@ -107,14 +113,14 @@ public abstract class ManualScrappingSearchFragment
         FrameLayout root = new FrameLayout(requireContext());
         root.addView(nativeView);
         nativeView.setVisibility(View.GONE);
-        previewSearch = new com.archos.mediacenter.video.leanback.PreviewMatchSearch(
+        previewSearch = new PreviewMatchSearch(
             requireContext(), initialQuery, this::onQueryTextSubmit, this::previewMatch);
         configurePreviewSearch(previewSearch);
         root.addView(previewSearch, new FrameLayout.LayoutParams(-1, -1));
         return root;
     }
 
-    protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search) {
+    protected void configurePreviewSearch(PreviewMatchSearch search) {
     }
 
     protected void refreshPreviewSearch() {
@@ -125,7 +131,7 @@ public abstract class ManualScrappingSearchFragment
     private void updatePreviewResults() {
         if (previewSearch == null)
             return;
-        java.util.List<BaseTags> values = new ArrayList<>();
+        List<BaseTags> values = new ArrayList<>();
         if (mResultsAdapter != null)
             for (int i = 0; i < mResultsAdapter.size(); i++)
                 if (mResultsAdapter.get(i) instanceof BaseTags)
@@ -188,19 +194,19 @@ public abstract class ManualScrappingSearchFragment
     }
 
     private void previewMatch(BaseTags tags) {
-        boolean episode = tags instanceof com.archos.mediascraper.EpisodeTags;
+        boolean episode = tags instanceof EpisodeTags;
         String title = "Metadata match";
-        if (tags instanceof com.archos.mediascraper.MovieTags) {
-            com.archos.mediascraper.MovieTags movie = (com.archos.mediascraper.MovieTags) tags;
+        if (tags instanceof MovieTags) {
+            MovieTags movie = (MovieTags) tags;
             title = movie.getTitle() + (movie.getYear() > 0 ? " (" + movie.getYear() + ")" : "");
-        } else if (tags instanceof com.archos.mediascraper.ShowTags)
-            title = ((com.archos.mediascraper.ShowTags) tags).getTitle();
+        } else if (tags instanceof ShowTags)
+            title = ((ShowTags) tags).getTitle();
         else if (episode) {
-            com.archos.mediascraper.EpisodeTags item = (com.archos.mediascraper.EpisodeTags) tags;
+            EpisodeTags item = (EpisodeTags) tags;
             title = item.getShowTitle() + " · S" + item.getSeason() + " E" + item.getEpisode();
         }
         String plot = tags.getPlot();
-        com.archos.mediacenter.video.leanback.PreviewDialog.review(requireContext(), "Match Preview",
+        PreviewDialog.review(requireContext(), "Match Preview",
             title + "\n\n" + (plot == null || plot.trim().isEmpty() ? "Synopsis unavailable" : plot),
             episode ? "Use This Episode" : "Use This Match", () -> {
                 if (isAdded())
@@ -431,7 +437,7 @@ public abstract class ManualScrappingSearchFragment
                     if (previewSearch != null
                         && (finalResult == null
                             || (!finalResult.isOkay()
-                                && finalResult.status != com.archos.mediascraper.ScrapeStatus.NOT_FOUND)))
+                                && finalResult.status != ScrapeStatus.NOT_FOUND)))
                         previewSearch.unavailable();
                 });
             });
