@@ -16,7 +16,6 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediaprovider.video.VideoStore;
 
 public class WatchingUpNextLoader extends VideoLoader {
     public WatchingUpNextLoader(Context context) {
