@@ -69,6 +69,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.Set;
 
+/** Displays a folder picker and manages the selected folder. */
 public class FolderPicker extends FragmentActivity {
 
     private static final String TAG = "FolderPicker";
