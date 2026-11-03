@@ -27,7 +27,7 @@ import com.archos.filecorelibrary.ftp.Session;
 import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
 import com.archos.filecorelibrary.sftp.SFTPSession;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.filebrowsing.network.FtpBrowser.BrowserBySFTP;
+import com.archos.mediacenter.video.utils.NetworkBrowserPolicy;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 import com.archos.mediacenter.video.leanback.network.NetworkListingFragment;
 
@@ -76,7 +76,7 @@ public class FtpListingFragment extends NetworkListingFragment {
         mHandler.removeMessages(LONG_CONNECTION);
         mLongConnectionMessage.setVisibility(View.GONE);
         mActionButton.setVisibility(View.GONE);
-        mHandler.sendEmptyMessageDelayed(LONG_CONNECTION, BrowserBySFTP.LONG_CONNECTION_DELAY);
+        mHandler.sendEmptyMessageDelayed(LONG_CONNECTION, NetworkBrowserPolicy.LONG_CONNECTION_DELAY);
         super.startListing(uri);
     }
 

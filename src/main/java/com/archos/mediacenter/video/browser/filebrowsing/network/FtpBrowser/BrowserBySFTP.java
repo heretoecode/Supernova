@@ -49,7 +49,7 @@ import java.util.List;
 
 /** Lists SFTP files and handles connection failures and credential requests. */
 public class BrowserBySFTP extends BrowserByNetwork implements ListingEngine.Listener,LoaderManager.LoaderCallbacks<Cursor> {
-    public static final long LONG_CONNECTION_DELAY = 8000; //delay before proposing to reset connection
+    public static final long LONG_CONNECTION_DELAY = com.archos.mediacenter.video.utils.NetworkBrowserPolicy.LONG_CONNECTION_DELAY; //delay before proposing to reset connection
 
     private static final int LONG_CONNECTION = 9;
     private static final String SSH_SHORTCUT_HELP_OVERLAY_KEY = "ssh_shortcut_help_overlay";
