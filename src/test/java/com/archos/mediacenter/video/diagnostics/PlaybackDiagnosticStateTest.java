@@ -20,6 +20,7 @@ import static com.archos.mediacenter.video.diagnostics.Diagnostics.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks playback diagnostic attempts, output and seek evidence without inventing successful playback. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PlaybackDiagnosticStateTest {
