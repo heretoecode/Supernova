@@ -112,7 +112,7 @@ public class ShortcutAdapter extends RootFragmentAdapter {
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.browser_network_share_button, viewGroup, false);
             return new BrowseViewHolder(v);
         }
-        else return super.onCreateViewHolder(viewGroup,viewType);
+            else return super.onCreateViewHolder(viewGroup,viewType);
     }
 
     public class ShortcutViewHolder extends RecyclerView.ViewHolder {
