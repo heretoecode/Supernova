@@ -3,14 +3,23 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import java.time.Duration;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -74,7 +83,7 @@ public class Supernova139HomeEditorTest {
     private void fullyVisible(View view) {
         // Native fixtures lay out the real hierarchy explicitly; their ViewRoot window frame is
         // not an Android WindowManager/device measurement. Intersect measured ancestor viewports.
-        android.graphics.Rect bounds = new android.graphics.Rect(0, 0, view.getWidth(), view.getHeight());
+        Rect bounds = new Rect(0, 0, view.getWidth(), view.getHeight());
         View cursor = view;
         while (cursor.getParent() instanceof View) {
             View parent = (View) cursor.getParent();
@@ -162,7 +171,7 @@ public class Supernova139HomeEditorTest {
             assertEquals(15, new PreviewHomeRows(host.get()).rows.get(7).maximum);
             key(dialog, KeyEvent.KEYCODE_BACK);
             assertTrue(dialog.isShowing());
-            assertEquals("15", ((android.widget.TextView) maximum).getText().toString());
+            assertEquals("15", ((TextView) maximum).getText().toString());
             maximum.performClick();
             key(dialog, KeyEvent.KEYCODE_DPAD_DOWN);
             maximum.performClick();
@@ -362,14 +371,14 @@ public class Supernova139HomeEditorTest {
             assertTrue(root(dialog).findViewWithTag("home.editor.name").requestFocus());
             View direction = root(dialog).findViewWithTag("home.editor.direction");
             direction.requestFocus();
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
             layout(dialog);
             fullyVisible(direction);
-            android.widget.TextView label = (android.widget.TextView) direction;
+            TextView label = (TextView) direction;
             assertEquals("Descending", label.getText().toString());
             View automatic = root(dialog).findViewWithTag("home.editor.automatic");
             assertTrue(automatic.requestFocus());
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
             layout(dialog);
             fullyVisible(automatic);
             PreviewPagesTest.capture(root(dialog), "0139-customise-small");
@@ -380,11 +389,11 @@ public class Supernova139HomeEditorTest {
     }
 
     private void held(Dialog dialog, int code, int repeats) {
-        long started = android.os.SystemClock.uptimeMillis();
+        long started = SystemClock.uptimeMillis();
         for (int repeat = 0; repeat < repeats; repeat++) {
             dialog.dispatchKeyEvent(new KeyEvent(started, started + repeat * 50, KeyEvent.ACTION_DOWN, code, repeat));
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(50));
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper())
+                .idleFor(Duration.ofMillis(50));
             layout(dialog);
             assertEquals("reorder repeat " + repeat, "watchnext", dialog.getCurrentFocus().getTag());
         }
@@ -407,7 +416,7 @@ public class Supernova139HomeEditorTest {
             original.rows.get(1).visible = false;
             original.save();
             List<String> order =
-                original.rows.stream().map(row -> row.id).collect(java.util.stream.Collectors.toList());
+                original.rows.stream().map(row -> row.id).collect(Collectors.toList());
             Dialog dialog = open(host);
             layout(dialog);
             View moving = root(dialog).findViewWithTag("watchnext");
@@ -420,17 +429,17 @@ public class Supernova139HomeEditorTest {
                 new PreviewHomeRows(host.get())
                     .rows.stream()
                     .map(row -> row.id)
-                    .collect(java.util.stream.Collectors.toList()));
+                    .collect(Collectors.toList()));
             key(dialog, KeyEvent.KEYCODE_BACK);
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper())
-                .idleFor(java.time.Duration.ofMillis(50));
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper())
+                .idleFor(Duration.ofMillis(50));
             layout(dialog);
             assertEquals("watchnext", dialog.getCurrentFocus().getTag());
             assertEquals(order,
                 new PreviewHomeRows(host.get())
                     .rows.stream()
                     .map(row -> row.id)
-                    .collect(java.util.stream.Collectors.toList()));
+                    .collect(Collectors.toList()));
             root(dialog).findViewWithTag("watchnext").performClick();
             held(dialog, KeyEvent.KEYCODE_DPAD_UP, 20);
             assertEquals("watchnext", dialog.getCurrentFocus().getTag());
@@ -455,11 +464,11 @@ public class Supernova139HomeEditorTest {
     public void largeFontProfileKeepsIndependentEditorControlsReachableAndPersisted() throws Exception {
         ActivityController<TopNavigationTest.Host> host = host();
         try {
-            android.content.res.Resources resources = host.get().getResources();
-            android.content.res.Configuration configuration =
-                new android.content.res.Configuration(resources.getConfiguration());
+            Resources resources = host.get().getResources();
+            Configuration configuration =
+                new Configuration(resources.getConfiguration());
             configuration.fontScale = 1.3f;
-            android.util.DisplayMetrics metrics = new android.util.DisplayMetrics();
+            DisplayMetrics metrics = new DisplayMetrics();
             metrics.setTo(resources.getDisplayMetrics());
             metrics.scaledDensity = metrics.density * 1.3f;
             resources.updateConfiguration(configuration, metrics);
@@ -480,7 +489,7 @@ public class Supernova139HomeEditorTest {
                 View field = root(dialog).findViewWithTag(tag);
                 assertNotNull(tag, field);
                 assertTrue(tag, field.requestFocus());
-                org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
                 layout(dialog);
                 fullyVisible(field);
                 assertEquals(tag, dialog.getCurrentFocus().getTag());
@@ -488,7 +497,7 @@ public class Supernova139HomeEditorTest {
             }
             for (String tag :
                 List.of("home.editor.icon", "home.editor.sort", "home.editor.direction", "home.editor.maximum")) {
-                android.widget.TextView control = (android.widget.TextView) root(dialog).findViewWithTag(tag);
+                TextView control = (TextView) root(dialog).findViewWithTag(tag);
                 assertTrue("full selected label: " + tag,
                     control.getPaint().measureText(control.getText().toString())
                         <= control.getWidth() - control.getCompoundPaddingLeft() - control.getCompoundPaddingRight());
@@ -503,7 +512,7 @@ public class Supernova139HomeEditorTest {
             key(dialog, KeyEvent.KEYCODE_DPAD_RIGHT);
             key(dialog, KeyEvent.KEYCODE_DPAD_RIGHT);
             assertEquals("Ascending",
-                ((android.widget.TextView) root(dialog).findViewWithTag("home.editor.direction")).getText().toString());
+                ((TextView) root(dialog).findViewWithTag("home.editor.direction")).getText().toString());
             dialog.dismiss();
         } finally {
             host.pause().stop().destroy();
