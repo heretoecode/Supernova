@@ -52,6 +52,7 @@ import com.archos.mediacenter.video.utils.SubtitlesWizardActivity;
 import java.io.File;
 import java.util.ArrayList;
 
+/** Displays video cover rolls and handles content switching and video context actions. */
 public class CoverRoll3DVideo extends CoverRoll3D {
 
 	static final String TAG = "CoverRoll3DVideo";
