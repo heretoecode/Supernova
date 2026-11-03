@@ -1,10 +1,15 @@
 package com.archos.mediacenter.video.utils;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.ContentValues;
+import androidx.preference.PreferenceManager;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Explicit known-choice allowlist plus value sanitisation. Recovery journals use raw private state. */
 public final class BackupPrivacy {
@@ -145,15 +150,15 @@ public final class BackupPrivacy {
     public static String cleanText(String value) {
         if (value == null)
             return null;
-        java.util.regex.Matcher urls =
-            java.util.regex.Pattern.compile("[A-Za-z][A-Za-z0-9+.-]*://[^\\s\"<>]+").matcher(value);
+        Matcher urls =
+            Pattern.compile("[A-Za-z][A-Za-z0-9+.-]*://[^\\s\"<>]+").matcher(value);
         StringBuffer result = new StringBuffer();
         while (urls.find()) {
             Uri uri = Uri.parse(urls.group());
             Uri.Builder safe = uri.buildUpon().clearQuery().fragment(null);
             if (uri.getHost() != null)
                 safe.encodedAuthority(uri.getHost() + (uri.getPort() < 0 ? "" : ":" + uri.getPort()));
-            urls.appendReplacement(result, java.util.regex.Matcher.quoteReplacement(safe.build().toString()));
+            urls.appendReplacement(result, Matcher.quoteReplacement(safe.build().toString()));
         }
         urls.appendTail(result);
         return result.toString();
@@ -253,10 +258,10 @@ public final class BackupPrivacy {
         }
     }
 
-    public static String selectedSettings(android.content.Context context, String json) throws org.json.JSONException {
+    public static String selectedSettings(Context context, String json) throws org.json.JSONException {
         org.json.JSONObject data = new org.json.JSONObject(json);
-        android.content.SharedPreferences p =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences p =
+            PreferenceManager.getDefaultSharedPreferences(context);
         boolean history = p.getBoolean("supernova_backup_history", true),
                 resume = p.getBoolean("supernova_backup_resume", true);
         List<String> remove = new ArrayList<>();
@@ -273,9 +278,9 @@ public final class BackupPrivacy {
         return data.toString();
     }
 
-    public static void applyViewingSelection(android.content.Context context, File copy) throws IOException {
-        android.content.SharedPreferences p =
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+    public static void applyViewingSelection(Context context, File copy) throws IOException {
+        SharedPreferences p =
+            PreferenceManager.getDefaultSharedPreferences(context);
         boolean history = p.getBoolean("supernova_backup_history", true),
                 resume = p.getBoolean("supernova_backup_resume", true);
         if (history && resume)
