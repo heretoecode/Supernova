@@ -18,6 +18,7 @@ import android.content.Context;
 import com.archos.mediacenter.video.utils.SortUtils;
 
 
+/** Loads anime TV shows filtered by an alphabetical selection. */
 public class AnimeShowsByAlphaLoader extends AnimeShowsByLoader {
 
     public static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED ASC";
