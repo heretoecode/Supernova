@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.LinearLayout;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -88,14 +90,14 @@ public final class PreviewGenres {
                 PreviewDialog.updateChecks(menu[0], checks);
                 accept.accept(new LinkedHashSet<>(result));
             });
-        android.view.View label = menu[0].getWindow().getDecorView().findViewWithTag("preview-label:0");
-        if (label != null && label.getParent() instanceof android.view.View
-            && ((android.view.View) label.getParent()).getParent() instanceof android.widget.LinearLayout) {
-            android.widget.LinearLayout rows =
-                (android.widget.LinearLayout) ((android.view.View) label.getParent()).getParent();
-            android.view.View divider = new android.view.View(c);
+        View label = menu[0].getWindow().getDecorView().findViewWithTag("preview-label:0");
+        if (label != null && label.getParent() instanceof View
+            && ((View) label.getParent()).getParent() instanceof LinearLayout) {
+            LinearLayout rows =
+                (LinearLayout) ((View) label.getParent()).getParent();
+            View divider = new View(c);
             divider.setBackgroundColor(0x557f8996);
-            rows.addView(divider, 1, new android.widget.LinearLayout.LayoutParams(-1, PreviewDialog.dp(c, 1)));
+            rows.addView(divider, 1, new LinearLayout.LayoutParams(-1, PreviewDialog.dp(c, 1)));
         }
     }
 
