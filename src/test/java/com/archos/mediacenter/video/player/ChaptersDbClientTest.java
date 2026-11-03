@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import okhttp3.*;
 import static org.junit.Assert.*;
 
+/** Checks chapter lookup identity, marker bounds, transport validation and offline caching. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class ChaptersDbClientTest {
