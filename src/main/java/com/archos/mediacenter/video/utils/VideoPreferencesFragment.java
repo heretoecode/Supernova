@@ -13,20 +13,11 @@
 // limitations under the License.
 package com.archos.mediacenter.video.utils;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceGroupAdapter;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.PreferenceViewHolder;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.archos.mediacenter.video.CustomApplication;
 
 public class VideoPreferencesFragment extends PreferenceFragmentCompat {
 
