@@ -1,8 +1,9 @@
 package com.archos.mediacenter.video.streaming.putio;
 
-import androidx.activity.ComponentActivity;
-import androidx.activity.OnBackPressedCallback;
-import android.os.Bundle;
+import android.app.Dialog;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
@@ -18,7 +19,7 @@ public final class PutioBrowserController implements AutoCloseable {
     private final long expectedAccount;
     private final Runnable leave, accountAction;
     private boolean closed;
-    private android.app.Dialog dialog;
+    private Dialog dialog;
     private UniversalFileBrowser surface;
     private LinearLayout rows;
     private Future<?> task;
@@ -62,7 +63,7 @@ public final class PutioBrowserController implements AutoCloseable {
         listing.setClipChildren(false);
         listing.setClipToPadding(false);
         listing.addView(rows);
-        browser.providerDock(listing, android.net.Uri.parse("putio://put.io/"));
+        browser.providerDock(listing, Uri.parse("putio://put.io/"));
         browser.providerOptions(this::options);
         // Own initial loading focus before replacing the account subtree; later navigation is user-owned.
         rows.setFocusableInTouchMode(true);
@@ -237,7 +238,7 @@ public final class PutioBrowserController implements AutoCloseable {
                 if (focused)
                     surface.providerInformation(item.name,
                         item.folder() ? "Folder"
-                                      : android.text.format.Formatter.formatFileSize(activity, item.size)
+                                      : Formatter.formatFileSize(activity, item.size)
                                 + "\n\nOriginal-quality playback remains in the indexed WebDAV library.",
                         item.folder(), open);
             });
@@ -296,7 +297,7 @@ public final class PutioBrowserController implements AutoCloseable {
             PutioReadClient.FileInfo info = client.file(item.id);
             return () -> {
                 dialog = PreviewDialog.read(activity, info.item.name,
-                    android.text.format.Formatter.formatFileSize(activity, info.item.size) + "\n" + info.description);
+                    Formatter.formatFileSize(activity, info.item.size) + "\n" + info.description);
             };
         });
     }
@@ -312,7 +313,7 @@ public final class PutioBrowserController implements AutoCloseable {
         v.setFocusable(true);
         v.setFocusableInTouchMode(true);
         v.setSingleLine(true);
-        v.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+        v.setEllipsize(TextUtils.TruncateAt.MIDDLE);
         v.setTag("semantic:putio.file." + id);
         v.setBackground(PreviewDialog.focus(activity));
         v.setOnClickListener(view -> action.run());
