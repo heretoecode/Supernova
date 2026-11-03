@@ -3,15 +3,29 @@ package com.archos.mediacenter.video.leanback.filebrowsing;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.format.DateUtils;
+import android.text.format.Formatter;
+import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.*;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import com.archos.filecorelibrary.ListingEngine;
@@ -27,8 +41,8 @@ import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsActivity;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.utils.PlayUtils;
-import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.VideoUtils;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,7 +89,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private int generation, listingRenderGeneration;
     private boolean closed, listingFailed;
     private TextView scanOverview, scanButton;
-    private final android.os.Handler scanHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Handler scanHandler = new Handler(Looper.getMainLooper());
     private final Runnable scanRefresh = new Runnable() {
         public void run() {
             if (scanButton != null)
@@ -186,7 +200,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 icon.setImageDrawable(new PreviewIcon(icons[index]));
                 card.addView(icon, new LayoutParams(gridDp(30), gridDp(30)));
                 TextView name = gridText(labels[index], 20);
-                name.setTypeface(null, android.graphics.Typeface.BOLD);
+                name.setTypeface(null, Typeface.BOLD);
                 LayoutParams nameSize = new LayoutParams(-1, -2);
                 nameSize.topMargin = gridDp(10);
                 card.addView(name, nameSize);
@@ -468,7 +482,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             @Override
             protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
                 super.onSizeChanged(width, height, oldWidth, oldHeight);
-                setClipBounds(new android.graphics.Rect(0, 0, width, height));
+                setClipBounds(new Rect(0, 0, width, height));
             }
             @Override
             protected void onMeasure(int width, int height) {
@@ -483,12 +497,12 @@ public final class UniversalFileBrowser extends LinearLayout {
                 revealContext(view);
         });
         informationScroll.addView(information);
-        information.addTextChangedListener(new android.text.TextWatcher() {
+        information.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence text, int start, int count, int after) {
             }
             public void onTextChanged(CharSequence text, int start, int before, int count) {
             }
-            public void afterTextChanged(android.text.Editable text) {
+            public void afterTextChanged(Editable text) {
                 boolean readable = !text.toString().trim().isEmpty();
                 informationScroll.setFocusable(readable);
                 informationScroll.setFocusableInTouchMode(readable);
@@ -523,13 +537,13 @@ public final class UniversalFileBrowser extends LinearLayout {
             right.getChildAt(n).setVisibility(GONE);
         networkLayout.back.setOnClickListener(v -> requestExit(this::networkLanding));
         sourceFingerprint = "";
-        status.addTextChangedListener(new android.text.TextWatcher() {
+        status.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int a, int b, int c) {
             }
             public void onTextChanged(CharSequence s, int a, int b, int c) {
                 ((View) status.getParent()).setVisibility(s.length() == 0 ? GONE : VISIBLE);
             }
-            public void afterTextChanged(android.text.Editable s) {
+            public void afterTextChanged(Editable s) {
             }
         });
         ((View) status.getParent()).setVisibility(GONE);
@@ -599,7 +613,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         for (Box box : mountedVolumes) {
             String path = box.getPath();
             Uri uri = Uri.fromFile(
-                new java.io.File(path == null ? android.os.Environment.getExternalStorageDirectory().getPath() : path));
+                new File(path == null ? Environment.getExternalStorageDirectory().getPath() : path));
             TextView row = action(
                 (box.getBoxId() == Box.ID.FOLDERS ? "Internal Storage" : box.getName()) + "\n" + uri.getPath(), () -> {
                     if (networkLayout != null && section == 0)
@@ -684,8 +698,8 @@ public final class UniversalFileBrowser extends LinearLayout {
                 stopDiscovery();
                 workspaceMode(true);
                 android.content.Context owner = getContext();
-                while (owner instanceof android.content.ContextWrapper && !(owner instanceof Activity))
-                    owner = ((android.content.ContextWrapper) owner).getBaseContext();
+                while (owner instanceof ContextWrapper && !(owner instanceof Activity))
+                    owner = ((ContextWrapper) owner).getBaseContext();
                 if (owner instanceof Activity)
                     putioBrowser = new com.archos.mediacenter.video.streaming.putio.PutioBrowserController(
                         (Activity) owner, this, account, folder, name,
@@ -1021,8 +1035,8 @@ public final class UniversalFileBrowser extends LinearLayout {
             if (box.getBoxId() == Box.ID.FOLDERS || box.getBoxId() == Box.ID.USB || box.getBoxId() == Box.ID.SDCARD
                 || box.getBoxId() == Box.ID.OTHER) {
                 String path = box.getPath();
-                Uri uri = Uri.fromFile(new java.io.File(
-                    path == null ? android.os.Environment.getExternalStorageDirectory().getPath() : path));
+                Uri uri = Uri.fromFile(new File(
+                    path == null ? Environment.getExternalStorageDirectory().getPath() : path));
                 TextView drive = location(
                     box.getBoxId() == Box.ID.FOLDERS ? "Internal Storage" : box.getName(), () -> changeSource(uri));
                 drive.setTag("storage:" + uri);
@@ -1218,7 +1232,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         SharedThreePanel.rowSeparator(row);
         TextView label = SharedThreePanel.text(getContext(), name + ": " + (checked ? "On" : "Off"), 19);
         row.addView(label, new LayoutParams(0, -2, 1));
-        androidx.appcompat.widget.SwitchCompat toggle = new androidx.appcompat.widget.SwitchCompat(getContext());
+        SwitchCompat toggle = new SwitchCompat(getContext());
         toggle.setChecked(checked);
         toggle.setFocusable(false);
         toggle.setClickable(false);
@@ -1564,7 +1578,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         left.addView(row, new LayoutParams(-1, dp(50)));
         PreviewIcon.apply(row, "storage", 22);
         row.setSingleLine(true);
-        row.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        row.setEllipsize(TextUtils.TruncateAt.END);
         row.setOnFocusChangeListener((v, focused) -> {
             if (focused) {
                 String tag = String.valueOf(row.getTag());
@@ -1656,7 +1670,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                     && LibraryHealth.state(getContext(), (Video) entry.media) != LibraryHealth.State.AVAILABLE)
                     unavailable++;
         return "Last completed scan: "
-            + (completed > 0 ? android.text.format.DateUtils.getRelativeTimeSpanString(completed) : "Not yet completed")
+            + (completed > 0 ? DateUtils.getRelativeTimeSpanString(completed) : "Not yet completed")
             + "\nIndexed items: " + (snapshot == null ? "Not loaded" : snapshot.technical.size())
             + "\nUnavailable items: " + (snapshot == null ? "Not loaded" : unavailable) + "\n"
             + PreviewLibraryScan.libraryStatus(getContext());
@@ -1927,7 +1941,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             segment.setOnFocusChangeListener((v, focused) -> {
                 if (focused) {
                     centreAnchor = v;
-                    v.requestRectangleOnScreen(new android.graphics.Rect(0, 0, v.getWidth(), v.getHeight()), false);
+                    v.requestRectangleOnScreen(new Rect(0, 0, v.getWidth(), v.getHeight()), false);
                 }
             });
             crumbs.addView(segment, new LayoutParams(-2, dp(48)));
@@ -2047,7 +2061,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             row.setAccessibilityDelegate(new View.AccessibilityDelegate() {
                 @Override
                 public void onInitializeAccessibilityNodeInfo(
-                    View host, android.view.accessibility.AccessibilityNodeInfo info) {
+                    View host, AccessibilityNodeInfo info) {
                     super.onInitializeAccessibilityNodeInfo(host, info);
                     if (onboarding && file.isDirectory()) {
                         info.setCheckable(true);
@@ -2125,7 +2139,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                                                                                  : "Not included");
         StringBuilder body = new StringBuilder();
         if (file != null && file.length() >= 0 && !folder)
-            body.append("\n\nSize\n").append(android.text.format.Formatter.formatFileSize(getContext(), file.length()));
+            body.append("\n\nSize\n").append(Formatter.formatFileSize(getContext(), file.length()));
         Video video = indexed.get(uri.toString());
         if (video != null) {
             body.append("\n\nAvailability\n").append(LibraryHealth.message(LibraryHealth.state(getContext(), video)));
@@ -2148,11 +2162,11 @@ public final class UniversalFileBrowser extends LinearLayout {
         if (actionIndex < 0)
             contextScroll.scrollTo(0, 0);
         if (directoryChoice != null) {
-            boolean writable = "file".equals(uri.getScheme()) && new java.io.File(uri.getPath()).isDirectory()
-                && new java.io.File(uri.getPath()).canWrite();
+            boolean writable = "file".equals(uri.getScheme()) && new File(uri.getPath()).isDirectory()
+                && new File(uri.getPath()).canWrite();
             if (writable)
                 addAction("Choose This Folder", () -> {
-                    java.io.File chosen = new java.io.File(uri.getPath());
+                    File chosen = new File(uri.getPath());
                     if (chosen.isDirectory() && chosen.canWrite())
                         directoryChoice.accept(uri);
                 });
@@ -2613,7 +2627,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View next = android.view.FocusFinder.getInstance().findNextFocus(
+                View next = FocusFinder.getInstance().findNextFocus(
                     items, focused, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
                 if (next != null && next != focused)
                     next.requestFocus();
@@ -2661,7 +2675,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View next = android.view.FocusFinder.getInstance().findNextFocus(
+                View next = FocusFinder.getInstance().findNextFocus(
                     networkLayout.workspace, focused, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
                 if (next != null && next != focused) {
                     next.requestFocus();
@@ -2689,7 +2703,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                         return true;
                     }
                 }
-                View next = android.view.FocusFinder.getInstance().findNextFocus(
+                View next = FocusFinder.getInstance().findNextFocus(
                     centre, focused, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
                 if (next != null && next != focused)
                     next.requestFocus();
@@ -2709,7 +2723,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                     : suppliedDock instanceof ViewGroup ? (ViewGroup) suppliedDock
                     : fileList.hasFocus() ? fileList
                                                           : centre;
-                View next = android.view.FocusFinder.getInstance().findNextFocus(
+                View next = FocusFinder.getInstance().findNextFocus(
                     horizontal, focused, key == KeyEvent.KEYCODE_DPAD_LEFT ? FOCUS_LEFT : FOCUS_RIGHT);
                 if (next != null && next != focused) {
                     int[] a = new int[2], b = new int[2];
