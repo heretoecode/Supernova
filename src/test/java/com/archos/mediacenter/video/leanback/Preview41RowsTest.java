@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.*;
+import android.content.Context;
 import android.view.*;
+import androidx.preference.PreferenceManager;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -22,7 +24,7 @@ public class Preview41RowsTest {
 
     @org.junit.Before
     public void configuredLibraryFixture() {
-        androidx.preference.PreferenceManager
+        PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
@@ -35,8 +37,8 @@ public class Preview41RowsTest {
         org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
-            android.content.Context c = host.get();
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+            Context c = host.get();
+            PreferenceManager.getDefaultSharedPreferences(c)
                 .edit()
                 .clear()
                 .putBoolean("supernova_onboarding_complete", true)
