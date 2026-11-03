@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 import static org.junit.Assert.*;
+/** Checks metadata identifiers, backup path validation, settings round trips and rejection of malformed archives. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class MarkChangesTest {
