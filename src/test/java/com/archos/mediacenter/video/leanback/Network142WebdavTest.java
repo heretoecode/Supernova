@@ -4,6 +4,9 @@ import android.app.Application;
 import android.net.Uri;
 import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
 import com.archos.filecorelibrary.webdav.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Locale;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
@@ -35,9 +38,9 @@ public class Network142WebdavTest {
                         String first = in.readLine(), auth = null, line;
                         int length = 0;
                         while ((line = in.readLine()) != null && !line.isEmpty()) {
-                            if (line.toLowerCase(java.util.Locale.ROOT).startsWith("authorization:"))
+                            if (line.toLowerCase(Locale.ROOT).startsWith("authorization:"))
                                 auth = line.substring(line.indexOf(':') + 1).trim();
-                            if (line.toLowerCase(java.util.Locale.ROOT).startsWith("content-length:"))
+                            if (line.toLowerCase(Locale.ROOT).startsWith("content-length:"))
                                 length = Integer.parseInt(line.substring(line.indexOf(':') + 1).trim());
                         }
                         for (int left = length; left > 0;) {
@@ -76,7 +79,7 @@ public class Network142WebdavTest {
                 "person@example.test", "fixture-only", uri.toString(), "", true));
             Object client = ReflectionHelpers.callInstanceMethod(
                 utils, "getSardine", ReflectionHelpers.ClassParameter.from(Uri.class, uri));
-            java.util.List<?> listed = ReflectionHelpers.callInstanceMethod(client, "list",
+            List<?> listed = ReflectionHelpers.callInstanceMethod(client, "list",
                 ReflectionHelpers.ClassParameter.from(String.class, WebdavFile2.uriToHttp(uri).toString()));
             assertEquals(2, listed.size());
             assertEquals("Film One.mkv", ReflectionHelpers.callInstanceMethod(listed.get(1), "getName"));
@@ -84,7 +87,7 @@ public class Network142WebdavTest {
             String auth = request.get(5, TimeUnit.SECONDS);
             assertNotNull(auth);
             assertEquals("person@example.test:fixture-only",
-                new String(java.util.Base64.getDecoder().decode(auth.substring(6)), StandardCharsets.UTF_8));
+                new String(Base64.getDecoder().decode(auth.substring(6)), StandardCharsets.UTF_8));
         } finally {
             worker.shutdownNow();
         }
