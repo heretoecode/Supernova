@@ -110,6 +110,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private TextView scanOverview, scanButton;
     private final Handler scanHandler = new Handler(Looper.getMainLooper());
     private final Runnable scanRefresh = new Runnable() {
+        @Override
         public void run() {
             if (scanButton != null)
                 scanButton.setText(PreviewLibraryScan.active() ? "Scanning…" : "Scan Library");
@@ -517,10 +518,13 @@ public final class UniversalFileBrowser extends LinearLayout {
         });
         informationScroll.addView(information);
         information.addTextChangedListener(new TextWatcher() {
+            @Override
             public void beforeTextChanged(CharSequence text, int start, int count, int after) {
             }
+            @Override
             public void onTextChanged(CharSequence text, int start, int before, int count) {
             }
+            @Override
             public void afterTextChanged(Editable text) {
                 boolean readable = !text.toString().trim().isEmpty();
                 informationScroll.setFocusable(readable);
@@ -557,11 +561,14 @@ public final class UniversalFileBrowser extends LinearLayout {
         networkLayout.back.setOnClickListener(v -> requestExit(this::networkLanding));
         sourceFingerprint = "";
         status.addTextChangedListener(new TextWatcher() {
+            @Override
             public void beforeTextChanged(CharSequence s, int a, int b, int c) {
             }
+            @Override
             public void onTextChanged(CharSequence s, int a, int b, int c) {
                 ((View) status.getParent()).setVisibility(s.length() == 0 ? GONE : VISIBLE);
             }
+            @Override
             public void afterTextChanged(Editable s) {
             }
         });
@@ -2011,6 +2018,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                       target = selected >= 0 ? selected : Math.min(previousPosition, files.size() - 1);
             fileList.post(new Runnable() {
                 int tries;
+                @Override
                 public void run() {
                     if (renderRequest != listingRenderGeneration)
                         return;
