@@ -1,13 +1,16 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.filecorelibrary.TransportReadObserver;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.zip.ZipFile;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -18,7 +21,7 @@ import static org.junit.Assert.*;
 @Config(application = Application.class, sdk = 28)
 public class DiagnosticRestorePolicyTest {
     private Application app;
-    private android.content.SharedPreferences prefs;
+    private SharedPreferences prefs;
     private PreferenceRestoreTransaction transaction;
 
     private static class ProcessDeath extends Error {
@@ -88,9 +91,9 @@ public class DiagnosticRestorePolicyTest {
         Diagnostics.setEnabled(app, false);
         File archive = new File(HistoricalBackupFixture.export(app));
         assertFalse(observing());
-        try (java.util.zip.ZipFile legacy = new java.util.zip.ZipFile(archive)) {
+        try (ZipFile legacy = new ZipFile(archive)) {
             assertFalse(new String(legacy.getInputStream(legacy.getEntry("settings.json")).readAllBytes(),
-                java.nio.charset.StandardCharsets.UTF_8)
+                StandardCharsets.UTF_8)
                     .contains(Diagnostics.KEY));
         }
         try (var incoming = BackupImportPreparation.prepare(app, new FileInputStream(archive), () -> false)) {
