@@ -13,6 +13,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks logical backup import validates bounded private snapshots and cleans up failed or cancelled reads. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class LogicalBackupImportTest {
