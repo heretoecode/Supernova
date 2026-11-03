@@ -56,6 +56,7 @@ import androidx.leanback.widget.ShadowLessRowPresenter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays video search results and responds to query changes. */
 public class VideoSearchFragment extends SafeSearchSupportFragment implements SearchSupportFragment.SearchResultProvider {
 
     static final String TAG = "VideoSearchFragment";
