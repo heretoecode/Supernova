@@ -23,6 +23,7 @@ public class VerifiedBackupPublicationTest {
         int corruption;
         boolean failClose;
 
+        @Override
         public OutputStream openWrite() {
             opened = true;
             return new FilterOutputStream(data) {
@@ -36,6 +37,7 @@ public class VerifiedBackupPublicationTest {
             };
         }
 
+        @Override
         public InputStream openRead() throws IOException {
             if (!closed)
                 throw new IOException("Read before close");
@@ -51,6 +53,7 @@ public class VerifiedBackupPublicationTest {
             return new ByteArrayInputStream(bytes);
         }
 
+        @Override
         public boolean removeIncomplete() {
             if (own) {
                 removed = true;
