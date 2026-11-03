@@ -47,6 +47,7 @@ public class UpnpShortcutAndServerAdapter extends WorkgroupShortcutAndServerAdap
         resetData();
 
     }
+    @Override
     public void resetData() {
         mData.clear();
         mTypes.clear();
