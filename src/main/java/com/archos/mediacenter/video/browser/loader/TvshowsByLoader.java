@@ -61,6 +61,7 @@ public abstract class TvshowsByLoader extends CursorLoader implements CompatAndS
         return sb.toString();
     }
 
+    @Override
     public Loader getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mForceHideVideos = hideWatchedVideos;
         return  new CursorLoader(getContext(),
