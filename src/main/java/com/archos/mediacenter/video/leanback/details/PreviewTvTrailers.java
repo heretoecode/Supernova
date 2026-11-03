@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.MovieScraper3;
 import com.uwetrottmann.tmdb2.entities.Videos;
+import com.uwetrottmann.tmdb2.enumerations.VideoType;
 import org.json.*;
 import java.util.*;
 
@@ -33,7 +34,7 @@ public final class PreviewTvTrailers {
             JSONArray rows = new JSONArray();
             List<ScraperTrailer> fresh = new ArrayList<>();
             for (Videos.Video v : videos.results) {
-                if (!"YouTube".equals(v.site) || v.type != com.uwetrottmann.tmdb2.enumerations.VideoType.TRAILER
+                if (!"YouTube".equals(v.site) || v.type != VideoType.TRAILER
                     || v.key == null || !v.key.matches("[A-Za-z0-9_-]{11}"))
                     continue;
                 String name = v.name == null ? "Trailer" : v.name;
