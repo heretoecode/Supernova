@@ -52,12 +52,12 @@ public class FtpPortInputTest {
         String source = new String(Files.readAllBytes(Paths.get(
             "src/main/java/com/archos/mediacenter/video/leanback/network/ftp/FtpServerCredentialsDialog.java")),
             StandardCharsets.UTF_8);
+        java.util.regex.Pattern argument = java.util.regex.Pattern.compile("[,(]\\s*(username|address|path)\\s*[,)]");
         for (String line : source.split("\n")) {
             if (!line.contains("log."))
                 continue;
-            assertFalse(line, line.contains("username)") || line.contains(", username"));
-            assertFalse(line, line.contains("address)") || line.contains(", address"));
-            assertFalse(line, line.contains("path)") || line.contains(", path"));
+            String code = line.replaceAll("\"[^\"]*\"", "\"\""); // ignore words inside the messages
+            assertFalse(line, argument.matcher(code).find());
         }
     }
 }

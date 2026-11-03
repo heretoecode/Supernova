@@ -198,15 +198,25 @@ public final class SupernovaStyle {
      * Works for the app's own icon drawables too, which ignore Android's tint lists.
      */
     public static void tintIcons(TextView view) {
-        Drawable[] d = view.getCompoundDrawablesRelative();
+        // Icons may be attached start/end (relative) or left/right (absolute); the relative getter does not
+        // report absolute ones, which left icons such as the Home hero's More Info white on the white box.
+        Drawable[] relative = view.getCompoundDrawablesRelative();
+        boolean useRelative = relative[0] != null || relative[2] != null;
+        Drawable[] d = useRelative ? relative : view.getCompoundDrawables();
         boolean changed = false;
         for (int i = 0; i < 4; i++)
             if (isMonochromeIcon(d[i])) {
-                d[i] = new StateIcon(d[i]);
+                Drawable wrapped = new StateIcon(d[i]);
+                wrapped.setBounds(d[i].getBounds());
+                d[i] = wrapped;
                 changed = true;
             }
-        if (changed)
+        if (!changed)
+            return;
+        if (useRelative)
             view.setCompoundDrawablesRelative(d[0], d[1], d[2], d[3]);
+        else
+            view.setCompoundDrawables(d[0], d[1], d[2], d[3]);
     }
 
     /**

@@ -1,6 +1,15 @@
 {
- "purpose": "0.154 batch 1: bugs, buttons, charcoal, panels, landing tiles, heroes - full unit suite",
+ "purpose": "0.154: icon-tint fix, FTP log test, new Local Storage page and its neighbours",
  "tests": [
-  "com.archos.*"
+  "com.archos.mediacenter.video.leanback.Supernova154UiTest",
+  "com.archos.mediacenter.video.leanback.SupernovaStyleTest",
+  "com.archos.mediacenter.video.leanback.SupernovaStyleConformanceTest",
+  "com.archos.mediacenter.video.leanback.network.FtpPortInputTest",
+  "com.archos.mediacenter.video.leanback.filebrowsing.LocalStorageViewTest",
+  "com.archos.mediacenter.video.leanback.Network142Test",
+  "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+  "com.archos.mediacenter.video.leanback.Supernova138UiTest",
+  "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest"
  ]
 }
