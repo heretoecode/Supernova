@@ -2,10 +2,14 @@ package com.archos.mediacenter.video.player;
 
 import android.app.*;
 import android.graphics.*;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.tvmenu.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -25,8 +29,8 @@ public class Playback141RenderTest {
         try {
             Activity activity = host.get();
             FrameLayout scene = new FrameLayout(activity);
-            scene.setBackground(new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
+            scene.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TL_BR,
                 new int[] {0xff243b4b, 0xff0b121a, 0xff4b3d30}));
             TextView label = new TextView(activity);
             label.setText("SUPERNOVA · synthetic playback scene\nNative UI render · physical Shield QA pending");
@@ -82,7 +86,7 @@ public class Playback141RenderTest {
                 decor.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
                               View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.AT_MOST));
                 decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
                 int height = decor.getHeight();
                 assertEquals("One third of the screen wide", 320, width);
                 assertTrue("Fitted inside the 20px margins: " + height, height <= 540 - 40);
@@ -97,10 +101,10 @@ public class Playback141RenderTest {
                 canvas.translate(960 - width - 20, 20);
                 decor.draw(canvas);
                 canvas.restore();
-                java.io.File out =
-                    new java.io.File("build/reports/preview-ui/0152-playback-side-panel-tab-" + tab + ".png");
+                File out =
+                    new File("build/reports/preview-ui/0152-playback-side-panel-tab-" + tab + ".png");
                 out.getParentFile().mkdirs();
-                try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) {
+                try (FileOutputStream stream = new FileOutputStream(out)) {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 }
                 bitmap.recycle();
