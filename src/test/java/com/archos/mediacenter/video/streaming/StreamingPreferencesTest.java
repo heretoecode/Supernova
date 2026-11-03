@@ -3,8 +3,10 @@ package com.archos.mediacenter.video.streaming;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Looper;
+import android.widget.FrameLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.*;
+import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +27,7 @@ public class StreamingPreferencesTest {
         @Override public void onCreate(Bundle state) {
             setTheme(androidx.appcompat.R.style.Theme_AppCompat);
             super.onCreate(state);
-            setContentView(new android.widget.FrameLayout(this));
+            setContentView(new FrameLayout(this));
         }
     }
     public static class Prefs extends PreferenceFragmentCompat {
@@ -86,7 +88,7 @@ public class StreamingPreferencesTest {
                 .putStringSet("streaming_providers_IE",Collections.singleton("8"))
                 .putString("streaming_preferred_IE","8")
                 .putString("streaming_catalogue_IE","[{\"id\":8,\"name\":\"Netflix\"}]").commit();
-        binding=new StreamingPreferences(fragment,(c,r)->{throw new java.io.IOException("Offline");});
+        binding=new StreamingPreferences(fragment,(c,r)->{throw new IOException("Offline");});
         awaitSummary(R.string.streaming_settings_error);
         assertEquals(Collections.singleton("8"),StreamingRepository.selected(host.get()));
         assertEquals("8",StreamingRepository.preferred(host.get()));
