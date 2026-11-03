@@ -2,11 +2,27 @@ package com.archos.mediacenter.video.leanback.details;
 
 import android.app.*;
 import android.content.*;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Outline;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.text.format.Formatter;
+import android.util.TypedValue;
 import android.view.*;
+import android.view.ViewParent;
+import android.view.WindowManager;
 import android.widget.*;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.widget.TextViewCompat;
 import androidx.leanback.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.*;
@@ -15,7 +31,12 @@ import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
 import com.archos.mediascraper.*;
+import java.io.File;
+import java.text.NumberFormat;
 import java.util.*;
+import java.util.SortedMap;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /** Presentation over the existing details fragment: playback, edits and deletion keep native handlers. */
@@ -70,14 +91,14 @@ public final class PreviewMoviePage extends ScrollView {
     private boolean compactCard;
     private SharedMetadata.Facts latestSummary;
     private Runnable showPlay;
-    private final java.util.SortedMap<Integer, java.util.List<Episode>> seasons = new java.util.TreeMap<>();
+    private final SortedMap<Integer, java.util.List<Episode>> seasons = new java.util.TreeMap<>();
     private LinearLayout episodes;
     private BaseTags tags;
     private final Map<String, ImageView> portraits = new HashMap<>();
     private List<ScraperTrailer> trailerList = Collections.emptyList();
     private Snapshot snapshot;
     private PreviewDetailsData.Result enrichment;
-    private java.util.concurrent.Future<?> enrichmentTask;
+    private Future<?> enrichmentTask;
     private String enrichmentKey = "";
     private int enrichmentGeneration;
     private org.json.JSONObject remoteDetails;
@@ -156,20 +177,20 @@ public final class PreviewMoviePage extends ScrollView {
         cardCopy.setPadding(dp(24), dp(18), dp(24), dp(16));
         detailsCard.addView(cardCopy, new FrameLayout.LayoutParams(-1, -1));
         title = text("", 34);
-        title.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        title.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         title.setMaxLines(2);
         title.setGravity(Gravity.CENTER_VERTICAL);
-        title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        title.setEllipsize(TextUtils.TruncateAt.END);
         cardCopy.addView(title, new LinearLayout.LayoutParams(dp(430), dp(96)));
         meta = text("", 18);
         meta.setSingleLine(true);
-        meta.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        meta.setEllipsize(TextUtils.TruncateAt.END);
         meta.setPadding(0, dp(10), 0, dp(4));
         cardCopy.addView(meta);
         context = text("", 13);
         context.setTextColor(0xffe1e9ef);
         context.setMaxLines(1);
-        context.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        context.setEllipsize(TextUtils.TruncateAt.END);
         cardCopy.addView(context);
         pills = new LinearLayout(c);
         pills.setVisibility(GONE);
@@ -177,7 +198,7 @@ public final class PreviewMoviePage extends ScrollView {
         plot = text("", 14);
         plot.setMaxLines(4);
         plot.setLineSpacing(dp(2), 1);
-        plot.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        plot.setEllipsize(TextUtils.TruncateAt.END);
         LinearLayout.LayoutParams plotSize = new LinearLayout.LayoutParams(
             Math.min(dp(440), getResources().getDisplayMetrics().widthPixels - dp(84)), dp(76));
         plotSize.topMargin = dp(8);
@@ -246,7 +267,7 @@ public final class PreviewMoviePage extends ScrollView {
                 revealContentFocus();
             }
             @Override
-            protected void dispatchDraw(android.graphics.Canvas canvas) {
+            protected void dispatchDraw(Canvas canvas) {
                 int saved = canvas.save();
                 canvas.clipRect(0, getScrollY(), getWidth(), getScrollY() + getHeight());
                 super.dispatchDraw(canvas);
@@ -304,10 +325,10 @@ public final class PreviewMoviePage extends ScrollView {
                 Math.min(TvLayout.dimension(getContext(), 96), Math.max(dp(40), Math.round(cardHeight * .24f)));
             title.setTextSize((compact ? 24 : 34) * TvLayout.scale(getContext()));
             title.setMaxLines(compact ? 1 : 2);
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
                 title, Math.round(18 * TvLayout.scale(getContext())),
                 Math.round((compact ? 24 : 34) * TvLayout.scale(getContext())), 1,
-                android.util.TypedValue.COMPLEX_UNIT_SP);
+                TypedValue.COMPLEX_UNIT_SP);
             meta.setTextSize(16 * TvLayout.scale(getContext()));
             meta.setMaxLines(1);
             meta.setPadding(0, dp(10), 0, dp(5));
@@ -356,7 +377,7 @@ public final class PreviewMoviePage extends ScrollView {
     @Override
     protected void onScrollChanged(int left, int top, int oldLeft, int oldTop) {
         super.onScrollChanged(left, top, oldLeft, oldTop);
-        android.view.ViewParent parent = getParent();
+        ViewParent parent = getParent();
         while (parent != null) {
             if (parent instanceof TopNavigation) {
                 ((TopNavigation)parent).setScrolled(top > 0);
@@ -370,7 +391,7 @@ public final class PreviewMoviePage extends ScrollView {
 
     /** Reuse the real title/logo; no second asynchronous request or focus target. */
     @Override
-    protected void dispatchDraw(android.graphics.Canvas canvas) {
+    protected void dispatchDraw(Canvas canvas) {
         float progress = title == null ? 0 : compactTitleProgress(getScrollY(), title.getBottom(), dp(40));
         int content = canvas.save();
         if (progress > 0)
@@ -397,8 +418,8 @@ public final class PreviewMoviePage extends ScrollView {
     }
 
     @Override
-    protected int computeScrollDeltaToGetChildRectOnScreen(android.graphics.Rect rect) {
-        android.graphics.Rect safe = new android.graphics.Rect(rect);
+    protected int computeScrollDeltaToGetChildRectOnScreen(Rect rect) {
+        Rect safe = new Rect(rect);
         if (heroPage != null && rect.top >= heroPage.getBottom() - dp(44))
             safe.top -= dp(48);
         return super.computeScrollDeltaToGetChildRectOnScreen(safe);
@@ -443,7 +464,7 @@ public final class PreviewMoviePage extends ScrollView {
             lp.rightMargin = dp(16);
             tabBar.addView(tab, lp);
             tab.setForeground(null);
-            if (android.os.Build.VERSION.SDK_INT >= 26)
+            if (Build.VERSION.SDK_INT >= 26)
                 tab.setDefaultFocusHighlightEnabled(false);
             if (TvLayout.width(getContext()) < 780) {
                 tab.setTextSize(10 * TvLayout.scale(getContext()));
@@ -512,12 +533,12 @@ public final class PreviewMoviePage extends ScrollView {
         View focused = findFocus();
         if (focused == null || !inside(focused, lower))
             return;
-        android.graphics.Rect rect = new android.graphics.Rect(0, 0, focused.getWidth(), focused.getHeight());
+        Rect rect = new Rect(0, 0, focused.getWidth(), focused.getHeight());
         lower.offsetDescendantRectToMyCoords(focused, rect);
         rect.inset(-dp(10), -dp(10));
         View heading = extraHeadings.get(focused);
         if (heading != null) {
-            android.graphics.Rect header = new android.graphics.Rect(0, 0, heading.getWidth(), heading.getHeight());
+            Rect header = new Rect(0, 0, heading.getWidth(), heading.getHeight());
             lower.offsetDescendantRectToMyCoords(heading, header);
             if (rect.bottom - header.top <= reading.getHeight())
                 rect.top = header.top;
@@ -729,7 +750,7 @@ public final class PreviewMoviePage extends ScrollView {
         t.setTextColor(Color.WHITE);
         t.setTextSize(size);
         t.setIncludeFontPadding(false);
-        t.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        t.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         return t;
     }
 
@@ -775,7 +796,7 @@ public final class PreviewMoviePage extends ScrollView {
         if (identity.equals(boundTitle))
             return;
         boundTitle = identity;
-        openedAt = android.os.SystemClock.elapsedRealtime();
+        openedAt = SystemClock.elapsedRealtime();
         activeSection = "Details";
         scrollTo(0, 0);
         enrichmentGeneration++;
@@ -860,7 +881,7 @@ public final class PreviewMoviePage extends ScrollView {
         if (selectedBackdrop == null && backdrops != null && !backdrops.isEmpty())
             selectedBackdrop = backdrops.get(0);
         if (selectedBackdrop != null) {
-            java.io.File file = selectedBackdrop.getLargeFileF();
+            File file = selectedBackdrop.getLargeFileF();
             Uri uri = file != null && file.exists()            ? Uri.fromFile(file)
                       : selectedBackdrop.getLargeUrl() == null ? null
                                                                : Uri.parse(selectedBackdrop.getLargeUrl());
@@ -979,7 +1000,7 @@ public final class PreviewMoviePage extends ScrollView {
             fact(key, "Year", String.valueOf(year));
         long runtime = movie == null ? 0 : movie.getDurationMs() / 60000;
         if (runtime <= 0 && selectedEpisode != null && tags instanceof EpisodeTags)
-            runtime = tags.getRuntime(java.util.concurrent.TimeUnit.MINUTES);
+            runtime = tags.getRuntime(TimeUnit.MINUTES);
         if (runtime <= 0) {
             org.json.JSONObject runtimeFacts = selectedEpisode != null ? episodeFacts : enriched;
             if (runtimeFacts != null)
@@ -1051,13 +1072,13 @@ public final class PreviewMoviePage extends ScrollView {
             for (String field : new String[] {"budget", "revenue"})
                 if (enriched.optLong(field) > 0)
                     fact(key, field.equals("budget") ? "Budget (TMDb)" : "Box office (TMDb)",
-                         java.text.NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));
+                         NumberFormat.getCurrencyInstance(Locale.US).format(enriched.optLong(field)));
             if (enriched.optLong("vote_count") > 0 && !(movie instanceof Episode))
                 fact(reception, "TMDb votes",
-                     java.text.NumberFormat.getIntegerInstance().format(enriched.optLong("vote_count")));
+                     NumberFormat.getIntegerInstance().format(enriched.optLong("vote_count")));
             if (episodeFacts != null && episodeFacts.optLong("vote_count") > 0)
                 fact(reception, "TMDb votes",
-                     java.text.NumberFormat.getIntegerInstance().format(episodeFacts.optLong("vote_count")));
+                     NumberFormat.getIntegerInstance().format(episodeFacts.optLong("vote_count")));
         }
         if (movie != null) {
             if (movie.getMeasuredWidth() > 0 && movie.getMeasuredHeight() > 0)
@@ -1068,7 +1089,7 @@ public final class PreviewMoviePage extends ScrollView {
             fact(technical, "Source", source(movie.getFileUri()));
             if (movie.getSize() > 0)
                 fact(technical, "File size",
-                     android.text.format.Formatter.formatShortFileSize(getContext(), movie.getSize()));
+                     Formatter.formatShortFileSize(getContext(), movie.getSize()));
             fact(technical, "Selected file", movie.getFilenameNonCryptic());
             fact(technical, "Location", PreviewVariants.safeLocation(movie.getFileUri()));
             String filename = movie.getFilenameNonCryptic();
@@ -1095,13 +1116,13 @@ public final class PreviewMoviePage extends ScrollView {
                             audioTracks.add(format);
                     }
                 }
-                fact(technical, "Audio tracks", android.text.TextUtils.join("\n", audioTracks));
+                fact(technical, "Audio tracks", TextUtils.join("\n", audioTracks));
                 for (int n = 0; n < data.getSubtitleTrackNb(); n++) {
                     com.archos.mediacenter.video.utils.VideoMetadata.SubtitleTrack track = data.getSubtitleTrack(n);
                     if (track != null && !safe(track.language).isEmpty())
                         subtitles.add(track.language);
                 }
-                fact(technical, "Subtitles", android.text.TextUtils.join(", ", subtitles));
+                fact(technical, "Subtitles", TextUtils.join(", ", subtitles));
             }
         } else if (show != null) {
             Snapshot library = snapshot != null ? snapshot : PreviewLibraryLoader.memoryCache();
@@ -1153,10 +1174,10 @@ public final class PreviewMoviePage extends ScrollView {
                 if (bytes > 0)
                     fact(technical, "Library size",
                          (knownSizes < physical.size() ? "≥ " : "") +
-                             android.text.format.Formatter.formatShortFileSize(getContext(), bytes));
+                             Formatter.formatShortFileSize(getContext(), bytes));
                 if (!physical.isEmpty() && knownSizes == physical.size())
                     fact(technical, "Average file size",
-                         android.text.format.Formatter.formatShortFileSize(getContext(), bytes / physical.size()));
+                         Formatter.formatShortFileSize(getContext(), bytes / physical.size()));
                 if (specials > 0)
                     fact(technical, "Specials (files)", String.valueOf(specials));
                 if (enriched != null && enriched.optInt("number_of_episodes") > 0)
@@ -1165,14 +1186,14 @@ public final class PreviewMoviePage extends ScrollView {
                 List<String> formatCounts = new ArrayList<>();
                 for (Map.Entry<String, Integer> format : formats.entrySet())
                     formatCounts.add(format.getKey() + ": " + format.getValue() + " files");
-                fact(technical, "File formats", android.text.TextUtils.join(", ", formatCounts));
-                fact(technical, "Storage locations", android.text.TextUtils.join("\n", locations));
-                fact(technical, "Location", android.text.TextUtils.join(", ", locations));
-                fact(technical, "Audio", android.text.TextUtils.join(", ", audioFormats));
-                fact(technical, "Container", android.text.TextUtils.join(", ", containers));
+                fact(technical, "File formats", TextUtils.join(", ", formatCounts));
+                fact(technical, "Storage locations", TextUtils.join("\n", locations));
+                fact(technical, "Location", TextUtils.join(", ", locations));
+                fact(technical, "Audio", TextUtils.join(", ", audioFormats));
+                fact(technical, "Container", TextUtils.join(", ", containers));
                 if (firstAdded != Long.MAX_VALUE)
                     fact(technical, "Added",
-                         android.text.format.DateFormat.getDateFormat(getContext())
+                         DateFormat.getDateFormat(getContext())
                              .format(new Date(firstAdded * 1000L)));
             }
         } else {
@@ -1198,7 +1219,7 @@ public final class PreviewMoviePage extends ScrollView {
                     if (entry.media instanceof Video && ((Video)entry.media).getId() == movie.getId() &&
                         entry.added > 0) {
                         fact(technical, "Added",
-                             android.text.format.DateFormat.getDateFormat(getContext())
+                             DateFormat.getDateFormat(getContext())
                                  .format(new Date(entry.added * 1000L)));
                         break;
                     }
@@ -1244,7 +1265,7 @@ public final class PreviewMoviePage extends ScrollView {
             }
             com.archos.mediacenter.video.diagnostics.Diagnostics.event(
                 "details_information_ready", "media_id", diagnosticMedia(), "elapsed_ms",
-                android.os.SystemClock.elapsedRealtime() - openedAt);
+                SystemClock.elapsedRealtime() - openedAt);
         }
         reception.setVisibility(reception.getChildCount() > 1 ? VISIBLE : GONE);
         technical.setVisibility(technical.getChildCount() > 1 ? VISIBLE : GONE);
@@ -1320,7 +1341,7 @@ public final class PreviewMoviePage extends ScrollView {
             if (item != null && !item.optString(key).isEmpty())
                 names.add(item.optString(key));
         }
-        return android.text.TextUtils.join(", ", names);
+        return TextUtils.join(", ", names);
     }
 
     private LinearLayout factPanel(LinearLayout panels, String name) {
@@ -1365,7 +1386,7 @@ public final class PreviewMoviePage extends ScrollView {
 
     private void cardArtwork(Uri uri) {
         if (uri == null || uri.toString().equals(artworkUri) ||
-            uri.toString().equals(failedArtworkUri) && android.os.SystemClock.elapsedRealtime() < artworkRetryAfter)
+            uri.toString().equals(failedArtworkUri) && SystemClock.elapsedRealtime() < artworkRetryAfter)
             return;
         artworkUri = uri.toString();
         String identity = boundTitle, requested = artworkUri;
@@ -1379,13 +1400,13 @@ public final class PreviewMoviePage extends ScrollView {
                     failedArtworkUri = null;
                     com.archos.mediacenter.video.diagnostics.Diagnostics.event(
                         "details_artwork_ready", "media_id", diagnosticMedia(), "elapsed_ms",
-                        android.os.SystemClock.elapsedRealtime() - openedAt);
+                        SystemClock.elapsedRealtime() - openedAt);
                 }
                 public void onError(Exception error) {
                     if (identity.equals(boundTitle) && requested.equals(artworkUri)) {
                         artworkUri = null;
                         failedArtworkUri = requested;
-                        artworkRetryAfter = android.os.SystemClock.elapsedRealtime() + 30000;
+                        artworkRetryAfter = SystemClock.elapsedRealtime() + 30000;
                         com.archos.mediacenter.video.diagnostics.Diagnostics.event("details_artwork_unavailable",
                                                                                    "media_id", diagnosticMedia());
                     }
@@ -1494,13 +1515,13 @@ public final class PreviewMoviePage extends ScrollView {
         cell.setFocusable(false);
         cell.setTag("person:" + name + ":" + role);
         cell.setContentDescription(name + ", " + role);
-        ImageView portrait = new androidx.appcompat.widget.AppCompatImageView(getContext()) {
-            private final android.graphics.Path circle = new android.graphics.Path();
+        ImageView portrait = new AppCompatImageView(getContext()) {
+            private final Path circle = new Path();
             @Override
-            public void draw(android.graphics.Canvas canvas) {
+            public void draw(Canvas canvas) {
                 int saved = canvas.save();
                 circle.reset();
-                circle.addOval(0, 0, getWidth(), getHeight(), android.graphics.Path.Direction.CW);
+                circle.addOval(0, 0, getWidth(), getHeight(), Path.Direction.CW);
                 canvas.clipPath(circle);
                 super.draw(canvas);
                 canvas.restoreToCount(saved);
@@ -1508,9 +1529,9 @@ public final class PreviewMoviePage extends ScrollView {
         };
         portrait.setImageResource(com.archos.mediacenter.video.R.drawable.preview_person);
         portrait.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        portrait.setBackground(new android.graphics.drawable.ColorDrawable(0xff1d2936));
+        portrait.setBackground(new ColorDrawable(0xff1d2936));
         portrait.setOutlineProvider(new ViewOutlineProvider() {
-            public void getOutline(View view, android.graphics.Outline outline) {
+            public void getOutline(View view, Outline outline) {
                 outline.setOval(0, 0, view.getWidth(), view.getHeight());
             }
         });
@@ -1521,7 +1542,7 @@ public final class PreviewMoviePage extends ScrollView {
             TextView text = text(value, 9);
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(true);
-            text.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            text.setEllipsize(TextUtils.TruncateAt.END);
             cell.addView(text, new LinearLayout.LayoutParams(-1, dp(12)));
         }
         row.addView(cell, new LinearLayout.LayoutParams(-1, -1));
@@ -1711,7 +1732,7 @@ public final class PreviewMoviePage extends ScrollView {
     private void info(LinearLayout row, String name, String value) {
         TextView t = text(value.replace("\n\n", "    ·    ").replace("\n", ": "), 13);
         t.setMaxLines(3);
-        t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        t.setEllipsize(TextUtils.TruncateAt.END);
         t.setTextColor(0xffa8becf);
         t.setPadding(0, dp(3), 0, dp(3));
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
@@ -1949,13 +1970,13 @@ public final class PreviewMoviePage extends ScrollView {
     private String firstPaintTitle = "";
 
     @Override
-    protected void onDraw(android.graphics.Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (!boundTitle.isEmpty() && !boundTitle.equals(firstPaintTitle)) {
             firstPaintTitle = boundTitle;
             com.archos.mediacenter.video.diagnostics.Diagnostics.event(
                 "details_first_paint", "media_id", diagnosticMedia(), "elapsed_ms",
-                android.os.SystemClock.elapsedRealtime() - openedAt);
+                SystemClock.elapsedRealtime() - openedAt);
         }
     }
 
@@ -2006,7 +2027,7 @@ public final class PreviewMoviePage extends ScrollView {
         Context app = getContext().getApplicationContext();
         final int requestedSeason = seasonNumber;
         enrichmentTask = PreviewDetailsData.IO.submit(() -> {
-            long start = android.os.SystemClock.elapsedRealtime();
+            long start = SystemClock.elapsedRealtime();
             String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("details_enrichment");
             try (com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored =
                      com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)) {
@@ -2016,7 +2037,7 @@ public final class PreviewMoviePage extends ScrollView {
                         post(() -> enqueueEnrichment(core, generation));
                     com.archos.mediacenter.video.diagnostics.Diagnostics.event(
                         "details_core_cache_ready", "media_id", id, "elapsed_ms",
-                        android.os.SystemClock.elapsedRealtime() - start, "cached", core != null);
+                        SystemClock.elapsedRealtime() - start, "cached", core != null);
                 }
                 PreviewDetailsData.Result cached = requestedSeason >= 0
                                                        ? PreviewDetailsData.cachedSeason(app, id, requestedSeason)
@@ -2040,7 +2061,7 @@ public final class PreviewMoviePage extends ScrollView {
             } finally {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.event(
                     "details_enrichment", "operation_id", operation, "elapsed_ms",
-                    android.os.SystemClock.elapsedRealtime() - start);
+                    SystemClock.elapsedRealtime() - start);
                 com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(operation, "details_enrichment",
                                                                                      start);
             }
@@ -2247,7 +2268,7 @@ public final class PreviewMoviePage extends ScrollView {
             technicalBadges(facts, technical);
             String file = safe(movie.getFilenameNonCryptic()) + "\n" + source(movie.getFileUri());
             if (movie.getSize() > 0)
-                file += " · " + android.text.format.Formatter.formatFileSize(getContext(), movie.getSize());
+                file += " · " + Formatter.formatFileSize(getContext(), movie.getSize());
             infoSection(facts, "Indexed library file", file);
         }
         if (show != null)
@@ -2263,7 +2284,7 @@ public final class PreviewMoviePage extends ScrollView {
         dialog.show();
         android.view.Window window = dialog.getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);
-        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         window.setDimAmount(.48f);
         int width = Math.min(dp(840), getResources().getDisplayMetrics().widthPixels - dp(64));
         int maximum = Math.min(dp(360), getResources().getDisplayMetrics().heightPixels - dp(96));
@@ -2477,7 +2498,7 @@ public final class PreviewMoviePage extends ScrollView {
         removeCallbacks(deliverEnrichment);
         pendingEnrichment = null;
         enrichmentDeliveryScheduled = false;
-        android.view.ViewParent shell = getParent();
+        ViewParent shell = getParent();
         while (shell != null) {
             if (shell instanceof TopNavigation) {
                 ((TopNavigation)shell).setDetailsExpanded(false);
