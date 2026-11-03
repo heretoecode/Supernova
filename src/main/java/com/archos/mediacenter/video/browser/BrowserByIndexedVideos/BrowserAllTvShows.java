@@ -104,6 +104,7 @@ public class BrowserAllTvShows extends CursorBrowserByVideo {
 		state.putString(SORT_PARAM_KEY, mSortOrder);
 	}
 
+	@Override
 	public boolean shouldEnableMultiSelection(){
 		return false;
 	}
@@ -237,6 +238,7 @@ public class BrowserAllTvShows extends CursorBrowserByVideo {
 
 	}
 
+	@Override
 	public Uri getRealPathUriFromPosition(int position){
 
 		mCursor.moveToPosition(position);
@@ -378,6 +380,7 @@ public class BrowserAllTvShows extends CursorBrowserByVideo {
         return R.string.scraper_no_tv_show_button_label;
     }
 
+    @Override
     public boolean showEmptyViewButton() {
         return true;
     }
