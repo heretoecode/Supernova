@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.utils;
 
+import android.app.Application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 28, application = android.app.Application.class)
+@Config(sdk = 28, application = Application.class)
 public class MediaUtilsSubsDirTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
