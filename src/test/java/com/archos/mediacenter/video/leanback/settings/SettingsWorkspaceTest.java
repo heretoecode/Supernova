@@ -16,8 +16,13 @@ import android.widget.*;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.*;
+import com.archos.environment.ArchosUtils;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.StandardSwitchDrawable;
+import com.archos.mediacenter.video.player.SegmentSkippingPolicy;
+import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
@@ -27,16 +32,19 @@ import java.util.Set;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
+import org.slf4j.LoggerFactory;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class SettingsWorkspaceTest {
-    private org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host;
+    private ActivityController<TopNavigationTest.Host> host;
     private VideoSettingsFragment.PrefsFragment fragment;
     private View root;
     private SettingsWorkspace workspace;
@@ -51,13 +59,13 @@ public class SettingsWorkspaceTest {
         ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", app);
         ReflectionHelpers.setStaticField(CustomApplication.class, "log",
-                                         org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
-        com.archos.environment.ArchosUtils.setGlobalContext(app);
+                                         LoggerFactory.getLogger(CustomApplication.class));
+        ArchosUtils.setGlobalContext(app);
         PreferenceManager.getDefaultSharedPreferences(app).edit().clear().putBoolean("try_new_ui", true).commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(app).build());
+            Picasso.setSingletonInstance(new Picasso.Builder(app).build());
         }
         host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         fragment = new VideoSettingsFragment.PrefsFragment();
@@ -199,7 +207,7 @@ public class SettingsWorkspaceTest {
                 assertTrue(colours.stream().anyMatch(
                     c -> Color.blue(c) > 180 && Color.red(c) < 100));
             else
-                assertTrue(colours.contains(com.archos.mediacenter.video.leanback.StandardSwitchDrawable.OFF));
+                assertTrue(colours.contains(StandardSwitchDrawable.OFF));
             box.setEnabled(false);
             image.eraseColor(Color.TRANSPARENT);
             icon = box.getButtonDrawable();
@@ -294,7 +302,7 @@ public class SettingsWorkspaceTest {
         p.setEntryValues(new String[] {"8", "999999"});
         p.setValues(Set.of("8"));
         PreviewPreferenceDialogs.show(fragment, p);
-        Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog dialog = ShadowDialog.getLatestDialog();
         View decor = dialog.getWindow().getDecorView();
         View label = decor.findViewWithTag("preview-label:1");
         ImageView netflix = (ImageView)((ViewGroup)label.getParent()).getChildAt(0);
@@ -441,7 +449,7 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void integrationDisableAndReenableRetainsPolicyAndReconcilesChildren() {
-        String master = com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER;
+        String master = SegmentSkippingPolicy.MASTER;
         workspace.open(5, "IntroDB");
         layout();
         String child = "introdb_mode_intro";
@@ -484,7 +492,7 @@ public class SettingsWorkspaceTest {
             force.performClick();
         layout();
         assertTrue(PreferenceManager.getDefaultSharedPreferences(host.get())
-                       .getBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,
+                       .getBoolean(VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,
                                    false));
         assertNotNull(fragment.findPreference("dec_choice"));
         assertNull("Basic decoder control must leave the model after advanced unlock",
@@ -493,13 +501,13 @@ public class SettingsWorkspaceTest {
         assertNotNull(root.findFocus());
         assertTrue(String.valueOf(root.findFocus().getTag()).startsWith("settings.preference."));
         Preference quit =
-            fragment.findPreference(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_QUIT);
+            fragment.findPreference(VideoPreferencesCommon.KEY_ADVANCED_VIDEO_QUIT);
         assertNotNull(quit);
         quit.performClick();
         layout();
         assertFalse(
             PreferenceManager.getDefaultSharedPreferences(host.get())
-                .getBoolean(com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,
+                .getBoolean(VideoPreferencesCommon.KEY_ADVANCED_VIDEO_ENABLED,
                             true));
         assertNull(fragment.findPreference("dec_choice"));
         assertNotNull(fragment.findPreference("force_software_decoding"));
