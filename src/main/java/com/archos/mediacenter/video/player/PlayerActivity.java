@@ -3512,6 +3512,7 @@ public class PlayerActivity extends AppCompatActivity
             adb.setTitle(R.string.notification_mode);
             adb.setSingleChoiceItems(R.array.pref_notification_mode_entries, mNotificationMode,
                                      new DialogInterface.OnClickListener() {
+                                         @Override
                                          public void onClick(DialogInterface dialog, int which) {
                                              setNewNotificationMode(which);
                                              dialog.dismiss();
@@ -3681,6 +3682,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 },
                 new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
@@ -3762,6 +3764,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 },
                 new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
@@ -4078,6 +4081,7 @@ public class PlayerActivity extends AppCompatActivity
                               .setMessage(buildErrorMessage(mErrorCode, mErrorQualCode, 0, mErrorMsg))
                               .setPositiveButton(android.R.string.ok,
                                                  new DialogInterface.OnClickListener() {
+                                                     @Override
                                                      public void onClick(DialogInterface dialog, int whichButton) {
                                                          finish();
                                                      }
@@ -4106,6 +4110,7 @@ public class PlayerActivity extends AppCompatActivity
                           .setMessage("This application runs only on Amazon Kindle")
                           .setPositiveButton(android.R.string.ok,
                                              new DialogInterface.OnClickListener() {
+                                                 @Override
                                                  public void onClick(DialogInterface dialog, int whichButton) {
                                                      finish();
                                                  }
@@ -4137,6 +4142,7 @@ public class PlayerActivity extends AppCompatActivity
                 .setPositiveButton(
                     R.string.player_plugin_purchase_google_play_button,
                     new DialogInterface.OnClickListener() {
+                        @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
                                 startActivity(
@@ -4154,6 +4160,7 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
+    @Override
     public void onDismiss(DialogInterface dialog) {
         mShowingDialogId = DIALOG_NO;
     }
@@ -4426,6 +4433,7 @@ public class PlayerActivity extends AppCompatActivity
         sendBroadcast(intent);
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -4824,6 +4832,7 @@ public class PlayerActivity extends AppCompatActivity
     // warning: when addressing mPlayer.setSubtitleTrack none track is -1
 
     /* PlayerController.Settings */
+    @Override
     public void switchSubtitleTrack() { // switch to next subtitle track avoiding none
         if (mSubtitleInfoController.getTrackCount() > 1) {
             int newSubtitleTrack = nextVideoInfoSubtitleTrack(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles);
@@ -4856,6 +4865,7 @@ public class PlayerActivity extends AppCompatActivity
         log.info("switchSubtitleTrack: " + mVideoInfo.subtitleTrack);
     }
 
+    @Override
     public void switchAudioTrack() {
         if (mAudioInfoController.getTrackCount() > 1) {
             int newAudioTrack = (mVideoInfo.audioTrack + 1) % mAudioInfoController.getTrackCount();
@@ -4870,6 +4880,7 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
+    @Override
     public void setSubtitleDelay(int delay) {
         if (mSubtitleInfoController.getTrackCount() > 1) {
             mVideoInfo.subtitleDelay += delay;
@@ -4936,6 +4947,7 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     /* TrackInfoAdapter.OnTrackInfoListener */
+    @Override
     public boolean onTrackSelected(TrackInfoController trackInfoController, int position, CharSequence name,
                                    CharSequence summary) {
         boolean ret = false;
@@ -5026,6 +5038,7 @@ public class PlayerActivity extends AppCompatActivity
         return ret;
     }
 
+    @Override
     public boolean onSettingsSelected(TrackInfoController trackInfoController, int key, CharSequence name) {
         log.info("onSettingsSelected: " + key);
         if (mPlayer.isBusy())
@@ -5336,6 +5349,7 @@ public class PlayerActivity extends AppCompatActivity
             });
         }
 
+        @Override
         public void onPrepared() {
             if (log.isDebugEnabled())
                 log.debug("onPrepared");
@@ -5345,6 +5359,7 @@ public class PlayerActivity extends AppCompatActivity
             postVideoInfoAndPrepared();
         }
 
+        @Override
         public void onCompletion() {
             if (log.isDebugEnabled())
                 log.debug("onCompletion");
@@ -5352,6 +5367,7 @@ public class PlayerActivity extends AppCompatActivity
             PlayerService.sPlayerService.setAudioFilt();
         }
 
+        @Override
         public boolean onError(int errorCode, int errorQualCode, String msg) {
             if (isFinishing())
                 return true;
@@ -5391,20 +5407,24 @@ public class PlayerActivity extends AppCompatActivity
             return true;
         }
 
+        @Override
         public void onSeekStart(int pos) {
             //no-op
         }
 
+        @Override
         public void onSeekComplete() {
             if (mPlayerController != null)
                 mPlayerController.onSeekComplete();
         }
 
+        @Override
         public void onAllSeekComplete() {
             if (mPlayerController != null)
                 mPlayerController.onAllSeekComplete();
         }
 
+        @Override
         public void onPlay(int state) {
             sendVideoStateChanged();
             //mPlayerController.hide();
@@ -5423,15 +5443,18 @@ public class PlayerActivity extends AppCompatActivity
             }
         }
 
+        @Override
         public void onFirstPlay() {
             mPlayerController.hide();
         }
 
+        @Override
         public void onIntroDbReady() {
             refreshPlayModeIntroSummary();
             refreshPhonePlayModeIntroSummary();
         }
 
+        @Override
         public void onShowSkipPrompt(final IntroSegments.Type type, final long targetMs) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -5441,6 +5464,7 @@ public class PlayerActivity extends AppCompatActivity
             });
         }
 
+        @Override
         public void onHideSkipPrompt() {
             runOnUiThread(new Runnable() {
                 @Override
@@ -5450,6 +5474,7 @@ public class PlayerActivity extends AppCompatActivity
             });
         }
 
+        @Override
         public void onPause(int state) {
             sendVideoStateChanged();
 
@@ -5468,11 +5493,13 @@ public class PlayerActivity extends AppCompatActivity
             }
         }
 
+        @Override
         public void onOSDUpdate() {
             if (mPlayerController != null)
                 mPlayerController.setEnabled(true);
         }
 
+        @Override
         public void onVideoMetadataUpdated(VideoMetadata vMetadata) {
             if (isStereoEffectOn()) {
                 int mode = vMetadata.getVideoTrack().s3dMode;
@@ -5484,6 +5511,7 @@ public class PlayerActivity extends AppCompatActivity
             }
         }
 
+        @Override
         public void onAudioMetadataUpdated(VideoMetadata vMetadata, int newAudioTrack) {
             if (mVideoInfo == null) {
                 mNewAudioTrack = newAudioTrack;
@@ -5526,6 +5554,7 @@ public class PlayerActivity extends AppCompatActivity
             mAudioInfoController.setTrack(mVideoInfo.audioTrack);
         }
 
+        @Override
         public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int newSubtitleTrack) {
             if (mVideoInfo == null) {
                 mNewSubtitleTrack = newSubtitleTrack;
@@ -5649,6 +5678,7 @@ public class PlayerActivity extends AppCompatActivity
             }
         }
 
+        @Override
         @SuppressLint("SetTextI18n")
         public void onBufferingUpdate(int percent) {
             if (!mPlayer.isInPlaybackState()) {
@@ -5731,12 +5761,14 @@ public class PlayerActivity extends AppCompatActivity
                                         .setCancelable(false)
                                         .setPositiveButton(R.string.yes,
                                                            new DialogInterface.OnClickListener() {
+                                                               @Override
                                                                public void onClick(DialogInterface dialog, int id) {
                                                                    selectVideoInfo(remoteVideoInfo,
                                                                                    PlayerService.ResumeSource.NETWORK);
                                                                }
                                                            })
                                         .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                            @Override
                                             public void onClick(DialogInterface dialog, int id) {
                                                 selectVideoInfo(localVideoInfo, PlayerService.ResumeSource.LOCAL);
                                             }
@@ -5806,6 +5838,7 @@ public class PlayerActivity extends AppCompatActivity
     };
 
     private SurfaceController.Listener mSurfaceListener = new SurfaceController.Listener() {
+        @Override
         public void onSwitchVideoFormat(int fmt, int autoFmt) {
             if (log.isDebugEnabled())
                 log.debug("CONFIG onSwitchVideoFormat: fmt={}, autoFmt={}", fmt, autoFmt);
