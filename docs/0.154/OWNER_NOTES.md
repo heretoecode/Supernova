@@ -31,6 +31,17 @@ Each item: what the owner saw → what they want → status.
   `03-hero-today-vs-proposed.png`.
 - **Status:** approved design — awaiting go-ahead to code.
 
+### 4. Faint second line round focused artwork cards (design)
+- **Seen (photos, 0.153):** Home row, focused Tulsa King card: a faint line just outside the white outline, all
+  the way round.
+- **Cause:** card focus (`PreviewFocusGlow`, used by `PreviewCardPresenter` and `CinematicCard`, exempt from the
+  0.153 button rules) draws the outline plus four 1dp "glow" rings outside it (16% then 5%); on a TV they read as
+  a ghost second line. The wider soft blue haze in the photos is most likely the TV's local-dimming bloom, not
+  the app (also seen near unfocused cards).
+- **Decision (owner, 2026-11-03):** remove the rings; focused cards keep **one crisp white outline** (plus the
+  existing enlargement), matching the global white-outline rule.
+- **Status:** approved design — awaiting go-ahead to code.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
