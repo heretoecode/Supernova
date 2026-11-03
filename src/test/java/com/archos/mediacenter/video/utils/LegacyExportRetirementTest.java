@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.zip.*;
@@ -64,7 +65,7 @@ public class LegacyExportRetirementTest {
                     entry.getName().equals("manifest.json") || entry.getName().equals("RESTORE_INSTRUCTIONS.txt")
                         || entry.getName().startsWith("categories/"));
                 try (InputStream input = zip.getInputStream(entry)) {
-                    String text = new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    String text = new String(input.readAllBytes(), StandardCharsets.UTF_8);
                     assertFalse(text.contains("CANARY"));
                 }
             }
