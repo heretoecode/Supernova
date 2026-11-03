@@ -27,6 +27,7 @@ import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.Arrays;
 
+/** Loads anime collection entries for the video library. */
 public class AllAnimeCollectionsLoader extends VideoLoader {
 
     private static final String TAG = AllAnimeCollectionsLoader.class.getSimpleName();
