@@ -1059,7 +1059,9 @@ public final class UniversalFileBrowser extends LinearLayout {
         if (networkLayout != null) {
             if (landingCards.isEmpty())
                 networkLanding();
-            else if (!networkLayout.landing() && current == null && !sectionChild && landingSelection == 0) {
+            else if (localShowing()) {
+                // The Local Storage page took the new drive list above and keeps its own focus.
+            } else if (!networkLayout.landing() && current == null && !sectionChild && landingSelection == 0) {
                 View focused = items.findFocus();
                 Object tag = focused == null ? null : focused.getTag();
                 localStorage();

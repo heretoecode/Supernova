@@ -1,5 +1,5 @@
 {
- "purpose": "0.154: icon-tint fix, FTP log test, new Local Storage page and its neighbours (retry after compile fix)",
+ "purpose": "0.154: Local Storage focus fixes (row before its buttons; drive refresh keeps the page)",
  "tests": [
   "com.archos.mediacenter.video.leanback.Supernova154UiTest",
   "com.archos.mediacenter.video.leanback.SupernovaStyleTest",

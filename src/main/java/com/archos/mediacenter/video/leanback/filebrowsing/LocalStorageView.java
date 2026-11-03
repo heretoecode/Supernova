@@ -907,7 +907,8 @@ public final class LocalStorageView extends LinearLayout {
             setGravity(Gravity.CENTER_VERTICAL);
             setFocusable(true);
             setFocusableInTouchMode(true);
-            setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+            // The row itself takes focus first; Right moves onto its buttons (they are reached explicitly).
+            setDescendantFocusability(FOCUS_BEFORE_DESCENDANTS);
             setBackground(SupernovaStyle.rowWithActions(c));
             setPadding(dp(10), 0, dp(10), 0);
             setLayoutParams(new RecyclerView.LayoutParams(-1, dp(50)));
