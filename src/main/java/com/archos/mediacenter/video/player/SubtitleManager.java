@@ -46,6 +46,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Manages subtitle track types, style defaults and effective style overrides. */
 public class SubtitleManager {
 
     private static final Logger log = LoggerFactory.getLogger(SubtitleManager.class);
