@@ -265,6 +265,7 @@ public class BrowserByNetwork extends BrowserByFolder {
 
     private View.OnClickListener mIndexFolderActionClickListener = new View.OnClickListener() {
         // Handle clicks on the "indexed folder" item when it is in displayed the action bar
+        @Override
         public void onClick(View v) {
             mShortcutPath = mCurrentDirectory.toString();
             mShortcutName = getActionBarTitle();
