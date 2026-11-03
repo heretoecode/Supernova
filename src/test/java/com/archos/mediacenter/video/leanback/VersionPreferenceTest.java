@@ -3,6 +3,7 @@ import android.app.Application;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -36,7 +37,7 @@ public class VersionPreferenceTest {
         var c = RuntimeEnvironment.getApplication();
         Movie lower = movie(1, 1920), higher = movie(2, 3840);
         PreviewVariants.remember(c, lower);
-        com.archos.mediaprovider.video.SupernovaLibraryPolicy.availability(c, 1, lower.getFileUri(), true);
+        SupernovaLibraryPolicy.availability(c, 1, lower.getFileUri(), true);
         assertEquals(2,
             ((Video) PreviewVariants
                     .logicalChoices(Arrays.asList(new Entry(lower, 0, 0, ""), new Entry(higher, 0, 0, "")))
