@@ -16,9 +16,7 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 import android.provider.BaseColumns;
-import android.util.Log;
 
-import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediaprovider.video.VideoStore;
 
 /**
