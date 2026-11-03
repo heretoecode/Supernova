@@ -295,7 +295,7 @@ public class NonScrapedVideosFragment extends MyVerticalGridFragment implements 
                 return new NonScrapedVideosLoader(getActivity(), args.getString("sort"));
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override
