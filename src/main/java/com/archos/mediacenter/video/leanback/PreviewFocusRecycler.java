@@ -99,6 +99,7 @@ public class PreviewFocusRecycler extends RecyclerView {
             scrollToPosition(target);
             postOnAnimation(new Runnable() {
                 int tries;
+                @Override
                 public void run() {
                     if (!isAttachedToWindow() || !hasFocus()) {
                         pending = NO_POSITION;
