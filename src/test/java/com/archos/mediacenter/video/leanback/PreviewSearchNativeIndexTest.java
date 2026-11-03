@@ -6,32 +6,40 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Looper;
 import android.widget.TextView;
+import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.browser.loader.SearchVideoLoader;
 import com.archos.mediacenter.video.leanback.search.PreviewSearch;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.video.*;
+import com.archos.mediascraper.BaseTags;
 import java.time.Duration;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.SQLiteMode;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
 /** Actual native SQLite views/projections and the real async search path, with in-process provider transport. */
-@org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+@SQLiteMode(SQLiteMode.Mode.NATIVE)
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewSearchNativeIndexTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
@@ -73,7 +81,7 @@ public class PreviewSearchNativeIndexTest {
         file.put("mime_type", "video/x-matroska");
         file.put("duration", 100000);
         file.put("media_type", 3);
-        file.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, com.archos.mediascraper.BaseTags.MOVIE);
+        file.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, BaseTags.MOVIE);
         file.put(VideoStore.Video.VideoColumns.ARCHOS_HIDDEN_BY_USER, 0);
         database.get().insertOrThrow("files", null, file);
         long id = 77;
@@ -97,17 +105,17 @@ public class PreviewSearchNativeIndexTest {
             assertTrue("Native original title row", original.moveToFirst());
             assertEquals("Le Film Original", original.getString(1));
         }
-        com.archos.mediacenter.video.browser.loader.SearchVideoLoader all =
-            new com.archos.mediacenter.video.browser.loader.SearchVideoLoader(app);
+        SearchVideoLoader all =
+            new SearchVideoLoader(app);
         all.setQuery("");
         try (Cursor nativeFiles = app.getContentResolver().query(
                  all.getUri(), all.getProjection(), all.getSelection(), all.getSelectionArgs(), all.getSortOrder())) {
             assertNotNull(nativeFiles);
             assertTrue("Native search loader row", nativeFiles.moveToFirst());
-            var mapper = new com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper();
+            var mapper = new VideoCursorMapper();
             mapper.bindColumns(nativeFiles);
             assertTrue("Native mapped movie",
-                mapper.bind(nativeFiles) instanceof com.archos.mediacenter.video.browser.adapters.object.Movie);
+                mapper.bind(nativeFiles) instanceof Movie);
         }
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         PreviewSearch search = new PreviewSearch(host.get(), 0, null);
@@ -130,7 +138,7 @@ public class PreviewSearchNativeIndexTest {
                 TextView status = ReflectionHelpers.getField(search, "status");
                 assertEquals("Native indexed query: " + query + " (" + status.getText() + ")", 1, results.size());
                 Object result = results.get(0);
-                com.archos.mediacenter.video.browser.adapters.object.Video video =
+                Video video =
                     ReflectionHelpers.getField(result, "video");
                 assertEquals(id, video.getId());
                 search.acceptVoice("");
