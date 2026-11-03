@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.player;
 
 import android.content.Context;
 import android.util.AtomicFile;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.json.*;
@@ -176,7 +177,7 @@ public final class ChaptersDbClient {
 
         HttpSource(Context context) {
             this(context,
-                com.archos.mediacenter.video.streaming.StreamingRepository.readOnlyNetworkClient()
+                StreamingRepository.readOnlyNetworkClient()
                     .newBuilder()
                     .connectTimeout(5, TimeUnit.SECONDS)
                     .readTimeout(5, TimeUnit.SECONDS)
