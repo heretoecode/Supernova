@@ -210,8 +210,8 @@ public class SubtitleManager {
             outlineColor = ContextCompat.getColor(context, R.color.subtitle_default_outline_color);
             shadowColor = ContextCompat.getColor(context, R.color.subtitle_default_shadow_color);
             backgroundColor = ContextCompat.getColor(context, R.color.subtitle_default_background_color);
-            outlineWidth = res.getInteger(R.integer.subtitle_default_outline_width);
-            shadowWidth = res.getInteger(R.integer.subtitle_default_shadow_width);
+            outlineWidth = 0f;
+            shadowWidth = 0f;
             overrideMode = OVERRIDE_CUSTOM;
             bgMode = BG_MODE_FLOATING;
         }
