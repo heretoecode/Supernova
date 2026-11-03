@@ -76,11 +76,13 @@ public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListen
         setCancelable(true);
         setCanceledOnTouchOutside(true);
     }
+    @Override
     public void onAttachedToWindow(){
         super.onAttachedToWindow();
         mSaveSettingCB.setChecked( PreferenceManager.getDefaultSharedPreferences(getContext()).getFloat(getContext().getResources().getString(R.string.save_audio_speed_setting_pref_key), 1.0f)!=1.0f);
 
     }
+    @Override
     public void handleMessage(Message msg) {
         switch(msg.what) {
             case CHANGE_SPEED:
@@ -109,12 +111,14 @@ public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListen
         mHandler.sendMessageDelayed(msg, CHANGE_SPEED_TIMEOUT);
     }
 
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         if (mCallBack != null) {
             mCallBack.onAudioSpeedChange(mAudioSpeedPicker, mAudioSpeedPicker.getSpeed());
         }
     }
 
+    @Override
     public void updateSpeed(float speed) {
         mAudioSpeedPicker.updateSpeed(speed);
     }
