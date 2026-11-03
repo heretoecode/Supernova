@@ -14,13 +14,22 @@
 
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
 
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
@@ -41,7 +50,7 @@ public class VideoSettingsActivity extends LeanbackActivity {
         if (SettingsWorkspace.enabled(this))
             overridePendingTransition(0, 0);
         if (SettingsWorkspace.enabled(this)) {
-            android.widget.FrameLayout full = new android.widget.FrameLayout(this);
+            FrameLayout full = new FrameLayout(this);
             full.setId(R.id.settingsFragment);
             previewNavigation = new com.archos.mediacenter.video.leanback.TopNavigation(this, full,
                 index
@@ -49,13 +58,12 @@ public class VideoSettingsActivity extends LeanbackActivity {
                     if (index == 4)
                         return;
                     if (index == 5)
-                        startActivity(new android.content.Intent(
+                        startActivity(new Intent(
                             this, com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
                     else {
-                        startActivity(new android.content
-                                .Intent(this, com.archos.mediacenter.video.leanback.MainActivityLeanback.class)
+                        startActivity(new Intent(this, com.archos.mediacenter.video.leanback.MainActivityLeanback.class)
                                 .putExtra("preview_tab", index)
-                                .addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                         finish();
                     }
                 },
@@ -67,9 +75,9 @@ public class VideoSettingsActivity extends LeanbackActivity {
                 });
             previewNavigation.selectTab(4);
             setContentView(previewNavigation);
-            new androidx.core.view.WindowInsetsControllerCompat(getWindow(), full)
-                .hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
-            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            new WindowInsetsControllerCompat(getWindow(), full)
+                .hide(WindowInsetsCompat.Type.systemBars());
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             if (savedInstanceState == null)
                 getSupportFragmentManager()
                     .beginTransaction()
@@ -103,18 +111,18 @@ public class VideoSettingsActivity extends LeanbackActivity {
                     && fragment.getChildFragmentManager().popBackStackImmediate()) {
                     return;
                 }
-                if (fragment instanceof androidx.preference.PreferenceFragmentCompat) {
-                    androidx.recyclerview.widget.RecyclerView list =
-                        ((androidx.preference.PreferenceFragmentCompat) fragment).getListView();
-                    if (list.hasFocus() && list.getTag() instanceof android.view.View) {
-                        ((android.view.View) list.getTag()).requestFocus();
+                if (fragment instanceof PreferenceFragmentCompat) {
+                    RecyclerView list =
+                        ((PreferenceFragmentCompat) fragment).getListView();
+                    if (list.hasFocus() && list.getTag() instanceof View) {
+                        ((View) list.getTag()).requestFocus();
                         return;
                     }
                 }
                 if (previewNavigation != null && previewNavigation.focusNavigation())
                     return;
                 finish();
-                if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(VideoSettingsActivity.this)
+                if (PreferenceManager.getDefaultSharedPreferences(VideoSettingsActivity.this)
                         .getBoolean("try_new_ui", false)) {
                     overridePendingTransition(0, 0);
                     return;
