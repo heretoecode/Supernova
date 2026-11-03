@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediaprovider.ArchosMediaCommon;
 import java.util.HashMap;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class SupernovaNetworkAvailabilityTest {
-    @org.junit.Before
+    @Before
     public void confirmedSelectionFixture() {
         PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
