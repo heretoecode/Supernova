@@ -13,8 +13,12 @@
 // limitations under the License.
 
 package com.archos.mediacenter.video.player;
+import android.widget.RelativeLayout;
 import com.archos.mediacenter.video.BuildConfig;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import android.annotation.SuppressLint;
@@ -38,7 +42,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Insets;
 import android.graphics.Point;
@@ -425,12 +428,12 @@ public class PlayerActivity extends AppCompatActivity
     private int mNewAudioTrack = -1;
     private ChaptersDbPlayback previewChapterSource;
 
-    java.util.List<PlaybackChapters.Chapter> previewChapters(java.util.List<PlaybackChapters.Chapter> embedded,
+    List<PlaybackChapters.Chapter> previewChapters(List<PlaybackChapters.Chapter> embedded,
                                                              long duration) {
         if (embedded != null && !embedded.isEmpty())
             return embedded;
         if (mVideoInfo == null || !mVideoInfo.isScraped || isFinishing() || isDestroyed())
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         if (previewChapterSource == null)
             previewChapterSource = new ChaptersDbPlayback(this);
         return previewChapterSource.chapters(mVideoInfo.uri, embedded, mVideoInfo.isShow ? "tv" : "movie",
@@ -864,7 +867,7 @@ public class PlayerActivity extends AppCompatActivity
 
         mSurfaceController.setListener(mSurfaceListener);
         ageOverlay = new PlaybackAgeOverlay(this, mSurfaceController);
-        ((ViewGroup)mRootView).addView(ageOverlay, new android.widget.RelativeLayout.LayoutParams(-1, -1));
+        ((ViewGroup)mRootView).addView(ageOverlay, new RelativeLayout.LayoutParams(-1, -1));
 
         View menuAnchor = mRootView.findViewById(R.id.menu_anchor);
         mProgressView = mRootView.findViewById(R.id.progress_indicator);
@@ -3291,7 +3294,7 @@ public class PlayerActivity extends AppCompatActivity
         else
             try {
                 com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this, mVideoInfo);
-            } catch (org.json.JSONException | java.io.IOException invalid) {
+            } catch (org.json.JSONException | IOException invalid) {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",
                                                                            invalid);
             }
