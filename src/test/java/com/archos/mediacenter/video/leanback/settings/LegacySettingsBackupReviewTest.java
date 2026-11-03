@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import com.archos.environment.ArchosUtils;
 import com.archos.mediacenter.video.CustomApplication;
 
 import com.archos.mediacenter.video.leanback.*;
@@ -19,6 +20,8 @@ import com.archos.mediacenter.video.utils.*;
 
 import com.archos.mediacenter.video.utils.backup.*;
 
+import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.squareup.picasso.Picasso;
 import java.io.*;
 
 import java.util.*;
@@ -37,6 +40,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 
 import static org.junit.Assert.*;
+import org.slf4j.LoggerFactory;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -46,9 +50,9 @@ public class LegacySettingsBackupReviewTest {
     public void setup() {
         PreviewAsyncFixtures.offlineTransport();
         ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
-        com.archos.environment.ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
+        ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         ReflectionHelpers.setStaticField(
-            CustomApplication.class, "log", org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
+            CustomApplication.class, "log", LoggerFactory.getLogger(CustomApplication.class));
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", RuntimeEnvironment.getApplication());
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
@@ -58,10 +62,10 @@ public class LegacySettingsBackupReviewTest {
             .putString("oauth_token", "AUTH_CANARY")
             .commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException missing) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -214,7 +218,7 @@ public class LegacySettingsBackupReviewTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             var fragment = install(host.get());
-            try (var helper = new com.archos.mediaprovider.video.VideoOpenHelper(host.get())) {
+            try (var helper = new VideoOpenHelper(host.get())) {
                 helper.getWritableDatabase().execSQL(
                     "INSERT INTO files(_id,media_type,_data) VALUES(77,3,'file:///fixture.mkv')");
             }
