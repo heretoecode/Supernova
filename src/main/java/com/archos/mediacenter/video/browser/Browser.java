@@ -102,6 +102,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/** Provides shared browsing, scrolling, thumbnail and view-mode handling for video browser fragments. */
 public abstract class Browser extends Fragment implements AbsListView.OnScrollListener,
         View.OnTouchListener,
         AdapterView.OnItemClickListener,
