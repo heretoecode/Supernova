@@ -1,11 +1,13 @@
 package com.archos.mediacenter.video.leanback.scrapping;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import com.archos.mediascraper.*;
+import java.io.IOException;
 import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +20,10 @@ import static org.junit.Assert.*;
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewMatchFragmentTest {
     @Test public void negativeNativeSaveResultCannotReportAcceptedMatchSuccess()throws Exception{
-        android.content.Context context=RuntimeEnvironment.getApplication();
+        Context context=RuntimeEnvironment.getApplication();
         for(BaseTags tags:new BaseTags[]{org.mockito.Mockito.mock(MovieTags.class),org.mockito.Mockito.mock(EpisodeTags.class)}){
             org.mockito.Mockito.when(tags.save(context,12L)).thenReturn(-1L);
-            try{ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);fail("Failed native save must remain a failed match");}catch(java.io.IOException expected){}
+            try{ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);fail("Failed native save must remain a failed match");}catch(IOException expected){}
             org.mockito.Mockito.when(tags.save(context,12L)).thenReturn(42L);
             ManualVideoScrappingSearchFragment.persistAcceptedMatch(context,tags,12L);
         }
