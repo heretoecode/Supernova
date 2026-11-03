@@ -69,6 +69,7 @@ public abstract class AnimesByLoader extends CursorLoader implements CompatAndSD
         return sb.toString();
     }
 
+    @Override
     public Loader<Cursor> getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mForceHideVideos = hideWatchedVideos;
         return new CursorLoader(getContext(),
