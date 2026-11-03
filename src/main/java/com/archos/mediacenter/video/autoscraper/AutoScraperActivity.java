@@ -111,6 +111,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+/** Displays automatic metadata scraping progress and lets users retry searches. */
 public class AutoScraperActivity extends AppCompatActivity implements AbsListView.OnScrollListener,
                                                              View.OnKeyListener, View.OnClickListener {
     private static final Logger log = LoggerFactory.getLogger(AutoScraperActivity.class);
