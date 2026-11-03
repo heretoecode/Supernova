@@ -32,7 +32,6 @@ import com.archos.filecorelibrary.FileUtilsQ;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.filecorelibrary.RawLister;
 import com.archos.filecorelibrary.FileUtils;
-import com.archos.filecorelibrary.localstorage.ExternalSDFileWriter;
 import com.archos.filecorelibrary.localstorage.LocalStorageFileEditor;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.filecoreextension.upnp2.MetaFileFactoryWithUpnp;
@@ -54,6 +53,7 @@ import com.archos.mediascraper.NfoParser;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,7 +246,7 @@ public class Delete {
 
     private static String sourceKind(Uri uri){
         String scheme=uri==null?null:uri.getScheme();
-        return scheme!=null&&java.util.Arrays.asList("file","content","webdav","webdavs","smb","smbj","sshj","sftp","ftp","ftps","http","https","upnp").contains(scheme.toLowerCase(java.util.Locale.ROOT))?scheme.toLowerCase(java.util.Locale.ROOT):"other";
+        return scheme!=null&&java.util.Arrays.asList("file","content","webdav","webdavs","smb","smbj","sshj","sftp","ftp","ftps","http","https","upnp").contains(scheme.toLowerCase(Locale.ROOT))?scheme.toLowerCase(Locale.ROOT):"other";
     }
     private final ThreadLocal<Boolean> absentRemoteSource=new ThreadLocal<Boolean>(){@Override protected Boolean initialValue(){return false;}};
     private boolean sourceWasAbsent(){boolean absent=Boolean.TRUE.equals(absentRemoteSource.get());absentRemoteSource.remove();return absent;}
