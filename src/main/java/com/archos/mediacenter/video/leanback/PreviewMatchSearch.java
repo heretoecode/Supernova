@@ -75,12 +75,15 @@ public final class PreviewMatchSearch extends LinearLayout {
         right.addView(scroll, new LayoutParams(-1, 0, 1));
         query = () -> search.accept(input.getText().toString().trim());
         input.addTextChangedListener(new TextWatcher() {
+            @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+            @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 removeCallbacks(query);
                 postDelayed(query, 350);
             }
+            @Override
             public void afterTextChanged(Editable value) {
             }
         });
