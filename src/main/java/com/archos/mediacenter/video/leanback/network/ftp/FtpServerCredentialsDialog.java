@@ -38,6 +38,7 @@ import com.archos.filecorelibrary.MetaFile2Factory;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,7 +235,7 @@ public class FtpServerCredentialsDialog extends DialogFragment {
             }});
         mDialog = builder.create();
 
-        mDialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(mDialog));
+        mDialog.setOnShowListener(ignored -> PreviewDialog.styleNative(mDialog));
         return mDialog;
 
     }
