@@ -8,7 +8,10 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.OperationCanceledException;
 import androidx.preference.PreferenceManager;
+import com.archos.environment.ArchosUtils;
 import com.archos.mediacenter.video.CustomApplication;
+import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.DbHolder;
@@ -24,6 +27,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.shadows.ShadowContentResolver;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
+import org.slf4j.LoggerFactory;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -37,8 +41,8 @@ public class PreviewLibraryRestoreRaceTest {
         ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", RuntimeEnvironment.getApplication());
         ReflectionHelpers.setStaticField(
-            CustomApplication.class, "log", org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
-        com.archos.environment.ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
+            CustomApplication.class, "log", LoggerFactory.getLogger(CustomApplication.class));
+        ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         source.setup();
     }
 
@@ -90,8 +94,8 @@ public class PreviewLibraryRestoreRaceTest {
                 if (!Arrays.asList(columns).contains(VideoStore.Video.VideoColumns.DATE_ADDED))
                     return rows;
                 try {
-                    com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper mapper =
-                        new com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper();
+                    VideoCursorMapper mapper =
+                        new VideoCursorMapper();
                     mapper.bindColumns(rows);
                     assertTrue(rows.moveToFirst());
                     assertNotNull(mapper.bind(rows));
@@ -153,7 +157,7 @@ public class PreviewLibraryRestoreRaceTest {
             assertNotNull(PreviewLibraryLoader.memoryCache());
             assertFalse(PreviewLibraryLoader.memoryCache().movies.isEmpty());
             assertTrue(PreviewLibraryLoader.memoryCache().movies.stream().noneMatch(
-                entry -> ((com.archos.mediacenter.video.browser.adapters.object.Movie) entry.media).isPinned()));
+                entry -> ((Movie) entry.media).isPinned()));
         }
     }
 }
