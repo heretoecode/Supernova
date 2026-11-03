@@ -58,9 +58,11 @@ public class PreviewSourceRemovalTest {
             // This displayed stale row deliberately has no corresponding database
             // record. The real database deletion returns zero, not success.
             Shortcut source = new Shortcut(987654, "https://example.invalid/absent", null, "Fixture") {
+                @Override
                 public Uri getUri() {
                     return Uri.parse(getFullPath());
                 }
+                @Override
                 public int getImage() {
                     return 0;
                 }
