@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.player.tvmenu;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.widget.CompoundButton;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.text.HtmlCompat;
 import android.text.SpannableString;
@@ -29,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
 import org.slf4j.Logger;
@@ -83,7 +85,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
     }
     public void setFocus(boolean hasFocus){
         if (log.isDebugEnabled()) log.debug("setFocus hasFocus:{}", hasFocus);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui",false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui",false)) {
             setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
             return;
         }
@@ -231,7 +233,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
             slaveView = (TVMenuItem)LayoutInflater.from(mContext)
                     .inflate(R.layout.menu_item_checkable_layout, null);
         }
-        else if (findViewById(R.id.info_text) != null && (findViewById(R.id.info_text) instanceof android.widget.CompoundButton)) {
+        else if (findViewById(R.id.info_text) != null && (findViewById(R.id.info_text) instanceof CompoundButton)) {
             slaveView = (TVMenuItem)LayoutInflater.from(mContext)
                     .inflate(R.layout.menu_item_switchable_layout, null);
         }
