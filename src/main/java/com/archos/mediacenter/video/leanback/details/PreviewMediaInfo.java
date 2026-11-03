@@ -3,6 +3,7 @@ import android.text.TextUtils;
 import org.json.*;
 import java.util.*;
 
+/** Formats audio codecs, channel labels and sample rates for the Details page. */
 public final class PreviewMediaInfo {
     /** Retain measured channel labels; do not infer a speaker layout from a channel count. */
     public static String audioTrack(String codec, String channels, int sampleRate) {
