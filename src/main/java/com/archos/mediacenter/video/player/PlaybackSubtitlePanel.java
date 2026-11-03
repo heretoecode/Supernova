@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.*;
 import android.text.TextUtils;
@@ -1116,7 +1117,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     private static final class MaxHeightScroll extends ScrollView {
         private int max = Integer.MAX_VALUE;
 
-        MaxHeightScroll(android.content.Context c) {
+        MaxHeightScroll(Context c) {
             super(c);
         }
 
