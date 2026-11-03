@@ -24,6 +24,7 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks library grid and list returns preserve the selected item, scroll position and view mode. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewLibraryReturnTest {
