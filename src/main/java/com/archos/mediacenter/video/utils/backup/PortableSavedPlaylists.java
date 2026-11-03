@@ -8,6 +8,8 @@ import com.archos.mediaprovider.video.ListTables;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
 import java.io.IOException;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import org.json.*;
 
@@ -53,7 +55,7 @@ public final class PortableSavedPlaylists {
             || text.matches("(?is).*(?:password|passwd|token|secret|authorization|cookie|api[_-]?key)\\s*[:=].*"))
             throw new JSONException("Playlist name requires privacy review");
         try {
-            java.nio.charset.StandardCharsets.UTF_8.newEncoder().encode(java.nio.CharBuffer.wrap(text));
+            StandardCharsets.UTF_8.newEncoder().encode(CharBuffer.wrap(text));
         } catch (Exception invalid) {
             throw new JSONException("Invalid playlist name encoding");
         }
