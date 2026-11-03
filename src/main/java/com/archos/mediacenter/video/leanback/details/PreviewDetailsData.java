@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.content.Context;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.io.InterruptedIOException;
@@ -122,7 +124,7 @@ final class PreviewDetailsData {
     }
 
     private static JSONObject cachedSection(Context c, String kind, long id, String section) {
-        JSONObject envelope = com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(c, kind, id, section);
+        JSONObject envelope = PreviewMetadataCache.read(c, kind, id, section);
         return envelope == null ? null : envelope.optJSONObject("data");
     }
 
@@ -229,7 +231,7 @@ final class PreviewDetailsData {
             result.credits = source.load("credits");
             publish(result, progress);
         } catch (Exception unavailable) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("credits_metadata_unavailable");
+            Diagnostics.event("credits_metadata_unavailable");
         }
         OmdbSupplement omdb = OmdbSupplement.production(c);
         if (omdb.enabled())
@@ -242,12 +244,12 @@ final class PreviewDetailsData {
         try {
             result.classification = source.load("tv".equals(kind) ? "content_ratings" : "release_dates");
         } catch (Exception unavailable) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("classification_metadata_unavailable");
+            Diagnostics.event("classification_metadata_unavailable");
         }
         try {
             result.alternatives = source.load("alternative_titles");
         } catch (Exception unavailable) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("alternative_titles_unavailable");
+            Diagnostics.event("alternative_titles_unavailable");
         }
         publish(result, progress);
         // Deliver extras before potentially many season/provider lookups.
@@ -255,7 +257,7 @@ final class PreviewDetailsData {
             addExtras(result, source.load("videos"));
             publish(result, progress);
         } catch (Exception error) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("extras_metadata_unavailable", error);
+            Diagnostics.error("extras_metadata_unavailable", error);
         }
         if ("tv".equals(kind)) {
             JSONArray seasons = result.details.optJSONArray("seasons");
@@ -272,7 +274,7 @@ final class PreviewDetailsData {
                         if (episodes != null)
                             result.episodes.put(number, episodes);
                     } catch (Exception unavailable) {
-                        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                        Diagnostics.event(
                             "season_metadata_unavailable", "season", number);
                     }
                     if (StreamingRepository.prefs(c).getBoolean(StreamingRepository.ENABLED, false)
@@ -281,7 +283,7 @@ final class PreviewDetailsData {
                             result.seasonAvailability.put(
                                 number, StreamingRepository.load(c, kind, id, StreamingRepository.country(c), number));
                         } catch (Exception unavailable) {
-                            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                            Diagnostics.event(
                                 "season_availability_unavailable", "season", number);
                         }
                     publish(result, progress);
@@ -291,7 +293,7 @@ final class PreviewDetailsData {
         try {
             candidates = source.load("recommendations").optJSONArray("results");
         } catch (Exception error) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("recommendations_unavailable", error);
+            Diagnostics.error("recommendations_unavailable", error);
             return result;
         }
         if (candidates == null)
@@ -323,7 +325,7 @@ final class PreviewDetailsData {
                 if (!offers.isEmpty())
                     result.related.add(new Remote(title, offers.get(0).provider));
             } catch (Exception error) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("discovery_availability_unavailable", error);
+                Diagnostics.error("discovery_availability_unavailable", error);
             }
         }
         return result;
