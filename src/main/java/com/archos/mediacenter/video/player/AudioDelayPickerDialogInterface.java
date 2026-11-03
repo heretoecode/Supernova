@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.player;
 
 import android.os.Message;
 
+/** Defines callbacks and updates for an audio delay picker dialog. */
 public interface AudioDelayPickerDialogInterface {
 
     public interface OnAudioDelayChangeListener {
