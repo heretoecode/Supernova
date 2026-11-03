@@ -3,6 +3,8 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.content.Context;
 import androidx.preference.*;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.*;
 import org.json.*;
 
@@ -74,8 +76,8 @@ final class SettingsRegistry {
     }
 
     private void read(Context context, String asset, Set<String> ids) {
-        try (java.io.InputStream stream = context.getAssets().open(asset)) {
-            java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        try (InputStream stream = context.getAssets().open(asset)) {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
             int n;
             while ((n = stream.read(buffer)) != -1)
