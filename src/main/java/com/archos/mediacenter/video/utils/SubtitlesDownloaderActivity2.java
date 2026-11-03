@@ -58,6 +58,7 @@ import com.archos.mediacenter.video.ui.NovaProgressDialog;
 import com.archos.mediaprovider.ArchosMediaIntent;
 import com.archos.mediaprovider.video.VideoStore;
 
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -607,7 +608,7 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
             if (previewUi()) {
                 if (isCancelled || isFinishing() || isDestroyed())
                     return;
-                java.util.function.Consumer<OpenSubtitlesSearchResult> accept = selected -> {
+                Consumer<OpenSubtitlesSearchResult> accept = selected -> {
                     previewNotice = null;
                     showPreviewProgress("Downloading selected subtitle…");
                     new Thread(() -> {
