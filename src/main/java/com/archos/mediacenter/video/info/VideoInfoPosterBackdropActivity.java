@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.utils.MiscUtils;
 
+/** Hosts the poster and backdrop selection screen for a video. */
 public class VideoInfoPosterBackdropActivity extends FragmentActivity {
     public static final  String EXTRA_VIDEO = "extra_video";
     public static final String EXTRA_CHOOSE_BACKDROP = "choose_backdrop";
