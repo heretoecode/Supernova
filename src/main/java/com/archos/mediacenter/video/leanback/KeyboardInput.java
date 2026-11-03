@@ -2,11 +2,13 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.Gravity;
 import android.view.View;
+import androidx.appcompat.widget.AppCompatEditText;
 import java.util.ArrayList;
 
 /** Editable/accessibility field without a redundant remote focus stop. */
-public final class KeyboardInput extends androidx.appcompat.widget.AppCompatEditText {
+public final class KeyboardInput extends AppCompatEditText {
     private final Paint caret = new Paint();
 
     public KeyboardInput(Context c) {
@@ -15,7 +17,7 @@ public final class KeyboardInput extends androidx.appcompat.widget.AppCompatEdit
         setSingleLine(true);
         setMaxLines(1);
         setIncludeFontPadding(false);
-        setGravity(android.view.Gravity.CENTER_VERTICAL);
+        setGravity(Gravity.CENTER_VERTICAL);
         setMinimumHeight(0);
         setMinHeight(0);
         caret.setColor(0xffb9dcf4);
