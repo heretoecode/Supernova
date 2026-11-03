@@ -42,6 +42,7 @@ import com.archos.mediacenter.video.EntryActivity;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.UiChoiceDialog;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
+import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.PermissionChecker;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
@@ -129,7 +130,7 @@ public class MainActivityLeanback extends LeanbackActivity {
         ((CustomApplication) getApplication()).loadLocale();
 
         super.onCreate(savedInstanceState);
-        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new com.archos.mediacenter.video.leanback.PreviewStartupSurface(this));
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new PreviewStartupSurface(this));
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             private long mBackStartedAt;
@@ -166,7 +167,7 @@ public class MainActivityLeanback extends LeanbackActivity {
         // Check if user disabled "Always start in TV interface" - if so, redirect to phone UI
         if (!UiChoiceDialog.applicationIsInLeanbackMode(this)) {
             if (log.isDebugEnabled()) log.debug("onCreate: User disabled leanback mode, redirecting to MainActivity");
-            Intent i = new Intent(this, com.archos.mediacenter.video.browser.MainActivity.class);
+            Intent i = new Intent(this, MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             if (getIntent().getData() != null) {
                 i.setData(getIntent().getData());
