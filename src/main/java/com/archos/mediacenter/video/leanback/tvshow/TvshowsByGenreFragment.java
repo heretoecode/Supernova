@@ -66,7 +66,7 @@ public class TvshowsByGenreFragment extends TvshowsByFragment {
     @Override
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie) return new TvshowsNoAnimeByGenreLoader(context);
-        else return new TvshowsByGenreLoader(context);
+            else return new TvshowsByGenreLoader(context);
     }
 
     @Override
