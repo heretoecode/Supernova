@@ -123,6 +123,7 @@ import java.util.concurrent.Executors;
 /*
  * This is the launch class for the video browser.
  */
+/** Hosts the video browser and handles navigation, permissions and resume playback. */
 public class MainActivity extends BrowserActivity implements ExternalPlayerWithResultStarter {
 
     private static final Logger log = LoggerFactory.getLogger(MainActivity.class);
