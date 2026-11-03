@@ -1,6 +1,11 @@
 {
- "purpose": "Full unit suite after Codex combined run (torrent removal, NOVA ports, indentation, @Override)",
+ "purpose": "0.154 five bug fixes: new tests plus neighbours",
  "tests": [
-  "com.archos.*"
+  "com.archos.mediacenter.video.utils.SubtitleCacheRenameTest",
+  "com.archos.mediacenter.video.leanback.network.FtpPortInputTest",
+  "com.archos.mediacenter.video.leanback.network.NetworkCredentialFlowTest",
+  "com.archos.mediacenter.video.leanback.search.VideoSearchProviderInputTest",
+  "com.archos.mediacenter.video.player.SkipPromptMasterSwitchTest",
+  "com.archos.mediacenter.video.player.SegmentSkippingPolicyTest"
  ]
 }
