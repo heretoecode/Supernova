@@ -1,8 +1,12 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.os.Looper;
+import android.view.View;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.time.Duration;
 import java.util.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,14 +43,14 @@ public class PreviewLibraryCompositionTest {
             host.get().setContentView(pages);
             com.archos.mediaprovider.ImportState.VIDEO.setState(
                 com.archos.mediaprovider.ImportState.State.INITIAL_IMPORT);
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean("supernova_welcome_dismissed", true)
                 .commit();
             Snapshot source = new Snapshot();
             pages.setSnapshot(source);
             PreviewPagesTest.layout(pages);
-            android.view.View info = pages.findViewWithTag("hero:info");
+            View info = pages.findViewWithTag("hero:info");
             assertNotNull(info);
             assertTrue(info.requestFocus());
             assertNull(pages.findViewWithTag("browser.view"));
@@ -54,10 +58,10 @@ public class PreviewLibraryCompositionTest {
             assertTrue(cells.stream().anyMatch(cell -> cell.value == HomePlaceholder.Kind.HERO));
             assertFalse(cells.stream().anyMatch(cell -> "Continue Watching".equals(cell.title)));
             com.archos.mediaprovider.ImportState.VIDEO.setState(com.archos.mediaprovider.ImportState.State.IDLE);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1100));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
             PreviewPagesTest.layout(pages);
             assertSame("Progress refresh retains More Info", info, pages.findFocus());
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean("supernova_onboarding_complete", true)
                 .commit();
