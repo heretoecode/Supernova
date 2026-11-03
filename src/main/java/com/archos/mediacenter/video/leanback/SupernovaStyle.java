@@ -21,7 +21,8 @@ import android.widget.TextView;
  * are halved here (e.g. 3px focus outline = 1.5dp).
  */
 public final class SupernovaStyle {
-    private SupernovaStyle() { }
+    private SupernovaStyle() {
+    }
 
     // ---- tokens --------------------------------------------------------------------------------
     /** Glass: navy at 97% opacity. Text behind a panel must not be readable. */
@@ -64,7 +65,9 @@ public final class SupernovaStyle {
         TILE
     }
 
-    public static int dp(Context c, float value) { return Math.round(value * c.getResources().getDisplayMetrics().density); }
+    public static int dp(Context c, float value) {
+        return Math.round(value * c.getResources().getDisplayMetrics().density);
+    }
 
     // ---- buttons and tiles ---------------------------------------------------------------------
 
@@ -79,31 +82,33 @@ public final class SupernovaStyle {
         int edge = surface == Surface.TILE ? 0x2EFFFFFF : 0;
         StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, dp(c, 6));
-        states.addState(new int[]{android.R.attr.state_focused}, focused);
-        states.addState(new int[]{android.R.attr.state_pressed}, focused);
-        states.addState(new int[]{-android.R.attr.state_enabled}, new Box(withAlpha(rest, DISABLED_ALPHA), edge, dp(c, 1), radius, 0));
-        states.addState(new int[]{android.R.attr.state_selected}, new Box(rest, Color.WHITE, Math.max(1, dp(c, 1)), radius, 0));
-        states.addState(new int[]{}, new Box(rest, edge, Math.max(1, dp(c, 1)), radius, 0));
+        states.addState(new int[] {android.R.attr.state_focused}, focused);
+        states.addState(new int[] {android.R.attr.state_pressed}, focused);
+        states.addState(new int[] {-android.R.attr.state_enabled},
+                        new Box(withAlpha(rest, DISABLED_ALPHA), edge, dp(c, 1), radius, 0));
+        states.addState(new int[] {android.R.attr.state_selected},
+                        new Box(rest, Color.WHITE, Math.max(1, dp(c, 1)), radius, 0));
+        states.addState(new int[] {}, new Box(rest, edge, Math.max(1, dp(c, 1)), radius, 0));
         return states;
     }
 
     /** Text and icon colour that follows the button state: black on the white focus box, white otherwise. */
     public static ColorStateList buttonContent() {
         return new ColorStateList(
-                new int[][]{{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {-android.R.attr.state_enabled}, {}},
-                new int[]{FOCUS_TEXT, FOCUS_TEXT, 0x66FFFFFF, TEXT});
+            new int[][] {
+                {android.R.attr.state_focused}, {android.R.attr.state_pressed}, {-android.R.attr.state_enabled}, {}},
+            new int[] {FOCUS_TEXT, FOCUS_TEXT, 0x66FFFFFF, TEXT});
     }
 
     /** Destructive action text (e.g. Delete): soft red at rest, deep red on the white focus box. */
     public static ColorStateList destructiveContent() {
-        return new ColorStateList(
-                new int[][]{{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},
-                new int[]{DESTRUCTIVE_ON_FOCUS, DESTRUCTIVE_ON_FOCUS, DESTRUCTIVE});
+        return new ColorStateList(new int[][] {{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},
+                                  new int[] {DESTRUCTIVE_ON_FOCUS, DESTRUCTIVE_ON_FOCUS, DESTRUCTIVE});
     }
 
     /** Colour for a label inside a button group: black while the group shows the focus box (activated). */
     public static ColorStateList groupLabelContent() {
-        return new ColorStateList(new int[][]{{android.R.attr.state_activated}, {}}, new int[]{FOCUS_TEXT, TEXT});
+        return new ColorStateList(new int[][] {{android.R.attr.state_activated}, {}}, new int[] {FOCUS_TEXT, TEXT});
     }
 
     /**
@@ -112,23 +117,29 @@ public final class SupernovaStyle {
      * refreshes the content that mirrors it: children copying the button's state, and group labels.
      */
     static final class ButtonStates extends StateListDrawable {
-        @Override protected boolean onStateChange(int[] state) {
+        @Override
+        protected boolean onStateChange(int[] state) {
             boolean changed = super.onStateChange(state);
             Callback owner = getCallback();
             // Safety net for the global rule: a screen that later sets a flat text colour on a button would
             // be white on white when focused, so the state-following colours are restored.
-            if (owner instanceof TextView) keepContentReadable((TextView) owner);
+            if (owner instanceof TextView)
+                keepContentReadable((TextView)owner);
             if (owner instanceof android.view.ViewGroup) {
                 boolean boxed = false;
-                for (int s : state) if (s == android.R.attr.state_focused || s == android.R.attr.state_pressed) boxed = true;
-                refreshContent((android.view.ViewGroup) owner, boxed);
+                for (int s : state)
+                    if (s == android.R.attr.state_focused || s == android.R.attr.state_pressed)
+                        boxed = true;
+                refreshContent((android.view.ViewGroup)owner, boxed);
             }
             return changed;
         }
 
         private static void keepContentReadable(TextView text) {
-            if (text.getTextColors().isStateful()) return;
-            boolean secondary = Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
+            if (text.getTextColors().isStateful())
+                return;
+            boolean secondary =
+                Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
             text.setTextColor(secondary ? secondaryContent() : buttonContent());
         }
 
@@ -138,9 +149,11 @@ public final class SupernovaStyle {
                 if (Boolean.TRUE.equals(child.getTag(com.archos.mediacenter.video.R.id.supernova_group_label))) {
                     child.setActivated(boxed);
                 } else if (child.isDuplicateParentStateEnabled() && !group.addStatesFromChildren()) {
-                    if (child instanceof TextView) keepContentReadable((TextView) child);
+                    if (child instanceof TextView)
+                        keepContentReadable((TextView)child);
                     child.refreshDrawableState();
-                    if (child instanceof android.view.ViewGroup) refreshContent((android.view.ViewGroup) child, boxed);
+                    if (child instanceof android.view.ViewGroup)
+                        refreshContent((android.view.ViewGroup)child, boxed);
                 }
             }
         }
@@ -148,9 +161,8 @@ public final class SupernovaStyle {
 
     /** Secondary text (e.g. a tile's description) that stays readable on both boxes. */
     public static ColorStateList secondaryContent() {
-        return new ColorStateList(
-                new int[][]{{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},
-                new int[]{TEXT_SECONDARY_ON_FOCUS, TEXT_SECONDARY_ON_FOCUS, TEXT_SECONDARY});
+        return new ColorStateList(new int[][] {{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},
+                                  new int[] {TEXT_SECONDARY_ON_FOCUS, TEXT_SECONDARY_ON_FOCUS, TEXT_SECONDARY});
     }
 
     /**
@@ -180,8 +192,13 @@ public final class SupernovaStyle {
     public static void tintIcons(TextView view) {
         Drawable[] d = view.getCompoundDrawablesRelative();
         boolean changed = false;
-        for (int i = 0; i < 4; i++) if (isMonochromeIcon(d[i])) { d[i] = new StateIcon(d[i]); changed = true; }
-        if (changed) view.setCompoundDrawablesRelative(d[0], d[1], d[2], d[3]);
+        for (int i = 0; i < 4; i++)
+            if (isMonochromeIcon(d[i])) {
+                d[i] = new StateIcon(d[i]);
+                changed = true;
+            }
+        if (changed)
+            view.setCompoundDrawablesRelative(d[0], d[1], d[2], d[3]);
     }
 
     /**
@@ -206,37 +223,44 @@ public final class SupernovaStyle {
             View child = group.getChildAt(i);
             if (child instanceof android.widget.ImageView) {
                 child.setBackgroundColor(Color.TRANSPARENT);
-                ((android.widget.ImageView) child).setImageTintList(buttonContent());
-                Drawable d = ((android.widget.ImageView) child).getDrawable();
-                if (isMonochromeIcon(d)) ((android.widget.ImageView) child).setImageDrawable(new StateIcon(d));
+                ((android.widget.ImageView)child).setImageTintList(buttonContent());
+                Drawable d = ((android.widget.ImageView)child).getDrawable();
+                if (isMonochromeIcon(d))
+                    ((android.widget.ImageView)child).setImageDrawable(new StateIcon(d));
             } else if (child instanceof TextView && !child.isFocusable()) {
                 // Not duplicateParentState: the group merges its children's states, so a label copying the
                 // group's state would recurse. ButtonStates marks group labels activated instead.
                 child.setDuplicateParentStateEnabled(false);
                 child.setTag(com.archos.mediacenter.video.R.id.supernova_group_label, Boolean.TRUE);
-                ((TextView) child).setTextColor(groupLabelContent());
+                ((TextView)child).setTextColor(groupLabelContent());
             }
         }
     }
 
     /** Background for any non-text view that behaves as a button (icon-only buttons, composite tiles). */
-    public static void styleContainer(View view, Surface surface) { applyButton(view, surface); }
+    public static void styleContainer(View view, Surface surface) {
+        applyButton(view, surface);
+    }
 
     private static void applyContent(View view, boolean root) {
-        if (!root) view.setDuplicateParentStateEnabled(true);
+        if (!root)
+            view.setDuplicateParentStateEnabled(true);
         if (view instanceof TextView) {
-            TextView text = (TextView) view;
-            boolean secondary = Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
+            TextView text = (TextView)view;
+            boolean secondary =
+                Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
             text.setTextColor(secondary ? secondaryContent() : buttonContent());
             tintIcons(text);
         } else if (view instanceof android.widget.ImageView) {
-            android.widget.ImageView image = (android.widget.ImageView) view;
+            android.widget.ImageView image = (android.widget.ImageView)view;
             Drawable d = image.getDrawable();
-            if (isMonochromeIcon(d)) image.setImageDrawable(new StateIcon(d));
+            if (isMonochromeIcon(d))
+                image.setImageDrawable(new StateIcon(d));
         }
         if (view instanceof android.view.ViewGroup) {
-            android.view.ViewGroup group = (android.view.ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) applyContent(group.getChildAt(i), false);
+            android.view.ViewGroup group = (android.view.ViewGroup)view;
+            for (int i = 0; i < group.getChildCount(); i++)
+                applyContent(group.getChildAt(i), false);
         }
     }
 
@@ -246,7 +270,8 @@ public final class SupernovaStyle {
      * would vanish on the white focus box.
      */
     public static final class FadedSpan extends android.text.style.CharacterStyle {
-        @Override public void updateDrawState(android.text.TextPaint paint) {
+        @Override
+        public void updateDrawState(android.text.TextPaint paint) {
             paint.setColor((paint.getColor() & 0x00FFFFFF) | 0xB8000000);
         }
     }
@@ -256,14 +281,18 @@ public final class SupernovaStyle {
      * artwork, bitmaps) and flags keep their own colours and are never recoloured.
      */
     static boolean isMonochromeIcon(Drawable d) {
-        if (d == null || d instanceof StateIcon) return false;
-        if (d instanceof PreviewLanguageIcon || d instanceof BitmapDrawable) return false;
-        return d instanceof PreviewIcon || d instanceof SubtitlePanelStyle.Icon || d instanceof ProviderMonogram
-                || d instanceof PreviewGenres.Icon || d instanceof VectorDrawable;
+        if (d == null || d instanceof StateIcon)
+            return false;
+        if (d instanceof PreviewLanguageIcon || d instanceof BitmapDrawable)
+            return false;
+        return d instanceof PreviewIcon || d instanceof SubtitlePanelStyle.Icon || d instanceof ProviderMonogram ||
+            d instanceof PreviewGenres.Icon || d instanceof VectorDrawable;
     }
 
     /** Marks a TextView inside a button or tile as secondary (description) text. */
-    public static void markSecondary(TextView text) { text.setTag(com.archos.mediacenter.video.R.id.supernova_secondary_text, Boolean.TRUE); }
+    public static void markSecondary(TextView text) {
+        text.setTag(com.archos.mediacenter.video.R.id.supernova_secondary_text, Boolean.TRUE);
+    }
 
     /**
      * Wraps any icon so it is drawn in the button's content colour for the current state
@@ -273,37 +302,96 @@ public final class SupernovaStyle {
         private final Drawable icon;
         private final ColorStateList colours = buttonContent();
         private int current = 0;
+
         public StateIcon(Drawable icon) {
             this.icon = icon;
             icon.setCallback(this);
             apply(colours.getDefaultColor());
         }
-        public Drawable icon() { return icon; }
-        private void apply(int colour) { if (colour != current) { current = colour; icon.setColorFilter(new PorterDuffColorFilter(colour, PorterDuff.Mode.SRC_IN)); } }
-        @Override public boolean isStateful() { return true; }
-        @Override protected boolean onStateChange(int[] state) {
+
+        public Drawable icon() {
+            return icon;
+        }
+
+        private void apply(int colour) {
+            if (colour != current) {
+                current = colour;
+                icon.setColorFilter(new PorterDuffColorFilter(colour, PorterDuff.Mode.SRC_IN));
+            }
+        }
+
+        @Override
+        public boolean isStateful() {
+            return true;
+        }
+
+        @Override
+        protected boolean onStateChange(int[] state) {
             int before = current;
             apply(colours.getColorForState(state, colours.getDefaultColor()));
             icon.setState(state);
-            if (before != current) { invalidateSelf(); return true; }
+            if (before != current) {
+                invalidateSelf();
+                return true;
+            }
             return false;
         }
-        @Override protected void onBoundsChange(Rect bounds) { icon.setBounds(bounds); }
-        @Override public void draw(Canvas canvas) { icon.draw(canvas); }
-        @Override public int getIntrinsicWidth() { return icon.getIntrinsicWidth(); }
-        @Override public int getIntrinsicHeight() { return icon.getIntrinsicHeight(); }
-        @Override public void setAlpha(int a) { icon.setAlpha(a); }
-        @Override public void setColorFilter(ColorFilter f) { /* colour follows state only */ }
-        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
-        @Override public void invalidateDrawable(Drawable who) { invalidateSelf(); }
-        @Override public void scheduleDrawable(Drawable who, Runnable what, long when) { scheduleSelf(what, when); }
-        @Override public void unscheduleDrawable(Drawable who, Runnable what) { unscheduleSelf(what); }
+
+        @Override
+        protected void onBoundsChange(Rect bounds) {
+            icon.setBounds(bounds);
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            icon.draw(canvas);
+        }
+
+        @Override
+        public int getIntrinsicWidth() {
+            return icon.getIntrinsicWidth();
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            return icon.getIntrinsicHeight();
+        }
+
+        @Override
+        public void setAlpha(int a) {
+            icon.setAlpha(a);
+        }
+
+        @Override public void setColorFilter(ColorFilter f) { /* colour follows state only */
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+
+        @Override
+        public void invalidateDrawable(Drawable who) {
+            invalidateSelf();
+        }
+
+        @Override
+        public void scheduleDrawable(Drawable who, Runnable what, long when) {
+            scheduleSelf(what, when);
+        }
+
+        @Override
+        public void unscheduleDrawable(Drawable who, Runnable what) {
+            unscheduleSelf(what);
+        }
     }
 
     // ---- glass ---------------------------------------------------------------------------------
 
     /** The one material for every pop-up, menu, dialog and floating panel. */
-    public static Drawable glass(Context c) { return glass(c, PANEL_RADIUS_DP); }
+    public static Drawable glass(Context c) {
+        return glass(c, PANEL_RADIUS_DP);
+    }
 
     public static Drawable glass(Context c, float radiusDp) {
         return new Box(GLASS, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, radiusDp), 0);
@@ -314,8 +402,8 @@ public final class SupernovaStyle {
     /** Row focus: white outline, no fill change. Use with {@link #ROW_INSET_DP} padding inside the row. */
     public static StateListDrawable rowFocus(Context c) {
         StateListDrawable states = new StateListDrawable();
-        states.addState(new int[]{android.R.attr.state_focused}, rowFocusOutline(c));
-        states.addState(new int[]{}, new ColorDrawable(Color.TRANSPARENT));
+        states.addState(new int[] {android.R.attr.state_focused}, rowFocusOutline(c));
+        states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
         return states;
     }
 
@@ -335,7 +423,8 @@ public final class SupernovaStyle {
         Context c = row.getContext();
         row.setBackground(rowFocus(c));
         int inset = dp(c, ROW_INSET_DP);
-        row.setPadding(Math.max(row.getPaddingLeft(), inset), row.getPaddingTop(), Math.max(row.getPaddingRight(), inset), row.getPaddingBottom());
+        row.setPadding(Math.max(row.getPaddingLeft(), inset), row.getPaddingTop(),
+                       Math.max(row.getPaddingRight(), inset), row.getPaddingBottom());
     }
 
     // ---- menus ---------------------------------------------------------------------------------
@@ -374,7 +463,9 @@ public final class SupernovaStyle {
 
     // ---- drawing -------------------------------------------------------------------------------
 
-    static int withAlpha(int colour, int alpha) { return (colour & 0x00FFFFFF) | (Math.round(Color.alpha(colour) * alpha / 255f) << 24); }
+    static int withAlpha(int colour, int alpha) {
+        return (colour & 0x00FFFFFF) | (Math.round(Color.alpha(colour) * alpha / 255f) << 24);
+    }
 
     /**
      * Rounded fill with an optional outline and an optional soft shadow drawn outside the bounds
@@ -386,13 +477,29 @@ public final class SupernovaStyle {
         private final float radius;
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private int alpha = 255;
+
         Box(int fill, int edge, int stroke, float radius, int shadow) {
-            this.fill = fill; this.edge = edge; this.stroke = stroke; this.radius = radius; this.shadow = shadow;
+            this.fill = fill;
+            this.edge = edge;
+            this.stroke = stroke;
+            this.radius = radius;
+            this.shadow = shadow;
         }
-        public int fill() { return fill; }
-        public int edge() { return edge; }
-        public float radius() { return radius; }
-        @Override public void draw(Canvas canvas) {
+
+        public int fill() {
+            return fill;
+        }
+
+        public int edge() {
+            return edge;
+        }
+
+        public float radius() {
+            return radius;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
             RectF r = new RectF(getBounds());
             if (shadow > 0) {
                 paint.setStyle(Paint.Style.FILL);
@@ -416,9 +523,27 @@ public final class SupernovaStyle {
                 canvas.drawRoundRect(e, Math.max(0, radius - stroke / 2f), Math.max(0, radius - stroke / 2f), paint);
             }
         }
-        @Override public void setAlpha(int a) { alpha = a; invalidateSelf(); }
-        @Override public int getAlpha() { return alpha; }
-        @Override public void setColorFilter(ColorFilter f) { paint.setColorFilter(f); invalidateSelf(); }
-        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
+
+        @Override
+        public void setAlpha(int a) {
+            alpha = a;
+            invalidateSelf();
+        }
+
+        @Override
+        public int getAlpha() {
+            return alpha;
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter f) {
+            paint.setColorFilter(f);
+            invalidateSelf();
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 }
