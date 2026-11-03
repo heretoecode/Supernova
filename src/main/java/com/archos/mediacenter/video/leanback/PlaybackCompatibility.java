@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
+import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
@@ -16,7 +17,7 @@ final class PlaybackCompatibility {
     private boolean displayKnown;
     static PlaybackCompatibility read(Context context) {
         PlaybackCompatibility result=new PlaybackCompatibility();
-        if(android.os.Build.VERSION.SDK_INT>=24)try {
+        if(Build.VERSION.SDK_INT>=24)try {
             Display display=((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             if(display!=null){for(int type:display.getHdrCapabilities().getSupportedHdrTypes())result.hdr.add(type);result.displayKnown=true;}
         }catch(RuntimeException unavailable){/* Preserve the existing player fallback. */}
