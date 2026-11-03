@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import android.content.*;
+import android.database.sqlite.SQLiteDatabase;
 import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.DbHolder;
@@ -9,6 +10,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import com.archos.mediaprovider.video.ScraperProvider;
 import com.archos.mediaprovider.video.ScraperStore;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.robolectric.shadows.ShadowContentResolver;
 import com.archos.mediacenter.video.utils.backup.PortablePinnedTitles;
 import com.archos.mediacenter.video.utils.backup.PortablePinnedTitles.*;
@@ -152,14 +156,14 @@ public class PortablePinnedTitlesTest {
             try {
                 PortablePinnedTitles.read(context);
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         } finally {
             database.close();
         }
     }
 
-    private void seed(android.database.sqlite.SQLiteDatabase db) {
+    private void seed(SQLiteDatabase db) {
         db.execSQL(
             "INSERT INTO files(_id,remote_id,media_type,bookmark,Archos_hiddenByUser) VALUES(100,100,3,4444,1),(101,101,3,5555,0)");
         db.execSQL(
@@ -167,14 +171,14 @@ public class PortablePinnedTitlesTest {
         db.execSQL("INSERT INTO SHOW(_id,s_online_id,Nova_pinned,name_show) VALUES(20,789,8,'KEEP_SHOW')");
     }
 
-    private PortablePinnedTitles.Prepared replacement(Context context, android.database.sqlite.SQLiteDatabase db)
+    private PortablePinnedTitles.Prepared replacement(Context context, SQLiteDatabase db)
         throws Exception {
         JSONObject payload = PortablePinnedTitles.export(
             scope("replacement-source"), List.of(new Title(Kind.MOVIE, 1, 123, 400), new Title(Kind.TV, 2, 789, 800)));
         return PortablePinnedTitles.prepare(payload, PortablePinnedTitles.read(db));
     }
 
-    private Map<String, Long> pins(android.database.sqlite.SQLiteDatabase db) throws Exception {
+    private Map<String, Long> pins(SQLiteDatabase db) throws Exception {
         Map<String, Long> result = new LinkedHashMap<>();
         for (Title title : PortablePinnedTitles.read(db))
             result.put(title.target(), title.pinned);
@@ -219,24 +223,24 @@ public class PortablePinnedTitlesTest {
                 PortablePinnedTitles.replace(db, replacement(context, db), () -> true, count -> {
                 });
                 fail();
-            } catch (java.io.InterruptedIOException expected) {
+            } catch (InterruptedIOException expected) {
             }
             assertEquals(before, pins(db));
             try {
                 PortablePinnedTitles.replace(db, replacement(context, db),
                     () -> false, count -> {
-                        throw new java.io.IOException("Injected write checkpoint failure");
+                        throw new IOException("Injected write checkpoint failure");
                     });
                 fail();
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             assertEquals(before, pins(db));
-            var cancelled = new java.util.concurrent.atomic.AtomicBoolean(false);
+            var cancelled = new AtomicBoolean(false);
             try {
                 PortablePinnedTitles.replace(
                     db, replacement(context, db), cancelled::get, count -> cancelled.set(true));
                 fail();
-            } catch (java.io.InterruptedIOException expected) {
+            } catch (InterruptedIOException expected) {
             }
             assertEquals(before, pins(db));
             assertFalse(db.inTransaction());
@@ -262,7 +266,7 @@ public class PortablePinnedTitlesTest {
                             fail("Stale preview must not write");
                         });
                     fail();
-                } catch (java.io.IOException expected) {
+                } catch (IOException expected) {
                 }
                 assertEquals(afterUserChange, pins(db));
             }
