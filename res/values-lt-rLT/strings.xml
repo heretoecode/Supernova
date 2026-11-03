@@ -363,11 +363,8 @@
     <string name="exit">Išeiti</string>
     <!-- torrent -->
     <string name="error">Įvyko klaida</string>
-    <string name="error_loading_torrent">Klaida įkeliant torrent</string>
-    <string name="error_downloading_not_enough_space">Klaida atsisiunčiant torrent: trūksta vietos</string>
     <string name="loading_torrent">Įkeliamas torrent…</string>
     <string name="error_no_video_file">Nėra vaizdo įrašų</string>
-    <string name="torrent_file_to_play">Pasirinkite failą</string>
     <!-- Shortcuts -->
     <string name="add_ssh_server">Naršyti FTP serverį</string>
     <string name="add_ssh_shortcut">Pridėti kaip nuorodą</string>
@@ -579,16 +576,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Atsiuntimo kelias</string>
     <string name="torrent_blocklist">Blokuojami</string>
     <string name="blocklist_empty">URL neturi būti tuščia</string>
     <string name="blocklist_invalid">Blokuojamų sąrašas netinkamas</string>
-    <string name="blocklist_file_not_found">Failas nerastas</string>
     <string name="blocklist_success">Blokuojami atnaujinti</string>
-    <string name="blocklist_unknown_error">Nežinoma</string>
-    <string name="blocklist_not_loaded">Neįkelta</string>
-    <string name="torrent_blocklist_url">Blokuojamų URL</string>
     <string name="sdk_not_supported">Android 4.3 nepalaikomas.</string>
     <string name="manually_create_share">Pridėti indeksuojamą aplanką per URL</string>
     <string name="share_infos_incomplete">Turite įvesti kelią</string>
