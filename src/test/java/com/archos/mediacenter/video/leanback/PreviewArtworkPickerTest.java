@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.*;
+import android.os.Looper;
 import android.view.*;
 import com.archos.mediascraper.ScraperImage;
 import com.squareup.picasso.Picasso;
@@ -27,9 +28,9 @@ public class PreviewArtworkPickerTest {
             Dialog dialog=PreviewArtworkPicker.show(host.get(),"Posters",Arrays.asList(first,second),first,true,(image,done)->{writes.incrementAndGet();completion.set(done);});
             View root=dialog.getWindow().getDecorView(),a=root.findViewWithTag("artwork-check:0"),b=root.findViewWithTag("artwork-check:1");
             View target=root.findViewWithTag("artwork:1");target.requestFocus();target.performClick();target.performClick();assertEquals(1,writes.get());
-            completion.get().accept(false);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            completion.get().accept(false);Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals(View.VISIBLE,a.getVisibility());assertEquals(View.INVISIBLE,b.getVisibility());assertTrue(dialog.isShowing());
-            target.performClick();completion.get().accept(true);Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            target.performClick();completion.get().accept(true);Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertEquals(View.INVISIBLE,a.getVisibility());assertEquals(View.VISIBLE,b.getVisibility());assertTrue(dialog.isShowing());assertSame(target,dialog.getCurrentFocus());
             dialog.dismiss();
         }finally{host.pause().stop().destroy();}
