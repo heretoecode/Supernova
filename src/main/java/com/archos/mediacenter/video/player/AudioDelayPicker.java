@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.archos.mediacenter.video.R;
 
 
+/** Provides controls for adjusting audio delay during playback. */
 public class AudioDelayPicker extends AudioDelayPickerAbstract {
 
     private final long initialRepeatDelay = 350;
