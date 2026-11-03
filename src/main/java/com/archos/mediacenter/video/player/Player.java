@@ -430,7 +430,8 @@ public class Player implements IPlayerControl,
         mAudioManager = (AudioManager) mContext.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mEffectRenderer = new VideoEffectRenderer(mContext, VideoEffect.getDefaultType());
         LibAvos.init(mContext); // Join asynchronous library startup before JNI.
-        mSubtitleEngine = new SubtitleEngine(); // NEW: Create the JNI wrapper
+        if (LibAvos.isAvailable())
+            mSubtitleEngine = new SubtitleEngine(); // NEW: Create the JNI wrapper
         setSurfaceController(surfaceController);
     }
     public void setWindow(Window window){
