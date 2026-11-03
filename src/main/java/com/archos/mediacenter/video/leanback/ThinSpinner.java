@@ -1,9 +1,11 @@
 package com.archos.mediacenter.video.leanback;
 import android.graphics.*;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 
 /** Thin indeterminate ring; driven only while its host is visible. */
-public final class ThinSpinner extends Drawable implements android.graphics.drawable.Animatable, Runnable {
+public final class ThinSpinner extends Drawable implements Animatable, Runnable {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean running;
     private float angle;
@@ -43,7 +45,7 @@ public final class ThinSpinner extends Drawable implements android.graphics.draw
             return;
         angle = (angle + 9) % 360;
         invalidateSelf();
-        scheduleSelf(this, android.os.SystemClock.uptimeMillis() + 25);
+        scheduleSelf(this, SystemClock.uptimeMillis() + 25);
     }
 
     public void setAlpha(int a) {
