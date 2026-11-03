@@ -16,6 +16,7 @@ import org.robolectric.shadows.ShadowSystemClock;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks diagnostic defaults, opt-out persistence and classification of heuristic and navigation events. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class DiagnosticsRefinementTest {
