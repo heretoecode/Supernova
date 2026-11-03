@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
-import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediascraper.ShowTags;
 
 import java.text.SimpleDateFormat;
