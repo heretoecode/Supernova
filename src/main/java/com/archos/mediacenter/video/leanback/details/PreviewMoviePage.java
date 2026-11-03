@@ -431,7 +431,7 @@ public final class PreviewMoviePage extends ScrollView {
             Action offer=offers.get(0);
             // Approved 2 Nov 2026: provider name + one generic "open externally" icon, same size and style as Resume/More.
             String provider=offer instanceof com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction?((com.archos.mediacenter.video.streaming.StreamingActionPresenter.LogoAction)offer).provider.name:String.valueOf(offer.getLabel1());
-            TextView open=button(provider,()->action.accept(offer));PreviewIcon.apply(open,"external",16);SupernovaStyle.tintIcons(open);open.setTag(offer.getId());open.setContentDescription("Open in "+provider);
+            TextView open=button(provider,()->action.accept(offer));PreviewIcon.apply(open,"external",16);SupernovaStyle.tintIcons(open);open.setTag(offer.getId());open.setContentDescription("Open "+provider);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,-2);lp.leftMargin=dp(18);providerActions.addView(open,lp);
 
         }

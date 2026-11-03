@@ -26,6 +26,6 @@ public class Supernova139ProviderMarksTest {
     }
     @Test public void unverifiedBrandOrArbitraryPathUsesSemanticFallbackWithoutLoadingOpaqueCatalogueArt(){
         Application context=RuntimeEnvironment.getApplication();ImageView icon=new ImageView(context);assertNotEquals(0,PreviewProviderIcons.resource("Disney+"));assertEquals(0,PreviewProviderIcons.resource("Unverified service"));
-        PreviewProviderIcons.bind(icon,"/opaque-square.png",1,"provider.choice");assertTrue(icon.getDrawable() instanceof com.archos.mediacenter.video.leanback.PreviewIcon);assertNull(icon.getBackground());assertNull(icon.getColorFilter());
+        PreviewProviderIcons.bind(icon,"/opaque-square.png",1,"provider.choice");assertTrue("approved 2 Nov 2026: uniform initials tile for providers without a logo",icon.getDrawable() instanceof com.archos.mediacenter.video.leanback.ProviderMonogram);assertNull(icon.getBackground());assertNull(icon.getColorFilter());
     }
 }

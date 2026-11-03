@@ -1,6 +1,10 @@
 {
- "purpose": "0.153 full unit suite sweep (find every old-style assertion)",
+ "purpose": "0.153 sweep fixes: updated old-style expectations; CategoryRowsDiffTest alone",
  "tests": [
-  "com.archos.*"
+  "com.archos.mediacenter.video.streaming.Supernova139ProviderMarksTest",
+  "com.archos.mediacenter.video.leanback.PreviewHomeVisualTest",
+  "com.archos.mediacenter.video.leanback.CategoryRowsDiffTest",
+  "com.archos.mediacenter.video.streaming.StreamingProviderFocusTest",
+  "com.archos.mediacenter.video.leanback.SupernovaStyleTest"
  ]
 }

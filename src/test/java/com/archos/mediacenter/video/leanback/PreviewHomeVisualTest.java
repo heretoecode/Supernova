@@ -19,22 +19,26 @@ public class PreviewHomeVisualTest {
  @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
     @Before public void remoteInputMode(){androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);}
-    @Test public void genreHeaderRemainsVisibleAndChoicesPersistWithoutDone()throws Exception{
+    /** Approved global rule (2 Nov 2026): pop-up menus have no title; the match mode is still announced to TalkBack. */
+    @Test public void genreMenuHasNoTitleAndChoicesPersistWithoutDone()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             PreviewGenres.choose(host.get(),Arrays.asList(PreviewGenres.NAMES),new HashSet<>(Arrays.asList("Drama","Science Fiction")),values->{});
             Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();View root=measure(dialog);
-            View heading=PreviewPagesTest.findText(root,"Genres · Match Any Selected");
-            assertNull(PreviewPagesTest.findText(root,"Done"));View done=(View)PreviewPagesTest.findText(root,"Western").getParent();
+            assertNull("no visible title",PreviewPagesTest.findText(root,"Genres · Match Any Selected"));
+            assertNotNull("title kept for accessibility",findDescription(root,"Genres · Match Any Selected"));
+            assertNull(PreviewPagesTest.findText(root,"Done"));View western=(View)PreviewPagesTest.findText(root,"Western").getParent();
             PreviewPagesTest.capture(root,"home-genres-initial");
-            Rect headerBefore=bounds(root,heading);
-            android.graphics.Bitmap headingBefore=renderRegion(root,heading);
             ScrollView scroll=findScroll(root);assertNotNull(scroll);assertTrue(scroll.getChildAt(0).getHeight()>scroll.getHeight());
-            scroll.fullScroll(View.FOCUS_DOWN);done.requestFocus();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();root=measure(dialog);
-            assertTrue(done.hasFocus());assertEquals(headerBefore,bounds(root,heading));bounds(root,done);
-            assertTrue("Scrolling rows must not paint over the fixed heading",headingBefore.sameAs(renderRegion(root,heading)));
+            scroll.fullScroll(View.FOCUS_DOWN);western.requestFocus();Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();root=measure(dialog);
+            assertTrue(western.hasFocus());bounds(root,western);
             PreviewPagesTest.capture(root,"home-genres-footer-focused");dialog.dismiss();
         }finally{host.pause().stop().destroy();}
+    }
+    private static View findDescription(View v,String text){
+        if(v.getContentDescription()!=null&&v.getContentDescription().toString().contains(text))return v;
+        if(v instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)v).getChildCount();i++){View found=findDescription(((android.view.ViewGroup)v).getChildAt(i),text);if(found!=null)return found;}
+        return null;
     }
     @Test public void deleteConfirmationKeepsBothButtonsInsideWindow()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
