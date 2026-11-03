@@ -43,6 +43,7 @@ public class CollectionCursorMapper implements CompatibleCursorMapper {
     public CollectionCursorMapper() {
     }
 
+    @Override
     public void bindColumns(Cursor cursor) {
         mIdColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID);
         mNameColumn = cursor.getColumnIndexOrThrow(CollectionLoader.COLUMN_NAME);
@@ -57,6 +58,7 @@ public class CollectionCursorMapper implements CompatibleCursorMapper {
         mPinnedColumn = cursor.getColumnIndex(VideoStore.Video.VideoColumns.NOVA_PINNED);
     }
 
+    @Override
     public Object bind(Cursor cursor) {
         return new Collection(
                 cursor.getLong(mIdColumn),
