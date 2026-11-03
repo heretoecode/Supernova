@@ -1,11 +1,11 @@
 package com.archos.mediacenter.video.leanback.settings;
 import android.app.Dialog;
-import android.content.Context;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.*;
 import java.util.*;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
+import java.util.function.Function;
 
 final class PreviewPreferenceDialogs {
     static boolean show(PreferenceFragmentCompat f, Preference p) {
@@ -144,7 +144,7 @@ final class PreviewPreferenceDialogs {
 
     private static void edit(PreferenceFragmentCompat f, EditTextPreference p) {
         boolean omdb = com.archos.mediacenter.video.metadata.OmdbSupplement.PREF_API_KEY.equals(p.getKey());
-        java.util.function.Function<String, String> validate =
+        Function<String, String> validate =
             omdb ? com.archos.mediacenter.video.metadata.OmdbSupplement::keyProblem : value -> null;
         com.archos.mediacenter.video.leanback.PreviewTextInput.showValidated(f.requireContext(),
             String.valueOf(p.getTitle()), p.getText() == null ? "" : p.getText(), 512, validate, value -> {
