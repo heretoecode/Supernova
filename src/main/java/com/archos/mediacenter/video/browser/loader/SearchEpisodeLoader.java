@@ -19,6 +19,7 @@ import android.content.Context;
 import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads episodes matching a search query. */
 public class SearchEpisodeLoader extends VideoLoader {
 
     // search based on scraper title and file title
