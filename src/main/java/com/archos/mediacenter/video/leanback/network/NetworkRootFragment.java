@@ -89,7 +89,6 @@ import java.util.concurrent.Executors;
  * Created by vapillon on 20/04/15.
  */
 public class NetworkRootFragment extends BrowseSupportFragment {
-
     private static final Logger log = LoggerFactory.getLogger(NetworkRootFragment.class);
 
     public static final int DISCOVERY_REPEAT_DELAY_MS = 2000;
@@ -108,7 +107,6 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     private ListRow mUpnpDiscoveryListRow;
     private ListRow mNetworkShortcutsListRow;
 
-
     private ShortcutsLoaderTask mShortcutsLoaderTask;
 
     SambaDiscovery mSambaDiscovery;
@@ -120,25 +118,23 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     private NetworkShortcutsLoaderTask mNetworkShortcutsLoaderTask;
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
-    private final ActivityResultLauncher<Intent> detailsLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_CODE_SHORTCUTS_MODIFIED) {
-                    mShortcutsLoaderTask = new ShortcutsLoaderTask();
-                    mShortcutsLoaderTask.execute();
-                    mNetworkShortcutsLoaderTask = new NetworkShortcutsLoaderTask();
-                    mNetworkShortcutsLoaderTask.execute();
-                }
-            });
+    private final ActivityResultLauncher<Intent> detailsLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_CODE_SHORTCUTS_MODIFIED) {
+                mShortcutsLoaderTask = new ShortcutsLoaderTask();
+                mShortcutsLoaderTask.execute();
+                mNetworkShortcutsLoaderTask = new NetworkShortcutsLoaderTask();
+                mNetworkShortcutsLoaderTask.execute();
+            }
+        });
 
-    private final ActivityResultLauncher<Intent> browsingLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_CODE_SHORTCUTS_MODIFIED) {
-                    mShortcutsLoaderTask = new ShortcutsLoaderTask();
-                    mShortcutsLoaderTask.execute();
-                }
-            });
+    private final ActivityResultLauncher<Intent> browsingLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_CODE_SHORTCUTS_MODIFIED) {
+                mShortcutsLoaderTask = new ShortcutsLoaderTask();
+                mShortcutsLoaderTask.execute();
+            }
+        });
 
     // temp debug flag (to remove once re-scan feature is published)
     static boolean sDisplayRescanItem = false;
@@ -152,14 +148,37 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         mShortcutsLoaderTask.execute();
     }
 
-    @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-        View nativeView=super.onCreateView(inflater,parent,state);
-        if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
-        android.widget.FrameLayout stage=new android.widget.FrameLayout(requireContext());stage.addView(nativeView);nativeView.setVisibility(View.GONE);
-        com.archos.mediacenter.video.leanback.PreviewSources sources=new com.archos.mediacenter.video.leanback.PreviewSources(requireContext(),mRowsAdapter,mClickListener);stage.addView(sources);
-        com.archos.mediacenter.video.leanback.TopNavigation nav=new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(),stage,tab->{
-            if(tab==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));else if(tab==5)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));else{Intent home=new Intent(requireContext(),com.archos.mediacenter.video.leanback.MainActivityLeanback.class);home.putExtra("preview_tab",tab);home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);requireActivity().finish();}
-        },sources::atTop);nav.selectTab(3);return nav;
+    @Override
+    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+        View nativeView = super.onCreateView(inflater, parent, state);
+        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("try_new_ui", false))
+            return nativeView;
+        android.widget.FrameLayout stage = new android.widget.FrameLayout(requireContext());
+        stage.addView(nativeView);
+        nativeView.setVisibility(View.GONE);
+        com.archos.mediacenter.video.leanback.PreviewSources sources =
+            new com.archos.mediacenter.video.leanback.PreviewSources(requireContext(), mRowsAdapter, mClickListener);
+        stage.addView(sources);
+        com.archos.mediacenter.video.leanback.TopNavigation nav =
+            new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(), stage, tab -> {
+                if (tab == 4)
+                    startActivity(new Intent(
+                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                else if (tab == 5)
+                    startActivity(new Intent(
+                        requireContext(), com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                else {
+                    Intent home =
+                        new Intent(requireContext(), com.archos.mediacenter.video.leanback.MainActivityLeanback.class);
+                    home.putExtra("preview_tab", tab);
+                    home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(home);
+                    requireActivity().finish();
+                }
+            }, sources::atTop);
+        nav.selectTab(3);
+        return nav;
     }
 
     @Override
@@ -185,7 +204,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (log.isDebugEnabled()) log.debug("onResume");
+        if (log.isDebugEnabled())
+            log.debug("onResume");
         mOverlay.resume();
         updateBackground();
         setTitle(getString(R.string.network_storage));
@@ -197,7 +217,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         // Launch the shortcuts loading async task
         mShortcutsLoaderTask = new ShortcutsLoaderTask();
         mShortcutsLoaderTask.execute();
-        mNetworkShortcutsLoaderTask = new NetworkShortcutsLoaderTask(); //not in the same task because this isn't using the same cursor
+        mNetworkShortcutsLoaderTask =
+            new NetworkShortcutsLoaderTask(); //not in the same task because this isn't using the same cursor
         mNetworkShortcutsLoaderTask.execute();
 
         // Setup theme change listener
@@ -213,7 +234,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (log.isDebugEnabled()) log.debug("onCreate");
+        if (log.isDebugEnabled())
+            log.debug("onCreate");
         updateBackground();
 
         setTitle(getString(R.string.network_storage));
@@ -225,7 +247,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         // Launch the shortcuts loading async task
         mShortcutsLoaderTask = new ShortcutsLoaderTask();
         mShortcutsLoaderTask.execute();
-        mNetworkShortcutsLoaderTask = new NetworkShortcutsLoaderTask(); //not in the same task because this isn't using the same cursor
+        mNetworkShortcutsLoaderTask =
+            new NetworkShortcutsLoaderTask(); //not in the same task because this isn't using the same cursor
         mNetworkShortcutsLoaderTask.execute();
     }
 
@@ -243,9 +266,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         mDiscoveryRepeatHandler.post(mSmbDiscoveryRepeat);
 
         // Start UPnP
-        UpnpServiceManager
-            .startServiceIfNeeded(getActivity())
-            .addListener(mUpnpListener);
+        UpnpServiceManager.startServiceIfNeeded(getActivity()).addListener(mUpnpListener);
     }
 
     @Override
@@ -265,64 +286,70 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     }
 
     private void loadRows() {
-        if(mRowsAdapter==null)mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+        if (mRowsAdapter == null)
+            mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         setAdapter(mRowsAdapter);
 
         mRowsAdapter.clear();
         ClassPresenterSelector classPresenter = new ClassPresenterSelector();
         classPresenter.addClassPresenter(NetworkShortcut.class, new NetworkShortcutPresenter());
         classPresenter.addClassPresenter(Box.class, new RescanBoxItemPresenter()); // for the rescan item
-        
+
         //Indexed Folders
         mIndexedFoldersAdapter = new ArrayObjectAdapter(classPresenter);
-        mIndexedFoldersListRow = new ListRow(
-            new HeaderItem(getString(R.string.indexed_folders)),
-            mIndexedFoldersAdapter); 
+        mIndexedFoldersListRow =
+            new ListRow(new HeaderItem(getString(R.string.indexed_folders)), mIndexedFoldersAdapter);
         mRowsAdapter.add(mIndexedFoldersListRow);
 
         //Shared Folders
         mSmbDiscoveryAdapter = new ArrayObjectAdapter(new SmbSharePresenter());
-        mSmbDiscoveryListRow = new ListRow(
-                new HeaderItem(getString(R.string.network_shared_folders)),
-                mSmbDiscoveryAdapter);
+        mSmbDiscoveryListRow =
+            new ListRow(new HeaderItem(getString(R.string.network_shared_folders)), mSmbDiscoveryAdapter);
         mRowsAdapter.add(mSmbDiscoveryListRow);
 
         //DLNA Servers
         mUpnpDiscoveryAdapter = new ArrayObjectAdapter(new SmbSharePresenter());
-        mUpnpDiscoveryListRow = new ListRow(
-                new HeaderItem(getString(R.string.network_media_servers)),
-                mUpnpDiscoveryAdapter);
+        mUpnpDiscoveryListRow =
+            new ListRow(new HeaderItem(getString(R.string.network_media_servers)), mUpnpDiscoveryAdapter);
         mRowsAdapter.add(mUpnpDiscoveryListRow);
 
         //Network Shortcuts
         mNetworkShortcutsAdapter = new ArrayObjectAdapter(new NetworkShortcutPresenter());
-        mNetworkShortcutsListRow = new ListRow(
-                new HeaderItem(getString(R.string.network_shortcuts)),
-                mNetworkShortcutsAdapter);
+        mNetworkShortcutsListRow =
+            new ListRow(new HeaderItem(getString(R.string.network_shortcuts)), mNetworkShortcutsAdapter);
         mRowsAdapter.add(mNetworkShortcutsListRow);
 
         //Click Handler
-        mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());        setOnItemViewClickedListener(mClickListener);
+        mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());
+        setOnItemViewClickedListener(mClickListener);
     }
 
     OnItemViewClickedListener mClickListener = new OnItemViewClickedListener() {
         @Override
-        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (item instanceof GenericNetworkShortcut) { // network shortcuts are for now only *ftp*
-                if (log.isDebugEnabled()) log.debug("onItemClicked: GenericNetworkShortcut");
+        public void onItemClicked(
+            Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+            if (item instanceof GenericNetworkShortcut) {
+                // network shortcuts are for now only *ftp*
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: GenericNetworkShortcut");
                 Intent intent = new Intent(getActivity(), NetworkShortcutDetailsActivity.class);
                 intent.putExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT, (Serializable) item);
-                detailsLauncher.launch(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                detailsLauncher.launch(intent,
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                         ((NetworkShortcutPresenter.NetworkShortcutViewHolder) itemViewHolder).getImageView(),
                         NetworkShortcutDetailsFragment.SHARED_ELEMENT_NAME));
-            }
-            else if (item instanceof NetworkBrowse) { // browse network
-                if (log.isDebugEnabled()) log.debug("onItemClicked: NetworkBrowse");
-                if (getParentFragmentManager().findFragmentByTag(NetworkServerCredentialsDialog.class.getCanonicalName()) == null) {
+            } else if (item instanceof NetworkBrowse) {
+                // browse network
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: NetworkBrowse");
+                if (getParentFragmentManager().findFragmentByTag(
+                        NetworkServerCredentialsDialog.class.getCanonicalName())
+                    == null) {
                     NetworkServerCredentialsDialog dialog = new NetworkServerCredentialsDialog();
                     dialog.setOnConnectClickListener(new NetworkServerCredentialsDialog.onConnectClickListener() {
                         @Override
-                        public void onConnectClick(String username, String path, String password, int port, int type, String remote, String domain) {
+                        public void onConnectClick(String username, String path, String password, int port, int type,
+                            String remote, String domain) {
                             String uriToBuild = "";
                             switch (type) {
                                 case 0:
@@ -355,14 +382,18 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                             //path needs to start with "/"
                             if (path.isEmpty() || !path.startsWith("/"))
                                 path = "/" + path;
-                            uriToBuild += "://" + (!remote.isEmpty() ? remote + (port != -1 ? ":" + port : "") : "") + path;
+                            uriToBuild +=
+                                "://" + (!remote.isEmpty() ? remote + (port != -1 ? ":" + port : "") : "") + path;
                             final Uri uri = Uri.parse(uriToBuild);
 
                             Intent intent = new Intent(getActivity(), ListingActivity.getActivityForUri(uri));
-                            if (log.isDebugEnabled()) log.debug("onItemClicked: NetworkBrowse ListingActivity root uri={}, root name={}", uri, uri.getHost());
+                            if (log.isDebugEnabled())
+                                log.debug("onItemClicked: NetworkBrowse ListingActivity root uri={}, root name={}", uri,
+                                    uri.getHost());
                             intent.putExtra(ListingActivity.EXTRA_ROOT_URI, uri);
                             String shareName = FileUtils.getName(uri);
-                            intent.putExtra(ListingActivity.EXTRA_ROOT_NAME, (shareName==null || shareName.isEmpty())?uri.getHost():shareName);
+                            intent.putExtra(ListingActivity.EXTRA_ROOT_NAME,
+                                (shareName == null || shareName.isEmpty()) ? uri.getHost() : shareName);
                             intent.putExtra(ListingActivity.EXTRA_CREDENTIALS_JUST_PROVIDED, true);
                             browsingLauncher.launch(intent);
                         }
@@ -374,41 +405,50 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                     });
                     dialog.show(getParentFragmentManager(), NetworkServerCredentialsDialog.class.getCanonicalName());
                 }
-            }
-            else if (item instanceof NetworkShortcut) { // indexed folders
-                if (log.isDebugEnabled()) log.debug("onItemClicked: NetworkShortcut");
+            } else if (item instanceof NetworkShortcut) {
+                // indexed folders
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: NetworkShortcut");
                 Intent intent = new Intent(getActivity(), NetworkShortcutDetailsActivity.class);
-                intent.putExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT, (Serializable)item);
-                detailsLauncher.launch(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                intent.putExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT, (Serializable) item);
+                detailsLauncher.launch(intent,
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                         ((NetworkShortcutPresenter.NetworkShortcutViewHolder) itemViewHolder).getImageView(),
                         NetworkShortcutDetailsFragment.SHARED_ELEMENT_NAME));
-            }
-            else if (item instanceof Box) {
-                if (log.isDebugEnabled()) log.debug("onItemClicked: Box");
-                Box box = (Box)item;
-                if (box.getBoxId()==Box.ID.INDEXED_FOLDERS_REFRESH) {
-                    if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewNetworkScanning.show(requireContext());else startActivity(new Intent(getActivity(), RescanActivity.class));
+            } else if (item instanceof Box) {
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: Box");
+                Box box = (Box) item;
+                if (box.getBoxId() == Box.ID.INDEXED_FOLDERS_REFRESH) {
+                    if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                            .getBoolean("try_new_ui", false))
+                        com.archos.mediacenter.video.leanback.PreviewNetworkScanning.show(requireContext());
+                    else
+                        startActivity(new Intent(getActivity(), RescanActivity.class));
                 }
-            }
-            else if (item instanceof SmbShare) {
-                if (log.isDebugEnabled()) log.debug("onItemClicked: SmbShare");
-                SmbShare share = (SmbShare)item;
+            } else if (item instanceof SmbShare) {
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: SmbShare");
+                SmbShare share = (SmbShare) item;
                 final Uri uri = share.getFileCoreShare().toUri();
 
-                if (log.isDebugEnabled()) log.debug("onItemClicked: SmbShare ListingActivity root uri={}, root name={}", uri, uri.getHost());
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: SmbShare ListingActivity root uri={}, root name={}", uri, uri.getHost());
                 Intent intent = new Intent(getActivity(), ListingActivity.getActivityForUri(uri));
                 intent.putExtra(ListingActivity.EXTRA_ROOT_URI, uri);
                 intent.putExtra(ListingActivity.EXTRA_ROOT_NAME, share.getName());
                 browsingLauncher.launch(intent);
-            }
-            else if (item instanceof UpnpServer) {
-                if (log.isDebugEnabled()) log.debug("onItemClicked: UpnpServer");
-                UpnpServer server = (UpnpServer)item;
+            } else if (item instanceof UpnpServer) {
+                if (log.isDebugEnabled())
+                    log.debug("onItemClicked: UpnpServer");
+                UpnpServer server = (UpnpServer) item;
 
                 // Build our own special Upnp Uri
                 final Uri uri = UpnpServiceManager.getDeviceUri(server.getClingDevice());
 
-                if (log.isDebugEnabled()) log.debug("onItemClicked: UpnpServer ListingActivity root uri={}, root name={}", uri, uri.getHost());
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "onItemClicked: UpnpServer ListingActivity root uri={}, root name={}", uri, uri.getHost());
                 Intent intent = new Intent(getActivity(), ListingActivity.getActivityForUri(uri));
                 intent.putExtra(ListingActivity.EXTRA_ROOT_URI, uri);
                 intent.putExtra(ListingActivity.EXTRA_ROOT_NAME, server.getName());
@@ -427,7 +467,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
             shortcutDbAdapter = ShortcutDbAdapter.VIDEO;
             executor.execute(() -> {
                 try {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     Cursor cursor = null;
                     if (getActivity() != null && !getActivity().isFinishing()) {
                         cursor = shortcutDbAdapter.queryAllShortcuts(getActivity());
@@ -437,7 +478,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                         try {
                             if (!isCancelled && getActivity() != null && !getActivity().isFinishing()) {
                                 if (isAdded() && finalCursor != null) {
-                                    if (shortcutDbAdapter != null && shortcutDbAdapter.isDbOpen() && !finalCursor.isClosed()) {
+                                    if (shortcutDbAdapter != null && shortcutDbAdapter.isDbOpen()
+                                        && !finalCursor.isClosed()) {
                                         if (finalCursor.getCount() == 0) {
                                             // remove shortcuts row if empty
                                             mRowsAdapter.remove(mIndexedFoldersListRow);
@@ -451,8 +493,12 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                                             mIndexedFoldersAdapter.clear();
                                             // First item is not an actual shortcut, it opens the re-scan settings
                                             if (finalCursor.getCount() > 0) {
-                                                Box rescanBox = new Box(Box.ID.INDEXED_FOLDERS_REFRESH, getString(R.string.rescan), R.drawable.filetype_new_rescan);
-                                                if (log.isDebugEnabled()) log.debug("ShortcutsLoaderTask NetworkScannerReceiver.isScannerWorking()={}", NetworkScannerReceiver.isScannerWorking());
+                                                Box rescanBox = new Box(Box.ID.INDEXED_FOLDERS_REFRESH,
+                                                    getString(R.string.rescan), R.drawable.filetype_new_rescan);
+                                                if (log.isDebugEnabled())
+                                                    log.debug(
+                                                        "ShortcutsLoaderTask NetworkScannerReceiver.isScannerWorking()={}",
+                                                        NetworkScannerReceiver.isScannerWorking());
                                                 mIndexedFoldersAdapter.add(rescanBox);
                                             }
 
@@ -472,7 +518,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                                 }
                             }
                         } finally {
-                            if (finalCursor != null && !finalCursor.isClosed()) finalCursor.close();
+                            if (finalCursor != null && !finalCursor.isClosed())
+                                finalCursor.close();
                             if (shortcutDbAdapter != null && shortcutDbAdapter.isDbOpen()) {
                                 shortcutDbAdapter.close();
                             }
@@ -501,18 +548,21 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         public void execute() {
             executor.execute(() -> {
                 try {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     Cursor cursor = ShortcutDb.STATIC.getCursorAllShortcuts(getActivity());
                     handler.post(() -> {
                         try {
                             if (!isCancelled && getActivity() != null && !getActivity().isFinishing()) {
                                 if (isAdded() && cursor != null && !cursor.isClosed()) {
                                     mNetworkShortcutsAdapter.clear();
-                                    mNetworkShortcutsAdapter.add(new NetworkBrowse(getString(R.string.browse_net_server)));
+                                    mNetworkShortcutsAdapter.add(
+                                        new NetworkBrowse(getString(R.string.browse_net_server)));
                                     if (cursor.getCount() > 0) {
                                         cursor.moveToFirst();
                                         do {
-                                            GenericNetworkShortcutMapper shortcutMapper = new GenericNetworkShortcutMapper();
+                                            GenericNetworkShortcutMapper shortcutMapper =
+                                                new GenericNetworkShortcutMapper();
                                             shortcutMapper.bindColumns(cursor);
                                             mNetworkShortcutsAdapter.add(shortcutMapper.bind(cursor));
                                         } while (cursor.moveToNext());
@@ -520,7 +570,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                                 }
                             }
                         } finally {
-                            if (cursor != null && !cursor.isClosed()) cursor.close();
+                            if (cursor != null && !cursor.isClosed())
+                                cursor.close();
                         }
                     });
                 } catch (Exception e) {
@@ -543,7 +594,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
      */
     static private void flagObjectsAsOld(ArrayObjectAdapter adapter) {
         for (Object o : adapter.unmodifiableList()) {
-            NetworkSource source = (NetworkSource)o;
+            NetworkSource source = (NetworkSource) o;
             source.setOld(true);
         }
     }
@@ -556,13 +607,14 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         // Remove disappeared shares (two steps to avoid ConcurrentModificationException and UnsupportedOperationException...)
         List<NetworkSource> toRemove = new LinkedList<NetworkSource>();
         for (Object obj : adapter.unmodifiableList()) {
-            NetworkSource source = (NetworkSource)obj;
+            NetworkSource source = (NetworkSource) obj;
             if (source.isOld()) {
                 toRemove.add(source);
             }
         }
         for (NetworkSource source : toRemove) {
-            if (log.isDebugEnabled()) log.debug("Removing {} ({})", source.getName(), source.getClass());
+            if (log.isDebugEnabled())
+                log.debug("Removing {} ({})", source.getName(), source.getClass());
             adapter.remove(source);
         }
     }
@@ -572,26 +624,29 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     // ------------------------------
 
     SambaDiscovery.Listener mSambaListener = new SambaDiscovery.Listener() {
-
         @Override
         public void onDiscoveryStart() {
-            if (log.isTraceEnabled()) log.trace("SambaDiscovery onDiscoveryStart");
+            if (log.isTraceEnabled())
+                log.trace("SambaDiscovery onDiscoveryStart");
             flagObjectsAsOld(mSmbDiscoveryAdapter);
         }
 
         @Override
         public void onDiscoveryEnd() {
-            if (log.isTraceEnabled()) log.trace("SambaDiscovery onDiscoveryEnd");
+            if (log.isTraceEnabled())
+                log.trace("SambaDiscovery onDiscoveryEnd");
             removeOldObjects(mSmbDiscoveryAdapter);
 
             // Schedule a discovery refresh
-            mDiscoveryRepeatHandler.removeCallbacks(mSmbDiscoveryRepeat); // better safe than sorry, don't want to have several same runnable posted
+            mDiscoveryRepeatHandler.removeCallbacks(
+                mSmbDiscoveryRepeat); // better safe than sorry, don't want to have several same runnable posted
             mDiscoveryRepeatHandler.postDelayed(mSmbDiscoveryRepeat, DISCOVERY_REPEAT_DELAY_MS);
         }
 
         @Override
         public void onDiscoveryUpdate(List<Workgroup> workgroups) {
-            if (log.isTraceEnabled()) log.trace("SambaDiscovery onDiscoveryUpdate");
+            if (log.isTraceEnabled())
+                log.trace("SambaDiscovery onDiscoveryUpdate");
 
             for (Workgroup workgroup : workgroups) {
                 for (Share share : workgroup.getShares()) {
@@ -599,19 +654,20 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                     // Check if this share is already in the adapter.
                     // We just check the IP because name and workgroup may change (TCP discovery returns IP only,
                     // need to update it with name once we get result from UDP discovery)
-                    for (int i=0; i<mSmbDiscoveryAdapter.size(); i++) {
+                    for (int i = 0; i < mSmbDiscoveryAdapter.size(); i++) {
                         Object obj = mSmbDiscoveryAdapter.get(i);
                         if (obj instanceof NetworkSource) {
-                            NetworkSource newSource = (NetworkSource)obj;
+                            NetworkSource newSource = (NetworkSource) obj;
                         }
                     }
                     int index = mSmbDiscoveryAdapter.indexOf(newInstance);
-                    if (index==-1) {
-                        if (log.isDebugEnabled()) log.debug("smb Adding {}", newInstance.getName());
+                    if (index == -1) {
+                        if (log.isDebugEnabled())
+                            log.debug("smb Adding {}", newInstance.getName());
                         addInAdapterInAlphabeticalOrder(newInstance, mSmbDiscoveryAdapter);
-                    }
-                    else {
-                        if (log.isDebugEnabled()) log.debug("smb {} already present", newInstance.getName());
+                    } else {
+                        if (log.isDebugEnabled())
+                            log.debug("smb {} already present", newInstance.getName());
                         SmbShare existingItem = (SmbShare) mSmbDiscoveryAdapter.get(index);
                         // seen again, flag as not old
                         existingItem.setOld(false);
@@ -635,10 +691,10 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     // ------------------------------
 
     UpnpServiceManager.Listener mUpnpListener = new UpnpServiceManager.Listener() {
-
         @Override
         public void onDeviceListUpdate(List<Device> devices) {
-            if (log.isTraceEnabled()) log.trace("UpnpDiscovery onDiscoveryUpdate");
+            if (log.isTraceEnabled())
+                log.trace("UpnpDiscovery onDiscoveryUpdate");
 
             // NOTE: for UPnP, onDiscoveryUpdate() is called each time a server is added or removed
 
@@ -648,13 +704,14 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                 UpnpServer newInstance = new UpnpServer(d, UpnpServiceManager.getDeviceFriendlyName(d));
                 // Check if this server is already in the adapter (even if it is not the same instance it is OK due to the equals() implementation)
                 int index = mUpnpDiscoveryAdapter.indexOf(newInstance);
-                if (index==-1) {
-                    if (log.isTraceEnabled()) log.trace("upnp Adding {}", newInstance.getName());
+                if (index == -1) {
+                    if (log.isTraceEnabled())
+                        log.trace("upnp Adding {}", newInstance.getName());
                     addInAdapterInAlphabeticalOrder(newInstance, mUpnpDiscoveryAdapter);
-                }
-                else {
-                    if (log.isTraceEnabled()) log.trace("upnp {} already present, flag as not old", newInstance.getName());
-                    ((NetworkSource)mUpnpDiscoveryAdapter.get(index)).setOld(false);
+                } else {
+                    if (log.isTraceEnabled())
+                        log.trace("upnp {} already present, flag as not old", newInstance.getName());
+                    ((NetworkSource) mUpnpDiscoveryAdapter.get(index)).setOld(false);
                 }
             }
 
@@ -666,7 +723,6 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     Runnable mSmbDiscoveryRepeat = new Runnable() {
         @Override
         public void run() {
-
             // samba discovery should not be running at this stage, but better safe than sorry
             if (mSambaDiscovery != null) {
                 mSambaDiscovery.abort();
@@ -680,7 +736,6 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         }
     };
 
-
     /**
      * Bloody ArrayObjectAdapter does not support sort()! (ArrayAdapter does...)
      * Need this f*ck*ng piece of code to do it
@@ -690,9 +745,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
      */
 
     private void addInAdapterInAlphabeticalOrder(NetworkSource newObject, ArrayObjectAdapter adapter) {
-
-        for (int i=0; i<adapter.size(); i++) {
-            NetworkSource obj = (NetworkSource)adapter.get(i);
+        for (int i = 0; i < adapter.size(); i++) {
+            NetworkSource obj = (NetworkSource) adapter.get(i);
             if (newObject.getName().compareToIgnoreCase(obj.getName()) < 0) {
                 adapter.add(i, newObject); // insert before this item
                 return;
@@ -710,7 +764,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         Resources r = getResources();
 
         bgMngr = BackgroundManager.getInstance(getActivity());
-        if(!bgMngr.isAttached())
+        if (!bgMngr.isAttached())
             bgMngr.attach(getActivity().getWindow());
 
         if (PrivateMode.isActive()) {
@@ -735,7 +789,8 @@ public class NetworkRootFragment extends BrowseSupportFragment {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (VideoPreferencesCommon.KEY_APP_THEME.equals(key)) {
-                    if (log.isDebugEnabled()) log.debug("Theme changed, updating background");
+                    if (log.isDebugEnabled())
+                        log.debug("Theme changed, updating background");
                     updateBackground();
                 }
             }
