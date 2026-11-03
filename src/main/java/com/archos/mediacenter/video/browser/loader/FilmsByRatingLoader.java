@@ -34,6 +34,7 @@ public class FilmsByRatingLoader extends FilmsByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         return "SELECT\n" +
                 "    CAST(m_rating as int) as _id,\n" +
