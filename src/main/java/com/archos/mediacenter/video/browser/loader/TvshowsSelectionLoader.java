@@ -18,6 +18,7 @@ import android.content.Context;
 import android.provider.BaseColumns;
 
 import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 
@@ -55,7 +56,7 @@ public class TvshowsSelectionLoader extends VideoLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.SHOW, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.SHOW, mSortOrder);
     }
 
     @Override
