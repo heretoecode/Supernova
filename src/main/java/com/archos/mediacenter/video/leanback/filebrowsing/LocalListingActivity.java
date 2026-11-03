@@ -19,6 +19,7 @@ import android.os.Environment;
 
 import com.archos.mediacenter.video.R;
 
+/** Opens the TV file browser at a local folder. */
 public class LocalListingActivity extends ListingActivity {
 
     static private Uri sRootUri = Uri.parse(
