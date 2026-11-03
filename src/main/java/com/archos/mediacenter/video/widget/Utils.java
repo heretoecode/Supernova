@@ -17,19 +17,13 @@ package com.archos.mediacenter.video.widget;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.NinePatch;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.util.Log;
 
-import com.archos.mediaprovider.video.VideoStore;
 
-import java.io.IOException;
-import java.io.InputStream;
 
 
 public class Utils {
