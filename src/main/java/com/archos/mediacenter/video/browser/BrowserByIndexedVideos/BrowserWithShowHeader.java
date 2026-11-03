@@ -132,6 +132,7 @@ public abstract class BrowserWithShowHeader extends CursorBrowserByVideo  {
         }
     }
 
+    @Override
     @SuppressWarnings("deprecation") // getSerializable: API 33+ branch uses typed form; else branch cast suppressed
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +153,7 @@ public abstract class BrowserWithShowHeader extends CursorBrowserByVideo  {
         mBackgroundLoader = new DelayedBackgroundLoader(getActivity(), 800, 0.2f);
 
     }
+    @Override
     public void onViewCreated(View v, Bundle save){
         super.onViewCreated(v, save);
         ImageViewSetterConfiguration config = ImageViewSetterConfiguration.Builder.createNew()
@@ -202,6 +204,7 @@ public abstract class BrowserWithShowHeader extends CursorBrowserByVideo  {
         return R.string.scraper_no_episode_found;
     }
 
+    @Override
     protected void applySelectedViewMode(int newMode) {
         if(mHeaderView!=null) { //removing headerview
             if (mArchosGridView instanceof ListView) {
@@ -463,6 +466,7 @@ public abstract class BrowserWithShowHeader extends CursorBrowserByVideo  {
 
     protected abstract void onPosterClick();
 
+    @Override
     public void onResume(){
         super.onResume();
     }
