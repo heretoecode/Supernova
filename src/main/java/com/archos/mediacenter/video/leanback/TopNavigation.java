@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -22,6 +23,9 @@ import android.widget.ScrollView;
 import android.widget.TextClock;
 import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import java.util.function.IntConsumer;
 import java.util.function.BooleanSupplier;
 
@@ -40,10 +44,10 @@ public final class TopNavigation extends LinearLayout {
     private final View content;
     private final FrameLayout stage;
     private final boolean scrollingContent;
-    private final android.graphics.drawable.Drawable navigationScene = new android.graphics.drawable.Drawable() {
+    private final Drawable navigationScene = new Drawable() {
         @Override
         public void draw(Canvas canvas) {
-            android.graphics.drawable.Drawable background = getBackground();
+            Drawable background = getBackground();
             if (background != null)
                 background.draw(canvas);
             int saved = canvas.save();
@@ -81,7 +85,7 @@ public final class TopNavigation extends LinearLayout {
         TvLayout.applyInsets(this);
         setWillNotDraw(false);
         artwork = new PreviewBackdrop(c);
-        artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION);
+        artwork.setFoundationHome(BuildConfig.FOUNDATION);
         setBackground(artwork);
         bar = new LinearLayout(c);
         bar.setClipChildren(true);
@@ -179,7 +183,7 @@ public final class TopNavigation extends LinearLayout {
                 tab.setText("");
                 // Custom drawables do not automatically apply Drawable.setTint to their Paint.
                 tab.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                android.graphics.drawable.Drawable search = new PreviewIcon(i == 4 ? "cog" : "search");
+                Drawable search = new PreviewIcon(i == 4 ? "cog" : "search");
                 search.setBounds(0, 0, dp(22), dp(22));
                 tab.setCompoundDrawables(search, null, null, null);
             }
@@ -320,7 +324,7 @@ public final class TopNavigation extends LinearLayout {
         tab.setTextColor(Color.WHITE);
         tab.setShadowLayer(0, 0, 0, 0);
         tab.setBackground(null);
-        for (android.graphics.drawable.Drawable icon : tab.getCompoundDrawables())
+        for (Drawable icon : tab.getCompoundDrawables())
             if (icon instanceof PreviewIcon)
                 ((PreviewIcon)icon).focus(false, 0);
     }
@@ -359,7 +363,7 @@ public final class TopNavigation extends LinearLayout {
     @Override
     protected boolean drawChild(Canvas canvas, View child, long time) {
         if (child == stage) {
-            com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser = visibleBrowser(content);
+            UniversalFileBrowser browser = visibleBrowser(content);
             if (browser != null) {
                 int visibility = browser.ownsScanStatus() ? GONE : VISIBLE;
                 if (scanStatus.getVisibility() != visibility)
@@ -377,7 +381,7 @@ public final class TopNavigation extends LinearLayout {
     }
 
     @Override
-    public void invalidateDrawable(android.graphics.drawable.Drawable who) {
+    public void invalidateDrawable(Drawable who) {
         super.invalidateDrawable(who);
         if (navigationShade != null)
             navigationShade.invalidate();
@@ -406,7 +410,7 @@ public final class TopNavigation extends LinearLayout {
         boolean moveNavigationFocus = bar.hasFocus() && selectedIndex != index;
         selectedIndex = index;
         artwork.setPage(index);
-        artwork.setFoundationHome(com.archos.mediacenter.video.BuildConfig.FOUNDATION && index == 0);
+        artwork.setFoundationHome(BuildConfig.FOUNDATION && index == 0);
         setBackground(index >= 3 && index <= 5 ? new PreviewUtilityBackground(getContext()) : artwork);
         for (TextView t : tabs)
             t.setSelected(false);
@@ -449,15 +453,15 @@ public final class TopNavigation extends LinearLayout {
         return TvLayout.dimension(getContext(), n);
     }
 
-    private static com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser visibleBrowser(View view) {
+    private static UniversalFileBrowser visibleBrowser(View view) {
         if (!view.isShown())
             return null;
-        if (view instanceof com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)
-            return (com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)view;
+        if (view instanceof UniversalFileBrowser)
+            return (UniversalFileBrowser)view;
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup)view;
             for (int i = 0; i < group.getChildCount(); i++) {
-                com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser result =
+                UniversalFileBrowser result =
                     visibleBrowser(group.getChildAt(i));
                 if (result != null)
                     return result;
@@ -513,7 +517,7 @@ public final class TopNavigation extends LinearLayout {
             return;
         }
 
-        com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser = visibleBrowser(content);
+        UniversalFileBrowser browser = visibleBrowser(content);
         if (browser == null)
             action.run();
         else
@@ -541,7 +545,7 @@ public final class TopNavigation extends LinearLayout {
         View previous = findFocus();
         boolean consumed = routeKeyEvent(event);
         if (event.getAction() == KeyEvent.ACTION_DOWN)
-            com.archos.mediacenter.video.diagnostics.Diagnostics.navigation(previous, findFocus(), event.getKeyCode(),
+            Diagnostics.navigation(previous, findFocus(), event.getKeyCode(),
                                                                             consumed);
         return consumed;
     }
