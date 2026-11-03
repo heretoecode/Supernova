@@ -1,12 +1,21 @@
 package com.archos.mediacenter.video.foundation;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Looper;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceFragmentCompat;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -93,9 +102,9 @@ public class FoundationAboutTest {
         FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(prefs, split, middle, help, rail);
         workspace.show(about);
         rail.getChildAt(1).requestFocus();
-        java.lang.reflect.Field field = FoundationAboutWorkspace.class.getDeclaredField("rows");
+        Field field = FoundationAboutWorkspace.class.getDeclaredField("rows");
         field.setAccessible(true);
-        java.util.List<TextView> rows = (java.util.List<TextView>) field.get(workspace);
+        List<TextView> rows = (List<TextView>) field.get(workspace);
         assertTrue(rows.size() > 10);
         String current = rows.get(0).getText().toString();
         rows.get(0).performClick();
@@ -108,7 +117,7 @@ public class FoundationAboutTest {
         assertTrue(second.getText().toString().startsWith("▾"));
         rail.getChildAt(3).requestFocus();
         rail.getChildAt(1).requestFocus();
-        rows = (java.util.List<TextView>) field.get(workspace);
+        rows = (List<TextView>) field.get(workspace);
         assertTrue(rows.get(1).getText().toString().startsWith("▾"));
         assertTrue(rows.get(2).getText().toString().startsWith("▾"));
         rows.get(1).requestFocus();
@@ -125,10 +134,10 @@ public class FoundationAboutTest {
         activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
         FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(
             prefs, new LinearLayout(activity), new View(activity), new View(activity), new LinearLayout(activity));
-        java.lang.reflect.Method qr = FoundationAboutWorkspace.class.getDeclaredMethod("qr", String.class);
+        Method qr = FoundationAboutWorkspace.class.getDeclaredMethod("qr", String.class);
         qr.setAccessible(true);
         String expected = "https://www.themoviedb.org/";
-        android.graphics.Bitmap bitmap = (android.graphics.Bitmap) qr.invoke(workspace, expected);
+        Bitmap bitmap = (Bitmap) qr.invoke(workspace, expected);
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         com.google.zxing.BinaryBitmap encoded =
@@ -157,26 +166,26 @@ public class FoundationAboutTest {
             var workspace = new FoundationAboutWorkspace(activity, split, middle, help, rail);
             workspace.show(about);
             workspace.openSection(1);
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue("Licence fixture must be attached before opening", workspace.isAttachedToWindow());
             android.widget.TextView licence = (android.widget.TextView) rail.getChildAt(2);
-            java.lang.reflect.Field reader = FoundationAboutWorkspace.class.getDeclaredField("reader");
+            Field reader = FoundationAboutWorkspace.class.getDeclaredField("reader");
             reader.setAccessible(true);
             assertNotNull(reader.get(workspace));
             assertFalse(allText(workspace).contains("Press OK"));
             assertTrue(licence.hasFocus());
-            java.util.concurrent.ExecutorService io = (java.util.concurrent.ExecutorService) reader.get(workspace);
+            ExecutorService io = (ExecutorService) reader.get(workspace);
             io.submit(() -> {
-            }).get(5, java.util.concurrent.TimeUnit.SECONDS);
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            }).get(5, TimeUnit.SECONDS);
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
             io.submit(() -> {
-            }).get(5, java.util.concurrent.TimeUnit.SECONDS);
-            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            }).get(5, TimeUnit.SECONDS);
+            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(allText(workspace), allText(workspace).contains("Components"));
             assertTrue(licence.hasFocus());
             assertFalse(allText(workspace).contains("Press OK"));
             licence.dispatchKeyEvent(
-                new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DPAD_RIGHT));
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
             assertFalse(licence.hasFocus());
             assertTrue(workspace.handleBack());
             assertTrue(licence.hasFocus());
@@ -194,8 +203,8 @@ public class FoundationAboutTest {
         StringBuilder result = new StringBuilder();
         if (view instanceof TextView)
             result.append(((TextView) view).getText());
-        if (view instanceof android.view.ViewGroup) {
-            android.view.ViewGroup group = (android.view.ViewGroup) view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++)
                 result.append(allText(group.getChildAt(i)));
         }
