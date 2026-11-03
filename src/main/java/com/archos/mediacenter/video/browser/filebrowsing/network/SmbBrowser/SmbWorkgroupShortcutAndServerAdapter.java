@@ -95,7 +95,7 @@ public class SmbWorkgroupShortcutAndServerAdapter extends WorkgroupShortcutAndSe
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_workgroup_separator, viewGroup, false);
             return new SeparatorViewHolder(v);
         }
-        else return super.onCreateViewHolder(viewGroup,viewType);
+            else return super.onCreateViewHolder(viewGroup,viewType);
     }
     public void resetData() {
         mData.clear();
