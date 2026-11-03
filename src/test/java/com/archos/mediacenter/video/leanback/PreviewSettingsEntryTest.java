@@ -3,7 +3,9 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.LinearLayout;
 import androidx.preference.*;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,8 +26,8 @@ public class PreviewSettingsEntryTest {
             }
             PreviewSettings.style(root);
         }
-        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(LayoutInflater inflater,ViewGroup parent,Bundle state){return PreviewSettings.grid(requireContext());}
-        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen root){return PreviewSettings.adapter(root);}
+        @Override public RecyclerView onCreateRecyclerView(LayoutInflater inflater,ViewGroup parent,Bundle state){return PreviewSettings.grid(requireContext());}
+        @Override protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen root){return PreviewSettings.adapter(root);}
         @Override public void onViewCreated(View view,Bundle state){super.onViewCreated(view,state);PreviewSettings.sidebar(this);}
     }
     @Test public void subtitleShortcutTargetsRailWithoutChangingSettingsOrEnteringOptions(){
@@ -34,7 +36,7 @@ public class PreviewSettingsEntryTest {
             host.get().getIntent().putExtra("preview_settings_category","Subtitles");Settings fragment=new Settings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);View subtitles=root.findViewWithTag("semantic:settings:category:Subtitles");
             assertTrue(subtitles.hasFocus());assertFalse(fragment.getListView().hasFocus());assertFalse(host.get().getIntent().hasExtra("preview_settings_category"));
-            assertTrue(subtitles.getParent() instanceof android.widget.LinearLayout);assertNotNull(subtitles.getBackground());
+            assertTrue(subtitles.getParent() instanceof LinearLayout);assertNotNull(subtitles.getBackground());
             assertFalse(((SwitchPreferenceCompat)fragment.findPreference("Subtitles-option")).isChecked());
             subtitles.performClick();PreviewPagesTest.layout(root);assertTrue(fragment.getListView().hasFocus());
             // ViewRoot dispatches an unhandled DPAD key through focusSearch; a direct child
