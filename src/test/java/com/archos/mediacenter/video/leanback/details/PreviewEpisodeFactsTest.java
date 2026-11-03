@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.leanback.SharedMetadata;
+import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -22,10 +24,10 @@ public class PreviewEpisodeFactsTest {
     @Test
     public void episodePanelConsumesItsSeasonPackageWithoutBorrowingSeriesFacts() throws Exception {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException missing) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
         var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
@@ -64,7 +66,7 @@ public class PreviewEpisodeFactsTest {
             assertFalse(ratings.contains("No rating available"));
             assertTrue(ratings.contains("7.2"));
             assertTrue(ratings.contains("123"));
-            com.archos.mediacenter.video.leanback.SharedMetadata.Facts summary =
+            SharedMetadata.Facts summary =
                 ReflectionHelpers.getField(page, "latestSummary");
             assertEquals(7.2f, summary.rating, 0.01f);
             assertEquals(123, summary.votes);
