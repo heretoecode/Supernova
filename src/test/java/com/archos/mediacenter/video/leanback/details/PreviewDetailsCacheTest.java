@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
 import java.util.Collections;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ public class PreviewDetailsCacheTest {
             context, "tv", 432, "", () -> new JSONObject("{name:'Series',seasons:[{season_number:1}]}"));
         PreviewMetadataCache.load(context, "tv", 432, "recommendations",
             () -> new JSONObject("{results:[{id:433,name:'Remote'},{id:434,name:'Unknown'}]}"));
-        android.content.SharedPreferences prefs =
+        SharedPreferences prefs =
             com.archos.mediacenter.video.streaming.StreamingRepository.prefs(context);
         prefs.edit()
             .putBoolean("streaming_enabled", true)
