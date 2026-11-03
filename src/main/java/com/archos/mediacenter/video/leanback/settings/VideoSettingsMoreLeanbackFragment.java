@@ -34,6 +34,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
+/** Displays additional TV Settings preferences and their dialogs. */
 public class VideoSettingsMoreLeanbackFragment extends LeanbackSettingsFragmentCompat {
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
