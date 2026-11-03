@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.database.sqlite.SQLiteOpenHelper;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ public final class PreviewAsyncFixtures {
  private static okhttp3.OkHttpClient fixtureTransport;
  private static List<okhttp3.Interceptor> previousInterceptors;
  public static void offlineTransport() {
-  fixtureTransport=ReflectionHelpers.getStaticField(com.archos.mediacenter.video.streaming.StreamingRepository.class,"HTTP");
+  fixtureTransport=ReflectionHelpers.getStaticField(StreamingRepository.class,"HTTP");
   previousInterceptors=fixtureTransport.interceptors();
   ReflectionHelpers.setField(fixtureTransport,"interceptors",List.<okhttp3.Interceptor>of(chain->{throw new IOException("Offline UI fixture");}));
  }
