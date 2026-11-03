@@ -24,6 +24,7 @@ import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
 import com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface;
 
+/** Hosts the TV network shortcut details screen. */
 public class NetworkShortcutDetailsActivity extends LeanbackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
