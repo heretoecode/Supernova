@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays movies grouped by year with sorting controls. */
 public class MoviesByYearFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = MoviesByYearFragment.class.getName() + "_SORT";
