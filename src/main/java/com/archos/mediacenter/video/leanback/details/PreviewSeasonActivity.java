@@ -5,8 +5,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import androidx.leanback.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
+import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.utils.PlayUtils;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -49,7 +54,7 @@ public final class PreviewSeasonActivity extends LeanbackActivity {
                         bind(snapshot);
                 });
             } catch (RuntimeException failure) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("season_library_load", failure);
+                Diagnostics.error("season_library_load", failure);
             }
         });
     }
@@ -81,8 +86,8 @@ public final class PreviewSeasonActivity extends LeanbackActivity {
         page.setSnapshot(snapshot);
         page.bindSeason(series, season, episodes, () -> {
             if (playable != null)
-                com.archos.mediacenter.video.utils.PlayUtils.startVideo(this, (Video) playable.media,
-                    com.archos.mediacenter.video.player.PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+                PlayUtils.startVideo(this, (Video) playable.media,
+                    PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
         });
         if (!page.hasFocus())
             page.post(page::focusPrimary);
@@ -90,9 +95,9 @@ public final class PreviewSeasonActivity extends LeanbackActivity {
 
     private void navigate(int tab) {
         if (tab == 4)
-            startActivity(new Intent(this, com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+            startActivity(new Intent(this, VideoSettingsActivity.class));
         else if (tab == 5)
-            startActivity(new Intent(this, com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+            startActivity(new Intent(this, VideoSearchActivity.class));
         else if (tab == 6)
             startActivity(new Intent(this, CustomLibraryActivity.class));
         else {
