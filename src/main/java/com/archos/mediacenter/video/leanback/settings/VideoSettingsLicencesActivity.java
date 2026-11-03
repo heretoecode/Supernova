@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.os.Bundle;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.foundation.LicenseDisclosure;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
@@ -31,6 +32,6 @@ public class VideoSettingsLicencesActivity extends LeanbackActivity {
             setTheme(R.style.MyLeanbackTheme_Preferences_Black);
         }
         super.onCreate(savedInstanceState);
-        setContentView(new com.archos.mediacenter.video.foundation.LicenseDisclosure(this));
+        setContentView(new LicenseDisclosure(this));
     }
 }
