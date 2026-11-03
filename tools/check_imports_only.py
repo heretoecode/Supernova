@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_format_only import tokens, git, show  # noqa: E402
 
 # Non-Java paths the overnight job may change.
-ALLOWED_OTHER = ('docs/codex/reports/', 'docs/Future Development/')
+ALLOWED_OTHER = ('docs/codex/reports/', 'docs/codex/findings/', 'docs/Future Development/')
 DECLARATION = re.compile(r'\b(?:class|interface|enum|record)\s+([A-Z]\w*)')
 
 

@@ -1,65 +1,73 @@
-# Overnight brief for Codex — tidy, never change behaviour
+# Overnight brief for Codex — tonight: three parts
 
-You are doing **mechanical tidying**. You make **no decisions about behaviour, design or naming**. Every change
-is checked by a script in the morning and by a full build; work that fails is thrown away, so there is nothing
-to gain by changing anything beyond what each part allows.
-
-Tonight has two parts. Do them **in order (A, then B)**, each file in its own commit.
+Parts A and B are mechanical and proved by a checker. Part C is a **read-only** bug hunt: you report, you
+change no code.
 
 ## Setup
 1. Start from the tip of branch `claude/supernova-github-access-yfhe89`.
-2. Create a new branch `codex/overnight-YYYY-MM-DD` (today's date; if that branch exists, add `-2`, `-3`, …).
-   Push only to that branch. Never push to `claude/supernova-github-access-yfhe89`, `main` or any other
-   existing branch. Do not open a pull request, merge, rebase or force-push.
-3. Never edit anything under `.github/`, `tools/`, `docs/` (except your report), build files (`*.gradle`,
-   `gradle.properties`), `res/` or `assets/`. `docs/codex/HANDS_OFF.txt` lists any further files to avoid.
+2. Create a new branch `codex/overnight-YYYY-MM-DD` (today's date; if it exists, add `-2`, `-3`, …). Push only
+   to that branch. No pull request, merge, rebase or force-push.
+3. Never edit `.github/`, `tools/`, build files (`*.gradle`, `gradle.properties`), `res/` or `assets/`.
+   In `docs/` you may only add your report and the Part C findings files.
 
-## Part A — add missing `@Override` (every `.java` file under `src/`)
-Add `@Override` on its own line directly above a method that **overrides or implements** a method of a
-superclass or interface and does not already have it. This labels the method for readers, and makes the
-compiler catch a misspelt method name in future.
-- Only where you are **certain** the method overrides: you can see the superclass or interface (an Android or
-  Java class you know, e.g. `Activity.onCreate`, `View.onDraw`, `Runnable.run`, `Object.equals/hashCode/
-  toString`, `BaseAdapter.getView`, `RecyclerView.Adapter.onBindViewHolder`, `Handler.handleMessage`), or a
-  class in this repository whose source declares the method with the same name and parameter types. Anonymous
-  classes (`new Runnable() { public void run() … }`) and lambdas' enclosing types count too.
-- **Skip** when unsure: overloads with different parameters, methods whose superclass you can't see, static
-  methods (they can't override), private methods, and constructors. A wrong `@Override` breaks the build, and
-  the whole night is then discarded — so when in doubt, leave it out.
-- Same indentation as the method; put it **above** any other annotations on the method (e.g. `@Override` then
-  `@SuppressWarnings`); don't touch existing annotations.
-- Commit each file: `Add missing @Override in <FileName>.java`, then run
-  `python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89 --files <path> --allow-added-override`
-  — must say `ok`.
-
-## Part B — a one-line summary on every test class that lacks one (`src/test/java`, plus any left in `src/main/java`)
-Exactly as last night's class summaries: for each top-level class, interface or enum with **no** `/** … */`
-comment directly above its declaration (and its annotations), add one immediately above it, e.g.
+## Part A — fix 34 misleading indentations (layout only)
+Android lint reports 34 `SuspiciousIndentation` errors, all in
+`src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java`. Each is a brace-less
+`for`/`if`/`while` whose single-statement body sits at the **same** indentation as the statement that owns it,
+e.g.
 ```java
-/** Checks that the playback HUD keeps its controls in place and rounds its buttons. */
+for (String key : new String[] { … })
+move(root, audio, key);          // body: must be indented one level deeper
 ```
-- One sentence, plain English, under about 120 characters, saying **what the tests check**, based only on the
-  test method names and code. If you can't tell, skip it and list it in the report.
-- Don't touch existing comments or add comments anywhere else.
-- Commit each file: `Add class summary to <FileName>.java`, then run
-  `python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89 --files <path> --allow-new-comments --allow-added-override`
-  — must say `ok`.
+Indent every such body one level (4 spaces) deeper than its owner. Look for the same pattern anywhere else in
+`src/` and fix it too. **Do not add braces** (that changes tokens). Commit per file:
+`Fix misleading indentation in <FileName>.java (layout only)`, then run
+`python3 tools/check_format_only.py --base claude/supernova-github-access-yfhe89 --files <path>` — must say `ok`.
+
+## Part B — the 94 `@Override` labels restored last time
+Last night's report (`docs/codex/reports/2026-11-03-overnight-2026-11-03-5.md`, "Files restored after the
+single checker attempt") lists nine files whose `@Override` additions were rejected only because of a checker
+bug, now fixed. Re-apply the same rules as last time (only where certain; skip when unsure; `@Override` above
+any other annotations) to those nine files. Commit per file: `Add missing @Override in <FileName>.java`, then
+run `python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89 --files <path> --allow-added-override`
+— must say `ok`.
+
+## Part C — read-only bug hunt, area 1: playback and the Details page
+Read **every line** of every `.java` file in these folders (under `src/main/java/com/archos/mediacenter/video/`):
+`player/`, `leanback/details/`, plus `leanback/PreviewPlayback*.java` and `utils/Player*.java` if present.
+Also read the lint findings for those files: `git fetch origin reports/lint` then
+`git show origin/reports/lint:lint-findings.json` (filter by `file`).
+
+Look for real defects — things that would misbehave for a user, not style:
+- **crashes**: values that can be null/empty where code assumes not; index out of range; wrong casts; missing
+  try/catch around I/O or parsing; use after a view/activity is destroyed;
+- **leaks**: listeners, receivers, handlers, cursors, streams, bitmaps or threads never released; static
+  references to Activity/View/Context (lint `StaticFieldLeak`);
+- **threading**: UI touched off the main thread; heavy work (disk, network, database) on the main thread;
+  shared state changed from two threads without protection;
+- **logic**: inverted or impossible conditions, off-by-one, copy-paste mistakes (lint `CutPasteId`), unit mix-ups
+  (ms vs s, dp vs px), state not reset between videos, a setting read but never applied;
+- **security/data**: secrets in logs, certificates accepted blindly (lint `TrustAllX509TrustManager`), data lost
+  on error.
+
+**Change no code.** Write findings to `docs/codex/findings/area1-playback-details.md` as a table, one row per
+finding:
+
+| ID | File:line | Kind | Severity (crash/user-visible/minor) | Confidence (high/medium/low) | What goes wrong, for whom, when | Evidence (the lines and why) | Suggested fix (described, not applied) |
+
+Rules: one row per distinct problem; quote the line numbers you read; say "low" confidence when you are
+guessing; don't report style, naming or formatting; don't report the lint items above unless you confirm them
+by reading the code. At the end of the file, list the files you read (all of them) so coverage is visible.
+Commit: `Bug hunt area 1: playback and Details (read-only findings)`.
 
 ## Hard rules — breaking any of these discards the whole night
-- Change only what each part allows: no renaming, reordering, new or removed code, no string or number
-  changes, no edits to existing comments or annotations.
-- Don't fix bugs, warnings or typos you notice — list them in the report.
-- No Gradle, builds or tests; the checker is the proof (the owner runs the full build afterwards).
+- Parts A and B change only what they allow; Part C changes no code at all.
+- No Gradle, builds or tests.
 - If something needs a judgement call, skip it and write the question in the report.
 
-## Pace
-Work briskly: one checker run per file, no extra hand-verification. Partial progress is fine — every file is
-its own commit — but always do "Before you finish".
-
 ## Before you finish
-1. Run `python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89 --allow-new-comments --allow-added-override`
-   on the whole branch. Every file must be `ok`.
-2. Add a **new** report `docs/codex/reports/YYYY-MM-DD-<branch suffix>.md` (never overwrite an earlier one):
-   Part A — files changed and the number of `@Override` added, with the skipped cases grouped by reason;
-   Part B — classes summarised and any left without a summary and why; anything odd you noticed (listed, not
-   fixed); the exact final checker output. Commit and push.
+1. Run `python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89 --allow-added-override`
+   on the whole branch — every file `ok` (the Part C findings under `docs/codex/findings/` are allowed).
+2. Add a **new** report `docs/codex/reports/YYYY-MM-DD-<branch suffix>.md`: Part A files and counts, Part B
+   `@Override` counts and skips, Part C number of findings by severity and confidence, files read, and the exact
+   final checker output. Commit and push.
