@@ -1,10 +1,13 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.*;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -117,7 +120,7 @@ public class SupernovaWorkspaceUiTest {
             host.get().setContentView(container);
             Runnable compact = () -> {
                 PreviewPagesTest.layout(container);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(300));
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(300));
                 PreviewPagesTest.layout(container);
             };
             compact.run();
@@ -129,7 +132,7 @@ public class SupernovaWorkspaceUiTest {
                 compact.run();
                 View action = PreviewPagesTest.findText(browser, label);
                 assertSame("Focus moves to " + label, action, browser.findFocus());
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 assertTrue(label + " is visible after compact scrolling", action.getGlobalVisibleRect(visible));
                 assertEquals("The full target remains visible in compact Home", action.getHeight(), visible.height());
             }
