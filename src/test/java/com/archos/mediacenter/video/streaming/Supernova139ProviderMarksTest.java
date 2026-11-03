@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.streaming;
 
 import android.app.Application;
 import android.graphics.*;
+import android.view.View;
 import android.widget.ImageView;
 import java.io.*;
 import org.junit.*;
@@ -43,12 +44,12 @@ public class Supernova139ProviderMarksTest {
             assertEquals(ImageView.ScaleType.FIT_CENTER, first.getScaleType());
             Bitmap mark = Bitmap.createBitmap(72, 72, Bitmap.Config.ARGB_8888),
                    other = Bitmap.createBitmap(72, 72, Bitmap.Config.ARGB_8888);
-            first.measure(android.view.View.MeasureSpec.makeMeasureSpec(72, android.view.View.MeasureSpec.EXACTLY),
-                          android.view.View.MeasureSpec.makeMeasureSpec(72, android.view.View.MeasureSpec.EXACTLY));
+            first.measure(View.MeasureSpec.makeMeasureSpec(72, View.MeasureSpec.EXACTLY),
+                          View.MeasureSpec.makeMeasureSpec(72, View.MeasureSpec.EXACTLY));
             first.layout(0, 0, 72, 72);
             first.draw(new Canvas(mark));
-            second.measure(android.view.View.MeasureSpec.makeMeasureSpec(72, android.view.View.MeasureSpec.EXACTLY),
-                           android.view.View.MeasureSpec.makeMeasureSpec(72, android.view.View.MeasureSpec.EXACTLY));
+            second.measure(View.MeasureSpec.makeMeasureSpec(72, View.MeasureSpec.EXACTLY),
+                           View.MeasureSpec.makeMeasureSpec(72, View.MeasureSpec.EXACTLY));
             second.layout(0, 0, 72, 72);
             second.draw(new Canvas(other));
             assertTrue(mark.sameAs(other));
