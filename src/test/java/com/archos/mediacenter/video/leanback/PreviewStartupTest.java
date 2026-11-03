@@ -61,7 +61,9 @@ public class PreviewStartupTest {
         database=new VideoOpenHelper(context);
         SQLiteDatabase db=database.getWritableDatabase();
         ContentProvider provider=new ContentProvider(){
+            @Override
             public boolean onCreate(){return true;}
+            @Override
             public Cursor query(Uri uri,String[] projection,String selection,String[] args,String order){
                 SQLiteQueryBuilder builder=new SQLiteQueryBuilder();builder.setTables(VideoOpenHelper.VIDEO_VIEW_NAME);
                 if(failQuery)throw new SQLiteException("Injected unavailable database");
@@ -72,9 +74,13 @@ public class PreviewStartupTest {
                     return super.getInt(column);
                 }};
             }
+            @Override
             public String getType(Uri uri){return null;}
+            @Override
             public Uri insert(Uri uri,ContentValues values){throw new UnsupportedOperationException();}
+            @Override
             public int update(Uri uri,ContentValues values,String s,String[] a){throw new UnsupportedOperationException();}
+            @Override
             public int delete(Uri uri,String s,String[] a){throw new UnsupportedOperationException();}
         };
         ShadowContentResolver.registerProviderInternal(VideoStore.Video.Media.EXTERNAL_CONTENT_URI.getAuthority(),provider);
