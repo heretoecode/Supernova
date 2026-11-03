@@ -27,6 +27,7 @@ import com.archos.mediacenter.video.browser.loader.TvshowsByRatingLoader;
 import com.archos.mediacenter.video.browser.loader.TvshowsNoAnimeByRatingLoader;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays TV shows grouped by rating with sorting controls. */
 public class TvshowsByRatingFragment extends TvshowsByFragment {
 
     private static final String SORT_PARAM_KEY = TvshowsByRatingFragment.class.getName() + "_SORT";
