@@ -14,6 +14,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks logical library counts, physical storage totals, watched state and calendar boundaries. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class LibraryStatisticsTest {
