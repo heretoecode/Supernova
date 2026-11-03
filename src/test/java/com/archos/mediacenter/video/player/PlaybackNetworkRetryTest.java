@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.robolectric.Shadows.shadowOf;
 
+/** Checks network playback retries retain the latest seek target and live playback position. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, manifest = Config.NONE, sdk = 30)
 @LooperMode(LooperMode.Mode.PAUSED)
