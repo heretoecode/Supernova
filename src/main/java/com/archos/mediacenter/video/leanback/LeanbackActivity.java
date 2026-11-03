@@ -33,6 +33,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.utils.TraktSigninDialogPreference;
 
+/** Provides shared lifecycle and key handling for TV activities. */
 public abstract class LeanbackActivity extends FragmentActivity {
 
     private BroadcastReceiver mTraktRelogBroadcastReceiver;
