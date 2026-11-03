@@ -1023,6 +1023,9 @@ public final class LocalStorageView extends LinearLayout {
                     showSecond(true, false);
                 } else {
                     Video video = indexed.get(file.getUri().toString());
+                    // Matched title first (owner, 3 Nov 2026); the file name only until a match is found.
+                    if (video != null && video.hasScraperData())
+                        line1.setText(rowTitle(video));
                     line2.setText(describe(file, video, excluded));
                     showSecond(indexedReady, fade);
                     tick.setVisibility(video != null && video.isWatched() ? VISIBLE : GONE);
@@ -1292,14 +1295,9 @@ public final class LocalStorageView extends LinearLayout {
 
     // ---- facts --------------------------------------------------------------------------------------------------
 
-    /** Line 2: matched title · S/E · duration · resolution · audio · size, then Watched or Resume. */
+    /** Line 2: duration · resolution · audio · size, then Watched or Resume (the matched title is on line 1). */
     static String describe(MetaFile2 file, Video video, boolean excluded) {
         List<String> parts = new ArrayList<>();
-        if (video != null && video.hasScraperData()) {
-            parts.add(matchedTitle(video));
-            if (video instanceof Episode)
-                parts.add("S" + ((Episode)video).getSeasonNumber() + " E" + ((Episode)video).getEpisodeNumber());
-        }
         if (video != null && video.getDurationMs() > 0)
             parts.add(Math.max(1, Math.round(video.getDurationMs() / 60000f)) + " min");
         if (video != null) {
@@ -1321,6 +1319,14 @@ public final class LocalStorageView extends LinearLayout {
         if (parts.isEmpty())
             parts.add(video == null ? "Video · not in your library" : "Video");
         return TextUtils.join(" · ", parts);
+    }
+
+    /** Line 1 for a matched video: the film's title, or "Show · S1 E2" for an episode. */
+    static String rowTitle(Video video) {
+        if (video instanceof Episode)
+            return join(matchedTitle(video), "S" + ((Episode)video).getSeasonNumber() + " E" +
+                                                ((Episode)video).getEpisodeNumber());
+        return matchedTitle(video);
     }
 
     static String matchedTitle(Video video) {

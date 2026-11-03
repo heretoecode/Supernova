@@ -147,7 +147,8 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
     to that level, Back still goes up one); the folder name as a large **title** with a folder tile; **status
     pills** — item count, total size, library marker (● In your library / Excluded), watched · in progress; at a
     drive's top level, free space. A divider separates header and list. Grid / Sort / Videos only on the right.
-  - **Two-line rows** (14–16): line 1 file name without extension; line 2 (soft grey) matched title · S/E ·
+  - **Two-line rows** (14–16): line 1 the **matched title** ("Show · S1 E2" for episodes), or the file name without
+    extension until a match is found (owner, 3 Nov 2026, same rule as Network Shares); line 2 (soft grey)
     duration · resolution · audio · size, plus "Watched" or **"Resume at 19:42 (40%)"** in blue. Right edge shows
     only the green ✓ for watched — **no mini progress bar**. Unmatched files show technical facts only.
   - **Inline row buttons** on the focused row (Resume/Play · Details · Exclude/Add · Save). OK on the row plays /
