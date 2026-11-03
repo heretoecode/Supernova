@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.widget;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 
+/** Supplies the row factory for a recently played videos home-screen widget. */
 public class RemoteViewsServiceRecentlyPlayed extends RemoteViewsService {
 	@Override
 	public RemoteViewsFactory onGetViewFactory(Intent intent) {
