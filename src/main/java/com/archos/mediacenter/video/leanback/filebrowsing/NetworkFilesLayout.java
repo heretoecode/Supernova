@@ -15,7 +15,7 @@ final class NetworkFilesLayout extends LinearLayout {
     private final ScrollView details, scroll;
     private final FrameLayout listing;
     private final LinearLayout items;
-    private boolean browsing,initialised,landing;
+    private boolean browsing,initialised,landing,hosted;
     final TextView back;
 
     NetworkFilesLayout(Context c, LinearLayout rail, LinearLayout centre, LinearLayout right,
@@ -35,12 +35,20 @@ final class NetworkFilesLayout extends LinearLayout {
         scroll=new ScrollView(c);scroll.setFillViewport(true);scroll.setFocusable(false);scroll.addView(body);
         mode(false);
     }
+    /** A full-panel page that draws itself (e.g. Local Storage): no back link, no shared surface. */
+    void host(View page){
+        hosted=true;landing=false;initialised=false;workspace.setBackground(null);back.setVisibility(GONE);
+        detach(centre);detach(right);detach(details);detach(items);detach(scroll);
+        workspace.removeAllViews();detach(page);workspace.addView(page,new FrameLayout.LayoutParams(-1,-1));
+    }
+    boolean hosted(){return hosted;}
     void landing(View grid){
-        landing=true;workspace.setBackground(null);back.setVisibility(GONE);workspace.removeAllViews();
+        hosted=false;landing=true;workspace.setBackground(null);back.setVisibility(GONE);workspace.removeAllViews();
         detach(grid);workspace.addView(grid,new FrameLayout.LayoutParams(-1,-1));
     }
     boolean landing(){return landing;}
     void mode(boolean value) {
+        if(hosted){hosted=false;surface(workspace,10);back.setVisibility(VISIBLE);initialised=false;}
         if(landing){surface(workspace,10);landing=false;initialised=false;back.setVisibility(VISIBLE);}
 
         if(initialised&&browsing==value)return;initialised=true;browsing=value;

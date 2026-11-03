@@ -137,6 +137,8 @@ public final class UniversalFileBrowser extends LinearLayout {
     private int landingSelection;
     private Runnable detailParent;
     private final List<View> landingCards = new ArrayList<>();
+    /** Network & Files › Local Storage (0.154 design); null when another page is showing. */
+    private LocalStorageView local;
 
     private float gridScale() {
         return Math.max(.5f,
@@ -156,6 +158,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     private void networkLanding() {
+        leaveLocal();
         if (current != null && suppliedDock == null) {
             remember();
             sectionLocations.put(landingSelection, current);
@@ -258,6 +261,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     private void openLandingCard(int index) {
+        leaveLocal();
         if (current != null && suppliedDock == null)
             sectionLocations.put(landingSelection, current);
         landingSelection = index;
@@ -267,12 +271,15 @@ public final class UniversalFileBrowser extends LinearLayout {
         workspaceMode(false);
         switch (index) {
             case 0:
+                if (networkLayout != null) {
+                    showLocal(sectionLocations.get(index));
+                    return;
+                }
                 if (sectionLocations.containsKey(index)) {
                     open(sectionLocations.get(index));
                     break;
                 }
                 localStorage();
-                centreAction("All Files", this::allLocations);
                 break;
             case 1:
                 if (sectionLocations.containsKey(index)) {
@@ -607,6 +614,39 @@ public final class UniversalFileBrowser extends LinearLayout {
         });
     }
 
+    private boolean localShowing() {
+        return local != null && networkLayout != null && networkLayout.hosted();
+    }
+
+    /** Shows the Local Storage page (full panel), reopening the folder left last time, if any. */
+    private void showLocal(Uri at) {
+        stopDiscovery();
+        stopListing();
+        current = null;
+        if (local == null)
+            local = new LocalStorageView(getContext(), prefs, selection, () -> configurationActive = true);
+        local.setVolumes(mountedVolumes);
+        networkLayout.host(local);
+        if (at != null)
+            local.open(at);
+        else
+            local.focusDefault();
+    }
+
+    /**
+     * Remembers where Local Storage was, so returning to the tile reopens that folder. The page itself is kept
+     * (with the folders it has listed this session) until the browser closes.
+     */
+    private void leaveLocal() {
+        if (local == null || !localShowing())
+            return;
+        if (local.location() != null)
+            sectionLocations.put(0, local.location());
+        else
+            sectionLocations.remove(0);
+        NetworkFilesLayout.detach(local);
+    }
+
     private void localStorage() {
         detailParent = null;
         sectionChild = false;
@@ -876,10 +916,12 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     public Uri location() {
-        return current;
+        return localShowing() ? local.location() : current;
     }
 
     public boolean atTop() {
+        if (localShowing())
+            return local.atTop();
         if (networkLayout != null)
             return networkLayout.back.hasFocus()
                 || networkLayout.landing() && landingCards.indexOf(findFocus()) >= 0
@@ -899,6 +941,10 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     public boolean focusOverview() {
+        if (localShowing()) {
+            local.focusDefault();
+            return true;
+        }
         if (networkLayout != null) {
             if (networkLayout.landing())
                 landingCards.get(landingSelection).requestFocus();
@@ -977,6 +1023,8 @@ public final class UniversalFileBrowser extends LinearLayout {
             if (box.getBoxId() == Box.ID.FOLDERS || box.getBoxId() == Box.ID.USB || box.getBoxId() == Box.ID.SDCARD
                 || box.getBoxId() == Box.ID.OTHER)
                 mountedVolumes.add(box);
+        if (local != null)
+            local.setVolumes(mountedVolumes);
         bookmarks.clear();
         bookmarks.addAll(saved);
         StringBuilder inventory = new StringBuilder();
@@ -1711,6 +1759,10 @@ public final class UniversalFileBrowser extends LinearLayout {
     public void open(Uri uri) {
         if (closed || uri == null)
             return;
+        if (localShowing() && "file".equalsIgnoreCase(uri.getScheme())) {
+            local.open(uri);
+            return;
+        }
         if (onboarding && !"file".equalsIgnoreCase(uri.getScheme())) {
             status.setText("Choose local folders during initial setup.");
             return;
@@ -2408,6 +2460,12 @@ public final class UniversalFileBrowser extends LinearLayout {
 
     /** Back consumes folder ancestry before offering to leave. */
     public boolean back(Runnable leave) {
+        if (localShowing()) {
+            if (local.back())
+                return true;
+            requestExit(this::networkLanding);
+            return true;
+        }
         if (putioBrowser != null) {
             putioBrowser.back();
             return true;
@@ -2606,6 +2664,10 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     public void close() {
+        if (local != null) {
+            local.close();
+            local = null;
+        }
         scanHandler.removeCallbacksAndMessages(null);
         closed = true;
         stopDiscovery();
@@ -2619,7 +2681,7 @@ public final class UniversalFileBrowser extends LinearLayout {
             return super.dispatchKeyEvent(event);
         int key = event.getKeyCode();
         View focused = findFocus();
-        if (networkLayout != null && networkLayout.landing())
+        if (networkLayout != null && (networkLayout.landing() || localShowing()))
             return super.dispatchKeyEvent(event);
         if (networkLayout != null && networkLayout.back.hasFocus()) {
             if (key == KeyEvent.KEYCODE_DPAD_DOWN) {

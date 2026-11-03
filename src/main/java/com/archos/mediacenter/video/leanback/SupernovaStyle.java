@@ -423,6 +423,32 @@ public final class SupernovaStyle {
         return states;
     }
 
+    /**
+     * A clickable path chip (e.g. the file browser's path): no box at rest, the white focus box when focused.
+     * Pair with {@link #buttonContent()} for its text and icon.
+     */
+    public static StateListDrawable chip(Context c) {
+        StateListDrawable states = new ButtonStates();
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 7), 0);
+        states.addState(new int[] {android.R.attr.state_focused}, focused);
+        states.addState(new int[] {android.R.attr.state_pressed}, focused);
+        states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
+        return states;
+    }
+
+    /**
+     * A list row that shows its own buttons when focused (owner, 3 Nov 2026): the white row outline while the
+     * row itself is focused; a faint fill while one of its buttons holds focus (the row is then "activated").
+     */
+    public static StateListDrawable rowWithActions(Context c) {
+        StateListDrawable states = new StateListDrawable();
+        states.addState(new int[] {android.R.attr.state_focused}, rowFocusOutline(c));
+        states.addState(new int[] {android.R.attr.state_activated},
+                        new Box(ROW_SELECTED, 0, 0, dp(c, RADIUS_DP), 0));
+        states.addState(new int[] {}, new ColorDrawable(Color.TRANSPARENT));
+        return states;
+    }
+
     /** Background for a selectable row whose focus is drawn by a travelling outline (e.g. a settings rail):
      *  the chosen row keeps a faint fill so it stays recognisable when focus moves away; no focus states here. */
     public static Drawable selectedRow(Context c, boolean selected) {
