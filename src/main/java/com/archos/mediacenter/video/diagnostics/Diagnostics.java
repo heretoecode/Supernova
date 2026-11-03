@@ -25,12 +25,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import androidx.preference.PreferenceManager;
+import com.archos.filecorelibrary.TransportReadObserver;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewPages;
+import com.google.zxing.WriterException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -193,13 +201,13 @@ public final class Diagnostics {
             String digest = "none";
             if (!genreSet.isEmpty()) {
                 byte[] hash = MessageDigest.getInstance("SHA-256").digest(
-                    TextUtils.join("|", genreSet).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    TextUtils.join("|", genreSet).getBytes(StandardCharsets.UTF_8));
                 StringBuilder value = new StringBuilder();
                 for (byte b : hash)
                     value.append(String.format(java.util.Locale.ROOT, "%02x", b));
                 digest = value.toString();
             }
-            uiFilterDetails = new org.json.JSONObject()
+            uiFilterDetails = new JSONObject()
                                   .put("genre_count", genreSet.size())
                                   .put("genre_selection_id", digest)
                                   .put("years", numericFilters(years))
@@ -211,8 +219,8 @@ public final class Diagnostics {
         }
     }
 
-    private static org.json.JSONArray numericFilters(String values) {
-        org.json.JSONArray result = new org.json.JSONArray();
+    private static JSONArray numericFilters(String values) {
+        JSONArray result = new JSONArray();
         for (String value : values.split("\\|"))
             if (value.matches("[0-9]{1,9}") && result.length() < 100)
                 result.put(Long.parseLong(value));
@@ -405,7 +413,7 @@ public final class Diagnostics {
         if (enabled)
             HEARTBEAT.execute(Diagnostics::previousExitEvidence);
         event("startup", "default_logging", defaultEnabled(), "version",
-            com.archos.mediacenter.video.BuildConfig.VERSION_NAME, "sdk", Build.VERSION.SDK_INT);
+            BuildConfig.VERSION_NAME, "sdk", Build.VERSION.SDK_INT);
     }
 
     private static String viewId(View view) {
@@ -413,11 +421,11 @@ public final class Diagnostics {
             return "none";
         for (View ancestor = view; ancestor != null;
             ancestor = ancestor.getParent() instanceof View ? (View) ancestor.getParent() : null) {
-            Object mark = ancestor.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic);
+            Object mark = ancestor.getTag(R.id.preview_diagnostic_semantic);
             if ("semantic:private.credential".equals(mark))
                 return "semantic:private.credential";
         }
-        Object semantic = view.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic);
+        Object semantic = view.getTag(R.id.preview_diagnostic_semantic);
         if (!(semantic instanceof String))
             semantic = view.getTag();
         if (semantic instanceof String && ((String) semantic).matches("semantic:[A-Za-z0-9 _:.-]{1,100}"))
@@ -467,7 +475,7 @@ public final class Diagnostics {
 
     public static void semantic(View view, String identity) {
         if (view != null && identity != null && identity.matches("[A-Za-z0-9_.:-]{1,90}"))
-            view.setTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic, "semantic:" + identity);
+            view.setTag(R.id.preview_diagnostic_semantic, "semantic:" + identity);
     }
 
     public static String focusEntry(View opener, String flow) {
@@ -512,7 +520,7 @@ public final class Diagnostics {
     }
 
     static void inspectFocusGeometry(View target) {
-        if (!enabled || target instanceof com.archos.mediacenter.video.leanback.PreviewPages
+        if (!enabled || target instanceof PreviewPages
             || !target.isAttachedToWindow() || !target.hasFocus() || target.getWidth() == 0 || target.getHeight() == 0)
             return;
         Rect visible = new Rect();
@@ -590,7 +598,7 @@ public final class Diagnostics {
     }
 
     public static void chooseDisable(Context c, Consumer<Boolean> changed) {
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(c, "Turn diagnostic logging off?",
+        PreviewDialog.choose(c, "Turn diagnostic logging off?",
             new String[] {
                 "Cancel", "Keep saved logs", "Delete saved logs"
             }, 0, n -> {
@@ -627,7 +635,7 @@ public final class Diagnostics {
     }
 
     private static void installTransportReads() {
-        com.archos.filecorelibrary.TransportReadObserver.install(enabled ? protocol -> {
+        TransportReadObserver.install(enabled ? protocol -> {
             if (!enabled)
                 return null;
             final String session = playback, id = PROCESS + ":read:" + SEQUENCE.incrementAndGet();
@@ -929,7 +937,7 @@ public final class Diagnostics {
                     try (java.io.InputStream input = info.getTraceInputStream()) {
                         if (input != null) {
                             BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(input, java.nio.charset.StandardCharsets.UTF_8));
+                                new InputStreamReader(input, StandardCharsets.UTF_8));
                             String line;
                             StringBuilder frames = new StringBuilder();
                             int bytes = 0, count = 0;
@@ -1088,14 +1096,14 @@ public final class Diagnostics {
 
     public static void reportProblem(Context c) {
         if (!enabled) {
-            com.archos.mediacenter.video.leanback.PreviewDialog.read(c, "Diagnostic logging is off",
+            PreviewDialog.read(c, "Diagnostic logging is off",
                 "Enable Diagnostic Logging in Advanced settings before recording a problem.");
             return;
         }
         String[] categories = {
             "Playback", "UI", "Network", "Other"
         };
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(c, "Report a Problem", categories, -1, n -> {
+        PreviewDialog.choose(c, "Report a Problem", categories, -1, n -> {
             String id = PROCESS.substring(0, 8) + "-" + SEQUENCE.incrementAndGet();
             long time = System.currentTimeMillis();
             event("manual_problem_marker", "category", categories[n], "marker_id", id, "reported_at", time);
@@ -1115,7 +1123,7 @@ public final class Diagnostics {
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (c instanceof Activity && (((Activity) c).isFinishing() || ((Activity) c).isDestroyed()))
                     return;
-                com.archos.mediacenter.video.leanback.PreviewDialog.read(c, "Issues Digest", digest);
+                PreviewDialog.read(c, "Issues Digest", digest);
             });
         });
     }
@@ -1124,7 +1132,7 @@ public final class Diagnostics {
         SharedPreferences saved = c.getSharedPreferences("supernova_diagnostic_session", Context.MODE_PRIVATE);
         String id = saved.getString("latest_manual_reference", "");
         if (id.isEmpty()) {
-            com.archos.mediacenter.video.leanback.PreviewDialog.read(
+            PreviewDialog.read(
                 c, "Latest Reference", "No problem has been recorded yet.");
             return;
         }
@@ -1136,7 +1144,7 @@ public final class Diagnostics {
         try {
             DiagnosticReference.payload(id, category, time);
         } catch (IllegalArgumentException invalid) {
-            com.archos.mediacenter.video.leanback.PreviewDialog.read(
+            PreviewDialog.read(
                 c, title, "The saved reference is unavailable. Record a new problem to create a reference.");
             return;
         }
@@ -1148,10 +1156,10 @@ public final class Diagnostics {
         Bitmap qr = null;
         try {
             qr = DiagnosticReference.bitmap(id, category, time, 512);
-        } catch (com.google.zxing.WriterException | RuntimeException failure) {
+        } catch (WriterException | RuntimeException failure) {
             confirmation += "\nQR unavailable; the readable reference remains valid.";
         }
-        com.archos.mediacenter.video.leanback.PreviewDialog.read(c, title, confirmation, qr);
+        PreviewDialog.read(c, title, confirmation, qr);
     }
 
     public static void error(String event, Throwable error) {
@@ -1357,10 +1365,10 @@ public final class Diagnostics {
                 JSONObject info = new JSONObject();
                 try {
                     info.put("package", c.getPackageName());
-                    info.put("version_name", com.archos.mediacenter.video.BuildConfig.VERSION_NAME);
-                    info.put("version_code", com.archos.mediacenter.video.BuildConfig.VERSION_CODE);
-                    info.put("source_commit", com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA);
-                    info.put("build_utc", com.archos.mediacenter.video.BuildConfig.PREVIEW_BUILD_UTC);
+                    info.put("version_name", BuildConfig.VERSION_NAME);
+                    info.put("version_code", BuildConfig.VERSION_CODE);
+                    info.put("source_commit", BuildConfig.PREVIEW_GIT_SHA);
+                    info.put("build_utc", BuildConfig.PREVIEW_BUILD_UTC);
                     info.put("manufacturer", safe(Build.MANUFACTURER));
                     info.put("model", safe(Build.MODEL));
                     info.put("android_release", safe(Build.VERSION.RELEASE));
@@ -1368,7 +1376,7 @@ public final class Diagnostics {
                     info.put("abis", Arrays.toString(Build.SUPPORTED_ABIS));
                     info.put("logging_enabled", enabled);
                     info.put("utc_ms", System.currentTimeMillis());
-                } catch (org.json.JSONException failure) {
+                } catch (JSONException failure) {
                     throw new IOException(failure);
                 }
                 entry(zip, "build-device.json", info.toString(2).getBytes(StandardCharsets.UTF_8));
@@ -1417,7 +1425,7 @@ public final class Diagnostics {
                     }
                     zip.closeEntry();
                 }
-            } catch (org.json.JSONException failure) {
+            } catch (JSONException failure) {
                 throw new IOException(failure);
             } finally {
                 removeLogs(snapshot);
@@ -1480,14 +1488,14 @@ public final class Diagnostics {
         String linked = "";
         try {
             linked = DiagnosticArchive.linkedSummary(snapshot);
-        } catch (org.json.JSONException incomplete) {
+        } catch (JSONException incomplete) {
             linked = "\nLinked summary unavailable; raw evidence retained.\n";
         }
         return linked
             + "Supernova diagnostic summary\nCompleteness: PARTIAL (native/direct transport coverage is incomplete)\n"
             + retained + "Current logger dropped: " + DROPPED.get() + "; write errors: " + WRITE_ERRORS.get()
-            + "\nBuild: " + com.archos.mediacenter.video.BuildConfig.VERSION_NAME
-            + "\nSource: " + com.archos.mediacenter.video.BuildConfig.PREVIEW_GIT_SHA
+            + "\nBuild: " + BuildConfig.VERSION_NAME
+            + "\nSource: " + BuildConfig.PREVIEW_GIT_SHA
             + "\nPlayback sessions retained: " + sessions.size() + "\nEvent counts: " + counts
             + "\nRecent significant events (UTC milliseconds):\n" + TextUtils.join("\n", timeline)
             + "\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
