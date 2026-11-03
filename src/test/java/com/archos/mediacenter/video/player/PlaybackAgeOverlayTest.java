@@ -1,6 +1,15 @@
 package com.archos.mediacenter.video.player;
 
+import android.app.Activity;
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.net.Uri;
+import android.os.Looper;
+import android.view.View;
+import java.io.IOException;
+import java.time.Duration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -39,7 +48,7 @@ public class PlaybackAgeOverlayTest {
     public void establishedOutputCannotBeBorrowedFromAnotherLaunchOrMetadataInstance() {
         PlayerService service = Robolectric.buildService(PlayerService.class).get();
         var info = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
-        info.uri = android.net.Uri.parse("file:///fixture/current");
+        info.uri = Uri.parse("file:///fixture/current");
         Object session = ReflectionHelpers.getField(service, "mPlaybackSession");
         ReflectionHelpers.setField(service, "mVideoInfo", info);
         ReflectionHelpers.setField(session, "uri", info.uri);
@@ -47,7 +56,7 @@ public class PlaybackAgeOverlayTest {
         ReflectionHelpers.setField(session, "outputEstablished", true);
         assertTrue(service.hasEstablishedOutputFor(info));
         assertFalse(service.hasEstablishedOutputFor(new com.archos.mediacenter.utils.videodb.VideoDbInfo()));
-        ReflectionHelpers.setField(session, "uri", android.net.Uri.parse("file:///fixture/previous"));
+        ReflectionHelpers.setField(session, "uri", Uri.parse("file:///fixture/previous"));
         assertFalse(service.hasEstablishedOutputFor(info));
         ReflectionHelpers.setField(session, "uri", info.uri);
         ReflectionHelpers.setField(session, "failed", true);
@@ -56,20 +65,20 @@ public class PlaybackAgeOverlayTest {
 
     @Test
     public void outputIsRequiredAndOverlayNeverCapturesFocus() {
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             PlaybackAgeOverlay view = new PlaybackAgeOverlay(host.get(), null);
             host.get().setContentView(view);
             ReflectionHelpers.setField(view, "classification", "15");
-            assertEquals(android.view.View.GONE, view.getVisibility());
+            assertEquals(View.GONE, view.getVisibility());
             assertFalse(view.isFocusable());
             view.playbackStarted();
-            assertEquals(android.view.View.VISIBLE, view.getVisibility());
+            assertEquals(View.VISIBLE, view.getVisibility());
             assertEquals(10000, PlaybackAgeOverlay.DWELL_MS);
             view.stop();
-            assertEquals(android.view.View.GONE, view.getVisibility());
+            assertEquals(View.GONE, view.getVisibility());
             view.playbackStarted();
-            assertEquals(android.view.View.GONE, view.getVisibility());
+            assertEquals(View.GONE, view.getVisibility());
         } finally {
             host.pause().stop().destroy();
         }
@@ -77,15 +86,15 @@ public class PlaybackAgeOverlayTest {
 
     @Test
     public void lateMetadataNeverStartsANewTenSecondWindow() {
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             PlaybackAgeOverlay view = new PlaybackAgeOverlay(host.get(), null);
             host.get().setContentView(view);
             view.playbackStarted();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofSeconds(11));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(11));
             ReflectionHelpers.setField(view, "classification", "PG-13");
             view.playbackStarted();
-            assertEquals(android.view.View.GONE, view.getVisibility());
+            assertEquals(View.GONE, view.getVisibility());
         } finally {
             host.pause().stop().destroy();
         }
@@ -104,11 +113,11 @@ public class PlaybackAgeOverlayTest {
     public void rapidUnindexedFileSwitchResetsOutputEvenWhenDatabaseIdsMatch() {
         PlaybackAgeOverlay view = new PlaybackAgeOverlay(RuntimeEnvironment.getApplication(), null);
         var first = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
-        first.uri = android.net.Uri.parse("file:///one.mkv");
+        first.uri = Uri.parse("file:///one.mkv");
         view.bind(first);
         view.playbackStarted();
         var second = new com.archos.mediacenter.utils.videodb.VideoDbInfo();
-        second.uri = android.net.Uri.parse("file:///two.mkv");
+        second.uri = Uri.parse("file:///two.mkv");
         view.bind(second);
         assertFalse((Boolean) ReflectionHelpers.getField(view, "output"));
     }
@@ -126,24 +135,24 @@ public class PlaybackAgeOverlayTest {
 
     @Test
     public void tenSecondPlaybackDeadlineIsNotExtendedByRepeatedStartSignals() {
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             PlaybackAgeOverlay view = new PlaybackAgeOverlay(host.get(), null);
             host.get().setContentView(view);
             ReflectionHelpers.setField(view, "classification", "15");
             view.playbackStarted();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(9999));
-            assertEquals(android.view.View.VISIBLE, view.getVisibility());
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(9999));
+            assertEquals(View.VISIBLE, view.getVisibility());
             view.playbackStarted();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1000));
-            assertEquals(android.view.View.GONE, view.getVisibility());
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1000));
+            assertEquals(View.GONE, view.getVisibility());
         } finally {
             host.pause().stop().destroy();
         }
     }
 
     private void renderRating(String suffix) throws Exception {
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             PlaybackAgeOverlay view = new PlaybackAgeOverlay(host.get(), null);
             host.get().setContentView(view);
@@ -152,21 +161,21 @@ public class PlaybackAgeOverlayTest {
             var config = view.getResources().getConfiguration();
             float density = view.getResources().getDisplayMetrics().density;
             int w = Math.round(config.screenWidthDp * density), h = Math.round(config.screenHeightDp * density);
-            view.measure(android.view.View.MeasureSpec.makeMeasureSpec(w, android.view.View.MeasureSpec.EXACTLY),
-                android.view.View.MeasureSpec.makeMeasureSpec(h, android.view.View.MeasureSpec.EXACTLY));
+            view.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
             view.layout(0, 0, w, h);
             assertNull(view.getBackground());
             assertFalse(view.isFocusable());
             assertFalse(view.isClickable());
             com.archos.mediacenter.video.leanback.PreviewPagesTest.capture(view, "0147-age-rating-" + suffix);
-            android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeFile(
+            Bitmap bitmap = BitmapFactory.decodeFile(
                 "build/reports/preview-ui/0147-age-rating-" + suffix + ".png");
             int red = 0;
             for (int y = 0; y < h / 3; y++)
                 for (int x = 0; x < w / 3; x++) {
                     int c = bitmap.getPixel(x, y);
-                    if (android.graphics.Color.red(c) > 180 && android.graphics.Color.green(c) < 80
-                        && android.graphics.Color.blue(c) < 100)
+                    if (Color.red(c) > 180 && Color.green(c) < 80
+                        && Color.blue(c) < 100)
                         red++;
                 }
             assertTrue("Slim red accent is drawn", red > 0);
@@ -212,7 +221,7 @@ public class PlaybackAgeOverlayTest {
         assertEquals(1, requests[0]);
         assertEquals(
             "", PlaybackAgeOverlay.loadCertificate(null, "GB", () -> {
-                throw new java.io.IOException("Offline");
+                throw new IOException("Offline");
             }));
     }
 }
