@@ -70,20 +70,27 @@ import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.UiChoiceDialog;
 import com.archos.mediacenter.video.browser.loader.MoviesLoader;
+import com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes;
+import com.archos.mediacenter.video.foundation.FoundationAboutEntry;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.leanback.MainFragment;
 import com.archos.mediacenter.video.leanback.animes.AllAnimesGridFragment;
 import com.archos.mediacenter.video.leanback.animes.AnimesSortOrderEntry;
 import com.archos.mediacenter.video.leanback.movies.AllMoviesGridFragment;
 import com.archos.mediacenter.video.leanback.movies.MoviesSortOrderEntry;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsLicencesActivity;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsMoreLeanbackActivity;
 import com.archos.mediacenter.video.leanback.tvshow.AllTvshowsGridFragment;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowsSortOrderEntry;
+import com.archos.mediacenter.video.streaming.StreamingPreferences;
 import com.archos.mediacenter.video.tvshow.AnimeShowSortOrderEntries;
 import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
 import com.archos.mediacenter.video.utils.credentialsmanager.CredentialsManagerPreferenceActivity;
 import com.archos.medialib.MediaFactory;
+import com.archos.mediaprovider.VideoDb;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.ScraperTables;
 import com.archos.mediaprovider.video.VideoProvider;
 import com.archos.mediascraper.AllCollectionScrapeService;
 import com.archos.mediascraper.AutoScrapeService;
@@ -339,7 +346,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     private Preference mExportManualPreference;
     private Preference mDbExportManualPreference = null;
 
-    private com.archos.mediacenter.video.streaming.StreamingPreferences mStreamingPreferences;
+    private StreamingPreferences mStreamingPreferences;
     private PreferenceFragmentCompat mPreferencesFragment;
 
     List<String> OpensubtitlesLanguageListEntries = new ArrayList<>();
@@ -376,7 +383,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 Intent intent = new Intent(MediaLibraryBackupService.ACTION_EXPORT, null, getActivity(),
                                            MediaLibraryBackupService.class);
                 intent.putExtra(MediaLibraryBackupService.EXTRA_EXPORT_URI, uri.toString());
-                androidx.core.content.ContextCompat.startForegroundService(getContext(), intent);
+                ContextCompat.startForegroundService(getContext(), intent);
             });
         backupSource =
             preferencesFragment.registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
@@ -387,7 +394,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         preferencesFragment.getLifecycle().addObserver(new DefaultLifecycleObserver() {
             @Override
             public void onCreate(LifecycleOwner owner) {
-                if (!androidx.preference.PreferenceManager
+                if (!PreferenceManager
                          .getDefaultSharedPreferences(preferencesFragment.requireContext())
                          .getBoolean("try_new_ui", false))
                     backupReview = new BackupReview(preferencesFragment);
@@ -459,7 +466,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     // thread; both callers post to it via Handler(Looper.getMainLooper()) after their
     // background-thread SubtitleFontsFolderSync call returns.
     private void onFontsFolderSynced(Context context, Uri treeUri, int resultCount) {
-        java.io.File storeDir = SubtitleFontsFolderSync.getFontsStoreDir(context);
+        File storeDir = SubtitleFontsFolderSync.getFontsStoreDir(context);
         if (resultCount >= 0) {
             // Only the store path (not the SAF URI) is what Player.java/native code
             // ever reads -- see the KEY_SUBTITLE_FONTS_FOLDER comment at its
@@ -525,14 +532,14 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     //
     // `dir` here is ALWAYS this app's own private store directory (getFontsStoreDir()-based),
     // never a user-picked path -- so there's no permission concern to check.
-    private void refreshSubtitleDefaultFontList(java.io.File dir) {
+    private void refreshSubtitleDefaultFontList(File dir) {
         ListPreference defaultFontPref = (ListPreference)findPreference(KEY_SUBTITLE_DEFAULT_FONT);
         if (defaultFontPref == null)
             return;
 
-        java.io.File[] files = dir.listFiles();
+        File[] files = dir.listFiles();
         if (files == null)
-            files = new java.io.File[0];
+            files = new File[0];
         Arrays.sort(files, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
 
         log.debug("refreshSubtitleDefaultFontList: scanning {} font file(s) in '{}'", files.length,
@@ -542,11 +549,11 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         // (filename + optional selector suffix) -- built up across all files/entries before
         // handing off to the ListPreference, since the final count isn't known until every
         // file has been parsed (one file can yield 0, 1, or many entries).
-        java.util.List<CharSequence> entryLabels = new java.util.ArrayList<>();
-        java.util.List<CharSequence> entryValues = new java.util.ArrayList<>();
-        java.util.Set<String> seenLabels = new java.util.HashSet<>();
+        List<CharSequence> entryLabels = new ArrayList<>();
+        List<CharSequence> entryValues = new ArrayList<>();
+        Set<String> seenLabels = new HashSet<>();
 
-        for (java.io.File file : files) {
+        for (File file : files) {
             FontNameParser.Entry[] parsed = FontNameParser.parse(file.getAbsolutePath());
             if (parsed.length == 0) {
                 log.warn("refreshSubtitleDefaultFontList: '{}' could not be parsed as a font, skipping",
@@ -957,7 +964,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         resetPassthroughPref(mSharedPreferences);
 
         addPreferencesFromResource(R.xml.preferences_video);
-        mStreamingPreferences = new com.archos.mediacenter.video.streaming.StreamingPreferences(mPreferencesFragment);
+        mStreamingPreferences = new StreamingPreferences(mPreferencesFragment);
 
         FontsFolderSafPreference fontsFolderPref =
             (FontsFolderSafPreference)findPreference(KEY_SUBTITLE_FONTS_FOLDER_URI);
@@ -1141,12 +1148,12 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         mAboutPreferences = (PreferenceCategory)findPreference(KEY_ABOUT_PREFERENCES);
         Preference novaVersion = (Preference)findPreference("preferences_version");
         novaVersion.setTitle("Build");
-        novaVersion.setSummary(com.archos.mediacenter.video.BuildConfig.VERSION_NAME);
+        novaVersion.setSummary(BuildConfig.VERSION_NAME);
         // Approved 2 Nov 2026: the old build box (outdated aos-Video link and "Base NOVA 6.4.63") is removed;
         // version and build information live in the About / Build information screens.
 
-        if (com.archos.mediacenter.video.BuildConfig.FOUNDATION)
-            com.archos.mediacenter.video.foundation.FoundationAboutEntry.install(mPreferencesFragment);
+        if (BuildConfig.FOUNDATION)
+            FoundationAboutEntry.install(mPreferencesFragment);
         mSmb2 = (CheckBoxPreference)findPreference(KEY_SMB2);
         mSmbResolver = (CheckBoxPreference)findPreference(KEY_SMB_RESOLV);
         mSmbDisableTcpDiscovery = (CheckBoxPreference)findPreference(KEY_SMB_DISABLE_TCP_DISCOVERY);
@@ -1202,8 +1209,8 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             Toast.makeText(getActivity(), R.string.recreate_sort_titles_in_progress, Toast.LENGTH_SHORT).show();
             new Thread(() -> {
                 try {
-                    SQLiteDatabase db = com.archos.mediaprovider.VideoDb.get(getContext());
-                    com.archos.mediaprovider.video.ScraperTables.recreateSortNames(db);
+                    SQLiteDatabase db = VideoDb.get(getContext());
+                    ScraperTables.recreateSortNames(db);
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
                             if (getActivity() != null) {
@@ -1285,7 +1292,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         exportLibraryPreference.setSummary(
             "Selected configuration and viewing choices. Media and credentials are excluded. Unencrypted; keep backups private.");
         exportLibraryPreference.setOnPreferenceClickListener(preference -> {
-            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+            new AlertDialog.Builder(getActivity())
                 .setTitle("Back up Supernova?")
                 .setMessage(
                     "This backup is unencrypted. Selected configuration and history can reveal private viewing interests. Media, artwork, subtitle files, credentials, accounts, access grants, Put.io associations and legacy Collections are excluded. Filenames and locations are Off by default. Reconnect services, sources and Android permissions separately.")
@@ -1296,11 +1303,11 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                         try {
                             backupDestination.launch(
                                 "nova-backup-" +
-                                new SimpleDateFormat("yyyy-MM-dd-HHmm", java.util.Locale.ROOT)
+                                new SimpleDateFormat("yyyy-MM-dd-HHmm", Locale.ROOT)
                                     .format(new Date()) +
                                 ".zip.in-progress");
-                        } catch (android.content.ActivityNotFoundException missing) {
-                            new androidx.appcompat.app.AlertDialog.Builder(getActivity())
+                        } catch (ActivityNotFoundException missing) {
+                            new AlertDialog.Builder(getActivity())
                                 .setMessage(
                                     "Install a document picker to choose a backup location. You can still export to SUPERNOVA's folder.")
                                 .setPositiveButton("Export here",
@@ -1319,14 +1326,14 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         importLibraryPreference.setOnPreferenceClickListener(preference -> {
             try {
                 backupSource.launch(new String[] {"application/zip", "application/octet-stream"});
-            } catch (android.content.ActivityNotFoundException missing) {
+            } catch (ActivityNotFoundException missing) {
                 showImportDialog();
             }
             return true;
         });
 
         findPreference(KEY_RESCAN_STORAGE).setOnPreferenceClickListener(preference -> {
-            com.archos.mediaprovider.video.NetworkAutoRefresh.forceRescan(getContext());
+            NetworkAutoRefresh.forceRescan(getContext());
             if (LoaderUtils.getScrapeInProgress()) {
                 //Stop the scrape.
                 LoaderUtils.setScrapeInProgress(false);
@@ -1913,7 +1920,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
     }
 
     public static Map<String, String> subtitleLanguageChoices(Context context) {
-        List<String> entries = new java.util.ArrayList<>(), values = new java.util.ArrayList<>();
+        List<String> entries = new ArrayList<>(), values = new ArrayList<>();
         buildLanguageList(context, OPENSUBTITLES_LANGUAGES, entries, values);
         Map<String, String> result = new LinkedHashMap<>();
         for (int i = 0; i < values.size(); i++)
@@ -1945,7 +1952,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
         for (String s : languageCodeArray) {
             String currentLocaleLanguage =
-                com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.getLanguageNameFor2LetterCode(context,
+                ISO639codes.getLanguageNameFor2LetterCode(context,
                                                                                                                 s);
             if (currentLocaleLanguage.equalsIgnoreCase(defaultLocaleLanguage) ||
                 currentLocaleLanguage.equalsIgnoreCase(englishLocaleLanguage))
@@ -2278,12 +2285,12 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             .setTitle(R.string.media_library_import_dialog_title)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok,
-                               (dialog, which) -> { reviewBackup(android.net.Uri.fromFile(backupFile)); })
+                               (dialog, which) -> { reviewBackup(Uri.fromFile(backupFile)); })
             .setNegativeButton(android.R.string.cancel, null)
             .show();
     }
 
-    private void reviewBackup(android.net.Uri source) {
+    private void reviewBackup(Uri source) {
         if (backupReview == null)
             backupReview = new BackupReview(mPreferencesFragment);
         backupReview.open(source);
@@ -2320,10 +2327,10 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
 
                 // Check if this is a leanback settings activity
                 boolean isLeanbackSettings =
-                    (activity instanceof com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity) ||
+                    (activity instanceof VideoSettingsActivity) ||
                     (activity instanceof
-                     com.archos.mediacenter.video.leanback.settings.VideoSettingsMoreLeanbackActivity) ||
-                    (activity instanceof com.archos.mediacenter.video.leanback.settings.VideoSettingsLicencesActivity);
+                     VideoSettingsMoreLeanbackActivity) ||
+                    (activity instanceof VideoSettingsLicencesActivity);
 
                 if (isLeanbackSettings) {
                     // Recreate settings activity so theme changes immediately
