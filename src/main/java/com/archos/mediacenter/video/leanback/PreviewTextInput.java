@@ -6,6 +6,7 @@ import android.text.InputFilter;
 import android.text.method.PasswordTransformationMethod;
 import android.view.*;
 import android.widget.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -42,7 +43,7 @@ public final class PreviewTextInput {
         LinearLayout panel = foundation ? new MenuFoundation.WindowPanel(c) : new LinearLayout(c);
         panel.setOrientation(LinearLayout.VERTICAL);
         if (secret)
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(panel, "private.credential");
+            Diagnostics.semantic(panel, "private.credential");
         panel.setPadding(dp(c, 20), dp(c, 16), dp(c, 20), dp(c, 16));
         panel.setBackground(foundation ? MenuFoundation.surface(c, false) : PreviewDialog.dialogSurface(c));
         TextView heading = new TextView(c);
@@ -57,7 +58,7 @@ public final class PreviewTextInput {
         input.setText(previous);
         if (secret) {
             input.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(input, "private.credential");
+            Diagnostics.semantic(input, "private.credential");
         }
         input.setTextSize(16);
         SupernovaStyle.applyButton(input, SupernovaStyle.Surface.STANDARD);
