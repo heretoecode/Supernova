@@ -55,6 +55,7 @@ import com.archos.mediacenter.video.browser.loader.MoviesLoader;
 import com.archos.mediacenter.video.browser.loader.MoviesSelectionLoader;
 import com.archos.mediacenter.video.leanback.CompatibleCursorMapperConverter;
 import com.archos.mediacenter.video.leanback.VideoViewClickedListener;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
@@ -132,7 +133,7 @@ public abstract class MoviesByFragment extends BrowseSupportFragment implements 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSortOrder = mPrefs.getString(getSortOrderParamKey(), MoviesLoader.DEFAULT_SORT);
         mSeparateAnimeFromShowMovie = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
-        mSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         Resources r = getResources();
 
@@ -189,7 +190,7 @@ public abstract class MoviesByFragment extends BrowseSupportFragment implements 
         super.onResume();
         mOverlay.resume();
         updateBackground();
-        boolean newSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        boolean newSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
         if (newSortIgnoreArticles != mSortIgnoreArticles) {
             mSortIgnoreArticles = newSortIgnoreArticles;
             if (mCurrentCategoriesCursor != null) {
