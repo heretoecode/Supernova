@@ -16,6 +16,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks logical backup archives validate selected payloads, schemas and integrity without including secrets. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class LogicalBackupArchiveTest {
