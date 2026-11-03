@@ -15,12 +15,9 @@
 package com.archos.mediacenter.video.utils.oauth;
 
 
-import java.net.URLEncoder;
-import java.util.Iterator;
 
 import org.json.JSONObject;
 
-import android.util.Log;
 
 /**
  *	Class with all the information of the authentication
