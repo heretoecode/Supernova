@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.player;
 
+import android.app.Application;
 import android.content.ContentResolver;
 import android.os.Environment;
 import org.robolectric.annotation.Implementation;
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 30, application = android.app.Application.class, shadows = StorageWriteAccessTest.DeniedStorage.class)
+@Config(sdk = 30, application = Application.class, shadows = StorageWriteAccessTest.DeniedStorage.class)
 public class StorageWriteAccessTest {
     // Model denied all-files access explicitly. SDK 30's unshadowed no-arg
     // framework method indexes an external-volume array absent in this fixture.
