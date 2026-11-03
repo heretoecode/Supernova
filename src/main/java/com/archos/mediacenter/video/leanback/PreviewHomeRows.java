@@ -4,6 +4,7 @@ import android.content.*;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import java.util.*;
 import java.util.function.Consumer;
@@ -127,7 +128,7 @@ public final class PreviewHomeRows {
             Set<String> genres = PreviewGenres.parse(row.genreRule);
             Set<String> calculated = new LinkedHashSet<>();
             for (Entry entry : available.values())
-                if ((entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow ? row.tv
+                if ((entry.media instanceof Tvshow ? row.tv
                                                                                                         : row.movies)
                     && PreviewGenres.matches(entry.genres, genres, row.matchAll))
                     calculated.add(entry.key());
