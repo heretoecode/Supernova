@@ -8,23 +8,27 @@ import com.archos.mediacenter.video.utils.OpenSubtitlesSearchResult;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSubtitleResultsTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
@@ -36,14 +40,14 @@ public class PreviewSubtitleResultsTest {
         Dialog parent = PreviewSubtitleResults.show(host, Collections.singletonList(result), downloaded::set);
         View row = (View) parent.getWindow().getDecorView().findViewWithTag("preview-label:0").getParent();
         row.performClick();
-        Dialog review = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog review = ShadowDialog.getLatestDialog();
         assertNull(downloaded.get());
         assertNotNull(PreviewPagesTest.findText(review.getWindow().getDecorView(), "Source: OpenSubtitles"));
         review.dismiss();
         assertTrue(parent.isShowing());
         assertNull(downloaded.get());
         row.performClick();
-        review = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        review = ShadowDialog.getLatestDialog();
         View confirm = exact(review.getWindow().getDecorView(), "Download");
         assertNotNull(confirm);
         confirm.performClick();
@@ -63,14 +67,14 @@ public class PreviewSubtitleResultsTest {
         return null;
     }
 
-    @org.junit.Test
+    @Test
     public void approvedPlaybackRouteDoesNotReplaceTheDefaultSubtitleDialog() {
         Activity host = Robolectric.buildActivity(Activity.class).setup().get();
         android.app.Dialog approved = PreviewSubtitleResults.showPlayback(host,
             List.of(new OpenSubtitlesSearchResult("fixture", "Fixture subtitle.srt", "en-GB")), r -> {
             });
-        org.junit.Assert.assertNotNull(approved.getWindow().getDecorView().findViewWithTag("subtitles.download"));
-        org.junit.Assert.assertNotNull(approved.getWindow().getDecorView().findViewWithTag("subtitles.result.0"));
+        Assert.assertNotNull(approved.getWindow().getDecorView().findViewWithTag("subtitles.download"));
+        Assert.assertNotNull(approved.getWindow().getDecorView().findViewWithTag("subtitles.result.0"));
         approved.dismiss();
     }
 }
