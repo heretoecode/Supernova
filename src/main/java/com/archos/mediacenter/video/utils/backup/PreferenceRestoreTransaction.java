@@ -6,15 +6,23 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.AtomicFile;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.CustomLibraryPage;
 import com.archos.mediacenter.video.leanback.HomeIntentCodec;
+import com.archos.mediacenter.video.leanback.LegacyViewingSnapshot;
 import com.archos.mediacenter.video.leanback.PortableViewingChoices;
 import com.archos.mediacenter.video.leanback.PortableReviewNotes;
 import com.archos.mediacenter.video.leanback.PortablePreferredVersions;
 import com.archos.mediacenter.video.leanback.PortableViewingState;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
+import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.archos.mediascraper.BaseTags;
+import com.archos.mediascraper.MatchRestoreOperations;
+import com.archos.mediascraper.OwnedCanonicalBatch;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -100,7 +108,7 @@ public final class PreferenceRestoreTransaction {
         private final String bookmarksBefore, bookmarksAfter;
         private final String sourcesBefore, sourcesAfter;
         private final String titleBefore;
-        private List<com.archos.mediascraper.OwnedCanonicalBatch> canonicalBatches = Collections.emptyList();
+        private List<OwnedCanonicalBatch> canonicalBatches = Collections.emptyList();
         private Collection<Long> canonicalFiles = Collections.emptyList();
         private final boolean viewingExisted, historySelected, positionsSelected;
 
@@ -148,16 +156,16 @@ public final class PreferenceRestoreTransaction {
     /** Data is already durable; a refresh failure must not be reported as a failed restoration. */
     private void publishRestoredState() {
         try {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.reloadPolicy(destination);
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.invalidateHistoryCache(destination);
+            Diagnostics.reloadPolicy(destination);
+            PreviewLibraryLoader.invalidateHistoryCache(destination);
             destination.getContentResolver().notifyChange(
-                com.archos.mediaprovider.video.ScraperStore.ALL_CONTENT_URI, null);
+                ScraperStore.ALL_CONTENT_URI, null);
             destination.sendBroadcast(
                 new Intent(destination.getPackageName() + ".VIEWING_STATE_CHANGED")
                     .setPackage(destination.getPackageName()));
         } catch (RuntimeException unavailable) {
             refreshFailed = true;
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("restore_refresh_failed", unavailable);
+            Diagnostics.error("restore_refresh_failed", unavailable);
         }
     }
 
@@ -192,7 +200,7 @@ public final class PreferenceRestoreTransaction {
                 if (!(saved instanceof String))
                     throw new IOException("Pending playlist configuration is invalid");
                 String pending = (String) saved;
-                File file = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);
+                File file = VideoOpenHelper.getDatabaseFile(destination);
                 if (!file.exists())
                     return;
                 try {
@@ -360,10 +368,10 @@ public final class PreferenceRestoreTransaction {
         MediaMatchInventory inventory = MediaMatchInventory.capture(destination);
         if (!inventory.signature.equals(original.matchesBefore))
             throw new IOException("Receiving identification changed during canonical preparation");
-        List<com.archos.mediascraper.OwnedCanonicalBatch> batches = new ArrayList<>();
+        List<OwnedCanonicalBatch> batches = new ArrayList<>();
         List<Long> files = new ArrayList<>();
         Map<String, Object> values = new LinkedHashMap<>(original.after);
-        File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);
+        File store = VideoOpenHelper.getDatabaseFile(destination);
         if (!store.exists())
             return original;
         CanonicalMatchMaterial.Preparation preparation = new CanonicalMatchMaterial.Preparation(destination);
@@ -391,11 +399,11 @@ public final class PreferenceRestoreTransaction {
                 if (intent.isNull("requested")) {
                     if (owner.match == null)
                         continue;
-                    Long provider = owner.type == com.archos.mediascraper.BaseTags.MOVIE
+                    Long provider = owner.type == BaseTags.MOVIE
                         ? Long.parseLong(owner.match.identity.split(":")[2])
                         : owner.episodeProviderRaw;
                     batches.add(
-                        CanonicalMatchMaterial.guard(com.archos.mediascraper.MatchRestoreOperations.prepareClear(
+                        CanonicalMatchMaterial.guard(MatchRestoreOperations.prepareClear(
                                                          id, owner.type, owner.localId, provider),
                             owner));
                     files.add(id);
@@ -474,7 +482,7 @@ public final class PreferenceRestoreTransaction {
                 }
             if (!pending)
                 return false;
-            File media = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(destination);
+            File media = VideoOpenHelper.getDatabaseFile(destination);
             if (!media.exists())
                 return false;
             cancelled(cancel);
@@ -758,7 +766,7 @@ public final class PreferenceRestoreTransaction {
         String introducedImage = null, nativeImage = null;
         if (selected.containsKey(BackupCategory.HISTORY) != selected.containsKey(BackupCategory.POSITIONS)) {
             var catalog = LogicalBackupCatalog.capture(destination, () -> false);
-            var nativeRows = com.archos.mediacenter.video.leanback.LegacyViewingSnapshot.merge(
+            var nativeRows = LegacyViewingSnapshot.merge(
                 destination, Collections.emptyMap(), catalog.snapshot);
             Map<String, ViewingHistory.Record> original = PortableViewingState.validateRecoverySnapshot(
                                                    new JSONObject(viewingBefore)),
@@ -874,7 +882,7 @@ public final class PreferenceRestoreTransaction {
             if (plan.nativeViewingBefore != null)
                 try {
                     var catalog = LogicalBackupCatalog.capture(destination, () -> false);
-                    var currentNative = com.archos.mediacenter.video.leanback.LegacyViewingSnapshot.merge(
+                    var currentNative = LegacyViewingSnapshot.merge(
                         destination, Collections.emptyMap(), catalog.snapshot);
                     if (!PortableViewingState.recoverySnapshot(currentNative)
                             .toString()
