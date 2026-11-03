@@ -8,8 +8,11 @@ import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.ArrayObjectAdapter;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
 import com.archos.mediascraper.ScraperTrailer;
+import com.archos.mediascraper.ShowTags;
+import com.squareup.picasso.Picasso;
 import java.util.*;
 import java.util.Locale;
 import org.json.JSONObject;
@@ -27,10 +30,10 @@ public class Details139AcceptanceTest {
     public void isolate() {
         PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -130,17 +133,17 @@ public class Details139AcceptanceTest {
             }, page::atTop);
             host.get().setContentView(root);
             var show =
-                new com.archos.mediacenter.video.browser.adapters.object.Tvshow(8, "Series", null, 1, 1, 0, "/fixture");
+                new Tvshow(8, "Series", null, 1, 1, 0, "/fixture");
             page.bindShow(show, () -> {
             });
-            var tags = new com.archos.mediascraper.ShowTags();
+            var tags = new ShowTags();
             tags.addGenreIfAbsent("Drama");
             page.setTags(tags,
                 List.of(new ScraperTrailer(ScraperTrailer.Type.SHOW_TRAILER, "Trailer", "abcdefghijk", "YouTube", "")),
                 List.of());
             var snapshot = new PreviewLibraryLoader.Snapshot();
             snapshot.shows.add(new PreviewLibraryLoader.Entry(
-                new com.archos.mediacenter.video.browser.adapters.object.Tvshow(9, "Related", null, 1, 1, 0, "/other"),
+                new Tvshow(9, "Related", null, 1, 1, 0, "/other"),
                 1, 9, "Drama"));
             page.setSnapshot(snapshot);
             layout(root);
