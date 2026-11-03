@@ -1,10 +1,14 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.*;
+import android.os.Bundle;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.tvmenu.*;
+import java.lang.reflect.Field;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -39,7 +43,7 @@ public class PreviewPlaybackMenusTest {
 
     public static class TopNavigationTestHost extends Activity {
         @Override
-        public void onCreate(android.os.Bundle state) {
+        public void onCreate(Bundle state) {
             setTheme(R.style.MyLeanbackTheme);
             super.onCreate(state);
         }
@@ -66,7 +70,7 @@ public class PreviewPlaybackMenusTest {
                 View.MeasureSpec.makeMeasureSpec(dialog().getWindow().getAttributes().height,
                                                  View.MeasureSpec.EXACTLY));
             root.layout(0, 0, root.getMeasuredWidth(), root.getMeasuredHeight());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
@@ -131,7 +135,7 @@ public class PreviewPlaybackMenusTest {
              new String[] {"current", "owner", "adapter", "origin", "tabs", "rows", "trackRows", "adjustmentRows",
                            "content", "scroll", "restoreParent", "backAction", "nested", "liveCard", "legacyPanel",
                            "subtitlePanel", "presentationHost"}) {
-            java.lang.reflect.Field field = PreviewPlaybackMenus.class.getDeclaredField(fieldName);
+            Field field = PreviewPlaybackMenus.class.getDeclaredField(fieldName);
             field.setAccessible(true);
             assertNull("Closed playback settings must release Activity-owned " + fieldName, field.get(null));
         }
@@ -185,7 +189,7 @@ public class PreviewPlaybackMenusTest {
 
     @Test
     public void subtitlesRedesignPreservesStoredLanguageAndPreparationPreferences() {
-        var prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(host);
+        var prefs = PreferenceManager.getDefaultSharedPreferences(host);
         prefs.edit()
             .putBoolean("subtitles_hide_default", true)
             .putString("favSubLang", "fra")
