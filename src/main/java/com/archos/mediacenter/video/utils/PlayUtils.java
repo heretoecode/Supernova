@@ -73,19 +73,22 @@ public class PlayUtils implements IndexHelper.Listener {
 
     @Override
     public void onScraped(ScrapeDetailResult result) {
-
     }
 
-    public interface SubtitleDownloadListener{
+    public interface SubtitleDownloadListener {
         public void onDownloadStart(SubtitleManager engine);
         public void onDownloadEnd();
     }
 
-    public static boolean unsupportedTorrent(Uri uri,String mime){
-        if("application/x-bittorrent".equalsIgnoreCase(mime))return true;
-        if(uri==null)return false;
-        if("magnet".equalsIgnoreCase(uri.getScheme()))return true;
-        String filename=uri.getLastPathSegment();return filename!=null&&filename.toLowerCase(java.util.Locale.ROOT).endsWith(".torrent");
+    public static boolean unsupportedTorrent(Uri uri, String mime) {
+        if ("application/x-bittorrent".equalsIgnoreCase(mime))
+            return true;
+        if (uri == null)
+            return false;
+        if ("magnet".equalsIgnoreCase(uri.getScheme()))
+            return true;
+        String filename = uri.getLastPathSegment();
+        return filename != null && filename.toLowerCase(java.util.Locale.ROOT).endsWith(".torrent");
     }
 
     /**
@@ -95,73 +98,81 @@ public class PlayUtils implements IndexHelper.Listener {
      * @param externalPlayerWithResultStarter
      * @param playlistId
      */
-    static public void startVideo(final Context context,
-                                  final Video requested,
-                                  final int resume,
-                                  final boolean legacyPlayer,
-                                  final int resumePosition, //in case we already have resume position. Will only be used by external players
-                                  final ExternalPlayerWithResultStarter externalPlayerWithResultStarter, //mxplayer will call onResult after playing video
-                                  final long playlistId)
-                                    {
-
-        final Video video=com.archos.mediacenter.video.BuildConfig.FOUNDATION&&requested!=null?com.archos.mediacenter.video.leanback.PreviewVariants.resolve(context,requested):requested;
-        if(com.archos.mediacenter.video.BuildConfig.FOUNDATION&&video!=null){com.archos.mediacenter.video.leanback.LibraryHealth.State state=com.archos.mediacenter.video.leanback.LibraryHealth.state(context,video);if(state!=com.archos.mediacenter.video.leanback.LibraryHealth.State.AVAILABLE){com.archos.mediacenter.video.leanback.PreviewDialog.read(context,com.archos.mediacenter.video.leanback.LibraryHealth.message(state),"Reconnect the source and scan to check this item again. Your library, watched state and playback progress are retained.");return;}}
+    static public void startVideo(final Context context, final Video requested, final int resume,
+        final boolean legacyPlayer,
+        final int resumePosition, //in case we already have resume position. Will only be used by external players
+        final ExternalPlayerWithResultStarter
+            externalPlayerWithResultStarter, //mxplayer will call onResult after playing video
+        final long playlistId) {
+        final Video video = com.archos.mediacenter.video.BuildConfig.FOUNDATION && requested != null
+            ? com.archos.mediacenter.video.leanback.PreviewVariants.resolve(context, requested)
+            : requested;
+        if (com.archos.mediacenter.video.BuildConfig.FOUNDATION && video != null) {
+            com.archos.mediacenter.video.leanback.LibraryHealth.State state =
+                com.archos.mediacenter.video.leanback.LibraryHealth.state(context, video);
+            if (state != com.archos.mediacenter.video.leanback.LibraryHealth.State.AVAILABLE) {
+                com.archos.mediacenter.video.leanback.PreviewDialog.read(context,
+                    com.archos.mediacenter.video.leanback.LibraryHealth.message(state),
+                    "Reconnect the source and scan to check this item again. Your library, watched state and playback progress are retained.");
+                return;
+            }
+        }
         final PlayUtils playUtils = new PlayUtils();
         if (video == null) {
             log.warn("startVideo: video is null!");
             Toast.makeText(context, "Error video is null", Toast.LENGTH_SHORT).show();
             return;
         } else {
-            if (log.isDebugEnabled()) log.debug("startVideo from resume={}, streamingUri {}", resume, (video.getStreamingUri() == null ? "null" : video.getStreamingUri()));
+            if (log.isDebugEnabled())
+                log.debug("startVideo from resume={}, streamingUri {}", resume,
+                    (video.getStreamingUri() == null ? "null" : video.getStreamingUri()));
         }
         // try to find extension when none has been set
         String mimeType = video.getMimeType();
-        if(mimeType==null&&video.getFileUri()!=null) {
+        if (mimeType == null && video.getFileUri() != null) {
             String extension = FileUtils.getExtension(FileUtils.getName(video.getFileUri()));
-            if (extension!=null) {
+            if (extension != null) {
                 mimeType = MimeUtils.guessMimeTypeFromExtension(extension);
             }
         }
-        if(mimeType==null&&video.getStreamingUri()!=null) {
+        if (mimeType == null && video.getStreamingUri() != null) {
             String extension = FileUtils.getExtension(FileUtils.getName(video.getStreamingUri()));
-            if (extension!=null) {
+            if (extension != null) {
                 mimeType = MimeUtils.guessMimeTypeFromExtension(extension);
             }
         }
 
         final String finalMimetype = mimeType;
-        if(unsupportedTorrent(video.getFileUri(),mimeType)){
-            Toast.makeText(context,"BitTorrent playback is no longer supported.",Toast.LENGTH_LONG).show();return;
-        }
-        else if(video.getFileUri() != null && "upnp".equals(video.getFileUri().getScheme()) &&
-                        (video.getStreamingUri()==null || "upnp".equals(video.getStreamingUri().getScheme()))){ // retrieve streaming uri for external player
+        if (unsupportedTorrent(video.getFileUri(), mimeType)) {
+            Toast.makeText(context, "BitTorrent playback is no longer supported.", Toast.LENGTH_LONG).show();
+            return;
+        } else if (video.getFileUri() != null && "upnp".equals(video.getFileUri().getScheme())
+            && (video.getStreamingUri() == null
+                || "upnp".equals(video.getStreamingUri().getScheme()))) {
+            // retrieve streaming uri for external player
             StreamUriFinder uriFinder = new StreamUriFinder(video.getFileUri(), context);
             uriFinder.setListener(new StreamUriFinder.Listener() {
                 @Override
                 public void onUriFound(Uri uri) {
                     video.setStreamingUri(uri);
-                    playUtils.startPlayer(context, video, finalMimetype, resume, legacyPlayer, resumePosition, externalPlayerWithResultStarter, playlistId);
+                    playUtils.startPlayer(context, video, finalMimetype, resume, legacyPlayer, resumePosition,
+                        externalPlayerWithResultStarter, playlistId);
                 }
 
                 @Override
                 public void onError() {
-                    playUtils.startPlayer(context, video, finalMimetype, resume, legacyPlayer, resumePosition, externalPlayerWithResultStarter, playlistId);
+                    playUtils.startPlayer(context, video, finalMimetype, resume, legacyPlayer, resumePosition,
+                        externalPlayerWithResultStarter, playlistId);
                 }
             });
             uriFinder.start();
-        }
-        else
-            playUtils.startPlayer(context, video, finalMimetype, resume, legacyPlayer, resumePosition, externalPlayerWithResultStarter, playlistId);
+        } else
+            playUtils.startPlayer(context, video, finalMimetype, resume, legacyPlayer, resumePosition,
+                externalPlayerWithResultStarter, playlistId);
     }
 
-    private void startPlayer(Context context,
-                             Video video,
-                             final String mimeType,
-                             int resume,
-                             boolean legacyPlayer,
-                             int resumePosition,
-                             ExternalPlayerWithResultStarter externalPlayerWithResultStarter,
-                             long playlistId) {
+    private void startPlayer(Context context, Video video, final String mimeType, int resume, boolean legacyPlayer,
+        int resumePosition, ExternalPlayerWithResultStarter externalPlayerWithResultStarter, long playlistId) {
         reset();
         resumePosition = resolveAutomaticResume(video, resume, resumePosition);
         mContext = context;
@@ -175,7 +186,8 @@ public class PlayUtils implements IndexHelper.Listener {
         if (allow3rdPartyPlayer(context)) {
             // prepare subs only for external player to provide list to 3rd party player
             // subs are fetched in /storage/emulated/0/Android/data/org.courville.nova/cache/subtitles/ during preFetchHTTPSubtitlesAndPrepareUpnpSubs
-            if (log.isDebugEnabled()) log.debug("startPlayer: prepareSubs");
+            if (log.isDebugEnabled())
+                log.debug("startPlayer: prepareSubs");
             prepareSubs();
             /*
             if(mIndexHelper==null)
@@ -185,43 +197,55 @@ public class PlayUtils implements IndexHelper.Listener {
         } else {
             if (resume == PlayerService.RESUME_NO)
                 resumePosition = 0;
-            if (log.isDebugEnabled()) log.debug("startPlayer: send onResumeReady");
-            onResumeReady(context, mVideo, mimeType, resume, legacyPlayer, resumePosition, externalPlayerWithResultStarter, playlistId);
+            if (log.isDebugEnabled())
+                log.debug("startPlayer: send onResumeReady");
+            onResumeReady(context, mVideo, mimeType, resume, legacyPlayer, resumePosition,
+                externalPlayerWithResultStarter, playlistId);
         }
     }
 
     public static int resolveAutomaticResume(Video video, int mode, int explicitPosition) {
-        if (explicitPosition >= 0) return explicitPosition;
+        if (explicitPosition >= 0)
+            return explicitPosition;
         if (mode == PlayerService.RESUME_FROM_LAST_POS || mode == PlayerService.RESUME_FROM_LOCAL_POS)
             return video.getAutomaticResumeMs();
         return explicitPosition;
     }
 
     public void requestVideoDb() {
-        if (log.isDebugEnabled()) log.debug("requestVideoDb: list subtitles for {}", mVideo.getFileUri());
+        if (log.isDebugEnabled())
+            log.debug("requestVideoDb: list subtitles for {}", mVideo.getFileUri());
         if (FileUtils.isLocal(mVideo.getFileUri())) {
             // provide local list of subs
-            if (log.isDebugEnabled()) log.debug("requestVideoDb: local list of subs");
+            if (log.isDebugEnabled())
+                log.debug("requestVideoDb: local list of subs");
             listOfSubtitles = SubtitleManager.getListOfLocalSubs();
         } else {
-            if (log.isDebugEnabled()) log.debug("requestVideoDb: remote prefetched list of subs");
+            if (log.isDebugEnabled())
+                log.debug("requestVideoDb: remote prefetched list of subs");
             // provide prefetched list of subs for remote shares
             listOfSubtitles = SubtitleManager.getPreFetchedListOfSubs();
         }
-        if (listOfSubtitles != null) if (log.isDebugEnabled()) log.debug("requestVideoDb: listOfSubtitles {}", Arrays.toString(listOfSubtitles.toArray()));
-        else if (log.isDebugEnabled()) log.debug("requestVideoDb: listOfSubtitles is null");
-        if(mIndexHelper==null)
+        if (listOfSubtitles != null)
+            if (log.isDebugEnabled())
+                log.debug("requestVideoDb: listOfSubtitles {}", Arrays.toString(listOfSubtitles.toArray()));
+            else if (log.isDebugEnabled())
+                log.debug("requestVideoDb: listOfSubtitles is null");
+        if (mIndexHelper == null)
             mIndexHelper = new IndexHelper(mContext, null, 0);
-        mIndexHelper.requestVideoDb(mVideo.getUri(), -1,null, this, false, true);
+        mIndexHelper.requestVideoDb(mVideo.getUri(), -1, null, this, false, true);
     }
 
     private Boolean mIsPreparingSubs = false;
+
     private void prepareSubs() {
-        if (log.isDebugEnabled()) log.debug("prepareSubs");
-        if(!mIsPreparingSubs) {
+        if (log.isDebugEnabled())
+            log.debug("prepareSubs");
+        if (!mIsPreparingSubs) {
             mIsPreparingSubs = true;
             com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager subtitleManager =
-                    new com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager(mContext, new SubtitleManager.Listener() {
+                new com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager(
+                    mContext, new SubtitleManager.Listener() {
                         @Override
                         public void onAbort() {
                             mIsPreparingSubs = false;
@@ -234,7 +258,8 @@ public class PlayUtils implements IndexHelper.Listener {
                         }
                         @Override
                         public void onSuccess(Uri uri) {
-                            if (log.isDebugEnabled()) log.debug("prepareSubs.onSuccess {}", uri);
+                            if (log.isDebugEnabled())
+                                log.debug("prepareSubs.onSuccess {}", uri);
                             mIsPreparingSubs = false;
                             requestVideoDb();
                         }
@@ -244,7 +269,9 @@ public class PlayUtils implements IndexHelper.Listener {
                             requestVideoDb();
                         }
                     });
-            if (log.isDebugEnabled()) log.debug("prepareSubs: launch preFetchHTTPSubtitlesAndPrepareUpnpSubs {} -> {}", mVideo.getFileUri(), mVideo.getFileUri());
+            if (log.isDebugEnabled())
+                log.debug("prepareSubs: launch preFetchHTTPSubtitlesAndPrepareUpnpSubs {} -> {}", mVideo.getFileUri(),
+                    mVideo.getFileUri());
             // this copies subs locally to /storage/emulated/0/Android/data/org.courville.nova/cache/subtitles/
             subtitleManager.preFetchHTTPSubtitlesAndPrepareUpnpSubs(mVideo.getFileUri(), mVideo.getFileUri());
         }
@@ -253,11 +280,11 @@ public class PlayUtils implements IndexHelper.Listener {
     @Override
     public void onVideoDb(VideoDbInfo info, VideoDbInfo remoteInfo) {
         int resumePos = -1;
-        if(info!=null||remoteInfo!=null) {
+        if (info != null || remoteInfo != null) {
             if (mResume != PlayerService.RESUME_NO) {
-                if(remoteInfo!=null&&info==null)
+                if (remoteInfo != null && info == null)
                     resumePos = remoteInfo.resume;
-                else if(info!=null&&remoteInfo==null)
+                else if (info != null && remoteInfo == null)
                     resumePos = info.resume;
                 else if (mResume == PlayerService.RESUME_FROM_LAST_POS) {
                     resumePos = info.resume > remoteInfo.resume ? info.resume : remoteInfo.resume;
@@ -268,13 +295,14 @@ public class PlayUtils implements IndexHelper.Listener {
                 }
             }
         }
-        if (log.isDebugEnabled()) log.debug("onVideoDb: send onResumeReady");
-        onResumeReady(mContext, mVideo, mMimeType,
-                mResume, mLegacyPlayer, resumePos, mExternalPlayerWithResultStarter, mPlaylistId);
+        if (log.isDebugEnabled())
+            log.debug("onVideoDb: send onResumeReady");
+        onResumeReady(mContext, mVideo, mMimeType, mResume, mLegacyPlayer, resumePos, mExternalPlayerWithResultStarter,
+            mPlaylistId);
     }
 
     private void reset() {
-        if(mIndexHelper!=null)
+        if (mIndexHelper != null)
             mIndexHelper.abort();
         mVideoDbInfo = null;
         mContext = null;
@@ -287,15 +315,19 @@ public class PlayUtils implements IndexHelper.Listener {
         mPlaylistId = -1;
     }
 
-    private void onResumeReady(Context context, Video video, final String mimeType, int resume, boolean legacyPlayer, int resumePosition, ExternalPlayerWithResultStarter externalPlayerWithResultStarter, long playlistId){
+    private void onResumeReady(Context context, Video video, final String mimeType, int resume, boolean legacyPlayer,
+        int resumePosition, ExternalPlayerWithResultStarter externalPlayerWithResultStarter, long playlistId) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Uri dataUri = video.getUri();
         Uri fileUri = null;
         if (!allow3rdPartyPlayer(context)) {
-            if (log.isDebugEnabled()) log.debug("onResumeReady: nova player");
+            if (log.isDebugEnabled())
+                log.debug("onResumeReady: nova player");
             intent.putExtra(PlayerService.VIDEO, video);
             intent.setClass(context, PlayerActivity.class);
-            if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("try_new_ui",false))intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                    "try_new_ui", false))
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             intent.setDataAndType(dataUri, mimeType);
         } else {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -304,22 +336,30 @@ public class PlayUtils implements IndexHelper.Listener {
                 if (!"upnp".equals(video.getFileUri().getScheme())) {
                     // Http proxy to allow 3rd party players to play remote files
                     try {
-                        if (log.isDebugEnabled()) log.debug("onResumeReady: 3rd party player, non local file, file uri:{}", video.getFileUri());
-                        StreamOverHttp stream = new StreamOverHttp(video.getFileUri(), mimeType, StreamOverHttp.ReadMode.PLAYBACK);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onResumeReady: 3rd party player, non local file, file uri:{}", video.getFileUri());
+                        StreamOverHttp stream =
+                            new StreamOverHttp(video.getFileUri(), mimeType, StreamOverHttp.ReadMode.PLAYBACK);
                         dataUri = stream.getEncodedUri(FileUtils.getName(video.getFileUri()));
                     } catch (IOException e) {
                         log.error("onResumeReady: failed to start {}{}", video.getFileUri(), e);
                     }
-                } else if (video.getStreamingUri() != null && !"upnp".equals(video.getStreamingUri().getScheme())) { //when upnp, try to open streamingUri
+                } else if (video.getStreamingUri() != null
+                    && !"upnp".equals(video.getStreamingUri().getScheme())) {
+                    //when upnp, try to open streamingUri
                     dataUri = video.getStreamingUri();
                 }
-                if (log.isDebugEnabled()) log.debug("onResumeReady: 3rd party player, non local file, streaming uri:{}", dataUri);
+                if (log.isDebugEnabled())
+                    log.debug("onResumeReady: 3rd party player, non local file, streaming uri:{}", dataUri);
                 intent.setDataAndType(dataUri, mimeType);
             } else {
                 // in case of a local file, need to rely on FileProvider since API24+ to avoid android.os.FileUriExposedException
                 File localFile = new File(video.getFileUri().getPath());
-                fileUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", localFile);
-                if (log.isDebugEnabled()) log.debug("onResumeReady: 3rd party player, local file, file uri:{}", fileUri);
+                fileUri = FileProvider.getUriForFile(
+                    context, context.getApplicationContext().getPackageName() + ".provider", localFile);
+                if (log.isDebugEnabled())
+                    log.debug("onResumeReady: 3rd party player, local file, file uri:{}", fileUri);
                 intent.setDataAndType(fileUri, mimeType);
             }
             // add support for 3rd party player subs both for local and remote
@@ -335,52 +375,67 @@ public class PlayUtils implements IndexHelper.Listener {
             List<String> MxSubFileList = new ArrayList<>();
             Uri subUri;
             if (listOfSubtitles != null) {
-                if (log.isDebugEnabled()) log.debug("onResumeReady: listOfSubtitles {}", Arrays.toString(listOfSubtitles.toArray()));
+                if (log.isDebugEnabled())
+                    log.debug("onResumeReady: listOfSubtitles {}", Arrays.toString(listOfSubtitles.toArray()));
             } else {
-                if (log.isDebugEnabled()) log.debug("onResumeReady: listOfSubtitles is null");
+                if (log.isDebugEnabled())
+                    log.debug("onResumeReady: listOfSubtitles is null");
             }
             if (listOfSubtitles != null) {
-                if (log.isDebugEnabled()) log.debug("onResumeReady: videoMetadata not null, number of sub files to inspect:{}", listOfSubtitles.size());
+                if (log.isDebugEnabled())
+                    log.debug("onResumeReady: videoMetadata not null, number of sub files to inspect:{}",
+                        listOfSubtitles.size());
                 // find first external subtitle file and pass it to vlc
                 while (n < listOfSubtitles.size()) {
                     subPath = listOfSubtitles.get(n);
                     MxSubFileList.add(subPath);
-                    subLanguage = SubtitleManager.getSubLanguageFromSubPathAndVideoPath(context, subPath, video.getFriendlyPath());
+                    subLanguage = SubtitleManager.getSubLanguageFromSubPathAndVideoPath(
+                        context, subPath, video.getFriendlyPath());
                     MxSubNameList.add(subLanguage);
                     if (EXTERNAL_PLAYER_HTTP_SUBS) {
-                        subUri = Uri.parse(subPath); // these files are in local nova cache not accessible from 3rd party players
+                        subUri = Uri.parse(
+                            subPath); // these files are in local nova cache not accessible from 3rd party players
                         try {
                             StreamOverHttp stream = new StreamOverHttp(subUri, mimeType);
                             dataUri = stream.getEncodedUri(FileUtils.getName(subUri));
                             // vlc
-                            if (!subFound) intent.putExtra("subtitles_location", dataUri);
+                            if (!subFound)
+                                intent.putExtra("subtitles_location", dataUri);
                             subFound = true;
                             // mxplayer/justplayer
                             MxSubPaths.add(dataUri);
-                            if (log.isDebugEnabled()) log.debug("onResumeReady: adding external subtitle {}", dataUri);
+                            if (log.isDebugEnabled())
+                                log.debug("onResumeReady: adding external subtitle {}", dataUri);
                         } catch (IOException e) {
                             log.error("onResumeReady: failed to start {}{}", subUri, e);
                         }
                     } else {
                         // TODO FIXME passing file to 3rd party player is not working
                         subFile = new File(subPath);
-                        subUri = FileProvider.getUriForFile(context, com.archos.mediacenter.video.BuildConfig.FOUNDATION ? context.getPackageName()+".provider" : "org.courville.nova.provider", subFile);
+                        subUri = FileProvider.getUriForFile(context,
+                            com.archos.mediacenter.video.BuildConfig.FOUNDATION ? context.getPackageName() + ".provider"
+                                                                                : "org.courville.nova.provider",
+                            subFile);
                         MxSubPaths.add(subUri);
                     }
-                    if (log.isDebugEnabled()) log.debug("onResumeReady: subPath {} -> subUri {}-> subLanguage {}", subPath, subUri, subLanguage);
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "onResumeReady: subPath {} -> subUri {}-> subLanguage {}", subPath, subUri, subLanguage);
                     n++;
                 }
                 Parcelable[] MxSubPathsParcelableArray = MxSubPaths.toArray(new Parcelable[0]);
-                if (log.isTraceEnabled()) log.trace("onResumeReady: subs passed to 3rd party player {}", Arrays.toString(MxSubPathsParcelableArray));
-                if (! MxSubPaths.isEmpty()) {
+                if (log.isTraceEnabled())
+                    log.trace("onResumeReady: subs passed to 3rd party player {}",
+                        Arrays.toString(MxSubPathsParcelableArray));
+                if (!MxSubPaths.isEmpty()) {
                     intent.putExtra("subs", MxSubPathsParcelableArray);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.putExtra("subs.name", MxSubNameList.toArray(new String[0]));
                     intent.putExtra("subs.file", MxSubFileList.toArray(new String[0]));
                 }
             } else {
-                if (log.isDebugEnabled()) log.debug("onResumeReady: no sub files to inspect");
-
+                if (log.isDebugEnabled())
+                    log.debug("onResumeReady: no sub files to inspect");
             }
         }
         //this differs from the file uri for upnp
@@ -389,9 +444,9 @@ public class PlayUtils implements IndexHelper.Listener {
         intent.putExtra(PlayerActivity.VIDEO_PLAYER_LEGACY_EXTRA, legacyPlayer);
         intent.putExtra(PlayerService.PLAYLIST_ID, playlistId);
 
-        ExternalPlayerResultListener.ExternalPositionExtra.setAllPositionExtras(intent,resumePosition );
+        ExternalPlayerResultListener.ExternalPositionExtra.setAllPositionExtras(intent, resumePosition);
         try {
-            if(externalPlayerWithResultStarter==null||!allow3rdPartyPlayer(context)) {
+            if (externalPlayerWithResultStarter == null || !allow3rdPartyPlayer(context)) {
                 if (!((Activity) context).isFinishing()) {
                     context.startActivity(intent);
                 }
@@ -420,23 +475,25 @@ public class PlayUtils implements IndexHelper.Listener {
         }
         Uri uri = file.getUri();
         Uri fileUri = null;
-        if(!FileUtils.isLocal(uri)){
+        if (!FileUtils.isLocal(uri)) {
             try {
-                StreamOverHttp streamOverHttp = new StreamOverHttp(file,mimeType);
+                StreamOverHttp streamOverHttp = new StreamOverHttp(file, mimeType);
                 uri = streamOverHttp.getUri(file.getName());
             } catch (IOException e) {
                 log.error("openAnyFile: failed to start {}{}", file.getUri(), e);
             }
             intent.setDataAndType(uri, mimeType);
-        }
-        else {
+        } else {
             // in case of a local file, need to rely on FileProvider since API24+ to avoid android.os.FileUriExposedException
             File localFile = new File(uri.getPath());
-            fileUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", localFile);
+            fileUri = FileProvider.getUriForFile(
+                context, context.getApplicationContext().getPackageName() + ".provider", localFile);
             intent.setDataAndType(fileUri, mimeType);
         }
-        if (log.isDebugEnabled()) log.debug("openAnyFile: data={}", uri);
-        if (log.isDebugEnabled()) log.debug("openAnyFile: type={}", mimeType);
+        if (log.isDebugEnabled())
+            log.debug("openAnyFile: data={}", uri);
+        if (log.isDebugEnabled())
+            log.debug("openAnyFile: type={}", mimeType);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
             context.startActivity(intent);
@@ -457,7 +514,7 @@ public class PlayUtils implements IndexHelper.Listener {
     }
 
     static private boolean allow3rdPartyPlayer(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(VideoPreferencesActivity.ALLOW_3RD_PARTY_PLAYER, VideoPreferencesActivity.ALLOW_3RD_PARTY_PLAYER_DEFAULT);
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+            VideoPreferencesActivity.ALLOW_3RD_PARTY_PLAYER, VideoPreferencesActivity.ALLOW_3RD_PARTY_PLAYER_DEFAULT);
     }
 }
