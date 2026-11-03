@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
+/** Coordinates stereo display modes with the Archos display-mode broadcast. */
 public class StereoMergeArchosEffect extends VideoEffect
 {
 
