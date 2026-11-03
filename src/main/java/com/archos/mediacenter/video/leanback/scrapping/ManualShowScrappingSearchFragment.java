@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.ui.NovaProgressDialog;
@@ -176,7 +177,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
         // Hence we need to get the ShowTags from the EpisodeTags
         if (newTags instanceof ShowTags) {
             final ShowTags newShowTags = (ShowTags)newTags;
-            if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
                 // The shared Match Preview already required explicit Use This Match.
                 mEpisodeSaveTask=new EpSaveTask();mEpisodeSaveTask.execute(newShowTags);return;
             }
