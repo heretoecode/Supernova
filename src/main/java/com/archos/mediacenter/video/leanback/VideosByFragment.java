@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
+/** Provides shared category loading, sorting and row presentation for TV video browsers. */
 public abstract class VideosByFragment extends CategoryBrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final Logger log = LoggerFactory.getLogger(VideosByFragment.class);
 
