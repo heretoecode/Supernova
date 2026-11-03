@@ -27,9 +27,12 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.SubtitleDelayPickerAbstract;
 import com.archos.mediacenter.video.player.SubtitleDelayPickerDialog;
+import java.util.Formatter;
+import java.util.Locale;
 
 
 public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implements TVSlaveView {
@@ -91,7 +94,7 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
         slaveView=null;
         final NumberPicker.Formatter twoDigitFormatter = new NumberPicker.Formatter() {
             final StringBuilder mBuilder = new StringBuilder();
-            final java.util.Formatter mFmt = new java.util.Formatter(mBuilder, java.util.Locale.US);
+            final Formatter mFmt = new Formatter(mBuilder, Locale.US);
             final Object[] mArgs = new Object[1];
             public String format(int value) {
                 mArgs[0] = value;
@@ -121,7 +124,7 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
         
     }
     public void setFocus(boolean hasFocus){
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
             setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
             return;
         }
