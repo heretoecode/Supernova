@@ -14,7 +14,10 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.widget.TextView;
+import androidx.leanback.widget.DetailsOverviewRow;
 import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import androidx.leanback.widget.HorizontalGridView;
 import androidx.leanback.widget.Presenter;
@@ -58,9 +61,9 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
 
         mViewHolder = (ViewHolder)holder;
         
-        android.widget.TextView footer = holder.view.findViewById(R.id.streaming_footer);
-        android.content.Context context = holder.view.getContext();
-        Object title = ((androidx.leanback.widget.DetailsOverviewRow)item).getItem();
+        TextView footer = holder.view.findViewById(R.id.streaming_footer);
+        Context context = holder.view.getContext();
+        Object title = ((DetailsOverviewRow)item).getItem();
         boolean streaming = com.archos.mediacenter.video.streaming.StreamingRepository.LINKS_AVAILABLE && !mHideActions && !com.archos.mediacenter.video.player.PrivateMode.isActive()
             && com.archos.mediacenter.video.streaming.StreamingRepository.prefs(context).getBoolean("streaming_enabled", true)
             && !com.archos.mediacenter.video.streaming.StreamingRepository.selected(context).isEmpty();
