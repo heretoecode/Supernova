@@ -27,6 +27,7 @@ import com.archos.mediacenter.video.browser.loader.AnimeShowsByAlphaLoader;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays anime shows grouped alphabetically with sorting controls. */
 public class AnimeShowsByAlphaFragment extends TvshowsByFragment {
 
     private static final String SORT_PARAM_KEY = AnimeShowsByAlphaFragment.class.getName() + "_SORT";
