@@ -11,6 +11,7 @@ import org.robolectric.annotation.Config;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks put.io associations preserve identity and reject stale, conflicting or disconnected updates. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PutioAssociationStoreTest {
