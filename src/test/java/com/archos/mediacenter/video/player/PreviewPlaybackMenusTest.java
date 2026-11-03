@@ -7,6 +7,7 @@ import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import com.archos.mediacenter.video.player.tvmenu.*;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -16,6 +17,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.shadows.ShadowDialog;
 
 /** Real settings window and native callbacks; no decoder/hardware acceptance is implied. */
 @RunWith(RobolectricTestRunner.class)
@@ -59,7 +61,7 @@ public class PreviewPlaybackMenusTest {
     }
 
     Dialog dialog() {
-        return org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        return ShadowDialog.getLatestDialog();
     }
 
     void layoutWindow() {
@@ -232,7 +234,7 @@ public class PreviewPlaybackMenusTest {
         View track = tagged("audio.row.track");
         assertEquals("English", value(track));
         assertTrue(((TextView)track.findViewWithTag("value")).getCompoundDrawables()[0] instanceof
-                   com.archos.mediacenter.video.leanback.PreviewLanguageIcon);
+                   PreviewLanguageIcon);
         key(track, KeyEvent.KEYCODE_DPAD_RIGHT);
         assertSame(original, dialog());
         assertTrue(french.isChecked());
