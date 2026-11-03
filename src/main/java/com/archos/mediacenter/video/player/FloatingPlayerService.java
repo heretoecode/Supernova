@@ -42,7 +42,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -55,7 +54,6 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.archos.mediacenter.utils.RepeatingImageButton;
@@ -65,6 +63,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.utils.MiscUtils;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 
+import java.lang.IllegalArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -600,7 +599,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                 PlayerService.sPlayerService.removePlayerFrontend(this,isStartingPlayerActivity);
             try {
                 mWindowManager.removeViewImmediate(mFloatingPlayerRootView);
-            } catch (java.lang.IllegalArgumentException e){}
+            } catch (IllegalArgumentException e){}
             contains = false;
         }
     }
