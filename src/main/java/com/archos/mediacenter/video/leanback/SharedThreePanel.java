@@ -13,12 +13,24 @@ import android.widget.TextView;
 /** Common geometry and row styling for storage, Settings and Library Health workspaces. */
 public class SharedThreePanel extends LinearLayout {
     private boolean constrainViewport;
+
     /** Only the compact Backup workspace opts out of the ordinary horizontally revealed panes. */
-    public void constrainViewport(boolean value){constrainViewport=value;requestLayout();}
-    @Override protected void onMeasure(int widthSpec,int heightSpec){
-        if(constrainViewport&&getParent() instanceof View){View viewport=(View)getParent();int width=viewport.getWidth()-viewport.getPaddingLeft()-viewport.getPaddingRight();if(width>0)widthSpec=MeasureSpec.makeMeasureSpec(width,MeasureSpec.EXACTLY);}
-        super.onMeasure(widthSpec,heightSpec);
+    public void constrainViewport(boolean value) {
+        constrainViewport = value;
+        requestLayout();
     }
+
+    @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+        if (constrainViewport && getParent() instanceof View) {
+            View viewport = (View)getParent();
+            int width = viewport.getWidth() - viewport.getPaddingLeft() - viewport.getPaddingRight();
+            if (width > 0)
+                widthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        }
+        super.onMeasure(widthSpec, heightSpec);
+    }
+
     public SharedThreePanel(Context context) {
         super(context);
         setOrientation(HORIZONTAL);
@@ -32,29 +44,56 @@ public class SharedThreePanel extends LinearLayout {
         addPanel(centre, .38f, true);
         addPanel(right, .38f, false);
     }
+
     /** On narrow logical TVs retain usable pane widths and reveal panes with remote focus. */
-    public static View viewport(SharedThreePanel panels){
-        Context c=panels.getContext();if(TvLayout.width(c)>=780)return panels;
-        android.widget.HorizontalScrollView viewport=new android.widget.HorizontalScrollView(c);viewport.setHorizontalScrollBarEnabled(false);viewport.setFillViewport(false);viewport.setClipChildren(false);viewport.setClipToPadding(false);viewport.addView(panels,new android.widget.FrameLayout.LayoutParams(TvLayout.px(c,900),-1));return viewport;
+    public static View viewport(SharedThreePanel panels) {
+        Context c = panels.getContext();
+        if (TvLayout.width(c) >= 780)
+            return panels;
+        android.widget.HorizontalScrollView viewport = new android.widget.HorizontalScrollView(c);
+        viewport.setHorizontalScrollBarEnabled(false);
+        viewport.setFillViewport(false);
+        viewport.setClipChildren(false);
+        viewport.setClipToPadding(false);
+        viewport.addView(panels, new android.widget.FrameLayout.LayoutParams(TvLayout.px(c, 900), -1));
+        return viewport;
     }
 
-    public void widths(float left,float centre,float right) {
-        float[] widths={left,centre,right};
-        for(int i=0;i<Math.min(3,getChildCount());i++){LayoutParams size=(LayoutParams)getChildAt(i).getLayoutParams();size.weight=widths[i];getChildAt(i).setLayoutParams(size);}
+    public void widths(float left, float centre, float right) {
+        float[] widths = {left, centre, right};
+        for (int i = 0; i < Math.min(3, getChildCount()); i++) {
+            LayoutParams size = (LayoutParams)getChildAt(i).getLayoutParams();
+            size.weight = widths[i];
+            getChildAt(i).setLayoutParams(size);
+        }
     }
-    public static void heading(LinearLayout column,String title) { column.addView(text(column.getContext(),title,21)); divider(column); }
-    public static void divider(LinearLayout column) { View line=new View(column.getContext());line.setBackgroundColor(0x447f8996);LayoutParams size=new LayoutParams(-1,dp(column.getContext(),1));size.topMargin=dp(column.getContext(),8);size.bottomMargin=dp(column.getContext(),10);column.addView(line,size); }
+
+    public static void heading(LinearLayout column, String title) {
+        column.addView(text(column.getContext(), title, 21));
+        divider(column);
+    }
+
+    public static void divider(LinearLayout column) {
+        View line = new View(column.getContext());
+        line.setBackgroundColor(0x447f8996);
+        LayoutParams size = new LayoutParams(-1, dp(column.getContext(), 1));
+        size.topMargin = dp(column.getContext(), 8);
+        size.bottomMargin = dp(column.getContext(), 10);
+        column.addView(line, size);
+    }
+
     private void addPanel(View view, float weight, boolean gap) {
         decorate(view);
         LayoutParams size = new LayoutParams(0, LayoutParams.MATCH_PARENT, weight);
-        if (gap) size.rightMargin = dp(getContext(), 16);
+        if (gap)
+            size.rightMargin = dp(getContext(), 16);
         addView(view, size);
     }
 
     public static void decorate(View panel) {
         Context context = panel.getContext();
-        GradientDrawable surface = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{0xb3212c39, 0xc00b121d});
+        GradientDrawable surface =
+            new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[] {0xb3212c39, 0xc00b121d});
         surface.setCornerRadius(dp(context, 16));
         surface.setStroke(dp(context, 1), 0x557f8996);
         panel.setBackground(surface);
@@ -89,25 +128,51 @@ public class SharedThreePanel extends LinearLayout {
     }
 
     /** Refinement screens opt in; deferred Details/Playback retain the legacy focus factory. */
-    public static TextView accentAction(Context context,String label,Runnable action){
-        TextView row=action(context,label,action);row.setBackground(accentFocus(context));return row;
+    public static TextView accentAction(Context context, String label, Runnable action) {
+        TextView row = action(context, label, action);
+        row.setBackground(accentFocus(context));
+        return row;
     }
 
     /** Permanent inset control surface; row actions retain their separate focus-only outline. */
-    public static void rowSeparator(View row){
-        android.graphics.drawable.Drawable line=new android.graphics.drawable.Drawable(){
-            private final android.graphics.Paint paint=new android.graphics.Paint();
-            public void draw(android.graphics.Canvas canvas){paint.setColor(0x337f8996);paint.setStrokeWidth(dp(row.getContext(),1));canvas.drawLine(dp(row.getContext(),8),getBounds().bottom-1,getBounds().right-dp(row.getContext(),8),getBounds().bottom-1,paint);}
-            public void setAlpha(int alpha){}public void setColorFilter(android.graphics.ColorFilter filter){}public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
+    public static void rowSeparator(View row) {
+        android.graphics.drawable.Drawable line = new android.graphics.drawable.Drawable() {
+            private final android.graphics.Paint paint = new android.graphics.Paint();
+            public void draw(android.graphics.Canvas canvas) {
+                paint.setColor(0x337f8996);
+                paint.setStrokeWidth(dp(row.getContext(), 1));
+                canvas.drawLine(dp(row.getContext(), 8), getBounds().bottom - 1,
+                                getBounds().right - dp(row.getContext(), 8), getBounds().bottom - 1, paint);
+            }
+            public void setAlpha(int alpha) {
+            }
+            public void setColorFilter(android.graphics.ColorFilter filter) {
+            }
+            public int getOpacity() {
+                return android.graphics.PixelFormat.TRANSLUCENT;
+            }
         };
-        android.graphics.drawable.Drawable existing=row.getForeground();row.setForeground(existing==null?line:new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{existing,line}));
+        android.graphics.drawable.Drawable existing = row.getForeground();
+        row.setForeground(existing == null ? line
+                                           : new android.graphics.drawable.LayerDrawable(
+                                                 new android.graphics.drawable.Drawable[] {existing, line}));
     }
+
     /** Button background from the shared style. Prefer {@link SupernovaStyle#applyButton}, which also sets the content colours. */
-    public static StateListDrawable control(Context context, int radius) { return SupernovaStyle.button(context, SupernovaStyle.Surface.STANDARD); }
+    public static StateListDrawable control(Context context, int radius) {
+        return SupernovaStyle.button(context, SupernovaStyle.Surface.STANDARD);
+    }
 
     /** Row focus from the shared style: white outline, no fill change. */
-    public static StateListDrawable focus(Context context) { return SupernovaStyle.rowFocus(context); }
-    public static StateListDrawable accentFocus(Context context) { return SupernovaStyle.rowFocus(context); }
+    public static StateListDrawable focus(Context context) {
+        return SupernovaStyle.rowFocus(context);
+    }
 
-    public static int dp(Context context, int value) { return PreviewDialog.dp(context, value); }
+    public static StateListDrawable accentFocus(Context context) {
+        return SupernovaStyle.rowFocus(context);
+    }
+
+    public static int dp(Context context, int value) {
+        return PreviewDialog.dp(context, value);
+    }
 }
