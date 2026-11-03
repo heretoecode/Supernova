@@ -43,6 +43,7 @@ import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.ScraperResultsAdapter;
+import com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges;
 import com.archos.mediascraper.BaseTags;
 import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.MovieTags;
@@ -772,7 +773,7 @@ public class VideoInfoScraperSearchFragment extends Fragment implements  Handler
             tags.downloadPoster(context);
             // saving will trigger database change notification and reloading in
             // VideoInfoActivity
-            try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context,mUri);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return;}
+            try{MediaMatchManualChanges.mark(context,mUri);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return;}
             tags.save(context, mUri);
 
             // TODO make this nicer.
