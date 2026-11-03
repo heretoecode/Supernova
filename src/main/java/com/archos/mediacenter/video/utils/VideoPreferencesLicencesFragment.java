@@ -21,6 +21,7 @@ import androidx.preference.PreferenceScreen;
 
 import com.archos.mediacenter.video.R;
 
+/** Displays software licence preferences and opens selected licence entries. */
 public class VideoPreferencesLicencesFragment extends VideoPreferencesFragment {
 
     @Override
