@@ -26,6 +26,7 @@ import com.archos.mediacenter.utils.imageview.LoadTaskItem;
 import com.archos.mediacenter.utils.imageview.LoadResult.Status;
 import com.archos.mediaprovider.video.VideoStore.Video;
 
+/** Loads and crops system video thumbnails for the automatic metadata scraper. */
 public class VideoThumbProcessor extends ImageProcessor {
     private static final boolean DBG = false;
     private static final String TAG = VideoThumbProcessor.class.getSimpleName();
