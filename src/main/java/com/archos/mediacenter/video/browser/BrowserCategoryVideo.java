@@ -169,6 +169,7 @@ public class BrowserCategoryVideo extends BrowserCategory implements ActionBar.O
         }
     }
 
+    @Override
     protected int getDefaultId(){return ITEM_ID_RECENTLY_ADDED;}
 
 
