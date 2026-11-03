@@ -287,11 +287,13 @@ public final class PreviewEnrichmentQueue {
             super(c, "preview-enrichment.db", null, 2);
         }
 
+        @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(
                 "CREATE TABLE jobs(identity TEXT PRIMARY KEY,kind TEXT NOT NULL,media INTEGER NOT NULL,priority INTEGER NOT NULL,stage INTEGER NOT NULL,next_at INTEGER NOT NULL,completed_at INTEGER NOT NULL,season_cursor INTEGER NOT NULL DEFAULT 0)");
         }
 
+        @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             if (oldVersion == 1 && newVersion == 2)
                 db.execSQL("ALTER TABLE jobs ADD COLUMN season_cursor INTEGER NOT NULL DEFAULT 0");
