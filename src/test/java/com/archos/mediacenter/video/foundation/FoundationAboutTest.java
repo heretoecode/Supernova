@@ -11,6 +11,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceFragmentCompat;
+import com.archos.mediacenter.video.BuildConfig;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.RGBLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -20,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
@@ -79,7 +85,7 @@ public class FoundationAboutTest {
         rail.addView(about);
         workspace.show(about);
         String text = allText(workspace);
-        assertTrue(text.contains(com.archos.mediacenter.video.BuildConfig.VERSION_NAME));
+        assertTrue(text.contains(BuildConfig.VERSION_NAME));
         assertTrue(text.contains("Based on Nova Video Player 6.6.2"));
         assertFalse(text.contains("Check for Updates"));
         assertFalse(text.contains("Upstream SHA"));
@@ -140,10 +146,10 @@ public class FoundationAboutTest {
         Bitmap bitmap = (Bitmap) qr.invoke(workspace, expected);
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
         bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        com.google.zxing.BinaryBitmap encoded =
-            new com.google.zxing.BinaryBitmap(new com.google.zxing.common.HybridBinarizer(
-                new com.google.zxing.RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), pixels)));
-        assertEquals(expected, new com.google.zxing.MultiFormatReader().decode(encoded).getText());
+        BinaryBitmap encoded =
+            new BinaryBitmap(new HybridBinarizer(
+                new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), pixels)));
+        assertEquals(expected, new MultiFormatReader().decode(encoded).getText());
         assertNull(qr.invoke(workspace, "https://example.com/?token=private"));
         assertNull(qr.invoke(workspace, "https://user@example.com/"));
         assertNull(qr.invoke(workspace, "http://example.com/"));
@@ -166,9 +172,9 @@ public class FoundationAboutTest {
             var workspace = new FoundationAboutWorkspace(activity, split, middle, help, rail);
             workspace.show(about);
             workspace.openSection(1);
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue("Licence fixture must be attached before opening", workspace.isAttachedToWindow());
-            android.widget.TextView licence = (android.widget.TextView) rail.getChildAt(2);
+            TextView licence = (TextView) rail.getChildAt(2);
             Field reader = FoundationAboutWorkspace.class.getDeclaredField("reader");
             reader.setAccessible(true);
             assertNotNull(reader.get(workspace));
@@ -177,10 +183,10 @@ public class FoundationAboutTest {
             ExecutorService io = (ExecutorService) reader.get(workspace);
             io.submit(() -> {
             }).get(5, TimeUnit.SECONDS);
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             io.submit(() -> {
             }).get(5, TimeUnit.SECONDS);
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(allText(workspace), allText(workspace).contains("Components"));
             assertTrue(licence.hasFocus());
             assertFalse(allText(workspace).contains("Press OK"));
