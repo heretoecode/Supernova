@@ -309,6 +309,7 @@ public abstract class ManualScrappingSearchFragment
         return true;
     }
 
+    @Override
     public void onStop() {
         super.onStop();
         if (mNfoTask != null)

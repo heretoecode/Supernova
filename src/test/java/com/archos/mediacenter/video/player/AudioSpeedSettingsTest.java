@@ -11,6 +11,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks audio speed settings retain their switches and respect passthrough and hardware audio gates. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class AudioSpeedSettingsTest {

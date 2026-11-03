@@ -49,6 +49,7 @@ public class TvshowCursorMapper implements CompatibleCursorMapper {
     public TvshowCursorMapper() {
     }
 
+    @Override
     public void bindColumns(Cursor cursor) {
         mIdColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID);
         mNameColumn = cursor.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_TITLE);
@@ -68,6 +69,7 @@ public class TvshowCursorMapper implements CompatibleCursorMapper {
         mPathColumn = cursor.getColumnIndex("_data");
     }
 
+    @Override
     public Object bind(Cursor cursor) {
         final String filePath = cursor.getString(mPathColumn);
         return new Tvshow(

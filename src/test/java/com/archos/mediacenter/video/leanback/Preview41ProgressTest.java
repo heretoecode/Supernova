@@ -12,6 +12,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks committed episode progress, completion thresholds and shared home playback targets. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class Preview41ProgressTest {

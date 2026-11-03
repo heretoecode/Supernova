@@ -52,26 +52,32 @@ public class CanonicalMatchProviderTest {
         ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
         ScraperProvider scraper = new ScraperProvider(app, holder);
         ContentProvider provider = new ContentProvider() {
+            @Override
             public boolean onCreate() {
                 return true;
             }
+            @Override
             public String getType(Uri uri) {
                 return null;
             }
+            @Override
             public Cursor query(Uri uri, String[] columns, String where, String[] args, String order) {
                 return uri.getAuthority().equals(ScraperStore.AUTHORITY)
                     ? scraper.query(uri, columns, where, args, order)
                     : holder.get().query(
                           VideoOpenHelper.VIDEO_VIEW_NAME, columns, itemSelection(uri, where), args, null, null, order);
             }
+            @Override
             public Uri insert(Uri uri, ContentValues values) {
                 return scraper.insert(uri, values);
             }
+            @Override
             public int update(Uri uri, ContentValues values, String where, String[] args) {
                 return uri.getAuthority().equals(ScraperStore.AUTHORITY)
                     ? scraper.update(uri, values, where, args)
                     : holder.get().update("files", values, where, args);
             }
+            @Override
             public int delete(Uri uri, String where, String[] args) {
                 return scraper.delete(uri, where, args);
             }

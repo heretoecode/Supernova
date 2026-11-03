@@ -33,6 +33,7 @@ class RemoteViewsFactoryTVShows extends RemoteViewsFactoryBase {
         if (log.isDebugEnabled()) log.debug("Create TVShows service for the video widget");
     }
 
+    @Override
     protected boolean loadData(Context context, int maxItemCount) {
         if (log.isDebugEnabled()) log.debug("loadData()");
 		String sortOrder = BrowserAllTvShows.DEFAULT_SORT + " LIMIT " + maxItemCount;

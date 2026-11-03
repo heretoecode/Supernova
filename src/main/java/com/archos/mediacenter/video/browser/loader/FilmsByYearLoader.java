@@ -34,6 +34,7 @@ public class FilmsByYearLoader extends FilmsByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String categorySort = COLUMN_SUBSET_NAME + " COLLATE NOCASE DESC";
         if (mSortOrder != null && (mSortOrder.startsWith("name") || mSortOrder.startsWith(COLUMN_SUBSET_NAME)) && mSortOrder.contains("ASC")) {

@@ -101,6 +101,7 @@ public class VideoWidgetConfigure extends AppCompatActivity {
    }
 
     private View.OnClickListener mValidateButtonClickListener = new View.OnClickListener() {
+        @Override
         public void onClick(View view) {
             // Configure the widget
             WidgetProviderVideo.configure(VideoWidgetConfigure.this, mAppWidgetId, mContentType);

@@ -11,6 +11,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
+/** Checks put.io account parsing selects safe fields and reports malformed responses without leaking payloads. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioAccountTest {
     @Test public void malformedAccountIsCorrelatedWithSuccessfulTransportWithoutLeakingBody()throws Exception{

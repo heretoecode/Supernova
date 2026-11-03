@@ -27,18 +27,22 @@ public enum AdapterDefaultValuesList implements AdapterDefaultValues {
 
     INSTANCE;
 
+    @Override
     public int getDefaultDirectoryThumbnail() {
         return R.drawable.filetype_video_folder;
     }
 
+    @Override
     public int getDefaultShortcutThumbnail() {
         return R.drawable.filetype_video_folder_indexed;
     }
 
+    @Override
     public int getDefaultVideoThumbnail() {
         return R.drawable.filetype_video;
     }
 
+    @Override
     public int getMediaSyncIcon(int state) {
         switch (state) {
             case 0:
@@ -52,10 +56,12 @@ public enum AdapterDefaultValuesList implements AdapterDefaultValues {
         }
     }
 
+    @Override
     public int getLayoutId() {
         return R.layout.browser_item_list;
     }
 
+    @Override
     public int getLayoutId(int itemType) {
         int layoutId;
 
@@ -95,6 +101,7 @@ public enum AdapterDefaultValuesList implements AdapterDefaultValues {
         return layoutId;
     }
 
+    @Override
     public int[] getThumnailHeightWidth(Context context) {
         Resources res = context.getResources();
         return new int[] {
@@ -103,6 +110,7 @@ public enum AdapterDefaultValuesList implements AdapterDefaultValues {
         };
     }
 
+    @Override
     public int getExpandedZone() {
         return R.id.expanded;
     }

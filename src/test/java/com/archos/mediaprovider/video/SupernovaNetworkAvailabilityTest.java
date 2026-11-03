@@ -19,6 +19,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks network availability uses native media IDs and clears unavailable state after reconnection. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

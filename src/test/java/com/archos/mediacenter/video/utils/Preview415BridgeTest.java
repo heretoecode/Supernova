@@ -9,6 +9,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
+/** Checks the playback bridge binds only to loopback and accepts local connections. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class Preview415BridgeTest {
     @Test public void bridgeBindsOnlyLoopbackAndAcceptsLocalConnections()throws Exception{

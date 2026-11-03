@@ -37,6 +37,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowLooper;
 
+/** Checks settings reachability, file filters, committed history, keyboard actions and responsive UI bounds. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -167,6 +168,7 @@ public class NextQaReliabilityTest {
             0
         };
         BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context context, Intent intent) {
                 assertEquals(5000, ViewingHistory.read(context).get("tmdb:tv:123:2:1").position);
                 observed[0]++;

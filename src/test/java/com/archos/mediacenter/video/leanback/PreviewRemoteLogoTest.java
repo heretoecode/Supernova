@@ -12,6 +12,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks remote title logos use the shared cache and retain fallback text. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewRemoteLogoTest {
     @Test public void remoteTitleConsumesTheSameLogoCacheAndKeepsFallbackText(){

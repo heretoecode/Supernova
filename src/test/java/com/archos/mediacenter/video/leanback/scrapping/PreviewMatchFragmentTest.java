@@ -32,11 +32,15 @@ public class PreviewMatchFragmentTest {
     }
     public static class Fixture extends ManualScrappingSearchFragment {
         @Override public void onCreate(Bundle state){super.onCreate(state);setInitialQuery("Example");}
+        @Override
         protected ScrapeSearchResult performSearch(String text){return new ScrapeSearchResult(Collections.emptyList(),true,ScrapeStatus.NOT_FOUND,null);}
         protected BaseTags getTagFromSearchResult(SearchResult result){return null;}
         protected void saveTagsAndFinish(BaseTags tags){throw new AssertionError("No explicit match accepted");}
+        @Override
         protected String getResultsHeaderText(){return "Results";}
+        @Override
         protected String getEmptyText(){return "No matches";}
+        @Override
         protected BaseTags getNfoTags(){return null;}
     }
     @Test public void previewViewSurvivesNativeSearchLifecycleWithoutStartingSpeech(){

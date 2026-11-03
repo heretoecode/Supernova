@@ -29,6 +29,7 @@ import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks About navigation, application identity, release notes, QR links and licence focus behavior. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class FoundationAboutTest {

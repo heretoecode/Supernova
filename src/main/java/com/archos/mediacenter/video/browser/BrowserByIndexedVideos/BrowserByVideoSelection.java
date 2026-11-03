@@ -108,6 +108,7 @@ public class BrowserByVideoSelection extends CursorBrowserByVideo {
 		return R.string.scraper_no_movie_button_label;
 	}
 
+	@Override
 	public boolean showEmptyViewButton() {
 		return true;
 	}

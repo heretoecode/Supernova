@@ -129,6 +129,7 @@ final class PreviewPlaybackLoading extends FrameLayout {
         final int expected = generation;
         final SurfaceView surface = root.findViewById(R.id.surface_view);
         post(new Runnable() {
+            @Override
             public void run() {
                 if (expected != generation)
                     return;

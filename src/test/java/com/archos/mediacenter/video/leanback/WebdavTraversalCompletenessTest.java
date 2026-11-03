@@ -11,6 +11,7 @@ import java.util.*;
 import java.io.IOException;
 import static org.mockito.Mockito.*;
 
+/** Checks WebDAV traversal reports completeness only after a successful uninterrupted listing. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class WebdavTraversalCompletenessTest {

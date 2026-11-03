@@ -40,6 +40,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks Details page facts, missing-data presentation, playback delegation and read-only focus behavior. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

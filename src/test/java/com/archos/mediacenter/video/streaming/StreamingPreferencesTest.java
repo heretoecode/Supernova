@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.R;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks streaming preferences retain country-specific choices after filtering or refresh failures. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class, sdk=28)
 public class StreamingPreferencesTest {

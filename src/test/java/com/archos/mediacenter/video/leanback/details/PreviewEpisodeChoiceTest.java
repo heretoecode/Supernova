@@ -16,6 +16,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks episode choices prefer indexed local versions and require verified remote availability. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewEpisodeChoiceTest {

@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks that transport observation preserves stream behavior and records safe byte and failure evidence. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class TransportReadDiagnosticsTest {
@@ -112,6 +113,7 @@ public class TransportReadDiagnosticsTest {
     public void originalTimeoutAndCloseExceptionsPropagateWithoutTheirMessagesEnteringRecorder() throws Exception {
         IOException timeout = new SocketTimeoutException("TIMEOUT_CANARY password=SECRET_CANARY");
         InputStream failing = new InputStream() {
+            @Override
             public int read() throws IOException {
                 throw timeout;
             }

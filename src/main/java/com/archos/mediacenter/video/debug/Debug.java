@@ -38,6 +38,7 @@ public class Debug {
     public static void startLogcatRecording(){
         if(isDebuggable()) {
             new Thread() {
+                @Override
                 public void run() {
                     try {
                         Process process = Runtime.getRuntime().exec("logcat -f " + getFilePath());

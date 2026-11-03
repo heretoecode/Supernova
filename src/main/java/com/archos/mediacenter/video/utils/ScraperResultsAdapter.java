@@ -112,6 +112,7 @@ public class ScraperResultsAdapter extends BaseAdapter {
         mItems = buildInitialItemsData(nfoTags, results);
     }
 
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
@@ -160,14 +161,17 @@ public class ScraperResultsAdapter extends BaseAdapter {
         return true;
     }
 
+    @Override
     public int getCount() {
         return mItems.size();
     }
 
+    @Override
     public Object getItem(int position) {
         return mItems.get(position);
     }
 
+    @Override
     public long getItemId(int position) {
         return position;
     }

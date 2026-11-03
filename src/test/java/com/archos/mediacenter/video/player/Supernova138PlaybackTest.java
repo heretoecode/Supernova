@@ -22,6 +22,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks playback HUD seek tooltips, finish-time predictions and bounded progress pills. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class Supernova138PlaybackTest {

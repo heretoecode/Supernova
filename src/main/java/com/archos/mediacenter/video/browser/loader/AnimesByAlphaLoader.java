@@ -35,6 +35,7 @@ public class AnimesByAlphaLoader extends AnimesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String col = SortUtils.getAlphaBucketColumn(context, SortUtils.SortScope.MOVIE);
         return "SELECT\n" +

@@ -31,6 +31,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks playback version choices, settings replacement, SFTP trust and artwork fallback behavior. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class Preview415Test {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}

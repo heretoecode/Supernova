@@ -266,6 +266,7 @@ public class SubtitleManager {
     public void preFetchHTTPSubtitlesAndPrepareUpnpSubs(final Uri upnpNiceUri, final Uri fileUri){
         if (log.isDebugEnabled()) log.debug("preFetchHTTPSubtitlesAndPrepareUpnpSubs on {}, {}", upnpNiceUri, fileUri);
         Thread mainThread = new Thread() {
+            @Override
             public void run() {
                 prefetchedListOfSubs = new ArrayList<>();
                 // Track pending enumeration operations to ensure completion before calling onSuccess
@@ -449,6 +450,7 @@ public class SubtitleManager {
 
     public void preFetchSubtitles(final Uri videoUri) {
         new Thread(){
+            @Override
             public void run(){
                 privatePrefetchSub(videoUri);
             }

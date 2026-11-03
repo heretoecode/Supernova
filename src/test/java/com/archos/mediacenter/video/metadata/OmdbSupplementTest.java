@@ -8,6 +8,7 @@ import org.robolectric.annotation.Config;
 import org.json.*;
 import static org.junit.Assert.*;
 
+/** Checks OMDb data validation, access policy, request budgets and credential privacy. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class OmdbSupplementTest {
@@ -45,12 +46,15 @@ public class OmdbSupplementTest {
     public void deniedAccessDoesNotReadKeyOrCallTransport() {
         OmdbSupplement client = new OmdbSupplement(
             new OmdbSupplement.Access() {
+                @Override
                 public boolean permitted() {
                     return false;
                 }
+                @Override
                 public boolean acquireRequest() {
                     throw new AssertionError();
                 }
+                @Override
                 public String apiKey() {
                     throw new AssertionError();
                 }
@@ -116,12 +120,15 @@ public class OmdbSupplementTest {
 
     private OmdbSupplement.Access access(boolean budget) {
         return new OmdbSupplement.Access() {
+            @Override
             public boolean permitted() {
                 return true;
             }
+            @Override
             public boolean acquireRequest() {
                 return budget;
             }
+            @Override
             public String apiKey() {
                 return "fixture00";
             }

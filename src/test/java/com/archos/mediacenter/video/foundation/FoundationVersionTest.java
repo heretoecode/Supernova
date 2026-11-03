@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.foundation;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks literal Foundation version counters and rejection of invalid version values. */
 public class FoundationVersionTest {
     @Test public void literalCountersNeverRoundOrBecomeNovaSemanticVersions() {
         assertEquals(9,FoundationVersion.array("0.9")[1]);

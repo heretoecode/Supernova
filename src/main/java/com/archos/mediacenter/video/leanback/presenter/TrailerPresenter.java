@@ -72,10 +72,12 @@ public class TrailerPresenter extends PosterImageCardPresenter {
 
     }
 
+    @Override
     public int getWidth(Context context) {
         return context.getResources().getDimensionPixelSize(R.dimen.trailer_width);
     }
 
+    @Override
     public int getHeight(Context context) {
         return context.getResources().getDimensionPixelSize(R.dimen.trailer_height);
     }

@@ -19,6 +19,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks legacy viewing snapshots preserve watched state and resume positions without inventing timestamps. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

@@ -113,6 +113,7 @@ public class VideoInfoActivity extends AppCompatActivity {
         globalLayout.addView(mGlobalBackdrop, 0);
     }
 
+    @Override
     protected void onStop(){
         if (DBG) Log.d(TAG,"onStop");
         super.onStop();

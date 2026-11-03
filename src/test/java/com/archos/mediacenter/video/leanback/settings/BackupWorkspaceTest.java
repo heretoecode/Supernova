@@ -18,6 +18,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 
+/** Checks backup category layout, retained selections, focus boundaries and privacy confirmations. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -7,6 +7,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks the compact Details title appears only after the hero title scrolls out of view. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class PreviewCompactTitleTest {

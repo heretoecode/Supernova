@@ -316,6 +316,7 @@ public class SubtitlesWizardActivity extends AppCompatActivity implements OnItem
             mInflater = LayoutInflater.from(context);
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
 
@@ -401,25 +402,30 @@ public class SubtitlesWizardActivity extends AppCompatActivity implements OnItem
             return convertView;
         }
 
+        @Override
         public boolean areAllItemsEnabled() {
             return false;
         }
 
+        @Override
         public boolean isEnabled(int position) {
             ItemData itemData = getItemData(position);
             return (itemData.type == ITEM_DATA_TYPE_CURRENT || itemData.type == ITEM_DATA_TYPE_AVAILABLE);
         }
 
+        @Override
         public boolean isEmpty() {
             // We have at least the two separators
             return false;
         }
 
+        @Override
         public int getViewTypeCount() {
             // Return how many different layouts are used
             return 3;
         }
 
+        @Override
         public int getItemViewType(int position) {
             ItemData itemData = mActivity.getItemData(position);
             if (itemData.type == ITEM_DATA_TYPE_SEPARATOR) {
@@ -431,14 +437,17 @@ public class SubtitlesWizardActivity extends AppCompatActivity implements OnItem
             return ITEM_VIEW_TYPE_FILE;
         }
 
+        @Override
         public boolean hasStableIds() {
             return true;
         }
 
+        @Override
         public int getCount() {
             return mActivity.getItemsCount();
         }
 
+        @Override
         public Object getItem(int position) {
             String text = null;
 
@@ -473,13 +482,16 @@ public class SubtitlesWizardActivity extends AppCompatActivity implements OnItem
             return text;
         }
 
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
+        @Override
         public void registerDataSetObserver(DataSetObserver observer) {
         }
 
+        @Override
         public void unregisterDataSetObserver(DataSetObserver observer) {
         }
     }

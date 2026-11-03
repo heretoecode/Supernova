@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.robolectric.annotation.GraphicsMode;
 
+/** Checks focused card artwork stays within its rounded, consistently enlarged boundary. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class FoundationCardContainmentTest {

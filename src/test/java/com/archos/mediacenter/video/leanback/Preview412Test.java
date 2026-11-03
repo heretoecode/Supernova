@@ -12,6 +12,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks title-logo bounds, provider filter freshness and library summary structure. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class Preview412Test {

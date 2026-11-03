@@ -14,6 +14,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks playlist restore preserves account-owned data and recovers native state after cancellation or failure. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

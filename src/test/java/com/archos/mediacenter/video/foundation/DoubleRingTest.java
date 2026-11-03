@@ -8,6 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks the double-ring animation's rotation timing and cancellation of scheduling. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class DoubleRingTest {
@@ -21,8 +22,11 @@ public class DoubleRingTest {
     @Test public void hidingAndRemovingCallbackStopsScheduling(){
         DoubleRingDrawable ring=new DoubleRingDrawable();final int[] scheduled={0},cancelled={0};
         ring.setCallback(new Drawable.Callback(){
+            @Override
             public void invalidateDrawable(Drawable d){}
+            @Override
             public void scheduleDrawable(Drawable d,Runnable r,long when){scheduled[0]++;}
+            @Override
             public void unscheduleDrawable(Drawable d,Runnable r){cancelled[0]++;}
         });
         ring.start();assertTrue(ring.isRunning());assertEquals(1,scheduled[0]);

@@ -21,6 +21,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks media match journals recover coordinated state and preserve native facts across restore boundaries. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

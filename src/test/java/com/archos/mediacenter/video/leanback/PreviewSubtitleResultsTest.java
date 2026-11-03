@@ -18,6 +18,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 
+/** Checks explicit subtitle download selection and preservation of the default playback dialog route. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSubtitleResultsTest {

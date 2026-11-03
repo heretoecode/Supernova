@@ -12,6 +12,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks portable settings round-trip selected owned values while excluding credentials and unowned state. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortableSettingsRegistryTest {

@@ -38,10 +38,12 @@ public class AllTvShowsAdapter extends PresenterAdapterByCursor  implements Adap
         return null;
     }
 
+    @Override
     public String getCover() {
         int coverColumn = getCursor().getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_S_COVER);
         return coverColumn >= 0 ? getCursor().getString(coverColumn) : null;
     }
+    @Override
     public Object getItem(int position){
         getCursor().moveToPosition(position);
         return mVideoCursorMapper.bind(getCursor());

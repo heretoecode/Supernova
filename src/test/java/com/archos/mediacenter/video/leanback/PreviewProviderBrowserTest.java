@@ -14,6 +14,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks provider listings use shared panels and expose a read-only action. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewProviderBrowserTest {

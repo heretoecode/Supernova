@@ -191,6 +191,7 @@ public class Player implements IPlayerControl,
 
     private Handler     mHandler = new Handler(Looper.getMainLooper());
     private Runnable mPreparedAsync = new Runnable() {
+        @Override
         public void run() {
             if (mPlaybackEnding) return;
             if (mCurrentState == STATE_REFRESH_PREPARED) {
@@ -209,6 +210,7 @@ public class Player implements IPlayerControl,
     };
 
     private Runnable mRefreshRateCheckerAsync = new Runnable() {
+        @Override
         public void run() {
             if (mPlaybackEnding) return;
             if (log.isDebugEnabled()) log.debug("mRefreshRateCheckerAsync");
@@ -930,6 +932,7 @@ public class Player implements IPlayerControl,
         return mFocusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
+    @Override
     public void start(int state) {
         if (mPlaybackEnding) return;
         mTargetState = STATE_PLAYING;
@@ -952,6 +955,7 @@ public class Player implements IPlayerControl,
         if (mEffectRenderer != null) mEffectRenderer.onPlay();
     }
 
+    @Override
     public void pause(int state) {
         mResumeAfterFocusLoss = false;
         mTargetState = STATE_PAUSED;
@@ -981,6 +985,7 @@ public class Player implements IPlayerControl,
     }
 
     // cache duration as mDuration for faster access
+    @Override
     public int getDuration() {
         if (isInPlaybackState()) {
             mDuration = mMediaPlayer.getDuration();
@@ -992,6 +997,7 @@ public class Player implements IPlayerControl,
         return mUri != null && mStopPosition >= 0;
     }
 
+    @Override
     public int getCurrentPosition() {
         if (isInPlaybackState()) {
             int currentPos = mMediaPlayer.getCurrentPosition();
@@ -1003,14 +1009,17 @@ public class Player implements IPlayerControl,
         return 0;
     }
 
+    @Override
     public int getBufferPosition() {
         return mBufferPosition;
     }
 
+    @Override
     public int getRelativePosition() {
         return mRelativePosition;
     }
     
+    @Override
     public void seekTo(int msec) {
         mStopPosition = msec;
         Diagnostics.event("seek","target_ms",msec,"state",mCurrentState);
@@ -1031,10 +1040,12 @@ public class Player implements IPlayerControl,
      * return true if MediaPlayer is seeking on network videos,
      * in that case, avoid to call any MediaPlayer method in order to prevent freeze.
      */
+    @Override
     public boolean isBusy() {
         return mIsBusy && !isLocalVideo();
     }
             
+    @Override
     public boolean isPlaying() {
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
@@ -1047,6 +1058,7 @@ public class Player implements IPlayerControl,
         return isInPlaybackState() && ! mMediaPlayer.isPlaying();
     }
 
+    @Override
     public boolean isInPlaybackState() {
         return (mMediaPlayer != null &&
                 mCurrentState != STATE_ERROR &&
@@ -1054,22 +1066,27 @@ public class Player implements IPlayerControl,
                 mCurrentState != STATE_PREPARING);
     }
 
+    @Override
     public void setLooping(boolean enable) {
         if (mMediaPlayer != null) mMediaPlayer.setLooping(enable);
     }
     
+    @Override
     public boolean isLocalVideo() {
         return mIsLocalVideo;
     }
 
+    @Override
     public boolean canPause() {
         return mCanPause;
     }
 
+    @Override
     public boolean canSeekBackward() {
         return mCanSeekBack;
     }
 
+    @Override
     public boolean canSeekForward() {
         return mCanSeekForward;
     }
@@ -1103,6 +1120,7 @@ public class Player implements IPlayerControl,
             mMediaPlayer.checkSubtitles(); // note that player checks also cache directory with avos
     }
 
+    @Override
     public boolean setSubtitleTrack(int stream) {
         mResumeCtx.setSubtitleTrack(stream);
         Diagnostics.event("subtitle_selection","track",stream,"state",mCurrentState);
@@ -1117,6 +1135,7 @@ public class Player implements IPlayerControl,
         return  mMediaPlayer!=null?mMediaPlayer.doesCurrentFileExists():mLastExistState;
     }
 
+    @Override
     public void setSubtitleDelay(int delay) {
         mResumeCtx.setSubtitleDelay(delay);
         if (isInPlaybackState()) {
@@ -1132,6 +1151,7 @@ public class Player implements IPlayerControl,
      * <li> otherwise n=d=24000
      * </ul>
      */
+    @Override
     public void setSubtitleRatio(int ratio) {
         switch (ratio) {
             case 1:
@@ -1157,6 +1177,7 @@ public class Player implements IPlayerControl,
         }
     }
     
+    @Override
     public boolean setAudioFilter(int n, boolean nightOn) {
         int enable = nightOn?1:0;
         mResumeCtx.setAudioFilter(n, enable);
@@ -1181,6 +1202,7 @@ public class Player implements IPlayerControl,
         }
     };
 
+    @Override
     public boolean setAudioTrack(int stream) {
         mResumeCtx.setAudioTrack(stream);
         Diagnostics.event("audio_selection","track",stream,"state",mCurrentState);

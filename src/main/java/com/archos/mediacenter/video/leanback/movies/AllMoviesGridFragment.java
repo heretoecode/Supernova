@@ -260,6 +260,7 @@ public class AllMoviesGridFragment extends MyVerticalGridFragment implements Loa
                 mSortOrderItem = MoviesSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;

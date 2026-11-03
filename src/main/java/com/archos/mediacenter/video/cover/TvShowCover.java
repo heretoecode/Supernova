@@ -203,6 +203,7 @@ public class TvShowCover extends Cover {
 
     public Runnable getOpenAction(final Context context, final int resume) {
         return new Runnable() {
+            @Override
             public void run() {
                 Bundle args;
                 Intent i = new Intent(LAUNCH_CONTENT_BROWSER_INTENT);

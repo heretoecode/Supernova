@@ -115,6 +115,7 @@ public abstract class NewRootFragment extends Fragment implements WorkgroupShort
         rescanAction.setTitle(getString(R.string.network_reindex));
         rescanAction.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_refresh));
         rescanAction.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 // Rescan the contents of the folder
                 NetworkScanner.scanVideos(getActivity(), uri);

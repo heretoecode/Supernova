@@ -11,6 +11,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks put.io root mapping follows stable IDs and remains bound to account, folder and source. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioRootLocationTest {
     @Test public void stableIdWalkBuildsCurrentFolderPath()throws Exception {

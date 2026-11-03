@@ -15,6 +15,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks legacy storage imports keep upgraded hidden records visible without changing bookmarks. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 26)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
@@ -25,21 +26,27 @@ public class SupernovaLegacyVolumeVisibilityTest {
         VideoOpenHelper helper = new VideoOpenHelper(app);
         SQLiteDatabase database = helper.getWritableDatabase();
         ContentProvider provider = new ContentProvider() {
+            @Override
             public boolean onCreate() {
                 return true;
             }
+            @Override
             public String getType(Uri uri) {
                 return null;
             }
+            @Override
             public Cursor query(Uri uri, String[] projection, String where, String[] args, String sort) {
                 throw new AssertionError("No storage query required");
             }
+            @Override
             public Uri insert(Uri uri, ContentValues values) {
                 throw new AssertionError("No insert required");
             }
+            @Override
             public int delete(Uri uri, String where, String[] args) {
                 throw new AssertionError("No deletion allowed");
             }
+            @Override
             public int update(Uri uri, ContentValues values, String where, String[] args) {
                 assertEquals(VideoStoreInternal.FILES_IMPORT, uri);
                 assertEquals(Integer.valueOf(0), values.getAsInteger("volume_hidden"));

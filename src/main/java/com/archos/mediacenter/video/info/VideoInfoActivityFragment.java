@@ -402,6 +402,7 @@ public class VideoInfoActivityFragment extends Fragment
     public VideoInfoActivityFragment() {
     }
 
+    @Override
     public void onCreate(Bundle save) {
         if (log.isDebugEnabled())
             log.debug("onCreate");
@@ -1015,6 +1016,7 @@ public class VideoInfoActivityFragment extends Fragment
 
     private void getThumbnailSync(final Video video) {
         Thread t = new Thread() {
+            @Override
             public void run() {
                 getThumbnail(video, false);
             }
@@ -1173,6 +1175,7 @@ public class VideoInfoActivityFragment extends Fragment
                 if (UriUtils.isIndexable(mCurrentVideo.getFileUri())) {
                     final Uri uri = mCurrentVideo.getFileUri();
                     new Thread() {
+                        @Override
                         public void run() {
                             if (!VideoStoreImportImpl.isNoMediaPath(uri)) {
                                 if (log.isDebugEnabled())
@@ -2305,9 +2308,11 @@ public class VideoInfoActivityFragment extends Fragment
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
     }
 
+    @Override
     public void onAnimationStart(Animation animation) {
     }
 
+    @Override
     public void onAnimationRepeat(Animation animation) {
     }
 

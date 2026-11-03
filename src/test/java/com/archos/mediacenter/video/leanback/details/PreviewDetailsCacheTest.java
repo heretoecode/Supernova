@@ -14,6 +14,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks Details caches supply known facts without inventing optional provider availability. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewDetailsCacheTest {

@@ -6,6 +6,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks playback chapters preserve supplied timestamps and reject invalid or invented markers. */
 public class PlaybackChaptersTest {
     private MediaMetadata data(long... starts) {
         MediaMetadata data = mock(MediaMetadata.class);

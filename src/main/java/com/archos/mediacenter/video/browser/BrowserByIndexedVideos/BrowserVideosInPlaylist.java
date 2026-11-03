@@ -51,6 +51,7 @@ public class BrowserVideosInPlaylist extends BrowserByVideoSelection {
 	private Map<String, List<String>> mMoviesMap = new HashMap<>();
 	private Map<String, List<String>> mEpisodesMap = new HashMap<>();
 
+	@Override
 	protected long getPlaylistId() {
 		return getArguments().getLong(EXTRA_PLAYLIST_ID);
 	}

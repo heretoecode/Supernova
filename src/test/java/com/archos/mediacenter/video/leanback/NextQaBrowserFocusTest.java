@@ -14,6 +14,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks that file-browser traversal scrolls to offscreen items and refresh preserves nearby focus. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

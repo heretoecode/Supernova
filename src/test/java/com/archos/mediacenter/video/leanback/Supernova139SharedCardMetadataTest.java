@@ -14,6 +14,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks shared card metadata stays bounded while full Details facts remain available. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -25,6 +25,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks portable pinned titles remap exact identities and update only selected pin state transactionally. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortablePinnedTitlesTest {
@@ -125,21 +126,27 @@ public class PortablePinnedTitlesTest {
             ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
             ScraperProvider scraper = new ScraperProvider(context, database);
             ContentProvider provider = new ContentProvider() {
+                @Override
                 public boolean onCreate() {
                     return true;
                 }
+                @Override
                 public String getType(Uri uri) {
                     return null;
                 }
+                @Override
                 public Cursor query(Uri uri, String[] columns, String where, String[] args, String order) {
                     return scraper.query(uri, columns, where, args, order);
                 }
+                @Override
                 public Uri insert(Uri uri, ContentValues values) {
                     throw new AssertionError("Backup inventory is read only");
                 }
+                @Override
                 public int update(Uri uri, ContentValues values, String where, String[] args) {
                     throw new AssertionError("Backup inventory is read only");
                 }
+                @Override
                 public int delete(Uri uri, String where, String[] args) {
                     throw new AssertionError("Backup inventory is read only");
                 }

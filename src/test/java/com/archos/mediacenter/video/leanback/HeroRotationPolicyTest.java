@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks hero pool eligibility, balance and idle rotation timing. */
 public class HeroRotationPolicyTest {
     private HeroRotationPolicy.Candidate<String> title(String id, boolean tv) { return new HeroRotationPolicy.Candidate<>(id,tv,id); }
     private List<List<HeroRotationPolicy.Candidate<String>>> sources() { List<List<HeroRotationPolicy.Candidate<String>>> result=new ArrayList<>();for(int i=0;i<4;i++)result.add(new ArrayList<>());return result; }

@@ -67,6 +67,7 @@ public final class LibraryPageHeader {
             busy ? "Scan in progress" : "Indexed library", busy ? "history" : "info");
         Runnable refresh = new Runnable() {
             private boolean lastBusy = busy;
+            @Override
             public void run() {
                 if (!panel.isAttachedToWindow())
                     return;
@@ -93,9 +94,11 @@ public final class LibraryPageHeader {
             }
         };
         panel.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
             public void onViewAttachedToWindow(View view) {
                 panel.post(refresh);
             }
+            @Override
             public void onViewDetachedFromWindow(View view) {
                 panel.removeCallbacks(refresh);
             }

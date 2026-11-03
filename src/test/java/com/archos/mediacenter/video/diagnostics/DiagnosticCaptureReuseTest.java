@@ -8,6 +8,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks that repeated anomalies reuse a capture window while manual markers create a fresh capture. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class DiagnosticCaptureReuseTest {

@@ -14,6 +14,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks put.io token encryption, fresh initialization vectors and rejection of tampered credentials. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioTokenStoreTest {
     @Rule public TemporaryFolder temporary=new TemporaryFolder();

@@ -20,6 +20,7 @@ import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks unconfirmed source and bookmark removal leave their displayed rows unchanged. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSourceRemovalTest {
@@ -58,9 +59,11 @@ public class PreviewSourceRemovalTest {
             // This displayed stale row deliberately has no corresponding database
             // record. The real database deletion returns zero, not success.
             Shortcut source = new Shortcut(987654, "https://example.invalid/absent", null, "Fixture") {
+                @Override
                 public Uri getUri() {
                     return Uri.parse(getFullPath());
                 }
+                @Override
                 public int getImage() {
                     return 0;
                 }

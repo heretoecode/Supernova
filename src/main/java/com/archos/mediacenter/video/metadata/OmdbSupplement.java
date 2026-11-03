@@ -66,12 +66,15 @@ public final class OmdbSupplement {
     }
 
     private static final Access DENIED = new Access() {
+        @Override
         public boolean permitted() {
             return false;
         }
+        @Override
         public boolean acquireRequest() {
             return false;
         }
+        @Override
         public String apiKey() {
             return "";
         }

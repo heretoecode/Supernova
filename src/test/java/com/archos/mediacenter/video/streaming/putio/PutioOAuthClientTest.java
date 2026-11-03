@@ -14,6 +14,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks put.io device linking validates configuration, QR payloads and authorization responses. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioOAuthClientTest {
     @Test public void oauthDiagnosticsIncludeSemanticFailureButNeverPayloadOrLinkCode()throws Exception{

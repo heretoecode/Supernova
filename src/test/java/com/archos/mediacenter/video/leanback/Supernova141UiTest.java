@@ -28,6 +28,7 @@ import org.robolectric.util.ReflectionHelpers;
 import java.time.Duration;
 import static org.junit.Assert.*;
 
+/** Checks keyboard actions, library focus, toolbar placement and explicit regional language metadata. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

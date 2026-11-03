@@ -42,6 +42,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import org.slf4j.LoggerFactory;
 
+/** Checks legacy backup review survives recreation and requires explicit restore and privacy consent. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

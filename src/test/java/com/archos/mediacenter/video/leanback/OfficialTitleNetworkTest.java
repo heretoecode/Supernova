@@ -15,6 +15,7 @@ import okhttp3.*;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks that title-logo transport records bounded diagnostics without sensitive URLs. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class OfficialTitleNetworkTest {
     @Test public void boundedLogoTransportCorrelatesWithoutSensitiveUrl()throws Exception{

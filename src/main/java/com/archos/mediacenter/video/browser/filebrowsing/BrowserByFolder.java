@@ -480,6 +480,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
             displayFailPage();
     }
 
+    @Override
     protected void refresh(){
         listFiles(false);
     }
@@ -750,6 +751,7 @@ abstract public class BrowserByFolder extends BrowserByVideoObjects implements
         }
     }
 
+    @Override
     protected boolean shouldForceVideoSelection() {
         return true;
     }

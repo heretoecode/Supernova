@@ -264,6 +264,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
 	    }
 
 	    menu.add(0, R.string.play_selection, 0, R.string.play_selection).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				mLayout.getFrontCover().play(getContext());
 				return true;
@@ -289,6 +290,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
 
             String resumeString = activity.getString(R.string.resume) + " (" + MediaUtils.formatTime(resume) + ")";
 			menu.add(resumeString).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				@Override
 				public boolean onMenuItemClick(MenuItem item) {
 					BaseVideoCover bvc = (BaseVideoCover)c;
 					bvc.getOpenAction(getContext(), PlayerActivity.RESUME_FROM_LAST_POS).run(); // here we lose the actual resume position, Player will query it again...
@@ -300,6 +302,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
 		if (bookmark > 0) {
             String bookmarkString = activity.getString(R.string.bookmark) + " (" + MediaUtils.formatTime(bookmark) + ")";
 			menu.add(bookmarkString).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				@Override
 				public boolean onMenuItemClick(MenuItem item) {
 					BaseVideoCover bvc = (BaseVideoCover)c;
 					bvc.getOpenAction(getContext(), PlayerActivity.RESUME_FROM_BOOKMARK).run(); // here we lose the actual bookmark position, Player will query it again...
@@ -309,6 +312,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
 
 		//Delete
 		menu.add(R.string.delete).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				// Forbid deleting in DemoMode
 				if (ArchosSettings.isDemoModeActive(mActivity)) {
@@ -349,6 +353,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
 
         //Subtitles wizard
         menu.add(R.string.get_subtitles_on_drive).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
             public boolean onMenuItemClick(MenuItem item) {
                 String videoPath = ((BaseVideoCover)c).getFilePath();
                 if (videoPath != null && videoPath.length() > 0) {
@@ -363,6 +368,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
         final String videoPath = ((BaseVideoCover)c).getFilePath();
         menu.add(R.string.get_subtitles_online).setOnMenuItemClickListener(
                 new OnMenuItemClickListener() {
+                    @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         Intent intent = new Intent(Intent.ACTION_MAIN);
 						intent.setClass(getContext(), SubtitlesDownloaderActivity2.class);
@@ -374,6 +380,7 @@ public class CoverRoll3DVideo extends CoverRoll3D {
                 });
         //Info
         menu.add(R.string.info).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
             public boolean onMenuItemClick(MenuItem item) {
                 openInfoActivity(mLayout.getFrontCoverIndex());
                 return true;

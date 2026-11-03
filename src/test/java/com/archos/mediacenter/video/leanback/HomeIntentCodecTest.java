@@ -14,6 +14,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks portable home row membership, unresolved references and rejection of unsafe labels. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class HomeIntentCodecTest {

@@ -72,11 +72,13 @@ public abstract class LeanbackActivity extends FragmentActivity {
         };
     }
 
+    @Override
     public void onResume(){
         super.onResume();
         ContextCompat.registerReceiver(this, mTraktRelogBroadcastReceiver, new IntentFilter(Trakt.TRAKT_ISSUE_REFRESH_TOKEN), ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
+    @Override
     public void onPause(){
         super.onPause();
         unregisterReceiver(mTraktRelogBroadcastReceiver);

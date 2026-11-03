@@ -115,6 +115,7 @@ public class BrowserBySFTP extends BrowserByNetwork implements ListingEngine.Lis
         mShortcuts = ShortcutDb.STATIC.getAllShortcuts(getActivity());
     }
 
+    @Override
     public void onPause(){
         super.onPause();
         if(mHandler != null){
@@ -217,6 +218,7 @@ public class BrowserBySFTP extends BrowserByNetwork implements ListingEngine.Lis
         }
     }
 
+    @Override
     protected void updateAdapterIfReady() {
         super.updateAdapterIfReady();
         mUnfilteredItemList = new ArrayList<>(mItemList);
@@ -243,6 +245,7 @@ public class BrowserBySFTP extends BrowserByNetwork implements ListingEngine.Lis
         }
     }
 
+    @Override
     protected void listFiles(boolean discrete) {
         mHandler.removeMessages(LONG_CONNECTION);
         if(!discrete)

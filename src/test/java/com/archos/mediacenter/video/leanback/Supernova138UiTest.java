@@ -38,6 +38,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import java.util.*;
 
+/** Checks Details, navigation, Settings and playback controls remain readable and reachable. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

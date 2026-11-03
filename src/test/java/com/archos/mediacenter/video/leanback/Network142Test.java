@@ -24,6 +24,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks Network & Files navigation, connection forms, recovery, sorting and retained folder state. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

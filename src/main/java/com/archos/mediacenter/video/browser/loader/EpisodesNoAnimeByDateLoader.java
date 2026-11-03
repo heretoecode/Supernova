@@ -44,6 +44,7 @@ public class EpisodesNoAnimeByDateLoader extends MoviesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String formatter = "e_aired";
         switch (mDateView) {

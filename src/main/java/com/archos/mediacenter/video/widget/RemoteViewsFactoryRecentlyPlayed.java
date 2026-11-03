@@ -32,6 +32,7 @@ class RemoteViewsFactoryRecentlyPlayed extends RemoteViewsFactoryBase {
         if (log.isDebugEnabled()) log.debug("Create RecentlyPlayed service for the video widget");
     }
 
+    @Override
     protected boolean loadData(Context context, int maxItemCount) {
         if (log.isDebugEnabled()) log.debug("loadData()");
     	String sortOrder = VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED + " DESC" + " LIMIT " + maxItemCount;

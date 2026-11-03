@@ -14,6 +14,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks media match intents remain guarded, portable and read-only until their native participant applies them. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

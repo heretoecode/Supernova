@@ -10,6 +10,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks remote text caret alignment and the Details page artwork scrim. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

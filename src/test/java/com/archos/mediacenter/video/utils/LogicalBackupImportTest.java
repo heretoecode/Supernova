@@ -13,6 +13,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks logical backup import validates bounded private snapshots and cleans up failed or cancelled reads. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class LogicalBackupImportTest {
@@ -129,9 +130,11 @@ public class LogicalBackupImportTest {
     public void boundedCopyRejectsOversizeInputBeforeZipParsingAndLeavesNoPartial() throws Exception {
         InputStream huge = new InputStream() {
             long remaining = 24L * 1024 * 1024 + 1;
+            @Override
             public int read() {
                 return remaining-- > 0 ? 0 : -1;
             }
+            @Override
             public int read(byte[] b, int offset, int length) {
                 if (remaining == 0)
                     return -1;

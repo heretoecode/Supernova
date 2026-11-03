@@ -22,6 +22,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.annotation.GraphicsMode;
 import static org.junit.Assert.*;
 
+/** Checks navigation shading samples scrolled content and fades without changing background transparency. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewNavigationShadeTest {
     @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)

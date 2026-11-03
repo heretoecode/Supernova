@@ -18,6 +18,7 @@ import org.json.*;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks season details use exact season metadata, credits and available episode counts. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSeasonTest {

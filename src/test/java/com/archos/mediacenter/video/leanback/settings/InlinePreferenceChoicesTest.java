@@ -12,6 +12,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import java.util.Set;
 
+/** Checks inline preference choices preserve native values, focus and change-listener vetoes. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class InlinePreferenceChoicesTest {

@@ -18,6 +18,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks logical backup export includes selected public data without creating stores or leaking private data. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

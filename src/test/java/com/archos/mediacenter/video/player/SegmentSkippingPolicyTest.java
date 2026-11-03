@@ -8,6 +8,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks segment skipping defaults, binge-arrival rules and protection of post-credit material. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class SegmentSkippingPolicyTest {

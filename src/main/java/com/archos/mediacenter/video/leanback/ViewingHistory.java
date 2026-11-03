@@ -76,11 +76,13 @@ public final class ViewingHistory {
             super(c, DATABASE, null, 1);
         }
 
+        @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(
                 "CREATE TABLE history(identity TEXT PRIMARY KEY, completed INTEGER NOT NULL, started INTEGER NOT NULL, position INTEGER NOT NULL, duration INTEGER NOT NULL, played INTEGER NOT NULL, completed_at INTEGER NOT NULL)");
         }
 
+        @Override
         public void onUpgrade(SQLiteDatabase db, int old, int next) {
             throw new IllegalStateException("Unsupported history schema");
         }

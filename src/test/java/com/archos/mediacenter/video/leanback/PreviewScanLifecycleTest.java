@@ -24,6 +24,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks scan lifecycle telemetry uses actual progress, batch totals and terminal outcomes. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewScanLifecycleTest {

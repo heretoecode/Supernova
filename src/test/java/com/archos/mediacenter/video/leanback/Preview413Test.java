@@ -10,6 +10,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks media source classification and distinct TV show counts with indexed storage totals. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class Preview413Test {
     private Entry movie(long id,String path,long bytes){

@@ -25,6 +25,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks artwork request correlation, cancellation and privacy when library items are rebound. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class ArtworkRequestTest {
     @Before public void initialisePicasso(){

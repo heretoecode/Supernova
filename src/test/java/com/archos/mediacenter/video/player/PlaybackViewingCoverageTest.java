@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+/** Checks watched coverage counts distinct played intervals and excludes seeks and invalid durations. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class PlaybackViewingCoverageTest {

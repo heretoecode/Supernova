@@ -417,10 +417,12 @@ abstract class RemoteViewsFactoryBase implements RemoteViewsService.RemoteViewsF
             super(new Handler(Looper.getMainLooper()));
         }
 
+        @Override
         public boolean deliverSelfNotifications() {
             return true;
         }
 
+        @Override
         public void onChange(boolean selfChange) {
             // The content of a cursor has changed => make the service reload
             // the data if needed

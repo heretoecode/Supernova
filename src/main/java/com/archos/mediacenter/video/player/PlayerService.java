@@ -573,6 +573,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
      */
 
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (log.isDebugEnabled())
             log.debug("onStartCommand");
@@ -2033,6 +2034,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (log.isDebugEnabled())
             log.debug("fetchIntroDbIfNeeded: querying {}", query);
         new Thread("IntroDbFetch") {
+            @Override
             public void run() {
                 IntroSegments segments = IntroDbManager.fetch(query);
                 if (uri.equals(mIntroDbFetchedUri)) {
@@ -2243,6 +2245,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (UriUtils.isIndexable(mVideoInfo.uri)) {
                     final Uri uri = mVideoInfo.uri;
                     new Thread() {
+                        @Override
                         public void run() {
                             if (!VideoStoreImportImpl.isNoMediaPath(uri))
                                 VideoStore.requestIndexing(uri, PlayerService.this);

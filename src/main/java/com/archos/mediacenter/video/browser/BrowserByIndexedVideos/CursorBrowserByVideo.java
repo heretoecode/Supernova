@@ -128,6 +128,7 @@ abstract public class CursorBrowserByVideo extends BrowserByVideoObjects impleme
         }
         mCursor = null;
     }
+    @Override
     protected void refresh(){
         mBrowserAdapter.notifyDataSetChanged();
     }
@@ -148,6 +149,7 @@ abstract public class CursorBrowserByVideo extends BrowserByVideoObjects impleme
      * Get the type that the mediaDb ID will be representing, i.e. the type of the thumbnails
      * @return
      */
+    @Override
     public int getThumbnailsType() {
         // Most BrowserById subclasses represents files, so here is the default implementation, but some subclasses will do something else
         return ThumbnailEngineVideo.TYPE_FILE;

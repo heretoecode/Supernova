@@ -112,6 +112,7 @@ public final class SubtitlePanelStyle {
             this.blur = blur;
         }
 
+        @Override
         public void draw(Canvas canvas) {
             RectF rect = new RectF(getBounds());
             rect.inset(px(3), px(3));
@@ -126,16 +127,19 @@ public final class SubtitlePanelStyle {
             canvas.drawRoundRect(rect, px(radius), px(radius), paint);
         }
 
+        @Override
         public void setAlpha(int a) {
             paint.setAlpha(a);
             invalidateSelf();
         }
 
+        @Override
         public void setColorFilter(ColorFilter f) {
             paint.setColorFilter(f);
             invalidateSelf();
         }
 
+        @Override
         public int getOpacity() {
             return PixelFormat.TRANSLUCENT;
         }

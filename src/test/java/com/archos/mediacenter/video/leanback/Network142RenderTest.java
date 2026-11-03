@@ -19,6 +19,7 @@ import org.robolectric.util.ReflectionHelpers;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks Network & Files rendering across sections, WebDAV states and viewport sizes. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

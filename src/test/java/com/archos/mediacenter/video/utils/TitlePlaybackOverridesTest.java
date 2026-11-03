@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks playback overrides remain guarded until backend validation and preserve unrelated viewing state. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class TitlePlaybackOverridesTest {

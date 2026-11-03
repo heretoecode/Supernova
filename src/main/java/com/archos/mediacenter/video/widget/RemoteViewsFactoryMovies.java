@@ -34,6 +34,7 @@ class RemoteViewsFactoryMovies extends RemoteViewsFactoryBase {
 		if (log.isDebugEnabled()) log.debug("RemoteViewsFactoryMovies contructor");
 	}
 
+	@Override
 	protected boolean loadData(Context context, int maxItemCount) {
 		if (log.isDebugEnabled()) log.debug("loadData()");
 		String sortOrder = BrowserByVideoSelection.DEFAULT_SORT + " LIMIT " + maxItemCount;

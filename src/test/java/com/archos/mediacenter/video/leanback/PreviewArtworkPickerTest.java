@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks artwork selection saving and remote focus boundaries in the artwork grid. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewArtworkPickerTest {
  @org.junit.Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}

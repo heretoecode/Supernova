@@ -72,6 +72,7 @@ public class BrowserByShow extends BrowserWithShowHeader {
     private int mLastColor;
 
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHideOption = false;
@@ -79,6 +80,7 @@ public class BrowserByShow extends BrowserWithShowHeader {
 
     }
 
+    @Override
     public void onViewCreated(View view, Bundle save ){
         super.onViewCreated(view, save);
         if (getActivity() != null && ((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
@@ -155,6 +157,7 @@ public class BrowserByShow extends BrowserWithShowHeader {
 
 
 
+    @Override
     protected void postBindAdapter() {
     	super.postBindAdapter();
     	
@@ -259,6 +262,7 @@ public class BrowserByShow extends BrowserWithShowHeader {
         return null;
     }
 
+    @Override
     public int getFileSize(){
         return getFileAndFolderSize();
     }

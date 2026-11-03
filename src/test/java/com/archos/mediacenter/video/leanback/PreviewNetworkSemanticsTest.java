@@ -28,6 +28,7 @@ import org.robolectric.util.ReflectionHelpers;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks network navigation, private location semantics, credential recovery and staged source setup. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewNetworkSemanticsTest {
@@ -90,9 +91,11 @@ public class PreviewNetworkSemanticsTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             Shortcut source = new Shortcut(72, "https://private-host/private-path", null, "Private source") {
+                @Override
                 public Uri getUri() {
                     return Uri.parse(getFullPath());
                 }
+                @Override
                 public int getImage() {
                     return 0;
                 }

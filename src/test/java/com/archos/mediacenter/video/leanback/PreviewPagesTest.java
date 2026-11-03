@@ -46,6 +46,7 @@ import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks library playback targets, episode dates, storage aggregation and page tab focus. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewPagesTest {

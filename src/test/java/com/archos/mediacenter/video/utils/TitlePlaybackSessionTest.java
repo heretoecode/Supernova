@@ -21,6 +21,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks playback sessions apply restored track choices only after validated backend acceptance. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class TitlePlaybackSessionTest {

@@ -31,11 +31,13 @@ public class ScraperImageBackdropPresenter extends ScraperImagePresenter {
         super();
     }
 
+    @Override
     public int getWidth(Context context) {
         // Return base dimension; ScraperImagePresenter applies 1.2x supersampling for high-quality scaling
         return context.getResources().getDimensionPixelSize(R.dimen.details_backdrop_width);
     }
 
+    @Override
     public int getHeight(Context context) {
         // Return base dimension; ScraperImagePresenter applies 1.2x supersampling for high-quality scaling
         return context.getResources().getDimensionPixelSize(R.dimen.details_backdrop_height);

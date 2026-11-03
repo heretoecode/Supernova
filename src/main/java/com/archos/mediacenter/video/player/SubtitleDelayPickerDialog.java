@@ -98,7 +98,9 @@ public class SubtitleDelayPickerDialog extends AlertDialog implements OnClickLis
         setCanceledOnTouchOutside(true);
     }
 
-    /*package*/ public void handleMessage(Message msg) {
+    /*package*/ 
+    @Override
+    public void handleMessage(Message msg) {
         switch(msg.what) {
             case CHANGE_DELAY:
                 if (mCallBack != null) {
@@ -117,12 +119,14 @@ public class SubtitleDelayPickerDialog extends AlertDialog implements OnClickLis
         }
     }
 
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         if (mCallBack != null) {
             mCallBack.onDelayChange(mSubtitleDelayPicker, mSubtitleDelayPicker.getDelay(), mRatio);
         }
     }
 
+    @Override
     public void onDelayChanged(SubtitleDelayPickerAbstract view, int delay) {
         updateTitle(delay);
         mHandler.removeMessages(CHANGE_DELAY);
@@ -130,6 +134,7 @@ public class SubtitleDelayPickerDialog extends AlertDialog implements OnClickLis
         mHandler.sendMessageDelayed(msg, CHANGE_DELAY_TIMEOUT);
     }
 
+    @Override
     public void updateDelay(int delay) {
         mSubtitleDelayPicker.updateDelay(delay);
         updateTitle(delay);

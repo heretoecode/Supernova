@@ -190,6 +190,7 @@ public class VideoPicker extends AppCompatActivity implements AdapterView.OnItem
     /*
      * Called when the user clicks on the Cancel button
      */
+    @Override
     public void onClick(View v) {
         if (v.getId() == R.id.cancelButton) {
             // Tell the caller that the pick request was cancelled by the user

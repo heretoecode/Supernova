@@ -20,6 +20,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks streaming metadata validation, scoped availability, safe links and provider selection. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class StreamingRepositoryTest {

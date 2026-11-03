@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/** Checks external resume intents accept valid positions, preserve priority and redact other values. */
 public class ExternalResumeIntentTest {
 
     @Test

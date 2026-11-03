@@ -35,6 +35,7 @@ public class TvshowsNoAnimeByAlphaLoader extends TvshowsNoAnimeByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String col = SortUtils.getAlphaBucketColumn(context, SortUtils.SortScope.SHOW);
         return "SELECT\n" +

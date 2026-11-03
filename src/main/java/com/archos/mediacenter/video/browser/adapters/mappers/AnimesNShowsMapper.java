@@ -65,6 +65,7 @@ public class AnimesNShowsMapper implements CompatibleCursorMapper {
 
     private int mSeasonCountColumn, mEpisodeCountColumn, mEpisodeWatchedCountColumn;
 
+    @Override
     public void bindColumns(Cursor c) {
         mIdColumn = c.getColumnIndex(BaseColumns._ID);
         mScraperTypeColumn = c.getColumnIndex(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE);
@@ -132,6 +133,7 @@ public class AnimesNShowsMapper implements CompatibleCursorMapper {
         mEpisodeWatchedCountColumn = c.getColumnIndex("episode_watched_count");
     }
 
+    @Override
     public Object bind(Cursor c) {
         final int scraperType = c.getInt(mScraperTypeColumn);
         final String filePath = c.getString(mPathColumn);

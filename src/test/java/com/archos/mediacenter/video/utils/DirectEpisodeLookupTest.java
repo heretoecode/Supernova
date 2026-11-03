@@ -8,6 +8,7 @@ import org.robolectric.annotation.Config;
 import org.json.*;
 import static org.junit.Assert.*;
 
+/** Checks direct episode lookup validates coordinates and identifiers without silently changing the parent show. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DirectEpisodeLookupTest {
     @Test public void coordinatesKeepSpecialsAndDoNotGuessTitlesOrUnboundedNumbers(){

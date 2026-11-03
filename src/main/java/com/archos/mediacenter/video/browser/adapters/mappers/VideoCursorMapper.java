@@ -61,6 +61,7 @@ public class VideoCursorMapper implements CompatibleCursorMapper {
     private int mCountColumn;
     private int mPinnedColumn;
 
+    @Override
     public void bindColumns(Cursor c) {
         mIdColumn = c.getColumnIndex(BaseColumns._ID);
         mScraperTypeColumn = c.getColumnIndex(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE);
@@ -116,6 +117,7 @@ public class VideoCursorMapper implements CompatibleCursorMapper {
     }
 
 
+    @Override
     public Object bind(Cursor c) {
         final int scraperType = c.getInt(mScraperTypeColumn);
         final String filePath = c.getString(mPathColumn);

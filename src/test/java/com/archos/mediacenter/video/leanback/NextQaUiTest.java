@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks welcome dialogs, keyboard cancellation and cached hero artwork recovery. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

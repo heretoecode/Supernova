@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/** Checks resume policy distinguishes fresh launches, lifecycle checkpoints and explicit restart requests. */
 public class PlaybackResumePolicyTest {
 
     @Test

@@ -14,6 +14,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 
+/** Checks that Watch Next membership survives hiding and reordering home rows. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class Preview41RowsTest {

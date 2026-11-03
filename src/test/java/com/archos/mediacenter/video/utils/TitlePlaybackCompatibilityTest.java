@@ -13,6 +13,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks restored playback choices apply only to validated receiving tracks and compatible language selections. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class TitlePlaybackCompatibilityTest {

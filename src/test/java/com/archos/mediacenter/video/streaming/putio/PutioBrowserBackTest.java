@@ -9,6 +9,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks put.io Back navigation returns to the root before closing the activity. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioBrowserBackTest {
     @Test public void dispatcherReturnsToRootBeforeClosingActivity(){

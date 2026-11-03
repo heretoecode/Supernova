@@ -18,15 +18,22 @@ public final class CanonicalMatchExecutor {
         DbHolder sameConnection=new DbHolder(null){@Override public SQLiteDatabase get(){return database;}@Override public void close(){throw new IllegalStateException("Caller owns native transaction");}};
         ScraperProvider scraper=new ScraperProvider(context,sameConnection);
         ContentProvider local=new ContentProvider(){
-            public boolean onCreate(){return true;}public String getType(Uri uri){return null;}
+            @Override
+            public boolean onCreate(){return true;}
+            @Override
+            public String getType(Uri uri){return null;}
+            @Override
             public Cursor query(Uri uri,String[] columns,String where,String[] args,String order){
                 if(ScraperStore.AUTHORITY.equals(uri.getAuthority()))return scraper.query(uri,columns,where,args,order);
                 String last=uri.getLastPathSegment();
                 if(!VideoStore.AUTHORITY.equals(uri.getAuthority())||last==null||!last.matches("[1-9][0-9]{0,18}"))throw new IllegalArgumentException("Unsupported canonical file assertion");
                 return database.query(VideoOpenHelper.VIDEO_VIEW_NAME,columns,"_id="+Long.parseLong(last)+(where==null?"":" AND ("+where+")"),args,null,null,order);
             }
+            @Override
             public Uri insert(Uri uri,ContentValues values){return scraper.insert(uri,values);}
+            @Override
             public int update(Uri uri,ContentValues values,String where,String[] args){return scraper.update(uri,values,where,args);}
+            @Override
             public int delete(Uri uri,String where,String[] args){throw new IllegalArgumentException("Canonical batch does not delete receiving files or metadata");}
         };
         local.attachInfo(context,null);

@@ -9,6 +9,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+/** Checks source selection transactions, canonical paths, breadcrumb ancestry and unsaved changes. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class BrowserSelectionTest {
  @Test public void canonicalLocationsRemoveSecretsAndRespectDirectoryBoundaries(){

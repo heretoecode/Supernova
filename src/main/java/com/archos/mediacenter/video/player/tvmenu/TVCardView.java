@@ -114,6 +114,7 @@ public class TVCardView extends FrameLayout implements Checkable, FocusableTVCar
         return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("try_new_ui", false)
             ? (int)(getResources().getDisplayMetrics().heightPixels * .8f) : originalHeight * 2;
     }
+    @Override
     public TVCardView getSlaveView(){return slaveView;}
     public int getCurrentWidth() {
         ViewGroup.LayoutParams lp = getLayoutParams();

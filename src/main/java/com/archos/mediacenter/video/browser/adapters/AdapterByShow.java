@@ -54,6 +54,7 @@ public class AdapterByShow extends PresenterAdapterByCursor implements AdapterBy
         return mVideoCursorMapper.publicBind(c);
     }
 
+    @Override
     public boolean isEnabled(int position) {
         return true;
     }

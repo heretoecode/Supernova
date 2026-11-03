@@ -39,6 +39,7 @@ import java.util.LinkedHashSet;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks home row editor cancellation, membership, limits and remote operation across viewport sizes. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class Supernova139HomeEditorTest {

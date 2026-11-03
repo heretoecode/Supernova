@@ -13,6 +13,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks that the About activity shows the actual application identity after recreation. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class FoundationAboutActivityTest {

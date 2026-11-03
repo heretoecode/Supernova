@@ -39,6 +39,7 @@ final class PreviewUpNext {
     }
 
     private final Runnable tick = new Runnable() {
+        @Override
         public void run() {
             PlayerService service = PlayerService.sPlayerService;
             Player player = Player.sPlayer;

@@ -39,6 +39,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.robolectric.Shadows.shadowOf;
 
+/** Checks audio-route recovery preserves playback intent and position while rejecting stale work. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, manifest = Config.NONE, sdk = 30)
 @LooperMode(LooperMode.Mode.PAUSED)

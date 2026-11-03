@@ -31,6 +31,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.annotation.GraphicsMode;
 
+/** Checks top navigation overflow, focus restoration, section isolation and recycled card presentation. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class TopNavigationTest {

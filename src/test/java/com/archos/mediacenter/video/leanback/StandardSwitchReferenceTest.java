@@ -10,6 +10,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks shared switch proportions, gradient styling and independent focus presentation. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -29,6 +29,7 @@ public class FtpBrowse extends Shortcut implements Serializable {
        super(-1,"","",name);
     }
 
+    @Override
     public Uri getUri() {
         return null;
     }

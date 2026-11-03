@@ -400,6 +400,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
       return super.onTouchEvent(event);
     }
 
+    @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_ENTER) && event.getAction() == KeyEvent.ACTION_DOWN) {
             View focusedItem = mListView.getSelectedView();
@@ -417,6 +418,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
         return false;
     }
 
+    @Override
     public void onClick(View view) {
         if (view == mAbortButton) {
             // Ask the user whether he really wants to abort the scraper task or not
@@ -426,6 +428,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
                     .setMessage(R.string.scraper_abort_request)
                     .setCancelable(false)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
                         public void onClick(DialogInterface dialog, int id) {
                             if (mResultTask!=null) { // How can this be null ? I don't know, but we got a crash report on GooglePlay console...
                                 // Abort the scraper task and exit the activity
@@ -435,6 +438,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
                         }
                     })
                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
                         public void onClick(DialogInterface dialog, int id) {
                             // Keep on searching => do nothing
                         }
@@ -747,6 +751,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
 
                 emptyViewYesButton.setVisibility(View.VISIBLE);
                 emptyViewYesButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
                     public void onClick(View v) {
                         // The user wants to try searching again
                         trySearchingAgain();
@@ -755,6 +760,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
 
                 emptyViewNoButton.setVisibility(View.VISIBLE);
                 emptyViewNoButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
                     public void onClick(View v) {
                         // The user doesn't want to search again => close the activity
                         finish();
@@ -767,6 +773,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
                 // We only need the OK button here
                 emptyViewNoButton.setVisibility(View.GONE);
                 emptyViewYesButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
                     public void onClick(View v) {
                         // nothing to do => close the activity
                         finish();
@@ -827,6 +834,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
                        .setMessage(message)
                        .setCancelable(true)
                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 // Exit the activity when the user closes the dialog
                                 finish();
@@ -1114,6 +1122,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
         /**
         * Handle clicks on the revert buttons
         */
+        @Override
         public void onClick(View view) {
             int position = mActivity.mListView.getPositionForView(view);
             if (log.isDebugEnabled()) log.debug("onClick : position={}", position);

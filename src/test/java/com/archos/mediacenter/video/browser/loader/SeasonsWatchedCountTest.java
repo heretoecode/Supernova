@@ -11,6 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks that watched counts deduplicate video versions while keeping seasons and episodes distinct. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class SeasonsWatchedCountTest {
     @Test public void wholeShowCountDistinguishesSeasonAndEpisodeWhileDeduplicatingVersions(){

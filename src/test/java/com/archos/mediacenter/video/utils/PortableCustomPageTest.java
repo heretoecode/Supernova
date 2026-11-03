@@ -13,6 +13,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks portable custom page filters round-trip and reject injected credentials or unsupported collections. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortableCustomPageTest {

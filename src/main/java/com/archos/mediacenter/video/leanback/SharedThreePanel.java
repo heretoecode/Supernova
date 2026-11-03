@@ -147,16 +147,20 @@ public class SharedThreePanel extends LinearLayout {
     public static void rowSeparator(View row) {
         Drawable line = new Drawable() {
             private final Paint paint = new Paint();
+            @Override
             public void draw(Canvas canvas) {
                 paint.setColor(0x337f8996);
                 paint.setStrokeWidth(dp(row.getContext(), 1));
                 canvas.drawLine(dp(row.getContext(), 8), getBounds().bottom - 1,
                                 getBounds().right - dp(row.getContext(), 8), getBounds().bottom - 1, paint);
             }
+            @Override
             public void setAlpha(int alpha) {
             }
+            @Override
             public void setColorFilter(ColorFilter filter) {
             }
+            @Override
             public int getOpacity() {
                 return PixelFormat.TRANSLUCENT;
             }

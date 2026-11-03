@@ -97,6 +97,7 @@ public class MovieInfo extends BaseInfo {
 
     /* ----------------- Getters ------------------- */
 
+    @Override
     public CharSequence getFormattedTitle(Context context, int viewMode) {
         return mTitle;
     }
@@ -133,13 +134,16 @@ public class MovieInfo extends BaseInfo {
         return mGenres;
     }
 
+    @Override
     public File getCover() {
         return mCoverFile;
     }
 
+    @Override
     public void setDetailName(TextView view, Resources res) {
     }
 
+    @Override
     public void setDetailLineOne(TextView view, Resources res) {
         if (mDirectors == null) {
             view.setText(EMPTY);
@@ -154,6 +158,7 @@ public class MovieInfo extends BaseInfo {
         }
     }
 
+    @Override
     public void setDetailLineTwo(TextView view, Resources res) {
         if (mPlot == null) {
             view.setText(EMPTY);
@@ -164,6 +169,7 @@ public class MovieInfo extends BaseInfo {
         }
     }
 
+    @Override
     public void setDetailLineThree(TextView view, Resources res) {
         if (mActors == null) {
             view.setText(EMPTY);
@@ -174,10 +180,12 @@ public class MovieInfo extends BaseInfo {
         }
     }
 
+    @Override
     public float getDetailLineRating() {
         return mRating;
     }
 
+    @Override
     public void setDetailLineReleaseDate(TextView view, Resources res) {
         if (mYear > 0) {
             view.setText(res.getString(R.string.scrap_year_format, mYear));

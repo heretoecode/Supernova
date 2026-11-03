@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+/** Checks restore journals recover interrupted swaps and retain durably committed replacements. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class RestoreJournalTest {
     @Test public void interruptedSwapRollsBackFilesAndPreferencesBeforeReopening()throws Exception{exercise(false);}

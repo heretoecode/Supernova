@@ -14,6 +14,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks portable library sources preserve unresolved choices and reject unsafe or stale location data. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortableLibrarySourcesTest {

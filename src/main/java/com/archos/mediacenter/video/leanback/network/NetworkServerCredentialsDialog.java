@@ -219,6 +219,7 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
                         }
                     })
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
                         String username = usernameEt.getText().toString().trim();
                         final String password = passwordEt.getText().toString();

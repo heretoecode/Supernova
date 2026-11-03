@@ -18,6 +18,7 @@ import java.util.concurrent.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks put.io browsing preserves workspace navigation and rejects late results after closing. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 public class Network142PutioTest {

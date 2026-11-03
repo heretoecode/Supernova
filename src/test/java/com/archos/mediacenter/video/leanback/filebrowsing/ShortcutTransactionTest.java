@@ -10,6 +10,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks shortcut transactions roll back failed commits and avoid duplicate or missing roots. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class ShortcutTransactionTest {

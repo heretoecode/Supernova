@@ -13,6 +13,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks provider marks stay authentic, transparent and shared while unverified artwork uses fallbacks. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

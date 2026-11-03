@@ -13,6 +13,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks diagnostic trace correlation, nested scopes and focus-return identity without exposing control text. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class ArtworkTraceTest {
     @Test public void workerOperationScopeLinksChildrenAndRestoresAfterNestedFailure()throws Exception{

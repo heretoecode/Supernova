@@ -27,6 +27,7 @@ public class GenericNetworkShortcut extends Shortcut implements Serializable {
         super(id, fullPath, friendlyUri, name);
     }
 
+    @Override
     public Uri getUri() {
         return Uri.parse(mFullPath);
     }

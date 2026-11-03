@@ -69,8 +69,11 @@ public final class VerifiedBackupPublication {
     /** Picker integration must establish ownership separately; choosing an existing file is not creation proof. */
     public static Destination saf(ContentResolver resolver,Uri document,boolean createdForThisExport){
         return new Destination(){
+            @Override
             public OutputStream openWrite()throws IOException{return resolver.openOutputStream(document,"wt");}
+            @Override
             public InputStream openRead()throws IOException{return resolver.openInputStream(document);}
+            @Override
             public boolean removeIncomplete()throws IOException{if(!createdForThisExport)return false;return DocumentsContract.deleteDocument(resolver,document);}
         };
     }

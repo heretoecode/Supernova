@@ -93,12 +93,14 @@ public class AudioDelayPickerDialog extends AlertDialog implements OnClickListen
         setCancelable(true);
         setCanceledOnTouchOutside(true);
     }
+    @Override
     public void onAttachedToWindow(){
         log.error("onAttachedToWindow");
         super.onAttachedToWindow();
         mSaveSettingCB.setChecked( PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getContext().getResources().getString(R.string.save_delay_setting_pref_key), 0)!=0);
 
     }
+    @Override
     public void handleMessage(Message msg) {
         switch(msg.what) {
             case CHANGE_DELAY:
@@ -136,12 +138,14 @@ public class AudioDelayPickerDialog extends AlertDialog implements OnClickListen
         }
     }
 
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         if (mCallBack != null) {
             mCallBack.onAudioDelayChange(mAudioDelayPicker, clampDelay(mAudioDelayPicker.getDelay()));
         }
     }
 
+    @Override
     public void updateDelay(int delay) {
         mAudioDelayPicker.updateDelay(clampDelay(delay));
     }

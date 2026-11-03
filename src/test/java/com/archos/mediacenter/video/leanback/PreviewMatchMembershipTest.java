@@ -18,6 +18,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 
+/** Checks row membership creation and preservation of membership after correcting a series match. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMatchMembershipTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}

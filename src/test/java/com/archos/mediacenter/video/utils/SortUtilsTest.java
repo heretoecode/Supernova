@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+/** Checks movie, show and collection sort-order resolution, including null and compound video views. */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE, application = Application.class, sdk = 28)
 public class SortUtilsTest {

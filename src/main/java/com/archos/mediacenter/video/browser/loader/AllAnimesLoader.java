@@ -49,6 +49,7 @@ public class AllAnimesLoader extends VideoLoader {
         init();
     }
 
+    @Override
     protected void init() {
         super.init();
         if(mGroupByOnlineId) {

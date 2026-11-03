@@ -56,6 +56,7 @@ import org.robolectric.shadows.ShadowLooper;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/** Checks network authentication retry and cancellation callbacks occur without repeated prompts. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33)
 public class NetworkCredentialFlowTest {

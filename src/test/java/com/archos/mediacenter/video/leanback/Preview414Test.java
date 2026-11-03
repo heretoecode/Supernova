@@ -10,6 +10,7 @@ import org.robolectric.annotation.Config;
 import java.util.*;
 import static org.junit.Assert.*;
 
+/** Checks video version quality selection, resume continuity and deduplicated episode counts. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class Preview414Test {
     private Video movie(long id,int width,int height,long bytes){return new Movie(id,"/storage/version-"+id+".mkv","Film",1,"Plot",2024,7,"",null,100000,0,0,0,false,false,false,false,1,0,width,height,null,null,null,null,0,1,bytes,0);}

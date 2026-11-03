@@ -159,6 +159,7 @@ public class FtpServerCredentialsDialog extends DialogFragment {
             }
         })
         .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog,int id) {
                 final int type = typeSp.getSelectedItemPosition();
                 final String address = addressEt.getText().toString();

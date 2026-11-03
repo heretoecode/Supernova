@@ -36,11 +36,13 @@ public class CollectionsAdapter extends PresenterAdapterByCursor  implements Ada
         return null;
     }
 
+    @Override
     public String getCover() {
         int coverColumn = getCursor().getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_C_POSTER_LARGE_FILE);
         return coverColumn >= 0 ? getCursor().getString(coverColumn) : null;
     }
 
+    @Override
     public Object getItem(int position){
         getCursor().moveToPosition(position);
         return mCollectionsCursorMapper.bind(getCursor());

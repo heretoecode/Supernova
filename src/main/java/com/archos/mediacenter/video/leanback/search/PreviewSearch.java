@@ -167,11 +167,14 @@ public final class PreviewSearch extends LinearLayout {
         Diagnostics.uiRebuild(results, "search.results", "adapter_created", 0, adapter.getItemCount(), true);
         buildKeyboard(keyboardColumn);
         query.addTextChangedListener(new TextWatcher() {
+            @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+            @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 schedule(s.toString());
             }
+            @Override
             public void afterTextChanged(Editable e) {
             }
         });
@@ -573,10 +576,12 @@ public final class PreviewSearch extends LinearLayout {
     }
 
     private class ResultAdapter extends RecyclerView.Adapter<Holder> {
+        @Override
         public int getItemCount() {
             return items.size();
         }
 
+        @Override
         public int getItemViewType(int position) {
             return items.get(position).show == null ? 0 : 1;
         }

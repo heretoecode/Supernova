@@ -58,6 +58,7 @@ public class ShortcutAdapter extends RootFragmentAdapter {
     public void setOnShortcutAddListener(OnShortcutAddListener listener){
         mOnShortcutAddListener = listener;
     }
+    @Override
     public void resetData() {
         mData.clear();
         mTypes.clear();

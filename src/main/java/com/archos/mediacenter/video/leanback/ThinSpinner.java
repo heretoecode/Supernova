@@ -10,6 +10,7 @@ public final class ThinSpinner extends Drawable implements Animatable, Runnable 
     private boolean running;
     private float angle;
 
+    @Override
     public void draw(Canvas c) {
         Rect b = getBounds();
         float stroke = Math.max(1, b.width() / 14f);
@@ -24,6 +25,7 @@ public final class ThinSpinner extends Drawable implements Animatable, Runnable 
         c.drawArc(r, angle, 95, false, paint);
     }
 
+    @Override
     public void start() {
         if (!running) {
             running = true;
@@ -31,15 +33,18 @@ public final class ThinSpinner extends Drawable implements Animatable, Runnable 
         }
     }
 
+    @Override
     public void stop() {
         running = false;
         unscheduleSelf(this);
     }
 
+    @Override
     public boolean isRunning() {
         return running;
     }
 
+    @Override
     public void run() {
         if (!running)
             return;
@@ -48,14 +53,17 @@ public final class ThinSpinner extends Drawable implements Animatable, Runnable 
         scheduleSelf(this, SystemClock.uptimeMillis() + 25);
     }
 
+    @Override
     public void setAlpha(int a) {
         paint.setAlpha(a);
     }
 
+    @Override
     public void setColorFilter(ColorFilter f) {
         paint.setColorFilter(f);
     }
 
+    @Override
     public int getOpacity() {
         return PixelFormat.TRANSLUCENT;
     }

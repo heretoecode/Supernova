@@ -254,6 +254,7 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
                 mSortOrderItem = AnimesSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;

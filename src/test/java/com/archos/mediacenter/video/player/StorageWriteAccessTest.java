@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.robolectric.shadows.ShadowEnvironment;
 
+/** Checks denied storage write access leaves media records and folders unchanged. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 30, application = Application.class, shadows = StorageWriteAccessTest.DeniedStorage.class)
 public class StorageWriteAccessTest {

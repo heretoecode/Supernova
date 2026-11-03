@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.diagnostics;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks that captured failure windows survive log rotation and respect storage budgets. */
 public class DiagnosticFlightRecorderTest {
     @Test public void capturedFailureWindowSurvivesLaterRotationAndClear(){
         DiagnosticFlightRecorder recorder=new DiagnosticFlightRecorder(128,60000);

@@ -63,6 +63,7 @@ public class StereoMergeArchosEffect extends VideoEffect
         return VideoEffect.EFFECT_STEREO_MERGE_ARCHOS;
     }
     
+    @Override
     public int getUIMode() {
         if(!mPreferences.getBoolean(VideoPreferencesCommon.KEY_ACTIVATE_3D_SWITCH, false)){
             switch (getEffectMode()) {

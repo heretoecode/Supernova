@@ -12,6 +12,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowToast;
 
+/** Checks operation dialog cancellation, completion dismissal and focused failure notices. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewOperationDialogTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}

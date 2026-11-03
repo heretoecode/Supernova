@@ -193,6 +193,7 @@ public class VideoInfoScraperSearchFragment extends Fragment implements  Handler
     	mCustomSearchEditText = (EditText) mView.findViewById(R.id.custom_search_edittext);
     	mCustomSearchEditText.setHint(R.string.video_info_custom_search_file_hint);
     	mSearchButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View v) {
                 // Close the virtual keyboard if visible
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -365,6 +366,7 @@ public class VideoInfoScraperSearchFragment extends Fragment implements  Handler
     private static final int MESSAGE_WRITE_TAGS_TO_DB = 3;
     private static final int MESSAGE_RESET_SEARCH_UI = 4;
 
+    @Override
     public boolean handleMessage(Message msg) {
 
         switch(msg.what) {
@@ -814,6 +816,7 @@ public class VideoInfoScraperSearchFragment extends Fragment implements  Handler
             mListener = listener;
         }
 
+        @Override
         public void onClick(View v) {
             mImm.hideSoftInputFromWindow(mView.getWindowToken(), 0);
             if (mListener != null)
@@ -822,6 +825,7 @@ public class VideoInfoScraperSearchFragment extends Fragment implements  Handler
     }
 
     private TextView.OnEditorActionListener mEditorActionListener = new TextView.OnEditorActionListener() {
+        @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             // Forward keyboard ok -> button
             mSearchButton.callOnClick();

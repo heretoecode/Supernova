@@ -51,6 +51,7 @@ public final class PreviewSubtitleChooser {
         SubtitlesWizardCommon common = new SubtitlesWizardCommon(host);
         common.prepare();
         Backend backend = new Backend() {
+            @Override
             public List<Entry> load() {
                 common.loadFiles();
                 if (common.hasLoadFailure())
@@ -74,11 +75,13 @@ public final class PreviewSubtitleChooser {
                     }
                 return items;
             }
+            @Override
             public String associate(Entry entry) {
                 if (!common.renameFile(entry.path, entry.index))
                     return null;
                 return common.getCurrentFile(common.getCurrentFilesCount() - 1);
             }
+            @Override
             public boolean delete(Entry entry) {
                 return common.deleteFile(entry.path, entry.index, entry.associated);
             }

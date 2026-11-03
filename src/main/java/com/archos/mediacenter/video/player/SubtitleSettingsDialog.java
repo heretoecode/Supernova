@@ -63,6 +63,7 @@ public class SubtitleSettingsDialog extends AlertDialog implements
     private View mRightVerticalButton;
     private static int REPEAT_TOUCH_ACTION = 0;
     private Handler mHandler = new Handler(Looper.getMainLooper()){
+        @Override
         public void handleMessage(Message msg) {
             if(mTouchedView != null){
                 onAction(mTouchedView);
@@ -156,6 +157,7 @@ public class SubtitleSettingsDialog extends AlertDialog implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    @Override
     public void onProgressChanged(SeekBar seekBar, int progress,
             boolean fromTouch) {
         if (seekBar == mSizeSeekBar) {

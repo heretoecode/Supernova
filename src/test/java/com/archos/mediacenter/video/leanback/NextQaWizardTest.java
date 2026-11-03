@@ -15,6 +15,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks custom page statistics, toolbar placement and focus on initial entry. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = CustomApplication.class, sdk = 28,
         qualifiers = "w960dp-h540dp-land-mdpi")
@@ -152,8 +153,10 @@ public class NextQaWizardTest {
             View parent = (View)pages.getParent();
             final int[] detaches = {0};
             pages.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
                 public void onViewAttachedToWindow(View v) {
                 }
+                @Override
                 public void onViewDetachedFromWindow(View v) {
                     detaches[0]++;
                 }

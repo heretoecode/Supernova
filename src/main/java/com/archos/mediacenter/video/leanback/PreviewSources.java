@@ -68,12 +68,14 @@ public final class PreviewSources extends FrameLayout {
         addView(grid);
     }
 
+    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         rows.registerObserver(observer);
         refresh();
     }
 
+    @Override
     protected void onDetachedFromWindow() {
         rows.unregisterObserver(observer);
         for (ObjectAdapter a : observed)
@@ -214,6 +216,7 @@ public final class PreviewSources extends FrameLayout {
     }
 
     class Adapter extends RecyclerView.Adapter<Holder> {
+        @Override
         public int getItemCount() {
             return items.size();
         }

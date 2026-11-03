@@ -32,6 +32,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
         setPadding(PreviewDialog.dp(activity, 5), PreviewDialog.dp(activity, 6), PreviewDialog.dp(activity, 5),
             PreviewDialog.dp(activity, 6));
         setAdapter(new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            @Override
             public int getItemCount() {
                 return episodes.size();
             }
@@ -168,6 +169,7 @@ final class PreviewEpisodeRow extends PreviewFocusRecycler {
         // Wait for layout, not an arbitrary time delay: off-screen cards do not exist yet.
         final ViewTreeObserver.OnGlobalLayoutListener listener =
             new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
                 public void onGlobalLayout() {
                     RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(remembered);
                     if (holder != null) {

@@ -28,6 +28,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+/** Checks subtitle style defaults, saved overrides, resets and stable preference keys. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33, application = Application.class)
 public class SubtitleManagerDefaultsTest {

@@ -92,6 +92,7 @@ public class FtpRootFragment extends NewRootFragment implements View.OnClickList
 
         return super.onContextItemSelected(item);
     }
+    @Override
     public RootFragmentAdapter getAdapter(){
         mAdapter  = new FtpShortcutAdapter(getActivity());
         ((FtpShortcutAdapter)mAdapter).setOnBrowseClickListener(this);
@@ -158,6 +159,7 @@ public class FtpRootFragment extends NewRootFragment implements View.OnClickList
         rescanAction.setTitle(getString(R.string.add_to_library));
         rescanAction.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_add));
         rescanAction.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 addToIndexed(uri, name);
                 mQuickAction.dismiss();

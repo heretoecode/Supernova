@@ -115,6 +115,7 @@ public class UpnpRootFragment extends UpnpSmbCommonRootFragment implements UpnpS
     public void onDiscoveryStart() {
         ((WorkgroupShortcutAndServerAdapter)mAdapter).setIsLoadingWorkgroups(true);
     }
+    @Override
     public WorkgroupShortcutAndServerAdapter getAdapter(){
         return new UpnpShortcutAndServerAdapter(getActivity());
     }

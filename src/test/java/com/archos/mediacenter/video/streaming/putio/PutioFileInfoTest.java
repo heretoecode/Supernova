@@ -8,6 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks put.io file metadata validates identity and numbers while excluding transport secrets. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioFileInfoTest {
     private static final String FILE="{id:42,parent_id:7,size:100,name:'Example.mkv',file_type:VIDEO}";

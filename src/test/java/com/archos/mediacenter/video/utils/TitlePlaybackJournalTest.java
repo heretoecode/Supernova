@@ -17,6 +17,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks playback restore journals recover selected intent and preserve unresolved choices without private data. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)

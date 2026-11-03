@@ -8,6 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks Details facts use published territory, classification, year and runtime values. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewDetailsFactsTest {
     @Test public void alternativeTitlesPreferMatchingTerritoryAndDeduplicateProviderValues()throws Exception{

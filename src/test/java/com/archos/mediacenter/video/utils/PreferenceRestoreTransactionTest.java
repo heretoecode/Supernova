@@ -19,6 +19,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks preference restore journals preserve unselected state and recover exact originals after interruption. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreferenceRestoreTransactionTest {

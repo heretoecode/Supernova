@@ -25,6 +25,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks title-logo identity, language changes, cache behavior and readable fallback text. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

@@ -10,6 +10,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks Details menu actions use current watched state and distinct movie and TV namespaces. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMoreActionsTest {
     @Test public void watchedCommandResolvesLatestStateWhileMenuStaysOpen(){

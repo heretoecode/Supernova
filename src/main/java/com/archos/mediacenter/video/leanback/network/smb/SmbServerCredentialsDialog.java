@@ -119,6 +119,7 @@ public class SmbServerCredentialsDialog extends DialogFragment {
             }
         })
         .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog,int id) {
                 if(!usernameEt.getText().toString().isEmpty()){
 

@@ -101,11 +101,13 @@ public class VideoDetailsActivity extends LeanbackActivity {
         }
     }
 
+    @Override
     public void onPause(){
         traceDetails("activity-onPause");
         super.onPause();
 
     }
+    @Override
     public void onResume(){
         super.onResume();
         traceDetails("activity-onResume");

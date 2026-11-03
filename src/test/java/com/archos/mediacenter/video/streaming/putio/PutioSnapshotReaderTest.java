@@ -9,6 +9,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks recursive put.io snapshots require complete pagination and safe parent and authorization data. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PutioSnapshotReaderTest {

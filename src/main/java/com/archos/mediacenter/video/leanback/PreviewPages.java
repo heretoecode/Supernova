@@ -436,6 +436,7 @@ public final class PreviewPages extends FrameLayout {
         }
         list.postOnAnimation(new Runnable() {
             int attempts;
+            @Override
             public void run() {
                 if (generation != focusGeneration)
                     return;
@@ -638,6 +639,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private final Runnable rotateFeatured = new Runnable() {
+        @Override
         public void run() {
             if (!isAttachedToWindow())
                 return;
@@ -800,6 +802,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private final Runnable importRefresh = new Runnable() {
+        @Override
         public void run() {
             if (!isAttachedToWindow() || !loaded || !emptyHome())
                 return;
@@ -2244,6 +2247,7 @@ public final class PreviewPages extends FrameLayout {
                 progress.setMinHeight(dp(36));
                 v.addView(progress, new LinearLayout.LayoutParams(-1, -2));
                 progress.post(new Runnable() {
+                    @Override
                     public void run() {
                         if (!progress.isAttachedToWindow())
                             return;
@@ -2425,6 +2429,7 @@ public final class PreviewPages extends FrameLayout {
                 TextView status = text(PreviewNetworkScanning.lastResult(getContext()), 12);
                 v.addView(status, new LinearLayout.LayoutParams(-1, dp(70)));
                 status.post(new Runnable() {
+                    @Override
                     public void run() {
                         if (!status.isAttachedToWindow())
                             return;
@@ -2579,10 +2584,12 @@ public final class PreviewPages extends FrameLayout {
                 .dispatchUpdatesTo(this);
         }
 
+        @Override
         public long getItemId(int p) {
             return entries.get(p).key().hashCode();
         }
 
+        @Override
         public int getItemCount() {
             return entries.size();
         }
@@ -2652,6 +2659,7 @@ public final class PreviewPages extends FrameLayout {
             paint.setStrokeCap(Paint.Cap.ROUND);
         }
 
+        @Override
         public void draw(Canvas c) {
             c.save();
             c.translate(getBounds().left, getBounds().top);
@@ -2674,14 +2682,17 @@ public final class PreviewPages extends FrameLayout {
             c.restore();
         }
 
+        @Override
         public void setAlpha(int a) {
             paint.setAlpha(a);
         }
 
+        @Override
         public void setColorFilter(ColorFilter f) {
             paint.setColorFilter(f);
         }
 
+        @Override
         public int getOpacity() {
             return PixelFormat.TRANSLUCENT;
         }

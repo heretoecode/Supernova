@@ -67,6 +67,7 @@ public class BrowserByQuery extends CursorBrowserByVideo {
         return 0;
     }
 
+    @Override
     public boolean showEmptyViewButton() {
         return false;
     }

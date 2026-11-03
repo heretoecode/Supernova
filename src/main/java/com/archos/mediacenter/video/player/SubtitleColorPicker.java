@@ -101,6 +101,7 @@ public class SubtitleColorPicker extends LinearLayout  {
         }
         return false;
     }
+    @Override
     public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
         return true;
     }
@@ -120,6 +121,7 @@ public class SubtitleColorPicker extends LinearLayout  {
         super(context, attrs, defStyleAttr);
         init();
     }
+    @Override
     protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus,direction, previouslyFocusedRect);
         if(gainFocus)

@@ -18,6 +18,7 @@ import org.robolectric.annotation.*;
 import org.robolectric.shadows.ShadowDialog;
 import static org.junit.Assert.*;
 
+/** Checks shared workspace geometry, focus, draft handling, provider marks and library health states. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)

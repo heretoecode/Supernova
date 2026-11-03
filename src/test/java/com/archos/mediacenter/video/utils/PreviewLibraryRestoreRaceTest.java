@@ -29,6 +29,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import org.slf4j.LoggerFactory;
 
+/** Checks stale library queries cannot republish old snapshots after a pin restore. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
@@ -80,12 +81,15 @@ public class PreviewLibraryRestoreRaceTest {
             true
         };
         ContentProvider provider = new ContentProvider() {
+            @Override
             public boolean onCreate() {
                 return true;
             }
+            @Override
             public String getType(Uri uri) {
                 return null;
             }
+            @Override
             public Cursor query(Uri uri, String[] columns, String where, String[] args, String order) {
                 SQLiteQueryBuilder query = new SQLiteQueryBuilder();
                 query.setTables(VideoOpenHelper.VIDEO_VIEW_NAME);
@@ -129,12 +133,15 @@ public class PreviewLibraryRestoreRaceTest {
                 }
                 return rows;
             }
+            @Override
             public Uri insert(Uri uri, ContentValues values) {
                 throw new AssertionError();
             }
+            @Override
             public int update(Uri uri, ContentValues values, String where, String[] args) {
                 throw new AssertionError();
             }
+            @Override
             public int delete(Uri uri, String where, String[] args) {
                 throw new AssertionError();
             }
