@@ -26,6 +26,7 @@ import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays recently played videos from the library. */
 public class BrowserLastPlayed extends CursorBrowserByVideo {
 
     private static final String SELECT_LAST_PLAYED = VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED
