@@ -1,8 +1,13 @@
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.os.Build;
+import android.text.TextUtils;
 import androidx.preference.*;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 final class PreviewBuildInfo {
     static void install(PreferenceFragmentCompat fragment, PreferenceCategory about) {
@@ -38,14 +43,14 @@ final class PreviewBuildInfo {
         notes.setSummary("Release notes bundled with this build");
         notes.setOnPreferenceClickListener(p -> {
             String body;
-            try (java.io.InputStream stream = fragment.requireContext().getAssets().open("preview-whats-new.txt")) {
-                java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+            try (InputStream stream = fragment.requireContext().getAssets().open("preview-whats-new.txt")) {
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 byte[] chunk = new byte[4096];
                 int n;
                 while ((n = stream.read(chunk)) > 0)
                     bytes.write(chunk, 0, n);
                 body = bytes.toString("UTF-8");
-            } catch (java.io.IOException missing) {
+            } catch (IOException missing) {
                 body = "Release notes are unavailable in this build.";
             }
             PreviewDialog.read(fragment.requireContext(), "What's New", body);
@@ -60,8 +65,8 @@ final class PreviewBuildInfo {
             + "\nCustom Git SHA: " + BuildConfig.PREVIEW_GIT_SHA + "\nBuilt (UTC): " + BuildConfig.PREVIEW_BUILD_UTC
             + "\nBuild type: " + BuildConfig.BUILD_TYPE
             + "\nAPK ABIs: armeabi-v7a, arm64-v8a, x86, x86_64 (universal)\nDevice ABIs: "
-            + android.text.TextUtils.join(", ", android.os.Build.SUPPORTED_ABIS)
-            + "\nAndroid: " + android.os.Build.VERSION.RELEASE + " (API " + android.os.Build.VERSION.SDK_INT
+            + TextUtils.join(", ", Build.SUPPORTED_ABIS)
+            + "\nAndroid: " + Build.VERSION.RELEASE + " (API " + Build.VERSION.SDK_INT
             + ")\nSource baseline version: 6.4.63\nImplementation baseline: Preview 4.1.6 094d8e80938501222b4b16ed715c03937abde68f\n\nBundled release notes do not check for or install updates.";
     }
 }
