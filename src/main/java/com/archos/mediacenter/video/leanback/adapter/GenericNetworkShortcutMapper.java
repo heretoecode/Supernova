@@ -20,6 +20,7 @@ import android.provider.BaseColumns;
 import com.archos.mediacenter.video.browser.ShortcutDb;
 import com.archos.mediacenter.video.leanback.adapter.object.GenericNetworkShortcut;
 
+/** Maps network shortcut cursor columns into shortcut objects. */
 public class GenericNetworkShortcutMapper  {
 
     private static final String TAG = "GenericNetworkShortcutMapper";
