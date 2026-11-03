@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.utils;
 
+/** Stores file, title and episode parameters for OpenSubtitles searches. */
 public class OpenSubtitlesQueryParams {
     private String fileName;
     private Long fileLength;
