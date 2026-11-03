@@ -2,10 +2,13 @@ package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Application;
 
+import android.content.Context;
 import android.net.Uri;
 
+import android.os.Looper;
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.video.CustomApplication;
@@ -20,6 +23,7 @@ import java.io.*;
 
 import java.util.*;
 
+import java.util.concurrent.TimeUnit;
 import org.json.*;
 
 import org.junit.*;
@@ -76,10 +80,10 @@ public class LegacySettingsBackupReviewTest {
     }
 
     private void await(BackupOperationModel model, BackupOperationModel.Phase expected) throws Exception {
-        long end = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(15);
+        long end = System.nanoTime() + TimeUnit.SECONDS.toNanos(15);
         // Dialog clicks are posted to the main looper: idle-before-dispatch does not mean completion.
         while (model.isBusy() || model.current().phase != expected || model.states().getValue() != model.current()) {
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             if (!model.isBusy()
                 && (model.current().phase == BackupOperationModel.Phase.FAILED
                     || model.current().phase == BackupOperationModel.Phase.CANCELLED))
@@ -89,11 +93,11 @@ public class LegacySettingsBackupReviewTest {
                     "waiting for " + expected + "; observed " + model.current().phase + "; busy=" + model.isBusy());
             Thread.sleep(10);
         }
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(model.current().message, expected, model.current().phase);
     }
 
-    private File archive(android.content.Context context) throws Exception {
+    private File archive(Context context) throws Exception {
         File file = new File(context.getCacheDir(), "dialog-review-source.zip");
         JSONObject appearance =
             new JSONObject()
@@ -113,7 +117,7 @@ public class LegacySettingsBackupReviewTest {
     private VideoSettingsFragment.PrefsFragment install(TopNavigationTest.Host host) {
         var fragment = new VideoSettingsFragment.PrefsFragment();
         host.getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commitNow();
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertNotNull(review(fragment));
         assertNull(fragment.requireView().findViewWithTag("settings.backup.workspace"));
         return fragment;
@@ -126,7 +130,7 @@ public class LegacySettingsBackupReviewTest {
             var fragment = install(host.get());
             BackupReview review = review(fragment);
             BackupOperationModel model =
-                new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class);
+                new ViewModelProvider(host.get()).get(BackupOperationModel.class);
             File source = archive(host.get());
             review.open(Uri.fromFile(source));
             await(model, BackupOperationModel.Phase.REVIEW);
@@ -135,11 +139,11 @@ public class LegacySettingsBackupReviewTest {
             assertFalse(choices.getListView().isItemChecked(2));
             choices.getListView().performItemClick(choices.getListView().getChildAt(1), 1, 1);
             host.recreate();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             fragment = (VideoSettingsFragment.PrefsFragment) host.get().getSupportFragmentManager().findFragmentById(
                 android.R.id.content);
             review = review(fragment);
-            assertSame(model, new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class));
+            assertSame(model, new ViewModelProvider(host.get()).get(BackupOperationModel.class));
             assertFalse(dialog(review).getListView().isItemChecked(1));
             assertEquals(
                 7, PreferenceManager.getDefaultSharedPreferences(model.getApplication()).getInt("preview_accent41", 0));
@@ -174,7 +178,7 @@ public class LegacySettingsBackupReviewTest {
             var fragment = install(host.get());
             BackupReview review = review(fragment);
             BackupOperationModel model =
-                new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class);
+                new ViewModelProvider(host.get()).get(BackupOperationModel.class);
             review.open(Uri.fromFile(archive(host.get())));
             await(model, BackupOperationModel.Phase.REVIEW);
             AlertDialog choices = dialog(review);
@@ -183,13 +187,13 @@ public class LegacySettingsBackupReviewTest {
             AlertDialog privacy = ReflectionHelpers.getField(review, "privacy");
             assertTrue("privacy dialog visible", privacy.isShowing());
             privacy.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             choices = dialog(review);
             assertFalse(choices.getListView().isItemChecked(2));
             choices.getListView().performItemClick(choices.getListView().getChildAt(2), 2, 2);
             privacy = ReflectionHelpers.getField(review, "privacy");
             privacy.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             choices = dialog(review);
             assertTrue("location consent checked", choices.getListView().isItemChecked(2));
             choices.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
@@ -217,7 +221,7 @@ public class LegacySettingsBackupReviewTest {
             File source = new File(HistoricalBackupFixture.export(host.get()));
             BackupReview review = review(fragment);
             BackupOperationModel model =
-                new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class);
+                new ViewModelProvider(host.get()).get(BackupOperationModel.class);
             review.open(Uri.fromFile(source));
             await(model, BackupOperationModel.Phase.LEGACY_PREVIEW);
             assertNull(dialog(review).getListView());
