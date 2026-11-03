@@ -21,6 +21,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks backup export and restore preserve supported nonsecret state and reject credential-bearing databases. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class BackupCycleTest {
