@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.squareup.picasso.Picasso;
 import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.robolectric.annotation.GraphicsMode;
 import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -55,10 +57,10 @@ public class CustomLibraryPageTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             try {
-                com.squareup.picasso.Picasso.get();
+                Picasso.get();
             } catch (IllegalStateException absent) {
-                com.squareup.picasso.Picasso.setSingletonInstance(
-                    new com.squareup.picasso.Picasso.Builder(host.get()).build());
+                Picasso.setSingletonInstance(
+                    new Picasso.Builder(host.get()).build());
             }
             FrameLayout workspace = new FrameLayout(host.get());
             TopNavigation root = new TopNavigation(host.get(), workspace, i -> {
@@ -128,7 +130,7 @@ public class CustomLibraryPageTest {
         RecyclerView list =
             (RecyclerView) pages.getChildAt(0);
         assertEquals("Pending initial scroll must retain statistics at adapter row zero", 0,
-            (int) org.robolectric.util.ReflectionHelpers.getField(list.getLayoutManager(), "mPendingScrollPosition"));
+            (int) ReflectionHelpers.getField(list.getLayoutManager(), "mPendingScrollPosition"));
     }
 
     @Test
@@ -232,9 +234,9 @@ public class CustomLibraryPageTest {
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(c).build());
+            Picasso.setSingletonInstance(new Picasso.Builder(c).build());
         }
         Snapshot library = new Snapshot();
         library.movies.add(movie(1, "Movie", 2000, "Drama", false));
@@ -249,12 +251,12 @@ public class CustomLibraryPageTest {
         pages.configureCustomLibrary(page, () -> {
         });
         pages.setSnapshot(library);
-        assertSame(doc, org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages, "featured"));
+        assertSame(doc, ReflectionHelpers.callInstanceMethod(pages, "featured"));
         page.genres.clear();
         page.genres.add("No matches");
         pages.configureCustomLibrary(page, () -> {
         });
-        assertNull(org.robolectric.util.ReflectionHelpers.callInstanceMethod(pages, "featured"));
+        assertNull(ReflectionHelpers.callInstanceMethod(pages, "featured"));
     }
 
     @Test
