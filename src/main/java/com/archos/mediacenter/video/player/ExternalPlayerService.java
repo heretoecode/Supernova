@@ -36,6 +36,7 @@ import com.archos.mediacenter.video.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Runs the service that coordinates external video playback. */
 public class ExternalPlayerService extends Service {
 
     private static final String ACTION_STOP_SERVICE = "StopExternalPlayerService";
