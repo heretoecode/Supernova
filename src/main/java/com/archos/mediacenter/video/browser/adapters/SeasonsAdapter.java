@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper;
 import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 
+/** Adapts season cursor entries into video objects and cover artwork. */
 public class SeasonsAdapter extends PresenterAdapterByCursor  implements AdapterByVideoObjectsInterface{
     private final SeasonCursorMapper mVideoCursorMapper;
     public SeasonsAdapter(Context context, Cursor c) {
