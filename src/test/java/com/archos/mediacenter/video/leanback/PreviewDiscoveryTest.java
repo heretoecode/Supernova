@@ -1,4 +1,5 @@
 package com.archos.mediacenter.video.leanback;
+import android.net.Uri;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -75,7 +76,7 @@ public class PreviewDiscoveryTest {
     @Test
     public void sourceLabelsNeverExposeEmbeddedCredentials() {
         String label = com.archos.mediacenter.video.leanback.details.PreviewMoviePage.source(
-            android.net.Uri.parse("smb://user:password@server/film.mkv"));
+            Uri.parse("smb://user:password@server/film.mkv"));
         assertEquals("NAS / SMB", label);
     }
 }
