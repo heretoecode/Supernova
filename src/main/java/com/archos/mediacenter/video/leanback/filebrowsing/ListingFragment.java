@@ -63,11 +63,16 @@ import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.filecoreextension.upnp2.ListingEngineFactoryWithUpnp;
 import com.archos.mediacenter.filecoreextension.upnp2.UpnpFile2;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.ShortcutDb;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.NonIndexedVideo;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.loader.VideosInFolderLoader;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.DisplayMode;
+import com.archos.mediacenter.video.leanback.PreviewAccent;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewFolderActions;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsActivity;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
@@ -261,7 +266,7 @@ public abstract class ListingFragment
         }
 
         if (mPrefs.getBoolean("try_new_ui", false)) {
-            v.setBackground(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));
+            v.setBackground(PreviewAccent.utility(requireContext()));
             getTitleView().setBackgroundColor(Color.TRANSPARENT);
             View titleText = getTitleView().findViewById(androidx.leanback.R.id.title_text);
             if (titleText instanceof TextView) {
@@ -316,8 +321,8 @@ public abstract class ListingFragment
             R.id.orb1_description, R.id.orb2_description, R.id.orb3_description,
             R.id.orb4_description, R.id.orb5_description
         };
-        java.util.List<Runnable> commands = new ArrayList<>();
-        java.util.List<String> labels = new ArrayList<>();
+        List<Runnable> commands = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             View command = getTitleView().findViewById(ids[i]);
             TextView label = getTitleView().findViewById(descriptions[i]);
@@ -342,14 +347,14 @@ public abstract class ListingFragment
             }
         }
         if (mUri != null
-            && com.archos.mediacenter.video.browser.ShortcutDb.STATIC.isShortcut(requireContext(), mUri.toString())
+            && ShortcutDb.STATIC.isShortcut(requireContext(), mUri.toString())
                 < 0) {
             labels.add("Add to Saved Locations");
             commands.add(()
-                             -> com.archos.mediacenter.video.leanback.PreviewFolderActions.save(requireContext(), mUri,
+                             -> PreviewFolderActions.save(requireContext(), mUri,
                                  mUri.getLastPathSegment() == null ? "Files" : mUri.getLastPathSegment()));
         }
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(
+        PreviewDialog.choose(
             requireContext(), "File Options", labels.toArray(new String[0]), -1, n -> commands.get(n).run());
     }
 
@@ -410,7 +415,7 @@ public abstract class ListingFragment
                 String[] labels = new String[mSortOrderEntries.length];
                 for (int i = 0; i < labels.length; i++)
                     labels[i] = mSortOrderEntries[i].toString();
-                com.archos.mediacenter.video.leanback.PreviewDialog.choose(
+                PreviewDialog.choose(
                     requireContext(), getString(R.string.sort_mode), labels, mSortOrderItem, which -> {
                         if (mSortOrderItem != which) {
                             mSortOrderItem = which;
@@ -922,17 +927,17 @@ public abstract class ListingFragment
 
     @Override
     public void onCredentialRequired(Exception e) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_credentials_required");
+        Diagnostics.event("browser_credentials_required");
         Toast.makeText(getActivity(), "TODO: Credential Required", Toast.LENGTH_SHORT).show();
         log.error("TODO: Credential Required", e);
     }
 
     @Override
     public void onListingFatalError(Exception e, ListingEngine.ErrorEnum errorCode) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "browser_listing_failed", "code", String.valueOf(errorCode));
         if (e != null)
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("browser_listing_exception", e);
+            Diagnostics.error("browser_listing_exception", e);
         if (previewSurface != null) {
             previewSurface.failure(errorCode);
             return;
@@ -1035,10 +1040,10 @@ public abstract class ListingFragment
         if (!bgMngr.isAttached())
             bgMngr.attach(getActivity().getWindow());
 
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+        if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("try_new_ui", false)
             && !PrivateMode.isActive()) {
-            bgMngr.setDrawable(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));
+            bgMngr.setDrawable(PreviewAccent.utility(requireContext()));
             return;
         }
         if (PrivateMode.isActive()) {
