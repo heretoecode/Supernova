@@ -1,18 +1,42 @@
 package com.archos.mediacenter.video.leanback;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.preference.PreferenceManager;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.IntConsumer;
 
 /** Content-sized Nova menus. The caller still owns every real action and selection. */
 public final class PreviewDialog {
-    private static final java.util.Map<Context, java.util.List<java.lang.ref.WeakReference<Dialog>>> WINDOWS =
-        new java.util.WeakHashMap<>();
-    private static final java.util.Map<Dialog, String> KINDS = new java.util.WeakHashMap<>();
+    private static final Map<Context, List<WeakReference<Dialog>>> WINDOWS =
+        new WeakHashMap<>();
+    private static final Map<Dialog, String> KINDS = new WeakHashMap<>();
 
     /** Shared child-dialog lifetime: Back restores the opener in the parent window. */
     public static Dialog create(Context context) {
@@ -22,24 +46,24 @@ public final class PreviewDialog {
     public static Dialog create(Context context, String kind) {
         Context owner = owner(context);
         View opener = anchor(context);
-        androidx.lifecycle.Lifecycle lifetime = owner instanceof androidx.lifecycle.LifecycleOwner
-                                                    ? ((androidx.lifecycle.LifecycleOwner)owner).getLifecycle()
+        Lifecycle lifetime = owner instanceof LifecycleOwner
+                                                    ? ((LifecycleOwner)owner).getLifecycle()
                                                     : null;
-        androidx.lifecycle.LifecycleEventObserver[] cleanup = {null};
+        LifecycleEventObserver[] cleanup = {null};
         String restorationToken = com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener, "dialog");
-        java.lang.ref.WeakReference<View> previous = new java.lang.ref.WeakReference<>(opener);
-        java.lang.ref.WeakReference<View> previousRoot =
-            new java.lang.ref.WeakReference<>(opener == null ? null : opener.getRootView());
+        WeakReference<View> previous = new WeakReference<>(opener);
+        WeakReference<View> previousRoot =
+            new WeakReference<>(opener == null ? null : opener.getRootView());
         Object semantic = opener == null ? null : opener.getTag();
         int id = opener == null ? View.NO_ID : opener.getId();
         Dialog dialog = new Dialog(context) {
             @Override
             protected void onStart() {
                 super.onStart();
-                java.util.List<java.lang.ref.WeakReference<Dialog>> windows =
-                    WINDOWS.computeIfAbsent(owner, k -> new java.util.ArrayList<>());
+                List<WeakReference<Dialog>> windows =
+                    WINDOWS.computeIfAbsent(owner, k -> new ArrayList<>());
                 windows.removeIf(reference -> reference.get() == null || reference.get() == this);
-                windows.add(new java.lang.ref.WeakReference<>(this));
+                windows.add(new WeakReference<>(this));
                 modalState(windows);
             }
             @Override
@@ -50,7 +74,7 @@ public final class PreviewDialog {
                 }
                 boolean showing = isShowing();
                 super.dismiss();
-                java.util.List<java.lang.ref.WeakReference<Dialog>> windows = WINDOWS.get(owner);
+                List<WeakReference<Dialog>> windows = WINDOWS.get(owner);
                 if (windows != null) {
                     windows.removeIf(reference -> reference.get() == null || reference.get() == this);
                     if (windows.isEmpty())
@@ -87,34 +111,34 @@ public final class PreviewDialog {
         };
         if (lifetime != null) {
             cleanup[0] = (source, event) -> {
-                if (event == androidx.lifecycle.Lifecycle.Event.ON_DESTROY)
+                if (event == Lifecycle.Event.ON_DESTROY)
                     dialog.dismiss();
             };
             lifetime.addObserver(cleanup[0]);
         }
         KINDS.put(
             dialog,
-            java.util.Arrays.asList("dialog", "choice", "reader", "review", "artwork_picker", "trailer").contains(kind)
+            Arrays.asList("dialog", "choice", "reader", "review", "artwork_picker", "trailer").contains(kind)
                 ? kind
                 : "dialog");
         return dialog;
     }
 
-    private static void modalState(java.util.List<java.lang.ref.WeakReference<Dialog>> windows) {
-        java.util.List<String> kinds = new java.util.ArrayList<>();
+    private static void modalState(List<WeakReference<Dialog>> windows) {
+        List<String> kinds = new ArrayList<>();
         if (windows != null)
-            for (java.lang.ref.WeakReference<Dialog> reference : windows) {
+            for (WeakReference<Dialog> reference : windows) {
                 Dialog dialog = reference.get();
                 if (dialog != null)
                     kinds.add(KINDS.getOrDefault(dialog, "dialog"));
             }
         com.archos.mediacenter.video.diagnostics.Diagnostics.modalState(kinds.size(),
-                                                                        android.text.TextUtils.join(",", kinds));
+                                                                        TextUtils.join(",", kinds));
     }
 
     private static Context owner(Context context) {
-        while (context instanceof android.content.ContextWrapper && !(context instanceof android.app.Activity)) {
-            Context base = ((android.content.ContextWrapper)context).getBaseContext();
+        while (context instanceof ContextWrapper && !(context instanceof Activity)) {
+            Context base = ((ContextWrapper)context).getBaseContext();
             if (base == context)
                 break;
             context = base;
@@ -123,7 +147,7 @@ public final class PreviewDialog {
     }
 
     private static Dialog top(Context context) {
-        java.util.List<java.lang.ref.WeakReference<Dialog>> windows = WINDOWS.get(owner(context));
+        List<WeakReference<Dialog>> windows = WINDOWS.get(owner(context));
         if (windows != null)
             for (int i = windows.size() - 1; i >= 0; i--) {
                 Dialog dialog = windows.get(i).get();
@@ -136,7 +160,7 @@ public final class PreviewDialog {
     /** Presentation only for retained credential/artwork dialogs; original listeners and inputs remain. */
     public static void styleNative(Dialog dialog) {
         Context c = dialog.getContext();
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui", false))
+        if (!PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui", false))
             return;
         Window window = dialog.getWindow();
         if (window == null)
@@ -155,20 +179,20 @@ public final class PreviewDialog {
         Context context = owner(dialog.getContext());
         Dialog parent = top(context);
         View opener = anchor(context);
-        java.lang.ref.WeakReference<View> previous = new java.lang.ref.WeakReference<>(opener);
+        WeakReference<View> previous = new WeakReference<>(opener);
         String token = com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener, "native_dialog");
         KINDS.put(dialog, "native_dialog");
         View decor = dialog.getWindow().getDecorView();
         View.OnAttachStateChangeListener observer = new View.OnAttachStateChangeListener() {
             public void onViewAttachedToWindow(View view) {
-                java.util.List<java.lang.ref.WeakReference<Dialog>> windows =
-                    WINDOWS.computeIfAbsent(context, k -> new java.util.ArrayList<>());
+                List<WeakReference<Dialog>> windows =
+                    WINDOWS.computeIfAbsent(context, k -> new ArrayList<>());
                 windows.removeIf(reference -> reference.get() == null || reference.get() == dialog);
-                windows.add(new java.lang.ref.WeakReference<>(dialog));
+                windows.add(new WeakReference<>(dialog));
                 modalState(windows);
             }
             public void onViewDetachedFromWindow(View view) {
-                java.util.List<java.lang.ref.WeakReference<Dialog>> windows = WINDOWS.get(context);
+                List<WeakReference<Dialog>> windows = WINDOWS.get(context);
                 if (windows != null) {
                     windows.removeIf(reference -> reference.get() == null || reference.get() == dialog);
                     if (windows.isEmpty())
@@ -211,7 +235,7 @@ public final class PreviewDialog {
         return read(c, title, body, null);
     }
 
-    public static Dialog read(Context c, String title, String body, android.graphics.Bitmap referenceImage) {
+    public static Dialog read(Context c, String title, String body, Bitmap referenceImage) {
         return readInternal(c, title, body, referenceImage, null, null);
     }
 
@@ -219,7 +243,7 @@ public final class PreviewDialog {
         return readInternal(c, title, body, null, confirmation, accepted);
     }
 
-    private static Dialog readInternal(Context c, String title, String body, android.graphics.Bitmap referenceImage,
+    private static Dialog readInternal(Context c, String title, String body, Bitmap referenceImage,
                                        String confirmation, Runnable accepted) {
         Dialog dialog = create(c, accepted == null ? "reader" : "review");
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -272,10 +296,10 @@ public final class PreviewDialog {
                         accepted.run();
                     }
                 } else {
-                    android.content.ClipboardManager clipboard =
-                        (android.content.ClipboardManager)c.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipboardManager clipboard =
+                        (ClipboardManager)c.getSystemService(Context.CLIPBOARD_SERVICE);
                     if (clipboard != null)
-                        clipboard.setPrimaryClip(android.content.ClipData.newPlainText(title, body));
+                        clipboard.setPrimaryClip(ClipData.newPlainText(title, body));
                     Toast.makeText(c, "Copied", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -309,16 +333,16 @@ public final class PreviewDialog {
 
     public static Dialog choose(Context c, String title, String[] labels, int selected, IntConsumer action) {
         return choose(c, title, labels, selected,
-                      selected < 0 ? java.util.Collections.emptySet() : java.util.Collections.singleton(selected),
+                      selected < 0 ? Collections.emptySet() : Collections.singleton(selected),
                       action);
     }
 
-    public static Dialog choose(Context c, String title, String[] labels, int selected, java.util.Set<Integer> checked,
+    public static Dialog choose(Context c, String title, String[] labels, int selected, Set<Integer> checked,
                                 IntConsumer action) {
         return choose(c, title, labels, selected, checked, true, action);
     }
 
-    public static Dialog choose(Context c, String title, String[] labels, int selected, java.util.Set<Integer> checked,
+    public static Dialog choose(Context c, String title, String[] labels, int selected, Set<Integer> checked,
                                 boolean dismissOnSelect, IntConsumer action) {
         View anchor = anchor(c);
         Dialog d = create(c, "choice");
@@ -334,7 +358,7 @@ public final class PreviewDialog {
         panel.setContentDescription(title);
         ScrollView scroll = new ScrollView(c) {
             @Override
-            protected void dispatchDraw(android.graphics.Canvas canvas) {
+            protected void dispatchDraw(Canvas canvas) {
                 // The surrounding panel permits outward focus glow, but scrolling rows must
                 // remain inside this viewport and never paint over fixed header/footer controls.
                 int checkpoint = canvas.save();
@@ -390,7 +414,7 @@ public final class PreviewDialog {
             label.setTextSize(group ? 11 : 14);
             label.setTextColor(group ? 0xff8aaec5 : Color.WHITE);
             label.setSingleLine(true);
-            label.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            label.setEllipsize(TextUtils.TruncateAt.END);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2, 1);
             lp.leftMargin = group ? 0 : dp(c, 10);
             row.addView(label, lp);
@@ -431,7 +455,7 @@ public final class PreviewDialog {
         w.setBackgroundDrawableResource(android.R.color.transparent);
         w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         w.setDimAmount(.32f);
-        android.graphics.Paint measure = new android.graphics.Paint();
+        Paint measure = new Paint();
         measure.setTextSize(14 * c.getResources().getDisplayMetrics().scaledDensity);
         int longest = 0;
         for (String label : labels)
@@ -470,15 +494,15 @@ public final class PreviewDialog {
         if (parent != null && parent.getCurrentFocus() != null)
             return parent.getCurrentFocus();
         Context owner = owner(c);
-        return owner instanceof android.app.Activity ? ((android.app.Activity)owner).getCurrentFocus() : null;
+        return owner instanceof Activity ? ((Activity)owner).getCurrentFocus() : null;
     }
 
-    public static android.graphics.drawable.Drawable menuSurface(Context c) {
+    public static Drawable menuSurface(Context c) {
         return SupernovaStyle.glass(c);
     }
 
     /** Membership states use a plain white plus/check rather than a second generic row icon. */
-    public static void updateMembership(Dialog dialog, java.util.Set<Integer> checked, int count) {
+    public static void updateMembership(Dialog dialog, Set<Integer> checked, int count) {
         if (dialog == null || dialog.getWindow() == null)
             return;
         View root = dialog.getWindow().getDecorView();
@@ -497,13 +521,13 @@ public final class PreviewDialog {
         }
     }
 
-    public static void updateChecks(Dialog dialog, java.util.Set<Integer> checked) {
+    public static void updateChecks(Dialog dialog, Set<Integer> checked) {
         if (dialog == null || dialog.getWindow() == null)
             return;
         updateChecks(dialog.getWindow().getDecorView(), checked);
     }
 
-    private static void updateChecks(View view, java.util.Set<Integer> checked) {
+    private static void updateChecks(View view, Set<Integer> checked) {
         Object tag = view.getTag();
         if (tag instanceof String && ((String)tag).startsWith("preview-check:")) {
             int index = Integer.parseInt(((String)tag).substring(14));
@@ -541,7 +565,7 @@ public final class PreviewDialog {
     }
 
     public static Dialog confirmDelete(Context c, String title, String message, Runnable action) {
-        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(c)
+        AlertDialog dialog = new AlertDialog.Builder(c)
                                              .setTitle(title)
                                              .setMessage(message)
                                              .setIcon(android.R.drawable.ic_dialog_alert)
@@ -550,8 +574,8 @@ public final class PreviewDialog {
                                              .create();
         dialog.setOnShowListener(d -> {
             styleNative(dialog);
-            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(SupernovaStyle.destructiveContent());
-            dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(SupernovaStyle.destructiveContent());
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).requestFocus();
         });
         dialog.show();
         return dialog;
@@ -588,7 +612,7 @@ public final class PreviewDialog {
             content.addView(brand);
         }
         TextView heading = SharedThreePanel.text(c, title, 24);
-        heading.setTypeface(null, android.graphics.Typeface.BOLD);
+        heading.setTypeface(null, Typeface.BOLD);
         heading.setGravity(Gravity.CENTER);
         content.addView(heading);
         TextView copy = SharedThreePanel.text(c, body, 16);
@@ -624,7 +648,7 @@ public final class PreviewDialog {
         window.setGravity(Gravity.CENTER);
         window.setDimAmount(.45f);
         window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        if (android.os.Build.VERSION.SDK_INT >= 31) {
+        if (Build.VERSION.SDK_INT >= 31) {
             window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
             WindowManager.LayoutParams attributes = window.getAttributes();
             attributes.setBlurBehindRadius(dp(c, 6));
@@ -644,7 +668,7 @@ public final class PreviewDialog {
         return dialog;
     }
 
-    public static android.graphics.drawable.Drawable dialogSurface(Context c) {
+    public static Drawable dialogSurface(Context c) {
         return SupernovaStyle.glass(c);
     }
 
