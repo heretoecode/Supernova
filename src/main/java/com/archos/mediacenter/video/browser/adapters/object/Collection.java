@@ -112,6 +112,7 @@ public class Collection extends Base implements Serializable {
         return mCollId;
     }
 
+    @Override
     public Uri getPosterUri() {
         if(mPosterUri!=null)
             return Uri.parse(mPosterUri);
