@@ -321,9 +321,9 @@ public class AllAnimeCollectionsGridFragment extends MyVerticalGridFragment impl
         if (DBG) Log.d(TAG, "onCreateLoader");
         if (id == ALL_ANIME_COLLECTIONS_LOADER_ID) {
             if (args == null) return new AllAnimeCollectionsLoader(getActivity());
-            else return new AllAnimeCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
+                else return new AllAnimeCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
         }
-        else return null;
+            else return null;
     }
 
     @Override
