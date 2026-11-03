@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.view.*;
 import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.CustomApplication;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
@@ -15,6 +16,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
@@ -23,7 +25,7 @@ import static org.junit.Assert.*;
  * (docs/design/EDIT_PAGE_SIDE_PANEL_APPROVED_2026-11-02.md). 1920×1080 screen.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(application = com.archos.mediacenter.video.CustomApplication.class, sdk = 30,
+@Config(application = CustomApplication.class, sdk = 30,
         qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class EditPagePanelTest {
@@ -228,10 +230,10 @@ public class EditPagePanelTest {
             ReflectionHelpers.callInstanceMethod(workspace(a), "edit",
                                                  ReflectionHelpers.ClassParameter.from(int.class, 0));
             layoutPanel(a.editor().dialog());
-            Dialog before = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog before = ShadowDialog.getLatestDialog();
             in(a, "edit.row.language").performClick();
             layoutPanel(a.editor().dialog());
-            assertSame("No second pop-up", before, org.robolectric.shadows.ShadowDialog.getLatestDialog());
+            assertSame("No second pop-up", before, ShadowDialog.getLatestDialog());
             assertNotNull(in(a, "edit.page.back"));
             View any = in(a, "edit.language.0");
             View french = in(a, "edit.language.1");
@@ -270,7 +272,7 @@ public class EditPagePanelTest {
             if (tab != null)
                 assertEquals("The tab follows the draft name", "Renamed", tab.getText().toString());
             ReflectionHelpers.callInstanceMethod(w, "back");
-            View decor = org.robolectric.shadows.ShadowDialog.getLatestDialog().getWindow().getDecorView();
+            View decor = ShadowDialog.getLatestDialog().getWindow().getDecorView();
             assertNotNull(PreviewPagesTest.findText(decor, "Keep Editing"));
             assertNotNull(PreviewPagesTest.findText(decor, "Save"));
             PreviewPagesTest.findText(decor, "Discard").performClick();
@@ -296,7 +298,7 @@ public class EditPagePanelTest {
             in(a, "edit.save").performClick();
             assertTrue("Invalid name keeps the editor", ReflectionHelpers.getField(w, "editing"));
             assertNull(CustomLibraryPage.load(a));
-            org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss();
+            ShadowDialog.getLatestDialog().dismiss();
             draft(a).name = "QA Films";
             in(a, "edit.save").performClick();
             layout(a.getWindow().getDecorView());
