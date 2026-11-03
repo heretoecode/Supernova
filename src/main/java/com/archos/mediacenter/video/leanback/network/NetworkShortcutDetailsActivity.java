@@ -24,18 +24,33 @@ public class NetworkShortcutDetailsActivity extends LeanbackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
-            Object source=getIntent().getSerializableExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT);
-            if(source instanceof com.archos.mediacenter.video.leanback.adapter.object.Shortcut){com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface browser=(com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface)PreviewSourceManagement.create(this,(com.archos.mediacenter.video.leanback.adapter.object.Shortcut)source);setContentView(browser);getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){public void handleOnBackPressed(){browser.browser().back(()->{browser.browser().close();finish();});}});return;}
+        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
+            Object source = getIntent().getSerializableExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT);
+            if (source instanceof com.archos.mediacenter.video.leanback.adapter.object.Shortcut) {
+                com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface browser =
+                    (com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface) PreviewSourceManagement
+                        .create(this, (com.archos.mediacenter.video.leanback.adapter.object.Shortcut) source);
+                setContentView(browser);
+                getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+                    public void handleOnBackPressed() {
+                        browser.browser().back(() -> {
+                            browser.browser().close();
+                            finish();
+                        });
+                    }
+                });
+                return;
+            }
         }
         setContentView(R.layout.androidtv_network_shortcut_details_activity);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false) && keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
+        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)
+            && keyCode == KeyEvent.KEYCODE_DPAD_DOWN)
             return true;
-        
+
         return super.onKeyDown(keyCode, event);
     }
 }
