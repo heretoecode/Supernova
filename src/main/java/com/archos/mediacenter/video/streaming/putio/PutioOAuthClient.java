@@ -1,7 +1,10 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.net.Uri;
+import android.os.SystemClock;
 import java.io.*;
+import java.net.SocketTimeoutException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import okhttp3.*;
 import org.json.*;
@@ -43,7 +46,7 @@ final class PutioOAuthClient {
         String host = link.getHost();
         return "https".equals(link.getScheme()) && ("put.io".equals(host) || "app.put.io".equals(host))
             && link.getUserInfo() == null && link.getPort() == -1 && link.getFragment() == null
-            && !template.toLowerCase(java.util.Locale.ROOT).matches(".*(token|password|secret).*");
+            && !template.toLowerCase(Locale.ROOT).matches(".*(token|password|secret).*");
     }
 
     Code begin() throws IOException {
@@ -97,7 +100,7 @@ final class PutioOAuthClient {
 
     private <T> T request(HttpUrl url, String kind, Parser<T> parser) throws IOException {
         String operation = Diagnostics.operation("putio_" + kind), outcome = "transport_failed";
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         int status = 0;
         try (Response response = http.newCall(new Request.Builder().url(url).build()).execute()) {
             status = response.code();
@@ -129,14 +132,14 @@ final class PutioOAuthClient {
         } catch (Exception failure) {
             if (Thread.currentThread().isInterrupted())
                 outcome = "cancelled";
-            else if (failure instanceof java.net.SocketTimeoutException)
+            else if (failure instanceof SocketTimeoutException)
                 outcome = "timeout";
             throw new IOException("Provider linking is unavailable or expired");
         } finally {
             Diagnostics.event("complete".equals(outcome) || "pending".equals(outcome) ? "provider_request_complete"
                                                                                       : "provider_request_failed",
                 "operation_id", operation, "provider", "putio", "operation_type", kind, "status", status, "outcome",
-                outcome, "duration_ms", android.os.SystemClock.elapsedRealtime() - started, "retry_number", 0,
+                outcome, "duration_ms", SystemClock.elapsedRealtime() - started, "retry_number", 0,
                 "connectivity", Diagnostics.connectivity());
             Diagnostics.finishOperation(operation, "putio_" + kind, started);
         }
