@@ -27,7 +27,6 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.preference.PreferenceManager;
