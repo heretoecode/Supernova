@@ -8,6 +8,7 @@ import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
@@ -49,10 +50,10 @@ public class NextQaBrowserFocusTest {
             ReflectionHelpers.callInstanceMethod(browser, "breadcrumbs");
             List<MetaFile2> files = ReflectionHelpers.getField(browser, "files");
             for (int i = 0; i < 50; i++) {
-                MetaFile2 folder = org.mockito.Mockito.mock(MetaFile2.class);
-                org.mockito.Mockito.when(folder.isDirectory()).thenReturn(true);
-                org.mockito.Mockito.when(folder.getName()).thenReturn("Folder " + i);
-                org.mockito.Mockito.when(folder.getUri())
+                MetaFile2 folder = Mockito.mock(MetaFile2.class);
+                Mockito.when(folder.isDirectory()).thenReturn(true);
+                Mockito.when(folder.getName()).thenReturn("Folder " + i);
+                Mockito.when(folder.getUri())
                     .thenReturn(current.buildUpon().appendPath("folder" + i).build());
                 files.add(folder);
             }
