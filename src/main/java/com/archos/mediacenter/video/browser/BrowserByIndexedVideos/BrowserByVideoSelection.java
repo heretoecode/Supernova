@@ -37,6 +37,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStore.MediaColumns;
 import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 
+/** Browses a selected set of indexed videos with sorting and view modes. */
 public class BrowserByVideoSelection extends CursorBrowserByVideo {
 
     private static final boolean DBG = false;
