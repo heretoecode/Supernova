@@ -44,6 +44,7 @@ import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 
+import com.archos.mediascraper.BaseTags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,7 +191,7 @@ abstract class RemoteViewsFactoryBase implements RemoteViewsService.RemoteViewsF
 
         // Display some text if needed
         int textVisibility = View.GONE;
-        if (scraperType == com.archos.mediascraper.BaseTags.TV_SHOW) {
+        if (scraperType == BaseTags.TV_SHOW) {
             int season,episode;
             try {
                 showId = mCursor.getLong(mCursor.getColumnIndexOrThrow(VideoColumns.SCRAPER_SHOW_ID));
