@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+/** Runs file copy operations and reports their progress to listeners. */
 public class FileManagerService extends Service implements OperationEngineListener, DefaultLifecycleObserver {
 
     private static final Logger log = LoggerFactory.getLogger(FileManagerService.class);
