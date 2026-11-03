@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -9,8 +11,8 @@ import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewProviderRefreshTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void refreshOnlyForActiveKindCountryAndTitleScope(){
         assertTrue(PreviewPages.providerCacheAffectsPage("streaming_known_at:movie:42:IE:-1",1,"IE",true));
         assertTrue(PreviewPages.providerCacheAffectsPage("streaming_known_at:tv:42:IE:-1",2,"IE",true));
