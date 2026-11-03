@@ -33,6 +33,7 @@ public class TvshowsNoAnimeByGenreLoader extends TvshowsNoAnimeByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     protected String getSelection(Context context) {
         return "SELECT\n" +
                 "       _id,\n" +
