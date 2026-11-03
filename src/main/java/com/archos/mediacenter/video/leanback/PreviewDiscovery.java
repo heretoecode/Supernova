@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.io.IOException;
 import org.json.*;
 import java.util.*;
@@ -25,7 +26,7 @@ public final class PreviewDiscovery {
         }
     }
     public static PreviewDiscovery load(Context context) {
-        PreviewDiscovery out=new PreviewDiscovery();if(!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_integration_trakt",true)||!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(context))return out;
+        PreviewDiscovery out=new PreviewDiscovery();if(!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_integration_trakt",true)||!SupernovaLibraryPolicy.configured(context))return out;
         SharedPreferences cache=context.getSharedPreferences("preview_discovery",Context.MODE_PRIVATE);
         String raw=cache.getString("charts",null);
         if(raw==null||System.currentTimeMillis()-cache.getLong("time",0)>TTL){
