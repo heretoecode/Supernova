@@ -5,10 +5,12 @@ import android.content.*;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Looper;
+import android.widget.TextView;
 import com.archos.mediacenter.video.leanback.search.PreviewSearch;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.video.*;
 import java.time.Duration;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -119,13 +121,13 @@ public class PreviewSearchNativeIndexTest {
                 search.acceptVoice(query);
                 Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(300));
                 long until = System.nanoTime() + 3_000_000_000L;
-                java.util.List<?> results;
+                List<?> results;
                 do {
                     Thread.sleep(20);
                     Shadows.shadowOf(Looper.getMainLooper()).idle();
                     results = ReflectionHelpers.getField(search, "items");
                 } while (results.isEmpty() && System.nanoTime() < until);
-                android.widget.TextView status = ReflectionHelpers.getField(search, "status");
+                TextView status = ReflectionHelpers.getField(search, "status");
                 assertEquals("Native indexed query: " + query + " (" + status.getText() + ")", 1, results.size());
                 Object result = results.get(0);
                 com.archos.mediacenter.video.browser.adapters.object.Video video =
