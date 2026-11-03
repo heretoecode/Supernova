@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Supplies TV show sorting labels and their stored values. */
 public class TvshowSortOrderEntries {
 
     public final static String DEFAULT_SORT = VideoStore.Video.VideoColumns.SCRAPER_TITLE + " COLLATE LOCALIZED ASC";
