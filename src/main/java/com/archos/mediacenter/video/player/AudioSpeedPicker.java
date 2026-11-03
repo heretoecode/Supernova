@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.archos.mediacenter.video.R;
 
 
+/** Provides controls for adjusting audio speed during playback. */
 public class AudioSpeedPicker extends AudioSpeedPickerAbstract {
 
     private final String TAG = "AudioSpeedPicker";
