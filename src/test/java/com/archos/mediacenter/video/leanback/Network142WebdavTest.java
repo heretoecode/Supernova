@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import java.net.*;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
 /** Real loopback PROPFIND through the pinned DAV client; no external account or Shield claim. */
-@RunWith(org.robolectric.RobolectricTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class Network142WebdavTest {
     @Test
