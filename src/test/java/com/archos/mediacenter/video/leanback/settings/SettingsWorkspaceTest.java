@@ -1,12 +1,29 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Application;
+import android.app.Dialog;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.*;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.leanback.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -29,9 +46,9 @@ public class SettingsWorkspaceTest {
         Application app = RuntimeEnvironment.getApplication();
         Shadows.shadowOf(app.getPackageManager()).setSystemFeature("android.software.leanback", true);
         PreviewAsyncFixtures.offlineTransport();
-        ReflectionHelpers.setStaticField(androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.class,
+        ReflectionHelpers.setStaticField(ViewModelProvider.AndroidViewModelFactory.class,
                                          "_instance", null);
-        ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", java.util.Locale.getDefault());
+        ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", app);
         ReflectionHelpers.setStaticField(CustomApplication.class, "log",
                                          org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
@@ -112,11 +129,11 @@ public class SettingsWorkspaceTest {
         second.requestFocus();
         ViewGroup rail = (ViewGroup)second.getParent();
         assertFalse("Child surface must not paint a second focus boundary",
-                    second.getBackground() instanceof android.graphics.drawable.StateListDrawable);
+                    second.getBackground() instanceof StateListDrawable);
         assertNull("Selected state must not paint a second outline", second.getForeground());
         assertFalse(((TextView)second).getText().toString().contains("✓"));
         assertTrue(ReflectionHelpers.getField(rail, "visible"));
-        android.graphics.RectF outline = ReflectionHelpers.getField(rail, "current");
+        RectF outline = ReflectionHelpers.getField(rail, "current");
         assertEquals(second.getTop(), outline.top, 1);
         assertEquals(second.getBottom(), outline.bottom, 1);
         assertNull(ReflectionHelpers.getField(rail, "movement"));
@@ -127,9 +144,9 @@ public class SettingsWorkspaceTest {
     @Test
     public void switchTrackRemainsDistinctWithWhiteAndBlackCustomAccents() {
         var prefs = PreferenceManager.getDefaultSharedPreferences(host.get());
-        for (int accent : new int[] {android.graphics.Color.WHITE, android.graphics.Color.BLACK, 0xff62bbf3}) {
+        for (int accent : new int[] {Color.WHITE, Color.BLACK, 0xff62bbf3}) {
             prefs.edit().putInt("preview_accent41", accent).commit();
-            androidx.appcompat.widget.SwitchCompat toggle = new androidx.appcompat.widget.SwitchCompat(host.get());
+            SwitchCompat toggle = new SwitchCompat(host.get());
             PreviewSettings.styleSwitch(toggle);
             toggle.setBackground(null);
             toggle.setChecked(true);
@@ -140,19 +157,19 @@ public class SettingsWorkspaceTest {
             toggle.measure(View.MeasureSpec.makeMeasureSpec(200, View.MeasureSpec.EXACTLY),
                            View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY));
             toggle.layout(0, 0, 200, 100);
-            android.graphics.Bitmap image =
-                android.graphics.Bitmap.createBitmap(200, 100, android.graphics.Bitmap.Config.ARGB_8888);
-            toggle.draw(new android.graphics.Canvas(image));
-            java.util.Set<Integer> colours = new java.util.HashSet<>();
+            Bitmap image =
+                Bitmap.createBitmap(200, 100, Bitmap.Config.ARGB_8888);
+            toggle.draw(new Canvas(image));
+            Set<Integer> colours = new HashSet<>();
             for (int y = 0; y < 100; y++)
                 for (int x = 0; x < 200; x++)
                     colours.add(image.getPixel(x, y));
-            assertTrue("White thumb visible", colours.contains(android.graphics.Color.WHITE));
+            assertTrue("White thumb visible", colours.contains(Color.WHITE));
             assertTrue("Blue gradient remains visible",
                        colours.stream().anyMatch(
-                           c -> android.graphics.Color.blue(c) > 180 && android.graphics.Color.red(c) < 100));
-            assertNotEquals(android.graphics.Color.WHITE, PreviewAccent.switchTrack(host.get()));
-            assertNotEquals(android.graphics.Color.BLACK, PreviewAccent.switchTrack(host.get()));
+                           c -> Color.blue(c) > 180 && Color.red(c) < 100));
+            assertNotEquals(Color.WHITE, PreviewAccent.switchTrack(host.get()));
+            assertNotEquals(Color.BLACK, PreviewAccent.switchTrack(host.get()));
             if (accent == 0xff62bbf3)
                 assertEquals(accent, PreviewAccent.switchTrack(host.get()));
         }
@@ -161,37 +178,37 @@ public class SettingsWorkspaceTest {
     @Test
     public void legacySwitchRetainsSeparateTrackAndThumbColours() {
         CheckBox box = new CheckBox(host.get());
-        box.setButtonTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
+        box.setButtonTintList(ColorStateList.valueOf(Color.WHITE));
         PreviewSettings.tintSwitches(box);
         assertNull(box.getButtonTintList());
         for (boolean checked : new boolean[] {false, true}) {
             box.setEnabled(true);
             box.setChecked(checked);
-            android.graphics.drawable.Drawable icon = box.getButtonDrawable();
+            Drawable icon = box.getButtonDrawable();
             icon.setBounds(0, 0, 60, 32);
-            android.graphics.Bitmap image =
-                android.graphics.Bitmap.createBitmap(60, 32, android.graphics.Bitmap.Config.ARGB_8888);
-            icon.draw(new android.graphics.Canvas(image));
-            java.util.Set<Integer> colours = new java.util.HashSet<>();
+            Bitmap image =
+                Bitmap.createBitmap(60, 32, Bitmap.Config.ARGB_8888);
+            icon.draw(new Canvas(image));
+            Set<Integer> colours = new HashSet<>();
             for (int y = 0; y < 32; y++)
                 for (int x = 0; x < 60; x++)
-                    if (android.graphics.Color.alpha(image.getPixel(x, y)) > 240)
+                    if (Color.alpha(image.getPixel(x, y)) > 240)
                         colours.add(image.getPixel(x, y));
-            assertTrue(colours.contains(android.graphics.Color.WHITE));
+            assertTrue(colours.contains(Color.WHITE));
             if (checked)
                 assertTrue(colours.stream().anyMatch(
-                    c -> android.graphics.Color.blue(c) > 180 && android.graphics.Color.red(c) < 100));
+                    c -> Color.blue(c) > 180 && Color.red(c) < 100));
             else
                 assertTrue(colours.contains(com.archos.mediacenter.video.leanback.StandardSwitchDrawable.OFF));
             box.setEnabled(false);
-            image.eraseColor(android.graphics.Color.TRANSPARENT);
+            image.eraseColor(Color.TRANSPARENT);
             icon = box.getButtonDrawable();
             icon.setBounds(0, 0, 60, 32);
-            icon.draw(new android.graphics.Canvas(image));
+            icon.draw(new Canvas(image));
             int maximumAlpha = 0;
             for (int y = 0; y < 32; y++)
                 for (int x = 0; x < 60; x++)
-                    maximumAlpha = Math.max(maximumAlpha, android.graphics.Color.alpha(image.getPixel(x, y)));
+                    maximumAlpha = Math.max(maximumAlpha, Color.alpha(image.getPixel(x, y)));
             assertTrue("Disabled switch remains visible but distinct", maximumAlpha > 0 && maximumAlpha < 255);
         }
     }
@@ -251,10 +268,10 @@ public class SettingsWorkspaceTest {
             p.setEntries(new String[] {"English UK", "English US", "English", "Unknown"});
             p.setEntryValues(new String[] {"en-GB", "en-US", "en", "xx"});
             p.setValue("en");
-            android.app.Dialog dialog = SettingsChoiceDialog.show(host.get(), p);
+            Dialog dialog = SettingsChoiceDialog.show(host.get(), p);
             for (int n = 0; n < 4; n++) {
                 ViewGroup row = dialog.getWindow().getDecorView().findViewWithTag("settings.choice." + n);
-                android.graphics.drawable.Drawable icon = ((ImageView)row.getChildAt(1)).getDrawable();
+                Drawable icon = ((ImageView)row.getChildAt(1)).getDrawable();
                 assertTrue(icon instanceof PreviewLanguageIcon);
                 Object flag = ReflectionHelpers.getField(icon, "flag");
                 if (n < 3)
@@ -275,9 +292,9 @@ public class SettingsWorkspaceTest {
         p.setTitle("Providers");
         p.setEntries(new String[] {"Netflix", "Unknown provider"});
         p.setEntryValues(new String[] {"8", "999999"});
-        p.setValues(java.util.Set.of("8"));
+        p.setValues(Set.of("8"));
         PreviewPreferenceDialogs.show(fragment, p);
-        android.app.Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
         View decor = dialog.getWindow().getDecorView();
         View label = decor.findViewWithTag("preview-label:1");
         ImageView netflix = (ImageView)((ViewGroup)label.getParent()).getChildAt(0);
@@ -316,7 +333,7 @@ public class SettingsWorkspaceTest {
         p.setKey("streaming_providers_IE");
         p.setEntries(new String[] {"Alpha", "Beta"});
         p.setEntryValues(new String[] {"1", "2"});
-        p.setValues(new java.util.HashSet<>(java.util.Set.of("1")));
+        p.setValues(new HashSet<>(Set.of("1")));
         host.get().addContentView(target, new ViewGroup.LayoutParams(800, 600));
         InlinePreferenceChoices.show(target, p);
         target.measure(View.MeasureSpec.makeMeasureSpec(800, View.MeasureSpec.EXACTLY),
@@ -341,7 +358,7 @@ public class SettingsWorkspaceTest {
         assertEquals(1, registry.entries.stream().filter(e -> e.id.startsWith("N151") && !e.nested()).count());
         assertEquals(165, registry.entries.stream().filter(e -> e.id.startsWith("S")).count());
         assertEquals(5, registry.entries.stream().filter(e -> e.id.startsWith("N146") && !e.nested()).count());
-        java.util.Set<String> ids = new java.util.HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (SettingsRegistry.Entry e : registry.entries) {
             assertTrue(ids.add(e.id));
             assertFalse(e.disposition.isEmpty());
@@ -400,7 +417,7 @@ public class SettingsWorkspaceTest {
         ListPreference level = fragment.findPreference("supernova_diagnostic_level");
         assertNotNull(level);
         opener.requestFocus();
-        android.app.Dialog dialog = SettingsChoiceDialog.show(host.get(), level);
+        Dialog dialog = SettingsChoiceDialog.show(host.get(), level);
         assertNotNull(dialog);
         dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").requestFocus();
         assertEquals("qa", level.getValue());
@@ -586,13 +603,13 @@ public class SettingsWorkspaceTest {
     }
 
     private void save(String name) throws Exception {
-        android.graphics.Bitmap image = android.graphics.Bitmap.createBitmap(root.getWidth(), root.getHeight(),
-                                                                             android.graphics.Bitmap.Config.ARGB_8888);
-        root.draw(new android.graphics.Canvas(image));
-        java.io.File file = new java.io.File("build/reports/settings-0143/" + name + ".png");
+        Bitmap image = Bitmap.createBitmap(root.getWidth(), root.getHeight(),
+                                                                             Bitmap.Config.ARGB_8888);
+        root.draw(new Canvas(image));
+        File file = new File("build/reports/settings-0143/" + name + ".png");
         file.getParentFile().mkdirs();
-        try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
-            image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out);
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            image.compress(Bitmap.CompressFormat.PNG, 100, out);
         }
         image.recycle();
     }
@@ -613,13 +630,13 @@ public class SettingsWorkspaceTest {
     public void switchThumbStaysCircularWhenCompatAssignsTallTrackBounds() {
         SettingsSwitchThumb thumb = new SettingsSwitchThumb(host.get());
         int diameter = thumb.getIntrinsicWidth();
-        android.graphics.Bitmap image =
-            android.graphics.Bitmap.createBitmap(diameter, diameter * 2, android.graphics.Bitmap.Config.ARGB_8888);
+        Bitmap image =
+            Bitmap.createBitmap(diameter, diameter * 2, Bitmap.Config.ARGB_8888);
         thumb.setBounds(0, 0, diameter, diameter * 2);
-        thumb.draw(new android.graphics.Canvas(image));
-        assertEquals(0, android.graphics.Color.alpha(image.getPixel(diameter / 2, 0)));
-        assertEquals(255, android.graphics.Color.alpha(image.getPixel(diameter / 2, diameter)));
-        assertEquals(0, android.graphics.Color.alpha(image.getPixel(diameter / 2, diameter * 2 - 1)));
+        thumb.draw(new Canvas(image));
+        assertEquals(0, Color.alpha(image.getPixel(diameter / 2, 0)));
+        assertEquals(255, Color.alpha(image.getPixel(diameter / 2, diameter)));
+        assertEquals(0, Color.alpha(image.getPixel(diameter / 2, diameter * 2 - 1)));
         image.recycle();
     }
 
@@ -672,18 +689,18 @@ public class SettingsWorkspaceTest {
                 nav.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
                             View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
                 nav.layout(0, 0, 1920, 1080);
-                Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
             }
             invalidateAll(nav);
             PreviewPagesTest.capture(nav, "0147-settings-global-grid");
-            android.graphics.Bitmap pixels =
-                android.graphics.BitmapFactory.decodeFile("build/reports/preview-ui/0147-settings-global-grid.png");
+            Bitmap pixels =
+                BitmapFactory.decodeFile("build/reports/preview-ui/0147-settings-global-grid.png");
             int bright = 0;
             for (int y = 35; y < 76; y++)
                 for (int x = 52; x < 266; x++) {
                     int colour = pixels.getPixel(x, y);
-                    if (android.graphics.Color.red(colour) > 180 && android.graphics.Color.green(colour) > 180 &&
-                        android.graphics.Color.blue(colour) > 180)
+                    if (Color.red(colour) > 180 && Color.green(colour) > 180 &&
+                        Color.blue(colour) > 180)
                         bright++;
                 }
             assertTrue("Rendered SUPERNOVA brand remains visible", bright > 100);
