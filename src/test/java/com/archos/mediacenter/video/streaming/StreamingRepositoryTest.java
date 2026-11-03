@@ -1,8 +1,12 @@
 package com.archos.mediacenter.video.streaming;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Base64;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,13 +30,13 @@ public class StreamingRepositoryTest {
                 StreamingRepository.validateMetadataResponse(
                     "tv/42/season/1/episode/2/external_ids", new JSONObject(body));
                 fail("Invalid episode payload accepted");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         try {
             StreamingRepository.validateMetadataResponse(
                 "tv/42/external_ids", new JSONObject("{id:765432,tvdb_id:123}"));
             fail("Wrong series ID accepted");
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
     }
 
@@ -60,14 +64,14 @@ public class StreamingRepositoryTest {
                     StreamingRepository.get(
                         "https://api.themoviedb.org/3/movie/42?api_key=private-secret", 4, "fixture-parent", client);
                     fail("Bound/error response accepted");
-                } catch (java.io.IOException expected) {
+                } catch (IOException expected) {
                 }
             }
             Object recorder = org.robolectric.util.ReflectionHelpers.getStaticField(
                 com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
-            java.lang.reflect.Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
+            Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
-            String evidence = (String) snapshot.invoke(recorder, android.os.SystemClock.elapsedRealtime());
+            String evidence = (String) snapshot.invoke(recorder, SystemClock.elapsedRealtime());
             assertFalse(evidence.contains("private"));
             assertFalse(evidence.contains("api_key"));
             assertFalse(evidence.contains("/movie/42"));
@@ -114,9 +118,9 @@ public class StreamingRepositoryTest {
             assertEquals(original, StreamingRepository.resolveTitleUrl(original, fake));
             Object recorder = org.robolectric.util.ReflectionHelpers.getStaticField(
                 com.archos.mediacenter.video.diagnostics.Diagnostics.class, "FLIGHT");
-            java.lang.reflect.Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
+            Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
-            String evidence = (String) snapshot.invoke(recorder, android.os.SystemClock.elapsedRealtime());
+            String evidence = (String) snapshot.invoke(recorder, SystemClock.elapsedRealtime());
             assertFalse(evidence.contains("fixture-private-query"));
             assertFalse(evidence.contains("localhost"));
             int failures = 0;
@@ -138,7 +142,7 @@ public class StreamingRepositoryTest {
 
     @Test
     public void persistedAvailabilityDistinguishesUnknownEmptyAndStale() throws Exception {
-        android.content.Context context = org.robolectric.RuntimeEnvironment.getApplication();
+        Context context = org.robolectric.RuntimeEnvironment.getApplication();
         assertNull(StreamingRepository.cachedAvailability(context, "tv", 987, "IE", 1));
         StreamingRepository.prefs(context)
             .edit()
@@ -219,7 +223,7 @@ public class StreamingRepositoryTest {
             try {
                 StreamingRepository.validateMetadataResponse(invalid[0], new JSONObject(invalid[1]));
                 fail("Invalid package accepted: " + invalid[0]);
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         }
         StreamingRepository.validateMetadataResponse("movie/42", new JSONObject("{id:42}"));
@@ -235,7 +239,7 @@ public class StreamingRepositoryTest {
 
     @Test
     public void rejectedMetadataCannotBecomeAFreshCachedPackage() throws Exception {
-        android.content.Context context = org.robolectric.RuntimeEnvironment.getApplication();
+        Context context = org.robolectric.RuntimeEnvironment.getApplication();
         long id = System.nanoTime();
         try {
             com.archos.mediacenter.video.leanback.PreviewMetadataCache.load(
@@ -245,7 +249,7 @@ public class StreamingRepositoryTest {
                     return payload;
                 });
             fail("Incomplete recommendations must reach the retry path");
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
         assertFalse(
             com.archos.mediacenter.video.leanback.PreviewMetadataCache.fresh(context, "movie", id, "recommendations"));
@@ -272,11 +276,11 @@ public class StreamingRepositoryTest {
                             "{id:987654321,page:1,total_pages:3,results:[]}"))
                         .build();
                 }));
-            android.content.Context app = org.robolectric.RuntimeEnvironment.getApplication();
+            Context app = org.robolectric.RuntimeEnvironment.getApplication();
             try {
                 StreamingRepository.reviews(app, "movie", id, 2);
                 fail("Mismatched response accepted");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
             assertNull(
                 com.archos.mediacenter.video.leanback.PreviewMetadataCache.read(app, "movie", id, "reviews/page_2"));
@@ -300,7 +304,7 @@ public class StreamingRepositoryTest {
                 try {
                     StreamingRepository.validateMetadataResponse(kind + "/42/reviews", new JSONObject(body));
                     fail("Invalid reviews accepted");
-                } catch (java.io.IOException expected) {
+                } catch (IOException expected) {
                 }
             }
         }
@@ -310,12 +314,12 @@ public class StreamingRepositoryTest {
             try {
                 StreamingRepository.reviews(org.robolectric.RuntimeEnvironment.getApplication(), "movie", 42, page);
                 fail("Unbounded review page");
-            } catch (java.io.IOException expected) {
+            } catch (IOException expected) {
             }
         try {
             StreamingRepository.reviews(org.robolectric.RuntimeEnvironment.getApplication(), "episode", 42, 1);
             fail("Unsupported review scope");
-        } catch (java.io.IOException expected) {
+        } catch (IOException expected) {
         }
     }
 
