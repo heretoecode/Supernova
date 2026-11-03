@@ -18,13 +18,18 @@ import android.widget.TextView;
 public final class MenuFoundation {
     public static final int TEXT = 0xffffffff, SECONDARY = 0xffb7c0cc;
     public static final int DIVIDER = 0x337f8996;
-    private MenuFoundation() { }
 
-    public static int dp(Context context, float value) { return TvLayout.dimension(context, value); }
+    private MenuFoundation() {
+    }
+
+    public static int dp(Context context, float value) {
+        return TvLayout.dimension(context, value);
+    }
 
     public static GradientDrawable surface(Context context, boolean raised) {
-        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                raised ? new int[]{0xf01c2632, 0xf0131c27} : new int[]{0xf0141e29, 0xf00e1620});
+        GradientDrawable drawable =
+            new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                                 raised ? new int[] {0xf01c2632, 0xf0131c27} : new int[] {0xf0141e29, 0xf00e1620});
         drawable.setCornerRadius(dp(context, 6));
         drawable.setStroke(Math.max(1, dp(context, 1)), DIVIDER);
         return drawable;
@@ -51,15 +56,15 @@ public final class MenuFoundation {
         text.setFocusable(true);
         text.setFocusableInTouchMode(true);
         text.setClickable(true);
-        if (icon != null) icon(text, icon);
+        if (icon != null)
+            icon(text, icon);
         SupernovaStyle.applyButton(text, SupernovaStyle.Surface.STANDARD);
         text.setOnClickListener(view -> action.run());
         return text;
     }
 
     public static void icon(TextView target, String meaning) {
-        Drawable drawable = PreviewGenres.known(meaning)
-                ? new PreviewGenres.Icon(meaning) : new PreviewIcon(meaning);
+        Drawable drawable = PreviewGenres.known(meaning) ? new PreviewGenres.Icon(meaning) : new PreviewIcon(meaning);
         int size = dp(target.getContext(), 19);
         drawable.setBounds(0, 0, size, size);
         target.setCompoundDrawables(drawable, null, null, null);
@@ -67,20 +72,30 @@ public final class MenuFoundation {
     }
 
     /** Button background from the shared style. Prefer {@link SupernovaStyle#applyButton}, which also sets content colours. */
-    public static Drawable controlBackground(Context context) { return SupernovaStyle.button(context, SupernovaStyle.Surface.STANDARD); }
+    public static Drawable controlBackground(Context context) {
+        return SupernovaStyle.button(context, SupernovaStyle.Surface.STANDARD);
+    }
 
     /** Tracks the window boundary, so a covered parent never displays a second focus outline. */
     public static class WindowPanel extends android.widget.LinearLayout {
         boolean active = true;
-        public WindowPanel(Context context) { super(context); }
-        @Override public void onWindowFocusChanged(boolean focused) {
-            super.onWindowFocusChanged(focused); active = focused; invalidateChildren(this);
+
+        public WindowPanel(Context context) {
+            super(context);
         }
+
+        @Override
+        public void onWindowFocusChanged(boolean focused) {
+            super.onWindowFocusChanged(focused);
+            active = focused;
+            invalidateChildren(this);
+        }
+
         private static void invalidateChildren(View view) {
             view.invalidate();
-            if (view instanceof android.view.ViewGroup) for (int i=0;i<((android.view.ViewGroup)view).getChildCount();i++)
-                invalidateChildren(((android.view.ViewGroup)view).getChildAt(i));
+            if (view instanceof android.view.ViewGroup)
+                for (int i = 0; i < ((android.view.ViewGroup)view).getChildCount(); i++)
+                    invalidateChildren(((android.view.ViewGroup)view).getChildAt(i));
         }
     }
-
 }
