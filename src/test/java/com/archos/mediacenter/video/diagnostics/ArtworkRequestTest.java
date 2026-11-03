@@ -6,10 +6,16 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.PreviewLibraryColumns;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import java.io.IOException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -21,8 +27,8 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class ArtworkRequestTest {
-    @org.junit.Before public void initialisePicasso(){
-        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException uninitialised){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+    @Before public void initialisePicasso(){
+        try{Picasso.get();}catch(IllegalStateException uninitialised){Picasso.setSingletonInstance(new Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
     }
     @Test public void rebindTerminatesOldRequestAndDoesNotLeakSourceOrFailureMessage()throws Exception{
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
@@ -49,13 +55,13 @@ public class ArtworkRequestTest {
     }
     @Test public void actualLibraryListBindingCorrelatesAndCancelsPrivateArtwork()throws Exception{
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
-        com.archos.mediacenter.video.leanback.PreviewLibraryColumns columns=new com.archos.mediacenter.video.leanback.PreviewLibraryColumns(app,false);
+        PreviewLibraryColumns columns=new PreviewLibraryColumns(app,false);
         LinearLayout row=columns.newRow();
         try{
-            com.archos.mediacenter.video.browser.adapters.object.Video media=mock(com.archos.mediacenter.video.browser.adapters.object.Video.class);
+            Video media=mock(Video.class);
             when(media.getId()).thenReturn(78125L);when(media.getName()).thenReturn("private-title");when(media.getFilenameNonCryptic()).thenReturn("private-file.mkv");when(media.getFilePath()).thenReturn("/private/path.mkv");
             when(media.getPosterUri()).thenReturn(Uri.parse("file:///private/poster.jpg"));
-            columns.bind(row,new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry(media,0,0,""));columns.clear(row);columns.clear(row);
+            columns.bind(row,new PreviewLibraryLoader.Entry(media,0,0,""));columns.clear(row);columns.clear(row);
             assertRoute(78125,"library.list");
         }finally{columns.clear(row);Diagnostics.setEnabled(app,false);}
     }
@@ -63,8 +69,8 @@ public class ArtworkRequestTest {
         Application app=RuntimeEnvironment.getApplication();Diagnostics.setEnabled(app,true);
         var host=Robolectric.buildActivity(Activity.class).setup().visible();
         try{
-            var browser=new com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface(host.get(),new LinearLayout(host.get()),Uri.parse("file:///private/"),()->{});host.get().setContentView(browser);
-            com.archos.mediacenter.video.browser.adapters.object.Video media=mock(com.archos.mediacenter.video.browser.adapters.object.Video.class);
+            var browser=new PreviewBrowserSurface(host.get(),new LinearLayout(host.get()),Uri.parse("file:///private/"),()->{});host.get().setContentView(browser);
+            Video media=mock(Video.class);
             when(media.getId()).thenReturn(78126L);when(media.getName()).thenReturn("private-title");when(media.getFilenameNonCryptic()).thenReturn("private-file.mkv");when(media.getPosterUri()).thenReturn(Uri.parse("file:///private/poster.jpg"));
             ReflectionHelpers.callInstanceMethod(browser,"focusItem",ReflectionHelpers.ClassParameter.from(Object.class,media),ReflectionHelpers.ClassParameter.from(Runnable.class,(Runnable)()->{}));
             browser.providerItem("private-title","private-details",false,()->{});browser.providerItem("private-title","private-details",false,()->{});
