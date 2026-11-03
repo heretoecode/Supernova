@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.content.ContentValues;
 import android.content.Context;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import org.junit.*;
@@ -100,20 +101,20 @@ public class MediaMatchDependencyTest {
             db.beginTransaction();
             try {
                 db.delete("MOVIE", null, null);
-                android.content.ContentValues first = new android.content.ContentValues();
+                ContentValues first = new ContentValues();
                 first.put("_id", 1);
                 first.put(com.archos.mediaprovider.video.ScraperStore.Show.ONLINE_ID, 123);
                 first.put(com.archos.mediaprovider.video.ScraperStore.Show.NAME, "Original show");
                 first.put("Nova_pinned", 9);
                 db.insertOrThrow("SHOW", null, first);
-                android.content.ContentValues other = new android.content.ContentValues(first);
+                ContentValues other = new ContentValues(first);
                 other.put("_id", 2);
                 other.put(com.archos.mediaprovider.video.ScraperStore.Show.ONLINE_ID, 456);
                 other.put(com.archos.mediaprovider.video.ScraperStore.Show.NAME, "Other show");
                 other.put("Nova_pinned", 8);
                 db.insertOrThrow("SHOW", null, other);
                 for (int index = 0; index < 2; index++) {
-                    android.content.ContentValues episode = new android.content.ContentValues();
+                    ContentValues episode = new ContentValues();
                     episode.put("_id", 300 + index);
                     episode.put(com.archos.mediaprovider.video.ScraperStore.Episode.VIDEO_ID, 10 + index);
                     episode.put(com.archos.mediaprovider.video.ScraperStore.Episode.SHOW, 1 + index);
