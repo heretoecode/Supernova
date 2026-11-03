@@ -19,9 +19,15 @@ import android.widget.*;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
+import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.utils.VideoMetadata;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
@@ -29,26 +35,31 @@ import java.time.Duration;
 import java.util.Calendar;
 import java.util.TimeZone;
 import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import java.util.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewPagesTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
-    @org.junit.Before
+    @Before
     public void configuredLibraryFixture() {
         PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
@@ -70,12 +81,12 @@ public class PreviewPagesTest {
         c.clear();
         c.set(2022, 0, 17);
         assertEquals(2022,
-            com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper.premiereYear(c.getTimeInMillis()));
+            TvshowCursorMapper.premiereYear(c.getTimeInMillis()));
         c.clear();
         c.set(1959, 8, 12);
         assertEquals(1959,
-            com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper.premiereYear(c.getTimeInMillis()));
-        assertEquals(0, com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper.premiereYear(0));
+            TvshowCursorMapper.premiereYear(c.getTimeInMillis()));
+        assertEquals(0, TvshowCursorMapper.premiereYear(0));
     }
 
     @Test
@@ -91,7 +102,7 @@ public class PreviewPagesTest {
 
     @Test
     public void resumeWinsAndCompletionAdvancesRetrospectively() {
-        Entry first = episode(1, com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END, false, 100, 10);
+        Entry first = episode(1, PlayerActivity.LAST_POSITION_END, false, 100, 10);
         Entry second = episode(2, 5000, false, 200, 20), third = episode(3, 0, false, 0, 30);
         Snapshot s = PreviewLibraryLoader.build(Arrays.asList(third, first, second), Collections.emptyList());
         assertSame(second.media, s.recent.get(0).media);
@@ -140,12 +151,12 @@ public class PreviewPagesTest {
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void renderActualPagesAndCheckTabFocus() throws Exception {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             PreviewPages pages = new PreviewPages(host.get(), (holder, item) -> {
@@ -182,7 +193,7 @@ public class PreviewPagesTest {
                 View tabControl = nav.findViewWithTag("semantic:topnav." + identity);
                 assertNotNull(tabControl);
                 if (tab == 3)
-                    org.robolectric.util.ReflectionHelpers.setField(pages, "sourcesLoading", true);
+                    ReflectionHelpers.setField(pages, "sourcesLoading", true);
                 assertTrue(tabControl.performClick());
                 for (int frame = 0; frame < 4; frame++) {
                     nav.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
@@ -226,7 +237,7 @@ public class PreviewPagesTest {
             View columnsControl = nav.findViewWithTag("control:4");
             assertNotNull(columnsControl);
             assertEquals("semantic:library.toolbar.columns",
-                columnsControl.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
+                columnsControl.getTag(R.id.preview_diagnostic_semantic));
             assertTrue(columnsControl.requestFocus());
             nav.dispatchKeyEvent(
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
@@ -266,26 +277,26 @@ public class PreviewPagesTest {
                 }));
             View hud =
                 LayoutInflater.from(host.get())
-                    .inflate(com.archos.mediacenter.video.R.layout.player_controller_experimental, hudHost, false);
+                    .inflate(R.layout.player_controller_experimental, hudHost, false);
             hudHost.addView(hud);
             host.get().setContentView(hudHost);
-            hud.findViewById(com.archos.mediacenter.video.R.id.control_bar).setVisibility(View.VISIBLE);
+            hud.findViewById(R.id.control_bar).setVisibility(View.VISIBLE);
             android.widget.TextView hudTitle =
-                hud.findViewById(com.archos.mediacenter.video.R.id.preview_playback_title);
+                hud.findViewById(R.id.preview_playback_title);
             hudTitle.setText("Example show");
             hudTitle.setVisibility(View.VISIBLE);
-            android.widget.TextView ep = hud.findViewById(com.archos.mediacenter.video.R.id.preview_playback_episode);
+            android.widget.TextView ep = hud.findViewById(R.id.preview_playback_episode);
             ep.setText("S01 E03 · A new beginning");
             ep.setVisibility(View.VISIBLE);
-            ((android.widget.TextView) hud.findViewById(com.archos.mediacenter.video.R.id.clock))
+            ((android.widget.TextView) hud.findViewById(R.id.clock))
                 .setText("18:06 · Episode ends 19:02");
-            ((android.widget.TextView) hud.findViewById(com.archos.mediacenter.video.R.id.time_current))
+            ((android.widget.TextView) hud.findViewById(R.id.time_current))
                 .setText("22:14");
-            ((android.widget.TextView) hud.findViewById(com.archos.mediacenter.video.R.id.time)).setText("53:27");
-            ProgressBar progress = hud.findViewById(com.archos.mediacenter.video.R.id.seek_progress);
+            ((android.widget.TextView) hud.findViewById(R.id.time)).setText("53:27");
+            ProgressBar progress = hud.findViewById(R.id.seek_progress);
             progress.setMax(100);
             progress.setProgress(42);
-            android.view.View pause = hud.findViewById(com.archos.mediacenter.video.R.id.pause);
+            android.view.View pause = hud.findViewById(R.id.pause);
             pause.setFocusableInTouchMode(true);
             pause.requestFocus();
             layout(hudHost);
@@ -304,11 +315,11 @@ public class PreviewPagesTest {
             captureMenu(more, "playback-more");
             Class<?> info = Class.forName("com.archos.mediacenter.video.player.PreviewTechnicalInfo");
             Method showInfo = info.getDeclaredMethod("show", Activity.class,
-                com.archos.mediacenter.video.utils.VideoMetadata.class, Uri.class, int.class);
+                VideoMetadata.class, Uri.class, int.class);
             showInfo.setAccessible(true);
-            showInfo.invoke(null, host.get(), new com.archos.mediacenter.video.utils.VideoMetadata(),
+            showInfo.invoke(null, host.get(), new VideoMetadata(),
                 Uri.parse("webdavs://example.invalid/private-file.mkv"), 0);
-            Dialog infoDialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog infoDialog = ShadowDialog.getLatestDialog();
             View infoView = infoDialog.getWindow().getDecorView();
             for (String label : new String[] {
                 "Video", "Audio", "File", "Source"
@@ -367,7 +378,7 @@ public class PreviewPagesTest {
     }
 
     static void decorateCards(View v) {
-        if (v instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) {
+        if (v instanceof PreviewCardPresenter.Card) {
             Bitmap b =
                 Bitmap.createBitmap(200, 300, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
@@ -381,7 +392,7 @@ public class PreviewPagesTest {
             p.setTextSize(20);
             c.drawText("POSTER TOP", 20, 25, p);
             c.drawText("FULL FRAME", 20, 280, p);
-            ((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) v).image.setImageBitmap(b);
+            ((PreviewCardPresenter.Card) v).image.setImageBitmap(b);
         } else if (v instanceof ViewGroup)
             for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++)
                 decorateCards(((ViewGroup) v).getChildAt(i));
@@ -406,6 +417,6 @@ public class PreviewPagesTest {
         mountain.lineTo(1600, 900);
         mountain.close();
         canvas.drawPath(mountain, paint);
-        ((PreviewBackdrop) nav.getBackground()).onBitmapLoaded(art, com.squareup.picasso.Picasso.LoadedFrom.MEMORY);
+        ((PreviewBackdrop) nav.getBackground()).onBitmapLoaded(art, Picasso.LoadedFrom.MEMORY);
     }
 }
