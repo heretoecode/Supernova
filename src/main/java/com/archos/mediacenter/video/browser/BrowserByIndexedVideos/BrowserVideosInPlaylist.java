@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** Displays a playlist's videos and handles their context actions. */
 public class BrowserVideosInPlaylist extends BrowserByVideoSelection {
 
 	private static final boolean DBG = false;
