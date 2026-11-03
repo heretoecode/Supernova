@@ -29,6 +29,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStore.MediaColumns;
 import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 
+/** Exposes video search results through an Android content provider. */
 public class SearchProviderVideo extends ContentProvider {
 
     // primary text, = scraper title with fallback to plain filename based title
