@@ -1,13 +1,20 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.app.Dialog;
+import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
+import android.widget.FrameLayout;
 import androidx.leanback.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.details.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -110,10 +117,10 @@ public class Supernova138UiTest {
     /** FD-033 v3 fixes the six read-only regions in one viewport; retain 8+8 checks. */
     private void assertReadableInOverflow(PreviewMoviePage page, View text) {
         ScrollView reading = page.findViewWithTag("details.reading.overflow");
-        android.graphics.Rect rect = new android.graphics.Rect(0, 0, text.getWidth(), text.getHeight());
+        Rect rect = new Rect(0, 0, text.getWidth(), text.getHeight());
         reading.offsetDescendantRectToMyCoords(text, rect);
         reading.scrollTo(0, rect.top - reading.getPaddingTop());
-        android.graphics.Rect visible = new android.graphics.Rect();
+        Rect visible = new Rect();
         assertTrue(text.getContentDescription() + " reachable", text.getGlobalVisibleRect(visible));
         assertEquals(text.getHeight(), visible.height());
         assertSame(page.findViewWithTag("section:Details"), page.findFocus());
@@ -136,7 +143,7 @@ public class Supernova138UiTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             TopNavigation nav =
-                new TopNavigation(host.get(), new android.widget.FrameLayout(host.get()), n -> {
+                new TopNavigation(host.get(), new FrameLayout(host.get()), n -> {
                 }, () -> true);
             host.get().setContentView(nav);
             PreviewPagesTest.layout(nav);
@@ -154,7 +161,7 @@ public class Supernova138UiTest {
                 assertTrue("Enlarged " + tag + " text has vertical space",
                     tab.getHeight() >= tab.getPaint().getFontMetrics().bottom - tab.getPaint().getFontMetrics().top
                             + tab.getPaddingTop() + tab.getPaddingBottom());
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 assertTrue(tag, tab.getGlobalVisibleRect(visible));
                 assertEquals("Focused " + tag + " entirely visible", tab.getWidth(), visible.width());
             }
@@ -186,13 +193,13 @@ public class Supernova138UiTest {
                 nav.measure(View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(360, View.MeasureSpec.EXACTLY));
                 nav.layout(0, 0, 640, 360);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
             }
             for (String tag : new String[] {
                 "action:Play", "action:More", "section:Details"
             }) {
                 View control = page.findViewWithTag(tag);
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 assertTrue(tag, control.getGlobalVisibleRect(visible));
                 assertEquals(tag, control.getHeight(), visible.height());
                 assertTrue(tag, visible.bottom <= 360);
@@ -318,12 +325,12 @@ public class Supernova138UiTest {
             assertNotNull(filters);
             filters.requestFocus();
             filters.performClick();
-            android.app.Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
             assertNotNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Clear Filters"));
             assertNull(PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Page Details"));
             assertEquals(0, edited[0]);
             dialog.cancel();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertSame(filters, pages.findFocus());
             pages.findViewWithTag("custom.control.edit").performClick();
             assertEquals(1, edited[0]);
@@ -353,7 +360,7 @@ public class Supernova138UiTest {
             PreviewPagesTest.layout(browser);
             for (int n = 0; n < 10; n++) {
                 browser.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
                 PreviewPagesTest.layout(browser);
                 assertEquals("storage:file:///storage/usb" + n, browser.findFocus().getTag());
             }
@@ -381,17 +388,17 @@ public class Supernova138UiTest {
             View about = root.findViewWithTag("semantic:settings:category:About");
             assertNotNull(about);
             about.requestFocus();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             PreviewPagesTest.layout(root);
             assertFullyVisible(about);
             about.performClick();
             PreviewPagesTest.layout(root);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(250));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(250));
             PreviewPagesTest.layout(root);
             View technical = root.findViewWithTag("semantic:settings:about:Technical Information");
             assertNotNull(technical);
             technical.requestFocus();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             PreviewPagesTest.layout(root);
             PreviewPagesTest.capture(root, "0138-settings-technical-bottom");
             assertFullyVisible(technical);
@@ -401,13 +408,13 @@ public class Supernova138UiTest {
             licences.performClick();
             com.archos.mediacenter.video.foundation.FoundationAboutWorkspace workspace = findAbout(root);
             assertNotNull(workspace);
-            java.util.concurrent.ExecutorService reader = ReflectionHelpers.getField(workspace, "reader");
+            ExecutorService reader = ReflectionHelpers.getField(workspace, "reader");
             reader.submit(() -> {
-            }).get(5, java.util.concurrent.TimeUnit.SECONDS);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            }).get(5, TimeUnit.SECONDS);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             reader.submit(() -> {
-            }).get(5, java.util.concurrent.TimeUnit.SECONDS);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            }).get(5, TimeUnit.SECONDS);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             PreviewPagesTest.layout(root);
             List<TextView> rows = ReflectionHelpers.getField(workspace, "rows");
             assertFalse(rows.isEmpty());
@@ -433,7 +440,7 @@ public class Supernova138UiTest {
     }
 
     private void assertFullyVisible(View view) {
-        android.graphics.Rect visible = new android.graphics.Rect();
+        Rect visible = new Rect();
         int[] at = new int[2];
         view.getLocationOnScreen(at);
         String message = String.valueOf(view.getTag()) + " at=" + Arrays.toString(at) + " size=" + view.getWidth() + "x"
@@ -466,7 +473,7 @@ public class Supernova138UiTest {
             View centre = ReflectionHelpers.getField(browser, "centre");
             assertTrue(
                 "Read-only Overview has no centre focus stop", centre.getFocusables(View.FOCUS_FORWARD).isEmpty());
-            android.graphics.Rect visible = new android.graphics.Rect();
+            Rect visible = new Rect();
             assertTrue(scan.getGlobalVisibleRect(visible));
             assertTrue(visible.bottom <= browser.getHeight());
             browser.close();
