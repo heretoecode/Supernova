@@ -360,11 +360,8 @@ Copertina (rotolo di copertina)</string>
     <!-- torrent -->
     <string name="error">Si è verificato un errore</string>
     <string name="error_protocol_not_supported">Errore: protocollo non supportato</string>
-    <string name="error_loading_torrent">Errore nel caricamento del torrent</string>
-    <string name="error_downloading_not_enough_space">Errore nel caricamento del torrent: spazio non sufficiente</string>
     <string name="loading_torrent">Caricamento del torrent&#8230;</string>
     <string name="error_no_video_file">Nessun file video</string>
-    <string name="torrent_file_to_play">Scegli un file da riprodurre</string>
     <!-- Shortcuts -->
     <string name="add_ssh_server">Carica un server FTP</string>
     <string name="add_ssh_shortcut">Aggiungi un collegamento</string>
@@ -610,16 +607,11 @@ Copertina (rotolo di copertina)</string>
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Scarica percorso</string>
     <string name="torrent_blocklist">Blocklist</string>
     <string name="blocklist_empty">L\'URL non dovebbe essere vuoto</string>
     <string name="blocklist_invalid">Blocklist non valido</string>
-    <string name="blocklist_file_not_found">File non trovato</string>
     <string name="blocklist_success">Ricaricamento della blocklist effettuato</string>
-    <string name="blocklist_unknown_error">Sconosciuto</string>
-    <string name="blocklist_not_loaded">Non caricato</string>
-    <string name="torrent_blocklist_url">URL della blocklist</string>
     <string name="sdk_not_supported">Android 4.3 non è ancora supportato.\nStiamo lavorando per risolvere questo problema e speriamo di rilasciare presto una nuova versione!</string>
     <string name="manually_create_share">Aggiunta una nuova cartella indizzata dall\'URI</string>
     <string name="share_infos_incomplete">Devi compilare il percorso</string>
