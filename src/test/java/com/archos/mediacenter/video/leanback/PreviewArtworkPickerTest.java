@@ -6,8 +6,10 @@ import android.view.*;
 import com.archos.mediascraper.ScraperImage;
 import com.squareup.picasso.Picasso;
 import org.junit.*;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -17,11 +19,11 @@ import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewArtworkPickerTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @org.junit.Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Before public void images(){try{Picasso.get();}catch(IllegalStateException e){Picasso.setSingletonInstance(new Picasso.Builder(RuntimeEnvironment.getApplication()).build());}}
     @Test public void failedSaveKeepsOldCheckAndSuccessfulSaveKeepsGridOpen(){
-        org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
+        ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
         try{
             ScraperImage first=mock(ScraperImage.class),second=mock(ScraperImage.class);
             AtomicReference<Consumer<Boolean>> completion=new AtomicReference<>();AtomicInteger writes=new AtomicInteger();
@@ -36,7 +38,7 @@ public class PreviewArtworkPickerTest {
         }finally{host.pause().stop().destroy();}
     }
     @Test public void rowEdgesAndIncompleteLastRowDoNotEscapeGrid(){
-        org.robolectric.android.controller.ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
+        ActivityController<Activity> host=Robolectric.buildActivity(Activity.class).setup().visible();
         try{
             List<ScraperImage> images=new ArrayList<>();for(int i=0;i<4;i++)images.add(mock(ScraperImage.class));
             Dialog dialog=PreviewArtworkPicker.show(host.get(),"Backdrops",images,images.get(0),false,(image,done)->{});
