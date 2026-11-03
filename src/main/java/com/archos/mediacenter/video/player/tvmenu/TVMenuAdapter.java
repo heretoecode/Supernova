@@ -73,7 +73,7 @@ public class TVMenuAdapter {
             ((TVCardView)cards.get(0).findViewById(R.id.card_view)).requestFocus();
     }
 
-    public List<TVCardView> previewCards(){List<TVCardView> result=new java.util.ArrayList<>();for(View root:cards){TVCardView card=root.findViewById(R.id.card_view);if(card!=null&&card.getVisibility()==View.VISIBLE)result.add(card);}return result;}
+    public List<TVCardView> previewCards(){List<TVCardView> result=new ArrayList<>();for(View root:cards){TVCardView card=root.findViewById(R.id.card_view);if(card!=null&&card.getVisibility()==View.VISIBLE)result.add(card);}return result;}
     @SuppressLint("InflateParams") // Root TVMenu layout is inflated detached and attached to player controller
     public TVMenu createTVMenu(){
         TVMenu tvm = (TVMenu)LayoutInflater.from(mActivity)
