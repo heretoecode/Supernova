@@ -33,6 +33,7 @@ import org.robolectric.annotation.Config;
 import java.io.File;
 import java.io.FileOutputStream;
 
+/** Checks subtitle cache directory selection, fallback behavior and preservation of existing files. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 28, application = Application.class)
 public class MediaUtilsSubsDirTest {
