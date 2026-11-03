@@ -6,6 +6,7 @@ import com.archos.mediacenter.video.player.Player;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediaprovider.video.VideoStore;
 import java.io.IOException;
+import java.util.Objects;
 import org.json.JSONException;
 
 /** Per-open callback state. Real supported enumeration precedes selection, acknowledgements keep failures pending. */
@@ -16,7 +17,7 @@ public final class TitlePlaybackSession {
 
     public void videoInfo(Context context, VideoDbInfo info) throws JSONException {
         String current = TitlePlaybackOverrides.token(context, info);
-        if (java.util.Objects.equals(current, token))
+        if (Objects.equals(current, token))
             return;
         token = current;
         attempted = accepted = failed = false;
@@ -77,7 +78,7 @@ public final class TitlePlaybackSession {
             return;
         if (audioEvent ? track != audio : track != subtitle)
             return;
-        if (!java.util.Objects.equals(token, TitlePlaybackOverrides.token(context, info)))
+        if (!Objects.equals(token, TitlePlaybackOverrides.token(context, info)))
             return;
         if (!success) {
             failed = true;
