@@ -45,6 +45,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import java.io.File;
 
+/** Loads video cursors and connects them to browser adapters and thumbnails. */
 abstract public class CursorBrowserByVideo extends BrowserByVideoObjects implements
          LoaderManager.LoaderCallbacks<Cursor> {
 
