@@ -38,6 +38,7 @@ import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase.Credential;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 
+/** Collects SMB credentials and reports connect or cancel actions. */
 public class SmbServerCredentialsDialog extends DialogFragment {
 
     final private static String SMB_LATEST_USERNAME = "SMB_LATEST_USERNAME";
