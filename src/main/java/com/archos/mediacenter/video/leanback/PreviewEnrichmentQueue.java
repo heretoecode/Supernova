@@ -4,11 +4,13 @@ import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.*;
 import android.os.SystemClock;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
+import org.json.JSONArray;
 
 /** Persistent priority queue. One package section per turn lets foreground work pre-empt background work. */
 public final class PreviewEnrichmentQueue {
@@ -94,7 +96,7 @@ public final class PreviewEnrichmentQueue {
     }
 
     private static void offerEntry(SQLiteDatabase db, PreviewLibraryLoader.Entry entry, int priority, String scope) {
-        offer(db, entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie ? "movie" : "tv",
+        offer(db, entry.media instanceof Movie ? "movie" : "tv",
             entry.onlineId, priority, scope);
     }
 
@@ -102,7 +104,7 @@ public final class PreviewEnrichmentQueue {
         if (entry.onlineId <= 0)
             return;
         String kind =
-            entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie ? "movie" : "tv";
+            entry.media instanceof Movie ? "movie" : "tv";
         String key = kind + ":" + entry.onlineId + ":" + scope;
         pagePriorities.put(key, Math.min(priority, pagePriorities.getOrDefault(key, BACKGROUND)));
         offer(db, kind, entry.onlineId, priority, scope);
@@ -223,7 +225,7 @@ public final class PreviewEnrichmentQueue {
                     StreamingRepository.load(app, kind, id, StreamingRepository.country(app));
             } else if (SECTIONS[stage].equals("seasons")) {
                 if (kind.equals("tv")) {
-                    org.json.JSONArray seasons =
+                    JSONArray seasons =
                         StreamingRepository.metadata(app, kind, id, "").optJSONArray("seasons");
                     if (seasons == null)
                         throw new IOException("Incomplete series package");
