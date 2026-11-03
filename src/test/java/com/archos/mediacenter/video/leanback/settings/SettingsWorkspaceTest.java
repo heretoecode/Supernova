@@ -39,6 +39,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 import org.slf4j.LoggerFactory;
 
+/** Checks Settings categories, controls, persisted choices and focus across layouts and recreation. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
