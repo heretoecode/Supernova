@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
@@ -51,7 +52,7 @@ public final class LibraryHealthPanel {
             information("Library Health", LibraryHealth.report(context));
             return;
         }
-        android.content.SharedPreferences health =
+        SharedPreferences health =
             context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0);
         if (category == 4) {
             int count = 0;
