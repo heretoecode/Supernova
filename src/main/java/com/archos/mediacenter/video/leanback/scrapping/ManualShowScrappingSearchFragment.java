@@ -36,7 +36,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewHomeRows;
 import com.archos.mediacenter.video.ui.NovaProgressDialog;
+import com.archos.mediacenter.video.utils.DirectShowLookup;
+import com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges;
 import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.BaseTags;
@@ -45,6 +48,7 @@ import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.NfoWriter;
 import com.archos.mediascraper.ScrapeDetailResult;
 import com.archos.mediascraper.ScrapeSearchResult;
+import com.archos.mediascraper.ScrapeStatus;
 import com.archos.mediascraper.Scraper;
 import com.archos.mediascraper.ScraperImage;
 import com.archos.mediascraper.SearchResult;
@@ -116,13 +120,13 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
     protected ScrapeSearchResult performSearch(String text) {
         mTagsToSearchResultMap.clear();
         try {
-            ScrapeSearchResult direct = com.archos.mediacenter.video.utils.DirectShowLookup.find(requireContext().getApplicationContext(), text);
+            ScrapeSearchResult direct = DirectShowLookup.find(requireContext().getApplicationContext(), text);
             if (direct != null) return direct;
         } catch (Exception error) {
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (isAdded()) Toast.makeText(requireContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             });
-            return new ScrapeSearchResult(new ArrayList<>(), false, com.archos.mediascraper.ScrapeStatus.ERROR, error);
+            return new ScrapeSearchResult(new ArrayList<>(), false, ScrapeStatus.ERROR, error);
         }
         mSearchInfo.setUserInput(text+ " S1E1");
         // search for param + " S1E1" so we get show results only, filename is ignored but has to be != null
@@ -375,8 +379,8 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
             }
 
             // Update all episodes
-            java.util.List<Long> manualOwners=new java.util.ArrayList<>();for(EpisodeTags episode:targetEpisodesList)manualOwners.add(episode.getVideoId());
-            try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(mContext,manualOwners);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return null;}
+            List<Long> manualOwners=new ArrayList<>();for(EpisodeTags episode:targetEpisodesList)manualOwners.add(episode.getVideoId());
+            try{MediaMatchManualChanges.mark(mContext,manualOwners);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return null;}
             final long newShowId = newShow.save(mContext, 0); // second argument is not used in case of ShowTags
             if(newShowId<=0)return null;
             newShow.setId(newShowId);
@@ -425,7 +429,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
                     return null;
                 }
             }
-            com.archos.mediacenter.video.leanback.PreviewHomeRows.reconcileShowIdentity(mContext,mShowId,newShowId);
+            PreviewHomeRows.reconcileShowIdentity(mContext,mShowId,newShowId);
             TraktService.onNewVideo(mContext);
             log.info("saving in the end:" + t.step() + " thats:" + t.total());
             return newShow;
