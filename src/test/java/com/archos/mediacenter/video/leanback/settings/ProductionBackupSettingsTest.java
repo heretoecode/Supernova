@@ -1,12 +1,25 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.time.Duration;
 import java.util.*;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -24,9 +37,9 @@ public class ProductionBackupSettingsTest {
         // AndroidX caches its first process Application; Robolectric creates another between cases.
         // Keep real ViewModel retention within each recreation, without borrowing a previous sandbox's store.
         ReflectionHelpers.setStaticField(
-            androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.class, "_instance", null);
+            ViewModelProvider.AndroidViewModelFactory.class, "_instance", null);
         PreviewAsyncFixtures.offlineTransport();
-        ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", java.util.Locale.getDefault());
+        ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
         com.archos.environment.ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         ReflectionHelpers.setStaticField(
             CustomApplication.class, "log", org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
@@ -54,7 +67,7 @@ public class ProductionBackupSettingsTest {
     }
 
     private View find(View root, String label) {
-        if (root instanceof android.widget.TextView && label.contentEquals(((android.widget.TextView) root).getText()))
+        if (root instanceof TextView && label.contentEquals(((TextView) root).getText()))
             return root;
         if (root instanceof ViewGroup)
             for (int i = 0; i < ((ViewGroup) root).getChildCount(); i++) {
@@ -73,7 +86,7 @@ public class ProductionBackupSettingsTest {
     private VideoSettingsFragment.PrefsFragment install(TopNavigationTest.Host host) {
         var fragment = new VideoSettingsFragment.PrefsFragment();
         host.getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commitNow();
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         layout(fragment.requireView());
         assertTrue(PreviewSettings.enterBackup(fragment));
         layout(fragment.requireView());
@@ -91,7 +104,7 @@ public class ProductionBackupSettingsTest {
         frame.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
         frame.layout(0, 0, w, h);
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         return frame;
     }
 
@@ -108,27 +121,27 @@ public class ProductionBackupSettingsTest {
     private void capture(View root, String name) throws Exception {
         if (root.getWidth() != 960)
             name += "-" + root.getWidth();
-        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(
-            root.getWidth(), root.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(
+            root.getWidth(), root.getHeight(), Bitmap.Config.ARGB_8888);
         root.getViewTreeObserver().dispatchOnPreDraw();
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(500));
-        root.draw(new android.graphics.Canvas(bitmap));
-        java.io.File folder = new java.io.File("build/reports/preview-ui");
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(500));
+        root.draw(new Canvas(bitmap));
+        File folder = new File("build/reports/preview-ui");
         folder.mkdirs();
-        try (var output = new java.io.FileOutputStream(new java.io.File(folder, name + ".png"))) {
-            assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, output));
+        try (var output = new FileOutputStream(new File(folder, name + ".png"))) {
+            assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, output));
         }
     }
 
     private void assertBackupOpenerVisible(View root) {
         View child = root.findViewWithTag("settings.section.Backup & restore");
         assertNotNull(child);
-        android.graphics.Rect visible = new android.graphics.Rect();
+        Rect visible = new Rect();
         ViewParent parent = child.getParent();
-        while (parent instanceof View && !(parent instanceof android.widget.ScrollView))
+        while (parent instanceof View && !(parent instanceof ScrollView))
             parent = parent.getParent();
-        android.widget.ScrollView scroll = (android.widget.ScrollView) parent;
-        android.graphics.Rect target = new android.graphics.Rect(0, 0, child.getWidth(), child.getHeight());
+        ScrollView scroll = (ScrollView) parent;
+        Rect target = new Rect(0, 0, child.getWidth(), child.getHeight());
         ((ViewGroup) scroll.getChildAt(0)).offsetDescendantRectToMyCoords(child, target);
         String metrics = "visible=" + visible + ", target=" + target + ", scrollY=" + scroll.getScrollY()
             + ", scrollHeight=" + scroll.getHeight() + ", padding=" + scroll.getPaddingTop() + "/"
@@ -140,14 +153,14 @@ public class ProductionBackupSettingsTest {
     }
 
     private void await(BackupOperationModel model, BackupOperationModel.Phase expected) throws Exception {
-        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(15);
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(15);
         while (model.isBusy()) {
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             if (System.nanoTime() > deadline)
                 throw new AssertionError("Backup worker did not finish");
             Thread.sleep(10);
         }
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(model.current().message, expected, model.current().phase);
     }
 
@@ -174,12 +187,12 @@ public class ProductionBackupSettingsTest {
             root.findViewWithTag("backup.details").performClick();
             assertNotNull(operation(fragment).findViewWithTag("backup.details.page"));
             host.recreate();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             fragment = (VideoSettingsFragment.PrefsFragment) host.get().getSupportFragmentManager().findFragmentById(
                 android.R.id.content);
             root = fragment.requireView();
             layout(root);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             layout(root);
             assertEquals(rail, railWidth(root));
             assertNotNull(operation(fragment).findViewWithTag("backup.details.page"));
@@ -200,12 +213,12 @@ public class ProductionBackupSettingsTest {
         try {
             var fragment = install(host.get());
             BackupOperationModel model =
-                new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class);
+                new ViewModelProvider(host.get()).get(BackupOperationModel.class);
             assertSame("Fixture model must belong to the current process Application before recreation",
                 host.get().getApplication(), model.getApplication());
             var prefs = PreferenceManager.getDefaultSharedPreferences(host.get());
             prefs.edit().putInt("preview_accent41", 7).putString("oauth_token", "AUTH_CANARY").commit();
-            java.io.File source = new java.io.File(host.get().getCacheDir(), "review-source.zip");
+            File source = new File(host.get().getCacheDir(), "review-source.zip");
             org.json.JSONObject appearance =
                                     new org.json.JSONObject()
                                         .put("schema", 1)
@@ -219,20 +232,20 @@ public class ProductionBackupSettingsTest {
                                             .put("values", new org.json.JSONObject());
             LogicalBackupArchive.writeCategories(
                 source, Map.of(BackupCategory.APPEARANCE, appearance, BackupCategory.AUDIO, audio), () -> false);
-            model.open(new java.io.FileInputStream(source));
+            model.open(new FileInputStream(source));
             await(model, BackupOperationModel.Phase.REVIEW);
             layout(fragment.requireView());
             var before = prefs.getAll();
             operation(fragment).findViewWithTag("backup.category.AUDIO").performClick();
             assertEquals(before, prefs.getAll());
             host.recreate();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             fragment = (VideoSettingsFragment.PrefsFragment) host.get().getSupportFragmentManager().findFragmentById(
                 android.R.id.content);
             layout(fragment.requireView());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             layout(fragment.requireView());
-            assertSame(model, new androidx.lifecycle.ViewModelProvider(host.get()).get(BackupOperationModel.class));
+            assertSame(model, new ViewModelProvider(host.get()).get(BackupOperationModel.class));
             BackupSettingsController controller = ReflectionHelpers.getField(fragment, "backupController");
             BackupWorkspace workspace = ReflectionHelpers.getField(controller, "workspace");
             assertEquals(Set.of(BackupCategory.APPEARANCE), workspace.selection());
@@ -274,7 +287,7 @@ public class ProductionBackupSettingsTest {
                 assertNotNull(category.name(), option);
                 option.requestFocus();
                 layout(root);
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 assertTrue(category.name(), option.getGlobalVisibleRect(visible));
                 assertEquals(category.name(), option.getHeight(), visible.height());
             }
