@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.widget.TextView;
 
@@ -32,6 +33,6 @@ public final class TvButton {
         view.setCompoundDrawablePadding(TvLayout.dimension(c, 8 * ratio));
         SupernovaStyle.applyButton(view, SupernovaStyle.Surface.STANDARD);
         view.setSingleLine(true);
-        view.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        view.setEllipsize(TextUtils.TruncateAt.END);
     }
 }
