@@ -31,6 +31,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.FileManagerService;
 
+/** Displays file paste progress and handles file-operation events. */
 public class Paste extends AlertDialog implements FileManagerService.ServiceListener {
 
     private static String TAG = "Paste";
