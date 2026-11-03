@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.*;
 import android.widget.ImageView;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
+import com.archos.mediacenter.video.leanback.ProviderMonogram;
 import java.util.*;
 import org.json.*;
 import com.archos.mediacenter.video.R;
@@ -101,7 +103,7 @@ public final class PreviewProviderIcons {
     }
 
     public static void bindProvider(ImageView icon, StreamingRepository.Provider provider, long media, String surface) {
-        com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel(icon);
+        ArtworkRequest.cancel(icon);
         icon.clearColorFilter();
         icon.setBackground(null);
         icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -111,7 +113,7 @@ public final class PreviewProviderIcons {
             icon.setImageResource(resource);
         else
             icon.setImageDrawable(
-                new com.archos.mediacenter.video.leanback.ProviderMonogram(provider == null ? "" : provider.name));
+                new ProviderMonogram(provider == null ? "" : provider.name));
         if ("provider.choice".equals(surface) && icon.getLayoutParams() != null) {
             float d = icon.getResources().getDisplayMetrics().density;
             icon.getLayoutParams().width = Math.round(28 * d);
