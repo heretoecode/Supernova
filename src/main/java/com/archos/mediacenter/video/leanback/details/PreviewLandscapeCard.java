@@ -1,7 +1,10 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
@@ -10,7 +13,7 @@ import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 
 /** Shared landscape discovery/episode card with clean artwork and boundary focus. */
 final class PreviewLandscapeCard extends LinearLayout {
-    private final android.graphics.drawable.Drawable playGlyph;
+    private final Drawable playGlyph;
     final ImageView image, availability;
     final TextView title, metadata;
     final ProgressBar progress;
@@ -86,8 +89,8 @@ final class PreviewLandscapeCard extends LinearLayout {
         text.setTextSize(size);
         text.setTextColor(0xffe1e9ef);
         text.setSingleLine(true);
-        text.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        text.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        text.setEllipsize(TextUtils.TruncateAt.END);
+        text.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         return text;
     }
 
