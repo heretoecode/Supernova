@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays movies grouped alphabetically with sorting controls. */
 public class MoviesByAlphaFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = MoviesByAlphaFragment.class.getName() + "_SORT";
