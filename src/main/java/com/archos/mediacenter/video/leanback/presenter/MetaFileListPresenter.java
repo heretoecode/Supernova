@@ -15,9 +15,11 @@
 package com.archos.mediacenter.video.leanback.presenter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
@@ -39,9 +41,9 @@ public class MetaFileListPresenter extends ListPresenter {
             ThemeManager.getInstance(viewHolder.view.getContext()).getLeanbackHeaderColor());
         vh.getImageView().setImageResource(PresenterUtils.getIconResIdFor(file));
         vh.getImageView().setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(viewHolder.view.getContext())
+        if (PreferenceManager.getDefaultSharedPreferences(viewHolder.view.getContext())
                 .getBoolean("try_new_ui", false)) {
-            vh.getImageView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            vh.getImageView().setBackgroundColor(Color.TRANSPARENT);
             int pad = com.archos.mediacenter.video.leanback.PreviewDialog.dp(viewHolder.view.getContext(), 16);
             vh.getImageView().setPadding(pad, pad, pad, pad);
         }
