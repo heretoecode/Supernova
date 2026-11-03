@@ -3,6 +3,7 @@ package com.archos.mediaprovider.video;
 import android.app.Application;
 import android.content.*;
 import android.database.Cursor;
+import android.net.Uri;
 import com.archos.mediaprovider.DbHolder;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ public class PreviewMatchStateTest {
             tags.put(ScraperStore.Movie.NAME, "Original");
             assertNotNull(provider.insert(ScraperStore.Movie.URI.BASE, tags));
             tags.put(ScraperStore.Movie.NAME, "Corrected");
-            android.net.Uri corrected = provider.insert(ScraperStore.Movie.URI.BASE, tags);
+            Uri corrected = provider.insert(ScraperStore.Movie.URI.BASE, tags);
             assertNotNull(corrected);
             assertAssociation(mediaId, ContentUris.parseId(corrected), ScraperStore.SCRAPER_TYPE_MOVIE);
         }
@@ -70,7 +71,7 @@ public class PreviewMatchStateTest {
             tags.put(ScraperStore.Episode.VIDEO_ID, mediaId);
             tags.put(ScraperStore.Episode.SHOW, oldId);
             tags.put(ScraperStore.Episode.NAME, "Original episode");
-            android.net.Uri corrected = provider.insert(ScraperStore.Episode.URI.BASE, tags);
+            Uri corrected = provider.insert(ScraperStore.Episode.URI.BASE, tags);
             assertNotNull(corrected);
             assertAssociation(mediaId, ContentUris.parseId(corrected), ScraperStore.SCRAPER_TYPE_SHOW);
         }
@@ -79,7 +80,7 @@ public class PreviewMatchStateTest {
             tags.put(ScraperStore.Episode.VIDEO_ID, mediaId);
             tags.put(ScraperStore.Episode.SHOW, newId);
             tags.put(ScraperStore.Episode.NAME, "Corrected episode");
-            android.net.Uri corrected = provider.insert(ScraperStore.Episode.URI.BASE, tags);
+            Uri corrected = provider.insert(ScraperStore.Episode.URI.BASE, tags);
             assertNotNull(corrected);
             assertAssociation(mediaId, ContentUris.parseId(corrected), ScraperStore.SCRAPER_TYPE_SHOW);
         }
