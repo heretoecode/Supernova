@@ -24,7 +24,9 @@ public final class SidePanelKit {
     /** Edit Page is a solid panel (approved design); the page behind must not show through. */
     public static final int SOLID_TOP = 0xff1a1f5c, SOLID_BOTTOM = 0xff141848;
 
-    public interface Stepper { void step(int direction); }
+    public interface Stepper {
+        void step(int direction);
+    }
 
     public final Context context;
     private final float k;
@@ -35,7 +37,9 @@ public final class SidePanelKit {
         k = context.getResources().getDisplayMetrics().widthPixels / 1920f;
     }
 
-    public int s(float px) { return Math.max(1, Math.round(px * k)); }
+    public int s(float px) {
+        return Math.max(1, Math.round(px * k));
+    }
 
     public TextView text(String label, float px, int colour, boolean bold) {
         TextView v = new TextView(context);
@@ -43,7 +47,8 @@ public final class SidePanelKit {
         v.setTextColor(colour);
         v.setIncludeFontPadding(false);
         v.setTextSize(TypedValue.COMPLEX_UNIT_PX, px * k * context.getResources().getConfiguration().fontScale);
-        if (bold) v.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
+        if (bold)
+            v.setTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD));
         return v;
     }
 
@@ -60,12 +65,14 @@ public final class SidePanelKit {
 
     /** The shared glass (approved 2 Nov 2026: one 97% navy material for every panel). */
     public Drawable panelSurface(int glow) {
-        return new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26), Math.max(1, s(2)), 0x66000000, glow);
+        return new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26),
+                           Math.max(1, s(2)), 0x66000000, glow);
     }
 
     /** The shared row focus: white outline, no fill change. */
-    public Drawable rowFocus() { return SupernovaStyle.rowFocus(context); }
-
+    public Drawable rowFocus() {
+        return SupernovaStyle.rowFocus(context);
+    }
 
     public void section(LinearLayout body, String title, boolean first) {
         TextView label = text(title, 15, HEADING, true);
@@ -85,7 +92,9 @@ public final class SidePanelKit {
     /** Removes a separator left after the last row. */
     public static void dropTrailingRule(LinearLayout body) {
         int last = body.getChildCount() - 1;
-        if (last >= 0 && !(body.getChildAt(last) instanceof LinearLayout) && !(body.getChildAt(last) instanceof TextView)) body.removeViewAt(last);
+        if (last >= 0 && !(body.getChildAt(last) instanceof LinearLayout) &&
+            !(body.getChildAt(last) instanceof TextView))
+            body.removeViewAt(last);
     }
 
     /**
@@ -123,16 +132,20 @@ public final class SidePanelKit {
     /** (Re)binds the remote handling of a row: optional stepper on Left/Right, Up at the top leaves the list. */
     public void attach(LinearLayout body, View row, Stepper stepper) {
         row.setOnKeyListener((v, key, event) -> {
-            if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return false;
             if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                if (stepper != null && row.isEnabled()) stepper.step(key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
+                if (stepper != null && row.isEnabled())
+                    stepper.step(key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View next = FocusFinder.getInstance().findNextFocus(body, row, key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
+                View next = FocusFinder.getInstance().findNextFocus(
+                    body, row, key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
                 if (next == null || next == row) {
                     Object top = row.getTag(com.archos.mediacenter.video.R.id.preview_row_top);
-                    if (key == KeyEvent.KEYCODE_DPAD_UP && top instanceof Runnable) ((Runnable) top).run();
+                    if (key == KeyEvent.KEYCODE_DPAD_UP && top instanceof Runnable)
+                        ((Runnable)top).run();
                     return true;
                 }
             }
@@ -159,7 +172,8 @@ public final class SidePanelKit {
         value.setMaxWidth(s(280));
         value.setTag("value");
         LinearLayout.LayoutParams v = new LinearLayout.LayoutParams(-2, -2);
-        v.leftMargin = s(18); v.rightMargin = s(18);
+        v.leftMargin = s(18);
+        v.rightMargin = s(18);
         box.addView(value, v);
         box.addView(chevron("›"));
         row.addView(box);
@@ -200,17 +214,27 @@ public final class SidePanelKit {
     }
 
     public static void select(TextView[] texts, int selected) {
-        for (int i = 0; i < texts.length; i++) texts[i].setTextColor(i == selected ? VALUE : Color.WHITE);
+        for (int i = 0; i < texts.length; i++)
+            texts[i].setTextColor(i == selected ? VALUE : Color.WHITE);
     }
 
     /** Rounded fill (vertical gradient) with a border and an optional outer glow, inset by the glow. */
     public static final class Surface extends Drawable {
         private final int top, bottom, border, radius, stroke, glow, blur;
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
         public Surface(int top, int bottom, int border, int radius, int stroke, int glow, int blur) {
-            this.top = top; this.bottom = bottom; this.border = border; this.radius = radius; this.stroke = stroke; this.glow = glow; this.blur = blur;
+            this.top = top;
+            this.bottom = bottom;
+            this.border = border;
+            this.radius = radius;
+            this.stroke = stroke;
+            this.glow = glow;
+            this.blur = blur;
         }
-        @Override public void draw(Canvas canvas) {
+
+        @Override
+        public void draw(Canvas canvas) {
             RectF r = new RectF(getBounds());
             r.inset(blur + stroke / 2f, blur + stroke / 2f);
             if (glow != 0 && blur > 0) {
@@ -223,8 +247,13 @@ public final class SidePanelKit {
                 paint.clearShadowLayer();
             }
             paint.setStyle(Paint.Style.FILL);
-            if (top == bottom) { paint.setShader(null); paint.setColor(top); }
-            else { paint.setColor(Color.WHITE); paint.setShader(new LinearGradient(0, r.top, 0, r.bottom, top, bottom, Shader.TileMode.CLAMP)); }
+            if (top == bottom) {
+                paint.setShader(null);
+                paint.setColor(top);
+            } else {
+                paint.setColor(Color.WHITE);
+                paint.setShader(new LinearGradient(0, r.top, 0, r.bottom, top, bottom, Shader.TileMode.CLAMP));
+            }
             canvas.drawRoundRect(r, radius, radius, paint);
             paint.setShader(null);
             if (border != 0) {
@@ -234,17 +263,42 @@ public final class SidePanelKit {
                 canvas.drawRoundRect(r, radius, radius, paint);
             }
         }
-        @Override public void setAlpha(int a) { paint.setAlpha(a); invalidateSelf(); }
-        @Override public void setColorFilter(ColorFilter f) { paint.setColorFilter(f); invalidateSelf(); }
-        @Override public int getOpacity() { return PixelFormat.TRANSLUCENT; }
+
+        @Override
+        public void setAlpha(int a) {
+            paint.setAlpha(a);
+            invalidateSelf();
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter f) {
+            paint.setColorFilter(f);
+            invalidateSelf();
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
     }
 
     /** Wraps its content up to a maximum height, then scrolls. */
     public static final class FittedScroll extends ScrollView {
         private int max = Integer.MAX_VALUE;
-        public FittedScroll(Context c) { super(c); setSmoothScrollingEnabled(false); setFocusable(false); }
-        public void setMax(int px) { max = Math.max(1, px); requestLayout(); }
-        @Override protected void onMeasure(int widthSpec, int heightSpec) {
+
+        public FittedScroll(Context c) {
+            super(c);
+            setSmoothScrollingEnabled(false);
+            setFocusable(false);
+        }
+
+        public void setMax(int px) {
+            max = Math.max(1, px);
+            requestLayout();
+        }
+
+        @Override
+        protected void onMeasure(int widthSpec, int heightSpec) {
             int mode = MeasureSpec.getMode(heightSpec), size = MeasureSpec.getSize(heightSpec);
             int limit = mode == MeasureSpec.UNSPECIFIED ? max : Math.min(max, size);
             super.onMeasure(widthSpec, MeasureSpec.makeMeasureSpec(limit, MeasureSpec.AT_MOST));
