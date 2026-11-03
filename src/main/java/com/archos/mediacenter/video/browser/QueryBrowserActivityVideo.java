@@ -26,6 +26,7 @@ import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.BrowserByQuer
 import com.archos.mediacenter.video.info.VideoInfoActivity;
 
 
+/** Hosts the video browser for a search query. */
 public class QueryBrowserActivityVideo extends AppCompatActivity {
     private final static String TAG = "QueryBrowserActivityVideo";
     
