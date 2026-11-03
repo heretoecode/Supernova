@@ -22,16 +22,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.SystemClock;
-import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediascraper.GenreUtils;
-import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 
