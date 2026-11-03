@@ -56,6 +56,7 @@ import com.archos.environment.ArchosUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Hosts the TV home screen and handles navigation to settings. */
 public class MainActivityLeanback extends LeanbackActivity {
 
     private static final Logger log = LoggerFactory.getLogger(MainActivityLeanback.class);
