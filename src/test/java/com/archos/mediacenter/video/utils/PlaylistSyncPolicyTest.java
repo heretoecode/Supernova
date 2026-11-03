@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ProviderInfo;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediacenter.utils.trakt.*;
 import java.util.*;
@@ -29,7 +30,7 @@ public class PlaylistSyncPolicyTest {
         // Exercise real provider query code; avoid unrelated receiver/network lifecycle startup.
         provider = spy(new VideoProvider());
         doReturn(true).when(provider).onCreate();
-        android.content.pm.ProviderInfo info = new android.content.pm.ProviderInfo();
+        ProviderInfo info = new ProviderInfo();
         info.authority = VideoStore.AUTHORITY;
         provider.attachInfo(app, info);
         // VideoDb's process singleton retains its first Application across Robolectric test resets.
