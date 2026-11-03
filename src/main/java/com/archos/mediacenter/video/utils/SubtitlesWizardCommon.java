@@ -286,7 +286,7 @@ public class SubtitlesWizardCommon {
                 if(ProviderDiscoveryGate.protects(getActivity(),oldUri)||ProviderDiscoveryGate.protects(getActivity(),newUri))return false;
                 fileRenamed = oldFile.rename(newName);
             }
-            if (log.isDebugEnabled()) log.debug("onItemClick : selected file renamed as {}", newFilePath);
+            if (fileRenamed && log.isDebugEnabled()) log.debug("onItemClick : selected file renamed as {}", newFilePath);
         }
         catch (Exception e) {
             if (log.isDebugEnabled()) log.debug("renameFile : can not rename file as {}", newFilePath);
@@ -336,6 +336,49 @@ public class SubtitlesWizardCommon {
         }
 
         return fileRenamed;
+    }
+
+    /** Associates a subtitle by renaming it, or by copying it to the app cache when renaming fails. */
+    @SuppressWarnings("deprecation")
+    public boolean associateFile(String path, int index) {
+        Uri oldUri = Uri.parse(path);
+        // Keep Supernova's managed-provider protection on both association paths.
+        if (ProviderDiscoveryGate.protects(getActivity(), oldUri))
+            return false;
+        if (renameFile(path, index))
+            return true;
+        String extension = FileUtils.getExtension(path);
+        String videoName = FileUtils.getFileNameWithoutExtension(mVideoUri);
+        File directory = MediaUtils.getSubsDir(getActivity());
+        if (extension == null || videoName == null || directory == null)
+            return false;
+        File target = new File(directory, videoName + "." + extension);
+        Uri newUri = Uri.fromFile(target);
+        boolean copied;
+        try {
+            synchronized (ProviderDiscoveryGate.LOCK) {
+                if (ProviderDiscoveryGate.protects(getActivity(), oldUri)
+                    || ProviderDiscoveryGate.protects(getActivity(), newUri) || target.exists())
+                    return false;
+                FileEditor editor = FileEditorFactory.getFileEditorForUrl(oldUri, getActivity());
+                copied = editor.copyFileTo(newUri, getActivity());
+            }
+        } catch (Exception failure) {
+            log.debug("associateFile : cache copy failed");
+            return false;
+        }
+        if (!copied)
+            return false;
+        if (FileUtils.isLocal(mVideoUri)) {
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, mVideoUri);
+            intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
+            sendBroadcast(intent);
+        }
+        mCurrentFiles.add(newUri.toString());
+        mCurrentFilesCount++;
+        mAvailableFiles.remove(index);
+        mAvailableFilesCount--;
+        return true;
     }
 
     @SuppressWarnings("deprecation") // ACTION_MEDIA_SCANNER_SCAN_FILE used as internal IPC (setPackage targets Nova's own receiver only)
