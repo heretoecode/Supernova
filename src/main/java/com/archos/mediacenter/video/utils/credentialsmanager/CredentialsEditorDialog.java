@@ -32,6 +32,7 @@ import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 
+/** Displays a credentials editor and reports credential modifications. */
 public class CredentialsEditorDialog extends DialogFragment {
 
     private AlertDialog dialog;
