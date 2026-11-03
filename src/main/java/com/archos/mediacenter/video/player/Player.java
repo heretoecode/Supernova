@@ -17,6 +17,8 @@ package com.archos.mediacenter.video.player;
 
 import android.annotation.SuppressLint;
 
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticState;
 import static com.archos.mediacenter.video.utils.CodecDiscovery.displaySupportsDoVi;
 import static com.archos.mediacenter.video.utils.CodecDiscovery.displaySupportsHdr10;
 import static com.archos.mediacenter.video.utils.CodecDiscovery.displaySupportsHdr10Plus;
@@ -56,6 +58,7 @@ import com.archos.mediacenter.video.utils.SubtitleFontsFolderSync;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.medialib.IMediaPlayer;
+import com.archos.medialib.LibAvos;
 import com.archos.medialib.MediaFactory;
 import com.archos.medialib.MediaMetadata;
 import com.archos.mediaprovider.ArchosMediaCommon;
@@ -119,7 +122,7 @@ public class Player implements IPlayerControl,
     // of STATE_PAUSED.
     private int mCurrentState = STATE_IDLE;
     private int mTargetState  = STATE_IDLE;
-    private final com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticState playbackDiagnostics=new com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticState();
+    private final PlaybackDiagnosticState playbackDiagnostics=new PlaybackDiagnosticState();
 
     private static final int SCREEN_ON_FLAGS = (
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -424,7 +427,7 @@ public class Player implements IPlayerControl,
         mWindow = window;
         mAudioManager = (AudioManager) mContext.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mEffectRenderer = new VideoEffectRenderer(mContext, VideoEffect.getDefaultType());
-        com.archos.medialib.LibAvos.init(mContext); // Join asynchronous library startup before JNI.
+        LibAvos.init(mContext); // Join asynchronous library startup before JNI.
         mSubtitleEngine = new SubtitleEngine(); // NEW: Create the JNI wrapper
         setSurfaceController(surfaceController);
     }
@@ -590,7 +593,7 @@ public class Player implements IPlayerControl,
     }
 
     private void closeCurrentPlayer() {
-        if(playbackDiagnostics!=null)playbackDiagnostics.close(com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackOutcome.CANCELLED);
+        if(playbackDiagnostics!=null)playbackDiagnostics.close(Diagnostics.PlaybackOutcome.CANCELLED);
         outputEstablished=false;previewFrameRendered=false;
         ++mOpenGeneration;
         mHandler.removeCallbacks(mPreparedAsync);
@@ -694,7 +697,7 @@ public class Player implements IPlayerControl,
         // called start() previously
         log.info("openVideo: " + mUri);
         closeCurrentPlayer();
-        final com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackAttempt diagnosticOpen=playbackDiagnostics==null?null:playbackDiagnostics.opening();
+        final Diagnostics.PlaybackAttempt diagnosticOpen=playbackDiagnostics==null?null:playbackDiagnostics.opening();
         if (mStopPosition != -1) {
             mResumeCtx.setSeek(mStopPosition);
         }
@@ -1010,7 +1013,7 @@ public class Player implements IPlayerControl,
     
     public void seekTo(int msec) {
         mStopPosition = msec;
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("seek","target_ms",msec,"state",mCurrentState);
+        Diagnostics.event("seek","target_ms",msec,"state",mCurrentState);
         if (log.isDebugEnabled()) log.debug("seekTo: {} ms", msec);
         if (isInPlaybackState()) {
             if(playbackDiagnostics!=null)playbackDiagnostics.seeking(msec,getType());
@@ -1102,7 +1105,7 @@ public class Player implements IPlayerControl,
 
     public boolean setSubtitleTrack(int stream) {
         mResumeCtx.setSubtitleTrack(stream);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("subtitle_selection","track",stream,"state",mCurrentState);
+        Diagnostics.event("subtitle_selection","track",stream,"state",mCurrentState);
         if (log.isDebugEnabled()) log.debug("setSubtitleTrack: select stream {}", stream);
         if (isInPlaybackState()) {
             return mMediaPlayer.setSubtitleTrack(stream);
@@ -1180,7 +1183,7 @@ public class Player implements IPlayerControl,
 
     public boolean setAudioTrack(int stream) {
         mResumeCtx.setAudioTrack(stream);
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("audio_selection","track",stream,"state",mCurrentState);
+        Diagnostics.event("audio_selection","track",stream,"state",mCurrentState);
         if (log.isDebugEnabled()) log.debug("setAudioTrack: select stream {}", stream);
         if (isInPlaybackState()) {
             return mMediaPlayer.setAudioTrack(stream);
@@ -1262,7 +1265,7 @@ public class Player implements IPlayerControl,
     public void onPrepared(IMediaPlayer mp) {
         if (mPlaybackEnding || mp != mMediaPlayer) return;
         if(playbackDiagnostics!=null)playbackDiagnostics.prepared(mp,getType());
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_prepared","backend",getType());
+        Diagnostics.event("player_prepared","backend",getType());
         previewFrameRendered=false;outputEstablished=false;
         mCurrentState = STATE_PREPARED;
         if (mSurfaceController != null)
@@ -1396,7 +1399,7 @@ public class Player implements IPlayerControl,
 
     public void onCompletion(IMediaPlayer mp) {
         if (mp != mMediaPlayer) return;
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_completed","state",mCurrentState,"position_ms",getCurrentPosition(),"duration_ms",getDuration());
+        Diagnostics.event("playback_completed","state",mCurrentState,"position_ms",getCurrentPosition(),"duration_ms",getDuration());
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
         if (mPlayerListener != null) {
@@ -1504,7 +1507,7 @@ public class Player implements IPlayerControl,
         if (mp != mMediaPlayer) return true;
         if(playbackDiagnostics!=null)playbackDiagnostics.failed(mp);
         // Error messages can contain network credentials; record numeric backend codes only.
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_error","code",errorCode,"qualifier",errorQualCode,"state",mCurrentState);
+        Diagnostics.event("player_error","code",errorCode,"qualifier",errorQualCode,"state",mCurrentState);
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
         // The service's error callback runs after stopPlayback destroys native position.
         // Capture the live point first; the existing service error handler persists it.
@@ -1531,7 +1534,7 @@ public class Player implements IPlayerControl,
 
     public void onBufferingUpdate(IMediaPlayer mp, int percent) {
         if (mp != mMediaPlayer) return;
-        if(percent/10!=mBufferPosition/100)com.archos.mediacenter.video.diagnostics.Diagnostics.event("buffering","percent",percent,"state",mCurrentState);
+        if(percent/10!=mBufferPosition/100)Diagnostics.event("buffering","percent",percent,"state",mCurrentState);
         mBufferPosition = percent * 10;
         if (mPlayerListener != null) {
             mPlayerListener.onBufferingUpdate(percent);
