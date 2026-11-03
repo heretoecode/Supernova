@@ -32,6 +32,7 @@ public class SerialExecutor implements Executor {
     }
     public synchronized void execute(final Runnable r) {
         mTasks.offer(new Runnable() {
+            @Override
             public void run() {
                 try {
                     r.run();
