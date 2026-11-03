@@ -15,6 +15,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks put.io sync scheduling respects disabled integration, cancellation and operation correlation. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioSyncSchedulerTest {
     private Application app;
