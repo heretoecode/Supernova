@@ -15,6 +15,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks portable preferred video versions remap safely and preserve unrelated manual choices. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortablePreferredVersionsTest {
