@@ -89,6 +89,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/** Lists folder contents and connects file listings to video browsing actions. */
 abstract public class BrowserByFolder extends BrowserByVideoObjects implements
         LoaderManager.LoaderCallbacks<Cursor>, ListingEngine.Listener, VideoPresenter.ExtendedClickListener {
 
