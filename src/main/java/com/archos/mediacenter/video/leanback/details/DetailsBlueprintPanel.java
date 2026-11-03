@@ -1,6 +1,15 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.content.Context;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.GradientDrawable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
+import android.util.TypedValue;
+import androidx.core.widget.TextViewCompat;
 import com.archos.mediacenter.video.metadata.OmdbSupplement;
 import android.graphics.Typeface;
 import android.view.*;
@@ -107,9 +116,9 @@ final class DetailsBlueprintPanel extends LinearLayout {
         copy.setTag("details.full.synopsis");
         copy.setGravity(Gravity.CENTER);
         copy.setLineSpacing(dp(3), 1);
-        copy.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-            copy, DetailsDimensions.sp(c, 11), DetailsDimensions.sp(c, 14), 1, android.util.TypedValue.COMPLEX_UNIT_SP);
+        copy.setEllipsize(TextUtils.TruncateAt.END);
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            copy, DetailsDimensions.sp(c, 11), DetailsDimensions.sp(c, 14), 1, TypedValue.COMPLEX_UNIT_SP);
         description.addView(copy, new LayoutParams(-1, 0, 1));
         synopsisView = copy;
         copy.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
@@ -138,7 +147,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
                 TextView score = label("Indexed rating " + existingReception.get("Indexed Rating"), 16, true);
                 score.setTag("details.reception.primary");
                 score.setSingleLine(true);
-                score.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                score.setEllipsize(TextUtils.TruncateAt.END);
                 reception.addView(score, new LayoutParams(-1, -2));
             }
             if (!hasReception) {
@@ -220,11 +229,11 @@ final class DetailsBlueprintPanel extends LinearLayout {
         tile.setTypeface(null, Typeface.BOLD);
         tile.setTextColor(0xff0d253f);
         tile.setGravity(Gravity.CENTER);
-        tile.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dp(9));
+        tile.setTextSize(TypedValue.COMPLEX_UNIT_PX, dp(9));
         tile.setIncludeFontPadding(false);
         tile.setSingleLine(true);
-        android.graphics.drawable.GradientDrawable background = new android.graphics.drawable.GradientDrawable(
-            android.graphics.drawable.GradientDrawable.Orientation.LEFT_RIGHT, new int[] {
+        GradientDrawable background = new GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT, new int[] {
                 0xff90cea1, 0xff01b4e4
             });
         background.setCornerRadius(dp(2));
@@ -259,12 +268,12 @@ final class DetailsBlueprintPanel extends LinearLayout {
         logo.setTag("details.reception.logo." + row);
         if (row == 0) {
             logo.setImageResource(com.archos.mediacenter.video.R.drawable.imdb_logo);
-            android.graphics.drawable.GradientDrawable tile = new android.graphics.drawable.GradientDrawable();
+            GradientDrawable tile = new GradientDrawable();
             tile.setColor(0xffeead3d);
             tile.setCornerRadius(dp(2));
             logo.setBackground(tile);
             logo.setPadding(dp(1), dp(1), dp(1), dp(1));
-            logo.setColorFilter(new android.graphics.ColorMatrixColorFilter(new android.graphics.ColorMatrix(
+            logo.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(
                 new float[] {
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, 1, 0
                 })));
@@ -295,7 +304,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
             summary.setTag("details.reception.awards.summary");
             summary.setGravity(Gravity.CENTER_VERTICAL);
             summary.setMaxLines(2);
-            summary.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            summary.setEllipsize(TextUtils.TruncateAt.END);
             auto(summary, 6, 12);
             box.addView(summary, new LayoutParams(-1, 0, 1));
             if (!details.isEmpty()) {
@@ -304,7 +313,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
                 body.setLineSpacing(0, 1);
                 body.setTextColor(0xffc7c4ce);
                 body.setMaxLines(getResources().getConfiguration().fontScale > 1.2f ? 3 : 2);
-                body.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                body.setEllipsize(TextUtils.TruncateAt.END);
                 auto(body, 6, 11);
                 box.addView(
                     body, new LayoutParams(-1, 0, getResources().getConfiguration().fontScale > 1.2f ? 2.5f : 2f));
@@ -316,15 +325,15 @@ final class DetailsBlueprintPanel extends LinearLayout {
         score.setGravity(Gravity.CENTER_VERTICAL);
         score.setSingleLine(true);
         score.setHorizontallyScrolling(false);
-        score.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        score.setEllipsize(TextUtils.TruncateAt.END);
         auto(score, 8, 16);
         int unit = supplied.indexOf('/');
         if (unit < 0 && supplied.endsWith("%"))
             unit = supplied.length() - 1;
         if (unit >= 0) {
-            android.text.SpannableString styled = new android.text.SpannableString(supplied);
-            styled.setSpan(new android.text.style.RelativeSizeSpan(.85f), unit, supplied.length(),
-                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            SpannableString styled = new SpannableString(supplied);
+            styled.setSpan(new RelativeSizeSpan(.85f), unit, supplied.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             score.setText(styled);
         }
         box.addView(score, new LayoutParams(-1, 0, 1f));
@@ -347,16 +356,16 @@ final class DetailsBlueprintPanel extends LinearLayout {
         count.setGravity(Gravity.CENTER_VERTICAL);
         count.setSingleLine(true);
         count.setHorizontallyScrolling(false);
-        count.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        count.setEllipsize(TextUtils.TruncateAt.END);
         auto(count, 6, 11);
         box.addView(count, new LayoutParams(-1, 0, .7f));
         return box;
     }
 
     private void auto(TextView view, int min, int max) {
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(view,
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(view,
             DetailsDimensions.sp(getContext(), min), DetailsDimensions.sp(getContext(), max), 1,
-            android.util.TypedValue.COMPLEX_UNIT_SP);
+            TypedValue.COMPLEX_UNIT_SP);
     }
 
     private void attach(LinearLayout parent, View content) {
@@ -387,7 +396,7 @@ final class DetailsBlueprintPanel extends LinearLayout {
         row.addView(region, new LayoutParams(0, -1, weight));
         TextView heading = label(title, 15, true);
         heading.setSingleLine(true);
-        heading.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        heading.setEllipsize(TextUtils.TruncateAt.END);
         region.addView(heading, new LayoutParams(-1, dp(27)));
         return region;
     }
@@ -407,10 +416,10 @@ final class DetailsBlueprintPanel extends LinearLayout {
         TextView label = label(name, 10, false), data = label(value, 10, false);
         label.setTextColor(0xffb9c7d2);
         label.setSingleLine(true);
-        label.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        label.setEllipsize(TextUtils.TruncateAt.END);
         data.setSingleLine(true);
         data.setEllipsize(
-            name.equals("Path") ? android.text.TextUtils.TruncateAt.MIDDLE : android.text.TextUtils.TruncateAt.END);
+            name.equals("Path") ? TextUtils.TruncateAt.MIDDLE : TextUtils.TruncateAt.END);
         row.setContentDescription(name + ": " + value);
         row.addView(label, new LayoutParams(0, -2, .46f));
         LayoutParams valueSize = new LayoutParams(0, -2, .54f);
@@ -419,9 +428,9 @@ final class DetailsBlueprintPanel extends LinearLayout {
         for (TextView text : new TextView[] {
             label, data
         })
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(text,
+            TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(text,
                 DetailsDimensions.sp(getContext(), 8), DetailsDimensions.sp(getContext(), 10), 1,
-                android.util.TypedValue.COMPLEX_UNIT_SP);
+                TypedValue.COMPLEX_UNIT_SP);
         parent.addView(row, new LayoutParams(-1, 0, 1));
     }
 
