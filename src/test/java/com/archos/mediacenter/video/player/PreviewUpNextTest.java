@@ -7,9 +7,15 @@ import android.widget.TextView;
 import com.archos.mediacenter.utils.introdb.IntroSegments;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
+import org.robolectric.util.ReflectionHelpers;
 
-@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
-@org.robolectric.annotation.Config(application = Application.class, sdk = 28)
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 28)
 public class PreviewUpNextTest {
     @Test
     public void creditsAndUnknownMarkersCannotAdvancePastUnseenPostCredits() {
@@ -21,8 +27,8 @@ public class PreviewUpNextTest {
 
     @Test
     public void remoteSelectionConsumesReleaseWithoutPausingPlayback() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
-            org.robolectric.Robolectric.buildActivity(Activity.class).setup();
+        ActivityController<Activity> host =
+            Robolectric.buildActivity(Activity.class).setup();
         PreviewUpNext prompt = new PreviewUpNext(host.get());
         try {
             LinearLayout root = new LinearLayout(host.get());
@@ -43,12 +49,12 @@ public class PreviewUpNextTest {
                 b.setFocusableInTouchMode(true);
                 b.setOnClickListener(v -> {
                     chosen[0]++;
-                    org.robolectric.util.ReflectionHelpers.setField(prompt, "panel", null);
+                    ReflectionHelpers.setField(prompt, "panel", null);
                 });
                 actions.addView(b);
             }
             video.requestFocus();
-            org.robolectric.util.ReflectionHelpers.setField(prompt, "panel", panel);
+            ReflectionHelpers.setField(prompt, "panel", panel);
             for (int key : new int[] {
                 KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_RIGHT,
                      KeyEvent.KEYCODE_DPAD_CENTER
