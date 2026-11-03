@@ -19,6 +19,7 @@ import android.os.Environment;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads videos that lack scraped metadata. */
 public class NonScrapedVideosLoader extends VideoLoader {
 
     private static final String SELECTION = VideoStore.Video.VideoColumns.SCRAPER_MOVIE_ID + " IS NULL AND " +
