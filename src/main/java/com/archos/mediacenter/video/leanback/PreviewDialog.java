@@ -158,9 +158,9 @@ public final class PreviewDialog {
  }
  public static Dialog confirmPageDelete(Context c,String title,String message,Runnable action){
   Dialog dialog=message(c,title,message,false,new String[]{"Cancel","Delete"},0,index->{if(index==1)action.run();});
-  TextView remove=dialog.findViewById(android.R.id.content).findViewWithTag("semantic:dialog.action.1");if(remove!=null)remove.setTextColor(0xffffa5a5);return dialog;
+  TextView remove=dialog.findViewById(android.R.id.content).findViewWithTag("semantic:dialog.action.1");if(remove!=null)remove.setTextColor(SupernovaStyle.destructiveContent());return dialog;
  }
- public static Dialog confirmDelete(Context c,String title,String message,Runnable action){android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(c).setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->action.run()).create();dialog.setOnShowListener(d->{styleNative(dialog);dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(0xffffa5a5);dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();});dialog.show();return dialog;}
+ public static Dialog confirmDelete(Context c,String title,String message,Runnable action){android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(c).setTitle(title).setMessage(message).setIcon(android.R.drawable.ic_dialog_alert).setNegativeButton("Cancel",null).setPositiveButton("Delete",(d,w)->action.run()).create();dialog.setOnShowListener(d->{styleNative(dialog);dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(SupernovaStyle.destructiveContent());dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).requestFocus();});dialog.show();return dialog;}
  /** Content-driven, centred information/welcome/confirmation variant. Choices retain their menu. */
  public static Dialog message(Context c,String title,String body,boolean welcome,String[] labels,int initial,IntConsumer action){
   Dialog dialog=create(c,"dialog");dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

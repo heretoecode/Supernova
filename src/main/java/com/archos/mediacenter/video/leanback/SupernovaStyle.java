@@ -31,6 +31,8 @@ public final class SupernovaStyle {
     public static final int BUTTON_REST = 0xB8000000;
     /** Resting surface for buttons inside a panel and for tiles: the panel's darker navy. */
     public static final int PANEL_REST = 0xFF141848;
+    public static final int DESTRUCTIVE = 0xFFFFA5A5;
+    public static final int DESTRUCTIVE_ON_FOCUS = 0xFFB3261E;
     /** Faint fill marking the chosen row in a list whose focus travels separately. */
     public static final int ROW_SELECTED = 0x26FFFFFF;
     public static final int FOCUS_FILL = 0xFFF4F6FB;
@@ -92,6 +94,13 @@ public final class SupernovaStyle {
                 new int[]{FOCUS_TEXT, FOCUS_TEXT, 0x66FFFFFF, TEXT});
     }
 
+    /** Destructive action text (e.g. Delete): soft red at rest, deep red on the white focus box. */
+    public static ColorStateList destructiveContent() {
+        return new ColorStateList(
+                new int[][]{{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},
+                new int[]{DESTRUCTIVE_ON_FOCUS, DESTRUCTIVE_ON_FOCUS, DESTRUCTIVE});
+    }
+
     /** Colour for a label inside a button group: black while the group shows the focus box (activated). */
     public static ColorStateList groupLabelContent() {
         return new ColorStateList(new int[][]{{android.R.attr.state_activated}, {}}, new int[]{FOCUS_TEXT, TEXT});
@@ -106,6 +115,9 @@ public final class SupernovaStyle {
         @Override protected boolean onStateChange(int[] state) {
             boolean changed = super.onStateChange(state);
             Callback owner = getCallback();
+            // Safety net for the global rule: a screen that later sets a flat text colour on a button would
+            // be white on white when focused, so the state-following colours are restored.
+            if (owner instanceof TextView) keepContentReadable((TextView) owner);
             if (owner instanceof android.view.ViewGroup) {
                 boolean boxed = false;
                 for (int s : state) if (s == android.R.attr.state_focused || s == android.R.attr.state_pressed) boxed = true;
@@ -114,12 +126,19 @@ public final class SupernovaStyle {
             return changed;
         }
 
+        private static void keepContentReadable(TextView text) {
+            if (text.getTextColors().isStateful()) return;
+            boolean secondary = Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
+            text.setTextColor(secondary ? secondaryContent() : buttonContent());
+        }
+
         private static void refreshContent(android.view.ViewGroup group, boolean boxed) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (Boolean.TRUE.equals(child.getTag(com.archos.mediacenter.video.R.id.supernova_group_label))) {
                     child.setActivated(boxed);
                 } else if (child.isDuplicateParentStateEnabled() && !group.addStatesFromChildren()) {
+                    if (child instanceof TextView) keepContentReadable((TextView) child);
                     child.refreshDrawableState();
                     if (child instanceof android.view.ViewGroup) refreshContent((android.view.ViewGroup) child, boxed);
                 }

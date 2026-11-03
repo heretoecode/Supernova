@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 
 /** The approved button rule: content is black on the white focus box and white at rest — never white on white. */
 @RunWith(RobolectricTestRunner.class) @Config(sdk = 28, qualifiers = "w960dp-h540dp-land-xhdpi")
+@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
 public class SupernovaStyleTest {
     private ActivityController<Activity> host;
     private FrameLayout root;
@@ -82,6 +83,20 @@ public class SupernovaStyleTest {
         assertTrue(other.requestFocus());
         assertEquals(SupernovaStyle.TEXT, button.getCurrentTextColor());
         assertEquals(View.VISIBLE, button.getVisibility());
+    }
+
+    /** A screen that sets a flat colour after styling must still not end up white on white. */
+    @Test public void flatColourSetLaterIsMadeReadableAgain() {
+        TextView button = TvButton.create(host.get(), "Delete", () -> {}, false);
+        button.setTextColor(android.graphics.Color.WHITE);
+        TextView other = new TextView(host.get());
+        other.setFocusable(true);
+        root.addView(button);
+        root.addView(other, new FrameLayout.LayoutParams(10, 10, android.view.Gravity.END));
+        assertTrue(button.requestFocus());
+        assertEquals(SupernovaStyle.FOCUS_TEXT, button.getCurrentTextColor());
+        button.setTextColor(SupernovaStyle.destructiveContent());
+        assertEquals("destructive stays red but dark on the white box", SupernovaStyle.DESTRUCTIVE_ON_FOCUS, button.getCurrentTextColor());
     }
 
     /** Render of a grouped pop-up menu (the details More menu's shape) for comparison with the approved mock-up. */
