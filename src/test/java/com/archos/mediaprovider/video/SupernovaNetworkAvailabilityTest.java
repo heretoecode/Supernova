@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediaprovider.ArchosMediaCommon;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class SupernovaNetworkAvailabilityTest {
     @org.junit.Before
     public void confirmedSelectionFixture() {
-        androidx.preference.PreferenceManager
+        PreferenceManager
             .getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
