@@ -80,6 +80,7 @@ import com.archos.mediacenter.video.browser.loader.MoviesLoader;
 import com.archos.mediacenter.video.browser.loader.NonScrapedVideosCountLoader;
 import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediacenter.video.browser.loader.WatchingUpNextLoader;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.NetworkAutoRefresh;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
@@ -395,7 +396,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         mNavigation = null;
         mTopNavigation =
             PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
@@ -411,8 +412,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             mPreviewPages.setSnapshot(PreviewLibraryLoader.memoryCache());
         else {
             final PreviewPages target = mPreviewPages;
-            final android.content.Context app = requireContext().getApplicationContext();
-            java.util.concurrent.ExecutorService cache = java.util.concurrent.Executors.newSingleThreadExecutor();
+            final Context app = requireContext().getApplicationContext();
+            ExecutorService cache = Executors.newSingleThreadExecutor();
             cache.execute(() -> {
                 try {
                     PreviewLibraryLoader.Snapshot saved = PreviewLibraryLoader.readCache(app);
@@ -490,7 +491,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private void navigateTop(int tab) {
         if (tab == 4) {
             startActivity(new Intent(
-                requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                requireContext(), VideoSettingsActivity.class));
         } else if (tab == 5) {
             Intent search = new Intent(requireContext(), VideoSearchActivity.class);
             search.putExtra(VideoSearchActivity.EXTRA_SEARCH_MODE, VideoSearchActivity.SEARCH_MODE_ALL);
@@ -602,9 +603,9 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
             mPreviewHasResumed = false;
             viewingReceiverContext = requireContext().getApplicationContext();
-            androidx.core.content.ContextCompat.registerReceiver(viewingReceiverContext, viewingReceiver,
-                new android.content.IntentFilter(viewingReceiverContext.getPackageName() + ".VIEWING_STATE_CHANGED"),
-                androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
+            ContextCompat.registerReceiver(viewingReceiverContext, viewingReceiver,
+                new IntentFilter(viewingReceiverContext.getPackageName() + ".VIEWING_STATE_CHANGED"),
+                ContextCompat.RECEIVER_NOT_EXPORTED);
             return; // Preview uses one worker snapshot and the unmatched count, not hidden classic row queries.
         }
         // init the loaders after the rows are loaded to populate
@@ -703,7 +704,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         public void onReceive(Context context, Intent intent) {
             if (mPreviewPages == null || !isAdded())
                 return;
-            androidx.loader.content.Loader<Cursor> loader =
+            Loader<Cursor> loader =
                 LoaderManager.getInstance(MainFragment.this).getLoader(PreviewLibraryLoader.ID);
             if (loader != null)
                 loader.onContentChanged();
@@ -723,7 +724,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         super.onResume();
         consumePreviewNavigation();
         if (mPreviewPages != null) {
-            androidx.loader.content.Loader<Cursor> preview =
+            Loader<Cursor> preview =
                 LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
             if (preview == null)
                 LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
@@ -1242,7 +1243,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
         mFileBrowsingRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         if (mTopNavigation)
-            mFileBrowsingRowAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
+            mFileBrowsingRowAdapter.registerObserver(new ObjectAdapter.DataObserver() {
                 @Override
                 public void onChanged() {
                     refreshVisibleRows();
@@ -1299,7 +1300,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         updateDocumentariesVisibility(true);
         if (mTopNavigation) {
             mVisibleRows = new ArrayObjectAdapter(rowsPresenterSelector);
-            mRowsAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
+            mRowsAdapter.registerObserver(new ObjectAdapter.DataObserver() {
                 @Override
                 public void onChanged() {
                     refreshVisibleRows();
