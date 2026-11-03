@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.app.Application;
 import static org.junit.Assert.assertEquals;
 
 import android.net.Uri;
@@ -44,7 +45,7 @@ import java.util.Locale;
 @RunWith(RobolectricTestRunner.class)
 // Selection policy does not need production HDMI/bootstrap workers. Their
 // delayed receiver callbacks can outlive a Robolectric sandbox's instrumentation.
-@Config(application = android.app.Application.class, sdk = 33)
+@Config(application = Application.class, sdk = 33)
 public class AudioTrackSelectionPolicyTest {
 
     private Locale mOriginalLocale;
