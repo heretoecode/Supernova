@@ -3,13 +3,19 @@ package com.archos.mediacenter.video.utils;
 import android.app.Application;
 import android.content.*;
 import android.database.Cursor;
+import android.database.CursorWrapper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.OperationCanceledException;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.video.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -39,10 +45,10 @@ public class PreviewLibraryRestoreRaceTest {
     @After
     public void close() throws Exception {
         PreviewAsyncFixtures.drain();
-        java.util.concurrent.ExecutorService writer =
+        ExecutorService writer =
             ReflectionHelpers.getStaticField(PreviewLibraryLoader.class, "cacheWriter");
         writer.submit(() -> {
-        }).get(10, java.util.concurrent.TimeUnit.SECONDS);
+        }).get(10, TimeUnit.SECONDS);
         PreviewLibraryLoader.cached = null;
         source.close();
     }
@@ -59,7 +65,7 @@ public class PreviewLibraryRestoreRaceTest {
 
     private void checkRace(boolean rejectOneRecord) throws Exception {
         Application app = RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(app)
+        PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -77,7 +83,7 @@ public class PreviewLibraryRestoreRaceTest {
                 return null;
             }
             public Cursor query(Uri uri, String[] columns, String where, String[] args, String order) {
-                android.database.sqlite.SQLiteQueryBuilder query = new android.database.sqlite.SQLiteQueryBuilder();
+                SQLiteQueryBuilder query = new SQLiteQueryBuilder();
                 query.setTables(VideoOpenHelper.VIDEO_VIEW_NAME);
                 Cursor rows = query.query(holder.get(), columns, where, args, null, null, order);
                 rows.getCount();
@@ -107,7 +113,7 @@ public class PreviewLibraryRestoreRaceTest {
                         throw new IllegalStateException(failure);
                     }
                     if (rejectOneRecord)
-                        return new android.database.CursorWrapper(rows) {
+                        return new CursorWrapper(rows) {
                             @Override
                             public long getLong(int column) {
                                 if (getPosition() == 0
@@ -138,7 +144,7 @@ public class PreviewLibraryRestoreRaceTest {
                 rows.close();
             fail("Expected cancellation: warning=" + ReflectionHelpers.getField(stale, "loadWarning")
                 + ", cache=" + PreviewLibraryLoader.memoryCache());
-        } catch (android.os.OperationCanceledException expected) {
+        } catch (OperationCanceledException expected) {
         }
         assertNull(PreviewLibraryLoader.memoryCache());
         PreviewLibraryLoader fresh = new PreviewLibraryLoader(app);
