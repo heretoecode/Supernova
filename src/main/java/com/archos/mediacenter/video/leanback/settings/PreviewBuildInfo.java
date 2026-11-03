@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/** Adds build information, metadata attribution and release notes to Settings. */
 final class PreviewBuildInfo {
     static void install(PreferenceFragmentCompat fragment, PreferenceCategory about) {
         Preference build = about.findPreference("preferences_version");
