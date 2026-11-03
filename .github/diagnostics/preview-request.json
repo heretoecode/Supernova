@@ -1,15 +1,6 @@
 {
- "purpose": "0.154: Local Storage focus fixes (row before its buttons; drive refresh keeps the page)",
+ "purpose": "0.154 final candidate: full unit suite",
  "tests": [
-  "com.archos.mediacenter.video.leanback.Supernova154UiTest",
-  "com.archos.mediacenter.video.leanback.SupernovaStyleTest",
-  "com.archos.mediacenter.video.leanback.SupernovaStyleConformanceTest",
-  "com.archos.mediacenter.video.leanback.network.FtpPortInputTest",
-  "com.archos.mediacenter.video.leanback.filebrowsing.LocalStorageViewTest",
-  "com.archos.mediacenter.video.leanback.Network142Test",
-  "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
-  "com.archos.mediacenter.video.leanback.PreviewPagesTest",
-  "com.archos.mediacenter.video.leanback.Supernova138UiTest",
-  "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest"
+  "com.archos.*"
  ]
 }
