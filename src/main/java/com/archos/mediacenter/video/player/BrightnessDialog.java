@@ -119,6 +119,7 @@ public class BrightnessDialog extends AlertDialog implements SeekBar.OnSeekBarCh
      * This method is called each time the dialog is shown so it can be used to check
      * settings which may have been modified by the user outside the video player 
      */
+    @Override
     public void onStart() {
         super.onStart();
         // Update the current brightness value
@@ -151,6 +152,7 @@ public class BrightnessDialog extends AlertDialog implements SeekBar.OnSeekBarCh
         mContentResolver.registerContentObserver(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS), true, mBrightnessObserver);
     }
 
+    @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
         // This method is called in two cases:
         // - once at start : this is only to set the initial value of the slider, don't try to apply the brightness value.
@@ -162,10 +164,12 @@ public class BrightnessDialog extends AlertDialog implements SeekBar.OnSeekBarCh
         }
     }
 
+    @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         // NA
     }
 
+    @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // We need to write the current brightness value to the settings when it is modified 
         // so that another application like the notifications panel/settings view can stay
