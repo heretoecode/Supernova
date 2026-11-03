@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+/** Manages OpenSubtitles authentication, subtitle searches, downloads and account limits. */
 public class OpenSubtitlesApiHelper {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSubtitlesApiHelper.class);
