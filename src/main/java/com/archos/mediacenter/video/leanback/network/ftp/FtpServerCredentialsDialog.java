@@ -42,6 +42,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects FTP credentials and reports connect or cancel actions. */
 public class FtpServerCredentialsDialog extends DialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(FtpServerCredentialsDialog.class);
