@@ -41,6 +41,7 @@ public class BrowserMoviesByGenre2 extends BrowserMoviesBy {
 
 
 
+    @Override
     public void addSortOptionsSubmenus(ActionBarSubmenu submenu) {
         // MENU_ITEM_NAME is not a typo here, because the genre name will be copied to the name column
         submenu.addSubmenuItem(0, R.string.sort_by_genre_asc,  MENU_ITEM_SORT+MENU_ITEM_NAME+MENU_ITEM_ASC);
