@@ -83,4 +83,34 @@ public class SupernovaStyleTest {
         assertEquals(SupernovaStyle.TEXT, button.getCurrentTextColor());
         assertEquals(View.VISIBLE, button.getVisibility());
     }
+
+    /** Render of a grouped pop-up menu (the details More menu's shape) for comparison with the approved mock-up. */
+    @Test public void groupedMenuRender() throws Exception {
+        String[] labels = {"— Playback", "Restart Movie", "— Library", "Mark as Watched", "Add to Row", "Report Incorrect Match",
+                "Remove From Library", "— Files & Media", "Delete", "Subtitles and Artwork"};
+        android.app.Dialog dialog = PreviewDialog.choose(host.get(), "Actions", labels, 1, i -> {});
+        org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        View decor = dialog.getWindow().getDecorView();
+        assertNull("no menu title", PreviewPagesTest.findText(decor, "Actions"));
+        assertNotNull("group heading present", PreviewPagesTest.findText(decor, "Library"));
+        android.view.WindowManager.LayoutParams size = dialog.getWindow().getAttributes();
+        int width = size.width > 0 ? size.width : 600, height = size.height > 0 ? size.height : 700;
+        int screen = root.getResources().getDisplayMetrics().widthPixels;
+        assertTrue("menu fits its content (width " + width + ")", width <= Math.round(screen * SupernovaStyle.MENU_MAX_SCREEN_FRACTION));
+        decor.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+        decor.layout(0, 0, width, height);
+        android.graphics.Bitmap image = android.graphics.Bitmap.createBitmap(width + 120, height + 120, android.graphics.Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(image);
+        canvas.drawColor(0xFF2A3A55);
+        android.graphics.Paint stripe = new android.graphics.Paint();
+        stripe.setColor(0xFFE8C26A);
+        stripe.setTextSize(40);
+        for (int y = 60; y < height + 120; y += 70) canvas.drawText("Background text should not be readable", 10, y, stripe);
+        canvas.translate(60, 60);
+        decor.draw(canvas);
+        java.io.File out = new java.io.File("build/reports/preview-ui/grouped-menu.png");
+        out.getParentFile().mkdirs();
+        try (java.io.FileOutputStream stream = new java.io.FileOutputStream(out)) { image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, stream); }
+        dialog.dismiss();
+    }
 }

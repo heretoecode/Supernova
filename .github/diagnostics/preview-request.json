@@ -1,5 +1,5 @@
 {
- "purpose": "0.153 shared style, round 5 (diagnose details Resume colour)",
+ "purpose": "0.153 shared style, round 6 (grouped menu render)",
  "tests": [
   "com.archos.mediacenter.video.leanback.SupernovaStyleTest",
   "com.archos.mediacenter.video.leanback.SupernovaStyleConformanceTest",
