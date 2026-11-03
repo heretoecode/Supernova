@@ -32,6 +32,7 @@ public final class PreviewIcon extends Drawable {
         c.drawPath(q, p);
     }
 
+    @Override
     public void draw(Canvas c) {
         c.save();
         c.translate(getBounds().left, getBounds().top);
@@ -371,14 +372,17 @@ public final class PreviewIcon extends Drawable {
         c.restore();
     }
 
+    @Override
     public void setAlpha(int a) {
         p.setAlpha(a);
     }
 
+    @Override
     public void setColorFilter(ColorFilter f) {
         p.setColorFilter(f);
     }
 
+    @Override
     public int getOpacity() {
         return PixelFormat.TRANSLUCENT;
     }
