@@ -42,14 +42,6 @@
             android:data="https://www.boost.org/users/license.html" />
     </PreferenceScreen>
     <PreferenceScreen
-        android:summary="BSD"
-        android:title="libtorrent"
-        app:iconSpaceReserved="false">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="https://www.libtorrent.org/" />
-    </PreferenceScreen>
-    <PreferenceScreen
         android:summary="LGPL v2.1"
         android:title="jcifs-ng"
         app:iconSpaceReserved="false">
