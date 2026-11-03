@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.app.Application;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.squareup.picasso.Picasso;
 import java.util.*;
 import org.json.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
@@ -44,21 +47,21 @@ public class PreviewEpisodeChoiceTest {
     })
     public void providerMarkKeepsMonochromeShapeAndLocalRebindRestoresPlay() throws Exception {
         Activity activity =
-            org.robolectric.Robolectric.buildActivity(Activity.class).setup().get();
+            Robolectric.buildActivity(Activity.class).setup().get();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException unset) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(activity.getApplicationContext()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(activity.getApplicationContext()).build());
         }
         try {
-            com.archos.mediacenter.video.streaming.StreamingRepository.prefs(activity)
+            StreamingRepository.prefs(activity)
                 .edit()
                 .putBoolean("streaming_enabled", true)
                 .putString("streaming_country", "IE")
                 .putStringSet("streaming_providers_IE", Collections.singleton("8"))
                 .apply();
-            var exact = com.archos.mediacenter.video.streaming.StreamingRepository.parseAvailability(
+            var exact = StreamingRepository.parseAvailability(
                 new JSONObject(
                     "{results:{IE:{link:'https://www.themoviedb.org/tv/42/season/1/episode/2/watch',flatrate:[{provider_id:8,provider_name:'Provider'}]}}}"),
                 "IE");
@@ -91,21 +94,21 @@ public class PreviewEpisodeChoiceTest {
     })
     public void seasonOfferDoesNotMakeAnUnverifiedEpisodePlayable() throws Exception {
         Activity activity =
-            org.robolectric.Robolectric.buildActivity(Activity.class).setup().get();
+            Robolectric.buildActivity(Activity.class).setup().get();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException unset) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(activity.getApplicationContext()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(activity.getApplicationContext()).build());
         }
-        com.archos.mediacenter.video.streaming.StreamingRepository.prefs(activity)
+        StreamingRepository.prefs(activity)
             .edit()
             .putBoolean("streaming_enabled", true)
             .putString("streaming_country", "IE")
             .putStringSet("streaming_providers_IE", Collections.singleton("8"))
             .apply();
-        com.archos.mediacenter.video.streaming.StreamingRepository
-            .Availability season = com.archos.mediacenter.video.streaming.StreamingRepository.parseAvailability(
+        StreamingRepository
+            .Availability season = StreamingRepository.parseAvailability(
             new JSONObject(
                 "{results:{IE:{link:'https://www.themoviedb.org/tv/42/watch',flatrate:[{provider_id:8,provider_name:'Provider'}]}}}"),
             "IE");
