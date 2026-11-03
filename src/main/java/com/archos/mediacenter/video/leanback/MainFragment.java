@@ -134,7 +134,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MainFragment extends ExperimentalBrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
     private static final Logger log = LoggerFactory.getLogger(MainFragment.class);
 
     /**
@@ -236,7 +235,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private String mAnimesSortOrder;
     private String mTvShowSortOrder;
 
-    private boolean restartLastAddedLoader, restartLastPlayedLoader, restartMoviesLoader, restartTvshowsLoader, restartAnimesLoader, restartWatchingUpNextLoader;
+    private boolean restartLastAddedLoader, restartLastPlayedLoader, restartMoviesLoader, restartTvshowsLoader,
+        restartAnimesLoader, restartWatchingUpNextLoader;
 
     // Track the video ID at position 0 of last played row to detect when a new video was played
     private long mLastPlayedPosition0VideoId = -1;
@@ -272,10 +272,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         // reaches its debounce deadline.  In that case the scan-finished broadcast will schedule
         // the only refresh that reflects the completed import.
         if (isVideoImportRunning()) {
-            if (log.isDebugEnabled()) log.debug("scanner box refresh: import still active, waiting for scanner finished");
+            if (log.isDebugEnabled())
+                log.debug("scanner box refresh: import still active, waiting for scanner finished");
             return;
         }
-        if (log.isDebugEnabled()) log.debug("scanner box refresh: quiet period elapsed");
+        if (log.isDebugEnabled())
+            log.debug("scanner box refresh: quiet period elapsed");
         refreshAllBoxes();
     };
 
@@ -295,132 +297,230 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private TopNavigation mNavigation;
     private PreviewPages mPreviewPages;
     private int mActiveTab;
+
     private Presenter homeVideoPresenter(boolean wide) {
-        return mTopNavigation ? new PreviewCardPresenter(wide ? PreviewCardPresenter.Style.CONTINUE : PreviewCardPresenter.Style.POSTER)
+        return mTopNavigation
+            ? new PreviewCardPresenter(wide ? PreviewCardPresenter.Style.CONTINUE : PreviewCardPresenter.Style.POSTER)
             : new PosterImageCardPresenter(mActivity);
     }
+
     private Presenter homeCategoryPresenter() {
         return mTopNavigation ? new PreviewCardPresenter(PreviewCardPresenter.Style.CATEGORY) : new BoxItemPresenter();
     }
+
     private static int homeOrder(long id) {
-        if (id == ROW_ID_WATCHING_UP_NEXT) return 0;
-        if (id == ROW_ID_TVSHOW) return 1;
-        if (id == ROW_ID_LAST_ADDED) return 2;
-        if (id == ROW_ID_MOVIES) return 3;
+        if (id == ROW_ID_WATCHING_UP_NEXT)
+            return 0;
+        if (id == ROW_ID_TVSHOW)
+            return 1;
+        if (id == ROW_ID_LAST_ADDED)
+            return 2;
+        if (id == ROW_ID_MOVIES)
+            return 3;
         return 4;
     }
+
     private ArrayObjectAdapter mVisibleRows;
 
     static boolean belongsToTab(long row, int tab) {
         switch (tab) {
-            case 1: return row == ROW_ID_MOVIES || row == ROW_ID_ALL_MOVIES;
-            case 2: return row == ROW_ID_TVSHOW || row == ROW_ID_ALL_TVSHOWS || row == ROW_ID_ANIMES || row == ROW_ID_ALL_ANIMES;
-            case 3: return row == ROW_ID_FILES;
-            default: return row == ROW_ID_WATCHING_UP_NEXT || row == ROW_ID_LAST_ADDED || row == ROW_ID_LAST_PLAYED
-                || row == ROW_ID_MOVIES || row == ROW_ID_TVSHOW;
+            case 1:
+                return row == ROW_ID_MOVIES || row == ROW_ID_ALL_MOVIES;
+            case 2:
+                return row == ROW_ID_TVSHOW || row == ROW_ID_ALL_TVSHOWS || row == ROW_ID_ANIMES
+                    || row == ROW_ID_ALL_ANIMES;
+            case 3:
+                return row == ROW_ID_FILES;
+            default:
+                return row == ROW_ID_WATCHING_UP_NEXT || row == ROW_ID_LAST_ADDED || row == ROW_ID_LAST_PLAYED
+                    || row == ROW_ID_MOVIES || row == ROW_ID_TVSHOW;
         }
     }
 
     private void refreshVisibleRows() {
         if (mPreviewPages != null && mFileBrowsingRowAdapter != null) {
             java.util.List<Box> files = new java.util.ArrayList<>();
-            for (int i=0;i<mFileBrowsingRowAdapter.size();i++) files.add((Box)mFileBrowsingRowAdapter.get(i));
+            for (int i = 0; i < mFileBrowsingRowAdapter.size(); i++)
+                files.add((Box) mFileBrowsingRowAdapter.get(i));
             mPreviewPages.setFiles(files);
         }
-        if (!mTopNavigation || mVisibleRows == null) return;
+        if (!mTopNavigation || mVisibleRows == null)
+            return;
         int oldPosition = getSelectedPosition();
         Object selected = oldPosition >= 0 && oldPosition < mVisibleRows.size() ? mVisibleRows.get(oldPosition) : null;
         java.util.List<Object> rows = new java.util.ArrayList<>();
         for (int i = 0; i < mRowsAdapter.size(); i++) {
             Object row = mRowsAdapter.get(i);
-            if (row instanceof ListRow && belongsToTab(((ListRow)row).getId(), mActiveTab)) rows.add(row);
+            if (row instanceof ListRow && belongsToTab(((ListRow) row).getId(), mActiveTab))
+                rows.add(row);
         }
-        if (mActiveTab == 0) rows.sort((a, b) -> Integer.compare(homeOrder(((Row)a).getId()), homeOrder(((Row)b).getId())));
+        if (mActiveTab == 0)
+            rows.sort((a, b) -> Integer.compare(homeOrder(((Row) a).getId()), homeOrder(((Row) b).getId())));
         boolean unchanged = rows.size() == mVisibleRows.size();
-        for (int i = 0; unchanged && i < rows.size(); i++) unchanged = rows.get(i) == mVisibleRows.get(i);
-        if (unchanged) return; // Hidden-section updates must not reset the current row's focus.
+        for (int i = 0; unchanged && i < rows.size(); i++)
+            unchanged = rows.get(i) == mVisibleRows.get(i);
+        if (unchanged)
+            return; // Hidden-section updates must not reset the current row's focus.
         mVisibleRows.setItems(rows, null);
-        if (!rows.isEmpty()) super.setSelectedPosition(Math.max(0, rows.indexOf(selected)), false);
+        if (!rows.isEmpty())
+            super.setSelectedPosition(Math.max(0, rows.indexOf(selected)), false);
     }
 
     private int selectedSourcePosition() {
         int selected = getSelectedPosition();
         return mTopNavigation && mVisibleRows != null && selected >= 0 && selected < mVisibleRows.size()
-            ? mRowsAdapter.indexOf(mVisibleRows.get(selected)) : selected;
+            ? mRowsAdapter.indexOf(mVisibleRows.get(selected))
+            : selected;
     }
 
     private void selectSourcePosition(int position, boolean smooth, Presenter.ViewHolderTask task) {
         if (mTopNavigation) {
-            if (mVisibleRows == null || position < 0 || position >= mRowsAdapter.size()) return;
+            if (mVisibleRows == null || position < 0 || position >= mRowsAdapter.size())
+                return;
             position = mVisibleRows.indexOf(mRowsAdapter.get(position));
-            if (position < 0) return;
+            if (position < 0)
+                return;
         }
-        if (task == null) super.setSelectedPosition(position, smooth);
-        else super.setSelectedPosition(position, smooth, task);
+        if (task == null)
+            super.setSelectedPosition(position, smooth);
+        else
+            super.setSelectedPosition(position, smooth, task);
     }
-
 
     @Override
     public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup container, Bundle state) {
         mNavigation = null;
-        mTopNavigation = PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
+        mTopNavigation =
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
         View content = super.onCreateView(inflater, container, state);
-        if (!mTopNavigation) return content;
+        if (!mTopNavigation)
+            return content;
         android.widget.FrameLayout pages = new android.widget.FrameLayout(requireContext());
-        pages.addView(content); content.setVisibility(View.GONE);
-        mPreviewPages = new PreviewPages(requireContext(), (holder,item) -> new MainViewClickedListener(requireActivity()).onItemClicked(holder,item,null,null));
-        if(PreviewLibraryLoader.memoryCache()!=null)mPreviewPages.setSnapshot(PreviewLibraryLoader.memoryCache());
-        else {final PreviewPages target=mPreviewPages;final android.content.Context app=requireContext().getApplicationContext();java.util.concurrent.ExecutorService cache=java.util.concurrent.Executors.newSingleThreadExecutor();cache.execute(()->{try{PreviewLibraryLoader.Snapshot saved=PreviewLibraryLoader.readCache(app);if(saved!=null)target.post(()->{if(mPreviewPages==target&&!target.hasLoadedSnapshot())target.setSnapshot(saved);});}finally{cache.shutdown();}});}
-        pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1,-1));
-        mNavigation = new TopNavigation(requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
-        mPreviewPages.setArtworkListener(mNavigation::setArtwork);mPreviewPages.setScrollListener(mNavigation::setScrolled);
-        int requestedTab=requireActivity().getIntent().getIntExtra("preview_tab",mActiveTab);
-        if(requestedTab>=0&&requestedTab<4){mActiveTab=requestedTab;mPreviewPages.setTab(requestedTab);mNavigation.selectTab(requestedTab);mNavigation.setEmbeddedScanStatus(requestedTab==3);}
+        pages.addView(content);
+        content.setVisibility(View.GONE);
+        mPreviewPages = new PreviewPages(requireContext(),
+            (holder, item) -> new MainViewClickedListener(requireActivity()).onItemClicked(holder, item, null, null));
+        if (PreviewLibraryLoader.memoryCache() != null)
+            mPreviewPages.setSnapshot(PreviewLibraryLoader.memoryCache());
+        else {
+            final PreviewPages target = mPreviewPages;
+            final android.content.Context app = requireContext().getApplicationContext();
+            java.util.concurrent.ExecutorService cache = java.util.concurrent.Executors.newSingleThreadExecutor();
+            cache.execute(() -> {
+                try {
+                    PreviewLibraryLoader.Snapshot saved = PreviewLibraryLoader.readCache(app);
+                    if (saved != null)
+                        target.post(() -> {
+                            if (mPreviewPages == target && !target.hasLoadedSnapshot())
+                                target.setSnapshot(saved);
+                        });
+                } finally {
+                    cache.shutdown();
+                }
+            });
+        }
+        pages.addView(mPreviewPages, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        mNavigation = new TopNavigation(
+            requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
+        mPreviewPages.setArtworkListener(mNavigation::setArtwork);
+        mPreviewPages.setScrollListener(mNavigation::setScrolled);
+        int requestedTab = requireActivity().getIntent().getIntExtra("preview_tab", mActiveTab);
+        if (requestedTab >= 0 && requestedTab < 4) {
+            mActiveTab = requestedTab;
+            mPreviewPages.setTab(requestedTab);
+            mNavigation.selectTab(requestedTab);
+            mNavigation.setEmbeddedScanStatus(requestedTab == 3);
+        }
         requireActivity().getIntent().removeExtra("preview_tab");
-        android.widget.FrameLayout composed=new android.widget.FrameLayout(requireContext());composed.addView(mNavigation,new android.widget.FrameLayout.LayoutParams(-1,-1));
-        View launch=new View(requireContext());launch.setBackground(new PreviewStartupSurface(requireContext()));launch.setClickable(true);composed.addView(launch,new android.widget.FrameLayout.LayoutParams(-1,-1));
-        mPreviewPages.setReadyListener(()->{if(launch.getParent()==null)return;composed.post(new Runnable(){public void run(){if(launch.getParent()==null||mPreviewPages==null||mNavigation==null)return;if(!mPreviewPages.hasComposedContent()){composed.postOnAnimation(this);return;}composed.getViewTreeObserver().addOnPreDrawListener(new android.view.ViewTreeObserver.OnPreDrawListener(){public boolean onPreDraw(){composed.getViewTreeObserver().removeOnPreDrawListener(this);launch.animate().alpha(0f).setDuration(160).withEndAction(()->composed.removeView(launch)).start();return true;}});composed.invalidate();}});});
-        new androidx.core.view.WindowInsetsControllerCompat(requireActivity().getWindow(),composed).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());requireActivity().getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        android.widget.FrameLayout composed = new android.widget.FrameLayout(requireContext());
+        composed.addView(mNavigation, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        View launch = new View(requireContext());
+        launch.setBackground(new PreviewStartupSurface(requireContext()));
+        launch.setClickable(true);
+        composed.addView(launch, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        mPreviewPages.setReadyListener(() -> {
+            if (launch.getParent() == null)
+                return;
+            composed.post(new Runnable() {
+                public void run() {
+                    if (launch.getParent() == null || mPreviewPages == null || mNavigation == null)
+                        return;
+                    if (!mPreviewPages.hasComposedContent()) {
+                        composed.postOnAnimation(this);
+                        return;
+                    }
+                    composed.getViewTreeObserver().addOnPreDrawListener(
+                        new android.view.ViewTreeObserver.OnPreDrawListener() {
+                            public boolean onPreDraw() {
+                                composed.getViewTreeObserver().removeOnPreDrawListener(this);
+                                launch.animate()
+                                    .alpha(0f)
+                                    .setDuration(160)
+                                    .withEndAction(() -> composed.removeView(launch))
+                                    .start();
+                                return true;
+                            }
+                        });
+                    composed.invalidate();
+                }
+            });
+        });
+        new androidx.core.view.WindowInsetsControllerCompat(requireActivity().getWindow(), composed)
+            .hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+        requireActivity().getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
         return composed;
     }
 
     public void consumePreviewNavigation() {
-        if (mPreviewPages == null || !requireActivity().getIntent().hasExtra("preview_tab")) return;
+        if (mPreviewPages == null || !requireActivity().getIntent().hasExtra("preview_tab"))
+            return;
         int tab = requireActivity().getIntent().getIntExtra("preview_tab", mActiveTab);
         requireActivity().getIntent().removeExtra("preview_tab");
-        if (tab >= 0 && tab < 4) navigateTop(tab);
+        if (tab >= 0 && tab < 4)
+            navigateTop(tab);
     }
 
     private void navigateTop(int tab) {
         if (tab == 4) {
-            startActivity(new Intent(requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+            startActivity(new Intent(
+                requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
         } else if (tab == 5) {
             Intent search = new Intent(requireContext(), VideoSearchActivity.class);
             search.putExtra(VideoSearchActivity.EXTRA_SEARCH_MODE, VideoSearchActivity.SEARCH_MODE_ALL);
             startActivity(search);
         } else {
             mActiveTab = tab;
-            if (mNavigation != null) {mNavigation.selectTab(tab);mNavigation.setEmbeddedScanStatus(tab==3);}
-            if (mPreviewPages != null) mPreviewPages.setTab(tab);
+            if (mNavigation != null) {
+                mNavigation.selectTab(tab);
+                mNavigation.setEmbeddedScanStatus(tab == 3);
+            }
+            if (mPreviewPages != null)
+                mPreviewPages.setTab(tab);
             refreshVisibleRows();
-            if (mVisibleRows != null && mVisibleRows.size() > 0) super.setSelectedPosition(0, false);
+            if (mVisibleRows != null && mVisibleRows.size() > 0)
+                super.setSelectedPosition(0, false);
         }
     }
 
-    public boolean browserBack(Runnable leave){return mPreviewPages!=null&&mPreviewPages.browserBack(leave);}
+    public boolean browserBack(Runnable leave) {
+        return mPreviewPages != null && mPreviewPages.browserBack(leave);
+    }
+
     public boolean focusTopNavigation() {
         return mNavigation != null && mNavigation.focusNavigation();
     }
 
     private Activity updateActivity(String callingMethod) {
         mActivity = getActivity();
-        if (mActivity == null) log.warn("updateActivity: {} -> activity is null!", callingMethod);
+        if (mActivity == null)
+            log.warn("updateActivity: {} -> activity is null!", callingMethod);
         return mActivity;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (log.isDebugEnabled()) log.debug("onViewCreated");
+        if (log.isDebugEnabled())
+            log.debug("onViewCreated");
         CustomApplication.loadLocale(getResources());
         super.onViewCreated(view, savedInstanceState);
         mActivity = getActivity();
@@ -430,26 +530,37 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
         mOverlay = new Overlay(this);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        mSeparateAnimeFromShowMovie = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
-        mShowWatchingUpNextRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_WATCHING_UP_NEXT_ROW, VideoPreferencesCommon.SHOW_WATCHING_UP_NEXT_ROW_DEFAULT);
-        if (! FEATURE_WATCH_UP_NEXT) mShowWatchingUpNextRow = false;
-        mShowLastAddedRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_LAST_ADDED_ROW, VideoPreferencesCommon.SHOW_LAST_ADDED_ROW_DEFAULT);
-        mShowLastPlayedRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_LAST_PLAYED_ROW, VideoPreferencesCommon.SHOW_LAST_PLAYED_ROW_DEFAULT);
+        mSeparateAnimeFromShowMovie = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW,
+            VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
+        mShowWatchingUpNextRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_WATCHING_UP_NEXT_ROW,
+            VideoPreferencesCommon.SHOW_WATCHING_UP_NEXT_ROW_DEFAULT);
+        if (!FEATURE_WATCH_UP_NEXT)
+            mShowWatchingUpNextRow = false;
+        mShowLastAddedRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_LAST_ADDED_ROW, VideoPreferencesCommon.SHOW_LAST_ADDED_ROW_DEFAULT);
+        mShowLastPlayedRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_LAST_PLAYED_ROW, VideoPreferencesCommon.SHOW_LAST_PLAYED_ROW_DEFAULT);
         mSmartRecentlyRows = mPrefs.getBoolean("smart_recently_rows", false);
-        mShowMoviesRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_MOVIES_ROW, VideoPreferencesCommon.SHOW_ALL_MOVIES_ROW_DEFAULT);
+        mShowMoviesRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_ALL_MOVIES_ROW, VideoPreferencesCommon.SHOW_ALL_MOVIES_ROW_DEFAULT);
         mMovieSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_MOVIE_SORT_ORDER, MoviesLoader.DEFAULT_SORT);
-        mShowTvshowsRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_TV_SHOWS_ROW, VideoPreferencesCommon.SHOW_ALL_TV_SHOWS_ROW_DEFAULT);
-        mShowDocumentaries = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_DOCUMENTARIES, VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
-        mShowAnimesRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_ANIMES_ROW, VideoPreferencesCommon.SHOW_ALL_ANIMES_ROW_DEFAULT);
+        mShowTvshowsRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_ALL_TV_SHOWS_ROW, VideoPreferencesCommon.SHOW_ALL_TV_SHOWS_ROW_DEFAULT);
+        mShowDocumentaries = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_DOCUMENTARIES, VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
+        mShowAnimesRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_ALL_ANIMES_ROW, VideoPreferencesCommon.SHOW_ALL_ANIMES_ROW_DEFAULT);
         mAnimesSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_ANIMES_SORT_ORDER, AnimesLoader.DEFAULT_SORT);
-        mTvShowSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_TV_SHOW_SORT_ORDER, TvshowSortOrderEntries.DEFAULT_SORT);
+        mTvShowSortOrder =
+            mPrefs.getString(VideoPreferencesCommon.KEY_TV_SHOW_SORT_ORDER, TvshowSortOrderEntries.DEFAULT_SORT);
 
         updateBackground();
 
         Resources r = getResources();
         setBadgeDrawable(ContextCompat.getDrawable(mActivity, R.drawable.leanback_title));
         setHeadersState(mTopNavigation ? HEADERS_DISABLED : HEADERS_ENABLED);
-        if (mTopNavigation) showTitle(false);
+        if (mTopNavigation)
+            showTitle(false);
         setHeadersTransitionOnBackEnabled(true);
 
         // Apply theme-aware colors
@@ -465,7 +576,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (VideoPreferencesCommon.KEY_APP_THEME.equals(key)) {
-                    if (log.isDebugEnabled()) log.debug("Theme changed, updating background and colors");
+                    if (log.isDebugEnabled())
+                        log.debug("Theme changed, updating background and colors");
                     updateBackground();
                     // Update brand color
                     setBrandColor(themeManager.getLeanbackHeaderColor());
@@ -482,67 +594,89 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
             LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
             mPreviewHasResumed = false;
-            viewingReceiverContext=requireContext().getApplicationContext();
-            androidx.core.content.ContextCompat.registerReceiver(viewingReceiverContext,viewingReceiver,
-                new android.content.IntentFilter(viewingReceiverContext.getPackageName()+".VIEWING_STATE_CHANGED"),androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
+            viewingReceiverContext = requireContext().getApplicationContext();
+            androidx.core.content.ContextCompat.registerReceiver(viewingReceiverContext, viewingReceiver,
+                new android.content.IntentFilter(viewingReceiverContext.getPackageName() + ".VIEWING_STATE_CHANGED"),
+                androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED);
             return; // Preview uses one worker snapshot and the unmatched count, not hidden classic row queries.
         }
         // init the loaders after the rows are loaded to populate
         if (mShowWatchingUpNextRow) {
-            if (log.isDebugEnabled()) log.debug("onViewCreated: watchingUpNext initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: watchingUpNext initLoader");
             // /!\ WARNING this loader never ends if FEATURE_WATCH_UP_NEXT is true on large collection of videos watched
             LoaderManager.getInstance(this).initLoader(LOADER_ID_WATCHING_UP_NEXT, null, this);
-            if (log.isDebugEnabled()) log.debug("onViewCreated: init LOADER_ID_WATCHING_UP_NEXT");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: init LOADER_ID_WATCHING_UP_NEXT");
         } else {
-            if (log.isDebugEnabled()) log.debug("onViewCreated: NOT init LOADER_ID_WATCHING_UP_NEXT");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: NOT init LOADER_ID_WATCHING_UP_NEXT");
         }
-        if (log.isDebugEnabled()) log.debug("onViewCreated: mShowLastAddedRow={}, mShowLastPlayedRow={}", mShowLastAddedRow, mShowLastPlayedRow);
+        if (log.isDebugEnabled())
+            log.debug(
+                "onViewCreated: mShowLastAddedRow={}, mShowLastPlayedRow={}", mShowLastAddedRow, mShowLastPlayedRow);
         if (mShowLastAddedRow) {
-            if (log.isDebugEnabled()) log.debug("onViewCreated: lastAdded initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: lastAdded initLoader");
             LoaderManager.getInstance(this).initLoader(LOADER_ID_LAST_ADDED, null, this);
         }
         if (mShowLastPlayedRow) {
-            if (log.isDebugEnabled()) log.debug("onViewCreated: lastPlayed initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: lastPlayed initLoader");
             LoaderManager.getInstance(this).initLoader(LOADER_ID_LAST_PLAYED, null, this);
         }
         if (mShowMoviesRow) {
             Bundle movieArgs = new Bundle();
             movieArgs.putString("sort", mMovieSortOrder);
-            if (log.isDebugEnabled()) log.debug("onViewCreated: allMovies initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: allMovies initLoader");
             LoaderManager.getInstance(this).initLoader(LOADER_ID_ALL_MOVIES, movieArgs, this);
         }
         if (mShowTvshowsRow) {
             Bundle tvshowArgs = new Bundle();
             tvshowArgs.putString("sort", mTvShowSortOrder);
-            if (log.isDebugEnabled()) log.debug("onViewCreated: allTvshows initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: allTvshows initLoader");
             LoaderManager.getInstance(this).initLoader(LOADER_ID_ALL_TV_SHOWS, tvshowArgs, this);
         }
         if (mShowDocumentaries) {
         }
-        if (log.isDebugEnabled()) log.debug("onViewCreated: nonScrapedVideosCount initLoader");
+        if (log.isDebugEnabled())
+            log.debug("onViewCreated: nonScrapedVideosCount initLoader");
         LoaderManager.getInstance(this).initLoader(LOADER_ID_NON_SCRAPED_VIDEOS_COUNT, null, this);
         if (mShowAnimesRow && mSeparateAnimeFromShowMovie) {
             Bundle animesArgs = new Bundle();
             animesArgs.putString("sort", mAnimesSortOrder);
-            if (log.isDebugEnabled()) log.debug("onViewCreated: allAnimes initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onViewCreated: allAnimes initLoader");
             LoaderManager.getInstance(this).initLoader(LOADER_ID_ALL_ANIMES, animesArgs, this);
         }
     }
 
     @Override
     public void onDestroyView() {
-        if(viewingReceiverContext!=null){viewingReceiverContext.unregisterReceiver(viewingReceiver);viewingReceiverContext=null;}
+        if (viewingReceiverContext != null) {
+            viewingReceiverContext.unregisterReceiver(viewingReceiver);
+            viewingReceiverContext = null;
+        }
         mPreviewPages = null;
-        if (log.isDebugEnabled()) log.debug("onDestroyView");
+        if (log.isDebugEnabled())
+            log.debug("onDestroyView");
         mRowsSelectionHandler.removeCallbacks(mClearRowPendingSelection);
         mScannerBoxRefreshHandler.removeCallbacks(mRefreshBoxesAfterScannerQuietPeriod);
         mRowPendingSelection = null;
-        if (mBuildAllMoviesBoxTask != null) mBuildAllMoviesBoxTask.cancel();
-        if (mBuildAllAnimesBoxTask != null) mBuildAllAnimesBoxTask.cancel();
-        if (mBuildAllTvshowsBoxTask != null) mBuildAllTvshowsBoxTask.cancel();
-        if (mBuildAllCollectionsBoxTask != null) mBuildAllCollectionsBoxTask.cancel();
-        if (mBuildAllAnimeCollectionsBoxTask != null) mBuildAllAnimeCollectionsBoxTask.cancel();
-        if (mBuildAllAnimeShowsBoxTask != null) mBuildAllAnimeShowsBoxTask.cancel();
+        if (mBuildAllMoviesBoxTask != null)
+            mBuildAllMoviesBoxTask.cancel();
+        if (mBuildAllAnimesBoxTask != null)
+            mBuildAllAnimesBoxTask.cancel();
+        if (mBuildAllTvshowsBoxTask != null)
+            mBuildAllTvshowsBoxTask.cancel();
+        if (mBuildAllCollectionsBoxTask != null)
+            mBuildAllCollectionsBoxTask.cancel();
+        if (mBuildAllAnimeCollectionsBoxTask != null)
+            mBuildAllAnimeCollectionsBoxTask.cancel();
+        if (mBuildAllAnimeShowsBoxTask != null)
+            mBuildAllAnimeShowsBoxTask.cancel();
 
         if (mOverlay != null) {
             mOverlay.destroy();
@@ -558,10 +692,14 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     private Context viewingReceiverContext;
     private final BroadcastReceiver viewingReceiver = new BroadcastReceiver() {
-        @Override public void onReceive(Context context,Intent intent){
-            if(mPreviewPages==null||!isAdded())return;
-            androidx.loader.content.Loader<Cursor> loader=LoaderManager.getInstance(MainFragment.this).getLoader(PreviewLibraryLoader.ID);
-            if(loader!=null)loader.onContentChanged();
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mPreviewPages == null || !isAdded())
+                return;
+            androidx.loader.content.Loader<Cursor> loader =
+                LoaderManager.getInstance(MainFragment.this).getLoader(PreviewLibraryLoader.ID);
+            if (loader != null)
+                loader.onContentChanged();
         }
     };
     private boolean mPreviewHasResumed;
@@ -573,27 +711,34 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     @Override
     public void onResume() {
-        if (log.isDebugEnabled()) log.debug("onResume");
+        if (log.isDebugEnabled())
+            log.debug("onResume");
         super.onResume();
         consumePreviewNavigation();
         if (mPreviewPages != null) {
-            androidx.loader.content.Loader<Cursor> preview = LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
-            if (preview == null) LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
-            else if (mPreviewHasResumed) preview.forceLoad();
+            androidx.loader.content.Loader<Cursor> preview =
+                LoaderManager.getInstance(this).getLoader(PreviewLibraryLoader.ID);
+            if (preview == null)
+                LoaderManager.getInstance(this).initLoader(PreviewLibraryLoader.ID, null, this);
+            else if (mPreviewHasResumed)
+                preview.forceLoad();
             mPreviewHasResumed = true;
         }
-        if (mTopNavigation != PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
+        if (mTopNavigation
+            != PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
             requireActivity().recreate();
             return;
         }
         CustomApplication.loadLocale(getResources());
         if (hasLocaleChanged()) {
             // Recreate the fragment or activity to apply the new locale
-            if (getActivity() != null) getActivity().recreate();
+            if (getActivity() != null)
+                getActivity().recreate();
         }
         // be sure activity is not null and static variable does not refer to a destroyed one
         mActivity = getActivity();
-        if (mActivity == null) log.warn("onResume: mActivity is null!");
+        if (mActivity == null)
+            log.warn("onResume: mActivity is null!");
         mOverlay.resume();
         updateBackground();
 
@@ -606,14 +751,20 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         intentFilter.addAction(ExtStorageReceiver.ACTION_MEDIA_UNMOUNTED);
         intentFilter.addAction(ExtStorageReceiver.ACTION_MEDIA_CHANGED);
         intentFilter.addDataScheme("file");
-        intentFilter.addDataScheme(ExtStorageReceiver.ARCHOS_FILE_SCHEME);//new android nougat send UriExposureException when scheme = file
-        ContextCompat.registerReceiver(mActivity, mExternalStorageReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
+        intentFilter.addDataScheme(
+            ExtStorageReceiver.ARCHOS_FILE_SCHEME); //new android nougat send UriExposureException when scheme = file
+        ContextCompat.registerReceiver(
+            mActivity, mExternalStorageReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
         mUpdateFilter = new IntentFilter(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FINISHED);
         // VideoStoreImportService sends null scheme thus do not filter for specific scheme
         //for (String scheme : UriUtils.sIndexableSchemes) mUpdateFilter.addDataScheme(scheme);
         ContextCompat.registerReceiver(mActivity, mUpdateReceiver, mUpdateFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
 
-        if (mPreviewPages != null) { firstTimeLoad = false; findAndUpdatePrivateModeIcon(); return; }
+        if (mPreviewPages != null) {
+            firstTimeLoad = false;
+            findAndUpdatePrivateModeIcon();
+            return;
+        }
 
         // check if resuming we have a change of parameters and update everything accordingly
         restartWatchingUpNextLoader = false;
@@ -624,60 +775,84 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         restartAnimesLoader = false;
         // needs to be done first to know if movie/tvshow loaders need to be reloaded because
         // need to (inc|ex)clude animation videos. However do not restart updateAnimesRow because done later
-        boolean newSeparateAnimeFromShowMovie = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
+        boolean newSeparateAnimeFromShowMovie = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW,
+            VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
         if (newSeparateAnimeFromShowMovie != mSeparateAnimeFromShowMovie) {
             mSeparateAnimeFromShowMovie = newSeparateAnimeFromShowMovie;
             if (newSeparateAnimeFromShowMovie)
-                if (log.isDebugEnabled()) log.debug("onResume: separate Anime From Show Movie");
-            else
-                if (log.isDebugEnabled()) log.debug("onResume: do not separate Anime From Show Movie");
+                if (log.isDebugEnabled())
+                    log.debug("onResume: separate Anime From Show Movie");
+                else if (log.isDebugEnabled())
+                    log.debug("onResume: do not separate Anime From Show Movie");
             // need to switch loaders because movies are tvshows do not contain animations anymore
-            if (mShowMoviesRow) restartMoviesLoader = true;
-            if (mShowTvshowsRow) restartTvshowsLoader = true;
+            if (mShowMoviesRow)
+                restartMoviesLoader = true;
+            if (mShowTvshowsRow)
+                restartTvshowsLoader = true;
             // in case we disable Anime/Show+Movie separation, there can't be an allAnimesRow
-            if (! newSeparateAnimeFromShowMovie) mShowAnimesRow = false;
-            if (mShowAnimesRow) restartAnimesLoader = true;
+            if (!newSeparateAnimeFromShowMovie)
+                mShowAnimesRow = false;
+            if (mShowAnimesRow)
+                restartAnimesLoader = true;
             else // this will add or remove row if no allAnimesRow
                 updateAnimesRow(null, false);
         }
 
-        boolean newShowWatchingUpNextRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_WATCHING_UP_NEXT_ROW, VideoPreferencesCommon.SHOW_WATCHING_UP_NEXT_ROW_DEFAULT);
-        if (! FEATURE_WATCH_UP_NEXT) newShowWatchingUpNextRow = mShowWatchingUpNextRow;
+        boolean newShowWatchingUpNextRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_WATCHING_UP_NEXT_ROW,
+            VideoPreferencesCommon.SHOW_WATCHING_UP_NEXT_ROW_DEFAULT);
+        if (!FEATURE_WATCH_UP_NEXT)
+            newShowWatchingUpNextRow = mShowWatchingUpNextRow;
         if (newShowWatchingUpNextRow != mShowWatchingUpNextRow) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, display watching up next row: {} -> updating", newShowWatchingUpNextRow);
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, display watching up next row: {} -> updating",
+                    newShowWatchingUpNextRow);
             mShowWatchingUpNextRow = newShowWatchingUpNextRow;
-            if (mShowWatchingUpNextRow) restartWatchingUpNextLoader = true;
-            else updateWatchingUpNextRow(null);
+            if (mShowWatchingUpNextRow)
+                restartWatchingUpNextLoader = true;
+            else
+                updateWatchingUpNextRow(null);
         }
         if (restartWatchingUpNextLoader) {
-            if (log.isDebugEnabled()) log.debug("onResume: watchingUpNext initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onResume: watchingUpNext initLoader");
             restartWatchingUpNextLoader = false;
             LoaderManager.getInstance(this).initLoader(LOADER_ID_WATCHING_UP_NEXT, null, this);
         }
 
-        boolean newShowLastAddedRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_LAST_ADDED_ROW, VideoPreferencesCommon.SHOW_LAST_ADDED_ROW_DEFAULT);
+        boolean newShowLastAddedRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_LAST_ADDED_ROW, VideoPreferencesCommon.SHOW_LAST_ADDED_ROW_DEFAULT);
         if (newShowLastAddedRow != mShowLastAddedRow) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, display last added row: {} -> updating", newShowLastAddedRow);
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, display last added row: {} -> updating", newShowLastAddedRow);
             mShowLastAddedRow = newShowLastAddedRow;
-            if (mShowLastAddedRow) restartLastAddedLoader = true;
-            else updateLastAddedRow(null);
+            if (mShowLastAddedRow)
+                restartLastAddedLoader = true;
+            else
+                updateLastAddedRow(null);
         }
         if (restartLastAddedLoader) {
-            if (log.isDebugEnabled()) log.debug("onResume: lastAdded initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onResume: lastAdded initLoader");
             restartLastAddedLoader = false;
             // update lastAdded loader: MUST use initLoader and NOT restartLoader otherwise to avoid update if it exists
             LoaderManager.getInstance(this).initLoader(LOADER_ID_LAST_ADDED, null, this);
         }
 
-        boolean newShowLastPlayedRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_LAST_PLAYED_ROW, VideoPreferencesCommon.SHOW_LAST_PLAYED_ROW_DEFAULT);
+        boolean newShowLastPlayedRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_LAST_PLAYED_ROW, VideoPreferencesCommon.SHOW_LAST_PLAYED_ROW_DEFAULT);
         if (newShowLastPlayedRow != mShowLastPlayedRow) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, display last played row: {} -> updating", newShowLastPlayedRow);
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onResume: preference changed, display last played row: {} -> updating", newShowLastPlayedRow);
             mShowLastPlayedRow = newShowLastPlayedRow;
-            if (mShowLastPlayedRow) restartLastPlayedLoader = true;
-            else updateLastPlayedRow(null);
+            if (mShowLastPlayedRow)
+                restartLastPlayedLoader = true;
+            else
+                updateLastPlayedRow(null);
         }
         if (restartLastPlayedLoader) {
-            if (log.isDebugEnabled()) log.debug("onResume: lastPlayed initLoader");
+            if (log.isDebugEnabled())
+                log.debug("onResume: lastPlayed initLoader");
             restartLastPlayedLoader = false;
             // update lastAdded loader: MUST use initLoader and NOT restartLoader otherwise to avoid update if it exists
             LoaderManager.getInstance(this).initLoader(LOADER_ID_LAST_PLAYED, null, this);
@@ -686,13 +861,18 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         // Check if smart_recently_rows preference changed - need to restart loaders to update URI and row titles
         boolean newSmartRecentlyRows = mPrefs.getBoolean("smart_recently_rows", false);
         if (newSmartRecentlyRows != mSmartRecentlyRows) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, smart recently rows: {} -> updating row titles and restarting loaders", newSmartRecentlyRows);
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onResume: preference changed, smart recently rows: {} -> updating row titles and restarting loaders",
+                    newSmartRecentlyRows);
             mSmartRecentlyRows = newSmartRecentlyRows;
             LoaderUtils.mSmartRecentlyRows = newSmartRecentlyRows;
 
             // Recreate rows with new titles
-            String lastAddedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.new_and_unwatched) : getString(R.string.recently_added);
-            String lastPlayedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.keep_watching) : getString(R.string.recently_played);
+            String lastAddedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.new_and_unwatched)
+                                                                      : getString(R.string.recently_added);
+            String lastPlayedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.keep_watching)
+                                                                       : getString(R.string.recently_played);
 
             // Update last added row title
             if (mShowLastAddedRow) {
@@ -715,31 +895,44 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             }
         }
 
-        boolean newSortIgnoreArticles = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SORT_IGNORE_ARTICLES, VideoPreferencesCommon.SORT_IGNORE_ARTICLES_DEFAULT);
+        boolean newSortIgnoreArticles = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SORT_IGNORE_ARTICLES, VideoPreferencesCommon.SORT_IGNORE_ARTICLES_DEFAULT);
         if (newSortIgnoreArticles != mSortIgnoreArticles) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, sort ignore articles: {} -> restarting loaders", newSortIgnoreArticles);
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, sort ignore articles: {} -> restarting loaders",
+                    newSortIgnoreArticles);
             mSortIgnoreArticles = newSortIgnoreArticles;
-            if (mShowMoviesRow) restartMoviesLoader = true;
-            if (mShowTvshowsRow) restartTvshowsLoader = true;
-            if (mShowAnimesRow && mSeparateAnimeFromShowMovie) restartAnimesLoader = true;
+            if (mShowMoviesRow)
+                restartMoviesLoader = true;
+            if (mShowTvshowsRow)
+                restartTvshowsLoader = true;
+            if (mShowAnimesRow && mSeparateAnimeFromShowMovie)
+                restartAnimesLoader = true;
         }
 
-        boolean newShowMoviesRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_MOVIES_ROW, VideoPreferencesCommon.SHOW_ALL_MOVIES_ROW_DEFAULT);
+        boolean newShowMoviesRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_ALL_MOVIES_ROW, VideoPreferencesCommon.SHOW_ALL_MOVIES_ROW_DEFAULT);
         if (newShowMoviesRow != mShowMoviesRow) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, display all movies row: {} -> updating", newShowMoviesRow);
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, display all movies row: {} -> updating", newShowMoviesRow);
             mShowMoviesRow = newShowMoviesRow;
-            if (mShowMoviesRow) restartMoviesLoader = true;
-            else updateMoviesRow(null, true);
-        } else
-            if (! mShowMoviesRow && firstTimeLoad) updateMoviesRow(null, false);
-        String newMovieSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_MOVIE_SORT_ORDER, MoviesLoader.DEFAULT_SORT);
+            if (mShowMoviesRow)
+                restartMoviesLoader = true;
+            else
+                updateMoviesRow(null, true);
+        } else if (!mShowMoviesRow && firstTimeLoad)
+            updateMoviesRow(null, false);
+        String newMovieSortOrder =
+            mPrefs.getString(VideoPreferencesCommon.KEY_MOVIE_SORT_ORDER, MoviesLoader.DEFAULT_SORT);
         if (mShowMoviesRow && !newMovieSortOrder.equals(mMovieSortOrder)) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, showing movie row and sort order changed -> updating");
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, showing movie row and sort order changed -> updating");
             mMovieSortOrder = newMovieSortOrder;
             restartMoviesLoader = true;
         }
         if (restartMoviesLoader) {
-            if (log.isDebugEnabled()) log.debug("onResume: restart allMovies loader");
+            if (log.isDebugEnabled())
+                log.debug("onResume: restart allMovies loader");
             restartMoviesLoader = false;
             Bundle args = new Bundle();
             args.putString("sort", mMovieSortOrder);
@@ -747,22 +940,29 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             LoaderManager.getInstance(this).restartLoader(LOADER_ID_ALL_MOVIES, args, this);
         }
 
-        boolean newShowTvshowsRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_TV_SHOWS_ROW, VideoPreferencesCommon.SHOW_ALL_TV_SHOWS_ROW_DEFAULT);
+        boolean newShowTvshowsRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_ALL_TV_SHOWS_ROW, VideoPreferencesCommon.SHOW_ALL_TV_SHOWS_ROW_DEFAULT);
         if (newShowTvshowsRow != mShowTvshowsRow) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, display all tv shows row: {} -> updating", newShowTvshowsRow);
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, display all tv shows row: {} -> updating", newShowTvshowsRow);
             mShowTvshowsRow = newShowTvshowsRow;
-            if (mShowTvshowsRow) restartTvshowsLoader = true;
-            else updateTvShowsRow(null, true);
-        } else
-            if (! mShowTvshowsRow && firstTimeLoad) updateTvShowsRow(null, false);
-        String newTvShowSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_TV_SHOW_SORT_ORDER, TvshowSortOrderEntries.DEFAULT_SORT);
+            if (mShowTvshowsRow)
+                restartTvshowsLoader = true;
+            else
+                updateTvShowsRow(null, true);
+        } else if (!mShowTvshowsRow && firstTimeLoad)
+            updateTvShowsRow(null, false);
+        String newTvShowSortOrder =
+            mPrefs.getString(VideoPreferencesCommon.KEY_TV_SHOW_SORT_ORDER, TvshowSortOrderEntries.DEFAULT_SORT);
         if (mShowTvshowsRow && !newTvShowSortOrder.equals(mTvShowSortOrder)) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, showing tv show row and sort order changed -> updating");
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, showing tv show row and sort order changed -> updating");
             mTvShowSortOrder = newTvShowSortOrder;
             restartTvshowsLoader = true;
         }
         if (restartTvshowsLoader) {
-            if (log.isDebugEnabled()) log.debug("onResume: restart allTvshows loader");
+            if (log.isDebugEnabled())
+                log.debug("onResume: restart allTvshows loader");
             restartTvshowsLoader = false;
             Bundle args = new Bundle();
             args.putString("sort", mTvShowSortOrder);
@@ -770,30 +970,37 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             LoaderManager.getInstance(this).restartLoader(LOADER_ID_ALL_TV_SHOWS, args, this);
         }
 
-        boolean newShowAnimesRow = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_ALL_ANIMES_ROW, VideoPreferencesCommon.SHOW_ALL_ANIMES_ROW_DEFAULT);
+        boolean newShowAnimesRow = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_ALL_ANIMES_ROW, VideoPreferencesCommon.SHOW_ALL_ANIMES_ROW_DEFAULT);
         if (newShowAnimesRow != mShowAnimesRow && mSeparateAnimeFromShowMovie) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, display all animes row: {} -> updating", newShowAnimesRow);
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, display all animes row: {} -> updating", newShowAnimesRow);
             mShowAnimesRow = newShowAnimesRow;
-            if (mShowAnimesRow) restartAnimesLoader = true;
-            else if (mSeparateAnimeFromShowMovie) updateAnimesRow(null, true);
-        } else
-            if (! mShowAnimesRow && mSeparateAnimeFromShowMovie && firstTimeLoad) updateAnimesRow(null, false);
-        String newAnimesSortOrder = mPrefs.getString(VideoPreferencesCommon.KEY_ANIMES_SORT_ORDER, AnimesLoader.DEFAULT_SORT);
+            if (mShowAnimesRow)
+                restartAnimesLoader = true;
+            else if (mSeparateAnimeFromShowMovie)
+                updateAnimesRow(null, true);
+        } else if (!mShowAnimesRow && mSeparateAnimeFromShowMovie && firstTimeLoad)
+            updateAnimesRow(null, false);
+        String newAnimesSortOrder =
+            mPrefs.getString(VideoPreferencesCommon.KEY_ANIMES_SORT_ORDER, AnimesLoader.DEFAULT_SORT);
         if (mShowAnimesRow && !newAnimesSortOrder.equals(mAnimesSortOrder) && mSeparateAnimeFromShowMovie) {
-            if (log.isDebugEnabled()) log.debug("onResume: preference changed, showing animes row and sort order changed -> updating");
+            if (log.isDebugEnabled())
+                log.debug("onResume: preference changed, showing animes row and sort order changed -> updating");
             mAnimesSortOrder = newAnimesSortOrder;
             restartAnimesLoader = true;
         }
         if (restartAnimesLoader) {
-            if (log.isDebugEnabled()) log.debug("onResume: restart allAnimes loader");
+            if (log.isDebugEnabled())
+                log.debug("onResume: restart allAnimes loader");
             restartAnimesLoader = false;
             Bundle args = new Bundle();
             args.putString("sort", mAnimesSortOrder);
             LoaderManager.getInstance(this).restartLoader(LOADER_ID_ALL_ANIMES, args, this);
         }
 
-        boolean newShowDocumentaries = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_DOCUMENTARIES,
-                VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
+        boolean newShowDocumentaries = mPrefs.getBoolean(
+            VideoPreferencesCommon.KEY_SHOW_DOCUMENTARIES, VideoPreferencesCommon.SHOW_DOCUMENTARIES_DEFAULT);
         if (newShowDocumentaries != mShowDocumentaries) {
             mShowDocumentaries = newShowDocumentaries;
             updateDocumentariesVisibility(true);
@@ -812,20 +1019,29 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
         // be sure to reload loaders and iconBoxes in onResume after an onPause
         wasInPause = true;
-        if (mShowLastAddedRow) restartLastAddedLoader = true;
-        if (mShowLastPlayedRow) restartLastPlayedLoader = true;
-        if (mShowMoviesRow) restartMoviesLoader = true;
-        if (mShowTvshowsRow) restartTvshowsLoader = true;
-        if (mShowAnimesRow) restartAnimesLoader = true;
+        if (mShowLastAddedRow)
+            restartLastAddedLoader = true;
+        if (mShowLastPlayedRow)
+            restartLastPlayedLoader = true;
+        if (mShowMoviesRow)
+            restartMoviesLoader = true;
+        if (mShowTvshowsRow)
+            restartTvshowsLoader = true;
+        if (mShowAnimesRow)
+            restartAnimesLoader = true;
 
         mActivity = getActivity();
-        if (mActivity == null) log.warn("onPause: mActivity is null!");
+        if (mActivity == null)
+            log.warn("onPause: mActivity is null!");
         try {
-            if (log.isDebugEnabled()) log.debug("onPause: unregisterReceiver mUpdateReceiver and mExternalStorageReceiver");
+            if (log.isDebugEnabled())
+                log.debug("onPause: unregisterReceiver mUpdateReceiver and mExternalStorageReceiver");
             mActivity.unregisterReceiver(mExternalStorageReceiver);
             mActivity.unregisterReceiver(mUpdateReceiver);
-        } catch(IllegalArgumentException | NullPointerException e) { // EntryActivity could have been destroyed
-            log.warn("onDetach: trying to unregister mUpdateReceiver or mExternalStorageReceiver which is not registered or EntryActivity destroyed!");
+        } catch (IllegalArgumentException | NullPointerException e) {
+            // EntryActivity could have been destroyed
+            log.warn(
+                "onDetach: trying to unregister mUpdateReceiver or mExternalStorageReceiver which is not registered or EntryActivity destroyed!");
         }
     }
 
@@ -835,13 +1051,13 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         }
         Resources r = getResources();
         bgMngr = BackgroundManager.getInstance(mActivity);
-        if(!bgMngr.isAttached()) {
+        if (!bgMngr.isAttached()) {
             bgMngr.attach(mActivity.getWindow());
         }
-        
+
         // Update private mode indicator visibility
         PrivateModeUIHelper.updatePrivateModeIndicator(getView());
-        
+
         if (PrivateMode.isActive()) {
             int privateModeColor = ThemeManager.getInstance(mActivity).getPrivateModeColor();
             bgMngr.setColor(privateModeColor);
@@ -875,7 +1091,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
      * Called when theme changes from settings
      */
     public void refreshTheme() {
-        if (log.isDebugEnabled()) log.debug("refreshTheme called");
+        if (log.isDebugEnabled())
+            log.debug("refreshTheme called");
         // Update background
         updateBackground();
         // Update brand color (headers)
@@ -885,7 +1102,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void setupEventListeners() {
-        if (mActivity == null) return;
+        if (mActivity == null)
+            return;
         setOnSearchClickedListener(new View.OnClickListener() {
             public void onClick(View view) {
                 if (mActivity != null) {
@@ -897,16 +1115,24 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                 }
             }
         });
-        if (mActivity != null) setOnItemViewClickedListener(new MainViewClickedListener(mActivity));
+        if (mActivity != null)
+            setOnItemViewClickedListener(new MainViewClickedListener(mActivity));
     }
 
     private void loadRows() {
-        if (log.isDebugEnabled()) log.debug("loadRows");
-        if (updateActivity("loadRows") == null) return;
+        if (log.isDebugEnabled())
+            log.debug("loadRows");
+        if (updateActivity("loadRows") == null)
+            return;
 
         // Two different row presenters, one standard for regular cards, one special for the icon items
-        ListRowPresenter listRowPresenter = new ListRowPresenter(mTopNavigation ? androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_NONE : androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_MEDIUM);
-        if (mTopNavigation) { listRowPresenter.setShadowEnabled(false); listRowPresenter.setSelectEffectEnabled(false); }
+        ListRowPresenter listRowPresenter =
+            new ListRowPresenter(mTopNavigation ? androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_NONE
+                                                : androidx.leanback.widget.FocusHighlight.ZOOM_FACTOR_MEDIUM);
+        if (mTopNavigation) {
+            listRowPresenter.setShadowEnabled(false);
+            listRowPresenter.setSelectEffectEnabled(false);
+        }
         IconItemRowPresenter iconItemRowPresenter = new IconItemRowPresenter();
 
         // Only way I found to use two different presenter is using a ClassPresenterSelector, hence i needed
@@ -923,28 +1149,36 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
         mWatchingUpNextAdapter = new CursorObjectAdapter(homeVideoPresenter(true));
         mWatchingUpNextAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
-        mWatchingUpNextRow = new ListRow(ROW_ID_WATCHING_UP_NEXT, new HeaderItem(getString(mTopNavigation ? R.string.preview_continue_watching : R.string.watching_up_next)), mWatchingUpNextAdapter);
+        mWatchingUpNextRow = new ListRow(ROW_ID_WATCHING_UP_NEXT,
+            new HeaderItem(getString(mTopNavigation ? R.string.preview_continue_watching : R.string.watching_up_next)),
+            mWatchingUpNextAdapter);
 
         mLastAddedAdapter = new CursorObjectAdapter(homeVideoPresenter(false));
         mLastAddedAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
-        String lastAddedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.new_and_unwatched) : getString(R.string.recently_added);
+        String lastAddedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.new_and_unwatched)
+                                                                  : getString(R.string.recently_added);
         mLastAddedRow = new ListRow(ROW_ID_LAST_ADDED, new HeaderItem(lastAddedTitle), mLastAddedAdapter);
 
         mLastPlayedAdapter = new CursorObjectAdapter(homeVideoPresenter(true));
         mLastPlayedAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
-        String lastPlayedTitle = LoaderUtils.isSmartRecentlyRows() ? getString(R.string.keep_watching) : getString(R.string.recently_played);
+        String lastPlayedTitle =
+            LoaderUtils.isSmartRecentlyRows() ? getString(R.string.keep_watching) : getString(R.string.recently_played);
         mLastPlayedRow = new ListRow(ROW_ID_LAST_PLAYED, new HeaderItem(lastPlayedTitle), mLastPlayedAdapter);
 
-        boolean showByRating = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_BY_RATING, VideoPreferencesCommon.SHOW_BY_RATING_DEFAULT);
+        boolean showByRating =
+            mPrefs.getBoolean(VideoPreferencesCommon.KEY_SHOW_BY_RATING, VideoPreferencesCommon.SHOW_BY_RATING_DEFAULT);
 
         mMoviesRowsAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         buildAllMoviesBox(wasInPause);
         mMoviesRowsAdapter.add(mAllMoviesBox);
         //mMoviesRowsAdapter.add(new Box(Box.ID.MOVIES_BY_ALPHA, getString(R.string.movies_by_alpha), R.drawable.alpha_banner));
-        mMoviesRowsAdapter.add(new Box(Box.ID.MOVIES_BY_GENRE, getString(R.string.movies_by_genre), R.drawable.genres_banner));
+        mMoviesRowsAdapter.add(
+            new Box(Box.ID.MOVIES_BY_GENRE, getString(R.string.movies_by_genre), R.drawable.genres_banner));
         if (showByRating)
-            mMoviesRowsAdapter.add(new Box(Box.ID.MOVIES_BY_RATING, getString(R.string.movies_by_rating), R.drawable.ratings_banner));
-        mMoviesRowsAdapter.add(new Box(Box.ID.MOVIES_BY_YEAR, getString(R.string.movies_by_year), R.drawable.years_banner_2026));
+            mMoviesRowsAdapter.add(
+                new Box(Box.ID.MOVIES_BY_RATING, getString(R.string.movies_by_rating), R.drawable.ratings_banner));
+        mMoviesRowsAdapter.add(
+            new Box(Box.ID.MOVIES_BY_YEAR, getString(R.string.movies_by_year), R.drawable.years_banner_2026));
         mMovieRow = new ListRow(ROW_ID_MOVIES, new HeaderItem(getString(R.string.movies)), mMoviesRowsAdapter);
         buildAllCollectionsBox(wasInPause);
         mMoviesRowsAdapter.add(mAllCollectionsBox);
@@ -952,21 +1186,28 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mTvshowRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         buildAllTvshowsBox(wasInPause);
         mTvshowRowAdapter.add(mAllTvshowsBox);
-        mDocumentariesBox = new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentary_tv_shows), R.drawable.genres_banner);
-        if (mShowDocumentaries) mTvshowRowAdapter.add(mDocumentariesBox);
+        mDocumentariesBox =
+            new Box(Box.ID.DOCUMENTARIES, getString(R.string.documentary_tv_shows), R.drawable.genres_banner);
+        if (mShowDocumentaries)
+            mTvshowRowAdapter.add(mDocumentariesBox);
         //tvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_ALPHA, getString(R.string.tvshows_by_alpha), R.drawable.alpha_banner));
-        mTvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_GENRE, getString(R.string.tvshows_by_genre), R.drawable.genres_banner));
+        mTvshowRowAdapter.add(
+            new Box(Box.ID.TVSHOWS_BY_GENRE, getString(R.string.tvshows_by_genre), R.drawable.genres_banner));
         if (showByRating)
-            mTvshowRowAdapter.add(new Box(Box.ID.TVSHOWS_BY_RATING, getString(R.string.tvshows_by_rating), R.drawable.ratings_banner));
-        mTvshowRowAdapter.add(new Box(Box.ID.EPISODES_BY_DATE, getString(R.string.episodes_by_date), R.drawable.years_banner_2026));
+            mTvshowRowAdapter.add(
+                new Box(Box.ID.TVSHOWS_BY_RATING, getString(R.string.tvshows_by_rating), R.drawable.ratings_banner));
+        mTvshowRowAdapter.add(
+            new Box(Box.ID.EPISODES_BY_DATE, getString(R.string.episodes_by_date), R.drawable.years_banner_2026));
         mTvshowRow = new ListRow(ROW_ID_TVSHOW, new HeaderItem(getString(R.string.all_tv_shows)), mTvshowRowAdapter);
 
         mAnimeRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
         mAnimeRow = new ListRow(ROW_ID_ANIMES, new HeaderItem(getString(R.string.animes)), mAnimeRowAdapter);
         buildAllAnimesBox(wasInPause);
         mAnimeRowAdapter.add(mAllAnimesBox);
-        mAnimeRowAdapter.add(new Box(Box.ID.ANIMES_BY_GENRE, getString(R.string.animes_by_genre), R.drawable.genres_banner));
-        mAnimeRowAdapter.add(new Box(Box.ID.ANIMES_BY_YEAR, getString(R.string.animes_by_year), R.drawable.years_banner_2026));
+        mAnimeRowAdapter.add(
+            new Box(Box.ID.ANIMES_BY_GENRE, getString(R.string.animes_by_genre), R.drawable.genres_banner));
+        mAnimeRowAdapter.add(
+            new Box(Box.ID.ANIMES_BY_YEAR, getString(R.string.animes_by_year), R.drawable.years_banner_2026));
         buildAllAnimeShowsBox(wasInPause);
         mAnimeRowAdapter.add(mAllAnimeShowsBox);
 
@@ -974,7 +1215,6 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mAnimeRowAdapter.add(mAllAnimeCollectionsBox);
 
         wasInPause = false;
-
 
         // initialize adapters even the ones not used but do not launch the loaders yet for performance considerations
 
@@ -994,58 +1234,93 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mAnimesRow = new ListRow(ROW_ID_ALL_ANIMES, new HeaderItem(getString(R.string.all_animes_row)), mAnimesAdapter);
 
         mFileBrowsingRowAdapter = new ArrayObjectAdapter(homeCategoryPresenter());
-        if (mTopNavigation) mFileBrowsingRowAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
-            @Override public void onChanged() { refreshVisibleRows(); }
-            @Override public void onItemRangeInserted(int start,int count) { refreshVisibleRows(); }
-            @Override public void onItemRangeRemoved(int start,int count) { refreshVisibleRows(); }
-        });
-        mFileBrowsingRowAdapter.add(new Box(Box.ID.NETWORK, getString(R.string.network_storage), R.drawable.filetype_new_server));
-        mFileBrowsingRowAdapter.add(new Box(Box.ID.FOLDERS, getString(R.string.internal_storage), R.drawable.filetype_new_folder));
-        mFileBrowsingRowAdapter.add(new Box(Box.ID.VIDEOS_BY_LISTS, getString(R.string.video_lists), R.drawable.filetype_new_playlist));
+        if (mTopNavigation)
+            mFileBrowsingRowAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
+                @Override
+                public void onChanged() {
+                    refreshVisibleRows();
+                }
+                @Override
+                public void onItemRangeInserted(int start, int count) {
+                    refreshVisibleRows();
+                }
+                @Override
+                public void onItemRangeRemoved(int start, int count) {
+                    refreshVisibleRows();
+                }
+            });
+        mFileBrowsingRowAdapter.add(
+            new Box(Box.ID.NETWORK, getString(R.string.network_storage), R.drawable.filetype_new_server));
+        mFileBrowsingRowAdapter.add(
+            new Box(Box.ID.FOLDERS, getString(R.string.internal_storage), R.drawable.filetype_new_folder));
+        mFileBrowsingRowAdapter.add(
+            new Box(Box.ID.VIDEOS_BY_LISTS, getString(R.string.video_lists), R.drawable.filetype_new_playlist));
 
-        mNonScrapedVideosItem = new Box(Box.ID.NON_SCRAPED_VIDEOS, getString(R.string.non_scraped_videos), R.drawable.filetype_new_unscraped_video);
+        mNonScrapedVideosItem = new Box(
+            Box.ID.NON_SCRAPED_VIDEOS, getString(R.string.non_scraped_videos), R.drawable.filetype_new_unscraped_video);
         // Add USB and SDcard items at init ?depending of their availability
         updateUsbAndSdcardVisibility();
 
-        mRowsAdapter.add(new ListRow(ROW_ID_FILES,
-                new HeaderItem(getString(R.string.leanback_browsing)),
-                mFileBrowsingRowAdapter));
+        mRowsAdapter.add(
+            new ListRow(ROW_ID_FILES, new HeaderItem(getString(R.string.leanback_browsing)), mFileBrowsingRowAdapter));
 
         mPreferencesRowAdapter = new ArrayObjectAdapter(new IconItemPresenter());
-        mPreferencesRowAdapter.add(new Icon(Icon.ID.PREFERENCES, getString(R.string.preferences), R.drawable.ic_cog_outline));
-        mPreferencesRowAdapter.add(new Icon(Icon.ID.RESCAN, getString(R.string.rescan), R.drawable.filetype_new_rescan));
-        mPreferencesRowAdapter.add(new Icon(Icon.ID.PRIVATE_MODE, getString(R.string.private_mode_is_on), getString(R.string.private_mode_is_off),
-                                            R.drawable.ic_incognito,  R.drawable.ic_incognito_off, PrivateMode.isActive()));
-        mPreferencesRowAdapter.add(new Icon(Icon.ID.LEGACY_UI, getString(R.string.leanback_legacy_ui), R.drawable.ic_tablet_cellphone));
+        mPreferencesRowAdapter.add(
+            new Icon(Icon.ID.PREFERENCES, getString(R.string.preferences), R.drawable.ic_cog_outline));
+        mPreferencesRowAdapter.add(
+            new Icon(Icon.ID.RESCAN, getString(R.string.rescan), R.drawable.filetype_new_rescan));
+        mPreferencesRowAdapter.add(new Icon(Icon.ID.PRIVATE_MODE, getString(R.string.private_mode_is_on),
+            getString(R.string.private_mode_is_off), R.drawable.ic_incognito, R.drawable.ic_incognito_off,
+            PrivateMode.isActive()));
+        mPreferencesRowAdapter.add(
+            new Icon(Icon.ID.LEGACY_UI, getString(R.string.leanback_legacy_ui), R.drawable.ic_tablet_cellphone));
         mPreferencesRowAdapter.add(new Icon(Icon.ID.HELP_FAQ, getString(R.string.help_faq), R.drawable.ic_help_circle));
 
-        if (BuildConfig.ENABLE_SPONSOR) mEnableSponsor = mPrefs.getBoolean(VideoPreferencesCommon.KEY_ENABLE_SPONSOR, VideoPreferencesCommon.ENABLE_SPONSOR_DEFAULT) && BuildConfig.ENABLE_SPONSOR;
-        if (((! ArchosUtils.isInstalledfromPlayStore(getActivity().getApplicationContext())) || mEnableSponsor) && BuildConfig.ENABLE_SPONSOR) {
-            mPreferencesRowAdapter.add(new Icon(Icon.ID.SPONSOR, getString(R.string.sponsor), R.drawable.piggy_bank_256));
+        if (BuildConfig.ENABLE_SPONSOR)
+            mEnableSponsor = mPrefs.getBoolean(VideoPreferencesCommon.KEY_ENABLE_SPONSOR,
+                                 VideoPreferencesCommon.ENABLE_SPONSOR_DEFAULT)
+                && BuildConfig.ENABLE_SPONSOR;
+        if (((!ArchosUtils.isInstalledfromPlayStore(getActivity().getApplicationContext())) || mEnableSponsor)
+            && BuildConfig.ENABLE_SPONSOR) {
+            mPreferencesRowAdapter.add(
+                new Icon(Icon.ID.SPONSOR, getString(R.string.sponsor), R.drawable.piggy_bank_256));
         }
         // Must use an IconListRow to have the dedicated presenter used (see ClassPresenterSelector above)
-        mRowsAdapter.add(new IconListRow(ROW_ID_PREFERENCES,
-                new HeaderItem(getString(R.string.preferences)),
-                mPreferencesRowAdapter));
+        mRowsAdapter.add(new IconListRow(
+            ROW_ID_PREFERENCES, new HeaderItem(getString(R.string.preferences)), mPreferencesRowAdapter));
 
         updateDocumentariesVisibility(true);
         if (mTopNavigation) {
             mVisibleRows = new ArrayObjectAdapter(rowsPresenterSelector);
             mRowsAdapter.registerObserver(new androidx.leanback.widget.ObjectAdapter.DataObserver() {
-                @Override public void onChanged() { refreshVisibleRows(); }
-                @Override public void onItemRangeChanged(int start, int count) { refreshVisibleRows(); }
-                @Override public void onItemRangeInserted(int start, int count) { refreshVisibleRows(); }
-                @Override public void onItemRangeRemoved(int start, int count) { refreshVisibleRows(); }
+                @Override
+                public void onChanged() {
+                    refreshVisibleRows();
+                }
+                @Override
+                public void onItemRangeChanged(int start, int count) {
+                    refreshVisibleRows();
+                }
+                @Override
+                public void onItemRangeInserted(int start, int count) {
+                    refreshVisibleRows();
+                }
+                @Override
+                public void onItemRangeRemoved(int start, int count) {
+                    refreshVisibleRows();
+                }
             });
             setAdapter(mVisibleRows);
             refreshVisibleRows();
-        } else setAdapter(mRowsAdapter);
+        } else
+            setAdapter(mRowsAdapter);
         // A cold start creates banner placeholders.  Schedule their composite-icon replacement
         // when no import is underway.  An active import will send the scanner-finished broadcast;
         // using that authoritative signal avoids building the same icons once before and once
         // after the import completes.
         if (isVideoImportRunning()) {
-            if (log.isDebugEnabled()) log.debug("initial box refresh: waiting for active import to finish");
+            if (log.isDebugEnabled())
+                log.debug("initial box refresh: waiting for active import to finish");
         } else {
             scheduleBoxRefreshAfterScannerQuietPeriod("initial rows attached");
         }
@@ -1058,9 +1333,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void refreshAllBoxes() {
-        if (mPreviewPages != null) return;
-        if (log.isDebugEnabled()) log.debug("refreshAllBoxes");
-        if (updateActivity("refreshAllBoxes") == null) return;
+        if (mPreviewPages != null)
+            return;
+        if (log.isDebugEnabled())
+            log.debug("refreshAllBoxes");
+        if (updateActivity("refreshAllBoxes") == null)
+            return;
         refreshAllMoviesBox();
         refreshAllCollectionsBox();
         refreshAllTvshowsBox();
@@ -1070,8 +1348,10 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void scheduleBoxRefreshAfterScannerQuietPeriod(String reason) {
-        if (mPreviewPages != null) return;
-        if (log.isDebugEnabled()) log.debug("scanner box refresh: {} - waiting {}ms", reason, SCANNER_BOX_REFRESH_DEBOUNCE_MS);
+        if (mPreviewPages != null)
+            return;
+        if (log.isDebugEnabled())
+            log.debug("scanner box refresh: {} - waiting {}ms", reason, SCANNER_BOX_REFRESH_DEBOUNCE_MS);
         mScannerBoxRefreshHandler.removeCallbacks(mRefreshBoxesAfterScannerQuietPeriod);
         mScannerBoxRefreshHandler.postDelayed(mRefreshBoxesAfterScannerQuietPeriod, SCANNER_BOX_REFRESH_DEBOUNCE_MS);
     }
@@ -1081,21 +1361,27 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void buildAllMoviesBox(Boolean buildIcons) {
-        if (log.isDebugEnabled()) log.debug("buildAllMoviesBox: buildIcons {}", buildIcons);
+        if (log.isDebugEnabled())
+            log.debug("buildAllMoviesBox: buildIcons {}", buildIcons);
         mAllMoviesBox = new Box(Box.ID.ALL_MOVIES, getString(R.string.all_movies), R.drawable.movies_banner);
-        if (buildIcons) refreshAllMoviesBox();
+        if (buildIcons)
+            refreshAllMoviesBox();
     }
 
     private void refreshAllMoviesBox() {
-        if (log.isDebugEnabled()) log.debug("refreshAllMoviesBox");
-        if (! mShowMoviesRow) {
-            if (mBuildAllMoviesBoxTask != null) mBuildAllMoviesBoxTask.cancel();
+        if (log.isDebugEnabled())
+            log.debug("refreshAllMoviesBox");
+        if (!mShowMoviesRow) {
+            if (mBuildAllMoviesBoxTask != null)
+                mBuildAllMoviesBoxTask.cancel();
             mBuildAllMoviesBoxTask = new BuildBoxIconTask();
-            mBuildAllMoviesBoxTask.execute(
-                () -> mSeparateAnimeFromShowMovie ? new AllFilmsIconBuilder(mActivity).buildNewBitmap()
-                                                 : new AllMoviesIconBuilder(mActivity).buildNewBitmap(),
+            mBuildAllMoviesBoxTask.execute(()
+                                               -> mSeparateAnimeFromShowMovie
+                    ? new AllFilmsIconBuilder(mActivity).buildNewBitmap()
+                    : new AllMoviesIconBuilder(mActivity).buildNewBitmap(),
                 bitmap -> {
-                    if (bitmap == null || mAllMoviesBox == null || mMovieRow == null) return;
+                    if (bitmap == null || mAllMoviesBox == null || mMovieRow == null)
+                        return;
                     mAllMoviesBox.setBitmap(bitmap);
                     ((ArrayObjectAdapter) mMovieRow.getAdapter()).replace(0, mAllMoviesBox);
                 });
@@ -1103,21 +1389,28 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void buildAllCollectionsBox(Boolean buildIcons) {
-        if (log.isDebugEnabled()) log.debug("buildAllCollectionsBox: buildIcons {}", buildIcons);
-        mAllCollectionsBox = new Box(Box.ID.COLLECTIONS, getString(R.string.movie_collections), R.drawable.movies_banner);
-        if (buildIcons) refreshAllCollectionsBox();
+        if (log.isDebugEnabled())
+            log.debug("buildAllCollectionsBox: buildIcons {}", buildIcons);
+        mAllCollectionsBox =
+            new Box(Box.ID.COLLECTIONS, getString(R.string.movie_collections), R.drawable.movies_banner);
+        if (buildIcons)
+            refreshAllCollectionsBox();
     }
 
     private void refreshAllCollectionsBox() {
-        if (log.isDebugEnabled()) log.debug("refreshAllCollectionsBox");
-        if (! mShowMoviesRow) {
-            if (mBuildAllCollectionsBoxTask != null) mBuildAllCollectionsBoxTask.cancel();
+        if (log.isDebugEnabled())
+            log.debug("refreshAllCollectionsBox");
+        if (!mShowMoviesRow) {
+            if (mBuildAllCollectionsBoxTask != null)
+                mBuildAllCollectionsBoxTask.cancel();
             mBuildAllCollectionsBoxTask = new BuildBoxIconTask();
-            mBuildAllCollectionsBoxTask.execute(
-                () -> mSeparateAnimeFromShowMovie ? new CollectionsIconBuilder(mActivity).buildNewBitmap()
-                                                 : new CollectionsMoviesIconBuilder(mActivity).buildNewBitmap(),
+            mBuildAllCollectionsBoxTask.execute(()
+                                                    -> mSeparateAnimeFromShowMovie
+                    ? new CollectionsIconBuilder(mActivity).buildNewBitmap()
+                    : new CollectionsMoviesIconBuilder(mActivity).buildNewBitmap(),
                 bitmap -> {
-                    if (bitmap == null || mAllCollectionsBox == null || mMovieRow == null) return;
+                    if (bitmap == null || mAllCollectionsBox == null || mMovieRow == null)
+                        return;
                     mAllCollectionsBox.setBitmap(bitmap);
                     ((ArrayObjectAdapter) mMovieRow.getAdapter()).replace(3, mAllCollectionsBox);
                 });
@@ -1125,20 +1418,25 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void buildAllAnimeCollectionsBox(Boolean buildIcons) {
-        if (log.isDebugEnabled()) log.debug("buildAllAnimeCollectionsBox: buildIcons {}", buildIcons);
-        mAllAnimeCollectionsBox = new Box(Box.ID.ANIME_COLLECTIONS, getString(R.string.anime_collections), R.drawable.movies_banner);
-        if (buildIcons) refreshAllAnimeCollectionsBox();
+        if (log.isDebugEnabled())
+            log.debug("buildAllAnimeCollectionsBox: buildIcons {}", buildIcons);
+        mAllAnimeCollectionsBox =
+            new Box(Box.ID.ANIME_COLLECTIONS, getString(R.string.anime_collections), R.drawable.movies_banner);
+        if (buildIcons)
+            refreshAllAnimeCollectionsBox();
     }
 
     private void refreshAllAnimeCollectionsBox() {
-        if (log.isDebugEnabled()) log.debug("refreshAllAnimeCollectionsBox");
-        if (mSeparateAnimeFromShowMovie && ! mShowAnimesRow) {
-            if (mBuildAllAnimeCollectionsBoxTask != null) mBuildAllAnimeCollectionsBoxTask.cancel();
+        if (log.isDebugEnabled())
+            log.debug("refreshAllAnimeCollectionsBox");
+        if (mSeparateAnimeFromShowMovie && !mShowAnimesRow) {
+            if (mBuildAllAnimeCollectionsBoxTask != null)
+                mBuildAllAnimeCollectionsBoxTask.cancel();
             mBuildAllAnimeCollectionsBoxTask = new BuildBoxIconTask();
             mBuildAllAnimeCollectionsBoxTask.execute(
-                () -> new AnimeCollectionsIconBuilder(mActivity).buildNewBitmap(),
-                bitmap -> {
-                    if (bitmap == null || mAllAnimeCollectionsBox == null || mAnimeRow == null) return;
+                () -> new AnimeCollectionsIconBuilder(mActivity).buildNewBitmap(), bitmap -> {
+                    if (bitmap == null || mAllAnimeCollectionsBox == null || mAnimeRow == null)
+                        return;
                     mAllAnimeCollectionsBox.setBitmap(bitmap);
                     ((ArrayObjectAdapter) mAnimeRow.getAdapter()).replace(4, mAllAnimeCollectionsBox);
                 });
@@ -1146,41 +1444,49 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void buildAllAnimesBox(Boolean buildIcons) {
-        if (log.isDebugEnabled()) log.debug("buildAllAnimesBox: buildIcons {}", buildIcons);
+        if (log.isDebugEnabled())
+            log.debug("buildAllAnimesBox: buildIcons {}", buildIcons);
         mAllAnimesBox = new Box(Box.ID.ALL_ANIMES, getString(R.string.all_animes), R.drawable.movies_banner);
-        if (buildIcons) refreshAllAnimesBox();
+        if (buildIcons)
+            refreshAllAnimesBox();
     }
 
     private void refreshAllAnimesBox() {
-        if (log.isDebugEnabled()) log.debug("refreshAllAnimesBox");
-        if (mSeparateAnimeFromShowMovie && ! mShowAnimesRow) {
-            if (mBuildAllAnimesBoxTask != null) mBuildAllAnimesBoxTask.cancel();
+        if (log.isDebugEnabled())
+            log.debug("refreshAllAnimesBox");
+        if (mSeparateAnimeFromShowMovie && !mShowAnimesRow) {
+            if (mBuildAllAnimesBoxTask != null)
+                mBuildAllAnimesBoxTask.cancel();
             mBuildAllAnimesBoxTask = new BuildBoxIconTask();
-            mBuildAllAnimesBoxTask.execute(
-                () -> new AllAnimesIconBuilder(mActivity).buildNewBitmap(),
-                bitmap -> {
-                    if (bitmap == null || mAllAnimesBox == null || mAnimeRow == null) return;
-                    mAllAnimesBox.setBitmap(bitmap);
-                    ((ArrayObjectAdapter) mAnimeRow.getAdapter()).replace(0, mAllAnimesBox);
-                });
+            mBuildAllAnimesBoxTask.execute(() -> new AllAnimesIconBuilder(mActivity).buildNewBitmap(), bitmap -> {
+                if (bitmap == null || mAllAnimesBox == null || mAnimeRow == null)
+                    return;
+                mAllAnimesBox.setBitmap(bitmap);
+                ((ArrayObjectAdapter) mAnimeRow.getAdapter()).replace(0, mAllAnimesBox);
+            });
         }
     }
 
     private void buildAllAnimeShowsBox(Boolean buildIcons) {
-        if (log.isDebugEnabled()) log.debug("buildAllAnimeShowsBox: buildIcons {}", buildIcons);
-        mAllAnimeShowsBox = new Box(Box.ID.ALL_ANIMESHOWS, getString(R.string.all_animeshows), R.drawable.movies_banner);
-        if (buildIcons) refreshAllAnimeShowsBox();
+        if (log.isDebugEnabled())
+            log.debug("buildAllAnimeShowsBox: buildIcons {}", buildIcons);
+        mAllAnimeShowsBox =
+            new Box(Box.ID.ALL_ANIMESHOWS, getString(R.string.all_animeshows), R.drawable.movies_banner);
+        if (buildIcons)
+            refreshAllAnimeShowsBox();
     }
 
     private void refreshAllAnimeShowsBox() {
-        if (log.isDebugEnabled()) log.debug("refreshAllAnimeShowsBox");
-        if (mSeparateAnimeFromShowMovie && ! mShowAnimesRow) {
-            if (mBuildAllAnimeShowsBoxTask != null) mBuildAllAnimeShowsBoxTask.cancel();
+        if (log.isDebugEnabled())
+            log.debug("refreshAllAnimeShowsBox");
+        if (mSeparateAnimeFromShowMovie && !mShowAnimesRow) {
+            if (mBuildAllAnimeShowsBoxTask != null)
+                mBuildAllAnimeShowsBoxTask.cancel();
             mBuildAllAnimeShowsBoxTask = new BuildBoxIconTask();
             mBuildAllAnimeShowsBoxTask.execute(
-                () -> new AllAnimeShowsIconBuilder(mActivity).buildNewBitmap(),
-                bitmap -> {
-                    if (bitmap == null || mAllAnimeShowsBox == null || mAnimeRow == null) return;
+                () -> new AllAnimeShowsIconBuilder(mActivity).buildNewBitmap(), bitmap -> {
+                    if (bitmap == null || mAllAnimeShowsBox == null || mAnimeRow == null)
+                        return;
                     mAllAnimeShowsBox.setBitmap(bitmap);
                     ((ArrayObjectAdapter) mAnimeRow.getAdapter()).replace(3, mAllAnimeShowsBox);
                 });
@@ -1188,21 +1494,27 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void buildAllTvshowsBox(Boolean buildIcons) {
-        if (log.isDebugEnabled()) log.debug("buildTvshowsMoviesBox: buildIcons {}", buildIcons);
+        if (log.isDebugEnabled())
+            log.debug("buildTvshowsMoviesBox: buildIcons {}", buildIcons);
         mAllTvshowsBox = new Box(Box.ID.ALL_TVSHOWS, getString(R.string.all_tvshows), R.drawable.movies_banner);
-        if (buildIcons) refreshAllTvshowsBox();
+        if (buildIcons)
+            refreshAllTvshowsBox();
     }
 
     private void refreshAllTvshowsBox() {
-        if (log.isDebugEnabled()) log.debug("refreshAllTvshowsBox");
-        if (! mShowTvshowsRow) {
-            if (mBuildAllTvshowsBoxTask != null) mBuildAllTvshowsBoxTask.cancel();
+        if (log.isDebugEnabled())
+            log.debug("refreshAllTvshowsBox");
+        if (!mShowTvshowsRow) {
+            if (mBuildAllTvshowsBoxTask != null)
+                mBuildAllTvshowsBoxTask.cancel();
             mBuildAllTvshowsBoxTask = new BuildBoxIconTask();
-            mBuildAllTvshowsBoxTask.execute(
-                () -> mSeparateAnimeFromShowMovie ? new AllTvshowNoAmimeIconBuilder(mActivity).buildNewBitmap()
-                                                 : new AllTvshowsIconBuilder(mActivity).buildNewBitmap(),
+            mBuildAllTvshowsBoxTask.execute(()
+                                                -> mSeparateAnimeFromShowMovie
+                    ? new AllTvshowNoAmimeIconBuilder(mActivity).buildNewBitmap()
+                    : new AllTvshowsIconBuilder(mActivity).buildNewBitmap(),
                 bitmap -> {
-                    if (bitmap == null || mAllTvshowsBox == null || mTvshowRow == null) return;
+                    if (bitmap == null || mAllTvshowsBox == null || mTvshowRow == null)
+                        return;
                     mAllTvshowsBox.setBitmap(bitmap);
                     ((ArrayObjectAdapter) mTvshowRow.getAdapter()).replace(0, mAllTvshowsBox);
                 });
@@ -1210,8 +1522,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private class BuildBoxIconTask {
-        interface Work { Bitmap run(); }
-        interface Done { void run(Bitmap bitmap); }
+        interface Work {
+            Bitmap run();
+        }
+        interface Done {
+            void run(Bitmap bitmap);
+        }
 
         private final Handler handler = new Handler(Looper.getMainLooper());
         private volatile boolean isCancelled = false;
@@ -1220,15 +1536,18 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             BOX_ICON_BUILD_EXECUTOR.execute(() -> {
                 Bitmap result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     result = work.run();
                 } catch (Exception e) {
                     log.error("BuildBoxIconTask failed", e);
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Bitmap finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     done.run(finalResult);
                 });
             });
@@ -1240,30 +1559,54 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void debugRows(String function) {
-        if (getRowPosition(ROW_ID_WATCHING_UP_NEXT) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_WATCHING_UP_NEXT {}", function, getRowPosition(ROW_ID_WATCHING_UP_NEXT));
-        if (getRowPosition(ROW_ID_LAST_ADDED) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_LAST_ADDED {}", function, getRowPosition(ROW_ID_LAST_ADDED));
-        if (getRowPosition(ROW_ID_LAST_PLAYED) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_LAST_PLAYED {}", function, getRowPosition(ROW_ID_LAST_PLAYED));
-        if (getRowPosition(ROW_ID_MOVIES) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_MOVIES {}", function, getRowPosition(ROW_ID_MOVIES));
-        if (getRowPosition(ROW_ID_ALL_MOVIES) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_ALL_MOVIES {}", function, getRowPosition(ROW_ID_ALL_MOVIES));
-        if (getRowPosition(ROW_ID_TVSHOW) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_TVSHOW {}", function, getRowPosition(ROW_ID_TVSHOW));
-        if (getRowPosition(ROW_ID_ALL_TVSHOWS) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_ALL_TVSHOWS {}", function, getRowPosition(ROW_ID_ALL_TVSHOWS));
-        if (getRowPosition(ROW_ID_ANIMES) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_ANIMES {}", function, getRowPosition(ROW_ID_ANIMES));
-        if (getRowPosition(ROW_ID_ALL_ANIMES) != -1) if (log.isTraceEnabled()) log.trace("{}: ROW_ID_ALL_ANIMES{}", function, getRowPosition(ROW_ID_ALL_ANIMES));
+        if (getRowPosition(ROW_ID_WATCHING_UP_NEXT) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_WATCHING_UP_NEXT {}", function, getRowPosition(ROW_ID_WATCHING_UP_NEXT));
+        if (getRowPosition(ROW_ID_LAST_ADDED) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_LAST_ADDED {}", function, getRowPosition(ROW_ID_LAST_ADDED));
+        if (getRowPosition(ROW_ID_LAST_PLAYED) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_LAST_PLAYED {}", function, getRowPosition(ROW_ID_LAST_PLAYED));
+        if (getRowPosition(ROW_ID_MOVIES) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_MOVIES {}", function, getRowPosition(ROW_ID_MOVIES));
+        if (getRowPosition(ROW_ID_ALL_MOVIES) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_ALL_MOVIES {}", function, getRowPosition(ROW_ID_ALL_MOVIES));
+        if (getRowPosition(ROW_ID_TVSHOW) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_TVSHOW {}", function, getRowPosition(ROW_ID_TVSHOW));
+        if (getRowPosition(ROW_ID_ALL_TVSHOWS) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_ALL_TVSHOWS {}", function, getRowPosition(ROW_ID_ALL_TVSHOWS));
+        if (getRowPosition(ROW_ID_ANIMES) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_ANIMES {}", function, getRowPosition(ROW_ID_ANIMES));
+        if (getRowPosition(ROW_ID_ALL_ANIMES) != -1)
+            if (log.isTraceEnabled())
+                log.trace("{}: ROW_ID_ALL_ANIMES{}", function, getRowPosition(ROW_ID_ALL_ANIMES));
     }
 
     private void updateWatchingUpNextRow(Cursor cursor) {
-        if (log.isDebugEnabled()) log.debug("updateWatchingUpNextRow");
+        if (log.isDebugEnabled())
+            log.debug("updateWatchingUpNextRow");
         if (cursor != null) {
-            if (log.isDebugEnabled()) log.debug("updateWatchingUpNextRow: cursor != null");
+            if (log.isDebugEnabled())
+                log.debug("updateWatchingUpNextRow: cursor != null");
             mWatchingUpNextAdapter.changeCursor(cursor);
         } else {
-            if (log.isDebugEnabled()) log.debug("updateWatchingUpNextRow: cursor = null getting old mWatchingUpNextAdapter cursor");
+            if (log.isDebugEnabled())
+                log.debug("updateWatchingUpNextRow: cursor = null getting old mWatchingUpNextAdapter cursor");
             cursor = mWatchingUpNextAdapter.getCursor();
         }
         int currentPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT);
         if (cursor != null) {
             if (cursor.getCount() == 0 || !mShowWatchingUpNextRow) {
-                if (log.isDebugEnabled()) log.debug("updateWatchingUpNextRow: cursor not null and row not shown thus removing currentPosition={}", currentPosition);
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "updateWatchingUpNextRow: cursor not null and row not shown thus removing currentPosition={}",
+                        currentPosition);
                 if (currentPosition != -1)
                     removeRows(currentPosition, 1);
             } else {
@@ -1271,7 +1614,9 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     int newPosition = 0;
                     if (getRowPosition(ROW_ID_LAST_ADDED) != -1)
                         newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
-                    if (log.isDebugEnabled()) log.debug("updateWatchingUpNextRow: cursor not null and row shown thus adding newPosition={}", newPosition);
+                    if (log.isDebugEnabled())
+                        log.debug("updateWatchingUpNextRow: cursor not null and row shown thus adding newPosition={}",
+                            newPosition);
                     addRow(newPosition, mWatchingUpNextRow);
                 }
             }
@@ -1282,31 +1627,43 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void updateLastAddedRow(Cursor cursor) {
-        if (log.isDebugEnabled()) log.debug("updateLastAddedRow");
-        if (cursor != null) mLastAddedAdapter.changeCursor(cursor);
-        else cursor = mLastAddedAdapter.getCursor();
+        if (log.isDebugEnabled())
+            log.debug("updateLastAddedRow");
+        if (cursor != null)
+            mLastAddedAdapter.changeCursor(cursor);
+        else
+            cursor = mLastAddedAdapter.getCursor();
         int currentPosition = getRowPosition(ROW_ID_LAST_ADDED);
         if (cursor == null || cursor.getCount() == 0 || !mShowLastAddedRow) {
-            if (cursor == null) if (log.isDebugEnabled()) log.debug("updateLastAddedRow: cursor is null");
-            else if (log.isDebugEnabled()) log.debug("updateLastAddedRow: cursor has {} elements", cursor.getCount());
+            if (cursor == null)
+                if (log.isDebugEnabled())
+                    log.debug("updateLastAddedRow: cursor is null");
+                else if (log.isDebugEnabled())
+                    log.debug("updateLastAddedRow: cursor has {} elements", cursor.getCount());
             if (currentPosition != -1) {
-                if (log.isDebugEnabled()) log.debug("updateLastAddedRow: removing currentPosition={}", currentPosition);
+                if (log.isDebugEnabled())
+                    log.debug("updateLastAddedRow: removing currentPosition={}", currentPosition);
                 removeRows(currentPosition, 1);
             }
         } else {
             if (currentPosition == -1) {
                 int newPosition = 0;
-                if (log.isDebugEnabled()) log.debug("updateLastAddedRow: adding at newPosition={} if {}", newPosition, mShowLastAddedRow);
-                if (mShowLastAddedRow) addRow(newPosition, mLastAddedRow);
+                if (log.isDebugEnabled())
+                    log.debug("updateLastAddedRow: adding at newPosition={} if {}", newPosition, mShowLastAddedRow);
+                if (mShowLastAddedRow)
+                    addRow(newPosition, mLastAddedRow);
             }
         }
         debugRows("updateLastAddedRow");
     }
 
     private void updateLastPlayedRow(Cursor cursor) {
-        if (log.isDebugEnabled()) log.debug("updateLastPlayedRow");
-        if (cursor != null) mLastPlayedAdapter.changeCursor(cursor);
-        else cursor = mLastPlayedAdapter.getCursor();
+        if (log.isDebugEnabled())
+            log.debug("updateLastPlayedRow");
+        if (cursor != null)
+            mLastPlayedAdapter.changeCursor(cursor);
+        else
+            cursor = mLastPlayedAdapter.getCursor();
         int currentPosition = getRowPosition(ROW_ID_LAST_PLAYED);
         if (cursor == null || cursor.getCount() == 0 || !mShowLastPlayedRow) {
             if (currentPosition != -1) // it exists thus we remove
@@ -1318,24 +1675,32 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
                 else if (getRowPosition(ROW_ID_LAST_ADDED) != -1)
                     newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
-                if (mShowLastPlayedRow) addRow(newPosition, mLastPlayedRow);
+                if (mShowLastPlayedRow)
+                    addRow(newPosition, mLastPlayedRow);
             }
         }
         debugRows("updateLastPlayedRow");
     }
 
     private void updateMoviesRow(Cursor cursor, Boolean updateBox) {
-        if (log.isDebugEnabled()) log.debug("updateMoviesRow: updateBox {}", updateBox);
-        if (cursor != null) mMoviesAdapter.changeCursor(cursor);
-        else cursor = mMoviesAdapter.getCursor();
+        if (log.isDebugEnabled())
+            log.debug("updateMoviesRow: updateBox {}", updateBox);
+        if (cursor != null)
+            mMoviesAdapter.changeCursor(cursor);
+        else
+            cursor = mMoviesAdapter.getCursor();
         int currentPosition = getRowPosition(ROW_ID_ALL_MOVIES);
-        if (log.isDebugEnabled()) log.debug("updateMoviesRow: current position of all movies row {}", currentPosition);
-        if (cursor == null || cursor.getCount() == 0 || !mShowMoviesRow) { // NOT ALL MOVIES
-            if (log.isDebugEnabled()) log.debug("updateMoviesRow: not all movies");
+        if (log.isDebugEnabled())
+            log.debug("updateMoviesRow: current position of all movies row {}", currentPosition);
+        if (cursor == null || cursor.getCount() == 0 || !mShowMoviesRow) {
+            // NOT ALL MOVIES
+            if (log.isDebugEnabled())
+                log.debug("updateMoviesRow: not all movies");
             int moviesPosition = getRowPosition(ROW_ID_MOVIES);
             if (currentPosition != -1) {
                 if (moviesPosition == -1) {
-                    if (log.isDebugEnabled()) log.debug("updateMoviesRow: replace all movies row at position {}", currentPosition);
+                    if (log.isDebugEnabled())
+                        log.debug("updateMoviesRow: replace all movies row at position {}", currentPosition);
                     replaceRow(currentPosition, mMovieRow);
                 } else {
                     removeRows(currentPosition, 1);
@@ -1349,19 +1714,23 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
                 else if (getRowPosition(ROW_ID_LAST_ADDED) != -1) // otherwise put it after LAST ADDED ROW
                     newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
-                if (log.isDebugEnabled()) log.debug("updateMoviesRow: adding movies row at {}", newPosition);
+                if (log.isDebugEnabled())
+                    log.debug("updateMoviesRow: adding movies row at {}", newPosition);
                 addRow(newPosition, mMovieRow);
             }
-            if (! mShowMoviesRow && updateBox) {
+            if (!mShowMoviesRow && updateBox) {
                 refreshAllMoviesBox();
                 refreshAllCollectionsBox();
             }
-        } else { // ALL MOVIES CASE
-            if (log.isDebugEnabled()) log.debug("updateMoviesRow: all movies");
+        } else {
+            // ALL MOVIES CASE
+            if (log.isDebugEnabled())
+                log.debug("updateMoviesRow: all movies");
             int position = getRowPosition(ROW_ID_MOVIES);
             if (position != -1) {
                 if (currentPosition == -1) {
-                    if (log.isDebugEnabled()) log.debug("updateMoviesRow: replace movies row at position {}", position);
+                    if (log.isDebugEnabled())
+                        log.debug("updateMoviesRow: replace movies row at position {}", position);
                     replaceRow(position, mMoviesRow);
                 } else {
                     removeRows(position, 1);
@@ -1375,7 +1744,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
                 else if (getRowPosition(ROW_ID_LAST_ADDED) != -1) // otherwise put it after LAST ADDED ROW
                     newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
-                if (log.isDebugEnabled()) log.debug("updateMoviesRow: adding movies row at {}", newPosition);
+                if (log.isDebugEnabled())
+                    log.debug("updateMoviesRow: adding movies row at {}", newPosition);
                 addRow(newPosition, mMoviesRow);
             }
         }
@@ -1383,17 +1753,23 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void updateTvShowsRow(Cursor cursor, Boolean updateBox) {
-        if (log.isDebugEnabled()) log.debug("updateTvShowsRow: updateBox {}", updateBox);
-        if (cursor != null) mTvshowsAdapter.changeCursor(cursor);
-        else cursor = mTvshowsAdapter.getCursor();
+        if (log.isDebugEnabled())
+            log.debug("updateTvShowsRow: updateBox {}", updateBox);
+        if (cursor != null)
+            mTvshowsAdapter.changeCursor(cursor);
+        else
+            cursor = mTvshowsAdapter.getCursor();
         int currentPosition = getRowPosition(ROW_ID_ALL_TVSHOWS);
-        if (log.isDebugEnabled()) log.debug("updateTvShowsRow: current position of all tvshows row {}", currentPosition);
+        if (log.isDebugEnabled())
+            log.debug("updateTvShowsRow: current position of all tvshows row {}", currentPosition);
         if (cursor == null || cursor.getCount() == 0 || !mShowTvshowsRow) {
-            if (log.isDebugEnabled()) log.debug("updateTvShowsRow: not all tvshows");
+            if (log.isDebugEnabled())
+                log.debug("updateTvShowsRow: not all tvshows");
             int tvshowsPosition = getRowPosition(ROW_ID_TVSHOW);
             if (currentPosition != -1) {
                 if (tvshowsPosition == -1) {
-                    if (log.isDebugEnabled()) log.debug("updateTvShowsRow: replace all tvshows row at position {}", currentPosition);
+                    if (log.isDebugEnabled())
+                        log.debug("updateTvShowsRow: replace all tvshows row at position {}", currentPosition);
                     replaceRow(currentPosition, mTvshowRow);
                 } else {
                     removeRows(currentPosition, 1);
@@ -1411,15 +1787,18 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
                 else if (getRowPosition(ROW_ID_LAST_ADDED) != -1)
                     newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
-                if (log.isDebugEnabled()) log.debug("updateTvShowsRow: adding tvshows row at {}", newPosition);
+                if (log.isDebugEnabled())
+                    log.debug("updateTvShowsRow: adding tvshows row at {}", newPosition);
                 addRow(newPosition, mTvshowRow);
             }
-            if (! mShowTvshowsRow && updateBox) refreshAllTvshowsBox();
+            if (!mShowTvshowsRow && updateBox)
+                refreshAllTvshowsBox();
         } else {
             int position = getRowPosition(ROW_ID_TVSHOW);
             if (position != -1) {
                 if (currentPosition == -1) {
-                    if (log.isDebugEnabled()) log.debug("updateTvShowsRow: replace tvshows row at position {}", position);
+                    if (log.isDebugEnabled())
+                        log.debug("updateTvShowsRow: replace tvshows row at position {}", position);
                     replaceRow(position, mTvshowsRow);
                 } else {
                     removeRows(position, 1);
@@ -1437,7 +1816,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
                 else if (getRowPosition(ROW_ID_LAST_ADDED) != -1)
                     newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
-                if (log.isDebugEnabled()) log.debug("updateTvShowsRow: adding all tvshows row at {}", newPosition);
+                if (log.isDebugEnabled())
+                    log.debug("updateTvShowsRow: adding all tvshows row at {}", newPosition);
                 addRow(newPosition, mTvshowsRow);
             }
         }
@@ -1445,18 +1825,24 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     private void updateAnimesRow(Cursor cursor, Boolean updateBox) {
-        if (log.isDebugEnabled()) log.debug("updateAnimesRow: updateBox {}", updateBox);
-        if (cursor != null) mAnimesAdapter.changeCursor(cursor);
-        else cursor = mAnimesAdapter.getCursor();
+        if (log.isDebugEnabled())
+            log.debug("updateAnimesRow: updateBox {}", updateBox);
+        if (cursor != null)
+            mAnimesAdapter.changeCursor(cursor);
+        else
+            cursor = mAnimesAdapter.getCursor();
         int currentPosition = getRowPosition(ROW_ID_ALL_ANIMES);
-        if (log.isDebugEnabled()) log.debug("updateAnimesRow: current position of all animes row {}", currentPosition);
-        if (cursor ==null || cursor.getCount() == 0 || !mShowAnimesRow) {
-            if (log.isDebugEnabled()) log.debug("updateAnimesRow: not all animes");
+        if (log.isDebugEnabled())
+            log.debug("updateAnimesRow: current position of all animes row {}", currentPosition);
+        if (cursor == null || cursor.getCount() == 0 || !mShowAnimesRow) {
+            if (log.isDebugEnabled())
+                log.debug("updateAnimesRow: not all animes");
             if (mSeparateAnimeFromShowMovie) {
                 int animesPosition = getRowPosition(ROW_ID_ANIMES);
                 if (currentPosition != -1) {
                     if (animesPosition == -1) {
-                        if (log.isDebugEnabled()) log.debug("updateAnimesRow: replace all animations row at position {}", currentPosition);
+                        if (log.isDebugEnabled())
+                            log.debug("updateAnimesRow: replace all animations row at position {}", currentPosition);
                         replaceRow(currentPosition, mAnimeRow);
                     } else {
                         removeRows(currentPosition, 1);
@@ -1478,10 +1864,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                         newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
                     else if (getRowPosition(ROW_ID_WATCHING_UP_NEXT) != -1)
                         newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
-                    if (log.isDebugEnabled()) log.debug("updateAnimesRow: adding animations row at {}", newPosition);
+                    if (log.isDebugEnabled())
+                        log.debug("updateAnimesRow: adding animations row at {}", newPosition);
                     addRow(newPosition, mAnimeRow);
                 }
-                if (! mShowAnimesRow && updateBox) {
+                if (!mShowAnimesRow && updateBox) {
                     refreshAllAnimesBox();
                     refreshAllAnimeShowsBox();
                 }
@@ -1494,7 +1881,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             if (mSeparateAnimeFromShowMovie) {
                 if (position != -1) {
                     if (currentPosition == -1) {
-                        if (log.isDebugEnabled()) log.debug("updateAnimesRow: replace animations row at position {}", position);
+                        if (log.isDebugEnabled())
+                            log.debug("updateAnimesRow: replace animations row at position {}", position);
                         replaceRow(position, mAnimesRow);
                     } else {
                         removeRows(position, 1);
@@ -1516,7 +1904,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                         newPosition = getRowPosition(ROW_ID_LAST_ADDED) + 1;
                     else if (getRowPosition(ROW_ID_WATCHING_UP_NEXT) != -1)
                         newPosition = getRowPosition(ROW_ID_WATCHING_UP_NEXT) + 1;
-                    if (log.isDebugEnabled()) log.debug("updateAnimesRow: adding all animations row at {}", newPosition);
+                    if (log.isDebugEnabled())
+                        log.debug("updateAnimesRow: adding all animations row at {}", newPosition);
                     addRow(newPosition, mAnimesRow);
                 }
             } else {
@@ -1530,16 +1919,21 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private void updateNonScrapedVideosVisibility(Cursor cursor) {
         int count = NonScrapedVideosCountLoader.getNonScrapedVideoCount(cursor);
         int currentIndex = mFileBrowsingRowAdapter.indexOf(mNonScrapedVideosItem);
-        if (log.isDebugEnabled()) log.debug("updateNonScrapedVideosVisibility: count={}, currentIndex={}", count, currentIndex);
+        if (log.isDebugEnabled())
+            log.debug("updateNonScrapedVideosVisibility: count={}, currentIndex={}", count, currentIndex);
         if (count > 0) {
             if (currentIndex < 0) {
-                if (log.isDebugEnabled()) log.debug("updateNonScrapedVideosVisibility: adding non-scraped box");
+                if (log.isDebugEnabled())
+                    log.debug("updateNonScrapedVideosVisibility: adding non-scraped box");
                 mFileBrowsingRowAdapter.add(mNonScrapedVideosItem);
             } else {
-                if (log.isDebugEnabled()) log.debug("updateNonScrapedVideosVisibility: non-scraped box already present at index {}", currentIndex);
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "updateNonScrapedVideosVisibility: non-scraped box already present at index {}", currentIndex);
             }
         } else {
-            if (log.isDebugEnabled()) log.debug("updateNonScrapedVideosVisibility: removing non-scraped box");
+            if (log.isDebugEnabled())
+                log.debug("updateNonScrapedVideosVisibility: removing non-scraped box");
             mFileBrowsingRowAdapter.remove(mNonScrapedVideosItem);
         }
     }
@@ -1550,10 +1944,10 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
      * @return -1 if the row is not present
      */
     private int getRowPosition(int rowId) {
-        for (int i=0; i<mRowsAdapter.size(); i++) {
+        for (int i = 0; i < mRowsAdapter.size(); i++) {
             Object o = mRowsAdapter.get(i);
             if (o instanceof ListRow) {
-                if (((ListRow)o).getId() == rowId) {
+                if (((ListRow) o).getId() == rowId) {
                     return i;
                 }
             }
@@ -1563,13 +1957,16 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     private void addRow(int position, ListRow row) {
         mRowsAdapter.add(position, row);
-        if (mRowPendingSelection != null) stabilizeRowsSelection(position);
+        if (mRowPendingSelection != null)
+            stabilizeRowsSelection(position);
     }
 
     private void replaceRow(int position, ListRow row) {
-        if (mRowPendingSelection == mRowsAdapter.get(position)) mRowPendingSelection = row;
+        if (mRowPendingSelection == mRowsAdapter.get(position))
+            mRowPendingSelection = row;
         mRowsAdapter.replace(position, row);
-        if (mRowPendingSelection != null) stabilizeRowsSelection(position);
+        if (mRowPendingSelection != null)
+            stabilizeRowsSelection(position);
     }
 
     /**
@@ -1578,11 +1975,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
      * can occur before Leanback runs its posted selection callback.
      */
     private void removeRows(int position, int count) {
-        if (position < 0 || count <= 0 || position + count > mRowsAdapter.size()) return;
+        if (position < 0 || count <= 0 || position + count > mRowsAdapter.size())
+            return;
 
         if (mRowPendingSelection == null && mRowsAdapter.size() > 0) {
-            int selectedPosition = Math.max(0,
-                    Math.min(selectedSourcePosition(), mRowsAdapter.size() - 1));
+            int selectedPosition = Math.max(0, Math.min(selectedSourcePosition(), mRowsAdapter.size() - 1));
             mRowPendingSelection = mRowsAdapter.get(selectedPosition);
         }
         mRowsAdapter.removeItems(position, count);
@@ -1613,8 +2010,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
      */
     private boolean isEmptyViewRow(ObjectAdapter adapter) {
         if (adapter instanceof ArrayObjectAdapter) {
-            ArrayObjectAdapter arrayObjectAdapter = (ArrayObjectAdapter)adapter;
-            if (arrayObjectAdapter.size()==1) {
+            ArrayObjectAdapter arrayObjectAdapter = (ArrayObjectAdapter) adapter;
+            if (arrayObjectAdapter.size() == 1) {
                 if (arrayObjectAdapter.get(0) instanceof EmptyView) {
                     return true;
                 }
@@ -1626,69 +2023,93 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         mActivity = getActivity();
-        if (mActivity == null) log.warn("onCreateLoader: mActivity is null!");
+        if (mActivity == null)
+            log.warn("onCreateLoader: mActivity is null!");
         switch (id) {
-            case PreviewLibraryLoader.ID -> { return new PreviewLibraryLoader(requireContext()); }
+            case PreviewLibraryLoader.ID -> {
+                return new PreviewLibraryLoader(requireContext());
+            }
             case LOADER_ID_WATCHING_UP_NEXT -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader WATCHING_UP_NEXT");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader WATCHING_UP_NEXT");
                 return new WatchingUpNextLoader(mActivity);
             }
             case LOADER_ID_LAST_ADDED -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader LAST_ADDED");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader LAST_ADDED");
                 return new LastAddedLoader(mActivity);
             }
             case LOADER_ID_LAST_PLAYED -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader LAST_PLAYED");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader LAST_PLAYED");
                 return new LastPlayedLoader(mActivity);
             }
             case LOADER_ID_ALL_MOVIES -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader ALL_MOVIES");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader ALL_MOVIES");
                 if (mSeparateAnimeFromShowMovie) {
                     if (args == null)
-                        return new FilmsLoader(mActivity, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new FilmsLoader(
+                            mActivity, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                     else
-                        return new FilmsLoader(mActivity, args.getString("sort"), true, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new FilmsLoader(mActivity, args.getString("sort"), true, true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 } else {
                     if (args == null)
-                        return new MoviesLoader(mActivity, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new MoviesLoader(
+                            mActivity, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                     else
-                        return new MoviesLoader(mActivity, args.getString("sort"), true, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new MoviesLoader(mActivity, args.getString("sort"), true, true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 }
             }
             case LOADER_ID_ALL_TV_SHOWS -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader ALL_TV_SHOWS");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader ALL_TV_SHOWS");
                 if (mSeparateAnimeFromShowMovie) {
                     if (args == null)
-                        return new AllTvshowsNoAnimeLoader(mActivity, TvshowSortOrderEntries.DEFAULT_SORT, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AllTvshowsNoAnimeLoader(mActivity, TvshowSortOrderEntries.DEFAULT_SORT, true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                     else
-                        return new AllTvshowsNoAnimeLoader(mActivity, args.getString("sort"), true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AllTvshowsNoAnimeLoader(mActivity, args.getString("sort"), true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 } else {
                     if (args == null)
-                        return new AllTvshowsLoader(mActivity, TvshowSortOrderEntries.DEFAULT_SORT, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AllTvshowsLoader(mActivity, TvshowSortOrderEntries.DEFAULT_SORT, true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                     else
-                        return new AllTvshowsLoader(mActivity, args.getString("sort"), true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AllTvshowsLoader(mActivity, args.getString("sort"), true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 }
             }
             case LOADER_ID_ALL_ANIMES -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader ALL_ANIMES");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader ALL_ANIMES");
                 if (mSeparateAnimeFromShowMovie) {
                     if (args == null)
-                        return new AnimesNShowsLoader(mActivity, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AnimesNShowsLoader(
+                            mActivity, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                     else
-                        return new AnimesNShowsLoader(mActivity, args.getString("sort"), true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AnimesNShowsLoader(mActivity, args.getString("sort"), true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 } else {
-                    if (args == null) return new AnimesLoader(mActivity, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                    if (args == null)
+                        return new AnimesLoader(
+                            mActivity, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                     else
-                        return new AnimesLoader(mActivity, args.getString("sort"), true, true, VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                        return new AnimesLoader(mActivity, args.getString("sort"), true, true,
+                            VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
                 }
             }
             case LOADER_ID_DOCUMENTARIES -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader DOCUMENTARIES");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader DOCUMENTARIES");
                 return new DocumentaryTvshowsLoader(mActivity, TvshowSortOrderEntries.DEFAULT_SORT, true,
-                        VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
+                    VideoLoader.ALLVIDEO_THROTTLE, VideoLoader.ALLVIDEO_THROTTLE_DELAY);
             }
             case LOADER_ID_NON_SCRAPED_VIDEOS_COUNT -> {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader NON_SCRAPED");
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader NON_SCRAPED");
                 return new NonScrapedVideosCountLoader(mActivity);
             }
             default -> {
@@ -1699,15 +2120,20 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (updateActivity("onLoadFinished") == null) return;
+        if (updateActivity("onLoadFinished") == null)
+            return;
         if (cursorLoader.getId() == PreviewLibraryLoader.ID) {
-            if (mPreviewPages != null) mPreviewPages.setSnapshot(((PreviewLibraryLoader)cursorLoader).snapshot);
-            String warning=((PreviewLibraryLoader)cursorLoader).loadWarning;
-            if(warning!=null)PreviewNotice.show(requireContext(),warning,true);
+            if (mPreviewPages != null)
+                mPreviewPages.setSnapshot(((PreviewLibraryLoader) cursorLoader).snapshot);
+            String warning = ((PreviewLibraryLoader) cursorLoader).loadWarning;
+            if (warning != null)
+                PreviewNotice.show(requireContext(), warning, true);
             return;
         }
-        boolean scanningOnGoing = NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress() || isVideoImportRunning();
-        if (log.isDebugEnabled()) log.debug("onLoadFinished: cursor id={}, scanningOnGoing={}", cursorLoader.getId(), scanningOnGoing);
+        boolean scanningOnGoing =
+            NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress() || isVideoImportRunning();
+        if (log.isDebugEnabled())
+            log.debug("onLoadFinished: cursor id={}, scanningOnGoing={}", cursorLoader.getId(), scanningOnGoing);
 
         // Check if this loader has completed its initial load
         boolean isInitialLoadComplete = false;
@@ -1721,7 +2147,8 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             case LOADER_ID_NON_SCRAPED_VIDEOS_COUNT -> isInitialLoadComplete = mNonScrapedVideosInitialLoadComplete;
         }
 
-        if (cursor != null && ! cursor.isClosed()) { // seen on sentry sometimes cursor is already closed
+        if (cursor != null && !cursor.isClosed()) {
+            // seen on sentry sometimes cursor is already closed
             // Skip UI updates during scanning/scraping ONLY after initial load to prevent SQLite contention
             // But still swap cursors to prevent closed cursor errors
             boolean skipUIUpdate = scanningOnGoing && isInitialLoadComplete;
@@ -1730,32 +2157,50 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                 case LOADER_ID_WATCHING_UP_NEXT -> {
                     if (!skipUIUpdate) {
                         if (mShowWatchingUpNextRow && mWatchingUpNextInitFocus == InitFocus.NOT_FOCUSED)
-                            mWatchingUpNextInitFocus = cursor.getCount() > 0 ? InitFocus.NEED_FOCUS : InitFocus.NO_NEED_FOCUS;
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: WatchingUpNext cursor ready with {} entries and {}, updating row", cursor.getCount(), mWatchingUpNextInitFocus);
-                        if (mShowWatchingUpNextRow) updateWatchingUpNextRow(cursor);
+                            mWatchingUpNextInitFocus =
+                                cursor.getCount() > 0 ? InitFocus.NEED_FOCUS : InitFocus.NO_NEED_FOCUS;
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: WatchingUpNext cursor ready with {} entries and {}, updating row",
+                                cursor.getCount(), mWatchingUpNextInitFocus);
+                        if (mShowWatchingUpNextRow)
+                            updateWatchingUpNextRow(cursor);
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: WatchingUpNext skipping UI update during scanning, but swapping cursor");
-                        if (mWatchingUpNextAdapter != null) mWatchingUpNextAdapter.changeCursor(cursor);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: WatchingUpNext skipping UI update during scanning, but swapping cursor");
+                        if (mWatchingUpNextAdapter != null)
+                            mWatchingUpNextAdapter.changeCursor(cursor);
                     }
                     mWatchingUpNextInitialLoadComplete = true;
                 }
                 case LOADER_ID_LAST_ADDED -> {
                     if (!skipUIUpdate) {
                         if (mShowLastAddedRow && mLastAddedInitFocus == InitFocus.NOT_FOCUSED)
-                            mLastAddedInitFocus = cursor.getCount() > 0 ? InitFocus.NEED_FOCUS : InitFocus.NO_NEED_FOCUS;
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: LastAdded cursor ready with {} entries and {}, updating row", cursor.getCount(), mLastAddedInitFocus);
-                        if (mShowLastAddedRow) updateLastAddedRow(cursor);
+                            mLastAddedInitFocus =
+                                cursor.getCount() > 0 ? InitFocus.NEED_FOCUS : InitFocus.NO_NEED_FOCUS;
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: LastAdded cursor ready with {} entries and {}, updating row",
+                                cursor.getCount(), mLastAddedInitFocus);
+                        if (mShowLastAddedRow)
+                            updateLastAddedRow(cursor);
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: LastAdded skipping UI update during scanning, but swapping cursor");
-                        if (mLastAddedAdapter != null) mLastAddedAdapter.changeCursor(cursor);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: LastAdded skipping UI update during scanning, but swapping cursor");
+                        if (mLastAddedAdapter != null)
+                            mLastAddedAdapter.changeCursor(cursor);
                     }
                     mLastAddedInitialLoadComplete = true;
                 }
                 case LOADER_ID_LAST_PLAYED -> {
                     if (!skipUIUpdate) {
                         if (mShowLastPlayedRow && mLastPlayedInitFocus == InitFocus.NOT_FOCUSED)
-                            mLastPlayedInitFocus = cursor.getCount() > 0 ? InitFocus.NEED_FOCUS : InitFocus.NO_NEED_FOCUS;
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: LastPlayed cursor ready with {} entries and {}, updating row", cursor.getCount(), mLastAddedInitFocus);
+                            mLastPlayedInitFocus =
+                                cursor.getCount() > 0 ? InitFocus.NEED_FOCUS : InitFocus.NO_NEED_FOCUS;
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: LastPlayed cursor ready with {} entries and {}, updating row",
+                                cursor.getCount(), mLastAddedInitFocus);
                         if (mShowLastPlayedRow) {
                             // Check if the video at position 0 has changed (indicating a new video was played)
                             long newPosition0VideoId = -1;
@@ -1766,8 +2211,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                                     newPosition0VideoId = cursor.getLong(idColumnIndex);
                                 }
                             }
-                            boolean videoPosition0Changed = (mLastPlayedPosition0VideoId != -1 && newPosition0VideoId != -1 && mLastPlayedPosition0VideoId != newPosition0VideoId);
-                            if (log.isDebugEnabled()) log.debug("onLoadFinished: LastPlayed position 0 video ID changed from {} to {}, changed={}", mLastPlayedPosition0VideoId, newPosition0VideoId, videoPosition0Changed);
+                            boolean videoPosition0Changed = (mLastPlayedPosition0VideoId != -1
+                                && newPosition0VideoId != -1 && mLastPlayedPosition0VideoId != newPosition0VideoId);
+                            if (log.isDebugEnabled())
+                                log.debug(
+                                    "onLoadFinished: LastPlayed position 0 video ID changed from {} to {}, changed={}",
+                                    mLastPlayedPosition0VideoId, newPosition0VideoId, videoPosition0Changed);
                             mLastPlayedPosition0VideoId = newPosition0VideoId;
 
                             updateLastPlayedRow(cursor);
@@ -1775,56 +2224,83 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                             // This ensures that when returning from video playback, the focus goes to position 0
                             // where the just-played video now is, but stays at the current position if no video was played
                             int lastPlayedRowPosition = getRowPosition(ROW_ID_LAST_PLAYED);
-                            if (videoPosition0Changed && lastPlayedRowPosition != -1 && lastPlayedRowPosition == selectedSourcePosition()) {
-                                if (log.isDebugEnabled()) log.debug("onLoadFinished: LastPlayed row is currently selected and video at position 0 changed, resetting item position to 0");
+                            if (videoPosition0Changed && lastPlayedRowPosition != -1
+                                && lastPlayedRowPosition == selectedSourcePosition()) {
+                                if (log.isDebugEnabled())
+                                    log.debug(
+                                        "onLoadFinished: LastPlayed row is currently selected and video at position 0 changed, resetting item position to 0");
                                 // Use setSelectedPosition with SelectItemViewHolderTask to reset horizontal position
-                                selectSourcePosition(lastPlayedRowPosition, false, new ListRowPresenter.SelectItemViewHolderTask(0));
+                                selectSourcePosition(
+                                    lastPlayedRowPosition, false, new ListRowPresenter.SelectItemViewHolderTask(0));
                             }
                         }
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: LastPlayed skipping UI update during scanning, but swapping cursor");
-                        if (mLastPlayedAdapter != null) mLastPlayedAdapter.changeCursor(cursor);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: LastPlayed skipping UI update during scanning, but swapping cursor");
+                        if (mLastPlayedAdapter != null)
+                            mLastPlayedAdapter.changeCursor(cursor);
                     }
                     mLastPlayedInitialLoadComplete = true;
                 }
                 case LOADER_ID_ALL_MOVIES -> {
                     if (!skipUIUpdate) {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: AllMovies cursor ready with {} entries, updating row/box", cursor.getCount());
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: AllMovies cursor ready with {} entries, updating row/box",
+                                cursor.getCount());
                         // cannot use if (isCursorCountChanged(mLastAddedAdapter.getCursor(), cursor)) because when row is full it is 100 always
-                        if (mShowMoviesRow) updateMoviesRow(cursor, false);
+                        if (mShowMoviesRow)
+                            updateMoviesRow(cursor, false);
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: AllMovies skipping UI update during scanning, but swapping cursor");
-                        if (mMoviesAdapter != null) mMoviesAdapter.changeCursor(cursor);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: AllMovies skipping UI update during scanning, but swapping cursor");
+                        if (mMoviesAdapter != null)
+                            mMoviesAdapter.changeCursor(cursor);
                     }
                     mMoviesInitialLoadComplete = true;
                 }
                 case LOADER_ID_ALL_TV_SHOWS -> {
                     if (!skipUIUpdate) {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: AllTvShows cursor ready with {} entries, updating row/box", cursor.getCount());
-                        if (mShowTvshowsRow) updateTvShowsRow(cursor, false);
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: AllTvShows cursor ready with {} entries, updating row/box",
+                                cursor.getCount());
+                        if (mShowTvshowsRow)
+                            updateTvShowsRow(cursor, false);
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: AllTvShows skipping UI update during scanning, but swapping cursor");
-                        if (mTvshowsAdapter != null) mTvshowsAdapter.changeCursor(cursor);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: AllTvShows skipping UI update during scanning, but swapping cursor");
+                        if (mTvshowsAdapter != null)
+                            mTvshowsAdapter.changeCursor(cursor);
                     }
                     mTvshowsInitialLoadComplete = true;
                 }
                 case LOADER_ID_ALL_ANIMES -> {
                     if (!skipUIUpdate) {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: AllAnimes cursor ready with {} entries, updating row/box", cursor.getCount());
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: AllAnimes cursor ready with {} entries, updating row/box",
+                                cursor.getCount());
                         if (mShowAnimesRow && mSeparateAnimeFromShowMovie)
                             updateAnimesRow(cursor, false);
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: AllAnimes skipping UI update during scanning, but swapping cursor");
-                        if (mAnimesAdapter != null) mAnimesAdapter.changeCursor(cursor);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onLoadFinished: AllAnimes skipping UI update during scanning, but swapping cursor");
+                        if (mAnimesAdapter != null)
+                            mAnimesAdapter.changeCursor(cursor);
                     }
                     mAnimesInitialLoadComplete = true;
                 }
                 case LOADER_ID_NON_SCRAPED_VIDEOS_COUNT -> {
                     if (!skipUIUpdate) {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: NonScrapedVideos cursor ready, count={}", NonScrapedVideosCountLoader.getNonScrapedVideoCount(cursor));
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: NonScrapedVideos cursor ready, count={}",
+                                NonScrapedVideosCountLoader.getNonScrapedVideoCount(cursor));
                         updateNonScrapedVideosVisibility(cursor);
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onLoadFinished: NonScrapedVideos skipping UI update during scanning");
+                        if (log.isDebugEnabled())
+                            log.debug("onLoadFinished: NonScrapedVideos skipping UI update during scanning");
                         // This loader doesn't use a cursor adapter, just skip entirely
                     }
                     mNonScrapedVideosInitialLoadComplete = true;
@@ -1841,22 +2317,28 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         switch (cursorLoader.getId()) {
             case LOADER_ID_WATCHING_UP_NEXT -> {
-                if (mWatchingUpNextAdapter != null) mWatchingUpNextAdapter.changeCursor(null);
+                if (mWatchingUpNextAdapter != null)
+                    mWatchingUpNextAdapter.changeCursor(null);
             }
             case LOADER_ID_LAST_ADDED -> {
-                if (mLastAddedAdapter != null) mLastAddedAdapter.changeCursor(null);
+                if (mLastAddedAdapter != null)
+                    mLastAddedAdapter.changeCursor(null);
             }
             case LOADER_ID_LAST_PLAYED -> {
-                if (mLastPlayedAdapter != null) mLastPlayedAdapter.changeCursor(null);
+                if (mLastPlayedAdapter != null)
+                    mLastPlayedAdapter.changeCursor(null);
             }
             case LOADER_ID_ALL_MOVIES -> {
-                if (mMoviesAdapter != null) mMoviesAdapter.changeCursor(null);
+                if (mMoviesAdapter != null)
+                    mMoviesAdapter.changeCursor(null);
             }
             case LOADER_ID_ALL_TV_SHOWS -> {
-                if (mTvshowsAdapter != null) mTvshowsAdapter.changeCursor(null);
+                if (mTvshowsAdapter != null)
+                    mTvshowsAdapter.changeCursor(null);
             }
             case LOADER_ID_ALL_ANIMES -> {
-                if (mAnimesAdapter != null) mAnimesAdapter.changeCursor(null);
+                if (mAnimesAdapter != null)
+                    mAnimesAdapter.changeCursor(null);
             }
             case LOADER_ID_DOCUMENTARIES -> updateDocumentariesVisibility(false);
         }
@@ -1865,10 +2347,13 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     /** A real browse row also creates a native entry in the left navigation.
      * Keep it discoverable even before the first documentary has been scraped. */
     private void updateDocumentariesVisibility(boolean unused) {
-        if (mTvshowRowAdapter == null || mDocumentariesBox == null) return;
+        if (mTvshowRowAdapter == null || mDocumentariesBox == null)
+            return;
         int index = mTvshowRowAdapter.indexOf(mDocumentariesBox);
-        if (mShowDocumentaries && index < 0) mTvshowRowAdapter.add(Math.min(1, mTvshowRowAdapter.size()), mDocumentariesBox);
-        else if (!mShowDocumentaries && index >= 0) mTvshowRowAdapter.remove(mDocumentariesBox);
+        if (mShowDocumentaries && index < 0)
+            mTvshowRowAdapter.add(Math.min(1, mTvshowRowAdapter.size()), mDocumentariesBox);
+        else if (!mShowDocumentaries && index >= 0)
+            mTvshowRowAdapter.remove(mDocumentariesBox);
     }
 
     private enum InitFocus {
@@ -1883,31 +2368,53 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private InitFocus mLastAddedInitFocus = InitFocus.NOT_FOCUSED;
     private InitFocus mLastPlayedInitFocus = InitFocus.NOT_FOCUSED;
 
-    private void checkInitFocus() { // sets focus on line 0 when there is a line 0 loader update
+    private void checkInitFocus() {
+        // sets focus on line 0 when there is a line 0 loader update
         // Check if we have WatchingUpNext, LastAdded and LastPlayed loader results
-        if (log.isDebugEnabled()) log.debug("checkInitFocus: mLastAddedInitFocus={}, mLastPlayedInitFocus={}, mWatchingUpNextInitFocus={}, mShowWatchingUpNextRow={}, mShowLastAddedRow={}, mShowLastPlayedRow={}", mLastAddedInitFocus, mLastPlayedInitFocus, mWatchingUpNextInitFocus, mShowWatchingUpNextRow, mShowLastAddedRow, mShowLastPlayedRow);
+        if (log.isDebugEnabled())
+            log.debug(
+                "checkInitFocus: mLastAddedInitFocus={}, mLastPlayedInitFocus={}, mWatchingUpNextInitFocus={}, mShowWatchingUpNextRow={}, mShowLastAddedRow={}, mShowLastPlayedRow={}",
+                mLastAddedInitFocus, mLastPlayedInitFocus, mWatchingUpNextInitFocus, mShowWatchingUpNextRow,
+                mShowLastAddedRow, mShowLastPlayedRow);
         if (mWatchingUpNextInitFocus == InitFocus.NEED_FOCUS) {
-            if (log.isDebugEnabled()) log.debug("checkInitFocus: WatchingUpNext loader ready and needs focus and row is {}", (getRowPosition(ROW_ID_WATCHING_UP_NEXT) != -1 ? "present" : "absent"));
+            if (log.isDebugEnabled())
+                log.debug("checkInitFocus: WatchingUpNext loader ready and needs focus and row is {}",
+                    (getRowPosition(ROW_ID_WATCHING_UP_NEXT) != -1 ? "present" : "absent"));
             mWatchingUpNextInitFocus = InitFocus.FOCUSED;
             //mLastAddedInitFocus = InitFocus.NO_NEED_FOCUS;
             //mLastPlayedInitFocus = InitFocus.NO_NEED_FOCUS;
-            if (FEATURE_WATCH_UP_NEXT && getRowPosition(ROW_ID_WATCHING_UP_NEXT) == -1) return;
+            if (FEATURE_WATCH_UP_NEXT && getRowPosition(ROW_ID_WATCHING_UP_NEXT) == -1)
+                return;
         } else if (mLastAddedInitFocus == InitFocus.NEED_FOCUS) {
-            if (log.isDebugEnabled()) log.debug("checkInitFocus: LastAdded loader ready and needs focus and row is {}", (getRowPosition(ROW_ID_LAST_ADDED) != -1 ? "present" : "absent"));
+            if (log.isDebugEnabled())
+                log.debug("checkInitFocus: LastAdded loader ready and needs focus and row is {}",
+                    (getRowPosition(ROW_ID_LAST_ADDED) != -1 ? "present" : "absent"));
             mLastAddedInitFocus = InitFocus.FOCUSED;
             // removing for now since it causes first row not to be focused since isLastAddedRowVisible=true but in reality it is MoviesRow displayed
             //mLastPlayedInitFocus = InitFocus.NO_NEED_FOCUS;
-            if (getRowPosition(ROW_ID_LAST_ADDED) == -1) return;
-        } else if (mLastPlayedInitFocus == InitFocus.NEED_FOCUS) { // check if row is visible to avoid selecting MoviesRow in case of slow row display
-            if (log.isDebugEnabled()) log.debug("checkInitFocus: LastPlayed loader ready and needs focus and row is {}", (getRowPosition(ROW_ID_LAST_PLAYED) != -1 ? "present" : "absent"));
+            if (getRowPosition(ROW_ID_LAST_ADDED) == -1)
+                return;
+        } else if (mLastPlayedInitFocus
+            == InitFocus
+                .NEED_FOCUS) {
+            // check if row is visible to avoid selecting MoviesRow in case of slow row display
+            if (log.isDebugEnabled())
+                log.debug("checkInitFocus: LastPlayed loader ready and needs focus and row is {}",
+                    (getRowPosition(ROW_ID_LAST_PLAYED) != -1 ? "present" : "absent"));
             mLastPlayedInitFocus = InitFocus.FOCUSED;
-            if (getRowPosition(ROW_ID_LAST_PLAYED) == -1) return;
+            if (getRowPosition(ROW_ID_LAST_PLAYED) == -1)
+                return;
         } else {
-            if (log.isDebugEnabled()) log.debug("checkInitFocus: there was a cursor update on one that is tagged with FOCUSED OR NO_NEED_FOCUS");
+            if (log.isDebugEnabled())
+                log.debug(
+                    "checkInitFocus: there was a cursor update on one that is tagged with FOCUSED OR NO_NEED_FOCUS");
             return; /// if nobody needs focus then exit
         }
-        if (log.isDebugEnabled()) log.debug("checkInitFocus: sets focus on row 0 with animation if above rows were not visible it happens on network first");
-        if ((FEATURE_WATCH_UP_NEXT && mShowWatchingUpNextRow) || mShowLastAddedRow || mShowLastPlayedRow) selectSourcePosition(0, true, null);
+        if (log.isDebugEnabled())
+            log.debug(
+                "checkInitFocus: sets focus on row 0 with animation if above rows were not visible it happens on network first");
+        if ((FEATURE_WATCH_UP_NEXT && mShowWatchingUpNextRow) || mShowLastAddedRow || mShowLastPlayedRow)
+            selectSourcePosition(0, true, null);
     }
 
     /**
@@ -1916,11 +2423,12 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     private final BroadcastReceiver mExternalStorageReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (action.equals(ExtStorageReceiver.ACTION_MEDIA_MOUNTED)){
-                if (log.isDebugEnabled()) log.debug("mExternalStorageReceiver: ACTION_MEDIA_MOUNTED");
+            if (action.equals(ExtStorageReceiver.ACTION_MEDIA_MOUNTED)) {
+                if (log.isDebugEnabled())
+                    log.debug("mExternalStorageReceiver: ACTION_MEDIA_MOUNTED");
                 // Remove "file://"
                 String path = null;
-                if(intent.getDataString().startsWith("file"))
+                if (intent.getDataString().startsWith("file"))
                     path = intent.getDataString().substring("file".length());
                 else if (intent.getDataString().startsWith(ExtStorageReceiver.ARCHOS_FILE_SCHEME))
                     path = intent.getDataString().substring(ExtStorageReceiver.ARCHOS_FILE_SCHEME.length());
@@ -1928,12 +2436,11 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                 if (path == null || path.isEmpty())
                     return;
                 updateUsbAndSdcardVisibility();
-            }
-            else if (action.equals(ExtStorageReceiver.ACTION_MEDIA_CHANGED)){
+            } else if (action.equals(ExtStorageReceiver.ACTION_MEDIA_CHANGED)) {
                 updateUsbAndSdcardVisibility();
-            }
-            else if (action.equals(ExtStorageReceiver.ACTION_MEDIA_UNMOUNTED)){
-                if (log.isDebugEnabled()) log.debug("mExternalStorageReceiver: ACTION_MEDIA_UNMOUNTED");
+            } else if (action.equals(ExtStorageReceiver.ACTION_MEDIA_UNMOUNTED)) {
+                if (log.isDebugEnabled())
+                    log.debug("mExternalStorageReceiver: ACTION_MEDIA_UNMOUNTED");
                 updateUsbAndSdcardVisibility();
             }
         }
@@ -1941,48 +2448,59 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     private final BroadcastReceiver mUpdateReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            if (log.isDebugEnabled()) log.debug("mUpdateReceiver: received intent!!!");
-            if (context != null && intent != null && intent.getAction().equals(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FINISHED)) {
+            if (log.isDebugEnabled())
+                log.debug("mUpdateReceiver: received intent!!!");
+            if (context != null && intent != null
+                && intent.getAction().equals(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FINISHED)) {
                 scheduleBoxRefreshAfterScannerQuietPeriod("scanner finished");
             }
         }
     };
 
     private void updateUsbAndSdcardVisibility() {
-        if (log.isDebugEnabled()) log.debug("updateUsbAndSdcardVisibility");
+        if (log.isDebugEnabled())
+            log.debug("updateUsbAndSdcardVisibility");
         ExtStorageManager storageManager = ExtStorageManager.getExtStorageManager();
         final boolean hasExternal = storageManager.hasExtStorage();
 
         // Remember if non-scraped box was present before clearing
         boolean nonScrapedWasPresent = mFileBrowsingRowAdapter.indexOf(mNonScrapedVideosItem) >= 0;
-        if (log.isDebugEnabled()) log.debug("updateUsbAndSdcardVisibility: nonScrapedWasPresent={}", nonScrapedWasPresent);
+        if (log.isDebugEnabled())
+            log.debug("updateUsbAndSdcardVisibility: nonScrapedWasPresent={}", nonScrapedWasPresent);
 
         mFileBrowsingRowAdapter.clear();
-        mFileBrowsingRowAdapter.add(new Box(Box.ID.NETWORK, getString(R.string.network_storage), R.drawable.filetype_new_server));
-        mFileBrowsingRowAdapter.add(new Box(Box.ID.FOLDERS, getString(R.string.internal_storage), R.drawable.filetype_new_folder));
+        mFileBrowsingRowAdapter.add(
+            new Box(Box.ID.NETWORK, getString(R.string.network_storage), R.drawable.filetype_new_server));
+        mFileBrowsingRowAdapter.add(
+            new Box(Box.ID.FOLDERS, getString(R.string.internal_storage), R.drawable.filetype_new_folder));
 
         if (hasExternal) {
-            for(String s : storageManager.getExtSdcards()) {
-                Box item = new Box(Box.ID.SDCARD, getString(R.string.sd_card_storage) + getVolumeDescription(s), R.drawable.filetype_new_sdcard, s);
+            for (String s : storageManager.getExtSdcards()) {
+                Box item = new Box(Box.ID.SDCARD, getString(R.string.sd_card_storage) + getVolumeDescription(s),
+                    R.drawable.filetype_new_sdcard, s);
                 mFileBrowsingRowAdapter.add(item);
             }
-            for(String s : storageManager.getExtUsbStorages()) {
-                Box item = new Box(Box.ID.USB, getString(R.string.usb_host_storage) + getVolumeDescription(s), R.drawable.filetype_new_usb, s);
+            for (String s : storageManager.getExtUsbStorages()) {
+                Box item = new Box(Box.ID.USB, getString(R.string.usb_host_storage) + getVolumeDescription(s),
+                    R.drawable.filetype_new_usb, s);
                 mFileBrowsingRowAdapter.add(item);
             }
-            for(String s : storageManager.getExtOtherStorages()) {
-                Box item = new Box(Box.ID.OTHER, getString(R.string.other_storage) + getVolumeDescription(s), R.drawable.filetype_new_folder, s);
+            for (String s : storageManager.getExtOtherStorages()) {
+                Box item = new Box(Box.ID.OTHER, getString(R.string.other_storage) + getVolumeDescription(s),
+                    R.drawable.filetype_new_folder, s);
                 mFileBrowsingRowAdapter.add(item);
             }
         }
 
         // Re-add non-scraped box if it was present before
         if (nonScrapedWasPresent) {
-            if (log.isDebugEnabled()) log.debug("updateUsbAndSdcardVisibility: re-adding non-scraped box");
+            if (log.isDebugEnabled())
+                log.debug("updateUsbAndSdcardVisibility: re-adding non-scraped box");
             mFileBrowsingRowAdapter.add(mNonScrapedVideosItem);
         }
 
-        mFileBrowsingRowAdapter.add(new Box(Box.ID.VIDEOS_BY_LISTS, getString(R.string.video_lists), R.drawable.filetype_new_playlist));
+        mFileBrowsingRowAdapter.add(
+            new Box(Box.ID.VIDEOS_BY_LISTS, getString(R.string.video_lists), R.drawable.filetype_new_playlist));
     }
 
     private String getVolumeDescription(String s) {
@@ -1990,10 +2508,14 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         String volLabel = storageManager.getVolumeLabel(s);
         String volDescr = storageManager.getVolumeDesc(s);
         String descr = "";
-        if (volDescr != null && ! volDescr.isEmpty()) descr = volDescr;
-        if (volLabel != null && ! volLabel.isEmpty())
-            descr = (descr.isEmpty()) ? volLabel : volLabel + " (" + descr + ")"; // volume label is the primary if it exists otherwise volume description is the one
-        if (! descr.isEmpty()) descr = ": " + descr;
+        if (volDescr != null && !volDescr.isEmpty())
+            descr = volDescr;
+        if (volLabel != null && !volLabel.isEmpty())
+            descr = (descr.isEmpty()) ? volLabel
+                                      : volLabel + " (" + descr
+                    + ")"; // volume label is the primary if it exists otherwise volume description is the one
+        if (!descr.isEmpty())
+            descr = ": " + descr;
         return descr;
     }
 
@@ -2005,7 +2527,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
 
     private void findAndUpdatePrivateModeIcon() {
         if (mPreferencesRowAdapter != null) {
-            for(int i=0 ; i<mPreferencesRowAdapter.size() ; i++) {
+            for (int i = 0; i < mPreferencesRowAdapter.size(); i++) {
                 Object item = mPreferencesRowAdapter.get(i);
                 if (item instanceof Icon) {
                     Icon icon = (Icon) item;
@@ -2021,7 +2543,6 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     }
 
     public class MainViewClickedListener extends VideoViewClickedListener {
-
         final private Activity vActivity;
 
         public MainViewClickedListener(Activity activity) {
@@ -2030,69 +2551,59 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         }
 
         @Override
-        public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-
+        public void onItemClicked(
+            Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
             if (item instanceof Box) {
-                Box box = (Box)item;
+                Box box = (Box) item;
                 switch (box.getBoxId()) {
-                    case ALL_MOVIES ->
-                            vActivity.startActivity(new Intent(vActivity, AllMoviesGridActivity.class));
-                    case MOVIES_BY_ALPHA ->
-                            vActivity.startActivity(new Intent(vActivity, MoviesByAlphaActivity.class));
-                    case MOVIES_BY_GENRE ->
-                            vActivity.startActivity(new Intent(vActivity, MoviesByGenreActivity.class));
+                    case ALL_MOVIES -> vActivity.startActivity(new Intent(vActivity, AllMoviesGridActivity.class));
+                    case MOVIES_BY_ALPHA -> vActivity.startActivity(new Intent(vActivity, MoviesByAlphaActivity.class));
+                    case MOVIES_BY_GENRE -> vActivity.startActivity(new Intent(vActivity, MoviesByGenreActivity.class));
                     case MOVIES_BY_RATING ->
-                            vActivity.startActivity(new Intent(vActivity, MoviesByRatingActivity.class));
-                    case MOVIES_BY_YEAR ->
-                            vActivity.startActivity(new Intent(vActivity, MoviesByYearActivity.class));
-                    case ALL_ANIMES ->
-                            vActivity.startActivity(new Intent(vActivity, AllAnimesGridActivity.class));
-                    case ANIMES_BY_GENRE ->
-                            vActivity.startActivity(new Intent(vActivity, AnimesByGenreActivity.class));
-                    case ANIMES_BY_YEAR ->
-                            vActivity.startActivity(new Intent(vActivity, AnimesByYearActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, MoviesByRatingActivity.class));
+                    case MOVIES_BY_YEAR -> vActivity.startActivity(new Intent(vActivity, MoviesByYearActivity.class));
+                    case ALL_ANIMES -> vActivity.startActivity(new Intent(vActivity, AllAnimesGridActivity.class));
+                    case ANIMES_BY_GENRE -> vActivity.startActivity(new Intent(vActivity, AnimesByGenreActivity.class));
+                    case ANIMES_BY_YEAR -> vActivity.startActivity(new Intent(vActivity, AnimesByYearActivity.class));
                     case ALL_ANIMESHOWS ->
-                            vActivity.startActivity(new Intent(vActivity, AllAnimeShowsGridActivity.class));
-                    case VIDEOS_BY_LISTS ->
-                            vActivity.startActivity(new Intent(vActivity, VideosByListActivity.class));
-                    case FOLDERS ->
-                            vActivity.startActivity(new Intent(vActivity, LocalListingActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, AllAnimeShowsGridActivity.class));
+                    case VIDEOS_BY_LISTS -> vActivity.startActivity(new Intent(vActivity, VideosByListActivity.class));
+                    case FOLDERS -> vActivity.startActivity(new Intent(vActivity, LocalListingActivity.class));
                     case SDCARD, USB, OTHER -> {
                         Intent i = new Intent(vActivity, ExtStorageListingActivity.class);
                         i.putExtra(ExtStorageListingActivity.MOUNT_POINT, box.getPath());
                         i.putExtra(ExtStorageListingActivity.STORAGE_NAME, box.getName());
                         vActivity.startActivity(i);
                     }
-                    case NETWORK ->
-                            vActivity.startActivity(new Intent(vActivity, NetworkRootActivity.class));
+                    case NETWORK -> vActivity.startActivity(new Intent(vActivity, NetworkRootActivity.class));
                     case NON_SCRAPED_VIDEOS ->
-                            vActivity.startActivity(new Intent(vActivity, NonScrapedVideosActivity.class));
-                    case ALL_TVSHOWS ->
-                            vActivity.startActivity(new Intent(vActivity, AllTvshowsGridActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, NonScrapedVideosActivity.class));
+                    case ALL_TVSHOWS -> vActivity.startActivity(new Intent(vActivity, AllTvshowsGridActivity.class));
                     case DOCUMENTARIES ->
-                            vActivity.startActivity(new Intent(vActivity, DocumentaryTvshowsGridActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, DocumentaryTvshowsGridActivity.class));
                     case TVSHOWS_BY_ALPHA ->
-                            vActivity.startActivity(new Intent(vActivity, TvshowsByAlphaActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, TvshowsByAlphaActivity.class));
                     case TVSHOWS_BY_GENRE ->
-                            vActivity.startActivity(new Intent(vActivity, TvshowsByGenreActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, TvshowsByGenreActivity.class));
                     case TVSHOWS_BY_RATING ->
-                            vActivity.startActivity(new Intent(vActivity, TvshowsByRatingActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, TvshowsByRatingActivity.class));
                     case EPISODES_BY_DATE ->
-                            vActivity.startActivity(new Intent(vActivity, EpisodesByDateActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, EpisodesByDateActivity.class));
                     case COLLECTIONS ->
-                            vActivity.startActivity(new Intent(vActivity, AllCollectionsGridActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, AllCollectionsGridActivity.class));
                     case ANIME_COLLECTIONS ->
-                            vActivity.startActivity(new Intent(vActivity, AllAnimeCollectionsGridActivity.class));
+                        vActivity.startActivity(new Intent(vActivity, AllAnimeCollectionsGridActivity.class));
                 }
-            }
-            else if (item instanceof Icon) {
-                Icon icon = (Icon)item;
+            } else if (item instanceof Icon) {
+                Icon icon = (Icon) item;
                 switch (icon.getId()) {
                     case PREFERENCES:
                         if (vActivity instanceof MainActivityLeanback)
-                            ((MainActivityLeanback)vActivity).startPreferencesActivity(); // I know this is ugly (and i'm ashamed...)
+                            ((MainActivityLeanback) vActivity)
+                                .startPreferencesActivity(); // I know this is ugly (and i'm ashamed...)
                         else
-                            throw new IllegalStateException("Sorry developer, this ugly code can work with a MainActivityLeanback only for now!");
+                            throw new IllegalStateException(
+                                "Sorry developer, this ugly code can work with a MainActivityLeanback only for now!");
                         break;
                     case RESCAN:
                         NetworkAutoRefresh.forceRescan(vActivity);
@@ -2105,22 +2616,19 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                         updateBackground();
                         break;
                     case LEGACY_UI:
-                        new DensityTweak(vActivity)
-                                .temporaryRestoreDefaultDensity();
+                        new DensityTweak(vActivity).temporaryRestoreDefaultDensity();
                         vActivity.startActivity(new Intent(vActivity, MainActivity.class));
                         break;
                     case HELP_FAQ:
-                        WebUtils.openWebLink(vActivity,getString(R.string.faq_url));
+                        WebUtils.openWebLink(vActivity, getString(R.string.faq_url));
                         break;
                     case SPONSOR:
-                        WebUtils.openWebLink(vActivity,getString(R.string.sponsor_url));
+                        WebUtils.openWebLink(vActivity, getString(R.string.sponsor_url));
                         break;
                 }
-            }
-            else {
+            } else {
                 super.onItemClicked(itemViewHolder, item, rowViewHolder, row);
             }
         }
     }
-
 }
