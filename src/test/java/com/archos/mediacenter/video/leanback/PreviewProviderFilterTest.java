@@ -5,9 +5,12 @@ import android.graphics.*;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import com.squareup.picasso.Picasso;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -18,12 +21,12 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewProviderFilterTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void actualFiltersRetainMultiSelectionAcrossReopenAndRecreation()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
-            try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(host.get().getApplicationContext()).build());}
+            try{Picasso.get();}catch(IllegalStateException missing){Picasso.setSingletonInstance(new Picasso.Builder(host.get().getApplicationContext()).build());}
             var prefs=StreamingRepository.prefs(host.get());
             prefs.edit().clear().putString(StreamingRepository.COUNTRY,"IE")
                 .putStringSet(StreamingRepository.PROVIDERS+"IE",new HashSet<>(Arrays.asList("8","9")))
