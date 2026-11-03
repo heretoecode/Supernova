@@ -94,7 +94,11 @@ final class ExternalResumeIntent {
                 result.append(key).append('(')
                         .append(value != null ? value.getClass().getSimpleName() : "null")
                         .append(')');
-                if (isResumeKey(key)) result.append('=').append(value);
+                if (isResumeKey(key)) {
+                    result.append('=');
+                    if (value instanceof Integer || value instanceof Long) result.append(value);
+                    else result.append("<invalid>");
+                }
             }
         }
         return result.append(']').toString();
