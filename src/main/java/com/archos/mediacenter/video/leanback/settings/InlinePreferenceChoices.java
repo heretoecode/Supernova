@@ -6,6 +6,7 @@ import android.widget.*;
 import androidx.preference.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
+import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import java.util.*;
 
 /** Immediate native preference choices, hosted by the right Settings panel. */
@@ -45,7 +46,7 @@ final class InlinePreferenceChoices {
         String key = preference.getKey();
         if (!Arrays
                 .asList("ui_lang", "favSubLang", "favAudioLang", "languages_list",
-                    com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG)
+                    VideoPreferencesCommon.KEY_SCRAPER_FAV_LANG)
                 .contains(key))
             return;
         PreviewLanguageIcon icon = new PreviewLanguageIcon(row.getContext(), PreviewLanguageIcon.providerCode(value));
