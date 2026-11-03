@@ -35,12 +35,12 @@ const settings = [
   ['info', 'About Supernova', 'Version information, credits and legal details.'],
 ];
 const network = [
-  ['drive', 'Local Storage', 'Browse internal storage, USB drives and all files.'],
-  ['servers', 'Network Locations', 'Saved locations, discovered devices and Put.io.'],
-  ['plus', 'Add Connection', 'Set up SMB, WebDAV, SFTP or FTP access.', true],
-  ['links', 'Manage Connections', 'Review saved locations and library membership.'],
-  ['scan', 'Network Scanning', 'Configure automatic checks and scan your library.'],
-  ['sliders', 'Advanced Options', 'Library Health, file browsing and compatibility.'],
+  ['drive', 'Local Storage', "Browse this device's storage and any USB drives."],
+  ['servers', 'Network Shares', 'Open saved shares, devices on your network and Put.io.'],
+  ['plus', 'Add Connection', 'Connect to a share using SMB, WebDAV, SFTP or FTP.', true],
+  ['links', 'Saved Connections', 'Edit connections and choose which ones feed your library.'],
+  ['scan', 'Library Scanning', 'Scan for new videos and set up automatic checks.'],
+  ['sliders', 'Advanced', 'Library Health, file browsing and compatibility options.'],
 ];
 const TILE = { charcoal: 'rgba(22,24,28,.97)', navy: 'rgba(26,31,92,.97)' };
 const nav = active => `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</span><span>Movies</span><span>TV Shows</span><span>Documentaries</span>
