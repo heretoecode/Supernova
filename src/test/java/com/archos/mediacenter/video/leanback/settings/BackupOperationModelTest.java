@@ -59,12 +59,15 @@ public class BackupOperationModelTest {
         model.destinationPending();
         phase(BackupOperationModel.Phase.DESTINATION_PENDING);
         model.publish(new VerifiedBackupPublication.Destination() {
+            @Override
             public OutputStream openWrite() throws IOException {
                 throw new IOException("Provider unavailable");
             }
+            @Override
             public InputStream openRead() {
                 throw new AssertionError();
             }
+            @Override
             public boolean removeIncomplete() {
                 return false;
             }
@@ -74,12 +77,15 @@ public class BackupOperationModelTest {
         assertTrue(model.current().message.contains("incomplete"));
         ByteArrayOutputStream destination = new ByteArrayOutputStream();
         model.publish(new VerifiedBackupPublication.Destination() {
+            @Override
             public OutputStream openWrite() {
                 return destination;
             }
+            @Override
             public InputStream openRead() {
                 return new ByteArrayInputStream(destination.toByteArray());
             }
+            @Override
             public boolean removeIncomplete() {
                 throw new AssertionError();
             }
@@ -113,12 +119,15 @@ public class BackupOperationModelTest {
         phase(BackupOperationModel.Phase.EXPORT_READY);
         ByteArrayOutputStream saved = new ByteArrayOutputStream();
         model.publish(new VerifiedBackupPublication.Destination() {
+            @Override
             public OutputStream openWrite() {
                 return saved;
             }
+            @Override
             public InputStream openRead() {
                 return new ByteArrayInputStream(saved.toByteArray());
             }
+            @Override
             public boolean removeIncomplete() {
                 return false;
             }
@@ -207,19 +216,24 @@ public class BackupOperationModelTest {
     public void publicationCancellationRetainsPrivateBackupAndReportsUnverifiedExternalFile() {
         model.create(Set.of(BackupCategory.APPEARANCE));
         model.publish(new VerifiedBackupPublication.Destination() {
+            @Override
             public OutputStream openWrite() {
                 return new OutputStream() {
+                    @Override
                     public void write(int b) {
                         model.cancel();
                     }
+                    @Override
                     public void write(byte[] bytes, int offset, int length) {
                         model.cancel();
                     }
                 };
             }
+            @Override
             public InputStream openRead() {
                 throw new AssertionError();
             }
+            @Override
             public boolean removeIncomplete() {
                 return false;
             }
