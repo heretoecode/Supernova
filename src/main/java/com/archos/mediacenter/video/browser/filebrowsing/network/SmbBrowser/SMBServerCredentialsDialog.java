@@ -24,6 +24,7 @@ import com.archos.mediacenter.video.browser.ServerCredentialsDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects SMB server credentials and builds a connection URI. */
 public class SMBServerCredentialsDialog extends ServerCredentialsDialog {
 
     private static final Logger log = LoggerFactory.getLogger(SMBServerCredentialsDialog.class);
