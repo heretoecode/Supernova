@@ -7,6 +7,7 @@ import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediascraper.AutoScrapeService;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -33,7 +34,7 @@ public class SetupPolicyTest {
   inventory();SupernovaLibraryPolicy.initialiseSetup(context);
   assertFalse(SupernovaLibraryPolicy.configured(context));assertTrue(SupernovaLibraryPolicy.excluded(context,Uri.parse("file:///storage/ABCD/Movies/new.mkv")));
   PreviewAutoScanPolicy.initialise(context);assertFalse(PreferenceManager.getDefaultSharedPreferences(context).contains(NetworkAutoRefresh.AUTO_RESCAN_PERIOD));
-  assertFalse(com.archos.mediascraper.AutoScrapeService.requestService(context));verify(context,never()).startService(any());verify(context,never()).startForegroundService(any());
+  assertFalse(AutoScrapeService.requestService(context));verify(context,never()).startService(any());verify(context,never()).startForegroundService(any());
   assertTrue(PreferenceManager.getDefaultSharedPreferences(context).getStringSet("supernova_library_roots",Set.of()).isEmpty());
   inventory("/storage/ABCD/Movies/new.mkv");SupernovaLibraryPolicy.initialiseSetup(context);assertFalse("A completed fresh-inventory decision cannot be replaced by drive enumeration",SupernovaLibraryPolicy.configured(context));
  }
