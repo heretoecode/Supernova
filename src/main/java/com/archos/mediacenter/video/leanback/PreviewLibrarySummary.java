@@ -3,6 +3,8 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.net.Uri;
 import android.text.format.Formatter;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import java.util.*;
@@ -48,10 +50,10 @@ public final class PreviewLibrarySummary {
         Snapshot filtered = new Snapshot();
         Set<Long> shows = new HashSet<>();
         for (Entry entry : selected) {
-            if (entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow) {
+            if (entry.media instanceof Tvshow) {
                 filtered.shows.add(entry);
                 shows.add(entry.show);
-            } else if (entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)
+            } else if (entry.media instanceof Movie)
                 filtered.movies.add(entry);
         }
         for (Entry episode : snapshot.episodes)
