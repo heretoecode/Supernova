@@ -8,6 +8,7 @@ import com.archos.mediaprovider.video.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import org.json.*;
@@ -134,7 +135,7 @@ public final class MediaStateRecovery {
                         for (byte part : MessageDigest.getInstance("SHA-256").digest(
                                  identity.toString().getBytes(StandardCharsets.UTF_8)))
                             guard.append(String.format(Locale.ROOT, "%02x", part & 255));
-                    } catch (java.security.NoSuchAlgorithmException unavailable) {
+                    } catch (NoSuchAlgorithmException unavailable) {
                         throw new IOException("Media identity validation unavailable", unavailable);
                     }
                     hiddenRows.put(new JSONObject()
