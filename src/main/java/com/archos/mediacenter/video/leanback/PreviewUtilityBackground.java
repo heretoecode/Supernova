@@ -3,6 +3,8 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.R;
 
 /** Exact supplied 4.1.2 asset, aspect-preserving viewport cover; decoded once. */
 public final class PreviewUtilityBackground extends Drawable {
@@ -11,23 +13,23 @@ public final class PreviewUtilityBackground extends Drawable {
 
     public PreviewUtilityBackground(Context context) {
         synchronized (PreviewUtilityBackground.class) {
-            if (com.archos.mediacenter.video.BuildConfig.FOUNDATION) {
+            if (BuildConfig.FOUNDATION) {
                 if (foundationImage == null) {
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inSampleSize = 2;
                     foundationImage = BitmapFactory.decodeResource(context.getResources(),
-                        com.archos.mediacenter.video.R.drawable.foundation_space_black, options);
+                        R.drawable.foundation_space_black, options);
                 }
             } else if (image == null)
                 image = BitmapFactory.decodeResource(
-                    context.getResources(), com.archos.mediacenter.video.R.drawable.preview_utility_background);
+                    context.getResources(), R.drawable.preview_utility_background);
         }
     }
 
     @Override
     public void draw(Canvas canvas) {
         Bitmap image =
-            com.archos.mediacenter.video.BuildConfig.FOUNDATION ? foundationImage : PreviewUtilityBackground.image;
+            BuildConfig.FOUNDATION ? foundationImage : PreviewUtilityBackground.image;
         Rect b = getBounds();
         canvas.drawColor(0xff09111a);
         if (image == null)
@@ -38,7 +40,7 @@ public final class PreviewUtilityBackground extends Drawable {
             new RectF(
                 b.exactCenterX() - w / 2, b.exactCenterY() - h / 2, b.exactCenterX() + w / 2, b.exactCenterY() + h / 2),
             paint);
-        if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION)
+        if (!BuildConfig.FOUNDATION)
             canvas.drawColor(0x44050b12);
     }
 
