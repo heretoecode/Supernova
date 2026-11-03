@@ -178,7 +178,7 @@ public class OpenSubtitlesApiHelper {
         authTokenValid = false;
     }
 
-    private static boolean integrationEnabled(){android.content.Context c=com.archos.mediacenter.video.CustomApplication.getAppContext();return c==null||PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_integration_opensubtitles",true);}
+    private static boolean integrationEnabled(){Context c=CustomApplication.getAppContext();return c==null||PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_integration_opensubtitles",true);}
     public static synchronized boolean login(String openSubtitlesApiKey, String u, String p) throws IOException {
         if(!integrationEnabled())return false;
         username = u;
