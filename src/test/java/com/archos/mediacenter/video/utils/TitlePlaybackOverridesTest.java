@@ -8,6 +8,8 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.backup.*;
+import com.archos.medialib.IMediaPlayer;
+import com.archos.medialib.MediaMetadata;
 import com.archos.mediaprovider.video.VideoStore;
 import java.util.*;
 import org.json.*;
@@ -116,9 +118,9 @@ public class TitlePlaybackOverridesTest {
         VideoMetadata metadata = mock(VideoMetadata.class);
         when(metadata.getAudioTrackNb()).thenReturn(1);
         when(metadata.getSubtitleTrackNb()).thenReturn(1);
-        com.archos.medialib.MediaMetadata raw = mock(com.archos.medialib.MediaMetadata.class);
-        int key = com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK
-            + com.archos.medialib.IMediaPlayer.METADATA_KEY_AUDIO_TRACK_SUPPORTED;
+        MediaMetadata raw = mock(MediaMetadata.class);
+        int key = IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+            + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_SUPPORTED;
         when(raw.has(key)).thenReturn(true);
         when(raw.getBoolean(key)).thenReturn(true);
         VideoMetadata.AudioTrack track = new VideoMetadata.AudioTrack(raw, 0);
