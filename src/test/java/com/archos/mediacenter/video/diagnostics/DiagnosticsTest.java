@@ -15,6 +15,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewPages;
+import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import com.archos.mediacenter.video.leanback.details.PreviewTrailer;
+import com.archos.mediascraper.ScraperTrailer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,11 +37,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
+import org.robolectric.shadows.ShadowSystemClock;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -57,14 +69,14 @@ public class DiagnosticsTest {
     @Test
     public void payloadDurationCannotOverwriteEventClockOrIdentity() throws Exception {
         long before = SystemClock.elapsedRealtime();
-        String line = org.robolectric.util.ReflectionHelpers.callStaticMethod(Diagnostics.class, "record",
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class, "artwork_ready"),
-            org.robolectric.util.ReflectionHelpers.ClassParameter.from(Object[].class,
+        String line = ReflectionHelpers.callStaticMethod(Diagnostics.class, "record",
+            ReflectionHelpers.ClassParameter.from(String.class, "artwork_ready"),
+            ReflectionHelpers.ClassParameter.from(Object[].class,
                 new Object[] {
                     "elapsed_ms", 3, "utc_ms", 1, "sequence", -1, "event", "spoof", "process", "spoof", "pid",
                     -1, "exit_pid", 123, "session", "spoof", "app_session", "spoof", "last_operation", "spoof"
                 }));
-        var json = new org.json.JSONObject(line);
+        var json = new JSONObject(line);
         assertTrue(json.getLong("elapsed_ms") >= before);
         assertEquals(3, json.getLong("duration_ms"));
         assertTrue(json.getLong("utc_ms") > 1);
@@ -82,9 +94,9 @@ public class DiagnosticsTest {
     public void temporaryLibraryFocusHolderIsNotClassifiedAsClippedControl() {
         Diagnostics.setEnabled(RuntimeEnvironment.getApplication(), true);
         try {
-            var holder = org.mockito.Mockito.mock(com.archos.mediacenter.video.leanback.PreviewPages.class);
+            var holder = Mockito.mock(PreviewPages.class);
             Diagnostics.inspectFocusGeometry(holder);
-            org.mockito.Mockito.verifyNoInteractions(holder);
+            Mockito.verifyNoInteractions(holder);
         } finally {
             Diagnostics.setEnabled(RuntimeEnvironment.getApplication(), false);
         }
@@ -95,9 +107,9 @@ public class DiagnosticsTest {
         Application c = RuntimeEnvironment.getApplication();
         Diagnostics.setEnabled(c, true);
         ExecutorService important =
-            org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class, "IMPORTANT");
+            ReflectionHelpers.getStaticField(Diagnostics.class, "IMPORTANT");
         ExecutorService routine =
-            org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class, "WORK");
+            ReflectionHelpers.getStaticField(Diagnostics.class, "WORK");
         CountDownLatch entered = new CountDownLatch(2),
                                             release = new CountDownLatch(1);
         try {
@@ -105,7 +117,7 @@ public class DiagnosticsTest {
             }).get(5, TimeUnit.SECONDS);
             routine.submit(() -> {
             }).get(5, TimeUnit.SECONDS);
-            org.robolectric.util.ReflectionHelpers.setStaticField(Diagnostics.class, "freezeUntil", 0L);
+            ReflectionHelpers.setStaticField(Diagnostics.class, "freezeUntil", 0L);
             for (ExecutorService writer :
                 new ExecutorService[] {
                     important, routine
@@ -122,7 +134,7 @@ public class DiagnosticsTest {
             long failureTime = SystemClock.elapsedRealtime();
             Diagnostics.event("playback_failed", "failure_category", "fixture");
             Diagnostics.event("fixture_immediately_after_failure");
-            org.robolectric.shadows.ShadowSystemClock.advanceBy(Duration.ofSeconds(61));
+            ShadowSystemClock.advanceBy(Duration.ofSeconds(61));
             Diagnostics.event("fixture_outside_post_window");
             release.countDown();
             important.submit(() -> {
@@ -135,7 +147,7 @@ public class DiagnosticsTest {
                     retained.append(Files.readString(file.toPath()));
             assertTrue(retained.toString().contains("fixture_immediately_after_failure"));
             assertFalse(retained.toString().contains("fixture_outside_post_window"));
-            long deadline = org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class, "freezeUntil");
+            long deadline = ReflectionHelpers.getStaticField(Diagnostics.class, "freezeUntil");
             assertEquals(failureTime + 60000, deadline);
         } finally {
             release.countDown();
@@ -148,13 +160,13 @@ public class DiagnosticsTest {
         Application c = RuntimeEnvironment.getApplication();
         Diagnostics.setEnabled(c, true);
         ExecutorService writer =
-            org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class, "IMPORTANT");
+            ReflectionHelpers.getStaticField(Diagnostics.class, "IMPORTANT");
         CountDownLatch entered = new CountDownLatch(1),
                                             release = new CountDownLatch(1);
         try {
             writer.submit(() -> {
             }).get(5, TimeUnit.SECONDS);
-            org.robolectric.util.ReflectionHelpers.setStaticField(Diagnostics.class, "freezeUntil", 0L);
+            ReflectionHelpers.setStaticField(Diagnostics.class, "freezeUntil", 0L);
             writer.execute(() -> {
                 entered.countDown();
                 try {
@@ -167,7 +179,7 @@ public class DiagnosticsTest {
             Diagnostics.event("fixture_before_queued_failure");
             Diagnostics.event("playback_failed", "failure_category", "fixture");
             DiagnosticFlightRecorder recorder =
-                org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
+                ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
             // Simulate full rotation while the protected writer is busy.
             recorder.clear();
             recorder.add(SystemClock.elapsedRealtime(), "{\"event\":\"later_fixture\"}\n");
@@ -216,16 +228,16 @@ public class DiagnosticsTest {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         Diagnostics.setEnabled(activity, true);
         try {
-            com.archos.mediacenter.video.leanback.details.PreviewMoviePage page =
-                new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(
+            PreviewMoviePage page =
+                new PreviewMoviePage(
                     activity, ArrayObjectAdapter::new, a -> {
                     }, () -> {
                     }, uri -> {
                     });
             activity.setContentView(page);
-            page.bindRemote(new org.json.JSONObject().put("title", "private-fixture-title"), "movie", 0);
-            page.setSnapshot(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot());
-            Object recorder = org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
+            page.bindRemote(new JSONObject().put("title", "private-fixture-title"), "movie", 0);
+            page.setSnapshot(new PreviewLibraryLoader.Snapshot());
+            Object recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
             Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             String evidence = (String) snapshot.invoke(recorder, SystemClock.elapsedRealtime());
@@ -235,7 +247,7 @@ public class DiagnosticsTest {
             for (String line : evidence.split("\n")) {
                 if (line.isEmpty())
                     continue;
-                org.json.JSONObject row = new org.json.JSONObject(line);
+                JSONObject row = new JSONObject(line);
                 if ("ui_rebuild".equals(row.optString("event"))
                     && "details.information".equals(row.optString("surface"))) {
                     assertEquals(++count, row.getInt("rebuild_count"));
@@ -271,13 +283,13 @@ public class DiagnosticsTest {
         }, dismissed = {
             0
         };
-        Dialog dialog = com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(
+        Dialog dialog = PreviewDialog.confirmDelete(
             activity, "Fixture", "Private fixture text", () -> deleted[0]++);
         try {
             dialog.setOnDismissListener(d -> dismissed[0]++);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             String evidence = Diagnostics.incidentContext("operation_failed", new Diagnostics.UiSnapshot());
-            assertEquals("native_dialog", new org.json.JSONObject(evidence).getString("modal_kinds"));
+            assertEquals("native_dialog", new JSONObject(evidence).getString("modal_kinds"));
             assertFalse(evidence.contains("Private fixture text"));
             ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
             Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -285,7 +297,7 @@ public class DiagnosticsTest {
             assertEquals(1, dismissed[0]);
             assertTrue(opener.hasFocus());
             assertEquals(0,
-                new org.json.JSONObject(Diagnostics.incidentContext("operation_failed", new Diagnostics.UiSnapshot()))
+                new JSONObject(Diagnostics.incidentContext("operation_failed", new Diagnostics.UiSnapshot()))
                     .getInt("modal_depth"));
         } finally {
             dialog.dismiss();
@@ -297,8 +309,8 @@ public class DiagnosticsTest {
     @Test
     public void detailsReaderRetainsSemanticOpenerAndModalContext() throws Exception {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
-        com.archos.mediacenter.video.leanback.details.PreviewMoviePage page =
-            new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(
+        PreviewMoviePage page =
+            new PreviewMoviePage(
                 activity, ArrayObjectAdapter::new, a -> {
                 }, () -> {
                 }, uri -> {
@@ -308,15 +320,15 @@ public class DiagnosticsTest {
         assertNotNull(opener);
         opener.requestFocus();
         assertEquals("semantic:details.action.more",
-            opener.getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
+            opener.getTag(R.id.preview_diagnostic_semantic));
         Diagnostics.setEnabled(activity, true);
         Dialog dialog = null;
         try {
-            org.robolectric.util.ReflectionHelpers.callInstanceMethod(page, "moreInfo");
-            dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            ReflectionHelpers.callInstanceMethod(page, "moreInfo");
+            dialog = ShadowDialog.getLatestDialog();
             assertNotNull(dialog);
             assertEquals("reader",
-                new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()))
+                new JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()))
                     .getString("modal_kinds"));
             dialog.dismiss();
             org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -339,13 +351,13 @@ public class DiagnosticsTest {
         opener.requestFocus();
         Dialog dialog = null;
         try {
-            com.archos.mediacenter.video.leanback.details.PreviewTrailer.show(activity,
-                new com.archos.mediascraper.ScraperTrailer(
-                    com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER, "Trailer", "abcdefghijk", "YouTube", ""));
-            dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            PreviewTrailer.show(activity,
+                new ScraperTrailer(
+                    ScraperTrailer.Type.SHOW_TRAILER, "Trailer", "abcdefghijk", "YouTube", ""));
+            dialog = ShadowDialog.getLatestDialog();
             assertNotNull(dialog);
             assertEquals("trailer",
-                new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()))
+                new JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()))
                     .getString("modal_kinds"));
             dialog.dismiss();
             org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -362,18 +374,18 @@ public class DiagnosticsTest {
     public void nestedDialogSnapshotRetainsKindsAfterDismissal() throws Exception {
         Activity activity = Robolectric.buildActivity(Activity.class).setup().get();
         Diagnostics.setEnabled(activity, true);
-        Dialog parent = com.archos.mediacenter.video.leanback.PreviewDialog.create(activity, "reader"),
-                           child = com.archos.mediacenter.video.leanback.PreviewDialog.create(activity, "choice");
+        Dialog parent = PreviewDialog.create(activity, "reader"),
+                           child = PreviewDialog.create(activity, "choice");
         try {
             parent.show();
             child.show();
             Diagnostics.UiSnapshot captured = new Diagnostics.UiSnapshot();
             child.dismiss();
             parent.dismiss();
-            org.json.JSONObject row = new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed", captured));
+            JSONObject row = new JSONObject(Diagnostics.incidentContext("artwork_failed", captured));
             assertEquals(2, row.getInt("modal_depth"));
             assertEquals("reader,choice", row.getString("modal_kinds"));
-            row = new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()));
+            row = new JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()));
             assertEquals(0, row.getInt("modal_depth"));
             assertEquals("none", row.getString("modal_kinds"));
         } finally {
@@ -394,19 +406,19 @@ public class DiagnosticsTest {
             Diagnostics.UiSnapshot captured = new Diagnostics.UiSnapshot();
             Diagnostics.uiState("settings", "playback", "workspace", "none", "none", 0);
             String text = Diagnostics.incidentContext("artwork_failed", captured);
-            org.json.JSONObject row = new org.json.JSONObject(text);
+            JSONObject row = new JSONObject(text);
             assertEquals("SIZE:descending", row.getString("sort"));
             assertFalse(text.contains("private"));
             assertFalse(text.contains("secret"));
             assertFalse(text.contains("Drama"));
-            org.json.JSONObject filters = new org.json.JSONObject(row.getString("filter_state"));
+            JSONObject filters = new JSONObject(row.getString("filter_state"));
             assertEquals(2, filters.getInt("genre_count"));
             assertEquals(64, filters.getString("genre_selection_id").length());
             assertEquals("[2024,2025]", filters.getJSONArray("years").toString());
             assertEquals("[8,9]", filters.getJSONArray("provider_ids").toString());
             assertTrue(filters.getBoolean("unmatched"));
             assertEquals("{}",
-                new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()))
+                new JSONObject(Diagnostics.incidentContext("artwork_failed", new Diagnostics.UiSnapshot()))
                     .getString("filter_state"));
         } finally {
             Diagnostics.uiState("unknown", "none", "unknown", "unknown", "none", 0);
@@ -424,8 +436,8 @@ public class DiagnosticsTest {
             Diagnostics.UiSnapshot captured = new Diagnostics.UiSnapshot();
             Diagnostics.uiState("settings", "playback", "workspace", "none", "none", 0);
             Diagnostics.modalDepth(0);
-            org.json.JSONObject value =
-                new org.json.JSONObject(Diagnostics.incidentContext("artwork_failed", captured));
+            JSONObject value =
+                new JSONObject(Diagnostics.incidentContext("artwork_failed", captured));
             assertEquals("movies", value.getString("page"));
             assertEquals("list", value.getString("view_mode"));
             assertEquals(42, value.getLong("media_id"));
@@ -451,7 +463,7 @@ public class DiagnosticsTest {
             org.robolectric.Shadows.shadowOf(Looper.getMainLooper())
                 .idleFor(Duration.ofMillis(40));
             String evidence = Diagnostics.incidentContext("playback_failed", captured);
-            org.json.JSONObject value = new org.json.JSONObject(evidence);
+            JSONObject value = new JSONObject(evidence);
             assertEquals(captured.playbackSession, value.getString("session"));
             assertEquals(captured.foregroundSession, value.getString("app_session"));
             assertEquals(captured.operation, value.getString("last_operation"));
@@ -474,7 +486,7 @@ public class DiagnosticsTest {
             Diagnostics.modalDepth(2);
             Method snapshot = Diagnostics.class.getDeclaredMethod("incidentContext", String.class);
             snapshot.setAccessible(true);
-            org.json.JSONObject value = new org.json.JSONObject((String) snapshot.invoke(null, "artwork_failed"));
+            JSONObject value = new JSONObject((String) snapshot.invoke(null, "artwork_failed"));
             assertEquals("movies", value.getString("page"));
             assertEquals("list", value.getString("view_mode"));
             assertEquals("genre,year", value.getString("active_filters"));
@@ -486,7 +498,7 @@ public class DiagnosticsTest {
             String safe = (String) snapshot.invoke(null, "artwork_failed");
             assertFalse(safe.contains("private"));
             assertFalse(safe.contains("secret"));
-            value = new org.json.JSONObject(safe);
+            value = new JSONObject(safe);
             assertEquals(0, value.getLong("media_id"));
             assertEquals(0, value.getInt("modal_depth"));
         } finally {
@@ -507,12 +519,12 @@ public class DiagnosticsTest {
             freeze.invoke(null, "artwork_failed");
             freeze.invoke(null, "artwork_failed");
             freeze.invoke(null, "artwork_failed");
-            List<org.json.JSONObject> records =
+            List<JSONObject> records =
                 DiagnosticArchive.records(new File(c.getFilesDir(), "supernova-diagnostics"));
             int repeats = 0;
             boolean summary = false;
             String incident = null;
-            for (org.json.JSONObject row : records) {
+            for (JSONObject row : records) {
                 if ("incident_repeated".equals(row.optString("event"))
                     && "artwork_failed".equals(row.optString("reason"))) {
                     repeats++;
