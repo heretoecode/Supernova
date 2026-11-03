@@ -244,11 +244,13 @@ public abstract class VideosByFragment extends CategoryBrowseFragment implements
 
     private void setupEventListeners() {
         setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 mSortOrderItem = sortOrder2Item(mSortOrder);
                 new AlertDialog.Builder(getActivity())
                     .setSingleChoiceItems(getSortOrderEntries(), mSortOrderItem,
                         new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
