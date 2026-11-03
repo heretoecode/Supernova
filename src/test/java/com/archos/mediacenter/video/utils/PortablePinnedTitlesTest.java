@@ -13,6 +13,7 @@ import com.archos.mediaprovider.video.ScraperStore;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.robolectric.annotation.SQLiteMode;
 import org.robolectric.shadows.ShadowContentResolver;
 import com.archos.mediacenter.video.utils.backup.PortablePinnedTitles;
 import com.archos.mediacenter.video.utils.backup.PortablePinnedTitles.*;
@@ -107,7 +108,7 @@ public class PortablePinnedTitlesTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void actualUnfilteredProviderProjectionIncludesOrphanPinsWithoutReadingMetadataText() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -185,7 +186,7 @@ public class PortablePinnedTitlesTest {
         return result;
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void sqliteReplacementUpdatesOnlyPinsAndPreservesFileProgressHiddenStateAndMetadata() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -211,7 +212,7 @@ public class PortablePinnedTitlesTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void cancellationAndFailureAfterFirstWriteRollBackEveryPin() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
@@ -247,7 +248,7 @@ public class PortablePinnedTitlesTest {
         }
     }
 
-    @org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+    @SQLiteMode(SQLiteMode.Mode.NATIVE)
     @Test
     public void changedProviderPinOrInventoryRejectsStalePreviewBeforeAnyWrites() throws Exception {
         Context context = RuntimeEnvironment.getApplication();
