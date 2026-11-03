@@ -44,6 +44,7 @@ import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects network server credentials and reports connect or cancel actions. */
 public class NetworkServerCredentialsDialog extends DialogFragment {
     // Note: this is both used in the leanback and the mobile interface in network shortcuts
 
