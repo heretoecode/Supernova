@@ -18,6 +18,7 @@ import android.content.Context;
 
 import com.archos.mediascraper.GenreUtils;
 
+/** Loads episodes filtered by date while excluding anime. */
 public class EpisodesNoAnimeByDateLoader extends MoviesByLoader {
 
 
