@@ -14,8 +14,15 @@
 
 package com.archos.mediacenter.video.player;
 import android.widget.RelativeLayout;
+import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediacenter.video.BuildConfig;
 
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.OfficialTitleArtwork;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
+import com.archos.mediacenter.video.leanback.PreviewOperationDialog;
+import com.archos.mediacenter.video.leanback.PreviewSubtitleChooser;
+import com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -153,6 +160,7 @@ import com.archos.medialib.LibAvos;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.ScrapeDetailResult;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -747,7 +755,7 @@ public class PlayerActivity extends AppCompatActivity
                     hideSkipPrompt();
                 } else {
                     setEnabled(false);
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested", "reason",
+                    Diagnostics.event("playback_exit_requested", "reason",
                                                                                "user_back");
                     getOnBackPressedDispatcher().onBackPressed();
                     setEnabled(true);
@@ -958,7 +966,7 @@ public class PlayerActivity extends AppCompatActivity
                                           evt.getOldValue(), evt.getNewValue());
                             if (!networkState.hasLocalConnection() &&
                                 !mPlayer.isLocalVideo()) { // should not finish if playing local file
-                                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                                Diagnostics.event(
                                     "playback_exit_requested", "reason", "network_connection_lost");
                                 if (log.isDebugEnabled())
                                     log.debug("lost network: finish");
@@ -1054,7 +1062,7 @@ public class PlayerActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         if (isTVMode &&
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
+            PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
             previewUpNext == null)
             previewUpNext = new PreviewUpNext(this);
         if (log.isDebugEnabled())
@@ -1201,7 +1209,7 @@ public class PlayerActivity extends AppCompatActivity
         // Read HTTP headers passed by external apps (MX Player API / Stremio)
         Bundle headersBundle = getIntent().getBundleExtra("headers");
         if (headersBundle != null && !headersBundle.isEmpty()) {
-            mExtraMap = new java.util.HashMap<>();
+            mExtraMap = new HashMap<>();
             for (String key : headersBundle.keySet()) {
                 Object value = headersBundle.get(key);
                 if (value instanceof String) {
@@ -1252,7 +1260,7 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("playback", "player", "video", "none", "none",
+        Diagnostics.uiState("playback", "player", "video", "none", "none",
                                                                      mVideoId);
         if (log.isDebugEnabled())
             log.debug("onResume");
@@ -2464,7 +2472,7 @@ public class PlayerActivity extends AppCompatActivity
                                         subtitle.language == null ? "" : subtitle.language);
                             View label = item.findViewById(R.id.info_text);
                             if (label instanceof TextView)
-                                com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,
+                                PreviewLanguageIcon.apply((TextView)label,
                                                                                                 subtitle.language);
                         }
                     }
@@ -2533,7 +2541,7 @@ public class PlayerActivity extends AppCompatActivity
                         item.setTag(R.id.preview_track_language, language);
                         View label = item.findViewById(R.id.info_text);
                         if (label instanceof TextView)
-                            com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label, language);
+                            PreviewLanguageIcon.apply((TextView)label, language);
                     }
                 }
 
@@ -3239,7 +3247,7 @@ public class PlayerActivity extends AppCompatActivity
             PlayerService.sPlayerService.setPlayOnResume(false);
             PlayerService.sPlayerService.checkpointPlaybackIntent(getIntent());
         }
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_settings_open", "paused", true);
+        Diagnostics.event("playback_settings_open", "paused", true);
     }
 
     // Common methods for TV and normal menu
@@ -3293,9 +3301,9 @@ public class PlayerActivity extends AppCompatActivity
             PlayerService.sPlayerService.manualTitleChoice(mVideoInfo);
         else
             try {
-                com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this, mVideoInfo);
-            } catch (org.json.JSONException | IOException invalid) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",
+                TitlePlaybackOverrides.supersede(this, mVideoInfo);
+            } catch (JSONException | IOException invalid) {
+                Diagnostics.error("manual_title_choice_persistence_failed",
                                                                            invalid);
             }
     }
@@ -3623,13 +3631,13 @@ public class PlayerActivity extends AppCompatActivity
                                 @Override
                                 public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
                                     float control = (progress - 50) / 50.0f;
-                                    android.util.Log.d("PHH", "progress changed " + progress);
+                                    Log.d("PHH", "progress changed " + progress);
                                     var svc = AdditionalServiceSingleton.getService();
                                     if (svc != null) {
                                         try {
                                             svc.setControl(control);
                                         } catch (RemoteException e) {
-                                            android.util.Log.d("PHH", "failed changing progress", e);
+                                            Log.d("PHH", "failed changing progress", e);
                                         }
                                     }
                                 }
@@ -3876,8 +3884,8 @@ public class PlayerActivity extends AppCompatActivity
         return mAudioInfoController != null && mAudioInfoController.getTrackCount() > 0;
     }
 
-    public void bindPreviewTitleArtwork(android.widget.TextView title) {
-        com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title, mVideoInfo);
+    public void bindPreviewTitleArtwork(TextView title) {
+        OfficialTitleArtwork.bind(title, mVideoInfo);
     }
 
     public String previewTitle() {
@@ -3888,7 +3896,7 @@ public class PlayerActivity extends AppCompatActivity
 
     public String previewEpisode() {
         return mVideoInfo != null && mVideoInfo.isShow
-            ? String.format(java.util.Locale.getDefault(), "Season %d • Episode %d", mVideoInfo.scraperSeasonNr,
+            ? String.format(Locale.getDefault(), "Season %d • Episode %d", mVideoInfo.scraperSeasonNr,
                             mVideoInfo.scraperEpisodeNr) +
                   (mVideoInfo.scraperEpisodeName == null ? "" : " · " + mVideoInfo.scraperEpisodeName)
             : "";
@@ -3897,7 +3905,7 @@ public class PlayerActivity extends AppCompatActivity
     void showVideoInfos() {
         if (mPreferences != null && mPreferences.getBoolean("try_new_ui", false) && isTVMode)
             return;
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_information_open", "player_present",
+        Diagnostics.event("playback_information_open", "player_present",
                                                                    mPlayer != null);
         if (mPreferences.getBoolean("try_new_ui", false) && isTVMode) {
             showNativeVideoInfos();
@@ -3907,7 +3915,7 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     private void showNativeVideoInfos() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "playback_technical_open", "player_present", mPlayer != null, "metadata_present",
             mPlayer != null && mPlayer.getVideoMetadata() != null);
         if (mPreferences.getBoolean("try_new_ui", false) && isTVMode) {
@@ -3965,7 +3973,7 @@ public class PlayerActivity extends AppCompatActivity
         // Forward HTTP headers so the info activity can probe the stream with the same headers
         if (mExtraMap != null && !mExtraMap.isEmpty()) {
             Bundle headersBundle = new Bundle();
-            for (java.util.Map.Entry<String, String> entry : mExtraMap.entrySet()) {
+            for (Map.Entry<String, String> entry : mExtraMap.entrySet()) {
                 headersBundle.putString(entry.getKey(), entry.getValue());
             }
             intent.putExtra("headers", headersBundle);
@@ -4695,7 +4703,7 @@ public class PlayerActivity extends AppCompatActivity
                     boolean foundPoster = false;
                     if (posterPath != null) {
                         Bitmap bm =
-                            com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(posterPath, 150, 225);
+                            BitmapUtils.decodeSampledBitmapFromFile(posterPath, 150, 225);
                         if (bm != null) {
                             float scaleFactor = (float)100 / (float)bm.getWidth();
                             result = Bitmap.createScaledBitmap(bm, (int)(scaleFactor * (float)bm.getWidth()),
@@ -5045,7 +5053,7 @@ public class PlayerActivity extends AppCompatActivity
         previewPendingSubtitlePath =
             data == null
                 ? null
-                : data.getStringExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH);
+                : data.getStringExtra(PreviewSubtitleChooser.SELECTED_PATH);
         if (previewPendingSubtitlePath != null) {
             String requested = previewPendingSubtitlePath;
             previewPendingSubtitlePath = null;
@@ -5063,7 +5071,7 @@ public class PlayerActivity extends AppCompatActivity
         for (int i = 0; i < metadata.getSubtitleTrackNb(); i++) {
             SubtitleTrack track = metadata.getSubtitleTrack(i);
             if (track == null || !track.isExternal ||
-                !com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.sameFile(path, track.path))
+                !PreviewSubtitleChooser.sameFile(path, track.path))
                 continue;
             int position = subtitleTrackToPosition(i, mVideoInfo.nbSubtitles);
             if (position < 0 || position >= mSubtitleInfoController.getTrackCount())
@@ -5097,13 +5105,13 @@ public class PlayerActivity extends AppCompatActivity
 
         subIntent.setClass(mContext, SubtitlesWizardActivity.class);
         subIntent.setData(uri);
-        subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ALLOW_SELECTION, true);
+        subIntent.putExtra(PreviewSubtitleChooser.ALLOW_SELECTION, true);
         if (mPlayer != null && mPlayer.getVideoMetadata() != null && mVideoInfo != null &&
             mVideoInfo.subtitleTrack >= 0 &&
             mVideoInfo.subtitleTrack < mPlayer.getVideoMetadata().getSubtitleTrackNb()) {
             SubtitleTrack active = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
             if (active != null && active.isExternal)
-                subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ACTIVE_PATH,
+                subIntent.putExtra(PreviewSubtitleChooser.ACTIVE_PATH,
                                    active.path);
         }
         subtitleLauncher.launch(subIntent);
@@ -5134,7 +5142,7 @@ public class PlayerActivity extends AppCompatActivity
             return languageStr.toLowerCase(Locale.ROOT);
         }
         // Use ISO639codes utility to convert any format (2-letter, 3-letter, or full name) to 2-letter code
-        String code = com.archos.mediacenter.utils.ISO639codes.getISO6391ForLetterCode(languageStr);
+        String code = ISO639codes.getISO6391ForLetterCode(languageStr);
         if (code != null && !code.isEmpty()) {
             return code.toLowerCase(Locale.ROOT);
         }
@@ -5297,7 +5305,7 @@ public class PlayerActivity extends AppCompatActivity
         // Home/PiP do not finish this activity. A floating-player handoff keeps its session.
         if (!mLaunchFloatingPlayer && mPlayer != null)
             mPlayer.beginPlaybackExit();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "playback_activity_finish", "completed", mVideoFinished, "error_code", mErrorCode, "changing_configuration",
             isChangingConfigurations());
         log.info("Playback Activity finish: completed={} error={} changingConfiguration={}", mVideoFinished, mErrorCode,
@@ -5621,7 +5629,7 @@ public class PlayerActivity extends AppCompatActivity
             String requested = previewPendingSubtitlePath;
             previewPendingSubtitlePath = null;
             if (requested != null && !applyPreviewSubtitle(requested, vMetadata) && !isFinishing() && !isDestroyed())
-                com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(
+                PreviewOperationDialog.notice(
                     PlayerActivity.this, "Choose Subtitles",
                     "The selected subtitle is not available as a playable track. Your current selection has been kept.",
                     () -> {});
