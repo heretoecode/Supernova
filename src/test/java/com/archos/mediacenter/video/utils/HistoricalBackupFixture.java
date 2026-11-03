@@ -17,9 +17,11 @@ import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.VideoDb;
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import com.archos.mediascraper.MediaScraper;
 import java.io.*;
 import java.io.InputStream;
@@ -27,10 +29,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.UUID;
 import java.util.zip.*;
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Test-only historical1.0 fixture writer. Not packaged or reachable by application export. */
 public final class HistoricalBackupFixture extends ContextWrapper {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HistoricalBackupFixture.class);
+    private static final Logger log = LoggerFactory.getLogger(HistoricalBackupFixture.class);
     private static final String DATABASE_NAME = "media.db", CREDENTIALS_DB_NAME = "credentials_db",
                                 SHORTCUTS_DB_NAME = "shortcuts_db", SHORTCUTS2_DB_NAME = "shortcuts2_db",
                                 VERSION_FILE = "db_version.txt";
@@ -59,7 +64,7 @@ public final class HistoricalBackupFixture extends ContextWrapper {
         Set<String> reproducible = MigrationBackup.reproducibleFiles(this);
         DbHolder holder = VideoDb.getHolder(this);
         holder.get(); // Ensure even an empty library has its schema before snapshotting.
-        synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
+        synchronized (ProviderDiscoveryGate.LOCK) {
             holder.lockExclusive();
             try {
                 holder.close();
@@ -121,13 +126,13 @@ public final class HistoricalBackupFixture extends ContextWrapper {
                 zos.putNextEntry(new ZipEntry("named_preferences.json"));
                 zos.write(MigrationBackup.settings(this).getBytes(StandardCharsets.UTF_8));
                 zos.closeEntry();
-            } catch (org.json.JSONException e) {
+            } catch (JSONException e) {
                 throw new IOException("Could not export settings", e);
             }
             File historyFile = new File(getCacheDir(), "history-export-" + UUID.randomUUID());
             try {
-                com.archos.mediacenter.video.leanback.ViewingHistory.export(this, historyFile);
-                zos.putNextEntry(new ZipEntry(com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE));
+                ViewingHistory.export(this, historyFile);
+                zos.putNextEntry(new ZipEntry(ViewingHistory.DATABASE));
                 try (InputStream history = new java.io.FileInputStream(historyFile)) {
                     byte[] bytes = new byte[65536];
                     int count;
