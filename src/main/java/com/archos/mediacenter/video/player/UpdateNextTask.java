@@ -196,7 +196,7 @@ public class UpdateNextTask {
                     c.close();
                     if (log.isDebugEnabled()) log.debug("UpdateNextTask.Result binge mode {}", nextUri);
                     if (nextUri != null) return new Result(nextUri, nextId);
-                    else return null;
+                        else return null;
                 }
 
                 boolean useNextVideo = false;
@@ -431,7 +431,7 @@ public class UpdateNextTask {
         isCancelled = true;
         if (mFuture != null) mFuture.cancel(mayInterruptIfRunning);
         if (mayInterruptIfRunning) executor.shutdownNow();
-        else executor.shutdown();
+            else executor.shutdown();
     }
 
     public Result get() throws ExecutionException, InterruptedException {
