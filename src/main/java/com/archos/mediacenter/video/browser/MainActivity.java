@@ -418,6 +418,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         	.setTitle("Trakt")
         	.setMessage(R.string.trakt_change)
         	.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+        		@Override
         		public void onClick(DialogInterface dialog, int which) { 
         			dialog.dismiss();
         		}
@@ -1013,22 +1014,27 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
                     // Handle clicks on the "resume global" area
                     grv.setOnClickListener(new View.OnClickListener() {
                         boolean launching = false;
+                        @Override
                         public void onClick(View v) {
                             if (launching)
                                 return;
                             f_grv.launchOpenAnimation(new Animator.AnimatorListener() {
+                                @Override
                                 public void onAnimationStart(Animator animation) {
                                     launching = true;
                                 }
 
+                                @Override
                                 public void onAnimationRepeat(Animator animation) {
                                 }
 
+                                @Override
                                 public void onAnimationEnd(Animator animation) {
                                     launching = false;
                                     launchGlobalResume();
                                 }
 
+                                @Override
                                 public void onAnimationCancel(Animator animation) {
                                 }
                             });
@@ -1041,6 +1047,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
                         // Allow to draw a specific image on top of the
                         // "resume global"
                         // area when it has the focus
+                        @Override
                         public void onFocusChange(View v, boolean hasFocus) {
                             ImageView resumeGlobalFocusView = (ImageView) findViewById(R.id.global_resume_focus);
                             resumeGlobalFocusView
@@ -1053,6 +1060,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
                         // Allow to draw a specific image on top of the
                         // "resume global"
                         // area when it is pressed
+                        @Override
                         @SuppressLint("ClickableViewAccessibility")
                         public boolean onTouch(View v, MotionEvent event) {
                             ImageView resumeGlobalFocusView = (ImageView) findViewById(R.id.global_resume_focus);
