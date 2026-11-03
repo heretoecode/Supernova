@@ -17,7 +17,6 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 
 import com.archos.mediascraper.GenreUtils;
-import com.archos.mediaprovider.video.VideoStore;
 
 public class EpisodesNoAnimeByDateLoader extends MoviesByLoader {
 
