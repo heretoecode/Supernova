@@ -23,6 +23,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays library videos that have not been played. */
 public class BrowserNeverPlayed extends CursorBrowserByVideo {
 
     private static final String SELECT_NEVER_PLAYED = VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED
