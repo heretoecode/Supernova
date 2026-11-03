@@ -25,6 +25,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks portable pinned titles remap exact identities and update only selected pin state transactionally. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortablePinnedTitlesTest {
