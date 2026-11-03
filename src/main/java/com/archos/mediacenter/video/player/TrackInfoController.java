@@ -39,6 +39,7 @@ import com.archos.mediacenter.video.R;
 
 import java.util.ArrayList;
 
+/** Displays track and settings entries and reports the user's selection. */
 public class TrackInfoController implements OnMenuItemClickListener, OnItemClickListener {
     private MenuItem mMenuItem = null;
     private ListPopupWindow mPopup = null;
