@@ -31,6 +31,8 @@ public final class SupernovaStyle {
     public static final int BUTTON_REST = 0xB8000000;
     /** Resting surface for buttons inside a panel and for tiles: the panel's darker navy. */
     public static final int PANEL_REST = 0xFF141848;
+    /** Faint fill marking the chosen row in a list whose focus travels separately. */
+    public static final int ROW_SELECTED = 0x26FFFFFF;
     public static final int FOCUS_FILL = 0xFFF4F6FB;
     public static final int FOCUS_TEXT = 0xFF0B0D12;
     public static final int TEXT = Color.WHITE;
@@ -73,7 +75,7 @@ public final class SupernovaStyle {
         float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
         int edge = surface == Surface.TILE ? 0x2EFFFFFF : 0;
-        StateListDrawable states = new StateListDrawable();
+        StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, dp(c, 6));
         states.addState(new int[]{android.R.attr.state_focused}, focused);
         states.addState(new int[]{android.R.attr.state_pressed}, focused);
@@ -88,6 +90,41 @@ public final class SupernovaStyle {
         return new ColorStateList(
                 new int[][]{{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {-android.R.attr.state_enabled}, {}},
                 new int[]{FOCUS_TEXT, FOCUS_TEXT, 0x66FFFFFF, TEXT});
+    }
+
+    /** Colour for a label inside a button group: black while the group shows the focus box (activated). */
+    public static ColorStateList groupLabelContent() {
+        return new ColorStateList(new int[][]{{android.R.attr.state_activated}, {}}, new int[]{FOCUS_TEXT, TEXT});
+    }
+
+    /**
+     * The button background. Android only passes a parent's state to children that asked for it before they
+     * were added, but buttons are styled after their content exists. So whenever the box changes state it
+     * refreshes the content that mirrors it: children copying the button's state, and group labels.
+     */
+    static final class ButtonStates extends StateListDrawable {
+        @Override protected boolean onStateChange(int[] state) {
+            boolean changed = super.onStateChange(state);
+            Callback owner = getCallback();
+            if (owner instanceof android.view.ViewGroup) {
+                boolean boxed = false;
+                for (int s : state) if (s == android.R.attr.state_focused || s == android.R.attr.state_pressed) boxed = true;
+                refreshContent((android.view.ViewGroup) owner, boxed);
+            }
+            return changed;
+        }
+
+        private static void refreshContent(android.view.ViewGroup group, boolean boxed) {
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View child = group.getChildAt(i);
+                if (Boolean.TRUE.equals(child.getTag(com.archos.mediacenter.video.R.id.supernova_group_label))) {
+                    child.setActivated(boxed);
+                } else if (child.isDuplicateParentStateEnabled() && !group.addStatesFromChildren()) {
+                    child.refreshDrawableState();
+                    if (child instanceof android.view.ViewGroup) refreshContent((android.view.ViewGroup) child, boxed);
+                }
+            }
+        }
     }
 
     /** Secondary text (e.g. a tile's description) that stays readable on both boxes. */
@@ -154,8 +191,11 @@ public final class SupernovaStyle {
                 Drawable d = ((android.widget.ImageView) child).getDrawable();
                 if (isMonochromeIcon(d)) ((android.widget.ImageView) child).setImageDrawable(new StateIcon(d));
             } else if (child instanceof TextView && !child.isFocusable()) {
-                child.setDuplicateParentStateEnabled(true);
-                ((TextView) child).setTextColor(buttonContent());
+                // Not duplicateParentState: the group merges its children's states, so a label copying the
+                // group's state would recurse. ButtonStates marks group labels activated instead.
+                child.setDuplicateParentStateEnabled(false);
+                child.setTag(com.archos.mediacenter.video.R.id.supernova_group_label, Boolean.TRUE);
+                ((TextView) child).setTextColor(groupLabelContent());
             }
         }
     }
@@ -260,6 +300,12 @@ public final class SupernovaStyle {
         return states;
     }
 
+    /** Background for a selectable row whose focus is drawn by a travelling outline (e.g. a settings rail):
+     *  the chosen row keeps a faint fill so it stays recognisable when focus moves away; no focus states here. */
+    public static Drawable selectedRow(Context c, boolean selected) {
+        return new Box(selected ? ROW_SELECTED : Color.TRANSPARENT, 0, 0, dp(c, RADIUS_DP), 0);
+    }
+
     /** The row focus outline itself (white, rounded, no fill), e.g. for foreground focus on cards. */
     public static Drawable rowFocusOutline(Context c) {
         return new Box(Color.TRANSPARENT, Color.WHITE, Math.max(2, dp(c, ROW_FOCUS_STROKE_DP)), dp(c, RADIUS_DP), 0);
@@ -315,7 +361,8 @@ public final class SupernovaStyle {
      * Rounded fill with an optional outline and an optional soft shadow drawn outside the bounds
      * (so a focused box is exactly the size of a resting one).
      */
-    static final class Box extends Drawable {
+    /** Rounded box with optional outline and soft shadow; exposes its values so tests can check the shared style. */
+    public static final class Box extends Drawable {
         private final int fill, edge, stroke, shadow;
         private final float radius;
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -323,6 +370,9 @@ public final class SupernovaStyle {
         Box(int fill, int edge, int stroke, float radius, int shadow) {
             this.fill = fill; this.edge = edge; this.stroke = stroke; this.radius = radius; this.shadow = shadow;
         }
+        public int fill() { return fill; }
+        public int edge() { return edge; }
+        public float radius() { return radius; }
         @Override public void draw(Canvas canvas) {
             RectF r = new RectF(getBounds());
             if (shadow > 0) {

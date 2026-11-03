@@ -9,9 +9,10 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-/** A single travelling boundary for adjacent navigation controls. Cards keep their own focus. */
+/** A single travelling boundary (the shared white row outline) for adjacent navigation controls. Cards keep their own focus. */
 public final class PreviewFocusRail extends LinearLayout {
-    private PreviewFocusGlow boundary;
+    /** The shared white row outline (owner rule 2 Nov 2026: focus is white everywhere). */
+    private android.graphics.drawable.Drawable boundary;
     private final RectF current = new RectF();
     private ValueAnimator movement;
     private boolean visible;
@@ -23,13 +24,13 @@ public final class PreviewFocusRail extends LinearLayout {
 
     public PreviewFocusRail(Context context) {
         super(context);
-        boundary = new PreviewFocusGlow(context);
+        boundary = SupernovaStyle.rowFocusOutline(context);
         setClipChildren(false);
         setClipToPadding(false);
     }
 
     public void refreshColour() {
-        boundary = new PreviewFocusGlow(getContext());
+        boundary = SupernovaStyle.rowFocusOutline(getContext());
         invalidate();
     }
 

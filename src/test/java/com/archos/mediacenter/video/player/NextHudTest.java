@@ -61,10 +61,8 @@ public class NextHudTest {
    android.graphics.drawable.Drawable background = root.findViewById(id).getBackground();
    assertNotNull(background);
    android.graphics.drawable.Drawable face = background instanceof android.graphics.drawable.StateListDrawable ? background.getCurrent() : background;
-   assertTrue(face instanceof android.graphics.drawable.GradientDrawable);
-   android.graphics.drawable.GradientDrawable shape = (android.graphics.drawable.GradientDrawable) face;
-   assertEquals("rectangle, not oval", android.graphics.drawable.GradientDrawable.RECTANGLE, shape.getShape());
-   assertEquals(12f * density, shape.getCornerRadius(), 0.5f);
+   assertTrue("shared rounded-rectangle button", face instanceof com.archos.mediacenter.video.leanback.SupernovaStyle.Box);
+   assertEquals(12f * density, ((com.archos.mediacenter.video.leanback.SupernovaStyle.Box) face).radius(), 0.5f);
   }
  }
 

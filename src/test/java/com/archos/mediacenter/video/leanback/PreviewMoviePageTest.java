@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class PreviewMoviePageTest {
  @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
  @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
-    @Test public void detailsPeopleAreReadOnlyWhileBrowserRetainsAccentFocus(){
+    @Test public void detailsPeopleAreReadOnlyWhileBrowserRetainsWhiteFocus(){
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             PreviewMoviePage page=new PreviewMoviePage(host.get(),ArrayObjectAdapter::new,a->{},()->{},uri->{});
@@ -27,7 +27,7 @@ public class PreviewMoviePageTest {
             assertFalse(people.getChildAt(0).isFocusable());assertNull(people.getChildAt(0).getBackground());
             var browser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
             android.graphics.drawable.Drawable navigation=browser.findViewWithTag("semantic:network.category.overview").getBackground();navigation.setState(new int[]{android.R.attr.state_focused});
-            assertEquals(PreviewAccent.color(host.get()),Shadows.shadowOf((android.graphics.drawable.GradientDrawable)navigation.getCurrent()).getStrokeColor());
+            assertEquals("browser keeps a focus outline, now the shared white one",android.graphics.Color.WHITE,((SupernovaStyle.Box)navigation.getCurrent()).edge());
         }finally{host.pause().stop().destroy();}
     }
     @Test public void seriesInformationDoesNotCountUnknownFileSizesAsZero(){
