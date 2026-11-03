@@ -8,6 +8,7 @@ import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.squareup.picasso.Picasso;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -24,10 +25,10 @@ public class PreviewSeasonTest {
     public void before() {
         PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
