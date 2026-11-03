@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import com.archos.mediacenter.video.player.PrivateMode;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -22,7 +23,7 @@ public final class HeroPlaybackEligibility {
     public static boolean consumed(Entry entry) { return ESTABLISHED.contains(identity(entry)); }
     public static long generation() { return GENERATION.get(); }
     public static void established(Context context,String identity) {
-        if(identity==null||!identity.matches("(?:movie:|tv:|v|s)[1-9][0-9]*")||com.archos.mediacenter.video.player.PrivateMode.isActive())return;
+        if(identity==null||!identity.matches("(?:movie:|tv:|v|s)[1-9][0-9]*")||PrivateMode.isActive())return;
         if(ESTABLISHED.add(identity)){
             GENERATION.incrementAndGet();
             context.getApplicationContext().sendBroadcast(new Intent(context.getPackageName()+".VIEWING_STATE_CHANGED").setPackage(context.getPackageName()));
