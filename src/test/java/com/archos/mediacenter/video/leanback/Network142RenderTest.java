@@ -1,9 +1,16 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.adapter.object.*;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -19,7 +26,7 @@ public class Network142RenderTest {
     @Before
     public void setup() {
         PreviewAsyncFixtures.offlineTransport();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -35,7 +42,7 @@ public class Network142RenderTest {
             root.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
             root.layout(0, 0, 1920, 1080);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
         }
     }
 
@@ -53,19 +60,19 @@ public class Network142RenderTest {
     private void capture(View root, String name) throws Exception {
         invalidateCapture(root);
         PreviewPagesTest.capture(root, name);
-        android.graphics.Bitmap bitmap =
-            android.graphics.BitmapFactory.decodeFile("build/reports/preview-ui/" + name + ".png");
+        Bitmap bitmap =
+            BitmapFactory.decodeFile("build/reports/preview-ui/" + name + ".png");
         assertTrue("Capture retains the static global brand: " + name, brightPixels(bitmap, 52, 35, 266, 76) > 100);
         assertNotNull("Global navigation retained", root.findViewWithTag("semantic:topnav.network"));
     }
 
-    private int brightPixels(android.graphics.Bitmap bitmap, int left, int top, int right, int bottom) {
+    private int brightPixels(Bitmap bitmap, int left, int top, int right, int bottom) {
         int count = 0;
         for (int y = top; y < bottom; y++)
             for (int x = left; x < right; x++) {
                 int pixel = bitmap.getPixel(x, y);
-                if (android.graphics.Color.red(pixel) > 180 && android.graphics.Color.green(pixel) > 180
-                    && android.graphics.Color.blue(pixel) > 180)
+                if (Color.red(pixel) > 180 && Color.green(pixel) > 180
+                    && Color.blue(pixel) > 180)
                     count++;
             }
         return count;
@@ -131,7 +138,7 @@ public class Network142RenderTest {
                 nav.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
                 nav.layout(0, 0, w, h);
-                Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(50));
+                Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));
             }
             for (int n = 0; n < 6; n++) {
                 View card = nav.findViewWithTag("network.card." + n);
@@ -146,7 +153,7 @@ public class Network142RenderTest {
                 "home", "movies", "tv", "network", "search", "settings"
             }) {
                 View control = nav.findViewWithTag("semantic:topnav." + tab);
-                android.graphics.Rect visible = new android.graphics.Rect();
+                Rect visible = new Rect();
                 assertTrue(tab, control.getGlobalVisibleRect(visible));
                 assertEquals(
                     "Complete navigation control at " + suffix + ": " + tab, control.getWidth(), visible.width());
