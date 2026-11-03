@@ -22,15 +22,16 @@ import androidx.leanback.app.GuidedStepSupportFragment;
 
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
+import com.archos.mediacenter.video.leanback.PreviewSubtitleChooser;
 
 public class SubtitlesWizardActivity extends LeanbackActivity {
-    private com.archos.mediacenter.video.leanback.PreviewSubtitleChooser previewChooser;
+    private PreviewSubtitleChooser previewChooser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
-            previewChooser=com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.create(this);
+            previewChooser=PreviewSubtitleChooser.create(this);
             previewChooser.start();return;
         }
         GuidedStepSupportFragment fragment = new SubtitlesWizardFragment();
