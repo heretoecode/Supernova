@@ -8,6 +8,7 @@ import android.widget.*;
 import androidx.leanback.widget.*;
 import androidx.recyclerview.widget.*;
 import androidx.recyclerview.widget.GridLayoutManager;
+import com.archos.mediacenter.video.R;
 import java.util.*;
 
 /** Source grid over Nova's existing discovery adapters and click handlers. */
@@ -259,7 +260,7 @@ public final class PreviewSources extends FrameLayout {
             tile.setGravity(Gravity.CENTER_VERTICAL);
             tile.setPadding(dp(12), dp(8), dp(12), dp(8));
             ImageView icon = new ImageView(getContext());
-            ImageView original = nativeView.findViewById(com.archos.mediacenter.video.R.id.image);
+            ImageView original = nativeView.findViewById(R.id.image);
             icon.setImageDrawable(original != null && original.getDrawable() != null ? original.getDrawable()
                                                                                      : new PreviewIcon("network"));
             icon.setScaleType(ImageView.ScaleType.FIT_CENTER);
