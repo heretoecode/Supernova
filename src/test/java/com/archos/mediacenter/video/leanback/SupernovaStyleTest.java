@@ -38,10 +38,10 @@ public class SupernovaStyleTest {
         label.setText("Library");
         button.addView(label);
         TextView other = new TextView(host.get());
-        other.setFocusable(true);
+        other.setFocusable(true); other.setFocusableInTouchMode(true);
         root.addView(button);
         root.addView(other, new FrameLayout.LayoutParams(10, 10, android.view.Gravity.END));
-        button.setFocusable(true);
+        button.setFocusable(true); button.setFocusableInTouchMode(true);
         SupernovaStyle.applyButton(button, SupernovaStyle.Surface.STANDARD);
 
         assertTrue(button.requestFocus());
@@ -55,13 +55,13 @@ public class SupernovaStyleTest {
         FrameLayout group = new FrameLayout(host.get());
         group.setAddStatesFromChildren(true);
         ImageButton icon = new ImageButton(host.get());
-        icon.setFocusable(true);
+        icon.setFocusable(true); icon.setFocusableInTouchMode(true);
         TextView label = new TextView(host.get());
         label.setText("Settings");
         group.addView(icon);
         group.addView(label);
         TextView other = new TextView(host.get());
-        other.setFocusable(true);
+        other.setFocusable(true); other.setFocusableInTouchMode(true);
         root.addView(group);
         root.addView(other, new FrameLayout.LayoutParams(10, 10, android.view.Gravity.END));
         SupernovaStyle.applyButtonGroup(group, SupernovaStyle.Surface.STANDARD);
@@ -75,7 +75,7 @@ public class SupernovaStyleTest {
     @Test public void textButtonIsBlackOnFocus() {
         TextView button = TvButton.create(host.get(), "Resume", () -> {}, false);
         TextView other = new TextView(host.get());
-        other.setFocusable(true);
+        other.setFocusable(true); other.setFocusableInTouchMode(true);
         root.addView(button);
         root.addView(other, new FrameLayout.LayoutParams(10, 10, android.view.Gravity.END));
         assertTrue(button.requestFocus());
@@ -90,7 +90,7 @@ public class SupernovaStyleTest {
         TextView button = TvButton.create(host.get(), "Delete", () -> {}, false);
         button.setTextColor(android.graphics.Color.WHITE);
         TextView other = new TextView(host.get());
-        other.setFocusable(true);
+        other.setFocusable(true); other.setFocusableInTouchMode(true);
         root.addView(button);
         root.addView(other, new FrameLayout.LayoutParams(10, 10, android.view.Gravity.END));
         assertTrue(button.requestFocus());

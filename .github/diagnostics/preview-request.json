@@ -1,16 +1,6 @@
 {
- "purpose": "0.153 shared style, round 7 (readable-content safety net, destructive colour, menu render)",
+ "purpose": "0.153 full unit suite sweep (find every old-style assertion)",
  "tests": [
-  "com.archos.mediacenter.video.leanback.SupernovaStyleTest",
-  "com.archos.mediacenter.video.leanback.SupernovaStyleConformanceTest",
-  "com.archos.mediacenter.video.player.NextHudTest",
-  "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
-  "com.archos.mediacenter.video.leanback.EditPagePanelTest",
-  "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
-  "com.archos.mediacenter.video.leanback.details.PreviewMoreActionsTest",
-  "com.archos.mediacenter.video.leanback.PreviewDialogStackTest",
-  "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
-  "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
-  "com.archos.mediacenter.video.leanback.NextQaWizardTest"
+  "com.archos.*"
  ]
 }
