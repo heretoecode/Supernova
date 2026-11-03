@@ -14,10 +14,12 @@
 
 package com.archos.mediacenter.video.leanback.filebrowsing;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.text.TextUtils;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.core.os.BundleCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
@@ -27,8 +29,6 @@ import androidx.loader.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,7 +51,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +82,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.VideoUtils;
 
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -262,14 +262,14 @@ public abstract class ListingFragment
 
         if (mPrefs.getBoolean("try_new_ui", false)) {
             v.setBackground(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));
-            getTitleView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            getTitleView().setBackgroundColor(Color.TRANSPARENT);
             View titleText = getTitleView().findViewById(androidx.leanback.R.id.title_text);
             if (titleText instanceof TextView) {
                 TextView title = (TextView) titleText;
                 title.setTextSize(19);
                 title.setTextColor(0xffc7d8e4);
                 title.setSingleLine(true);
-                title.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+                title.setEllipsize(TextUtils.TruncateAt.MIDDLE);
             }
             if (mUri != null) {
                 String path = mUri.getPath();
@@ -316,8 +316,8 @@ public abstract class ListingFragment
             R.id.orb1_description, R.id.orb2_description, R.id.orb3_description,
             R.id.orb4_description, R.id.orb5_description
         };
-        java.util.List<Runnable> commands = new java.util.ArrayList<>();
-        java.util.List<String> labels = new java.util.ArrayList<>();
+        java.util.List<Runnable> commands = new ArrayList<>();
+        java.util.List<String> labels = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             View command = getTitleView().findViewById(ids[i]);
             TextView label = getTitleView().findViewById(descriptions[i]);
@@ -565,9 +565,9 @@ public abstract class ListingFragment
                 protected void initializeGridViewHolder(VerticalGridPresenter.ViewHolder holder) {
                     super.initializeGridViewHolder(holder);
                     if (previewList) {
-                        holder.view.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                        holder.view.setBackgroundColor(Color.TRANSPARENT);
                         holder.view.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
-                        holder.getGridView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                        holder.getGridView().setBackgroundColor(Color.TRANSPARENT);
                         holder.getGridView().setPadding(0, 0, 0, 0);
                     }
                 }
@@ -991,7 +991,7 @@ public abstract class ListingFragment
         infoLauncher.launch(intent, opts);
     }
 
-    public static ActivityOptionsCompat detailsTransition(android.app.Activity activity, View sourceView) {
+    public static ActivityOptionsCompat detailsTransition(Activity activity, View sourceView) {
         if (activity == null || activity.isFinishing() || activity.isDestroyed() || sourceView == null
             || !sourceView.isAttachedToWindow())
             return null;
