@@ -2,11 +2,31 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.net.Uri;
+import android.os.SystemClock;
+import android.provider.MediaStore;
+import android.util.AtomicFile;
+import android.util.Log;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.loader.*;
 import com.archos.mediacenter.video.browser.adapters.mappers.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediaprovider.video.VideoStore;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 /** Builds an immutable UI snapshot on the loader worker, never querying per card. */
 public final class PreviewLibraryLoader extends AllVideosLoader {
@@ -32,8 +52,8 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     public String[] getProjection() {
         return concatTwoStringArrays(mProjection,
             new String[] {
-                android.provider.MediaStore.Video.VideoColumns.WIDTH,
-                android.provider.MediaStore.Video.VideoColumns.HEIGHT,
+                MediaStore.Video.VideoColumns.WIDTH,
+                MediaStore.Video.VideoColumns.HEIGHT,
                 VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_BEST_AUDIOTRACK_FORMAT,
                 VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_VIDEO_FORMAT,
                 VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE,
@@ -47,7 +67,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             });
     }
 
-    public static final class Entry implements java.io.Serializable {
+    public static final class Entry implements Serializable {
         public final Base media;
         public final long added, show;
         public final String genres;
@@ -61,7 +81,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         public String sortTitle = "";
         public String releaseDate = "";
         public long onlineId;
-        public transient android.net.Uri backdrop;
+        public transient Uri backdrop;
         public long bytes, runtime, modified, bitrate;
         public int episodes, seasons, knownSizes, files;
         public String resolution = "", hdr = "", audio = "", codec = "", path = "", container = "";
@@ -106,22 +126,22 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                                             : "v" + ((Video) media).getId();
         }
 
-        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+        private void writeObject(ObjectOutputStream out) throws IOException {
             out.defaultWriteObject();
             out.writeObject(backdrop == null ? null : backdrop.toString());
         }
 
-        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
             in.defaultReadObject();
             String uri = (String) in.readObject();
-            backdrop = uri == null ? null : android.net.Uri.parse(uri);
+            backdrop = uri == null ? null : Uri.parse(uri);
         }
 
         public int year() {
             if (media instanceof Episode && ((Episode) media).getEpisodeDate() > 0) {
-                java.util.Calendar date = java.util.Calendar.getInstance();
+                Calendar date = Calendar.getInstance();
                 date.setTimeInMillis(((Episode) media).getEpisodeDate());
-                return date.get(java.util.Calendar.YEAR);
+                return date.get(Calendar.YEAR);
             }
             if (media instanceof Episode)
                 return 0;
@@ -137,7 +157,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         }
     }
 
-    public static final class Snapshot implements java.io.Serializable {
+    public static final class Snapshot implements Serializable {
         public final List<Entry> featured = new ArrayList<>();
         public final List<Entry> technical = new ArrayList<>();
         public final List<Entry> episodes = new ArrayList<>();
@@ -317,10 +337,10 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     }
 
     private static final Object CACHE_LOCK = new Object();
-    private static final java.util.concurrent.atomic.AtomicLong CACHE_GENERATION =
-        new java.util.concurrent.atomic.AtomicLong();
-    private static final java.util.concurrent.ExecutorService cacheWriter =
-        java.util.concurrent.Executors.newSingleThreadExecutor();
+    private static final AtomicLong CACHE_GENERATION =
+        new AtomicLong();
+    private static final ExecutorService cacheWriter =
+        Executors.newSingleThreadExecutor();
 
     public static void warmCache(Context context) {
         cacheWriter.execute(() -> {
@@ -346,10 +366,10 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
             return memoryCache();
         if (com.archos.mediacenter.video.player.PrivateMode.isActive())
             return null;
-        try (java.io.ObjectInputStream in = new java.io.ObjectInputStream(new java.io.BufferedInputStream(
-                 new java.io.FileInputStream(new java.io.File(c.getCacheDir(), "preview-library-v42"))))) {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(
+                 new FileInputStream(new File(c.getCacheDir(), "preview-library-v42"))))) {
             Snapshot s = (Snapshot) in.readObject();
-            for (List<Entry> list : java.util.Arrays.asList(s.movies, s.shows, s.recent, s.played, s.watched,
+            for (List<Entry> list : Arrays.asList(s.movies, s.shows, s.recent, s.played, s.watched,
                      s.continuingMovies, s.continuingShows, s.episodes))
                 for (Entry e : list)
                     if (e.media instanceof Video)
@@ -373,25 +393,25 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
         synchronized (CACHE_LOCK) {
             CACHE_GENERATION.incrementAndGet();
             cached = null;
-            new android.util.AtomicFile(new java.io.File(context.getCacheDir(), "preview-library-v42")).delete();
+            new AtomicFile(new File(context.getCacheDir(), "preview-library-v42")).delete();
         }
         context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
     }
 
     private void writeCacheLocked(Snapshot value) {
-        android.util.AtomicFile file =
-            new android.util.AtomicFile(new java.io.File(getContext().getCacheDir(), "preview-library-v42"));
-        java.io.FileOutputStream stream = null;
+        AtomicFile file =
+            new AtomicFile(new File(getContext().getCacheDir(), "preview-library-v42"));
+        FileOutputStream stream = null;
         try {
             stream = file.startWrite();
-            java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(stream);
+            ObjectOutputStream out = new ObjectOutputStream(stream);
             out.writeObject(value);
             out.flush();
             file.finishWrite(stream);
         } catch (Exception failure) {
             if (stream != null)
                 file.failWrite(stream);
-            android.util.Log.d("NovaPreview", "Snapshot cache unavailable", failure);
+            Log.d("NovaPreview", "Snapshot cache unavailable", failure);
         }
     }
 
@@ -513,28 +533,28 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     @Override
     public Cursor loadInBackground() {
         String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("indexed_library_load");
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         Cursor c = null;
         loadWarning = null;
         try {
             try {
                 new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext())
                     .reconcilePlaylists();
-            } catch (java.io.IOException pending) {
+            } catch (IOException pending) {
                 loadWarning = "Some restored saved playlists are still pending. Refresh after source setup to retry.";
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("playlist_restore_pending", pending);
             }
             try {
                 new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext())
                     .reconcileSources();
-            } catch (java.io.IOException pending) {
+            } catch (IOException pending) {
                 loadWarning = "Some restored sources are still pending. Refresh after source setup to retry.";
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_restore_pending", pending);
             }
             try {
                 new com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction(getContext())
                     .reconcileTitlePlayback();
-            } catch (java.io.IOException pending) {
+            } catch (IOException pending) {
                 loadWarning = "Some restored title choices are still pending. Refresh after source setup to retry.";
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("title_restore_pending", pending);
             }
@@ -560,7 +580,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                     String backdrop =
                         c.getString(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_FILE));
                     if (backdrop != null && !backdrop.isEmpty())
-                        v.setPreviewBackdrop(android.net.Uri.fromFile(new java.io.File(backdrop)).toString());
+                        v.setPreviewBackdrop(Uri.fromFile(new File(backdrop)).toString());
                     else {
                         String remote = c.getString(
                             c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_BACKDROP_LARGE_URL));
@@ -585,7 +605,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                         entry.onlineId =
                             c.getLong(c.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID));
                     videos.add(entry);
-                } catch (android.database.sqlite.SQLiteException databaseFailure) {
+                } catch (SQLiteException databaseFailure) {
                     throw databaseFailure;
                 } catch (IllegalStateException | IllegalArgumentException badRecord) {
                     ((PreviewMappingCursor) c).report("video", badRecord);
@@ -612,7 +632,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
                         Tvshow tv = (Tvshow) sm.bind(sc);
                         Entry e = byShow.get(tv.getTvshowId());
                         if (e == null
-                            && androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+                            && PreferenceManager.getDefaultSharedPreferences(getContext())
                                 .getBoolean("supernova_library_policy_initialized", false))
                             continue;
                         Entry se = new Entry(tv, e == null ? 0 : e.added, tv.getTvshowId(), e == null ? "" : e.genres);
