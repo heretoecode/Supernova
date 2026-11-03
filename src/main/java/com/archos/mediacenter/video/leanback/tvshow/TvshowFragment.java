@@ -1165,6 +1165,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                     startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                     // Delay the finish the "old" activity, else it breaks the animation
                     mHandler.postDelayed(new Runnable() {
+                        @Override
                         public void run() {
                             if (getActivity() != null) // better safe than sorry
                                 getActivity().finish();
