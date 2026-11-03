@@ -23,6 +23,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Supplies collection sorting labels and their stored values. */
 public class CollectionsSortOrderEntries {
 
     public final static String DEFAULT_SORT = VideoStore.Video.VideoColumns.SCRAPER_C_NAME + " COLLATE LOCALIZED ASC";
