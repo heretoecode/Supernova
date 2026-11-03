@@ -1,9 +1,14 @@
 package com.archos.mediacenter.video.player;
 import android.app.*;
+import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 final class PreviewPlaybackInfo {
     static void show(Activity a, String title, String episode, Object media, Runnable restart, Runnable full) {
@@ -26,8 +31,8 @@ final class PreviewPlaybackInfo {
                     + (v.getDurationMs() > 0 ? v.getDurationMs() / 60000 + " min" : "");
                 label(text, meta, 12);
                 label(text, v.getDescriptionBody(), 14);
-                java.util.concurrent.ExecutorService metadata =
-                    java.util.concurrent.Executors.newSingleThreadExecutor();
+                ExecutorService metadata =
+                    Executors.newSingleThreadExecutor();
                 metadata.execute(() -> {
                     try {
                         com.archos.mediascraper.BaseTags tags = v.getFullScraperTags(a.getApplicationContext());
@@ -44,7 +49,7 @@ final class PreviewPlaybackInfo {
                                 if (writers != null && !writers.isEmpty())
                                     complete.append("Writers · ").append(writers).append("\n\n");
                                 int count = 0;
-                                for (java.util.Map.Entry<String, String> person : tags.getActors().entrySet()) {
+                                for (Map.Entry<String, String> person : tags.getActors().entrySet()) {
                                     String line = person.getKey()
                                         + (person.getValue() == null || person.getValue().isEmpty()
                                                 ? ""
@@ -136,9 +141,9 @@ final class PreviewPlaybackInfo {
         t.setText(s);
         t.setTextSize(size);
         t.setTextColor(size >= 19 ? -1 : 0xffbfd1de);
-        t.setShadowLayer(3f, 0f, 1f, android.graphics.Color.BLACK);
+        t.setShadowLayer(3f, 0f, 1f, Color.BLACK);
         t.setMaxLines(size >= 19 || size == 12 ? 2 : 4);
-        t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        t.setEllipsize(TextUtils.TruncateAt.END);
         t.setPadding(0, 0, 0, PreviewDialog.dp(p.getContext(), 10));
         p.addView(t);
     }
