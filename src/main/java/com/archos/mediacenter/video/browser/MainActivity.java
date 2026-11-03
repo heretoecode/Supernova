@@ -76,6 +76,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.preference.PreferenceManager;
 
 import com.archos.filecorelibrary.FileUtils;
+import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediacenter.utils.GlobalResumeView;
 import com.archos.mediacenter.utils.trakt.Trakt;
@@ -109,6 +110,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 import com.archos.mediascraper.AutoScrapeService;
 
+import com.archos.mediascraper.BaseTags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -321,7 +323,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         ThemeManager.getInstance(this).registerThemeChangeListener(mThemeChangeListener);
 
         // Update uimode/uimode_leanback to reflect we're in phone/tablet mode
-        com.archos.mediacenter.video.UiChoiceDialog.updateUiModePreferences(this, false);
+        UiChoiceDialog.updateUiModePreferences(this, false);
 
         //Setup an preferences before we start activites.
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -938,9 +940,9 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
                         int index_name = scraperCursor
                                 .getColumnIndex(ScraperStore.AllVideos.MOVIE_OR_SHOW_NAME);
 
-                        thumbnail = com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(scraperCursor.getString(index_cover), 300, 450);
+                        thumbnail = BitmapUtils.decodeSampledBitmapFromFile(scraperCursor.getString(index_cover), 300, 450);
 
-                        if (scraperType == com.archos.mediascraper.BaseTags.MOVIE) {
+                        if (scraperType == BaseTags.MOVIE) {
                             name = scraperCursor.getString(index_name);
                         } else {
                             int index_number = scraperCursor
