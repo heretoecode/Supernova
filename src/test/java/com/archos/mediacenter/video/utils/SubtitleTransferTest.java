@@ -4,6 +4,7 @@ import java.io.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks subtitle downloads stage complete data and reject empty, cancelled, interrupted or oversized responses. */
 public class SubtitleTransferTest {
     @Test public void completeResponseIsStagedUnchanged() throws Exception {
         byte[] payload="1\n00:00:00,000 --> 00:00:01,000\nExample\n".getBytes("UTF-8");
