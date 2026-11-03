@@ -29,8 +29,10 @@ import android.widget.TextView;
 import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.player.AudioDelayPickerAbstract;
 
+import com.archos.mediacenter.video.player.PreviewAdjustmentValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,8 +119,8 @@ public class AudioDelayTVPicker extends AudioDelayPickerAbstract implements TVSl
     }
 
     public void setFocus(boolean hasFocus) {
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if (log.isDebugEnabled()) log.debug("setFocus: {}", hasFocus);
@@ -238,8 +240,8 @@ public class AudioDelayTVPicker extends AudioDelayPickerAbstract implements TVSl
     }
 
     public void updateTextViewDelay() {
-        setText(com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
-                ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.delay(getDelay())
+        setText(PreviewAdjustmentValue.enabled(mContext)
+                ?PreviewAdjustmentValue.delay(getDelay())
                 :mHourFormat ? getFormattedDelay().toString() : "" + getDelay());
     }
 
