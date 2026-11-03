@@ -23,6 +23,7 @@ import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads TV show entries while excluding anime shows. */
 public class AllTvshowsNoAnimeLoader extends VideoLoader {
 
     private static final String TAG = "AllTvshowsNoAnimeLoader";
