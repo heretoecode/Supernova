@@ -49,23 +49,29 @@ public class PreviewSearchNativeIndexTest {
         ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
         ScraperProvider scraper = new ScraperProvider(app, database);
         ContentProvider provider = new ContentProvider() {
+            @Override
             public boolean onCreate() {
                 return true;
             }
+            @Override
             public String getType(Uri uri) {
                 return null;
             }
+            @Override
             public Cursor query(Uri uri, String[] columns, String where, String[] args, String order) {
                 if (uri.getAuthority().equals(ScraperStore.AUTHORITY))
                     return scraper.query(uri, columns, where, args, order);
                 return database.get().query(VideoOpenHelper.VIDEO_VIEW_NAME, columns, where, args, null, null, order);
             }
+            @Override
             public Uri insert(Uri uri, ContentValues values) {
                 throw new AssertionError("Search must be read only");
             }
+            @Override
             public int update(Uri uri, ContentValues values, String where, String[] args) {
                 throw new AssertionError("Search must be read only");
             }
+            @Override
             public int delete(Uri uri, String where, String[] args) {
                 throw new AssertionError("Search must be read only");
             }
