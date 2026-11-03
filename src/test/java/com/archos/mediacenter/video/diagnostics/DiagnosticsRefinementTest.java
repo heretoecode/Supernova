@@ -2,10 +2,12 @@ package com.archos.mediacenter.video.diagnostics;
 
 import android.app.*;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.*;
 import android.widget.Button;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.BuildConfig;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -18,7 +20,7 @@ import static org.junit.Assert.*;
 public class DiagnosticsRefinementTest {
     private String flight() {
         DiagnosticFlightRecorder recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
-        return recorder.snapshot(android.os.SystemClock.elapsedRealtime());
+        return recorder.snapshot(SystemClock.elapsedRealtime());
     }
 
     @After
@@ -53,7 +55,7 @@ public class DiagnosticsRefinementTest {
         ReflectionHelpers.setStaticField(Diagnostics.class, "mainAck", 0L);
         ReflectionHelpers.setStaticField(Diagnostics.class, "lastStall", 0L);
         ReflectionHelpers.setStaticField(Diagnostics.class, "trendSamples", 0);
-        org.robolectric.shadows.ShadowSystemClock.advanceBy(java.time.Duration.ofSeconds(61));
+        org.robolectric.shadows.ShadowSystemClock.advanceBy(Duration.ofSeconds(61));
         for (int sample = 0; sample < 6; sample++)
             ReflectionHelpers.callStaticMethod(Diagnostics.class, "heartbeat");
         String evidence = flight();
