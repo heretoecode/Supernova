@@ -12,6 +12,7 @@ import org.robolectric.util.ReflectionHelpers;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
+/** Checks failed or cancelled playback starts preserve prior resume and viewing history. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class FailedPlaybackCheckpointTest {
