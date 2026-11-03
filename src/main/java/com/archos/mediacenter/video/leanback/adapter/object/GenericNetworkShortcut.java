@@ -16,14 +16,6 @@ package com.archos.mediacenter.video.leanback.adapter.object;
 
 import android.net.Uri;
 
-import com.archos.filecorelibrary.FileUtils;
-import com.archos.filecorelibrary.contentstorage.ContentStorageFileEditor;
-import com.archos.filecorelibrary.ftp.FtpFileEditor;
-import com.archos.filecorelibrary.jcifs.JcifsFileEditor;
-import com.archos.filecorelibrary.localstorage.LocalStorageFileEditor;
-import com.archos.filecorelibrary.sftp.SftpFileEditor;
-import com.archos.filecorelibrary.zip.ZipFileEditor;
-import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.utils.VideoUtils;
 
 import java.io.Serializable;
