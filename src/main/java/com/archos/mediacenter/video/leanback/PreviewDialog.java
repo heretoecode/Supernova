@@ -22,6 +22,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public final class PreviewDialog {
                                                     ? ((LifecycleOwner)owner).getLifecycle()
                                                     : null;
         LifecycleEventObserver[] cleanup = {null};
-        String restorationToken = com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener, "dialog");
+        String restorationToken = Diagnostics.focusEntry(opener, "dialog");
         WeakReference<View> previous = new WeakReference<>(opener);
         WeakReference<View> previousRoot =
             new WeakReference<>(opener == null ? null : opener.getRootView());
@@ -105,7 +106,7 @@ public final class PreviewDialog {
                     }
                 }
                 boolean restored = target != null && target.requestFocus();
-                com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(restorationToken, requested, target,
+                Diagnostics.focusRestored(restorationToken, requested, target,
                                                                                    fallback, restored);
             }
         };
@@ -132,7 +133,7 @@ public final class PreviewDialog {
                 if (dialog != null)
                     kinds.add(KINDS.getOrDefault(dialog, "dialog"));
             }
-        com.archos.mediacenter.video.diagnostics.Diagnostics.modalState(kinds.size(),
+        Diagnostics.modalState(kinds.size(),
                                                                         TextUtils.join(",", kinds));
     }
 
@@ -180,7 +181,7 @@ public final class PreviewDialog {
         Dialog parent = top(context);
         View opener = anchor(context);
         WeakReference<View> previous = new WeakReference<>(opener);
-        String token = com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(opener, "native_dialog");
+        String token = Diagnostics.focusEntry(opener, "native_dialog");
         KINDS.put(dialog, "native_dialog");
         View decor = dialog.getWindow().getDecorView();
         View.OnAttachStateChangeListener observer = new View.OnAttachStateChangeListener() {
@@ -202,7 +203,7 @@ public final class PreviewDialog {
                 View target = previous.get();
                 boolean restored = top(context) == parent && target != null && target.isAttachedToWindow() &&
                                    target.isShown() && target.isFocusable() && target.requestFocus();
-                com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(
+                Diagnostics.focusRestored(
                     token, target, restored ? target : null, false, restored);
             }
         };
@@ -397,7 +398,7 @@ public final class PreviewDialog {
             row.setEnabled(enabled);
             row.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
             row.setAlpha(enabled ? 1f : group ? 1f : .4f);
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(row, "dialog.choice." + i);
+            Diagnostics.semantic(row, "dialog.choice." + i);
             if (!group) {
                 ImageView icon = new ImageView(c);
                 String iconLabel = title.equals(c.getString(com.archos.mediacenter.video.R.string.menu_audio)) ? "Audio"
@@ -633,7 +634,7 @@ public final class PreviewDialog {
             }, false);
             button.setSingleLine(false);
             button.setMinHeight(dp(c, 48));
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(button, "dialog.action." + i);
+            Diagnostics.semantic(button, "dialog.action." + i);
             button.setTag("semantic:dialog.action." + i);
             LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(-1, -2);
             size.topMargin = i == 0 ? 0 : dp(c, 10);
