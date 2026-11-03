@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -79,7 +80,7 @@ public class PlaybackNetworkRetryTest {
         doAnswer(call -> {Object result=call.callRealMethod();sourcePosted.countDown();return result;})
                 .when(handler).post(any(Runnable.class));
         subtitles.countDown();
-        assertTrue("Source-open worker did not post",sourcePosted.await(2,java.util.concurrent.TimeUnit.SECONDS));
+        assertTrue("Source-open worker did not post",sourcePosted.await(2,TimeUnit.SECONDS));
         shadowOf(Looper.getMainLooper()).idle();
         verify(player).setVideoURI(uri, null);
     }
