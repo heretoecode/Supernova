@@ -23,6 +23,7 @@ import android.content.Intent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads all-video entries for the video home-screen widget. */
 class RemoteViewsFactoryAllVideos extends RemoteViewsFactoryBase {
     private static final Logger log = LoggerFactory.getLogger(RemoteViewsFactoryAllVideos.class);
 
