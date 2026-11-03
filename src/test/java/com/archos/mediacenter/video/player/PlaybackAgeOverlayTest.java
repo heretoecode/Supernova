@@ -21,6 +21,7 @@ import org.robolectric.annotation.GraphicsMode;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks age overlays require established playback and valid regional ratings without capturing focus. */
 @RunWith(RobolectricTestRunner.class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(application = Application.class, sdk = 28)
