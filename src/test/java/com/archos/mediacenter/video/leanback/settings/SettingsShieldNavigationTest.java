@@ -12,11 +12,13 @@ import android.widget.TextView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
+import com.archos.environment.ArchosUtils;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
 import com.archos.mediacenter.video.leanback.PreviewAsyncFixtures;
 import com.archos.mediacenter.video.leanback.TopNavigationTest;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
+import org.slf4j.LoggerFactory;
 
 /** Actual production preference hierarchy and root D-pad dispatch, including reverse entry. */
 @RunWith(RobolectricTestRunner.class)
@@ -51,13 +54,13 @@ public class SettingsShieldNavigationTest {
         ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", app);
         ReflectionHelpers.setStaticField(
-            CustomApplication.class, "log", org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
-        com.archos.environment.ArchosUtils.setGlobalContext(app);
+            CustomApplication.class, "log", LoggerFactory.getLogger(CustomApplication.class));
+        ArchosUtils.setGlobalContext(app);
         PreferenceManager.getDefaultSharedPreferences(app).edit().clear().putBoolean("try_new_ui", true).commit();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(app).build());
+            Picasso.setSingletonInstance(new Picasso.Builder(app).build());
         }
         host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         settings = new VideoSettingsFragment.PrefsFragment();
