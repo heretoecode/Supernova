@@ -1,8 +1,12 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.animation.ValueAnimator;
 import android.app.*;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediaprovider.ArchosMediaIntent;
@@ -41,7 +45,7 @@ public class HomeGenreLiveTest {
     }
 
     private void advance() {
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(1100));
     }
 
     private ScrollView viewport(View view) {
@@ -50,7 +54,7 @@ public class HomeGenreLiveTest {
         return (ScrollView) view;
     }
 
-    private void scanner(android.content.Context app, String action) {
+    private void scanner(Context app, String action) {
         new NetworkScannerReceiver().onReceive(app, new Intent(action, Uri.parse("file:///synthetic-indexed-root")));
     }
 
@@ -129,15 +133,15 @@ public class HomeGenreLiveTest {
             TextView label =
                 (TextView) PreviewPagesTest.findText(dialog.getWindow().getDecorView(), "Scanning library…");
             LinearLayout indicator = (LinearLayout) label.getParent();
-            android.graphics.drawable.Animatable spinner =
-                (android.graphics.drawable.Animatable) ((ImageView) indicator.getChildAt(0)).getDrawable();
+            Animatable spinner =
+                (Animatable) ((ImageView) indicator.getChildAt(0)).getDrawable();
             assertEquals(View.GONE, indicator.getVisibility());
             assertFalse(spinner.isRunning());
             scanner(host.get(), ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_STARTED);
             advance();
             assertEquals(View.VISIBLE, indicator.getVisibility());
             assertTrue(spinner.isRunning());
-            ReflectionHelpers.callStaticMethod(android.animation.ValueAnimator.class, "setDurationScale",
+            ReflectionHelpers.callStaticMethod(ValueAnimator.class, "setDurationScale",
                 ReflectionHelpers.ClassParameter.from(float.class, 0f));
             advance();
             assertEquals(View.VISIBLE, indicator.getVisibility());
@@ -150,7 +154,7 @@ public class HomeGenreLiveTest {
             advance();
             assertFalse(spinner.isRunning());
         } finally {
-            ReflectionHelpers.callStaticMethod(android.animation.ValueAnimator.class, "setDurationScale",
+            ReflectionHelpers.callStaticMethod(ValueAnimator.class, "setDurationScale",
                 ReflectionHelpers.ClassParameter.from(float.class, 1f));
             scanner(host.get(), ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FINISHED);
             if (dialog != null)
