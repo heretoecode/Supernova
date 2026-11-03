@@ -52,6 +52,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Season;
 import com.archos.mediacenter.video.browser.loader.SeasonsLoader;
 import com.archos.mediacenter.video.leanback.CompatibleCursorMapperConverter;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.adapter.PlaceholderCursorObjectAdapter;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
@@ -219,7 +220,7 @@ public class SeasonFragment
                         };
                         if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                                 .getBoolean("try_new_ui", false))
-                            com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(requireContext(),
+                            PreviewDialog.confirmDelete(requireContext(),
                                 "Delete episodes?",
                                 "This permanently deletes the selected episode files from their storage. This cannot be undone.",
                                 executeDelete);
@@ -269,7 +270,7 @@ public class SeasonFragment
                     };
                     if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                             .getBoolean("try_new_ui", false))
-                        com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(requireContext(),
+                        PreviewDialog.confirmDelete(requireContext(),
                             "Delete episodes?",
                             "This permanently deletes the selected episode files from their storage. This cannot be undone.",
                             executeDelete);
