@@ -1,7 +1,11 @@
 package com.archos.mediacenter.video.utils;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.system.ErrnoException;
+import android.system.Os;
+import android.system.OsConstants;
 import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediascraper.MediaScraper;
@@ -11,6 +15,7 @@ import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BooleanSupplier;
 import java.util.zip.*;
 
 /** Stage and validate the whole archive before replacing any live library files. */
@@ -37,7 +42,7 @@ public final class SafeBackup {
         return stage(c, input, () -> false);
     }
 
-    public static File stage(Context c, InputStream input, java.util.function.BooleanSupplier cancel) throws Exception {
+    public static File stage(Context c, InputStream input, BooleanSupplier cancel) throws Exception {
         File stage = new File(c.getCacheDir(), "restore-" + UUID.randomUUID());
         if (!stage.mkdirs())
             throw new IOException("Cannot create restore staging folder");
@@ -151,9 +156,9 @@ public final class SafeBackup {
         if (parent != null && !new File(parent.getCanonicalFile(), file.getName()).equals(file.getCanonicalFile()))
             return true;
         try {
-            return android.system.OsConstants.S_ISLNK(android.system.Os.lstat(file.getPath()).st_mode);
-        } catch (android.system.ErrnoException failure) {
-            if (failure.errno == android.system.OsConstants.ENOENT)
+            return OsConstants.S_ISLNK(Os.lstat(file.getPath()).st_mode);
+        } catch (ErrnoException failure) {
+            if (failure.errno == OsConstants.ENOENT)
                 return false;
             throw new IOException("Private review inventory unavailable", failure);
         }
@@ -367,7 +372,7 @@ public final class SafeBackup {
                         throw new IOException("Cannot save restored settings");
                     if (!c.getSharedPreferences("opensubtitles_credentials", 0).edit().clear().commit())
                         throw new IOException("Cannot clear obsolete credentials");
-                    android.content.SharedPreferences.Editor followup =
+                    SharedPreferences.Editor followup =
                         PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(
                             "preview_restore_artwork_pending", true);
                     if ("app.supernova.player".equals(c.getPackageName()))
