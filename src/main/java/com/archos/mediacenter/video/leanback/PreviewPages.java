@@ -1,18 +1,44 @@
 package com.archos.mediacenter.video.leanback;
 
-import android.app.AlertDialog;
+import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Parcelable;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.*;
+import android.view.ViewParent;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.*;
 import androidx.leanback.widget.Presenter;
+import androidx.recyclerview.widget.AdapterListUpdateCallback;
+import androidx.recyclerview.widget.ListUpdateCallback;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
 import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import java.util.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 /** Recycled native TV grids. Only visible artwork is decoded. Classic Browse remains untouched. */
 public final class PreviewPages extends FrameLayout {
@@ -44,7 +70,7 @@ public final class PreviewPages extends FrameLayout {
         new Thread(() -> {
             List<com.archos.mediacenter.video.leanback.adapter.object.Shortcut> indexed = new ArrayList<>(),
                                                                                 saved = new ArrayList<>();
-            try (android.database.Cursor c =
+            try (Cursor c =
                      com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO.getAllShortcuts(app, null, null)) {
                 if (c != null) {
                     com.archos.mediacenter.video.leanback.adapter.NetworkShortcutMapper m =
@@ -56,7 +82,7 @@ public final class PreviewPages extends FrameLayout {
             } catch (Exception e) {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.error("source_summary_unavailable", e);
             }
-            try (android.database.Cursor c =
+            try (Cursor c =
                      com.archos.mediacenter.video.browser.ShortcutDb.STATIC.getCursorAllShortcuts(app)) {
                 if (c != null) {
                     com.archos.mediacenter.video.leanback.adapter.GenericNetworkShortcutMapper m =
@@ -85,8 +111,7 @@ public final class PreviewPages extends FrameLayout {
 
     private void openSource(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source) {
         getContext().startActivity(
-            new android.content
-                .Intent(getContext(),
+            new Intent(getContext(),
                         com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsActivity.class)
                 .putExtra(com.archos.mediacenter.video.leanback.network.NetworkShortcutDetailsFragment.EXTRA_SHORTCUT,
                           source));
@@ -96,9 +121,9 @@ public final class PreviewPages extends FrameLayout {
     private int tab;
     private PreviewNetworkWorkspace sharedBrowser, networkBrowser, homeSetupBrowser;
     private final FocusAnchor[] anchors = new FocusAnchor[4];
-    private final android.os.Parcelable[] scrollStates = new android.os.Parcelable[4];
+    private final Parcelable[] scrollStates = new Parcelable[4];
     private boolean restoringFocus, switchingTab;
-    private android.content.SharedPreferences preferences;
+    private SharedPreferences preferences;
     private int focusGeneration;
 
     private static final class FocusAnchor {
@@ -117,7 +142,7 @@ public final class PreviewPages extends FrameLayout {
         while (view != null) {
             if (view == ancestor)
                 return true;
-            android.view.ViewParent p = view.getParent();
+            ViewParent p = view.getParent();
             view = p instanceof View ? (View)p : null;
         }
         return false;
@@ -142,7 +167,7 @@ public final class PreviewPages extends FrameLayout {
         }
 
         @Override
-        public boolean requestChildRectangleOnScreen(View child, android.graphics.Rect rect, boolean immediate) {
+        public boolean requestChildRectangleOnScreen(View child, Rect rect, boolean immediate) {
             int position = getChildAdapterPosition(child);
             if (!horizontal && (tab == 1 || tab == 2) && position >= 0 && position < cells.size() &&
                 cells.get(position).type == POSTER) {
@@ -293,12 +318,12 @@ public final class PreviewPages extends FrameLayout {
         if (Math.abs(delta) > 1 && list.canScrollVertically(delta > 0 ? 1 : -1)) {
             list.stopScroll();
             list.removeCallbacks(centreLibraryRow);
-            list.smoothScrollBy(0, delta, new android.view.animation.DecelerateInterpolator(), 180);
+            list.smoothScrollBy(0, delta, new DecelerateInterpolator(), 180);
         }
     }
 
     @Override
-    protected boolean onRequestFocusInDescendants(int direction, android.graphics.Rect rect) {
+    protected boolean onRequestFocusInDescendants(int direction, Rect rect) {
         if (sharedBrowser != null && sharedBrowser.isShown())
             return sharedBrowser.browser().focusOverview();
         if (restoringFocus)
@@ -449,8 +474,8 @@ public final class PreviewPages extends FrameLayout {
     private boolean loaded;
     private final Map<String, Integer> quietOrder = new HashMap<>();
     private PreviewDiscovery discovery = new PreviewDiscovery();
-    private java.util.concurrent.ExecutorService worker;
-    private java.util.function.Consumer<android.net.Uri> artwork = uri -> {
+    private ExecutorService worker;
+    private Consumer<Uri> artwork = uri -> {
     };
     private final boolean[] ascending = {false, false, false};
     private final boolean[] listMode = {false, false, false};
@@ -480,7 +505,7 @@ public final class PreviewPages extends FrameLayout {
         renderFeatured();
     }
 
-    private final android.net.Uri[] lastArtwork = new android.net.Uri[4];
+    private final Uri[] lastArtwork = new Uri[4];
     private final String[] artworkKeys = new String[4];
     private final Map<String, String> featuredReasons = new HashMap<>();
     private Snapshot heroPoolSnapshot;
@@ -570,11 +595,11 @@ public final class PreviewPages extends FrameLayout {
     private long lastInteraction;
 
     private boolean motionAllowed() {
-        return android.os.Build.VERSION.SDK_INT < 26 || android.animation.ValueAnimator.areAnimatorsEnabled();
+        return Build.VERSION.SDK_INT < 26 || ValueAnimator.areAnimatorsEnabled();
     }
 
     public void recordRemoteInput() {
-        lastInteraction = android.os.SystemClock.elapsedRealtime();
+        lastInteraction = SystemClock.elapsedRealtime();
         heroClock.input(lastInteraction);
         removeCallbacks(rotateFeatured);
         if (tab == 0 && isAttachedToWindow())
@@ -584,7 +609,7 @@ public final class PreviewPages extends FrameLayout {
     private void startHeroClock() {
         removeCallbacks(rotateFeatured);
         if (tab == 0 && isAttachedToWindow()) {
-            heroClock.resume(android.os.SystemClock.elapsedRealtime());
+            heroClock.resume(SystemClock.elapsedRealtime());
             postDelayed(rotateFeatured, HeroRotationPolicy.IDLE_MS);
         } else
             heroClock.suspend();
@@ -594,7 +619,7 @@ public final class PreviewPages extends FrameLayout {
         public void run() {
             if (!isAttachedToWindow())
                 return;
-            long now = android.os.SystemClock.elapsedRealtime();
+            long now = SystemClock.elapsedRealtime();
             boolean visible = tab == 0 && hasWindowFocus() && isShown() && !list.canScrollVertically(-1);
             int count = featuredCandidates().size();
             if (heroClock.due(now, visible, motionAllowed(), count))
@@ -705,7 +730,7 @@ public final class PreviewPages extends FrameLayout {
         return loaded;
     }
 
-    public void setArtworkListener(java.util.function.Consumer<android.net.Uri> listener) {
+    public void setArtworkListener(Consumer<Uri> listener) {
         artwork = listener;
         updateArtwork();
     }
@@ -731,7 +756,7 @@ public final class PreviewPages extends FrameLayout {
             key.endsWith(":" + country + ":-1");
     }
 
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener providerSettings =
+    private final SharedPreferences.OnSharedPreferenceChangeListener providerSettings =
         (prefs, key) -> {
         if (key == null)
             return;
@@ -762,7 +787,7 @@ public final class PreviewPages extends FrameLayout {
                 postDelayed(this, 1000);
         }
     };
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener homeSettings = (prefs, key) -> {
+    private final SharedPreferences.OnSharedPreferenceChangeListener homeSettings = (prefs, key) -> {
         if (key != null && (key.startsWith("preview_featured_") || key.equals("preview_home_rows41") ||
                             key.equals("preview_accent41") || key.equals("hide_watched") ||
                             key.equals("sort_ignore_articles") || key.equals("supernova_onboarding_complete")))
@@ -795,7 +820,7 @@ public final class PreviewPages extends FrameLayout {
             !isAttachedToWindow() || snapshot.movies.isEmpty() && snapshot.shows.isEmpty())
             return;
         requestedDiscovery = true;
-        worker = java.util.concurrent.Executors.newSingleThreadExecutor();
+        worker = Executors.newSingleThreadExecutor();
         worker.execute(() -> {
             try {
                 PreviewDiscovery result = PreviewDiscovery.load(getContext().getApplicationContext());
@@ -889,9 +914,9 @@ public final class PreviewPages extends FrameLayout {
                 return;
             }
         }
-        if (e.media instanceof Video && getContext() instanceof android.app.Activity) {
+        if (e.media instanceof Video && getContext() instanceof Activity) {
             com.archos.mediacenter.video.utils.PlayUtils.startVideo(
-                (android.app.Activity)getContext(), (Video)e.media,
+                (Activity)getContext(), (Video)e.media,
                 com.archos.mediacenter.video.player.PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
         } else
             open(e, v);
@@ -968,7 +993,7 @@ public final class PreviewPages extends FrameLayout {
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list, "library.adapter", "adapter_created", 0,
                                                                        adapter.getItemCount(), true);
         addView(list, new FrameLayout.LayoutParams(-1, -1));
-        preferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
+        preferences = PreferenceManager.getDefaultSharedPreferences(c);
         if (preferences.getBoolean("remember_library_views", true))
             for (int i = 1; i <= 2; i++) {
                 String k = "preview_library_" + i + "_";
@@ -984,7 +1009,7 @@ public final class PreviewPages extends FrameLayout {
         columns[2] = new PreviewLibraryColumns(c, true);
         render("initial");
         if (PreviewLibraryLoader.memoryCache() == null) {
-            java.util.concurrent.ExecutorService cacheWorker = java.util.concurrent.Executors.newSingleThreadExecutor();
+            ExecutorService cacheWorker = Executors.newSingleThreadExecutor();
             cacheWorker.execute(() -> {
                 try {
                     Snapshot previous = PreviewLibraryLoader.readCache(c.getApplicationContext());
@@ -999,7 +1024,7 @@ public final class PreviewPages extends FrameLayout {
         }
     }
 
-    private java.util.function.Consumer<Boolean> scrollListener = value -> {
+    private Consumer<Boolean> scrollListener = value -> {
     };
 
     @Override
@@ -1020,7 +1045,7 @@ public final class PreviewPages extends FrameLayout {
         list.setPadding(dp(28), inset + (tab == 1 || tab == 2 ? 0 : dp(10)), dp(28), dp(12));
     }
 
-    public void setScrollListener(java.util.function.Consumer<Boolean> listener) {
+    public void setScrollListener(Consumer<Boolean> listener) {
         scrollListener = listener;
         notifyScroll();
     }
@@ -1253,7 +1278,7 @@ public final class PreviewPages extends FrameLayout {
                 }
         }
         if (event.getAction() == KeyEvent.ACTION_DOWN)
-            lastInteraction = android.os.SystemClock.elapsedRealtime();
+            lastInteraction = SystemClock.elapsedRealtime();
         if ((tab == 1 || tab == 2) && event.getAction() == KeyEvent.ACTION_DOWN &&
             event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN && libraryControl(findFocus())) {
             for (int i = 0; i < cells.size(); i++)
@@ -1369,7 +1394,7 @@ public final class PreviewPages extends FrameLayout {
         else
             com.archos.mediacenter.video.diagnostics.Diagnostics.uiState(tab == 0 ? "home" : "network", "none", "grid",
                                                                          "none", "none", 0);
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         List<Cell> previous = new ArrayList<>(cells);
         persistViews();
         rememberFocus();
@@ -1493,8 +1518,8 @@ public final class PreviewPages extends FrameLayout {
                 holdFocus();
         }
         int[] changes = new int[4];
-        androidx.recyclerview.widget.AdapterListUpdateCallback updates =
-            new androidx.recyclerview.widget.AdapterListUpdateCallback(adapter);
+        AdapterListUpdateCallback updates =
+            new AdapterListUpdateCallback(adapter);
         DiffUtil
             .calculateDiff(new DiffUtil.Callback() {
                 public int getOldListSize() {
@@ -1511,7 +1536,7 @@ public final class PreviewPages extends FrameLayout {
                     return previous.get(a).signature.equals(cells.get(b).signature);
                 }
             })
-            .dispatchUpdatesTo(new androidx.recyclerview.widget.ListUpdateCallback() {
+            .dispatchUpdatesTo(new ListUpdateCallback() {
                 public void onInserted(int position, int count) {
                     changes[0] += count;
                     updates.onInserted(position, count);
@@ -1532,7 +1557,7 @@ public final class PreviewPages extends FrameLayout {
         com.archos.mediacenter.video.diagnostics.Diagnostics.event(
             "home_page_render", "reason", reason, "tab", tab, "previous_cells", previous.size(), "cells", cells.size(),
             "inserted", changes[0], "removed", changes[1], "moved", changes[2], "rebound", changes[3],
-            "adapter_recreated", false, "elapsed_ms", android.os.SystemClock.elapsedRealtime() - started);
+            "adapter_recreated", false, "elapsed_ms", SystemClock.elapsedRealtime() - started);
         com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(list,
                                                                        tab == 0   ? "home.rows"
                                                                        : tab == 1 ? "movies.library"
@@ -1540,7 +1565,7 @@ public final class PreviewPages extends FrameLayout {
                                                                                   : "network.page",
                                                                        reason, previous.size(), cells.size(), false);
         if (state != null && !switchingTab && preserve)
-            layout.onRestoreInstanceState((android.os.Parcelable)state);
+            layout.onRestoreInstanceState((Parcelable)state);
         if (preserve)
             restoreFocus();
         list.post(this::notifyScroll);
@@ -1581,7 +1606,7 @@ public final class PreviewPages extends FrameLayout {
                                    customLibrary != null ? customLibrary.entries(snapshot)
                                    : tab == 2            ? snapshot.shows
                                                          : snapshot.movies,
-                                   System.currentTimeMillis(), java.util.TimeZone.getDefault())
+                                   System.currentTimeMillis(), TimeZone.getDefault())
                         .signature();
         if (c.type == NETWORK_PANEL || c.type == NETWORK) {
             StringBuilder sources = new StringBuilder(base);
@@ -1620,7 +1645,7 @@ public final class PreviewPages extends FrameLayout {
         sorts[1] = "title".equals(page.sort) ? 1 : "year".equals(page.sort) ? 2 : 0;
         ascending[1] = !page.descending;
         columns[1] = new PreviewLibraryColumns(getContext(), true, "custom_");
-        android.content.SharedPreferences saved = preferences;
+        SharedPreferences saved = preferences;
         genres[1] = saved.getString("preview_custom_genres", "");
         selectedYears[1] = saved.getString("preview_custom_years", "");
         providers[1] = saved.getString("preview_custom_providers", "");
@@ -1645,7 +1670,7 @@ public final class PreviewPages extends FrameLayout {
         if (!unmatched[tab])
             return tab == 1 ? snapshot.movies : snapshot.shows;
         List<Entry> result = new ArrayList<>();
-        Map<android.net.Uri, PreviewMediaClassification.Kind> hints = PreviewMediaClassification.hints(preferences);
+        Map<Uri, PreviewMediaClassification.Kind> hints = PreviewMediaClassification.hints(preferences);
         if (snapshot.unmatched != null)
             for (Entry entry : snapshot.unmatched) {
                 Video video = (Video)entry.media;
@@ -1660,8 +1685,7 @@ public final class PreviewPages extends FrameLayout {
 
     private void networkSection(String section) {
         getContext().startActivity(
-            new android.content
-                .Intent(getContext(), com.archos.mediacenter.video.leanback.network.NetworkRootActivity.class)
+            new Intent(getContext(), com.archos.mediacenter.video.leanback.network.NetworkRootActivity.class)
                 .putExtra("preview_source_section", section));
     }
 
@@ -1706,7 +1730,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     public static boolean hiddenByWatchedPreference(Context context, Entry entry) {
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("hide_watched",
+        if (!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("hide_watched",
                                                                                                    false))
             return false;
         return entry.media instanceof Video
@@ -1811,7 +1835,7 @@ public final class PreviewPages extends FrameLayout {
                         names.add(provider.name);
                         ids.add(String.valueOf(provider.id));
                     }
-                    android.app.Dialog menu = chooseMany("Streaming Services", names, ids, providers[tab], value -> {
+                    Dialog menu = chooseMany("Streaming Services", names, ids, providers[tab], value -> {
                         providers[tab] = value;
                         quietOrder.clear();
                         render();
@@ -1826,7 +1850,7 @@ public final class PreviewPages extends FrameLayout {
                     for (Entry e : source())
                         values.addAll(PreviewGenres.parse(e.genres));
                     PreviewGenres.choose(getContext(), values, PreviewGenres.parse(genres[tab]), selected -> {
-                        genres[tab] = android.text.TextUtils.join("|", selected);
+                        genres[tab] = TextUtils.join("|", selected);
                         quietOrder.clear();
                         render();
                     });
@@ -1846,8 +1870,8 @@ public final class PreviewPages extends FrameLayout {
             });
     }
 
-    private android.app.Dialog chooseMany(String title, List<String> names, List<String> values, String saved,
-                                          java.util.function.Consumer<String> accept) {
+    private Dialog chooseMany(String title, List<String> names, List<String> values, String saved,
+                                          Consumer<String> accept) {
         Set<String> selected = PreviewGenres.parse(saved);
         List<String> labels = new ArrayList<>(names);
         labels.add("Clear selection");
@@ -1856,11 +1880,11 @@ public final class PreviewPages extends FrameLayout {
         for (int i = 0; i < values.size(); i++)
             if (selected.contains(values.get(i)))
                 checks.add(i);
-        android.app.Dialog[] dialog = {null};
+        Dialog[] dialog = {null};
         dialog[0] = PreviewDialog.choose(getContext(), title, labels.toArray(new String[0]), -1, checks, false, n -> {
             if (n == values.size() + 1) {
                 dialog[0].dismiss();
-                accept.accept(android.text.TextUtils.join("|", selected));
+                accept.accept(TextUtils.join("|", selected));
                 return;
             }
             if (n == values.size())
@@ -1888,12 +1912,12 @@ public final class PreviewPages extends FrameLayout {
     private final Runnable warmHeroes = () -> {
         if (!isAttachedToWindow() || tab != 0)
             return;
-        heroWarmAt = android.os.SystemClock.elapsedRealtime();
+        heroWarmAt = SystemClock.elapsedRealtime();
         List<Entry> catalogue = featuredCandidates();
         for (int i = 0; i < Math.min(8, catalogue.size()); i++) {
             Entry candidate = catalogue.get(Math.floorMod(featuredIndex + i, catalogue.size()));
             OfficialTitleArtwork.prefetch(getContext(), candidate.media);
-            android.net.Uri uri = candidate.backdrop != null ? candidate.backdrop : candidate.media.getPosterUri();
+            Uri uri = candidate.backdrop != null ? candidate.backdrop : candidate.media.getPosterUri();
             if (uri != null) {
                 com.squareup.picasso.RequestCreator request =
                     com.squareup.picasso.Picasso.get().load(uri).resize(dp(960), dp(540));
@@ -1905,11 +1929,11 @@ public final class PreviewPages extends FrameLayout {
             }
         }
     };
-    private final java.util.LinkedHashMap<String, PreviewFeaturedCard> heroWindow = new java.util.LinkedHashMap<>();
+    private final LinkedHashMap<String, PreviewFeaturedCard> heroWindow = new LinkedHashMap<>();
 
     private PreviewFeaturedCard preparedHero(Entry e, View opener) {
         com.archos.mediacenter.video.utils.SubtitleDiscovery.hero(getContext(), e, snapshot);
-        long preparedAt = android.os.SystemClock.elapsedRealtime();
+        long preparedAt = SystemClock.elapsedRealtime();
         if (preparedAt - heroWarmAt > 30000) {
             removeCallbacks(warmHeroes);
             postDelayed(warmHeroes, 500);
@@ -1929,7 +1953,7 @@ public final class PreviewPages extends FrameLayout {
                 activeKey = key;
             keep.add(key);
             OfficialTitleArtwork.prefetch(getContext(), candidate.media);
-            android.net.Uri uri = candidate.backdrop != null ? candidate.backdrop : candidate.media.getPosterUri();
+            Uri uri = candidate.backdrop != null ? candidate.backdrop : candidate.media.getPosterUri();
             if (uri != null) {
                 com.squareup.picasso.RequestCreator request =
                     com.squareup.picasso.Picasso.get().load(uri).resize(dp(960), dp(540));
@@ -1952,7 +1976,7 @@ public final class PreviewPages extends FrameLayout {
                 heroWindow.put(key, card);
             }
         }
-        java.util.Iterator<java.util.Map.Entry<String, PreviewFeaturedCard>> retained =
+        Iterator<java.util.Map.Entry<String, PreviewFeaturedCard>> retained =
             heroWindow.entrySet().iterator();
         while (retained.hasNext()) {
             java.util.Map.Entry<String, PreviewFeaturedCard> cached = retained.next();
@@ -1967,7 +1991,7 @@ public final class PreviewPages extends FrameLayout {
             ((ViewGroup)card.getParent()).removeView(card);
         com.archos.mediacenter.video.diagnostics.Diagnostics.event(
             "hero_window_prepared", "cards", heroWindow.size(), "elapsed_ms",
-            android.os.SystemClock.elapsedRealtime() - preparedAt);
+            SystemClock.elapsedRealtime() - preparedAt);
         return card;
     }
 
@@ -2006,7 +2030,7 @@ public final class PreviewPages extends FrameLayout {
         if (tab != 0 || !isAttachedToWindow() || preferences.getBoolean("supernova_welcome_dismissed", false) ||
             com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(getContext()))
             return;
-        android.app.Dialog dialog = PreviewDialog.message(
+        Dialog dialog = PreviewDialog.message(
             getContext(), "Welcome to Supernova",
             "Add movies and TV shows from local storage, external drives or network shares. Supernova will only begin scanning once you've selected and confirmed your folders.",
             true, new String[] {"Network & Files", "Explore Supernova"}, 0, n -> {
@@ -2343,7 +2367,7 @@ public final class PreviewPages extends FrameLayout {
                 }
                 TextView title = text(name, 13);
                 title.setMaxLines(1);
-                title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                title.setEllipsize(TextUtils.TruncateAt.END);
                 labels.addView(title);
                 if (!sub.isEmpty()) {
                     TextView detail = text(sub, 10);
@@ -2424,7 +2448,7 @@ public final class PreviewPages extends FrameLayout {
                     TextView item =
                         button(source.getName() + " · " + source.getUri().getScheme(), () -> openSource(source));
                     item.setSingleLine(true);
-                    item.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                    item.setEllipsize(TextUtils.TruncateAt.END);
                     v.addView(item, new LinearLayout.LayoutParams(-1, dp(34)));
                 }
                 v.addView(button("Open " + c.title,
@@ -2587,26 +2611,26 @@ public final class PreviewPages extends FrameLayout {
             else if (index == 2) {
                 new PreviewHomeRows(getContext()).dismiss(entry);
                 render();
-            } else if (entry.media instanceof Video && getContext() instanceof android.app.Activity)
+            } else if (entry.media instanceof Video && getContext() instanceof Activity)
                 com.archos.mediacenter.video.utils.PlayUtils.startVideo(
                     getContext(), (Video)entry.media, com.archos.mediacenter.video.player.PlayerService.RESUME_NO,
                     false, -1, null, -1);
         });
     }
 
-    static final class StorageIcon extends android.graphics.drawable.Drawable {
+    static final class StorageIcon extends Drawable {
         final Box.ID id;
-        final android.graphics.Paint paint = new android.graphics.Paint(3);
+        final Paint paint = new Paint(3);
 
         StorageIcon(Box.ID id) {
             this.id = id;
             paint.setColor(0xffb7d7f5);
-            paint.setStyle(android.graphics.Paint.Style.STROKE);
+            paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(1.7f);
-            paint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
+            paint.setStrokeCap(Paint.Cap.ROUND);
         }
 
-        public void draw(android.graphics.Canvas c) {
+        public void draw(Canvas c) {
             c.save();
             c.translate(getBounds().left, getBounds().top);
             c.scale(getBounds().width() / 32f, getBounds().height() / 32f);
@@ -2632,12 +2656,12 @@ public final class PreviewPages extends FrameLayout {
             paint.setAlpha(a);
         }
 
-        public void setColorFilter(android.graphics.ColorFilter f) {
+        public void setColorFilter(ColorFilter f) {
             paint.setColorFilter(f);
         }
 
         public int getOpacity() {
-            return android.graphics.PixelFormat.TRANSLUCENT;
+            return PixelFormat.TRANSLUCENT;
         }
     }
 }
