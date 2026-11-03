@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 
 import com.archos.mediacenter.video.R;
 
+/** Hosts the manual TV show metadata search screen. */
 public class ManualShowScrappingActivity extends FragmentActivity {
 
     public static final String EXTRA_TVSHOW_ID = "TVSHOW_ID";
