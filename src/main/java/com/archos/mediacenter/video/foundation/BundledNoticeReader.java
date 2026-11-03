@@ -1,8 +1,8 @@
 package com.archos.mediacenter.video.foundation;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.BackgroundColorSpan;
 import android.view.*;
 import android.widget.*;
@@ -108,7 +108,7 @@ public final class BundledNoticeReader extends LinearLayout {
             focusReader();
             return;
         }
-        String body = android.text.TextUtils.join("", blocks).toLowerCase(Locale.ROOT);
+        String body = TextUtils.join("", blocks).toLowerCase(Locale.ROOT);
         String needle = query.toLowerCase(Locale.ROOT);
         match = body.indexOf(needle, match < 0 ? 0 : match + 1);
         if (match < 0)
