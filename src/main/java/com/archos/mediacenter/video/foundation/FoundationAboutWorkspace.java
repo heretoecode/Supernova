@@ -21,7 +21,10 @@ import android.widget.TextView;
 import androidx.preference.PreferenceFragmentCompat;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.SharedThreePanel;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
@@ -92,8 +95,8 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         detailsBody = column();
         catalogue = scroll(catalogueBody);
         details = scroll(detailsBody);
-        com.archos.mediacenter.video.leanback.SharedThreePanel.decorate(catalogue);
-        com.archos.mediacenter.video.leanback.SharedThreePanel.decorate(details);
+        SharedThreePanel.decorate(catalogue);
+        SharedThreePanel.decorate(details);
         addView(catalogue, new LayoutParams(0, -1, .44f));
         LayoutParams right = new LayoutParams(0, -1, .56f);
         right.leftMargin = dp(20);
@@ -149,7 +152,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     }
 
     private TextView text(String value, int size) {
-        TextView v = com.archos.mediacenter.video.leanback.SharedThreePanel.text(getContext(), value, size);
+        TextView v = SharedThreePanel.text(getContext(), value, size);
         v.setLineSpacing(dp(3), 1);
         return v;
     }
@@ -173,7 +176,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                 child.setFocusableInTouchMode(true);
                 child.setTag("semantic:settings:about:" + name);
                 child.setBackground(PreviewDialog.focus(getContext()));
-                com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(child);
+                SharedThreePanel.rowSeparator(child);
                 rail.addView(child,
                     new LayoutParams(-1,
                         Math.max(dp(34),
@@ -444,7 +447,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             }
             return false;
         });
-        com.archos.mediacenter.video.leanback.SharedThreePanel.divider(catalogueBody);
+        SharedThreePanel.divider(catalogueBody);
         return row;
     }
 
@@ -555,7 +558,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                     if (generation != requestGeneration || !isAttachedToWindow() || !section.equals(SECTIONS[1]))
                         return;
                     catalogueBody.removeAllViews();
-                    com.archos.mediacenter.video.leanback.SharedThreePanel.heading(catalogueBody, "Components");
+                    SharedThreePanel.heading(catalogueBody, "Components");
                     rows.clear();
                     rowSelections.clear();
                     for (int i = 0; i < components.length(); i++) {
@@ -671,8 +674,8 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                 null, null);
         }, null);
         row("Library & Storage", () -> {
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
-                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            PreviewLibraryLoader.Snapshot snapshot =
+                PreviewLibraryLoader.memoryCache();
             String count = snapshot == null ? "Unavailable" : String.valueOf(snapshot.technical.size());
             String free = "Unavailable", capacity = "Unavailable";
             try {
@@ -692,7 +695,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             ()
                 -> showDetails("Diagnostics",
                     "Optional diagnostic logging: "
-                        + (com.archos.mediacenter.video.diagnostics.Diagnostics.enabled() ? "On" : "Off")
+                        + (Diagnostics.enabled() ? "On" : "Off")
                         + "\n\nUse the existing Settings controls for logging and export. No new diagnostic viewer or upload is added.",
                     null, null),
             null);
