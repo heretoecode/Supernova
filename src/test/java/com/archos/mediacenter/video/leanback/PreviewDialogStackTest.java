@@ -10,6 +10,7 @@ import java.util.Collections;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
@@ -19,7 +20,7 @@ public class PreviewDialogStackTest {
     @Test
     @Config(qualifiers = "w960dp-h540dp")
     public void frequencyChoiceUsesItsOpenerAsAnAnchor() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             Activity activity = host.get();
@@ -56,7 +57,7 @@ public class PreviewDialogStackTest {
 
     @Test
     public void childBackRestoresMoreRowThenParentBackRestoresHero() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             Activity activity = host.get();
@@ -100,7 +101,7 @@ public class PreviewDialogStackTest {
 
     @Test
     public void rebuiltOpenerRestoresSemanticPeerInSameWindow() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             Activity activity = host.get();
@@ -134,7 +135,7 @@ public class PreviewDialogStackTest {
 
     @Test
     public void dismissingCoveredParentDoesNotStealChildFocus() {
-        org.robolectric.android.controller.ActivityController<Activity> host =
+        ActivityController<Activity> host =
             Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             Activity activity = host.get();
