@@ -33,6 +33,20 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper;
+import com.archos.mediacenter.video.browser.adapters.object.Season;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.PreviewArtworkPicker;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewSeriesJourney;
+import com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialog;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import com.archos.mediacenter.video.leanback.details.PreviewTvTrailers;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import android.os.Handler;
 import android.os.Looper;
@@ -93,6 +107,9 @@ import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
 import com.archos.mediacenter.video.utils.PlayUtils;
 import com.archos.environment.NetworkState;
 import com.archos.mediaprovider.video.VideoStore;
+import com.archos.mediascraper.BaseTags;
+import com.archos.mediascraper.ScraperImage;
+import com.archos.mediascraper.ScraperTrailer;
 import com.archos.mediascraper.ShowTags;
 import com.squareup.picasso.Picasso;
 
@@ -105,8 +122,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements LoaderManager.LoaderCallbacks<Cursor> {
-    private com.archos.mediacenter.video.leanback.details.PreviewMoviePage preview;
-    private com.archos.mediacenter.video.leanback.TopNavigation previewNavigation;
+    private PreviewMoviePage preview;
+    private TopNavigation previewNavigation;
     private OnActionClickedListener previewAction;
     private ExecutorService previewArtworkWorker;
     private boolean previewArtworkLoading;
@@ -126,7 +143,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         nativeView.setVisibility(View.GONE);
         mDetailsOverviewRow = new DetailsOverviewRow(mTvshow);
         mDetailsOverviewRow.setActionsAdapter(new TvshowActionAdapter(requireContext(), mTvshow));
-        preview = new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(requireActivity(),
+        preview = new PreviewMoviePage(requireActivity(),
             ()
                 -> mDetailsOverviewRow.getActionsAdapter(),
             a -> previewAction.onActionClicked(a), this::showPreviewArtworkMenu, uri -> {
@@ -136,16 +153,16 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         preview.bindShow(mTvshow, this::playEpisode);
         container.addView(preview);
         previewNavigation =
-            new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(), container, tab -> {
+            new TopNavigation(requireContext(), container, tab -> {
                 if (tab == 4)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                        requireContext(), VideoSettingsActivity.class));
                 else if (tab == 5)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                        requireContext(), VideoSearchActivity.class));
                 else {
                     Intent home =
-                        new Intent(requireContext(), com.archos.mediacenter.video.leanback.MainActivityLeanback.class);
+                        new Intent(requireContext(), MainActivityLeanback.class);
                     home.putExtra("preview_tab", tab);
                     home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(home);
@@ -164,40 +181,40 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             return;
         previewWatchedBusy = true;
         Tvshow target = mTvshow;
-        com.archos.mediacenter.video.leanback.details.PreviewMoviePage page = preview;
+        PreviewMoviePage page = preview;
         Context app = requireContext().getApplicationContext();
         Handler main = new Handler(Looper.getMainLooper());
         artworkWorker().execute(() -> {
-            List<com.archos.mediacenter.video.browser.adapters.object.Season> seasons =
+            List<Season> seasons =
                 new ArrayList<>();
             try (Cursor cursor = new SeasonsLoader(app, target.getTvshowId()).loadInBackground()) {
                 if (cursor != null) {
-                    com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper mapper =
-                        new com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper();
+                    SeasonCursorMapper mapper =
+                        new SeasonCursorMapper();
                     mapper.bindColumns(cursor);
                     while (cursor.moveToNext())
-                        seasons.add((com.archos.mediacenter.video.browser.adapters.object.Season) mapper.bind(cursor));
+                        seasons.add((Season) mapper.bind(cursor));
                 }
             } catch (Exception failed) {
                 seasons.clear();
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("watched_scope_unavailable", failed);
+                Diagnostics.error("watched_scope_unavailable", failed);
             }
             main.post(() -> {
                 previewWatchedBusy = false;
                 if (!isAdded() || preview != page || mTvshow == null || mTvshow.getTvshowId() != target.getTvshowId())
                     return;
                 if (seasons.isEmpty()) {
-                    com.archos.mediacenter.video.leanback.PreviewDialog.read(
+                    PreviewDialog.read(
                         requireContext(), "Watched state", "No indexed seasons are available.");
                     return;
                 }
-                com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialog.show(
+                PreviewWatchedScopeDialog.show(
                     requireContext(), seasons, (selected, watched) -> {
                         previewWatchedBusy = true;
                         artworkWorker().execute(() -> {
                             boolean applied = true;
                             try {
-                                for (com.archos.mediacenter.video.browser.adapters.object.Season season : selected) {
+                                for (Season season : selected) {
                                     if (Thread.currentThread().isInterrupted()) {
                                         applied = false;
                                         break;
@@ -209,7 +226,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                                 }
                             } catch (Exception failed) {
                                 applied = false;
-                                com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+                                Diagnostics.error(
                                     "watched_scope_update_failed", failed);
                             }
                             final boolean success = applied;
@@ -222,7 +239,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                                 LoaderManager.getInstance(TvshowFragment.this)
                                     .restartLoader(SEASONS_LOADER_ID, null, TvshowFragment.this);
                                 if (!success)
-                                    com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),
+                                    PreviewDialog.read(requireContext(),
                                         "Watched state",
                                         "Some episodes could not be updated. Current library state has been refreshed.");
                             });
@@ -239,7 +256,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     }
 
     private void showPreviewArtworkMenu() {
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(
+        PreviewDialog.choose(
             requireContext(), "Artwork", new String[] {
                 "Posters", "Backdrops"
             }, -1, n -> showPreviewArtwork(n == 0));
@@ -250,33 +267,33 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             return;
         previewArtworkLoading = true;
         Tvshow target = mTvshow;
-        com.archos.mediacenter.video.leanback.details.PreviewMoviePage page = preview;
+        PreviewMoviePage page = preview;
         Context app = requireContext().getApplicationContext();
         Handler main = new Handler(Looper.getMainLooper());
         artworkWorker().execute(() -> {
-            List<com.archos.mediascraper.ScraperImage> found = Collections.emptyList();
-            com.archos.mediascraper.ScraperImage current = null;
+            List<ScraperImage> found = Collections.emptyList();
+            ScraperImage current = null;
             try {
-                com.archos.mediascraper.BaseTags tags = target.getFullScraperTags(app);
+                BaseTags tags = target.getFullScraperTags(app);
                 if (tags != null) {
                     found = posters ? tags.getAllPostersInDb(app) : tags.getAllBackdropsInDb(app);
                     current = posters ? tags.getDefaultPoster() : tags.getDefaultBackdrop();
                 }
             } catch (Exception failed) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("artwork_choices_unavailable", failed);
+                Diagnostics.error("artwork_choices_unavailable", failed);
             }
-            final List<com.archos.mediascraper.ScraperImage> images = found;
-            final com.archos.mediascraper.ScraperImage selected = current;
+            final List<ScraperImage> images = found;
+            final ScraperImage selected = current;
             main.post(() -> {
                 previewArtworkLoading = false;
                 if (!isAdded() || preview != page || mTvshow == null || mTvshow.getTvshowId() != target.getTvshowId())
                     return;
                 if (images == null || images.isEmpty()) {
-                    com.archos.mediacenter.video.leanback.PreviewDialog.read(
+                    PreviewDialog.read(
                         requireContext(), "Artwork", "No artwork available");
                     return;
                 }
-                com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(requireContext(),
+                PreviewArtworkPicker.show(requireContext(),
                     posters ? "Posters" : "Backdrops", images, selected, posters,
                     (image, done) -> artworkWorker().execute(() -> {
                         boolean saved = false;
@@ -285,7 +302,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                                 && !Thread.currentThread().isInterrupted())
                                 saved = posters ? image.setAsDefault(app, -1) : image.setAsDefault(app);
                         } catch (Exception failed) {
-                            com.archos.mediacenter.video.diagnostics.Diagnostics.error("artwork_save_failed", failed);
+                            Diagnostics.error("artwork_save_failed", failed);
                         }
                         final boolean success = saved;
                         main.post(() -> {
@@ -294,7 +311,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                                 return;
                             if (success) {
                                 if (!posters && image.getLargeFileF() != null && image.getLargeFileF().isFile())
-                                    previewNavigation.setArtwork(android.net.Uri.fromFile(image.getLargeFileF()));
+                                    previewNavigation.setArtwork(Uri.fromFile(image.getLargeFileF()));
                                 onMoreDetailsResult();
                             }
                             done.accept(success);
@@ -539,26 +556,26 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         });
     }
 
-    private List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> journeyEntries(
-        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries) {
+    private List<PreviewLibraryLoader.Entry> journeyEntries(
+        List<PreviewLibraryLoader.Entry> entries) {
         if (mTvshow.getShowTags() != null)
-            for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry : entries)
+            for (PreviewLibraryLoader.Entry entry : entries)
                 entry.onlineId = mTvshow.getShowTags().getOnlineId();
         return entries;
     }
 
     private void playEpisode() {
         if (preview != null && mSeasonAdapters != null) {
-            List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries =
+            List<PreviewLibraryLoader.Entry> entries =
                 new ArrayList<>();
             for (int i = 0; i < mSeasonAdapters.size(); i++) {
                 CursorObjectAdapter a = mSeasonAdapters.valueAt(i);
                 for (int j = 0; j < a.size(); j++)
-                    entries.add(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry(
+                    entries.add(new PreviewLibraryLoader.Entry(
                         (Video) a.get(j), 0, mTvshow.getTvshowId(), ""));
             }
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry next =
-                com.archos.mediacenter.video.leanback.PreviewSeriesJourney
+            PreviewLibraryLoader.Entry next =
+                PreviewSeriesJourney
                     .select(getActivity(), journeyEntries(entries))
                     .episode;
             if (next == null && !entries.isEmpty())
@@ -566,7 +583,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             if (next != null && mTvshow.getShowTags() != null && mTvshow.getShowTags().getDefaultBackdrop() != null) {
                 File backdrop = mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();
                 if (backdrop != null && backdrop.exists())
-                    ((Video) next.media).setPreviewBackdrop(android.net.Uri.fromFile(backdrop).toString());
+                    ((Video) next.media).setPreviewBackdrop(Uri.fromFile(backdrop).toString());
             }
             if (next != null)
                 PlayUtils.startVideo(
@@ -616,15 +633,15 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     private void updatePreviewPlaybackTarget() {
         if (preview == null || mSeasonAdapters == null || mTvshow == null)
             return;
-        List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries =
+        List<PreviewLibraryLoader.Entry> entries =
             new ArrayList<>();
         for (int i = 0; i < mSeasonAdapters.size(); i++) {
             CursorObjectAdapter adapter = mSeasonAdapters.valueAt(i);
             for (int j = 0; j < adapter.size(); j++)
-                entries.add(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry(
+                entries.add(new PreviewLibraryLoader.Entry(
                     (Video) adapter.get(j), 0, mTvshow.getTvshowId(), ""));
         }
-        preview.setSeriesPlaybackTarget(com.archos.mediacenter.video.leanback.PreviewSeriesJourney.select(
+        preview.setSeriesPlaybackTarget(PreviewSeriesJourney.select(
             requireContext(), journeyEntries(entries)));
     }
 
@@ -841,22 +858,22 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                     if (preview != null) {
                         preview.bindShow(finalResult, TvshowFragment.this::playEpisode);
                         // Tags are already local; trailer/artwork database reads stay on the worker.
-                        com.archos.mediascraper.ShowTags showTags = finalResult.getShowTags();
+                        ShowTags showTags = finalResult.getShowTags();
                         Context app = requireContext().getApplicationContext();
                         ExecutorService metadata = Executors.newSingleThreadExecutor();
                         metadata.execute(() -> {
                             try {
-                                List<com.archos.mediascraper.ScraperTrailer> trailers =
+                                List<ScraperTrailer> trailers =
                                     showTags.getAllTrailersInDb(app);
-                                List<com.archos.mediascraper.ScraperImage> backdrops =
+                                List<ScraperImage> backdrops =
                                     showTags.getAllBackdropsInDb(app);
                                 handler.post(() -> {
                                     if (preview != null && isAdded())
                                         preview.setTags(showTags, trailers, backdrops);
                                 });
                                 if (trailers.isEmpty()) {
-                                    List<com.archos.mediascraper.ScraperTrailer> tvTrailers =
-                                        com.archos.mediacenter.video.leanback.details.PreviewTvTrailers.load(
+                                    List<ScraperTrailer> tvTrailers =
+                                        PreviewTvTrailers.load(
                                             app, showTags);
                                     if (!tvTrailers.isEmpty())
                                         handler.post(() -> {
