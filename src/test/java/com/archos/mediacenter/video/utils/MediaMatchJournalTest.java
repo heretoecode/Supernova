@@ -5,7 +5,11 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediaprovider.video.ScraperProvider;
 import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.archos.mediascraper.MovieTags;
+import com.archos.mediascraper.ScrapeDetailResult;
+import com.archos.mediascraper.ScrapeStatus;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -15,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -137,17 +142,17 @@ public class MediaMatchJournalTest {
     }
 
     private PreferenceRestoreTransaction.Plan canonicalPlan() throws Exception {
-        com.archos.mediaprovider.video.ScraperProvider.hookUriMatcher(
+        ScraperProvider.hookUriMatcher(
             new UriMatcher(UriMatcher.NO_MATCH));
         return fixture.transaction.prepareCanonicalMatches(
             all(), null, fixture.physical(), (context, requested, file) -> {
-                var tags = new com.archos.mediascraper.MovieTags();
+                var tags = new MovieTags();
                 tags.setOnlineId(789);
                 tags.setTitle("Fresh canonical title");
                 tags.setPlot("Fresh canonical facts");
                 tags.addGenreIfAbsent("Drama");
-                return new com.archos.mediascraper.ScrapeDetailResult(
-                    tags, true, null, com.archos.mediascraper.ScrapeStatus.OKAY, null);
+                return new ScrapeDetailResult(
+                    tags, true, null, ScrapeStatus.OKAY, null);
             }, () -> false);
     }
 
@@ -234,8 +239,8 @@ public class MediaMatchJournalTest {
             fail();
         } catch (ProcessDeath expected) {
         }
-        org.robolectric.util.ReflectionHelpers.setStaticField(
-            com.archos.mediaprovider.video.ScraperProvider.class, "sUriMatcher", null);
+        ReflectionHelpers.setStaticField(
+            ScraperProvider.class, "sUriMatcher", null);
         PreferenceRestoreTransaction.recoverAtStartup(fixture.app);
         try (VideoOpenHelper helper = new VideoOpenHelper(fixture.app);
             var row = helper.getReadableDatabase().rawQuery(
