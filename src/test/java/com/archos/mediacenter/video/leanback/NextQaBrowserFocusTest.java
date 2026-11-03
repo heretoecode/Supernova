@@ -2,8 +2,10 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.net.Uri;
 import android.view.*;
+import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
+import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -34,7 +36,7 @@ public class NextQaBrowserFocusTest {
     private void check(int columns) {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean(ReflectionHelpers.getStaticField(UniversalFileBrowser.class, "GRID"), columns == 2)
                 .commit();
@@ -45,7 +47,7 @@ public class NextQaBrowserFocusTest {
             ReflectionHelpers.setField(browser, "current", current);
             ((View) ReflectionHelpers.getField(browser, "toolbar")).setVisibility(View.VISIBLE);
             ReflectionHelpers.callInstanceMethod(browser, "breadcrumbs");
-            java.util.List<MetaFile2> files = ReflectionHelpers.getField(browser, "files");
+            List<MetaFile2> files = ReflectionHelpers.getField(browser, "files");
             for (int i = 0; i < 50; i++) {
                 MetaFile2 folder = org.mockito.Mockito.mock(MetaFile2.class);
                 org.mockito.Mockito.when(folder.isDirectory()).thenReturn(true);
