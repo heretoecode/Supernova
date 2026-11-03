@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import androidx.leanback.widget.Action;
+import androidx.leanback.widget.ObjectAdapter;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter;
 import com.archos.mediacenter.video.streaming.StreamingActionPresenter;
 
@@ -11,7 +12,7 @@ public final class PreviewMoreActions {
         return television?id==TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED||id==TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED
                 :id==VideoActionAdapter.ACTION_MARK_AS_WATCHED||id==VideoActionAdapter.ACTION_MARK_AS_NOT_WATCHED;
     }
-    public static Action current(androidx.leanback.widget.ObjectAdapter adapter,Action previous,boolean television){
+    public static Action current(ObjectAdapter adapter,Action previous,boolean television){
         if(adapter==null||previous==null)return null;
         for(int i=0;i<adapter.size();i++){Object item=adapter.get(i);if(item instanceof Action){Action candidate=(Action)item;
             if(group(candidate,television)>=0&&(watched(previous,television)?watched(candidate,television):candidate.getId()==previous.getId()))return candidate;
