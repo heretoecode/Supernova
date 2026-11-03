@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Loads recently added video entries for the home-screen widget. */
 class RemoteViewsFactoryRecentlyAdded extends RemoteViewsFactoryBase {
     private static final Logger log = LoggerFactory.getLogger(RemoteViewsFactoryRecentlyAdded.class);
 
