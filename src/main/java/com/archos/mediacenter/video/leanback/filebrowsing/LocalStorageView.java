@@ -1205,7 +1205,9 @@ public final class LocalStorageView extends LinearLayout {
 
     // ---- focus: the focused row shows its buttons ---------------------------------------------------------------
 
-    private final ViewTreeObserver.OnGlobalFocusChangeListener focusWatcher = (oldFocus, newFocus) -> {
+    private final ViewTreeObserver.OnGlobalFocusChangeListener focusWatcher = this::focusMoved;
+
+    private void focusMoved(View oldFocus, View newFocus) {
         if (newFocus == null || !isInside(newFocus, this)) {
             return;
         }
@@ -1224,7 +1226,7 @@ public final class LocalStorageView extends LinearLayout {
             showButtons((Row)rowView, true);
             rowView.setActivated(newFocus != rowView);
         }
-    };
+    }
 
     private void showButtons(Row row, boolean show) {
         row.buttons.setVisibility(show && row.buttons.getChildCount() > 0 ? VISIBLE : GONE);
