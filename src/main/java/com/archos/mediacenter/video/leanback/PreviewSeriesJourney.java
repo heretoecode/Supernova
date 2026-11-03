@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.player.PrivateMode;
@@ -11,7 +12,7 @@ import java.util.*;
 
 /** A committed series cursor, distinct from each file's always-saved bookmark. */
 public final class PreviewSeriesJourney {
-    private static SharedPreferences prefs(Context c) { return androidx.preference.PreferenceManager.getDefaultSharedPreferences(c); }
+    private static SharedPreferences prefs(Context c) { return PreferenceManager.getDefaultSharedPreferences(c); }
     public static long meaningfulViewMs(long runtimeMs) { return Math.max(60000,Math.min(180000,runtimeMs>0?runtimeMs/10:180000)); }
     public static boolean resumable(Video v) { return v.getResumeMs()>0; }
     public static boolean completed(Video v) { return v.getResumeMs()==PlayerActivity.LAST_POSITION_END || (v.isWatched()&&!resumable(v)); }
