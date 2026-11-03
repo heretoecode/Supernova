@@ -1,9 +1,16 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.net.Uri;
 import android.view.View;
+import android.view.Window;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.VideoMetadata;
+import java.util.Locale;
 
 /** Read-only snapshot of the active decoder. Never starts a second metadata probe/player. */
 final class PreviewTechnicalInfo {
@@ -24,7 +31,7 @@ final class PreviewTechnicalInfo {
                 .append(metadata.getVideoHeight())
                 .append(video.bitRate > 0 ? "\nBitrate: " + video.bitRate + " kb/s" : "")
                 .append(video.fpsScale > 0 ? "\nFrame rate: "
-                            + String.format(java.util.Locale.UK, "%.3f", video.fpsRate / (double) video.fpsScale)
+                            + String.format(Locale.UK, "%.3f", video.fpsRate / (double) video.fpsScale)
                                            : "");
         if (metadata.getAudioTrackNb() > 0)
             text.append("\n\nAUDIO");
@@ -58,8 +65,8 @@ final class PreviewTechnicalInfo {
         return PreviewDialog.dp(a, n);
     }
 
-    private static android.widget.TextView text(Activity a, String value, int size) {
-        android.widget.TextView t = new android.widget.TextView(a);
+    private static TextView text(Activity a, String value, int size) {
+        TextView t = new TextView(a);
         t.setText(value);
         t.setTextSize(size);
         t.setTextColor(0xffd2e1ed);
@@ -70,11 +77,11 @@ final class PreviewTechnicalInfo {
         return text == null || text.isEmpty() ? "Unknown" : text;
     }
 
-    static void show(Activity activity, VideoMetadata metadata, android.net.Uri uri, int backend) {
+    static void show(Activity activity, VideoMetadata metadata, Uri uri, int backend) {
         show(activity, metadata, uri, backend, null);
     }
 
-    static void show(Activity activity, VideoMetadata metadata, android.net.Uri uri, int backend, Runnable restoreHud) {
+    static void show(Activity activity, VideoMetadata metadata, Uri uri, int backend, Runnable restoreHud) {
         View origin = activity.getCurrentFocus();
         com.archos.mediacenter.video.diagnostics.Diagnostics.event(
             "playback_technical_snapshot", "metadata_present", metadata != null, "backend", backend);
@@ -82,16 +89,16 @@ final class PreviewTechnicalInfo {
             String path =
                 com.archos.mediacenter.video.utils.VideoUtils.getFileUriStringFromContentUri(activity, uri.toString());
             if (path != null)
-                uri = android.net.Uri.parse(path);
+                uri = Uri.parse(path);
         }
         String full = describe(metadata, com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(uri), backend);
-        android.app.Dialog dialog = new android.app.Dialog(activity);
-        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
-        android.widget.LinearLayout panel = new android.widget.LinearLayout(activity);
-        panel.setOrientation(android.widget.LinearLayout.VERTICAL);
+        Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(activity, 20), dp(activity, 16), dp(activity, 20), dp(activity, 16));
         panel.setBackground(PreviewDialog.surface(activity, false));
-        android.widget.LinearLayout columns = new android.widget.LinearLayout(activity);
+        LinearLayout columns = new LinearLayout(activity);
         String[] titles = {
             "Source", "Video", "Audio", "File"
         };
@@ -115,19 +122,19 @@ final class PreviewTechnicalInfo {
         for (int i : new int[] {
             1, 2, 3, 0
         }) {
-            android.widget.LinearLayout column = new android.widget.LinearLayout(activity);
-            column.setOrientation(android.widget.LinearLayout.VERTICAL);
+            LinearLayout column = new LinearLayout(activity);
+            column.setOrientation(LinearLayout.VERTICAL);
             column.setPadding(dp(activity, 10), 0, dp(activity, 10), 0);
             column.addView(text(activity, titles[i], 15));
-            android.widget.TextView body = text(activity, bodies[i], 12);
+            TextView body = text(activity, bodies[i], 12);
             body.setPadding(0, dp(activity, 12), 0, 0);
             column.addView(body);
-            columns.addView(column, new android.widget.LinearLayout.LayoutParams(0, -2, 1));
+            columns.addView(column, new LinearLayout.LayoutParams(0, -2, 1));
         }
-        android.widget.ScrollView scroll = new android.widget.ScrollView(activity);
+        ScrollView scroll = new ScrollView(activity);
         scroll.addView(columns);
         scroll.setFocusable(true);
-        panel.addView(scroll, new android.widget.LinearLayout.LayoutParams(-1, 0, 1));
+        panel.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
         dialog.setContentView(panel);
         dialog.show();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
