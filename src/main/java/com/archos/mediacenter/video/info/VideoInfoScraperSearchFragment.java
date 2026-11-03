@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Searches video metadata and saves the selected scraper result. */
 public class VideoInfoScraperSearchFragment extends Fragment implements  Handler.Callback {
 
     private static final Logger log = LoggerFactory.getLogger(VideoInfoScraperSearchFragment.class);
