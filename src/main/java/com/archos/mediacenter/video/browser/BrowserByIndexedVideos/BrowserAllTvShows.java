@@ -234,7 +234,7 @@ public class BrowserAllTvShows extends CursorBrowserByVideo {
 			cursor2.close();
 			return  true;
 		}
-		else return super.onContextItemSelected(item);
+    		else return super.onContextItemSelected(item);
 
 	}
 
