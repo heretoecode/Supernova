@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Future;
 
 /** Provider-only discovery opens a Supernova Details page without creating a fake local file. */
@@ -54,11 +56,11 @@ public final class PreviewRemoteDetailsActivity extends Activity {
                 org.json.JSONObject details = StreamingRepository.metadata(getApplicationContext(), kind, id, "");
                 StreamingRepository.Availability availability =
                     StreamingRepository.load(getApplicationContext(), kind, id, StreamingRepository.country(this));
-                java.util.List<StreamingRepository.Offer> offers =
+                List<StreamingRepository.Offer> offers =
                     StreamingRepository.prefs(this).getBoolean(StreamingRepository.ENABLED, false)
                     ? StreamingRepository.filter(
                           availability, StreamingRepository.selected(this), StreamingRepository.preferred(this))
-                    : java.util.Collections.emptyList();
+                    : Collections.emptyList();
                 runOnUiThread(() -> {
                     if (isFinishing() || isDestroyed())
                         return;
