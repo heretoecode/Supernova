@@ -19,6 +19,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ViewGroup;
 import com.archos.mediacenter.video.R;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -120,8 +121,8 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
             this.slaveView.setSlaveMasterStatus(true);
             this.slaveView.setFocusable(false);
             // the copy is as wide as the card it mirrors (a card may be wider than the layout's own width)
-            android.view.ViewGroup.LayoutParams own = getLayoutParams();
-            android.view.ViewGroup.LayoutParams copy = this.slaveView.getLayoutParams();
+            ViewGroup.LayoutParams own = getLayoutParams();
+            ViewGroup.LayoutParams copy = this.slaveView.getLayoutParams();
             if (own != null && copy != null && own.width > 0)
                 copy.width = own.width;
             for(View v:others){
@@ -325,7 +326,7 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
     }
 
     public void setPos(int i, int offset) {
-        android.view.ViewGroup.LayoutParams lp = getLayoutParams();
+        ViewGroup.LayoutParams lp = getLayoutParams();
         originalWidth = lp.width;
         this.pos = i;
         setX((originalWidth + 30) * i + offset);
@@ -336,7 +337,7 @@ public class TVCardDialog extends FrameLayout implements TVSlaveView  {
     }
     public void originalSetX(float x){
         this.originalX = x;
-        android.view.ViewGroup.LayoutParams lp = getLayoutParams();
+        ViewGroup.LayoutParams lp = getLayoutParams();
         originalWidth = lp.width;
         if(slaveView!=null)
             slaveView.originalSetX(x);
