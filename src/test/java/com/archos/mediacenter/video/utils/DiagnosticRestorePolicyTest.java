@@ -6,6 +6,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.filecorelibrary.TransportReadObserver;
+import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -85,7 +86,7 @@ public class DiagnosticRestorePolicyTest {
 
     @Test
     public void legacyReplacementReappliesSupportedDefaultWithoutInventingAbsentDiagnosticField() throws Exception {
-        try (var helper = new com.archos.mediaprovider.video.VideoOpenHelper(app)) {
+        try (var helper = new VideoOpenHelper(app)) {
             helper.getWritableDatabase();
         }
         Diagnostics.setEnabled(app, false);
