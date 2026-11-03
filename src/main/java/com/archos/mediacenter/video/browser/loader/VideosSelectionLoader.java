@@ -23,9 +23,6 @@ import com.archos.mediaprovider.video.VideoStore;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by vapillon on 10/04/15.
