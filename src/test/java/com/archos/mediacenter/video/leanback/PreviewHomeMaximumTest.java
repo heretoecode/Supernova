@@ -7,27 +7,33 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.annotation.GraphicsMode;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewHomeMaximumTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
-    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
     @Config(qualifiers="w960dp-h540dp-land-mdpi") public void invalidExactValueKeepsSharedKeyboardOpen()throws Exception{
         InstrumentationRegistry.getInstrumentation().setInTouchMode(false);
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> controller=
-                org.robolectric.Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        ActivityController<TopNavigationTest.Host> controller=
+                Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             AtomicInteger accepted=new AtomicInteger(-1);
             PreviewTextInput.showValidated(controller.get(),"Maximum items","bad",10,
                     value->PreviewHomeRows.parseMaximum(value)==null?"Enter a whole number":null,
                     value->accepted.set(PreviewHomeRows.parseMaximum(value)));
-            Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog dialog=ShadowDialog.getLatestDialog();
             View root=dialog.getWindow().getDecorView();
             PreviewPagesTest.findText(root,"Done").performClick();
             assertTrue(dialog.isShowing());assertEquals(-1,accepted.get());
