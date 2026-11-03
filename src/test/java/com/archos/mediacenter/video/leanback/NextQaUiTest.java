@@ -1,8 +1,20 @@
 package com.archos.mediacenter.video.leanback;
 import android.app.Application;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.view.*;
 import android.app.Dialog;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import java.util.List;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -36,7 +48,7 @@ public class NextQaUiTest {
             host.get().setContentView(pages);
             pages.setSnapshot(new PreviewLibraryLoader.Snapshot());
             PreviewPagesTest.layout(pages);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             Dialog welcome = org.robolectric.shadows.ShadowDialog.getLatestDialog();
             assertNotNull("First-run welcome exists", welcome);
             assertTrue("Welcome is visible", welcome.isShowing());
@@ -61,7 +73,7 @@ public class NextQaUiTest {
                     row.visible = false;
             org.robolectric.util.ReflectionHelpers.callInstanceMethod(rows, "save");
             PreviewPagesTest.layout(pages);
-            java.util.List<PreviewPages.Cell> cells = org.robolectric.util.ReflectionHelpers.getField(pages, "cells");
+            List<PreviewPages.Cell> cells = org.robolectric.util.ReflectionHelpers.getField(pages, "cells");
             assertFalse("Placeholder respects a hidden Recently Added row",
                 cells.stream().anyMatch(cell -> cell.value == HomePlaceholder.Kind.RECENT));
         } finally {
@@ -126,9 +138,9 @@ public class NextQaUiTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             var resources = host.get().getResources();
-            var configuration = new android.content.res.Configuration(resources.getConfiguration());
+            var configuration = new Configuration(resources.getConfiguration());
             configuration.fontScale = 1.5f;
-            var metrics = new android.util.DisplayMetrics();
+            var metrics = new DisplayMetrics();
             metrics.setTo(resources.getDisplayMetrics());
             metrics.scaledDensity = 1.5f * metrics.density;
             resources.updateConfiguration(configuration, metrics);
@@ -142,9 +154,9 @@ public class NextQaUiTest {
             assertTrue(welcome.getWindow().getAttributes().height <= Math.round(TvLayout.safeHeight(host.get()) * .8f));
             for (int i = 0; i < 2; i++) {
                 View action = root.findViewWithTag("semantic:dialog.action." + i);
-                android.graphics.Rect bounds = new android.graphics.Rect();
+                Rect bounds = new Rect();
                 action.getDrawingRect(bounds);
-                ((android.view.ViewGroup) root).offsetDescendantRectToMyCoords(action, bounds);
+                ((ViewGroup) root).offsetDescendantRectToMyCoords(action, bounds);
                 assertTrue(bounds.top >= 0);
                 assertTrue(bounds.bottom <= root.getHeight());
                 assertTrue(action.requestFocus());
@@ -157,11 +169,11 @@ public class NextQaUiTest {
             root = PreviewHomeVisualTest.measure(keyboard);
             assertTrue(
                 keyboard.getWindow().getAttributes().height <= Math.round(TvLayout.safeHeight(host.get()) * .9f));
-            android.widget.TextView backspace = root.findViewWithTag("semantic:keyboard:Backspace");
+            TextView backspace = root.findViewWithTag("semantic:keyboard:Backspace");
             assertTrue(backspace.getLayout().getHeight() <= backspace.getHeight());
             View done = root.findViewWithTag("semantic:keyboard:Done");
             assertTrue(done.requestFocus());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(done.isShown());
             PreviewPagesTest.capture(root, "next-qa-keyboard-large-font");
             keyboard.dismiss();
@@ -178,40 +190,40 @@ public class NextQaUiTest {
             org.mockito.Mockito.mock(com.squareup.picasso.RequestCreator.class, org.mockito.Mockito.RETURNS_SELF);
         try (var singleton = org.mockito.Mockito.mockStatic(com.squareup.picasso.Picasso.class)) {
             singleton.when(com.squareup.picasso.Picasso::get).thenReturn(picasso);
-            org.mockito.Mockito.when(picasso.load(org.mockito.ArgumentMatchers.any(android.net.Uri.class)))
+            org.mockito.Mockito.when(picasso.load(org.mockito.ArgumentMatchers.any(Uri.class)))
                 .thenReturn(request);
             try {
                 var movie = org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class);
                 org.mockito.Mockito.when(movie.getName()).thenReturn("Cold fixture");
                 var entry = new PreviewLibraryLoader.Entry(movie, 1, 0, "");
-                entry.backdrop = android.net.Uri.parse("file:///fixture/backdrop.jpg");
+                entry.backdrop = Uri.parse("file:///fixture/backdrop.jpg");
                 PreviewFeaturedCard card =
-                    new PreviewFeaturedCard(host.get(), java.util.List.of(entry), 0, () -> {
+                    new PreviewFeaturedCard(host.get(), List.of(entry), 0, () -> {
                     }, () -> {
                     });
                 host.get().setContentView(card);
                 PreviewPagesTest.layout(card);
                 org.mockito.Mockito.verify(request).into(
-                    org.mockito.ArgumentMatchers.any(android.widget.ImageView.class),
+                    org.mockito.ArgumentMatchers.any(ImageView.class),
                     org.mockito.ArgumentMatchers.any(com.squareup.picasso.Callback.class));
-                host.get().setContentView(new android.widget.FrameLayout(host.get()));
+                host.get().setContentView(new FrameLayout(host.get()));
                 host.get().setContentView(card);
                 PreviewPagesTest.layout(card);
                 org.mockito.Mockito.verify(request, org.mockito.Mockito.times(2))
-                    .into(org.mockito.ArgumentMatchers.any(android.widget.ImageView.class),
+                    .into(org.mockito.ArgumentMatchers.any(ImageView.class),
                         org.mockito.ArgumentMatchers.any(com.squareup.picasso.Callback.class));
-                android.widget.ImageView artwork =
-                    (android.widget.ImageView) ((android.view.ViewGroup) card.findViewWithTag(
+                ImageView artwork =
+                    (ImageView) ((ViewGroup) card.findViewWithTag(
                                                     "semantic:featured.active"))
                         .getChildAt(0);
-                var ready = new android.graphics.drawable.ColorDrawable(android.graphics.Color.BLUE);
+                var ready = new ColorDrawable(Color.BLUE);
                 artwork.setImageDrawable(ready);
-                host.get().setContentView(new android.widget.FrameLayout(host.get()));
+                host.get().setContentView(new FrameLayout(host.get()));
                 host.get().setContentView(card);
                 PreviewPagesTest.layout(card);
                 assertSame(ready, artwork.getDrawable());
                 org.mockito.Mockito.verify(request, org.mockito.Mockito.times(2))
-                    .into(org.mockito.ArgumentMatchers.any(android.widget.ImageView.class),
+                    .into(org.mockito.ArgumentMatchers.any(ImageView.class),
                         org.mockito.ArgumentMatchers.any(com.squareup.picasso.Callback.class));
             } finally {
                 host.pause().stop().destroy();
