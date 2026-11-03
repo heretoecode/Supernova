@@ -15,7 +15,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewTextInput;
+import com.archos.mediacenter.video.leanback.SharedThreePanel;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.io.IOException;
 import java.util.*;
@@ -103,8 +106,8 @@ public final class PutioAccountController {
         Dialog view = PreviewDialog.create(activity);
         LinearLayout panel = new LinearLayout(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
-        com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel, title);
-        TextView body = com.archos.mediacenter.video.leanback.SharedThreePanel.text(activity, text, 15);
+        SharedThreePanel.heading(panel, title);
+        TextView body = SharedThreePanel.text(activity, text, 15);
         body.setFocusable(true);
         panel.addView(body);
         view.setContentView(panel);
@@ -117,11 +120,11 @@ public final class PutioAccountController {
         Dialog view = PreviewDialog.create(activity);
         LinearLayout panel = new LinearLayout(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
-        com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel, title);
+        SharedThreePanel.heading(panel, title);
         for (int n = 0; n < labels.length; n++) {
             final int index = n;
             TextView row =
-                com.archos.mediacenter.video.leanback.SharedThreePanel.accentAction(activity, labels[n], () -> {
+                SharedThreePanel.accentAction(activity, labels[n], () -> {
                     if (labels[index].equals("Cancel") || labels[index].equals("Finish Later")) {
                         if (cancelled != null)
                             cancelled.run();
@@ -132,7 +135,7 @@ public final class PutioAccountController {
                         accepted.accept(index);
                 });
             panel.addView(row);
-            com.archos.mediacenter.video.leanback.SharedThreePanel.divider(panel);
+            SharedThreePanel.divider(panel);
         }
         view.setContentView(panel);
         return view;
@@ -459,10 +462,10 @@ public final class PutioAccountController {
         work("Choose existing WebDAV playback source", () -> {
             List<Uri> sources = new ArrayList<>();
             try (Cursor c =
-                     com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO.getAllShortcuts(activity, null, null)) {
+                     ShortcutDbAdapter.VIDEO.getAllShortcuts(activity, null, null)) {
                 if (c == null)
                     throw new IllegalStateException("Sources unavailable");
-                int path = c.getColumnIndexOrThrow(com.archos.mediacenter.utils.ShortcutDbAdapter.KEY_PATH);
+                int path = c.getColumnIndexOrThrow(ShortcutDbAdapter.KEY_PATH);
                 while (c.moveToNext()) {
                     Uri uri = Uri.parse(c.getString(path));
                     if (Arrays.asList("https", "http", "webdav", "webdavs", "dav", "davs").contains(uri.getScheme())
@@ -606,7 +609,7 @@ public final class PutioAccountController {
     private void searchInput(String previous) {
         if (dialog != null)
             dialog.dismiss();
-        com.archos.mediacenter.video.leanback.PreviewTextInput.show(
+        PreviewTextInput.show(
             activity, "Search put.io files", previous, 256, query -> searchPage(query, null, Collections.emptySet()));
     }
 
