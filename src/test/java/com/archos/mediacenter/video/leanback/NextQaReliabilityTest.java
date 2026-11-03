@@ -14,8 +14,13 @@ import android.view.*;
 import android.widget.EditText;
 import androidx.preference.*;
 import androidx.recyclerview.widget.RecyclerView;
+import com.archos.filecorelibrary.ListingEngine;
+import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
+import com.archos.mediaprovider.video.Blacklist;
+import com.archos.mediaprovider.video.VideoStoreImportImpl;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +29,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowLooper;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
@@ -75,8 +84,8 @@ public class NextQaReliabilityTest {
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content, settings).commitNow();
             View root = settings.requireView();
             PreviewPagesTest.layout(root);
-            assertNotNull(settings.findPreference(com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL));
-            assertTrue(com.archos.mediacenter.video.diagnostics.Diagnostics.defaultEnabled());
+            assertNotNull(settings.findPreference(Diagnostics.LEVEL));
+            assertTrue(Diagnostics.defaultEnabled());
             for (String label : new String[] {
                 "Playback", "Video", "Audio", "Subtitles", "Library & Metadata", "Home",
                      "Appearance", "Streaming", "Network", "Integrations", "Advanced", "About"
@@ -106,7 +115,7 @@ public class NextQaReliabilityTest {
 
     @Test
     public void allFilesUsesOneFilterForBothFilesAndHiddenDirectories() {
-        class Filter extends com.archos.filecorelibrary.ListingEngine {
+        class Filter extends ListingEngine {
             Filter() {
                 super(RuntimeEnvironment.getApplication());
             }
@@ -165,8 +174,8 @@ public class NextQaReliabilityTest {
         };
         c.registerReceiver(receiver, new IntentFilter(c.getPackageName() + ".VIEWING_STATE_CHANGED"));
         try {
-            com.archos.mediacenter.utils.videodb.VideoDbInfo info =
-                new com.archos.mediacenter.utils.videodb.VideoDbInfo(
+            VideoDbInfo info =
+                new VideoDbInfo(
                     Uri.parse("file:///storage/TV/Vigil/S02E01.mkv"));
             info.isShow = true;
             info.scraperShowId = "123";
@@ -177,7 +186,7 @@ public class NextQaReliabilityTest {
             info.lastTimePlayed = 100;
             ViewingHistory.record(c, info, false);
             ViewingHistory.awaitWrites();
-            org.robolectric.shadows.ShadowLooper.idleMainLooper();
+            ShadowLooper.idleMainLooper();
             assertEquals(1, observed[0]);
         } finally {
             c.unregisterReceiver(receiver);
@@ -231,14 +240,14 @@ public class NextQaReliabilityTest {
             .putBoolean("supernova_library_policy_initialized", true)
             .putStringSet("supernova_library_roots", Set.of("file:///storage/drive-b"))
             .commit();
-        ContentResolver resolver = org.mockito.Mockito.mock(ContentResolver.class);
+        ContentResolver resolver = Mockito.mock(ContentResolver.class);
         final List<Long> pages = new ArrayList<>();
-        org.mockito.Mockito
-            .when(resolver.query(org.mockito.ArgumentMatchers.any(Uri.class),
-                org.mockito.ArgumentMatchers.any(String[].class),
-                org.mockito.ArgumentMatchers.any(android.os.Bundle.class), org.mockito.ArgumentMatchers.isNull()))
+        Mockito
+            .when(resolver.query(ArgumentMatchers.any(Uri.class),
+                ArgumentMatchers.any(String[].class),
+                ArgumentMatchers.any(Bundle.class), ArgumentMatchers.isNull()))
             .thenAnswer(call -> {
-                String selection = ((android.os.Bundle) call.getArgument(2))
+                String selection = ((Bundle) call.getArgument(2))
                                        .getString(ContentResolver.QUERY_ARG_SQL_SELECTION);
                 Matcher match = Pattern.compile("_id > (-?[0-9]+)").matcher(selection);
                 long after = match.find() ? Long.parseLong(match.group(1)) : -1;
@@ -258,22 +267,22 @@ public class NextQaReliabilityTest {
                     });
                 return rows;
             });
-        com.archos.mediaprovider.video.VideoStoreImportImpl importer = org.mockito.Mockito.mock(
-            com.archos.mediaprovider.video.VideoStoreImportImpl.class, org.mockito.Mockito.CALLS_REAL_METHODS);
-        Method scan = com.archos.mediaprovider.video.VideoStoreImportImpl.class.getDeclaredMethod(
+        VideoStoreImportImpl importer = Mockito.mock(
+            VideoStoreImportImpl.class, Mockito.CALLS_REAL_METHODS);
+        Method scan = VideoStoreImportImpl.class.getDeclaredMethod(
             "doScan", ContentResolver.class, Context.class,
-            com.archos.mediaprovider.video.Blacklist.class);
+            Blacklist.class);
         scan.setAccessible(true);
-        scan.invoke(importer, resolver, c, org.mockito.Mockito.mock(com.archos.mediaprovider.video.Blacklist.class));
-        org.mockito.ArgumentCaptor<ArrayList<ContentProviderOperation>> batches =
-            org.mockito.ArgumentCaptor.forClass(ArrayList.class);
-        org.mockito.Mockito.verify(resolver, org.mockito.Mockito.times(2))
-            .applyBatch(org.mockito.ArgumentMatchers.anyString(), batches.capture());
+        scan.invoke(importer, resolver, c, Mockito.mock(Blacklist.class));
+        ArgumentCaptor<ArrayList<ContentProviderOperation>> batches =
+            ArgumentCaptor.forClass(ArrayList.class);
+        Mockito.verify(resolver, Mockito.times(2))
+            .applyBatch(ArgumentMatchers.anyString(), batches.capture());
         assertEquals(0, batches.getAllValues().get(0).size());
         assertEquals(2, batches.getAllValues().get(1).size());
         assertEquals(List.of(-1L, 2500L), pages);
-        org.mockito.Mockito.verify(resolver, org.mockito.Mockito.never())
-            .delete(org.mockito.ArgumentMatchers.any(Uri.class), org.mockito.ArgumentMatchers.any(),
-                org.mockito.ArgumentMatchers.any());
+        Mockito.verify(resolver, Mockito.never())
+            .delete(ArgumentMatchers.any(Uri.class), ArgumentMatchers.any(),
+                ArgumentMatchers.any());
     }
 }
