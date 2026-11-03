@@ -28,6 +28,7 @@ import com.archos.mediacenter.video.utils.SortOrder;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays anime movies grouped by rating with sorting controls. */
 public class AnimesByRatingFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = AnimesByRatingFragment.class.getName() + "_SORT";
