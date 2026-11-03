@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.graphics.Rect;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.*;
@@ -155,7 +156,7 @@ final class InlinePreferenceChoices {
                 if (row != null) {
                     row.requestFocus();
                     row.requestRectangleOnScreen(
-                        new android.graphics.Rect(0, 0, row.getWidth(), row.getHeight()), false);
+                        new Rect(0, 0, row.getWidth(), row.getHeight()), false);
                 }
             });
     }
