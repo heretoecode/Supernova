@@ -80,6 +80,7 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Manages TV channel definitions, ordering and their video lists. */
 public class ChannelManager {
 
     private static final String TAG = "ChannelManager";
