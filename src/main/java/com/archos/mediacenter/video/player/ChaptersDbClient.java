@@ -2,6 +2,8 @@ package com.archos.mediacenter.video.player;
 
 import android.content.Context;
 import android.util.AtomicFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.json.*;
 import java.io.*;
 import okhttp3.*;
@@ -93,7 +95,7 @@ public final class ChaptersDbClient {
             || !episodeTvdb.equals(episode.optString("tvdbId")) || parent == null
             || !show.optString("id").equals(parent.optString("id")))
             return empty(Status.IDENTITY_MISMATCH);
-        java.util.regex.Matcher ordinal = java.util.regex.Pattern.compile("^S([0-9]{1,4})E([0-9]{1,4})\\s*[-:]\\s*.+$")
+        Matcher ordinal = Pattern.compile("^S([0-9]{1,4})E([0-9]{1,4})\\s*[-:]\\s*.+$")
                                               .matcher(episode.optString("title"));
         if (!ordinal.matches() || Integer.parseInt(ordinal.group(1)) != season
             || Integer.parseInt(ordinal.group(2)) != number || !uuid(episode.optString("id")))
