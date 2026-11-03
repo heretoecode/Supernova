@@ -15,8 +15,11 @@ import android.widget.*;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.*;
 import androidx.recyclerview.widget.RecyclerView;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
+import com.archos.mediacenter.video.player.SegmentSkippingPolicy;
 import java.util.*;
 
 /** New grid/category presentation. The preference hierarchy is a retained model, never the visible UI. */
@@ -60,7 +63,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     };
 
     static boolean enabled(Context c) {
-        return com.archos.mediacenter.video.BuildConfig.FOUNDATION ||
+        return BuildConfig.FOUNDATION ||
             PreferenceManager.getDefaultSharedPreferences(c).getBoolean("try_new_ui", false);
     }
 
@@ -580,7 +583,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     private boolean integrationDisabled() {
         return section.equals("Trakt") && !prefs.getBoolean("supernova_integration_trakt", true) ||
             section.equals("IntroDB") &&
-                !prefs.getBoolean(com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER, true);
+                !prefs.getBoolean(SegmentSkippingPolicy.MASTER, true);
     }
 
     private void refreshStoredValues() {
@@ -698,7 +701,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             setFocusable(true);
             setFocusableInTouchMode(true);
             setTag("settings.preference." + entry.actualKey(getContext()));
-            com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(this, "settings:preference:" +
+            Diagnostics.semantic(this, "settings:preference:" +
                                                                                     entry.actualKey(getContext()));
             setBackground(SharedThreePanel.accentFocus(getContext()));
             SharedThreePanel.rowSeparator(this);
