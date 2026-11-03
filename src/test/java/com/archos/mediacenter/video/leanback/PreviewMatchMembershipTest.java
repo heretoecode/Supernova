@@ -9,28 +9,31 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.preference.PreferenceManager;
 import java.util.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMatchMembershipTest {
- @org.junit.Before public void isolatePreviewTransport(){com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();}
- @org.junit.After public void drainPreviewWorkers() throws Exception { com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain(); }
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void createRowAddsTitleAndReturnsToSelectedMembershipWithoutClosingParent(){
         Activity host=Robolectric.buildActivity(Activity.class).setup().get();
         PreferenceManager.getDefaultSharedPreferences(host).edit().clear().commit();
         PreviewLibraryLoader.Entry entry=new PreviewPagesTest().episode(1,0,false,0,0);
-        PreviewHomeRows.add(host,entry,()->{});Dialog original=org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        PreviewHomeRows.add(host,entry,()->{});Dialog original=ShadowDialog.getLatestDialog();
         View root=original.getWindow().getDecorView();
         View watch=root.findViewWithTag("preview-check:0");assertEquals(View.VISIBLE,watch.getVisibility());
         assertTrue(((View)watch.getParent()).getContentDescription().toString().endsWith("not selected"));
         ((View)PreviewPagesTest.findText(root,"Create New Row").getParent()).performClick();
-        Dialog keyboard=org.robolectric.shadows.ShadowDialog.getLatestDialog();EditText input=findInput(keyboard.getWindow().getDecorView());assertNotNull(input);input.setText("My favourites");
+        Dialog keyboard=ShadowDialog.getLatestDialog();EditText input=findInput(keyboard.getWindow().getDecorView());assertNotNull(input);input.setText("My favourites");
         PreviewPagesTest.findText(keyboard.getWindow().getDecorView(),"Done").performClick();
-        Dialog returned=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNotSame(original,returned);assertTrue(returned.isShowing());assertFalse(keyboard.isShowing());
+        Dialog returned=ShadowDialog.getLatestDialog();assertNotSame(original,returned);assertTrue(returned.isShowing());assertFalse(keyboard.isShowing());
         View added=(View)PreviewPagesTest.findText(returned.getWindow().getDecorView(),"My favourites").getParent();
         assertTrue(added.getContentDescription().toString().endsWith(", selected"));assertTrue(added.hasFocus());
         PreviewHomeRows model=new PreviewHomeRows(host);assertTrue(model.rows.stream().anyMatch(row->row.name.equals("My favourites")&&row.members.contains(entry.key())));
