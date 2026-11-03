@@ -1,14 +1,17 @@
 package com.archos.mediacenter.video.streaming.putio;
+import android.app.Application;
+import android.os.SystemClock;
+import java.lang.reflect.Method;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioAccountTest {
     @Test public void malformedAccountIsCorrelatedWithSuccessfulTransportWithoutLeakingBody()throws Exception{
-        android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();
+        Application app=org.robolectric.RuntimeEnvironment.getApplication();
         com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
         try{
             PutioReadClient client=new PutioReadClient("fixture-private-token");
@@ -18,8 +21,8 @@ public class PutioAccountTest {
             org.robolectric.util.ReflectionHelpers.setField(client,"http",fake);
             try{client.account();fail();}catch(PutioReadClient.Unavailable expected){assertEquals(PutioReconciliation.Failure.INVALID_PAGE,expected.reason);}
             Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");
-            java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
-            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());
+            Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,SystemClock.elapsedRealtime());
             assertFalse(evidence.contains("fixture-private-token"));assertFalse(evidence.contains("fixture-private-name"));
             String operation=null;int failures=0;
             for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
