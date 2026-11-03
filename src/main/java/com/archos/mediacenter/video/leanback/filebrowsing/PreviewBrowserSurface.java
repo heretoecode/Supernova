@@ -6,8 +6,12 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.FrameLayout;
 import androidx.leanback.widget.BrowseFrameLayout;
+import com.archos.filecorelibrary.ListingEngine;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -26,14 +30,14 @@ public final class PreviewBrowserSurface extends BrowseFrameLayout {
     }
     public UniversalFileBrowser browser(){return browser;}
     void credentials(Consumer<Exception> handler,Consumer<Uri> changed){browser.credentials(handler,changed);}
-    void failure(com.archos.filecorelibrary.ListingEngine.ErrorEnum code){browser.listingFailure(code);}
+    void failure(ListingEngine.ErrorEnum code){browser.listingFailure(code);}
     void open(Uri uri){browser.open(uri);}
-    void focusItem(Object item,Runnable action){if(item instanceof com.archos.mediacenter.video.browser.adapters.object.Video)browser.focusVideo((com.archos.mediacenter.video.browser.adapters.object.Video)item);}
+    void focusItem(Object item,Runnable action){if(item instanceof Video)browser.focusVideo((Video)item);}
     public void providerItem(String title,String details,boolean folder,Runnable action){browser.providerInformation(title,details,folder,action);}
     public void providerPath(List<String> labels,List<Runnable> navigate){browser.providerPath(labels,navigate);}
     private void navigate(Activity activity,int index) {
-        if(index==4)activity.startActivity(new Intent(activity,com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
-        else if(index==5)activity.startActivity(new Intent(activity,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+        if(index==4)activity.startActivity(new Intent(activity,VideoSettingsActivity.class));
+        else if(index==5)activity.startActivity(new Intent(activity,VideoSearchActivity.class));
         else {activity.startActivity(new Intent(activity,MainActivityLeanback.class).putExtra("preview_tab",index).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));activity.finish();}
     }
     private int dp(int n){return PreviewDialog.dp(getContext(),n);}
