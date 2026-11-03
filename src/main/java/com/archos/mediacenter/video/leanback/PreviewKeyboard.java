@@ -186,8 +186,8 @@ public final class PreviewKeyboard extends LinearLayout {
     private void capsState(TextView key) {
         key.setSelected(caps);
         key.setText(caps ? "ON" : "OFF");
-        key.setTextColor(caps ? PreviewAccent.color(getContext()) : android.graphics.Color.WHITE);
-        key.setTypeface(null, caps ? android.graphics.Typeface.BOLD : android.graphics.Typeface.NORMAL);
+        key.setTextColor(caps ? PreviewAccent.color(getContext()) : Color.WHITE);
+        key.setTypeface(null, caps ? Typeface.BOLD : Typeface.NORMAL);
         key.setContentDescription("Caps Lock " + (caps ? "On" : "Off"));
         key.setForeground(null);
     }
