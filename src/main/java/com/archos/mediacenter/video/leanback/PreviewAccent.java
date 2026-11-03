@@ -1,7 +1,14 @@
 package com.archos.mediacenter.video.leanback;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import androidx.core.graphics.ColorUtils;
+import androidx.preference.PreferenceManager;
 
 /** Accent affects controls and subtle utility backgrounds; never tints artwork. */
 public final class PreviewAccent {
@@ -10,14 +17,14 @@ public final class PreviewAccent {
     }
 
     public static int color(Context c, int defaultColour) {
-        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getInt(
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(
             "preview_accent41", defaultColour);
     }
 
     /** A white thumb must remain distinct, including with custom white/black accents. */
     public static int switchTrack(Context c) {
         int accent = color(c);
-        double luminance = androidx.core.graphics.ColorUtils.calculateLuminance(accent);
+        double luminance = ColorUtils.calculateLuminance(accent);
         return luminance < .08 || luminance > .65 ? 0xff0a6cff : accent;
     }
 
@@ -51,19 +58,19 @@ public final class PreviewAccent {
     }
 
     private static void save(Context c, int colour) {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c)
+        PreferenceManager.getDefaultSharedPreferences(c)
             .edit()
             .putInt("preview_accent41", colour)
             .apply();
     }
 
     private static void custom(Context c, Runnable changed) {
-        android.app.Dialog d = new android.app.Dialog(c);
-        android.widget.LinearLayout box = new android.widget.LinearLayout(c);
-        box.setOrientation(android.widget.LinearLayout.VERTICAL);
+        Dialog d = new Dialog(c);
+        LinearLayout box = new LinearLayout(c);
+        box.setOrientation(LinearLayout.VERTICAL);
         box.setPadding(28, 24, 28, 24);
         box.setBackground(utility(c));
-        android.widget.TextView title = new android.widget.TextView(c);
+        TextView title = new TextView(c);
         title.setText("Custom accent — Left / Right adjusts each colour");
         title.setTextColor(Color.WHITE);
         box.addView(title);
@@ -73,28 +80,28 @@ public final class PreviewAccent {
         };
         for (int i = 0; i < 3; i++) {
             final int channel = i;
-            android.widget.TextView name = new android.widget.TextView(c);
+            TextView name = new TextView(c);
             name.setText(new String[] {
                 "Red", "Green", "Blue"
             }[i]);
             name.setTextColor(Color.WHITE);
             box.addView(name);
-            android.widget.SeekBar slider = new android.widget.SeekBar(c);
+            SeekBar slider = new SeekBar(c);
             slider.setMax(255);
             slider.setProgress(rgb[i]);
-            slider.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
-                public void onProgressChanged(android.widget.SeekBar b, int value, boolean user) {
+            slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                public void onProgressChanged(SeekBar b, int value, boolean user) {
                     rgb[channel] = value;
                     title.setTextColor(Color.rgb(rgb[0], rgb[1], rgb[2]));
                 }
-                public void onStartTrackingTouch(android.widget.SeekBar b) {
+                public void onStartTrackingTouch(SeekBar b) {
                 }
-                public void onStopTrackingTouch(android.widget.SeekBar b) {
+                public void onStopTrackingTouch(SeekBar b) {
                 }
             });
             box.addView(slider);
         }
-        android.widget.Button apply = new android.widget.Button(c);
+        Button apply = new Button(c);
         apply.setText("Apply");
         apply.setOnClickListener(v -> {
             save(c, Color.rgb(rgb[0], rgb[1], rgb[2]));
