@@ -1,6 +1,5 @@
 package com.archos.mediacenter.video.leanback;
 
-import android.content.Context;
 import android.net.Uri;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
