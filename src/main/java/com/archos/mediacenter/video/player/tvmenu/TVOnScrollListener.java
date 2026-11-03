@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+/** Defines a callback for scroll changes in TV playback menus. */
 public interface TVOnScrollListener {
     public void onScrollChanged();
 }
