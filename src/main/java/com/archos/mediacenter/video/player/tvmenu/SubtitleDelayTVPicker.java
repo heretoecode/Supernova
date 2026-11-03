@@ -37,6 +37,7 @@ import java.util.Formatter;
 import java.util.Locale;
 
 
+/** Provides a remote-controlled subtitle delay picker for TV playback menus. */
 public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implements TVSlaveView {
 
     /* UI Components */
