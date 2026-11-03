@@ -17,7 +17,6 @@ package com.archos.mediacenter.video.leanback.details;
 import android.content.Context;
 import androidx.leanback.widget.HeaderItem;
 
-import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 
