@@ -1,6 +1,14 @@
 package com.archos.mediacenter.video.metadata;
 
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import okhttp3.*;
 import org.json.*;
@@ -82,16 +90,16 @@ public final class OmdbSupplement {
      * OMDb using the owner's own key, typed once into Settings. Enabled only when a key is present.
      */
     public static OmdbSupplement production(android.content.Context context) {
-        return new OmdbSupplement(new UserKeyAccess(androidx.preference.PreferenceManager.getDefaultSharedPreferences(
+        return new OmdbSupplement(new UserKeyAccess(PreferenceManager.getDefaultSharedPreferences(
                                       context.getApplicationContext())),
             SHARED_TRANSPORT);
     }
 
     /** Per-device key from Settings, with a persisted per-day request budget. */
     static final class UserKeyAccess implements Access {
-        private final android.content.SharedPreferences prefs;
+        private final SharedPreferences prefs;
 
-        UserKeyAccess(android.content.SharedPreferences prefs) {
+        UserKeyAccess(SharedPreferences prefs) {
             this.prefs = prefs;
         }
 
@@ -110,9 +118,9 @@ public final class OmdbSupplement {
         public boolean acquireRequest() {
             synchronized (UserKeyAccess.class) {
                 // java.time is unavailable on API 23; use the legacy formatter in UTC.
-                java.text.SimpleDateFormat day = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
-                day.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
-                String today = day.format(new java.util.Date());
+                SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                day.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String today = day.format(new Date());
                 int used = today.equals(prefs.getString(PREF_BUDGET_DAY, "")) ? prefs.getInt(PREF_BUDGET_USED, 0) : 0;
                 if (used >= DAILY_BUDGET)
                     return false;
@@ -246,8 +254,8 @@ public final class OmdbSupplement {
                          .execute()) {
                 if (!response.isSuccessful() || response.body() == null || response.body().contentLength() > 65536)
                     throw new IOException("Supplement unavailable");
-                try (java.io.InputStream in = response.body().byteStream();
-                    java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream()) {
+                try (InputStream in = response.body().byteStream();
+                    ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                     byte[] buffer = new byte[4096];
                     int length;
                     while ((length = in.read(buffer)) != -1) {
