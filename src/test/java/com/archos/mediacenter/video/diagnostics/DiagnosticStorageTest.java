@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.zip.*;
 import org.json.JSONObject;
 import org.junit.*;
@@ -161,7 +162,7 @@ public class DiagnosticStorageTest {
     @Test
     public void oversizedProducerRecordIsDroppedRatherThanCreatingAnUnparseableOrOversizedFile() throws Exception {
         long before =
-            ((java.util.concurrent.atomic.AtomicLong) ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED"))
+            ((AtomicLong) ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED"))
                 .get();
         Object[] fields = new Object[40];
         for (int i = 0; i < fields.length; i += 2) {
@@ -171,7 +172,7 @@ public class DiagnosticStorageTest {
         Diagnostics.event("oversized_probe", fields);
         flush();
         assertTrue(
-            ((java.util.concurrent.atomic.AtomicLong) ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED"))
+            ((AtomicLong) ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED"))
                 .get()
             > before);
         assertFalse(DiagnosticArchive.records(directory).stream().anyMatch(
