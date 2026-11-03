@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
@@ -22,8 +23,11 @@ import java.time.Duration;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.GraphicsMode;
@@ -229,8 +233,8 @@ public class Supernova139HomeEditorTest {
         first.onlineId = 77;
         second.onlineId = 77;
         snapshot.movies.addAll(List.of(first, second, unmatched));
-        com.archos.mediacenter.video.browser.adapters.object.Tvshow show =
-            mock(com.archos.mediacenter.video.browser.adapters.object.Tvshow.class);
+        Tvshow show =
+            mock(Tvshow.class);
         when(show.getTvshowId()).thenReturn(10L);
         Entry tv = new Entry(show, 0, 10, "Drama");
         tv.onlineId = 77;
@@ -258,8 +262,8 @@ public class Supernova139HomeEditorTest {
 
     @Test
     public void legacySavedUnlimitedRowRetainsLargestApprovedCountWhileNewRowsDefaultToFifteen() throws Exception {
-        Context context = org.robolectric.RuntimeEnvironment.getApplication();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+        Context context = RuntimeEnvironment.getApplication();
+        PreferenceManager.getDefaultSharedPreferences(context)
             .edit()
             .putString("preview_home_rows41", "[{\"id\":\"custom:legacy\",\"name\":\"Legacy\",\"maximum\":0}]")
             .commit();
@@ -270,10 +274,10 @@ public class Supernova139HomeEditorTest {
         assertEquals(15, new PreviewHomeRows.Row("custom:new", "New").maximum);
         PreviewLibraryLoader.Snapshot library = new PreviewLibraryLoader.Snapshot();
         for (int id = 1; id <= 40; id++) {
-            com.archos.mediacenter.video.browser.adapters.object.Movie movie =
-                org.mockito.Mockito.mock(com.archos.mediacenter.video.browser.adapters.object.Movie.class);
-            org.mockito.Mockito.when(movie.getId()).thenReturn((long) id);
-            org.mockito.Mockito.when(movie.getName()).thenReturn("Film " + id);
+            Movie movie =
+                Mockito.mock(Movie.class);
+            Mockito.when(movie.getId()).thenReturn((long) id);
+            Mockito.when(movie.getName()).thenReturn("Film " + id);
             PreviewLibraryLoader.Entry entry = new PreviewLibraryLoader.Entry(movie, id, 0, "");
             library.movies.add(entry);
             row.members.add(entry.key());
@@ -371,14 +375,14 @@ public class Supernova139HomeEditorTest {
             assertTrue(root(dialog).findViewWithTag("home.editor.name").requestFocus());
             View direction = root(dialog).findViewWithTag("home.editor.direction");
             direction.requestFocus();
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             layout(dialog);
             fullyVisible(direction);
             TextView label = (TextView) direction;
             assertEquals("Descending", label.getText().toString());
             View automatic = root(dialog).findViewWithTag("home.editor.automatic");
             assertTrue(automatic.requestFocus());
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             layout(dialog);
             fullyVisible(automatic);
             PreviewPagesTest.capture(root(dialog), "0139-customise-small");
@@ -392,7 +396,7 @@ public class Supernova139HomeEditorTest {
         long started = SystemClock.uptimeMillis();
         for (int repeat = 0; repeat < repeats; repeat++) {
             dialog.dispatchKeyEvent(new KeyEvent(started, started + repeat * 50, KeyEvent.ACTION_DOWN, code, repeat));
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper())
+            Shadows.shadowOf(Looper.getMainLooper())
                 .idleFor(Duration.ofMillis(50));
             layout(dialog);
             assertEquals("reorder repeat " + repeat, "watchnext", dialog.getCurrentFocus().getTag());
@@ -431,7 +435,7 @@ public class Supernova139HomeEditorTest {
                     .map(row -> row.id)
                     .collect(Collectors.toList()));
             key(dialog, KeyEvent.KEYCODE_BACK);
-            org.robolectric.Shadows.shadowOf(Looper.getMainLooper())
+            Shadows.shadowOf(Looper.getMainLooper())
                 .idleFor(Duration.ofMillis(50));
             layout(dialog);
             assertEquals("watchnext", dialog.getCurrentFocus().getTag());
@@ -489,7 +493,7 @@ public class Supernova139HomeEditorTest {
                 View field = root(dialog).findViewWithTag(tag);
                 assertNotNull(tag, field);
                 assertTrue(tag, field.requestFocus());
-                org.robolectric.Shadows.shadowOf(Looper.getMainLooper()).idle();
+                Shadows.shadowOf(Looper.getMainLooper()).idle();
                 layout(dialog);
                 fullyVisible(field);
                 assertEquals(tag, dialog.getCurrentFocus().getTag());
