@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.player.tvmenu;
 
 import android.view.View;
 
+/** Defines creation, attachment and updates for child views in TV playback cards. */
 public interface TVSlaveView {
     public void updateSlaveView();
     
