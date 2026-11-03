@@ -384,11 +384,8 @@
     <!-- torrent -->
     <string name="error">Đã xảy ra lỗi</string>
     <string name="error_protocol_not_supported">Lỗi: giao thức không được hỗ trợ</string>
-    <string name="error_loading_torrent">Lỗi khi tải torrent</string>
-    <string name="error_downloading_not_enough_space">Lỗi khi tải xuống torrent : không đủ dung lượng</string>
     <string name="loading_torrent">Đang tải torrent…</string>
     <string name="error_no_video_file">Không có tệp băng hình</string>
-    <string name="torrent_file_to_play">Chọn một tệp để phát</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Duyệt một mạng chia sẻ</string>
     <string name="add_ssh_server">Duyệt qua một máy chủ FTP</string>
@@ -656,16 +653,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Đường dẫn tải về</string>
     <string name="torrent_blocklist">Danh sách chặn</string>
     <string name="blocklist_empty">URL không nên để trống</string>
     <string name="blocklist_invalid">Danh sách chặn không hợp lệ</string>
-    <string name="blocklist_file_not_found">Không tìm thấy tệp</string>
     <string name="blocklist_success">Làm mới danh sách chặn thành công</string>
-    <string name="blocklist_unknown_error">Không rõ</string>
-    <string name="blocklist_not_loaded">Không tải được</string>
-    <string name="torrent_blocklist_url">Url danh sách chặn</string>
     <string name="sdk_not_supported">Android 4.3 chưa được hỗ trợ.\nChúng tôi đang nỗ lực để khắc phục và hy vọng sẽ sớm có phiên bản mới!</string>
     <string name="manually_create_share">Thêm thư mục được lập chỉ mục theo URI</string>
     <string name="share_infos_incomplete">Bạn cần điền vào đường dẫn</string>
