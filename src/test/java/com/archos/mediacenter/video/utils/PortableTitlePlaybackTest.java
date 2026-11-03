@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.robolectric.annotation.SQLiteMode;
 
+/** Checks portable playback choices validate tracks and preserve unresolved intent without exporting private paths. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PortableTitlePlaybackTest {
