@@ -14,6 +14,10 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.utils.MiscUtils;
 import com.archos.mediacenter.video.utils.VideoMetadata;
@@ -36,6 +40,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,8 +180,8 @@ public class SubtitleManager {
      * from the preferences and call restoreStyle() (then apply the vertical position the same
      * way startup does): every key is gone, so everything falls back to its default.
      */
-    public static final java.util.List<String> STYLE_KEYS = java.util.Collections.unmodifiableList(
-            java.util.Arrays.asList(KEY_VPOS, KEY_COLOR, KEY_BG_OPACITY, KEY_BG_MODE, KEY_OVERRIDE_MODE,
+    public static final List<String> STYLE_KEYS = Collections.unmodifiableList(
+            Arrays.asList(KEY_VPOS, KEY_COLOR, KEY_BG_OPACITY, KEY_BG_MODE, KEY_OVERRIDE_MODE,
                     KEY_BOLD, KEY_OUTLINE_COLOR, KEY_SHADOW_COLOR, KEY_BACKGROUND_COLOR,
                     KEY_OUTLINE_WIDTH, KEY_SHADOW_WIDTH, KEY_FONT_SIZE_PT, KEY_FONT_SCALE));
 
@@ -191,7 +198,7 @@ public class SubtitleManager {
         public final boolean bold;
 
         public Defaults(Context context) {
-            final android.content.res.Resources res = context.getResources();
+            final Resources res = context.getResources();
             vpos = res.getInteger(R.integer.player_pref_subtitle_vpos_default);
             color = ContextCompat.getColor(context, R.color.subtitle_default_text_color);
             bgOpacity = res.getInteger(R.integer.subtitle_default_bg_opacity);
@@ -332,15 +339,15 @@ public class SubtitleManager {
     public static float calcTextSize(int size) {
         return 16f + 48f * Math.max(0, Math.min(100, size)) / 100f;
     }
-    private static int referenceShortSide(android.util.DisplayMetrics metrics, int canvasShortSide) {
+    private static int referenceShortSide(DisplayMetrics metrics, int canvasShortSide) {
         return Math.max(1, canvasShortSide > 0 ? canvasShortSide : Math.min(metrics.widthPixels, metrics.heightPixels));
     }
-    static int legacySizeToNativePt(int size, android.util.DisplayMetrics metrics, int canvasShortSide) {
-        float px = android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP, calcTextSize(size), metrics);
+    static int legacySizeToNativePt(int size, DisplayMetrics metrics, int canvasShortSide) {
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, calcTextSize(size), metrics);
         return Math.max(1, Math.round(px * 720f / referenceShortSide(metrics, canvasShortSide)));
     }
-    static int nativePtToLegacySize(int pt, android.util.DisplayMetrics metrics, int canvasShortSide) {
-        float oneSp = android.util.TypedValue.applyDimension(android.util.TypedValue.COMPLEX_UNIT_SP, 1f, metrics);
+    static int nativePtToLegacySize(int pt, DisplayMetrics metrics, int canvasShortSide) {
+        float oneSp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1f, metrics);
         float sp = pt * referenceShortSide(metrics, canvasShortSide) / (720f * Math.max(0.01f, oneSp));
         return Math.max(0, Math.min(100, Math.round((sp - 16f) * 100f / 48f)));
     }
@@ -546,7 +553,7 @@ public class SubtitleManager {
             return;
         }
         try {
-            android.graphics.Canvas c = mUiSurface.lockCanvas(null);
+            Canvas c = mUiSurface.lockCanvas(null);
             if (c != null) {
                 c.drawColor(0x00000000); // fully transparent clear
                 mUiSurface.unlockCanvasAndPost(c);
