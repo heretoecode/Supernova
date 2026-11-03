@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.text.format.Formatter;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import org.junit.Test;
@@ -20,8 +21,8 @@ public class Preview413Test {
         s.movies.add(local);s.movies.add(dav);s.movies.add(smb);
         String text=PreviewLibrarySummary.describe(RuntimeEnvironment.getApplication(),s,false);
         assertTrue(text.startsWith("3 Movies"));assertTrue(text.contains("Local Storage    1 movies"));assertTrue(text.contains("Network / WebDAV    2 movies"));
-        assertTrue(text.contains(android.text.format.Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),7168)));
-        assertTrue(text.contains(android.text.format.Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),6144)));
+        assertTrue(text.contains(Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),7168)));
+        assertTrue(text.contains(Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),6144)));
     }
     @Test public void mixedEpisodeSourcesCountDistinctShowsAndSumIndexedBytes(){
         Snapshot s=new Snapshot();Entry local=episode(1,7,"/storage/a.mkv"),network=episode(2,7,"https://server/dav/b.mkv"),other=episode(3,8,"webdav://server/c.mkv");
@@ -30,7 +31,7 @@ public class Preview413Test {
         String text=PreviewLibrarySummary.describe(RuntimeEnvironment.getApplication(),s,true);
         assertTrue(text.startsWith("2 Shows"));
         assertTrue(text.contains("Local Storage    1 shows"));assertTrue(text.contains("Network / WebDAV    2 shows"));assertTrue(text.contains("Shows spanning sources"));
-        assertTrue(text.contains(android.text.format.Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),3000)));
+        assertTrue(text.contains(Formatter.formatShortFileSize(RuntimeEnvironment.getApplication(),3000)));
     }
     private Entry episode(long id,long show,String path){return new Entry(new Episode(id,(int)id,1,(int)id,"Episode",0,0,"","","Show",path,null,null,100000,0,0,0,false,false,false,false,1,0,1920,1080,null,null,null,null,0,1,1000),0,show,"");}
 }
