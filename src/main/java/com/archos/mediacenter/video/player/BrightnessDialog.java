@@ -43,6 +43,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.archos.mediacenter.video.R;
 
 
+/** Displays playback brightness controls and reports brightness changes. */
 public class BrightnessDialog extends AlertDialog implements SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "BrightnessDialog";
 
