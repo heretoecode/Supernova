@@ -14,28 +14,19 @@
 
 package com.archos.mediacenter.video.leanback.network.rescan;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.leanback.app.GuidedStepSupportFragment;
 import androidx.leanback.widget.GuidanceStylist;
 import androidx.leanback.widget.GuidedAction;
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.R;
-import com.archos.mediaprovider.video.NetworkAutoRefresh;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ScheduledRescanShares extends GuidedStepSupportFragment {
