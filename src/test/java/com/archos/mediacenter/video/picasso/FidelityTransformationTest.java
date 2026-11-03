@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
+/** Checks image crop dimensions remain valid and bounded by the source image. */
 public class FidelityTransformationTest {
     @Test
     public void constructorRejectsNonPositiveTargetDimensions() {
