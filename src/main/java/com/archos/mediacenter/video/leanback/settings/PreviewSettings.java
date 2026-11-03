@@ -24,6 +24,20 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.*;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.archos.filecorelibrary.sftp.SftpHostTrust;
+import com.archos.mediacenter.utils.introdb.IntroSegments;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
+import com.archos.mediacenter.video.leanback.PreviewFocusRecycler;
+import com.archos.mediacenter.video.leanback.SharedThreePanel;
+import com.archos.mediacenter.video.leanback.StandardSwitchDrawable;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediacenter.video.player.SegmentSkippingPolicy;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.NetworkScannerUtil;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import com.archos.mediacenter.video.R;
@@ -95,7 +109,7 @@ public final class PreviewSettings {
             trust.setSummary(
                 "First connection stores a server identity. Changed identities are rejected. Only reset after verifying a legitimate server key change.");
             trust.setOnPreferenceClickListener(p -> {
-                String[] hosts = com.archos.filecorelibrary.sftp.SftpHostTrust.hosts();
+                String[] hosts = SftpHostTrust.hosts();
                 if (hosts.length == 0) {
                     PreviewDialog.read(fragment.requireContext(), "SFTP server identities",
                         "No identities recorded yet. First-use trust does not protect an already compromised first connection.");
@@ -108,7 +122,7 @@ public final class PreviewSettings {
                             "Cancel", "Reset identity for " + hosts[n]
                         }, 0, i -> {
                             if (i == 1)
-                                com.archos.filecorelibrary.sftp.SftpHostTrust.forget(hosts[n]);
+                                SftpHostTrust.forget(hosts[n]);
                         }));
                 return true;
             });
@@ -135,16 +149,16 @@ public final class PreviewSettings {
                  "subtitle_default_font", "subtitle_use_margins"
         })
             move(root, categories.get("Subtitles"), key);
-        if (root.findPreference(com.archos.mediacenter.video.utils.SubtitleDiscovery.ENABLED) == null) {
+        if (root.findPreference(SubtitleDiscovery.ENABLED) == null) {
             SwitchPreferenceCompat discovery = new SwitchPreferenceCompat(fragment.requireContext());
-            discovery.setKey(com.archos.mediacenter.video.utils.SubtitleDiscovery.ENABLED);
+            discovery.setKey(SubtitleDiscovery.ENABLED);
             discovery.setTitle("Prepare Subtitle Searches");
             discovery.setSummary(
                 "Check your chosen languages when viewing titles or starting playback. Cache results privately; downloads remain your choice. No provider searches during library import.");
             discovery.setDefaultValue(false);
             categories.get("Subtitles").addPreference(discovery);
             SwitchPreferenceCompat season = new SwitchPreferenceCompat(fragment.requireContext());
-            season.setKey(com.archos.mediacenter.video.utils.SubtitleDiscovery.PREFETCH);
+            season.setKey(SubtitleDiscovery.PREFETCH);
             season.setTitle("Prepare Current Season");
             season.setSummary(
                 "Pace searches for remaining local episodes after this season starts playing. Prepare only the next episode at a season boundary.");
@@ -178,14 +192,14 @@ public final class PreviewSettings {
         interval.setEntryValues(new String[] {
             "0", "900000", "1800000", "3600000", "21600000", "86400000"
         });
-        int savedPeriod = com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());
+        int savedPeriod = NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());
         interval.setValue(String.valueOf(savedPeriod));
         interval.setSummaryProvider(p -> {
-            int period = com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());
+            int period = NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());
             return period <= 0 ? "Off" : period / 60000 + " minutes · Android may defer background jobs";
         });
         interval.setOnPreferenceChangeListener((p, value) -> {
-            com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(
+            NetworkScannerUtil.scheduleNewRescan(
                 fragment.requireContext(), 0, Integer.parseInt(value.toString()), true);
             return true;
         });
@@ -266,23 +280,23 @@ public final class PreviewSettings {
             categories.get("Home & Discovery").addPreference(enabled);
         }
         SwitchPreferenceCompat diagnostics = new SwitchPreferenceCompat(fragment.requireContext());
-        diagnostics.setKey(com.archos.mediacenter.video.diagnostics.Diagnostics.KEY);
+        diagnostics.setKey(Diagnostics.KEY);
         diagnostics.setTitle("Diagnostic Logging");
         diagnostics.setSummary(
             "Detailed diagnostic logging starts enabled. Bounded local reports exclude credentials.");
-        diagnostics.setDefaultValue(com.archos.mediacenter.video.diagnostics.Diagnostics.defaultEnabled());
+        diagnostics.setDefaultValue(Diagnostics.defaultEnabled());
         diagnostics.setOnPreferenceChangeListener((p, value) -> {
             if ((Boolean) value) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(fragment.requireContext(), true);
+                Diagnostics.setEnabled(fragment.requireContext(), true);
                 return true;
             }
-            com.archos.mediacenter.video.diagnostics.Diagnostics.chooseDisable(
+            Diagnostics.chooseDisable(
                 fragment.requireContext(), checked -> diagnostics.setChecked(checked));
             return false;
         });
         categories.get("Advanced").addPreference(diagnostics);
         ListPreference diagnosticLevel = new ListPreference(fragment.requireContext());
-        diagnosticLevel.setKey(com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL);
+        diagnosticLevel.setKey(Diagnostics.LEVEL);
         diagnosticLevel.setTitle("Diagnostic Level");
         diagnosticLevel.setEntries(new String[] {
             "Normal", "Detailed (QA)"
@@ -301,11 +315,11 @@ public final class PreviewSettings {
             item.setTitle(label);
             item.setOnPreferenceClickListener(p -> {
                 if (label.equals("Issues Digest"))
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.showDigest(fragment.requireContext());
+                    Diagnostics.showDigest(fragment.requireContext());
                 else if (label.equals("Show Latest Reference"))
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.showLatestReference(fragment.requireContext());
+                    Diagnostics.showLatestReference(fragment.requireContext());
                 else
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(fragment.requireContext());
+                    Diagnostics.reportProblem(fragment.requireContext());
                 return true;
             });
             categories.get("Advanced").addPreference(item);
@@ -317,26 +331,26 @@ public final class PreviewSettings {
             "Save recent logs and safe device/build information as a ZIP. Choose a destination using Android Files.");
         export.setOnPreferenceClickListener(p -> {
             fragment.startActivity(new Intent(
-                fragment.requireContext(), com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity.class));
+                fragment.requireContext(), DiagnosticExportActivity.class));
             return true;
         });
         categories.get("Advanced").addPreference(export);
-        if (!com.archos.mediacenter.video.BuildConfig.FOUNDATION)
+        if (!BuildConfig.FOUNDATION)
             PreviewBuildInfo.install(fragment, categories.get("About"));
         for (String[] choice :
             new String[][] {
                 {
-                    com.archos.mediacenter.video.leanback.ViewingHistory.TRACK, "Track Watch History"
+                    ViewingHistory.TRACK, "Track Watch History"
                 },
                 {
-                    com.archos.mediacenter.video.leanback.ViewingHistory.RESUME, "Remember Playback Position"
+                    ViewingHistory.RESUME, "Remember Playback Position"
                 }
             }) {
                 SwitchPreferenceCompat enabled = new SwitchPreferenceCompat(fragment.requireContext());
                 enabled.setKey(choice[0]);
                 enabled.setTitle(choice[1]);
                 enabled.setDefaultValue(true);
-                enabled.setSummary(choice[0].equals(com.archos.mediacenter.video.leanback.ViewingHistory.TRACK)
+                enabled.setSummary(choice[0].equals(ViewingHistory.TRACK)
                     ? "Keep viewing history until explicitly cleared. Turning this off keeps existing history."
                     : "Save unfinished playback positions independently of viewing-history tracking.");
                 categories.get("Library").addPreference(enabled);
@@ -363,7 +377,7 @@ public final class PreviewSettings {
         clearHistory.setOnPreferenceClickListener(p -> {
             PreviewDialog.confirmDelete(fragment.requireContext(), "Clear Viewing History?",
                 "Saved watch history will be removed. Unfinished playback positions, media files and sources are kept.",
-                () -> com.archos.mediacenter.video.leanback.ViewingHistory.clear(fragment.requireContext(),
+                () -> ViewingHistory.clear(fragment.requireContext(),
                         () -> Toast
                                 .makeText(fragment.requireContext(),
                                     "Watch history cleared. Unfinished playback positions kept.",
@@ -456,8 +470,8 @@ public final class PreviewSettings {
             diagnosticGroup.setTitle("Diagnostics");
             advanced.addPreference(diagnosticGroup);
             for (String key : new String[] {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.KEY,
-                 com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL, "preview_diagnostic_Issues Digest",
+                Diagnostics.KEY,
+                 Diagnostics.LEVEL, "preview_diagnostic_Issues Digest",
                  "preview_diagnostic_Report a Problem", "preview_diagnostic_Show Latest Reference",
                  "export_diagnostic_report"
             })
@@ -477,27 +491,27 @@ public final class PreviewSettings {
             intro.setTitle("IntroDB");
             integrations.addPreference(intro);
             SwitchPreferenceCompat skip = new SwitchPreferenceCompat(fragment.requireContext());
-            skip.setKey(com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER);
+            skip.setKey(SegmentSkippingPolicy.MASTER);
             skip.setTitle("Enable IntroDB");
             skip.setSummary("Use available segment boundaries. Uncertain material plays normally.");
             skip.setDefaultValue(true);
             skip.setVisible(false);
             intro.addPreference(skip);
-            for (com.archos.mediacenter.utils.introdb.IntroSegments.Type type :
-            com.archos.mediacenter.utils.introdb.IntroSegments.Type.values()) {
+            for (IntroSegments.Type type :
+            IntroSegments.Type.values()) {
                 ListPreference policy = new ListPreference(fragment.requireContext());
-                policy.setKey(com.archos.mediacenter.video.player.SegmentSkippingPolicy.key(type));
+                policy.setKey(SegmentSkippingPolicy.key(type));
                 policy.setTitle(type.name().substring(0, 1) + type.name().substring(1).toLowerCase(java.util.Locale.ROOT));
                 policy.setEntries(new String[] {
                     "Play Normally", "Show Skip (5 seconds)",
-                    type == com.archos.mediacenter.utils.introdb.IntroSegments.Type.CREDITS ? "Safe Auto Skip"
+                    type == IntroSegments.Type.CREDITS ? "Safe Auto Skip"
                                                                                         : "Auto Skip",
                     "Smart"
                 });
                 policy.setEntryValues(new String[] {
                     "NORMAL", "PROMPT", "AUTO", "SMART"
                 });
-                policy.setDefaultValue(com.archos.mediacenter.video.player.SegmentSkippingPolicy.defaultMode(type).name());
+                policy.setDefaultValue(SegmentSkippingPolicy.defaultMode(type).name());
                 policy.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
                 intro.addPreference(policy);
             }
@@ -557,7 +571,7 @@ public final class PreviewSettings {
         String enable = "trakt_category".equals(group.getKey()) ? "supernova_integration_trakt"
             : "preview_opensubtitles".equals(group.getKey()) ? "supernova_integration_opensubtitles"
             : "preview_introdb".equals(group.getKey())
-            ? com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER
+            ? SegmentSkippingPolicy.MASTER
             : null;
         boolean enabled = enable == null
             || PreferenceManager.getDefaultSharedPreferences(group.getContext()).getBoolean(enable, true);
@@ -664,7 +678,7 @@ public final class PreviewSettings {
             public void onBindViewHolder(PreferenceViewHolder holder, int position) {
                 super.onBindViewHolder(holder, position);
                 Preference p = getItem(position);
-                com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
+                Diagnostics.semantic(
                     holder.itemView, "settings.preference." + p.getKey());
                 boolean category = p instanceof PreferenceCategory;
                 holder.itemView.setBackgroundColor(Color.TRANSPARENT);
@@ -680,10 +694,10 @@ public final class PreviewSettings {
                 });
                 holder.itemView.setForeground(category
                         ? null
-                        : com.archos.mediacenter.video.leanback.SharedThreePanel.accentFocus(
+                        : SharedThreePanel.accentFocus(
                               holder.itemView.getContext()));
                 if (!category)
-                    com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(holder.itemView);
+                    SharedThreePanel.rowSeparator(holder.itemView);
                 holder.itemView.setFocusable(!category && p.isEnabled() && p.isSelectable());
                 holder.itemView.setFocusableInTouchMode(!category && p.isEnabled() && p.isSelectable());
                 if (holder.itemView.hasFocus()) {
@@ -733,8 +747,8 @@ public final class PreviewSettings {
     // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
     @SuppressLint("RestrictedApi")
     public static RecyclerView grid(Context c) {
-        com.archos.mediacenter.video.leanback.PreviewFocusRecycler list =
-            new com.archos.mediacenter.video.leanback.PreviewFocusRecycler(c) {
+        PreviewFocusRecycler list =
+            new PreviewFocusRecycler(c) {
                 @Override
                 protected boolean locksHorizontalEdges() {
                     return false;
@@ -788,11 +802,11 @@ public final class PreviewSettings {
         toggle.setShowText(false);
         toggle.setThumbDrawable(thumb);
         toggle.setTrackTintList(null);
-        toggle.setTrackDrawable(new com.archos.mediacenter.video.leanback.StandardSwitchDrawable(context, false));
+        toggle.setTrackDrawable(new StandardSwitchDrawable(context, false));
         toggle.getTrackDrawable().setState(toggle.getDrawableState());
         toggle.setSplitTrack(false);
         toggle.setSwitchMinWidth(
-            PreviewDialog.dp(context, com.archos.mediacenter.video.leanback.StandardSwitchDrawable.WIDTH_DP));
+            PreviewDialog.dp(context, StandardSwitchDrawable.WIDTH_DP));
         toggle.setThumbTintList(ColorStateList.valueOf(Color.WHITE));
     }
 
@@ -812,7 +826,7 @@ public final class PreviewSettings {
         } else if (view instanceof CheckBox) {
             CheckBox box = (CheckBox) view;
             box.setButtonTintList(null);
-            box.setButtonDrawable(new com.archos.mediacenter.video.leanback.StandardSwitchDrawable(box.getContext()));
+            box.setButtonDrawable(new StandardSwitchDrawable(box.getContext()));
         } else if (view instanceof CompoundButton)
             ((CompoundButton) view).setButtonTintList(tint);
         if (view instanceof ViewGroup)
@@ -900,10 +914,10 @@ public final class PreviewSettings {
             overviewBody.setOrientation(LinearLayout.VERTICAL);
             overviewBody.setVisibility(View.GONE);
             middle.addView(overviewBody, new LinearLayout.LayoutParams(-1, -1));
-            TextView help = com.archos.mediacenter.video.leanback.SharedThreePanel.text(c, "", 16);
+            TextView help = SharedThreePanel.text(c, "", 16);
             LinearLayout helpBody = new LinearLayout(c);
             helpBody.setOrientation(LinearLayout.VERTICAL);
-            com.archos.mediacenter.video.leanback.SharedThreePanel.heading(helpBody, "Information");
+            SharedThreePanel.heading(helpBody, "Information");
             helpBody.addView(help);
             LinearLayout choices = new LinearLayout(c);
             choices.setOrientation(LinearLayout.VERTICAL);
@@ -926,8 +940,8 @@ public final class PreviewSettings {
             }, rememberedCentre = {
                 null
             };
-            com.archos.mediacenter.video.leanback.SharedThreePanel split =
-            new com.archos.mediacenter.video.leanback.SharedThreePanel(c) {
+            SharedThreePanel split =
+            new SharedThreePanel(c) {
                 @Override
                 public boolean dispatchKeyEvent(KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -1002,13 +1016,13 @@ public final class PreviewSettings {
             split.widths(.28f, .46f, .26f);
             if (backup != null)
             backup.attach(split, middle, helpScroll);
-            final com.archos.mediacenter.video.foundation.FoundationAboutWorkspace about =
-            com.archos.mediacenter.video.BuildConfig.FOUNDATION
-            ? new com.archos.mediacenter.video.foundation.FoundationAboutWorkspace(
+            final FoundationAboutWorkspace about =
+            BuildConfig.FOUNDATION
+            ? new FoundationAboutWorkspace(
                   fragment, split, middle, helpScroll, links)
             : null;
             HELP.put(activityContext(c), new WeakReference<>(help));
-            parent.addView(com.archos.mediacenter.video.leanback.SharedThreePanel.viewport(split), index, original);
+            parent.addView(SharedThreePanel.viewport(split), index, original);
             PreferenceScreen root = fragment.getPreferenceScreen();
             Map<Preference, Boolean> visibility = new IdentityHashMap<>();
             collectVisibility(root, visibility);
@@ -1085,8 +1099,8 @@ public final class PreviewSettings {
                         helpScroll.setVisibility(View.GONE);
                         split.widths(.28f, .72f, 0);
                         overviewBody.removeAllViews();
-                        com.archos.mediacenter.video.leanback.SharedThreePanel.heading(overviewBody, "Advanced");
-                        overviewBody.addView(com.archos.mediacenter.video.leanback.SharedThreePanel.text(c,
+                        SharedThreePanel.heading(overviewBody, "Advanced");
+                        overviewBody.addView(SharedThreePanel.text(c,
                         "Compatibility controls and local diagnostics\n\nThese options support devices and media requiring specific behaviour. Change compatibility settings only when needed. Expand Advanced to select a section.",
                         17));
                     }
@@ -1094,13 +1108,13 @@ public final class PreviewSettings {
                         list.setVisibility(View.GONE);
                         overviewBody.setVisibility(View.VISIBLE);
                         overviewBody.removeAllViews();
-                        com.archos.mediacenter.video.leanback.SharedThreePanel.heading(overviewBody, "Integrations");
+                        SharedThreePanel.heading(overviewBody, "Integrations");
                         String[] titles = {
                             "Trakt", "IntroDB", "OpenSubtitles"
                         },
                              keys = {
                                  "supernova_integration_trakt",
-                                 com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER,
+                                 SegmentSkippingPolicy.MASTER,
                                  "supernova_integration_opensubtitles"
                              };
                         String[] explanations = {
@@ -1117,7 +1131,7 @@ public final class PreviewSettings {
                             toggle.setTextSize(17);
                             toggle.setFocusable(true);
                             toggle.setChecked(PreferenceManager.getDefaultSharedPreferences(c).getBoolean(keys[n], true));
-                            toggle.setBackground(com.archos.mediacenter.video.leanback.SharedThreePanel.accentFocus(c));
+                            toggle.setBackground(SharedThreePanel.accentFocus(c));
                             toggle.setOnFocusChangeListener((v, yes) -> {
                                 if (yes)
                                 help.setText(explanations[integrationIndex]);
@@ -1139,7 +1153,7 @@ public final class PreviewSettings {
                                 }
                             });
                             overviewBody.addView(toggle, new LinearLayout.LayoutParams(-1, dp(fragment, 46)));
-                            com.archos.mediacenter.video.leanback.SharedThreePanel.divider(overviewBody);
+                            SharedThreePanel.divider(overviewBody);
                         }
                     }
                 };
@@ -1189,7 +1203,7 @@ public final class PreviewSettings {
                             continue;
                         String integration = "trakt_category".equals(p.getKey()) ? "supernova_integration_trakt"
                             : "preview_introdb".equals(p.getKey())
-                            ? com.archos.mediacenter.video.player.SegmentSkippingPolicy.MASTER
+                            ? SegmentSkippingPolicy.MASTER
                             : "preview_opensubtitles".equals(p.getKey()) ? "supernova_integration_opensubtitles"
                                                                          : null;
                         if (integration != null
@@ -1380,8 +1394,8 @@ public final class PreviewSettings {
         PreviewIcon.apply(button, name, 22);
         button.setFocusable(true);
         button.setFocusableInTouchMode(true);
-        button.setBackground(com.archos.mediacenter.video.leanback.SharedThreePanel.accentFocus(c));
-        com.archos.mediacenter.video.leanback.SharedThreePanel.rowSeparator(button);
+        button.setBackground(SharedThreePanel.accentFocus(c));
+        SharedThreePanel.rowSeparator(button);
         return button;
     }
 
