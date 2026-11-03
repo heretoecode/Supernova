@@ -7,6 +7,11 @@ import android.net.Uri;
 import com.archos.mediaprovider.DbHolder;
 import com.archos.mediacenter.video.streaming.putio.PutioReconciliation;
 import com.archos.mediacenter.video.streaming.putio.PutioAssociationStore;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -65,7 +70,7 @@ public class PreviewPutioNativeImportTest {
         provider.attachInfo(app, null);
         ShadowContentResolver.registerProviderInternal(VideoStore.AUTHORITY, provider);
         type = Class.forName("com.archos.mediacenter.video.streaming.putio.PutioLibraryBridge");
-        java.lang.reflect.Constructor<?> constructor = type.getDeclaredConstructor(Context.class);
+        Constructor<?> constructor = type.getDeclaredConstructor(Context.class);
         constructor.setAccessible(true);
         bridge = constructor.newInstance(app);
     }
@@ -77,7 +82,7 @@ public class PreviewPutioNativeImportTest {
     }
 
     Object call(String name, Class<?>[] parameters, Object... args) throws Exception {
-        java.lang.reflect.Method method = type.getDeclaredMethod(name, parameters);
+        Method method = type.getDeclaredMethod(name, parameters);
         method.setAccessible(true);
         return method.invoke(bridge, args);
     }
@@ -140,7 +145,7 @@ public class PreviewPutioNativeImportTest {
                 Uri.class, PutioReconciliation.File.class
             }, source, file);
             fail();
-        } catch (java.lang.reflect.InvocationTargetException expected) {
+        } catch (InvocationTargetException expected) {
             assertTrue(expected.getCause() instanceof IllegalStateException);
         }
         try (Cursor c = database.get().rawQuery("SELECT COUNT(*) FROM files", null)) {
@@ -151,8 +156,8 @@ public class PreviewPutioNativeImportTest {
 
     private PutioReconciliation.Snapshot snapshot(long folder, boolean complete, PutioReconciliation.File... files) {
         PutioReconciliation.Snapshot s = new PutioReconciliation.Snapshot("10:" + folder, "first");
-        s.page("first", java.util.Arrays.asList(files),
-            complete ? java.util.Collections.emptyList() : java.util.Collections.singletonList("more"));
+        s.page("first", Arrays.asList(files),
+            complete ? Collections.emptyList() : Collections.singletonList("more"));
         if (complete)
             s.finish();
         return s;
@@ -167,7 +172,7 @@ public class PreviewPutioNativeImportTest {
             store.prepare(10, 20, source);
             PutioAssociationStore.Session session = store.begin(10, 20);
             assertTrue(store.commit(session, snapshot(20, true, file),
-                java.util.Collections.singletonList(new PutioReconciliation.Existing(id, "Original.mkv", 100, 0))));
+                Collections.singletonList(new PutioReconciliation.Existing(id, "Original.mkv", 100, 0))));
             assertTrue(store.activate(session));
         }
         return id;
@@ -175,7 +180,7 @@ public class PreviewPutioNativeImportTest {
 
     private void reassign(long folder, Uri target, PutioReconciliation.Snapshot snapshot) throws Exception {
         Class<?> implementation = Class.forName("com.archos.mediacenter.video.streaming.putio.PutioReassignment");
-        java.lang.reflect.Method method =
+        Method method =
             implementation.getDeclaredMethod("apply", Context.class, long.class, long.class, long.class, Uri.class,
                 PutioAssociationStore.DisconnectChoice.class, PutioReconciliation.Snapshot.class);
         method.setAccessible(true);
@@ -192,7 +197,7 @@ public class PreviewPutioNativeImportTest {
         try {
             reassign(21, target, full);
             fail();
-        } catch (java.lang.reflect.InvocationTargetException expected) {
+        } catch (InvocationTargetException expected) {
             assertTrue(expected.getCause() instanceof IllegalStateException);
         }
         try (PutioAssociationStore store = new PutioAssociationStore(RuntimeEnvironment.getApplication())) {
@@ -218,7 +223,7 @@ public class PreviewPutioNativeImportTest {
         try {
             reassign(21, Uri.parse("https://webdav.put.io/NewFilms"), snapshot(21, false));
             fail();
-        } catch (java.lang.reflect.InvocationTargetException expected) {
+        } catch (InvocationTargetException expected) {
             assertTrue(expected.getCause() instanceof IllegalArgumentException);
         }
         try (PutioAssociationStore store = new PutioAssociationStore(RuntimeEnvironment.getApplication())) {
