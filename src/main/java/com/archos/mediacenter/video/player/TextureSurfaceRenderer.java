@@ -18,6 +18,7 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLUtils;
 import android.util.Log;
 
+import java.util.concurrent.CountDownLatch;
 import javax.microedition.khronos.egl.*;
 
 /**
@@ -41,7 +42,7 @@ public abstract class TextureSurfaceRenderer implements Runnable
     private volatile boolean running;
     private volatile boolean pause;
     private Thread renderThread;
-    private final java.util.concurrent.CountDownLatch initialized = new java.util.concurrent.CountDownLatch(1);
+    private final CountDownLatch initialized = new CountDownLatch(1);
     private RuntimeException initializationError;
 
     /**
