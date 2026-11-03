@@ -8,18 +8,43 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.152",
-    "version_code": 152,
-    "date": "2026-11-02",
-    "kind": "Shield QA candidate \u2014 owner-approved designs; physical verification pending",
+    "version": "0.153",
+    "version_code": 153,
+    "date": "2026-11-03",
+    "kind": "Shield QA candidate \u2014 one global style for buttons, menus and panels; physical verification pending",
     "notes": [
-      "Playback Settings is one side panel with Subtitles, Audio and Playback tabs; track lists and subtitle downloads open inside it.",
-      "Edit Page is a side panel over the live custom page, which updates as settings change.",
-      "13 more language flags (Welsh, Scottish, Catalan, Galician, Basque, Arab League, Esperanto and others) and the Spanish/Arabic mappings.",
-      "HUD no longer jumps on first show; rounded-rectangle buttons; library toolbar centred; custom page blurs under the top bar."
+      "Every button: black at rest, white box with black text and icon on focus, sized to its content; one shared style app-wide.",
+      "Menus and panels share 97% navy glass; rows focus with a white outline; pop-up menus lose their titles, gain inline group headings and fit their content.",
+      "Streaming button shows the provider name with an open-externally icon; providers use official single-colour logos or a uniform initials tile.",
+      "Settings grid fills the page with larger tiles, icons beside single-line titles and no page title; old build box removed."
     ]
   },
   "history": [
+    {
+      "version": "0.152",
+      "version_code": 152,
+      "date": "2026-11-02",
+      "kind": "Shield QA candidate \u2014 owner-approved designs; physical verification pending",
+      "notes": [
+        "Playback Settings is one side panel with Subtitles, Audio and Playback tabs; track lists and subtitle downloads open inside it.",
+        "Edit Page is a side panel over the live custom page, which updates as settings change.",
+        "13 more language flags (Welsh, Scottish, Catalan, Galician, Basque, Arab League, Esperanto and others) and the Spanish/Arabic mappings.",
+        "HUD no longer jumps on first show; rounded-rectangle buttons; library toolbar centred; custom page blurs under the top bar."
+      ],
+      "source_sha": "d81c002728bfd8b80521fff1ac74f7c882ab66d9",
+      "evidence": "docs/0.152/SIGNED_QA_EVIDENCE.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "6b11325ed701339e3060c6b5da60f40cdfb2023811db991cdb67a26105e046aa",
+      "artifact_id": 13167518679,
+      "run_id": 41500194694,
+      "apks": [
+        {
+          "sha256": "d5faf58926767b8219694b84e98e568bed1f455d095633f6cfc3fa4af92989dc",
+          "size": 95648589,
+          "filename": "Supernova_0.152.apk"
+        }
+      ]
+    },
     {
       "version": "0.151",
       "version_code": 151,
