@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/** Renders subtitles and coordinates their surface, styling and 3D layout. */
 public class SubtitleEngine implements TextureView.SurfaceTextureListener, SurfaceController.VideoBoxListener {
 
     private static final Logger log = LoggerFactory.getLogger(SubtitleEngine.class);
