@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
+import com.archos.mediacenter.video.picasso.FidelityTransformation;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.leanback.DetailsBackdropController;
 import com.archos.mediacenter.video.leanback.adapter.object.WebPageLink;
@@ -290,7 +291,7 @@ public class TvshowMoreDetailsFragment extends DetailsFragmentWithLessTopOffset 
                                         .load(file)
                                         .noFade() // no fade since we are using activity transition anyway
                                         .config(Bitmap.Config.ARGB_8888)
-                                        .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(
+                                        .transform(new FidelityTransformation(
                                                 getResources().getDimensionPixelSize(R.dimen.details_poster_width),
                                                 getResources().getDimensionPixelSize(R.dimen.details_poster_height)))
                                         .get();
@@ -429,7 +430,7 @@ public class TvshowMoreDetailsFragment extends DetailsFragmentWithLessTopOffset 
                                 .resize((int)(width * 2.0f), (int)(height * 2.0f))
                                 .centerCrop()
                                 .onlyScaleDown()
-                                .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(width, height))
+                                .transform(new FidelityTransformation(width, height))
                                 .get();
                     } catch (IOException e) {
                         Log.d(TAG, "ShowPosterSaverTask Picasso load exception", e);
