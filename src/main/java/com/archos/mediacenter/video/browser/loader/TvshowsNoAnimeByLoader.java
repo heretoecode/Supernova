@@ -64,6 +64,7 @@ public abstract class TvshowsNoAnimeByLoader extends CursorLoader implements Com
         return sb.toString();
     }
 
+    @Override
     public Loader getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mForceHideVideos = hideWatchedVideos;
         return  new CursorLoader(getContext(),
