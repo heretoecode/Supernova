@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
 import android.database.ContentObserver;
+import android.net.Uri;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoStore;
@@ -40,7 +41,7 @@ public class RestorePublicationTest {
         }
         observer = new ContentObserver(null) {
             @Override
-            public void onChange(boolean self, android.net.Uri uri) {
+            public void onChange(boolean self, Uri uri) {
                 assertFalse("Refresh follows journal cleanup", fixture.journal.exists());
                 notified.incrementAndGet();
             }
@@ -116,7 +117,7 @@ public class RestorePublicationTest {
         fixture.app.getContentResolver().unregisterContentObserver(observer);
         observer = new ContentObserver(null) {
             @Override
-            public void onChange(boolean self, android.net.Uri uri) {
+            public void onChange(boolean self, Uri uri) {
                 throw new IllegalStateException("Synthetic observer failure");
             }
         };
