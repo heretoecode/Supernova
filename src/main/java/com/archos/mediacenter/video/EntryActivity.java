@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.PreviewStartupSurface;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
@@ -50,7 +51,7 @@ public class EntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         // Apply window theme after super.onCreate()
-        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new com.archos.mediacenter.video.leanback.PreviewStartupSurface(this));else themeManager.applyWindowTheme(this);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new PreviewStartupSurface(this));else themeManager.applyWindowTheme(this);
 
         if (log.isDebugEnabled()) log.debug("onCreate");
 
