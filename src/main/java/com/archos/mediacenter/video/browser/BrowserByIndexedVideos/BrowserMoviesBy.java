@@ -44,6 +44,7 @@ import com.archos.mediacenter.video.utils.VideoUtils;
 
 import java.util.ArrayList;
 
+/** Provides shared loading, sorting and presentation for grouped movie browsers. */
 public abstract class BrowserMoviesBy extends CursorBrowserByVideo implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final boolean DBG = false;
