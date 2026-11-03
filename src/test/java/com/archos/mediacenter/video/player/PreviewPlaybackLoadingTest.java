@@ -1,6 +1,13 @@
 package com.archos.mediacenter.video.player;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.squareup.picasso.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,12 +17,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = android.app.Application.class, sdk = 28)
+@Config(application = Application.class, sdk = 28)
 public class PreviewPlaybackLoadingTest {
     @Test
     public void actualLoadingViewUsesOnlyCachedProviderTaglineAndCollapsesMissingCopy() throws Exception {
         com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             try {
                 Picasso.get();
@@ -28,7 +35,7 @@ public class PreviewPlaybackLoadingTest {
                     -> new org.json.JSONObject()
                         .put("tagline", "Verified series tagline")
                         .put("overview", "Never substitute this synopsis"));
-            PreviewPlaybackLoading loading = new PreviewPlaybackLoading(host.get(), new android.content.Intent());
+            PreviewPlaybackLoading loading = new PreviewPlaybackLoading(host.get(), new Intent());
             host.get().setContentView(loading);
             com.archos.mediacenter.utils.videodb.VideoDbInfo info =
                 new com.archos.mediacenter.utils.videodb.VideoDbInfo();
@@ -40,20 +47,20 @@ public class PreviewPlaybackLoadingTest {
             info.scraperEpisodeNr = 1;
             info.duration = 3600000;
             loading.bind(info, "Fallback");
-            android.widget.TextView copy = org.robolectric.util.ReflectionHelpers.getField(loading, "episode");
+            TextView copy = org.robolectric.util.ReflectionHelpers.getField(loading, "episode");
             assertEquals("Verified series tagline", copy.getText().toString());
-            assertEquals(android.view.View.VISIBLE, copy.getVisibility());
+            assertEquals(View.VISIBLE, copy.getVisibility());
             info.scraperShowId = "987124";
             loading.bind(info, "Fallback");
             assertEquals("", copy.getText().toString());
-            assertEquals(android.view.View.GONE, copy.getVisibility());
-            loading.measure(android.view.View.MeasureSpec.makeMeasureSpec(960, android.view.View.MeasureSpec.EXACTLY),
-                android.view.View.MeasureSpec.makeMeasureSpec(540, android.view.View.MeasureSpec.EXACTLY));
+            assertEquals(View.GONE, copy.getVisibility());
+            loading.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
             loading.layout(0, 0, 960, 540);
-            assertTrue(loading.getFocusables(android.view.View.FOCUS_FORWARD).isEmpty());
-            loading.setVisibility(android.view.View.INVISIBLE);
+            assertTrue(loading.getFocusables(View.FOCUS_FORWARD).isEmpty());
+            loading.setVisibility(View.INVISIBLE);
             loading.begin();
-            assertEquals(android.view.View.VISIBLE, loading.getVisibility());
+            assertEquals(View.VISIBLE, loading.getVisibility());
             assertEquals(1f, loading.getAlpha(), 0);
         } finally {
             host.pause().stop().destroy();
@@ -64,13 +71,13 @@ public class PreviewPlaybackLoadingTest {
     /** Owner decision 2 Nov 2026: no tint/gradient layer may sit over the preparing-playback artwork. */
     @Test
     public void artworkIsNotCoveredByAnyShadeLayer() {
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
-            PreviewPlaybackLoading loading = new PreviewPlaybackLoading(host.get(), new android.content.Intent());
+            PreviewPlaybackLoading loading = new PreviewPlaybackLoading(host.get(), new Intent());
             assertEquals("only artwork and the text block", 2, loading.getChildCount());
-            assertTrue(loading.getChildAt(0) instanceof android.widget.ImageView);
-            assertTrue(loading.getChildAt(1) instanceof android.widget.LinearLayout);
-            android.widget.ImageView artwork = (android.widget.ImageView) loading.getChildAt(0);
+            assertTrue(loading.getChildAt(0) instanceof ImageView);
+            assertTrue(loading.getChildAt(1) instanceof LinearLayout);
+            ImageView artwork = (ImageView) loading.getChildAt(0);
             assertNull("artwork must not be tinted", artwork.getColorFilter());
             assertEquals(1f, artwork.getAlpha(), 0f);
         } finally {
