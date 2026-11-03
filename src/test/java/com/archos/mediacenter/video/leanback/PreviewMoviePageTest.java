@@ -13,32 +13,45 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.leanback.widget.*;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.NonIndexedVideo;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.leanback.details.*;
+import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
+import com.archos.mediascraper.EpisodeTags;
+import com.archos.mediascraper.ScraperTrailer;
+import com.archos.mediascraper.ShowTags;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class PreviewMoviePageTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
@@ -48,14 +61,14 @@ public class PreviewMoviePageTest {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
             LinearLayout people = new LinearLayout(host.get());
-            org.robolectric.util.ReflectionHelpers.callInstanceMethod(
+            ReflectionHelpers.callInstanceMethod(
                 page, "person",
-                org.robolectric.util.ReflectionHelpers.ClassParameter.from(LinearLayout.class, people),
-                org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class, "Actor"),
-                org.robolectric.util.ReflectionHelpers.ClassParameter.from(String.class, "Role"));
+                ReflectionHelpers.ClassParameter.from(LinearLayout.class, people),
+                ReflectionHelpers.ClassParameter.from(String.class, "Actor"),
+                ReflectionHelpers.ClassParameter.from(String.class, "Role"));
             assertFalse(people.getChildAt(0).isFocusable());
             assertNull(people.getChildAt(0).getBackground());
-            var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            var browser = new UniversalFileBrowser(host.get());
             Drawable navigation =
                 browser.findViewWithTag("semantic:network.category.overview").getBackground();
             navigation.setState(new int[] {android.R.attr.state_focused});
@@ -74,12 +87,12 @@ public class PreviewMoviePageTest {
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
             host.get().setContentView(page);
             page.bindShow(
-                new com.archos.mediacenter.video.browser.adapters.object.Tvshow(7, "Series", null, 1, 2, 0, "/series"),
+                new Tvshow(7, "Series", null, 1, 2, 0, "/series"),
                 () -> {});
             for (boolean complete : new boolean[] {false, true}) {
                 PreviewLibraryLoader.Snapshot snapshot = new PreviewLibraryLoader.Snapshot();
                 for (int id = 1; id <= 2; id++) {
-                    var episode = new com.archos.mediacenter.video.browser.adapters.object.Episode(
+                    var episode = new Episode(
                         id, id, 1, id, "Episode", 0, 0, "", "Synopsis", "Series", "/fixture/" + id, null, null, 0, 0, 0,
                         0, false, false, false, false, 0, 0, 1920, 1080, null, null, null, null, 0, 1,
                         id == 1 || complete ? 1000 : 0);
@@ -115,7 +128,7 @@ public class PreviewMoviePageTest {
                 new PreviewMoviePage(host.get(), () -> actions, a -> chosen[0] = a.getId(), () -> {}, uri -> {});
             host.get().setContentView(page);
             Uri file = Uri.parse("file:///storage/unmatched.mkv");
-            page.bind(new com.archos.mediacenter.video.browser.adapters.object.NonIndexedVideo(
+            page.bind(new NonIndexedVideo(
                 file, file, "Unmatched fixture", null));
             PreviewPagesTest.layout(page);
             View match = page.findViewWithTag("action:Match Metadata"), play = page.findViewWithTag("action:Play");
@@ -141,19 +154,19 @@ public class PreviewMoviePageTest {
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void scrolledTitleDoesNotIntroduceAFocusTarget() throws Exception {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
             TopNavigation nav = new TopNavigation(host.get(), page, i -> {}, page::atTop);
             host.get().setContentView(nav);
-            page.bindRemote(new org.json.JSONObject().put("title", "Compact title fixture"), "movie", 0);
+            page.bindRemote(new JSONObject().put("title", "Compact title fixture"), "movie", 0);
             PreviewPagesTest.layout(nav);
             View panel = page.findViewWithTag("semantic:details.panel.key.information");
             assertFalse(panel.requestFocus());
@@ -179,13 +192,13 @@ public class PreviewMoviePageTest {
 
     @Test
     public void backgroundSnapshotRetainsInformationPanelFocus() throws Exception {
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
             host.get().setContentView(page);
-            page.bindRemote(new org.json.JSONObject().put("title", "Fixture"), "movie", 0);
+            page.bindRemote(new JSONObject().put("title", "Fixture"), "movie", 0);
             PreviewPagesTest.layout(page);
             View panel = page.findViewWithTag("semantic:details.panel.key.information");
             assertNotNull(panel);
@@ -202,13 +215,13 @@ public class PreviewMoviePageTest {
 
     @Test
     public void remotePanelsKeepSixRegionsWithHonestMissingRatings() throws Exception {
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             PreviewMoviePage page =
                 new PreviewMoviePage(host.get(), ArrayObjectAdapter::new, a -> {}, () -> {}, uri -> {});
             host.get().setContentView(page);
-            page.bindRemote(new org.json.JSONObject()
+            page.bindRemote(new JSONObject()
                                 .put("title", "Remote fixture")
                                 .put("tagline", "A real supplied tagline")
                                 .put("revenue", 1234),
@@ -228,12 +241,12 @@ public class PreviewMoviePageTest {
     @Test
     public void extrasHavePopulatedCategoriesOnly() throws Exception {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             PreviewMoviePage page =
@@ -242,9 +255,9 @@ public class PreviewMoviePageTest {
             page.setTags(
                 null,
                 Arrays.asList(
-                    new com.archos.mediascraper.ScraperTrailer(com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER,
+                    new ScraperTrailer(ScraperTrailer.Type.SHOW_TRAILER,
                                                                "Official Trailer", "abcdefghijk", "YouTube", ""),
-                    new com.archos.mediascraper.ScraperTrailer(com.archos.mediascraper.ScraperTrailer.Type.SHOW_TRAILER,
+                    new ScraperTrailer(ScraperTrailer.Type.SHOW_TRAILER,
                                                                "Official Teaser", "lmnopqrstuv", "YouTube", "")),
                 Collections.emptyList());
             assertNotNull(PreviewPagesTest.findText(page, "Trailers"));
@@ -263,26 +276,26 @@ public class PreviewMoviePageTest {
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void episodeMetadataDoesNotBorrowSeriesRating() throws Exception {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             ArrayObjectAdapter actions = new ArrayObjectAdapter();
             PreviewMoviePage page = new PreviewMoviePage(host.get(), () -> actions, a -> {}, () -> {}, uri -> {});
             TopNavigation shell = new TopNavigation(host.get(), page, i -> {}, () -> page.getScrollY() == 0);
             host.get().setContentView(shell);
-            com.archos.mediacenter.video.browser.adapters.object.Episode episode =
-                new com.archos.mediacenter.video.browser.adapters.object.Episode(
+            Episode episode =
+                new Episode(
                     1, 1, 1, 1, "Pilot", 1642377600000L, 0, "", "An episode synopsis", "Example show", "/episode", null,
                     null, 0, 0, 0, 0, false, false, false, false, 1, 0, 1920, 1080, null, null, null, null, 0, 1, 2000);
-            com.archos.mediascraper.ShowTags series = new com.archos.mediascraper.ShowTags();
+            ShowTags series = new ShowTags();
             series.setRating(9.8f);
             series.addGenreIfAbsent("Drama");
-            com.archos.mediascraper.EpisodeTags tags = new com.archos.mediascraper.EpisodeTags(series, 1, 1);
+            EpisodeTags tags = new EpisodeTags(series, 1, 1);
             tags.setRuntime(45, TimeUnit.MINUTES);
             page.bind(episode);
             page.setTags(tags, Collections.emptyList(), Collections.emptyList());
@@ -305,12 +318,12 @@ public class PreviewMoviePageTest {
     @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void moviePageDelegatesPlaybackAndRenders() throws Exception {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host =
+        ActivityController<TopNavigationTest.Host> host =
             Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             ArrayObjectAdapter actions = new ArrayObjectAdapter();
@@ -345,7 +358,7 @@ public class PreviewMoviePageTest {
             primary.requestFocus();
             assertNotNull(PreviewPagesTest.findText(page, "SMB · server/movies/film.mkv"));
             assertNotNull(PreviewPagesTest.findText(page, "MKV"));
-            com.archos.mediascraper.ShowTags cast = new com.archos.mediascraper.ShowTags();
+            ShowTags cast = new ShowTags();
             for (int person = 1; person <= 10; person++)
                 cast.addActorIfAbsent("Fixture Person " + person, "Role " + person);
             page.setTags(cast, Collections.emptyList(), Collections.emptyList());
