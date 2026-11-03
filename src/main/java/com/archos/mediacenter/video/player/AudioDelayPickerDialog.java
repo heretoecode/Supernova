@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Displays an audio delay picker dialog and reports delay changes. */
 public class AudioDelayPickerDialog extends AlertDialog implements OnClickListener,
         AudioDelayPicker.OnAudioDelayChangedListener, AudioDelayPickerDialogInterface {
 
