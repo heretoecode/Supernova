@@ -45,12 +45,15 @@ public class OmdbSupplementTest {
     public void deniedAccessDoesNotReadKeyOrCallTransport() {
         OmdbSupplement client = new OmdbSupplement(
             new OmdbSupplement.Access() {
+                @Override
                 public boolean permitted() {
                     return false;
                 }
+                @Override
                 public boolean acquireRequest() {
                     throw new AssertionError();
                 }
+                @Override
                 public String apiKey() {
                     throw new AssertionError();
                 }
@@ -116,12 +119,15 @@ public class OmdbSupplementTest {
 
     private OmdbSupplement.Access access(boolean budget) {
         return new OmdbSupplement.Access() {
+            @Override
             public boolean permitted() {
                 return true;
             }
+            @Override
             public boolean acquireRequest() {
                 return budget;
             }
+            @Override
             public String apiKey() {
                 return "fixture00";
             }
