@@ -8,6 +8,7 @@ import android.view.*;
 import android.widget.TextView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.squareup.picasso.Picasso;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,10 @@ public class LibraryStatisticsLayoutTest {
     public void setup() {
         PreviewAsyncFixtures.offlineTransport();
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
