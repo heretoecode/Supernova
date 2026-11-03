@@ -5,7 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import com.archos.mediaprovider.video.ProviderDiscoveryGate;
+import java.io.InterruptedIOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.*;
+import java.util.Locale;
 
 /** Explicit, resumable source change. The journal precedes native URI writes; no media is deleted. */
 final class PutioReassignment {
@@ -151,7 +155,7 @@ final class PutioReassignment {
                     PutioLibraryBridge library = new PutioLibraryBridge(context);
                     for (PutioAssociationStore.Link link : links.values()) {
                         if (Thread.currentThread().isInterrupted())
-                            throw new java.io.InterruptedIOException();
+                            throw new InterruptedIOException();
                         PutioReconciliation.File file = files.get(link.fileId);
                         if (file == null)
                             continue;
@@ -225,11 +229,11 @@ final class PutioReassignment {
     }
 
     private static String retiredKey(long account, Uri source) throws Exception {
-        byte[] hash = java.security.MessageDigest.getInstance("SHA-256").digest(
-            source.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        byte[] hash = MessageDigest.getInstance("SHA-256").digest(
+            source.toString().getBytes(StandardCharsets.UTF_8));
         StringBuilder key = new StringBuilder("putio-retired:" + account + ":");
         for (byte b : hash)
-            key.append(String.format(java.util.Locale.ROOT, "%02x", b & 255));
+            key.append(String.format(Locale.ROOT, "%02x", b & 255));
         return key.toString();
     }
 
