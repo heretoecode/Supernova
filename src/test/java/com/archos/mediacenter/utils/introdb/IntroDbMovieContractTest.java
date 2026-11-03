@@ -8,6 +8,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks movie and episode lookup identifiers and protection of post-credit material in IntroDB markers. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class IntroDbMovieContractTest {
     @Test public void movieReadsRequireImdbAndOmitEpisodeIdentifiers() {
