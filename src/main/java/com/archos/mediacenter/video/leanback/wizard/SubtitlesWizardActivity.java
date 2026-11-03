@@ -20,6 +20,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.leanback.app.GuidedStepSupportFragment;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
 public class SubtitlesWizardActivity extends LeanbackActivity {
@@ -28,7 +29,7 @@ public class SubtitlesWizardActivity extends LeanbackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
             previewChooser=com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.create(this);
             previewChooser.start();return;
         }
