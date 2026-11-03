@@ -13,8 +13,6 @@
  */
 package com.archos.customizedleanback.widget;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import androidx.leanback.R;
 import android.view.LayoutInflater;
 import android.view.View;
