@@ -40,9 +40,8 @@ import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.DensityTweak;
 import com.archos.mediacenter.video.EntryActivity;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.UiChoiceDialog;
+import com.archos.mediacenter.video.UiModePolicy;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
-import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.PermissionChecker;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
@@ -72,7 +71,7 @@ public class MainActivityLeanback extends LeanbackActivity {
             result -> {
                 if (result.getResultCode() == VideoPreferencesCommon.ACTIVITY_RESULT_UI_MODE_CHANGED) {
                     String newUiModeLeanback = PreferenceManager.getDefaultSharedPreferences(this)
-                            .getString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
+                            .getString(UiModePolicy.UI_CHOICE_LEANBACK_KEY, "-");
                     if (!newUiModeLeanback.equals(mCurrentUiModeLeanback)) {
                         finish();
                         startActivity(new Intent(this, EntryActivity.class));
@@ -166,28 +165,12 @@ public class MainActivityLeanback extends LeanbackActivity {
             }
         });
 
-        // Check if user disabled "Always start in TV interface" - if so, redirect to phone UI
-        if (!UiChoiceDialog.applicationIsInLeanbackMode(this)) {
-            if (log.isDebugEnabled()) log.debug("onCreate: User disabled leanback mode, redirecting to MainActivity");
-            Intent i = new Intent(this, MainActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            if (getIntent().getData() != null) {
-                i.setData(getIntent().getData());
-            }
-            if (getIntent().getExtras() != null) {
-                i.putExtras(getIntent().getExtras());
-            }
-            startActivity(i);
-            finish();
-            return;
-        }
-
         // Batch all SharedPreferences operations into single apply
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
 
         // Update uimode/uimode_leanback to reflect we're in leanback mode
-        UiChoiceDialog.updateUiModePreferencesInEditor(this, editor);
+        UiModePolicy.updateUiModePreferencesInEditor(this, editor);
 
         // If we are starting the Browser again, we aren't unpausing a Video
         editor.putBoolean("user_paused_video", false);
@@ -252,7 +235,7 @@ public class MainActivityLeanback extends LeanbackActivity {
      */
     public void startPreferencesActivity() {
         // Save the uimode_leanback to check if it changed when back from preferences
-        mCurrentUiModeLeanback = PreferenceManager.getDefaultSharedPreferences(this).getString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
+        mCurrentUiModeLeanback = PreferenceManager.getDefaultSharedPreferences(this).getString(UiModePolicy.UI_CHOICE_LEANBACK_KEY, "-");
         preferencesLauncher.launch(new Intent(this, VideoSettingsActivity.class));
     }
 

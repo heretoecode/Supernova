@@ -482,8 +482,8 @@ public class FileManagerService extends Service implements OperationEngineListen
         nm.cancel(OPEN_NOTIFICATION_ID);
 
         // Build the intent to send when the user clicks on the notification in the notification panel
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setAction(MainActivity.LAUNCH_DIALOG);
+        Intent notificationIntent = new Intent(this, com.archos.mediacenter.video.EntryActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 

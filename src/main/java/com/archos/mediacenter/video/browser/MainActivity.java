@@ -84,6 +84,7 @@ import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.DensityTweak;
 import com.archos.mediacenter.video.EntryActivity;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.UiModePolicy;
 import com.archos.mediacenter.video.UiChoiceDialog;
 import com.archos.mediacenter.video.autoscraper.AutoScraperActivity;
 import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.BrowserListOfSeasons;
@@ -169,7 +170,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
             result -> {
                 if (result.getResultCode() == VideoPreferencesCommon.ACTIVITY_RESULT_UI_MODE_CHANGED) {
                     String newUiModeLeanback = PreferenceManager.getDefaultSharedPreferences(this)
-                            .getString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
+                            .getString(UiModePolicy.UI_CHOICE_LEANBACK_KEY, "-");
                     if (!newUiModeLeanback.equals(mCurrentUiModeLeanback)) {
                         finish();
                         startActivity(new Intent(this, EntryActivity.class));
@@ -324,7 +325,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         ThemeManager.getInstance(this).registerThemeChangeListener(mThemeChangeListener);
 
         // Update uimode/uimode_leanback to reflect we're in phone/tablet mode
-        UiChoiceDialog.updateUiModePreferences(this, false);
+        UiModePolicy.updateUiModePreferences(this, false);
 
         //Setup an preferences before we start activites.
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -781,7 +782,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         Intent p = new Intent(Intent.ACTION_MAIN);
         p.setComponent(new ComponentName(this, VideoPreferencesActivity.class));
         // Save the uimode_leanback to check if it changed when back from preferences
-        mCurrentUiModeLeanback = PreferenceManager.getDefaultSharedPreferences(this).getString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
+        mCurrentUiModeLeanback = PreferenceManager.getDefaultSharedPreferences(this).getString(UiModePolicy.UI_CHOICE_LEANBACK_KEY, "-");
         preferencesLauncher.launch(p);
     }
 
@@ -1181,7 +1182,7 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
         }
 
         final String uiMode = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "unset");
+                .getString(UiModePolicy.UI_CHOICE_LEANBACK_KEY, "unset");
 
         // If the choice has not been done yet, ask user
         if (uiMode.equals("unset") &&

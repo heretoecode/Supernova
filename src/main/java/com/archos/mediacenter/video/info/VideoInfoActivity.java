@@ -48,21 +48,21 @@ public class VideoInfoActivity extends AppCompatActivity {
     private static final String TAG = "VideoInfoActivity";
     private static final boolean DBG = false;
 
-    public static final String SHARED_ELEMENT_NAME = "poster";
-    public static final int MAX_VIDEO = 200;
-    public static final String EXTRA_NO_ONLINE_UPDATE = "no_online_updates";
+    public static final String SHARED_ELEMENT_NAME = VideoInfoContract.SHARED_ELEMENT_NAME;
+    public static final int MAX_VIDEO = VideoInfoContract.MAX_VIDEO;
+    public static final String EXTRA_NO_ONLINE_UPDATE = VideoInfoContract.EXTRA_NO_ONLINE_UPDATE;
     private View mGlobalBackdrop;
     private ViewPager mViewPager;
-    public static final String EXTRA_VIDEO = "VIDEO";
-    public static final String EXTRA_VIDEO_ID = "video_id";
-    public static final String EXTRA_PLAYLIST_ID = "playlist_id";
-    public static final String EXTRA_LAUNCHED_FROM_PLAYER = "launchedFromPlayer";
-    public static final String EXTRA_VIDEO_PATHS = "video_paths";
-    public static final String EXTRA_VIDEO_PATH = "video_path";
-    public static final String EXTRA_CURRENT_POSITION = "current_position";
-    public static final String EXTRA_USE_VIDEO_METADATA = "useVideoMetadata";
-    public static final String EXTRA_PLAYER_TYPE = "playerType";
-    public static final String EXTRA_FORCE_VIDEO_SELECTION = "force_video_selection";
+    public static final String EXTRA_VIDEO = VideoInfoContract.EXTRA_VIDEO;
+    public static final String EXTRA_VIDEO_ID = VideoInfoContract.EXTRA_VIDEO_ID;
+    public static final String EXTRA_PLAYLIST_ID = VideoInfoContract.EXTRA_PLAYLIST_ID;
+    public static final String EXTRA_LAUNCHED_FROM_PLAYER = VideoInfoContract.EXTRA_LAUNCHED_FROM_PLAYER;
+    public static final String EXTRA_VIDEO_PATHS = VideoInfoContract.EXTRA_VIDEO_PATHS;
+    public static final String EXTRA_VIDEO_PATH = VideoInfoContract.EXTRA_VIDEO_PATH;
+    public static final String EXTRA_CURRENT_POSITION = VideoInfoContract.EXTRA_CURRENT_POSITION;
+    public static final String EXTRA_USE_VIDEO_METADATA = VideoInfoContract.EXTRA_USE_VIDEO_METADATA;
+    public static final String EXTRA_PLAYER_TYPE = VideoInfoContract.EXTRA_PLAYER_TYPE;
+    public static final String EXTRA_FORCE_VIDEO_SELECTION = VideoInfoContract.EXTRA_FORCE_VIDEO_SELECTION;
 
     private ArrayList<Uri> mPaths;
     private Video mCurrentVideo;

@@ -126,10 +126,9 @@ import com.archos.mediacenter.utils.videodb.IndexHelper;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.UiChoiceDialog;
 import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.PermissionChecker;
-import com.archos.mediacenter.video.info.VideoInfoActivity;
+import com.archos.mediacenter.video.info.VideoInfoContract;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.leanback.wizard.SubtitlesWizardActivity;
@@ -152,7 +151,6 @@ import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoMetadata.AudioTrack;
 import com.archos.mediacenter.video.utils.VideoMetadata.SubtitleTrack;
 import com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack;
-import com.archos.mediacenter.video.utils.VideoPreferencesActivity;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.medialib.IMediaPlayer;
@@ -3801,7 +3799,7 @@ public class PlayerActivity extends AppCompatActivity
         case MENU_PREFERENCES: {
             pauseForSettings();
             Intent p = new Intent(Intent.ACTION_MAIN);
-            p.setComponent(new ComponentName(this, VideoPreferencesActivity.class));
+            p.setComponent(new ComponentName(this, VideoSettingsActivity.class));
             startActivity(p);
             return true;
         }
@@ -3936,31 +3934,8 @@ public class PlayerActivity extends AppCompatActivity
         }
         mPlayerController.hide();
 
-        Class infoActivity = null;
-
-        try {
-            // When on an actual leanback device (Android TV, etc.) we give no choice -> Leanback!
-            if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {
-                infoActivity = getClassLoader().loadClass(
-                    "com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity");
-            } else {
-                // string definitions are in preference_video.xml and in @array/ui_mode_leanback_entryvalues
-                final String uiMode = PreferenceManager.getDefaultSharedPreferences(this).getString(
-                    UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
-
-                if (uiMode.equals(UiChoiceDialog.UI_CHOICE_LEANBACK_TV_VALUE)) {
-                    // User explicitly choose TV mode
-                    infoActivity = getClassLoader().loadClass(
-                        "com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity");
-                } else { // user did not choose or user explicitly choose tablet mode
-                    infoActivity = VideoInfoActivity.class;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            infoActivity = VideoInfoActivity.class; // fallback to dialog
-        }
-
-        Intent intent = new Intent(this, infoActivity);
+        Intent intent = new Intent(this,
+            com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity.class);
 
         if (mPlayer.getType() == IMediaPlayer.TYPE_AVOS && fileExists()) {
             intent.setData(Uri.fromFile(mPlayer.getVideoMetadata().getFile()));
@@ -3969,11 +3944,11 @@ public class PlayerActivity extends AppCompatActivity
         }
 
         if (mPlayer.getType() == IMediaPlayer.TYPE_AVOS) {
-            intent.putExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA, mPlayer.getVideoMetadata());
+            intent.putExtra(VideoInfoContract.EXTRA_USE_VIDEO_METADATA, mPlayer.getVideoMetadata());
         }
-        intent.putExtra(VideoInfoActivity.EXTRA_PLAYER_TYPE, mPlayer.getType());
-        intent.putExtra(VideoInfoActivity.EXTRA_VIDEO_ID, mVideoId);
-        intent.putExtra(VideoInfoActivity.EXTRA_LAUNCHED_FROM_PLAYER, true);
+        intent.putExtra(VideoInfoContract.EXTRA_PLAYER_TYPE, mPlayer.getType());
+        intent.putExtra(VideoInfoContract.EXTRA_VIDEO_ID, mVideoId);
+        intent.putExtra(VideoInfoContract.EXTRA_LAUNCHED_FROM_PLAYER, true);
         // Forward HTTP headers so the info activity can probe the stream with the same headers
         if (mExtraMap != null && !mExtraMap.isEmpty()) {
             Bundle headersBundle = new Bundle();

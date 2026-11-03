@@ -382,7 +382,7 @@ public class AutoScraperActivity extends AppCompatActivity implements AbsListVie
     //*****************************************************************************
 
     private void startBrowserActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, com.archos.mediacenter.video.EntryActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
