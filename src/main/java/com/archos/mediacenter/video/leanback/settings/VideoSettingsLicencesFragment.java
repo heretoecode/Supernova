@@ -36,6 +36,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.WebUtils;
 
+/** Displays software licence preferences and handles licence selection. */
 public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompat {
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
