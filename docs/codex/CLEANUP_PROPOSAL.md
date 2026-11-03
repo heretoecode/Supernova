@@ -1,5 +1,7 @@
 # GitHub clean-up proposal — for the owner to approve
 
+> **Approved by the owner on 2026-11-03 (all sections).** Section 1 done by Claude (21 PRs closed). Sections 2–5: `docs/codex/CLEANUP_BRIEF.md` (section 2 moved to Codex — this session may only push to its own branch).
+
 Prepared 2026-11-03. **Nothing here has been done.** Tick, cross out or edit each section; only approved
 sections are carried out (by Codex overnight, or by Claude where noted). Every deletion is recoverable from
 git history unless marked otherwise.
