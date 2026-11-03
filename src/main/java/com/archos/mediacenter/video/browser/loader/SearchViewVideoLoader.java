@@ -16,12 +16,9 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.Browser;
 import com.archos.mediaprovider.video.VideoStore;
 
 public class SearchViewVideoLoader extends SearchVideoLoader {
