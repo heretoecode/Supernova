@@ -4,11 +4,23 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.text.format.DateUtils;
 import android.text.format.Formatter;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.function.IntConsumer;
 
 /** TV account and read-only API browsing. Credentials never enter view state or diagnostics. */
 public final class PutioAccountController {
@@ -18,7 +30,7 @@ public final class PutioAccountController {
     private PutioAuthFlow auth;
     private Dialog dialog;
     private int generation;
-    private android.widget.LinearLayout inline;
+    private LinearLayout inline;
     public interface BrowserOpener {
         void open(long account, long folder, String name);
     }
@@ -37,7 +49,7 @@ public final class PutioAccountController {
         if (browserOpener != null)
             browserOpener.open(account.id, folder, name);
         else
-            activity.startActivity(new android.content.Intent(activity, PutioBrowserActivity.class)
+            activity.startActivity(new Intent(activity, PutioBrowserActivity.class)
                     .putExtra("account", account.id)
                     .putExtra("folder", folder)
                     .putExtra("folder_name", name));
@@ -59,7 +71,7 @@ public final class PutioAccountController {
             new PutioAccountController((Activity) context).load();
     }
 
-    public static PutioAccountController attach(Context context, android.widget.LinearLayout target) {
+    public static PutioAccountController attach(Context context, LinearLayout target) {
         while (context instanceof ContextWrapper && !(context instanceof Activity))
             context = ((ContextWrapper) context).getBaseContext();
         if (!(context instanceof Activity))
@@ -89,26 +101,26 @@ public final class PutioAccountController {
         if (inline == null)
             return PreviewDialog.read(activity, title, text);
         Dialog view = PreviewDialog.create(activity);
-        android.widget.LinearLayout panel = new android.widget.LinearLayout(activity);
-        panel.setOrientation(android.widget.LinearLayout.VERTICAL);
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(LinearLayout.VERTICAL);
         com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel, title);
-        android.widget.TextView body = com.archos.mediacenter.video.leanback.SharedThreePanel.text(activity, text, 15);
+        TextView body = com.archos.mediacenter.video.leanback.SharedThreePanel.text(activity, text, 15);
         body.setFocusable(true);
         panel.addView(body);
         view.setContentView(panel);
         return view;
     }
 
-    private Dialog choose(String title, String[] labels, int selected, java.util.function.IntConsumer accepted) {
+    private Dialog choose(String title, String[] labels, int selected, IntConsumer accepted) {
         if (inline == null)
             return PreviewDialog.choose(activity, title, labels, selected, accepted);
         Dialog view = PreviewDialog.create(activity);
-        android.widget.LinearLayout panel = new android.widget.LinearLayout(activity);
-        panel.setOrientation(android.widget.LinearLayout.VERTICAL);
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(LinearLayout.VERTICAL);
         com.archos.mediacenter.video.leanback.SharedThreePanel.heading(panel, title);
         for (int n = 0; n < labels.length; n++) {
             final int index = n;
-            android.widget.TextView row =
+            TextView row =
                 com.archos.mediacenter.video.leanback.SharedThreePanel.accentAction(activity, labels[n], () -> {
                     if (labels[index].equals("Cancel") || labels[index].equals("Finish Later")) {
                         if (cancelled != null)
@@ -153,7 +165,7 @@ public final class PutioAccountController {
                 });
             } catch (Exception failure) {
                 boolean reconnect =
-                    failure instanceof java.io.IOException && !(failure instanceof PutioReadClient.Unavailable)
+                    failure instanceof IOException && !(failure instanceof PutioReadClient.Unavailable)
                     || failure instanceof PutioReadClient.Unavailable
                         && ((PutioReadClient.Unavailable) failure).reason == PutioReconciliation.Failure.UNAUTHORISED;
                 activity.runOnUiThread(() -> {
@@ -188,16 +200,16 @@ public final class PutioAccountController {
             previous.dismiss();
         }
         if (inline != null) {
-            android.widget.LinearLayout target = inline;
+            LinearLayout target = inline;
             // Hold focus inside the destination while the focused old subtree is removed.
             target.setFocusableInTouchMode(true);
             target.requestFocus();
-            android.view.ViewGroup content = next.getWindow().getDecorView().findViewById(android.R.id.content);
+            ViewGroup content = next.getWindow().getDecorView().findViewById(android.R.id.content);
             target.removeAllViews();
             while (content.getChildCount() > 0) {
-                android.view.View child = content.getChildAt(0);
+                View child = content.getChildAt(0);
                 content.removeView(child);
-                target.addView(child, new android.widget.LinearLayout.LayoutParams(-1, -2));
+                target.addView(child, new LinearLayout.LayoutParams(-1, -2));
             }
             focusInline(target);
             target.post(() -> {
@@ -207,8 +219,8 @@ public final class PutioAccountController {
         }
     }
 
-    private static void focusInline(android.widget.LinearLayout target) {
-        for (android.view.View candidate : target.getFocusables(android.view.View.FOCUS_FORWARD))
+    private static void focusInline(LinearLayout target) {
+        for (View candidate : target.getFocusables(View.FOCUS_FORWARD))
             if (candidate != target && candidate.isShown() && candidate.isEnabled() && candidate.requestFocus())
                 return;
     }
@@ -217,12 +229,12 @@ public final class PutioAccountController {
         return inline != null;
     }
 
-    private android.content.SharedPreferences selections() {
+    private SharedPreferences selections() {
         return activity.getSharedPreferences("putio-library-selection-v1", 0);
     }
 
     private void load() {
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(
+        if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean(
                 "supernova_putio_enabled", true)) {
             replace(read("put.io", "Disabled. Account credentials and library associations are retained."));
             return;
@@ -311,7 +323,7 @@ public final class PutioAccountController {
                                                                                            : "Needs review");
                     long synced = selections().getLong("sync:" + key, 0);
                     summary.append(" · Last sync: ")
-                        .append(synced > 0 ? android.text.format.DateUtils.getRelativeTimeSpanString(synced)
+                        .append(synced > 0 ? DateUtils.getRelativeTimeSpanString(synced)
                                            : "Not yet synced");
                 }
             }
@@ -370,7 +382,7 @@ public final class PutioAccountController {
                         : scope.ownership == PutioAssociationStore.Ownership.INACTIVE ? "Inactive"
                                                                                          : "Generic discovery";
                     labels[i] = selections().getString("name:" + key, scope.source.getPath()) + " · " + status
-                        + (synced > 0 ? " · " + android.text.format.DateUtils.getRelativeTimeSpanString(synced) : "");
+                        + (synced > 0 ? " · " + DateUtils.getRelativeTimeSpanString(synced) : "");
                 }
                 replace(choose(changeFolder ? "Choose the folder association to change" : "Sync a library folder",
                     labels, 0, index -> {
@@ -445,14 +457,14 @@ public final class PutioAccountController {
 
     private void chooseSource(long folder, String name, String kind) {
         work("Choose existing WebDAV playback source", () -> {
-            List<android.net.Uri> sources = new ArrayList<>();
-            try (android.database.Cursor c =
+            List<Uri> sources = new ArrayList<>();
+            try (Cursor c =
                      com.archos.mediacenter.utils.ShortcutDbAdapter.VIDEO.getAllShortcuts(activity, null, null)) {
                 if (c == null)
                     throw new IllegalStateException("Sources unavailable");
                 int path = c.getColumnIndexOrThrow(com.archos.mediacenter.utils.ShortcutDbAdapter.KEY_PATH);
                 while (c.moveToNext()) {
-                    android.net.Uri uri = android.net.Uri.parse(c.getString(path));
+                    Uri uri = Uri.parse(c.getString(path));
                     if (Arrays.asList("https", "http", "webdav", "webdavs", "dav", "davs").contains(uri.getScheme())
                         && uri.getUserInfo() == null && uri.getQuery() == null && uri.getFragment() == null)
                         sources.add(uri);
@@ -468,7 +480,7 @@ public final class PutioAccountController {
                 for (int i = 0; i < labels.length; i++)
                     labels[i] = sources.get(i).getHost() + sources.get(i).getPath();
                 replace(choose("Which WebDAV source is the same folder as " + name + "?", labels, 0, index -> {
-                    android.net.Uri source = sources.get(index);
+                    Uri source = sources.get(index);
                     replace(choose(
                         "Preserve your existing library and link matching files rather than importing them again?",
                         new String[] {
@@ -476,7 +488,7 @@ public final class PutioAccountController {
                         }, 0, confirm -> {
                             if (confirm != 1)
                                 return;
-                            androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity)
+                            PreferenceManager.getDefaultSharedPreferences(activity)
                                 .edit()
                                 .putString("preview_source_kind:" + source, kind)
                                 .apply();
@@ -495,7 +507,7 @@ public final class PutioAccountController {
         });
     }
 
-    private void confirmReassignment(long folder, android.net.Uri source) {
+    private void confirmReassignment(long folder, Uri source) {
         PutioAssociationStore.Scope previous = changing;
         if (previous.folderId == folder && previous.source.equals(source)) {
             changing = null;
@@ -533,7 +545,7 @@ public final class PutioAccountController {
         });
     }
 
-    private void sync(long folder, android.net.Uri source) {
+    private void sync(long folder, Uri source) {
         work("Read complete put.io library", () -> {
             PutioSync.Review review = PutioSync.fetch(activity, client, account.id, folder, source);
             return () -> applyReview(review, Collections.emptyMap());
