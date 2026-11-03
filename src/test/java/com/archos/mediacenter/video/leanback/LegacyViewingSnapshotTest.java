@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.utils.backup.*;
@@ -155,7 +156,7 @@ public class LegacyViewingSnapshotTest {
             db.execSQL(
                 "INSERT INTO MOVIE(_id,video_id,m_online_id,name_movie) VALUES(100,10,123,'Old'),(200,11,456,'New')");
         }
-        var info = new com.archos.mediacenter.utils.videodb.VideoDbInfo(Uri.parse("file:///new.mkv"));
+        var info = new VideoDbInfo(Uri.parse("file:///new.mkv"));
         info.scraperMovieId = "456";
         info.lastTimePlayed = 200;
         info.resume = 5555;
