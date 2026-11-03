@@ -54,6 +54,7 @@ import com.archos.environment.ArchosFeatures;
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.filecoreextension.upnp2.StreamUriFinder;
+import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediacenter.utils.ISO639codes;
 import com.archos.mediacenter.utils.introdb.IntroDbManager;
 import com.archos.mediacenter.video.BuildConfig;
@@ -67,13 +68,23 @@ import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.HeroPlaybackEligibility;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewSeriesJourney;
+import com.archos.mediacenter.video.leanback.PreviewVariants;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediacenter.video.leanback.channels.ChannelManager;
 import com.archos.mediacenter.video.utils.MiscUtils;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediacenter.video.utils.AdditionalServiceSingleton;
+import com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides;
+import com.archos.mediacenter.video.utils.backup.TitlePlaybackSession;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStoreImportImpl;
 import com.archos.mediascraper.BaseTags;
@@ -97,6 +108,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import static com.archos.mediascraper.StringUtils.stringContainsForced;
 
 import java.util.concurrent.TimeUnit;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -401,10 +413,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
         if (binge && mPreferences.getBoolean("try_new_ui", false) && mVideoInfo != null && mVideoInfo.isShow
             && mVideoInfo.id == mVideoId) {
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library =
-                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            PreviewLibraryLoader.Snapshot library =
+                PreviewLibraryLoader.memoryCache();
             if (library != null && library.episodes.stream().anyMatch(e -> ((Video) e.media).getId() == mVideoId)) {
-                com.archos.mediacenter.video.browser.adapters.object.Episode next = previewAdjacentEpisode(1);
+                Episode next = previewAdjacentEpisode(1);
                 if (next != null) {
                     mNextUri = next.getUri();
                     mNextVideoId = next.getId();
@@ -536,7 +548,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         };
 
         if (Trakt.isTraktV2Enabled(this, mPreferences)
-            && com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this) && !PrivateMode.isActive()) {
+            && ViewingHistory.tracking(this) && !PrivateMode.isActive()) {
             mTraktClient = new TraktService.Client(this, mTraktListener, false);
         }
 
@@ -611,8 +623,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         intent.removeExtra(ExternalResumeIntent.EXTERNAL_PLAYER_LAUNCH);
 
         mUri = intent.getData();
-        if (!java.util.Objects.equals(mPlaybackSession.uri, mUri))
-            com.archos.mediacenter.video.diagnostics.Diagnostics.beginPlayback(mUri);
+        if (!Objects.equals(mPlaybackSession.uri, mUri))
+            Diagnostics.beginPlayback(mUri);
         mUri = Uri.parse(removeFileSlashSlash(mUri.toString())); // we need to remove "file://"
 
         boolean hasCurrentSession = mPlaybackSession.uri != null;
@@ -679,11 +691,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mVideoId = intent.getIntExtra("id", -1);
         Object subtitleIntentVideo = intent.getSerializableExtra(VIDEO);
         if (subtitleIntentVideo instanceof Video)
-            com.archos.mediacenter.video.utils.SubtitleDiscovery.playback(this, (Video) subtitleIntentVideo,
-                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache());
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_selection", "physical_id", mVideoId,
+            SubtitleDiscovery.playback(this, (Video) subtitleIntentVideo,
+                PreviewLibraryLoader.memoryCache());
+        Diagnostics.event("playback_selection", "physical_id", mVideoId,
             "resume_command", mResume, "explicit_position_ms", explicitPosition, "source",
-            com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mUri));
+            Diagnostics.sourceType(mUri));
         if (log.isDebugEnabled())
             log.debug("onStart mVideoId={}", mVideoId);
 
@@ -830,14 +842,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             boolean restoredPosition = false;
             try {
                 restoredPosition =
-                    com.archos.mediacenter.video.leanback.ViewingHistory.applyRestoredPosition(this, localInfo);
+                    ViewingHistory.applyRestoredPosition(this, localInfo);
             } catch (IOException invalid) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_position_invalid", invalid);
+                Diagnostics.error("restored_position_invalid", invalid);
             }
             boolean eligible = PlaybackResumePolicy.isDatabaseResumeEligible(
                 localInfo.lastTimePlayed, mResume, RESUME_FROM_REMOTE_POS);
             mPlaybackSession.setCandidate(ResumeSource.LOCAL, localInfo.resume,
-                restoredPosition ? com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this) : eligible);
+                restoredPosition ? ViewingHistory.resumeEnabled(this) : eligible);
             mPlaybackSession.setCandidate(ResumeSource.BOOKMARK, localInfo.bookmark, eligible);
             int traktPosition = localInfo.duration > 0
                 ? Math.abs((int) (localInfo.traktResume * (double) localInfo.duration / 100))
@@ -1173,14 +1185,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     /** Sample before native teardown without allowing unavailable/zero state to erase progress. */
     void checkpointBeforePlayerError() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "error_checkpoint_attempt", "last_known_ms", mPlaybackSession.lastKnownPositionMs);
         int previous = mPlaybackSession.lastKnownPositionMs;
         try {
             if (captureCurrentPosition(false) > 0 || previous <= 0)
                 return;
         } catch (RuntimeException unavailable) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("error_checkpoint_unavailable", unavailable);
+            Diagnostics.error("error_checkpoint_unavailable", unavailable);
             log.warn("Native error position unavailable; retaining periodic checkpoint");
         }
         mPlaybackSession.lastKnownPositionMs = previous;
@@ -1254,7 +1266,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private void sampleJourneyTime() {
         if (mPlayer == null || !mPlaybackSession.startPositionApplied)
             return;
-        long now = android.os.SystemClock.elapsedRealtime();
+        long now = SystemClock.elapsedRealtime();
         int position = captureCurrentPosition(false);
         if (mPlaybackSession.outputEstablished && mVideoInfo != null && mVideoInfo.id >= 0 && !PrivateMode.isActive()
             && mPlaybackSession.coverageId != mVideoInfo.id) {
@@ -1274,7 +1286,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (elapsed >= 250 && !mPlaybackSession.outputEstablished) {
                     mPlaybackSession.outputEstablished = true;
                     excludeEstablishedHero();
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    Diagnostics.event(
                         "player_output_established", "evidence", "advancing_media_clock");
                 }
                 if (mPlaybackSession.outputEstablished && mVideoInfo != null && !PrivateMode.isActive()) {
@@ -1301,11 +1313,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
 
     private void saveVideoStateIfReady(boolean periodic) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_attempt", "periodic", periodic, "state",
+        Diagnostics.event("checkpoint_attempt", "periodic", periodic, "state",
             String.valueOf(mPlayerState), "has_played", mPlaybackSession.hasPlayed, "failed", mPlaybackSession.failed);
         sampleJourneyTime();
         if (!mPlaybackSession.outputEstablished) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            Diagnostics.event(
                 "checkpoint_skipped", "reason", "before_playback_established", "failed", mPlaybackSession.failed);
             return;
         }
@@ -1321,8 +1333,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     log.debug("saveVideoStateIfReady: source={} position={} completed={}",
                         mPlaybackSession.selectedSource, resumePosition, mPlaybackSession.completed);
                 if (mVideoInfo != null && !PrivateMode.isActive()) {
-                    mVideoInfo.resume = com.archos.mediacenter.video.leanback.ViewingHistory.resumeEnabled(this)
-                            && (com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this)
+                    mVideoInfo.resume = ViewingHistory.resumeEnabled(this)
+                            && (ViewingHistory.tracking(this)
                                 || !mPlaybackSession.completed)
                         ? resumePosition
                         : 0;
@@ -1342,21 +1354,21 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     // saving seconds since the Unix epoch (January 1, 1970, 00:00:00 UTC) and this value is in UTC
                     // traktResume is set to -resume unless synced
                     mVideoInfo.lastTimePlayed = utcSeconds;
-                    if (com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this))
-                        com.archos.mediacenter.video.leanback.PreviewSeriesJourney.record(
+                    if (ViewingHistory.tracking(this))
+                        PreviewSeriesJourney.record(
                             this, mVideoInfo, mPlaybackSession.completed, mPlaybackSession.viewedMs);
-                    com.archos.mediacenter.video.leanback.ViewingHistory.record(
+                    ViewingHistory.record(
                         this, mVideoInfo, mPlaybackSession.completed);
                     log.info("saveVideoStateIfReady: save bookmark at {} for videoId {}", mVideoInfo.lastTimePlayed,
                         mVideoInfo.id);
                     mIndexHelper.writeVideoInfo(mVideoInfo, !periodic && mNetworkBookmarksEnabled);
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("checkpoint_submitted", "position_ms",
+                    Diagnostics.event("checkpoint_submitted", "position_ms",
                         resumePosition, "duration_ms", mPlayer == null ? -1 : mPlayer.getDuration(), "buffered_ms",
                         mPlayer == null ? -1 : mPlayer.getBufferPosition(), "audio_track", mVideoInfo.audioTrack,
                         "subtitle_track", mVideoInfo.subtitleTrack, "passthrough",
                         mPreferences.getString("force_audio_passthrough_multiple", "0"), "refresh_hz",
                         Player.getRefreshRate(), "speed", mAudioSpeed, "audio_delay", mAudioDelay, "source",
-                        com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri), "periodic",
+                        Diagnostics.sourceType(mStreamingUri), "periodic",
                         periodic, "network_bookmark", !periodic && mNetworkBookmarksEnabled);
                     // disable periodic trakt save this should be done with pauseTrakt() anyway
                     //stopTrakt(); //this writes mVideoInfo.traktResume
@@ -1568,7 +1580,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (log.isDebugEnabled())
                 log.debug("stopTrakt: mTraktClient == null, not sending watchStop");
             if (mVideoInfo != null) {
-                if (mVideoInfo.id >= 0 && com.archos.mediacenter.video.leanback.ViewingHistory.tracking(this)
+                if (mVideoInfo.id >= 0 && ViewingHistory.tracking(this)
                     && realViewingEligible() && Trakt.shouldMarkAsSeen(getPlayerProgress())
                     && !PrivateMode.isActive()) {
                     if (log.isDebugEnabled())
@@ -1646,23 +1658,23 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private VideoObserver mVideoObserver;
     private boolean mHasRequestedIndexing;
     private VideoDbInfo mVideoInfo;
-    private final com.archos.mediacenter.video.utils.backup.TitlePlaybackSession restoredTitle =
-        new com.archos.mediacenter.video.utils.backup.TitlePlaybackSession();
+    private final TitlePlaybackSession restoredTitle =
+        new TitlePlaybackSession();
 
     private void applyRestoredTitle(VideoMetadata metadata) {
         try {
             restoredTitle.metadata(this, mVideoInfo, metadata, mPlayer);
-        } catch (org.json.JSONException | IOException invalid) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_pending", invalid);
+        } catch (JSONException | IOException invalid) {
+            Diagnostics.error("restored_title_choice_pending", invalid);
         }
     }
 
     public void manualTitleChoice(VideoDbInfo info) {
         try {
-            com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this, info);
+            TitlePlaybackOverrides.supersede(this, info);
             restoredTitle.manual(this, info);
-        } catch (org.json.JSONException | IOException invalid) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+        } catch (JSONException | IOException invalid) {
+            Diagnostics.error(
                 "manual_title_choice_persistence_failed", invalid);
         }
     }
@@ -1831,8 +1843,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mVideoInfo = videoInfo;
         try {
             restoredTitle.videoInfo(this, mVideoInfo);
-        } catch (org.json.JSONException invalid) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error("restored_title_choice_invalid", invalid);
+        } catch (JSONException invalid) {
+            Diagnostics.error("restored_title_choice_invalid", invalid);
         }
         if (mVideoInfo != null) {
             if (log.isDebugEnabled())
@@ -1869,7 +1881,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onDestroy() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.endPlayback(mPlaybackSession.completed ? "completed"
+        Diagnostics.endPlayback(mPlaybackSession.completed ? "completed"
                 : mPlaybackSession.failed ? "player_error"
                                           : "service_destroyed");
         super.onDestroy();
@@ -2081,7 +2093,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     /** Fused intro/outro segments for the current video, or null if not available yet. */
     public IntroSegments getIntroSegments() {
-        return java.util.Objects.equals(mUri, mIntroDbFetchedUri) ? mIntroSegments : null;
+        return Objects.equals(mUri, mIntroDbFetchedUri) ? mIntroSegments : null;
     }
 
     /**
@@ -2154,7 +2166,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // Provider metadata is not engine EOF. Let the backend reach the real end;
         // an out-of-range seek must never commit watched state or erase resume.
         if (!isSafeAutoSkipTarget(targetMs, duration)) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            Diagnostics.event(
                 "auto_skip_declined", "target_ms", targetMs, "duration_ms", duration);
             return;
         }
@@ -2176,7 +2188,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
 
     private void applySegmentPolicies(IntroSegments segments, int position, int duration) {
-        if (!segmentSkippingEnabled() || position < 0 || !java.util.Objects.equals(mUri, mIntroDbFetchedUri))
+        if (!segmentSkippingEnabled() || position < 0 || !Objects.equals(mUri, mIntroDbFetchedUri))
             return;
         for (IntroSegments.Type type : IntroSegments.Type.values())
             for (IntroSegments.Segment segment : segments.get(type)) {
@@ -2250,8 +2262,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     @Override
     public void onPrepared() {
         VideoMetadata diagnosticMetadata = mPlayer == null ? null : mPlayer.getVideoMetadata();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("player_state", "state", "prepared", "source",
-            com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(mStreamingUri), "decoder",
+        Diagnostics.event("player_state", "state", "prepared", "source",
+            Diagnostics.sourceType(mStreamingUri), "decoder",
             diagnosticMetadata == null || diagnosticMetadata.getVideoTrack() == null
                 ? -1
                 : diagnosticMetadata.getVideoTrack().decoder);
@@ -2282,7 +2294,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             return;
         advancing = true;
         try {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_transition", "completed", completed,
+            Diagnostics.event("playback_transition", "completed", completed,
                 "failed", mPlaybackSession.failed, "next_available", mNextUri != null, "position_ms",
                 mPlaybackSession.lastKnownPositionMs);
             log.info("Playback transition completed={} lastPosition={} duration={} state={} failed={} next={}",
@@ -2320,10 +2332,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 // onStart reads the intent ID, so rotate both identity and metadata with the URI.
                 mIntent.putExtra("id", (int) mVideoId);
                 mIntent.removeExtra(VIDEO);
-                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library =
-                    com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+                PreviewLibraryLoader.Snapshot library =
+                    PreviewLibraryLoader.memoryCache();
                 if (library != null)
-                    for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e : library.episodes)
+                    for (PreviewLibraryLoader.Entry e : library.episodes)
                         if (((Video) e.media).getId() == mVideoId) {
                             mIntent.putExtra(VIDEO, e.media);
                             break;
@@ -2350,19 +2362,19 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
-    public com.archos.mediacenter.video.browser.adapters.object.Episode previewAdjacentEpisode(int direction) {
+    public Episode previewAdjacentEpisode(int direction) {
         if (mVideoInfo == null || !mVideoInfo.isShow)
             return null;
-        com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot snapshot =
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+        PreviewLibraryLoader.Snapshot snapshot =
+            PreviewLibraryLoader.memoryCache();
         if (snapshot == null)
             return null;
-        return com.archos.mediacenter.video.leanback.PreviewVariants.adjacentEpisode(
+        return PreviewVariants.adjacentEpisode(
             snapshot.episodes, mVideoInfo.id, direction);
     }
 
     public void previewNavigateEpisode(int direction) {
-        com.archos.mediacenter.video.browser.adapters.object.Episode next = previewAdjacentEpisode(direction);
+        Episode next = previewAdjacentEpisode(direction);
         if (next == null)
             return;
         mNextUri = next.getUri();
@@ -2421,7 +2433,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAllSeekComplete() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("seek_complete", "checkpoint_ms",
+        Diagnostics.event("seek_complete", "checkpoint_ms",
             mPlaybackSession.lastKnownPositionMs, "audio_delay", mAudioDelay, "speed", mAudioSpeed);
         log.info("Playback seek completed position={} audioDelay={} speed={} state={}",
             mPlayer == null ? -1 : mPlayer.getCurrentPosition(), mAudioDelay, mAudioSpeed, mPlayerState);
@@ -2449,7 +2461,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (mPlayerFrontend != null)
             mPlayerFrontend.onPlaybackEstablished();
         excludeEstablishedHero();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "player_output_established", "backend", mPlayer == null ? -1 : mPlayer.getType());
     }
 
@@ -2463,7 +2475,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             : !mVideoInfo.isShow ? "v" + mVideoInfo.id
                                  : null;
         if (identity == null) {
-            var library = com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+            var library = PreviewLibraryLoader.memoryCache();
             if (library != null)
                 for (var entry : library.episodes)
                     if (((Video) entry.media).getId() == mVideoInfo.id) {
@@ -2471,12 +2483,12 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         break;
                     }
         }
-        com.archos.mediacenter.video.leanback.HeroPlaybackEligibility.established(this, identity);
+        HeroPlaybackEligibility.established(this, identity);
     }
 
     @Override
     public void onPlay(int state) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "player_state", "state", "playing", "reason_code", state);
         if (log.isDebugEnabled())
             log.debug("onPlay");
@@ -2484,14 +2496,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mPlaybackSession.hasPlayed = true;
         mPlaybackSession.failed = false;
         if (mVideoInfo != null && !PrivateMode.isActive()) {
-            android.content.SharedPreferences.Editor edit = mPreferences.edit();
+            SharedPreferences.Editor edit = mPreferences.edit();
             if (!mVideoInfo.isShow)
                 edit.remove("preview_cw_dismiss:v" + mVideoInfo.id);
             else {
-                com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot library =
-                    com.archos.mediacenter.video.leanback.PreviewLibraryLoader.memoryCache();
+                PreviewLibraryLoader.Snapshot library =
+                    PreviewLibraryLoader.memoryCache();
                 if (library != null)
-                    for (com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry e : library.episodes)
+                    for (PreviewLibraryLoader.Entry e : library.episodes)
                         if (((Video) e.media).getId() == mVideoInfo.id) {
                             edit.remove("preview_cw_dismiss:" + e.key());
                             break;
@@ -2520,7 +2532,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onPause(int state) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "player_state", "state", "paused", "reason_code", state);
         if (log.isDebugEnabled())
             log.debug("onPause");
@@ -2564,7 +2576,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onAudioMetadataUpdated(VideoMetadata vMetadata, int newAudioTrack) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+        Diagnostics.event(
             "audio_metadata", "selected", newAudioTrack, "tracks", vMetadata == null ? 0 : vMetadata.getAudioTrackNb());
         applyRestoredTitle(vMetadata);
         /*
@@ -2736,8 +2748,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void onAudioTrackSelectionCompleted(int track, boolean success) {
         try {
             restoredTitle.selection(this, mVideoInfo, true, track, success);
-        } catch (org.json.JSONException | IOException invalid) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+        } catch (JSONException | IOException invalid) {
+            Diagnostics.error(
                 "restored_title_acknowledgement_failed", invalid);
         }
         if (success || mVideoInfo == null || mVideoInfo.audioTrack != track) {
@@ -2760,7 +2772,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int newSubtitleTrack) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("subtitle_metadata", "selected", newSubtitleTrack,
+        Diagnostics.event("subtitle_metadata", "selected", newSubtitleTrack,
             "tracks", vMetadata == null ? 0 : vMetadata.getSubtitleTrackNb());
         applyRestoredTitle(vMetadata);
         // note: if mIsPreparingSubs = true, onSubtitleMetadataUpdated can be called even if in not final state
@@ -3112,8 +3124,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public void onSubtitleTrackSelectionCompleted(int track, boolean success) {
         try {
             restoredTitle.selection(this, mVideoInfo, false, track, success);
-        } catch (org.json.JSONException | IOException invalid) {
-            com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+        } catch (JSONException | IOException invalid) {
+            Diagnostics.error(
                 "restored_title_acknowledgement_failed", invalid);
         }
         if (success || mVideoInfo == null || mVideoInfo.subtitleTrack != track) {
@@ -3272,7 +3284,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             return languageStr.toLowerCase(Locale.ROOT);
         }
         // Use ISO639codes utility to convert any format (2-letter, 3-letter, or full name) to 2-letter code
-        String code = com.archos.mediacenter.utils.ISO639codes.getISO6391ForLetterCode(languageStr);
+        String code = ISO639codes.getISO6391ForLetterCode(languageStr);
         if (code != null && !code.isEmpty()) {
             return code.toLowerCase(Locale.ROOT);
         }
@@ -3430,7 +3442,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (mVideoInfo.scraperCover != null && !mVideoInfo.scraperCover.isEmpty()) {
             // Video has a poster, try to decode it
             bitmap =
-                com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(mVideoInfo.scraperCover, 512, 512);
+                BitmapUtils.decodeSampledBitmapFromFile(mVideoInfo.scraperCover, 512, 512);
         }
         if (bitmap == null && mVideoInfo.id >= 0
             && (mVideoInfo.scraperCover == null || mVideoInfo.scraperCover.isEmpty())) {
