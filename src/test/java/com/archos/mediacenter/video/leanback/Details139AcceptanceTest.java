@@ -1,13 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
 import com.archos.mediascraper.ScraperTrailer;
 import java.util.*;
+import java.util.Locale;
 import org.json.JSONObject;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -48,7 +52,7 @@ public class Details139AcceptanceTest {
             view.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY));
             view.layout(0, 0, w, h);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
@@ -175,9 +179,9 @@ public class Details139AcceptanceTest {
 
     private int[] headerPixels(View root, View frame, View reading) {
         Rect a = bounds(frame), b = bounds(reading);
-        android.graphics.Bitmap bitmap =
-            android.graphics.Bitmap.createBitmap(a.width(), b.top - a.top, android.graphics.Bitmap.Config.ARGB_8888);
-        android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+        Bitmap bitmap =
+            Bitmap.createBitmap(a.width(), b.top - a.top, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
         canvas.translate(-a.left, -a.top);
         root.draw(canvas);
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
@@ -229,7 +233,7 @@ public class Details139AcceptanceTest {
                     region = page.findViewWithTag("details.region." + section);
                 if (region == null)
                     region = page.findViewWithTag(
-                        "semantic:details.panel." + section.toLowerCase(java.util.Locale.ROOT).replace(' ', '.'));
+                        "semantic:details.panel." + section.toLowerCase(Locale.ROOT).replace(' ', '.'));
                 assertNotNull(section, region);
                 assertFalse(region.isFocusable());
                 assertTrue(section + " has height", region.getHeight() > 0);
