@@ -15,6 +15,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
@@ -129,7 +130,7 @@ public class PutioConnectionFocusTest {
             };
             PutioAuthFlow flow = PutioAuthFlow.open(host.get(), () -> returned[0]++);
             drain(flow);
-            org.robolectric.shadows.ShadowDialog.getLatestDialog().dismiss();
+            ShadowDialog.getLatestDialog().dismiss();
             flow.close();
             Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(30));
             drain(flow);
@@ -152,7 +153,7 @@ public class PutioConnectionFocusTest {
             drain(approved);
             assertEquals(0, returned[0]);
             verify(stores.constructed().get(1), never()).save(any());
-            assertFalse(org.robolectric.shadows.ShadowDialog.getLatestDialog().isShowing());
+            assertFalse(ShadowDialog.getLatestDialog().isShowing());
         } finally {
             host.pause().stop().destroy();
         }
@@ -166,7 +167,7 @@ public class PutioConnectionFocusTest {
                 (client, context) -> when(client.begin()).thenThrow(new IOException("fixture-unavailable")))) {
             PutioAuthFlow flow = PutioAuthFlow.open(host.get(), () -> fail("Failed link cannot return as authorised"));
             drain(flow);
-            Dialog error = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+            Dialog error = ShadowDialog.getLatestDialog();
             assertTrue(error.isShowing());
             assertNotNull(find(error.getWindow().getDecorView(), "Linking unavailable"));
             flow.close();
