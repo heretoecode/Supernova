@@ -16,6 +16,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks diagnostic storage bounds, complete-record rotation and cleanup after export failures. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class DiagnosticStorageTest {
