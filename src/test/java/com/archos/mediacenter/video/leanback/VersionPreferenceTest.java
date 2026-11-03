@@ -11,6 +11,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks manual video version preferences survive rebuilds and handle unavailable versions. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class VersionPreferenceTest {
