@@ -30,6 +30,7 @@ import com.archos.mediacenter.video.R;
 
 import java.util.List;
 
+/** Displays saved server credentials and opens their editor when selected. */
 public class CredentialsManagerPreferencesFragment extends Fragment implements CredentialsManagerAdapter.OnItemClickListener {
 
     private RecyclerView mList;
