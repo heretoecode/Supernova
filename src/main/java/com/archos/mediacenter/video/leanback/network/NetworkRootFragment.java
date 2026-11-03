@@ -33,6 +33,12 @@ import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseSupportFragment;
 
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.PreviewNetworkScanning;
+import com.archos.mediacenter.video.leanback.PreviewSources;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -158,20 +164,20 @@ public class NetworkRootFragment extends BrowseSupportFragment {
         FrameLayout stage = new FrameLayout(requireContext());
         stage.addView(nativeView);
         nativeView.setVisibility(View.GONE);
-        com.archos.mediacenter.video.leanback.PreviewSources sources =
-            new com.archos.mediacenter.video.leanback.PreviewSources(requireContext(), mRowsAdapter, mClickListener);
+        PreviewSources sources =
+            new PreviewSources(requireContext(), mRowsAdapter, mClickListener);
         stage.addView(sources);
-        com.archos.mediacenter.video.leanback.TopNavigation nav =
-            new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(), stage, tab -> {
+        TopNavigation nav =
+            new TopNavigation(requireContext(), stage, tab -> {
                 if (tab == 4)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                        requireContext(), VideoSettingsActivity.class));
                 else if (tab == 5)
                     startActivity(new Intent(
-                        requireContext(), com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                        requireContext(), VideoSearchActivity.class));
                 else {
                     Intent home =
-                        new Intent(requireContext(), com.archos.mediacenter.video.leanback.MainActivityLeanback.class);
+                        new Intent(requireContext(), MainActivityLeanback.class);
                     home.putExtra("preview_tab", tab);
                     home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(home);
@@ -423,7 +429,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                 if (box.getBoxId() == Box.ID.INDEXED_FOLDERS_REFRESH) {
                     if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                             .getBoolean("try_new_ui", false))
-                        com.archos.mediacenter.video.leanback.PreviewNetworkScanning.show(requireContext());
+                        PreviewNetworkScanning.show(requireContext());
                     else
                         startActivity(new Intent(getActivity(), RescanActivity.class));
                 }
