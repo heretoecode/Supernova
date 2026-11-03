@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
 
+/** Hosts a TV playback card dialog with focus, scrolling and back handling. */
 public class TVCardDialog extends FrameLayout implements TVSlaveView  {
 
     private static final Logger log = LoggerFactory.getLogger(TVCardDialog.class);
