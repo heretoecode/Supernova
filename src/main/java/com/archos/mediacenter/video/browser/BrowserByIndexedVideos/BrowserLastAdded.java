@@ -24,6 +24,7 @@ import com.archos.mediacenter.video.browser.loader.LastAddedLoader;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.LoaderUtils;
 
+/** Displays recently added videos from the library. */
 public class BrowserLastAdded extends CursorBrowserByVideo {
 
 
