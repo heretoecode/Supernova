@@ -181,6 +181,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays video details and handles playback, subtitle and library actions. */
 public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     implements LoaderManager.LoaderCallbacks<Cursor>, PlayUtils.SubtitleDownloadListener, SubtitleInterface,
                Delete.DeleteListener, XmlDb.ResumeChangeListener, ExternalPlayerWithResultStarter {
