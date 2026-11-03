@@ -12,6 +12,7 @@ import java.util.concurrent.*;
 import static org.junit.Assert.*;
 import org.robolectric.shadows.ShadowDialog;
 
+/** Checks subtitle replacement requires explicit approval and cancelled work never authorizes a write. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30)
 public class SubtitleReplacementTest {
