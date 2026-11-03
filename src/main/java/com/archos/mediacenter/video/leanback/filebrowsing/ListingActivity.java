@@ -101,7 +101,7 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
         }
         else if ("smb".equals(scheme)) {
             if (isSMBjEnabled()) return SmbjListingActivity.class;
-            else return SmbListingActivity.class;
+                else return SmbListingActivity.class;
         }
         else if ("upnp".equals(scheme)) {
             return UpnpListingActivity.class;
@@ -117,7 +117,7 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
         }
         else if ("sftp".equals(scheme)) {
             if (isSSHjEnabled()) return SshjListingActivity.class;
-            else return FtpListingActivity.class;
+                else return FtpListingActivity.class;
         }
         else if ("sshj".equals(scheme)) {
             return SshjListingActivity.class;
@@ -261,6 +261,6 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
             if(active instanceof ListingFragment)((ListingFragment)active).browserExit(this::finish);else finish();
             return true;
         }
-        else return super.onKeyLongPress(keyCode, event);
+            else return super.onKeyLongPress(keyCode, event);
     }
 }
