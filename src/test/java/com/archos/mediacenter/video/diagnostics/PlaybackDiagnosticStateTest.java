@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.diagnostics;
 
 import android.app.Application;
 import android.net.Uri;
+import android.os.SystemClock;
 import com.archos.mediacenter.video.player.Player;
 import com.archos.medialib.IMediaPlayer;
 import java.io.*;
@@ -46,7 +47,7 @@ public class PlaybackDiagnosticStateTest {
     private List<JSONObject> rows() throws Exception {
         DiagnosticFlightRecorder recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
         List<JSONObject> rows = new ArrayList<>();
-        for (String line : recorder.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n"))
+        for (String line : recorder.snapshot(SystemClock.elapsedRealtime()).split("\n"))
             if (!line.isEmpty())
                 rows.add(new JSONObject(line));
         return rows;
