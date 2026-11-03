@@ -10,6 +10,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks technical metadata enrichment covers physical versions and respects file fingerprints. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewTechnicalEnrichmentTest {
     private Entry entry(long id){return new Entry(new Video(id,"/storage/file-"+id+".mkv","File",null,10000,0,0,0,false,false,false,false,0,1000),0,0,"");}
