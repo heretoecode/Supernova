@@ -24,8 +24,6 @@ import android.util.SparseArray;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.loader.AnimeShowsByAlphaLoader;
-import com.archos.mediacenter.video.browser.loader.TvshowsByAlphaLoader;
-import com.archos.mediacenter.video.browser.loader.TvshowsNoAnimeByAlphaLoader;
 import com.archos.mediaprovider.video.VideoStore;
 
 
