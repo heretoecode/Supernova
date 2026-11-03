@@ -3,6 +3,9 @@ package com.archos.mediacenter.video.streaming.putio;
 import android.app.*;
 import android.graphics.Bitmap;
 import android.os.*;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
@@ -149,11 +152,11 @@ final class PutioAuthFlow {
         dialog.setOnDismissListener(d -> stop());
     }
 
-    private static void setLinkDescription(android.view.View view) {
-        if (view instanceof android.widget.ImageView)
+    private static void setLinkDescription(View view) {
+        if (view instanceof ImageView)
             view.setContentDescription("Scan to authorise Supernova with put.io using the temporary linking code");
-        if (view instanceof android.view.ViewGroup) {
-            android.view.ViewGroup group = (android.view.ViewGroup) view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
             for (int n = 0; n < group.getChildCount(); n++)
                 setLinkDescription(group.getChildAt(n));
         }
