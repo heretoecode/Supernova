@@ -14,14 +14,16 @@
 
 package com.archos.mediacenter.video.leanback.scrapping;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Looper;
 
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.SearchSupportFragment;
@@ -36,8 +38,8 @@ import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.Row;
 import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.ShadowLessRowPresenter;
-import android.util.Log;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.ShadowLessListRow;
 import com.archos.mediacenter.video.utils.ThemeManager;
@@ -51,6 +53,7 @@ import com.archos.mediascraper.ScrapeSearchResult;
 import com.archos.mediascraper.Scraper;
 import com.archos.mediascraper.SearchResult;
 
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,18 +99,18 @@ public abstract class ManualScrappingSearchFragment
     }
 
     @Override
-    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state) {
         View nativeView = super.onCreateView(inflater, parent, state);
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+        if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("try_new_ui", false))
             return nativeView;
-        android.widget.FrameLayout root = new android.widget.FrameLayout(requireContext());
+        FrameLayout root = new FrameLayout(requireContext());
         root.addView(nativeView);
         nativeView.setVisibility(View.GONE);
         previewSearch = new com.archos.mediacenter.video.leanback.PreviewMatchSearch(
             requireContext(), initialQuery, this::onQueryTextSubmit, this::previewMatch);
         configurePreviewSearch(previewSearch);
-        root.addView(previewSearch, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        root.addView(previewSearch, new FrameLayout.LayoutParams(-1, -1));
         return root;
     }
 
@@ -122,7 +125,7 @@ public abstract class ManualScrappingSearchFragment
     private void updatePreviewResults() {
         if (previewSearch == null)
             return;
-        java.util.List<BaseTags> values = new java.util.ArrayList<>();
+        java.util.List<BaseTags> values = new ArrayList<>();
         if (mResultsAdapter != null)
             for (int i = 0; i < mResultsAdapter.size(); i++)
                 if (mResultsAdapter.get(i) instanceof BaseTags)
@@ -174,7 +177,7 @@ public abstract class ManualScrappingSearchFragment
             public void onItemClicked(
                 Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item instanceof BaseTags) {
-                    if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                             .getBoolean("try_new_ui", false))
                         previewMatch((BaseTags) item);
                     else
