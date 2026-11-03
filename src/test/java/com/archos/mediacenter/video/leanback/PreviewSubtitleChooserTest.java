@@ -4,8 +4,9 @@ import android.app.*;
 import android.content.Intent;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import java.util.*;
-import java.util.concurrent.Executor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -185,11 +186,11 @@ public class PreviewSubtitleChooserTest {
     }
 
     private static View exact(View view, String label) {
-        if (view instanceof android.widget.TextView && label.contentEquals(((android.widget.TextView) view).getText()))
+        if (view instanceof TextView && label.contentEquals(((TextView) view).getText()))
             return view;
-        if (view instanceof android.view.ViewGroup)
-            for (int i = 0; i < ((android.view.ViewGroup) view).getChildCount(); i++) {
-                View result = exact(((android.view.ViewGroup) view).getChildAt(i), label);
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View result = exact(((ViewGroup) view).getChildAt(i), label);
                 if (result != null)
                     return result;
             }
