@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback.filebrowsing;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.util.*;
 
 /** Transactional browser selections. Opening folders or moving focus never mutates the library. */
@@ -19,7 +20,7 @@ public final class BrowserSelection {
 
     public static String canonical(Uri uri) {
         if(uri==null)throw new IllegalArgumentException("Location required");
-        return com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(uri);
+        return SupernovaLibraryPolicy.canonical(uri);
     }
 
     public static boolean contains(String parent, String child) {
