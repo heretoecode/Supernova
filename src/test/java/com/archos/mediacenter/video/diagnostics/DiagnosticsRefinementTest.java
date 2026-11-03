@@ -12,6 +12,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowSystemClock;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
@@ -55,7 +56,7 @@ public class DiagnosticsRefinementTest {
         ReflectionHelpers.setStaticField(Diagnostics.class, "mainAck", 0L);
         ReflectionHelpers.setStaticField(Diagnostics.class, "lastStall", 0L);
         ReflectionHelpers.setStaticField(Diagnostics.class, "trendSamples", 0);
-        org.robolectric.shadows.ShadowSystemClock.advanceBy(Duration.ofSeconds(61));
+        ShadowSystemClock.advanceBy(Duration.ofSeconds(61));
         for (int sample = 0; sample < 6; sample++)
             ReflectionHelpers.callStaticMethod(Diagnostics.class, "heartbeat");
         String evidence = flight();
