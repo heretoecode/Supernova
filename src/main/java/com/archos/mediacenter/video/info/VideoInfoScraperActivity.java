@@ -26,6 +26,7 @@ import android.view.Menu;
 
 import com.archos.mediacenter.video.R;
 
+/** Hosts the video metadata scraper screen. */
 public class VideoInfoScraperActivity extends FragmentActivity {
 
     private static final boolean DBG = false;
