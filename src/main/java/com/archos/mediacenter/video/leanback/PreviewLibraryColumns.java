@@ -3,14 +3,19 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Dialog;
 import android.content.*;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.squareup.picasso.Picasso;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /** Shared library table. All values come from the background-built database snapshot. */
@@ -248,10 +253,10 @@ public final class PreviewLibraryColumns {
             case SIZE:
                 return e.knownSizes == 0 ? ""
                                          : (e.knownSizes < e.files ? "≥ " : "")
-                        + android.text.format.Formatter.formatShortFileSize(context, e.bytes);
+                        + Formatter.formatShortFileSize(context, e.bytes);
             case AVERAGE:
                 return e.episodes > 0 && e.knownSizes == e.files
-                    ? android.text.format.Formatter.formatShortFileSize(context, e.bytes / e.episodes)
+                    ? Formatter.formatShortFileSize(context, e.bytes / e.episodes)
                     : "";
             case ADDED:
                 return date(e.added);
@@ -278,7 +283,7 @@ public final class PreviewLibraryColumns {
     private static String date(long date) {
         if (date <= 0)
             return "";
-        return new java.text.SimpleDateFormat("dd MMM yy", Locale.UK)
+        return new SimpleDateFormat("dd MMM yy", Locale.UK)
             .format(new Date(date < 100000000000L ? date * 1000 : date));
     }
 
@@ -336,11 +341,11 @@ public final class PreviewLibraryColumns {
         return row;
     }
 
-    private android.graphics.drawable.Drawable separator(boolean vertical) {
-        android.graphics.drawable.LayerDrawable d = new android.graphics.drawable.LayerDrawable(
-            new android.graphics.drawable.Drawable[] {
-                new android.graphics.drawable.ColorDrawable(0x120b1b29),
-                new android.graphics.drawable.ColorDrawable(vertical ? 0x10708695 : 0x16708695)
+    private Drawable separator(boolean vertical) {
+        LayerDrawable d = new LayerDrawable(
+            new Drawable[] {
+                new ColorDrawable(0x120b1b29),
+                new ColorDrawable(vertical ? 0x10708695 : 0x16708695)
             });
         if (vertical) {
             d.setLayerWidth(1, dp(1));
