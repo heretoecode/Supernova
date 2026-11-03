@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.loader.SearchViewVideoLoader;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediaprovider.video.VideoStore.MediaColumns;
