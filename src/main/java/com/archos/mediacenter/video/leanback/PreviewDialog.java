@@ -185,6 +185,7 @@ public final class PreviewDialog {
         KINDS.put(dialog, "native_dialog");
         View decor = dialog.getWindow().getDecorView();
         View.OnAttachStateChangeListener observer = new View.OnAttachStateChangeListener() {
+            @Override
             public void onViewAttachedToWindow(View view) {
                 List<WeakReference<Dialog>> windows =
                     WINDOWS.computeIfAbsent(context, k -> new ArrayList<>());
@@ -192,6 +193,7 @@ public final class PreviewDialog {
                 windows.add(new WeakReference<>(dialog));
                 modalState(windows);
             }
+            @Override
             public void onViewDetachedFromWindow(View view) {
                 List<WeakReference<Dialog>> windows = WINDOWS.get(context);
                 if (windows != null) {
