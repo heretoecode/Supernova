@@ -5,7 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediacenter.video.streaming.putio.PutioAssociationStore;
 import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.archos.mediascraper.MediaScraper;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -37,8 +41,8 @@ public class BackupCycleTest {
             credentials.execSQL("CREATE TABLE credentials(password TEXT)");
             credentials.execSQL("INSERT INTO credentials VALUES('planted-credential-secret')");
         }
-        try (com.archos.mediacenter.video.streaming.putio.PutioAssociationStore associations =
-                 new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
+        try (PutioAssociationStore associations =
+                 new PutioAssociationStore(context)) {
             associations.prepare(10, 20, Uri.parse("https://webdav.put.io/Films"));
         }
         context.getSharedPreferences("provider-discovery-ownership-v1", 0)
@@ -53,13 +57,13 @@ public class BackupCycleTest {
             .putString("trakt_access_token", "planted-token-secret")
             .commit();
         var resume =
-            new com.archos.mediacenter.utils.videodb.VideoDbInfo(Uri.parse("smb://nas/Movies/film.mkv"));
+            new VideoDbInfo(Uri.parse("smb://nas/Movies/film.mkv"));
         resume.scraperMovieId = "99";
         resume.duration = 100000;
         resume.resume = 12345;
         resume.lastTimePlayed = 100;
-        com.archos.mediacenter.video.leanback.ViewingHistory.record(context, resume, false);
-        var completed = new com.archos.mediacenter.utils.videodb.VideoDbInfo(
+        ViewingHistory.record(context, resume, false);
+        var completed = new VideoDbInfo(
             Uri.parse("file:///removed-drive/ep1.mkv"));
         completed.isShow = true;
         completed.scraperShowId = "123";
@@ -68,8 +72,8 @@ public class BackupCycleTest {
         completed.resume = -2;
         completed.duration = 100000;
         completed.lastTimePlayed = 100;
-        com.archos.mediacenter.video.leanback.ViewingHistory.record(context, completed, true);
-        com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
+        ViewingHistory.record(context, completed, true);
+        ViewingHistory.awaitWrites();
         String archive = HistoricalBackupFixture.export(context);
         assertTrue("Export keeps device-local authentication", providerToken.isFile());
         File staged;
@@ -82,8 +86,8 @@ public class BackupCycleTest {
             staged = SafeBackup.stage(context, input);
         }
         resume.resume = 54321;
-        com.archos.mediacenter.video.leanback.ViewingHistory.record(context, resume, false);
-        com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
+        ViewingHistory.record(context, resume, false);
+        ViewingHistory.awaitWrites();
         preferences.edit().putString("preview_home_rows41", "changed").commit();
         SafeBackup.restore(context, staged);
         try (SQLiteDatabase restored = SQLiteDatabase.openDatabase(
@@ -102,12 +106,12 @@ public class BackupCycleTest {
         assertFalse(context.getDatabasePath("credentials_db").exists());
         assertFalse("Successful restore requires provider sign-in again", providerToken.exists());
         assertTrue(preferences.getBoolean("try_new_ui", false));
-        try (com.archos.mediacenter.video.streaming.putio.PutioAssociationStore associations =
-                 new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
+        try (PutioAssociationStore associations =
+                 new PutioAssociationStore(context)) {
             assertEquals(1, associations.scopes(10).size());
             assertEquals(20, associations.scopes(10).get(0).folderId);
         }
-        var history = com.archos.mediacenter.video.leanback.ViewingHistory.read(context);
+        var history = ViewingHistory.read(context);
         assertEquals(12345, history.get("tmdb:movie:99").position);
         assertTrue(history.get("tmdb:tv:123:1:1").completed);
         assertEquals(100, history.get("tmdb:tv:123:1:1").completedAt);
@@ -164,26 +168,26 @@ public class BackupCycleTest {
                 db.execSQL("CREATE TABLE keep_marker(value TEXT)");
                 db.execSQL("INSERT INTO keep_marker VALUES('OPTIONAL_KEEP')");
             }
-        try (com.archos.mediacenter.video.streaming.putio.PutioAssociationStore store =
-                 new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
+        try (PutioAssociationStore store =
+                 new PutioAssociationStore(context)) {
             store.prepare(10, 20, Uri.parse("https://webdav.put.io/Films"));
         }
         File poster =
-            new File(com.archos.mediascraper.MediaScraper.getPosterDirectory(context), "destination-keep.png");
+            new File(MediaScraper.getPosterDirectory(context), "destination-keep.png");
         poster.getParentFile().mkdirs();
         Files.writeString(poster.toPath(), "ART_KEEP");
         var info =
-            new com.archos.mediacenter.utils.videodb.VideoDbInfo(Uri.parse("file:///storage/fixture.mkv"));
+            new VideoDbInfo(Uri.parse("file:///storage/fixture.mkv"));
         info.scraperMovieId = "99";
         info.resume = 3333;
         info.duration = 100000;
         info.lastTimePlayed = 100;
-        com.archos.mediacenter.video.leanback.ViewingHistory.record(context, info, false);
-        com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
+        ViewingHistory.record(context, info, false);
+        ViewingHistory.awaitWrites();
         String archive = HistoricalBackupFixture.export(context);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         Set<String> omitted = Set.of("shortcuts_db", "shortcuts2_db", "putio-associations.db",
-            com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE);
+            ViewingHistory.DATABASE);
         try (ZipFile source = new ZipFile(archive); ZipOutputStream output = new ZipOutputStream(bytes)) {
             for (var entries = source.entries(); entries.hasMoreElements();) {
                 ZipEntry entry = entries.nextElement();
@@ -198,12 +202,12 @@ public class BackupCycleTest {
             }
         }
         info.resume = 4444;
-        com.archos.mediacenter.video.leanback.ViewingHistory.record(context, info, false);
-        com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
+        ViewingHistory.record(context, info, false);
+        ViewingHistory.awaitWrites();
         File staged = SafeBackup.stage(context, new ByteArrayInputStream(bytes.toByteArray()));
         SafeBackup.restore(context, staged);
         assertEquals(
-            4444, com.archos.mediacenter.video.leanback.ViewingHistory.read(context).get("tmdb:movie:99").position);
+            4444, ViewingHistory.read(context).get("tmdb:movie:99").position);
         for (String name : List.of("shortcuts_db", "shortcuts2_db"))
             try (SQLiteDatabase db = SQLiteDatabase.openDatabase(
                      context.getDatabasePath(name).getPath(), null, SQLiteDatabase.OPEN_READONLY);
@@ -211,8 +215,8 @@ public class BackupCycleTest {
                 assertTrue(row.moveToFirst());
                 assertEquals("OPTIONAL_KEEP", row.getString(0));
             }
-        try (com.archos.mediacenter.video.streaming.putio.PutioAssociationStore store =
-                 new com.archos.mediacenter.video.streaming.putio.PutioAssociationStore(context)) {
+        try (PutioAssociationStore store =
+                 new PutioAssociationStore(context)) {
             assertEquals(1, store.scopes(10).size());
         }
         assertEquals("ART_KEEP", Files.readString(poster.toPath()));
