@@ -20,6 +20,7 @@ import com.archos.mediacenter.video.browser.BrowserCategory;
 import com.archos.mediacenter.video.browser.MetaFile2ItemData;
 
 
+/** Browses files on USB storage. */
 public class BrowserByUsb extends BrowserByFolder {
 
     @Override
