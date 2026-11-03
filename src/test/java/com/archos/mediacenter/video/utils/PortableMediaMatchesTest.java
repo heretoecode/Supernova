@@ -17,6 +17,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks portable media matches use exact file and provider identity without transferring metadata ownership. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
