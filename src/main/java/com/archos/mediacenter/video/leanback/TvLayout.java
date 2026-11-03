@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.graphics.Insets;
+import android.os.Build;
 import android.view.View;
 import android.view.WindowInsets;
 
@@ -49,8 +51,8 @@ public final class TvLayout {
     /** Keep system bars/cutouts outside the shared navigation and safe content region. */
     public static void applyInsets(View root) {
         root.setOnApplyWindowInsetsListener((v, insets) -> {
-            if (android.os.Build.VERSION.SDK_INT >= 30) {
-                android.graphics.Insets edge =
+            if (Build.VERSION.SDK_INT >= 30) {
+                Insets edge =
                     insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
                 v.setPadding(edge.left, edge.top, edge.right, edge.bottom);
             } else
