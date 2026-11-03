@@ -548,6 +548,7 @@ public final class LocalStorageView extends LinearLayout {
         return true;
     }
 
+    /** Focuses a row, waiting (a few frames at most) for the list to lay it out. */
     private void focusPosition(int position) {
         RecyclerView.ViewHolder holder = list.findViewHolderForAdapterPosition(position);
         if (holder != null && holder.itemView.isShown()) {
@@ -555,10 +556,20 @@ public final class LocalStorageView extends LinearLayout {
             return;
         }
         layout.scrollToPositionWithOffset(position, dp(40));
-        list.post(() -> {
-            RecyclerView.ViewHolder later = list.findViewHolderForAdapterPosition(position);
-            if (later != null)
-                later.itemView.requestFocus();
+        int token = generation;
+        list.post(new Runnable() {
+            int tries;
+
+            @Override
+            public void run() {
+                if (closed || token != generation)
+                    return;
+                RecyclerView.ViewHolder later = list.findViewHolderForAdapterPosition(position);
+                if (later != null && later.itemView.isShown())
+                    later.itemView.requestFocus();
+                else if (tries++ < 8)
+                    list.postOnAnimation(this);
+            }
         });
     }
 
@@ -1307,6 +1318,8 @@ public final class LocalStorageView extends LinearLayout {
             parts.add("Watched");
         else if (video != null && video.getResumeMs() > 0)
             parts.add(resumeText(video.getResumeMs(), video.getDurationMs()));
+        if (parts.isEmpty())
+            parts.add(video == null ? "Video · not in your library" : "Video");
         return TextUtils.join(" · ", parts);
     }
 
