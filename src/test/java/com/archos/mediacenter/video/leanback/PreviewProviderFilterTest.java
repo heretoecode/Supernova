@@ -18,6 +18,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowDialog;
 import static org.junit.Assert.*;
 
+/** Checks provider filters preserve multiple selections across reopening and recreation. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewProviderFilterTest {
