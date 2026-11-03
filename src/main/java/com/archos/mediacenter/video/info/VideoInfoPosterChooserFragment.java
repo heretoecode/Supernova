@@ -31,6 +31,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediacenter.utils.imageview.ImageProcessor;
 import com.archos.mediacenter.utils.imageview.ImageViewSetter;
 import com.archos.mediacenter.utils.imageview.LoadResult.Status;
@@ -373,7 +374,7 @@ public class VideoInfoPosterChooserFragment extends Fragment implements
                     String file = image.getLargeFile();
                     if (file != null) {
                         image.download(mContext);
-                        taskItem.result.bitmap = com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(file, 300, 450);
+                        taskItem.result.bitmap = BitmapUtils.decodeSampledBitmapFromFile(file, 300, 450);
                     }
                     taskItem.result.status = taskItem.result.bitmap != null ?
                             Status.LOAD_OK : Status.LOAD_ERROR;
