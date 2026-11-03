@@ -27,6 +27,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
 
+/** Manages private playback mode and its confirmation dialog. */
 public class PrivateMode {
 
     private static String DONT_SHOW_PRIVATE_MODE_DIALOG = "dont_show_private_mode_dialog";
