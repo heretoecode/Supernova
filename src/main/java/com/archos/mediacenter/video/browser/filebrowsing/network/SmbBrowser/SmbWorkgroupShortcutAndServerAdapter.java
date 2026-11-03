@@ -61,6 +61,7 @@ public class SmbWorkgroupShortcutAndServerAdapter extends WorkgroupShortcutAndSe
         resetData();
     }
 
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean("mDisplayWorkgroupSeparator", mDisplayWorkgroupSeparator);
@@ -70,6 +71,7 @@ public class SmbWorkgroupShortcutAndServerAdapter extends WorkgroupShortcutAndSe
      * Restore the state that has been saved in a bundle
      * @param inState
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void onRestoreInstanceState(Bundle inState) {
         mDisplayWorkgroupSeparator = inState.getBoolean("mDisplayWorkgroupSeparator");
@@ -97,6 +99,7 @@ public class SmbWorkgroupShortcutAndServerAdapter extends WorkgroupShortcutAndSe
         }
             else return super.onCreateViewHolder(viewGroup,viewType);
     }
+    @Override
     public void resetData() {
         mData.clear();
         mTypes.clear();
