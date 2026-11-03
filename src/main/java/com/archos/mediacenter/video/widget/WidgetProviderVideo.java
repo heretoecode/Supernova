@@ -41,6 +41,7 @@ import com.archos.mediacenter.video.info.VideoInfoActivity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Handles video home-screen widget configuration, updates and removal events. */
 public class WidgetProviderVideo extends AppWidgetProvider {
 
     private static final Logger log = LoggerFactory.getLogger(WidgetProviderVideo.class);
