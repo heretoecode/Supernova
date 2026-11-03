@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.browser.ShortcutDb;
 import java.util.List;
 
 
+/** Displays FTP shortcuts and an entry for adding a new shortcut. */
 public class FtpShortcutAdapter extends RootFragmentAdapter {
     List<ShortcutDb.Shortcut> mShorcuts;
     protected static final int TYPE_SHORTCUT = 1;
