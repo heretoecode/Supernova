@@ -1,20 +1,46 @@
 package com.archos.mediacenter.video.leanback.settings;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+import android.transition.ChangeBounds;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.transition.TransitionSet;
 import android.view.*;
 import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Toast;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.*;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewIcon;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.PreviewHomeRows;
 import com.archos.mediacenter.video.leanback.PreviewAccent;
+import java.util.WeakHashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 public final class PreviewSettings {
-    private static final java.util.WeakHashMap<android.content.Context, java.lang.ref.WeakReference<TextView>> HELP =
-        new java.util.WeakHashMap<>();
+    private static final WeakHashMap<Context, WeakReference<TextView>> HELP =
+        new WeakHashMap<>();
     private static final
-        java.util.WeakHashMap<android.content.Context, java.util.function.Consumer<Preference>> EDITORS =
-        new java.util.WeakHashMap<>();
+        WeakHashMap<Context, Consumer<Preference>> EDITORS =
+        new WeakHashMap<>();
     private static final String[] ORIGINAL_NAMES = {
         "General", "Home & Discovery", "Playback", "Video & Audio",
         "Subtitles", "Library", "Sources & Storage", "Appearance", "Trakt", "Streaming", "Integrations", "Advanced",
@@ -290,7 +316,7 @@ public final class PreviewSettings {
         export.setSummary(
             "Save recent logs and safe device/build information as a ZIP. Choose a destination using Android Files.");
         export.setOnPreferenceClickListener(p -> {
-            fragment.startActivity(new android.content.Intent(
+            fragment.startActivity(new Intent(
                 fragment.requireContext(), com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity.class));
             return true;
         });
@@ -338,10 +364,10 @@ public final class PreviewSettings {
             PreviewDialog.confirmDelete(fragment.requireContext(), "Clear Viewing History?",
                 "Saved watch history will be removed. Unfinished playback positions, media files and sources are kept.",
                 () -> com.archos.mediacenter.video.leanback.ViewingHistory.clear(fragment.requireContext(),
-                        () -> android.widget.Toast
+                        () -> Toast
                                 .makeText(fragment.requireContext(),
                                     "Watch history cleared. Unfinished playback positions kept.",
-                                    android.widget.Toast.LENGTH_LONG)
+                                    Toast.LENGTH_LONG)
                                 .show()));
             return true;
         });
@@ -570,7 +596,7 @@ public final class PreviewSettings {
                 return;
     }
 
-    private static void focusFirst(androidx.recyclerview.widget.RecyclerView list) {
+    private static void focusFirst(RecyclerView list) {
         list.post(new Runnable() {
             int attempts;
             public void run() {
@@ -625,14 +651,14 @@ public final class PreviewSettings {
         }
     }
 
-    private static TextView helpFor(android.content.Context context) {
-        java.lang.ref.WeakReference<TextView> ref = HELP.get(context);
+    private static TextView helpFor(Context context) {
+        WeakReference<TextView> ref = HELP.get(context);
         return ref == null ? null : ref.get();
     }
 
     // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
-    @android.annotation.SuppressLint("RestrictedApi")
-    public static androidx.recyclerview.widget.RecyclerView.Adapter<?> adapter(PreferenceScreen root) {
+    @SuppressLint("RestrictedApi")
+    public static RecyclerView.Adapter<?> adapter(PreferenceScreen root) {
         return new PreferenceGroupAdapter(root) {
             @Override
             public void onBindViewHolder(PreferenceViewHolder holder, int position) {
@@ -641,13 +667,13 @@ public final class PreviewSettings {
                 com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(
                     holder.itemView, "settings.preference." + p.getKey());
                 boolean category = p instanceof PreferenceCategory;
-                holder.itemView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                holder.itemView.setBackgroundColor(Color.TRANSPARENT);
                 holder.itemView.setOnFocusChangeListener((v, focused) -> {
                     if (focused) {
                         TextView help = helpFor(activityContext(v.getContext()));
                         if (help != null)
                             help.setText(contextFor(p));
-                        java.util.function.Consumer<Preference> editor = EDITORS.get(activityContext(v.getContext()));
+                        Consumer<Preference> editor = EDITORS.get(activityContext(v.getContext()));
                         if (editor != null)
                             editor.accept(p);
                     }
@@ -667,7 +693,7 @@ public final class PreviewSettings {
                 }
                 if (p instanceof ListPreference || p instanceof MultiSelectListPreference)
                     holder.itemView.setOnClickListener(v -> {
-                        java.util.function.Consumer<Preference> editor = EDITORS.get(activityContext(v.getContext()));
+                        Consumer<Preference> editor = EDITORS.get(activityContext(v.getContext()));
                         if (editor != null)
                             editor.accept(p);
                         View right = holder.itemView.getRootView().findViewWithTag("settings.inline.choices");
@@ -684,8 +710,8 @@ public final class PreviewSettings {
                 if (summary != null)
                     summary.setVisibility(View.GONE);
                 holder.itemView.setAlpha(category || p.isEnabled() ? 1f : .38f);
-                androidx.recyclerview.widget.RecyclerView.LayoutParams lp =
-                    new androidx.recyclerview.widget.RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams lp =
+                    new RecyclerView.LayoutParams(
                         -1, category ? -2 : PreviewDialog.dp(holder.itemView.getContext(), 54));
                 lp.setMargins(0, 0, 0, PreviewDialog.dp(holder.itemView.getContext(), 6));
                 holder.itemView.setLayoutParams(lp);
@@ -705,8 +731,8 @@ public final class PreviewSettings {
     }
 
     // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
-    @android.annotation.SuppressLint("RestrictedApi")
-    public static androidx.recyclerview.widget.RecyclerView grid(android.content.Context c) {
+    @SuppressLint("RestrictedApi")
+    public static RecyclerView grid(Context c) {
         com.archos.mediacenter.video.leanback.PreviewFocusRecycler list =
             new com.archos.mediacenter.video.leanback.PreviewFocusRecycler(c) {
                 @Override
@@ -725,8 +751,8 @@ public final class PreviewSettings {
                 public View focusSearch(View focused, int direction) {
                     View item = findContainingItemView(focused);
                     int pos = item == null ? -1 : getChildAdapterPosition(item);
-                    androidx.recyclerview.widget.GridLayoutManager lm =
-                        (androidx.recyclerview.widget.GridLayoutManager) getLayoutManager();
+                    GridLayoutManager lm =
+                        (GridLayoutManager) getLayoutManager();
                     if (direction == View.FOCUS_LEFT && pos >= 0 && lm.getSpanSizeLookup().getSpanIndex(pos, 1) == 0
                         && getTag() instanceof View) {
                             Object back = getTag(R.id.preview_settings_return);
@@ -741,9 +767,9 @@ public final class PreviewSettings {
                     return super.focusSearch(focused, direction);
                 }
             };
-        androidx.recyclerview.widget.GridLayoutManager layout =
-            new androidx.recyclerview.widget.GridLayoutManager(c, 1);
-        layout.setSpanSizeLookup(new androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+        GridLayoutManager layout =
+            new GridLayoutManager(c, 1);
+        layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             public int getSpanSize(int position) {
                 if (!(list.getAdapter() instanceof PreferenceGroupAdapter))
                     return 1;
@@ -756,9 +782,9 @@ public final class PreviewSettings {
         return list;
     }
 
-    public static void styleSwitch(androidx.appcompat.widget.SwitchCompat toggle) {
-        android.content.Context context = toggle.getContext();
-        android.graphics.drawable.Drawable thumb = new SettingsSwitchThumb(context);
+    public static void styleSwitch(SwitchCompat toggle) {
+        Context context = toggle.getContext();
+        Drawable thumb = new SettingsSwitchThumb(context);
         toggle.setShowText(false);
         toggle.setThumbDrawable(thumb);
         toggle.setTrackTintList(null);
@@ -767,12 +793,12 @@ public final class PreviewSettings {
         toggle.setSplitTrack(false);
         toggle.setSwitchMinWidth(
             PreviewDialog.dp(context, com.archos.mediacenter.video.leanback.StandardSwitchDrawable.WIDTH_DP));
-        toggle.setThumbTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE));
+        toggle.setThumbTintList(ColorStateList.valueOf(Color.WHITE));
     }
 
     static void tintSwitches(View view) {
         int colour = PreviewAccent.color(view.getContext());
-        android.content.res.ColorStateList tint = new android.content.res.ColorStateList(
+        ColorStateList tint = new ColorStateList(
             new int[][] {
                 new int[] {
                     android.R.attr.state_checked
@@ -781,14 +807,14 @@ public final class PreviewSettings {
             }, new int[] {
                 colour, 0xff738493
             });
-        if (view instanceof androidx.appcompat.widget.SwitchCompat) {
-            styleSwitch((androidx.appcompat.widget.SwitchCompat) view);
-        } else if (view instanceof android.widget.CheckBox) {
-            android.widget.CheckBox box = (android.widget.CheckBox) view;
+        if (view instanceof SwitchCompat) {
+            styleSwitch((SwitchCompat) view);
+        } else if (view instanceof CheckBox) {
+            CheckBox box = (CheckBox) view;
             box.setButtonTintList(null);
             box.setButtonDrawable(new com.archos.mediacenter.video.leanback.StandardSwitchDrawable(box.getContext()));
-        } else if (view instanceof android.widget.CompoundButton)
-            ((android.widget.CompoundButton) view).setButtonTintList(tint);
+        } else if (view instanceof CompoundButton)
+            ((CompoundButton) view).setButtonTintList(tint);
         if (view instanceof ViewGroup)
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++)
                 tintSwitches(((ViewGroup) view).getChildAt(i));
@@ -854,8 +880,8 @@ public final class PreviewSettings {
 
     public static void sidebar(
         PreferenceFragmentCompat fragment, BackupSettingsController backup, boolean restoringBackup) {
-            android.content.Context c = fragment.requireContext();
-            androidx.recyclerview.widget.RecyclerView list = fragment.getListView();
+            Context c = fragment.requireContext();
+            RecyclerView list = fragment.getListView();
             ViewGroup parent = (ViewGroup) list.getParent();
             int index = parent.indexOfChild(list);
             ViewGroup.LayoutParams original = list.getLayoutParams();
@@ -981,7 +1007,7 @@ public final class PreviewSettings {
             ? new com.archos.mediacenter.video.foundation.FoundationAboutWorkspace(
                   fragment, split, middle, helpScroll, links)
             : null;
-            HELP.put(activityContext(c), new java.lang.ref.WeakReference<>(help));
+            HELP.put(activityContext(c), new WeakReference<>(help));
             parent.addView(com.archos.mediacenter.video.leanback.SharedThreePanel.viewport(split), index, original);
             PreferenceScreen root = fragment.getPreferenceScreen();
             Map<Preference, Boolean> visibility = new IdentityHashMap<>();
@@ -1084,7 +1110,7 @@ public final class PreviewSettings {
                         };
                         for (int n = 0; n < titles.length; n++) {
                             final int integrationIndex = n;
-                            androidx.appcompat.widget.SwitchCompat toggle = new androidx.appcompat.widget.SwitchCompat(c);
+                            SwitchCompat toggle = new SwitchCompat(c);
                             toggle.setShowText(false);
                             toggle.setText(titles[n]);
                             toggle.setTextColor(-1);
@@ -1118,31 +1144,31 @@ public final class PreviewSettings {
                     }
                 };
                 Runnable toggle = () -> {
-                    android.transition.TransitionManager.endTransitions(links);
-                    android.transition.TransitionSet transition =
-                    new android.transition.TransitionSet()
-                        .setOrdering(android.transition.TransitionSet.ORDERING_TOGETHER)
-                        .addTransition(new android.transition.ChangeBounds())
-                        .addTransition(new android.transition.Fade());
+                    TransitionManager.endTransitions(links);
+                    TransitionSet transition =
+                    new TransitionSet()
+                        .setOrdering(TransitionSet.ORDERING_TOGETHER)
+                        .addTransition(new ChangeBounds())
+                        .addTransition(new Fade());
                     transition.setDuration(220);
-                    transition.addListener(new android.transition.Transition.TransitionListener() {
-                        public void onTransitionEnd(android.transition.Transition finished) {
+                    transition.addListener(new Transition.TransitionListener() {
+                        public void onTransitionEnd(Transition finished) {
                             finished.removeListener(this);
                             View selected = rememberedLeft[0];
                             if (selected != null && selected.getParent() == links)
                             revealSidebarChild(selected, () -> rememberedLeft[0] == selected);
                         }
-                        public void onTransitionStart(android.transition.Transition started) {
+                        public void onTransitionStart(Transition started) {
                         }
-                        public void onTransitionCancel(android.transition.Transition cancelled) {
+                        public void onTransitionCancel(Transition cancelled) {
                         }
-                        public void onTransitionPause(android.transition.Transition paused) {
+                        public void onTransitionPause(Transition paused) {
                         }
-                        public void onTransitionResume(android.transition.Transition resumed) {
+                        public void onTransitionResume(Transition resumed) {
                         }
                     });
 
-                    android.transition.TransitionManager.beginDelayedTransition(links, transition);
+                    TransitionManager.beginDelayedTransition(links, transition);
                     if (expanded[0] == button) {
                         collapse.run();
                         button.requestFocus();
@@ -1279,7 +1305,7 @@ public final class PreviewSettings {
                 if (initial == null || name.equals(requested) || requested == null && streaming && name.equals("Streaming"))
                 initial = button;
             }
-            androidx.activity.OnBackPressedCallback back = new androidx.activity.OnBackPressedCallback(false) {
+            OnBackPressedCallback back = new OnBackPressedCallback(false) {
                 public void handleOnBackPressed() {
                     if (backup != null && backup.isVisible() && backup.back())
                     return;
@@ -1310,7 +1336,7 @@ public final class PreviewSettings {
             }
         }
 
-    private static void revealSidebarChild(View child, java.util.function.BooleanSupplier current) {
+    private static void revealSidebarChild(View child, BooleanSupplier current) {
         Runnable reveal = () -> {
             if (current.getAsBoolean() && child.isAttachedToWindow() && child.getWidth() > 0 && child.getHeight() > 0) {
                 ViewParent parent = child.getParent();
@@ -1319,7 +1345,7 @@ public final class PreviewSettings {
                 if (parent instanceof ScrollView) {
                     ScrollView scroll = (ScrollView) parent;
                     ViewGroup content = (ViewGroup) scroll.getChildAt(0);
-                    android.graphics.Rect target = new android.graphics.Rect(0, 0, child.getWidth(), child.getHeight());
+                    Rect target = new Rect(0, 0, child.getWidth(), child.getHeight());
                     content.offsetDescendantRectToMyCoords(child, target);
                     target.offset(content.getLeft(), content.getTop());
                     int position = scroll.getScrollY(), top = position + scroll.getPaddingTop(),
@@ -1342,13 +1368,13 @@ public final class PreviewSettings {
         });
     }
 
-    private static TextView sidebarButton(android.content.Context c, String name, boolean child) {
+    private static TextView sidebarButton(Context c, String name, boolean child) {
         TextView button = new TextView(c);
         button.setText(name);
         button.setTextSize(16);
         button.setSingleLine(true);
-        button.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        button.setTextColor(android.graphics.Color.WHITE);
+        button.setEllipsize(TextUtils.TruncateAt.END);
+        button.setTextColor(Color.WHITE);
         button.setGravity(Gravity.CENTER_VERTICAL);
         button.setPadding(PreviewDialog.dp(c, child ? 24 : 10), 0, PreviewDialog.dp(c, 10), 0);
         PreviewIcon.apply(button, name, 22);
@@ -1359,9 +1385,9 @@ public final class PreviewSettings {
         return button;
     }
 
-    private static android.content.Context activityContext(android.content.Context c) {
-        while (c instanceof android.content.ContextWrapper && !(c instanceof android.app.Activity))
-            c = ((android.content.ContextWrapper) c).getBaseContext();
+    private static Context activityContext(Context c) {
+        while (c instanceof ContextWrapper && !(c instanceof Activity))
+            c = ((ContextWrapper) c).getBaseContext();
         return c;
     }
 
