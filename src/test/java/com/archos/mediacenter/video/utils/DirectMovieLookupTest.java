@@ -9,6 +9,7 @@ import org.robolectric.annotation.Config;
 import org.json.*;
 import static org.junit.Assert.*;
 
+/** Checks direct movie lookup accepts valid identifiers and rejects TV or ambiguous IMDb results. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class DirectMovieLookupTest {
     @Test public void oneFieldAcceptsMovieIdentifiersAndUppercaseKeyboardImdbInput(){
