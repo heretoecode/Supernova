@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.collections.CollectionsSortOrderEntries;
 import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads videos belonging to a collection. */
 public class CollectionLoader extends VideoLoader {
 
     private static final String TAG = "CollectionLoader";
