@@ -57,6 +57,21 @@ Each item: what the owner saw → what they want → status.
   matters for the Details page and overlay, which keep it.
 - **Status:** approved design — awaiting go-ahead to code.
 
+### 6. Home and Details hero cards unified (design)
+- **Seen (photos, 0.153, Black Bag on both):** the Details hero repeats what the Details tab shows (boxed age
+  rating, boxed FHD / AAC 5.1 badges, 3-line synopsis); its artwork is dimmed as a whole, so the same film looks
+  darker than on Home.
+- **Decision (owner, 2026-11-03):** both heroes look the same —
+  - logo; row **`Year · Genres`** (Details adds runtime for films / seasons for series, next to the year:
+    `2025 · 1h 34m · Mystery, Thriller`); **tagline** (fallback: two-line synopsis when there is no tagline);
+  - **no score on either card** (mock-ups of text / star / five stars / ring in
+    `docs/design/proposals/hero-score/` were reviewed and rejected); scores stay in the Details tab's Reception;
+  - no age rating and no format badges on either card (both remain in the Details tab; rating also in the
+    playback overlay);
+  - same artwork treatment on both: approved text shadow + gentle left darkening (item 5), no whole-card dimming;
+  - buttons by job: More Info on Home; Play and More on Details.
+- **Status:** approved design — awaiting go-ahead to code.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
