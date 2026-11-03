@@ -3,10 +3,13 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediascraper.ScraperImage;
 import com.squareup.picasso.Picasso;
+import java.io.File;
 import java.util.*;
 import java.util.function.*;
 
@@ -64,7 +67,7 @@ public final class PreviewArtworkPicker {
             card.setForeground(PreviewDialog.focus(context));
             card.setContentDescription(heading + " " + (i + 1));
             FrameLayout body = new FrameLayout(context);
-            android.graphics.drawable.GradientDrawable outline = new android.graphics.drawable.GradientDrawable();
+            GradientDrawable outline = new GradientDrawable();
             outline.setColor(0xff142431);
             outline.setCornerRadius(PreviewDialog.dp(context, 6));
             body.setBackground(outline);
@@ -74,10 +77,10 @@ public final class PreviewArtworkPicker {
             picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
             body.addView(picture, new FrameLayout.LayoutParams(-1, -1));
             pictures.add(picture);
-            java.io.File file = image.getLargeFileF();
-            android.net.Uri uri = file != null && file.isFile() ? android.net.Uri.fromFile(file)
+            File file = image.getLargeFileF();
+            Uri uri = file != null && file.isFile() ? Uri.fromFile(file)
                                   : image.getLargeUrl() == null ? null
-                                                                : android.net.Uri.parse(image.getLargeUrl());
+                                                                : Uri.parse(image.getLargeUrl());
             if (uri != null)
                 com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(
                     picture, uri, com.archos.mediacenter.video.diagnostics.Diagnostics.artworkMedia(),
