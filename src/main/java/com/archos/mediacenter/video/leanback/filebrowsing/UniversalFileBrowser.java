@@ -184,17 +184,18 @@ public final class UniversalFileBrowser extends LinearLayout {
         grid.setOrientation(VERTICAL);
         grid.setTag("network.landing");
         grid.setPadding(gridDp(12), gridDp(8), gridDp(12), gridDp(8));
-        TextView title = gridText("Network & Files", 28);
-        grid.addView(title);
+        // Same tiles as the Settings landing page (owner, 3 Nov 2026): no page title, 3 × 2, charcoal.
         String[] labels = {
-            "Local Storage", "Network Locations", "Add Connection", "Manage Connections",
-            "Network Scanning", "Advanced Options"
+            "Local Storage", "Network Shares", "Add Connection", "Saved Connections",
+            "Library Scanning", "Advanced"
         };
         String[] copy = {
-            "Browse internal storage, USB drives and all files.",
-            "Saved locations, discovered devices and Put.io.", "Set up SMB, WebDAV, SFTP or FTP access.",
-            "Review saved locations and library membership.", "Configure automatic checks and scan your library.",
-            "Library Health, file browsing and compatibility."
+            "Browse this device's storage and any USB drives.",
+            "Open saved shares, devices on your network and Put.io.",
+            "Connect to a share using SMB, WebDAV, SFTP or FTP.",
+            "Edit connections and choose which ones feed your library.",
+            "Scan for new videos and set up automatic checks.",
+            "Library Health, file browsing and compatibility options."
         };
         String[] icons = {
             "local", "network", "plus", "settings.nodes", "refresh", "settings"
@@ -204,31 +205,14 @@ public final class UniversalFileBrowser extends LinearLayout {
             LinearLayout line = new LinearLayout(getContext());
             line.setBaselineAligned(false);
             LayoutParams row = new LayoutParams(-1, 0, 1);
-            row.topMargin = gridDp(12);
+            if (r == 0)
+                row.bottomMargin = gridDp(12);
             grid.addView(line, row);
             for (int c = 0; c < 3; c++) {
                 final int index = r * 3 + c;
-                LinearLayout card = column();
-                card.setGravity(Gravity.CENTER_VERTICAL);
-                card.setFocusable(true);
-                card.setFocusableInTouchMode(true);
-                card.setPadding(gridDp(16), gridDp(14), gridDp(16), gridDp(14));
-                card.setBackground(SharedThreePanel.control(getContext(), 9));
+                LinearLayout card = LandingTile.create(getContext(), icons[index], labels[index], copy[index],
+                                                       gridScale());
                 card.setTag("network.card." + index);
-                card.setContentDescription(labels[index] + ". " + copy[index]);
-                ImageView icon = new ImageView(getContext());
-                icon.setImageDrawable(new PreviewIcon(icons[index]));
-                card.addView(icon, new LayoutParams(gridDp(30), gridDp(30)));
-                TextView name = gridText(labels[index], 20);
-                name.setTypeface(null, Typeface.BOLD);
-                LayoutParams nameSize = new LayoutParams(-1, -2);
-                nameSize.topMargin = gridDp(10);
-                card.addView(name, nameSize);
-                TextView description = gridText(copy[index], 15);
-                description.setTextColor(0xffbcc9d9);
-                LayoutParams descriptionSize = new LayoutParams(-1, -2);
-                descriptionSize.topMargin = gridDp(6);
-                card.addView(description, descriptionSize);
                 LayoutParams size = new LayoutParams(0, -1, 1);
                 if (c < 2)
                     size.rightMargin = gridDp(12);

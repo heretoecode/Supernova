@@ -152,9 +152,6 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         return false;
     }
 
-    /** Measured 2 Nov 2026: 35px titles are the largest that keep every category title on one line at 1080p. */
-    static final float TILE_TITLE_SP = 17.5f, TILE_DESCRIPTION_SP = 12.5f, TILE_HEADING_OFFSET = .30f;
-
     private float scale() {
         return Math.max(.5f, Math.min(1.25f, Math.min(getResources().getConfiguration().screenWidthDp / 960f,
                                                       getResources().getConfiguration().screenHeightDp / 540f)));
@@ -249,48 +246,11 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             grid.addView(line, rowSize);
             for (int col = 0; col < 4; col++) {
                 final int index = r * 4 + col;
-                // Approved tile (2 Nov 2026): navy glass at rest, white box on focus; icon beside a one-line title,
-                // description full width underneath; headings at a fixed height so each row lines up.
-                LinearLayout card = new LinearLayout(getContext()) {
-                    @Override
-                    protected void onSizeChanged(int w, int h, int ow, int oh) {
-                        super.onSizeChanged(w, h, ow, oh);
-                        int top = Math.round(h * TILE_HEADING_OFFSET);
-                        if (getPaddingTop() != top)
-                            post(() -> setPadding(getPaddingLeft(), top, getPaddingRight(), getPaddingBottom()));
-                    }
-                };
-                card.setOrientation(VERTICAL);
-                card.setGravity(Gravity.TOP);
-                card.setPadding(dp(18), dp(20), dp(18), dp(14));
-                card.setFocusable(true);
-                card.setFocusableInTouchMode(true);
+                // Shared landing tile (Settings and Network & Files use the same one).
+                LinearLayout card = LandingTile.create(getContext(), SettingsRegistry.ICONS[index],
+                                                       SettingsRegistry.LABELS[index],
+                                                       SettingsRegistry.DESCRIPTIONS[index], scale());
                 card.setTag("settings.grid." + index);
-                card.setContentDescription(SettingsRegistry.LABELS[index] + ". " +
-                                           SettingsRegistry.DESCRIPTIONS[index]);
-                LinearLayout heading = new LinearLayout(getContext());
-                heading.setGravity(Gravity.CENTER_VERTICAL);
-                ImageView icon = new ImageView(getContext());
-                icon.setImageDrawable(new PreviewIcon(SettingsRegistry.ICONS[index]));
-                heading.addView(icon, new LayoutParams(dp(22), dp(22)));
-                TextView title = text(SettingsRegistry.LABELS[index], 18);
-                title.setTextSize(TILE_TITLE_SP * scale());
-                title.setTypeface(null, Typeface.BOLD);
-                title.setSingleLine(true);
-                title.setEllipsize(TextUtils.TruncateAt.END);
-                title.setTag("settings.grid.title");
-                LayoutParams titleSize = new LayoutParams(0, -2, 1);
-                titleSize.leftMargin = dp(9);
-                heading.addView(title, titleSize);
-                card.addView(heading, new LayoutParams(-1, -2));
-                TextView description = text(SettingsRegistry.DESCRIPTIONS[index], 13);
-                description.setTextSize(TILE_DESCRIPTION_SP * scale());
-                description.setLineSpacing(dp(2), 1);
-                SupernovaStyle.markSecondary(description);
-                LayoutParams descSize = new LayoutParams(-1, -2);
-                descSize.topMargin = dp(8);
-                card.addView(description, descSize);
-                SupernovaStyle.applyButton(card, SupernovaStyle.Surface.TILE);
                 LayoutParams size = new LayoutParams(0, -1, 1);
                 if (col < 3)
                     size.rightMargin = dp(12);

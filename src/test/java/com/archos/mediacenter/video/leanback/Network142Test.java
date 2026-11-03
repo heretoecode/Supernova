@@ -126,8 +126,8 @@ public class Network142Test {
     @Test
     public void sixCardsHaveApprovedOrderAndExplicitActivation() throws Exception {
         String[] expected = {
-            "Local Storage", "Network Locations", "Add Connection", "Manage Connections",
-            "Network Scanning", "Advanced Options"
+            "Local Storage", "Network Shares", "Add Connection", "Saved Connections",
+            "Library Scanning", "Advanced"
         };
         for (int n = 0; n < 6; n++) {
             View card = browser.findViewWithTag("network.card." + n);

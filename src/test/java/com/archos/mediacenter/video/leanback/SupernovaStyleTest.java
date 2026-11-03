@@ -129,6 +129,29 @@ public class SupernovaStyleTest {
         assertEquals(SupernovaStyle.TEXT, ((SupernovaStyle.StateIcon)icon).colour());
     }
 
+    /** 0.154: landing tiles (Settings and Network & Files) — title, description and icon readable on focus. */
+    @Test
+    public void landingTileContentIsDarkOnTheWhiteBox() {
+        LinearLayout tile = LandingTile.create(host.get(), "plus", "Add Connection",
+                                               "Connect to a share using SMB, WebDAV, SFTP or FTP.", 1f);
+        TextView other = new TextView(host.get());
+        other.setFocusable(true);
+        other.setFocusableInTouchMode(true);
+        root.addView(tile, new FrameLayout.LayoutParams(400, 300));
+        root.addView(other, new FrameLayout.LayoutParams(10, 10, Gravity.END));
+        assertEquals(SupernovaStyle.GLASS, ((SupernovaStyle.Box)tile.getBackground().getCurrent()).fill());
+        assertTrue(tile.requestFocus());
+        LinearLayout heading = (LinearLayout)tile.getChildAt(0);
+        android.widget.ImageView icon = (android.widget.ImageView)heading.getChildAt(0);
+        TextView title = (TextView)heading.getChildAt(1);
+        TextView description = (TextView)tile.getChildAt(1);
+        assertEquals(SupernovaStyle.FOCUS_TEXT, title.getCurrentTextColor());
+        assertEquals(SupernovaStyle.TEXT_SECONDARY_ON_FOCUS, description.getCurrentTextColor());
+        assertTrue(icon.getDrawable() instanceof SupernovaStyle.StateIcon);
+        assertEquals(SupernovaStyle.FOCUS_TEXT, ((SupernovaStyle.StateIcon)icon.getDrawable()).colour());
+        assertSame(SupernovaStyle.LABEL, title.getTypeface());
+    }
+
     /** A screen that sets a flat colour after styling must still not end up white on white. */
     @Test
     public void flatColourSetLaterIsMadeReadableAgain() {
