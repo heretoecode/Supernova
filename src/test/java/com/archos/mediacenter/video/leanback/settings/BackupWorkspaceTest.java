@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.*;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
@@ -56,7 +57,7 @@ public class BackupWorkspaceTest {
         view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
         view.layout(0, 0, width, height);
-        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
     private void capture(View view, String name) throws Exception {
@@ -227,18 +228,18 @@ public class BackupWorkspaceTest {
             locations.requestFocus();
             locations.performClick();
             var dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertFalse(workspace.included(BackupCategory.LOCATIONS));
             assertEquals("Cancel", ((TextView) dialog.getWindow().getDecorView().findFocus()).getText().toString());
             assertNotNull(text(dialog.getWindow().getDecorView(), "Include filenames and locations?"));
             text(dialog.getWindow().getDecorView(), "Cancel").performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertFalse(workspace.included(BackupCategory.LOCATIONS));
             assertSame(locations, workspace.findFocus());
             locations.performClick();
             dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
             text(dialog.getWindow().getDecorView(), "Include locations").performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(workspace.included(BackupCategory.LOCATIONS));
             assertTrue(workspace(host.get()).included(BackupCategory.LOCATIONS));
             assertSame(locations, workspace.findFocus());
@@ -246,17 +247,17 @@ public class BackupWorkspaceTest {
             history.requestFocus();
             history.performClick();
             dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(workspace.included(BackupCategory.HISTORY));
             assertEquals("Cancel", ((TextView) dialog.getWindow().getDecorView().findFocus()).getText().toString());
             dialog.onBackPressed();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertTrue(workspace.included(BackupCategory.HISTORY));
             assertSame(history, workspace.findFocus());
             history.performClick();
             dialog = org.robolectric.shadows.ShadowDialog.getLatestDialog();
             text(dialog.getWindow().getDecorView(), "Exclude history").performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertFalse(workspace.included(BackupCategory.HISTORY));
             assertTrue(workspace.included(BackupCategory.POSITIONS));
             assertSame(history, workspace.findFocus());
