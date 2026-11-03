@@ -451,6 +451,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
             if (launch.getParent() == null)
                 return;
             composed.post(new Runnable() {
+                @Override
                 public void run() {
                     if (launch.getParent() == null || mPreviewPages == null || mNavigation == null)
                         return;
@@ -460,6 +461,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                     }
                     composed.getViewTreeObserver().addOnPreDrawListener(
                         new ViewTreeObserver.OnPreDrawListener() {
+                            @Override
                             public boolean onPreDraw() {
                                 composed.getViewTreeObserver().removeOnPreDrawListener(this);
                                 launch.animate()
@@ -1114,6 +1116,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         if (mActivity == null)
             return;
         setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 if (mActivity != null) {
                     Intent intent = new Intent(mActivity, VideoSearchActivity.class);
@@ -2430,6 +2433,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
      * Update (un)mount sdcard/usb host
      */
     private final BroadcastReceiver mExternalStorageReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(ExtStorageReceiver.ACTION_MEDIA_MOUNTED)) {
@@ -2456,6 +2460,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
     };
 
     private final BroadcastReceiver mUpdateReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             if (log.isDebugEnabled())
                 log.debug("mUpdateReceiver: received intent!!!");
