@@ -21,8 +21,6 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.loader.content.Loader;
 import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
