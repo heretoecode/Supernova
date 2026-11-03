@@ -16,14 +16,11 @@ import com.archos.mediacenter.video.R;
  * The Playback Settings panel draws the same tokens; the Edit Page panel is built from this kit.
  */
 public final class SidePanelKit {
-    public static final int PANEL_TOP = 0xf51a1f5c, PANEL_BOTTOM = 0xf5141848, PANEL_BORDER = 0xff5fd0ff;
     public static final int ACCENT = 0xff2f6df0, FOCUS_BORDER = 0xff7fd6ff, OUTLINE = 0xff5a7bd8;
-    public static final int HEADING = 0xff9cc9f0, HEADING_RULE = 0xff3e5aa8, ROW_RULE = 0xff34479a;
+    public static final int HEADING = SupernovaStyle.HEADING, HEADING_RULE = SupernovaStyle.HEADING_LINE;
     public static final int VALUE = 0xff3fb6ff, META = 0xffb9c7e8, BAR = 0xffcfd8ff, ICON = 0xffe8eeff;
     public static final int MATCH = 0xff4cd3a0, WARNING = 0xffffc04d, DANGER = 0xffff6b7a;
-    public static final int ROW_HEIGHT = 52;
-    /** Edit Page is a solid panel (approved design); the page behind must not show through. */
-    public static final int SOLID_TOP = 0xff1a1f5c, SOLID_BOTTOM = 0xff141848;
+    public static final int ROW_HEIGHT = 74; // More-menu row height (0.154)
 
     public interface Stepper {
         void step(int direction);
@@ -64,7 +61,7 @@ public final class SidePanelKit {
         return image;
     }
 
-    /** The shared glass (approved 2 Nov 2026: one 97% navy material for every panel). */
+    /** The shared glass: one 97% charcoal material for every panel (0.154; was navy). */
     public Drawable panelSurface(int glow) {
         return new Surface(SupernovaStyle.GLASS, SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE, s(26),
                            Math.max(1, s(2)), 0x66000000, glow);
@@ -75,12 +72,22 @@ public final class SidePanelKit {
         return SupernovaStyle.rowFocus(context);
     }
 
+    /** More-menu heading: sentence case, soft grey, with a thin line alongside. Rows have no lines between them. */
     public void section(LinearLayout body, String title, boolean first) {
-        TextView label = text(title, 15, HEADING, true);
-        label.setLetterSpacing(.06f);
-        label.setPadding(s(4), s(first ? 4 : 12), 0, s(6));
-        body.addView(label);
-        rule(body, HEADING_RULE);
+        LinearLayout heading = new LinearLayout(context);
+        heading.setGravity(Gravity.CENTER_VERTICAL);
+        heading.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        heading.setPadding(s(6), s(first ? 4 : 18), s(6), s(4));
+        heading.setTag("panel.heading");
+        String lower = title.toLowerCase(java.util.Locale.ROOT);
+        heading.addView(text(lower.isEmpty() ? lower : Character.toUpperCase(lower.charAt(0)) + lower.substring(1),
+                             18, HEADING, false));
+        View line = new View(context);
+        line.setBackgroundColor(HEADING_RULE);
+        LinearLayout.LayoutParams lineSize = new LinearLayout.LayoutParams(0, Math.max(1, s(2)), 1);
+        lineSize.leftMargin = s(14);
+        heading.addView(line, lineSize);
+        body.addView(heading, new LinearLayout.LayoutParams(-1, -2));
     }
 
     public void rule(LinearLayout body, int colour) {
@@ -126,7 +133,6 @@ public final class SidePanelKit {
         row.setTag(R.id.preview_row_top, top);
         attach(body, row, null);
         body.addView(row, new LinearLayout.LayoutParams(-1, -2));
-        rule(body, ROW_RULE);
         return row;
     }
 

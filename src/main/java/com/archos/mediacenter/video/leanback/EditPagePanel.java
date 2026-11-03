@@ -499,7 +499,7 @@ public final class EditPagePanel extends LinearLayout {
         LayoutParams size = new LayoutParams(-1, -2);
         size.bottomMargin = kit.s(12);
         addView(back, 1, size);
-        scroll.setMax(Math.min(maxBodyHeight() + kit.s(60), kit.s(10 * (SidePanelKit.ROW_HEIGHT + 1.5f))));
+        scroll.setMax(Math.min(maxBodyHeight() + kit.s(60), kit.s(10 * SidePanelKit.ROW_HEIGHT)));
         scroll.scrollTo(0, 0);
         return back;
     }
@@ -534,7 +534,6 @@ public final class EditPagePanel extends LinearLayout {
         row.setTag(com.archos.mediacenter.video.R.id.preview_row_top, (Runnable)this::focusTop);
         kit.attach(body, row, null);
         body.addView(row, new LayoutParams(-1, -2));
-        kit.rule(body, SidePanelKit.ROW_RULE);
         return row;
     }
 

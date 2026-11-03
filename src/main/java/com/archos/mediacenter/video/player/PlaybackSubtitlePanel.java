@@ -37,11 +37,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     static final float SPEED_STEP = 0.05f;
 
     // Approved mock-up colours.
-    private static final int PANEL_TOP = 0xf51a1f5c, PANEL_BOTTOM = 0xf5141848, PANEL_BORDER = 0xff5fd0ff;
     private static final int TAB_BORDER = 0xff5a7bd8, TAB_ACTIVE = 0xff2f6df0, FOCUS_BORDER = 0xff7fd6ff;
-    private static final int HEADING = 0xff9cc9f0, HEADING_RULE = 0xff3e5aa8, ROW_RULE = 0xff34479a;
+    private static final int HEADING = SupernovaStyle.HEADING, HEADING_RULE = SupernovaStyle.HEADING_LINE;
     private static final int VALUE = 0xff3fb6ff, META = 0xffb9c7e8, BAR = 0xffcfd8ff, ICON = 0xffe8eeff;
-    private static final int ROW_HEIGHT = 60, LIST_ROWS_VISIBLE = 7;
+    private static final int ROW_HEIGHT = 74, LIST_ROWS_VISIBLE = 7;
 
     static final class Track {
         final String label, language;
@@ -154,15 +153,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         header = new LinearLayout(owner);
         header.setOrientation(VERTICAL);
         addView(header, new LayoutParams(-1, -2));
-        LinearLayout title = new LinearLayout(owner);
-        title.setGravity(Gravity.CENTER_VERTICAL);
-        title.addView(icon("settings.gear", 32));
-        TextView heading = text("Playback Settings", 30, Color.WHITE, true);
-        heading.setPadding(s(14), 0, 0, 0);
-        title.addView(heading);
-        LayoutParams titleSize = new LayoutParams(-1, -2);
-        titleSize.bottomMargin = s(22);
-        header.addView(title, titleSize);
+        // 0.154: no "Playback Settings" title; the tabs say where you are (same structure as the More menu).
 
         tabs = new LinearLayout(owner);
         tabs.setBaselineAligned(false);
@@ -170,7 +161,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         int[] ids = {TAB_SUBTITLES, TAB_AUDIO, TAB_PLAYBACK};
         for (int i = 0; i < ids.length; i++)
             tabs.addView(tab(i, ids[i], names[i], icons[i]), tabSize(i));
-        LayoutParams tabsSize = new LayoutParams(-1, s(56));
+        LayoutParams tabsSize = new LayoutParams(-1, s(72));
         tabsSize.bottomMargin = s(12);
         header.addView(tabs, tabsSize);
 
@@ -313,19 +304,26 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
     }
 
+    /** More-menu heading: sentence case, soft grey, with a thin line alongside. No lines between rows. */
     private void section(String title, boolean first) {
-        TextView label = text(title, 17, HEADING, true);
-        label.setLetterSpacing(.035f);
-        label.setPadding(s(4), s(first ? 10 : 22), 0, s(8));
-        body.addView(label);
-        rule(HEADING_RULE);
+        LinearLayout heading = new LinearLayout(owner);
+        heading.setGravity(Gravity.CENTER_VERTICAL);
+        heading.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+        heading.setPadding(s(6), s(first ? 10 : 22), s(6), s(6));
+        heading.setTag("playback.heading");
+        TextView label = text(sentenceCase(title), 18, HEADING, false);
+        heading.addView(label);
+        View line = new View(owner);
+        line.setBackgroundColor(HEADING_RULE);
+        LayoutParams lineSize = new LayoutParams(0, Math.max(1, s(2)), 1);
+        lineSize.leftMargin = s(14);
+        heading.addView(line, lineSize);
+        body.addView(heading, new LayoutParams(-1, -2));
     }
 
-    private void rule(int colour) {
-        View line = new View(owner);
-        line.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-        line.setBackgroundColor(colour);
-        body.addView(line, new LayoutParams(-1, Math.max(1, s(1.5f))));
+    static String sentenceCase(String title) {
+        String lower = title.toLowerCase(java.util.Locale.ROOT);
+        return lower.isEmpty() ? lower : Character.toUpperCase(lower.charAt(0)) + lower.substring(1);
     }
 
     private LinearLayout row(String tag, String iconKind, String title) {
@@ -352,7 +350,6 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         row.setContentDescription(title);
         row.setOnKeyListener((v, key, event) -> rowKeys(row, key, event, null));
         body.addView(row, new LayoutParams(-1, -2));
-        rule(ROW_RULE);
         return row;
     }
 
@@ -451,7 +448,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             styleTabs();
             body.removeAllViews();
             bindings.clear();
-            scroll.setMax(maxPanelHeight() - s(30 + 36 + 22 + 56 + 12 + 26) - s(28));
+            scroll.setMax(maxPanelHeight() - s(30 + 72 + 12 + 26) - s(28));
             if (id == TAB_AUDIO)
                 buildAudio();
             else if (id == TAB_PLAYBACK)
@@ -844,7 +841,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             addView(back, 1, backSize);
 
             List<Track> tracks = subtitles ? backend.tracks() : backend.audioTracks();
-            scroll.setMax(s(LIST_ROWS_VISIBLE * (ROW_HEIGHT + 1.5f)));
+            scroll.setMax(s(LIST_ROWS_VISIBLE * ROW_HEIGHT));
             View initial = null;
             for (int i = 0; i < tracks.size(); i++) {
                 View row = trackRow(which, i, tracks.get(i));
@@ -914,7 +911,6 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         });
         row.setOnKeyListener((v, key, event) -> rowKeys(row, key, event, null));
         body.addView(row, new LayoutParams(-1, -2));
-        rule(ROW_RULE);
         return row;
     }
 

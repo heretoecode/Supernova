@@ -29,13 +29,13 @@ public final class SupernovaStyle {
     }
 
     // ---- tokens --------------------------------------------------------------------------------
-    /** Glass: navy at 97% opacity. Text behind a panel must not be readable. */
-    public static final int GLASS = 0xF71A1F5C;
-    public static final int GLASS_EDGE = 0x66FFFFFF;
+    /** Glass: charcoal at 97% opacity (0.154; was navy). Text behind a panel must not be readable. */
+    public static final int GLASS = 0xF716181C;
+    public static final int GLASS_EDGE = 0x38FFFFFF;
     /** Resting button: black at 72%. */
     public static final int BUTTON_REST = 0xB8000000;
-    /** Resting surface for buttons inside a panel and for tiles: the panel's darker navy. */
-    public static final int PANEL_REST = 0xFF141848;
+    /** Resting surface for buttons inside a panel: a lighter charcoal step so they show on the charcoal glass. */
+    public static final int PANEL_REST = 0xFF2A2D33;
     public static final int DESTRUCTIVE = 0xFFFFA5A5;
     public static final int DESTRUCTIVE_ON_FOCUS = 0xFFB3261E;
     /** Faint fill marking the chosen row in a list whose focus travels separately. */
@@ -45,8 +45,9 @@ public final class SupernovaStyle {
     public static final int TEXT = Color.WHITE;
     public static final int TEXT_SECONDARY = 0xFFC9D3E6;
     public static final int TEXT_SECONDARY_ON_FOCUS = 0xFF3A4256;
-    public static final int HEADING = 0xFF9CC9F0;
-    public static final int HEADING_LINE = 0x599CC9F0;
+    /** Group headings and their lines: soft grey (0.154; was light blue). */
+    public static final int HEADING = 0xFFB7BFCC;
+    public static final int HEADING_LINE = 0x38FFFFFF;
     public static final int DISABLED_ALPHA = 102; // 40%
 
     /** Button and tile labels: Medium weight (Light strokes read as grey on a TV). */
@@ -65,9 +66,9 @@ public final class SupernovaStyle {
     public enum Surface {
         /** Small buttons on a page (HUD, toolbars, hero, details): black at rest. */
         STANDARD,
-        /** Buttons inside a glass panel (e.g. panel tabs): the panel's darker navy at rest. */
+        /** Buttons inside a glass panel (e.g. panel tabs): a lighter charcoal at rest. */
         PANEL,
-        /** Large boxed choices (e.g. the Settings grid): navy glass at rest. */
+        /** Large boxed choices (e.g. the Settings grid): charcoal glass at rest. */
         TILE
     }
 
