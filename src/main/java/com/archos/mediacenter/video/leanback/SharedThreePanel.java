@@ -1,12 +1,21 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,12 +59,12 @@ public class SharedThreePanel extends LinearLayout {
         Context c = panels.getContext();
         if (TvLayout.width(c) >= 780)
             return panels;
-        android.widget.HorizontalScrollView viewport = new android.widget.HorizontalScrollView(c);
+        HorizontalScrollView viewport = new HorizontalScrollView(c);
         viewport.setHorizontalScrollBarEnabled(false);
         viewport.setFillViewport(false);
         viewport.setClipChildren(false);
         viewport.setClipToPadding(false);
-        viewport.addView(panels, new android.widget.FrameLayout.LayoutParams(TvLayout.px(c, 900), -1));
+        viewport.addView(panels, new FrameLayout.LayoutParams(TvLayout.px(c, 900), -1));
         return viewport;
     }
 
@@ -99,7 +108,7 @@ public class SharedThreePanel extends LinearLayout {
         panel.setBackground(surface);
         panel.setElevation(dp(context, 4));
         panel.setPadding(dp(context, 20), dp(context, 20), dp(context, 20), dp(context, 20));
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
+        if (Build.VERSION.SDK_INT >= 28) {
             panel.setOutlineAmbientShadowColor(0x337f8996);
             panel.setOutlineSpotShadowColor(0x337f8996);
         }
@@ -136,9 +145,9 @@ public class SharedThreePanel extends LinearLayout {
 
     /** Permanent inset control surface; row actions retain their separate focus-only outline. */
     public static void rowSeparator(View row) {
-        android.graphics.drawable.Drawable line = new android.graphics.drawable.Drawable() {
-            private final android.graphics.Paint paint = new android.graphics.Paint();
-            public void draw(android.graphics.Canvas canvas) {
+        Drawable line = new Drawable() {
+            private final Paint paint = new Paint();
+            public void draw(Canvas canvas) {
                 paint.setColor(0x337f8996);
                 paint.setStrokeWidth(dp(row.getContext(), 1));
                 canvas.drawLine(dp(row.getContext(), 8), getBounds().bottom - 1,
@@ -146,16 +155,16 @@ public class SharedThreePanel extends LinearLayout {
             }
             public void setAlpha(int alpha) {
             }
-            public void setColorFilter(android.graphics.ColorFilter filter) {
+            public void setColorFilter(ColorFilter filter) {
             }
             public int getOpacity() {
-                return android.graphics.PixelFormat.TRANSLUCENT;
+                return PixelFormat.TRANSLUCENT;
             }
         };
-        android.graphics.drawable.Drawable existing = row.getForeground();
+        Drawable existing = row.getForeground();
         row.setForeground(existing == null ? line
-                                           : new android.graphics.drawable.LayerDrawable(
-                                                 new android.graphics.drawable.Drawable[] {existing, line}));
+                                           : new LayerDrawable(
+                                                 new Drawable[] {existing, line}));
     }
 
     /** Button background from the shared style. Prefer {@link SupernovaStyle#applyButton}, which also sets the content colours. */
