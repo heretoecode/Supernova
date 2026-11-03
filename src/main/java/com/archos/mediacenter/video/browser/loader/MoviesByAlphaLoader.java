@@ -35,6 +35,7 @@ public class MoviesByAlphaLoader extends MoviesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String col = SortUtils.getAlphaBucketColumn(context, SortUtils.SortScope.MOVIE);
         return "SELECT\n" +
