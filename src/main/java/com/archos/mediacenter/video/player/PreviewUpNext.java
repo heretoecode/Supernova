@@ -1,5 +1,9 @@
 package com.archos.mediacenter.video.player;
 import android.app.Activity;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
@@ -9,7 +13,7 @@ import com.archos.mediacenter.utils.introdb.IntroSegments;
 /** In-player presentation over the existing next-episode engine; never fabricates completion. */
 final class PreviewUpNext {
     private final Activity activity;
-    private final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView skipPill;
     private long skipExpires;
     private View skipOrigin;
@@ -34,7 +38,7 @@ final class PreviewUpNext {
         public void run() {
             PlayerService service = PlayerService.sPlayerService;
             Player player = Player.sPlayer;
-            long now = android.os.SystemClock.elapsedRealtime();
+            long now = SystemClock.elapsedRealtime();
             segmentPill(service);
             if (service != null && player != null && service.getVideoInfo() != null) {
                 long current = service.getVideoInfo().id;
@@ -68,11 +72,11 @@ final class PreviewUpNext {
     };
 
     private void show(Episode next, PlayerService service) {
-        deadline = android.os.SystemClock.elapsedRealtime() + 5000;
+        deadline = SystemClock.elapsedRealtime() + 5000;
         panel = new LinearLayout(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(16), dp(12), dp(16), dp(12));
-        android.graphics.drawable.GradientDrawable surface = PreviewDialog.surface(activity, false);
+        GradientDrawable surface = PreviewDialog.surface(activity, false);
         surface.setColor(0xec08121b);
         surface.setCornerRadius(dp(10));
         panel.setBackground(surface);
