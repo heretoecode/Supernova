@@ -191,6 +191,18 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
   settings move to Saved Connections.
 - **Status:** approved; built after 0.154.
 
+### 15. Network & Files › Add Connection (design, for the version after 0.154)
+- **Seen (photos, 0.153):** bare protocol list (SMB, WebDAV HTTPS/HTTP, SFTP, FTP, FTP TLS); one long form for every
+  type whose fields look like menu rows; blank Port; Connect as a full-width row; no way to test before saving.
+- **Decision (owner, 3 Nov 2026), mock-ups `docs/design/proposals/add-connection/01–04`:** types in plain English
+  grouped by where files live (Put.io recommended/"Already connected"; A computer or NAS with Find on my network ·
+  Enter address — Discover filtered to video sources; A WebDAV server; An SFTP server; More types = FTP, FTP TLS,
+  plain WebDAV); real fields (label + value) with Name, defaults shown, optional Folder, password eye, Remember
+  password; **Test connection** and **Save and browse** buttons; help on the right; plain-English success
+  ("2 folders, 21 videos found") and failure (wrong field outlined amber, nothing saved). Save and browse opens the
+  Local Storage-style page to add folders to the library.
+- **Status:** approved; built after 0.154.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
