@@ -61,6 +61,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays network shortcut details and handles the available shortcut actions. */
 public class NetworkShortcutDetailsFragment extends DetailsSupportFragment implements OnActionClickedListener {
     private static final Logger log = LoggerFactory.getLogger(NetworkShortcutDetailsFragment.class);
 
