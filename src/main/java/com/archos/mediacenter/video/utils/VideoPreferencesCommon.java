@@ -115,6 +115,7 @@ import static com.archos.filecorelibrary.FileUtils.backupDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Coordinates shared video preference behavior, account actions and settings changes. */
 public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener {
 
     private static final Logger log = LoggerFactory.getLogger(VideoPreferencesCommon.class);
