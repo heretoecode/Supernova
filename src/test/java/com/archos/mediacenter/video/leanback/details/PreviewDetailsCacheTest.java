@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import com.archos.mediacenter.video.leanback.PreviewMetadataCache;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.util.Collections;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class PreviewDetailsCacheTest {
         PreviewMetadataCache.load(context, "tv", 432, "recommendations",
             () -> new JSONObject("{results:[{id:433,name:'Remote'},{id:434,name:'Unknown'}]}"));
         SharedPreferences prefs =
-            com.archos.mediacenter.video.streaming.StreamingRepository.prefs(context);
+            StreamingRepository.prefs(context);
         prefs.edit()
             .putBoolean("streaming_enabled", true)
             .putString("streaming_country", "IE")
