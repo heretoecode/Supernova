@@ -16,6 +16,7 @@ import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks language icons use bundled regional flags or a visible neutral fallback. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
