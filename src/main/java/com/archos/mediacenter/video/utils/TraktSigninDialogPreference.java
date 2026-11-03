@@ -28,7 +28,6 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.utils.trakt.Trakt;
-import com.archos.mediacenter.video.R;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
