@@ -12,9 +12,11 @@ import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import androidx.appcompat.widget.AppCompatImageView;
+import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import java.util.*;
 
 /** Fixed exposed-card composition from HOME §11. Neighbours are affordances, never focus peers. */
@@ -159,12 +161,12 @@ final class PreviewFeaturedCard extends FrameLayout {
     }
 
     private void loadArtwork(ImageView image, Uri uri, boolean backdrop) {
-        com.squareup.picasso.RequestCreator request = Picasso.get().load(uri).resize(dp(960), dp(540)).noFade();
+        RequestCreator request = Picasso.get().load(uri).resize(dp(960), dp(540)).noFade();
         if (backdrop)
             request.centerCrop();
         else
             request.centerInside();
-        com.archos.mediacenter.video.diagnostics.ArtworkRequest.load(
+        ArtworkRequest.load(
             image, uri, 0, "home.featured", backdrop ? "backdrop" : "poster", request, true);
     }
 
@@ -218,7 +220,7 @@ final class PreviewFeaturedCard extends FrameLayout {
 
     private void cancel(View v) {
         if (v instanceof ImageView)
-            com.archos.mediacenter.video.diagnostics.ArtworkRequest.cancel((ImageView) v);
+            ArtworkRequest.cancel((ImageView) v);
         if (v instanceof ViewGroup)
             for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++)
                 cancel(((ViewGroup) v).getChildAt(i));
