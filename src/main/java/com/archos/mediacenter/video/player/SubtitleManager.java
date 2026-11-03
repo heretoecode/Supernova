@@ -524,7 +524,7 @@ public class SubtitleManager {
             mPlayerView.updateViewLayout(mSubtitleLayout, lp);
         }
         if (mUseLegacySize) setSize(mLegacySize);
-        else setFontSizePt(mFontSizePt);
+            else setFontSizePt(mFontSizePt);
         updateSubtitleLayout();
     }
 
