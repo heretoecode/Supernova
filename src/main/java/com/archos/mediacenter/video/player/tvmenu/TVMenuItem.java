@@ -33,6 +33,7 @@ import android.widget.TextView;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
     public void setFocus(boolean hasFocus){
         if (log.isDebugEnabled()) log.debug("setFocus hasFocus:{}", hasFocus);
         if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui",false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if(hasFocus){
