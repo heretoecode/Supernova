@@ -54,6 +54,7 @@ import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 
 import java.util.ArrayList;
 
+/** Displays TV shows and provides show browsing actions and view modes. */
 public class BrowserAllTvShows extends CursorBrowserByVideo {
 
     private static final boolean DBG = false;
