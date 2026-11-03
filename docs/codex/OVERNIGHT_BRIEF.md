@@ -1,65 +1,66 @@
-# Overnight brief for Codex — reformatting only
+# Overnight brief for Codex — tidy, never change behaviour
 
-You are doing **mechanical reformatting** of Java files in this repository. You make **no decisions about
-behaviour, design or naming**. Every change you make is checked by a script in the morning; work that
-fails the check is thrown away, so there is nothing to gain by changing anything except layout.
+You are doing **mechanical tidying**. You make **no decisions about behaviour, design or naming**. Every change
+is checked by a script in the morning; work that fails the check is thrown away, so there is nothing to gain
+by changing anything beyond what each part allows.
+
+Tonight has three parts. Do them **in order (A, B, C)**, each file in its own commit.
 
 ## Setup
 1. Start from the tip of branch `claude/supernova-github-access-yfhe89`.
-2. Create a new branch named `codex/overnight-YYYY-MM-DD` (today's date; if that branch already exists, add
-   `-2`, `-3`, …). Push only to that branch.
-   **Never** push to `claude/supernova-github-access-yfhe89`, `main`, or any other existing branch.
-   Do not open a pull request, merge, rebase or force-push.
+2. Create a new branch `codex/overnight-YYYY-MM-DD` (today's date; if that branch exists, add `-2`, `-3`, …).
+   Push only to that branch. Never push to `claude/supernova-github-access-yfhe89`, `main` or any other
+   existing branch. Do not open a pull request, merge, rebase or force-push.
+3. Never edit anything under `.github/`, `tools/`, build files (`*.gradle`, `gradle.properties`), resources
+   (`res/`, `assets/`) or tests' expected values. `docs/codex/HANDS_OFF.txt` lists any further files to avoid.
 
-## The job
-Work through `docs/codex/REFORMAT_QUEUE.txt` from the top. For each file:
+## Part A — reformat the files in `docs/codex/REFORMAT_QUEUE.txt` (layout only)
+Same job as before, top to bottom:
+- one statement per line; each `{` ends its line and each `}` starts its own line; 4-space indentation, no
+  tabs; aim for lines under 120 characters; one blank line between methods; keep member order exactly;
+- a brace-less `if`/`else`/`for`/`while` body goes on its own line, one level deeper. Do not add braces.
+- Commit: `Reformat <FileName>.java (layout only)`, then run
+  `python3 tools/check_format_only.py --base claude/supernova-github-access-yfhe89 --files <path>` — must say `ok`.
 
-1. Reformat it so a person can read it:
-   - one statement per line; each `{` ends its line and each `}` starts its own line;
-   - 4-space indentation, no tabs; aim for lines under 120 characters
-     (break long argument lists and long `&&` / `||` / `?:` chains across lines);
-   - one blank line between methods; keep the order of every member exactly as it is.
-   - an `if`/`else`/`for`/`while` body without braces goes on its own line, indented one level deeper than
-     the statement that owns it. Do **not** add braces — that would change tokens and fail the checker.
-2. Run the checker on just that file:
-   ```
-   python3 tools/check_format_only.py --base claude/supernova-github-access-yfhe89 --files <path>
-   ```
-   It must print `ok` for the file. If it prints `FAIL`, fix your layout (you changed a token) or
-   revert the file with `git checkout claude/supernova-github-access-yfhe89 -- <path>` and move on.
-3. Commit that one file on its own, message: `Reformat <FileName>.java (layout only)`.
+## Part B — imports, across every `.java` file under `src/`
+Two changes only, per file:
+1. **Fold fully qualified names into imports.** Where code writes a full name such as
+   `android.graphics.drawable.GradientDrawable`, add `import android.graphics.drawable.GradientDrawable;`
+   and write `GradientDrawable` instead. Rules:
+   - only names starting `android.`, `androidx.`, `java.` or `javax.`; ordinary single-type imports only
+     (no `import static`, no `*`);
+   - **skip a name** if its simple name (e.g. `GradientDrawable`) is already used on its own anywhere in the
+     file, already imported from a different package, or declared in the file — that would change meaning;
+   - never fold `android.R` (the app has its own `R`); never touch names inside strings or comments;
+   - fold all occurrences of a name in the file, or none of them.
+2. **Remove unused imports**: delete an `import` line only if its simple name appears nowhere else in the file
+   (code **or** comments). Never remove a wildcard (`.*`) import.
 
-## Target and pace
-**Tonight's target is half the queue: every file down to the `TARGET` marker in `REFORMAT_QUEUE.txt`
-(about 150 files).** Last night managed three, so work briskly:
-- Per file, run the checker once (after committing, with the `--files` command below). That is the proof;
-  extra hand-verification is not needed.
-- Do not run Gradle, tests or builds — layout-only changes cannot affect them, and the checker proves it.
-- If a file fights you for more than a few minutes, restore it, list it as skipped in the report, move on.
-- If you hit the marker with time to spare, carry on down the queue. If you run out of time first, stop
-  and still do the "Before you finish" steps — each file is its own commit, so partial progress is kept.
+Keep imports in the file's existing order and style; put new imports in alphabetical position among the
+existing ones. Commit each file: `Tidy imports in <FileName>.java`, then run
+`python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89 --files <path>` — must say
+`ok`. If it says `FAIL` and you cannot see why within a few minutes, restore the file
+(`git checkout claude/supernova-github-access-yfhe89 -- <path>`, then re-apply its Part A layout if it was in
+the queue) and list it as skipped. Work through the files with the most full names first:
+`grep -rcE "(android|androidx|java|javax)\.[a-z][a-z0-9_]*\.[A-Za-z]" src --include=*.java | sort -t: -k2 -rn`.
 
-## Hard rules — breaking any of these means the whole night's work is discarded
-- **Change layout only.** Do not rename, reorder, add, remove or "improve" anything: no code, no
-  string, no number, no annotation, no import, no comment text. Comments stay where they are,
-  word for word (you may re-wrap a long comment across lines and add the usual leading `*`).
-- **Do not touch any file listed in `docs/codex/HANDS_OFF.txt`.**
-- **Do not touch anything outside the file you are reformatting** — no build files, workflows,
-  scripts, resources, docs or tests other than the queued file itself.
-- Do not fix bugs, warnings or typos you notice. Write them in the report instead (below).
-- If a file is generated, binary, or will not tokenise in the checker, skip it and say so in the report.
+## Part C — Future Development register
+Apply `docs/codex/REGISTER_UPDATES.md` exactly. One commit: `Register: move built features out of Parked`.
+
+## Hard rules — breaking any of these discards the whole night
+- Change only what each part allows. No renaming, reordering, new or removed code, no string, number,
+  annotation or comment text changes.
+- Don't fix bugs, warnings or typos you notice — list them in the report.
+- No Gradle, builds or tests; the checkers are the proof (the owner runs the full build afterwards).
+- If something needs a judgement call, skip it and write the question in the report.
+
+## Pace
+Work briskly: one checker run per file, no extra hand-verification. Partial progress is fine — every file is
+its own commit — but always do "Before you finish".
 
 ## Before you finish
-1. Run the checker on the whole branch — it must report every file as `ok`, with no `FAIL` lines:
-   ```
-   python3 tools/check_format_only.py --base claude/supernova-github-access-yfhe89
-   ```
-2. Add **one** final commit containing `docs/codex/reports/YYYY-MM-DD.md` with:
-   - the files reformatted (with their longest line before → after, as printed by the checker);
-   - files skipped and why;
-   - anything odd you noticed (possible bugs, typos, dead code) — **listed, not fixed**;
-   - the exact final checker output.
-3. Push the branch.
-
-That is the whole job. If anything in these instructions seems to require a judgement call, skip
-the file and write the question in the report rather than guessing.
+1. Run `python3 tools/check_imports_only.py --base claude/supernova-github-access-yfhe89` (whole branch; it
+   covers Parts A and B, and allows the Part C and report changes). Every file must be `ok`.
+2. Add `docs/codex/reports/YYYY-MM-DD-<branch suffix>.md` (a new file — never overwrite an earlier report):
+   files done per part, files skipped and why, anything odd you noticed (listed, not fixed), and the exact
+   final checker output. Commit and push.
