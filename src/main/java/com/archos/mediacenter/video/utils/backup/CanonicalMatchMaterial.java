@@ -1,11 +1,20 @@
 package com.archos.mediacenter.video.utils.backup;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.*;
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** Verified provider material for guarded owned replacement. Not a registered restore codec. */
 public final class CanonicalMatchMaterial {
@@ -85,12 +94,12 @@ public final class CanonicalMatchMaterial {
                                      .prepareOwnedRestore(context, owner.videoId, owner.localId,
                                          Long.parseLong(owner.match.identity.split(":")[2]), receivingPin),
                         owner);
-                java.io.File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+                File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
                 if (store.exists())
-                    try (android.database.sqlite.SQLiteDatabase database =
-                             android.database.sqlite.SQLiteDatabase.openDatabase(
-                                 store.getPath(), null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
-                        android.database.Cursor retained =
+                    try (SQLiteDatabase database =
+                             SQLiteDatabase.openDatabase(
+                                 store.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+                        Cursor retained =
                             database.query("MOVIE", new String[] {
                                 "_id", "m_online_id", "Nova_pinned"
                             }, "video_id=?",
@@ -124,12 +133,12 @@ public final class CanonicalMatchMaterial {
                     return guard(episode.prepareOwnedRestore(context, owner.videoId, owner.localId,
                                      owner.match.episodeProvider, receivingShowId, receivingShowProvider, receivingPin),
                         owner);
-                java.io.File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+                File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
                 if (store.exists())
-                    try (android.database.sqlite.SQLiteDatabase database =
-                             android.database.sqlite.SQLiteDatabase.openDatabase(
-                                 store.getPath(), null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
-                        android.database.Cursor target = database.query("SHOW", new String[] {
+                    try (SQLiteDatabase database =
+                             SQLiteDatabase.openDatabase(
+                                 store.getPath(), null, SQLiteDatabase.OPEN_READONLY);
+                        Cursor target = database.query("SHOW", new String[] {
                             "_id", "Nova_pinned"
                         },
                             "s_online_id=? AND name_show IS NOT NULL AND trim(name_show)<>''",
@@ -154,9 +163,9 @@ public final class CanonicalMatchMaterial {
         throw new IOException("Canonical replacement requires further receiving dependency preparation");
     }
 
-    private static long reserve(android.database.sqlite.SQLiteDatabase database, String table) throws IOException {
-        try (android.database.Cursor next = database.rawQuery("SELECT IFNULL(MAX(_id),0)+1 FROM " + table, null)) {
-            if (!next.moveToFirst() || next.getType(0) != android.database.Cursor.FIELD_TYPE_INTEGER
+    private static long reserve(SQLiteDatabase database, String table) throws IOException {
+        try (Cursor next = database.rawQuery("SELECT IFNULL(MAX(_id),0)+1 FROM " + table, null)) {
+            if (!next.moveToFirst() || next.getType(0) != Cursor.FIELD_TYPE_INTEGER
                 || next.getLong(0) <= 0)
                 throw new IOException("Cannot reserve canonical metadata owner");
             return next.getLong(0);
@@ -166,7 +175,7 @@ public final class CanonicalMatchMaterial {
     /** One preparation scope reserves distinct native identities across all selected physical targets. */
     public static final class Preparation {
         private final Context context;
-        private final java.util.Map<String, Long> next = new java.util.HashMap<>();
+        private final Map<String, Long> next = new HashMap<>();
 
         private static final class Parent {
             final long id;
@@ -178,13 +187,13 @@ public final class CanonicalMatchMaterial {
             }
         }
 
-        private final java.util.Map<Long, Parent> plannedParents = new java.util.HashMap<>();
-        private final java.util.Set<String> plannedNames = new java.util.HashSet<>();
+        private final Map<Long, Parent> plannedParents = new HashMap<>();
+        private final Set<String> plannedNames = new HashSet<>();
 
-        private boolean occupied(android.database.sqlite.SQLiteDatabase database, String name) {
+        private boolean occupied(SQLiteDatabase database, String name) {
             if (plannedNames.contains(name))
                 return true;
-            try (android.database.Cursor row = database.query(
+            try (Cursor row = database.query(
                      "SHOW", new String[] {
                          "_id"
                      }, "name_show=?", new String[] {
@@ -198,7 +207,7 @@ public final class CanonicalMatchMaterial {
             this.context = context;
         }
 
-        private long reserveNext(android.database.sqlite.SQLiteDatabase database, String table) throws IOException {
+        private long reserveNext(SQLiteDatabase database, String table) throws IOException {
             long value = next.containsKey(table) ? next.get(table) : reserve(database, table);
             if (value <= 0 || value == Long.MAX_VALUE)
                 throw new IOException("Canonical metadata identity limit reached");
@@ -206,7 +215,7 @@ public final class CanonicalMatchMaterial {
             return value;
         }
 
-        public java.util.List<OwnedCanonicalBatch> prepare(MediaMatchInventory.Owner owner,
+        public List<OwnedCanonicalBatch> prepare(MediaMatchInventory.Owner owner,
             PortableMediaMatches.Match requested, Uri file, Resolver resolver) throws IOException {
             if (owner == null || requested == null || file == null || resolver == null
                 || "putio".equalsIgnoreCase(file.getScheme())
@@ -214,15 +223,15 @@ public final class CanonicalMatchMaterial {
                 throw new IOException("Receiving canonical target is unavailable");
             ScrapeDetailResult resolved = resolver.resolve(context, requested, file);
             BaseTags material = verify(requested, resolved);
-            java.io.File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
+            File store = com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context);
             if (!store.exists())
                 throw new IOException("Receiving media store is unavailable");
-            try (android.database.sqlite.SQLiteDatabase database = android.database.sqlite.SQLiteDatabase.openDatabase(
-                     store.getPath(), null, android.database.sqlite.SQLiteDatabase.OPEN_READONLY)) {
+            try (SQLiteDatabase database = SQLiteDatabase.openDatabase(
+                     store.getPath(), null, SQLiteDatabase.OPEN_READONLY)) {
                 if (material instanceof MovieTags) {
                     Long pin = null;
                     if (owner.type == BaseTags.MOVIE && owner.match != null)
-                        try (android.database.Cursor row =
+                        try (Cursor row =
                                  database.query("MOVIE", new String[] {
                                      "Nova_pinned"
                                  }, "_id=? AND video_id=?",
@@ -234,7 +243,7 @@ public final class CanonicalMatchMaterial {
                                 throw new IOException("Receiving movie owner disappeared");
                             pin = row.isNull(0) ? null : row.getLong(0);
                         }
-                    return java.util.List.of(
+                    return List.of(
                         prepareInternal(context, owner, requested, file, 0, pin, (ctx, match, uri) -> resolved, this));
                 }
                 EpisodeTags episode = (EpisodeTags) material;
@@ -243,7 +252,7 @@ public final class CanonicalMatchMaterial {
                 OwnedCanonicalBatch newParent = null;
                 String reservedName = null;
                 if (parent == null)
-                    try (android.database.Cursor row =
+                    try (Cursor row =
                              database.query("SHOW", new String[] {
                                  "_id", "Nova_pinned", "name_show"
                              }, "s_online_id=?",
@@ -277,7 +286,7 @@ public final class CanonicalMatchMaterial {
                 long metadata;
                 Long oldProvider = null, oldShow = null, oldShowProvider = null, oldPin = null;
                 boolean create;
-                try (android.database.Cursor row =
+                try (Cursor row =
                          database.query("EPISODE", new String[] {
                              "_id", "e_online_id", "show_episode"
                          }, "video_id=?",
@@ -296,7 +305,7 @@ public final class CanonicalMatchMaterial {
                     }
                 }
                 if (!create)
-                    try (android.database.Cursor row =
+                    try (Cursor row =
                              database.query("SHOW", new String[] {
                                  "s_online_id", "Nova_pinned"
                              }, "_id=?",
@@ -315,9 +324,9 @@ public final class CanonicalMatchMaterial {
                 if (newParent != null) {
                     plannedParents.put(provider, parent);
                     plannedNames.add(reservedName);
-                    return java.util.List.of(newParent, child);
+                    return List.of(newParent, child);
                 }
-                return java.util.List.of(child);
+                return List.of(child);
             } catch (IllegalArgumentException incompatible) {
                 throw new IOException("Canonical episode preparation is incompatible", incompatible);
             }
@@ -325,7 +334,7 @@ public final class CanonicalMatchMaterial {
     }
 
     public static OwnedCanonicalBatch guard(OwnedCanonicalBatch batch, MediaMatchInventory.Owner owner) {
-        android.content.ContentValues state = new android.content.ContentValues();
+        ContentValues state = new ContentValues();
         state.put("ArchosMediaScraper_type", owner.type);
         state.put("ArchosMediaScraper_id", owner.localId);
         if (owner.match != null) {
