@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
+import android.content.UriMatcher;
+import android.database.Cursor;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediaprovider.video.VideoOpenHelper;
@@ -61,7 +63,7 @@ public class MediaMatchJournalTest {
             JSONArray values = new JSONArray();
             for (int i = 0; i < row.getColumnCount(); i++)
                 values.put(
-                    row.getType(i) == android.database.Cursor.FIELD_TYPE_STRING ? row.getString(i) : row.getLong(i));
+                    row.getType(i) == Cursor.FIELD_TYPE_STRING ? row.getString(i) : row.getLong(i));
             return values.toString();
         }
     }
@@ -136,7 +138,7 @@ public class MediaMatchJournalTest {
 
     private PreferenceRestoreTransaction.Plan canonicalPlan() throws Exception {
         com.archos.mediaprovider.video.ScraperProvider.hookUriMatcher(
-            new android.content.UriMatcher(android.content.UriMatcher.NO_MATCH));
+            new UriMatcher(UriMatcher.NO_MATCH));
         return fixture.transaction.prepareCanonicalMatches(
             all(), null, fixture.physical(), (context, requested, file) -> {
                 var tags = new com.archos.mediascraper.MovieTags();
