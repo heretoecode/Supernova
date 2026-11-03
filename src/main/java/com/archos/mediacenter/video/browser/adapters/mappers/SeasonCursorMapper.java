@@ -16,7 +16,6 @@ package com.archos.mediacenter.video.browser.adapters.mappers;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 import com.archos.mediacenter.video.browser.adapters.object.Season;
 import com.archos.mediacenter.video.browser.loader.SeasonsLoader;
