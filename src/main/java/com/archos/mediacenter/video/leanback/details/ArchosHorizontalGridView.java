@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.lang.IllegalArgumentException;
 import java.lang.reflect.Field;
 
 /**
@@ -80,7 +81,7 @@ public class ArchosHorizontalGridView extends HorizontalGridView {
         try {
             return super.getChildViewHolder(child);
         }
-        catch (java.lang.IllegalArgumentException e){
+        catch (IllegalArgumentException e){
             Log.d(TAG,"catching IllegalArgumentException "+e.toString());
             e.printStackTrace();
         }
