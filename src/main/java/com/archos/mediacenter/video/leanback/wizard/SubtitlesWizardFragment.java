@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays guided choices for managing a video's subtitle files. */
 public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
 
     public static final int NO_FILE_MESSAGE_ID = 100;
