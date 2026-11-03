@@ -2,6 +2,9 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediascraper.*;
@@ -71,14 +74,14 @@ public final class PreviewMatchSearch extends LinearLayout {
         scroll.addView(rows);
         right.addView(scroll, new LayoutParams(-1, 0, 1));
         query = () -> search.accept(input.getText().toString().trim());
-        input.addTextChangedListener(new android.text.TextWatcher() {
+        input.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 removeCallbacks(query);
                 postDelayed(query, 350);
             }
-            public void afterTextChanged(android.text.Editable value) {
+            public void afterTextChanged(Editable value) {
             }
         });
         input.setOnEditorActionListener((v, action, event) -> {
@@ -130,13 +133,13 @@ public final class PreviewMatchSearch extends LinearLayout {
             row.setBackground(PreviewDialog.focus(getContext()));
             TextView title = text(label(tags), 16);
             title.setMaxLines(2);
-            title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            title.setEllipsize(TextUtils.TruncateAt.END);
             row.addView(title);
             String plot = tags.getPlot();
             if (plot != null && !plot.trim().isEmpty()) {
                 TextView detail = text(plot, 12);
                 detail.setMaxLines(2);
-                detail.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                detail.setEllipsize(TextUtils.TruncateAt.END);
                 detail.setPadding(0, dp(5), 0, 0);
                 row.addView(detail);
             }
