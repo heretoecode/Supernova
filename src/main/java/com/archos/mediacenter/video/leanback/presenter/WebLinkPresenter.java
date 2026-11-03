@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.adapter.object.WebPageLink;
 
+/** Binds web links to focusable TV presentation rows. */
 public class WebLinkPresenter extends Presenter {
 
     private int mColor = Color.TRANSPARENT;
