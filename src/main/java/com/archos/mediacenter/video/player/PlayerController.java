@@ -1458,15 +1458,19 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 final View overlay1 = mControllerViewLeft.findViewById(R.id.help_overlay);
                 if (overlay1 != null) {
                     overlay1.animate().alpha(0).setListener(new AnimatorListener() {
+                        @Override
                         public void onAnimationStart(Animator animation) {
                         }
+                        @Override
                         public void onAnimationRepeat(Animator animation) {
                         }
+                        @Override
                         public void onAnimationEnd(Animator animation) {
                             if (overlay1 != null) {
                                 overlay1.setVisibility(View.GONE);
                             }
                         }
+                        @Override
                         public void onAnimationCancel(Animator animation) {
                         }
                     });
@@ -1477,15 +1481,19 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                     final View overlay2 = mControllerViewRight.findViewById(R.id.help_overlay);
                     if (overlay2 != null) {
                         overlay2.animate().alpha(0).setListener(new AnimatorListener() {
+                            @Override
                             public void onAnimationStart(Animator animation) {
                             }
+                            @Override
                             public void onAnimationRepeat(Animator animation) {
                             }
+                            @Override
                             public void onAnimationEnd(Animator animation) {
                                 if (overlay2 != null) {
                                     overlay2.setVisibility(View.GONE);
                                 }
                             }
+                            @Override
                             public void onAnimationCancel(Animator animation) {
                             }
                         });
@@ -2126,6 +2134,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     // case there WON'T BE onStartTrackingTouch/onStopTrackingTouch notifications,
     // we will simply apply the updated position without suspending regular updates.
     private SeekBar.OnSeekBarChangeListener mProgressListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
         public void onStartTrackingTouch(SeekBar bar) {
             if (log.isDebugEnabled())
                 log.debug("onStartTrackingTouch");
@@ -2151,6 +2160,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             }
         }
 
+        @Override
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
             if (!fromuser || mIsStopped) {
                 // We're not interested in programmatically generated changes to
@@ -2203,6 +2213,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             }
         }
 
+        @Override
         public void onStopTrackingTouch(SeekBar bar) {
             if (mIsStopped)
                 return;
@@ -2221,18 +2232,21 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     };
 
     private View.OnClickListener mPauseListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             doPauseResume();
         }
     };
 
     private View.OnClickListener mBackwardListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             onSeek(-1, false);
         }
     };
 
     private View.OnLongClickListener mBackwardLongListener = new View.OnLongClickListener() {
+        @Override
         public boolean onLongClick(View v) {
             if (!mIsStopped) {
                 onSeek(-1, true);
@@ -2244,12 +2258,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     };
 
     private View.OnClickListener mForwardListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             onSeek(1, false);
         }
     };
 
     private View.OnLongClickListener mForwardLongListener = new View.OnLongClickListener() {
+        @Override
         public boolean onLongClick(View v) {
             if (!mIsStopped) {
                 onSeek(1, true);
@@ -2261,6 +2277,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     };
 
     private View.OnClickListener mFormatListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             if (!mIsStopped) {
                 sendFadeOut(SHOW_TIMEOUT);
@@ -2272,6 +2289,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     };
 
     private View.OnClickListener fullscreenWithCutoutListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             if (!mIsStopped) {
                 sendFadeOut(SHOW_TIMEOUT);
@@ -2322,6 +2340,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     private SeekBar.OnSeekBarChangeListener mVolumeLevelListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
             if (!fromuser || mAudioManager == null)
                 return;
@@ -2332,22 +2351,26 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             updateVolumeBar();
         }
 
+        @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
             show(FLAG_SIDE_VOLUME_BAR, 0);
         }
 
+        @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             show(FLAG_SIDE_VOLUME_BAR, SHOW_TIMEOUT);
         }
     };
 
     private View.OnClickListener mVolumeUpListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             changeVolumeBy(1);
         }
     };
 
     private View.OnClickListener mVolumeDownListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             changeVolumeBy(-1);
         }
@@ -2391,6 +2414,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         return false;
     }
 
+    @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouch(View v, MotionEvent event) {
         if (event == null)
