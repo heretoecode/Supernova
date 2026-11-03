@@ -11,23 +11,26 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import java.util.*;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-mdpi")
 public class BundledNoticePagerTest {
     @Test
     public void completeActualNoticesAreLosslessAndEveryTextLayoutIsBounded() throws Exception {
-        org.json.JSONArray catalogue;
+        JSONArray catalogue;
         try (InputStream input =
                  RuntimeEnvironment.getApplication().getAssets().open("foundation/licences.json")) {
             catalogue =
-                new org.json.JSONObject(new String(input.readAllBytes(), StandardCharsets.UTF_8))
+                new JSONObject(new String(input.readAllBytes(), StandardCharsets.UTF_8))
                     .getJSONArray("components");
         }
         assertTrue(catalogue.length() >= 60);
@@ -52,7 +55,7 @@ public class BundledNoticePagerTest {
         try {
             LicenseDisclosure disclosure = new LicenseDisclosure(host.get());
             host.get().setContentView(disclosure);
-            ExecutorService io = org.robolectric.util.ReflectionHelpers.getField(disclosure, "io");
+            ExecutorService io = ReflectionHelpers.getField(disclosure, "io");
             io.submit(() -> {
             }).get(5, TimeUnit.SECONDS);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
@@ -61,7 +64,7 @@ public class BundledNoticePagerTest {
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertNotNull(disclosure.findViewWithTag("licence.continuous.reader"));
             LinearLayout catalogue =
-                org.robolectric.util.ReflectionHelpers.getField(disclosure, "catalogue");
+                ReflectionHelpers.getField(disclosure, "catalogue");
             assertTrue(catalogue.getChildCount() >= 60);
         } finally {
             host.pause().stop().destroy();
