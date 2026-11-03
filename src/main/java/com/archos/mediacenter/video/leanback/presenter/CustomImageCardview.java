@@ -16,6 +16,8 @@ package com.archos.mediacenter.video.leanback.presenter;
 
 import android.content.Context;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import androidx.leanback.widget.ImageCardView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
 /**
@@ -37,12 +40,12 @@ public class CustomImageCardview extends ImageCardView {
 
     private void init() {
         mainRoot = new FrameLayout(getContext());
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
             TextView title = findViewById(R.id.title_text);
             title.setSingleLine(false); title.setMaxLines(2); title.setMinLines(2);
             title.setEllipsize(TextUtils.TruncateAt.END); title.setTextSize(14);
-            title.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
-            title.setTextColor(android.graphics.Color.WHITE);
+            title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+            title.setTextColor(Color.WHITE);
             TextView content = findViewById(R.id.content_text);
             content.setTextColor(0xffd5e1ee); content.setTextSize(12);
             setInfoAreaBackgroundColor(0xff223447);
