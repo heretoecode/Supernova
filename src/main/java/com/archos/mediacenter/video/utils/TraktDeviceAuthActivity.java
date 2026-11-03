@@ -45,6 +45,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.UUID;
 
+/** Hosts Trakt device authentication and handles its completion. */
 public class TraktDeviceAuthActivity extends AppCompatActivity {
 
     private static final Logger log = LoggerFactory.getLogger(TraktDeviceAuthActivity.class);
