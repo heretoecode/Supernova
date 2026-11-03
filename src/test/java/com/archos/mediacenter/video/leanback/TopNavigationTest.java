@@ -16,21 +16,27 @@ import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.widget.*;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.object.Base;
+import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
+import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.annotation.GraphicsMode;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class TopNavigationTest {
     @Test
     @Config(qualifiers = "w640dp-h360dp-land-xhdpi")
-    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     public void compactNavigationClipsOverflowBeforeTheClockAndRevealsFocusedActions() {
         var host = Robolectric.buildActivity(Host.class).setup().visible();
         try {
@@ -84,10 +90,10 @@ public class TopNavigationTest {
     @Before
     public void initialiseImageLoader() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException missingTestProvider) {
-            com.squareup.picasso.Picasso.setSingletonInstance(
-                new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());
+            Picasso.setSingletonInstance(
+                new Picasso.Builder(RuntimeEnvironment.getApplication()).build());
         }
     }
 
@@ -124,7 +130,7 @@ public class TopNavigationTest {
             .edit()
             .putBoolean("try_new_ui", true)
             .commit();
-        org.robolectric.android.controller.ActivityController<Host> host =
+        ActivityController<Host> host =
             Robolectric.buildActivity(Host.class).setup();
         try {
             Browse browse = new Browse();
@@ -149,7 +155,7 @@ public class TopNavigationTest {
 
     @Test
     public void experimentalPlaybackLayoutKeepsNativeControlTypes() {
-        org.robolectric.android.controller.ActivityController<Host> host =
+        ActivityController<Host> host =
             Robolectric.buildActivity(Host.class).setup();
         try {
             View hud = LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental, null);
@@ -178,7 +184,7 @@ public class TopNavigationTest {
             .edit()
             .putBoolean("try_new_ui", false)
             .commit();
-        org.robolectric.android.controller.ActivityController<Host> host =
+        ActivityController<Host> host =
             Robolectric.buildActivity(Host.class).setup();
         try {
             ExperimentalBrowseFragment browse = new ExperimentalBrowseFragment();
@@ -191,54 +197,54 @@ public class TopNavigationTest {
 
     @Test
     public void previewCardsResetRecycledStateAndClampProgress() {
-        org.robolectric.android.controller.ActivityController<Host> host =
+        ActivityController<Host> host =
             Robolectric.buildActivity(Host.class).setup();
         try {
-            com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter p =
-                new com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter(
-                    com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CONTINUE);
+            PreviewCardPresenter p =
+                new PreviewCardPresenter(
+                    PreviewCardPresenter.Style.CONTINUE);
             Presenter.ViewHolder vh = p.onCreateViewHolder(new FrameLayout(host.get()));
             p.onBindViewHolder(
-                vh, new com.archos.mediacenter.video.browser.adapters.object.Base("First programme", null));
+                vh, new Base("First programme", null));
             assertEquals("First programme", vh.view.getContentDescription());
             p.onUnbindViewHolder(vh);
             assertNull(vh.view.getContentDescription());
             p.onBindViewHolder(
-                vh, new com.archos.mediacenter.video.browser.adapters.object.Base("Second programme", null));
+                vh, new Base("Second programme", null));
             assertEquals("Second programme", vh.view.getContentDescription());
-            assertEquals(0, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(-1, 100));
-            assertEquals(0, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(50, 0));
-            assertEquals(50, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(50, 100));
-            assertEquals(100, com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.progress(200, 100));
+            assertEquals(0, PreviewCardPresenter.progress(-1, 100));
+            assertEquals(0, PreviewCardPresenter.progress(50, 0));
+            assertEquals(50, PreviewCardPresenter.progress(50, 100));
+            assertEquals(100, PreviewCardPresenter.progress(200, 100));
         } finally {
             host.pause().stop().destroy();
         }
     }
 
     @Test
-    @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     @Config(qualifiers = "w960dp-h540dp-land-mdpi")
     public void renderPreviewHomeAndCheckRemoteTabSelection() throws Exception {
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
             .edit()
             .putBoolean("try_new_ui", true)
             .commit();
-        org.robolectric.android.controller.ActivityController<Host> host =
+        ActivityController<Host> host =
             Robolectric.buildActivity(Host.class).setup();
         try {
             Browse browse = new Browse();
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content, browse).commitNow();
             ArrayObjectAdapter rows = (ArrayObjectAdapter) browse.getAdapter();
             for (int row = 0; row < 3; row++) {
-                com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style style = row == 0
-                    ? com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CONTINUE
-                    : row == 1 ? com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.CATEGORY
-                               : com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Style.POSTER;
+                PreviewCardPresenter.Style style = row == 0
+                    ? PreviewCardPresenter.Style.CONTINUE
+                    : row == 1 ? PreviewCardPresenter.Style.CATEGORY
+                               : PreviewCardPresenter.Style.POSTER;
                 ArrayObjectAdapter cards = new ArrayObjectAdapter(
-                    new com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter(style));
+                    new PreviewCardPresenter(style));
                 for (int i = 0; i < 6; i++)
-                    cards.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(
-                        com.archos.mediacenter.video.leanback.adapter.object.Box.ID.DOCUMENTARIES,
+                    cards.add(new Box(
+                        Box.ID.DOCUMENTARIES,
                         row == 1 ? (i == 0 ? "All TV shows"
                                            : i == 1 ? "Documentaries"
                                                     : "Genres")
