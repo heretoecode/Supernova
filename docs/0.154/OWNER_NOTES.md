@@ -167,6 +167,15 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
 - **Superseded mock-ups:** 01–13 (two-panel, strip, inline-strip variants) kept for history only.
 - **Status:** approved.
 
+### 13. Approved 2026-11-03 for Codex (brief `docs/codex/BRIEF_0154.md`)
+- **DP-01…DP-05** (Codex's second bug hunt, verified by Claude) — fix, each with a test. DP-05: on a switch row,
+  **Left = Off, Right = On**, OK still flips it.
+- **TV-only removal** — approved; done as six stages, one full build each, merged stage by stage after Claude
+  verifies them.
+- **Subtitle box padding** — approved; it is part of NOVA's engine update, so it comes with the **engine update
+  (planned as 0.155)**, together with the MediaLib fix, the three HDR app commits and permanent storage of the
+  rebuilt engine. Codex prepares the plan first.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
