@@ -7,10 +7,13 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.squareup.picasso.Picasso;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -158,9 +161,9 @@ public class Supernova138HomeTest {
     @Test
     public void automaticHomeRowsCapAfterEligibilityAndWatchNextDoesNot() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(app).build());
+            Picasso.setSingletonInstance(new Picasso.Builder(app).build());
         }
         Snapshot snapshot = new Snapshot();
         for (int n = 1; n <= 30; n++) {
@@ -171,13 +174,13 @@ public class Supernova138HomeTest {
             snapshot.continuingMovies.add(e);
             snapshot.recent.add(e);
         }
-        org.json.JSONArray rows = new org.json.JSONArray();
+        JSONArray rows = new JSONArray();
         try {
-            rows.put(new org.json.JSONObject()
+            rows.put(new JSONObject()
                     .put("id", "watchnext")
                     .put("name", "Watch Next")
                     .put("members",
-                        new org.json.JSONArray(
+                        new JSONArray(
                             snapshot.movies.stream().map(Entry::key).collect(Collectors.toList()))));
         } catch (Exception impossible) {
             throw new AssertionError(impossible);
@@ -226,9 +229,9 @@ public class Supernova138HomeTest {
     @Test
     public void noOpRefreshAndCarouselRefreshDoNotStealHomeRowFocus() {
         try {
-            com.squareup.picasso.Picasso.get();
+            Picasso.get();
         } catch (IllegalStateException absent) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(app).build());
+            Picasso.setSingletonInstance(new Picasso.Builder(app).build());
         }
         Snapshot snapshot = new Snapshot();
         Entry entry = new Entry(new Movie(1, "/film1", "Film 1", 1, "", 2024, 0, null, null, 100000, 1000, 0, 0, false,
