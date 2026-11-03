@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.player;
 
 import android.content.Context;
-import android.util.Log;
 
 public class StereoMergeEffect extends VideoEffect
 {
