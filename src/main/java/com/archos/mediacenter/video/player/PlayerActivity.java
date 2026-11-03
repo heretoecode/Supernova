@@ -175,11 +175,11 @@ import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_PARS
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_STREAM_BUFFER_SIZE;
 import static com.archos.mediacenter.video.utils.VideoPreferencesCommon.KEY_STREAM_MAX_IFRAME_SIZE;
 
-public class PlayerActivity extends AppCompatActivity implements PlayerController.Settings,
-        SubtitleDelayPickerDialog.OnDelayChangeListener, AudioDelayPickerDialog.OnAudioDelayChangeListener,
-        AudioSpeedPickerDialog.OnAudioSpeedChangeListener,
-        DialogInterface.OnDismissListener, TrackInfoListener,
-        IndexHelper.Listener, PermissionChecker.PermissionListener, MiscUtils.CutoutMetricsSetter {
+public class PlayerActivity extends AppCompatActivity
+    implements PlayerController.Settings, SubtitleDelayPickerDialog.OnDelayChangeListener,
+               AudioDelayPickerDialog.OnAudioDelayChangeListener, AudioSpeedPickerDialog.OnAudioSpeedChangeListener,
+               DialogInterface.OnDismissListener, TrackInfoListener, IndexHelper.Listener,
+               PermissionChecker.PermissionListener, MiscUtils.CutoutMetricsSetter {
 
     private static final Logger log = LoggerFactory.getLogger(PlayerActivity.class);
 
@@ -239,7 +239,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private static final String KEY_PLAYER_FORMAT = "player_pref_format_key";
     private static final String KEY_PLAYER_AUTO_FORMAT = "player_pref_auto_format_key";
     private static final String KEY_PLAYER_PROJECTOR_MODE = "player_projector_mode_key";
-    private static final String KEY_AUDIO_FILT = "pref_audio_filt_int_key"; // used to be "pref_audio_filt_key", containing a string
+    private static final String KEY_AUDIO_FILT =
+        "pref_audio_filt_int_key"; // used to be "pref_audio_filt_key", containing a string
     private static final String KEY_AUDIO_FILT_NIGHT = "pref_audio_filt_night_int_key";
     private static final String KEY_SPATIALIZATION_ENABLED = "player_spatialization_enabled";
     private static final String KEY_NOTIFICATIONS_MODE = "notifications_mode";
@@ -251,10 +252,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     public static final String KEY_STREAMING_URI = "streaming_uri";
 
-
     public static final String LAUNCH_FROM_FLOATING_PLAYER = "launch_from_floating_player";
     public static final String KEY_FORCE_SW = "force_software_decoding";
-
 
     private static final int SUBTITLE_MENU_DELAY = 0;
     private static final int SUBTITLE_MENU_SETTINGS = 1;
@@ -288,8 +287,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     private static final int MSG_PROGRESS_VISIBLE = 1;
 
-
-
     private static final int MSG_ERROR_UPNP = 4;
     private static final int MSG_SLEEP = 6;
 
@@ -305,9 +302,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private static final String EXTRA_HDMI_PLUGGED_STATE = "state";
     private static final String[] GENERIC_TEXT_SUBTITLE_FORMATS = {"srt", "vtt"};
 
-    private final ActivityResultLauncher<Intent> subtitleLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> { if (result.getResultCode() == Activity.RESULT_OK) onSubtitleResult(result.getData()); });
+    private final ActivityResultLauncher<Intent> subtitleLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK)
+                onSubtitleResult(result.getData());
+        });
     private String previewPendingSubtitlePath;
 
     private boolean mHasAskedFloatingPermission;
@@ -338,57 +337,60 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_PROGRESS_VISIBLE:
-                    if (mProgressView != null) {
-                        if(mProgressView instanceof PreviewPlaybackLoading){((PreviewPlaybackLoading)mProgressView).bind(mVideoInfo,mTitle);mPlayerController.setVideoTitleEnabled(false);}
-                        mProgressView.setVisibility(View.VISIBLE);
+            case MSG_PROGRESS_VISIBLE:
+                if (mProgressView != null) {
+                    if (mProgressView instanceof PreviewPlaybackLoading) {
+                        ((PreviewPlaybackLoading)mProgressView).bind(mVideoInfo, mTitle);
+                        mPlayerController.setVideoTitleEnabled(false);
                     }
-                    break;
-                case MSG_ERROR_UPNP:
-                    myShowDialog(DIALOG_ERROR);
-                    break;
-                case MSG_SLEEP:
-                    finishWithResult();
-                    break;
+                    mProgressView.setVisibility(View.VISIBLE);
+                }
+                break;
+            case MSG_ERROR_UPNP:
+                myShowDialog(DIALOG_ERROR);
+                break;
+            case MSG_SLEEP:
+                finishWithResult();
+                break;
             }
         }
     };
 
     private Context mContext;
 
-    private View                mRootView;
+    private View mRootView;
     private PlaybackAgeOverlay ageOverlay;
-    private PlayerController    mPlayerController;
-    private View                mPlayerControllerPlaceholder;
-    private Player              mPlayer;
-    private SurfaceController   mSurfaceController;
-    private SubtitleManager     mSubtitleManager = null;
-    private View                mProgressView;
-    private TextView            mBufferView;
-    private Uri                 mUri;
-    private Uri                 mStreamingUri;
-    private String              mTitle;
-    Map<String, String>         mExtraMap = null;
-    private String              mMovieOrShowName;
-    private String              mEpisode;
-    private Bitmap              mThumbnail;
-    private int                 mThumbnailDone;
-    private boolean             mPoster;
-    private String              mPosterPath;
+    private PlayerController mPlayerController;
+    private View mPlayerControllerPlaceholder;
+    private Player mPlayer;
+    private SurfaceController mSurfaceController;
+    private SubtitleManager mSubtitleManager = null;
+    private View mProgressView;
+    private TextView mBufferView;
+    private Uri mUri;
+    private Uri mStreamingUri;
+    private String mTitle;
+    Map<String, String> mExtraMap = null;
+    private String mMovieOrShowName;
+    private String mEpisode;
+    private Bitmap mThumbnail;
+    private int mThumbnailDone;
+    private boolean mPoster;
+    private String mPosterPath;
 
-    private boolean             fileHasAlreadyPlayed = false;
-    private int                 mResume;
-    private long                mVideoId;
-    private int                 mErrorCode = 0;
-    private int                 mErrorQualCode = 0;
-    private String              mErrorMsg = null;
-    private int                 mShowingDialogId;
-    private Dialog              mDialog; // assume there is only one dialog shown
-    private boolean             mNetworkFailed = false;
-    private boolean             mPaused;
-    private boolean             mUserPausedVideo = false;  // Track if user explicitly paused
-    private Resources           mResources;
-    private SharedPreferences   mPreferences;
+    private boolean fileHasAlreadyPlayed = false;
+    private int mResume;
+    private long mVideoId;
+    private int mErrorCode = 0;
+    private int mErrorQualCode = 0;
+    private String mErrorMsg = null;
+    private int mShowingDialogId;
+    private Dialog mDialog; // assume there is only one dialog shown
+    private boolean mNetworkFailed = false;
+    private boolean mPaused;
+    private boolean mUserPausedVideo = false; // Track if user explicitly paused
+    private Resources mResources;
+    private SharedPreferences mPreferences;
     private TrackInfoController mAudioInfoController;
     private TrackInfoController mSubtitleInfoController;
 
@@ -422,12 +424,21 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private int mNewSubtitleTrack = -1;
     private int mNewAudioTrack = -1;
     private ChaptersDbPlayback previewChapterSource;
-    java.util.List<PlaybackChapters.Chapter> previewChapters(java.util.List<PlaybackChapters.Chapter> embedded,long duration){
-        if(embedded!=null&&!embedded.isEmpty())return embedded;
-        if(mVideoInfo==null||!mVideoInfo.isScraped||isFinishing()||isDestroyed())return java.util.Collections.emptyList();
-        if(previewChapterSource==null)previewChapterSource=new ChaptersDbPlayback(this);
-        return previewChapterSource.chapters(mVideoInfo.uri,embedded,mVideoInfo.isShow?"tv":"movie",mVideoInfo.isShow?mVideoInfo.scraperShowId:mVideoInfo.scraperMovieId,mVideoInfo.isShow?mVideoInfo.scraperShowImdbId:null,mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr,duration);
+
+    java.util.List<PlaybackChapters.Chapter> previewChapters(java.util.List<PlaybackChapters.Chapter> embedded,
+                                                             long duration) {
+        if (embedded != null && !embedded.isEmpty())
+            return embedded;
+        if (mVideoInfo == null || !mVideoInfo.isScraped || isFinishing() || isDestroyed())
+            return java.util.Collections.emptyList();
+        if (previewChapterSource == null)
+            previewChapterSource = new ChaptersDbPlayback(this);
+        return previewChapterSource.chapters(mVideoInfo.uri, embedded, mVideoInfo.isShow ? "tv" : "movie",
+                                             mVideoInfo.isShow ? mVideoInfo.scraperShowId : mVideoInfo.scraperMovieId,
+                                             mVideoInfo.isShow ? mVideoInfo.scraperShowImdbId : null,
+                                             mVideoInfo.scraperSeasonNr, mVideoInfo.scraperEpisodeNr, duration);
     }
+
     private VideoDbInfo mVideoInfo;
     private IndexHelper mIndexHelper = null;
 
@@ -457,35 +468,36 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private final Runnable mSkipProgressTicker = new Runnable() {
         @Override
         public void run() {
-            if (!mIsSkipPromptShowing || mSkipProgress == null || mSkipButton == null) return;
+            if (!mIsSkipPromptShowing || mSkipProgress == null || mSkipButton == null)
+                return;
             updateSkipProgress();
             mSkipButton.postDelayed(this, SKIP_PROGRESS_TICK_MS);
         }
     };
     private boolean isTVMode;
 
-
     private Runnable r = null;
     private int mSavedMode;
-    private AlertDialog ad=null;
+    private AlertDialog ad = null;
     private long mWillSleepAt; //for timer, stop player activity
     private ServiceConnection mPlayerServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            if (log.isDebugEnabled()) log.debug("Service connected");
-            if(mIsReadytoStart)
+            if (log.isDebugEnabled())
+                log.debug("Service connected");
+            if (mIsReadytoStart)
                 postOnPlayerServiceBind();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
         }
     };
 
     public static Boolean isRotationLocked() {
         return mIsRotationLocked;
     }
+
     public static int getLockedRotation() {
         return mLockedRotation;
     }
@@ -493,25 +505,29 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (log.isDebugEnabled()) log.debug("onReceive: {}", intent);
+            if (log.isDebugEnabled())
+                log.debug("onReceive: {}", intent);
             String action = intent.getAction();
             if (isFinishing())
                 return;
             if (action.equals(Intent.ACTION_SHUTDOWN)) {
                 finishWithResult();
             } else if (action.equals(ACTION_HDMI_PLUGGED)) {
-                if (log.isDebugEnabled()) log.debug("intent received hdmi");
+                if (log.isDebugEnabled())
+                    log.debug("intent received hdmi");
                 boolean plugged = intent.getBooleanExtra(EXTRA_HDMI_PLUGGED_STATE, false);
                 int w = 0, h = 0;
                 mHdmiPlugged = plugged;
-                if (log.isDebugEnabled()) log.debug("intent received hdmi plugged={}", plugged);
+                if (log.isDebugEnabled())
+                    log.debug("intent received hdmi plugged={}", plugged);
                 if (plugged) {
                     // update HDMI screen size
                     int[] size = readHdmiSize(mContext);
                     if (size == null) {
                         // Some USB-C mirror outputs are not reported as FLAG_PRESENTATION displays.
                         size = readFallbackDisplaySize();
-                        log.warn("HDMI plugged but no presentation display found, using fallback size=({},{})", size[0], size[1]);
+                        log.warn("HDMI plugged but no presentation display found, using fallback size=({},{})", size[0],
+                                 size[1]);
                     }
                     w = size[0];
                     h = size[1];
@@ -523,15 +539,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (isTVMode) {
                     refreshAudioTracksTVMenu();
                 }
-            }
-            else if(action.equals(PlayerService.PLAYER_SERVICE_STARTED)){
-                if(mIsReadytoStart)
+            } else if (action.equals(PlayerService.PLAYER_SERVICE_STARTED)) {
+                if (mIsReadytoStart)
                     postOnPlayerServiceBind();
             }
         }
     };
     private boolean mWasInPictureInPicture;
-
 
     public boolean isPluggedOnTv() {
         return (TVUtils.isTV(this) || mHdmiPlugged);
@@ -539,16 +553,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     private boolean isSpatializationSupportedByPlatform() {
         int capabilities = CustomApplication.getSpatializerCapabilities();
-        return Build.VERSION.SDK_INT >= 32
-                && (capabilities & CodecDiscovery.SPATIALIZER_CAP_SUPPORTED) != 0
-                && (capabilities & CodecDiscovery.SPATIALIZER_CAP_AVAILABLE) != 0
-                && (capabilities & (CodecDiscovery.SPATIALIZER_CAP_CAN_SPATIALIZE_5_1
-                | CodecDiscovery.SPATIALIZER_CAP_CAN_SPATIALIZE_7_1)) != 0;
+        return Build.VERSION.SDK_INT >= 32 && (capabilities & CodecDiscovery.SPATIALIZER_CAP_SUPPORTED) != 0 &&
+            (capabilities & CodecDiscovery.SPATIALIZER_CAP_AVAILABLE) != 0 &&
+            (capabilities & (CodecDiscovery.SPATIALIZER_CAP_CAN_SPATIALIZE_5_1 |
+                             CodecDiscovery.SPATIALIZER_CAP_CAN_SPATIALIZE_7_1)) != 0;
     }
 
     private boolean isSpatializationToggleAvailable() {
-        return isSpatializationSupportedByPlatform()
-                && Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0")) == 0;
+        return isSpatializationSupportedByPlatform() &&
+            Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0")) == 0;
     }
 
     private boolean isSpatializationPreferenceEnabled() {
@@ -580,8 +593,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
         if (ArchosFeatures.isAndroidTV(this)) {
             LibAvos.setDownmix(mPreferences.getBoolean("enable_downmix_androidtv", false) ? 1 : 0);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                && mPreferences.getBoolean("disable_downmix", false)) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                   mPreferences.getBoolean("disable_downmix", false)) {
             LibAvos.setDownmix(0);
         } else {
             LibAvos.setDownmix(1);
@@ -589,8 +602,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private boolean isPassthroughAudioDelayLimited() {
-        return CustomApplication.isPassthroughSupported()
-                && Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0")) > 0;
+        return CustomApplication.isPassthroughSupported() &&
+            Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0")) > 0;
     }
 
     private int clampAudioDelayForPassthrough(int delay) {
@@ -605,7 +618,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (delay <= 0) {
             return;
         }
-        if (log.isDebugEnabled()) log.debug("resetUnsupportedPassthroughAudioDelayPreset: reset unsupported delay {}", delay);
+        if (log.isDebugEnabled())
+            log.debug("resetUnsupportedPassthroughAudioDelayPreset: reset unsupported delay {}", delay);
         mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), 0).apply();
         if (PlayerService.sPlayerService != null) {
             PlayerService.sPlayerService.setAudioDelay(0, false);
@@ -630,21 +644,23 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     public static int[] readHdmiSize(Context context) {
-        DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+        DisplayManager displayManager = (DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE);
         Display[] displays = displayManager.getDisplays();
         for (Display display : displays) {
             if ((display.getFlags() & Display.FLAG_PRESENTATION) != 0) {
                 Display.Mode mode = display.getMode();
                 int width = mode.getPhysicalWidth();
                 int height = mode.getPhysicalHeight();
-                if (log.isDebugEnabled()) log.debug("readHdmiSize: size=({},{})", width,height);
+                if (log.isDebugEnabled())
+                    log.debug("readHdmiSize: size=({},{})", width, height);
                 int[] ret = new int[2];
                 ret[0] = width;
                 ret[1] = height;
                 return ret;
             }
         }
-        if (log.isDebugEnabled()) log.debug("readHdmiSize: no external HDMI display found.");
+        if (log.isDebugEnabled())
+            log.debug("readHdmiSize: no external HDMI display found.");
         return null;
     }
 
@@ -657,11 +673,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private int[] readFallbackDisplaySize() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Rect bounds = getWindowManager().getCurrentWindowMetrics().getBounds();
-            return new int[] { bounds.width(), bounds.height() };
+            return new int[] {bounds.width(), bounds.height()};
         } else {
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
-            return new int[] { metrics.widthPixels, metrics.heightPixels };
+            return new int[] {metrics.widthPixels, metrics.heightPixels};
         }
     }
 
@@ -671,29 +687,29 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onCreate(Bundle icicle) {
-        if (log.isDebugEnabled()) log.debug("onCreate");
+        if (log.isDebugEnabled())
+            log.debug("onCreate");
 
         AdditionalServiceSingleton.getInstance().bindToService(
-                getApplicationContext(),
-                () -> {
-                    LibAvos.setAudioTransformer(new LibAvos.AudioTransformer() {
-                        @Override
-                        public float[] transformAudio(float[] samples) {
-                            var svc = AdditionalServiceSingleton.getService();
-                            if (svc == null) return samples;
-                            try {
-                                samples = svc.transformAudio(samples);
-                            } catch(RemoteException e) {
-                                log.error("transformAudio failed", e);
-                            }
+            getApplicationContext(),
+            ()
+                -> {
+                LibAvos.setAudioTransformer(new LibAvos.AudioTransformer() {
+                    @Override
+                    public float[] transformAudio(float[] samples) {
+                        var svc = AdditionalServiceSingleton.getService();
+                        if (svc == null)
                             return samples;
+                        try {
+                            samples = svc.transformAudio(samples);
+                        } catch (RemoteException e) {
+                            log.error("transformAudio failed", e);
                         }
-                        });
-                },
-                () -> {
-                    LibAvos.setAudioTransformer(null);
-                }
-        );
+                        return samples;
+                    }
+                });
+            },
+            () -> { LibAvos.setAudioTransformer(null); });
         mContext = this;
         isTVMode = TVUtils.isTV(this);
 
@@ -710,12 +726,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                log.info("Back navigation: OnBackPressedDispatcher callback, dialogId={}",
-                        mShowingDialogId);
-                if(previewUpNext!=null&&previewUpNext.cancelFocused())return;
+                log.info("Back navigation: OnBackPressedDispatcher callback, dialogId={}", mShowingDialogId);
+                if (previewUpNext != null && previewUpNext.cancelFocused())
+                    return;
                 if (mPlayerController != null && mPlayerController.handleBackPressed()) {
                     // The player controller dismisses a nested TV card before the main TV menu.
-                    if (isTVMode && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
+                    if (isTVMode && mSkipButtonContainer != null &&
+                        mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
                         mSkipButton.post(new Runnable() {
                             @Override
                             public void run() {
@@ -727,7 +744,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     hideSkipPrompt();
                 } else {
                     setEnabled(false);
-                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested","reason","user_back");
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested", "reason",
+                                                                               "user_back");
                     getOnBackPressedDispatcher().onBackPressed();
                     setEnabled(true);
                 }
@@ -756,7 +774,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mFullScreenWithCutout = mPreferences.getBoolean("enable_cutout_mode_short_edges", true);
             cutBothSidesX = mPreferences.getBoolean("enable_cutout_both_sidesx", false);
-            if (log.isDebugEnabled()) log.debug("onCreate cutout: mFullScreenWithCutout={}, cutBothSidesX={}",  mFullScreenWithCutout, cutBothSidesX);
+            if (log.isDebugEnabled())
+                log.debug("onCreate cutout: mFullScreenWithCutout={}, cutBothSidesX={}", mFullScreenWithCutout,
+                          cutBothSidesX);
             //Always using the long one, does this matter!?
             attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
         }
@@ -772,18 +792,21 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // needed on Bravia for HDR content to avoid grey bars cf. issue #270
         if (isEmulator() || isChromeOS(mContext)) // avoid emulator UI glitch
             getWindow().setBackgroundDrawable(new ColorDrawable(0xFF000000));
-        else getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        else
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setContentView(R.layout.player);
         mRootView = findViewById(R.id.root);
         mRootView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
 
-        mRootView.setOnApplyWindowInsetsListener( new View.OnApplyWindowInsetsListener() {
+        mRootView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override
             public WindowInsets onApplyWindowInsets(View view, WindowInsets insets) {
                 //NOTE do not do updateSizes() here otherwise player controller is not displayed
                 MiscUtils.setCutoutMetrics(insets, mRootView, PlayerActivity.this);
                 mSurfaceController.setCutoutMetrics(mCutoutLeft, mCutoutTop, mCutoutRight, mCutoutBottom);
-                if (log.isDebugEnabled()) log.debug("CONFIG onApplyWindowInsets: cutout=({},{},{},{})", mCutoutLeft, mCutoutTop, mCutoutRight, mCutoutBottom);
+                if (log.isDebugEnabled())
+                    log.debug("CONFIG onApplyWindowInsets: cutout=({},{},{},{})", mCutoutLeft, mCutoutTop, mCutoutRight,
+                              mCutoutBottom);
                 getWindow().getDecorView().setOnApplyWindowInsetsListener(null);
                 // needed on Bravia for HDR content to avoid grey bars cf. issue #270
                 // avoid emulator UI glitch
@@ -796,13 +819,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // needed otherwise the playerController does not appear
         mRootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
-            public void onLayoutChange(View v, int left, final int top, int right, final int bottom, int oldLeft, final int oldTop, int oldRight, final int oldBottom) {
-                if (log.isDebugEnabled()) log.debug("CONFIG addOnLayoutChangeListener: left={}, top={}, right={}, bottom={}, oldLeft={}, oldTop={}, oldRight={}, oldBottom={}", left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom);
-                if(oldBottom!=bottom||oldTop!=top) {
+            public void onLayoutChange(View v, int left, final int top, int right, final int bottom, int oldLeft,
+                                       final int oldTop, int oldRight, final int oldBottom) {
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "CONFIG addOnLayoutChangeListener: left={}, top={}, right={}, bottom={}, oldLeft={}, oldTop={}, oldRight={}, oldBottom={}",
+                        left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom);
+                if (oldBottom != bottom || oldTop != top) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (log.isDebugEnabled()) log.debug("CONFIG addOnLayoutChangeListener, do updateSizes()");
+                            if (log.isDebugEnabled())
+                                log.debug("CONFIG addOnLayoutChangeListener, do updateSizes()");
                             // without this video is stretched fullscreen
                             updateSizes();
                         }
@@ -817,7 +845,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setBackgroundDrawable(null);
-        if(mPreferences.getBoolean("try_new_ui",false))actionBar.hide();
+        if (mPreferences.getBoolean("try_new_ui", false))
+            actionBar.hide();
 
         mPaused = false;
         mPlayerControllerPlaceholder = findViewById(R.id.player_controller_placeholder);
@@ -834,28 +863,36 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mSurfaceController.mCutBothSidesX = cutBothSidesX;
 
         mSurfaceController.setListener(mSurfaceListener);
-        ageOverlay=new PlaybackAgeOverlay(this,mSurfaceController);((ViewGroup)mRootView).addView(ageOverlay,new android.widget.RelativeLayout.LayoutParams(-1,-1));
+        ageOverlay = new PlaybackAgeOverlay(this, mSurfaceController);
+        ((ViewGroup)mRootView).addView(ageOverlay, new android.widget.RelativeLayout.LayoutParams(-1, -1));
 
         View menuAnchor = mRootView.findViewById(R.id.menu_anchor);
         mProgressView = mRootView.findViewById(R.id.progress_indicator);
-        if(mPreferences.getBoolean("try_new_ui",false)){
-            ViewGroup parent=(ViewGroup)mProgressView.getParent();int index=parent.indexOfChild(mProgressView);
-            ViewGroup.LayoutParams params=mProgressView.getLayoutParams();params.width=ViewGroup.LayoutParams.MATCH_PARENT;params.height=ViewGroup.LayoutParams.MATCH_PARENT;
-            parent.removeView(mProgressView);mProgressView=new PreviewPlaybackLoading(this,getIntent());parent.addView(mProgressView,index,params);
+        if (mPreferences.getBoolean("try_new_ui", false)) {
+            ViewGroup parent = (ViewGroup)mProgressView.getParent();
+            int index = parent.indexOfChild(mProgressView);
+            ViewGroup.LayoutParams params = mProgressView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            parent.removeView(mProgressView);
+            mProgressView = new PreviewPlaybackLoading(this, getIntent());
+            parent.addView(mProgressView, index, params);
         }
-        mBufferView = (TextView) mRootView.findViewById(R.id.buffer_percentage);
+        mBufferView = (TextView)mRootView.findViewById(R.id.buffer_percentage);
 
-        mPlayerController = new PlayerController(mContext, getWindow(), (ViewGroup)mRootView, mSurfaceController, this, actionBar);
+        mPlayerController =
+            new PlayerController(mContext, getWindow(), (ViewGroup)mRootView, mSurfaceController, this, actionBar);
         mPlayerController.setVideoTitleEnabled(!(mProgressView instanceof PreviewPlaybackLoading));
 
         mAudioInfoController = new TrackInfoController(mContext, getLayoutInflater(), menuAnchor, actionBar);
         mAudioInfoController.setListener(this);
-        mSubtitleManager = new SubtitleManager(mContext, (ViewGroup)mRootView, getWindow().getWindowManager(),false);
+        mSubtitleManager = new SubtitleManager(mContext, (ViewGroup)mRootView, getWindow().getWindowManager(), false);
         mPlayerController.setOnControlBarVisibilityListener(visible -> {
             if (mSubtitleManager != null) {
                 mSubtitleManager.onControlBarVisibilityChanged();
             }
-            if (!visible && isTVMode && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
+            if (!visible && isTVMode && mSkipButtonContainer != null &&
+                mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
                 requestSkipButtonFocus();
             }
         });
@@ -867,7 +904,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mPlayer = new Player(mContext, getWindow(), mSurfaceController, false);
         initSkipButton();
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N_MR1){ //detect any kind of rotation, even from 270 to 90°
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) { //detect any kind of rotation, even from 270 to 90°
             mDisplayListener = new DisplayManager.DisplayListener() {
                 int orientation;
                 @Override
@@ -880,16 +917,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                         orientation = mContext.getDisplay().getRotation();
                     } else {
-                        orientation = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+                        orientation = ((WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE))
+                                          .getDefaultDisplay()
+                                          .getRotation();
                     }
-                    if(mCurrentRotation != orientation) {
+                    if (mCurrentRotation != orientation) {
                         mCurrentRotation = orientation;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (log.isDebugEnabled()) log.debug("CONFIG onDisplayChanged do updateSizes() rotation={}({})->{}({})",
-                                        getHumanReadableRotation(mCurrentRotation), mCurrentRotation,
-                                        getHumanReadableRotation(orientation), orientation);
+                                if (log.isDebugEnabled())
+                                    log.debug("CONFIG onDisplayChanged do updateSizes() rotation={}({})->{}({})",
+                                              getHumanReadableRotation(mCurrentRotation), mCurrentRotation,
+                                              getHumanReadableRotation(orientation), orientation);
                                 // needed to update dimensions when unchecking autorot
                                 updateSizes();
                             }
@@ -901,7 +941,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 public void onDisplayRemoved(int displayId) {
                 }
             };
-            mDisplayManager = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
+            mDisplayManager = (DisplayManager)mContext.getSystemService(Context.DISPLAY_SERVICE);
             mDisplayManager.registerDisplayListener(mDisplayListener, mHandler);
 
             networkState = NetworkState.instance(getApplicationContext());
@@ -910,10 +950,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
                         if (evt.getOldValue() != evt.getNewValue()) {
-                            if (log.isDebugEnabled()) log.debug("NetworkState for {} changed:{} -> {}", evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-                            if (!networkState.hasLocalConnection() && !mPlayer.isLocalVideo()) { // should not finish if playing local file
-                                com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_exit_requested","reason","network_connection_lost");
-                                if (log.isDebugEnabled()) log.debug("lost network: finish");
+                            if (log.isDebugEnabled())
+                                log.debug("NetworkState for {} changed:{} -> {}", evt.getPropertyName(),
+                                          evt.getOldValue(), evt.getNewValue());
+                            if (!networkState.hasLocalConnection() &&
+                                !mPlayer.isLocalVideo()) { // should not finish if playing local file
+                                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                                    "playback_exit_requested", "reason", "network_connection_lost");
+                                if (log.isDebugEnabled())
+                                    log.debug("lost network: finish");
                                 finishWithResult();
                             }
                         }
@@ -922,9 +967,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
     }
 
-    public boolean isInfoActivityDisplayed(){
+    public boolean isInfoActivityDisplayed() {
         return mIsInfoActivityDisplayed;
     }
+
     final BroadcastReceiver mClockReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -936,20 +982,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mPlayerController.updateClock();
     }
 
-    private void setEffectForced (int mode) {
+    private void setEffectForced(int mode) {
         setEffectForced(mode, true);
     }
 
-    private void setEffectForced (int mode, boolean save) {
+    private void setEffectForced(int mode, boolean save) {
         VideoEffect.setForcedMode(mode);
         setEffect(mode, save);
     }
 
-    private void setEffect (int mode) {
+    private void setEffect(int mode) {
         setEffect(mPlayer.getEffectType(), mode, true);
     }
 
-    private void setEffect (int mode, boolean save) {
+    private void setEffect(int mode, boolean save) {
         setEffect(mPlayer.getEffectType(), mode, save);
     }
 
@@ -958,46 +1004,58 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void setEffect(int type, int mode, boolean needSave) {
-        if (log.isDebugEnabled()) log.debug("setEffectForced: type {}, mode {}, needSave {}", type, mode, needSave);
-        if (needSave) mSavedMode=mode;
+        if (log.isDebugEnabled())
+            log.debug("setEffectForced: type {}, mode {}, needSave {}", type, mode, needSave);
+        if (needSave)
+            mSavedMode = mode;
         mPlayer.setEffect(type, mode);
         mPlayerController.setUIMode(mPlayer.getUIMode());
-        if(mSubtitleManager!=null)
+        if (mSubtitleManager != null)
             mSubtitleManager.setUIMode(mPlayer.getUIMode());
-        if(type!=VideoEffect.EFFECT_NONE){
-            if (log.isDebugEnabled()) log.debug("setEffect: setLockRotation true");
+        if (type != VideoEffect.EFFECT_NONE) {
+            if (log.isDebugEnabled())
+                log.debug("setEffect: setLockRotation true");
             setLockRotation(true);
-        }
-        else{
-            if (log.isDebugEnabled()) log.debug("setEffect: setLockRotation {}", mLockRotation);
+        } else {
+            if (log.isDebugEnabled())
+                log.debug("setEffect: setLockRotation {}", mLockRotation);
             setLockRotation(mLockRotation);
         }
     }
 
     private void addNetworkListener() {
-        if (networkState == null) networkState = NetworkState.instance(mContext);
+        if (networkState == null)
+            networkState = NetworkState.instance(mContext);
         if (!mNetworkStateListenerAdded && propertyChangeListener != null) {
-            if (log.isDebugEnabled()) log.debug("addNetworkListener: networkState.addPropertyChangeListener");
+            if (log.isDebugEnabled())
+                log.debug("addNetworkListener: networkState.addPropertyChangeListener");
             networkState.addPropertyChangeListener(propertyChangeListener);
             mNetworkStateListenerAdded = true;
         }
     }
 
     private void removeNetworkListener() {
-        if (networkState == null) networkState = NetworkState.instance(mContext);
+        if (networkState == null)
+            networkState = NetworkState.instance(mContext);
         if (mNetworkStateListenerAdded && propertyChangeListener != null) {
-            if (log.isDebugEnabled()) log.debug("removeListener: networkState.removePropertyChangeListener");
+            if (log.isDebugEnabled())
+                log.debug("removeListener: networkState.removePropertyChangeListener");
             networkState.removePropertyChangeListener(propertyChangeListener);
             mNetworkStateListenerAdded = false;
         }
     }
 
     private PreviewUpNext previewUpNext;
+
     @Override
     protected void onStart() {
         super.onStart();
-        if(isTVMode&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)&&previewUpNext==null)previewUpNext=new PreviewUpNext(this);
-        if (log.isDebugEnabled()) log.debug("onStart()");
+        if (isTVMode &&
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
+            previewUpNext == null)
+            previewUpNext = new PreviewUpNext(this);
+        if (log.isDebugEnabled())
+            log.debug("onStart()");
         mStopped = false;
         removeNetworkListener();
         IntentFilter intentFilter = new IntentFilter();
@@ -1010,19 +1068,24 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mLockRotation = mPreferences.getBoolean(KEY_LOCK_ROTATION, false);
         mNetworkBookmarksEnabled = mPreferences.getBoolean(KEY_NETWORK_BOOKMARKS, true);
         mForceSWDecoding = mPreferences.getBoolean(KEY_FORCE_SW, false);
-        if (log.isDebugEnabled()) log.debug("onStart: setLockRotation {}", mLockRotation);
+        if (log.isDebugEnabled())
+            log.debug("onStart: setLockRotation {}", mLockRotation);
         setLockRotation(mLockRotation);
         mSurfaceController.setVideoFormat(Integer.parseInt(mPreferences.getString(KEY_PLAYER_FORMAT, "-1")),
-                Integer.parseInt(mPreferences.getString(KEY_PLAYER_AUTO_FORMAT, "-1")));
+                                          Integer.parseInt(mPreferences.getString(KEY_PLAYER_AUTO_FORMAT, "-1")));
 
         //Set up projector mode if we need it, otherwise dont even call.
         mSurfaceController.setProjectorMode(mPreferences.getBoolean(KEY_PLAYER_PROJECTOR_MODE, false));
-        
-        if (log.isDebugEnabled()) log.debug("onStart: Setting audio transformer");
+
+        if (log.isDebugEnabled())
+            log.debug("onStart: Setting audio transformer");
         if (LibAvos.isAvailable()) {
-            VideoPreferencesCommon.resetPassthroughPref(mPreferences); // note this resets the audio_speed if in passthrough to 1.0f in prefs
-            int passthroughMode = CustomApplication.isPassthroughSupported()
-                    ? Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0")) : 0;
+            VideoPreferencesCommon.resetPassthroughPref(
+                mPreferences); // note this resets the audio_speed if in passthrough to 1.0f in prefs
+            int passthroughMode =
+                CustomApplication.isPassthroughSupported()
+                    ? Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0"))
+                    : 0;
             resetUnsupportedPassthroughAudioDelayPreset();
             mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             applySpatializationPreferenceToAvos();
@@ -1031,23 +1094,25 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             float audioSpeed;
             if (passthroughMode == 0) {
                 audioSpeed = mPreferences.getFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f);
-                if (log.isDebugEnabled()) log.debug("onStart: {}", audioSpeed);
+                if (log.isDebugEnabled())
+                    log.debug("onStart: {}", audioSpeed);
             } else {
-                if (log.isDebugEnabled()) log.debug("onStart: {}", 1.0f);
+                if (log.isDebugEnabled())
+                    log.debug("onStart: {}", 1.0f);
                 audioSpeed = 1.0f;
             }
             String size = mPreferences.getString(KEY_STREAM_BUFFER_SIZE, String.valueOf(DEFAULT_STREAM_BUFFER_SIZE));
             int finalSize;
             try {
                 finalSize = Integer.parseInt(size);
-            } catch(NumberFormatException | NullPointerException e) {
+            } catch (NumberFormatException | NullPointerException e) {
                 finalSize = DEFAULT_STREAM_BUFFER_SIZE;
             }
             LibAvos.setStreamBufferSize(finalSize);
             size = mPreferences.getString(KEY_STREAM_MAX_IFRAME_SIZE, String.valueOf(DEFAULT_MAX_IFRAME_SIZE));
             try {
                 finalSize = Integer.parseInt(size);
-            } catch(NumberFormatException | NullPointerException e) {
+            } catch (NumberFormatException | NullPointerException e) {
                 finalSize = DEFAULT_MAX_IFRAME_SIZE;
             }
             LibAvos.setStreamMaxIframeSize(finalSize);
@@ -1062,20 +1127,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
             LibAvos.setAudioSpeedBackend(audioSpeedBackend);
             LibAvos.setAudioSpeed(audioSpeed); // set audio speed playback (does nothing if audio speed not enabled)
-            LibAvos.setDynamicAudioDelay(mPreferences.getBoolean(VideoPreferencesCommon.KEY_ENABLE_DYNAMIC_AUDIO_DELAY, true)); // AVOS applies it only when the active sink path can use dynamic delay.
-            LibAvos.parserSyncMode(Integer.parseInt(mPreferences.getString(KEY_PARSER_SYNC_MODE,"0"))); // set lavc parser sync mode (0: PTS, 1 samples)
+            LibAvos.setDynamicAudioDelay(
+                mPreferences.getBoolean(VideoPreferencesCommon.KEY_ENABLE_DYNAMIC_AUDIO_DELAY,
+                                        true)); // AVOS applies it only when the active sink path can use dynamic delay.
+            LibAvos.parserSyncMode(Integer.parseInt(
+                mPreferences.getString(KEY_PARSER_SYNC_MODE, "0"))); // set lavc parser sync mode (0: PTS, 1 samples)
             applyDownmixPreferenceToAvos();
         }
 
         //if not started from floating player, we have to stop our video
         if (mForceSWDecoding)
-            Toast.makeText(
-                mContext,
-                R.string.warning_swdec,
-                Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.warning_swdec, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, PlayerService.class);
         bindService(intent, mPlayerServiceConnection, BIND_AUTO_CREATE);
-        if(PlayerService.sPlayerService!=null)
+        if (PlayerService.sPlayerService != null)
             postOnPlayerServiceBind();
         else
             mIsReadytoStart = true;
@@ -1084,7 +1149,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @SuppressWarnings("deprecation") // Bundle.get(key) is required for the untyped external header bundle.
     private void postOnPlayerServiceBind() {
-        if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: START, mResumeFromLast={}", mResumeFromLast);
+        if (log.isDebugEnabled())
+            log.debug("postOnPlayerServiceBind: START, mResumeFromLast={}", mResumeFromLast);
         if (!mResumeFromLast && getSharedPreferences("player", 0).getInt("lastintent", 0) == getIntent().hashCode()) {
             /* resume video if last intent == current intent
              * (when resumed from history for example)
@@ -1093,19 +1159,25 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             boolean hasPositionExtras = ExternalResumeIntent.hasPositionExtra(getIntent());
             if (!(mIsExternalPlayer && hasPositionExtras)) {
                 mResumeFromLast = true;
-                if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: Set mResumeFromLast=true due to lastintent match");
+                if (log.isDebugEnabled())
+                    log.debug("postOnPlayerServiceBind: Set mResumeFromLast=true due to lastintent match");
             } else {
-                if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: Skipping mResumeFromLast - external player with position extras detected");
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "postOnPlayerServiceBind: Skipping mResumeFromLast - external player with position extras detected");
             }
         }
         final String action = getIntent().getAction();
         if (mResumeFromLast || (action != null && action.equals(ArchosIntents.ARCHOS_RESUME_VIDEOPLAYER))) {
             mResume = RESUME_FROM_LAST_POS;
             getIntent().putExtra(RESUME, mResume);
-            if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: Set mResume=RESUME_FROM_LAST_POS due to mResumeFromLast or ARCHOS_RESUME action");
+            if (log.isDebugEnabled())
+                log.debug(
+                    "postOnPlayerServiceBind: Set mResume=RESUME_FROM_LAST_POS due to mResumeFromLast or ARCHOS_RESUME action");
         } else {
             mResume = getIntent().getIntExtra(RESUME, RESUME_NO);
-            if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: Retrieved mResume from intent, value={}", mResume);
+            if (log.isDebugEnabled())
+                log.debug("postOnPlayerServiceBind: Retrieved mResume from intent, value={}", mResume);
             // Check for external resume position if no other resume mode is set
             if (mResume == RESUME_NO) {
                 // Presence alone is not sufficient: position=0 and malformed values historically
@@ -1113,13 +1185,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (ExternalResumeIntent.hasValidLaunchPosition(getIntent())) {
                     mResume = RESUME_FROM_REMOTE_POS;
                     getIntent().putExtra(RESUME, mResume);
-                    if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: explicit position is owned by PlayerService");
+                    if (log.isDebugEnabled())
+                        log.debug("postOnPlayerServiceBind: explicit position is owned by PlayerService");
                 }
             }
         }
 
         mIsReadytoStart = false;
-        if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind() ");
+        if (log.isDebugEnabled())
+            log.debug("postOnPlayerServiceBind() ");
 
         // Read HTTP headers passed by external apps (MX Player API / Stremio)
         Bundle headersBundle = getIntent().getBundleExtra("headers");
@@ -1128,16 +1202,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             for (String key : headersBundle.keySet()) {
                 Object value = headersBundle.get(key);
                 if (value instanceof String) {
-                    mExtraMap.put(key, (String) value);
+                    mExtraMap.put(key, (String)value);
                 }
             }
-            if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: found {} HTTP headers from external intent: {}", mExtraMap.size(), mExtraMap.keySet());
+            if (log.isDebugEnabled())
+                log.debug("postOnPlayerServiceBind: found {} HTTP headers from external intent: {}", mExtraMap.size(),
+                          mExtraMap.keySet());
         } else {
-            if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: no HTTP headers in external intent");
+            if (log.isDebugEnabled())
+                log.debug("postOnPlayerServiceBind: no HTTP headers in external intent");
         }
         // Header values may contain bearer tokens; log only their names.
-        if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: uri={} headerNames={}",
-                getIntent().getData(), mExtraMap != null ? mExtraMap.keySet() : null);
+        if (log.isDebugEnabled())
+            log.debug("postOnPlayerServiceBind: uri={} headerNames={}", getIntent().getData(),
+                      mExtraMap != null ? mExtraMap.keySet() : null);
 
         Intent intent = new Intent();
         intent.putExtras(getIntent());
@@ -1150,19 +1228,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         PlayerService.sPlayerService.setUiContext(this);
         Player.sPlayer = mPlayer;
         PlayerService.sPlayerService.setPlayer();
-        if(mPermissionChecker.hasExternalPermission(this)) {
-            if (log.isDebugEnabled()) log.debug("postOnPlayerServiceBind: hasExternalPermission");
+        if (mPermissionChecker.hasExternalPermission(this)) {
+            if (log.isDebugEnabled())
+                log.debug("postOnPlayerServiceBind: hasExternalPermission");
             PlayerService.sPlayerService.onStart(intent);
             mUserPausedVideo = !PlayerService.sPlayerService.isPlayOnResume();
             PlayerService.sPlayerService.setIndexHelper(mIndexHelper);
             start();
         }
-
     }
+
     @Override
-    public void onPictureInPictureModeChanged(boolean isInPict){
+    public void onPictureInPictureModeChanged(boolean isInPict) {
         super.onPictureInPictureModeChanged(isInPict);
-        if(isInPict)
+        if (isInPict)
             mWasInPictureInPicture = true;
         adjustSkipButtonForPiP(isInPict);
     }
@@ -1170,8 +1249,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     protected void onResume() {
         super.onResume();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("playback","player","video","none","none",mVideoId);
-        if (log.isDebugEnabled()) log.debug("onResume");
+        com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("playback", "player", "video", "none", "none",
+                                                                     mVideoId);
+        if (log.isDebugEnabled())
+            log.debug("onResume");
         // Clock (for leanback devices only)
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {
             registerReceiver(mClockReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
@@ -1195,14 +1276,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // Safe to call unconditionally, same as resyncSurfaceSize() above.
         updateSubtitleLayoutMode();
 
-        if(!mWasInPictureInPicture){
+        if (!mWasInPictureInPicture) {
             mPermissionChecker.checkAndRequestPermission(this);
             if (!isFinishing() && !isDestroyed()) {
                 if (mHasAskedFloatingPermission && Settings.canDrawOverlays(this)) { //permission has been granted
                     startService(new Intent(this, FloatingPlayerService.class));
                 }
                 mHasAskedFloatingPermission = false;
-
             }
             addNetworkListener();
             if (mPaused) {
@@ -1210,14 +1290,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mPlayer.checkSubtitles();
                 // Ensure mPlayOnResume stays false if player is paused
                 if (mPlayer.isPauseRequested() && PlayerService.sPlayerService != null) {
-                    if (log.isDebugEnabled()) log.debug("onResume: player is paused, ensuring mPlayOnResume = false and mUserPausedVideo = true");
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "onResume: player is paused, ensuring mPlayOnResume = false and mUserPausedVideo = true");
                     mUserPausedVideo = true;
                     PlayerService.sPlayerService.setPlayOnResume(false);
                 }
             }
             mIsInfoActivityDisplayed = false;
         }
-
 
         // Restore the previous notifications mode
         mNotificationMode = mPreferences.getInt(KEY_NOTIFICATIONS_MODE, NOTIFICATION_MODE_ALL);
@@ -1233,9 +1314,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     protected void onPause() {
         // Also cover framework-driven finishing paths which bypass our finish() override.
-        if (isFinishing() && !mLaunchFloatingPlayer && mPlayer != null) mPlayer.beginPlaybackExit();
+        if (isFinishing() && !mLaunchFloatingPlayer && mPlayer != null)
+            mPlayer.beginPlaybackExit();
         super.onPause();
-        if (log.isDebugEnabled()) log.debug("onPause");
+        if (log.isDebugEnabled())
+            log.debug("onPause");
 
         // Clock (for leanback devices only)
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {
@@ -1243,7 +1326,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
         if (ArchosFeatures.isAndroidTV(this)) {
             if (mPlayer.isPlaying()) {
-                if (!requestVisibleBehind(true)&&!mLaunchFloatingPlayer) {
+                if (!requestVisibleBehind(true) && !mLaunchFloatingPlayer) {
                     // Try to play behind launcher, but if it fails, so paused.
 
                     removeNetworkListener();
@@ -1265,10 +1348,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         // If player is paused when activity pauses (screen off), preserve pause state
         if (mPlayer != null && mPlayer.isPauseRequested() && PlayerService.sPlayerService != null) {
-            if (log.isDebugEnabled()) log.debug("onPause (activity): player is paused, setting mPlayOnResume = false");
+            if (log.isDebugEnabled())
+                log.debug("onPause (activity): player is paused, setting mPlayOnResume = false");
             PlayerService.sPlayerService.setPlayOnResume(false);
         }
-
     }
 
     @SuppressWarnings("deprecation") // onVisibleBehindCanceled: deprecated API 26, no replacement for Android TV
@@ -1281,10 +1364,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onStop() {
-        if(ageOverlay!=null)ageOverlay.stop();
-        if(previewUpNext!=null){previewUpNext.stop();previewUpNext=null;}
+        if (ageOverlay != null)
+            ageOverlay.stop();
+        if (previewUpNext != null) {
+            previewUpNext.stop();
+            previewUpNext = null;
+        }
         super.onStop();
-        if (log.isDebugEnabled()) log.debug("onStop");
+        if (log.isDebugEnabled())
+            log.debug("onStop");
 
         // Refresh the service-owned handoff position in case playback continued behind Home.
         if (PlayerService.sPlayerService != null) {
@@ -1294,7 +1382,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // Home and screensavers also call onStop(). They are session checkpoints, not an
         // external-player completion, so do not publish a stale result here. Every deliberate
         // exit goes through finish(), which reports the latest service-owned snapshot.
-        if (isFinishing()) sendExternalPlayerResult();
+        if (isFinishing())
+            sendExternalPlayerResult();
 
         if (mStopped)
             return;
@@ -1326,13 +1415,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // real one. Keeping the binding alive across a plain minimize avoids that race entirely.
         boolean isLeavingForGood = isFinishing() || mLaunchFloatingPlayer;
         if (isLeavingForGood) {
-            if(PlayerService.sPlayerService !=null)
+            if (PlayerService.sPlayerService != null)
                 PlayerService.sPlayerService.removePlayerFrontend(mPlayerListener, mLaunchFloatingPlayer);
 
-            if(FloatingPlayerService.sFloatingPlayerService!=null&&!mLaunchFloatingPlayer)
+            if (FloatingPlayerService.sFloatingPlayerService != null && !mLaunchFloatingPlayer)
                 FloatingPlayerService.sFloatingPlayerService.stopSelf();
         } else {
-            if (log.isDebugEnabled()) log.debug("onStop: plain background transition, keeping PlayerService binding and Player.sPlayer alive for resume");
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onStop: plain background transition, keeping PlayerService binding and Player.sPlayer alive for resume");
         }
         mLaunchFloatingPlayer = false;
         mResumeFromLast = true;
@@ -1349,12 +1440,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     protected void onDestroy() {
-        if(previewChapterSource!=null){previewChapterSource.close();previewChapterSource=null;}
-        if (log.isDebugEnabled()) log.debug("onDestroy");
+        if (previewChapterSource != null) {
+            previewChapterSource.close();
+            previewChapterSource = null;
+        }
+        if (log.isDebugEnabled())
+            log.debug("onDestroy");
 
         // System-driven destruction after Home/screensaver is not an external-player exit.
         // finish() normally sends first; this guarded fallback covers framework finish paths.
-        if (isFinishing()) sendExternalPlayerResult();
+        if (isFinishing())
+            sendExternalPlayerResult();
 
         stopDialog();
         removeNetworkListener();
@@ -1362,10 +1458,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // System/screensaver recreation must retain a user pause. A deliberate finish ends it.
         if (isFinishing()) {
             mPreferences.edit()
-                    .putBoolean(PlayerService.PREFERENCE_USER_PAUSED_VIDEO, false)
-                    .remove(PlayerService.PREFERENCE_USER_PAUSED_URI)
-                    .apply();
-            if (log.isDebugEnabled()) log.debug("onDestroy: cleared finished paused session");
+                .putBoolean(PlayerService.PREFERENCE_USER_PAUSED_VIDEO, false)
+                .remove(PlayerService.PREFERENCE_USER_PAUSED_URI)
+                .apply();
+            if (log.isDebugEnabled())
+                log.debug("onDestroy: cleared finished paused session");
         }
 
         // Unregister DisplayListener to prevent memory leak
@@ -1376,7 +1473,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         VideoEffect.resetForcedMode();
-        if (log.isDebugEnabled()) log.debug("onDestroy: setEffect");
+        if (log.isDebugEnabled())
+            log.debug("onDestroy: setEffect");
         setEffect(VideoEffect.getDefaultMode());
         if (Player.sPlayer == mPlayer) {
             Player.sPlayer = null;
@@ -1392,11 +1490,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // The track kind is decided in native and interpreted in exactly one place,
         // SubtitleManager (see its KIND_* docs). This method only forwards the answer.
         syncSubtitleKind();
-        int category = mSubtitleManager != null
-                ? mSubtitleManager.getLayoutCategory()
-                : SurfaceController.SUBTITLE_CATEGORY_PLAIN_TEXT;
-        boolean useMargins = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(KEY_SUBTITLE_USE_MARGINS, true);
+        int category = mSubtitleManager != null ? mSubtitleManager.getLayoutCategory()
+                                                : SurfaceController.SUBTITLE_CATEGORY_PLAIN_TEXT;
+        boolean useMargins =
+            PreferenceManager.getDefaultSharedPreferences(this).getBoolean(KEY_SUBTITLE_USE_MARGINS, true);
         if (mSurfaceController != null) {
             mSurfaceController.setSubtitleLayoutMode(category, useMargins);
         }
@@ -1404,8 +1501,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @SuppressWarnings("deprecation") // getRealSize/getSize: API 30+ uses getCurrentWindowMetrics
     private void updateSizes() {
-        boolean isInPictureInPictureMode = Build.VERSION.SDK_INT>=Build.VERSION_CODES.N&&isInPictureInPictureMode();
-        boolean isInMultiWindowMode = Build.VERSION.SDK_INT>=Build.VERSION_CODES.N&&isInMultiWindowMode();
+        boolean isInPictureInPictureMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode();
+        boolean isInMultiWindowMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode();
         int width, height, layoutWidth, layoutHeight, displayWidth, displayHeight;
         // returns the real screen dimension
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -1440,7 +1537,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 captionInsets = rootInsets.getInsets(WindowInsets.Type.captionBar());
             }
             point.set(bounds.width() - captionInsets.left - captionInsets.right,
-                    bounds.height() - captionInsets.top - captionInsets.bottom);
+                      bounds.height() - captionInsets.top - captionInsets.bottom);
         } else {
             getWindowManager().getDefaultDisplay().getSize(point);
         }
@@ -1449,8 +1546,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         layoutWidth = point.x;
         layoutHeight = point.y;
 
-        boolean isPortrait = ((1.0f*layoutHeight/layoutWidth)>1.0);
-        boolean isSeenPortrait = ((1.0f*displayHeight/displayWidth)>1.0);
+        boolean isPortrait = ((1.0f * layoutHeight / layoutWidth) > 1.0);
+        boolean isSeenPortrait = ((1.0f * displayHeight / displayWidth) > 1.0);
 
         //Find the screen density.
         DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -1458,9 +1555,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         //Set the Floating Player Size, 45% of the smallest side, or 2 inches on Tablet etc.
         int smallestSide = (isPortrait ? displayWidth : displayHeight);
         int smallestSideLayout = (isPortrait ? layoutWidth : layoutHeight);
-        mPlayerController.floatingPlayerSize =  (int) ( smallestSide / metrics.densityDpi < 3 ?
-                (int) (smallestSideLayout * 0.45):
-                metrics.densityDpi * 2);
+        mPlayerController.floatingPlayerSize =
+            (int)(smallestSide / metrics.densityDpi < 3 ? (int)(smallestSideLayout * 0.45) : metrics.densityDpi * 2);
 
         //Update the Strecth X /Y Icon
         mPlayerController.setStretchXYIcon();
@@ -1471,24 +1567,29 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // hack to fix fullscreen height on chromeos pixelbook (and more?) since it reports 2400x1440 instead of 2400x1600 but ok in multiWindow
         // restricted to fullscreen: in freeform windowing the height difference can come from the caption bar
         // already subtracted above (cf. issue #1541), which this hack would otherwise cancel
-        if(isChromeOS(mContext)&&!isInMultiWindowMode&&(layoutWidth == displayWidth)&&(layoutHeight != displayHeight)) {
-            log.warn("CONFIG updateSizes: hack correcting on chromeOS layoutHeight from {} to {}", layoutHeight, displayHeight);
+        if (isChromeOS(mContext) && !isInMultiWindowMode && (layoutWidth == displayWidth) &&
+            (layoutHeight != displayHeight)) {
+            log.warn("CONFIG updateSizes: hack correcting on chromeOS layoutHeight from {} to {}", layoutHeight,
+                     displayHeight);
             layoutHeight = displayHeight;
         }
 
-        if (log.isDebugEnabled()) log.debug("CONFIG updateSizes isPortrait={}, isSeenPortrait={}, isInMultiWindowMode()={}, isInPictureInPictureMode()={}, layout=({},{}), display=({},{})",
-                isPortrait, isSeenPortrait, isInMultiWindowMode, isInPictureInPictureMode,
-                layoutWidth, layoutHeight, displayWidth, displayHeight);
+        if (log.isDebugEnabled())
+            log.debug(
+                "CONFIG updateSizes isPortrait={}, isSeenPortrait={}, isInMultiWindowMode()={}, isInPictureInPictureMode()={}, layout=({},{}), display=({},{})",
+                isPortrait, isSeenPortrait, isInMultiWindowMode, isInPictureInPictureMode, layoutWidth, layoutHeight,
+                displayWidth, displayHeight);
 
         // if rotation is locked reverse w/h but only if we have a difference of portrait/landscape perception between layout and screen dimension
-        if (isRotationLocked()&&(isPortrait != isSeenPortrait)) {
+        if (isRotationLocked() && (isPortrait != isSeenPortrait)) {
             int swapTemp = displayWidth;
             displayWidth = displayHeight;
             displayHeight = swapTemp;
-            if (log.isDebugEnabled()) log.debug("CONFIG updateSizes RotationLocked overriding display ({},{})", displayWidth, displayHeight);
+            if (log.isDebugEnabled())
+                log.debug("CONFIG updateSizes RotationLocked overriding display ({},{})", displayWidth, displayHeight);
         }
 
-        if (!isInPictureInPictureMode&&!isInMultiWindowMode) {
+        if (!isInPictureInPictureMode && !isInMultiWindowMode) {
             width = displayWidth;
             height = displayHeight;
         } else {
@@ -1497,8 +1598,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         // Note: mRootView contains player.xml layout and must cover full screen including cutout
-        if (log.isDebugEnabled()) log.debug("CONFIG updateSizes: trueFullscreen size WxH={}x{}", width, height);
-        if(!isChromeOS(mContext)) { //keeping things as it was on other devices
+        if (log.isDebugEnabled())
+            log.debug("CONFIG updateSizes: trueFullscreen size WxH={}x{}", width, height);
+        if (!isChromeOS(mContext)) { //keeping things as it was on other devices
             ViewGroup.LayoutParams lp = mRootView.getLayoutParams();
             lp.width = width;
             lp.height = height;
@@ -1508,19 +1610,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         mScreenWidth = width;
         mSurfaceController.setScreenSize(width, height);
         mSubtitleManager.setScreenSize(width, height);
-        if(!isInPictureInPictureMode) {
-            if (log.isDebugEnabled()) log.debug("CONFIG updateSizes: not PIP mPlayerController.setSizes layout=({},{}), display=({},{})", layoutWidth, layoutHeight, displayWidth, displayHeight);
+        if (!isInPictureInPictureMode) {
+            if (log.isDebugEnabled())
+                log.debug("CONFIG updateSizes: not PIP mPlayerController.setSizes layout=({},{}), display=({},{})",
+                          layoutWidth, layoutHeight, displayWidth, displayHeight);
             mPlayerController.setSizes(displayWidth, displayHeight, layoutWidth, layoutHeight);
             // Close the menus if needed
             mAudioInfoController.resetPopup();
             mSubtitleInfoController.resetPopup();
         }
         int vpos = mPreferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos);
-        if(isInPictureInPictureMode||isInMultiWindowMode) {
+        if (isInPictureInPictureMode || isInMultiWindowMode) {
             // note that in multiwindow mode chromeos returns correct height but not in full screen thus it works here
-            vpos = (int) ((layoutHeight / (float)(displayHeight<displayWidth?displayHeight:displayWidth)) * vpos);
+            vpos = (int)((layoutHeight / (float)(displayHeight < displayWidth ? displayHeight : displayWidth)) * vpos);
         }
-        if (log.isDebugEnabled()) log.debug("CONFIG updateSizes: vpos={}", vpos);
+        if (log.isDebugEnabled())
+            log.debug("CONFIG updateSizes: vpos={}", vpos);
         setSubtitleVpos(vpos, "updateSizes");
     }
 
@@ -1530,7 +1635,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (log.isDebugEnabled()) log.debug("CONFIG onConfigurationChanged: do updateSizes()");
+                if (log.isDebugEnabled())
+                    log.debug("CONFIG onConfigurationChanged: do updateSizes()");
                 updateSizes();
             }
         });
@@ -1566,7 +1672,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         } else {
             rotation = getWindowManager().getDefaultDisplay().getRotation();
         }
-        if (log.isDebugEnabled()) log.debug("CONFIG setLockRotation, rotation status: {}, i.e. {}", rotation, getHumanReadableRotation(rotation));
+        if (log.isDebugEnabled())
+            log.debug("CONFIG setLockRotation, rotation status: {}, i.e. {}", rotation,
+                      getHumanReadableRotation(rotation));
 
         boolean systemLock;
         try {
@@ -1575,10 +1683,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             systemLock = false;
         }
         mIsRotationLocked = (avpLock || systemLock);
-        if (log.isDebugEnabled()) log.debug("avpLock: {} systemLock: {}", avpLock, systemLock);
+        if (log.isDebugEnabled())
+            log.debug("avpLock: {} systemLock: {}", avpLock, systemLock);
         if (mIsRotationLocked) {
             int tmpOrientation = getResources().getConfiguration().orientation;
-            if (log.isDebugEnabled()) log.debug("CONFIG setLockRotation: current orientation is {}", getHumanReadableActivityOrientation(tmpOrientation));
+            if (log.isDebugEnabled())
+                log.debug("CONFIG setLockRotation: current orientation is {}",
+                          getHumanReadableActivityOrientation(tmpOrientation));
             int wantedOrientation;
 
             if (tmpOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -1589,10 +1700,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     wantedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
                     mLockedRotation = Surface.ROTATION_270;
                 }
-                if (log.isDebugEnabled()) log.debug("CONFIG setLockRotation: wanted orientation is {}", getHumanReadableActivityOrientation(wantedOrientation));
+                if (log.isDebugEnabled())
+                    log.debug("CONFIG setLockRotation: wanted orientation is {}",
+                              getHumanReadableActivityOrientation(wantedOrientation));
                 setRequestedOrientation(wantedOrientation);
-            }
-            else if (tmpOrientation == Configuration.ORIENTATION_PORTRAIT || tmpOrientation == Configuration.ORIENTATION_UNDEFINED) {
+            } else if (tmpOrientation == Configuration.ORIENTATION_PORTRAIT ||
+                       tmpOrientation == Configuration.ORIENTATION_UNDEFINED) {
                 if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_90) {
                     wantedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
                     mLockedRotation = Surface.ROTATION_90;
@@ -1600,11 +1713,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     wantedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
                     mLockedRotation = Surface.ROTATION_270;
                 }
-                if (log.isDebugEnabled()) log.debug("CONFIG setLockRotation: wanted orientation is {}", getHumanReadableActivityOrientation(wantedOrientation));
+                if (log.isDebugEnabled())
+                    log.debug("CONFIG setLockRotation: wanted orientation is {}",
+                              getHumanReadableActivityOrientation(wantedOrientation));
                 setRequestedOrientation(wantedOrientation);
             }
         } else {
-            if (log.isDebugEnabled()) log.debug("CONFIG setLockRotation: wanted orientation is unspecified");
+            if (log.isDebugEnabled())
+                log.debug("CONFIG setLockRotation: wanted orientation is unspecified");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
     }
@@ -1612,10 +1728,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (log.isDebugEnabled()) log.debug("onNewIntent: {}", intent);
+        if (log.isDebugEnabled())
+            log.debug("onNewIntent: {}", intent);
         ensureLaunchGeneration(intent);
         setIntent(intent);
-        if(mWasInPictureInPicture) {
+        if (mWasInPictureInPicture) {
             if (PlayerService.sPlayerService != null) {
                 PlayerService.sPlayerService.stopAndSaveVideoState();
                 postOnPlayerServiceBind();
@@ -1632,14 +1749,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if(previewUpNext!=null&&previewUpNext.handleKey(event,()->{if(mPlayerController!=null)mPlayerController.showControlBar();}))return true;
+        if (previewUpNext != null && previewUpNext.handleKey(event, () -> {
+                if (mPlayerController != null)
+                    mPlayerController.showControlBar();
+            }))
+            return true;
         return super.dispatchKeyEvent(event);
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         boolean handled = false;
-        if (!mStopped && (mPlayerController!=null)) {
+        if (!mStopped && (mPlayerController != null)) {
             // Send key event to PlayerController if it (its place-holder actually) has the focus
             // Only keep keys used for focus navigation (because this is not handled by PlayerController)
             if (!handled && mPlayerControllerPlaceholder.hasFocus() && !isKeyUsedForFocusNavigation(keyCode)) {
@@ -1647,7 +1768,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
             // Send key event to PlayerController even if it doesn't have the focus, in order to handled special media keys (play, pause, seek, volume, etc.)
             // Only keep keys used for navigation in the ActionBar
-            if (!handled && !mPlayerControllerPlaceholder.hasFocus() && (!isKeyUsedForActionBarNavigation(keyCode)||mPlayerController.isSeekPressed())) {
+            if (!handled && !mPlayerControllerPlaceholder.hasFocus() &&
+                (!isKeyUsedForActionBarNavigation(keyCode) || mPlayerController.isSeekPressed())) {
                 handled = mPlayerController.onKey(keyCode, event);
             }
         }
@@ -1659,12 +1781,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public boolean dispatchTouchEvent(MotionEvent event) {
 
         boolean handle = false;
-        if(mPlayerController!=null)
+        if (mPlayerController != null)
             handle = mPlayerController.onTouch(event);
 
         //Be careful not to override the return unless necessary
         //return false;
-        return handle?true:super.dispatchTouchEvent(event);
+        return handle ? true : super.dispatchTouchEvent(event);
     }
 
     @Override
@@ -1674,36 +1796,36 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // from/to ActionBar to/from PlayerController
         switch (keyCode) {
 
-            case KeyEvent.KEYCODE_DPAD_UP:
-                if (mSkipButton != null && (mSkipButton.hasFocus() || mSkipButton.isFocused())) {
-                    if (mPlayerControllerPlaceholder != null) {
-                        mPlayerControllerPlaceholder.requestFocus();
-                    }
-                    if (mPlayerController != null) {
-                        return mPlayerController.onKey(keyCode, event);
-                    }
-                    return true;
+        case KeyEvent.KEYCODE_DPAD_UP:
+            if (mSkipButton != null && (mSkipButton.hasFocus() || mSkipButton.isFocused())) {
+                if (mPlayerControllerPlaceholder != null) {
+                    mPlayerControllerPlaceholder.requestFocus();
                 }
-                if(mPlayerController!=null){
+                if (mPlayerController != null) {
                     return mPlayerController.onKey(keyCode, event);
                 }
-                break;
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-                if (isTVMode && mPlayerControllerPlaceholder != null && mPlayerControllerPlaceholder.hasFocus()
-                        && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE
-                        && !isMenuOrDialogDisplayed()) {
-                    if (mSkipButton != null && mSkipButton.requestFocus()) {
-                        return true;
-                    }
+                return true;
+            }
+            if (mPlayerController != null) {
+                return mPlayerController.onKey(keyCode, event);
+            }
+            break;
+        case KeyEvent.KEYCODE_DPAD_DOWN:
+            if (isTVMode && mPlayerControllerPlaceholder != null && mPlayerControllerPlaceholder.hasFocus() &&
+                mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE &&
+                !isMenuOrDialogDisplayed()) {
+                if (mSkipButton != null && mSkipButton.requestFocus()) {
+                    return true;
                 }
-                break;
-            case KeyEvent.KEYCODE_I:
-                showVideoInfos();
-                handled = true;
-                break;
+            }
+            break;
+        case KeyEvent.KEYCODE_I:
+            showVideoInfos();
+            handled = true;
+            break;
         }
 
-        if (!mStopped && (mPlayerController!=null) &&mPlayerControllerPlaceholder!=null&&!handled) {
+        if (!mStopped && (mPlayerController != null) && mPlayerControllerPlaceholder != null && !handled) {
             // Send key event to PlayerController if it (its place-holder actually) has the focus
             // Only keep keys used for focus navigation (because this is not handled by PlayerController)
             handled = mPlayerController.onKey(keyCode, event);
@@ -1721,7 +1843,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
      * @return
      */
     private static boolean isKeyUsedForFocusNavigation(int keyCode) {
-        if ((keyCode==KeyEvent.KEYCODE_DPAD_UP)||(keyCode==KeyEvent.KEYCODE_DPAD_DOWN)) {
+        if ((keyCode == KeyEvent.KEYCODE_DPAD_UP) || (keyCode == KeyEvent.KEYCODE_DPAD_DOWN)) {
             return true;
         } else {
             return false;
@@ -1735,7 +1857,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
      * @return
      */
     private static boolean isKeyUsedForActionBarNavigation(int keyCode) {
-        if ((keyCode==KeyEvent.KEYCODE_DPAD_LEFT)||(keyCode==KeyEvent.KEYCODE_DPAD_RIGHT)||(keyCode==KeyEvent.KEYCODE_ENTER)) {
+        if ((keyCode == KeyEvent.KEYCODE_DPAD_LEFT) || (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) ||
+            (keyCode == KeyEvent.KEYCODE_ENTER)) {
             return true;
         } else {
             return false;
@@ -1756,10 +1879,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         // Only handle joystick events
-        if(mPlayerController!=null && !mPlayerController.isTVMenuDisplayed())
+        if (mPlayerController != null && !mPlayerController.isTVMenuDisplayed())
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 int joystickZone = MediaUtils.getJoystickZone(event);
-                if (log.isDebugEnabled()) log.debug("onGenericMotionEvent : event=ACTION_MOVE");
+                if (log.isDebugEnabled())
+                    log.debug("onGenericMotionEvent : event=ACTION_MOVE");
 
                 if (!mSeekingWithJoystickStarted && joystickZone != MediaUtils.JOYSTICK_ZONE_CENTER) {
                     // Starting to seek => make the control bar visible
@@ -1781,39 +1905,40 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     // TV Menu
 
     @SuppressLint("InflateParams")
-    private void createTVTimerDialog(){
-        View dialogMainView = (View)LayoutInflater.from(mContext)
-                .inflate(R.layout.card_dialog_layout, null);
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setText((String) getText(R.string.sleep_timer_title));
+    private void createTVTimerDialog() {
+        View dialogMainView = (View)LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view))
+            .setText((String)getText(R.string.sleep_timer_title));
 
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         final TVMenu tvmenu = mPlayerController.getTVMenuAdapter().createTVMenu();
 
         // adding tv picker
-        final TimerDelayTVPicker tvPicker = (TimerDelayTVPicker)LayoutInflater.from(mContext)
-                .inflate(R.layout.timer_tv_picker, null);
+        final TimerDelayTVPicker tvPicker =
+            (TimerDelayTVPicker)LayoutInflater.from(mContext).inflate(R.layout.timer_tv_picker, null);
         tvPicker.setHourFormat(true);
         tvPicker.setStep(60000);
         tvPicker.setMin(0);
-        if(mWillSleepAt-System.currentTimeMillis()>0)
-            tvPicker.init((int)(mWillSleepAt-System.currentTimeMillis()), null);
+        if (mWillSleepAt - System.currentTimeMillis() > 0)
+            tvPicker.init((int)(mWillSleepAt - System.currentTimeMillis()), null);
         else
             tvPicker.init(0, null);
-        tvPicker.setMax(24*60*60*1000); //24h
+        tvPicker.setMax(24 * 60 * 60 * 1000); //24h
         tvmenu.createAndAddTVMenuItem(getString(R.string.sleep_timer_description), false, false);
         tvmenu.addTVMenuItem(tvPicker);
         ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).addOtherView(tvmenu);
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
-            @Override
-            public void onResult(int code) {
-                mHandler.removeMessages(MSG_SLEEP);
-                if(tvPicker.getDelay()>0) {
-                    mWillSleepAt = System.currentTimeMillis() + tvPicker.getDelay();
-                    mHandler.sendEmptyMessageDelayed(MSG_SLEEP, tvPicker.getDelay());
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view))
+            .setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
+                @Override
+                public void onResult(int code) {
+                    mHandler.removeMessages(MSG_SLEEP);
+                    if (tvPicker.getDelay() > 0) {
+                        mWillSleepAt = System.currentTimeMillis() + tvPicker.getDelay();
+                        mHandler.sendEmptyMessageDelayed(MSG_SLEEP, tvPicker.getDelay());
+                    }
+                    mPlayerController.getTVMenuAdapter().setDiscrete(false);
                 }
-                mPlayerController.getTVMenuAdapter().setDiscrete(false);
-            }
-        });
+            });
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         mPlayerController.addToMenuContainer(dialogMainView);
         tvPicker.requestFocus();
@@ -1821,21 +1946,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @SuppressLint("InflateParams")
     private void createTVSubtitleDialog() {
-        View dialogMainView = LayoutInflater.from(mContext)
-                .inflate(R.layout.card_dialog_layout, null);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) dialogMainView.findViewById(R.id.card_view).getLayoutParams();
+        View dialogMainView = LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
+        FrameLayout.LayoutParams params =
+            (FrameLayout.LayoutParams)dialogMainView.findViewById(R.id.card_view).getLayoutParams();
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setText((String) getText(R.string.player_pref_subtitle_delay_title));
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view))
+            .setText((String)getText(R.string.player_pref_subtitle_delay_title));
 
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         final TVMenu tvmenu = mPlayerController.getTVMenuAdapter().createTVMenu();
 
         // adding tv picker
-        SubtitleDelayTVPicker tvPicker = (SubtitleDelayTVPicker)LayoutInflater.from(mContext)
-                .inflate(R.layout.subtitle_delay_tv_picker, null);
+        SubtitleDelayTVPicker tvPicker =
+            (SubtitleDelayTVPicker)LayoutInflater.from(mContext).inflate(R.layout.subtitle_delay_tv_picker, null);
 
         tvPicker.setStep(1);
-        if(mPlayer.getDuration()>0) {
+        if (mPlayer.getDuration() > 0) {
             tvPicker.setMax(mPlayer.getDuration());
             tvPicker.setMin(-mPlayer.getDuration());
         }
@@ -1853,7 +1979,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 // TODO Auto-generated method stub
                 if (v instanceof TVMenuItem) {
                     tvmenu.unCheckAll();
-                    ((TVMenuItem) v).setChecked(true);
+                    ((TVMenuItem)v).setChecked(true);
                     PlayerActivity.this.onDelayChange(null, mVideoInfo.subtitleDelay, tvmenu.getItemPostion(v) - 3);
                 }
             }
@@ -1865,20 +1991,26 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
         });
         ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).addOtherView(tvmenu);
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
-            @Override
-            public void onResult(int code) {
-                mPlayerController.getTVMenuAdapter().setDiscrete(false);
-            }
-        });
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view))
+            .setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
+                @Override
+                public void onResult(int code) {
+                    mPlayerController.getTVMenuAdapter().setDiscrete(false);
+                }
+            });
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         mPlayerController.addToMenuContainer(dialogMainView);
         tvPicker.requestFocus();
     }
 
     // Read-only presentation bridge; setters and preference contracts remain in SubtitleManager.
-    SubtitleManager subtitlePresentationManager(){return mSubtitleManager;}
-    int subtitlePresentationDelay(){return mVideoInfo==null?0:mVideoInfo.subtitleDelay;}
+    SubtitleManager subtitlePresentationManager() {
+        return mSubtitleManager;
+    }
+
+    int subtitlePresentationDelay() {
+        return mVideoInfo == null ? 0 : mVideoInfo.subtitleDelay;
+    }
 
     /*
      * Inline Audio Delay / Playback Speed steppers for the approved Playback Settings side panel
@@ -1889,54 +2021,62 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     static final float AUDIO_SPEED_MIN = 0.5f, AUDIO_SPEED_MAX = 2.0f, AUDIO_SPEED_STEP = 0.05f;
 
     Integer presentationAudioDelay() {
-        if (PlayerService.sPlayerService == null) return null;
+        if (PlayerService.sPlayerService == null)
+            return null;
         return clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay());
     }
 
     void stepAudioDelay(int deltaMs) {
         Integer current = presentationAudioDelay();
-        if (current == null) return;
-        int delay = clampAudioDelayForPassthrough(Math.max(-AUDIO_DELAY_LIMIT_MS, Math.min(AUDIO_DELAY_LIMIT_MS, current + deltaMs)));
+        if (current == null)
+            return;
+        int delay = clampAudioDelayForPassthrough(
+            Math.max(-AUDIO_DELAY_LIMIT_MS, Math.min(AUDIO_DELAY_LIMIT_MS, current + deltaMs)));
         onAudioDelayChange(null, delay);
         String key = getString(R.string.save_delay_setting_pref_key);
-        if (mPreferences.getInt(key, 0) != 0) mPreferences.edit().putInt(key, delay).apply();
+        if (mPreferences.getInt(key, 0) != 0)
+            mPreferences.edit().putInt(key, delay).apply();
     }
 
     Float presentationAudioSpeed() {
-        if (PlayerService.sPlayerService == null || !VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences)) return null;
+        if (PlayerService.sPlayerService == null || !VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences))
+            return null;
         return PlayerService.sPlayerService.getAudioSpeed();
     }
 
     void setPresentationAudioSpeed(float speed) {
-        if (presentationAudioSpeed() == null) return;
+        if (presentationAudioSpeed() == null)
+            return;
         float clamped = Math.round(Math.max(AUDIO_SPEED_MIN, Math.min(AUDIO_SPEED_MAX, speed)) * 100f) / 100f;
         onAudioSpeedChange(null, clamped);
         String key = getString(R.string.save_audio_speed_setting_pref_key);
-        if (mPreferences.getFloat(key, 1.0f) != 1.0f) mPreferences.edit().putFloat(key, clamped).apply();
+        if (mPreferences.getFloat(key, 1.0f) != 1.0f)
+            mPreferences.edit().putFloat(key, clamped).apply();
     }
 
     private void createTVSubtitleSettingsDialog() {
         float density = getApplicationContext().getResources().getDisplayMetrics().density;
-        float pickerWidth= (float)100 * density;
+        float pickerWidth = (float)100 * density;
 
-        View dialogMainView =   LayoutInflater.from(mContext)
-                .inflate(R.layout.card_dialog_layout, null);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) dialogMainView.findViewById(R.id.card_view).getLayoutParams();
+        View dialogMainView = LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
+        FrameLayout.LayoutParams params =
+            (FrameLayout.LayoutParams)dialogMainView.findViewById(R.id.card_view).getLayoutParams();
         params.gravity = Gravity.CENTER_HORIZONTAL;
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setText((String) getText(R.string.menu_player_settings));
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view))
+            .setText((String)getText(R.string.menu_player_settings));
 
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         final TVMenu tvmenu = mPlayerController.getTVMenuAdapter().createTVMenu();
 
         tvmenu.createAndAddTVMenuItem(getText(R.string.subtitle_style_text).toString(), false);
-        final SubtitleDelayTVPicker tvPicker = (SubtitleDelayTVPicker)LayoutInflater.from(mContext)
-                .inflate(R.layout.subtitle_delay_tv_picker, null);
+        final SubtitleDelayTVPicker tvPicker =
+            (SubtitleDelayTVPicker)LayoutInflater.from(mContext).inflate(R.layout.subtitle_delay_tv_picker, null);
         tvPicker.setStep(100);
         tvPicker.setMin(10 * 100);
         tvPicker.setMax(100 * 100);
         // tvPicker.setHourFormat(true);
         tvmenu.addTVMenuItem(tvPicker);
-        tvPicker.setTextViewWidth((int) pickerWidth);
+        tvPicker.setTextViewWidth((int)pickerWidth);
         mSubtitleManager.setShowSubtitlePositionHint(true);
         tvPicker.setText(getTVSizeText(mSubtitleManager.getSize()));
         tvPicker.setTextSize(mSubtitleManager.getSize());
@@ -1961,7 +2101,6 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             public void onColorPicked(int color) {
                 tvPicker.setTextColor(color);
                 mSubtitleManager.setColor(color);
-
             }
         });
         tvmenu.addTVMenuItem(colorPicker);
@@ -1969,46 +2108,51 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         tvmenu.createAndAddTVMenuItem(getText(R.string.subtitle_vert_text).toString(), false);
 
         // adding tv picker
-        final SubtitleDelayTVPicker tvPicker2 = (SubtitleDelayTVPicker)LayoutInflater.from(mContext)
-                .inflate(R.layout.subtitle_delay_tv_picker, null);
+        final SubtitleDelayTVPicker tvPicker2 =
+            (SubtitleDelayTVPicker)LayoutInflater.from(mContext).inflate(R.layout.subtitle_delay_tv_picker, null);
 
         tvPicker2.setStep(100);
         tvPicker2.setMin(0);
-        tvPicker2.setMax(255*100);
+        tvPicker2.setMax(255 * 100);
         // tvPicker.setHourFormat(true);
         tvmenu.addTVMenuItem(tvPicker2);
-        tvPicker2.setTextViewWidth((int) pickerWidth);
+        tvPicker2.setTextViewWidth((int)pickerWidth);
         mSubtitleManager.setShowSubtitlePositionHint(true);
-        tvPicker2.init(mSubtitleManager.getVerticalPosition()*100, new SubtitleDelayPickerAbstract.OnDelayChangedListener() {
-            @Override
-            public void onDelayChanged(SubtitleDelayPickerAbstract view, int delay) {
-                if (r != null)
-                    tvPicker2.removeCallbacks(r);
-                mSubtitleManager.fadeSubtitlePositionHint(true);
-                setSubtitleVpos(delay/100, "onDelayChanged");
-                r = new Runnable() {
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        mSubtitleManager.fadeSubtitlePositionHint(false);
-                    }
-                };
-                tvPicker2.postDelayed(r, 200);
-            }
-        });
+        tvPicker2.init(mSubtitleManager.getVerticalPosition() * 100,
+                       new SubtitleDelayPickerAbstract.OnDelayChangedListener() {
+                           @Override
+                           public void onDelayChanged(SubtitleDelayPickerAbstract view, int delay) {
+                               if (r != null)
+                                   tvPicker2.removeCallbacks(r);
+                               mSubtitleManager.fadeSubtitlePositionHint(true);
+                               setSubtitleVpos(delay / 100, "onDelayChanged");
+                               r = new Runnable() {
+                                   @Override
+                                   public void run() {
+                                       // TODO Auto-generated method stub
+                                       mSubtitleManager.fadeSubtitlePositionHint(false);
+                                   }
+                               };
+                               tvPicker2.postDelayed(r, 200);
+                           }
+                       });
 
         tvmenu.createAndAddSeparator();
-        final TVMenuItem tvm = tvmenu.createAndAddTVSwitchableMenuItem(getResources().getString(R.string.subtitle_outline), mSubtitleManager.getOutlineState());
+        final TVMenuItem tvm = tvmenu.createAndAddTVSwitchableMenuItem(
+            getResources().getString(R.string.subtitle_outline), mSubtitleManager.getOutlineState());
         tvm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean outline = mSubtitleManager.getOutlineState();
-                tvm.setChecked(! outline);
-                mSubtitleManager.setOutlineState(! outline);
+                tvm.setChecked(!outline);
+                mSubtitleManager.setOutlineState(!outline);
             }
         });
 
-        final TVMenuItem tvmBg = tvmenu.createAndAddTVSwitchableMenuItem(getResources().getString(R.string.subtitle_background_text), mSubtitleManager.getBackgroundState()); // Make sure to add string resource or use literal "Subtitle Background"
+        final TVMenuItem tvmBg = tvmenu.createAndAddTVSwitchableMenuItem(
+            getResources().getString(R.string.subtitle_background_text),
+            mSubtitleManager
+                .getBackgroundState()); // Make sure to add string resource or use literal "Subtitle Background"
         tvmBg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2020,43 +2164,57 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         tvmenu.createAndAddTVMenuItem(getResources().getString(R.string.subtitle_bg_opacity_text), false);
 
-        final SubtitleDelayTVPicker tvPickerOpacity = (SubtitleDelayTVPicker) LayoutInflater.from(mContext)
-                .inflate(R.layout.subtitle_delay_tv_picker, null);
+        final SubtitleDelayTVPicker tvPickerOpacity =
+            (SubtitleDelayTVPicker)LayoutInflater.from(mContext).inflate(R.layout.subtitle_delay_tv_picker, null);
         tvPickerOpacity.setStep(100);
         tvPickerOpacity.setMin(0);
-        tvPickerOpacity.setMax(255 * 100); 
+        tvPickerOpacity.setMax(255 * 100);
         tvmenu.addTVMenuItem(tvPickerOpacity);
-        tvPickerOpacity.setTextViewWidth((int) pickerWidth);
+        tvPickerOpacity.setTextViewWidth((int)pickerWidth);
         tvPickerOpacity.setUpdateText(false);
         tvPickerOpacity.setText(String.valueOf(mSubtitleManager.getBackgroundOpacity()));
-        tvPickerOpacity.init(mSubtitleManager.getBackgroundOpacity() * 100, new SubtitleDelayPickerAbstract.OnDelayChangedListener() {
-            @Override
-            public void onDelayChanged(SubtitleDelayPickerAbstract view, int delay) {
-                int opacity = delay / 100;
-                if (opacity < 0) opacity = 0;
-                if (opacity > 255) opacity = 255;
-                mSubtitleManager.setBackgroundOpacity(opacity);
-                tvPickerOpacity.setText(String.valueOf(opacity));
-            }
-        });
+        tvPickerOpacity.init(mSubtitleManager.getBackgroundOpacity() * 100,
+                             new SubtitleDelayPickerAbstract.OnDelayChangedListener() {
+                                 @Override
+                                 public void onDelayChanged(SubtitleDelayPickerAbstract view, int delay) {
+                                     int opacity = delay / 100;
+                                     if (opacity < 0)
+                                         opacity = 0;
+                                     if (opacity > 255)
+                                         opacity = 255;
+                                     mSubtitleManager.setBackgroundOpacity(opacity);
+                                     tvPickerOpacity.setText(String.valueOf(opacity));
+                                 }
+                             });
 
         ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).addOtherView(tvmenu);
-        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view)).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {     
-            @Override
-            public void onResult(int code) {
-                mPreferences.edit().putInt(PlayerActivity.KEY_SUBTITLE_SIZE, mSubtitleManager.getSize())
+        ((TVCardDialog)dialogMainView.findViewById(R.id.card_view))
+            .setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
+                @Override
+                public void onResult(int code) {
+                    mPreferences.edit()
+                        .putInt(PlayerActivity.KEY_SUBTITLE_SIZE, mSubtitleManager.getSize())
                         .putInt(SubtitleManager.KEY_FONT_SIZE_PT, mSubtitleManager.getFontSizePt())
                         .putFloat(SubtitleManager.KEY_OUTLINE_WIDTH, mSubtitleManager.getOutlineWidth())
-                        .putInt(SubtitleManager.KEY_BG_MODE, mSubtitleManager.getBgMode()).apply();
-                mPreferences.edit().putInt( PlayerActivity.KEY_SUBTITLE_VPOS, mSubtitleManager.getVerticalPosition()).apply();
-                mPreferences.edit().putInt( PlayerActivity.KEY_SUBTITLE_COLOR, mSubtitleManager.getColor()).apply();
-                mPreferences.edit().putBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, mSubtitleManager.getOutlineState()).apply();
-                mPreferences.edit().putBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, mSubtitleManager.getBackgroundState()).apply();
-                mPreferences.edit().putInt(PlayerActivity.KEY_SUBTITLE_BG_OPACITY, mSubtitleManager.getBackgroundOpacity()).apply();
-                mPlayerController.getTVMenuAdapter().setDiscrete(false);
-                mSubtitleManager.fadeSubtitlePositionHint(false);
-            }
-        });
+                        .putInt(SubtitleManager.KEY_BG_MODE, mSubtitleManager.getBgMode())
+                        .apply();
+                    mPreferences.edit()
+                        .putInt(PlayerActivity.KEY_SUBTITLE_VPOS, mSubtitleManager.getVerticalPosition())
+                        .apply();
+                    mPreferences.edit().putInt(PlayerActivity.KEY_SUBTITLE_COLOR, mSubtitleManager.getColor()).apply();
+                    mPreferences.edit()
+                        .putBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, mSubtitleManager.getOutlineState())
+                        .apply();
+                    mPreferences.edit()
+                        .putBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, mSubtitleManager.getBackgroundState())
+                        .apply();
+                    mPreferences.edit()
+                        .putInt(PlayerActivity.KEY_SUBTITLE_BG_OPACITY, mSubtitleManager.getBackgroundOpacity())
+                        .apply();
+                    mPlayerController.getTVMenuAdapter().setDiscrete(false);
+                    mSubtitleManager.fadeSubtitlePositionHint(false);
+                }
+            });
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         mPlayerController.addToMenuContainer(dialogMainView);
         tvPicker.requestFocus();
@@ -2065,17 +2223,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private void createTVAudioDelayDialog() {
         View dialogContainer = (View)LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
         View dialogView = dialogContainer.findViewById(R.id.card_view);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) dialogView.getLayoutParams();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)dialogView.getLayoutParams();
         params.gravity = Gravity.CENTER_HORIZONTAL;
         dialogView.setLayoutParams(params);
-        ((TVCardDialog) dialogView).setText((String) getText(R.string.player_pref_audio_delay_title));
+        ((TVCardDialog)dialogView).setText((String)getText(R.string.player_pref_audio_delay_title));
 
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         final TVMenu tvmenu = mPlayerController.getTVMenuAdapter().createTVMenu();
 
         // adding tv picker
-        AudioDelayTVPicker tvPicker = (AudioDelayTVPicker)LayoutInflater.from(mContext)
-                .inflate(R.layout.audio_delay_tv_picker, null);
+        AudioDelayTVPicker tvPicker =
+            (AudioDelayTVPicker)LayoutInflater.from(mContext).inflate(R.layout.audio_delay_tv_picker, null);
 
         tvPicker.setStep(10);
         if (mPlayer.getDuration() > 0) {
@@ -2087,18 +2245,26 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
         tvPicker.setHourFormat(true);
         tvmenu.addTVMenuItem(tvPicker);
-        final TVMenuItem saveSettingCB = tvmenu.createAndAddTVSwitchableMenuItem(getString(R.string.keep_setting), mPreferences.getInt(getString(R.string.save_delay_setting_pref_key), 0) != 0);
+        final TVMenuItem saveSettingCB = tvmenu.createAndAddTVSwitchableMenuItem(
+            getString(R.string.keep_setting),
+            mPreferences.getInt(getString(R.string.save_delay_setting_pref_key), 0) != 0);
         saveSettingCB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveSettingCB.toggle();
-                if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog:onClick saveSettingCB.isChecked()={}", saveSettingCB.isChecked());
+                if (log.isDebugEnabled())
+                    log.debug("createTVAudioDelayDialog:onClick saveSettingCB.isChecked()={}",
+                              saveSettingCB.isChecked());
                 if (saveSettingCB.isChecked()) {
                     int delay = clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay());
-                    if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog: keep setting toggled ON, save current audio delay={} in prefs", delay);
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "createTVAudioDelayDialog: keep setting toggled ON, save current audio delay={} in prefs",
+                            delay);
                     mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), delay).apply();
                 } else {
-                    if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog: keep setting toggled OFF, save 0 in prefs");
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioDelayDialog: keep setting toggled OFF, save 0 in prefs");
                     mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), 0).apply();
                 }
             }
@@ -2110,30 +2276,37 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         //        └── TVMenu
         //            ├── AudioDelayTVPicker
         //            └── TVMenuItem (saveSettingCB)
-        tvPicker.init(clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay()), new AudioDelayPickerAbstract.OnAudioDelayChangedListener() {
-            @Override
-            public void onAudioDelayChanged(AudioDelayPickerAbstract view, int delay) {
-                delay = clampAudioDelayForPassthrough(delay);
-                if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog:onAudioDelayChanged delay={}", delay);
-                PlayerActivity.this.onAudioDelayChange(null, delay);
-                if (saveSettingCB.isChecked()) {
-                    if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog: audio delay changed to {} with keep setting ON, save in prefs", delay);
-                    mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), delay).apply();
+        tvPicker.init(
+            clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay()),
+            new AudioDelayPickerAbstract.OnAudioDelayChangedListener() {
+                @Override
+                public void onAudioDelayChanged(AudioDelayPickerAbstract view, int delay) {
+                    delay = clampAudioDelayForPassthrough(delay);
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioDelayDialog:onAudioDelayChanged delay={}", delay);
+                    PlayerActivity.this.onAudioDelayChange(null, delay);
+                    if (saveSettingCB.isChecked()) {
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "createTVAudioDelayDialog: audio delay changed to {} with keep setting ON, save in prefs",
+                                delay);
+                        mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), delay).apply();
+                    }
                 }
-            }
-        });
+            });
         ((TVCardDialog)dialogView).addOtherView(tvmenu);
         ((TVCardDialog)dialogView).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
             @Override
             public void onResult(int code) {
                 mPlayerController.getTVMenuAdapter().setDiscrete(false);
-                if(saveSettingCB.isChecked()){
+                if (saveSettingCB.isChecked()) {
                     int delay = clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay());
-                    if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog:onResult save audio delay={} in prefs", delay);
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioDelayDialog:onResult save audio delay={} in prefs", delay);
                     mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), delay).apply();
-                }
-                else {
-                    if (log.isDebugEnabled()) log.debug("createTVAudioDelayDialog:onResult do not save audio delay and carve 0 in prefs");
+                } else {
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioDelayDialog:onResult do not save audio delay and carve 0 in prefs");
                     mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), 0).apply();
                 }
             }
@@ -2148,56 +2321,76 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private void createTVAudioSpeedDialog() {
         View dialogContainer = (View)LayoutInflater.from(mContext).inflate(R.layout.card_dialog_layout, null);
         View dialogView = dialogContainer.findViewById(R.id.card_view);
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) dialogView.getLayoutParams();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)dialogView.getLayoutParams();
         params.gravity = Gravity.CENTER_HORIZONTAL;
         dialogView.setLayoutParams(params);
-        ((TVCardDialog) dialogView).setText((String) getText(R.string.player_pref_audio_speed_title));
+        ((TVCardDialog)dialogView).setText((String)getText(R.string.player_pref_audio_speed_title));
 
         mPlayerController.getTVMenuAdapter().setDiscrete(true);
         final TVMenu tvmenu = mPlayerController.getTVMenuAdapter().createTVMenu();
 
         // adding tv picker
-        AudioSpeedTVPicker tvPicker = (AudioSpeedTVPicker)LayoutInflater.from(mContext)
-                .inflate(R.layout.audio_speed_tv_picker, null);
+        AudioSpeedTVPicker tvPicker =
+            (AudioSpeedTVPicker)LayoutInflater.from(mContext).inflate(R.layout.audio_speed_tv_picker, null);
         tvmenu.addTVMenuItem(tvPicker);
-        final TVMenuItem saveSettingCB = tvmenu.createAndAddTVSwitchableMenuItem(getString(R.string.keep_setting), PlayerService.sPlayerService.getAudioSpeedFromPreferences() != 1.0f);
+        final TVMenuItem saveSettingCB = tvmenu.createAndAddTVSwitchableMenuItem(
+            getString(R.string.keep_setting), PlayerService.sPlayerService.getAudioSpeedFromPreferences() != 1.0f);
         saveSettingCB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveSettingCB.toggle();
                 // Save preference immediately when toggled
-                if(saveSettingCB.isChecked()){
-                    if (log.isDebugEnabled()) log.debug("createTVAudioSpeedDialog: keep setting toggled ON, save current audio speed={} in prefs", PlayerService.sPlayerService.getAudioSpeed());
-                    mPreferences.edit().putFloat(getString(R.string.save_audio_speed_setting_pref_key), PlayerService.sPlayerService.getAudioSpeed()).apply();
+                if (saveSettingCB.isChecked()) {
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "createTVAudioSpeedDialog: keep setting toggled ON, save current audio speed={} in prefs",
+                            PlayerService.sPlayerService.getAudioSpeed());
+                    mPreferences.edit()
+                        .putFloat(getString(R.string.save_audio_speed_setting_pref_key),
+                                  PlayerService.sPlayerService.getAudioSpeed())
+                        .apply();
                 } else {
-                    if (log.isDebugEnabled()) log.debug("createTVAudioSpeedDialog: keep setting toggled OFF, save 1.0f in prefs");
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioSpeedDialog: keep setting toggled OFF, save 1.0f in prefs");
                     mPreferences.edit().putFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f).apply();
                 }
             }
         });
-        tvPicker.init(PlayerService.sPlayerService.getAudioSpeed(), new AudioSpeedPickerAbstract.OnAudioSpeedChangedListener() {
-            @Override
-            public void onAudioSpeedChanged(AudioSpeedPickerAbstract view, float speed) {
-                PlayerActivity.this.onAudioSpeedChange(null, speed);
-                // Save preference immediately when speed changes if keep setting is enabled
-                if(saveSettingCB.isChecked()) {
-                    if (log.isDebugEnabled()) log.debug("createTVAudioSpeedDialog: audio speed changed to {} with keep setting ON, save in prefs", speed);
-                    mPreferences.edit().putFloat(getString(R.string.save_audio_speed_setting_pref_key), speed).apply();
+        tvPicker.init(
+            PlayerService.sPlayerService.getAudioSpeed(), new AudioSpeedPickerAbstract.OnAudioSpeedChangedListener() {
+                @Override
+                public void onAudioSpeedChanged(AudioSpeedPickerAbstract view, float speed) {
+                    PlayerActivity.this.onAudioSpeedChange(null, speed);
+                    // Save preference immediately when speed changes if keep setting is enabled
+                    if (saveSettingCB.isChecked()) {
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "createTVAudioSpeedDialog: audio speed changed to {} with keep setting ON, save in prefs",
+                                speed);
+                        mPreferences.edit()
+                            .putFloat(getString(R.string.save_audio_speed_setting_pref_key), speed)
+                            .apply();
+                    }
                 }
-            }
-        });
+            });
         ((TVCardDialog)dialogView).addOtherView(tvmenu);
         ((TVCardDialog)dialogView).setOnDialogResultListener(new TVCardDialog.OnDialogResultListener() {
             @Override
             public void onResult(int code) {
-                if (log.isDebugEnabled()) log.debug("createTVAudioSpeedDialog:onResult CALLED with code={}", code);
+                if (log.isDebugEnabled())
+                    log.debug("createTVAudioSpeedDialog:onResult CALLED with code={}", code);
                 mPlayerController.getTVMenuAdapter().setDiscrete(false);
-                if(saveSettingCB.isChecked()){
-                    if (log.isDebugEnabled()) log.debug("createTVAudioSpeedDialog:onResult save audio speed={} in prefs", PlayerService.sPlayerService.getAudioSpeed());
-                    mPreferences.edit().putFloat(getString(R.string.save_audio_speed_setting_pref_key), PlayerService.sPlayerService.getAudioSpeed()).apply();
-                }
-                else {
-                    if (log.isDebugEnabled()) log.debug("createTVAudioSpeedDialog:onResult do not save audio speed and carve 1.0f in prefs");
+                if (saveSettingCB.isChecked()) {
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioSpeedDialog:onResult save audio speed={} in prefs",
+                                  PlayerService.sPlayerService.getAudioSpeed());
+                    mPreferences.edit()
+                        .putFloat(getString(R.string.save_audio_speed_setting_pref_key),
+                                  PlayerService.sPlayerService.getAudioSpeed())
+                        .apply();
+                } else {
+                    if (log.isDebugEnabled())
+                        log.debug("createTVAudioSpeedDialog:onResult do not save audio speed and carve 1.0f in prefs");
                     mPreferences.edit().putFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f).apply();
                 }
             }
@@ -2209,54 +2402,73 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private String getTVSizeText(int size) {
-        if (size<20)
+        if (size < 20)
             return "ABC";
-        else if (size<50)
+        else if (size < 50)
             return "AB";
         else
             return "A";
     }
 
     private boolean previewPreferredSubtitle(int position) {
-        if (position == 0 || mPlayer == null || mPlayer.getVideoMetadata() == null) return true;
-        SubtitleTrack track = mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(position, mVideoInfo.nbSubtitles));
-        if (track == null) return true;
+        if (position == 0 || mPlayer == null || mPlayer.getVideoMetadata() == null)
+            return true;
+        SubtitleTrack track =
+            mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(position, mVideoInfo.nbSubtitles));
+        if (track == null)
+            return true;
         String language = track.isExternal
-                ? getSubLanguageFromSubPathAndVideoPath(mContext, track.path, mUri.toString()) : track.language;
-        if (language == null) return true;
+                              ? getSubLanguageFromSubPathAndVideoPath(mContext, track.path, mUri.toString())
+                              : track.language;
+        if (language == null)
+            return true;
         String preferred = mPreferences.getString("favSubLang", Locale.getDefault().getISO3Language());
-        return previewSubtitleLanguageMatches(preferred, language)
-                || previewSubtitleLanguageMatches("eng", language);
+        return previewSubtitleLanguageMatches(preferred, language) || previewSubtitleLanguageMatches("eng", language);
     }
 
     static boolean previewSubtitleLanguageMatches(String code, String language) {
-        if (language == null) return false;
-        if (language.length() <= 3 && ISO639codes.isFavoriteLanguageMatch(code, language)) return true;
+        if (language == null)
+            return false;
+        if (language.length() <= 3 && ISO639codes.isFavoriteLanguageMatch(code, language))
+            return true;
         // External subtitle names have already been localised and may carry the HI suffix.
         String name = language.replaceFirst("(?i)\\s*\\(HI\\)$", "").trim();
-        return name.equalsIgnoreCase(ISO639codes.getLanguageNameForLetterCode(code))
-                || name.equalsIgnoreCase(ISO639codes.getEnglishLanguageNameForLetterCode(code));
+        return name.equalsIgnoreCase(ISO639codes.getLanguageNameForLetterCode(code)) ||
+            name.equalsIgnoreCase(ISO639codes.getEnglishLanguageNameForLetterCode(code));
     }
 
     private void refreshSubtitleTVMenu() {
         if (mSubtitleTVMenu != null) {
             mSubtitleTVMenu.clean();
 
-            if (log.isDebugEnabled()) log.debug("refreshSubtitleTVMenu: mSubtitleInfoController.getTrackCount()={}", mSubtitleInfoController.getTrackCount());
+            if (log.isDebugEnabled())
+                log.debug("refreshSubtitleTVMenu: mSubtitleInfoController.getTrackCount()={}",
+                          mSubtitleInfoController.getTrackCount());
 
             mPlayerController.getTVMenuAdapter().setCardViewVisibility(View.VISIBLE, mSubtitleTVCardView);
 
-            if(mSubtitleInfoController.getTrackCount()>0) {
+            if (mSubtitleInfoController.getTrackCount() > 0) {
                 for (int i = 0; i < mSubtitleInfoController.getTrackCount(); i++) {
-                    TVMenuItem item = mSubtitleTVMenu.createAndAddTVMenuItem(mSubtitleInfoController.getTrackNameAt(i).toString(), true, mSubtitleInfoController.getTrack() == i);
+                    TVMenuItem item =
+                        mSubtitleTVMenu.createAndAddTVMenuItem(mSubtitleInfoController.getTrackNameAt(i).toString(),
+                                                               true, mSubtitleInfoController.getTrack() == i);
                     item.setTag(previewPreferredSubtitle(i));
-                    if(i>0&&mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){
-                        SubtitleTrack subtitle=mPlayer.getVideoMetadata().getSubtitleTrack(positionToSubtitleTrack(i,mVideoInfo.nbSubtitles));
-                        if(subtitle!=null){item.setTag(R.id.preview_track_language,subtitle.language==null?"":subtitle.language);View label=item.findViewById(R.id.info_text);if(label instanceof TextView)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,subtitle.language);}
+                    if (i > 0 && mPlayer != null && mPlayer.getVideoMetadata() != null && mVideoInfo != null) {
+                        SubtitleTrack subtitle = mPlayer.getVideoMetadata().getSubtitleTrack(
+                            positionToSubtitleTrack(i, mVideoInfo.nbSubtitles));
+                        if (subtitle != null) {
+                            item.setTag(R.id.preview_track_language,
+                                        subtitle.language == null ? "" : subtitle.language);
+                            View label = item.findViewById(R.id.info_text);
+                            if (label instanceof TextView)
+                                com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,
+                                                                                                subtitle.language);
+                        }
                     }
                 }
                 mSubtitleTVMenu.createAndAddSeparator();
-                mSubtitleDelayMenuItem = mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_subtitle_delay_title).toString(), false, false);
+                mSubtitleDelayMenuItem = mSubtitleTVMenu.createAndAddTVMenuItem(
+                    getText(R.string.player_pref_subtitle_delay_title).toString(), false, false);
                 mSubtitleDelayMenuItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -2265,35 +2477,41 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     }
                 });
 
-                if (log.isDebugEnabled()) log.debug("refreshSubtitleTVMenu: isCurrentSubtrackNone={}", isCurrentSubtrackNone());
+                if (log.isDebugEnabled())
+                    log.debug("refreshSubtitleTVMenu: isCurrentSubtrackNone={}", isCurrentSubtrackNone());
                 disableSubtitleDelayTVMenuItem(isCurrentSubtrackNone());
 
                 // Never disabled: the panel explains when settings cannot apply (no track, image or unsupported format).
-                mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.menu_player_settings).toString(), false, false).setOnClickListener(new View.OnClickListener() {
+                mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.menu_player_settings).toString(), false, false)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            createTVSubtitleSettingsDialog();
+                        }
+                    });
+            }
+            mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.get_subtitles_online).toString(), false, false)
+                .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        createTVSubtitleSettingsDialog();
+                        downloadSubtitles();
                     }
                 });
-            }
-            mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.get_subtitles_online).toString(), false, false).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    downloadSubtitles();
-                }
-            });
 
             Uri uri = VideoUtils.getFileUriFromMediaLibPath(mUri.toString());
 
-            if (uri.getScheme().equals("file") || uri.getScheme().startsWith("smb") || uri.getScheme().equals("sshj") || uri.getScheme().equals("sftp")) {
-                mSubtitleTVMenu.createAndAddTVMenuItem(getText(R.string.get_subtitles_on_drive).toString(), false, false).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        chooseSubtitles();
-                    }
-                });
+            if (uri.getScheme().equals("file") || uri.getScheme().startsWith("smb") || uri.getScheme().equals("sshj") ||
+                uri.getScheme().equals("sftp")) {
+                mSubtitleTVMenu
+                    .createAndAddTVMenuItem(getText(R.string.get_subtitles_on_drive).toString(), false, false)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            chooseSubtitles();
+                        }
+                    });
             }
-            PreviewPlaybackMenus.refresh(this,mSubtitleTVCardView);
+            PreviewPlaybackMenus.refresh(this, mSubtitleTVCardView);
         }
     }
 
@@ -2304,9 +2522,16 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mPlayerController.getTVMenuAdapter().setCardViewVisibility(View.VISIBLE, mAudioTracksTVCardView);
 
                 for (int i = 0; i < mAudioInfoController.getTrackCount(); i++) {
-                    TVMenuItem item=mAudioTracksTVMenu.createAndAddTVMenuItem(mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
-                    VideoMetadata metadata=mPlayer==null?null:mPlayer.getVideoMetadata();
-                    if(metadata!=null&&i<metadata.getAudioTrackNb()&&metadata.getAudioTrack(i)!=null){String language=metadata.getAudioTrack(i).language;item.setTag(R.id.preview_track_language,language);View label=item.findViewById(R.id.info_text);if(label instanceof TextView)com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label,language);}
+                    TVMenuItem item = mAudioTracksTVMenu.createAndAddTVMenuItem(
+                        mAudioInfoController.getTrackNameAt(i).toString(), true, mAudioInfoController.getTrack() == i);
+                    VideoMetadata metadata = mPlayer == null ? null : mPlayer.getVideoMetadata();
+                    if (metadata != null && i < metadata.getAudioTrackNb() && metadata.getAudioTrack(i) != null) {
+                        String language = metadata.getAudioTrack(i).language;
+                        item.setTag(R.id.preview_track_language, language);
+                        View label = item.findViewById(R.id.info_text);
+                        if (label instanceof TextView)
+                            com.archos.mediacenter.video.leanback.PreviewLanguageIcon.apply((TextView)label, language);
+                    }
                 }
 
                 mAudioTracksTVMenu.createAndAddSeparator();
@@ -2316,7 +2541,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 int passthroughMode = Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0"));
                 boolean isPassthroughActive = passthroughMode == 1 || passthroughMode == 2;
 
-                final TVMenuItem tvmi = mAudioTracksTVMenu.createAndAddTVSwitchableMenuItem(getResources().getString(R.string.pref_audio_filt_title), PlayerService.sPlayerService.mAudioFilt > 0);
+                final TVMenuItem tvmi = mAudioTracksTVMenu.createAndAddTVSwitchableMenuItem(
+                    getResources().getString(R.string.pref_audio_filt_title),
+                    PlayerService.sPlayerService.mAudioFilt > 0);
                 tvmi.setDisabled(isPassthroughActive);
                 tvmi.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2327,7 +2554,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     }
                 });
 
-                final TVMenuItem tvmi2 = mAudioTracksTVMenu.createAndAddTVSwitchableMenuItem(getResources().getString(R.string.pref_audio_filt_night_mode), PlayerService.sPlayerService.mNightModeOn);
+                final TVMenuItem tvmi2 = mAudioTracksTVMenu.createAndAddTVSwitchableMenuItem(
+                    getResources().getString(R.string.pref_audio_filt_night_mode),
+                    PlayerService.sPlayerService.mNightModeOn);
                 tvmi2.setDisabled(isPassthroughActive);
                 tvmi2.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2339,8 +2568,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 });
 
                 final TVMenuItem tvmiSpatialization = mAudioTracksTVMenu.createAndAddTVSwitchableMenuItem(
-                        getResources().getString(R.string.spatialization_capabilities),
-                        isSpatializationEnabledForPlayback());
+                    getResources().getString(R.string.spatialization_capabilities),
+                    isSpatializationEnabledForPlayback());
                 tvmiSpatialization.setDisabled(!isSpatializationToggleAvailable());
                 tvmiSpatialization.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -2352,7 +2581,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
                 mAudioTracksTVMenu.createAndAddSeparator();
 
-                final TVMenuItem tvmi3 = mAudioTracksTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_audio_delay_title).toString(), false, false);
+                final TVMenuItem tvmi3 = mAudioTracksTVMenu.createAndAddTVMenuItem(
+                    getText(R.string.player_pref_audio_delay_title).toString(), false, false);
                 tvmi3.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -2362,7 +2592,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
                 // disable playback speed if audio speed is disabled (passthrough, MediaCodec audio decoder, or API < 23)
                 if (VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences)) {
-                    final TVMenuItem tvmi4 = mAudioTracksTVMenu.createAndAddTVMenuItem(getText(R.string.player_pref_audio_speed_title).toString(), false, false);
+                    final TVMenuItem tvmi4 = mAudioTracksTVMenu.createAndAddTVMenuItem(
+                        getText(R.string.player_pref_audio_speed_title).toString(), false, false);
                     tvmi4.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -2373,7 +2604,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             } else {
                 mPlayerController.getTVMenuAdapter().setCardViewVisibility(View.GONE, mAudioTracksTVCardView);
             }
-            PreviewPlaybackMenus.refresh(this,mAudioTracksTVCardView);
+            PreviewPlaybackMenus.refresh(this, mAudioTracksTVCardView);
         }
     }
 
@@ -2381,12 +2612,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     // mode tile is first built. This adds (or updates) the summary line inside the Play mode
     // menu once the segments become available; safe to call repeatedly (e.g. on each menu show).
     public void refreshPlayModeIntroSummary() {
-        if (mPlayModeTVMenu == null||BuildConfig.FOUNDATION) return;
-        IntroSegments segments = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
-        String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
+        if (mPlayModeTVMenu == null || BuildConfig.FOUNDATION)
+            return;
+        IntroSegments segments =
+            (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
+        String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this),
+                                                                       getString(R.string.introdb_segment_end))
+                                            : null;
         if (summary == null) {
-            if (mIntroSummaryMenuItem != null) mIntroSummaryMenuItem.setVisibility(View.GONE);
-            if (mIntroSummarySeparator != null) mIntroSummarySeparator.setVisibility(View.GONE);
+            if (mIntroSummaryMenuItem != null)
+                mIntroSummaryMenuItem.setVisibility(View.GONE);
+            if (mIntroSummarySeparator != null)
+                mIntroSummarySeparator.setVisibility(View.GONE);
             triggerPlayModeTVCardViewReFocus();
             return;
         }
@@ -2401,9 +2638,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         } else {
             mIntroSummaryMenuItem.setText(summary);
         }
-        if (mIntroSummarySeparator != null) mIntroSummarySeparator.setVisibility(View.VISIBLE);
+        if (mIntroSummarySeparator != null)
+            mIntroSummarySeparator.setVisibility(View.VISIBLE);
         mIntroSummaryMenuItem.setVisibility(View.VISIBLE);
-        TextView summaryText = (TextView) mIntroSummaryMenuItem.findViewById(R.id.info_text);
+        TextView summaryText = (TextView)mIntroSummaryMenuItem.findViewById(R.id.info_text);
         if (summaryText != null) {
             summaryText.setSingleLine(false);
             summaryText.setMaxLines(6);
@@ -2426,14 +2664,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void refreshPhonePlayModeIntroSummary() {
-        if (mPhonePlayModeIntroFooter == null) return;
-        boolean enabled = mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
+        if (mPhonePlayModeIntroFooter == null)
+            return;
+        boolean enabled =
+            mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
         if (!enabled) {
             mPhonePlayModeIntroFooter.setVisibility(View.GONE);
             return;
         }
-        IntroSegments segments = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
-        String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
+        IntroSegments segments =
+            (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
+        String summary = (segments != null) ? segments.toSummaryString(PlayerService.introLabels(this),
+                                                                       getString(R.string.introdb_segment_end))
+                                            : null;
         if (summary != null) {
             mPhonePlayModeIntroFooter.setText(summary);
             mPhonePlayModeIntroFooter.setVisibility(View.VISIBLE);
@@ -2443,13 +2686,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void initSkipButton() {
-        if (BuildConfig.FOUNDATION) return;
+        if (BuildConfig.FOUNDATION)
+            return;
         LayoutInflater inflater = getLayoutInflater();
-        mSkipButtonContainer = (ViewGroup) inflater.inflate(R.layout.skip_button_layout, (ViewGroup) mRootView, false);
-        mSkipButton = (Button) mSkipButtonContainer.findViewById(R.id.skip_button);
+        mSkipButtonContainer = (ViewGroup)inflater.inflate(R.layout.skip_button_layout, (ViewGroup)mRootView, false);
+        mSkipButton = (Button)mSkipButtonContainer.findViewById(R.id.skip_button);
         mSkipProgress = new SkipProgressDrawable(this);
         mSkipButton.setForeground(mSkipProgress);
-        ((ViewGroup) mRootView).addView(mSkipButtonContainer);
+        ((ViewGroup)mRootView).addView(mSkipButtonContainer);
         mSkipButtonContainer.bringToFront();
 
         mSkipButton.setNextFocusDownId(R.id.player_controller_placeholder);
@@ -2466,40 +2710,40 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     switch (keyCode) {
-                        case KeyEvent.KEYCODE_DPAD_DOWN:
-                            if (mPlayerControllerPlaceholder != null) {
-                                mPlayerControllerPlaceholder.requestFocus();
-                            }
-                            if (mPlayerController != null) {
-                                mPlayerController.showControlBar();
-                            }
-                            return true;
-                        case KeyEvent.KEYCODE_DPAD_UP:
-                            if (mPlayerControllerPlaceholder != null) {
-                                mPlayerControllerPlaceholder.requestFocus();
-                            }
-                            if (mPlayerController != null) {
-                                return mPlayerController.onKey(keyCode, event);
-                            }
-                            return true;
-                        case KeyEvent.KEYCODE_DPAD_LEFT:
-                        case KeyEvent.KEYCODE_DPAD_RIGHT:
-                            if (mPlayerController != null) {
-                                return mPlayerController.onKey(keyCode, event);
-                            }
-                            return true;
-                        case KeyEvent.KEYCODE_BACK:
-                            hideSkipPrompt();
-                            return true;
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
+                        if (mPlayerControllerPlaceholder != null) {
+                            mPlayerControllerPlaceholder.requestFocus();
+                        }
+                        if (mPlayerController != null) {
+                            mPlayerController.showControlBar();
+                        }
+                        return true;
+                    case KeyEvent.KEYCODE_DPAD_UP:
+                        if (mPlayerControllerPlaceholder != null) {
+                            mPlayerControllerPlaceholder.requestFocus();
+                        }
+                        if (mPlayerController != null) {
+                            return mPlayerController.onKey(keyCode, event);
+                        }
+                        return true;
+                    case KeyEvent.KEYCODE_DPAD_LEFT:
+                    case KeyEvent.KEYCODE_DPAD_RIGHT:
+                        if (mPlayerController != null) {
+                            return mPlayerController.onKey(keyCode, event);
+                        }
+                        return true;
+                    case KeyEvent.KEYCODE_BACK:
+                        hideSkipPrompt();
+                        return true;
                     }
                 } else if (event.getAction() == KeyEvent.ACTION_UP) {
                     switch (keyCode) {
-                        case KeyEvent.KEYCODE_DPAD_LEFT:
-                        case KeyEvent.KEYCODE_DPAD_RIGHT:
-                            if (mPlayerController != null) {
-                                return mPlayerController.onKey(keyCode, event);
-                            }
-                            return true;
+                    case KeyEvent.KEYCODE_DPAD_LEFT:
+                    case KeyEvent.KEYCODE_DPAD_RIGHT:
+                        if (mPlayerController != null) {
+                            return mPlayerController.onKey(keyCode, event);
+                        }
+                        return true;
                     }
                 }
                 return false;
@@ -2521,9 +2765,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void requestSkipButtonFocus() {
-        if (!isTVMode || mSkipButton == null || mSkipButtonContainer == null) return;
-        if (mSkipButtonContainer.getVisibility() != View.VISIBLE) return;
-        if (isMenuOrDialogDisplayed()) return;
+        if (!isTVMode || mSkipButton == null || mSkipButtonContainer == null)
+            return;
+        if (mSkipButtonContainer.getVisibility() != View.VISIBLE)
+            return;
+        if (isMenuOrDialogDisplayed())
+            return;
 
         if (hasWindowFocus()) {
             boolean focused = mSkipButton.requestFocus();
@@ -2531,8 +2778,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mSkipButton.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (isTVMode && hasWindowFocus() && !isMenuOrDialogDisplayed()
-                                && mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
+                        if (isTVMode && hasWindowFocus() && !isMenuOrDialogDisplayed() &&
+                            mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
                             mSkipButton.requestFocus();
                         }
                     }
@@ -2542,7 +2789,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void updateSkipButtonText(IntroSegments.Type type) {
-        if (mSkipButton == null) return;
+        if (mSkipButton == null)
+            return;
         int textRes;
         if (type == IntroSegments.Type.RECAP) {
             textRes = R.string.skip_recap_button;
@@ -2557,7 +2805,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void executeSkipPrompt() {
-        if (mCurrentSkipTargetMs < 0) return;
+        if (mCurrentSkipTargetMs < 0)
+            return;
         long targetMs = mCurrentSkipTargetMs;
         IntroSegments.Type type = mCurrentSkipType;
         hideSkipPrompt();
@@ -2567,38 +2816,41 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void adjustSkipButtonForPiP(boolean isPiP) {
-        if (mSkipButtonContainer == null || mSkipButton == null) return;
-        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) mSkipButtonContainer.getLayoutParams();
+        if (mSkipButtonContainer == null || mSkipButton == null)
+            return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)mSkipButtonContainer.getLayoutParams();
         float density = getResources().getDisplayMetrics().density;
         if (lp != null) {
-            int margin = isPiP ? (int) (8 * density) : (int) (32 * density);
-            int bottomMargin = isPiP ? (int) (8 * density) : (int) (90 * density);
+            int margin = isPiP ? (int)(8 * density) : (int)(32 * density);
+            int bottomMargin = isPiP ? (int)(8 * density) : (int)(90 * density);
             lp.setMarginEnd(margin);
             lp.bottomMargin = bottomMargin;
             mSkipButtonContainer.setLayoutParams(lp);
         }
         if (isPiP) {
             mSkipButton.setTextSize(10);
-            int padH = (int) (8 * density);
-            int padTop = (int) (4 * density);
-            int padBottom = (int) (14 * density);
+            int padH = (int)(8 * density);
+            int padTop = (int)(4 * density);
+            int padBottom = (int)(14 * density);
             mSkipButton.setPadding(padH, padTop, padH, padBottom);
-            mSkipButton.setMinHeight((int) (28 * density));
-            mSkipButton.setMinWidth((int) (60 * density));
+            mSkipButton.setMinHeight((int)(28 * density));
+            mSkipButton.setMinWidth((int)(60 * density));
         } else {
             mSkipButton.setTextSize(15);
-            int padH = (int) (20 * density);
-            int padTop = (int) (10 * density);
-            int padBottom = (int) (14 * density);
+            int padH = (int)(20 * density);
+            int padTop = (int)(10 * density);
+            int padBottom = (int)(14 * density);
             mSkipButton.setPadding(padH, padTop, padH, padBottom);
-            mSkipButton.setMinHeight((int) (44 * density));
-            mSkipButton.setMinWidth((int) (140 * density));
+            mSkipButton.setMinHeight((int)(44 * density));
+            mSkipButton.setMinWidth((int)(140 * density));
         }
     }
 
     private void showSkipPrompt(final IntroSegments.Type type, final long targetMs) {
-        if (isFinishing() || isDestroyed() || mStopped) return;
-        if (mSkipButtonContainer == null || mSkipButton == null) return;
+        if (isFinishing() || isDestroyed() || mStopped)
+            return;
+        if (mSkipButtonContainer == null || mSkipButton == null)
+            return;
 
         boolean isPiP = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode();
         adjustSkipButtonForPiP(isPiP);
@@ -2626,7 +2878,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void startSkipProgress(long targetMs) {
-        if (mSkipProgress == null || mSkipButton == null) return;
+        if (mSkipProgress == null || mSkipButton == null)
+            return;
         if (mSkipProgressTargetMs != targetMs) {
             mSkipProgressTargetMs = targetMs;
             mSkipProgressStartMs = (Player.sPlayer != null) ? Player.sPlayer.getCurrentPosition() : targetMs;
@@ -2637,23 +2890,27 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void updateSkipProgress() {
-        if (mSkipProgress == null) return;
+        if (mSkipProgress == null)
+            return;
         final long span = mSkipProgressTargetMs - mSkipProgressStartMs;
         if (span <= 0 || Player.sPlayer == null) {
             mSkipProgress.setLevel(0);
             return;
         }
         final long position = Player.sPlayer.getCurrentPosition();
-        float fraction = (position - mSkipProgressStartMs) / (float) span;
-        if (fraction < 0f) fraction = 0f;
-        else if (fraction > 1f) fraction = 1f;
+        float fraction = (position - mSkipProgressStartMs) / (float)span;
+        if (fraction < 0f)
+            fraction = 0f;
+        else if (fraction > 1f)
+            fraction = 1f;
         mSkipProgress.setLevel(Math.round(fraction * 10000f));
     }
 
     private void hideSkipPrompt() {
         mIsSkipPromptShowing = false;
         mCurrentSkipTargetMs = -1;
-        if (mSkipButton != null) mSkipButton.removeCallbacks(mSkipProgressTicker);
+        if (mSkipButton != null)
+            mSkipButton.removeCallbacks(mSkipProgressTicker);
         mSkipProgressStartMs = -1;
         mSkipProgressTargetMs = -1;
         if (mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
@@ -2665,7 +2922,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             fadeOut.setDuration(250);
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
-                public void onAnimationStart(Animation animation) {}
+                public void onAnimationStart(Animation animation) {
+                }
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if (!mIsSkipPromptShowing && mSkipButtonContainer != null) {
@@ -2673,13 +2931,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     }
                     if (isTVMode && mPlayerControllerPlaceholder != null && !isMenuOrDialogDisplayed()) {
                         View currentFocus = getCurrentFocus();
-                        if (currentFocus == null || currentFocus == mSkipButton || currentFocus == mSkipButtonContainer) {
+                        if (currentFocus == null || currentFocus == mSkipButton ||
+                            currentFocus == mSkipButtonContainer) {
                             mPlayerControllerPlaceholder.requestFocus();
                         }
                     }
                 }
                 @Override
-                public void onAnimationRepeat(Animation animation) {}
+                public void onAnimationRepeat(Animation animation) {
+                }
             });
             mSkipButtonContainer.startAnimation(fadeOut);
         }
@@ -2690,8 +2950,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             TVMenuAdapter tma = mPlayerController.getTVMenuAdapter();
 
             //[subtitles]
-            mSubtitleTVCardView = tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_subtitles, null),
-                    getResources().getString(R.string.menu_subtitles));
+            mSubtitleTVCardView =
+                tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_subtitles, null),
+                                     getResources().getString(R.string.menu_subtitles));
             mSubtitleTVMenu = tma.createTVMenu();
             mSubtitleTVMenu.setOnItemClickListener(new View.OnClickListener() {
                 @Override
@@ -2702,7 +2963,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                         if (onTrackSelected(mSubtitleInfoController, pos, "", "")) {
                             if (v instanceof Checkable) {
                                 mSubtitleTVMenu.unCheckAll();
-                                ((Checkable) v).setChecked(true);
+                                ((Checkable)v).setChecked(true);
                             }
                         }
                     }
@@ -2713,8 +2974,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             //[/subtitles]
 
             //[audiotrack]
-            mAudioTracksTVCardView = tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_languages, null),
-                    getResources().getString(R.string.menu_audio));
+            mAudioTracksTVCardView =
+                tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_languages, null),
+                                     getResources().getString(R.string.menu_audio));
             mAudioTracksTVMenu = tma.createTVMenu();
             mAudioTracksTVMenu.setOnItemClickListener(new View.OnClickListener() {
                 @Override
@@ -2725,7 +2987,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                         if (onTrackSelected(mAudioInfoController, pos, "", "")) {
                             if (v instanceof Checkable) {
                                 mAudioTracksTVMenu.unCheckAll();
-                                ((Checkable) v).setChecked(true);
+                                ((Checkable)v).setChecked(true);
                             }
                         }
                     }
@@ -2736,10 +2998,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             //[/audiotrack]
 
             if (isStereoEffectOn()) {
-                TVCardView cv = tma.createAndAddView(ResourcesCompat.getDrawable(getResources(), R.drawable.tv_3d, null), null,
-                        getResources().getString(R.string.pref_s3d_mode_title));
+                TVCardView cv =
+                    tma.createAndAddView(ResourcesCompat.getDrawable(getResources(), R.drawable.tv_3d, null), null,
+                                         getResources().getString(R.string.pref_s3d_mode_title));
                 final TVMenu tvm3d = tma.createTVMenu();
-                int dialogInitItem = (mPlayer.getEffectMode() != 0) ? Integer.numberOfTrailingZeros(mPlayer.getEffectMode()) : 0;
+                int dialogInitItem =
+                    (mPlayer.getEffectMode() != 0) ? Integer.numberOfTrailingZeros(mPlayer.getEffectMode()) : 0;
                 tvm3d.setItems(R.array.pref_s3d_mode_entries_tv, dialogInitItem, true);
                 tvm3d.setOnItemClickListener(new View.OnClickListener() {
                     @Override
@@ -2758,9 +3022,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
 
             //[infomenu]
-            TVCardView tcv = tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(),R.drawable.tv_info, null),
-                    getResources().getString(R.string.menu_info));
-            String decoder = VideoInfoCommonClass.getShortDecoder(mPlayer.getVideoMetadata(), getResources(), mPlayer.getType());
+            TVCardView tcv =
+                tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_info, null),
+                                     getResources().getString(R.string.menu_info));
+            String decoder =
+                VideoInfoCommonClass.getShortDecoder(mPlayer.getVideoMetadata(), getResources(), mPlayer.getType());
 
             tcv.setText(decoder);
             tcv.setText2(CodecDiscovery.getTechnicalInfo(mContext));
@@ -2769,28 +3035,30 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 @Override
                 public void onClick(View v) {
                     showVideoInfos();
-                    v.postDelayed(new Runnable() { // delayed otherwise another onKeyDown pauses the player (will inspect that issue)
-                        @Override
-                        public void run() {
-                            mPlayerController.showTVMenu(false);
-                        }
-                    }, 20);
+                    v.postDelayed(
+                        new Runnable() { // delayed otherwise another onKeyDown pauses the player (will inspect that issue)
+                            @Override
+                            public void run() {
+                                mPlayerController.showTVMenu(false);
+                            }
+                        },
+                        20);
                 }
             });
 
             final TVMenu tm = tma.createTVMenu();
 
             tcv.addOtherView(tm);
-            if(mPreferences.getBoolean("try_new_ui",false))tma.setCardViewVisibility(View.GONE,tcv);
+            if (mPreferences.getBoolean("try_new_ui", false))
+                tma.setCardViewVisibility(View.GONE, tcv);
             //[/infomenu]
 
             // Scale (format) type
             tcv = tma.createAndAddView(ResourcesCompat.getDrawable(getResources(), R.drawable.tv_format, null), null,
-                                       getResources().getString( R.string.pref_format_mode_title));
+                                       getResources().getString(R.string.pref_format_mode_title));
             final TVMenu tvmFormat = tma.createTVMenu();
 
             tvmFormat.setItems(R.array.pref_format_mode_entries, mSurfaceController.getCurrentFormat(), true);
-
 
             if (mSurfaceController.getMax() < 3) {
                 tvmFormat.getItem(2).setVisibility(View.GONE);
@@ -2802,30 +3070,39 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 if (tvmFormat.getSlaveView() != null)
                     ((TVMenu)tvmFormat.getSlaveView()).getItem(1).setVisibility(View.GONE);
             }
-            for(int index=mSurfaceController.getMax();index<getResources().getStringArray(R.array.pref_format_mode_entries).length;index++)((TVMenuItem)tvmFormat.getItem(index)).setDisabled(true);
+            for (int index = mSurfaceController.getMax();
+                 index < getResources().getStringArray(R.array.pref_format_mode_entries).length; index++)
+                ((TVMenuItem)tvmFormat.getItem(index)).setDisabled(true);
             final View vPicInPic;
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N && TVUtils.isTV(this)&&getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && TVUtils.isTV(this) &&
+                getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
                 tvmFormat.createAndAddSeparator();
                 vPicInPic = tvmFormat.createAndAddTVMenuItem(getString(R.string.picture_in_picture), false, false);
-            }
-            else vPicInPic = null;
+            } else
+                vPicInPic = null;
             tvmFormat.setOnItemClickListener(new View.OnClickListener() {
                 @SuppressWarnings("deprecation") // enterPictureInPictureMode(): API 26+ uses PictureInPictureParams
                 @Override
                 public void onClick(View v) {
                     // TODO Auto-generated method stub
-                    if(v == vPicInPic){
+                    if (v == vPicInPic) {
                         if (Build.VERSION.SDK_INT >= 26) {
                             PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
                             if (mPlayer != null && mPlayer.getVideoWidth() > 0 && mPlayer.getVideoHeight() > 0) {
-                                double ratio = (double)mPlayer.getVideoWidth()/mPlayer.getVideoHeight();
-                                if (ratio >= 1.0/2.39 && ratio <= 2.39)
-                                    builder.setAspectRatio(new Rational(mPlayer.getVideoWidth(),mPlayer.getVideoHeight()));
+                                double ratio = (double)mPlayer.getVideoWidth() / mPlayer.getVideoHeight();
+                                if (ratio >= 1.0 / 2.39 && ratio <= 2.39)
+                                    builder.setAspectRatio(
+                                        new Rational(mPlayer.getVideoWidth(), mPlayer.getVideoHeight()));
                             }
                             View target = mSurfaceController != null ? mSurfaceController.getView() : mRootView;
-                            if (target != null) { Rect bounds = new Rect(); target.getGlobalVisibleRect(bounds); builder.setSourceRectHint(bounds); }
+                            if (target != null) {
+                                Rect bounds = new Rect();
+                                target.getGlobalVisibleRect(bounds);
+                                builder.setSourceRectHint(bounds);
+                            }
                             enterPictureInPictureMode(builder.build());
-                        } else if (Build.VERSION.SDK_INT >= 24) enterPictureInPictureMode();
+                        } else if (Build.VERSION.SDK_INT >= 24)
+                            enterPictureInPictureMode();
                         mHandler.post(() -> mPlayerController.showTVMenu(false));
                         return;
                     }
@@ -2854,7 +3131,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                             for (int i = 0; i < playModeCount; i++) {
                                 View item = tvmPlayMode.getItem(i);
                                 if (item instanceof Checkable) {
-                                    ((Checkable) item).setChecked(item == v);
+                                    ((Checkable)item).setChecked(item == v);
                                 }
                             }
                             PlayerService.sPlayerService.menuChangePlayMode(which);
@@ -2867,13 +3144,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             tvmPlayMode.createAndAddSeparator();
             final TVMenuItem tvmAutoSkip = tvmPlayMode.createAndAddTVSwitchableMenuItem(
-                    BuildConfig.FOUNDATION?"Segment Skipping (this session)":getResources().getString(R.string.pref_introdb_autoskip_title),
-                    BuildConfig.FOUNDATION?PlayerService.sPlayerService.segmentSkippingEnabled():mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED));
+                BuildConfig.FOUNDATION ? "Segment Skipping (this session)"
+                                       : getResources().getString(R.string.pref_introdb_autoskip_title),
+                BuildConfig.FOUNDATION ? PlayerService.sPlayerService.segmentSkippingEnabled()
+                                       : mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED,
+                                                                 PlayerService.DEFAULT_INTRODB_ENABLED));
             tvmAutoSkip.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean enabled=BuildConfig.FOUNDATION?!PlayerService.sPlayerService.segmentSkippingEnabled():!mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED);
-                    if(BuildConfig.FOUNDATION)PlayerService.sPlayerService.segmentOverride(enabled);else mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, enabled).apply();
+                    boolean enabled = BuildConfig.FOUNDATION
+                                          ? !PlayerService.sPlayerService.segmentSkippingEnabled()
+                                          : !mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED,
+                                                                     PlayerService.DEFAULT_INTRODB_ENABLED);
+                    if (BuildConfig.FOUNDATION)
+                        PlayerService.sPlayerService.segmentOverride(enabled);
+                    else
+                        mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, enabled).apply();
                     tvmAutoSkip.setChecked(enabled);
                     if (enabled && PlayerService.sPlayerService != null) {
                         PlayerService.sPlayerService.fetchIntroDbIfNeeded();
@@ -2905,17 +3191,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             // Do not display notification menu on Android TV devices because they have no actual "notifications"
             if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK)) {
-                TVCardView cv = tma.createAndAddView(null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_notifications, null),
-                                                     getResources().getString(R.string.notification_mode));
+                TVCardView cv = tma.createAndAddView(
+                    null, ResourcesCompat.getDrawable(getResources(), R.drawable.tv_notifications, null),
+                    getResources().getString(R.string.notification_mode));
                 final TVMenu tvm2 = tma.createTVMenu();
                 tvm2.setOnItemClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (v instanceof TVMenuItem) {
-                            int newNotificationMode = tvm2.getItemPostion(v); // Caution here, NotificationMode values must be [0,n[
+                            int newNotificationMode =
+                                tvm2.getItemPostion(v); // Caution here, NotificationMode values must be [0,n[
                             setNewNotificationMode(newNotificationMode);
                             tvm2.unCheckAll();
-                            ((TVMenuItem) v).toggle();
+                            ((TVMenuItem)v).toggle();
                         }
                     }
                 });
@@ -2940,14 +3228,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private void pauseForSettings() {
-                // Settings is an explicit foreground handoff, not background TV playback.
-                // Pause before launching even if the destination is translucent.
-                if (mPlayer != null) mPlayer.pause(PlayerController.STATE_OTHER);
-                if (PlayerService.sPlayerService != null) {
-                    PlayerService.sPlayerService.setPlayOnResume(false);
-                    PlayerService.sPlayerService.checkpointPlaybackIntent(getIntent());
-                }
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_settings_open", "paused", true);
+        // Settings is an explicit foreground handoff, not background TV playback.
+        // Pause before launching even if the destination is translucent.
+        if (mPlayer != null)
+            mPlayer.pause(PlayerController.STATE_OTHER);
+        if (PlayerService.sPlayerService != null) {
+            PlayerService.sPlayerService.setPlayOnResume(false);
+            PlayerService.sPlayerService.checkpointPlaybackIntent(getIntent());
+        }
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_settings_open", "paused", true);
     }
 
     // Common methods for TV and normal menu
@@ -2955,18 +3244,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (which > -1) {
             int mode = 1 << which;
             switch (which) {
-                case 0:
-                    mode = VideoEffect.getDefaultMode();
-                    break;
-                default:
-                    break;
+            case 0:
+                mode = VideoEffect.getDefaultMode();
+                break;
+            default:
+                break;
             }
-            if (log.isDebugEnabled()) log.debug("set3DMode: setEffect");
+            if (log.isDebugEnabled())
+                log.debug("set3DMode: setEffect");
             setEffectForced(mode);
         }
     }
 
-    private void setNewNotificationMode(int newNotificationMode){
+    private void setNewNotificationMode(int newNotificationMode) {
         if (newNotificationMode != mNotificationMode) {
             // The user selected a new mode
             mNotificationMode = newNotificationMode;
@@ -2974,8 +3264,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             applyNotificationsMode(mNotificationMode);
             // Store immediately the new mode in case the video player crashes before the end...
             mPreferences.edit()
-            .putInt(KEY_NOTIFICATIONS_MODE, newNotificationMode)
-            .apply(); // commit is blocking.. avoid!
+                .putInt(KEY_NOTIFICATIONS_MODE, newNotificationMode)
+                .apply(); // commit is blocking.. avoid!
         }
     }
 
@@ -2994,7 +3284,18 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mIndexHelper.writeVideoInfo(mVideoInfo, mNetworkBookmarksEnabled);
         }
     }
-    private void supersedeRestoredTitleChoice(){if(PlayerService.sPlayerService!=null)PlayerService.sPlayerService.manualTitleChoice(mVideoInfo);else try{com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this,mVideoInfo);}catch(org.json.JSONException|java.io.IOException invalid){com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",invalid);}}
+
+    private void supersedeRestoredTitleChoice() {
+        if (PlayerService.sPlayerService != null)
+            PlayerService.sPlayerService.manualTitleChoice(mVideoInfo);
+        else
+            try {
+                com.archos.mediacenter.video.utils.backup.TitlePlaybackOverrides.supersede(this, mVideoInfo);
+            } catch (org.json.JSONException | java.io.IOException invalid) {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error("manual_title_choice_persistence_failed",
+                                                                           invalid);
+            }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -3024,26 +3325,30 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_LOCK_ID, Menu.NONE, R.string.menu_lock_player);
             if (!isPluggedOnTv()) {
 
-                mBrightnessMenuItem = menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_BRIGHTNESS_ID, Menu.NONE, R.string.menu_brightness_settings);
+                mBrightnessMenuItem = menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_BRIGHTNESS_ID, Menu.NONE,
+                                               R.string.menu_brightness_settings);
                 if (mBrightnessMenuItem != null) {
-                    mBrightnessMenuItem.setIcon(R.drawable.ic_menu_brightness).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                    mBrightnessMenuItem.setIcon(R.drawable.ic_menu_brightness)
+                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
                 }
-                if (mPlayer!=null&&mPlayer.getEffectType()==VideoEffect.EFFECT_NONE) {
-                    menuItem = menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_LOCK_ROTATION_ID,
-                            Menu.NONE,R.string.rotation_unlock);
+                if (mPlayer != null && mPlayer.getEffectType() == VideoEffect.EFFECT_NONE) {
+                    menuItem =
+                        menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_LOCK_ROTATION_ID, Menu.NONE, R.string.rotation_unlock);
                     if (menuItem != null) {
-                        menuItem.setIcon(mLockRotation ? R.drawable.ic_menu_locked : R.drawable.ic_menu_unlocked).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                        menuItem.setIcon(mLockRotation ? R.drawable.ic_menu_locked : R.drawable.ic_menu_unlocked)
+                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                         menuItem.setCheckable(true);
                         menuItem.setChecked(!mLockRotation);
                     }
                 }
             }
 
-            menuItem = menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_NOTIFICATION_MANAGEMENT_ID,
-                    Menu.NONE, R.string.notification_mode);
+            menuItem = menu.add(MENU_GLOBAL_ACTIONS_GROUP, MENU_NOTIFICATION_MANAGEMENT_ID, Menu.NONE,
+                                R.string.notification_mode);
             if (menuItem != null) {
                 menuItem.setIcon(R.drawable.ic_menu_notifications);
-                menuItem.setShowAsAction(!isPluggedOnTv()? MenuItem.SHOW_AS_ACTION_NEVER:MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER
+                                                          : MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
             //------------------------------------------------------------------
             // Finally add the other items (which will be available in the menu)
@@ -3051,26 +3356,34 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             menuItem = menu.add(MENU_OTHER_GROUP, MENU_PLAYMODE_ID, Menu.NONE, R.string.pref_play_mode_title);
             if (menuItem != null) {
                 menuItem.setIcon(R.drawable.ic_menu_playmode);
-                menuItem.setShowAsAction(!isPluggedOnTv()? MenuItem.SHOW_AS_ACTION_NEVER:MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER
+                                                          : MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
-            menuItem = menu.add(MENU_OTHER_GROUP, MENU_AUDIO_FILTER_ID, Menu.NONE, R.string.pref_audio_parameters_title);
+            menuItem =
+                menu.add(MENU_OTHER_GROUP, MENU_AUDIO_FILTER_ID, Menu.NONE, R.string.pref_audio_parameters_title);
             if (menuItem != null) {
                 menuItem.setIcon(R.drawable.ic_menu_audioboost);
-                menuItem.setShowAsAction(!isPluggedOnTv()? MenuItem.SHOW_AS_ACTION_NEVER:MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER
+                                                          : MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
-            menuItem = menu.add(MENU_OTHER_GROUP, MENU_AUDIO_DELAY_ID, Menu.NONE, R.string.player_pref_audio_delay_title);
+            menuItem =
+                menu.add(MENU_OTHER_GROUP, MENU_AUDIO_DELAY_ID, Menu.NONE, R.string.player_pref_audio_delay_title);
             if (menuItem != null) {
                 menuItem.setIcon(R.drawable.ic_menu_delay);
-                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER
+                                                          : MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
-            menuItem = menu.add(MENU_OTHER_GROUP, MENU_AUDIO_SPEED_ID, Menu.NONE, R.string.player_pref_audio_speed_title);
+            menuItem =
+                menu.add(MENU_OTHER_GROUP, MENU_AUDIO_SPEED_ID, Menu.NONE, R.string.player_pref_audio_speed_title);
             if (menuItem != null) {
                 menuItem.setIcon(R.drawable.ic_baseline_speed_24);
-                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER
+                                                          : MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
             // disable playback speed if audio speed is disabled (passthrough, MediaCodec audio decoder, or API < 23)
             menuItem.setVisible(VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences));
-            menuItem = menu.add(MENU_OTHER_GROUP, MENU_SPATIALIZATION_ID, Menu.NONE, R.string.spatialization_capabilities);
+            menuItem =
+                menu.add(MENU_OTHER_GROUP, MENU_SPATIALIZATION_ID, Menu.NONE, R.string.spatialization_capabilities);
             if (menuItem != null) {
                 menuItem.setCheckable(true);
                 menuItem.setChecked(isSpatializationEnabledForPlayback());
@@ -3080,7 +3393,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             menuItem = menu.add(MENU_OTHER_GROUP, MENU_S3D_ID, Menu.NONE, R.string.pref_s3d_mode_title);
             if (menuItem != null) {
                 menuItem.setIcon(R.drawable.ic_menu_3d);
-                menuItem.setShowAsAction(!isPluggedOnTv()? MenuItem.SHOW_AS_ACTION_NEVER:MenuItem.SHOW_AS_ACTION_ALWAYS);
+                menuItem.setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER
+                                                          : MenuItem.SHOW_AS_ACTION_ALWAYS);
             }
             // Check if the brightness item can be enabled
             /*if (mBrightnessMenuItem != null) {
@@ -3097,21 +3411,23 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             menu.add(MENU_OTHER_GROUP, MENU_WINDOW_MODE, Menu.NONE, R.string.player_window_mode);
             // Always add a link to the general application preferences
             menu.add(MENU_OTHER_GROUP, MENU_PREFERENCES, Menu.NONE, R.string.preferences)
-                    .setIcon(R.drawable.ic_menu_settings).setShowAsAction(!isPluggedOnTv()? MenuItem.SHOW_AS_ACTION_NEVER:MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setIcon(R.drawable.ic_menu_settings)
+                .setShowAsAction(!isPluggedOnTv() ? MenuItem.SHOW_AS_ACTION_NEVER : MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         return true;
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
-        if (mPlayer==null||mPlayer.isBusy()) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mPlayer == null || mPlayer.isBusy()) {
             return false;
         }
         // The first time onPrepareOptionsMenu() is called, Video info can be
         // not available. However this does not matter because this item will
         // be updated anyway after loading the video
         if (mInfoMenuItem != null) {
-            mInfoMenuItem.setVisible(mStreamingUri != null&&!(mPreferences.getBoolean("try_new_ui",false)&&isTVMode));
+            mInfoMenuItem.setVisible(mStreamingUri != null &&
+                                     !(mPreferences.getBoolean("try_new_ui", false) && isTVMode));
         }
         // The first time onPrepareOptionsMenu() is called we don't know yet if
         // the "set bookmark" item can be enabled or not. However this does not
@@ -3132,176 +3448,195 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_LOCK_ID:
-                mPlayerController.lock();
-                return true;
-            case MENU_WINDOW_MODE:
-                mLaunchFloatingPlayer = true;
-                if (!Settings.canDrawOverlays(this))
-                    displayFloatingWindowPermissionDialog();
-                else {
-                    Intent floatingIntent = new Intent(this, FloatingPlayerService.class);
-                    // Pass a service-owned snapshot to the new frontend.
-                    if (PlayerService.sPlayerService != null) {
-                        int currentPos = PlayerService.sPlayerService.getPlaybackSnapshot().getPositionMs();
-                        floatingIntent.putExtra(ExternalResumeIntent.FLOATING_POSITION, currentPos);
-                        floatingIntent.putExtra("floating_player_size", mPlayerController.floatingPlayerSize);            //FLOATING PLAYER SIZE
-                    }
-                    startService(floatingIntent);
+        case MENU_LOCK_ID:
+            mPlayerController.lock();
+            return true;
+        case MENU_WINDOW_MODE:
+            mLaunchFloatingPlayer = true;
+            if (!Settings.canDrawOverlays(this))
+                displayFloatingWindowPermissionDialog();
+            else {
+                Intent floatingIntent = new Intent(this, FloatingPlayerService.class);
+                // Pass a service-owned snapshot to the new frontend.
+                if (PlayerService.sPlayerService != null) {
+                    int currentPos = PlayerService.sPlayerService.getPlaybackSnapshot().getPositionMs();
+                    floatingIntent.putExtra(ExternalResumeIntent.FLOATING_POSITION, currentPos);
+                    floatingIntent.putExtra("floating_player_size",
+                                            mPlayerController.floatingPlayerSize); //FLOATING PLAYER SIZE
                 }
-                //finish();
-                return true;
-            case MENU_INFO_ID:
-                showVideoInfos();
-                return true;
-            case MENU_BOOKMARK_ID:
-                if (mVideoInfo != null) {
-                    mVideoInfo.bookmark = getBookmarkPosition();
-                    persistVideoInfo();
-                    mPlayerController.updateBookmarkToast(mPlayer.getCurrentPosition());
-                }
-                return true;
-            case MENU_BRIGHTNESS_ID:
-                myShowDialog(DIALOG_BRIGHTNESS);
-                return true;
-            case MENU_LOCK_ROTATION_ID:
-                mLockRotation = !mLockRotation;
-                if (log.isDebugEnabled()) log.debug("onStart: setLockRotation {}", mLockRotation);
-                setLockRotation(mLockRotation);
-                mPreferences.edit().putBoolean(KEY_LOCK_ROTATION, mLockRotation).apply();
-                //item.setTitle(mLockRotation ? R.string.rotation_unlock : R.string.rotation_lock);
-                item.setChecked(!mLockRotation);
-                item.setIcon(mLockRotation ? R.drawable.ic_menu_locked : R.drawable.ic_menu_unlocked);
-                Toast.makeText(
-                        mContext,
-                        mLockRotation ? R.string.rotation_locked : R.string.rotation_unlocked,
-                                Toast.LENGTH_SHORT).show();
-                return true;
-            case MENU_NOTIFICATION_MANAGEMENT_ID: {
-                AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                adb.setTitle(R.string.notification_mode);
-                adb.setSingleChoiceItems(R.array.pref_notification_mode_entries, mNotificationMode, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        setNewNotificationMode(which);
-                        dialog.dismiss();
-                    }
-                });
-                adb.create().show();
-                return true;
+                startService(floatingIntent);
             }
-            case MENU_PLAYMODE_ID: {
-                AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                adb.setTitle(R.string.pref_play_mode_title);
-                final CharSequence[] playModeEntries = mContext.getResources().getTextArray(R.array.pref_play_mode_entries);
-                final ArrayList<RadioButton> playModeRbs = new ArrayList<RadioButton>();
-
-                LinearLayout content = new LinearLayout(mContext);
-                content.setOrientation(LinearLayout.VERTICAL);
-                int pad = (int) (16 * getResources().getDisplayMetrics().density);
-                content.setPadding(pad, pad / 2, pad, pad / 2);
-
-                for (int i = 0; i < playModeEntries.length; i++) {
-                    final int position2 = i;
-                    RadioButton rb = new RadioButton(mContext);
-                    rb.setText(playModeEntries[i]);
-                    rb.setPadding(pad, pad, pad, pad);
-                    rb.setChecked(PlayerService.sPlayerService.mPlayMode == i);
-                    playModeRbs.add(rb);
-                    rb.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            PlayerService.sPlayerService.menuChangePlayMode(position2);
-                            for (RadioButton other : playModeRbs)
-                                other.setChecked(other == v);
-                        }
-                    });
-                    content.addView(rb);
-                }
-
-                Switch tb = new Switch(mContext);
-                if(BuildConfig.FOUNDATION)tb.setText("Segment Skipping (this session)");else tb.setText(R.string.pref_introdb_autoskip_title);
-                tb.setPadding(pad, pad, pad, pad);
-                tb.setChecked(BuildConfig.FOUNDATION?PlayerService.sPlayerService.segmentSkippingEnabled():mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED, PlayerService.DEFAULT_INTRODB_ENABLED));
-                tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if(BuildConfig.FOUNDATION)PlayerService.sPlayerService.segmentOverride(isChecked);else mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, isChecked).apply();
-                    }
-                });
-                content.addView(tb);
-
-                IntroSegments introSegmentsPhone = (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
-                String introSummaryPhone = (introSegmentsPhone != null) ? introSegmentsPhone.toSummaryString(PlayerService.introLabels(this), getString(R.string.introdb_segment_end)) : null;
-                if (introSummaryPhone != null&&!BuildConfig.FOUNDATION) {
-                    TextView footer = new TextView(mContext);
-                    footer.setText(introSummaryPhone);
-                    footer.setEnabled(false);
-                    footer.setPadding(pad, pad / 2, pad, pad / 2);
-                    content.addView(footer);
-                }
-
-                ScrollView scroll = new ScrollView(mContext);
-                scroll.addView(content);
-                adb.setView(scroll);
-                adb.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        mPhonePlayModeIntroFooter = null;
-                    }
-                });
-                AlertDialog dialog = adb.create();
-                dialog.show();
-
-                Window window = dialog.getWindow();
-                if (window != null) {
-                    DisplayMetrics dm = getResources().getDisplayMetrics();
-                    int maxWidth = (int) (380 * dm.density);
-                    if (dm.widthPixels > maxWidth) {
-                        int width = Math.min(maxWidth, (int) (dm.widthPixels * 0.85f));
-                        window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    }
-                }
-
-                return true;
+            //finish();
+            return true;
+        case MENU_INFO_ID:
+            showVideoInfos();
+            return true;
+        case MENU_BOOKMARK_ID:
+            if (mVideoInfo != null) {
+                mVideoInfo.bookmark = getBookmarkPosition();
+                persistVideoInfo();
+                mPlayerController.updateBookmarkToast(mPlayer.getCurrentPosition());
             }
-            case MENU_AUDIO_FILTER_ID: {
-                AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                adb.setTitle(R.string.pref_audio_parameters_title);
-                final ArrayList<RadioButton> rbs = new  ArrayList<RadioButton>();
-                // Get passthrough mode to disable audio boost and night mode for passthrough modes 1 and 2 only
-                // Modes 0 (disabled) and 3 (recoding) support audio filters
-                final int passthroughMode = Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0"));
-                final boolean isPassthroughActive = passthroughMode == 1 || passthroughMode == 2;
-                adb.setAdapter(new ArrayAdapter<View>(mContext, R.layout.menu_item_layout) {
+            return true;
+        case MENU_BRIGHTNESS_ID:
+            myShowDialog(DIALOG_BRIGHTNESS);
+            return true;
+        case MENU_LOCK_ROTATION_ID:
+            mLockRotation = !mLockRotation;
+            if (log.isDebugEnabled())
+                log.debug("onStart: setLockRotation {}", mLockRotation);
+            setLockRotation(mLockRotation);
+            mPreferences.edit().putBoolean(KEY_LOCK_ROTATION, mLockRotation).apply();
+            //item.setTitle(mLockRotation ? R.string.rotation_unlock : R.string.rotation_lock);
+            item.setChecked(!mLockRotation);
+            item.setIcon(mLockRotation ? R.drawable.ic_menu_locked : R.drawable.ic_menu_unlocked);
+            Toast
+                .makeText(mContext, mLockRotation ? R.string.rotation_locked : R.string.rotation_unlocked,
+                          Toast.LENGTH_SHORT)
+                .show();
+            return true;
+        case MENU_NOTIFICATION_MANAGEMENT_ID: {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle(R.string.notification_mode);
+            adb.setSingleChoiceItems(R.array.pref_notification_mode_entries, mNotificationMode,
+                                     new DialogInterface.OnClickListener() {
+                                         public void onClick(DialogInterface dialog, int which) {
+                                             setNewNotificationMode(which);
+                                             dialog.dismiss();
+                                         }
+                                     });
+            adb.create().show();
+            return true;
+        }
+        case MENU_PLAYMODE_ID: {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle(R.string.pref_play_mode_title);
+            final CharSequence[] playModeEntries = mContext.getResources().getTextArray(R.array.pref_play_mode_entries);
+            final ArrayList<RadioButton> playModeRbs = new ArrayList<RadioButton>();
+
+            LinearLayout content = new LinearLayout(mContext);
+            content.setOrientation(LinearLayout.VERTICAL);
+            int pad = (int)(16 * getResources().getDisplayMetrics().density);
+            content.setPadding(pad, pad / 2, pad, pad / 2);
+
+            for (int i = 0; i < playModeEntries.length; i++) {
+                final int position2 = i;
+                RadioButton rb = new RadioButton(mContext);
+                rb.setText(playModeEntries[i]);
+                rb.setPadding(pad, pad, pad, pad);
+                rb.setChecked(PlayerService.sPlayerService.mPlayMode == i);
+                playModeRbs.add(rb);
+                rb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PlayerService.sPlayerService.menuChangePlayMode(position2);
+                        for (RadioButton other : playModeRbs)
+                            other.setChecked(other == v);
+                    }
+                });
+                content.addView(rb);
+            }
+
+            Switch tb = new Switch(mContext);
+            if (BuildConfig.FOUNDATION)
+                tb.setText("Segment Skipping (this session)");
+            else
+                tb.setText(R.string.pref_introdb_autoskip_title);
+            tb.setPadding(pad, pad, pad, pad);
+            tb.setChecked(BuildConfig.FOUNDATION ? PlayerService.sPlayerService.segmentSkippingEnabled()
+                                                 : mPreferences.getBoolean(PlayerService.KEY_INTRODB_ENABLED,
+                                                                           PlayerService.DEFAULT_INTRODB_ENABLED));
+            tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (BuildConfig.FOUNDATION)
+                        PlayerService.sPlayerService.segmentOverride(isChecked);
+                    else
+                        mPreferences.edit().putBoolean(PlayerService.KEY_INTRODB_ENABLED, isChecked).apply();
+                }
+            });
+            content.addView(tb);
+
+            IntroSegments introSegmentsPhone =
+                (PlayerService.sPlayerService != null) ? PlayerService.sPlayerService.getIntroSegments() : null;
+            String introSummaryPhone = (introSegmentsPhone != null)
+                                           ? introSegmentsPhone.toSummaryString(PlayerService.introLabels(this),
+                                                                                getString(R.string.introdb_segment_end))
+                                           : null;
+            if (introSummaryPhone != null && !BuildConfig.FOUNDATION) {
+                TextView footer = new TextView(mContext);
+                footer.setText(introSummaryPhone);
+                footer.setEnabled(false);
+                footer.setPadding(pad, pad / 2, pad, pad / 2);
+                content.addView(footer);
+            }
+
+            ScrollView scroll = new ScrollView(mContext);
+            scroll.addView(content);
+            adb.setView(scroll);
+            adb.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mPhonePlayModeIntroFooter = null;
+                }
+            });
+            AlertDialog dialog = adb.create();
+            dialog.show();
+
+            Window window = dialog.getWindow();
+            if (window != null) {
+                DisplayMetrics dm = getResources().getDisplayMetrics();
+                int maxWidth = (int)(380 * dm.density);
+                if (dm.widthPixels > maxWidth) {
+                    int width = Math.min(maxWidth, (int)(dm.widthPixels * 0.85f));
+                    window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
+            }
+
+            return true;
+        }
+        case MENU_AUDIO_FILTER_ID: {
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            adb.setTitle(R.string.pref_audio_parameters_title);
+            final ArrayList<RadioButton> rbs = new ArrayList<RadioButton>();
+            // Get passthrough mode to disable audio boost and night mode for passthrough modes 1 and 2 only
+            // Modes 0 (disabled) and 3 (recoding) support audio filters
+            final int passthroughMode =
+                Integer.parseInt(mPreferences.getString("force_audio_passthrough_multiple", "0"));
+            final boolean isPassthroughActive = passthroughMode == 1 || passthroughMode == 2;
+            adb.setAdapter(
+                new ArrayAdapter<View>(mContext, R.layout.menu_item_layout) {
                     @Override
                     public View getView(final int position, View convertView, ViewGroup parent) {
                         if (position == 2) {
-				SeekBar sb = new SeekBar(mContext);
-				sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-					@Override
-					public void onStartTrackingTouch(SeekBar sb) {}
-					@Override
-					public void onStopTrackingTouch(SeekBar sb) {}
-					@Override
-					public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
-						float control = (progress - 50) / 50.0f;
-						android.util.Log.d("PHH", "progress changed " + progress);
-						var svc = AdditionalServiceSingleton.getService();
-						if (svc != null) {
-							try {
-								svc.setControl(control);
-							} catch(RemoteException e) {
-						android.util.Log.d("PHH", "failed changing progress", e);
-							}
-						}
-					}
-				});
-				return sb;
-			} else if (position == 1) {
+                            SeekBar sb = new SeekBar(mContext);
+                            sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                @Override
+                                public void onStartTrackingTouch(SeekBar sb) {
+                                }
+                                @Override
+                                public void onStopTrackingTouch(SeekBar sb) {
+                                }
+                                @Override
+                                public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
+                                    float control = (progress - 50) / 50.0f;
+                                    android.util.Log.d("PHH", "progress changed " + progress);
+                                    var svc = AdditionalServiceSingleton.getService();
+                                    if (svc != null) {
+                                        try {
+                                            svc.setControl(control);
+                                        } catch (RemoteException e) {
+                                            android.util.Log.d("PHH", "failed changing progress", e);
+                                        }
+                                    }
+                                }
+                            });
+                            return sb;
+                        } else if (position == 1) {
                             SwitchCompat tb = new SwitchCompat(mContext);
                             tb.setText(R.string.pref_audio_filt_title);
-                            tb.setPadding(20,20, 20, 20);
-                            tb.setChecked( PlayerService.sPlayerService.mAudioFilt>0);
+                            tb.setPadding(20, 20, 20, 20);
+                            tb.setChecked(PlayerService.sPlayerService.mAudioFilt > 0);
                             tb.setEnabled(!isPassthroughActive);
                             tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                                 @Override
@@ -3310,11 +3645,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                                 }
                             });
                             return tb;
-                        }
-                        else {
+                        } else {
                             SwitchCompat tb = new SwitchCompat(mContext);
                             tb.setText(R.string.pref_audio_filt_night_mode);
-                            tb.setPadding(20,20, 20, 20);
+                            tb.setPadding(20, 20, 20, 20);
                             tb.setChecked(PlayerService.sPlayerService.mNightModeOn);
                             tb.setEnabled(!isPassthroughActive);
                             tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -3328,71 +3662,77 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     }
                     @Override
                     public int getCount() {
-			// Display the seekbar only if SuperNOVA is available
-			if (AdditionalServiceSingleton.getService() != null)
-				return 3;
-			return 2;
+                        // Display the seekbar only if SuperNOVA is available
+                        if (AdditionalServiceSingleton.getService() != null)
+                            return 3;
+                        return 2;
                     }
-                }
-                , new DialogInterface.OnClickListener() {
+                },
+                new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
 
-                ad = adb.create();
-                ad.show();
+            ad = adb.create();
+            ad.show();
+            return true;
+        }
+        case MENU_AUDIO_DELAY_ID: {
+            myShowDialog(DIALOG_AUDIO_DELAY);
+            return true;
+        }
+        case MENU_AUDIO_SPEED_ID: {
+            myShowDialog(DIALOG_AUDIO_SPEED);
+            return true;
+        }
+        case MENU_SPATIALIZATION_ID: {
+            toggleSpatializationPreference();
+            item.setChecked(isSpatializationEnabledForPlayback());
+            return true;
+        }
+        case MENU_S3D_ID: {
+            int menuId = R.array.pref_s3d_mode_entries;
+            if (!isStereoEffectOn())
                 return true;
-            }
-            case MENU_AUDIO_DELAY_ID: {
-                myShowDialog(DIALOG_AUDIO_DELAY);
-                return true;
-            }
-            case MENU_AUDIO_SPEED_ID: {
-                myShowDialog(DIALOG_AUDIO_SPEED);
-                return true;
-            }
-            case MENU_SPATIALIZATION_ID: {
-                toggleSpatializationPreference();
-                item.setChecked(isSpatializationEnabledForPlayback());
-                return true;
-            }
-            case MENU_S3D_ID: {
-                int menuId = R.array.pref_s3d_mode_entries;
-                if (!isStereoEffectOn()) return true;
 
-                AlertDialog.Builder adb = new AlertDialog.Builder(this);
-                SwitchCompat tb = new SwitchCompat(mContext);
-                tb.setText(R.string.pref_s3d_mode_title);
-                tb.setTextSize(25);
-                tb.setPadding(20,20, 20, 20);
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+            SwitchCompat tb = new SwitchCompat(mContext);
+            tb.setText(R.string.pref_s3d_mode_title);
+            tb.setTextSize(25);
+            tb.setPadding(20, 20, 20, 20);
 
-                final int dialogInitItem = (mPlayer.getEffectMode()!=0)?Integer.numberOfTrailingZeros(mPlayer.getEffectMode()):0;
-                adb.setCustomTitle(tb);
+            final int dialogInitItem =
+                (mPlayer.getEffectMode() != 0) ? Integer.numberOfTrailingZeros(mPlayer.getEffectMode()) : 0;
+            adb.setCustomTitle(tb);
 
-                if (!isPluggedOnTv()) {
-                    menuId = R.array.pref_s3d_mode_entries_dive;
-                }
-                final CharSequence[] t = mContext.getResources().getTextArray(menuId);
-                final ArrayList<RadioButton>rbs = new  ArrayList<RadioButton>();
-                final int menuId2= menuId;
-                adb.setAdapter(new ArrayAdapter<View>(mContext, R.layout.menu_item_layout){
+            if (!isPluggedOnTv()) {
+                menuId = R.array.pref_s3d_mode_entries_dive;
+            }
+            final CharSequence[] t = mContext.getResources().getTextArray(menuId);
+            final ArrayList<RadioButton> rbs = new ArrayList<RadioButton>();
+            final int menuId2 = menuId;
+            adb.setAdapter(
+                new ArrayAdapter<View>(mContext, R.layout.menu_item_layout) {
                     @Override
                     public View getView(final int position, View convertView, ViewGroup parent) {
 
-                        RadioButton rb= new RadioButton(mContext);
+                        RadioButton rb = new RadioButton(mContext);
                         rb.setText(t[position]);
-                        rb.setEnabled(dialogInitItem!=VideoEffect.NORMAL_2D_MODE);
+                        rb.setEnabled(dialogInitItem != VideoEffect.NORMAL_2D_MODE);
                         rbs.add(rb);
-                        rb.setPadding(20,20, 20, 20);
-                        rb.setChecked((dialogInitItem>0?dialogInitItem-1:(Integer.numberOfTrailingZeros(mSavedMode)>0?Integer.numberOfTrailingZeros(mSavedMode)-1:0))==position);
+                        rb.setPadding(20, 20, 20, 20);
+                        rb.setChecked((dialogInitItem > 0 ? dialogInitItem - 1
+                                                          : (Integer.numberOfTrailingZeros(mSavedMode) > 0
+                                                                 ? Integer.numberOfTrailingZeros(mSavedMode) - 1
+                                                                 : 0)) == position);
                         rb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                             @Override
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                 // TODO Auto-generated method stub
                                 if (isChecked) {
-                                    set3DMode(position+1);
-                                    for (int i =0; i< rbs.size(); i++) {
-                                        if (buttonView!=rbs.get(i))
+                                    set3DMode(position + 1);
+                                    for (int i = 0; i < rbs.size(); i++) {
+                                        if (buttonView != rbs.get(i))
                                             rbs.get(i).setChecked(false);
                                     }
                                     if (ad != null) {
@@ -3408,94 +3748,175 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     public int getCount() {
                         return mContext.getResources().getTextArray(menuId2).length;
                     }
-                }
-                , new DialogInterface.OnClickListener() {
+                },
+                new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                ad = adb.create();
-                ad.show();
+            ad = adb.create();
+            ad.show();
 
-                if (dialogInitItem == VideoEffect.NORMAL_2D_MODE) {
-                    ad.getListView().setEnabled(false);
-                }
-                tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        // TODO Auto-generated method stub
-                        if (isChecked) {
-                            if (log.isDebugEnabled()) log.debug("onOptionsItemSelected: setEffect");
-                            setEffectForced(mSavedMode);
-                            ad.getListView().setEnabled(true);
-                            for(RadioButton rb : rbs)
-                                rb.setEnabled(true);
-                        }
-                        else {
-                            if (log.isDebugEnabled()) log.debug("onOptionsItemSelected: setEffect");
-                            setEffectForced(VideoEffect.NORMAL_2D_MODE, false);
-                            ad.getListView().setEnabled(false);
-                            for (RadioButton rb : rbs)
-                                rb.setEnabled(false);
-                        }
+            if (dialogInitItem == VideoEffect.NORMAL_2D_MODE) {
+                ad.getListView().setEnabled(false);
+            }
+            tb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    // TODO Auto-generated method stub
+                    if (isChecked) {
+                        if (log.isDebugEnabled())
+                            log.debug("onOptionsItemSelected: setEffect");
+                        setEffectForced(mSavedMode);
+                        ad.getListView().setEnabled(true);
+                        for (RadioButton rb : rbs)
+                            rb.setEnabled(true);
+                    } else {
+                        if (log.isDebugEnabled())
+                            log.debug("onOptionsItemSelected: setEffect");
+                        setEffectForced(VideoEffect.NORMAL_2D_MODE, false);
+                        ad.getListView().setEnabled(false);
+                        for (RadioButton rb : rbs)
+                            rb.setEnabled(false);
                     }
-                });
-                tb.setChecked(mPlayer.getEffectMode()!=VideoEffect.NORMAL_2D_MODE);
-                return true;
-            }
-            case MENU_PREFERENCES: {
-                pauseForSettings();
-                Intent p = new Intent(Intent.ACTION_MAIN);
-                p.setComponent(new ComponentName(this, VideoPreferencesActivity.class));
-                startActivity(p);
-                return true;
-            }
-            default:
-                return super.onContextItemSelected(item);
+                }
+            });
+            tb.setChecked(mPlayer.getEffectMode() != VideoEffect.NORMAL_2D_MODE);
+            return true;
+        }
+        case MENU_PREFERENCES: {
+            pauseForSettings();
+            Intent p = new Intent(Intent.ACTION_MAIN);
+            p.setComponent(new ComponentName(this, VideoPreferencesActivity.class));
+            startActivity(p);
+            return true;
+        }
+        default:
+            return super.onContextItemSelected(item);
         }
     }
 
     private void displayFloatingWindowPermissionDialog() {
-        new AlertDialog.Builder(this).setTitle(R.string.error).setMessage(R.string.error_permission_display_over_apps).setPositiveButton(R.string.allow, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                mHasAskedFloatingPermission = true;
-                Intent in = new Intent();
-                in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                in.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                in.putExtra("android.intent.extra.PACKAGE_NAME", getPackageName());
-                startActivity(in);
-            }
-        }).setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                mHasAskedFloatingPermission = false;
-            }
-        }).setNegativeButton(android.R.string.cancel, null).show();
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.error)
+            .setMessage(R.string.error_permission_display_over_apps)
+            .setPositiveButton(R.string.allow,
+                               new DialogInterface.OnClickListener() {
+                                   @Override
+                                   public void onClick(DialogInterface dialogInterface, int i) {
+                                       mHasAskedFloatingPermission = true;
+                                       Intent in = new Intent();
+                                       in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                       in.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                                       in.putExtra("android.intent.extra.PACKAGE_NAME", getPackageName());
+                                       startActivity(in);
+                                   }
+                               })
+            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    mHasAskedFloatingPermission = false;
+                }
+            })
+            .setNegativeButton(android.R.string.cancel, null)
+            .show();
     }
 
-    void restorePreviewSettingsFocus(View opener){if(mPlayerController!=null&&!isFinishing()&&!isDestroyed()){mPlayerController.showControlBar();if(opener!=null&&opener.isShown())opener.requestFocus();}}
-    public String previewAudioLabel(){if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){VideoMetadata metadata=mPlayer.getVideoMetadata();int track=mVideoInfo.audioTrack;if(track>=0&&track<metadata.getAudioTrackNb()){VideoMetadata.AudioTrack audio=metadata.getAudioTrack(track);if(audio!=null)return PreviewTrackLabel.concise(audio.language,audio.format,audio.channels,"Audio");}}if(mAudioInfoController==null||mAudioInfoController.getTrackCount()==0)return "Audio";int i=mAudioInfoController.getTrack();return i>=0&&i<mAudioInfoController.getTrackCount()?String.valueOf(mAudioInfoController.getTrackNameAt(i)):"Audio";}
-    public String previewSubtitleLabel(){if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null){VideoMetadata metadata=mPlayer.getVideoMetadata();int track=mVideoInfo.subtitleTrack;if(track<0||track>=metadata.getSubtitleTrackNb())return "Off";SubtitleTrack subtitle=metadata.getSubtitleTrack(track);if(subtitle!=null){String language=subtitle.isExternal?getSubLanguageFromSubPathAndVideoPath(mContext,subtitle.path,mUri.toString()):subtitle.language;return PreviewTrackLabel.concise(language,"","","Subtitles");}}if(mSubtitleInfoController==null||mSubtitleInfoController.getTrackCount()==0)return "Subtitles off";int i=mSubtitleInfoController.getTrack();return i>=0&&i<mSubtitleInfoController.getTrackCount()?String.valueOf(mSubtitleInfoController.getTrackNameAt(i)):"Subtitles";}
-    public boolean previewHasAudio(){return mAudioInfoController!=null&&mAudioInfoController.getTrackCount()>0;}
-    public void bindPreviewTitleArtwork(android.widget.TextView title){com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title,mVideoInfo);}
-    public String previewTitle(){return mVideoInfo!=null&&mVideoInfo.isScraped&&mVideoInfo.scraperTitle!=null?mVideoInfo.scraperTitle:mTitle==null?"":mTitle;}
-    public String previewEpisode(){return mVideoInfo!=null&&mVideoInfo.isShow?String.format(java.util.Locale.getDefault(),"Season %d • Episode %d",mVideoInfo.scraperSeasonNr,mVideoInfo.scraperEpisodeNr)+(mVideoInfo.scraperEpisodeName==null?"":" · "+mVideoInfo.scraperEpisodeName):"";}
+    void restorePreviewSettingsFocus(View opener) {
+        if (mPlayerController != null && !isFinishing() && !isDestroyed()) {
+            mPlayerController.showControlBar();
+            if (opener != null && opener.isShown())
+                opener.requestFocus();
+        }
+    }
+
+    public String previewAudioLabel() {
+        if (mPlayer != null && mPlayer.getVideoMetadata() != null && mVideoInfo != null) {
+            VideoMetadata metadata = mPlayer.getVideoMetadata();
+            int track = mVideoInfo.audioTrack;
+            if (track >= 0 && track < metadata.getAudioTrackNb()) {
+                VideoMetadata.AudioTrack audio = metadata.getAudioTrack(track);
+                if (audio != null)
+                    return PreviewTrackLabel.concise(audio.language, audio.format, audio.channels, "Audio");
+            }
+        }
+        if (mAudioInfoController == null || mAudioInfoController.getTrackCount() == 0)
+            return "Audio";
+        int i = mAudioInfoController.getTrack();
+        return i >= 0 && i < mAudioInfoController.getTrackCount()
+            ? String.valueOf(mAudioInfoController.getTrackNameAt(i))
+            : "Audio";
+    }
+
+    public String previewSubtitleLabel() {
+        if (mPlayer != null && mPlayer.getVideoMetadata() != null && mVideoInfo != null) {
+            VideoMetadata metadata = mPlayer.getVideoMetadata();
+            int track = mVideoInfo.subtitleTrack;
+            if (track < 0 || track >= metadata.getSubtitleTrackNb())
+                return "Off";
+            SubtitleTrack subtitle = metadata.getSubtitleTrack(track);
+            if (subtitle != null) {
+                String language = subtitle.isExternal
+                                      ? getSubLanguageFromSubPathAndVideoPath(mContext, subtitle.path, mUri.toString())
+                                      : subtitle.language;
+                return PreviewTrackLabel.concise(language, "", "", "Subtitles");
+            }
+        }
+        if (mSubtitleInfoController == null || mSubtitleInfoController.getTrackCount() == 0)
+            return "Subtitles off";
+        int i = mSubtitleInfoController.getTrack();
+        return i >= 0 && i < mSubtitleInfoController.getTrackCount()
+            ? String.valueOf(mSubtitleInfoController.getTrackNameAt(i))
+            : "Subtitles";
+    }
+
+    public boolean previewHasAudio() {
+        return mAudioInfoController != null && mAudioInfoController.getTrackCount() > 0;
+    }
+
+    public void bindPreviewTitleArtwork(android.widget.TextView title) {
+        com.archos.mediacenter.video.leanback.OfficialTitleArtwork.bind(title, mVideoInfo);
+    }
+
+    public String previewTitle() {
+        return mVideoInfo != null && mVideoInfo.isScraped && mVideoInfo.scraperTitle != null ? mVideoInfo.scraperTitle
+        : mTitle == null                                                                     ? ""
+                                                                                             : mTitle;
+    }
+
+    public String previewEpisode() {
+        return mVideoInfo != null && mVideoInfo.isShow
+            ? String.format(java.util.Locale.getDefault(), "Season %d • Episode %d", mVideoInfo.scraperSeasonNr,
+                            mVideoInfo.scraperEpisodeNr) +
+                  (mVideoInfo.scraperEpisodeName == null ? "" : " · " + mVideoInfo.scraperEpisodeName)
+            : "";
+    }
+
     void showVideoInfos() {
-        if(mPreferences!=null&&mPreferences.getBoolean("try_new_ui",false)&&isTVMode)return;
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_information_open","player_present",mPlayer!=null);
-        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){showNativeVideoInfos();return;}
+        if (mPreferences != null && mPreferences.getBoolean("try_new_ui", false) && isTVMode)
+            return;
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_information_open", "player_present",
+                                                                   mPlayer != null);
+        if (mPreferences.getBoolean("try_new_ui", false) && isTVMode) {
+            showNativeVideoInfos();
+            return;
+        }
         showNativeVideoInfos();
     }
+
     private void showNativeVideoInfos() {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_technical_open","player_present",mPlayer!=null,"metadata_present",mPlayer!=null&&mPlayer.getVideoMetadata()!=null);
-        if(mPreferences.getBoolean("try_new_ui",false)&&isTVMode){
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            "playback_technical_open", "player_present", mPlayer != null, "metadata_present",
+            mPlayer != null && mPlayer.getVideoMetadata() != null);
+        if (mPreferences.getBoolean("try_new_ui", false) && isTVMode) {
             // The old handoff launched a second Details activity and could re-probe the
             // active network stream when native metadata was absent. Remain in the
             // owning player lifecycle and render a read-only copy of current metadata.
-            VideoMetadata live=mPlayer==null?null:mPlayer.getVideoMetadata();
-            PreviewTechnicalInfo.show(this,live==null?null:new VideoMetadata(live),mUri,mPlayer==null?-1:mPlayer.getType(),()->{
-                if(mPlayerController!=null)mPlayerController.showControlBar();
-            });
+            VideoMetadata live = mPlayer == null ? null : mPlayer.getVideoMetadata();
+            PreviewTechnicalInfo.show(this, live == null ? null : new VideoMetadata(live), mUri,
+                                      mPlayer == null ? -1 : mPlayer.getType(), () -> {
+                                          if (mPlayerController != null)
+                                              mPlayerController.showControlBar();
+                                      });
             return;
         }
         mPlayerController.hide();
@@ -3505,16 +3926,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         try {
             // When on an actual leanback device (Android TV, etc.) we give no choice -> Leanback!
             if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK) || isChromeOS(mContext)) {
-                infoActivity = getClassLoader().loadClass("com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity");
-            }
-            else {
+                infoActivity = getClassLoader().loadClass(
+                    "com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity");
+            } else {
                 // string definitions are in preference_video.xml and in @array/ui_mode_leanback_entryvalues
-                final String uiMode = PreferenceManager.getDefaultSharedPreferences(this)
-                        .getString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
+                final String uiMode = PreferenceManager.getDefaultSharedPreferences(this).getString(
+                    UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
 
                 if (uiMode.equals(UiChoiceDialog.UI_CHOICE_LEANBACK_TV_VALUE)) {
                     // User explicitly choose TV mode
-                    infoActivity = getClassLoader().loadClass("com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity");
+                    infoActivity = getClassLoader().loadClass(
+                        "com.archos.mediacenter.video.leanback.details.VideoDetailsOverlayActivity");
                 } else { // user did not choose or user explicitly choose tablet mode
                     infoActivity = VideoInfoActivity.class;
                 }
@@ -3544,7 +3966,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 headersBundle.putString(entry.getKey(), entry.getValue());
             }
             intent.putExtra("headers", headersBundle);
-            if (log.isDebugEnabled()) log.debug("showVideoInfos: forwarding {} headers to info activity", mExtraMap.size());
+            if (log.isDebugEnabled())
+                log.debug("showVideoInfos: forwarding {} headers to info activity", mExtraMap.size());
         }
         startActivity(intent);
         mIsInfoActivityDisplayed = true;
@@ -3552,17 +3975,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     private void applyNotificationsMode(int mode) {
         switch (mode) {
-            case NOTIFICATION_MODE_ALL:
-                mPlayerController.enableAllNotifications();
-                break;
+        case NOTIFICATION_MODE_ALL:
+            mPlayerController.enableAllNotifications();
+            break;
 
-            case NOTIFICATION_MODE_ALERTS:
-                mPlayerController.enableNotificationAlerts();
-                break;
+        case NOTIFICATION_MODE_ALERTS:
+            mPlayerController.enableNotificationAlerts();
+            break;
 
-            case NOTIFICATION_MODE_NONE:
-                mPlayerController.disableNotifications();
-                break;
+        case NOTIFICATION_MODE_NONE:
+            mPlayerController.disableNotifications();
+            break;
         }
     }
 
@@ -3582,93 +4005,105 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mShowingDialogId = DIALOG_NO;
             mDialog = null;
         }
-        switch(id) {
-            case DIALOG_SUBTITLE_DELAY:
-                SubtitleTrack track = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
-                if (track == null)
-                    return;
-                boolean hasRatio = track.isExternal;
-                mDialog = new SubtitleDelayPickerDialog(this, this, mVideoInfo.subtitleDelay, mVideoInfo.subtitleRatio, hasRatio);
-                mPlayerController.hide();
-                SubtitleDelayPickerDialog subtitleDelayPickerDialog = (SubtitleDelayPickerDialog) mDialog;
-                subtitleDelayPickerDialog.updateDelay(mVideoInfo.subtitleDelay);
-                break;
-            case DIALOG_SUBTITLE_SETTINGS:
-                mDialog = new SubtitleSettingsDialog(this, mSubtitleManager);
-                mPlayerController.hide();
-                break;
-            case DIALOG_AUDIO_DELAY:
-                if(PlayerService.sPlayerService!=null)
-                    mDialog = new AudioDelayPickerDialog(this, this, clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay()), isPassthroughAudioDelayLimited());
-                else
-                    mDialog = new AudioDelayPickerDialog(this, this, clampAudioDelayForPassthrough(mPreferences.getInt(getString(R.string.save_delay_setting_pref_key), 0)), isPassthroughAudioDelayLimited());
-                AudioDelayPickerDialog audioPickerDialog = (AudioDelayPickerDialog) mDialog;
-                audioPickerDialog.setStep(20);
-                if (mPlayer.getDuration() > 0) {
-                    audioPickerDialog.setMax(mPlayer.getDuration());
-                    audioPickerDialog.setMin(-mPlayer.getDuration());
-                }
-                if(PlayerService.sPlayerService!=null)
-                    audioPickerDialog.updateDelay(clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay()));
-                else
-                    audioPickerDialog.updateDelay(clampAudioDelayForPassthrough(mPreferences.getInt(getString(R.string.save_delay_setting_pref_key), 0)));
-                mPlayerController.hide();
-                break;
-            case DIALOG_AUDIO_SPEED:
-                if(PlayerService.sPlayerService!=null)
-                    mDialog = new AudioSpeedPickerDialog(this, this, PlayerService.sPlayerService.getAudioSpeed());
-                else
-                    mDialog = new AudioSpeedPickerDialog(this, this, mPreferences.getFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f));
-                AudioSpeedPickerDialog audioSpeedPickerDialog = (AudioSpeedPickerDialog) mDialog;
-                if(PlayerService.sPlayerService!=null)
-                    audioSpeedPickerDialog.updateSpeed(PlayerService.sPlayerService.getAudioSpeed());
-                else
-                    audioSpeedPickerDialog.updateSpeed(mPreferences.getFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f));
-                mPlayerController.hide();
-                break;
-            case DIALOG_ERROR:
-                if (mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_ALLOWED) {
-                    mDialog = new AlertDialog.Builder(this)
-                            .setTitle(R.string.player_err_cantplayvideo)
-                            .setMessage(buildErrorMessage(mErrorCode, mErrorQualCode, 0, mErrorMsg))
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    finish();
-                                }
-                            })
-                            .setCancelable(false)
-                            .create();
-                }
-                break;
-            case DIALOG_BRIGHTNESS:
-                mDialog = new BrightnessDialog(this);
-                mPlayerController.hide();
-                break;
-            case DIALOG_CODEC_NOT_SUPPORTED:
-                // Show toast instead of plugin download dialog
-                int toastStringId = mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED ?
-                        R.string.player_err_cantplayvideo : R.string.player_err_cantplaysound;
-                Toast.makeText(this, toastStringId, Toast.LENGTH_SHORT).show();
-                if (mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED) {
-                    finish();
-                }
-                break;
-            case DIALOG_WRONG_DEVICE_KINDLE:
+        switch (id) {
+        case DIALOG_SUBTITLE_DELAY:
+            SubtitleTrack track = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
+            if (track == null)
+                return;
+            boolean hasRatio = track.isExternal;
+            mDialog =
+                new SubtitleDelayPickerDialog(this, this, mVideoInfo.subtitleDelay, mVideoInfo.subtitleRatio, hasRatio);
+            mPlayerController.hide();
+            SubtitleDelayPickerDialog subtitleDelayPickerDialog = (SubtitleDelayPickerDialog)mDialog;
+            subtitleDelayPickerDialog.updateDelay(mVideoInfo.subtitleDelay);
+            break;
+        case DIALOG_SUBTITLE_SETTINGS:
+            mDialog = new SubtitleSettingsDialog(this, mSubtitleManager);
+            mPlayerController.hide();
+            break;
+        case DIALOG_AUDIO_DELAY:
+            if (PlayerService.sPlayerService != null)
+                mDialog = new AudioDelayPickerDialog(
+                    this, this, clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay()),
+                    isPassthroughAudioDelayLimited());
+            else
+                mDialog = new AudioDelayPickerDialog(this, this,
+                                                     clampAudioDelayForPassthrough(mPreferences.getInt(
+                                                         getString(R.string.save_delay_setting_pref_key), 0)),
+                                                     isPassthroughAudioDelayLimited());
+            AudioDelayPickerDialog audioPickerDialog = (AudioDelayPickerDialog)mDialog;
+            audioPickerDialog.setStep(20);
+            if (mPlayer.getDuration() > 0) {
+                audioPickerDialog.setMax(mPlayer.getDuration());
+                audioPickerDialog.setMin(-mPlayer.getDuration());
+            }
+            if (PlayerService.sPlayerService != null)
+                audioPickerDialog.updateDelay(
+                    clampAudioDelayForPassthrough(PlayerService.sPlayerService.getAudioDelay()));
+            else
+                audioPickerDialog.updateDelay(clampAudioDelayForPassthrough(
+                    mPreferences.getInt(getString(R.string.save_delay_setting_pref_key), 0)));
+            mPlayerController.hide();
+            break;
+        case DIALOG_AUDIO_SPEED:
+            if (PlayerService.sPlayerService != null)
+                mDialog = new AudioSpeedPickerDialog(this, this, PlayerService.sPlayerService.getAudioSpeed());
+            else
+                mDialog = new AudioSpeedPickerDialog(
+                    this, this, mPreferences.getFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f));
+            AudioSpeedPickerDialog audioSpeedPickerDialog = (AudioSpeedPickerDialog)mDialog;
+            if (PlayerService.sPlayerService != null)
+                audioSpeedPickerDialog.updateSpeed(PlayerService.sPlayerService.getAudioSpeed());
+            else
+                audioSpeedPickerDialog.updateSpeed(
+                    mPreferences.getFloat(getString(R.string.save_audio_speed_setting_pref_key), 1.0f));
+            mPlayerController.hide();
+            break;
+        case DIALOG_ERROR:
+            if (mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_ALLOWED) {
                 mDialog = new AlertDialog.Builder(this)
-                        .setTitle("Incompatible device")
-                        .setMessage("This application runs only on Amazon Kindle")
-                        .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        finish();
-                                    }
-                                })
-                        .setCancelable(false)
-                        .create();
-                break;
-            default:
-                mDialog = null;
-                break;
+                              .setTitle(R.string.player_err_cantplayvideo)
+                              .setMessage(buildErrorMessage(mErrorCode, mErrorQualCode, 0, mErrorMsg))
+                              .setPositiveButton(android.R.string.ok,
+                                                 new DialogInterface.OnClickListener() {
+                                                     public void onClick(DialogInterface dialog, int whichButton) {
+                                                         finish();
+                                                     }
+                                                 })
+                              .setCancelable(false)
+                              .create();
+            }
+            break;
+        case DIALOG_BRIGHTNESS:
+            mDialog = new BrightnessDialog(this);
+            mPlayerController.hide();
+            break;
+        case DIALOG_CODEC_NOT_SUPPORTED:
+            // Show toast instead of plugin download dialog
+            int toastStringId = mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED
+                                    ? R.string.player_err_cantplayvideo
+                                    : R.string.player_err_cantplaysound;
+            Toast.makeText(this, toastStringId, Toast.LENGTH_SHORT).show();
+            if (mErrorCode == IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED) {
+                finish();
+            }
+            break;
+        case DIALOG_WRONG_DEVICE_KINDLE:
+            mDialog = new AlertDialog.Builder(this)
+                          .setTitle("Incompatible device")
+                          .setMessage("This application runs only on Amazon Kindle")
+                          .setPositiveButton(android.R.string.ok,
+                                             new DialogInterface.OnClickListener() {
+                                                 public void onClick(DialogInterface dialog, int whichButton) {
+                                                     finish();
+                                                 }
+                                             })
+                          .setCancelable(false)
+                          .create();
+            break;
+        default:
+            mDialog = null;
+            break;
         }
         if (mDialog != null) {
             mDialog.setOnDismissListener(this);
@@ -3684,21 +4119,25 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (LibAvos.pluginNeedUpdate(this)) {
             log.info("pluginNeedUpdate returns true");
             return new AlertDialog.Builder(this)
-            .setTitle(R.string.plugin_update_required_title)
-            .setMessage(R.string.plugin_update_required_message)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.player_plugin_purchase_google_play_button,  new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=archos+video+plugins")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                        finish(); // probably safer to "quit" AVP now
-                    } catch (ActivityNotFoundException e) {}
-                }
-            })
-            .setCancelable(true)
-            .create();
-        }
-        else {
+                .setTitle(R.string.plugin_update_required_title)
+                .setMessage(R.string.plugin_update_required_message)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(
+                    R.string.player_plugin_purchase_google_play_button,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                startActivity(
+                                    new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=archos+video+plugins"))
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                finish(); // probably safer to "quit" AVP now
+                            } catch (ActivityNotFoundException e) {
+                            }
+                        }
+                    })
+                .setCancelable(true)
+                .create();
+        } else {
             return null;
         }
     }
@@ -3713,9 +4152,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         // this is called when systembar gets implicitly visible
         // when top menu gets visible
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && isTVMode && mSkipButtonContainer != null
-                && mSkipButtonContainer.getVisibility() == View.VISIBLE
-                && !isMenuOrDialogDisplayed()) {
+        if (hasFocus && isTVMode && mSkipButtonContainer != null &&
+            mSkipButtonContainer.getVisibility() == View.VISIBLE && !isMenuOrDialogDisplayed()) {
             mSkipButton.post(new Runnable() {
                 @Override
                 public void run() {
@@ -3732,26 +4170,32 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     @Override
     public void onPermissionGranted() {
-        if(PlayerService.sPlayerService!=null)
+        if (PlayerService.sPlayerService != null)
             postOnPlayerServiceBind();
     }
 
     private final static String SHOW_FORMAT = "%s  -  S%02dE%02d  -  %s";
 
-    public void setVideoInfo(VideoDbInfo info){
+    public void setVideoInfo(VideoDbInfo info) {
         mVideoInfo = info;
-        if(ageOverlay!=null){ageOverlay.bind(info);if(PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.hasEstablishedOutputFor(info))ageOverlay.playbackStarted();}
+        if (ageOverlay != null) {
+            ageOverlay.bind(info);
+            if (PlayerService.sPlayerService != null && PlayerService.sPlayerService.hasEstablishedOutputFor(info))
+                ageOverlay.playbackStarted();
+        }
         int viewMode = VideoEffect.getDefaultMode();
         int viewType = VideoEffect.getDefaultType();
         if (mVideoInfo != null) {
 
-            if (log.isDebugEnabled()) log.debug("setVideoInfo: mVideoInfo.subtitleTrack {}", mVideoInfo.subtitleTrack);
+            if (log.isDebugEnabled())
+                log.debug("setVideoInfo: mVideoInfo.subtitleTrack {}", mVideoInfo.subtitleTrack);
 
             // one of them is already known, don't care and overwrite both
 
             mVideoId = mVideoInfo.id;
             mUri = mVideoInfo.uri;
-            if (log.isDebugEnabled()) log.debug("setVideoInfo mVideoId: {}", mVideoId);
+            if (log.isDebugEnabled())
+                log.debug("setVideoInfo mVideoId: {}", mVideoId);
 
             if (getIntent() != null && mUri != null) {
                 getIntent().setData(mUri);
@@ -3772,7 +4216,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 mMovieOrShowName = mVideoInfo.scraperTitle;
                 if (mMovieOrShowName != null) {
                     if (mVideoInfo.isShow) {
-                        mTitle = String.format(Locale.getDefault(), SHOW_FORMAT, mMovieOrShowName, mVideoInfo.scraperSeasonNr, mVideoInfo.scraperEpisodeNr, mVideoInfo.scraperEpisodeName);
+                        mTitle = String.format(Locale.getDefault(), SHOW_FORMAT, mMovieOrShowName,
+                                               mVideoInfo.scraperSeasonNr, mVideoInfo.scraperEpisodeNr,
+                                               mVideoInfo.scraperEpisodeName);
                     } else {
                         mTitle = mMovieOrShowName;
                     }
@@ -3783,20 +4229,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             }
 
             switch (mVideoInfo.videoStereo) {
-                case 4: // Anaglyph mode
-                    viewMode = VideoEffect.ANAGLYPH_MODE;
-                    break;
-                case 3: // Top bottom mode
-                    viewMode = VideoEffect.TB_MODE;
-                    break;
-                case 2: //SBS Mode
-                case 1: //3D Mode
-                    viewMode = VideoEffect.SBS_MODE;
-                    break;
-                case 0:
-                default: //Normal mode
-                    viewMode = VideoEffect.getDefaultMode();
-                    break;
+            case 4: // Anaglyph mode
+                viewMode = VideoEffect.ANAGLYPH_MODE;
+                break;
+            case 3: // Top bottom mode
+                viewMode = VideoEffect.TB_MODE;
+                break;
+            case 2: //SBS Mode
+            case 1: //3D Mode
+                viewMode = VideoEffect.SBS_MODE;
+                break;
+            case 0:
+            default: //Normal mode
+                viewMode = VideoEffect.getDefaultMode();
+                break;
             }
         }
 
@@ -3809,7 +4255,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (viewMode == VideoEffect.NORMAL_2D_MODE)
             viewType = VideoEffect.EFFECT_NONE;
 
-        if (log.isDebugEnabled()) log.debug("setVideoInfo: setEffect");
+        if (log.isDebugEnabled())
+            log.debug("setVideoInfo: setEffect");
         setEffect(viewType, viewMode);
 
         /*
@@ -3817,43 +4264,63 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
          * we need to com.archos.mediacenter.videoki in 2 strings because of
          * the mighty sed that s/com.archos.mediacenter.video/com.archos.mediacenter.videoki/
          */
-        if (getPackageName().equals("com.archos.mediacenter"+"."+"video"+"ki")) {
+        if (getPackageName().equals("com.archos.mediacenter"
+                                    + "."
+                                    + "video"
+                                    + "ki")) {
             log.info("amazon?");
-            if (Build.BRAND == null || !Build.BRAND.equalsIgnoreCase("a"+"m"+"a"+"z"+"o"+"n")) {
+            if (Build.BRAND == null || !Build.BRAND.equalsIgnoreCase("a"
+                                                                     + "m"
+                                                                     + "a"
+                                                                     + "z"
+                                                                     + "o"
+                                                                     + "n")) {
                 myShowDialog(DIALOG_WRONG_DEVICE_KINDLE);
                 return;
             }
         }
 
         mPlayerController.setVideoTitle(mTitle);
-        if(mProgressView instanceof PreviewPlaybackLoading)((PreviewPlaybackLoading)mProgressView).bind(mVideoInfo,mTitle);
-        if (log.isDebugEnabled()) log.debug("setVideoInfo: mTitle {}, call postVideoInfoAndPrepared", mTitle);
+        if (mProgressView instanceof PreviewPlaybackLoading)
+            ((PreviewPlaybackLoading)mProgressView).bind(mVideoInfo, mTitle);
+        if (log.isDebugEnabled())
+            log.debug("setVideoInfo: mTitle {}, call postVideoInfoAndPrepared", mTitle);
         postVideoInfoAndPrepared();
     }
 
     /**
      * set start state = removing progress + enabling controllers
      */
-    private void  postVideoInfoAndPrepared() {
-        if (log.isDebugEnabled()) log.debug("postVideoInfoAndPrepared mVideoInfo!= null && (PlayerState PREPARED || PLAYING)={}", String.valueOf((PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PREPARED||PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PLAYING) && mVideoInfo != null));
+    private void postVideoInfoAndPrepared() {
+        if (log.isDebugEnabled())
+            log.debug("postVideoInfoAndPrepared mVideoInfo!= null && (PlayerState PREPARED || PLAYING)={}",
+                      String.valueOf((PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PREPARED ||
+                                      PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PLAYING) &&
+                                     mVideoInfo != null));
         // ex onStreamingUriOK
-        if ((PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PREPARED||PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PLAYING) && mVideoInfo != null) {
+        if ((PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PREPARED ||
+             PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PLAYING) &&
+            mVideoInfo != null) {
             if (mThumbnail != null) {
                 mThumbnail.recycle();
                 mThumbnail = null;
             }
             mThumbnailDone = 0;
             mHandler.removeMessages(MSG_PROGRESS_VISIBLE);
-            if(mProgressView instanceof PreviewPlaybackLoading)((PreviewPlaybackLoading)mProgressView).waitForFrame(mRootView);else mProgressView.setVisibility(View.GONE);
+            if (mProgressView instanceof PreviewPlaybackLoading)
+                ((PreviewPlaybackLoading)mProgressView).waitForFrame(mRootView);
+            else
+                mProgressView.setVisibility(View.GONE);
             mPlayerController.setVideoTitleEnabled(true);
             PlayerService.sPlayerService.setAudioFilt();
             mPlayerController.start();
             // Now that the video is loaded, Video info should be avalaible
             if (mInfoMenuItem != null) {
-                mInfoMenuItem.setVisible(mStreamingUri != null&&!(mPreferences.getBoolean("try_new_ui",false)&&isTVMode));
+                mInfoMenuItem.setVisible(mStreamingUri != null &&
+                                         !(mPreferences.getBoolean("try_new_ui", false) && isTVMode));
             }
             // Now that the video is loaded we know if the "set bookmark" item can be enabled or not
-            if(mBookmarkMenuItem!=null) {
+            if (mBookmarkMenuItem != null) {
                 mBookmarkMenuItem.setVisible(canSetBookmark());
             }
         }
@@ -3891,13 +4358,17 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         Intent intent = getIntent();
         mPlayer.setSurfaceController(mSurfaceController);
         mPlayer.setWindow(getWindow());
-        if (log.isDebugEnabled()) log.debug("start: {}", intent);
+        if (log.isDebugEnabled())
+            log.debug("start: {}", intent);
         if (mBufferView != null)
             mBufferView.setText("");
         mHandler.removeMessages(MSG_PROGRESS_VISIBLE);
-        if(!Player.sPlayer.isPlaying()){
-            if(mProgressView instanceof PreviewPlaybackLoading){((PreviewPlaybackLoading)mProgressView).begin();mHandler.sendEmptyMessage(MSG_PROGRESS_VISIBLE);}
-            else mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PROGRESS_VISIBLE), PROGRESS_VISIBLE_DELAY);
+        if (!Player.sPlayer.isPlaying()) {
+            if (mProgressView instanceof PreviewPlaybackLoading) {
+                ((PreviewPlaybackLoading)mProgressView).begin();
+                mHandler.sendEmptyMessage(MSG_PROGRESS_VISIBLE);
+            } else
+                mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PROGRESS_VISIBLE), PROGRESS_VISIBLE_DELAY);
         }
 
         if (mUri == null) {
@@ -3923,11 +4394,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mExtraMap = new HashMap<String, String>();
             mExtraMap.put("extra_name", clingName);
         }
-
     }
 
     private void stop() {
-        if (log.isDebugEnabled()) log.debug("stop");
+        if (log.isDebugEnabled())
+            log.debug("stop");
 
         mPlayer.pause(PlayerController.STATE_OTHER);
 
@@ -3944,19 +4415,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults){
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mPermissionChecker.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     private boolean canSetBookmark() {
-        return false;  //06/2015: no more bookmark feature!
+        return false; //06/2015: no more bookmark feature!
         //return mPlayer.canSeekBackward() && mPlayer.canSeekForward();
     }
 
     private boolean fileExists() {
         VideoMetadata metadata = mPlayer.getVideoMetadata();
-        if (metadata == null) return false;
+        if (metadata == null)
+            return false;
 
         File file = metadata.getFile();
         return file != null && file.exists();
@@ -3993,9 +4465,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             /* Avos stream errors */
             VideoMetadata.VideoTrack video = vMetadata.getVideoTrack();
             VideoMetadata.AudioTrack audio = null;
-            if (mVideoInfo != null &&
-                    mVideoInfo.audioTrack >= 0 &&
-                    mVideoInfo.audioTrack < vMetadata.getAudioTrackNb()) {
+            if (mVideoInfo != null && mVideoInfo.audioTrack >= 0 &&
+                mVideoInfo.audioTrack < vMetadata.getAudioTrackNb()) {
                 audio = vMetadata.getAudioTrack(mVideoInfo.audioTrack);
             } else if (vMetadata.getAudioTrackNb() > 0) {
                 audio = vMetadata.getAudioTrack(0);
@@ -4005,150 +4476,163 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             String errorDesc = msg != null ? msg : mPlayer.getErrorDesc();
 
             switch (errorCode) {
-                case IMediaPlayer.MEDIA_ERROR_VE_TOO_BIG_FOR_STREAM:
-                    if (video != null) {
-                        msgBuilder.append(r.getText(R.string.player_err_sizetoobig)).append("\n(")
-                        .append(width).append("x").append(height).append(")\n");
-                    }
-                    break;
-                case IMediaPlayer.MEDIA_ERROR_VE_TOO_BIG_FOR_CODEC:
-                    if (video != null) {
-                        msgBuilder.append(r.getText(R.string.player_err_sizetoobig)).append(" ")
+            case IMediaPlayer.MEDIA_ERROR_VE_TOO_BIG_FOR_STREAM:
+                if (video != null) {
+                    msgBuilder.append(r.getText(R.string.player_err_sizetoobig))
+                        .append("\n(")
+                        .append(width)
+                        .append("x")
+                        .append(height)
+                        .append(")\n");
+                }
+                break;
+            case IMediaPlayer.MEDIA_ERROR_VE_TOO_BIG_FOR_CODEC:
+                if (video != null) {
+                    msgBuilder.append(r.getText(R.string.player_err_sizetoobig))
+                        .append(" ")
                         .append(r.getText(R.string.player_err_forcodec))
-                        .append(" \"").append(video.format).append("\"");
-                        if (width > 0 && height > 0) {
-                            msgBuilder.append(" (")
-                            .append(width).append("x").append(height).append(")");
-                        }
+                        .append(" \"")
+                        .append(video.format)
+                        .append("\"");
+                    if (width > 0 && height > 0) {
+                        msgBuilder.append(" (").append(width).append("x").append(height).append(")");
+                    }
+                } else {
+                    msgBuilder.append(r.getText(R.string.player_err_unknown));
+                }
+                break;
+            case IMediaPlayer.MEDIA_ERROR_VE_NOT_INTERLEAVED:
+                msgBuilder.append(r.getText(R.string.player_err_notinterleaved));
+                break;
+            case IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_ALLOWED: {
+                int audioIdx = 0;
+                boolean hasVideo = video != null;
+                boolean hasAudio = false;
+
+                for (audioIdx = 0; audioIdx < vMetadata.getAudioTrackNb(); ++audioIdx) {
+                    hasAudio = true;
+                    audio = vMetadata.getAudioTrack(audioIdx);
+                    break;
+                }
+                if (hasVideo && hasAudio) {
+                    msgBuilder.append(getString(R.string.player_plugin_video_audio_msg, video.format, audio.format))
+                        .append("\n");
+                } else if (hasVideo) {
+                    msgBuilder.append(getString(R.string.player_plugin_video_msg, video.format)).append("\n");
+                } else if (hasAudio) {
+                    msgBuilder.append(getString(R.string.player_plugin_audio_msg, audio.format)).append("\n");
+                }
+                break;
+            }
+            case IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED:
+                switch (errorQualCode) {
+                case IMediaPlayer.MEDIA_ERROR_VEQ_SEE_DESCRIPTION:
+                    if (errorDesc != null && !errorDesc.equals("null")) {
+                        msgBuilder.append(errorDesc);
                     } else {
                         msgBuilder.append(r.getText(R.string.player_err_unknown));
                     }
                     break;
-                case IMediaPlayer.MEDIA_ERROR_VE_NOT_INTERLEAVED:
-                    msgBuilder.append(r.getText(R.string.player_err_notinterleaved));
-                    break;
-                case IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_ALLOWED: {
-                    int audioIdx = 0;
-                    boolean hasVideo = video != null;
-                    boolean hasAudio = false;
-
-                    for (audioIdx = 0; audioIdx < vMetadata.getAudioTrackNb(); ++audioIdx) {
-                            hasAudio = true;
-                            audio = vMetadata.getAudioTrack(audioIdx);
-                            break;
-                    }
-                    if (hasVideo && hasAudio) {
-                        msgBuilder.append(getString(R.string.player_plugin_video_audio_msg, video.format, audio.format))
-                        .append("\n");
-                    } else if (hasVideo) {
-                        msgBuilder.append(getString(R.string.player_plugin_video_msg, video.format))
-                        .append("\n");
-                    } else if (hasAudio) {
-                        msgBuilder.append(getString(R.string.player_plugin_audio_msg, audio.format))
-                        .append("\n");
-                    }
-                    break;
-                }
-                case IMediaPlayer.MEDIA_ERROR_VE_VIDEO_NOT_SUPPORTED:
-                    switch (errorQualCode) {
-                        case IMediaPlayer.MEDIA_ERROR_VEQ_SEE_DESCRIPTION:
-                            if (errorDesc != null && !errorDesc.equals("null")) {
-                                msgBuilder.append(errorDesc);
-                            } else {
-                                msgBuilder.append(r.getText(R.string.player_err_unknown));
-                            }
-                            break;
-                        default:
-                            if (video != null) {
-                                msgBuilder.append(r.getText(R.string.player_err_codec));
-                                appendCodec(msgBuilder, video.format);
-                                msgBuilder.append(r.getText(R.string.player_err_isnotsupported));
-                            } else {
-                                msgBuilder.append(r.getText(R.string.player_err_unknown));
-                            }
-                            break;
-                    }
-                    break;
-
-                case IMediaPlayer.MEDIA_ERROR_VE_AUDIO_NOT_ALLOWED:
-                case IMediaPlayer.MEDIA_ERROR_VE_AUDIO_NOT_SUPPORTED:
-                    if (audio != null) {
+                default:
+                    if (video != null) {
                         msgBuilder.append(r.getText(R.string.player_err_codec));
-                        appendCodec(msgBuilder, audio.format);
+                        appendCodec(msgBuilder, video.format);
                         msgBuilder.append(r.getText(R.string.player_err_isnotsupported));
                     } else {
                         msgBuilder.append(r.getText(R.string.player_err_unknown));
                     }
                     break;
+                }
+                break;
 
-                case IMediaPlayer.MEDIA_ERROR_VE_CRYPTED:
-                    msgBuilder.append(r.getText(R.string.player_err_fileNoLicense));
-                    break;
+            case IMediaPlayer.MEDIA_ERROR_VE_AUDIO_NOT_ALLOWED:
+            case IMediaPlayer.MEDIA_ERROR_VE_AUDIO_NOT_SUPPORTED:
+                if (audio != null) {
+                    msgBuilder.append(r.getText(R.string.player_err_codec));
+                    appendCodec(msgBuilder, audio.format);
+                    msgBuilder.append(r.getText(R.string.player_err_isnotsupported));
+                } else {
+                    msgBuilder.append(r.getText(R.string.player_err_unknown));
+                }
+                break;
 
-                case IMediaPlayer.MEDIA_ERROR_VE_FILE_ERROR:
-                    if(Player.sPlayer.checkCurrentFileExists()==0)
-                        msgBuilder.append(r.getText(R.string.player_err_file));
-                    else
-                        msgBuilder.append(r.getText(R.string.player_err_fileerror));
-                    break;
+            case IMediaPlayer.MEDIA_ERROR_VE_CRYPTED:
+                msgBuilder.append(r.getText(R.string.player_err_fileNoLicense));
+                break;
 
-                case IMediaPlayer.MEDIA_ERROR_VE_CONNECTION_ERROR:
-                    msgBuilder.append(r.getText(R.string.player_err_connection_failed));
-                    break;
-                case IMediaPlayer.MEDIA_ERROR_VE_ERROR:
-                default:
-                    switch (errorQualCode) {
-                        case IMediaPlayer.MEDIA_ERROR_VEQ_SEE_DESCRIPTION:
-                            if (errorDesc != null && !errorDesc.equals("null")) {
-                                msgBuilder.append(r.getText(R.string.player_err_video_decoder_error))
-                                .append(" \"").append(errorDesc).append("\"");
-                            } else {
-                                msgBuilder.append(r.getText(R.string.player_err_unknown));
-                            }
-                            break;
-                        case IMediaPlayer.MEDIA_ERROR_VEQ_MPG4_UNSUPPORTED:
-                            msgBuilder.append(r.getText(R.string.player_err_qpel_and_gmc)).append(" ")
-                            .append(r.getText(R.string.player_err_isnotsupported));
-                            break;
-                        case IMediaPlayer.MEDIA_ERROR_VEQ_INTERLACED_NOT_SUPPORTED:
-                            msgBuilder.append(r.getText(R.string.player_err_interlaced)).append(" ")
-                            .append(r.getText(R.string.player_err_isnotsupported));
-                            break;
-                        case IMediaPlayer.MEDIA_ERROR_VEQ_PROFILE_AND_LEVEL_UNSUPPORTED:
-                            if (video != null) {
-                                msgBuilder.append(r.getText(R.string.player_err_codec))
-                                .append(" \"").append(video.format).append("\" ")
-                                .append(r.getText(R.string.player_err_profile_and_level)).append(" ");
+            case IMediaPlayer.MEDIA_ERROR_VE_FILE_ERROR:
+                if (Player.sPlayer.checkCurrentFileExists() == 0)
+                    msgBuilder.append(r.getText(R.string.player_err_file));
+                else
+                    msgBuilder.append(r.getText(R.string.player_err_fileerror));
+                break;
 
-                                String profileName = VideoMetadata.getH264ProfileName(video.profile);
-                                if (profileName != null) {
-                                    msgBuilder.append("(")
-                                    .append(video.profile);
-                                    if (video.level != 0) {
-                                        msgBuilder.append(" ").append(video.level / (double) 10);
-                                    }
-                                    msgBuilder.append(") ");
-                                }
-                                msgBuilder.append(r.getText(R.string.player_err_isnotsupported));
-                            } else {
-                                msgBuilder.append(r.getText(R.string.player_err_unknown));
-                            }
-                            break;
-                        case IMediaPlayer.MEDIA_ERROR_VEQ_AUDIO_PROFILE_AND_LEVEL_UNSUPPORTED:
-                            if (audio != null) {
-                                msgBuilder.append(r.getText(R.string.player_err_codec))
-                                .append(" \"").append(audio.format).append("\" ")
-                                .append(r.getText(R.string.player_err_profile_and_level)).append(" ")
-                                .append(r.getText(R.string.player_err_isnotsupported));
-                            } else {
-                                msgBuilder.append(r.getText(R.string.player_err_unknown));
-                            }
-                            break;
-                        default:
-                            msgBuilder.append(r.getText(R.string.player_err_unknown));
-                            break;
+            case IMediaPlayer.MEDIA_ERROR_VE_CONNECTION_ERROR:
+                msgBuilder.append(r.getText(R.string.player_err_connection_failed));
+                break;
+            case IMediaPlayer.MEDIA_ERROR_VE_ERROR:
+            default:
+                switch (errorQualCode) {
+                case IMediaPlayer.MEDIA_ERROR_VEQ_SEE_DESCRIPTION:
+                    if (errorDesc != null && !errorDesc.equals("null")) {
+                        msgBuilder.append(r.getText(R.string.player_err_video_decoder_error))
+                            .append(" \"")
+                            .append(errorDesc)
+                            .append("\"");
+                    } else {
+                        msgBuilder.append(r.getText(R.string.player_err_unknown));
                     }
                     break;
+                case IMediaPlayer.MEDIA_ERROR_VEQ_MPG4_UNSUPPORTED:
+                    msgBuilder.append(r.getText(R.string.player_err_qpel_and_gmc))
+                        .append(" ")
+                        .append(r.getText(R.string.player_err_isnotsupported));
+                    break;
+                case IMediaPlayer.MEDIA_ERROR_VEQ_INTERLACED_NOT_SUPPORTED:
+                    msgBuilder.append(r.getText(R.string.player_err_interlaced))
+                        .append(" ")
+                        .append(r.getText(R.string.player_err_isnotsupported));
+                    break;
+                case IMediaPlayer.MEDIA_ERROR_VEQ_PROFILE_AND_LEVEL_UNSUPPORTED:
+                    if (video != null) {
+                        msgBuilder.append(r.getText(R.string.player_err_codec))
+                            .append(" \"")
+                            .append(video.format)
+                            .append("\" ")
+                            .append(r.getText(R.string.player_err_profile_and_level))
+                            .append(" ");
+
+                        String profileName = VideoMetadata.getH264ProfileName(video.profile);
+                        if (profileName != null) {
+                            msgBuilder.append("(").append(video.profile);
+                            if (video.level != 0) {
+                                msgBuilder.append(" ").append(video.level / (double)10);
+                            }
+                            msgBuilder.append(") ");
+                        }
+                        msgBuilder.append(r.getText(R.string.player_err_isnotsupported));
+                    } else {
+                        msgBuilder.append(r.getText(R.string.player_err_unknown));
+                    }
+                    break;
+                case IMediaPlayer.MEDIA_ERROR_VEQ_AUDIO_PROFILE_AND_LEVEL_UNSUPPORTED:
+                    if (audio != null) {
+                        msgBuilder.append(r.getText(R.string.player_err_codec))
+                            .append(" \"")
+                            .append(audio.format)
+                            .append("\" ")
+                            .append(r.getText(R.string.player_err_profile_and_level))
+                            .append(" ")
+                            .append(r.getText(R.string.player_err_isnotsupported));
+                    } else {
+                        msgBuilder.append(r.getText(R.string.player_err_unknown));
+                    }
+                    break;
+                default:
+                    msgBuilder.append(r.getText(R.string.player_err_unknown));
+                    break;
+                }
+                break;
             }
         }
         return msgBuilder.toString();
@@ -4167,22 +4651,26 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             mPlayer.setSubtitleRatio(mVideoInfo.subtitleRatio);
             // Save the subtitle delay and ratio to the database for persistence across resume
             persistVideoInfo();
-            if (log.isDebugEnabled()) log.debug("onDelayChange: saved subtitleDelay={} subtitleRatio={} to database", mVideoInfo.subtitleDelay, mVideoInfo.subtitleRatio);
+            if (log.isDebugEnabled())
+                log.debug("onDelayChange: saved subtitleDelay={} subtitleRatio={} to database",
+                          mVideoInfo.subtitleDelay, mVideoInfo.subtitleRatio);
         }
     }
 
     /* AudioDelayPickerDialog.OnAudioDelayChangeListener */
     public void onAudioDelayChange(AudioDelayPickerAbstract delayPicker, int delay) {
-       PlayerService.sPlayerService.setAudioDelay(clampAudioDelayForPassthrough(delay), false);
+        PlayerService.sPlayerService.setAudioDelay(clampAudioDelayForPassthrough(delay), false);
     }
 
     /* AudioSpeedPickerDialog.OnAudioSpeedChangeListener */
     public void onAudioSpeedChange(AudioSpeedPickerAbstract speedPicker, float speed) {
         if (VideoPreferencesCommon.isAudioSpeedEnabled(mPreferences)) {
-            if (log.isDebugEnabled()) log.debug("onAudioSpeedChange: setAudioSpeed {}", speed);
-             PlayerService.sPlayerService.setAudioSpeed(speed, false);
+            if (log.isDebugEnabled())
+                log.debug("onAudioSpeedChange: setAudioSpeed {}", speed);
+            PlayerService.sPlayerService.setAudioSpeed(speed, false);
         } else {
-            if (log.isDebugEnabled()) log.debug("onAudioSpeedChange: DO NOT setAudioSpeed coz audio speed disabled");
+            if (log.isDebugEnabled())
+                log.debug("onAudioSpeedChange: DO NOT setAudioSpeed coz audio speed disabled");
         }
     }
 
@@ -4190,7 +4678,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         // mThumbnailDone is the state of the thread: 0: not started yet, 1: started, 2: done
         if (mThumbnailDone == 0) {
-            if (log.isDebugEnabled()) log.debug("XXT", "starting new Thread");
+            if (log.isDebugEnabled())
+                log.debug("XXT", "starting new Thread");
             mThumbnailDone = 1;
             final ContentResolver cr = getContentResolver();
             final String posterPath = mPosterPath;
@@ -4202,10 +4691,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     Bitmap result = null;
                     boolean foundPoster = false;
                     if (posterPath != null) {
-                        Bitmap bm = com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(posterPath, 150, 225);
+                        Bitmap bm =
+                            com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(posterPath, 150, 225);
                         if (bm != null) {
                             float scaleFactor = (float)100 / (float)bm.getWidth();
-                            result = Bitmap.createScaledBitmap(bm, (int)(scaleFactor * (float)bm.getWidth()), (int)(scaleFactor * (float)bm.getHeight()), true);
+                            result = Bitmap.createScaledBitmap(bm, (int)(scaleFactor * (float)bm.getWidth()),
+                                                               (int)(scaleFactor * (float)bm.getHeight()), true);
                             // Free the original bitmap ASAP if we made a copy (Caution!!! createScaledBitmap() doesn't always make a copy)
                             if (result != bm) {
                                 bm.recycle();
@@ -4214,10 +4705,12 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                         }
                     }
                     if (!foundPoster && videoId >= 0) {
-                        Bitmap bm = VideoStore.Video.Thumbnails.getThumbnail(cr, videoId, VideoStore.Video.Thumbnails.MINI_KIND, null);
+                        Bitmap bm = VideoStore.Video.Thumbnails.getThumbnail(
+                            cr, videoId, VideoStore.Video.Thumbnails.MINI_KIND, null);
                         if (bm != null) {
                             float scaleFactor = (float)160 / (float)bm.getWidth();
-                            result = Bitmap.createScaledBitmap(bm, (int)(scaleFactor * (float)bm.getWidth()), (int)(scaleFactor * (float)bm.getHeight()), true);
+                            result = Bitmap.createScaledBitmap(bm, (int)(scaleFactor * (float)bm.getWidth()),
+                                                               (int)(scaleFactor * (float)bm.getHeight()), true);
                             // Free the original bitmap ASAP if we made a copy (Caution!!! createScaledBitmap() doesn't always make a copy)
                             if (result != bm) {
                                 bm.recycle();
@@ -4265,33 +4758,45 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     int positionToSubtitleTrack(int position, int nbTracks) { // nbTracks does not count none track
         // subtitleTracks are between 0<=track<=nbTrack and none track is nbTrack
-        if (nbTracks <= 0) return 0; // to avoid division by 0
-        if (position <= 0) return nbTracks; // position 0 is none track thus return nbTracks
-        else return (position - 1) % (nbTracks + 1);
+        if (nbTracks <= 0)
+            return 0; // to avoid division by 0
+        if (position <= 0)
+            return nbTracks; // position 0 is none track thus return nbTracks
+        else
+            return (position - 1) % (nbTracks + 1);
     }
 
     int positionToPlayerSubtitleTrack(int position, int nbTracks) { // nbTracks does not count none track
-        if (nbTracks == 0) return -1; // to avoid division by 0
-        if (position == 0) return -1; // position 0 is none track thus return -1 for the player
-        else return (position - 1) % nbTracks;
+        if (nbTracks == 0)
+            return -1; // to avoid division by 0
+        if (position == 0)
+            return -1; // position 0 is none track thus return -1 for the player
+        else
+            return (position - 1) % nbTracks;
     }
 
     int subtitleTrackToPosition(int subtitleTrack, int nbTracks) { // nbTracks does not count none track
-        if (nbTracks == 0) return 0;
+        if (nbTracks == 0)
+            return 0;
         // position is between 0<=position<=nbTrack with 0 is none track
-        if (nbTracks >= 0) return (subtitleTrack + 1) % (nbTracks + 1);
-        else return 0;
+        if (nbTracks >= 0)
+            return (subtitleTrack + 1) % (nbTracks + 1);
+        else
+            return 0;
     }
 
     int nextSubtitleTrack(int subtitleTrack, int nbTracks) { // nbTracks does not count none track
         // subtitleTracks are between 0<=track<=nbTrack-1 and none track is -1
         // none track is covered in nextSubtitleTrack
-        if (subtitleTrack == nbTracks) return -1; // none track
-        else return (subtitleTrack + 1) % nbTracks;
+        if (subtitleTrack == nbTracks)
+            return -1; // none track
+        else
+            return (subtitleTrack + 1) % nbTracks;
     }
 
     int nextVideoInfoSubtitleTrack(int subtitleTrack, int nbTracks) { // nbTracks does not count none track
-        if (nbTracks == 0) return 0; // to avoid division by 0
+        if (nbTracks == 0)
+            return 0; // to avoid division by 0
         // subtitleTracks are between 0<=track<=nbTrack and none track is nbTrack
         // none track is covered in nextSubtitleTrack
         return (subtitleTrack == nbTracks - 1) ? nbTracks : (subtitleTrack + 1) % (nbTracks + 1);
@@ -4312,20 +4817,28 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             int newSubtitleTrack = nextVideoInfoSubtitleTrack(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles);
             int newSubtitlePosition = subtitleTrackToPosition(newSubtitleTrack, mVideoInfo.nbSubtitles);
             int playerPosition = positionToPlayerSubtitleTrack(newSubtitlePosition, mVideoInfo.nbSubtitles);
-            if (log.isDebugEnabled()) log.debug("switchSubtitleTrack: {}/{} -> (track,position)=({},{}), playerPosition={}", mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles,
-                    newSubtitleTrack, newSubtitlePosition, playerPosition);
+            if (log.isDebugEnabled())
+                log.debug("switchSubtitleTrack: {}/{} -> (track,position)=({},{}), playerPosition={}",
+                          mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles, newSubtitleTrack, newSubtitlePosition,
+                          playerPosition);
             if (mPlayer.setSubtitleTrack(playerPosition)) {
                 mVideoInfo.subtitleTrack = newSubtitleTrack;
-                mSubtitleInfoController.setTrack(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles)); // +1 since none track is at position 0, for UI only
+                mSubtitleInfoController.setTrack(subtitleTrackToPosition(
+                    mVideoInfo.subtitleTrack,
+                    mVideoInfo.nbSubtitles));                  // +1 since none track is at position 0, for UI only
                 if (mSubtitleInfoController.getTrack() == 0) { // 0 is nonePosition
-                    if (log.isDebugEnabled()) log.debug("switchSubtitleTrack: disableSubtitleDelayTVMenuItem(true) because nonePosition");
+                    if (log.isDebugEnabled())
+                        log.debug("switchSubtitleTrack: disableSubtitleDelayTVMenuItem(true) because nonePosition");
                     disableSubtitleDelayTVMenuItem(true);
                 }
                 refreshSubtitleTVMenu();
-                CharSequence subTrackName = mSubtitleInfoController.getTrackNameAt(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
-                if (log.isDebugEnabled()) log.debug("switchSubtitleTrack: changed track={} -> {}", mVideoInfo.subtitleTrack, subTrackName);
+                CharSequence subTrackName = mSubtitleInfoController.getTrackNameAt(
+                    subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
+                if (log.isDebugEnabled())
+                    log.debug("switchSubtitleTrack: changed track={} -> {}", mVideoInfo.subtitleTrack, subTrackName);
                 setSubtitleVpos("switchSubtitleTrack");
-                mPlayerController.updateToast(getResources().getText(R.string.player_subtitle_track_toast) + " " + subTrackName);
+                mPlayerController.updateToast(getResources().getText(R.string.player_subtitle_track_toast) + " " +
+                                              subTrackName);
             }
         }
         log.info("switchSubtitleTrack: " + mVideoInfo.subtitleTrack);
@@ -4334,12 +4847,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     public void switchAudioTrack() {
         if (mAudioInfoController.getTrackCount() > 1) {
             int newAudioTrack = (mVideoInfo.audioTrack + 1) % mAudioInfoController.getTrackCount();
-            if (log.isDebugEnabled()) log.debug("switchAudioTrack: circular increment from {} to  {}", mVideoInfo.audioTrack, newAudioTrack);
+            if (log.isDebugEnabled())
+                log.debug("switchAudioTrack: circular increment from {} to  {}", mVideoInfo.audioTrack, newAudioTrack);
             if (setPlayerAudioTrack(newAudioTrack)) {
                 mVideoInfo.audioTrack = newAudioTrack;
                 mAudioInfoController.setTrack(mVideoInfo.audioTrack);
                 mPlayerController.updateToast(getResources().getText(R.string.player_audio_track_toast) + " " +
-                        mAudioInfoController.getTrackNameAt(mVideoInfo.audioTrack));
+                                              mAudioInfoController.getTrackNameAt(mVideoInfo.audioTrack));
             }
         }
     }
@@ -4355,7 +4869,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     /** The selected subtitle track, or null for "None"/unselected/out of range. */
     private SubtitleTrack currentSubtitleTrack() {
         if (mPlayer == null || mPlayer.getVideoMetadata() == null || mVideoInfo == null ||
-                mVideoInfo.subtitleTrack < 0 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles) {
+            mVideoInfo.subtitleTrack < 0 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles) {
             return null;
         }
         return mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
@@ -4374,29 +4888,35 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     public boolean isCurrentSubtrackNone() {
         if (mPlayer == null || mPlayer.getVideoMetadata() == null || mVideoInfo == null ||
-                mVideoInfo.subtitleTrack == -1) {
+            mVideoInfo.subtitleTrack == -1) {
             return false;
         }
         return mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles;
     }
 
     private void setSubtitleVpos(String caller) {
-        setSubtitleVpos(PreferenceManager.getDefaultSharedPreferences(PlayerActivity.this).getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos), caller);
+        setSubtitleVpos(PreferenceManager.getDefaultSharedPreferences(PlayerActivity.this)
+                            .getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos),
+                        caller);
     }
 
     private void setSubtitleVpos(int vpos, String caller) {
         // Sync first: this runs on track selection before updateSubtitleLayoutMode(), and the
         // manager must already know the new track's kind when it applies the position.
         syncSubtitleKind();
-        if (mVideoInfo == null || mVideoInfo.subtitleTrack == -1 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles) return;
-        if (log.isDebugEnabled()) log.debug("{}: set vpos to {}, subtitleTrack={}, kind={}", caller, vpos, mVideoInfo.subtitleTrack, mSubtitleManager.getSubtitleKind());
+        if (mVideoInfo == null || mVideoInfo.subtitleTrack == -1 || mVideoInfo.subtitleTrack >= mVideoInfo.nbSubtitles)
+            return;
+        if (log.isDebugEnabled())
+            log.debug("{}: set vpos to {}, subtitleTrack={}, kind={}", caller, vpos, mVideoInfo.subtitleTrack,
+                      mSubtitleManager.getSubtitleKind());
         // Always hand over the user's value: for bitmap tracks the manager applies offset 0 by
         // itself and keeps the saved value intact (the old code passed 0 and lost it).
         mSubtitleManager.setVerticalPosition(vpos);
     }
 
     private void disableSubtitleDelayTVMenuItem(boolean disable) {
-        if (log.isDebugEnabled()) log.debug("disableSubtitleDelayTVMenuItem: {}", disable);
+        if (log.isDebugEnabled())
+            log.debug("disableSubtitleDelayTVMenuItem: {}", disable);
         mSubtitleInfoController.enableSettings(SUBTITLE_MENU_DELAY, !disable, disable);
         if (mSubtitleDelayMenuItem != null) {
             mSubtitleDelayMenuItem.setDisabled(disable);
@@ -4405,13 +4925,14 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
     /* TrackInfoAdapter.OnTrackInfoListener */
     public boolean onTrackSelected(TrackInfoController trackInfoController, int position, CharSequence name,
-            CharSequence summary) {
+                                   CharSequence summary) {
         boolean ret = false;
         if (mPlayer.isBusy())
             return false;
         log.info("onTrackSelected(" + position + "): " + name);
         if (Objects.equals(trackInfoController, mAudioInfoController)) {
-            if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, mVideoInfo.audioTrack={}", position, mVideoInfo.audioTrack);
+            if (log.isDebugEnabled())
+                log.debug("onTrackSelected: position={}, mVideoInfo.audioTrack={}", position, mVideoInfo.audioTrack);
             AudioTrack at = mPlayer.getVideoMetadata().getAudioTrack(position);
             if (at != null && at.supported) {
                 ret = setPlayerAudioTrack(position);
@@ -4419,32 +4940,43 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     mVideoInfo.audioTrack = position;
                     // Save the audio track selection to the database for persistence across resume
                     persistVideoInfo();
-                    if (log.isDebugEnabled()) log.debug("onTrackSelected: saved audioTrack {} to database", mVideoInfo.audioTrack);
+                    if (log.isDebugEnabled())
+                        log.debug("onTrackSelected: saved audioTrack {} to database", mVideoInfo.audioTrack);
                 }
-            } else if (at == null || !at.supported){
+            } else if (at == null || !at.supported) {
                 mErrorMsg = (at != null) ? at.format : "";
                 myShowDialog(DIALOG_CODEC_NOT_SUPPORTED);
             }
         } else if (Objects.equals(trackInfoController, mSubtitleInfoController)) {
-            if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, mVideoInfo.subtitleTrack={}, mVideoInfo.nbSubtitles={}, subtitleTrackToPosition={}", position, mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles, subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onTrackSelected: position={}, mVideoInfo.subtitleTrack={}, mVideoInfo.nbSubtitles={}, subtitleTrackToPosition={}",
+                    position, mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles,
+                    subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
             if (position != subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles)) {
-                if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, old mVideoInfo.subtitleTrack={}", position, mVideoInfo.subtitleTrack);
+                if (log.isDebugEnabled())
+                    log.debug("onTrackSelected: position={}, old mVideoInfo.subtitleTrack={}", position,
+                              mVideoInfo.subtitleTrack);
                 ret = mPlayer.setSubtitleTrack(positionToPlayerSubtitleTrack(position, mVideoInfo.nbSubtitles));
                 if (ret) {
                     mVideoInfo.subtitleTrack = positionToSubtitleTrack(position, mVideoInfo.nbSubtitles);
-                    if (log.isDebugEnabled()) log.debug("onTrackSelected: -> mVideoInfo.subtitleTrack={}", mVideoInfo.subtitleTrack);
+                    if (log.isDebugEnabled())
+                        log.debug("onTrackSelected: -> mVideoInfo.subtitleTrack={}", mVideoInfo.subtitleTrack);
                     // Extract and save the subtitle language for track validation on re-enumeration
                     if (mVideoInfo.subtitleTrack >= 0) {
                         SubtitleTrack track = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
                         if (track != null) {
                             String language = null;
                             if (track.isExternal) {
-                                language = getSubLanguageFromSubPathAndVideoPath(getApplicationContext(), track.path, mUri.toString());
+                                language = getSubLanguageFromSubPathAndVideoPath(getApplicationContext(), track.path,
+                                                                                 mUri.toString());
                             } else {
                                 language = ISO639codes.getLanguageNameForLetterCode(track.language);
                             }
                             mVideoInfo.subtitleLanguage = extractLanguageCode(language).toLowerCase(Locale.ROOT);
-                            if (log.isDebugEnabled()) log.debug("onTrackSelected: saved subtitleLanguage={} for track {}", mVideoInfo.subtitleLanguage, mVideoInfo.subtitleTrack);
+                            if (log.isDebugEnabled())
+                                log.debug("onTrackSelected: saved subtitleLanguage={} for track {}",
+                                          mVideoInfo.subtitleLanguage, mVideoInfo.subtitleTrack);
                         }
                     } else {
                         mVideoInfo.subtitleLanguage = null;
@@ -4452,21 +4984,33 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     setSubtitleVpos("onTrackSelected");
                     // Save the subtitle track selection to the database for persistence across resume
                     persistVideoInfo();
-                    if (log.isDebugEnabled()) log.debug("onTrackSelected: saved subtitleTrack {} to database", mVideoInfo.subtitleTrack);
+                    if (log.isDebugEnabled())
+                        log.debug("onTrackSelected: saved subtitleTrack {} to database", mVideoInfo.subtitleTrack);
                     updateSubtitleLayoutMode();
                 } else {
-                    if (log.isDebugEnabled()) log.debug("onTrackSelected: player failed to get to subtitletrack {}", positionToSubtitleTrack(position, mVideoInfo.nbSubtitles));
+                    if (log.isDebugEnabled())
+                        log.debug("onTrackSelected: player failed to get to subtitletrack {}",
+                                  positionToSubtitleTrack(position, mVideoInfo.nbSubtitles));
                 }
                 if (mVideoInfo.subtitleTrack >= 0) {
-                    String trackName = mSubtitleInfoController.getTrackNameAt(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles)).toString();
+                    String trackName =
+                        mSubtitleInfoController
+                            .getTrackNameAt(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles))
+                            .toString();
                     disableSubtitleDelayTVMenuItem(position == 0);
-                    if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, mSubtitleInfoController.getTrackNameAt({}) mVideoInfo.subtitleTrack={}", position, trackName, mVideoInfo.subtitleTrack);
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "onTrackSelected: position={}, mSubtitleInfoController.getTrackNameAt({}) mVideoInfo.subtitleTrack={}",
+                            position, trackName, mVideoInfo.subtitleTrack);
                 } else {
-                    if (log.isDebugEnabled()) log.debug("onTrackSelected: position={}, None mVideoInfo.subtitleTrack={}", position, mVideoInfo.subtitleTrack);
+                    if (log.isDebugEnabled())
+                        log.debug("onTrackSelected: position={}, None mVideoInfo.subtitleTrack={}", position,
+                                  mVideoInfo.subtitleTrack);
                 }
             }
         }
-        if(ret)supersedeRestoredTitleChoice();
+        if (ret)
+            supersedeRestoredTitleChoice();
         return ret;
     }
 
@@ -4476,42 +5020,55 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             return false;
         if (trackInfoController == mSubtitleInfoController) {
             switch (key) {
-                case SUBTITLE_MENU_DELAY:
-                    myShowDialog(DIALOG_SUBTITLE_DELAY);
-                    break;
-                case SUBTITLE_MENU_SETTINGS:
-                    myShowDialog(DIALOG_SUBTITLE_SETTINGS);
-                    break;
-                case SUBTITLE_MENU_DOWNLOAD:
-                    downloadSubtitles();
-                    break;
+            case SUBTITLE_MENU_DELAY:
+                myShowDialog(DIALOG_SUBTITLE_DELAY);
+                break;
+            case SUBTITLE_MENU_SETTINGS:
+                myShowDialog(DIALOG_SUBTITLE_SETTINGS);
+                break;
+            case SUBTITLE_MENU_DOWNLOAD:
+                downloadSubtitles();
+                break;
             }
         }
         return true;
     }
 
     private void onSubtitleResult(Intent data) {
-        if (log.isDebugEnabled()) log.debug("Get result from SubtitlesDownloaderActivity/SubtitlesWizardActivity");
-        if(mPlayer==null)return;
-        previewPendingSubtitlePath=data==null?null:data.getStringExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH);
-        if(previewPendingSubtitlePath!=null){
-            String requested=previewPendingSubtitlePath;previewPendingSubtitlePath=null;
-            if(applyPreviewSubtitle(requested,mPlayer.getVideoMetadata()))return;
-            previewPendingSubtitlePath=requested;
+        if (log.isDebugEnabled())
+            log.debug("Get result from SubtitlesDownloaderActivity/SubtitlesWizardActivity");
+        if (mPlayer == null)
+            return;
+        previewPendingSubtitlePath =
+            data == null
+                ? null
+                : data.getStringExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.SELECTED_PATH);
+        if (previewPendingSubtitlePath != null) {
+            String requested = previewPendingSubtitlePath;
+            previewPendingSubtitlePath = null;
+            if (applyPreviewSubtitle(requested, mPlayer.getVideoMetadata()))
+                return;
+            previewPendingSubtitlePath = requested;
         }
         mPlayer.checkSubtitles();
     }
 
     /** Explicit chooser action, routed through the existing user track-selection/persistence path. */
-    private boolean applyPreviewSubtitle(String path,VideoMetadata metadata){
-        if(path==null||metadata==null||mVideoInfo==null||mSubtitleInfoController==null)return false;
-        for(int i=0;i<metadata.getSubtitleTrackNb();i++){
-            SubtitleTrack track=metadata.getSubtitleTrack(i);
-            if(track==null||!track.isExternal||!com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.sameFile(path,track.path))continue;
-            int position=subtitleTrackToPosition(i,mVideoInfo.nbSubtitles);
-            if(position<0||position>=mSubtitleInfoController.getTrackCount())return false;
-            if(mVideoInfo.subtitleTrack==i||onTrackSelected(mSubtitleInfoController,position,"","")){
-                mSubtitleInfoController.setTrack(position);refreshSubtitleTVMenu();return true;
+    private boolean applyPreviewSubtitle(String path, VideoMetadata metadata) {
+        if (path == null || metadata == null || mVideoInfo == null || mSubtitleInfoController == null)
+            return false;
+        for (int i = 0; i < metadata.getSubtitleTrackNb(); i++) {
+            SubtitleTrack track = metadata.getSubtitleTrack(i);
+            if (track == null || !track.isExternal ||
+                !com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.sameFile(path, track.path))
+                continue;
+            int position = subtitleTrackToPosition(i, mVideoInfo.nbSubtitles);
+            if (position < 0 || position >= mSubtitleInfoController.getTrackCount())
+                return false;
+            if (mVideoInfo.subtitleTrack == i || onTrackSelected(mSubtitleInfoController, position, "", "")) {
+                mSubtitleInfoController.setTrack(position);
+                refreshSubtitleTVMenu();
+                return true;
             }
             return false;
         }
@@ -4521,8 +5078,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     private void downloadSubtitles() {
         Intent subIntent = new Intent(Intent.ACTION_MAIN);
         subIntent.setClass(mContext, SubtitlesDownloaderActivity2.class);
-        subIntent.putExtra(SubtitlesDownloaderActivity2.PLAYBACK_SETTINGS_POPUP,PreviewPlaybackMenus.isSubtitlesShowing());
-        subIntent.putExtra(SubtitlesDownloaderActivity2.FILE_URL, PlayerService.sPlayerService.getStreamingUri().toString());
+        subIntent.putExtra(SubtitlesDownloaderActivity2.PLAYBACK_SETTINGS_POPUP,
+                           PreviewPlaybackMenus.isSubtitlesShowing());
+        subIntent.putExtra(SubtitlesDownloaderActivity2.FILE_URL,
+                           PlayerService.sPlayerService.getStreamingUri().toString());
         if (mTitle != null) {
             subIntent.putExtra(SubtitlesDownloaderActivity2.FILE_NAME, mTitle);
         }
@@ -4535,16 +5094,21 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         subIntent.setClass(mContext, SubtitlesWizardActivity.class);
         subIntent.setData(uri);
-        subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ALLOW_SELECTION,true);
-        if(mPlayer!=null&&mPlayer.getVideoMetadata()!=null&&mVideoInfo!=null&&mVideoInfo.subtitleTrack>=0&&mVideoInfo.subtitleTrack<mPlayer.getVideoMetadata().getSubtitleTrackNb()){
-            SubtitleTrack active=mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
-            if(active!=null&&active.isExternal)subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ACTIVE_PATH,active.path);
+        subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ALLOW_SELECTION, true);
+        if (mPlayer != null && mPlayer.getVideoMetadata() != null && mVideoInfo != null &&
+            mVideoInfo.subtitleTrack >= 0 &&
+            mVideoInfo.subtitleTrack < mPlayer.getVideoMetadata().getSubtitleTrackNb()) {
+            SubtitleTrack active = mPlayer.getVideoMetadata().getSubtitleTrack(mVideoInfo.subtitleTrack);
+            if (active != null && active.isExternal)
+                subIntent.putExtra(com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.ACTIVE_PATH,
+                                   active.path);
         }
         subtitleLauncher.launch(subIntent);
     }
 
     private static boolean isGenericTextSubtitleFormat(String lang) {
-        if (lang == null) return false;
+        if (lang == null)
+            return false;
         for (String format : GENERIC_TEXT_SUBTITLE_FORMATS) {
             if (format.equalsIgnoreCase(lang)) {
                 return true;
@@ -4584,7 +5148,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     }
 
     private boolean setPlayerAudioTrack(int audioTrack) {
-        if (log.isDebugEnabled()) log.debug("setPlayerAudioTrack: {}", audioTrack);
+        if (log.isDebugEnabled())
+            log.debug("setPlayerAudioTrack: {}", audioTrack);
         if (mPlayer.getType() == IMediaPlayer.TYPE_ANDROID) {
             /*
              * On android, AudioTrack can only be changed on Prepared State
@@ -4606,7 +5171,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         if (intent != null) {
             String action = intent.getAction();
             boolean returnResult = intent.getBooleanExtra("return_result", false);
-            if (log.isDebugEnabled()) log.debug("detectExternalPlayerMode: action={}, return_result={}", action, returnResult);
+            if (log.isDebugEnabled())
+                log.debug("detectExternalPlayerMode: action={}, return_result={}", action, returnResult);
 
             // Check if launched via ACTION_VIEW (typical for external player usage)
             if (Intent.ACTION_VIEW.equals(action)) {
@@ -4618,27 +5184,33 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     Uri referrer = getReferrer();
                     if (referrer != null && "android-app".equals(referrer.getScheme())) {
                         mCallingPackage = referrer.getHost();
-                        if (log.isDebugEnabled()) log.debug("detectExternalPlayerMode: Got calling package from referrer: {}", mCallingPackage);
+                        if (log.isDebugEnabled())
+                            log.debug("detectExternalPlayerMode: Got calling package from referrer: {}",
+                                      mCallingPackage);
                     }
                 }
 
                 // Check if we have external player indicators
-                boolean hasExternalIndicators = returnResult
-                        || ExternalResumeIntent.hasPositionExtra(intent);
+                boolean hasExternalIndicators = returnResult || ExternalResumeIntent.hasPositionExtra(intent);
 
                 // Detect external player mode if:
                 // 1. We have a calling package that's different from Nova, OR
                 // 2. We have external player indicators (position extras, return_result, etc.)
                 if ((mCallingPackage != null && !mCallingPackage.equals(getPackageName())) || hasExternalIndicators) {
                     mIsExternalPlayer = true;
-                    if (log.isDebugEnabled()) log.debug("detectExternalPlayerMode: Nova launched as external player by {} (hasExternalIndicators={})", mCallingPackage, hasExternalIndicators);
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "detectExternalPlayerMode: Nova launched as external player by {} (hasExternalIndicators={})",
+                            mCallingPackage, hasExternalIndicators);
                 }
             }
         }
     }
 
     private void sendExternalPlayerResult() {
-        if (log.isDebugEnabled()) log.debug("sendExternalPlayerResult called - mIsExternalPlayer={}, mResultSent={}", mIsExternalPlayer, mResultSent);
+        if (log.isDebugEnabled())
+            log.debug("sendExternalPlayerResult called - mIsExternalPlayer={}, mResultSent={}", mIsExternalPlayer,
+                      mResultSent);
         if (!mIsExternalPlayer || mResultSent) {
             return;
         }
@@ -4650,16 +5222,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         // Prefer live state, but retain the service-owned lifecycle checkpoint as a fallback for
         // a deliberate finish after the service/player has already been torn down.
-        PlayerService.PlaybackSnapshot snapshot = PlayerService.sPlayerService != null
-                ? PlayerService.sPlayerService.getPlaybackSnapshot()
-                : null;
+        PlayerService.PlaybackSnapshot snapshot =
+            PlayerService.sPlayerService != null ? PlayerService.sPlayerService.getPlaybackSnapshot() : null;
         int servicePosition = snapshot != null ? snapshot.getPositionMs() : -1;
-        int playerPosition = mPlayer != null && mPlayer.isInPlaybackState()
-                ? mPlayer.getCurrentPosition() : -1;
-        int checkpointPosition = ExternalResumeIntent.readPosition(
-                getIntent(), PlayerService.SESSION_POSITION);
-        int currentPosition = PlaybackResumePolicy.chooseExternalResultPosition(
-                servicePosition, playerPosition, checkpointPosition);
+        int playerPosition = mPlayer != null && mPlayer.isInPlaybackState() ? mPlayer.getCurrentPosition() : -1;
+        int checkpointPosition = ExternalResumeIntent.readPosition(getIntent(), PlayerService.SESSION_POSITION);
+        int currentPosition =
+            PlaybackResumePolicy.chooseExternalResultPosition(servicePosition, playerPosition, checkpointPosition);
 
         // Get duration
         int duration = -1;
@@ -4681,19 +5250,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         resultIntent.putExtra("duration", duration);
 
         // VLC format
-        resultIntent.putExtra("extra_position", (long) currentPosition);
-        resultIntent.putExtra("extra_duration", (long) duration);
+        resultIntent.putExtra("extra_position", (long)currentPosition);
+        resultIntent.putExtra("extra_duration", (long)duration);
 
         // Completion status
         if (mVideoFinished) {
             resultIntent.putExtra("end_by", "playback_completion");
             // Set position to duration for completed videos
             resultIntent.putExtra("position", duration);
-            resultIntent.putExtra("extra_position", (long) duration);
+            resultIntent.putExtra("extra_position", (long)duration);
         }
 
-        if (log.isDebugEnabled()) log.debug("sendExternalPlayerResult: position={}, duration={}, finished={}, callingPackage={}, action={}", currentPosition, duration, mVideoFinished, mCallingPackage, resultIntent.getAction());
-
+        if (log.isDebugEnabled())
+            log.debug("sendExternalPlayerResult: position={}, duration={}, finished={}, callingPackage={}, action={}",
+                      currentPosition, duration, mVideoFinished, mCallingPackage, resultIntent.getAction());
 
         setResult(Activity.RESULT_OK, resultIntent);
 
@@ -4705,9 +5275,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 broadcastIntent.setPackage(mCallingPackage);
                 broadcastIntent.putExtras(resultIntent);
                 sendBroadcast(broadcastIntent);
-                if (log.isDebugEnabled()) log.debug("sendExternalPlayerResult: broadcast sent to {}", mCallingPackage);
+                if (log.isDebugEnabled())
+                    log.debug("sendExternalPlayerResult: broadcast sent to {}", mCallingPackage);
             } catch (Exception e) {
-                if (log.isDebugEnabled()) log.debug("sendExternalPlayerResult: broadcast failed: {}", e.getMessage());
+                if (log.isDebugEnabled())
+                    log.debug("sendExternalPlayerResult: broadcast failed: {}", e.getMessage());
             }
         }
     }
@@ -4720,16 +5292,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
     @Override
     public void finish() {
         // Home/PiP do not finish this activity. A floating-player handoff keeps its session.
-        if (!mLaunchFloatingPlayer && mPlayer != null) mPlayer.beginPlaybackExit();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("playback_activity_finish","completed",mVideoFinished,"error_code",mErrorCode,"changing_configuration",isChangingConfigurations());
-        log.info("Playback Activity finish: completed={} error={} changingConfiguration={}",mVideoFinished,mErrorCode,isChangingConfigurations());
+        if (!mLaunchFloatingPlayer && mPlayer != null)
+            mPlayer.beginPlaybackExit();
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            "playback_activity_finish", "completed", mVideoFinished, "error_code", mErrorCode, "changing_configuration",
+            isChangingConfigurations());
+        log.info("Playback Activity finish: completed={} error={} changingConfiguration={}", mVideoFinished, mErrorCode,
+                 isChangingConfigurations());
         // Send result before finishing if we haven't already
         if (mIsExternalPlayer && !mResultSent) {
-            if (log.isDebugEnabled()) log.debug("finish() called - sending result before finish");
+            if (log.isDebugEnabled())
+                log.debug("finish() called - sending result before finish");
             sendExternalPlayerResult();
         }
         super.finish();
-        if(mPreferences!=null&&mPreferences.getBoolean("try_new_ui",false))overridePendingTransition(0,0);
+        if (mPreferences != null && mPreferences.getBoolean("try_new_ui", false))
+            overridePendingTransition(0, 0);
     }
 
     /*
@@ -4737,17 +5315,27 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
      */
     public class PlayerListener implements PlayerService.PlayerFrontend {
-        @Override public void onPlaybackEstablished(){runOnUiThread(()->{if(ageOverlay!=null&&PlayerService.sPlayerService!=null&&PlayerService.sPlayerService.hasEstablishedOutputFor(mVideoInfo))ageOverlay.playbackStarted();});}
+        @Override
+        public void onPlaybackEstablished() {
+            runOnUiThread(() -> {
+                if (ageOverlay != null && PlayerService.sPlayerService != null &&
+                    PlayerService.sPlayerService.hasEstablishedOutputFor(mVideoInfo))
+                    ageOverlay.playbackStarted();
+            });
+        }
 
         public void onPrepared() {
-            if (log.isDebugEnabled()) log.debug("onPrepared");
+            if (log.isDebugEnabled())
+                log.debug("onPrepared");
             mNetworkFailed = false;
-            if (log.isDebugEnabled()) log.debug("onPrepared: call postVideoInfoAndPrepared");
+            if (log.isDebugEnabled())
+                log.debug("onPrepared: call postVideoInfoAndPrepared");
             postVideoInfoAndPrepared();
         }
 
         public void onCompletion() {
-            if (log.isDebugEnabled()) log.debug("onCompletion");
+            if (log.isDebugEnabled())
+                log.debug("onCompletion");
 
             PlayerService.sPlayerService.setAudioFilt();
         }
@@ -4757,12 +5345,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 return true;
             log.warn("onError: {}, {}", errorCode, errorQualCode);
 
-            if (errorCode == IMediaPlayer.MEDIA_ERROR_VE_FILE_ERROR
-                    && !mPlayer.isLocalVideo()
-                    && !mNetworkFailed) {
+            if (errorCode == IMediaPlayer.MEDIA_ERROR_VE_FILE_ERROR && !mPlayer.isLocalVideo() && !mNetworkFailed) {
                 PlayerService service = PlayerService.sPlayerService;
-                if (NetworkState.isNetworkConnected(mContext) && mVideoInfo != null
-                        && service != null) {
+                if (NetworkState.isNetworkConnected(mContext) && mVideoInfo != null && service != null) {
                     /* If we get a corrupted file error, if the file is from the network,
                      * and if we are still connected, try to reopen the video one time.
                      */
@@ -4795,7 +5380,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
 
         public void onSeekStart(int pos) {
-        //no-op
+            //no-op
         }
 
         public void onSeekComplete() {
@@ -4814,23 +5399,27 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             // Set mPlayOnResume to true for user-initiated play (STATE_NORMAL)
             if (state == PlayerController.STATE_NORMAL && PlayerService.sPlayerService != null) {
-                if (log.isDebugEnabled()) log.debug("onPlay: user initiated play, setting mPlayOnResume = true and mUserPausedVideo = false");
+                if (log.isDebugEnabled())
+                    log.debug("onPlay: user initiated play, setting mPlayOnResume = true and mUserPausedVideo = false");
                 mUserPausedVideo = false;
                 PlayerService.sPlayerService.setPlayOnResume(true);
                 // Clear the pause state preference
                 mPreferences.edit()
-                        .putBoolean(PlayerService.PREFERENCE_USER_PAUSED_VIDEO, false)
-                        .remove(PlayerService.PREFERENCE_USER_PAUSED_URI)
-                        .apply();
+                    .putBoolean(PlayerService.PREFERENCE_USER_PAUSED_VIDEO, false)
+                    .remove(PlayerService.PREFERENCE_USER_PAUSED_URI)
+                    .apply();
             }
         }
+
         public void onFirstPlay() {
             mPlayerController.hide();
         }
+
         public void onIntroDbReady() {
             refreshPlayModeIntroSummary();
             refreshPhonePlayModeIntroSummary();
         }
+
         public void onShowSkipPrompt(final IntroSegments.Type type, final long targetMs) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -4839,6 +5428,7 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 }
             });
         }
+
         public void onHideSkipPrompt() {
             runOnUiThread(new Runnable() {
                 @Override
@@ -4847,21 +5437,22 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 }
             });
         }
+
         public void onPause(int state) {
             sendVideoStateChanged();
 
             // Preserve explicit and permanent-focus pauses through Activity recreation.
             // Transient focus pauses retain the play request and may resume on gain.
             if (mPlayer.isPauseRequested() && PlayerService.sPlayerService != null) {
-                if (log.isDebugEnabled()) log.debug("onPause: user paused, setting mPlayOnResume = false and mUserPausedVideo = true");
+                if (log.isDebugEnabled())
+                    log.debug("onPause: user paused, setting mPlayOnResume = false and mUserPausedVideo = true");
                 mUserPausedVideo = true;
                 PlayerService.sPlayerService.setPlayOnResume(false);
                 // Save pause state to preferences to survive activity recreation
                 mPreferences.edit()
-                        .putBoolean(PlayerService.PREFERENCE_USER_PAUSED_VIDEO, true)
-                        .putString(PlayerService.PREFERENCE_USER_PAUSED_URI,
-                                mUri != null ? mUri.toString() : null)
-                        .apply();
+                    .putBoolean(PlayerService.PREFERENCE_USER_PAUSED_VIDEO, true)
+                    .putString(PlayerService.PREFERENCE_USER_PAUSED_URI, mUri != null ? mUri.toString() : null)
+                    .apply();
             }
         }
 
@@ -4874,8 +5465,9 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             if (isStereoEffectOn()) {
                 int mode = vMetadata.getVideoTrack().s3dMode;
                 if (mode != 0) {
-                    if (log.isDebugEnabled()) log.debug("onVideoMetadataUpdated: setEffect");
-                    setEffect (mode);
+                    if (log.isDebugEnabled())
+                        log.debug("onVideoMetadataUpdated: setEffect");
+                    setEffect(mode);
                 }
             }
         }
@@ -4893,7 +5485,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
             boolean firstTimeUpdated = mAudioInfoController.getTrackCount() == 0;
             int nbTrack = vMetadata.getAudioTrackNb();
 
-            if (log.isDebugEnabled()) log.debug("onAudioMetadataUpdated: newAudio: {}  mVideoInfo.audioTrack: {}  firstTimeUpdated: {}  nbTrack: {}", newAudioTrack, mVideoInfo.audioTrack, firstTimeUpdated, nbTrack);
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onAudioMetadataUpdated: newAudio: {}  mVideoInfo.audioTrack: {}  firstTimeUpdated: {}  nbTrack: {}",
+                    newAudioTrack, mVideoInfo.audioTrack, firstTimeUpdated, nbTrack);
 
             mAudioInfoController.clear();
             String trackName = null;
@@ -4901,14 +5496,19 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 VideoMetadata.AudioTrack audio = vMetadata.getAudioTrack(i);
                 if (audio == null)
                     continue;
-                if (log.isDebugEnabled()) log.debug("onAudioMetadataUpdated: name={}, language={}, format={}, disposition={}", audio.name, audio.language, audio.format, audio.disposition);
-                trackName = generateTrackName(mContext, audio.name, audio.language, audio.format, audio.disposition, true);
+                if (log.isDebugEnabled())
+                    log.debug("onAudioMetadataUpdated: name={}, language={}, format={}, disposition={}", audio.name,
+                              audio.language, audio.format, audio.disposition);
+                trackName =
+                    generateTrackName(mContext, audio.name, audio.language, audio.format, audio.disposition, true);
                 CharSequence name = trackName;
                 // when no name use track number instead of R.string.unknown_track_name th
                 if (trackName.isEmpty())
                     name = getText(R.string.player_track) + " " + (i + 1);
-                CharSequence summary = audio.format + (audio.channels == null || audio.channels.isEmpty() ? "" : " · " + audio.channels);
-                if (mPreferences.getBoolean("try_new_ui", false) && audio.channels != null && !audio.channels.isEmpty()) name = name + " · " + audio.channels;
+                CharSequence summary =
+                    audio.format + (audio.channels == null || audio.channels.isEmpty() ? "" : " · " + audio.channels);
+                if (mPreferences.getBoolean("try_new_ui", false) && audio.channels != null && !audio.channels.isEmpty())
+                    name = name + " · " + audio.channels;
                 mAudioInfoController.addTrack(name, summary, false);
             }
             mAudioInfoController.setTrack(mVideoInfo.audioTrack);
@@ -4928,7 +5528,10 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             final boolean firstTimeCalled = mSubtitleInfoController.getTrackCount() == 0;
 
-            if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: newSubtitle: {}, mVideoInfo.subtitleTrack: {}, firstTimeCalled: {}, nbTrack: {}", newSubtitleTrack, mVideoInfo.subtitleTrack, firstTimeCalled, nbTrack);
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onSubtitleMetadataUpdated: newSubtitle: {}, mVideoInfo.subtitleTrack: {}, firstTimeCalled: {}, nbTrack: {}",
+                    newSubtitleTrack, mVideoInfo.subtitleTrack, firstTimeCalled, nbTrack);
 
             mSubtitleInfoController.clear();
 
@@ -4947,41 +5550,64 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                     // infer language from path if path is provided
                     if (track.isExternal) {
                         // external subtitle get name from file
-                        lang = getSubLanguageFromSubPathAndVideoPath(mContext, track.path, vMetadata.getFile().getPath());
-                        if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: extsub name={}, path={}, videoPath={}, isExternal={}, langFromPath={}", track.name, track.path, vMetadata.getFile().getPath(), track.isExternal, lang);
+                        lang =
+                            getSubLanguageFromSubPathAndVideoPath(mContext, track.path, vMetadata.getFile().getPath());
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onSubtitleMetadataUpdated: extsub name={}, path={}, videoPath={}, isExternal={}, langFromPath={}",
+                                track.name, track.path, vMetadata.getFile().getPath(), track.isExternal, lang);
                         if (lang != null) {
-                            if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: extsub name might not be null add track name with lang={}", lang);
+                            if (log.isDebugEnabled())
+                                log.debug(
+                                    "onSubtitleMetadataUpdated: extsub name might not be null add track name with lang={}",
+                                    lang);
                             mSubtitleInfoController.addTrack(lang, true);
                         } else { // this should never happen
-                            log.warn("onSubtitleMetadataUpdated: extsub name and lang are null, add track name to unknown");
+                            log.warn(
+                                "onSubtitleMetadataUpdated: extsub name and lang are null, add track name to unknown");
                             mSubtitleInfoController.addTrack(getText(R.string.unknown_track_name), true);
                         }
                     } else {
                         // internal subtitle get name from name
-                        if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: intsub add track name with name={} replacing language code in {}, disposition={}", track.name, track.language, track.disposition);
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onSubtitleMetadataUpdated: intsub add track name with name={} replacing language code in {}, disposition={}",
+                                track.name, track.language, track.disposition);
                         String format = VideoUtils.getSubtitleFormatLabel(mContext, track.format);
-                        mSubtitleInfoController.addTrack(generateTrackName(mContext, track.name, track.language, format, track.disposition, false), false);
+                        mSubtitleInfoController.addTrack(
+                            generateTrackName(mContext, track.name, track.language, format, track.disposition, false),
+                            false);
                     }
                 }
                 mSubtitleInfoController.addSeparator();
-                mSubtitleInfoController.addSettings(getText(R.string.player_pref_subtitle_delay_title), R.drawable.ic_menu_delay, SUBTITLE_MENU_DELAY);
-                mSubtitleInfoController.addSettings(getText(R.string.menu_player_settings), R.drawable.ic_menu_settings, SUBTITLE_MENU_SETTINGS);
+                mSubtitleInfoController.addSettings(getText(R.string.player_pref_subtitle_delay_title),
+                                                    R.drawable.ic_menu_delay, SUBTITLE_MENU_DELAY);
+                mSubtitleInfoController.addSettings(getText(R.string.menu_player_settings), R.drawable.ic_menu_settings,
+                                                    SUBTITLE_MENU_SETTINGS);
             }
-            mSubtitleInfoController.addSettings(getText(R.string.get_subtitles_online), R.drawable.ic_menu_subtitles, SUBTITLE_MENU_DOWNLOAD);
+            mSubtitleInfoController.addSettings(getText(R.string.get_subtitles_online), R.drawable.ic_menu_subtitles,
+                                                SUBTITLE_MENU_DOWNLOAD);
             if (nbTrack != 0) {
                 mSubtitleManager.start();
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(PlayerActivity.this);
                 mSubtitleManager.restoreStyle(preferences);
-                setSubtitleVpos(preferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos), "onSubtitleMetadataUpdated");
+                setSubtitleVpos(preferences.getInt(KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos),
+                                "onSubtitleMetadataUpdated");
 
                 // mVideoInfo.subtitleTrack is the track number with the none track 0<=mVideoInfo.subtitleTrack<=nbTrack, nbTrack for none track
                 // but mSubtitleInfoController is the track number with the none track (i.e. nbTrack + 1) at position 0
                 // at this point mVideoInfo.subtitleTrack is the track number to be used
-                if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: set mSubtitleInfoController.setTrack: {}", subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
-                mSubtitleInfoController.setTrack(subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles)); // +1 since none track is at position 0, for UI only
+                if (log.isDebugEnabled())
+                    log.debug("onSubtitleMetadataUpdated: set mSubtitleInfoController.setTrack: {}",
+                              subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
+                mSubtitleInfoController.setTrack(subtitleTrackToPosition(
+                    mVideoInfo.subtitleTrack,
+                    mVideoInfo.nbSubtitles)); // +1 since none track is at position 0, for UI only
                 if (mSubtitleInfoController.getTrack() == nonePosition) {
-                    if (log.isDebugEnabled()) log.debug("onSubtitleMetadataUpdated: disableSubtitleDelayTVMenuItem(true) because nonePosition");
+                    if (log.isDebugEnabled())
+                        log.debug(
+                            "onSubtitleMetadataUpdated: disableSubtitleDelayTVMenuItem(true) because nonePosition");
                     disableSubtitleDelayTVMenuItem(true);
                 }
             }
@@ -4989,9 +5615,13 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
             // A chooser request is a user action, not inferred metadata selection. Clear before
             // applying so a synchronous engine callback cannot repeat it.
-            String requested=previewPendingSubtitlePath;previewPendingSubtitlePath=null;
-            if(requested!=null&&!applyPreviewSubtitle(requested,vMetadata)&&!isFinishing()&&!isDestroyed())
-                com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(PlayerActivity.this,"Choose Subtitles","The selected subtitle is not available as a playable track. Your current selection has been kept.",()->{});
+            String requested = previewPendingSubtitlePath;
+            previewPendingSubtitlePath = null;
+            if (requested != null && !applyPreviewSubtitle(requested, vMetadata) && !isFinishing() && !isDestroyed())
+                com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(
+                    PlayerActivity.this, "Choose Subtitles",
+                    "The selected subtitle is not available as a playable track. Your current selection has been kept.",
+                    () -> {});
             refreshSubtitleTVMenu();
 
             if (mPlayerController.isTVMenuDisplayed() && !PreviewPlaybackMenus.isShowing()) {
@@ -5001,7 +5631,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                 // focus before the refresh (e.g. "Get subtitles online" that was just clicked)
                 if (nbTrack != 0) {
                     View selectedTrackItem = mSubtitleTVMenu.getItem(mSubtitleInfoController.getTrack());
-                    if (selectedTrackItem != null) selectedTrackItem.requestFocus();
+                    if (selectedTrackItem != null)
+                        selectedTrackItem.requestFocus();
                 }
             }
         }
@@ -5009,76 +5640,95 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         @SuppressLint("SetTextI18n")
         public void onBufferingUpdate(int percent) {
             if (!mPlayer.isInPlaybackState()) {
-                mBufferView.setText(" "+percent+"%");
+                mBufferView.setText(" " + percent + "%");
             }
         }
 
         @Override
-        public void onAudioError(boolean isNotSupported,String msg) {
+        public void onAudioError(boolean isNotSupported, String msg) {
             mErrorMsg = msg;
-            if(isNotSupported)
+            if (isNotSupported)
                 myShowDialog(DIALOG_CODEC_NOT_SUPPORTED);
         }
 
         @Override
         public void onVideoDb(final VideoDbInfo localVideoInfo, final VideoDbInfo remoteVideoInfo) {
-            if (log.isDebugEnabled()) log.debug("onVideoDb: localVideoInfo.subtitleTrack={}, remoteVideoInfo.subtitleTrack={}", ((localVideoInfo != null) ? localVideoInfo.subtitleTrack : "none"), ((remoteVideoInfo != null) ? remoteVideoInfo.subtitleTrack : "none"));
-            if (log.isDebugEnabled()) log.debug("onVideoDb: trakt: {} local {}", localVideoInfo.traktResume, localVideoInfo.resume);
-            if (log.isDebugEnabled()) log.debug("onVideoDb: localVideoInfo.lastTimePlayed: {}, remoteVideoInfo.lastTimePlayed: {}", ((localVideoInfo != null) ? localVideoInfo.lastTimePlayed : "none"), ((remoteVideoInfo != null) ? remoteVideoInfo.lastTimePlayed : "none"));
+            if (log.isDebugEnabled())
+                log.debug("onVideoDb: localVideoInfo.subtitleTrack={}, remoteVideoInfo.subtitleTrack={}",
+                          ((localVideoInfo != null) ? localVideoInfo.subtitleTrack : "none"),
+                          ((remoteVideoInfo != null) ? remoteVideoInfo.subtitleTrack : "none"));
+            if (log.isDebugEnabled())
+                log.debug("onVideoDb: trakt: {} local {}", localVideoInfo.traktResume, localVideoInfo.resume);
+            if (log.isDebugEnabled())
+                log.debug("onVideoDb: localVideoInfo.lastTimePlayed: {}, remoteVideoInfo.lastTimePlayed: {}",
+                          ((localVideoInfo != null) ? localVideoInfo.lastTimePlayed : "none"),
+                          ((remoteVideoInfo != null) ? remoteVideoInfo.lastTimePlayed : "none"));
             if (localVideoInfo != null) {
                 if (remoteVideoInfo != null) {
                     if (localVideoInfo.lastTimePlayed == 0 && remoteVideoInfo.audioTrack == -1) {
-                        if (log.isDebugEnabled()) log.debug("onVideoDb: first play");
+                        if (log.isDebugEnabled())
+                            log.debug("onVideoDb: first play");
                         fileHasAlreadyPlayed = false;
-                    } else fileHasAlreadyPlayed = true;
+                    } else
+                        fileHasAlreadyPlayed = true;
                 } else {
                     if (localVideoInfo.lastTimePlayed == 0) {
-                        if (log.isDebugEnabled()) log.debug("onVideoDb: first play");
+                        if (log.isDebugEnabled())
+                            log.debug("onVideoDb: first play");
                         fileHasAlreadyPlayed = false;
-                    } else fileHasAlreadyPlayed = true;
+                    } else
+                        fileHasAlreadyPlayed = true;
                 }
-            } else fileHasAlreadyPlayed = false;
+            } else
+                fileHasAlreadyPlayed = false;
             if (localVideoInfo != null && PlayerService.sPlayerService != null) {
-                int explicitPosition = PlayerService.sPlayerService.getResumeCandidate(PlayerService.ResumeSource.EXPLICIT);
+                int explicitPosition =
+                    PlayerService.sPlayerService.getResumeCandidate(PlayerService.ResumeSource.EXPLICIT);
                 if (explicitPosition > 0) {
                     selectVideoInfo(localVideoInfo, PlayerService.ResumeSource.EXPLICIT);
                     return;
                 }
 
                 if (remoteVideoInfo != null && mResume != RESUME_NO && mResume != RESUME_FROM_LOCAL_POS) {
-                    if (log.isDebugEnabled()) log.debug("hasRemoteVideoInfo");
+                    if (log.isDebugEnabled())
+                        log.debug("hasRemoteVideoInfo");
                     // Don't show resume dialog if user explicitly paused the video
                     // Use mUserPausedVideo flag which is set by onPause listener and cleared by onPlay
-                    if (log.isDebugEnabled()) log.debug("onVideoDb: mUserPausedVideo={}", mUserPausedVideo);
+                    if (log.isDebugEnabled())
+                        log.debug("onVideoDb: mUserPausedVideo={}", mUserPausedVideo);
 
                     if (!mUserPausedVideo) {
-                        int localLastPosition = PlayerService.sPlayerService.getResumeCandidate(PlayerService.ResumeSource.LOCAL);
-                        int remoteLastPosition = PlayerService.sPlayerService.getResumeCandidate(PlayerService.ResumeSource.NETWORK);
+                        int localLastPosition =
+                            PlayerService.sPlayerService.getResumeCandidate(PlayerService.ResumeSource.LOCAL);
+                        int remoteLastPosition =
+                            PlayerService.sPlayerService.getResumeCandidate(PlayerService.ResumeSource.NETWORK);
 
                         if (localLastPosition != remoteLastPosition && remoteLastPosition > 0) {
                             //do not display dialog if remote position is the only available
                             if (localLastPosition <= 0) {
-                                if (log.isDebugEnabled()) log.debug("use remoteVideoInfo");
+                                if (log.isDebugEnabled())
+                                    log.debug("use remoteVideoInfo");
                                 selectVideoInfo(remoteVideoInfo, PlayerService.ResumeSource.NETWORK);
 
                             } else {
-                                if(mResume ==  RESUME_FROM_REMOTE_POS){ //use only remote
+                                if (mResume == RESUME_FROM_REMOTE_POS) { //use only remote
                                     selectVideoInfo(remoteVideoInfo, PlayerService.ResumeSource.NETWORK);
-                                }
-                                else {
+                                } else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(PlayerActivity.this);
                                     builder.setMessage(R.string.use_remote_resume)
-                                            .setCancelable(false)
-                                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    selectVideoInfo(remoteVideoInfo, PlayerService.ResumeSource.NETWORK);
-                                                }
-                                            })
-                                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    selectVideoInfo(localVideoInfo, PlayerService.ResumeSource.LOCAL);
-                                                }
-                                    });
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.yes,
+                                                           new DialogInterface.OnClickListener() {
+                                                               public void onClick(DialogInterface dialog, int id) {
+                                                                   selectVideoInfo(remoteVideoInfo,
+                                                                                   PlayerService.ResumeSource.NETWORK);
+                                                               }
+                                                           })
+                                        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                selectVideoInfo(localVideoInfo, PlayerService.ResumeSource.LOCAL);
+                                            }
+                                        });
                                     AlertDialog alert = builder.create();
                                     alert.show();
                                     alert.getButton(DialogInterface.BUTTON_POSITIVE).requestFocus();
@@ -5087,18 +5737,20 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
                             return;
                         }
                     } else {
-                        if (log.isDebugEnabled()) log.debug("onVideoDb: player is paused, skipping resume dialog");
+                        if (log.isDebugEnabled())
+                            log.debug("onVideoDb: player is paused, skipping resume dialog");
                     }
                 }
             }
 
             // this provides the video info to the player based on localVideoInfo (keeping subtrack etc...)
-            if (log.isDebugEnabled()) log.debug("onVideoDb: call setVideoInfo for playerActivity and playerService");
+            if (log.isDebugEnabled())
+                log.debug("onVideoDb: call setVideoInfo for playerActivity and playerService");
             selectVideoInfo(localVideoInfo, PlayerService.ResumeSource.NONE);
         }
 
         @Override
-        public void setUri(Uri uri, Uri streamingUri){
+        public void setUri(Uri uri, Uri streamingUri) {
             mUri = uri;
             mStreamingUri = streamingUri;
             if (getIntent() != null) {
@@ -5123,7 +5775,8 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         @Override
         public void setVideoInfo(VideoDbInfo mVideoInfo) {
-            if (log.isDebugEnabled()) log.debug("setVideoInfo {}", String.valueOf(mVideoInfo != null));
+            if (log.isDebugEnabled())
+                log.debug("setVideoInfo {}", String.valueOf(mVideoInfo != null));
             PlayerActivity.this.setVideoInfo(mVideoInfo);
         }
 
@@ -5135,15 +5788,15 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
 
         @Override
         public void onFrontendDetached() {
-            if(mLaunchFloatingPlayer)
+            if (mLaunchFloatingPlayer)
                 finish();
         }
-
     };
 
     private SurfaceController.Listener mSurfaceListener = new SurfaceController.Listener() {
         public void onSwitchVideoFormat(int fmt, int autoFmt) {
-            if (log.isDebugEnabled()) log.debug("CONFIG onSwitchVideoFormat: fmt={}, autoFmt={}", fmt, autoFmt);
+            if (log.isDebugEnabled())
+                log.debug("CONFIG onSwitchVideoFormat: fmt={}, autoFmt={}", fmt, autoFmt);
             SharedPreferences.Editor editor = mPreferences.edit();
             editor.putString(KEY_PLAYER_FORMAT, String.valueOf(fmt));
             editor.putString(KEY_PLAYER_AUTO_FORMAT, String.valueOf(autoFmt));
@@ -5161,7 +5814,11 @@ public class PlayerActivity extends AppCompatActivity implements PlayerControlle
         }
     }
 
-    public static int getScreenWidth() { return mScreenWidth; }
-    public static int getScreenHeight() { return mScreenHeight; }
+    public static int getScreenWidth() {
+        return mScreenWidth;
+    }
 
+    public static int getScreenHeight() {
+        return mScreenHeight;
+    }
 }
