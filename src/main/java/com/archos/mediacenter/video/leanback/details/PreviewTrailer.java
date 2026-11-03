@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback.details;
 import android.app.*;
 import android.content.*;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.webkit.*;
 import android.view.*;
 import android.widget.*;
@@ -57,7 +58,7 @@ public final class PreviewTrailer {
         title.setTextSize(14);
         title.setTextColor(0xffffffff);
         title.setSingleLine(true);
-        title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        title.setEllipsize(TextUtils.TruncateAt.END);
         bar.addView(title, new LinearLayout.LayoutParams(0, -2, 1));
         for (String label : new String[] {
             "Open YouTube", "Close"
