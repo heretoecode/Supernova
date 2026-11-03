@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Loads movie entries for the video home-screen widget. */
 class RemoteViewsFactoryMovies extends RemoteViewsFactoryBase {
 	private static final Logger log = LoggerFactory.getLogger(RemoteViewsFactoryMovies.class);
 
