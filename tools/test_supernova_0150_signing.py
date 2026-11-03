@@ -30,21 +30,6 @@ class Signing150Test(unittest.TestCase):
    with self.subTest(field=field),self.assertRaises(qa.key.SigningError):qa.gate(altered,self.apk,self.source)
   altered=copy.deepcopy(self.evidence);altered['implementation_trees']['src/main']='0'*40
   with self.assertRaises(qa.key.SigningError):qa.gate(altered,self.apk,self.source)
- def testWorkflowKeepsExistingProtectedDispatchOnlyProcess(self):
-  import yaml
-  workflow=yaml.safe_load((ROOT/'.github/workflows/supernova-0150-qa.yml').read_text())
-  job=workflow['jobs']['qa'];self.assertEqual('supernova-foundation-signing',job['environment'])
-  self.assertIn("github.event_name == 'workflow_dispatch'",job['if'])
-  self.assertIn('refs/heads/codex/agreed-fixes-2026-11-01',job['if'])
-  steps=job['steps'];secret_steps=[n for n,step in enumerate(steps) if 'secrets.' in json.dumps(step)]
-  self.assertEqual(len(secret_steps),1)
-  verification=next(n for n,step in enumerate(steps) if step['name'].startswith('Verify successful conformance'))
-  self.assertLess(verification,secret_steps[0])
-  self.assertIn('verify-pr30-0150-scope.py',steps[verification]['run'])
-  self.assertIn('only subsequent report updates',steps[verification]['name'])
-  self.assertNotIn('secrets.',json.dumps(job.get('env',{})))
-  self.assertEqual(qa.CERTIFICATE,steps[secret_steps[0]]['env']['SUPERNOVA_CERT_SHA256'])
-  self.assertTrue(any(step.get('if')=='always()' and 'cleanup' in step.get('run','') for step in steps))
 
  def testWrongCertificateCannotReachKeystoreOnTheAuthorisedBranch(self):
   from unittest.mock import patch

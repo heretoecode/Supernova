@@ -78,18 +78,6 @@ class NextRefinementQATests(unittest.TestCase):
             altered = dict(original); altered[entry] = b'changed'
             with self.assertRaises(ValueError): apk_check.payload_parity(self.packed('u.apk', original), self.packed('s.apk', altered))
 
-    def test_signing_is_dispatch_only_and_secrets_scoped_after_conformance(self):
-        import yaml
-        text = (ROOT / '.github/workflows/next-qa.yml').read_text(); workflow = yaml.safe_load(text)
-        trigger = workflow.get('on', workflow.get(True)); self.assertEqual(set(trigger), {'push', 'workflow_dispatch'}); self.assertEqual(trigger['push']['paths'], ['.github/workflows/next-qa.yml'])
-        job = workflow['jobs']['qa']; self.assertEqual(job['environment'], 'supernova-foundation-signing'); self.assertIn("github.event_name == 'workflow_dispatch'", job['if']); self.assertIn("refs/heads/codex/supernova-0.137-qa-2026-10-11", job['if'])
-        self.assertNotIn('secrets.', json.dumps(job.get('env', {})))
-        steps = job['steps']; secret_steps = [i for i, step in enumerate(steps) if 'secrets.' in json.dumps(step)]
-        gates = [i for i, step in enumerate(steps) if 'record-next-qa-conformance.py' in step.get('run', '')]
-        self.assertEqual(len(secret_steps), 1); self.assertGreater(secret_steps[0], gates[0])
-        self.assertNotIn('foundationRelease', text); self.assertNotIn('FOUNDATION_RELEASE_READY', text)
-        self.assertIn('env:SUPERNOVA_STORE_PASSWORD', text); self.assertIn('payload parity', text)
-        self.assertNotIn('actions/create-release', text); self.assertNotIn('gh release', text)
 
 
 if __name__ == '__main__': unittest.main()

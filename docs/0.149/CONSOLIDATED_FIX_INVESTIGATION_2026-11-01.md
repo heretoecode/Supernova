@@ -84,10 +84,10 @@ Local JDK parser: 1,108 Java files, zero syntax errors. `git diff --check` passe
 
 **Robolectric native-graphics fixtures only; not Android emulator/Shield screenshots. Data is synthetic, not owner metadata or production hardcoding.**
 
-- [Custom first entry without scrolling — final source](shield-continuation-software-evidence/custom-first-entry-robolectric-f4bdffa2.png): complete statistics visible for an empty fixture library.
-- [ON/OFF switches — final source](shield-continuation-software-evidence/switch-states-robolectric-f4bdffa2.png): separate white thumbs, coloured/dark tracks, no adjacent state text. White/black-accent and disabled variants additionally pass raster assertions.
-- [Reception at 150% text — final source](shield-continuation-software-evidence/reception-large-text-robolectric-f4bdffa2.png): score/count no longer clipped; four source slots and Technical Information visible. Not an exact original-reference match.
-- [Subtitle Track regional flags and neutral fallback](shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png): source 50f76e93; that popup/global icon implementation is unchanged in final source.
+- (image removed 2026-11; in git history: docs/0.149/shield-continuation-software-evidence/custom-first-entry-robolectric-f4bdffa2.png): complete statistics visible for an empty fixture library.
+- (image removed 2026-11; in git history: docs/0.149/shield-continuation-software-evidence/switch-states-robolectric-f4bdffa2.png): separate white thumbs, coloured/dark tracks, no adjacent state text. White/black-accent and disabled variants additionally pass raster assertions.
+- (image removed 2026-11; in git history: docs/0.149/shield-continuation-software-evidence/reception-large-text-robolectric-f4bdffa2.png): score/count no longer clipped; four source slots and Technical Information visible. Not an exact original-reference match.
+- (image removed 2026-11; in git history: docs/0.149/shield-continuation-software-evidence/subtitle-flags-robolectric-50f76e93.png): source 50f76e93; that popup/global icon implementation is unchanged in final source.
 
 ## Preservation and remaining acceptance
 

@@ -4,7 +4,7 @@ Continues `75c17bed` on the existing PR #30 branch. **Implemented and affected r
 
 ## Original evidence
 
-All three owner files were extracted from `Supernova_0.149_Codex_QA_References.zip` and inspected. [Provenance and original-file SHA-256 values](owner-references/provenance.json). [Reception original](owner-references/IMG_5090.jpeg) and [Gemini original video](owner-references/gemini_generated_video_A1E9E8FB.mp4) are retained unchanged; the private diagnostics ZIP/logs remain outside the repository.
+All three owner files were extracted from `Supernova_0.149_Codex_QA_References.zip` and inspected. [Provenance and original-file SHA-256 values](owner-references/provenance.json). (image removed 2026-11; in git history: docs/0.149/owner-references/IMG_5090.jpeg) and (image removed 2026-11; in git history: docs/0.149/owner-references/gemini_generated_video_A1E9E8FB.mp4) are retained unchanged; the private diagnostics ZIP/logs remain outside the repository.
 
 The video is 10 seconds, 910×512, 30fps. Reviewed OFF, ON, transition and return-to-OFF frames. The switch is approximately 2.7:1, with a dark OFF face, cyan-to-blue ON gradient, white circular thumb and separate outline/glow. Demo mouse-pointer/click animation and “Feature Status” labels are not product requirements; the owner's previous no-redundant-On/Off-text instruction still applies.
 
@@ -127,23 +127,23 @@ These are the complete continuation paths relative to the repository root. Origi
 
 ### Reports, original references and unmodified software evidence
 
-- [docs/0.149/owner-reference-software-evidence/reception-reference-150-percent.png](../../docs/0.149/owner-reference-software-evidence/reception-reference-150-percent.png)
-- [docs/0.149/owner-reference-software-evidence/reception-reference-1080p.png](../../docs/0.149/owner-reference-software-evidence/reception-reference-1080p.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/reception-reference-150-percent.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/reception-reference-1080p.png)
 - [docs/0.149/CONSOLIDATED_FIX_INVESTIGATION_2026-11-01.md](../../docs/0.149/CONSOLIDATED_FIX_INVESTIGATION_2026-11-01.md)
 - [docs/0.149/OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md](../../docs/0.149/OWNER_REFERENCE_AND_RAW_DIAGNOSTICS_REVIEW_2026-11-01.md)
 - [docs/0.149/STATUS.md](../../docs/0.149/STATUS.md)
 - [docs/0.149/owner-reference-software-evidence/README.md](../../docs/0.149/owner-reference-software-evidence/README.md)
-- [docs/0.149/owner-reference-software-evidence/custom-populated-after-refresh-api30.png](../../docs/0.149/owner-reference-software-evidence/custom-populated-after-refresh-api30.png)
-- [docs/0.149/owner-reference-software-evidence/custom-populated-first-frame-api30.png](../../docs/0.149/owner-reference-software-evidence/custom-populated-first-frame-api30.png)
-- [docs/0.149/owner-reference-software-evidence/gemini-switch-states-api30.png](../../docs/0.149/owner-reference-software-evidence/gemini-switch-states-api30.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/custom-populated-after-refresh-api30.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/custom-populated-first-frame-api30.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/gemini-switch-states-api30.png)
 - [docs/0.149/owner-reference-software-evidence/provenance.json](../../docs/0.149/owner-reference-software-evidence/provenance.json)
-- [docs/0.149/owner-reference-software-evidence/regional-language-icons.png](../../docs/0.149/owner-reference-software-evidence/regional-language-icons.png)
-- [docs/0.149/owner-reference-software-evidence/settings-switches-1080p.png](../../docs/0.149/owner-reference-software-evidence/settings-switches-1080p.png)
-- [docs/0.149/owner-reference-software-evidence/subtitles-main.png](../../docs/0.149/owner-reference-software-evidence/subtitles-main.png)
-- [docs/0.149/owner-reference-software-evidence/subtitles-track.png](../../docs/0.149/owner-reference-software-evidence/subtitles-track.png)
-- [docs/0.149/owner-references/IMG_5090.jpeg](../../docs/0.149/owner-references/IMG_5090.jpeg)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/regional-language-icons.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/settings-switches-1080p.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/subtitles-main.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-reference-software-evidence/subtitles-track.png)
+- (image removed 2026-11; in git history: docs/0.149/owner-references/IMG_5090.jpeg)
 - [docs/0.149/owner-references/diagnostic-aggregate.json](../../docs/0.149/owner-references/diagnostic-aggregate.json)
-- [docs/0.149/owner-references/gemini_generated_video_A1E9E8FB.mp4](../../docs/0.149/owner-references/gemini_generated_video_A1E9E8FB.mp4)
+- (image removed 2026-11; in git history: docs/0.149/owner-references/gemini_generated_video_A1E9E8FB.mp4)
 - [docs/0.149/owner-references/provenance.json](../../docs/0.149/owner-references/provenance.json)
 
 ## Remaining acceptance limits

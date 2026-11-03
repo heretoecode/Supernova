@@ -23,7 +23,7 @@
 
 ## Details and Extras conformance
 
-[Reference archive/provenance](references/README.md), [measured visual register](VISUAL_QA.md), [side-by-side comparison](visual-evidence/FD033-reference-comparison.png), [geometry overlay](visual-evidence/FD033-geometry-overlay.png).
+[Reference archive/provenance](references/README.md), [measured visual register](VISUAL_QA.md), (image removed 2026-11; in git history: docs/0.140/visual-evidence/FD033-reference-comparison.png), (image removed 2026-11; in git history: docs/0.140/visual-evidence/FD033-geometry-overlay.png).
 
 | Approved correction | Result and evidence boundary |
 |---|---|

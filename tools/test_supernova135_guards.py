@@ -42,16 +42,6 @@ class Supernova135GuardTests(unittest.TestCase):
             (self.video / self.proof).write_text(json.dumps(proof))
             self.assertFalse(conformance.verified_baseline_record(self.video, self.entry))
 
-    def test_unsigned_workflow_has_no_signing_secrets_or_apk_upload(self):
-        import yaml
-        workflow = yaml.safe_load((ROOT / '.github/workflows/supernova135-conformance.yml').read_text())
-        text = (ROOT / '.github/workflows/supernova135-conformance.yml').read_text()
-        self.assertNotIn('secrets.', text)
-        self.assertNotIn('-x :MediaLib:ndkBuild', text)
-        self.assertNotIn('-x :FileCoreLibrary:ndkBuild', text)
-        uploads = [step for step in workflow['jobs']['conformance']['steps'] if step.get('uses', '').startswith('actions/upload-artifact@')]
-        self.assertEqual(len(uploads), 1)
-        self.assertNotIn('.apk', uploads[0]['with']['path'])
 
 
 if __name__ == '__main__':

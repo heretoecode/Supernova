@@ -68,7 +68,7 @@ Continuation research resolved API-use permission: the official page explicitly 
 
 ## Annotated section diagrams
 
-[Section 1](edit-section-1-normal.png) · [Filters](edit-section-2-normal.png) · [Display Options](edit-section-3-normal.png) · [Review](edit-section-4-normal.png).
+(image removed 2026-11; in git history: docs/next-version/design-proposals/edit-section-1-normal.png) · (image removed 2026-11; in git history: docs/next-version/design-proposals/edit-section-2-normal.png) · (image removed 2026-11; in git history: docs/next-version/design-proposals/edit-section-3-normal.png) · (image removed 2026-11; in git history: docs/next-version/design-proposals/edit-section-4-normal.png).
 
 Each has a `-large.svg` counterpart for expanded text annotations. These are explicitly labelled design diagrams, with no fabricated media/counts and no screenshot or final typography claim. They supplement the measured table; they do not fulfil physical/production screenshot acceptance. The real global navigation is outside this diagram crop. Narrow screens retain the documented focus-revealed viewport proposal.
 
@@ -78,4 +78,4 @@ The examples in the documentation are absent, but **the service is not generally
 
 ## HUD diagram
 
-[Measured HUD proposal](hud-measured-proposal.png) ([editable SVG](hud-measured-proposal.svg)) shows the single shared centre, source-derived icon shapes, target bounds and both remote graphs. Placeholder time strings illustrate measured allocations; no media, chapter or certification data is asserted. It is a review aid, not a production render. HUD engineering decisions have since been resolved under the owner’s continuation instruction; this historical diagram is not the current acceptance evidence.
+(image removed 2026-11; in git history: docs/next-version/design-proposals/hud-measured-proposal.png) ([editable SVG](hud-measured-proposal.svg)) shows the single shared centre, source-derived icon shapes, target bounds and both remote graphs. Placeholder time strings illustrate measured allocations; no media, chapter or certification data is asserted. It is a review aid, not a production render. HUD engineering decisions have since been resolved under the owner’s continuation instruction; this historical diagram is not the current acceptance evidence.

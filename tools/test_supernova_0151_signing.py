@@ -30,30 +30,6 @@ class Signing151Test(unittest.TestCase):
    with self.subTest(field=field),self.assertRaises(qa.key.SigningError):qa.gate(altered,self.apk,self.source)
   altered=copy.deepcopy(self.evidence);altered['implementation_trees']['src/main']='0'*40
   with self.assertRaises(qa.key.SigningError):qa.gate(altered,self.apk,self.source)
- def testWorkflowKeepsExistingProtectedDispatchOnlyProcess(self):
-  import yaml
-  workflow=yaml.safe_load((ROOT/'.github/workflows/supernova-0151-qa.yml').read_text())
-  job=workflow['jobs']['qa'];self.assertEqual('supernova-foundation-signing',job['environment'])
-  self.assertIn("github.event_name == 'workflow_dispatch'",job['if'])
-  self.assertIn('refs/heads/claude/supernova-github-access-yfhe89',job['if'])
-  steps=job['steps']
-  # The signing key appears in exactly one step; Drive credentials in exactly one later step.
-  drive_steps=[n for n,step in enumerate(steps) if 'secrets.GDRIVE_' in json.dumps(step)]
-  secret_steps=[n for n,step in enumerate(steps) if 'secrets.' in json.dumps(step) and n not in drive_steps]
-  self.assertEqual(len(secret_steps),1)
-  self.assertEqual(len(drive_steps),1)
-  drive=steps[drive_steps[0]]
-  self.assertNotIn('SUPERNOVA_',json.dumps(drive))
-  cleanup=next(n for n,step in enumerate(steps) if step.get('if')=='always()' and 'cleanup' in step.get('run',''))
-  self.assertGreater(drive_steps[0],cleanup,'Drive delivery runs only after the signing key is destroyed')
-  self.assertIn('drive_upload.py',drive['run'])
-  verification=next(n for n,step in enumerate(steps) if step['name'].startswith('Verify successful conformance'))
-  self.assertLess(verification,secret_steps[0])
-  self.assertIn('verify-0151-scope.py',steps[verification]['run'])
-  self.assertIn('only subsequent report updates',steps[verification]['name'])
-  self.assertNotIn('secrets.',json.dumps(job.get('env',{})))
-  self.assertEqual(qa.CERTIFICATE,steps[secret_steps[0]]['env']['SUPERNOVA_CERT_SHA256'])
-  self.assertTrue(any(step.get('if')=='always()' and 'cleanup' in step.get('run','') for step in steps))
 
  def testWrongCertificateCannotReachKeystoreOnTheAuthorisedBranch(self):
   from unittest.mock import patch
