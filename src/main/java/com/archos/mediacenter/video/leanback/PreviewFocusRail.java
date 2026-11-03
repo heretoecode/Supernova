@@ -3,8 +3,10 @@ package com.archos.mediacenter.video.leanback;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
@@ -12,7 +14,7 @@ import android.widget.LinearLayout;
 /** A single travelling boundary (the shared white row outline) for adjacent navigation controls. Cards keep their own focus. */
 public final class PreviewFocusRail extends LinearLayout {
     /** The shared white row outline (owner rule 2 Nov 2026: focus is white everywhere). */
-    private android.graphics.drawable.Drawable boundary;
+    private Drawable boundary;
     private final RectF current = new RectF();
     private ValueAnimator movement;
     private boolean visible;
@@ -88,7 +90,7 @@ public final class PreviewFocusRail extends LinearLayout {
             boundary.setBounds(Math.round(current.left), Math.round(current.top), Math.round(current.right),
                                Math.round(current.bottom));
             if (underline) {
-                android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
                 paint.setColor(PreviewAccent.color(getContext()));
                 canvas.drawRoundRect(current, getResources().getDisplayMetrics().density,
                                      getResources().getDisplayMetrics().density, paint);
