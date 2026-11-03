@@ -166,8 +166,9 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset implements LoaderManager.LoaderCallbacks<Cursor>, PlayUtils.SubtitleDownloadListener, SubtitleInterface, Delete.DeleteListener, XmlDb.ResumeChangeListener, ExternalPlayerWithResultStarter {
-
+public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
+    implements LoaderManager.LoaderCallbacks<Cursor>, PlayUtils.SubtitleDownloadListener, SubtitleInterface,
+               Delete.DeleteListener, XmlDb.ResumeChangeListener, ExternalPlayerWithResultStarter {
     private static final Logger log = LoggerFactory.getLogger(VideoDetailsFragment.class);
 
     /** A serialized com.archos.mediacenter.video.leanback.adapter.object.Video */
@@ -184,18 +185,17 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public static final String EXTRA_HAS_SHARED_ELEMENT = "has_shared_element";
     public static final String EXTRA_DETAILS_COLOR = "extra_details_color";
 
-
     public static final int REQUEST_CODE_LOCAL_RESUME_AFTER_ADS_ACTIVITY = 985;
     public static final int REQUEST_CODE_REMOTE_RESUME_AFTER_ADS_ACTIVITY = 986;
-    public static final int REQUEST_CODE_SUBTITLES_ACTIVITY                 = 987;
-    public static final int REQUEST_CODE_RESUME_AFTER_ADS_ACTIVITY          = 988;
+    public static final int REQUEST_CODE_SUBTITLES_ACTIVITY = 987;
+    public static final int REQUEST_CODE_RESUME_AFTER_ADS_ACTIVITY = 988;
     public static final int REQUEST_CODE_PLAY_FROM_BEGIN_AFTER_ADS_ACTIVITY = 989;
     public static final int PLAY_ACTIVITY_REQUEST_CODE = 990;
 
     private static final int INDEX_MAIN = 0;
-    private static final int INDEX_FILELIST =1;
-    private   int INDEX_SUBTITLES = 1;
-    private   int INDEX_FILEDETAILS = 2;
+    private static final int INDEX_FILELIST = 1;
+    private int INDEX_SUBTITLES = 1;
+    private int INDEX_FILEDETAILS = 2;
 
     /** pre-play subtitle download dialog is displayed only in case the wait is long than DIALOG_LAUNCH_DELAY_MS */
     private static final int DIALOG_LAUNCH_DELAY_MS = 2000;
@@ -203,54 +203,134 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     /** The video for which we are displaying the details. This object is updated each time we have a DB update */
     private PreviewMoviePage mPreviewMovie;
     private BaseTags mPreviewTags;
-    private ScraperImage mPreviewPosterSelection,mPreviewBackdropSelection;
+    private ScraperImage mPreviewPosterSelection, mPreviewBackdropSelection;
     private com.archos.mediacenter.video.leanback.TopNavigation mPreviewNavigation;
     private View mNativeDetails;
     private java.util.concurrent.ExecutorService mPreviewWorker;
     private boolean mPreviewAutoPlayed;
-    @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-        View nativeView=super.onCreateView(inflater,parent,state);
-        if(mVideo==null||mLaunchedFromPlayer||!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
-        mNativeDetails=nativeView;android.widget.FrameLayout container=new android.widget.FrameLayout(requireContext());container.addView(nativeView);nativeView.setVisibility(View.GONE);
-        mPreviewMovie=new PreviewMoviePage(requireActivity(),()->mDetailsOverviewRow==null?null:mDetailsOverviewRow.getActionsAdapter(),a->{mOnActionClickedListener.onActionClicked(a);if(mVideo!=null)mPreviewMovie.bind(mVideo);},this::showPreviewTools,uri->{if(mPreviewNavigation!=null)mPreviewNavigation.setArtwork(uri);});
-        container.addView(mPreviewMovie,new android.widget.FrameLayout.LayoutParams(-1,-1));
-        mPreviewNavigation=new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(),container,tab->{
-            if(tab==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
-            else if(tab==5)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
-            else{Intent home=new Intent(requireContext(),com.archos.mediacenter.video.leanback.MainActivityLeanback.class);home.putExtra("preview_tab",tab);home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);requireActivity().finish();}
-        },()->mPreviewMovie!=null&&mPreviewMovie.atTop());
-        mPreviewNavigation.selectTab(mVideo instanceof Episode?2:1);mPreviewMovie.bind(mVideo);mPreviewMovie.post(mPreviewMovie::focusPrimary);
+
+    @Override
+    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+        View nativeView = super.onCreateView(inflater, parent, state);
+        if (mVideo == null || mLaunchedFromPlayer
+            || !PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
+            return nativeView;
+        mNativeDetails = nativeView;
+        android.widget.FrameLayout container = new android.widget.FrameLayout(requireContext());
+        container.addView(nativeView);
+        nativeView.setVisibility(View.GONE);
+        mPreviewMovie = new PreviewMoviePage(requireActivity(),
+            ()
+                -> mDetailsOverviewRow == null ? null : mDetailsOverviewRow.getActionsAdapter(),
+            a
+            -> {
+                mOnActionClickedListener.onActionClicked(a);
+                if (mVideo != null)
+                    mPreviewMovie.bind(mVideo);
+            },
+            this::showPreviewTools,
+            uri -> {
+                if (mPreviewNavigation != null)
+                    mPreviewNavigation.setArtwork(uri);
+            });
+        container.addView(mPreviewMovie, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        mPreviewNavigation =
+            new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(), container, tab -> {
+                if (tab == 4)
+                    startActivity(new Intent(
+                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                else if (tab == 5)
+                    startActivity(new Intent(
+                        requireContext(), com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                else {
+                    Intent home =
+                        new Intent(requireContext(), com.archos.mediacenter.video.leanback.MainActivityLeanback.class);
+                    home.putExtra("preview_tab", tab);
+                    home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(home);
+                    requireActivity().finish();
+                }
+            }, () -> mPreviewMovie != null && mPreviewMovie.atTop());
+        mPreviewNavigation.selectTab(mVideo instanceof Episode ? 2 : 1);
+        mPreviewMovie.bind(mVideo);
+        mPreviewMovie.post(mPreviewMovie::focusPrimary);
         return mPreviewNavigation;
     }
-    public boolean closePreviewNativeDetails(){return false;}
-    private void showPreviewVersions(){
-        java.util.List<Video> variants=new java.util.ArrayList<>(mVideoList);variants.sort(com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-        com.archos.mediacenter.video.leanback.PreviewVersionsDialog.show(requireActivity(),variants,mVideo,video->{
+
+    public boolean closePreviewNativeDetails() {
+        return false;
+    }
+
+    private void showPreviewVersions() {
+        java.util.List<Video> variants = new java.util.ArrayList<>(mVideoList);
+        variants.sort(com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
+        com.archos.mediacenter.video.leanback.PreviewVersionsDialog.show(requireActivity(), variants, mVideo, video -> {
             // Switching encode keeps the already selected title's playback position.
-            video.setAutomaticResumeMs(mVideo.getResumeMs());video.setRemoteResumeMs(mVideo.getRemoteResumeMs());
-            mSelectCurrentVideo=true;mVideo=video;fullyReloadVideo(mVideo,null,false);
-        });
-    }
-    private void showPreviewTools(){
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Subtitles and artwork",new String[]{"Download subtitles","Choose subtitles","Posters","Backdrops","Subtitle Settings"},-1,java.util.Collections.emptySet(),false,n->{
-            if(n==0)performSubtitleDownload();else if(n==1)performSubtitleChoose();else if(n==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class).putExtra("preview_settings_category","Subtitles"));else showPreviewArtwork(n==2?mPostersRow:mBackdropsRow);
-        });
-    }
-    private void showPreviewArtwork(Row sourceRow){
-        ListRow row=sourceRow instanceof ListRow?(ListRow)sourceRow:null;
-        if(row==null||row.getAdapter().size()==0){com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Artwork","No artwork available");return;}
-        boolean posters=sourceRow==mPostersRow;java.util.List<ScraperImage> images=new java.util.ArrayList<>();
-        for(int i=0;i<row.getAdapter().size();i++)if(row.getAdapter().get(i) instanceof ScraperImage)images.add((ScraperImage)row.getAdapter().get(i));
-        ScraperImage selected=posters?mPreviewPosterSelection:mPreviewBackdropSelection;
-        com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(requireContext(),posters?"Posters":"Backdrops",images,selected,posters,(image,done)->{
-            java.util.function.Consumer<Boolean> complete=saved->{if(saved){if(posters)mPreviewPosterSelection=image;else mPreviewBackdropSelection=image;}done.accept(saved);};
-            if(posters){mPosterSaverTask=new PosterSaverTask(getActivity(),mVideo instanceof Episode?((Episode)mVideo).getSeasonNumber():-1);mPosterSaverTask.execute(image,complete);}
-            else{mBackdropSaverTask=new BackdropSaverTask(getActivity());mBackdropSaverTask.execute(image,complete);}
+            video.setAutomaticResumeMs(mVideo.getResumeMs());
+            video.setRemoteResumeMs(mVideo.getRemoteResumeMs());
+            mSelectCurrentVideo = true;
+            mVideo = video;
+            fullyReloadVideo(mVideo, null, false);
         });
     }
 
+    private void showPreviewTools() {
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(), "Subtitles and artwork",
+            new String[] {
+                "Download subtitles", "Choose subtitles", "Posters", "Backdrops", "Subtitle Settings"
+            }, -1,
+            java.util.Collections.emptySet(), false, n -> {
+                if (n == 0)
+                    performSubtitleDownload();
+                else if (n == 1)
+                    performSubtitleChoose();
+                else if (n == 4)
+                    startActivity(new Intent(
+                        requireContext(), com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class)
+                            .putExtra("preview_settings_category", "Subtitles"));
+                else
+                    showPreviewArtwork(n == 2 ? mPostersRow : mBackdropsRow);
+            });
+    }
+
+    private void showPreviewArtwork(Row sourceRow) {
+        ListRow row = sourceRow instanceof ListRow ? (ListRow) sourceRow : null;
+        if (row == null || row.getAdapter().size() == 0) {
+            com.archos.mediacenter.video.leanback.PreviewDialog.read(
+                requireContext(), "Artwork", "No artwork available");
+            return;
+        }
+        boolean posters = sourceRow == mPostersRow;
+        java.util.List<ScraperImage> images = new java.util.ArrayList<>();
+        for (int i = 0; i < row.getAdapter().size(); i++)
+            if (row.getAdapter().get(i) instanceof ScraperImage)
+                images.add((ScraperImage) row.getAdapter().get(i));
+        ScraperImage selected = posters ? mPreviewPosterSelection : mPreviewBackdropSelection;
+        com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(
+            requireContext(), posters ? "Posters" : "Backdrops", images, selected, posters, (image, done) -> {
+                java.util.function.Consumer<Boolean> complete = saved -> {
+                    if (saved) {
+                        if (posters)
+                            mPreviewPosterSelection = image;
+                        else
+                            mPreviewBackdropSelection = image;
+                    }
+                    done.accept(saved);
+                };
+                if (posters) {
+                    mPosterSaverTask = new PosterSaverTask(
+                        getActivity(), mVideo instanceof Episode ? ((Episode) mVideo).getSeasonNumber() : -1);
+                    mPosterSaverTask.execute(image, complete);
+                } else {
+                    mBackdropSaverTask = new BackdropSaverTask(getActivity());
+                    mBackdropSaverTask.execute(image, complete);
+                }
+            });
+    }
+
     private Video mVideo;
-    private static boolean mIsVideoWatched = false; // TOFIX: adding internal state since trakt sync can occur much later
+    private static boolean mIsVideoWatched =
+        false; // TOFIX: adding internal state since trakt sync can occur much later
 
     /** DB id of the video to display (in case we do not get the video object directly)*/
     private long mVideoIdFromPlayer;
@@ -313,6 +393,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             mBackdropController.setCurrentlyDisplayedFile(file);
         }
     }
+
     private VideoInfoTask mVideoInfoTask;
     private FullScraperTagsTask mFullScraperTagsTask;
     private SubtitleFilesListerTask mSubtitleFilesListerTask;
@@ -363,29 +444,32 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     private int deleteOperation = Delete.OP_SINGLE_FILE;
     private long deleteFileSize = 0L;
 
-    private final ActivityResultLauncher<Intent> playLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> ExternalPlayerResultListener.getInstance().onActivityResult(
-                    PLAY_ACTIVITY_REQUEST_CODE, result.getResultCode(), result.getData()));
+    private final ActivityResultLauncher<Intent> playLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            result
+            -> ExternalPlayerResultListener.getInstance().onActivityResult(
+                PLAY_ACTIVITY_REQUEST_CODE, result.getResultCode(), result.getData()));
 
-    private final ActivityResultLauncher<Intent> subtitleLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    if (log.isDebugEnabled()) log.debug("Get RESULT_OK from SubtitlesDownloaderActivity/SubtitlesWizardActivity");
-                    if (mSubtitleFilesListerTask != null) {
-                        mSubtitleFilesListerTask.cancel();
-                    }
-                    mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());
-                    mSubtitleFilesListerTask.execute(mVideo);
+    private final ActivityResultLauncher<Intent> subtitleLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                if (log.isDebugEnabled())
+                    log.debug("Get RESULT_OK from SubtitlesDownloaderActivity/SubtitlesWizardActivity");
+                if (mSubtitleFilesListerTask != null) {
+                    mSubtitleFilesListerTask.cancel();
                 }
-            });
+                mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());
+                mSubtitleFilesListerTask.execute(mVideo);
+            }
+        });
 
-    private final ActivityResultLauncher<IntentSenderRequest> deleteLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartIntentSenderForResult(),
-            result -> { // result can be RESULT_OK, RESULT_CANCELED
+    private final ActivityResultLauncher<IntentSenderRequest> deleteLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(),
+            result -> {
+                // result can be RESULT_OK, RESULT_CANCELED
                 Context context = getActivity();
-                if (log.isDebugEnabled()) log.debug("ActivityResultLauncher deleteLauncher: result {}", result.toString());
+                if (log.isDebugEnabled())
+                    log.debug("ActivityResultLauncher deleteLauncher: result {}", result.toString());
                 if (delete == null && getActivity() != null) {
                     delete = new Delete(VideoDetailsFragment.this, getActivity());
                 }
@@ -395,7 +479,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
             });
 
-    @SuppressWarnings("deprecation") // getSerializableExtra / getParcelableArrayList: API 33+ branch uses typed form; else branch suppressed
+    @SuppressWarnings("deprecation")
+    // getSerializableExtra / getParcelableArrayList: API 33+ branch uses typed form; else branch suppressed
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -408,10 +493,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             deleteOperation = savedInstanceState.getInt(SAVED_DELETE_OPERATION, Delete.OP_SINGLE_FILE);
             deleteFileSize = savedInstanceState.getLong(SAVED_DELETE_FILE_SIZE, 0L);
         }
-        mDetailsLaunchUptimeMs = getActivity().getIntent()
-                .getLongExtra(EXTRA_DETAILS_LAUNCH_UPTIME_MS, -1);
+        mDetailsLaunchUptimeMs = getActivity().getIntent().getLongExtra(EXTRA_DETAILS_LAUNCH_UPTIME_MS, -1);
         traceDetails("fragment-onCreate");
-        if (log.isDebugEnabled()) log.debug("onCreate");
+        if (log.isDebugEnabled())
+            log.debug("onCreate");
         // pass the right deleteLauncher linked to activity
         FileUtilsQ.setDeleteLauncher(deleteLauncher);
         CustomApplication.resetLastVideoPlayed();
@@ -428,14 +513,15 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         // TransitionListener wrappers.
         Intent launchIntent = getActivity().getIntent();
         boolean cinematic = launchIntent.getSerializableExtra(EXTRA_VIDEO) instanceof Video
-                && !launchIntent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false)
-                && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
+            && !launchIntent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false)
+            && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                   .getBoolean("try_new_ui", false);
         if (cinematic) {
             getActivity().getWindow().setSharedElementEnterTransition(null);
             getActivity().getWindow().setSharedElementReturnTransition(null);
         }
         Transition transition = cinematic ? null : getActivity().getWindow().getSharedElementEnterTransition();
-        if(hasSharedElement && transition!=null) {
+        if (hasSharedElement && transition != null) {
             mAnimationIsRunning = false;
             transition.addListener(new Transition.TransitionListener() {
                 @Override
@@ -452,7 +538,6 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     if (mThumbnail != null) {
                         mDetailsOverviewRow.setImageBitmap(getActivity(), mThumbnail);
                         mDetailsOverviewRow.setImageScaleUpAllowed(true);
-
                     }
                     mOverlay.show();
                 }
@@ -477,7 +562,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         setTopOffsetRatio(0.5f);
         XmlDb.getInstance().addResumeChangeListener(this);
         int defaultColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
-        mColor = getActivity().getIntent() != null ? getActivity().getIntent().getIntExtra(EXTRA_DETAILS_COLOR, defaultColor) : defaultColor;
+        mColor = getActivity().getIntent() != null
+            ? getActivity().getIntent().getIntExtra(EXTRA_DETAILS_COLOR, defaultColor)
+            : defaultColor;
         dominantColor = mColor;
         mDescriptionPresenter = new VideoDetailsDescriptionPresenter();
         mOverviewRowPresenter = new ArchosDetailsOverviewRowPresenter(mDescriptionPresenter);
@@ -490,12 +577,13 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             mOverviewRowPresenter.setListener(helper);
         }
         mOverviewRowPresenter.setBackgroundColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor());
-        mOverviewRowPresenter.setActionsBackgroundColor(getDarkerColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()));
+        mOverviewRowPresenter.setActionsBackgroundColor(
+            getDarkerColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()));
         mOverviewRowPresenter.setOnActionClickedListener(mOnActionClickedListener);
         mVideoBadgePresenter = new VideoBadgePresenter(getActivity());
         mVideoBadgePresenter.setSelectedBackgroundColor(mColor);
         mFileListAdapter = new ArrayObjectAdapter(mVideoBadgePresenter);
-        mFileListRow = new SelectableListRow(new HeaderItem(getString(R.string.video_sources)),mFileListAdapter);
+        mFileListRow = new SelectableListRow(new HeaderItem(getString(R.string.video_sources)), mFileListAdapter);
 
         // allow Video Badges Animation at end of enter transition to prevent a huge animation glitch when opening VideoDetails
         /*
@@ -516,56 +604,67 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         );
          */
         Intent intent = getActivity().getIntent();
-        mSelectCurrentVideo = intent.getBooleanExtra(EXTRA_FORCE_VIDEO_SELECTION, false) ;
+        mSelectCurrentVideo = intent.getBooleanExtra(EXTRA_FORCE_VIDEO_SELECTION, false);
 
         // Easiest case when called from the leanback browser
         mVideo = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                ? intent.getSerializableExtra(EXTRA_VIDEO, Video.class)
-                : (Video) intent.getSerializableExtra(EXTRA_VIDEO);
+            ? intent.getSerializableExtra(EXTRA_VIDEO, Video.class)
+            : (Video) intent.getSerializableExtra(EXTRA_VIDEO);
 
         // When called from the player we don't have the Video object, but we may have the video id if it is indexed
-        if (mVideo==null) {
+        if (mVideo == null) {
             mVideoIdFromPlayer = intent.getLongExtra(EXTRA_VIDEO_ID, -1);
             if (mVideoIdFromPlayer == -1) {
                 mVideoPathFromPlayer = intent.getData().toString();
             }
-        } else { // initialization of watched state
+        } else {
+            // initialization of watched state
             mIsVideoWatched = mVideo.isWatched();
-            if (log.isDebugEnabled()) log.debug("onCreate: init mIsVideoWatched={}", mIsVideoWatched);
+            if (log.isDebugEnabled())
+                log.debug("onCreate: init mIsVideoWatched={}", mIsVideoWatched);
         }
 
         mLaunchedFromPlayer = intent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false);
         mShouldLoadBackdrop = intent.getBooleanExtra(EXTRA_SHOULD_LOAD_BACKDROP, true);
         mPlayerType = intent.getIntExtra(VideoInfoActivity.EXTRA_PLAYER_TYPE, -1);
         mVideoMetadataFromPlayer = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                ? intent.getSerializableExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA, VideoMetadata.class)
-                : (VideoMetadata) intent.getSerializableExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA);
-        
-        mBackdropController = new DetailsBackdropController(getActivity(), R.id.details_backdrop,
-                VideoInfoCommonClass.getDarkerColor(mColor));
+            ? intent.getSerializableExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA, VideoMetadata.class)
+            : (VideoMetadata) intent.getSerializableExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA);
+
+        mBackdropController = new DetailsBackdropController(
+            getActivity(), R.id.details_backdrop, VideoInfoCommonClass.getDarkerColor(mColor));
         mBackdropController.attach();
 
         setOnItemViewClickedListener(new OnItemViewClickedListener() {
             @Override
-            public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-                if(item instanceof ScraperTrailer){
+            public void onItemClicked(
+                Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+                if (item instanceof ScraperTrailer) {
                     // Breaks AndroidTV acceptance but needed to launch scraper in Youtube app instead of browser
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, ((ScraperTrailer)item).getUrl());
-                    ActivityInfo activityInfo = browserIntent.resolveActivityInfo(getActivity().getPackageManager(), PackageManager.MATCH_DEFAULT_ONLY);
-                    if (activityInfo == null) if (log.isDebugEnabled()) log.debug("onCreate.onItemClicked: activity identified null");
-                    else if (log.isDebugEnabled()) log.debug("onCreate.onItemClicked: activity identified {}", activityInfo.processName);
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, ((ScraperTrailer) item).getUrl());
+                    ActivityInfo activityInfo = browserIntent.resolveActivityInfo(
+                        getActivity().getPackageManager(), PackageManager.MATCH_DEFAULT_ONLY);
+                    if (activityInfo == null)
+                        if (log.isDebugEnabled())
+                            log.debug("onCreate.onItemClicked: activity identified null");
+                        else if (log.isDebugEnabled())
+                            log.debug("onCreate.onItemClicked: activity identified {}", activityInfo.processName);
                     if (activityInfo != null) {
                         // not used to exclude !activityInfo.processName.equals("com.google.android.tv.frameworkpackagestubs") but was preventing opening youtube on ADTV
-                        if (log.isDebugEnabled()) log.debug("onCreate.onItemClicked: browserintent on {} with activityInfo {}", ((ScraperTrailer)item).getUrl(), activityInfo.processName);
+                        if (log.isDebugEnabled())
+                            log.debug("onCreate.onItemClicked: browserintent on {} with activityInfo {}",
+                                ((ScraperTrailer) item).getUrl(), activityInfo.processName);
                         startActivity(browserIntent);
-                    }
-                    else {
-                        String url = ((ScraperTrailer)item).getUrl().toString().replace("https://www.youtube.com/watch", "https://www.youtube.com/tv#/watch");
-                        if (log.isDebugEnabled()) log.debug("onCreate.onItemClicked: open url {}", url);
+                    } else {
+                        String url = ((ScraperTrailer) item)
+                                         .getUrl()
+                                         .toString()
+                                         .replace("https://www.youtube.com/watch", "https://www.youtube.com/tv#/watch");
+                        if (log.isDebugEnabled())
+                            log.debug("onCreate.onItemClicked: open url {}", url);
                         WebUtils.openWebLink(getActivity(), url);
                     }
-                }
-                else if (item instanceof ScraperImage) {
+                } else if (item instanceof ScraperImage) {
                     if (row == mPostersRow) {
                         int season = -1;
                         if (mVideo instanceof Episode) {
@@ -583,30 +682,27 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     if (row == mFileListRow) {
                         Video old = mVideo;
                         mVideo = (Video) item;
-                        if (log.isDebugEnabled()) log.debug("Video selected");
+                        if (log.isDebugEnabled())
+                            log.debug("Video selected");
                         mShouldUpdateRemoteResume = true;
-                        if(!smoothUpdateVideo(mVideo, old)){
+                        if (!smoothUpdateVideo(mVideo, old)) {
                             // Full update if this is not a smooth update case
                             if (mDetailRowBuilderTask != null) {
                                 mDetailRowBuilderTask.cancel();
                             }
 
-                            fullyReloadVideo(mVideo,mPoster);
-
+                            fullyReloadVideo(mVideo, mPoster);
                         }
-                        LoaderManager.getInstance(VideoDetailsFragment.this).restartLoader(1, null, VideoDetailsFragment.this);
-
+                        LoaderManager.getInstance(VideoDetailsFragment.this)
+                            .restartLoader(1, null, VideoDetailsFragment.this);
                     }
-                }
-                else if (item instanceof WebPageLink) {
+                } else if (item instanceof WebPageLink) {
                     // launch of web browser
-                    WebPageLink link = (WebPageLink)item;
+                    WebPageLink link = (WebPageLink) item;
                     WebUtils.openWebLink(getActivity(), link.getUrl());
                 }
             }
         });
-
-
     }
 
     private int getDarkerColor(int color) {
@@ -623,7 +719,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             if (delete != null && delete.getCurrentVideoFileToDeleteSize() > 0) {
                 deleteFileSize = delete.getCurrentVideoFileToDeleteSize();
             }
-            outState.putParcelableArrayList(SAVED_DELETE_URIS, (deleteUrisList instanceof ArrayList) ? (ArrayList<Uri>) deleteUrisList : new ArrayList<>(deleteUrisList));
+            outState.putParcelableArrayList(SAVED_DELETE_URIS,
+                (deleteUrisList instanceof ArrayList) ? (ArrayList<Uri>) deleteUrisList
+                                                      : new ArrayList<>(deleteUrisList));
             outState.putInt(SAVED_DELETE_OPERATION, deleteOperation);
             outState.putLong(SAVED_DELETE_FILE_SIZE, deleteFileSize);
         }
@@ -650,12 +748,23 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mOverlay = new Overlay(this);
-        if(mPreviewMovie!=null){
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader loader=new com.archos.mediacenter.video.leanback.PreviewLibraryLoader(requireContext().getApplicationContext());
-            final PreviewMoviePage page=mPreviewMovie;
-            mPreviewWorker=java.util.concurrent.Executors.newSingleThreadExecutor();mPreviewWorker.execute(()->{
-                try(android.database.Cursor cursor=loader.loadInBackground()){if(cursor!=null)page.post(()->{if(mPreviewMovie==page&&page.isAttachedToWindow())page.setSnapshot(loader.snapshot);});}
-                catch(RuntimeException ignored){}finally{page.post(loader::reset);}
+        if (mPreviewMovie != null) {
+            com.archos.mediacenter.video.leanback.PreviewLibraryLoader loader =
+                new com.archos.mediacenter.video.leanback.PreviewLibraryLoader(
+                    requireContext().getApplicationContext());
+            final PreviewMoviePage page = mPreviewMovie;
+            mPreviewWorker = java.util.concurrent.Executors.newSingleThreadExecutor();
+            mPreviewWorker.execute(() -> {
+                try (android.database.Cursor cursor = loader.loadInBackground()) {
+                    if (cursor != null)
+                        page.post(() -> {
+                            if (mPreviewMovie == page && page.isAttachedToWindow())
+                                page.setSnapshot(loader.snapshot);
+                        });
+                } catch (RuntimeException ignored) {
+                } finally {
+                    page.post(loader::reset);
+                }
             });
         }
 
@@ -665,16 +774,21 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         if (mVideo != null && mAdapter == null) {
             traceDetails("initial-overview-from-intent");
             Bitmap transitionPoster = VideoDetailsTransitionPosterCache.take(mDetailsLaunchUptimeMs);
-            if (transitionPoster != null) traceDetails("transition-poster-reused");
+            if (transitionPoster != null)
+                traceDetails("transition-poster-reused");
             fullyReloadVideo(mVideo, transitionPoster, false, transitionPoster != null);
         }
     }
 
     @Override
     public void onDestroyView() {
-        if(mPreviewWorker!=null)mPreviewWorker.shutdownNow();
-        mPreviewMovie=null;mPreviewNavigation=null;mNativeDetails=null;
-        if (mDetailsOverviewRow != null) StreamingActions.cancel(mDetailsOverviewRow.getActionsAdapter());
+        if (mPreviewWorker != null)
+            mPreviewWorker.shutdownNow();
+        mPreviewMovie = null;
+        mPreviewNavigation = null;
+        mNativeDetails = null;
+        if (mDetailsOverviewRow != null)
+            StreamingActions.cancel(mDetailsOverviewRow.getActionsAdapter());
         mOverlay.destroy();
         delete = null;
         super.onDestroyView();
@@ -684,64 +798,85 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public void onStop() {
         // Cancel all the async tasks
         // please be aware that even after stopping, the async task continues until background task has finished
-        if (mDetailRowBuilderTask != null) mDetailRowBuilderTask.cancel();
+        if (mDetailRowBuilderTask != null)
+            mDetailRowBuilderTask.cancel();
         mBackdropController.onStop(!mLaunchedFromPlayer && mVideo != null, mVideo);
-        if (mVideoInfoTask != null) mVideoInfoTask.cancel();
-        if (mFullScraperTagsTask != null) mFullScraperTagsTask.cancel();
-        if (mSubtitleFilesListerTask != null) mSubtitleFilesListerTask.cancel();
-        if (mPosterSaverTask != null) mPosterSaverTask.cancel();
-        if (mBackdropSaverTask != null) mBackdropSaverTask.cancel();
-        if (mThumbnailAsyncTask != null) mThumbnailAsyncTask.cancel();
+        if (mVideoInfoTask != null)
+            mVideoInfoTask.cancel();
+        if (mFullScraperTagsTask != null)
+            mFullScraperTagsTask.cancel();
+        if (mSubtitleFilesListerTask != null)
+            mSubtitleFilesListerTask.cancel();
+        if (mPosterSaverTask != null)
+            mPosterSaverTask.cancel();
+        if (mBackdropSaverTask != null)
+            mBackdropSaverTask.cancel();
+        if (mThumbnailAsyncTask != null)
+            mThumbnailAsyncTask.cancel();
         //do not update remote resume
-        if (log.isDebugEnabled()) log.debug("removeParseListener");
+        if (log.isDebugEnabled())
+            log.debug("removeParseListener");
         XmlDb.getInstance().removeParseListener(mRemoteDbObserver);
         XmlDb.getInstance().removeResumeChangeListener(this);
         super.onStop();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-        if (mDetailsOverviewRow != null) StreamingActions.refresh(mDetailsOverviewRow.getActionsAdapter());
+        if (mDetailsOverviewRow != null)
+            StreamingActions.refresh(mDetailsOverviewRow.getActionsAdapter());
         traceDetails("fragment-onResume");
-        if (log.isDebugEnabled()) log.debug("onResume");
+        if (log.isDebugEnabled())
+            log.debug("onResume");
         mShouldUpdateRemoteResume = true;
         mOverlay.resume();
-        if(mResumeFromPlayer && ArchosUtils.isAmazonApk()) {
+        if (mResumeFromPlayer && ArchosUtils.isAmazonApk()) {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     StoreRatingDialogBuilder.displayStoreRatingDialogIfNeeded(getActivity());
                 }
-            },2000);
+            }, 2000);
         }
 
         // update video in case of binge watching or repeat mode
-        if (log.isDebugEnabled()) log.debug("onResume: mFirstOnResume {}, mResumeFromPlayer {}", mFirstOnResume, mResumeFromPlayer);
+        if (log.isDebugEnabled())
+            log.debug("onResume: mFirstOnResume {}, mResumeFromPlayer {}", mFirstOnResume, mResumeFromPlayer);
         long playerVideoId = CustomApplication.getLastVideoPlayedId();
         Uri playerVideoUri = CustomApplication.getLastVideoPlayedUri();
-        if (mVideo != null) if (log.isDebugEnabled()) log.debug("onResume: current mVideo {}({}), playerVideo {}({}), mVideoIdFromPlayer {}, mVideoFromPlayer {}({})", mVideo.getFileUri(), mVideo.getId(), playerVideoUri, playerVideoId, mVideoIdFromPlayer, mVideoPathFromPlayer, mVideoIdFromPlayer);
-        else if (log.isDebugEnabled()) log.debug("onResume: current mVideo is null");
-        if (mVideo != null && ((playerVideoId >= 0 && mVideo.getId() != playerVideoId) ||
-            (playerVideoUri != null && !mVideo.getFileUri().equals(playerVideoUri)))) {
-            if (log.isDebugEnabled()) log.debug("onResume: different playerVideo and mVideo detected!");
+        if (mVideo != null)
+            if (log.isDebugEnabled())
+                log.debug(
+                    "onResume: current mVideo {}({}), playerVideo {}({}), mVideoIdFromPlayer {}, mVideoFromPlayer {}({})",
+                    mVideo.getFileUri(), mVideo.getId(), playerVideoUri, playerVideoId, mVideoIdFromPlayer,
+                    mVideoPathFromPlayer, mVideoIdFromPlayer);
+            else if (log.isDebugEnabled())
+                log.debug("onResume: current mVideo is null");
+        if (mVideo != null
+            && ((playerVideoId >= 0 && mVideo.getId() != playerVideoId)
+                || (playerVideoUri != null && !mVideo.getFileUri().equals(playerVideoUri)))) {
+            if (log.isDebugEnabled())
+                log.debug("onResume: different playerVideo and mVideo detected!");
             mVideoPathFromPlayer = playerVideoUri != null ? playerVideoUri.toString() : null;
             mVideoIdFromPlayer = playerVideoId;
-            if (log.isDebugEnabled()) log.debug("onResume: not the same video than before (repeat mode?) target is {}", mVideoPathFromPlayer);
+            if (log.isDebugEnabled())
+                log.debug("onResume: not the same video than before (repeat mode?) target is {}", mVideoPathFromPlayer);
             // get mVideo set to new video
-            CursorLoader loader = playerVideoUri != null
-                    ? new MultipleVideoLoader(getActivity(), mVideoPathFromPlayer)
-                    : new MultipleVideoLoader(getActivity(), playerVideoId);
+            CursorLoader loader = playerVideoUri != null ? new MultipleVideoLoader(getActivity(), mVideoPathFromPlayer)
+                                                         : new MultipleVideoLoader(getActivity(), playerVideoId);
             Cursor c = loader.loadInBackground();
-            if (c != null && c.getCount()>0) {
+            if (c != null && c.getCount() > 0) {
                 mVideo = findPlayedVideoInCursor(c, playerVideoId, playerVideoUri);
                 if (mVideo != null) {
-                    if (log.isDebugEnabled()) log.debug("onResume: yay we get a new video {}", mVideo.getFilePath());
-                    mRepeatModeDetected = true; // to signal smoothUpdateVideo that it should all details since video is different from initial one
+                    if (log.isDebugEnabled())
+                        log.debug("onResume: yay we get a new video {}", mVideo.getFilePath());
+                    mRepeatModeDetected =
+                        true; // to signal smoothUpdateVideo that it should all details since video is different from initial one
                 }
             } else {
-                if (log.isDebugEnabled()) log.debug("onResume: oops no video found");
+                if (log.isDebugEnabled())
+                    log.debug("onResume: oops no video found");
             }
             if (c != null)
                 c.close();
@@ -750,9 +885,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
         // Launch the first details task
         if (mFirstOnResume) {
-            if (log.isDebugEnabled()) log.debug("onResume: mFirstOnResume");
-            if (mVideo!=null) {
-                if(mThumbnailAsyncTask!=null)
+            if (log.isDebugEnabled())
+                log.debug("onResume: mFirstOnResume");
+            if (mVideo != null) {
+                if (mThumbnailAsyncTask != null)
                     mThumbnailAsyncTask.cancel();
             }
             // We start the loader in all cases to get DB updates that will trigger details update if need be
@@ -761,10 +897,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
         // Update the details when back from player (we may have miss some DB updates while in background)
         else if (mResumeFromPlayer) {
-            if (log.isDebugEnabled()) log.debug("onResume: mResumeFromPlayer");
+            if (log.isDebugEnabled())
+                log.debug("onResume: mResumeFromPlayer");
             LoaderManager.getInstance(this).restartLoader(1, null, this);
 
-            if (mSubtitleFilesListerTask !=null) {
+            if (mSubtitleFilesListerTask != null) {
                 mSubtitleFilesListerTask.cancel();
             }
             mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());
@@ -777,8 +914,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
         // The details update below owns the initial backdrop request.  Starting one here as well
         // used to race the scraper-tag request and could replace the backdrop during the enter animation.
-        if (!mLaunchedFromPlayer) mBackdropController.restoreIfNeeded();
-
+        if (!mLaunchedFromPlayer)
+            mBackdropController.restoreIfNeeded();
     }
 
     private Video findPlayedVideoInCursor(Cursor cursor, long playerVideoId, Uri playerVideoUri) {
@@ -803,34 +940,38 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             return true;
         Uri videoUri = video.getFileUri();
         return playerVideoUri != null && videoUri != null
-                && (playerVideoUri.equals(videoUri) || playerVideoUri.toString().equals(videoUri.toString()));
+            && (playerVideoUri.equals(videoUri) || playerVideoUri.toString().equals(videoUri.toString()));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (log.isDebugEnabled()) log.debug("onPause");
+        if (log.isDebugEnabled())
+            log.debug("onPause");
         mOverlay.pause();
     }
 
     final OnActionClickedListener mOnActionClickedListener = new OnActionClickedListener() {
         @Override
         public void onActionClicked(Action action) {
-            if(mVideo!=null&&mBackdropController!=null){
-                java.io.File cached=mBackdropController.getCurrentlyDisplayedFile();
-                if(cached!=null)mVideo.setPreviewBackdrop(Uri.fromFile(cached).toString());
+            if (mVideo != null && mBackdropController != null) {
+                java.io.File cached = mBackdropController.getCurrentlyDisplayedFile();
+                if (cached != null)
+                    mVideo.setPreviewBackdrop(Uri.fromFile(cached).toString());
             }
-                if (StreamingActions.onClick(action)) return;
+            if (StreamingActions.onClick(action))
+                return;
             VideoMetadata mMetadata = mVideo.getMetadata();
             isFilePlayable = true;
             // test from FileDetailsRowPresenter to check if file is playable
             if (mMetadata != null) {
-                if (mMetadata.getFileSize() == 0 && mMetadata.getVideoTrack() == null && mMetadata.getAudioTrackNb() == 0) {
+                if (mMetadata.getFileSize() == 0 && mMetadata.getVideoTrack() == null
+                    && mMetadata.getAudioTrackNb() == 0) {
                     // sometimes metadata are set to zero but the file is there, can be due to libavosjni not loaded
                     isFilePlayable = false;
                 }
             }
-            if(action.getId() == VideoActionAdapter.ACTION_LOCAL_RESUME){
+            if (action.getId() == VideoActionAdapter.ACTION_LOCAL_RESUME) {
                 if (isFilePlayable) {
                     startAds(REQUEST_CODE_LOCAL_RESUME_AFTER_ADS_ACTIVITY);
                 } else {
@@ -846,15 +987,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             }
             if (action.getId() == VideoActionAdapter.ACTION_REMOTE_RESUME) {
                 startAds(REQUEST_CODE_REMOTE_RESUME_AFTER_ADS_ACTIVITY);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_PLAY_FROM_BEGIN || action.getId() == VideoActionAdapter.ACTION_PLAY) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_PLAY_FROM_BEGIN
+                || action.getId() == VideoActionAdapter.ACTION_PLAY) {
                 if (isFilePlayable) {
                     startAds(REQUEST_CODE_PLAY_FROM_BEGIN_AFTER_ADS_ACTIVITY);
                 } else {
                     Toast.makeText(getActivity(), R.string.player_err_cantplayvideo, Toast.LENGTH_SHORT).show();
                 }
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_LIST_EPISODES) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_LIST_EPISODES) {
                 if (mVideo instanceof Episode) {
                     // In this case mVideo is a tvshow Episode
                     Episode mEpisode = (Episode) mVideo;
@@ -879,16 +1019,17 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                         mHandler.postDelayed(new Runnable() {
                             public void run() {
                                 Activity activity = getActivity();
-                                if (activity != null) activity.finish(); // better safe than sorry
+                                if (activity != null)
+                                    activity.finish(); // better safe than sorry
                             }
                         }, 1000);
                     }
                 }
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_NEXT_EPISODE) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_NEXT_EPISODE) {
                 if (mNextEpisode != null) {
                     Video nextEp = mNextEpisode;
-                    if (log.isDebugEnabled()) log.debug("ACTION_NEXT_EPISODE: in-place reload from {} to {}", mVideo, nextEp);
+                    if (log.isDebugEnabled())
+                        log.debug("ACTION_NEXT_EPISODE: in-place reload from {} to {}", mVideo, nextEp);
                     cancelPendingEpisodeTasks();
                     mVideo = nextEp;
                     mIsVideoWatched = nextEp.isWatched();
@@ -901,40 +1042,54 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     // (Play/Resume) like a freshly created details screen would.
                     mOverviewRowPresenter.setSelectedActionPosition(0);
                     if (isAdded()) {
-                        LoaderManager.getInstance(VideoDetailsFragment.this).restartLoader(1, null, VideoDetailsFragment.this);
+                        LoaderManager.getInstance(VideoDetailsFragment.this)
+                            .restartLoader(1, null, VideoDetailsFragment.this);
                     }
                 }
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_INDEX) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_INDEX) {
                 VideoStore.requestIndexing(mVideo.getFileUri(), getActivity());
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_UNINDEX) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_UNINDEX) {
                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_DELETE) {
-                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(requireContext(),mVideo.getFileUri())){
-                    com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Manage put.io file","This file is managed by put.io. Use put.io to delete it; Supernova will not send destructive operations through WebDAV.");return;
+            } else if (action.getId() == VideoActionAdapter.ACTION_DELETE) {
+                if (com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(
+                        requireContext(), mVideo.getFileUri())) {
+                    com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(), "Manage put.io file",
+                        "This file is managed by put.io. Use put.io to delete it; Supernova will not send destructive operations through WebDAV.");
+                    return;
                 }
                 if (mPreviewMovie != null) {
                     com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
-                            "Remove or delete file", new String[]{getString(android.R.string.cancel), "Remove from Library (keep file)", "Delete source file"},
-                            0, choice -> {
-                                if (!isAdded()) return;
-                                if (choice == 1) DbUtils.markAsHiddenByUser(getActivity(), mVideo);
-                                if (choice == 2) com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
-                                    "Delete source file permanently?",new String[]{getString(android.R.string.cancel),"Delete source file"},0,
-                                    confirm->{if(confirm==1&&isAdded())deleteFile_async(mVideo);});
-                            });
+                        "Remove or delete file",
+                        new String[] {
+                            getString(android.R.string.cancel), "Remove from Library (keep file)",
+                            "Delete source file"
+                        },
+                        0, choice -> {
+                            if (!isAdded())
+                                return;
+                            if (choice == 1)
+                                DbUtils.markAsHiddenByUser(getActivity(), mVideo);
+                            if (choice == 2)
+                                com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),
+                                    "Delete source file permanently?",
+                                    new String[] {
+                                        getString(android.R.string.cancel), "Delete source file"
+                                    }, 0,
+                                    confirm -> {
+                                        if (confirm == 1 && isAdded())
+                                            deleteFile_async(mVideo);
+                                    });
+                        });
                     return;
                 }
                 mShouldDisplayConfirmDelete = true;
-                
-                ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_CONFIRM_DELETE) {
+
+                ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter())
+                    .update(mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete,
+                        mNextEpisode, mIsTvEpisode);
+            } else if (action.getId() == VideoActionAdapter.ACTION_CONFIRM_DELETE) {
                 deleteFile_async(mVideo);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_SCRAP) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_SCRAP) {
                 if (!NetworkState.isNetworkConnected(getActivity())) {
                     Toast.makeText(getActivity(), R.string.scrap_no_network, Toast.LENGTH_SHORT).show();
                 } else {
@@ -943,49 +1098,48 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     startActivity(intent);
                 }
             } else if (action.getId() == VideoActionAdapter.ACTION_UNSCRAP) {
-                DbUtils.deleteScraperInfo(getActivity(),mVideo); // TODO should probably be in an async task
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_HIDE) {
+                DbUtils.deleteScraperInfo(getActivity(), mVideo); // TODO should probably be in an async task
+            } else if (action.getId() == VideoActionAdapter.ACTION_HIDE) {
                 DbUtils.markAsHiddenByUser(getActivity(), mVideo);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_ADD_TO_LIST) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_ADD_TO_LIST) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(ListDialog.EXTRA_VIDEO, mVideo);
                 ListDialog dialog = new ListDialog();
                 dialog.setArguments(bundle);
                 dialog.show(getParentFragmentManager(), "list_dialog");
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_REMOVE_FROM_LIST) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_REMOVE_FROM_LIST) {
                 BaseTags metadata = mVideo.getFullScraperTags(getActivity());
                 boolean isEpisode = metadata instanceof EpisodeTags;
-                VideoStore.VideoList.VideoItem videoItem  = new VideoStore.VideoList.VideoItem(-1,!isEpisode?(int)metadata.getOnlineId():-1, isEpisode?(int)metadata.getOnlineId():-1, VideoStore.List.SyncStatus.STATUS_DELETED);
-                getActivity().getContentResolver().update(VideoStore.List.getListUri(getActivity().getIntent().getLongExtra(EXTRA_LIST_ID,-1)), videoItem.toContentValues(),  videoItem.getDBWhereString(), videoItem.getDBWhereArgs());
+                VideoStore.VideoList.VideoItem videoItem =
+                    new VideoStore.VideoList.VideoItem(-1, !isEpisode ? (int) metadata.getOnlineId() : -1,
+                        isEpisode ? (int) metadata.getOnlineId() : -1, VideoStore.List.SyncStatus.STATUS_DELETED);
+                getActivity().getContentResolver().update(
+                    VideoStore.List.getListUri(getActivity().getIntent().getLongExtra(EXTRA_LIST_ID, -1)),
+                    videoItem.toContentValues(), videoItem.getDBWhereString(), videoItem.getDBWhereArgs());
                 mShouldDisplayRemoveFromList = false;
-                mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
+                mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), mVideo, mLaunchedFromPlayer,
+                    mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
                 TraktService.sync(ArchosUtils.getGlobalContext(), TraktService.FLAG_SYNC_AUTO);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_UNHIDE) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_UNHIDE) {
                 DbUtils.markAsNotHiddenByUser(getActivity(), mVideo);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_MARK_AS_WATCHED) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_MARK_AS_WATCHED) {
                 int offset = 0;
 
                 if (mVideo.getResumeMs() > 0)
                     offset--;
-                
+
                 if (mVideo.getRemoteResumeMs() > 0 && mVideo.getRemoteResumeMs() != mVideo.getResumeMs())
                     offset--;
 
                 mOverviewRowPresenter.moveSelectedPosition(offset);
                 DbUtils.markAsRead(getActivity(), mVideo);
                 getActivity().setResult(Activity.RESULT_OK);
-            }
-            else if (action.getId() == VideoActionAdapter.ACTION_MARK_AS_NOT_WATCHED) {
+            } else if (action.getId() == VideoActionAdapter.ACTION_MARK_AS_NOT_WATCHED) {
                 int offset = 0;
 
                 if (mVideo.getResumeMs() > 0)
                     offset--;
-                
+
                 if (mVideo.getRemoteResumeMs() > 0 && mVideo.getRemoteResumeMs() != mVideo.getResumeMs())
                     offset--;
 
@@ -1004,27 +1158,31 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         traceDetails("details-loader-created");
         // If we don't have the video object
-        if (mVideo==null) {
-            if (mVideoIdFromPlayer >=0) {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader: mVideo is null, working from mVideoIdFromPlayer {}", mVideoIdFromPlayer);
+        if (mVideo == null) {
+            if (mVideoIdFromPlayer >= 0) {
+                if (log.isDebugEnabled())
+                    log.debug("onCreateLoader: mVideo is null, working from mVideoIdFromPlayer {}", mVideoIdFromPlayer);
                 return new MultipleVideoLoader(getActivity(), mVideoIdFromPlayer);
             } else {
-                if (log.isDebugEnabled()) log.debug("onCreateLoader: mVideo is null, working from mVideoPathFromPlayer {}", mVideoPathFromPlayer);
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "onCreateLoader: mVideo is null, working from mVideoPathFromPlayer {}", mVideoPathFromPlayer);
                 return new MultipleVideoLoader(getActivity(), mVideoPathFromPlayer);
             }
         }
         // If we already have the Video object
         else if (mVideo.isIndexed()) {
-            if (log.isDebugEnabled()) log.debug("onCreateLoader: mVideo is known and indexed with id {}", mVideo.getId());
+            if (log.isDebugEnabled())
+                log.debug("onCreateLoader: mVideo is known and indexed with id {}", mVideo.getId());
             return new MultipleVideoLoader(getActivity(), mVideo.getId());
         } else {
-            if (log.isDebugEnabled()) log.debug("onCreateLoader: mVideo is known not indexed with path {}", mVideo.getFilePath());
+            if (log.isDebugEnabled())
+                log.debug("onCreateLoader: mVideo is known not indexed with path {}", mVideo.getFilePath());
             return new MultipleVideoLoader(getActivity(), mVideo.getFilePath());
         }
     }
 
-    private XmlDb.ParseListener mRemoteDbObserver = new XmlDb.ParseListener(){
-
+    private XmlDb.ParseListener mRemoteDbObserver = new XmlDb.ParseListener() {
         @Override
         public void onParseFail(XmlDb.ParseResult parseResult) {
             XmlDb.getInstance().removeParseListener(this);
@@ -1032,40 +1190,45 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
         @Override
         public void onParseOk(XmlDb.ParseResult result) {
-
-            if (log.isDebugEnabled()) log.debug("onParseOk");
+            if (log.isDebugEnabled())
+                log.debug("onParseOk");
             XmlDb xmlDb = XmlDb.getInstance();
             //xmlDb.removeParseListener(this);
-            if(getActivity()==null) { //too late
+            if (getActivity() == null) {
+                //too late
 
-                if (log.isDebugEnabled()) log.debug("getActivity is null, leaving");
+                if (log.isDebugEnabled())
+                    log.debug("getActivity is null, leaving");
                 return;
             }
             VideoDbInfo videoInfo = null;
             if (result.success) {
-                if (log.isDebugEnabled()) log.debug("result.success");
+                if (log.isDebugEnabled())
+                    log.debug("result.success");
                 videoInfo = xmlDb.getEntry(mVideo.getFileUri());
-                if(videoInfo!=null){
-                    if (log.isDebugEnabled()) log.debug("videoInfo!=null {}", videoInfo.resume);
+                if (videoInfo != null) {
+                    if (log.isDebugEnabled())
+                        log.debug("videoInfo!=null {}", videoInfo.resume);
                     mVideo.setRemoteResumeMs(videoInfo.resume);
                     // Update the action adapter if there is a network resume
-                    if (mDetailsOverviewRow!=null) {
+                    if (mDetailsOverviewRow != null) {
                         ObjectAdapter mAdapter = mDetailsOverviewRow.getActionsAdapter();
                         if (mAdapter instanceof VideoActionAdapter) {
                             ((VideoActionAdapter) mAdapter).updateRemoteResume(getActivity(), mVideo);
                         } else {
-                            log.warn("onParseOk: mAdapter is not a VideoActionAdapter it is a {}", mAdapter.getClass().getName());
+                            log.warn("onParseOk: mAdapter is not a VideoActionAdapter it is a {}",
+                                mAdapter.getClass().getName());
                         }
                     }
                 }
             }
-
         }
-
     };
+
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (getActivity() == null) return;
+        if (getActivity() == null)
+            return;
         traceDetails("details-loader-finished");
         long start = System.currentTimeMillis();
         Video oldVideoObject = mVideo;
@@ -1073,12 +1236,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         mVideoList.clear();
 
         // Getting an empty cursor here means that the video is not indexed
-        if (cursor.getCount()<1) {
-            if (log.isDebugEnabled()) log.debug("onLoadFinished: cursor is empty, video is not indexed");
+        if (cursor.getCount() < 1) {
+            if (log.isDebugEnabled())
+                log.debug("onLoadFinished: cursor is empty, video is not indexed");
             // we're changing from indexed case to non-indexed case (user probably unindexed file some milliseconds ago)
-            if (oldVideoObject!=null) {
+            if (oldVideoObject != null) {
                 // building a new unindexed video object using the Uri and name we had in the previous video object
-                mVideo = new NonIndexedVideo( oldVideoObject.getStreamingUri(),oldVideoObject.getFileUri(), oldVideoObject.getName(), oldVideoObject.getPosterUri() );
+                mVideo = new NonIndexedVideo(oldVideoObject.getStreamingUri(), oldVideoObject.getFileUri(),
+                    oldVideoObject.getName(), oldVideoObject.getPosterUri());
 
                 // If the video was indexed we did a query based on its ID.
                 // It is not indexed anymore hence we need to change our query and have it based on the path now
@@ -1089,13 +1254,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             }
             // If we have no Video object (case it's launched from player with path only)
             else {
-                mVideo = new NonIndexedVideo(mVideoPathFromPlayer); // TODO corner case BUG: gte only cryptic name from url for non-indexed UPnP when Details are opened from player
+                mVideo = new NonIndexedVideo(
+                    mVideoPathFromPlayer); // TODO corner case BUG: gte only cryptic name from url for non-indexed UPnP when Details are opened from player
             }
 
             //TODO remove sources list
-        }
-        else {
-            if (log.isDebugEnabled()) log.debug("onLoadFinished: found {} videos", cursor.getCount());
+        } else {
+            if (log.isDebugEnabled())
+                log.debug("onLoadFinished: found {} videos", cursor.getCount());
             // Build video objects from the new cursor data
 
             mVideoBadgePresenter.setDisplay3dBadge(false);
@@ -1104,63 +1270,67 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             VideoCursorMapper cursorMapper = new VideoCursorMapper();
             cursorMapper.publicBindColumns(cursor);
             do {
-
-                Video video =  (Video) cursorMapper.publicBind(cursor);
-                if(video.is3D())
+                Video video = (Video) cursorMapper.publicBind(cursor);
+                if (video.is3D())
                     mVideoBadgePresenter.setDisplay3dBadge(true);
                 int onlineIdColumn = cursor.getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_ONLINE_ID);
                 mOnlineId = onlineIdColumn >= 0 ? cursor.getLong(onlineIdColumn) : -1;
-                if (log.isDebugEnabled()) log.debug("onLoadFinished: online id {}", mOnlineId);
+                if (log.isDebugEnabled())
+                    log.debug("onLoadFinished: online id {}", mOnlineId);
                 mVideoList.add(video);
-                if (log.isDebugEnabled()) log.debug("onLoadFinished: found video : {}", video.getFileUri());
-                if(!mSelectCurrentVideo){ // get most advanced video
-                    if(video.getLastPlayed()>0&&mVideo==null||mVideo!=null&&video.getLastPlayed()>mVideo.getLastPlayed()){
+                if (log.isDebugEnabled())
+                    log.debug("onLoadFinished: found video : {}", video.getFileUri());
+                if (!mSelectCurrentVideo) {
+                    // get most advanced video
+                    if (video.getLastPlayed() > 0 && mVideo == null
+                        || mVideo != null && video.getLastPlayed() > mVideo.getLastPlayed()) {
                         mVideo = video;
                     }
-                }
-                else if(oldVideoObject!=null&&video.getFileUri().equals(oldVideoObject.getFileUri())){
+                } else if (oldVideoObject != null && video.getFileUri().equals(oldVideoObject.getFileUri())) {
                     mVideo = video;
                 }
-            }while (cursor.moveToNext());
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
-                Video history=mVideo;
-                Collections.sort(mVideoList,com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
-                mVideo=com.archos.mediacenter.video.leanback.PreviewVariants.choose(requireContext(),mVideoList);
-                if(history!=null&&history.getResumeMs()>0){mVideo.setAutomaticResumeMs(history.getResumeMs());mVideo.setRemoteResumeMs(history.getRemoteResumeMs());}
-            }else Collections.sort(mVideoList, new SortByFavoriteSources(oldVideoList));
+            } while (cursor.moveToNext());
+            if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)) {
+                Video history = mVideo;
+                Collections.sort(mVideoList, com.archos.mediacenter.video.leanback.PreviewVariants.BEST_FIRST);
+                mVideo = com.archos.mediacenter.video.leanback.PreviewVariants.choose(requireContext(), mVideoList);
+                if (history != null && history.getResumeMs() > 0) {
+                    mVideo.setAutomaticResumeMs(history.getResumeMs());
+                    mVideo.setRemoteResumeMs(history.getRemoteResumeMs());
+                }
+            } else
+                Collections.sort(mVideoList, new SortByFavoriteSources(oldVideoList));
 
             mSelectCurrentVideo = true;
-            if(mVideo == null)
+            if (mVideo == null)
                 mVideo = mVideoList.get(0);
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))
-                com.archos.mediacenter.video.leanback.PreviewVariants.restoreTitleResume(mVideoList,mVideo);
-            if(mVideoList.size()>1){
+            if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
+                com.archos.mediacenter.video.leanback.PreviewVariants.restoreTitleResume(mVideoList, mVideo);
+            if (mVideoList.size() > 1) {
                 int i = 0;
-                for(Video video : mVideoList) {
-                    if(mFileListAdapter.size()>i)
+                for (Video video : mVideoList) {
+                    if (mFileListAdapter.size() > i)
                         mFileListAdapter.replace(i, video);
                     else
                         mFileListAdapter.add(i, video);
                     i++;
                 }
-                if(i<mFileListAdapter.size()){
-                    mFileListAdapter.removeItems(i,mFileListAdapter.size() -i);
+                if (i < mFileListAdapter.size()) {
+                    mFileListAdapter.removeItems(i, mFileListAdapter.size() - i);
                 }
             }
-
-
         }
 
         // Keep the video decoder metadata if we already have it (we don't want to compute it again, it can be long)
         VideoMetadata alreadyComputedVideoMetadata = mVideoMetadateCache.get(mVideo.getFilePath());
 
         // Keep the video decoder metadata if we already have it
-        if(alreadyComputedVideoMetadata!=null)
+        if (alreadyComputedVideoMetadata != null)
             mVideo.setMetadata(alreadyComputedVideoMetadata);
         mVideoBadgePresenter.setSelectedUri(mVideo.getFileUri());
 
-        if(!smoothUpdateVideo(mVideo, giveOldVideo ? oldVideoObject : null)||mVideoList.size()>1&&mAdapter!=null&&mAdapter.indexOf(mFileListRow)==-1) {
-
+        if (!smoothUpdateVideo(mVideo, giveOldVideo ? oldVideoObject : null)
+            || mVideoList.size() > 1 && mAdapter != null && mAdapter.indexOf(mFileListRow) == -1) {
             if (mDetailRowBuilderTask != null) {
                 mDetailRowBuilderTask.cancel();
             }
@@ -1174,18 +1344,16 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         giveOldVideo = true;
     }
 
-
-    public void requestIndexAndScrap(){
-
+    public void requestIndexAndScrap() {
         if (!PrivateMode.isActive()) {
             if (mVideo.getId() == -1 && mVideo.getFileUri() != null && !mVideo.getFileUri().equals(mLastIndexed)) {
                 mLastIndexed = mVideo.getFileUri();
-                if(UriUtils.isIndexable(mVideo.getFileUri())) {
+                if (UriUtils.isIndexable(mVideo.getFileUri())) {
                     final Uri uri = mVideo.getFileUri();
                     new Thread() {
                         public void run() {
                             if (!VideoStoreImportImpl.isNoMediaPath(uri))
-                                VideoStore.requestIndexing(uri, getActivity(),false);
+                                VideoStore.requestIndexing(uri, getActivity(), false);
                         }
                     }.start();
                 }
@@ -1200,27 +1368,34 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
      * @return
      */
     private boolean smoothUpdateVideo(Video currentVideo, Video oldVideoObject) {
-        if (log.isDebugEnabled()) log.debug("smoothUpdateVideo");
+        if (log.isDebugEnabled())
+            log.debug("smoothUpdateVideo");
         boolean smoothUpdate = false;
         // Check if we really need to update the fragment
         boolean needToUpdateDetailsOverview;
-        if ((mDetailsOverviewRow==null && mDetailRowBuilderTask==null) || mRepeatModeDetected) { // if no row yet and no async task building it yet
+        if ((mDetailsOverviewRow == null && mDetailRowBuilderTask == null)
+            || mRepeatModeDetected) {
+            // if no row yet and no async task building it yet
             needToUpdateDetailsOverview = true; // first time or repeat mode detected requiring full update
             mRepeatModeDetected = false;
         } else {
-            needToUpdateDetailsOverview = foundDifferencesRequiringDetailsUpdate(oldVideoObject, currentVideo); // update
-            if (log.isDebugEnabled()) log.debug("smoothUpdateVideo: needToUpdateDetailsOverview {}", needToUpdateDetailsOverview);
+            needToUpdateDetailsOverview =
+                foundDifferencesRequiringDetailsUpdate(oldVideoObject, currentVideo); // update
+            if (log.isDebugEnabled())
+                log.debug("smoothUpdateVideo: needToUpdateDetailsOverview {}", needToUpdateDetailsOverview);
         }
 
         // Update if needed
         if (needToUpdateDetailsOverview) {
             requestIndexAndScrap();
             // mDetailsOverviewRow can be null and need to be initialized but perhaps should call fullyReloadVideo instead
-            if (mDetailsOverviewRow == null) mDetailsOverviewRow = new DetailsOverviewRow(currentVideo);
+            if (mDetailsOverviewRow == null)
+                mDetailsOverviewRow = new DetailsOverviewRow(currentVideo);
             // First check if we can do a smooth/smart update (when unscrapping and/or unindexing)
             // smooth update when unscrapping
-            if (oldVideoObject!=null && oldVideoObject.hasScraperData() && !currentVideo.hasScraperData()) {
-                if (mAdapter != null) { // mAdapter can be null (seen on sentry)
+            if (oldVideoObject != null && oldVideoObject.hasScraperData() && !currentVideo.hasScraperData()) {
+                if (mAdapter != null) {
+                    // mAdapter can be null (seen on sentry)
                     // remove scraper related rows
                     if (mAdapter.indexOf(mFileListRow) >= 0) {
                         mAdapter.remove(mFileListRow);
@@ -1235,11 +1410,15 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
                 // update details presenter and actions
                 mDescriptionPresenter.update(currentVideo);
-                if(mDetailsOverviewRow.getActionsAdapter()==null)
-                    mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), currentVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
+                if (mDetailsOverviewRow.getActionsAdapter() == null)
+                    mDetailsOverviewRow.setActionsAdapter(
+                        new VideoActionAdapter(getActivity(), currentVideo, mLaunchedFromPlayer,
+                            mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
                 else {
                     if (mDetailsOverviewRow.getActionsAdapter() instanceof VideoActionAdapter) {
-                        ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(currentVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
+                        ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter())
+                            .update(currentVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList,
+                                mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
                     } else {
                         // seen on sentry
                         log.error("smoothUpdateVideo: cannot cast ArrayObjectAdapter to VideoActionAdapter!");
@@ -1247,33 +1426,39 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 }
 
                 // update poster
-                mDetailsOverviewRow.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
+                mDetailsOverviewRow.setImageDrawable(
+                    ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
                 mDetailsOverviewRow.setImageScaleUpAllowed(false);
                 smoothUpdate = true;
             }
             // smooth update when unindexing
-            if (oldVideoObject!=null && oldVideoObject.isIndexed() && !currentVideo.isIndexed()) {
+            if (oldVideoObject != null && oldVideoObject.isIndexed() && !currentVideo.isIndexed()) {
                 // update details presenter and actions
                 mDescriptionPresenter.update(currentVideo);
-                if(mDetailsOverviewRow.getActionsAdapter()==null)
-                    mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), currentVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
+                if (mDetailsOverviewRow.getActionsAdapter() == null)
+                    mDetailsOverviewRow.setActionsAdapter(
+                        new VideoActionAdapter(getActivity(), currentVideo, mLaunchedFromPlayer,
+                            mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
                 else {
                     if (mDetailsOverviewRow.getActionsAdapter() instanceof VideoActionAdapter) {
-                        ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(currentVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
+                        ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter())
+                            .update(currentVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList,
+                                mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
                     } else {
                         log.error("smoothUpdateVideo: cannot cast ArrayObjectAdapter to VideoActionAdapter!");
                     }
                 }
 
                 // update poster
-                mDetailsOverviewRow.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
+                mDetailsOverviewRow.setImageDrawable(
+                    ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
                 mDetailsOverviewRow.setImageScaleUpAllowed(false);
                 smoothUpdate = true;
             }
 
             if (smoothUpdate) {
                 mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
-                
+
                 mVideoBadgePresenter.setSelectedBackgroundColor(mColor);
                 mOverviewRowPresenter.updateBackgroundColor(mColor);
                 mOverviewRowPresenter.updateActionsBackgroundColor(getDarkerColor(mColor));
@@ -1284,22 +1469,24 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     }
                 }
                 // this is required to remove backdrop after removal of description
-                if (needToUpdateDetailsOverview) mBackdropController.replace(currentVideo);
-
+                if (needToUpdateDetailsOverview)
+                    mBackdropController.replace(currentVideo);
             }
-        }else {
+        } else {
             smoothUpdate = true;
         }
-        if(mShouldUpdateRemoteResume) {
+        if (mShouldUpdateRemoteResume) {
             //before that, we couldn't be sure to have the right file uri. Now that we are, try to get remote resume
-            currentVideo.setRemoteResumeMs(-1);//reset remote resume
-            if (!mLaunchedFromPlayer && !FileUtils.isLocal(currentVideo.getFileUri()) && UriUtils.isCompatibleWithRemoteDB(currentVideo.getFileUri())) {
-                if (log.isDebugEnabled()) log.debug("addParseListener");
+            currentVideo.setRemoteResumeMs(-1); //reset remote resume
+            if (!mLaunchedFromPlayer && !FileUtils.isLocal(currentVideo.getFileUri())
+                && UriUtils.isCompatibleWithRemoteDB(currentVideo.getFileUri())) {
+                if (log.isDebugEnabled())
+                    log.debug("addParseListener");
                 XmlDb.getInstance().addParseListener(mRemoteDbObserver);
                 XmlDb.getInstance().parseXmlLocation(currentVideo.getFileUri());
             }
             mShouldUpdateRemoteResume = false;
-        }else if(oldVideoObject!=null) {
+        } else if (oldVideoObject != null) {
             // should not set the currentVideo remoteResumeMs to oldVideoObject one otherwise we inherit old network resume and get two buttons
             //currentVideo.setRemoteResumeMs(oldVideoObject.getRemoteResumeMs());
         }
@@ -1308,45 +1495,82 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     }
 
     private boolean foundDifferencesRequiringDetailsUpdate(Video v1, Video v2) {
-        if (v1==null || v2==null) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate null"); mShouldLoadBackdrop = true; return true;}
-        if (v1.getClass() != v2.getClass()) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate class"); mShouldLoadBackdrop = true; return true;}
-        if (v1.getId() != v2.getId()) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate id"); mShouldLoadBackdrop = true; return true;}
-        if (v1.hasScraperData() != v2.hasScraperData()) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate hasScraperData"); mShouldLoadBackdrop = true; return true;}
-        if (v1.getResumeMs() != v2.getResumeMs()) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate resumeMs"); return true;}
-        if (v1.isWatched() != v2.isWatched()) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate isWatched"); return true;}
-        if (v1.isUserHidden() != v2.isUserHidden()) { if (log.isDebugEnabled()) log.debug("foundDifferencesRequiringDetailsUpdate isUserHidden"); return true;}
+        if (v1 == null || v2 == null) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate null");
+            mShouldLoadBackdrop = true;
+            return true;
+        }
+        if (v1.getClass() != v2.getClass()) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate class");
+            mShouldLoadBackdrop = true;
+            return true;
+        }
+        if (v1.getId() != v2.getId()) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate id");
+            mShouldLoadBackdrop = true;
+            return true;
+        }
+        if (v1.hasScraperData() != v2.hasScraperData()) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate hasScraperData");
+            mShouldLoadBackdrop = true;
+            return true;
+        }
+        if (v1.getResumeMs() != v2.getResumeMs()) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate resumeMs");
+            return true;
+        }
+        if (v1.isWatched() != v2.isWatched()) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate isWatched");
+            return true;
+        }
+        if (v1.isUserHidden() != v2.isUserHidden()) {
+            if (log.isDebugEnabled())
+                log.debug("foundDifferencesRequiringDetailsUpdate isUserHidden");
+            return true;
+        }
         //if (v1.subtitleCount() != v2.subtitleCount()) {log.debug("foundDifferencesRequiringDetailsUpdate subtitleCount"); return true;}
         //if (v1.externalSubtitleCount() != v2.externalSubtitleCount()) {log.debug("foundDifferencesRequiringDetailsUpdate externalSubtitleCount"); return true;}
         return false;
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {}
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    }
 
     @Override
     public void onResumeChange(Uri videoFile, int resumePercent) {
-        if (log.isDebugEnabled()) log.debug("onResumeChange()");
-        if(mHasRetrievedDetails&&isAdded()&&!isDetached()&&videoFile.equals(mVideo.getFileUri())){
+        if (log.isDebugEnabled())
+            log.debug("onResumeChange()");
+        if (mHasRetrievedDetails && isAdded() && !isDetached() && videoFile.equals(mVideo.getFileUri())) {
             VideoDbInfo info = XmlDb.getEntry(videoFile);
-            if(info!=null) {
+            if (info != null) {
                 mVideo.setRemoteResumeMs(info.resume);
                 // Update the action adapter if there is a network resume
                 if (mDetailsOverviewRow != null) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if(mDetailsOverviewRow.getActionsAdapter()==null) {
-                                mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
+                            if (mDetailsOverviewRow.getActionsAdapter() == null) {
+                                mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), mVideo,
+                                    mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete,
+                                    mNextEpisode, mIsTvEpisode));
                             } else {
                                 if (mDetailsOverviewRow.getActionsAdapter() instanceof VideoActionAdapter) {
-                                    ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).update(mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
+                                    ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter())
+                                        .update(mVideo, mLaunchedFromPlayer, mShouldDisplayRemoveFromList,
+                                            mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
                                 } else {
                                     log.error("onResumeChange: cannot cast ArrayObjectAdapter to VideoActionAdapter!");
                                 }
                             }
                         }
                     });
-
                 }
             }
         }
@@ -1395,7 +1619,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             executor.execute(() -> {
                 Pair<Bitmap, Video> result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     Bitmap bitmap = null;
                     Uri imageUri = null;
                     if (video.isIndexed()) {
@@ -1407,15 +1632,15 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                             imageUri = ThumbnailRequestHandler.buildUri(video.getId()); // Thumbnail
                         }
                     }
-                    if (imageUri!=null) {
+                    if (imageUri != null) {
                         bitmap = Picasso.get()
-                                .load(imageUri)
-                                .config(Bitmap.Config.ARGB_8888)
-                                .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(
-                                        getResources().getDimensionPixelSize(R.dimen.details_poster_width),
-                                        getResources().getDimensionPixelSize(R.dimen.details_poster_height)))
-                                .noFade()
-                                .get();
+                                     .load(imageUri)
+                                     .config(Bitmap.Config.ARGB_8888)
+                                     .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(
+                                         getResources().getDimensionPixelSize(R.dimen.details_poster_width),
+                                         getResources().getDimensionPixelSize(R.dimen.details_poster_height)))
+                                     .noFade()
+                                     .get();
                     }
                     result = new Pair<>(bitmap, video);
                 } catch (IOException e) {
@@ -1425,24 +1650,28 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Pair<Bitmap, Video> finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
-                    if (finalResult == null) return;
-                    if(mVideo.getPosterUri()==null||mVideo.getPosterUri().equals(finalResult.second.getPosterUri())) {
+                    if (isCancelled)
+                        return;
+                    if (finalResult == null)
+                        return;
+                    if (mVideo.getPosterUri() == null
+                        || mVideo.getPosterUri().equals(finalResult.second.getPosterUri())) {
                         Bitmap bitmap = finalResult.first;
                         if (finalResult.first != null) {
                             if (mVideo.isWatched() || mIsVideoWatched)
                                 bitmap = PresenterUtils.addWatchedMark(bitmap, getContext());
-                            if(!mAnimationIsRunning) {
+                            if (!mAnimationIsRunning) {
                                 mDetailsOverviewRow.setImageBitmap(getActivity(), bitmap);
                                 mDetailsOverviewRow.setImageScaleUpAllowed(true);
-                            }
-                            else
+                            } else
                                 mThumbnail = bitmap;
                         } else {
-                            mDetailsOverviewRow.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
+                            mDetailsOverviewRow.setImageDrawable(
+                                ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
                             mDetailsOverviewRow.setImageScaleUpAllowed(false);
                         }
                     }
@@ -1480,28 +1709,32 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
      *                              its final size from the first frame, without copying or scaling
      *                              the bitmap on the UI thread.
      */
-    private void fullyReloadVideo(Video video, Bitmap poster, boolean showFallbackPoster, boolean useDetailsPosterSize) {
+    private void fullyReloadVideo(
+        Video video, Bitmap poster, boolean showFallbackPoster, boolean useDetailsPosterSize) {
         traceDetails("details-row-build-start");
-        if (log.isDebugEnabled()) log.debug("fullyReloadVideo: mShouldLoadBackdrop={}", mShouldLoadBackdrop);
-        if(mShouldLoadBackdrop)
+        if (log.isDebugEnabled())
+            log.debug("fullyReloadVideo: mShouldLoadBackdrop={}", mShouldLoadBackdrop);
+        if (mShouldLoadBackdrop)
             mBackdropController.setFallbackColor(VideoInfoCommonClass.getDarkerColor(mColor));
         mSubtitlesDetailsRow = new SubtitlesDetailsRow(getActivity(), video, null);
         mFileDetailsRow = new FileDetailsRow(getActivity(), video, mPlayerType);
-        if(mDetailsOverviewRow==null)
+        if (mDetailsOverviewRow == null)
             mDetailsOverviewRow = new DetailsOverviewRow(video);
         else
             mDetailsOverviewRow.setItem(video);
-        if(mAdapter == null) {
+        if (mAdapter == null) {
             mFileListRowPresenter = new SelectableListRowPresenter();
 
             ClassPresenterSelector ps = new ClassPresenterSelector();
             ps.addClassPresenter(DetailsOverviewRow.class, mOverviewRowPresenter);
-            ps.addClassPresenter(SubtitlesDetailsRow.class, new SubtitlesDetailsRowPresenter(VideoDetailsFragment.this, mColor));
-            ps.addClassPresenter(FileDetailsRow.class,  new FileDetailsRowPresenter(mColor));
+            ps.addClassPresenter(
+                SubtitlesDetailsRow.class, new SubtitlesDetailsRowPresenter(VideoDetailsFragment.this, mColor));
+            ps.addClassPresenter(FileDetailsRow.class, new FileDetailsRowPresenter(mColor));
             ps.addClassPresenter(ListRow.class, new ListRowPresenter());
             ps.addClassPresenter(SelectableListRow.class, mFileListRowPresenter);
-            ps.addClassPresenter(PlotAndGenresRow.class, new PlotAndGenresRowPresenter(14,mColor)); // 14 lines max to fit on screen
-            ps.addClassPresenter(CastRow.class, new CastRowPresenter(14,mColor)); // 14 lines max to fit on screen
+            ps.addClassPresenter(
+                PlotAndGenresRow.class, new PlotAndGenresRowPresenter(14, mColor)); // 14 lines max to fit on screen
+            ps.addClassPresenter(CastRow.class, new CastRowPresenter(14, mColor)); // 14 lines max to fit on screen
             mAdapter = new ArrayObjectAdapter(ps);
             setAdapter(mAdapter);
             traceDetails("details-adapter-set");
@@ -1509,35 +1742,33 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
             mAdapter.add(INDEX_MAIN, mDetailsOverviewRow);
             traceDetails("details-overview-row-added");
-            if(mVideoList.size()>1) {
+            if (mVideoList.size() > 1) {
                 mAdapter.add(INDEX_FILELIST, mFileListRow);
-                INDEX_SUBTITLES ++;
-                INDEX_FILEDETAILS ++;
+                INDEX_SUBTITLES++;
+                INDEX_FILEDETAILS++;
             }
             mAdapter.add(INDEX_SUBTITLES, mSubtitlesDetailsRow);
             mAdapter.add(INDEX_FILEDETAILS, mFileDetailsRow);
-        }
-        else{
-           // mAdapter.replace(INDEX_MAIN, mDetailsOverviewRow);
-            if(mVideoList.size()>1) {
-
-                if(mAdapter.indexOf(mFileListRow)==-1) {
+        } else {
+            // mAdapter.replace(INDEX_MAIN, mDetailsOverviewRow);
+            if (mVideoList.size() > 1) {
+                if (mAdapter.indexOf(mFileListRow) == -1) {
                     mAdapter.replace(INDEX_FILELIST, mFileListRow);
-                    INDEX_SUBTITLES ++;
-                    INDEX_FILEDETAILS ++;
+                    INDEX_SUBTITLES++;
+                    INDEX_FILEDETAILS++;
                 }
             }
-            if(mAdapter.size()>INDEX_SUBTITLES)
+            if (mAdapter.size() > INDEX_SUBTITLES)
                 mAdapter.replace(INDEX_SUBTITLES, mSubtitlesDetailsRow);
             else
                 mAdapter.add(INDEX_SUBTITLES, mSubtitlesDetailsRow);
 
-            if(mAdapter.size()>INDEX_FILEDETAILS)
+            if (mAdapter.size() > INDEX_FILEDETAILS)
                 mAdapter.replace(INDEX_FILEDETAILS, mFileDetailsRow);
             else
                 mAdapter.add(INDEX_FILEDETAILS, mFileDetailsRow);
-            if(mAdapter.size()>INDEX_FILEDETAILS+1)
-                mAdapter.removeItems(INDEX_FILEDETAILS+1, mAdapter.size()-INDEX_FILEDETAILS-1);
+            if (mAdapter.size() > INDEX_FILEDETAILS + 1)
+                mAdapter.removeItems(INDEX_FILEDETAILS + 1, mAdapter.size() - INDEX_FILEDETAILS - 1);
         }
 
         mVideoBadgePresenter.setSelectedBackgroundColor(mColor);
@@ -1545,34 +1776,50 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         mOverviewRowPresenter.updateActionsBackgroundColor(getDarkerColor(mColor));
 
         //set background color :
-        for(Presenter pres : mAdapter.getPresenterSelector().getPresenters()){
-            if(pres instanceof BackgroundColorPresenter)
+        for (Presenter pres : mAdapter.getPresenterSelector().getPresenters()) {
+            if (pres instanceof BackgroundColorPresenter)
                 ((BackgroundColorPresenter) pres).setBackgroundColor(mColor);
         }
 
-        if(mVideoList.size()>1) {
+        if (mVideoList.size() > 1) {
             //selectItem
             mFileListRow.setStartingSelectedPosition(mVideoList.indexOf(video));
         }
 
         mIsTvEpisode = video instanceof Episode;
 
-        if(mDetailsOverviewRow.getActionsAdapter()==null || !(mDetailsOverviewRow.getActionsAdapter() instanceof  VideoActionAdapter))
-            mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
-        else{
-            ((VideoActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode);
+        if (mDetailsOverviewRow.getActionsAdapter() == null
+            || !(mDetailsOverviewRow.getActionsAdapter() instanceof VideoActionAdapter))
+            mDetailsOverviewRow.setActionsAdapter(new VideoActionAdapter(getActivity(), video, mLaunchedFromPlayer,
+                mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete, mNextEpisode, mIsTvEpisode));
+        else {
+            ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter())
+                .update(video, mLaunchedFromPlayer, mShouldDisplayRemoveFromList, mShouldDisplayConfirmDelete,
+                    mNextEpisode, mIsTvEpisode);
         }
 
-        if(mPreviewMovie!=null){mPreviewMovie.bind(video);mPreviewMovie.setVersions(mVideoList.size(),this::showPreviewVersions);}
-        if(!mPreviewAutoPlayed&&requireActivity().getIntent().getBooleanExtra("preview_play",false)){
-            mPreviewAutoPlayed=true;requireActivity().getIntent().removeExtra("preview_play");
-            getView().post(()->{
-                if(!isAdded()||mDetailsOverviewRow==null)return;
-                androidx.leanback.widget.ObjectAdapter actions=mDetailsOverviewRow.getActionsAdapter();
-                for(int id:new int[]{VideoActionAdapter.ACTION_RESUME,VideoActionAdapter.ACTION_LOCAL_RESUME,VideoActionAdapter.ACTION_PLAY,VideoActionAdapter.ACTION_PLAY_FROM_BEGIN,VideoActionAdapter.ACTION_REMOTE_RESUME}){
-                    for(int i=0;i<actions.size();i++){
-                        Object value=actions.get(i);
-                        if(value instanceof Action&&((Action)value).getId()==id){mOnActionClickedListener.onActionClicked((Action)value);return;}
+        if (mPreviewMovie != null) {
+            mPreviewMovie.bind(video);
+            mPreviewMovie.setVersions(mVideoList.size(), this::showPreviewVersions);
+        }
+        if (!mPreviewAutoPlayed && requireActivity().getIntent().getBooleanExtra("preview_play", false)) {
+            mPreviewAutoPlayed = true;
+            requireActivity().getIntent().removeExtra("preview_play");
+            getView().post(() -> {
+                if (!isAdded() || mDetailsOverviewRow == null)
+                    return;
+                androidx.leanback.widget.ObjectAdapter actions = mDetailsOverviewRow.getActionsAdapter();
+                for (int id : new int[] {
+                    VideoActionAdapter.ACTION_RESUME, VideoActionAdapter.ACTION_LOCAL_RESUME,
+                         VideoActionAdapter.ACTION_PLAY, VideoActionAdapter.ACTION_PLAY_FROM_BEGIN,
+                         VideoActionAdapter.ACTION_REMOTE_RESUME
+                }) {
+                    for (int i = 0; i < actions.size(); i++) {
+                        Object value = actions.get(i);
+                        if (value instanceof Action && ((Action) value).getId() == id) {
+                            mOnActionClickedListener.onActionClicked((Action) value);
+                            return;
+                        }
                     }
                 }
             });
@@ -1586,16 +1833,16 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 mFullScraperTagsTask.cancel();
             mFullScraperTagsTask = new FullScraperTagsTask(getActivity());
             mFullScraperTagsTask.execute(video);
-        }
-        else {
+        } else {
             // Backdrop must be done in non-scrap case because there may be a backdrop remaining from previous scrap data than need to be removed (when removing scrap data)
             mBackdropController.replace(video);
         }
 
         // Check subtitles. Better to do it before VideoInfoTask because it should be quicker and it is displayed higher in the Fragment
-        if(mSubtitleListCache.get(video.getFileUri())==null) {
+        if (mSubtitleListCache.get(video.getFileUri()) == null) {
             if (mSubtitleFilesListerTask == null || !mSubtitleFilesListerTask.isLoading(video)) {
-                if (mSubtitleFilesListerTask != null) mSubtitleFilesListerTask.cancel();
+                if (mSubtitleFilesListerTask != null)
+                    mSubtitleFilesListerTask.cancel();
                 mSubtitleFilesListerTask = new SubtitleFilesListerTask(getActivity());
                 mSubtitleFilesListerTask.execute(video);
             }
@@ -1606,47 +1853,51 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         // Start the video info task only now that the DB UI is ready to setup
         // special case : for upnp:// we need the streaming uri (http)
         String path = video.getFilePath();
-        if(mVideoMetadateCache.containsKey(path)){
+        if (mVideoMetadateCache.containsKey(path)) {
             video.setMetadata(mVideoMetadateCache.get(path));
             updateMetadataWhenReady();
             updateSubtitleRowWhenReady();
-
         }
         // A DB/poster reload for the same URI can reuse the provisional overview's work.
         if (mVideoInfoTask == null || !mVideoInfoTask.isLoading(video)) {
-            if (mVideoInfoTask != null) mVideoInfoTask.cancel();
+            if (mVideoInfoTask != null)
+                mVideoInfoTask.cancel();
             // Do not execute file info task when torrent file.
             if (video.getFileUri() == null || mLaunchedFromPlayer
-                    || !FileUtils.getName(video.getFileUri()).endsWith("torrent")) {
+                || !FileUtils.getName(video.getFileUri()).endsWith("torrent")) {
                 mVideoInfoTask = new VideoInfoTask();
                 mVideoInfoTask.execute(video);
             }
         }
 
         if (poster == null) {
-            if (log.isDebugEnabled()) log.debug("fullyReloadVideo: no poster, generate it");
+            if (log.isDebugEnabled())
+                log.debug("fullyReloadVideo: no poster, generate it");
 
             if (showFallbackPoster) {
-                mDetailsOverviewRow.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
+                mDetailsOverviewRow.setImageDrawable(
+                    ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
                 mDetailsOverviewRow.setImageScaleUpAllowed(false);
             }
             mThumbnailAsyncTask = new ThumbnailAsyncTask();
             mThumbnailAsyncTask.execute(mVideo);
-        }else{
-            if (log.isDebugEnabled()) log.debug("fullyReloadVideo: should put watched mark on poster {}", (mVideo.isWatched() || mIsVideoWatched));
+        } else {
+            if (log.isDebugEnabled())
+                log.debug(
+                    "fullyReloadVideo: should put watched mark on poster {}", (mVideo.isWatched() || mIsVideoWatched));
             if (mVideo.isWatched() || mIsVideoWatched)
                 poster = PresenterUtils.addWatchedMark(poster, getContext());
             if (useDetailsPosterSize) {
                 int width = getResources().getDimensionPixelSize(R.dimen.details_poster_width);
                 int height = getResources().getDimensionPixelSize(R.dimen.details_poster_height);
                 traceDetails("transition-poster-details-size");
-                mDetailsOverviewRow.setImageDrawable(new DetailsPosterSizedBitmapDrawable(getResources(), poster, width, height));
+                mDetailsOverviewRow.setImageDrawable(
+                    new DetailsPosterSizedBitmapDrawable(getResources(), poster, width, height));
             } else {
                 mDetailsOverviewRow.setImageBitmap(getActivity(), poster);
             }
             mDetailsOverviewRow.setImageScaleUpAllowed(true);
         }
-
     }
 
     /**
@@ -1686,30 +1937,33 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 traceDetails("detail-row-builder-started");
                 Bitmap result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
 
                     Uri imageUri = null;
-                    if (video.getPosterUri()!=null) {
+                    if (video.getPosterUri() != null) {
                         imageUri = video.getPosterUri();
-                    }
-                    else if (video.isIndexed()) {
+                    } else if (video.isIndexed()) {
                         imageUri = ThumbnailRequestHandler.buildUriNoThumbCreation(video.getId()); // Thumbnail
                     }
-                    if(imageUri != null){
+                    if (imageUri != null) {
                         int width = getResources().getDimensionPixelSize(R.dimen.details_poster_width);
                         int height = getResources().getDimensionPixelSize(R.dimen.details_poster_height);
                         try {
                             traceDetails("details-poster-decode-start");
-                            Bitmap bitmap = Picasso.get().load(imageUri)
+                            Bitmap bitmap =
+                                Picasso.get()
+                                    .load(imageUri)
                                     .noFade() // no fade since we are using activity transition anyway
                                     .config(Bitmap.Config.ARGB_8888)
-                                    .resize((int)(width * 2.0f), (int)(height * 2.0f))
+                                    .resize((int) (width * 2.0f), (int) (height * 2.0f))
                                     .centerCrop()
                                     .onlyScaleDown()
-                                    .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(width, height))
+                                    .transform(
+                                        new com.archos.mediacenter.video.picasso.FidelityTransformation(width, height))
                                     .get();
                             traceDetails("details-poster-decode-finished");
-                            if(bitmap!=null) {
+                            if (bitmap != null) {
                                 result = bitmap;
                             }
                         } catch (IOException e) {
@@ -1721,18 +1975,24 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Bitmap finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     traceDetails("detail-row-builder-main-thread");
                     mPoster = finalResult;
-                    if(finalResult!=null) {
+                    if (finalResult != null) {
                         Palette palette = Palette.from(finalResult).generate();
                         if (palette.getDarkVibrantSwatch() != null)
-                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : palette.getDarkVibrantSwatch().getRgb();
+                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme()
+                                ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()
+                                : palette.getDarkVibrantSwatch().getRgb();
                         else if (palette.getDarkMutedSwatch() != null)
-                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : palette.getDarkMutedSwatch().getRgb();
+                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme()
+                                ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()
+                                : palette.getDarkMutedSwatch().getRgb();
                         else
                             mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
                         dominantColor = mColor;
@@ -1778,33 +2038,39 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             executor.execute(() -> {
                 VideoMetadata result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    if(playerMetadata != null && playerMetadata.getVideoTrack() != null)
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
+                    if (playerMetadata != null && playerMetadata.getVideoTrack() != null)
                         result = playerMetadata;
-                    else if(cachedMetadata != null){
-                        if (log.isDebugEnabled()) log.debug("metadata retrieved from cache {}", startingPath);
+                    else if (cachedMetadata != null) {
+                        if (log.isDebugEnabled())
+                            log.debug("metadata retrieved from cache {}", startingPath);
                         result = cachedMetadata;
-                    }
-                    else {
+                    } else {
                         // Pick up any HTTP headers forwarded from the external player intent (e.g. Stremio/debrid)
                         java.util.Map<String, String> headers = null;
                         if (headersBundle != null && !headersBundle.isEmpty()) {
                             headers = new java.util.HashMap<>();
                             for (String key : headersBundle.keySet()) {
                                 String val = headersBundle.getString(key);
-                                if (val != null) headers.put(key, val);
+                                if (val != null)
+                                    headers.put(key, val);
                             }
-                            if (log.isDebugEnabled()) log.debug("VideoInfoTask: using {} HTTP headers from intent", headers.size());
+                            if (log.isDebugEnabled())
+                                log.debug("VideoInfoTask: using {} HTTP headers from intent", headers.size());
                         } else {
-                            if (log.isDebugEnabled()) log.debug("VideoInfoTask: no HTTP headers in activity intent");
+                            if (log.isDebugEnabled())
+                                log.debug("VideoInfoTask: no HTTP headers in activity intent");
                         }
                         NetworkInitialization.awaitReadyForSmb(video.getFileUri(), context);
-                        if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                        if (isCancelled || Thread.currentThread().isInterrupted())
+                            return;
                         VideoMetadata videoMetaData = VideoInfoCommonClass.retrieveMetadata(video, context, headers);
                         // Cancellation may have happened during SMB I/O. Discard its result
                         // before writing metadata back to the database or the fragment cache.
-                        if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                        if(videoMetaData != null && video.isIndexed())
+                        if (isCancelled || Thread.currentThread().isInterrupted())
+                            return;
+                        if (videoMetaData != null && video.isIndexed())
                             videoMetaData.save(context, startingPath);
                         result = videoMetaData;
                     }
@@ -1813,13 +2079,16 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final VideoMetadata finalResult = result;
                 handler.post(() -> {
                     isFinished = true;
                     if (isCancelled || mVideoInfoTask != this || mVideo == null
-                            || !Objects.equals(startingPath, mVideo.getFilePath())) return;
-                    if (finalResult != null) mVideoMetadateCache.put(startingPath, finalResult);
+                        || !Objects.equals(startingPath, mVideo.getFilePath()))
+                        return;
+                    if (finalResult != null)
+                        mVideoMetadateCache.put(startingPath, finalResult);
                     // Update the video object with the computed metadata
                     // An initialization failure is retryable: show the existing file error,
                     // but do not cache or persist empty metadata as a successful result.
@@ -1839,11 +2108,12 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
     }
 
-    private void updateMetadataWhenReady(){
-        if(mVideo.getMetadata()!=null) {
+    private void updateMetadataWhenReady() {
+        if (mVideo.getMetadata() != null) {
             // Tell presenter to update the badges according to the metadata
             mDescriptionPresenter.displayActualVideoBadges(mVideo);
-            if(mPreviewMovie!=null&&mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie)mVideo);
+            if (mPreviewMovie != null && mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie)
+                mPreviewMovie.bind((com.archos.mediacenter.video.browser.adapters.object.Movie) mVideo);
 
             // update the details row and replace it in the adapter
             mFileDetailsRow = new FileDetailsRow(getActivity(), mVideo, mPlayerType);
@@ -1860,10 +2130,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         private List<ScraperImage> mBackdrops;
         private List<ScraperTrailer> mTrailers;
 
-        public FullScraperTagsTask(Activity activity){
+        public FullScraperTagsTask(Activity activity) {
             mActivity = activity;
         }
-        private Activity getActivity(){
+
+        private Activity getActivity() {
             return mActivity;
         }
 
@@ -1871,34 +2142,37 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             executor.execute(() -> {
                 BaseTags result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     BaseTags tags = video.getFullScraperTags(getActivity());
 
                     // Posters
-                    if (tags!=null && !isCancelled) {
+                    if (tags != null && !isCancelled) {
                         mPosters = tags.getAllPostersInDb(getActivity());
                     } else {
                         mPosters = null;
                     }
                     // Backdrops
-                    if (tags!=null && !isCancelled) {
+                    if (tags != null && !isCancelled) {
                         mBackdrops = tags.getAllBackdropsInDb(getActivity());
                     } else {
                         mBackdrops = null;
                     }
-                    if (tags!=null && !isCancelled)
+                    if (tags != null && !isCancelled)
                         mTrailers = tags.getAllTrailersInDb(getActivity());
                     else
                         mTrailers = null;
                     // Check if we have the next episode
                     if (tags instanceof EpisodeTags) {
                         // Using a CursorLoader but outside of the LoaderManager : need to make sure the Looper is ready
-                        if (Looper.myLooper()==null) Looper.prepare();
-                        CursorLoader loader = new NextEpisodeLoader(getActivity(), (EpisodeTags)tags);
+                        if (Looper.myLooper() == null)
+                            Looper.prepare();
+                        CursorLoader loader = new NextEpisodeLoader(getActivity(), (EpisodeTags) tags);
                         Cursor c = loader.loadInBackground();
-                        if (c.getCount()>0) {
+                        if (c.getCount() > 0) {
                             c.moveToFirst();
-                            mNextEpisode = (Episode)new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
+                            mNextEpisode =
+                                (Episode) new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
                         }
                         c.close();
                     }
@@ -1908,33 +2182,45 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final BaseTags finalTags = result;
                 final List<ScraperImage> finalPosters = mPosters;
                 final List<ScraperImage> finalBackdrops = mBackdrops;
                 final List<ScraperTrailer> finalTrailers = mTrailers;
                 handler.post(() -> {
-                    if (isCancelled) return;
-                    if (log.isDebugEnabled()) log.debug("onPostExecute");
-                    if(getActivity().isDestroyed())
+                    if (isCancelled)
                         return;
-                    mPreviewTags=finalTags;mPreviewPosterSelection=finalTags==null?null:finalTags.getDefaultPoster();mPreviewBackdropSelection=finalTags==null?null:finalTags.getDefaultBackdrop();if(mPreviewMovie!=null)mPreviewMovie.setTags(finalTags,finalTrailers,finalBackdrops);
+                    if (log.isDebugEnabled())
+                        log.debug("onPostExecute");
+                    if (getActivity().isDestroyed())
+                        return;
+                    mPreviewTags = finalTags;
+                    mPreviewPosterSelection = finalTags == null ? null : finalTags.getDefaultPoster();
+                    mPreviewBackdropSelection = finalTags == null ? null : finalTags.getDefaultBackdrop();
+                    if (mPreviewMovie != null)
+                        mPreviewMovie.setTags(finalTags, finalTrailers, finalBackdrops);
                     // Update the action adapter if there is a next episode
-                    ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).setNextEpisodeStatus(mNextEpisode != null);
+                    ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter())
+                        .setNextEpisodeStatus(mNextEpisode != null);
                     ((VideoActionAdapter) mDetailsOverviewRow.getActionsAdapter()).setListEpisodesStatus(mIsTvEpisode);
                     // Launch backdrop task in BaseTags-as-arguments mode.  A later scraper callback
                     // may decide that the backdrop is already loading; it must not cancel that
                     // in-flight request and then leave the details screen without a backdrop.
-                    if (finalTags!=null && !mLaunchedFromPlayer) { // in player case the player is displayed in the background, not the backdrop
-                        if(mShouldLoadBackdrop) {
-                            if (log.isDebugEnabled()) log.debug("onPostExecute: loading backdrop");
+                    if (finalTags != null
+                        && !mLaunchedFromPlayer) {
+                        // in player case the player is displayed in the background, not the backdrop
+                        if (mShouldLoadBackdrop) {
+                            if (log.isDebugEnabled())
+                                log.debug("onPostExecute: loading backdrop");
                             mBackdropController.replaceIfDifferent(finalTags);
                             mShouldLoadBackdrop = false;
                         } else {
-                            if (log.isDebugEnabled()) log.debug("onPostExecute: should not load backdrop");
+                            if (log.isDebugEnabled())
+                                log.debug("onPostExecute: should not load backdrop");
                         }
                     }
-                    if (finalTags!=null) {
+                    if (finalTags != null) {
                         // Plot & Genres
                         final String plot = finalTags.getPlot();
                         String genres = null;
@@ -1943,7 +2229,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                         }
                         // Keep it simple: we do not display the row if plot==null && genres!=null (very unlikely and not a big deal)
                         if (plot != null && !plot.isEmpty()) {
-                            if(mPlotAndGenresRow!=null&&mAdapter.indexOf(mPlotAndGenresRow)!=-1)
+                            if (mPlotAndGenresRow != null && mAdapter.indexOf(mPlotAndGenresRow) != -1)
                                 mAdapter.remove(mPlotAndGenresRow);
 
                             mPlotAndGenresRow = new PlotAndGenresRow(getString(R.string.scrap_plot), plot, genres);
@@ -1960,61 +2246,68 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                         }
                         // Keep it simple: we do not display the row if cast==null && directors!=null (very unlikely and not a big deal)
                         if (castTags.getActorsFormatted() != null && !castTags.getActorsFormatted().isEmpty()) {
-                            if(mCastRow!=null&&mAdapter.indexOf(mCastRow)!=-1)
+                            if (mCastRow != null && mAdapter.indexOf(mCastRow) != -1)
                                 mAdapter.remove(mCastRow);
-                            mCastRow = new CastRow(getString(R.string.scrap_cast), castTags, finalTags.getDirectorsFormatted());
+                            mCastRow = new CastRow(
+                                getString(R.string.scrap_cast), castTags, finalTags.getDirectorsFormatted());
                             mAdapter.add(mCastRow);
                         }
                     }
 
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    boolean hideTrailerRow = prefs.getBoolean(VideoPreferencesCommon.KEY_HIDE_TRAILER_ROW, VideoPreferencesCommon.HIDE_TRAILER_ROW_DEFAULT);
+                    boolean hideTrailerRow = prefs.getBoolean(
+                        VideoPreferencesCommon.KEY_HIDE_TRAILER_ROW, VideoPreferencesCommon.HIDE_TRAILER_ROW_DEFAULT);
 
-                    if(finalTrailers!=null&&finalTrailers.size()>0 && !hideTrailerRow){
-                        ArrayObjectAdapter postersRowAdapter = new ArrayObjectAdapter(new TrailerPresenter(getActivity()));
+                    if (finalTrailers != null && finalTrailers.size() > 0 && !hideTrailerRow) {
+                        ArrayObjectAdapter postersRowAdapter =
+                            new ArrayObjectAdapter(new TrailerPresenter(getActivity()));
                         postersRowAdapter.addAll(0, finalTrailers);
 
-                        if(mTrailersRow!=null&&mAdapter.indexOf(mTrailersRow)!=-1)
+                        if (mTrailersRow != null && mAdapter.indexOf(mTrailersRow) != -1)
                             mAdapter.remove(mTrailersRow);
-                        mTrailersRow = new ListRow(
-                                new HeaderItem(getString(R.string.scrap_trailer)),
-                                postersRowAdapter);
+                        mTrailersRow =
+                            new ListRow(new HeaderItem(getString(R.string.scrap_trailer)), postersRowAdapter);
                         mAdapter.add(mTrailersRow);
                     }
                     // Posters
-                    if (finalPosters!=null && !finalPosters.isEmpty()) {
-                        ArrayObjectAdapter postersRowAdapter = new ArrayObjectAdapter(new ScraperImagePosterPresenter());
+                    if (finalPosters != null && !finalPosters.isEmpty()) {
+                        ArrayObjectAdapter postersRowAdapter =
+                            new ArrayObjectAdapter(new ScraperImagePosterPresenter());
                         postersRowAdapter.addAll(0, finalPosters);
-                        if(mPostersRow!=null&&mAdapter.indexOf(mPostersRow)!=-1)
+                        if (mPostersRow != null && mAdapter.indexOf(mPostersRow) != -1)
                             mAdapter.remove(mPostersRow);
                         mPostersRow = new ListRow(
-                                new HeaderItem(getString(!mIsTvEpisode ? R.string.leanback_posters_header : R.string.leanback_season_posters_header)),
-                                postersRowAdapter);
+                            new HeaderItem(getString(!mIsTvEpisode ? R.string.leanback_posters_header
+                                                                   : R.string.leanback_season_posters_header)),
+                            postersRowAdapter);
                         mAdapter.add(mPostersRow);
                     }
 
                     // Backdrops
-                    if (finalBackdrops!=null && !finalBackdrops.isEmpty()) {
-                        ArrayObjectAdapter backdropsRowAdapter = new ArrayObjectAdapter(new ScraperImageBackdropPresenter());
+                    if (finalBackdrops != null && !finalBackdrops.isEmpty()) {
+                        ArrayObjectAdapter backdropsRowAdapter =
+                            new ArrayObjectAdapter(new ScraperImageBackdropPresenter());
                         backdropsRowAdapter.addAll(0, finalBackdrops);
-                        if(mBackdropsRow!=null&&mAdapter.indexOf(mBackdropsRow)!=-1)
+                        if (mBackdropsRow != null && mAdapter.indexOf(mBackdropsRow) != -1)
                             mAdapter.remove(mBackdropsRow);
                         mBackdropsRow = new ListRow(
-                                new HeaderItem(getString(!mIsTvEpisode ? R.string.leanback_backdrops_header : R.string.leanback_tvshow_backdrops_header)),
-                                backdropsRowAdapter);
+                            new HeaderItem(getString(!mIsTvEpisode ? R.string.leanback_backdrops_header
+                                                                   : R.string.leanback_tvshow_backdrops_header)),
+                            backdropsRowAdapter);
                         mAdapter.add(mBackdropsRow);
                     }
 
                     // Web links
                     List<String> links = getWebLinks(finalTags);
-                    if (links.size()>0) {
+                    if (links.size() > 0) {
                         // less bling bling
                         //ArrayObjectAdapter rowAdapter = new ArrayObjectAdapter(new WebPageLinkPresenter());
                         ArrayObjectAdapter rowAdapter = new ArrayObjectAdapter(new WebLinkPresenter(mColor));
                         for (String link : links) {
                             rowAdapter.add(new WebPageLink(link));
                         }
-                        mAdapter.add(new ListRow( new HeaderItem(getString(R.string.leanback_weblinks_header)), rowAdapter));
+                        mAdapter.add(
+                            new ListRow(new HeaderItem(getString(R.string.leanback_weblinks_header)), rowAdapter));
                     }
                 });
             });
@@ -2038,11 +2331,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             return !isCancelled && !isFinished && Objects.equals(fileUri, video.getFileUri());
         }
 
-        public SubtitleFilesListerTask(Activity activity){
+        public SubtitleFilesListerTask(Activity activity) {
             mActivity = activity;
         }
 
-        private Activity getActivity(){
+        private Activity getActivity() {
             return mActivity;
         }
 
@@ -2051,15 +2344,24 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             executor.execute(() -> {
                 List<SubtitleManager.SubtitleFile> result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground starting for: {}", video.getFileUri());
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground file name: {}", FileUtils.getName(video.getFileUri()));
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask:doInBackground starting for: {}", video.getFileUri());
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask:doInBackground file name: {}",
+                            FileUtils.getName(video.getFileUri()));
                     NetworkInitialization.awaitReadyForSmb(fileUri, mActivity.getApplicationContext());
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     SubtitleManager lister = new SubtitleManager(getActivity(), null);
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground calling listLocalAndRemotesSubtitles");
-                    List<SubtitleManager.SubtitleFile> list = lister.listLocalAndRemotesSubtitles(video.getFileUri(), true);
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask:doInBackground completed, found {} subtitles", (list != null ? list.size() : 0));
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask:doInBackground calling listLocalAndRemotesSubtitles");
+                    List<SubtitleManager.SubtitleFile> list =
+                        lister.listLocalAndRemotesSubtitles(video.getFileUri(), true);
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask:doInBackground completed, found {} subtitles",
+                            (list != null ? list.size() : 0));
                     result = list;
                 } catch (Exception e) {
                     log.error("SubtitleFilesListerTask:doInBackground exception", e);
@@ -2068,16 +2370,20 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     executor.shutdown();
                 }
                 if (isCancelled) {
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask: cancelled before post");
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask: cancelled before post");
                     return;
                 }
                 final List<SubtitleManager.SubtitleFile> finalResult = result;
                 handler.post(() -> {
                     isFinished = true;
                     if (isCancelled || mSubtitleFilesListerTask != this || mVideo == null
-                            || !Objects.equals(fileUri, mVideo.getFileUri())) return;
+                        || !Objects.equals(fileUri, mVideo.getFileUri()))
+                        return;
                     mSubtitleListCache.put(fileUri, finalResult);
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask: onPostExecute with {} subtitles", (finalResult != null ? finalResult.size() : 0));
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask: onPostExecute with {} subtitles",
+                            (finalResult != null ? finalResult.size() : 0));
                     mExternalSubtitles = finalResult;
 
                     // Cache the subtitle files for this video to avoid re-enumeration on playback
@@ -2086,12 +2392,18 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     // See: https://github.com/nova-video-player/aos-AVP/issues/1605
                     if (finalResult != null && mVideo != null && FileUtils.isLocal(mVideo.getFileUri())) {
                         SubtitleManager.cacheSubtitleFiles(mVideo.getFileUri(), finalResult);
-                        if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask: cached {} subtitles for local file {}", finalResult.size(), mVideo.getFileUri());
+                        if (log.isDebugEnabled())
+                            log.debug("SubtitleFilesListerTask: cached {} subtitles for local file {}",
+                                finalResult.size(), mVideo.getFileUri());
                     } else if (finalResult != null && mVideo != null) {
-                        if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask: skipping cache for remote file (requires local copy): {}", mVideo.getFileUri());
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "SubtitleFilesListerTask: skipping cache for remote file (requires local copy): {}",
+                                mVideo.getFileUri());
                     }
 
-                    if (log.isDebugEnabled()) log.debug("SubtitleFilesListerTask: onPostExecute calling updateSubtitleRowWhenReady");
+                    if (log.isDebugEnabled())
+                        log.debug("SubtitleFilesListerTask: onPostExecute calling updateSubtitleRowWhenReady");
                     updateSubtitleRowWhenReady();
                 });
             });
@@ -2108,21 +2420,30 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
      * Update subtitles details when both metadata (for integrated subs) and external sub checking is done
      */
     private void updateSubtitleRowWhenReady() {
-        if (log.isDebugEnabled()) log.debug("updateSubtitleRowWhenReady: called");
-        if (log.isDebugEnabled()) log.debug("updateSubtitleRowWhenReady: metadata={}", (mVideo.getMetadata() != null));
-        if (log.isDebugEnabled()) log.debug("updateSubtitleRowWhenReady: cache entry={}", (mSubtitleListCache.get(mVideo.getFileUri()) != null));
+        if (log.isDebugEnabled())
+            log.debug("updateSubtitleRowWhenReady: called");
+        if (log.isDebugEnabled())
+            log.debug("updateSubtitleRowWhenReady: metadata={}", (mVideo.getMetadata() != null));
+        if (log.isDebugEnabled())
+            log.debug(
+                "updateSubtitleRowWhenReady: cache entry={}", (mSubtitleListCache.get(mVideo.getFileUri()) != null));
 
-        if ((mVideo.getMetadata()!=null) && (mSubtitleListCache.get(mVideo.getFileUri())!=null)) {
-            if (log.isDebugEnabled()) log.debug("updateSubtitleRowWhenReady: updating row");
+        if ((mVideo.getMetadata() != null) && (mSubtitleListCache.get(mVideo.getFileUri()) != null)) {
+            if (log.isDebugEnabled())
+                log.debug("updateSubtitleRowWhenReady: updating row");
             try {
-                mSubtitlesDetailsRow = new SubtitlesDetailsRow(getActivity(), mVideo, mSubtitleListCache.get(mVideo.getFileUri()));
+                mSubtitlesDetailsRow =
+                    new SubtitlesDetailsRow(getActivity(), mVideo, mSubtitleListCache.get(mVideo.getFileUri()));
                 mAdapter.replace(INDEX_SUBTITLES, mSubtitlesDetailsRow);
-                if (log.isDebugEnabled()) log.debug("updateSubtitleRowWhenReady: row updated successfully");
+                if (log.isDebugEnabled())
+                    log.debug("updateSubtitleRowWhenReady: row updated successfully");
             } catch (Exception e) {
                 log.error("updateSubtitleRowWhenReady: error updating row", e);
             }
         } else {
-            if (log.isDebugEnabled()) log.debug("updateSubtitleRowWhenReady: not ready - metadata={}, cache={}", (mVideo.getMetadata() != null), (mSubtitleListCache.get(mVideo.getFileUri()) != null));
+            if (log.isDebugEnabled())
+                log.debug("updateSubtitleRowWhenReady: not ready - metadata={}, cache={}",
+                    (mVideo.getMetadata() != null), (mSubtitleListCache.get(mVideo.getFileUri()) != null));
         }
     }
 
@@ -2151,7 +2472,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     private void startAds(int requestCode) {
         int resume = PlayerActivity.RESUME_FROM_LAST_POS;
         int resumePos = -1;
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_CODE_LOCAL_RESUME_AFTER_ADS_ACTIVITY:
                 resume = PlayerActivity.RESUME_FROM_LOCAL_POS;
                 resumePos = mVideo.getResumeMs();
@@ -2165,11 +2486,12 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 resumePos = mVideo.getRemoteResumeMs();
                 break;
             case REQUEST_CODE_PLAY_FROM_BEGIN_AFTER_ADS_ACTIVITY:
-                resume =  PlayerActivity.RESUME_NO;
+                resume = PlayerActivity.RESUME_NO;
                 break;
         }
         mResumeFromPlayer = true;
-        PlayUtils.startVideo(getActivity(), mVideo, resume, false,resumePos, this, getActivity().getIntent().getLongExtra(EXTRA_LIST_ID, -1));
+        PlayUtils.startVideo(getActivity(), mVideo, resume, false, resumePos, this,
+            getActivity().getIntent().getLongExtra(EXTRA_LIST_ID, -1));
     }
 
     /** Saves a Poster as default poster for a video and update the current poster */
@@ -2180,42 +2502,44 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         private final Handler handler = new Handler(Looper.getMainLooper());
         private volatile boolean isCancelled = false;
 
-        public PosterSaverTask(Activity activity, int season){
+        public PosterSaverTask(Activity activity, int season) {
             mActivity = activity;
             mSeason = season;
         }
 
-        private Activity getActivity(){
+        private Activity getActivity() {
             return mActivity;
         }
 
         void execute(ScraperImage poster) {
-            execute(poster,null);
+            execute(poster, null);
         }
-        void execute(ScraperImage poster,java.util.function.Consumer<Boolean> completed) {
+
+        void execute(ScraperImage poster, java.util.function.Consumer<Boolean> completed) {
             executor.execute(() -> {
                 Bitmap result = null;
-                boolean applied=false;
+                boolean applied = false;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    if(mVideo instanceof Movie) {
-                        poster.setOnlineId(((Movie)mVideo).getOnlineId());
-                    }
-                    else if(mVideo instanceof Episode){
-                        poster.setOnlineId(((Episode)mVideo).getOnlineId());
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
+                    if (mVideo instanceof Movie) {
+                        poster.setOnlineId(((Movie) mVideo).getOnlineId());
+                    } else if (mVideo instanceof Episode) {
+                        poster.setOnlineId(((Episode) mVideo).getOnlineId());
                     }
                     // Save in DB and download
                     if (poster.download(getActivity())) {
-                        applied=poster.setAsDefault(getActivity(), mSeason);
+                        applied = poster.setAsDefault(getActivity(), mSeason);
                     }
                     // Update the bitmap
                     try {
                         result = Picasso.get()
-                                .load(poster.getLargeFileF())
-                                .noFade()
-                                .resize(getResources().getDimensionPixelSize(R.dimen.poster_width), getResources().getDimensionPixelSize(R.dimen.poster_height))
-                                .centerCrop()
-                                .get();
+                                     .load(poster.getLargeFileF())
+                                     .noFade()
+                                     .resize(getResources().getDimensionPixelSize(R.dimen.poster_width),
+                                         getResources().getDimensionPixelSize(R.dimen.poster_height))
+                                     .centerCrop()
+                                     .get();
                     } catch (IOException e) {
                         log.error("PosterSaverTask Picasso load exception", e);
                     }
@@ -2224,12 +2548,14 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Bitmap finalResult = result;
-                final boolean saved=applied;
+                final boolean saved = applied;
                 handler.post(() -> {
-                    if (isCancelled) return;
-                    if (finalResult != null&&(completed==null||saved)) {
+                    if (isCancelled)
+                        return;
+                    if (finalResult != null && (completed == null || saved)) {
                         mPoster = finalResult;
 
                         Palette palette = Palette.from(finalResult).generate();
@@ -2249,23 +2575,28 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                             color = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
 
                         if (color != mColor) {
-                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : color;
+                            mColor = ThemeManager.getInstance(getActivity()).isSlateTheme()
+                                ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()
+                                : color;
 
                             mVideoBadgePresenter.setSelectedBackgroundColor(color);
                             mOverviewRowPresenter.updateBackgroundColor(color);
                             mOverviewRowPresenter.updateActionsBackgroundColor(getDarkerColor(color));
 
-                            for (Presenter pres : mAdapter.getPresenterSelector().getPresenters()){
+                            for (Presenter pres : mAdapter.getPresenterSelector().getPresenters()) {
                                 if (pres instanceof BackgroundColorPresenter)
                                     ((BackgroundColorPresenter) pres).setBackgroundColor(color);
                             }
                         }
 
-                        if(completed==null)Toast.makeText(getActivity(), R.string.leanback_poster_changed, Toast.LENGTH_SHORT).show();
+                        if (completed == null)
+                            Toast.makeText(getActivity(), R.string.leanback_poster_changed, Toast.LENGTH_SHORT).show();
                     } else {
-                        if(completed==null)Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
+                        if (completed == null)
+                            Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
                     }
-                    if(completed!=null)completed.accept(saved);
+                    if (completed != null)
+                        completed.accept(saved);
                 });
             });
         }
@@ -2283,41 +2614,58 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         private final Handler handler = new Handler(Looper.getMainLooper());
         private volatile boolean isCancelled = false;
 
-        public BackdropSaverTask(Activity activity){
+        public BackdropSaverTask(Activity activity) {
             mActivity = activity;
         }
 
-        private Activity getActivity(){
+        private Activity getActivity() {
             return mActivity;
         }
 
         void execute(ScraperImage backdrop) {
-            execute(backdrop,null);
+            execute(backdrop, null);
         }
-        void execute(ScraperImage backdrop,java.util.function.Consumer<Boolean> completed) {
+
+        void execute(ScraperImage backdrop, java.util.function.Consumer<Boolean> completed) {
             executor.execute(() -> {
-                boolean applied=false;
+                boolean applied = false;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     // Save in DB and download
-                    if(completed!=null){if(backdrop.download(getActivity()))applied=backdrop.setAsDefault(getActivity());}
-                    else if (backdrop.setAsDefault(getActivity())) {backdrop.download(getActivity());applied=true;}
+                    if (completed != null) {
+                        if (backdrop.download(getActivity()))
+                            applied = backdrop.setAsDefault(getActivity());
+                    } else if (backdrop.setAsDefault(getActivity())) {
+                        backdrop.download(getActivity());
+                        applied = true;
+                    }
                 } catch (Exception e) {
                     log.error("BackdropSaverTask failed", e);
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
-                final boolean saved=applied;
+                if (isCancelled)
+                    return;
+                final boolean saved = applied;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     // Update backdrop
-                    if (!mLaunchedFromPlayer) { // in player case the player is displayed in the background, not the backdrop
+                    if (!mLaunchedFromPlayer) {
+                        // in player case the player is displayed in the background, not the backdrop
                         mBackdropController.replace(mVideo);
                     }
-                    if(completed==null)Toast.makeText(getActivity(), R.string.leanback_backdrop_changed, Toast.LENGTH_SHORT).show();
+                    if (completed == null)
+                        Toast.makeText(getActivity(), R.string.leanback_backdrop_changed, Toast.LENGTH_SHORT).show();
                     else {
-                        if(saved&&mPreviewMovie!=null){java.io.File file=backdrop.getLargeFileF();if(file!=null&&file.isFile()){mVideo.setPreviewBackdrop(Uri.fromFile(file).toString());mPreviewMovie.bind(mVideo);}}
+                        if (saved && mPreviewMovie != null) {
+                            java.io.File file = backdrop.getLargeFileF();
+                            if (file != null && file.isFile()) {
+                                mVideo.setPreviewBackdrop(Uri.fromFile(file).toString());
+                                mPreviewMovie.bind(mVideo);
+                            }
+                        }
                         completed.accept(saved);
                     }
                     getActivity().setResult(Activity.RESULT_OK);
@@ -2331,7 +2679,6 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         }
     }
 
-
     //---------------------------------------------------
 
     /**
@@ -2339,11 +2686,11 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
      */
     @Override
     public void onDownloadStart(final SubtitleManager downloader) {
-        mDownloadingSubs=true;
+        mDownloadingSubs = true;
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(mDownloadingSubs)
+                if (mDownloadingSubs)
                     showSubtitleDialog(downloader);
             }
         }, DIALOG_LAUNCH_DELAY_MS);
@@ -2354,12 +2701,12 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
      */
     @Override
     public void onDownloadEnd() {
-        mDownloadingSubs=false;
-        if(mDialogRetrieveSubtitles!=null)
+        mDownloadingSubs = false;
+        if (mDialogRetrieveSubtitles != null)
             mDialogRetrieveSubtitles.dismiss();
     }
 
-    public void showSubtitleDialog(SubtitleManager downloader){
+    public void showSubtitleDialog(SubtitleManager downloader) {
         mDialogRetrieveSubtitles = new DialogRetrieveSubtitles();
         mDialogRetrieveSubtitles.show(getParentFragmentManager(), null);
         mDialogRetrieveSubtitles.setDownloader(downloader);
@@ -2397,8 +2744,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     }
 
     @Override
-    public void onVideoFileRemoved(final Uri videoFile,boolean askForFolderRemoval, final Uri folder) {
-        if (log.isDebugEnabled()) log.debug("onVideoFileRemoved: {}", videoFile);
+    public void onVideoFileRemoved(final Uri videoFile, boolean askForFolderRemoval, final Uri folder) {
+        if (log.isDebugEnabled())
+            log.debug("onVideoFileRemoved: {}", videoFile);
         if (getActivity() != null) {
             Toast.makeText(getActivity(), R.string.delete_done, Toast.LENGTH_SHORT).show();
             if (askForFolderRemoval) {
@@ -2406,20 +2754,19 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 b.setIcon(R.drawable.filetype_new_folder);
                 b.setMessage(R.string.confirm_delete_parent_folder);
                 b.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                sendDeleteResult(videoFile);
-                            }
-                        })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                delete = new Delete(VideoDetailsFragment.this, getActivity());
-                                deleteOperation = Delete.OP_FOLDER;
-                                deleteUrisList = Collections.singletonList(folder);
-                                delete.deleteFolder(folder);
-                            }
-                        });
+                     @Override
+                     public void onClick(DialogInterface dialogInterface, int i) {
+                         sendDeleteResult(videoFile);
+                     }
+                 }).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        delete = new Delete(VideoDetailsFragment.this, getActivity());
+                        deleteOperation = Delete.OP_FOLDER;
+                        deleteUrisList = Collections.singletonList(folder);
+                        delete.deleteFolder(folder);
+                    }
+                });
                 b.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
@@ -2433,14 +2780,15 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
         } else {
             sendDeleteResult(videoFile);
         }
-
     }
 
-    private void sendDeleteResult(Uri file){
-        if (log.isDebugEnabled()) log.debug("sendDeleteResult: {}", file);
+    private void sendDeleteResult(Uri file) {
+        if (log.isDebugEnabled())
+            log.debug("sendDeleteResult: {}", file);
         Intent intent = new Intent();
         intent.setData(file);
-        if (getActivity() != null) getActivity().setResult(ListingActivity.RESULT_FILE_DELETED, intent);
+        if (getActivity() != null)
+            getActivity().setResult(ListingActivity.RESULT_FILE_DELETED, intent);
         // TODO: do not finish if there are multiple videos under same name check counter
         // TODO: do the same for phoneUI
         slightlyDelayedFinish();
@@ -2448,27 +2796,34 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
     @Override
     public void onDeleteVideoFailed(Uri videoFile) {
-        if (log.isDebugEnabled()) log.debug("onDeleteVideoFailed: {}", videoFile);
-        if (getActivity() != null) Toast.makeText(getActivity(),R.string.delete_error, Toast.LENGTH_SHORT).show();
+        if (log.isDebugEnabled())
+            log.debug("onDeleteVideoFailed: {}", videoFile);
+        if (getActivity() != null)
+            Toast.makeText(getActivity(), R.string.delete_error, Toast.LENGTH_SHORT).show();
 
         // Failed or cancelled deletion leaves the file and its Details available for retry.
     }
 
     @Override
     public void onFolderRemoved(Uri folder) {
-        if (log.isDebugEnabled()) log.debug("onFolderRemoved: {}", folder);
-        if (getActivity() != null) Toast.makeText(getActivity(), R.string.delete_done, Toast.LENGTH_SHORT).show();
+        if (log.isDebugEnabled())
+            log.debug("onFolderRemoved: {}", folder);
+        if (getActivity() != null)
+            Toast.makeText(getActivity(), R.string.delete_done, Toast.LENGTH_SHORT).show();
         sendDeleteResult(folder);
     }
 
     @Override
     public void onDeleteSuccess() {
-        if (log.isDebugEnabled()) log.debug("onDeleteSuccess");
+        if (log.isDebugEnabled())
+            log.debug("onDeleteSuccess");
     }
+
     //---------------------------------------------------
 
     private void deleteFile_async(Video video) {
-        if (log.isDebugEnabled()) log.debug("deleteFile_async: {}", video.getFileUri());
+        if (log.isDebugEnabled())
+            log.debug("deleteFile_async: {}", video.getFileUri());
         delete = new Delete(this, getActivity());
         deleteOperation = Delete.OP_SINGLE_FILE;
         deleteFileSize = video != null ? video.getSize() : 0L;
@@ -2481,8 +2836,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
 
     private void unindexRemoteVideo(Video video) {
         int numberDeleted = getActivity().getContentResolver().delete(VideoStoreInternal.FILES_SCANNED,
-                VideoStore.MediaColumns.DATA + " = ?",
-                new String[]{mVideo.getFilePath()});
+            VideoStore.MediaColumns.DATA + " = ?", new String[] {
+                mVideo.getFilePath()
+            });
         // BootupRecommendationService is for before Android O otherwise TV channels are used
         if (ArchosFeatures.isAndroidTV(getContext()))
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -2491,8 +2847,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 getActivity().sendBroadcast(intent);
             } else
                 ChannelManager.refreshChannels(getContext());
-        if (numberDeleted!=1) {
-            if (getActivity() != null) Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
+        if (numberDeleted != 1) {
+            if (getActivity() != null)
+                Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -2505,20 +2862,23 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             //log.debug("tags.getOnlineId() = {}", onlineId);
             if (onlineId > 0) {
                 final String language = Scraper.getLanguage(getActivity());
-                list.add(String.format(Locale.ROOT, getResources().getString(R.string.tmdb_movie_title_url), Long.toString(onlineId), language));
+                list.add(String.format(Locale.ROOT, getResources().getString(R.string.tmdb_movie_title_url),
+                    Long.toString(onlineId), language));
             }
         } else if (tags instanceof EpisodeTags) {
-            if (mOnlineId >0) {
+            if (mOnlineId > 0) {
                 final String language = Scraper.getLanguage(getActivity());
-                list.add(String.format(Locale.ROOT, getResources().getString(R.string.tmdb_tvshow_title_url), Long.toString(mOnlineId), language));
+                list.add(String.format(Locale.ROOT, getResources().getString(R.string.tmdb_tvshow_title_url),
+                    Long.toString(mOnlineId), language));
             }
         }
 
         // IMDB (valid for both movies and episodes)
         String imdbId = null;
-        if (tags != null) imdbId = tags.getImdbId();
+        if (tags != null)
+            imdbId = tags.getImdbId();
         //log.debug("tags.getImdbId() = {}", imdbId);
-        if ((imdbId!=null) && (!imdbId.isEmpty())) {
+        if ((imdbId != null) && (!imdbId.isEmpty())) {
             list.add(getResources().getString(R.string.imdb_title_url) + imdbId);
         }
 
@@ -2526,7 +2886,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     }
 
     private void slightlyDelayedFinish() {
-        if (log.isDebugEnabled()) log.debug("slightlyDelayedFinish");
+        if (log.isDebugEnabled())
+            log.debug("slightlyDelayedFinish");
         if (getActivity() != null)
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -2549,7 +2910,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 isFilePlayable = true;
                 // test from FileDetailsRowPresenter to check if file is playable
                 if (mMetadata != null) {
-                    if (mMetadata.getFileSize() == 0 && mMetadata.getVideoTrack() == null && mMetadata.getAudioTrackNb() == 0) {
+                    if (mMetadata.getFileSize() == 0 && mMetadata.getVideoTrack() == null
+                        && mMetadata.getAudioTrackNb() == 0) {
                         // sometimes metadata are set to zero but the file is there, can be due to libavosjni not loaded
                         isFilePlayable = false;
                     }
@@ -2576,34 +2938,34 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 String sortOrder = prefs.getString(AllMoviesGridFragment.SORT_PARAM_KEY, MoviesLoader.DEFAULT_SORT);
                 boolean showWatched = prefs.getBoolean(AllMoviesGridFragment.SHOW_WATCHED_KEY, true);
-                loader = new MoviesLoader(getActivity(), sortOrder, showWatched, true, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
-            }
-            else if (mVideo instanceof Episode) {
-                EpisodeTags tags = (EpisodeTags)mVideo.getFullScraperTags(getActivity());
+                loader = new MoviesLoader(getActivity(), sortOrder, showWatched, true, VideoLoader.GRIDVIDEO_THROTTLE,
+                    VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+            } else if (mVideo instanceof Episode) {
+                EpisodeTags tags = (EpisodeTags) mVideo.getFullScraperTags(getActivity());
                 loader = new EpisodesLoader(getActivity(), tags.getShowId(), -1, true);
             }
             if (loader != null) {
                 // Using a CursorLoader but outside of the LoaderManager : need to make sure the Looper is ready
-                if (Looper.myLooper()==null) Looper.prepare();
+                if (Looper.myLooper() == null)
+                    Looper.prepare();
                 Cursor c = loader.loadInBackground();
                 Video video = null;
                 for (int i = 0; i < c.getCount(); i++) {
                     c.moveToPosition(i);
-                    Video v = (Video)new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
+                    Video v = (Video) new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
                     if (v.getId() == mVideo.getId()) {
                         if (direction == Gravity.START) {
                             if (i - 1 >= 0)
                                 c.moveToPosition(i - 1);
                             else
                                 c.moveToPosition(c.getCount() - 1);
-                        }
-                        else if (direction == Gravity.END) {
+                        } else if (direction == Gravity.END) {
                             if (i + 1 <= c.getCount() - 1)
                                 c.moveToPosition(i + 1);
                             else
                                 c.moveToPosition(0);
                         }
-                        Video nv = (Video)new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
+                        Video nv = (Video) new CompatibleCursorMapperConverter(new VideoCursorMapper()).convert(c);
                         if (nv.getId() != v.getId())
                             video = nv;
                         break;
@@ -2626,7 +2988,7 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
                     // Delay the finish the "old" activity, else it breaks the animation
                     mHandler.postDelayed(new Runnable() {
                         public void run() {
-                            if (getActivity()!=null) // better safe than sorry
+                            if (getActivity() != null) // better safe than sorry
                                 getActivity().finish();
                         }
                     }, 1000);
@@ -2636,7 +2998,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
     }
 
     public static void setWatchState(Boolean isVideoWatched) {
-        if (log.isDebugEnabled()) log.debug("setWatchState to {}", isVideoWatched);
+        if (log.isDebugEnabled())
+            log.debug("setWatchState to {}", isVideoWatched);
         mIsVideoWatched = isVideoWatched;
     }
 
