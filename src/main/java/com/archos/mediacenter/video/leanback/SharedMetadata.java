@@ -14,12 +14,13 @@ import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.details.PreviewMediaInfo;
 import com.archos.mediacenter.video.utils.VideoMetadata;
+import java.io.Serializable;
 import org.json.*;
 import java.util.*;
 
 /** Shared, compact metadata. Descriptive provider facts never imply local file capabilities. */
 public final class SharedMetadata {
-    public static final class Facts implements java.io.Serializable {
+    public static final class Facts implements Serializable {
         public String certificate = "", year = "", genres = "", context = "";
         public double rating;
         public long votes;
