@@ -37,6 +37,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+/** Generates video thumbnails and compositions of poster artwork. */
 public class ThumbnailEngineVideo extends ThumbnailEngine {
 	private final static String TAG = "ThumbnailEngineVideo";
 	private final static boolean DBG = false;
