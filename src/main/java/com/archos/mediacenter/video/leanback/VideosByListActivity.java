@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.leanback;
 
 import androidx.fragment.app.Fragment;
 
+/** Hosts the TV screen for browsing videos by list. */
 public class VideosByListActivity extends SingleFragmentActivity {
     @Override
     public Fragment getFragmentInstance() {
