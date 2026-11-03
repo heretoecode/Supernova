@@ -48,6 +48,7 @@ import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.shadows.ShadowSystemClock;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks diagnostic session correlation, UI snapshots and removal of private data. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class DiagnosticsTest {
