@@ -82,11 +82,13 @@ public class DiagnosticStorageTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         OutputStream slow = new OutputStream() {
             boolean first = true;
+            @Override
             public void write(int value) throws IOException {
                 write(new byte[] {
                     (byte) value
                 }, 0, 1);
             }
+            @Override
             public void write(byte[] data, int start, int length) throws IOException {
                 if (first) {
                     first = false;
@@ -143,6 +145,7 @@ public class DiagnosticStorageTest {
         flush();
         try {
             Diagnostics.export(app, new OutputStream() {
+                @Override
                 public void write(int value) throws IOException {
                     throw new IOException("Destination unavailable");
                 }
