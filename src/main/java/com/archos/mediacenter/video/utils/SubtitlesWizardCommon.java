@@ -410,7 +410,7 @@ public class SubtitlesWizardCommon {
             } else {
                 helpMessage = getString(R.string.subtitles_wizard_help).replace("%s", name);
             }
-        } else helpMessage = "No guidance, no video file!";
+            } else helpMessage = "No guidance, no video file!";
 
         return helpMessage;
     }
