@@ -14,16 +14,11 @@
 
 package com.archos.mediacenter.video.player;
 
-import com.archos.mediacenter.video.R;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.NumberPicker;
 
 
 public abstract class SubtitleDelayPickerAbstract extends FrameLayout {
