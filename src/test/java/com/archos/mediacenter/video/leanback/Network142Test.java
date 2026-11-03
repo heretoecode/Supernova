@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import androidx.preference.PreferenceManager;
+import com.archos.filecorelibrary.samba.SambaDiscovery;
 import com.archos.mediacenter.video.leanback.adapter.object.*;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import com.archos.filecorelibrary.MetaFile2;
@@ -15,7 +16,9 @@ import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import java.util.*;
 import static org.junit.Assert.*;
@@ -25,7 +28,7 @@ import static org.mockito.Mockito.*;
 @Config(application = Application.class, sdk = 30, qualifiers = "w960dp-h540dp-land-xhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class Network142Test {
-    private org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host;
+    private ActivityController<TopNavigationTest.Host> host;
     private UniversalFileBrowser browser;
 
     @Before
@@ -273,7 +276,7 @@ public class Network142Test {
         assertTrue(browser.findViewWithTag("network.back").isShown());
         View username = PreviewPagesTest.findText(browser, "Username: ");
         username.performClick();
-        Dialog keyboard = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        Dialog keyboard = ShadowDialog.getLatestDialog();
         keyboard.getWindow().getDecorView().findViewWithTag("semantic:keyboard:Done").performClick();
         layout();
         assertSame("Keyboard Done returns to the edited field", PreviewPagesTest.findText(browser, "Username: "),
@@ -282,7 +285,7 @@ public class Network142Test {
         ReflectionHelpers.setField(browser, "connectionDirty", true);
         browser.back(() -> {
         });
-        assertNotNull(org.robolectric.shadows.ShadowDialog.getLatestDialog());
+        assertNotNull(ShadowDialog.getLatestDialog());
         assertEquals(2, (int) ReflectionHelpers.getField(browser, "section"));
     }
 
@@ -303,7 +306,7 @@ public class Network142Test {
 
     @Test
     public void lateDiscoveryCannotReplaceTheSelectedOverview() {
-        var discovery = mock(com.archos.filecorelibrary.samba.SambaDiscovery.class);
+        var discovery = mock(SambaDiscovery.class);
         ReflectionHelpers.setField(browser, "discovery", discovery);
         select("network_shares");
         select("overview");
