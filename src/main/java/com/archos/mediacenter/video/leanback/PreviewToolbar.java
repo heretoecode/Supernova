@@ -2,9 +2,15 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.TextUtils;
 import android.view.*;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /** Shared library boxes and preserved Details tabs, with deterministic remote edges. */
 public final class PreviewToolbar extends LinearLayout {
@@ -38,7 +44,7 @@ public final class PreviewToolbar extends LinearLayout {
 
     public static View viewport(PreviewToolbar toolbar) {
         Context c = toolbar.getContext();
-        android.widget.HorizontalScrollView viewport = new android.widget.HorizontalScrollView(c);
+        HorizontalScrollView viewport = new HorizontalScrollView(c);
         viewport.setHorizontalScrollBarEnabled(false);
         viewport.setFillViewport(true);
         viewport.setClipToPadding(false);
@@ -46,17 +52,17 @@ public final class PreviewToolbar extends LinearLayout {
         int outline = PreviewDialog.dp(c, 3);
         viewport.setPadding(outline, outline, outline, outline);
         toolbar.setMinimumWidth(0);
-        viewport.addView(toolbar, new android.widget.FrameLayout.LayoutParams(-2, -2));
+        viewport.addView(toolbar, new FrameLayout.LayoutParams(-2, -2));
         return viewport;
     }
 
     /** Keep a trailing action visible while only the left controls scroll at narrow/large-text sizes. */
-    public static View withTrailingAction(PreviewToolbar controls, android.widget.TextView action) {
+    public static View withTrailingAction(PreviewToolbar controls, TextView action) {
         Context c = controls.getContext();
         LinearLayout row = new LinearLayout(c);
         row.setClipChildren(false);
         row.setClipToPadding(false);
-        row.setGravity(android.view.Gravity.TOP);
+        row.setGravity(Gravity.TOP);
         row.addView(viewport(controls), new LinearLayout.LayoutParams(0, -2, 1));
         PreviewToolbar trailing = new PreviewToolbar(c, true);
         trailing.setPadding(PreviewDialog.dp(c, 8), PreviewDialog.dp(c, 3), PreviewDialog.dp(c, 3),
@@ -75,14 +81,14 @@ public final class PreviewToolbar extends LinearLayout {
             SupernovaStyle.applyButton(child, SupernovaStyle.Surface.STANDARD);
         else
             child.setBackground(null);
-        if (boxed && child instanceof android.widget.TextView) {
-            TvButton.style((android.widget.TextView)child, true);
-            ((android.widget.TextView)child).setSingleLine(true);
-            ((android.widget.TextView)child).setEllipsize(android.text.TextUtils.TruncateAt.END);
+        if (boxed && child instanceof TextView) {
+            TvButton.style((TextView)child, true);
+            ((TextView)child).setSingleLine(true);
+            ((TextView)child).setEllipsize(TextUtils.TruncateAt.END);
             child.setMinimumHeight(TvLayout.dimension(getContext(), 44));
             child.setPadding(TvLayout.dimension(getContext(), 12), TvLayout.dimension(getContext(), 6),
                              TvLayout.dimension(getContext(), 12), TvLayout.dimension(getContext(), 6));
-            ((android.widget.TextView)child).setCompoundDrawablePadding(TvLayout.dimension(getContext(), 6));
+            ((TextView)child).setCompoundDrawablePadding(TvLayout.dimension(getContext(), 6));
             SupernovaStyle.applyButton(child, SupernovaStyle.Surface.STANDARD);
         }
         child.setOnFocusChangeListener((v, focused) -> invalidate());
@@ -119,7 +125,7 @@ public final class PreviewToolbar extends LinearLayout {
         View focused = findFocus();
         View active = focused != null ? focused : selectedSegment;
         if (active != null && active.getParent() == this) {
-            paint.setColor(focused != null ? android.graphics.Color.WHITE : 0x88ffffff);
+            paint.setColor(focused != null ? Color.WHITE : 0x88ffffff);
             canvas.drawRect(active.getLeft(), y, active.getRight(), getHeight(), paint);
         }
     }
