@@ -43,12 +43,11 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFragment {
-
     private static final Logger log = LoggerFactory.getLogger(ManualVideoScrappingSearchFragment.class);
 
     private Video mVideo;
     private SearchInfo mSearchInfo;
-    private boolean previewEpisode,returningFromSeries;
+    private boolean previewEpisode, returningFromSeries;
     HashMap<BaseTags, SearchResult> mTagsToSearchResultMap = new HashMap<>();
 
     @SuppressWarnings("deprecation") // getSerializableExtra: API 33+ branch uses typed form; else branch suppressed
@@ -58,36 +57,75 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
         // Get input file and init the SearchInfo ASAP
         mVideo = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                ? getActivity().getIntent().getSerializableExtra(ManualVideoScrappingActivity.EXTRA_VIDEO, Video.class)
-                : (Video) getActivity().getIntent().getSerializableExtra(ManualVideoScrappingActivity.EXTRA_VIDEO);
-        mSearchInfo = SearchPreprocessor.instance().parseFileBased(mVideo.getUri(), mVideo.getName()!=null&&!mVideo.getName().isEmpty()? Uri.parse("/"+mVideo.getName()):mVideo.getUri());
-        previewEpisode=mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false);
+            ? getActivity().getIntent().getSerializableExtra(ManualVideoScrappingActivity.EXTRA_VIDEO, Video.class)
+            : (Video) getActivity().getIntent().getSerializableExtra(ManualVideoScrappingActivity.EXTRA_VIDEO);
+        mSearchInfo = SearchPreprocessor.instance().parseFileBased(mVideo.getUri(),
+            mVideo.getName() != null && !mVideo.getName().isEmpty() ? Uri.parse("/" + mVideo.getName())
+                                                                    : mVideo.getUri());
+        previewEpisode = mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode
+            && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                   .getBoolean("try_new_ui", false);
 
         // Start a search using the search suggestion. It makes it easy for the user to edit it for typo if needed
         // Allow often the second or third suggestion is the right one
-        setInitialQuery(previewEpisode?"S"+((com.archos.mediacenter.video.browser.adapters.object.Episode)mVideo).getSeasonNumber()+" E"+((com.archos.mediacenter.video.browser.adapters.object.Episode)mVideo).getEpisodeNumber():mSearchInfo.getSearchSuggestion());
+        setInitialQuery(previewEpisode
+                ? "S" + ((com.archos.mediacenter.video.browser.adapters.object.Episode) mVideo).getSeasonNumber() + " E"
+                    + ((com.archos.mediacenter.video.browser.adapters.object.Episode) mVideo).getEpisodeNumber()
+                : mSearchInfo.getSearchSuggestion());
 
         setTitle(getString(R.string.leanback_video_info_custom_search_file_hint));
     }
-    @Override protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search){
-        if(previewEpisode)search.parentSeries(((com.archos.mediacenter.video.browser.adapters.object.Episode)mVideo).getShowName(),this::changeSeriesMatch);
+
+    @Override
+    protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search) {
+        if (previewEpisode)
+            search.parentSeries(((com.archos.mediacenter.video.browser.adapters.object.Episode) mVideo).getShowName(),
+                this::changeSeriesMatch);
     }
-    private void changeSeriesMatch(){
-        final android.content.Context app=requireContext().getApplicationContext();
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
-        worker.execute(()->{EpisodeTags tags=null;try{tags=com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app,mVideo.getId());}catch(Exception ignored){}finally{worker.shutdown();}
-            final EpisodeTags parent=tags;new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{
-                if(!isAdded()||getView()==null)return;
-                if(parent==null||parent.getShowId()<0){com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),"Find a Match","The current series could not be read. Please reopen this title and try again.",()->{});return;}
-                returningFromSeries=true;startActivity(new android.content.Intent(requireContext(),ManualShowScrappingActivity.class).putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_ID,parent.getShowId()).putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_NAME,parent.getShowTitle()));
+
+    private void changeSeriesMatch() {
+        final android.content.Context app = requireContext().getApplicationContext();
+        java.util.concurrent.ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
+        worker.execute(() -> {
+            EpisodeTags tags = null;
+            try {
+                tags = com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app, mVideo.getId());
+            } catch (Exception ignored) {
+            } finally {
+                worker.shutdown();
+            }
+            final EpisodeTags parent = tags;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                if (!isAdded() || getView() == null)
+                    return;
+                if (parent == null || parent.getShowId() < 0) {
+                    com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),
+                        "Find a Match", "The current series could not be read. Please reopen this title and try again.",
+                        () -> {
+                        });
+                    return;
+                }
+                returningFromSeries = true;
+                startActivity(new android.content.Intent(requireContext(), ManualShowScrappingActivity.class)
+                        .putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_ID, parent.getShowId())
+                        .putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_NAME, parent.getShowTitle()));
             });
         });
     }
-    @Override public void onResume(){super.onResume();if(returningFromSeries){returningFromSeries=false;refreshPreviewSearch();}}
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (returningFromSeries) {
+            returningFromSeries = false;
+            refreshPreviewSearch();
+        }
+    }
 
     @Override
     protected BaseTags getNfoTags() {
-        if(previewEpisode)return null; // Local NFO must not bypass the explicit parent-constrained choice.
+        if (previewEpisode)
+            return null; // Local NFO must not bypass the explicit parent-constrained choice.
         if (NfoParser.isNetworkNfoParseEnabled(getActivity())) {
             return NfoParser.getTagForFile(mVideo.getFileUri(), getActivity());
         }
@@ -96,7 +134,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
     @Override
     protected String getEmptyText() {
-        return getString(R.string.no_results_found)+" "+getString(R.string.no_results_found_show_helper);
+        return getString(R.string.no_results_found) + " " + getString(R.string.no_results_found_show_helper);
     }
 
     @Override
@@ -112,14 +150,30 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     @Override
     protected ScrapeSearchResult performSearch(String text) {
         mTagsToSearchResultMap.clear();
-        if(previewEpisode){
-            try{EpisodeTags current=com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(requireContext().getApplicationContext(),mVideo.getId());
-                return com.archos.mediacenter.video.utils.DirectEpisodeLookup.find(requireContext().getApplicationContext(),current.getShowTags(),text,mVideo.getFileUri(),SEARCH_RESULT_MAX_ITEMS);
-            }catch(Exception failed){return new ScrapeSearchResult(java.util.Collections.emptyList(),false,com.archos.mediascraper.ScrapeStatus.ERROR,failed);}
+        if (previewEpisode) {
+            try {
+                EpisodeTags current = com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(
+                    requireContext().getApplicationContext(), mVideo.getId());
+                return com.archos.mediacenter.video.utils.DirectEpisodeLookup.find(
+                    requireContext().getApplicationContext(), current.getShowTags(), text, mVideo.getFileUri(),
+                    SEARCH_RESULT_MAX_ITEMS);
+            } catch (Exception failed) {
+                return new ScrapeSearchResult(
+                    java.util.Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
+            }
         }
-        if(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie||!(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)&&!(mSearchInfo instanceof TvShowSearchInfo)){
-            try{ScrapeSearchResult direct=com.archos.mediacenter.video.utils.DirectMovieLookup.find(requireContext().getApplicationContext(),text,mVideo.getFileUri());if(direct!=null)return direct;}
-            catch(Exception failed){return new ScrapeSearchResult(java.util.Collections.emptyList(),false,com.archos.mediascraper.ScrapeStatus.ERROR,failed);}
+        if (mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie
+            || !(mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Episode)
+                && !(mSearchInfo instanceof TvShowSearchInfo)) {
+            try {
+                ScrapeSearchResult direct = com.archos.mediacenter.video.utils.DirectMovieLookup.find(
+                    requireContext().getApplicationContext(), text, mVideo.getFileUri());
+                if (direct != null)
+                    return direct;
+            } catch (Exception failed) {
+                return new ScrapeSearchResult(
+                    java.util.Collections.emptyList(), false, com.archos.mediascraper.ScrapeStatus.ERROR, failed);
+            }
         }
         mSearchInfo.setUserInput(text);
         ScrapeSearchResult result = mScraper.getAllMatches(mSearchInfo);
@@ -128,6 +182,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         }
         return result;
     }
+
     protected BaseTags getTagFromSearchResult(SearchResult result) {
         // Get the details for this match
         Bundle b = new Bundle();
@@ -142,25 +197,29 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
         }
         ScrapeDetailResult detail = mScraper.getDetails(result, b);
         BaseTags tags = detail.tag;
-        if (log.isDebugEnabled()) log.debug("getTagFromSearchResult: found tag {}", tags);
+        if (log.isDebugEnabled())
+            log.debug("getTagFromSearchResult: found tag {}", tags);
         if (tags instanceof EpisodeTags) {
-            if (log.isDebugEnabled()) log.debug("getTagFromSearchResult: found EpisodeTags");
-            if (((EpisodeTags)tags).getShowTags() != null) ((EpisodeTags)tags).getShowTags().setTitle(result.getTitle());
+            if (log.isDebugEnabled())
+                log.debug("getTagFromSearchResult: found EpisodeTags");
+            if (((EpisodeTags) tags).getShowTags() != null)
+                ((EpisodeTags) tags).getShowTags().setTitle(result.getTitle());
         }
 
         if (tags == null) {
-            if(previewEpisode)return null; // Failed fetches must never replace known episode metadata with a title-only stub.
+            if (previewEpisode)
+                return null; // Failed fetches must never replace known episode metadata with a title-only stub.
             // No tags were found online for this movie/show but we know at least its title
             // => build an empty tags structure containing only the title
             if (detail.isMovie) {
                 tags = buildNewMovieTags(result.getTitle());
-            }
-            else {
+            } else {
                 tags = buildNewEpisodeTags(result.getTitle());
             }
         }
 
-        if (log.isTraceEnabled()) log.trace("getTagFromSearchResult: put in mTagsToSearchResultMap {}", tags);
+        if (log.isTraceEnabled())
+            log.trace("getTagFromSearchResult: put in mTagsToSearchResultMap {}", tags);
         mTagsToSearchResultMap.put(tags, result);
 
         return tags;
@@ -172,11 +231,16 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
      */
     @Override
     protected void saveTagsAndFinish(final BaseTags fTags) {
-        if(previewEpisode||fTags instanceof MovieTags&&androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
-            savePreviewMatch(fTags);return;
+        if (previewEpisode
+            || fTags instanceof MovieTags
+                && androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    .getBoolean("try_new_ui", false)) {
+            savePreviewMatch(fTags);
+            return;
         }
 
-        if (log.isDebugEnabled()) log.debug("saveTagsAndFinish");
+        if (log.isDebugEnabled())
+            log.debug("saveTagsAndFinish");
 
         final NovaProgressDialog progressDialog = new NovaProgressDialog(getActivity());
         progressDialog.setTitle(R.string.scrap_get_title);
@@ -198,17 +262,20 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 if (tags instanceof EpisodeTags) {
                     // note that this is for a single episode scraping not the whole show here thus get only the required season
                     // this enables to get the right poster from the show
-                    bundle.putInt(Scraper.ITEM_REQUEST_SEASON, ((EpisodeTags)tags).getSeason());
+                    bundle.putInt(Scraper.ITEM_REQUEST_SEASON, ((EpisodeTags) tags).getSeason());
                     // this is required to get the season poster (episode does not have this information on tmdb)
-                    bundle.putInt(Scraper.ITEM_REQUEST_EPISODE, ((EpisodeTags)tags).getEpisode());
-                    SearchResult sr = mTagsToSearchResultMap.get(tags); // Get the searchResult from the map we built for it
+                    bundle.putInt(Scraper.ITEM_REQUEST_EPISODE, ((EpisodeTags) tags).getEpisode());
+                    SearchResult sr =
+                        mTagsToSearchResultMap.get(tags); // Get the searchResult from the map we built for it
                     ScrapeDetailResult detail = Scraper.getDetails(sr, bundle);
                     if (detail.isOkay())
                         tags = detail.tag;
                 }
 
-                if (log.isTraceEnabled()) log.trace("saveTagsAndFinish: found this tag {}", tags);
-                if (log.isDebugEnabled()) log.debug("saveTagsAndFinish: downloadPoster");
+                if (log.isTraceEnabled())
+                    log.trace("saveTagsAndFinish: found this tag {}", tags);
+                if (log.isDebugEnabled())
+                    log.debug("saveTagsAndFinish: downloadPoster");
 
                 // since poster can be deleted again we refresh it here
                 //tags.downloadPoster(getActivity());
@@ -223,7 +290,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                     }
                 }
 
-                if (getActivity() != null && ! getActivity().isFinishing() && ! getActivity().isDestroyed()) {
+                if (getActivity() != null && !getActivity().isFinishing() && !getActivity().isDestroyed()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -235,14 +302,27 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
                 // saving will trigger database change notification and reloading in
                 // VideoInfoActivity
-                try{com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(getActivity(),mVideo.getId());}
-                catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);if(getActivity()!=null)getActivity().runOnUiThread(()->{progressDialog.dismiss();com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(getActivity(),"Find a Match","The match could not be saved. Check the current match and try again.",()->{});});return;}
+                try {
+                    com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(
+                        getActivity(), mVideo.getId());
+                } catch (IOException unavailable) {
+                    log.warn("Manual matching protection unavailable", unavailable);
+                    if (getActivity() != null)
+                        getActivity().runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(getActivity(),
+                                "Find a Match", "The match could not be saved. Check the current match and try again.",
+                                () -> {
+                                });
+                        });
+                    return;
+                }
                 tags.save(getActivity(), mVideo.getId());
-        
+
                 // Update Trakt
                 TraktService.onNewVideo(getActivity());
 
-                if (getActivity() != null && ! getActivity().isFinishing() && ! getActivity().isDestroyed()) {
+                if (getActivity() != null && !getActivity().isFinishing() && !getActivity().isDestroyed()) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -256,37 +336,66 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
     }
 
     /** Keep the accepted parent/episode fixed while saving; failures leave the chooser available. */
-    private void savePreviewMatch(BaseTags accepted){
-        if(accepted==null||!isAdded()||previewEpisode&&!(accepted instanceof EpisodeTags))return;
-        final BaseTags choice=accepted;
-        final android.content.Context app=requireContext().getApplicationContext();
-        final android.app.Dialog progress=com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(requireContext(),"Find a Match","Saving the selected match…");
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
-        worker.execute(()->{
-            boolean saved=false;
-            try{
-                if(previewEpisode){
-                    EpisodeTags current=com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app,mVideo.getId());
-                    EpisodeTags episode=(EpisodeTags)choice;
-                    if(current.getShowTags()==null||episode.getShowTags()==null||current.getShowTags().getOnlineId()!=episode.getShowTags().getOnlineId())throw new IOException("The series match changed. Search again before saving.");
+    private void savePreviewMatch(BaseTags accepted) {
+        if (accepted == null || !isAdded() || previewEpisode && !(accepted instanceof EpisodeTags))
+            return;
+        final BaseTags choice = accepted;
+        final android.content.Context app = requireContext().getApplicationContext();
+        final android.app.Dialog progress = com.archos.mediacenter.video.leanback.PreviewOperationDialog.waiting(
+            requireContext(), "Find a Match", "Saving the selected match…");
+        java.util.concurrent.ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
+        worker.execute(() -> {
+            boolean saved = false;
+            try {
+                if (previewEpisode) {
+                    EpisodeTags current =
+                        com.archos.mediacenter.video.utils.DirectEpisodeLookup.current(app, mVideo.getId());
+                    EpisodeTags episode = (EpisodeTags) choice;
+                    if (current.getShowTags() == null || episode.getShowTags() == null
+                        || current.getShowTags().getOnlineId() != episode.getShowTags().getOnlineId())
+                        throw new IOException("The series match changed. Search again before saving.");
                 }
-                persistAcceptedMatch(app,choice,mVideo.getId());saved=true;
-                try{TraktService.onNewVideo(app);}catch(Exception ignored){}
-                if(NfoWriter.isNfoAutoExportEnabled(app))try{NfoWriter.export(mVideo.getFileUri(),choice,null);}catch(IOException ignored){}
-            }catch(Exception failed){com.archos.mediacenter.video.diagnostics.Diagnostics.event("match_save_failed","category","metadata_save");}
-            finally{worker.shutdown();}
-            final boolean complete=saved;new android.os.Handler(android.os.Looper.getMainLooper()).post(()->{
-                progress.dismiss();if(!isAdded()||getActivity()==null||getActivity().isFinishing()||getActivity().isDestroyed())return;
-                if(complete)getActivity().finish();else com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),"Find a Match","The match could not be saved. Check the current match and try again.",()->{});
+                persistAcceptedMatch(app, choice, mVideo.getId());
+                saved = true;
+                try {
+                    TraktService.onNewVideo(app);
+                } catch (Exception ignored) {
+                }
+                if (NfoWriter.isNfoAutoExportEnabled(app))
+                    try {
+                        NfoWriter.export(mVideo.getFileUri(), choice, null);
+                    } catch (IOException ignored) {
+                    }
+            } catch (Exception failed) {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    "match_save_failed", "category", "metadata_save");
+            } finally {
+                worker.shutdown();
+            }
+            final boolean complete = saved;
+            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                progress.dismiss();
+                if (!isAdded() || getActivity() == null || getActivity().isFinishing() || getActivity().isDestroyed())
+                    return;
+                if (complete)
+                    getActivity().finish();
+                else
+                    com.archos.mediacenter.video.leanback.PreviewOperationDialog.notice(requireContext(),
+                        "Find a Match", "The match could not be saved. Check the current match and try again.",
+                        () -> {
+                        });
             });
         });
     }
 
-    static void persistAcceptedMatch(android.content.Context context,BaseTags tags,long videoId)throws IOException{
-        com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context,videoId);
-        if(tags.save(context,videoId)<0)throw new IOException("Metadata persistence failed");
-        context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH,0)
-                .edit().remove("incorrect:"+videoId).apply();
+    static void persistAcceptedMatch(android.content.Context context, BaseTags tags, long videoId) throws IOException {
+        com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges.mark(context, videoId);
+        if (tags.save(context, videoId) < 0)
+            throw new IOException("Metadata persistence failed");
+        context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+            .edit()
+            .remove("incorrect:" + videoId)
+            .apply();
     }
 
     private static MovieTags buildNewMovieTags(String movieTitle) {
