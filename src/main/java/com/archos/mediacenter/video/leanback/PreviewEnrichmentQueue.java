@@ -3,8 +3,10 @@ package com.archos.mediacenter.video.leanback;
 import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.*;
+import android.os.SystemClock;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -213,7 +215,7 @@ public final class PreviewEnrichmentQueue {
             stage = cursor.getInt(3);
             seasonCursor = cursor.getInt(4);
         }
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         String operation = Diagnostics.operation("metadata_package");
         try (Diagnostics.OperationScope ignored = Diagnostics.operationScope(operation)) {
             if (SECTIONS[stage].equals("providers")) {
@@ -224,15 +226,15 @@ public final class PreviewEnrichmentQueue {
                     org.json.JSONArray seasons =
                         StreamingRepository.metadata(app, kind, id, "").optJSONArray("seasons");
                     if (seasons == null)
-                        throw new java.io.IOException("Incomplete series package");
+                        throw new IOException("Incomplete series package");
                     if (seasonCursor < seasons.length()) {
                         int number = seasons.getJSONObject(seasonCursor).getInt("season_number");
                         if (number < 0)
-                            throw new java.io.IOException("Invalid season identity");
+                            throw new IOException("Invalid season identity");
                         String section = "season/" + number;
                         StreamingRepository.metadata(app, kind, id, section);
                         if (!PreviewMetadataCache.fresh(app, kind, id, section))
-                            throw new java.io.IOException("Season refresh retained stale cache");
+                            throw new IOException("Season refresh retained stale cache");
                         if (StreamingRepository.prefs(app).getBoolean(StreamingRepository.ENABLED, false))
                             StreamingRepository.load(app, kind, id, StreamingRepository.country(app), number);
                         if (!key.endsWith(":" + scope(app)))
@@ -249,11 +251,11 @@ public final class PreviewEnrichmentQueue {
                 String section = kind.equals("tv") ? "content_ratings" : "release_dates";
                 StreamingRepository.metadata(app, kind, id, section);
                 if (!PreviewMetadataCache.fresh(app, kind, id, section))
-                    throw new java.io.IOException("Classification refresh retained stale cache");
+                    throw new IOException("Classification refresh retained stale cache");
             } else {
                 StreamingRepository.metadata(app, kind, id, SECTIONS[stage]);
                 if (!PreviewMetadataCache.fresh(app, kind, id, SECTIONS[stage]))
-                    throw new java.io.IOException("Metadata refresh retained stale cache");
+                    throw new IOException("Metadata refresh retained stale cache");
             }
             if (!key.endsWith(":" + scope(app)))
                 return;
