@@ -390,11 +390,8 @@
     <!-- torrent -->
     <string name="error">خطایی رخ داد</string>
     <string name="error_protocol_not_supported">خطا: پروتکل پشتیبانی نمی شود</string>
-    <string name="error_loading_torrent">خطا هنگام بارگیری تورنت</string>
-    <string name="error_downloading_not_enough_space">خطا هنگام دانلود تورنت: فضای کافی نیست</string>
     <string name="loading_torrent">در حال بارگیری تورنت…</string>
     <string name="error_no_video_file">بدون فایل ویدیویی</string>
-    <string name="torrent_file_to_play">انتخاب فایلی برای پخش</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">مرور اشتراک‌های شبکه</string>
     <string name="add_ssh_server">مرور سرور FTP</string>
@@ -586,8 +583,6 @@
     <string name="preferences_movie_sort_order_title">ترتیب مرتب‌سازی ردیف تمام فیلم ها</string>
     <string name="preferences_show_all_tv_shows_row_summary">علامت بزنید تا یک ردیف با همه برنامه‌های تلویزیونی شما به جای ردیف دسته‌های نمایش تلویزیونی نمایش داده شود</string>
     <string name="preferences_show_all_tv_shows_row">نمایش ردیف همه سریال‌ها</string>
-    <string name="blocklist_file_not_found">پرونده یافت نشد</string>
-    <string name="blocklist_unknown_error">ناشناخته</string>
     <string name="share_path">مسیر</string>
     <string name="category_trakt">Trakt</string>
     <string name="trakt_signin">ورود به سیستم</string>
