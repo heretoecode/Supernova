@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.app.Application;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -38,7 +39,7 @@ import java.lang.reflect.Method;
  * (SUB_KIND in native sub_kind.h). These tests pin that interpretation.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33, application = android.app.Application.class)
+@Config(sdk = 33, application = Application.class)
 public class SubtitleManagerKindTest {
 
     private SubtitleManager mManager;
