@@ -74,6 +74,7 @@ public class BrowserBySeason extends BrowserWithShowHeader  {
         return (mTitle != null ? mTitle : getString(R.string.all_tv_shows));
     }
 
+    @Override
     public boolean shouldEnableMultiSelection(){
         return false;
     }
@@ -131,6 +132,7 @@ public class BrowserBySeason extends BrowserWithShowHeader  {
     }
 
 
+    @Override
     public Uri getRealPathUriFromPosition(int position){
         mCursor.moveToPosition(position);
         int dataColumn = mCursor.getColumnIndex(VideoStore.MediaColumns.DATA);
