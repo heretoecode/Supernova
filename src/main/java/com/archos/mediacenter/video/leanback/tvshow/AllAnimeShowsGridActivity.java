@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.SingleFragmentActivity;
 
+/** Hosts the TV anime show grid. */
 public class AllAnimeShowsGridActivity extends SingleFragmentActivity {
     @Override
     public Fragment getFragmentInstance() {
