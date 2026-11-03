@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback;
 import android.content.Context;
+import android.graphics.Rect;
 import android.view.*;
 import androidx.recyclerview.widget.*;
 
@@ -22,7 +23,7 @@ public class PreviewFocusRecycler extends RecyclerView {
     }
 
     @Override
-    public boolean requestChildRectangleOnScreen(View child, android.graphics.Rect rect, boolean immediate) {
+    public boolean requestChildRectangleOnScreen(View child, Rect rect, boolean immediate) {
         return super.requestChildRectangleOnScreen(child, rect, true);
     }
 
