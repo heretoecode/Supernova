@@ -1,11 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
+import android.text.format.Formatter;
+import android.util.TypedValue;
 import android.view.*;
 import android.widget.*;
+import androidx.core.widget.TextViewCompat;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /** FD-007: one continuous two-row, read-only panel aligned with the library grid. */
@@ -46,12 +52,12 @@ public final class LibraryPageHeader {
         metric(bottom, "Unwatched", String.valueOf(stats.unwatched), stats.share(stats.unwatched), "eye-off");
         metric(bottom, "In Progress", String.valueOf(stats.inProgress), stats.share(stats.inProgress), "history");
         metric(bottom, "Added This Month", String.valueOf(stats.addedThisMonth),
-            new java.text.SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(new Date()), "Date Added");
+            new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(new Date()), "Date Added");
         long last = LibraryScanRecord.completed(c);
         LinearLayout lastCell = metric(bottom, "Last Updated",
-            last == 0 ? "Unknown" : android.text.format.DateFormat.getDateFormat(c).format(new Date(last)),
+            last == 0 ? "Unknown" : DateFormat.getDateFormat(c).format(new Date(last)),
             last == 0 ? "No completed scan recorded"
-                      : android.text.format.DateFormat.getTimeFormat(c).format(new Date(last)),
+                      : DateFormat.getTimeFormat(c).format(new Date(last)),
             "history");
         boolean busy = PreviewLibraryScan.building();
         LinearLayout statusCell = metric(bottom, "Library Status",
@@ -78,11 +84,11 @@ public final class LibraryPageHeader {
                 ((TextView) lastCell.getChildAt(1))
                     .setText(completed == 0
                             ? "Unknown"
-                            : android.text.format.DateFormat.getDateFormat(c).format(new Date(completed)));
+                            : DateFormat.getDateFormat(c).format(new Date(completed)));
                 ((TextView) lastCell.getChildAt(2))
                     .setText(completed == 0
                             ? "No completed scan recorded"
-                            : android.text.format.DateFormat.getTimeFormat(c).format(new Date(completed)));
+                            : DateFormat.getTimeFormat(c).format(new Date(completed)));
                 panel.postDelayed(this, 1000);
             }
         };
@@ -123,10 +129,10 @@ public final class LibraryPageHeader {
         name.setTextColor(0xffbbc4cd);
         name.setSingleLine(true);
         name.setHorizontallyScrolling(false);
-        name.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        name.setEllipsize(TextUtils.TruncateAt.END);
         PreviewIcon.apply(name, icon, 12);
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-            name, 8, 11, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            name, 8, 11, 1, TypedValue.COMPLEX_UNIT_SP);
         cell.addView(name, new LinearLayout.LayoutParams(-1, lineHeight(name, 12)));
         TextView number = SharedThreePanel.text(c, value, 17);
         number.setGravity(Gravity.CENTER_VERTICAL);
@@ -135,9 +141,9 @@ public final class LibraryPageHeader {
         number.setTypeface(null, Typeface.BOLD);
         number.setSingleLine(true);
         number.setHorizontallyScrolling(false);
-        number.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-            number, 10, 17, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
+        number.setEllipsize(TextUtils.TruncateAt.END);
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            number, 10, 17, 1, TypedValue.COMPLEX_UNIT_SP);
         cell.addView(number, new LinearLayout.LayoutParams(-1, dp(c, 21)));
         TextView secondary = SharedThreePanel.text(c, detail, 10);
         secondary.setIncludeFontPadding(false);
@@ -145,20 +151,20 @@ public final class LibraryPageHeader {
         secondary.setTextColor(0xffa6b1bc);
         secondary.setSingleLine(true);
         secondary.setHorizontallyScrolling(false);
-        secondary.setEllipsize(android.text.TextUtils.TruncateAt.END);
-        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-            secondary, 8, 10, 1, android.util.TypedValue.COMPLEX_UNIT_SP);
+        secondary.setEllipsize(TextUtils.TruncateAt.END);
+        TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            secondary, 8, 10, 1, TypedValue.COMPLEX_UNIT_SP);
         cell.addView(secondary, new LinearLayout.LayoutParams(-1, lineHeight(secondary, 0)));
         return cell;
     }
 
     private static int lineHeight(TextView text, int minimumDp) {
-        android.graphics.Paint.FontMetrics metrics = text.getPaint().getFontMetrics();
+        Paint.FontMetrics metrics = text.getPaint().getFontMetrics();
         return Math.max(dp(text.getContext(), minimumDp), (int) Math.ceil(metrics.descent - metrics.ascent));
     }
 
     private static String size(Context c, long bytes, int unknown) {
-        return (unknown > 0 ? "≥ " : "") + android.text.format.Formatter.formatShortFileSize(c, bytes);
+        return (unknown > 0 ? "≥ " : "") + Formatter.formatShortFileSize(c, bytes);
     }
 
     private static int dp(Context c, int n) {
