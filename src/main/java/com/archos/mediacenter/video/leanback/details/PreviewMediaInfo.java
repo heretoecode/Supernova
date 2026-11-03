@@ -1,4 +1,5 @@
 package com.archos.mediacenter.video.leanback.details;
+import android.text.TextUtils;
 import org.json.*;
 import java.util.*;
 
@@ -13,7 +14,7 @@ public final class PreviewMediaInfo {
             facts.add(channel.matches("[0-9]+") ? channel + " channels" : channel);
         if (sampleRate > 0)
             facts.add(sampleRate + " Hz");
-        return android.text.TextUtils.join(" · ", facts);
+        return TextUtils.join(" · ", facts);
     }
 
     public static String format(String value) {
@@ -39,7 +40,7 @@ public final class PreviewMediaInfo {
                     if (!codec.isEmpty())
                         labels.add(codec);
                 }
-                return android.text.TextUtils.join(" · ", labels);
+                return TextUtils.join(" · ", labels);
             } catch (JSONException ignored) {
                 return "";
             }
