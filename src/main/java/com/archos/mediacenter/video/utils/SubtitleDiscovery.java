@@ -1,9 +1,14 @@
 package com.archos.mediacenter.video.utils;
 
 import android.content.*;
+import android.net.Uri;
+import android.text.TextUtils;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import org.json.*;
 import java.io.*;
 import java.util.*;
@@ -44,13 +49,13 @@ public final class SubtitleDiscovery {
     }
 
     private static boolean enabled(Context c) {
-        SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         return prefs.getBoolean(ENABLED, false) && prefs.getBoolean("supernova_integration_opensubtitles", true)
             && !com.archos.mediacenter.video.player.PrivateMode.isActive();
     }
 
     public static String languages(Context c) {
-        Set<String> requested = androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getStringSet(
+        Set<String> requested = PreferenceManager.getDefaultSharedPreferences(c).getStringSet(
             "languages_list", Collections.emptySet());
         TreeSet<String> values = new TreeSet<>();
         for (String language : requested)
@@ -58,7 +63,7 @@ public final class SubtitleDiscovery {
                 values.add(language.toLowerCase(Locale.ROOT));
         if (values.isEmpty())
             values.add(Locale.getDefault().getLanguage());
-        return android.text.TextUtils.join(",", values);
+        return TextUtils.join(",", values);
     }
 
     public static String key(OpenSubtitlesQueryParams query, String languages) {
@@ -69,8 +74,8 @@ public final class SubtitleDiscovery {
             + ":" + new TreeSet<>(Arrays.asList(languages.split(","))) + ":"
             + (query.getFileHash() == null ? "" : query.getFileHash());
         try {
-            byte[] hash = java.security.MessageDigest.getInstance("SHA-256").digest(
-                source.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            byte[] hash = MessageDigest.getInstance("SHA-256").digest(
+                source.getBytes(StandardCharsets.UTF_8));
             StringBuilder result = new StringBuilder();
             for (byte value : hash)
                 result.append(String.format(Locale.ROOT, "%02x", value));
@@ -185,7 +190,7 @@ public final class SubtitleDiscovery {
         });
         offer(c, playing, SubtitleDiscoveryPolicy.PLAYBACK);
         if (library != null
-            && androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean(PREFETCH, true))
+            && PreferenceManager.getDefaultSharedPreferences(c).getBoolean(PREFETCH, true))
             for (Entry entry : SubtitleDiscoveryPolicy.remainingSeason(c, playing, library.episodes))
                 offer(c, entry, SubtitleDiscoveryPolicy.SEASON);
     }
@@ -238,7 +243,7 @@ public final class SubtitleDiscovery {
         Context c, OpenSubtitlesQueryParams query, String languages) throws IOException {
         if (query == null)
             throw new IOException("Subtitle identity unavailable");
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean(
+        if (!PreferenceManager.getDefaultSharedPreferences(c).getBoolean(
                 "supernova_integration_opensubtitles", true))
             throw new IOException("Subtitle integration disabled");
         if (com.archos.mediacenter.video.player.PrivateMode.isActive())
@@ -372,7 +377,7 @@ public final class SubtitleDiscovery {
                     ad |= (track.disposition & 256) != 0;
             }
         }
-        android.net.Uri uri = video.getFileUri();
+        Uri uri = video.getFileUri();
         if (uri != null && "file".equals(uri.getScheme())) {
             File media = new File(uri.getPath());
             String name = media.getName();
