@@ -1,12 +1,15 @@
 package com.archos.mediacenter.video.utils;
 
+import android.app.Application;
 import android.content.*;
+import android.database.sqlite.SQLiteDatabase;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediacenter.video.utils.backup.*;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.json.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -14,7 +17,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
     private static class ProcessDeath extends Error {}
     @Before public void media()throws Exception {
@@ -40,7 +43,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
         JSONObject media=MediaStateRecovery.capture(app,true,true);JSONArray pins=media.getJSONArray("pins");assertEquals(400,pins.getJSONObject(0).getLong("value"));
         assertEquals(0,pins.getJSONObject(1).getLong("value"));assertEquals(800,pins.getJSONObject(2).getLong("value"));
         for(int i=0;i<media.getJSONArray("hidden").length();i++)assertFalse(media.getJSONArray("hidden").getJSONObject(i).getBoolean("value"));
-        try(android.database.sqlite.SQLiteDatabase db=android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READONLY);
+        try(SQLiteDatabase db=SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,SQLiteDatabase.OPEN_READONLY);
             var rows=db.rawQuery("SELECT bookmark,title,_data FROM files WHERE _id=10",null)) {
             assertTrue(rows.moveToFirst());assertEquals(4444,rows.getInt(0));assertEquals("TITLE_CANARY",rows.getString(1));assertEquals("file:///media/PATH_CANARY.mkv",rows.getString(2));
         }
@@ -63,7 +66,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
         PreferenceRestoreTransaction.recoverAtStartup(app);assertNew();assertFalse(journal.exists());
     }
     @Test public void committedMediaWithPendingCleanupIsIdempotentAcrossRecoveryAndLateCancellation()throws Exception {
-        var cancel=new java.util.concurrent.atomic.AtomicBoolean(false);try{transaction.apply(transaction.prepare(all(),null,physical()),cancel::get,
+        var cancel=new AtomicBoolean(false);try{transaction.apply(transaction.prepare(all(),null,physical()),cancel::get,
                 at->{if(at==PreferenceRestoreTransaction.Checkpoint.MEDIA_DURABLE){cancel.set(true);throw new ProcessDeath();}});fail();}catch(ProcessDeath expected){}
         assertNew();assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,new PreferenceRestoreTransaction(app).recover());assertNew();assertEquals(PreferenceRestoreTransaction.Recovery.NONE,transaction.recover());
     }
@@ -79,7 +82,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
         assertEquals(media,mediaImage());assertEquals(viewing,ViewingHistory.captureRecovery(app).toString());assertEquals(19,prefs.getInt("preview_accent41",0));assertTrue(journal.exists());
     }
     @Test public void staleNativeInventoryFailsBeforePreferencesOrJournalChange()throws Exception {
-        var plan=transaction.prepare(all(),null,physical());try(android.database.sqlite.SQLiteDatabase db=android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READWRITE)) {
+        var plan=transaction.prepare(all(),null,physical());try(SQLiteDatabase db=SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,SQLiteDatabase.OPEN_READWRITE)) {
             db.execSQL("UPDATE MOVIE SET m_online_id=999 WHERE _id=100");
         }String changed=mediaImage();try{transaction.apply(plan,()->false);fail();}catch(IOException expected){}
         assertEquals(7,prefs.getInt("preview_accent41",0));assertEquals(changed,mediaImage());assertFalse(journal.exists());
@@ -109,7 +112,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
     @Test public void acknowledgedCompletionDoesNotOverwriteLaterManualMediaChangesDuringCleanupRecovery()throws Exception {
         try{transaction.apply(transaction.prepare(all(),null,physical()),()->false,
                 at->{if(at==PreferenceRestoreTransaction.Checkpoint.COMPLETION_DURABLE)throw new ProcessDeath();});fail();}catch(ProcessDeath expected){}
-        try(android.database.sqlite.SQLiteDatabase db=android.database.sqlite.SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,android.database.sqlite.SQLiteDatabase.OPEN_READWRITE)) {
+        try(SQLiteDatabase db=SQLiteDatabase.openDatabase(VideoOpenHelper.getDatabaseFile(app).getPath(),null,SQLiteDatabase.OPEN_READWRITE)) {
             db.execSQL("UPDATE MOVIE SET Nova_pinned=9000 WHERE _id=100");db.execSQL("UPDATE files SET Archos_hiddenByUser=1 WHERE _id=10");
         }String later=mediaImage();assertEquals(PreferenceRestoreTransaction.Recovery.COMPLETED,transaction.recover());assertEquals(later,mediaImage());assertFalse(journal.exists());
     }
@@ -122,7 +125,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
 
     private void seedBookmarks()throws Exception {
         app.deleteDatabase(BookmarkStoreRecovery.DATABASE);
-        try(var db=android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(app.getDatabasePath(BookmarkStoreRecovery.DATABASE),null)) {
+        try(var db=SQLiteDatabase.openOrCreateDatabase(app.getDatabasePath(BookmarkStoreRecovery.DATABASE),null)) {
             db.execSQL("CREATE TABLE shortcuts(_id INTEGER PRIMARY KEY AUTOINCREMENT,uri TEXT NOT NULL,shortcut_name TEXT NOT NULL,friendly_uri TEXT)");db.setVersion(2);
             db.execSQL("INSERT INTO shortcuts(uri,shortcut_name,friendly_uri) VALUES('smb://nas.example/Media','Original bookmark',NULL)");
         }
