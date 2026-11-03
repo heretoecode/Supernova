@@ -4,8 +4,11 @@ package com.archos.mediacenter.video.streaming;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Base64;
 import androidx.preference.PreferenceManager;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -163,7 +166,7 @@ public final class StreamingRepository {
         if (country != null)
             url.appendQueryParameter("watch_region", country);
         String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_request");
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         try (com.archos.mediacenter.video.diagnostics.Diagnostics.OperationScope ignored =
                  com.archos.mediacenter.video.diagnostics.Diagnostics.operationScope(operation)) {
             String body = get(url.build().toString(), 2 * 1024 * 1024, operation);
@@ -255,7 +258,7 @@ public final class StreamingRepository {
     static String get(String url, int limit, String parentOperation, OkHttpClient client) throws IOException {
         if (Thread.currentThread().isInterrupted())
             throw new IOException("Cancelled");
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("metadata_network");
         String host = Uri.parse(url).getHost();
         String service = "api.themoviedb.org".equals(host) || "www.themoviedb.org".equals(host) ? "tmdb"
@@ -280,8 +283,8 @@ public final class StreamingRepository {
                 throw new IOException("Availability service unavailable");
             }
             // Bound both API and HTML responses rather than loading an unlimited body.
-            java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
-            java.io.InputStream input = response.body().byteStream();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            InputStream input = response.body().byteStream();
             byte[] chunk = new byte[8192];
             int count;
             while ((count = input.read(chunk)) != -1) {
@@ -310,7 +313,7 @@ public final class StreamingRepository {
             com.archos.mediacenter.video.diagnostics.Diagnostics.event("metadata_network_outcome", "operation_id",
                 operation, "parent_operation_id", parentOperation, "service", service, "operation_type", kind, "status",
                 status, "outcome", outcome, "retry_number", 0, "duration_ms",
-                android.os.SystemClock.elapsedRealtime() - started, "connectivity",
+                SystemClock.elapsedRealtime() - started, "connectivity",
                 com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
             com.archos.mediacenter.video.diagnostics.Diagnostics.finishOperation(
                 operation, "metadata_network", started);
@@ -631,11 +634,11 @@ public final class StreamingRepository {
             return url;
         OkHttpClient redirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build();
         String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("provider_redirect");
-        long started = android.os.SystemClock.elapsedRealtime();
+        long started = SystemClock.elapsedRealtime();
         String current = url;
         try {
             for (int i = 0; i < 5; i++) {
-                long requestStarted = android.os.SystemClock.elapsedRealtime();
+                long requestStarted = SystemClock.elapsedRealtime();
                 int status = 0;
                 String outcome = "transport_failed";
                 try (Response response =
@@ -661,7 +664,7 @@ public final class StreamingRepository {
                                                                                  : "provider_request_failed",
                         "operation_id", operation, "provider", "provider_link", "operation_type", "title_redirect",
                         "status", status, "outcome", outcome, "redirect_index", i, "duration_ms",
-                        android.os.SystemClock.elapsedRealtime() - requestStarted, "retry_number", 0, "connectivity",
+                        SystemClock.elapsedRealtime() - requestStarted, "retry_number", 0, "connectivity",
                         com.archos.mediacenter.video.diagnostics.Diagnostics.connectivity());
                 }
             }
