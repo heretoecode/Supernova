@@ -26,6 +26,10 @@ Work through `docs/codex/REFORMAT_QUEUE.txt` from the top. For each file:
    revert the file with `git checkout claude/supernova-github-access-yfhe89 -- <path>` and move on.
 3. Commit that one file on its own, message: `Reformat <FileName>.java (layout only)`.
 
+## Pace
+Partial progress is fine: each file is its own commit, so stop whenever you run out of time and still do
+the "Before you finish" steps. Quality beats quantity — one clean file is worth more than ten that fail.
+
 ## Hard rules — breaking any of these means the whole night's work is discarded
 - **Change layout only.** Do not rename, reorder, add, remove or "improve" anything: no code, no
   string, no number, no annotation, no import, no comment text. Comments stay where they are,
