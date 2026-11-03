@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
