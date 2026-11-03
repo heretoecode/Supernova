@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 
 
+/** Loads TV shows filtered by rating. */
 public class TvshowsByRatingLoader extends TvshowsByLoader {
 
     public static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE NOCASE DESC";
