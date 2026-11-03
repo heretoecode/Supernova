@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.utils.backup;
 
 import android.content.Context;
+import android.net.Uri;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
 import java.util.*;
@@ -23,7 +24,7 @@ public final class PortablePhysicalReferences {
     }
     /** Strict locator fingerprint for restore preconditions; null means it cannot bind automatically. */
     public static String fingerprint(String path){
-        if(path==null)return null;android.net.Uri uri=android.net.Uri.parse(path);
+        if(path==null)return null;Uri uri=Uri.parse(path);
         // Removing account/query material cannot prove the remaining address names the same media.
         // Preserve those records with opaque origin IDs for explicit matching instead.
         if(uri.getEncodedQuery()!=null||uri.getEncodedFragment()!=null||
