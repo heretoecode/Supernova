@@ -10,6 +10,11 @@ import com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActiv
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.leanback.details.*;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
+import com.archos.mediaprovider.ImportState;
+import com.archos.mediaprovider.video.LoaderUtils;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -26,9 +31,9 @@ public final class LibraryHealthActivity extends LeanbackActivity {
         TopNavigation shell = new TopNavigation(this, workspace, index -> {
             if (index == 4)
                 startActivity(
-                    new Intent(this, com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
+                    new Intent(this, VideoSettingsActivity.class));
             else if (index == 5)
-                startActivity(new Intent(this, com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
+                startActivity(new Intent(this, VideoSearchActivity.class));
             else {
                 startActivity(new Intent(this, MainActivityLeanback.class)
                         .putExtra("preview_tab", index)
@@ -121,11 +126,11 @@ public final class LibraryHealthActivity extends LeanbackActivity {
             sourceIssues.clear();
             for (List<Entry> group : groups)
                 group.clear();
-            boolean importing = com.archos.mediaprovider.ImportState.VIDEO.isInitialImport()
-                || com.archos.mediaprovider.ImportState.VIDEO.isRegularImport()
-                || com.archos.mediaprovider.video.LoaderUtils.getScrapeInProgress();
+            boolean importing = ImportState.VIDEO.isInitialImport()
+                || ImportState.VIDEO.isRegularImport()
+                || LoaderUtils.getScrapeInProgress();
             SharedPreferences health =
-                getContext().getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0);
+                getContext().getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
             for (Entry entry : next.technical) {
                 if (!(entry.media instanceof Video))
                     continue;
@@ -291,7 +296,7 @@ public final class LibraryHealthActivity extends LeanbackActivity {
                 String status =
                     video instanceof Movie || video instanceof Episode ? "Matched: " + video.getName() : "Unmatched";
                 description.setText("Filename\n" + video.getFilenameNonCryptic() + "\n\nSource / Location\n"
-                    + com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(video.getFileUri())
+                    + SupernovaLibraryPolicy.canonical(video.getFileUri())
                     + "\n\nMatch status\n" + status + "\n\nAvailability\n"
                     + LibraryHealth.message(LibraryHealth.state(getContext(), video)));
                 context.addView(SharedThreePanel.accentAction(getContext(), "View Details",
@@ -305,7 +310,7 @@ public final class LibraryHealthActivity extends LeanbackActivity {
                 if (category == 1)
                     context.addView(SharedThreePanel.accentAction(getContext(), "Match is correct", () -> {
                         getContext()
-                            .getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+                            .getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
                             .edit()
                             .remove("incorrect:" + video.getId())
                             .apply();
