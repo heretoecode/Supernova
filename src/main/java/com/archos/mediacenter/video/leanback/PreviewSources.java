@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils;
 import android.view.*;
 import android.widget.*;
 import androidx.leanback.widget.*;
@@ -156,8 +158,8 @@ public final class PreviewSources extends FrameLayout {
     }
 
     private boolean included(Object item) {
-        String section = getContext() instanceof android.app.Activity
-                             ? ((android.app.Activity)getContext()).getIntent().getStringExtra("preview_source_section")
+        String section = getContext() instanceof Activity
+                             ? ((Activity)getContext()).getIntent().getStringExtra("preview_source_section")
                              : null;
         if (section == null)
             return true;
@@ -273,7 +275,7 @@ public final class PreviewSources extends FrameLayout {
                 if (i > 0)
                     SupernovaStyle.markSecondary(label);
                 label.setSingleLine(true);
-                label.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                label.setEllipsize(TextUtils.TruncateAt.END);
                 text.addView(label);
             }
             card.addView(tile, new FrameLayout.LayoutParams(-1, dp(76)));
