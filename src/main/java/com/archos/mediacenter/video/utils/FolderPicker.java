@@ -16,6 +16,8 @@ package com.archos.mediacenter.video.utils;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,7 +101,7 @@ public class FolderPicker extends FragmentActivity {
      * This extra is a String (the full path).
      */
     public static final String EXTRA_SELECTED_FOLDER = "EXTRA_SELECTED_FOLDER";
-    private com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser sharedBrowser;
+    private UniversalFileBrowser sharedBrowser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +109,12 @@ public class FolderPicker extends FragmentActivity {
         if(shared)setTheme(R.style.MyLeanbackTheme);
         super.onCreate(savedInstanceState);
         if(shared){
-            sharedBrowser=new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(this);
+            sharedBrowser=new UniversalFileBrowser(this);
             sharedBrowser.directoryPicker(uri->{setResult(RESULT_OK,new Intent().putExtra(EXTRA_SELECTED_FOLDER,uri.getPath()));finish();});
-            java.util.List<com.archos.mediacenter.video.leanback.adapter.object.Box> volumes=new ArrayList<>();
+            List<Box> volumes=new ArrayList<>();
             ExtStorageManager storage=ExtStorageManager.getExtStorageManager();
             Set<String> paths=new LinkedHashSet<>();paths.addAll(storage.getExtSdcards());paths.addAll(storage.getExtUsbStorages());paths.addAll(storage.getExtOtherStorages());
-            for(String path:paths)volumes.add(new com.archos.mediacenter.video.leanback.adapter.object.Box(com.archos.mediacenter.video.leanback.adapter.object.Box.ID.OTHER,new File(path).getName(),0,path));
+            for(String path:paths)volumes.add(new Box(Box.ID.OTHER,new File(path).getName(),0,path));
             sharedBrowser.locations(volumes,Collections.emptyList(),Collections.emptyList(),ignored->{});setContentView(sharedBrowser);
             String restored=savedInstanceState==null?null:savedInstanceState.getString("shared_directory");String selected=getIntent().getStringExtra(EXTRA_CURRENT_SELECTION);
             String path=restored!=null?Uri.parse(restored).getPath():selected==null?null:Uri.parse(selected).getPath();
