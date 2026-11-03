@@ -24,6 +24,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.leanback.PreviewSubtitleChooser;
 
+/** Hosts the TV subtitle file wizard and handles returning from it. */
 public class SubtitlesWizardActivity extends LeanbackActivity {
     private PreviewSubtitleChooser previewChooser;
 
