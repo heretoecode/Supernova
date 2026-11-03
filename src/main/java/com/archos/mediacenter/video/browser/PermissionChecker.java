@@ -15,16 +15,15 @@
 package com.archos.mediacenter.video.browser;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Process;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AlertDialog;
@@ -42,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.List;
 
 import io.sentry.SentryLevel;
 
@@ -345,7 +343,7 @@ public class PermissionChecker {
             ).setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            android.os.Process.killProcess(android.os.Process.myPid());
+                            Process.killProcess(Process.myPid());
                         }
                     }
             ).setCancelable(false).show();
