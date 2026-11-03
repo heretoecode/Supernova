@@ -90,7 +90,7 @@ public class VideoDetailsActivity extends LeanbackActivity {
                         backdropView.setAlpha(1.0f);
                     }
                     if (entry.file != null) {
-                        androidx.fragment.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
+                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
                         if (fragment instanceof VideoDetailsFragment) {
                             ((VideoDetailsFragment) fragment).setCurrentlyDisplayedBackdropFile(entry.file);
                         }
