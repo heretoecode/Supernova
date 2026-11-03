@@ -1,15 +1,27 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextClock;
 import android.widget.TextView;
-import com.archos.mediacenter.video.utils.ThemeManager;
+import androidx.preference.PreferenceManager;
 import java.util.function.IntConsumer;
 import java.util.function.BooleanSupplier;
 
@@ -20,17 +32,17 @@ public final class TopNavigation extends LinearLayout {
     }
     private final LinearLayout bar;
     private final TextView brand;
-    private final android.widget.TextClock clock;
+    private final TextClock clock;
     private int navigationInset;
     private final PreviewFocusRail group;
     private static final int[] VISUAL_ORDER = {0, 1, 2, 6, 3, 5, 4};
     private final PreviewBackdrop artwork;
     private final View content;
-    private final android.widget.FrameLayout stage;
+    private final FrameLayout stage;
     private final boolean scrollingContent;
     private final android.graphics.drawable.Drawable navigationScene = new android.graphics.drawable.Drawable() {
         @Override
-        public void draw(android.graphics.Canvas canvas) {
+        public void draw(Canvas canvas) {
             android.graphics.drawable.Drawable background = getBackground();
             if (background != null)
                 background.draw(canvas);
@@ -43,15 +55,15 @@ public final class TopNavigation extends LinearLayout {
         public void setAlpha(int alpha) {
         }
         @Override
-        public void setColorFilter(android.graphics.ColorFilter filter) {
+        public void setColorFilter(ColorFilter filter) {
         }
         @Override
         public int getOpacity() {
-            return android.graphics.PixelFormat.TRANSLUCENT;
+            return PixelFormat.TRANSLUCENT;
         }
     };
-    private final android.widget.FrameLayout scanStatus;
-    private final android.widget.FrameLayout status;
+    private final FrameLayout scanStatus;
+    private final FrameLayout status;
     private final BooleanSupplier firstRow;
     private TextView selected;
     private int selectedIndex;
@@ -62,7 +74,7 @@ public final class TopNavigation extends LinearLayout {
         super(c);
         this.content = content;
         this.firstRow = firstRow;
-        scanStatus = new android.widget.FrameLayout(c);
+        scanStatus = new FrameLayout(c);
         scanStatus.setFocusable(false);
         scanStatus.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
         setOrientation(VERTICAL);
@@ -80,7 +92,7 @@ public final class TopNavigation extends LinearLayout {
         brand = new TextView(c);
         brand.setSingleLine(true);
         brand.setText("SUPERNOVA");
-        brand.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        brand.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         brand.setTextSize(19 * TvLayout.scale(c));
         brand.setTextColor(Color.WHITE);
         brand.setGravity(Gravity.CENTER_VERTICAL);
@@ -91,13 +103,13 @@ public final class TopNavigation extends LinearLayout {
         group.setClipChildren(false);
         group.setClipToPadding(false);
         group.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-        android.widget.HorizontalScrollView rail = new android.widget.HorizontalScrollView(c);
+        HorizontalScrollView rail = new HorizontalScrollView(c);
         rail.setHorizontalScrollBarEnabled(false);
         rail.setFillViewport(true);
         rail.setClipChildren(true);
         rail.setClipToPadding(true);
         rail.setFocusable(false);
-        rail.addView(group, new android.widget.FrameLayout.LayoutParams(-2, -1));
+        rail.addView(group, new FrameLayout.LayoutParams(-2, -1));
         bar.addView(rail, new LayoutParams(0, -1, 1));
         String[] labels = {"Home", "Movies", "TV Shows", "Network & Files", "Settings", "Search", customLabel(c)};
         for (int i = 0; i < labels.length; i++) {
@@ -111,10 +123,10 @@ public final class TopNavigation extends LinearLayout {
             tab.setTextColor(Color.WHITE);
             tab.setTextSize(19 * TvLayout.scale(c));
             tab.setGravity(Gravity.CENTER);
-            tab.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+            tab.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
             if (index == 6) {
                 tab.setMaxWidth(dp(140));
-                tab.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                tab.setEllipsize(TextUtils.TruncateAt.END);
             }
             tab.setSingleLine(true);
             tab.setFocusable(true);
@@ -133,7 +145,7 @@ public final class TopNavigation extends LinearLayout {
                             return;
                         Runnable open = ()
                             -> getContext().startActivity(
-                                new android.content.Intent(getContext(), CustomLibraryActivity.class));
+                                new Intent(getContext(), CustomLibraryActivity.class));
                         open.run();
                         return;
                     }
@@ -181,30 +193,30 @@ public final class TopNavigation extends LinearLayout {
         group.addView(tabs[6], group.indexOfChild(tabs[2]) + 1, new LayoutParams(-2, dp(36)));
         group.removeView(tabs[5]);
         group.addView(tabs[5], group.indexOfChild(tabs[4]), new LayoutParams(-2, dp(36)));
-        status = new android.widget.FrameLayout(c);
+        status = new FrameLayout(c);
         bar.addView(status, new LayoutParams(dp(64), dp(46)));
-        clock = new android.widget.TextClock(c);
+        clock = new TextClock(c);
         clock.setSingleLine(true);
         clock.setTag("preview-default-clock");
         clock.setFormat12Hour("h:mm");
         clock.setFormat24Hour("HH:mm");
-        clock.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+        clock.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
         clock.setTextSize(19 * TvLayout.scale(c));
         clock.setTextColor(Color.WHITE);
         clock.setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
         clock.setIncludeFontPadding(tabs[0].getIncludeFontPadding());
         clock.setPadding(0, dp(6), 0, dp(6));
-        status.addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));
+        status.addView(clock, new FrameLayout.LayoutParams(-1, -1));
         updateCustomPage();
         selected = tabs[0];
         selected.setSelected(true);
         addView(bar, new LayoutParams(-1, dp(52)));
-        stage = new android.widget.FrameLayout(c);
+        stage = new FrameLayout(c);
         navigationInset = dp(52);
         scrollingContent = prepareScrollingContent(content);
-        stage.addView(content, new android.widget.FrameLayout.LayoutParams(-1, -1));
-        android.widget.FrameLayout.LayoutParams scanParams =
-            new android.widget.FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM | Gravity.END);
+        stage.addView(content, new FrameLayout.LayoutParams(-1, -1));
+        FrameLayout.LayoutParams scanParams =
+            new FrameLayout.LayoutParams(-2, -2, Gravity.BOTTOM | Gravity.END);
         scanParams.setMargins(dp(20), dp(12), dp(20), dp(16));
         stage.addView(scanStatus, scanParams);
         addView(stage, new LayoutParams(-1, 0, 1));
@@ -219,14 +231,14 @@ public final class TopNavigation extends LinearLayout {
             ((PreviewPages)view).setNavigationInset(dp(52));
             return true;
         }
-        if (view instanceof android.widget.ScrollView) {
+        if (view instanceof ScrollView) {
             view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + dp(52), view.getPaddingRight(),
                             view.getPaddingBottom());
-            ((android.widget.ScrollView)view).setClipToPadding(false);
+            ((ScrollView)view).setClipToPadding(false);
             return true;
         }
-        if (view instanceof android.widget.FrameLayout) {
-            android.view.ViewGroup group = (android.view.ViewGroup)view;
+        if (view instanceof FrameLayout) {
+            ViewGroup group = (ViewGroup)view;
             for (int i = 0; i < group.getChildCount(); i++)
                 if (prepareScrollingContent(group.getChildAt(i)))
                     return true;
@@ -264,13 +276,13 @@ public final class TopNavigation extends LinearLayout {
             ((PreviewPages)view).setNavigationInset(inset);
             return true;
         }
-        if (view instanceof android.widget.ScrollView) {
+        if (view instanceof ScrollView) {
             view.setPadding(view.getPaddingLeft(), view.getPaddingTop() + delta, view.getPaddingRight(),
                             view.getPaddingBottom());
             return true;
         }
-        if (view instanceof android.widget.FrameLayout) {
-            android.view.ViewGroup children = (android.view.ViewGroup)view;
+        if (view instanceof FrameLayout) {
+            ViewGroup children = (ViewGroup)view;
             for (int n = 0; n < children.getChildCount(); n++)
                 if (updateNavigationInset(children.getChildAt(n), inset, delta))
                     return true;
@@ -290,7 +302,7 @@ public final class TopNavigation extends LinearLayout {
         return count == 2 ? 1 - position : position;
     }
 
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener accentListener = (prefs, key) -> {
+    private final SharedPreferences.OnSharedPreferenceChangeListener accentListener = (prefs, key) -> {
         if ("preview_accent41".equals(key))
             refreshAccent();
         else if (CustomLibraryPage.KEY.equals(key))
@@ -316,14 +328,14 @@ public final class TopNavigation extends LinearLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+        PreferenceManager.getDefaultSharedPreferences(getContext())
             .registerOnSharedPreferenceChangeListener(accentListener);
         for (TextView tab : tabs)
             styleTab(tab);
     }
 
     private boolean scrolled;
-    private android.animation.ValueAnimator scrimAnimation;
+    private ValueAnimator scrimAnimation;
     private int scrimAlpha;
 
     public void setScrolled(boolean value) {
@@ -335,7 +347,7 @@ public final class TopNavigation extends LinearLayout {
         scrolled = value;
         if (scrimAnimation != null)
             scrimAnimation.cancel();
-        scrimAnimation = android.animation.ValueAnimator.ofInt(scrimAlpha, value ? 255 : 0);
+        scrimAnimation = ValueAnimator.ofInt(scrimAlpha, value ? 255 : 0);
         scrimAnimation.setDuration(220);
         scrimAnimation.addUpdateListener(animation -> {
             scrimAlpha = (int)animation.getAnimatedValue();
@@ -345,7 +357,7 @@ public final class TopNavigation extends LinearLayout {
     }
 
     @Override
-    protected boolean drawChild(android.graphics.Canvas canvas, View child, long time) {
+    protected boolean drawChild(Canvas canvas, View child, long time) {
         if (child == stage) {
             com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser browser = visibleBrowser(content);
             if (browser != null) {
@@ -371,7 +383,7 @@ public final class TopNavigation extends LinearLayout {
             navigationShade.invalidate();
     }
 
-    public void setArtwork(android.net.Uri uri) {
+    public void setArtwork(Uri uri) {
         artwork.load(uri);
     }
 
@@ -410,7 +422,7 @@ public final class TopNavigation extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext())
+        PreferenceManager.getDefaultSharedPreferences(getContext())
             .unregisterOnSharedPreferenceChangeListener(accentListener);
         if (scrimAnimation != null)
             scrimAnimation.cancel();
@@ -425,11 +437,11 @@ public final class TopNavigation extends LinearLayout {
         scanStatus.setVisibility(embedded ? GONE : VISIBLE);
     }
 
-    public android.widget.FrameLayout getScanContainer() {
+    public FrameLayout getScanContainer() {
         return scanStatus;
     }
 
-    public android.widget.FrameLayout getStatusContainer() {
+    public FrameLayout getStatusContainer() {
         return status;
     }
 
@@ -442,8 +454,8 @@ public final class TopNavigation extends LinearLayout {
             return null;
         if (view instanceof com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)
             return (com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser)view;
-        if (view instanceof android.view.ViewGroup) {
-            android.view.ViewGroup group = (android.view.ViewGroup)view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup)view;
             for (int i = 0; i < group.getChildCount(); i++) {
                 com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser result =
                     visibleBrowser(group.getChildAt(i));
@@ -483,8 +495,8 @@ public final class TopNavigation extends LinearLayout {
             return null;
         if (view instanceof PageExitGuard)
             return (PageExitGuard)view;
-        if (view instanceof android.view.ViewGroup) {
-            android.view.ViewGroup group = (android.view.ViewGroup)view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup)view;
             for (int i = 0; i < group.getChildCount(); i++) {
                 PageExitGuard found = editor(group.getChildAt(i));
                 if (found != null)
@@ -539,9 +551,9 @@ public final class TopNavigation extends LinearLayout {
             return ((ContentFocus)view).focusFromNavigation();
         if (view instanceof PreviewPages)
             return ((PreviewPages)view).focusFromNavigation();
-        if (view instanceof android.view.ViewGroup)
-            for (int i = 0; i < ((android.view.ViewGroup)view).getChildCount(); i++)
-                if (focusLibraryEntry(((android.view.ViewGroup)view).getChildAt(i)))
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup)view).getChildCount(); i++)
+                if (focusLibraryEntry(((ViewGroup)view).getChildAt(i)))
                     return true;
         return false;
     }
@@ -551,9 +563,9 @@ public final class TopNavigation extends LinearLayout {
             ((PreviewPages)view).recordRemoteInput();
             return;
         }
-        if (view instanceof android.view.ViewGroup)
-            for (int i = 0; i < ((android.view.ViewGroup)view).getChildCount(); i++)
-                homeInput(((android.view.ViewGroup)view).getChildAt(i));
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup)view).getChildCount(); i++)
+                homeInput(((ViewGroup)view).getChildAt(i));
     }
 
     private boolean routeKeyEvent(KeyEvent event) {
