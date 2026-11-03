@@ -7,8 +7,11 @@ import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import com.archos.mediacenter.video.streaming.PreviewProviderIcons;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.time.Duration;
 import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.*;
@@ -19,14 +22,14 @@ import static org.junit.Assert.*;
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class SupernovaWorkspaceUiTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     @Test
@@ -212,7 +215,7 @@ public class SupernovaWorkspaceUiTest {
             assertEquals(5, workspace.categoryRows.size());
             PreviewPagesTest.capture(workspace, "0135-library-health-empty");
             host.get()
-                .getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0)
+                .getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
                 .edit()
                 .putLong("offline:smb://nas/Movies", 42)
                 .commit();
