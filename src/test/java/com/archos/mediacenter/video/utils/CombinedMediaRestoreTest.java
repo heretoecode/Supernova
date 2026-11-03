@@ -17,6 +17,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.*;
 import static org.junit.Assert.*;
 
+/** Checks coordinated media restore handles crashes, cancellation and durable recovery across all stores. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28) @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest {
     private static class ProcessDeath extends Error {}
