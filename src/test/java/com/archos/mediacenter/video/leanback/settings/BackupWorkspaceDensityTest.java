@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Application;
 import android.graphics.*;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.TopNavigationTest;
@@ -32,7 +33,7 @@ public class BackupWorkspaceDensityTest {
             workspace.measure(View.MeasureSpec.makeMeasureSpec(1256, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(936, View.MeasureSpec.EXACTLY));
             workspace.layout(0, 0, 1256, 936);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             host.windowFocusChanged(true);
             assertEquals(1256, workspace.getWidth());
             assertEquals(936, workspace.getHeight());
