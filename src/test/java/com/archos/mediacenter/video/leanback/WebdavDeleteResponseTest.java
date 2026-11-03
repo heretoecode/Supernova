@@ -3,7 +3,9 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
+import com.archos.environment.ArchosUtils;
 import com.archos.filecorelibrary.webdav.*;
+import com.archos.mediacenter.video.browser.Delete;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +23,7 @@ public class WebdavDeleteResponseTest {
     @Test
     public void realDeleteAcceptsOnlySuccessOr404() throws Exception {
         WebdavUtils.getInstance(RuntimeEnvironment.getApplication());
-        com.archos.environment.ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
+        ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         for (int status : new int[] {
             204, 404, 401, 403, 405, 423, 500, 503
         }) {
@@ -56,8 +58,8 @@ public class WebdavDeleteResponseTest {
                         editor.delete();
                         assertTrue("Unexpected success " + status, status == 204 || status == 404);
                         assertEquals(status == 404, editor.wasAlreadyAbsent());
-                        com.archos.mediacenter.video.browser.Delete deletion =
-                            new com.archos.mediacenter.video.browser.Delete(null, RuntimeEnvironment.getApplication());
+                        Delete deletion =
+                            new Delete(null, RuntimeEnvironment.getApplication());
                         var physical = deletion.getClass().getDeclaredMethod(
                             "deletePhysicalFile", Context.class, Uri.class);
                         physical.setAccessible(true);
