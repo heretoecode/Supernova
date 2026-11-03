@@ -108,7 +108,8 @@ Each item: what the owner saw → what they want → status.
   white focus box with dark text; **charcoal** tiles at rest (owner leaning charcoal). Network & Files wording:
   Local Storage · Network Shares · Add Connection · Saved Connections · Library Scanning · Advanced (descriptions
   in the mock-up). Mock-ups: `docs/design/proposals/landing-tiles/`.
-- **Status:** awaiting owner's approval of the mock-ups; the two bugs are fixed by the redesign and covered by
+- **Decision (owner, 2026-11-03):** approved as mocked, charcoal tiles, with the new Network & Files wording.
+- **Status:** approved design — awaiting go-ahead to code. The two bugs are fixed by the redesign and covered by
   extending the white-on-white test to tiles.
 
 ## Already queued for 0.154 (decided earlier)
