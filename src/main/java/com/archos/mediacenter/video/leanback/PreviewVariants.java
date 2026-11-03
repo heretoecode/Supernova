@@ -7,9 +7,15 @@ import android.text.TextUtils;
 import android.text.format.Formatter;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.details.PreviewMediaInfo;
+import com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection;
+import com.archos.mediacenter.video.player.PlayerActivity;
+import com.archos.mediacenter.video.utils.VideoMetadata;
 import java.util.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import org.json.JSONException;
 
 /** Real indexed measurements only; unknown measurements sort after known values. */
 public final class PreviewVariants {
@@ -79,16 +85,16 @@ public final class PreviewVariants {
         SharedPreferences.Editor edit = prefs.edit().putString(
             "preview_version_choice:" + choiceKey(video),
             video.getId() + "|"
-                + com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(video.getFileUri()));
+                + BrowserSelection.canonical(video.getFileUri()));
         String pending = prefs.getString(PortablePreferredVersions.PENDING, null);
         if (pending != null) {
             try {
                 if (pending.length() > 4 * 1024 * 1024)
-                    throw new org.json.JSONException("Pending choice exceeds size limit");
+                    throw new JSONException("Pending choice exceeds size limit");
                 edit.putString(
                     PortablePreferredVersions.PENDING, PortablePreferredVersions.supersede(pending, choiceKey(video)));
-            } catch (org.json.JSONException invalid) {
-                com.archos.mediacenter.video.diagnostics.Diagnostics.event("version_pending_invalid");
+            } catch (JSONException invalid) {
+                Diagnostics.event("version_pending_invalid");
             }
         }
         edit.apply();
@@ -101,7 +107,7 @@ public final class PreviewVariants {
         String selection = PreferenceManager.getDefaultSharedPreferences(context).getString(
             "preview_version_choice:" + choiceKey(video), "");
         return selection.equals(video.getId() + "|"
-            + com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelection.canonical(video.getFileUri()));
+            + BrowserSelection.canonical(video.getFileUri()));
     }
 
     public static Video resolve(Context context, Video requested) {
@@ -199,16 +205,16 @@ public final class PreviewVariants {
         if (!range.isEmpty())
             facts.add(range);
         String codec =
-            com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedVideoFormat());
+            PreviewMediaInfo.format(video.getCalculatedVideoFormat());
         String audio =
-            com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());
+            PreviewMediaInfo.format(video.getCalculatedBestAudioFormat());
         if (video.getMetadata() != null) {
             Set<String> tracks = new LinkedHashSet<>();
             for (int n = 0; n < video.getMetadata().getAudioTrackNb(); n++) {
-                com.archos.mediacenter.video.utils.VideoMetadata.AudioTrack track =
+                VideoMetadata.AudioTrack track =
                     video.getMetadata().getAudioTrack(n);
                 if (track != null) {
-                    String label = com.archos.mediacenter.video.leanback.details.PreviewMediaInfo.audioTrack(
+                    String label = PreviewMediaInfo.audioTrack(
                         track.format, track.channels, 0);
                     if (!label.isEmpty())
                         tracks.add(label);
@@ -234,7 +240,7 @@ public final class PreviewVariants {
 
     static String dynamicRange(Context context, Video video, PreviewLibraryLoader.Snapshot snapshot) {
         if (video.getMetadata() != null && video.getMetadata().getVideoTrack() != null) {
-            com.archos.mediacenter.video.utils.VideoMetadata.VideoTrack track = video.getMetadata().getVideoTrack();
+            VideoMetadata.VideoTrack track = video.getMetadata().getVideoTrack();
             String measured = track.dynamicRange();
             if (measured != null && !measured.isEmpty() || track.colorTrc > 0)
                 return measured == null ? "" : measured;
@@ -298,7 +304,7 @@ public final class PreviewVariants {
             if (history != null && group.size() > 1) {
                 Video origin = (Video) history.media, target = (Video) best.media;
                 target.setAutomaticResumeMs(PreviewSeriesJourney.completed(origin)
-                        ? com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END
+                        ? PlayerActivity.LAST_POSITION_END
                         : origin.getResumeMs());
                 target.setRemoteResumeMs(origin.getRemoteResumeMs());
                 best.playedAt = Math.max(best.playedAt, history.playedAt);
