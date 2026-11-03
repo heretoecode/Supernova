@@ -223,10 +223,12 @@ public class EpisodeInfo extends BaseInfo {
     /**
      * Base class implementation
      */
+    @Override
     public File getCover() {
         return getShowCover();
     }
 
+    @Override
     public void setDetailName(TextView view, Resources res) {
         if (mShowTitle != null) {
             view.setText(mShowTitle);
@@ -234,10 +236,12 @@ public class EpisodeInfo extends BaseInfo {
         }
     }
 
+    @Override
     public void setDetailLineOne(TextView view, Resources res) {
         view.setText(getEpisodeIdentificationString(res, mSeasonNumber, mEpisodeNumber));
     }
 
+    @Override
     public void setDetailLineTwo(TextView view, Resources res) {
         if (mEpisodeTitle == null) {
             view.setText(EMPTY);
@@ -250,6 +254,7 @@ public class EpisodeInfo extends BaseInfo {
         view.setSingleLine(true);
     }
 
+    @Override
     public void setDetailLineThree(TextView view, Resources res) {
         if (mEpisodePlot == null) {
             view.setText(EMPTY);
@@ -261,10 +266,12 @@ public class EpisodeInfo extends BaseInfo {
         view.setMaxLines(3);
     }
 
+    @Override
     public float getDetailLineRating() {
         return mEpisodeRating;
     }
 
+    @Override
     public void setDetailLineReleaseDate(TextView view, Resources res) {
         if (mAired == null) {
             view.setText(EMPTY);
