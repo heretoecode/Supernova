@@ -18,7 +18,6 @@ import android.annotation.SuppressLint;
 import androidx.annotation.RequiresApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.widget.BaseCardView;
 import androidx.leanback.widget.Presenter;
