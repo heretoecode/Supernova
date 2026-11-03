@@ -8,6 +8,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import org.json.*;
@@ -44,7 +45,7 @@ public final class HiddenItemReplacement {
                 StringBuilder guard=new StringBuilder();for(byte value:digest)guard.append(String.format(Locale.ROOT,"%02x",value&255));
                 result.put(id,new State(hidden==1,guard.toString(),PortablePhysicalReferences.fingerprint(path)));
             }
-        }catch(RuntimeException|java.security.NoSuchAlgorithmException failure){throw new IOException("Cannot validate hidden-item restore inventory",failure);}
+        }catch(RuntimeException|NoSuchAlgorithmException failure){throw new IOException("Cannot validate hidden-item restore inventory",failure);}
         return Collections.unmodifiableMap(result);
     }
     public static final class Plan {
