@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.diagnostics.ArtworkTrace;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.squareup.picasso.*;
 import java.util.Objects;
 
@@ -25,17 +28,17 @@ public final class PreviewBackdrop extends Drawable implements Target {
     private Target activeTarget;
     private long requestedAt;
     private long requestSequence;
-    private com.archos.mediacenter.video.diagnostics.ArtworkTrace trace;
+    private ArtworkTrace trace;
 
-    private static long indexedMedia(android.net.Uri uri) {
+    private static long indexedMedia(Uri uri) {
         PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
         if (snapshot == null || uri == null)
             return 0;
         long found = 0;
         for (PreviewLibraryLoader.Entry entry : snapshot.technical)
             if (uri.equals(entry.backdrop)
-                && entry.media instanceof com.archos.mediacenter.video.browser.adapters.object.Video) {
-                long id = ((com.archos.mediacenter.video.browser.adapters.object.Video) entry.media).getId();
+                && entry.media instanceof Video) {
+                long id = ((Video) entry.media).getId();
                 if (found != 0 && found != id)
                     return 0;
                 found = id;
@@ -100,9 +103,9 @@ public final class PreviewBackdrop extends Drawable implements Target {
         if (trace != null)
             trace.cancelled();
         trace = next == null ? null
-                             : new com.archos.mediacenter.video.diagnostics.ArtworkTrace(indexedMedia(next),
-                                   com.archos.mediacenter.video.diagnostics.Diagnostics.artworkSurface(), "backdrop",
-                                   com.archos.mediacenter.video.diagnostics.Diagnostics.sourceType(next));
+                             : new ArtworkTrace(indexedMedia(next),
+                                   Diagnostics.artworkSurface(), "backdrop",
+                                   Diagnostics.sourceType(next));
         pending = () -> {
             if (next == null) {
                 previous = bitmap;
