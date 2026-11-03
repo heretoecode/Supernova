@@ -22,6 +22,7 @@ import com.archos.mediaprovider.video.LoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads anime and TV show entries using a shared video projection. */
 public class AnimesNShowsLoader extends VideoLoader {
 
     private static final Logger log = LoggerFactory.getLogger(AnimesNShowsLoader.class);
