@@ -4,6 +4,7 @@ import android.app.Application;
 import android.net.Uri;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.archos.mediacenter.video.player.PlayerActivity;
 import java.time.Instant;
 import java.util.*;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class LibraryStatisticsTest {
     public void completedAndWatchedTitlesAreNeverUnwatchedWithoutResume() {
         Snapshot s = new Snapshot();
         Entry completed = movie(1, 10, 1, "file:///one", 1,
-                  com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END, false),
+                  PlayerActivity.LAST_POSITION_END, false),
               watched = movie(2, 11, 1, "file:///two", 1, 0, true),
               resume = movie(3, 12, 1, "file:///three", 1, 90000, false);
         s.technical.addAll(List.of(completed, watched, resume));
@@ -74,7 +75,7 @@ public class LibraryStatisticsTest {
             when(episode.getSeasonNumber()).thenReturn(1);
             when(episode.getEpisodeNumber()).thenReturn(n);
             when(episode.getResumeMs())
-                .thenReturn(n == 1 ? com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END : 30000);
+                .thenReturn(n == 1 ? PlayerActivity.LAST_POSITION_END : 30000);
             when(episode.getFileUri()).thenReturn(Uri.parse("file:///series/" + n));
             s.technical.add(new Entry(episode, 1, 7, ""));
         }
@@ -95,7 +96,7 @@ public class LibraryStatisticsTest {
             when(episode.getSeasonNumber()).thenReturn(1);
             when(episode.getEpisodeNumber()).thenReturn(n == 3 ? 2 : 1);
             when(episode.getResumeMs())
-                .thenReturn(n == 1 ? com.archos.mediacenter.video.player.PlayerActivity.LAST_POSITION_END
+                .thenReturn(n == 1 ? PlayerActivity.LAST_POSITION_END
                         : n == 2 ? 30000
                                    : 0);
             when(episode.getFileUri()).thenReturn(Uri.parse("file:///series/" + n));
