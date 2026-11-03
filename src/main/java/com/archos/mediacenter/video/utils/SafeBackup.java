@@ -7,6 +7,8 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediascraper.MediaScraper;
 import com.archos.mediaprovider.DbHolder;
@@ -17,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.zip.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** Stage and validate the whole archive before replacing any live library files. */
 public final class SafeBackup {
@@ -103,9 +107,9 @@ public final class SafeBackup {
         if (version != VideoOpenHelper.getDatabaseVersion()
             && !(version == 62 && VideoOpenHelper.getDatabaseVersion() == 63))
             throw new IOException("Backup database version is incompatible");
-        File history = new File(stage, com.archos.mediacenter.video.leanback.ViewingHistory.DATABASE);
+        File history = new File(stage, ViewingHistory.DATABASE);
         if (history.isFile())
-            com.archos.mediacenter.video.leanback.ViewingHistory.validate(history);
+            ViewingHistory.validate(history);
         File media = new File(stage, "media.db");
         if (!media.isFile())
             throw new IOException("Backup has no media database");
@@ -284,10 +288,10 @@ public final class SafeBackup {
     }
 
     public static void restore(Context c, File stage) throws Exception {
-        com.archos.mediacenter.video.leanback.ViewingHistory.awaitWrites();
+        ViewingHistory.awaitWrites();
         try (RestoreJournal.Guard guard = RestoreJournal.acquire(c)) {
-            synchronized (com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK) {
-                synchronized (com.archos.mediacenter.video.leanback.ViewingHistory.LOCK) {
+            synchronized (ProviderDiscoveryGate.LOCK) {
+                synchronized (ViewingHistory.LOCK) {
                     restoreLocked(c, stage);
                 }
             }
@@ -344,17 +348,17 @@ public final class SafeBackup {
             try {
                 holder.close();
                 ShortcutDbAdapter.VIDEO.close();
-                org.json.JSONArray recoveryFiles = new org.json.JSONArray();
+                JSONArray recoveryFiles = new JSONArray();
                 for (Swap swap : swaps)
-                    recoveryFiles.put(new org.json.JSONObject()
+                    recoveryFiles.put(new JSONObject()
                             .put("live", swap.live.getAbsolutePath())
                             .put("old", swap.old.getAbsolutePath())
                             .put("fresh", swap.fresh.getAbsolutePath())
                             .put("existed", swap.live.exists()));
-                org.json.JSONObject recoveryNamed = new org.json.JSONObject();
+                JSONObject recoveryNamed = new JSONObject();
                 for (Map.Entry<String, String> entry : originalNamed.entrySet())
                     recoveryNamed.put(entry.getKey(), entry.getValue());
-                org.json.JSONObject journal = RestoreJournal.prepare(c, recoveryFiles, originalSettings, recoveryNamed);
+                JSONObject journal = RestoreJournal.prepare(c, recoveryFiles, originalSettings, recoveryNamed);
                 try {
                     for (Swap swap : swaps)
                         swap.apply();
