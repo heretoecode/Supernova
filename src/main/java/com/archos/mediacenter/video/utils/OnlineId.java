@@ -41,6 +41,6 @@ public class OnlineId {
         if (imdbId != null) {
             // remove all non numeric characters from imdbID (often starts with tt)
             return imdbId.replaceAll("[^\\d]", "");
-        } else return imdbId;
+            } else return imdbId;
     }
 }
