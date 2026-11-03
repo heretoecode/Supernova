@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.browser;
 
 import com.archos.filecorelibrary.MetaFile2;
-import com.archos.mediacenter.utils.UpnpItemData;
 
 /**
  * Created by alexandre on 30/04/15.
