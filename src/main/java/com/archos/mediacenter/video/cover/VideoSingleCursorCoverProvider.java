@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.archos.mediascraper.BaseTags;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,9 +67,9 @@ public abstract class VideoSingleCursorCoverProvider extends SingleCursorCoverPr
 			if (update) {
 				final String coverID;
 				if (scraperID > 0) {
-					if (scraperType == com.archos.mediascraper.BaseTags.MOVIE) {
+					if (scraperType == BaseTags.MOVIE) {
 						coverID = MovieCover.computeCoverID(videoID);
-					} else if (scraperType == com.archos.mediascraper.BaseTags.TV_SHOW) {
+					} else if (scraperType == BaseTags.TV_SHOW) {
 						coverID = EpisodeCover.computeCoverID(videoID);
 					} else {
 						throw new IllegalArgumentException("Unexpected scraper type!: "+scraperType);
@@ -86,7 +87,7 @@ public abstract class VideoSingleCursorCoverProvider extends SingleCursorCoverPr
 			}
 			if (cover==null) {
 				if (scraperID > 0) {
-					if (scraperType == com.archos.mediascraper.BaseTags.MOVIE) {
+					if (scraperType == BaseTags.MOVIE) {
 						if(DBG) Log.d(TAG, "Create new cover for "+MovieCover.computeCoverID(videoID));
 						// Create a new one
 						cover = new MovieCover(
@@ -94,7 +95,7 @@ public abstract class VideoSingleCursorCoverProvider extends SingleCursorCoverPr
 								c.getString(mFilePathIdx),
 								c.getLong(mDurationIdx),
 								c.getLong(mScraperIdIdx));
-					} else if (scraperType == com.archos.mediascraper.BaseTags.TV_SHOW) {
+					} else if (scraperType == BaseTags.TV_SHOW) {
 						if(DBG) Log.d(TAG, "Create new cover for "+EpisodeCover.computeCoverID(videoID));
 						// Create a new one
 						cover = new EpisodeCover(
