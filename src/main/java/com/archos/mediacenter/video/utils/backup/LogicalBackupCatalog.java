@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils.backup;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.MediaStore;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 import com.archos.mediacenter.video.browser.loader.VideoLoader;
@@ -45,8 +46,8 @@ public final class LogicalBackupCatalog {
             database.execSQL("SAVEPOINT supernova_backup_read");try {
                 Set<String> columns=new LinkedHashSet<>(Arrays.asList(VideoLoader.mProjection));
                 columns.addAll(List.of(VideoStore.Video.VideoColumns.DATE_ADDED,VideoStore.Video.VideoColumns.SCRAPER_M_GENRES,
-                    VideoStore.Video.VideoColumns.SCRAPER_S_GENRES,android.provider.MediaStore.Video.VideoColumns.WIDTH,
-                    android.provider.MediaStore.Video.VideoColumns.HEIGHT,VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_BEST_AUDIOTRACK_FORMAT,
+                    VideoStore.Video.VideoColumns.SCRAPER_S_GENRES,MediaStore.Video.VideoColumns.WIDTH,
+                    MediaStore.Video.VideoColumns.HEIGHT,VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_BEST_AUDIOTRACK_FORMAT,
                     VideoStore.Video.VideoColumns.ARCHOS_CALCULATED_VIDEO_FORMAT));
                 Set<Long> seen=new HashSet<>();Map<Long,Long> showAdded=new HashMap<>();
                 try(Cursor rows=database.query(VideoOpenHelper.VIDEO_VIEW_NAME,columns.toArray(new String[0]),null,null,null,null,"_id ASC")) {
