@@ -1,6 +1,10 @@
 package com.archos.mediacenter.video.leanback.details;
 
 import android.app.Application;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
@@ -37,7 +41,7 @@ public class PreviewSeasonTest {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
             PreviewMoviePage page = new PreviewMoviePage(
-                host.get(), androidx.leanback.widget.ArrayObjectAdapter::new, a -> {
+                host.get(), ArrayObjectAdapter::new, a -> {
                 }, () -> {
                 }, uri -> {
                 });
@@ -67,14 +71,14 @@ public class PreviewSeasonTest {
             });
             ReflectionHelpers.setField(page, "enrichment", result);
             ReflectionHelpers.callInstanceMethod(page, "renderDetails");
-            android.widget.TextView metadata = ReflectionHelpers.getField(page, "meta");
+            TextView metadata = ReflectionHelpers.getField(page, "meta");
             assertTrue(metadata.getText().toString(), metadata.getText().toString().contains("3 Episodes"));
             assertFalse(metadata.getText().toString().contains("4 Seasons"));
             assertFalse(metadata.getText().toString().contains("30m"));
             assertFalse(metadata.getText().toString().contains("TMDB"));
             assertNotNull(page.findViewWithTag("semantic:details.card"));
-            android.widget.LinearLayout badges = ReflectionHelpers.getField(page, "pills");
-            assertEquals(android.view.View.GONE, badges.getVisibility());
+            LinearLayout badges = ReflectionHelpers.getField(page, "pills");
+            assertEquals(View.GONE, badges.getVisibility());
         } finally {
             host.pause().stop().destroy();
         }
