@@ -3,9 +3,13 @@ package com.archos.mediacenter.video.leanback.search;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.*;
+import android.os.SystemClock;
 import android.text.*;
 import android.view.*;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import androidx.recyclerview.widget.*;
@@ -18,6 +22,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.squareup.picasso.Picasso;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.diagnostics.ArtworkRequest;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -40,7 +45,7 @@ public final class PreviewSearch extends LinearLayout {
     private Parcelable scrollState;
     private Runnable pending;
     private String detailsFocusToken = "";
-    private java.lang.ref.WeakReference<View> detailsOpener = new java.lang.ref.WeakReference<>(null);
+    private WeakReference<View> detailsOpener = new WeakReference<>(null);
     private boolean detailsWindowAway;
     private final int mode;
 
@@ -75,7 +80,7 @@ public final class PreviewSearch extends LinearLayout {
         this.mode = mode;
         setOrientation(VERTICAL);
         setPadding(dp(28), dp(12), dp(28), dp(12));
-        setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        setBackgroundColor(Color.TRANSPARENT);
         status = text("", 12);
         status.setGravity(Gravity.END);
         addView(status, new LayoutParams(-1, dp(22)));
@@ -107,11 +112,11 @@ public final class PreviewSearch extends LinearLayout {
         query.setMaxLines(1);
         query.setGravity(Gravity.CENTER_VERTICAL);
         query.setIncludeFontPadding(false);
-        query.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        query.setBackgroundColor(Color.TRANSPARENT);
         query.setCursorVisible(true);
         query.setLongClickable(false);
-        query.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH |
-                            android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        query.setImeOptions(EditorInfo.IME_ACTION_SEARCH |
+                            EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         query.setPadding(dp(12), 0, dp(12), 0);
         search.addView(query, new LayoutParams(0, KeyboardInput.compactHeight(activity), 1));
         SupernovaStyle.applyButton(search, SupernovaStyle.Surface.STANDARD);
@@ -223,7 +228,7 @@ public final class PreviewSearch extends LinearLayout {
     }
 
     private void recordDetailsEntry(View opener) {
-        detailsOpener = new java.lang.ref.WeakReference<>(opener);
+        detailsOpener = new WeakReference<>(opener);
         detailsFocusToken = Diagnostics.focusEntry(opener, "search.details");
         detailsWindowAway = false;
     }
@@ -277,7 +282,7 @@ public final class PreviewSearch extends LinearLayout {
     }
 
     private void load(String value, int request) {
-        final long started = android.os.SystemClock.elapsedRealtime();
+        final long started = SystemClock.elapsedRealtime();
         final String operation = com.archos.mediacenter.video.diagnostics.Diagnostics.operation("search");
         VideoLoader loader;
         switch (mode) {
@@ -301,7 +306,7 @@ public final class PreviewSearch extends LinearLayout {
             all.setQuery("");
             loader = all;
         }
-        android.net.Uri uri = loader.getUri();
+        Uri uri = loader.getUri();
         String[] extra = {
             VideoStore.Video.VideoColumns.SCRAPER_M_GENRES,  VideoStore.Video.VideoColumns.SCRAPER_S_GENRES,
             VideoStore.Video.VideoColumns.SCRAPER_ACTORS,    VideoStore.Video.VideoColumns.SCRAPER_DIRECTORS,
@@ -317,7 +322,7 @@ public final class PreviewSearch extends LinearLayout {
         status.setText("Searching library…");
         Context app = activity.getApplicationContext();
         AllTvshowsLoader showLoader = new AllTvshowsLoader(activity);
-        android.net.Uri showUri = showLoader.getUri();
+        Uri showUri = showLoader.getUri();
         String[] showProjection = showLoader.getProjection(), showArgs = showLoader.getSelectionArgs();
         String showSelection = showLoader.getSelection(), showSort = showLoader.getSortOrder();
         worker.execute(() -> {
@@ -499,7 +504,7 @@ public final class PreviewSearch extends LinearLayout {
         Map<Long, String[]> result = new HashMap<>();
         String[] columns =
             shows ? new String[] {"_id", "original_title_show"} : new String[] {"_id", "original_title_movie"};
-        android.net.Uri uri = shows ? com.archos.mediaprovider.video.ScraperStore.Show.URI.ALL
+        Uri uri = shows ? com.archos.mediaprovider.video.ScraperStore.Show.URI.ALL
                                     : com.archos.mediaprovider.video.ScraperStore.Movie.URI.ALL;
         try (Cursor cursor = context.getContentResolver().query(uri, columns, null, null, null, cancellation)) {
             if (cursor != null)
@@ -557,7 +562,7 @@ public final class PreviewSearch extends LinearLayout {
             action = text("View Show", 13);
             action.setGravity(Gravity.CENTER);
             action.setDuplicateParentStateEnabled(true);
-            action.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            action.setBackgroundColor(Color.TRANSPARENT);
             action.setPadding(dp(8), dp(7), dp(8), dp(7));
             row.addView(action, new LayoutParams(dp(104), dp(38)));
         }
@@ -648,7 +653,7 @@ public final class PreviewSearch extends LinearLayout {
             h.genres.setVisibility(TextUtils.isEmpty(r.genres) ? GONE : VISIBLE);
             ArtworkRequest.cancel(h.image);
             h.image.setImageDrawable(null);
-            android.net.Uri art = video instanceof Episode ? ((Episode)video).getPictureUri() : video.getPosterUri();
+            Uri art = video instanceof Episode ? ((Episode)video).getPictureUri() : video.getPosterUri();
             if (art != null)
                 ArtworkRequest.load(h.image, art, video.getId(), "search.results",
                                     video instanceof Episode ? "episode_still" : "poster",
