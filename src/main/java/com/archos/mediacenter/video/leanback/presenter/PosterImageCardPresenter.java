@@ -40,6 +40,7 @@ import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediacenter.utils.trakt.Trakt;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
+import com.archos.mediacenter.video.picasso.FidelityTransformation;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
@@ -143,7 +144,7 @@ public class PosterImageCardPresenter extends Presenter {
                         .resize(decodeWidth, decodeHeight)
                         .centerCrop()
                         .onlyScaleDown()
-                        .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(width, height))
+                        .transform(new FidelityTransformation(width, height))
                         .noFade()
                         .error(mErrorDrawable)
                         .into(mImageCardViewTarget);
