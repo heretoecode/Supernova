@@ -55,10 +55,12 @@ public class CustomListPreference extends ListPreference {
 
         }
 
+        @Override
         public boolean areAllItemsEnabled() {
             return false;
         }
 
+        @Override
         public View getView(int position, View converView, ViewGroup viewGroup){
             View v = super.getView(position, converView, viewGroup);
             v.setEnabled(true);
@@ -67,6 +69,7 @@ public class CustomListPreference extends ListPreference {
             return v;
         }
 
+        @Override
         public boolean isEnabled(int position) {
             return true;
         }
