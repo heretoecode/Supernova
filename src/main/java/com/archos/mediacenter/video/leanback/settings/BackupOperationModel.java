@@ -5,6 +5,7 @@ import android.net.Uri;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.utils.backup.*;
 import java.io.*;
 import java.util.*;
@@ -266,7 +267,7 @@ public final class BackupOperationModel extends AndroidViewModel {
                 needsInventory ? LogicalBackupCatalog.capture(getApplication(), token::get) : null;
             PreferenceRestoreTransaction transaction = new PreferenceRestoreTransaction(getApplication());
             restorePlan = transaction.prepareCanonicalMatches(payloads,
-                catalog == null ? new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot()
+                catalog == null ? new PreviewLibraryLoader.Snapshot()
                                 : catalog.snapshot,
                 new PortablePhysicalReferences(
                     getApplication(), catalog == null ? Collections.emptyList() : catalog.physical),
