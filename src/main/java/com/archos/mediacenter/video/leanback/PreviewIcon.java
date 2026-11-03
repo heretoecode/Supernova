@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.leanback;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.widget.TextView;
 import java.util.Locale;
 
 /** Small outline icons shared by Nova menus, controls and preference categories. */
@@ -382,7 +383,7 @@ public final class PreviewIcon extends Drawable {
         return PixelFormat.TRANSLUCENT;
     }
 
-    public static void apply(android.widget.TextView view, String kind, int size) {
+    public static void apply(TextView view, String kind, int size) {
         PreviewIcon icon = new PreviewIcon(kind);
         int d = Math.round(size * view.getResources().getDisplayMetrics().density);
         icon.setBounds(0, 0, d, d);
