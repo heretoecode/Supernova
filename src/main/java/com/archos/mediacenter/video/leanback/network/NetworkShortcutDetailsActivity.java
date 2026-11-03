@@ -21,6 +21,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
+import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface;
 
 public class NetworkShortcutDetailsActivity extends LeanbackActivity {
     @Override
@@ -28,10 +30,10 @@ public class NetworkShortcutDetailsActivity extends LeanbackActivity {
         super.onCreate(savedInstanceState);
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
             Object source = getIntent().getSerializableExtra(NetworkShortcutDetailsFragment.EXTRA_SHORTCUT);
-            if (source instanceof com.archos.mediacenter.video.leanback.adapter.object.Shortcut) {
-                com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface browser =
-                    (com.archos.mediacenter.video.leanback.filebrowsing.PreviewBrowserSurface) PreviewSourceManagement
-                        .create(this, (com.archos.mediacenter.video.leanback.adapter.object.Shortcut) source);
+            if (source instanceof Shortcut) {
+                PreviewBrowserSurface browser =
+                    (PreviewBrowserSurface) PreviewSourceManagement
+                        .create(this, (Shortcut) source);
                 setContentView(browser);
                 getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                     public void handleOnBackPressed() {
