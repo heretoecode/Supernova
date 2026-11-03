@@ -21,6 +21,7 @@ import com.archos.mediacenter.video.foundation.LicenseDisclosure;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
+/** Hosts the TV software licences screen. */
 public class VideoSettingsLicencesActivity extends LeanbackActivity {
 
     @Override
