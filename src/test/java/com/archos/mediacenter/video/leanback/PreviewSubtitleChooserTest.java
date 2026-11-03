@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import java.util.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -17,14 +19,14 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSubtitleChooserTest {
-    @org.junit.Before
+    @Before
     public void isolatePreviewTransport() {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.offlineTransport();
+        PreviewAsyncFixtures.offlineTransport();
     }
 
-    @org.junit.After
+    @After
     public void drainPreviewWorkers() throws Exception {
-        com.archos.mediacenter.video.leanback.PreviewAsyncFixtures.drain();
+        PreviewAsyncFixtures.drain();
     }
 
     static final String PATH = "file:///media/example.en.srt";
