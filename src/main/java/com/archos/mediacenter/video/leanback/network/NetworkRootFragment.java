@@ -19,19 +19,20 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseSupportFragment;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -149,12 +150,12 @@ public class NetworkRootFragment extends BrowseSupportFragment {
     }
 
     @Override
-    public View onCreateView(android.view.LayoutInflater inflater, android.view.ViewGroup parent, Bundle state) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state) {
         View nativeView = super.onCreateView(inflater, parent, state);
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+        if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean("try_new_ui", false))
             return nativeView;
-        android.widget.FrameLayout stage = new android.widget.FrameLayout(requireContext());
+        FrameLayout stage = new FrameLayout(requireContext());
         stage.addView(nativeView);
         nativeView.setVisibility(View.GONE);
         com.archos.mediacenter.video.leanback.PreviewSources sources =
@@ -420,7 +421,7 @@ public class NetworkRootFragment extends BrowseSupportFragment {
                     log.debug("onItemClicked: Box");
                 Box box = (Box) item;
                 if (box.getBoxId() == Box.ID.INDEXED_FOLDERS_REFRESH) {
-                    if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    if (PreferenceManager.getDefaultSharedPreferences(requireContext())
                             .getBoolean("try_new_ui", false))
                         com.archos.mediacenter.video.leanback.PreviewNetworkScanning.show(requireContext());
                     else
