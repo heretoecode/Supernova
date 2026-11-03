@@ -59,6 +59,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 
+/** Displays browser categories and opens the selected category's content. */
 abstract public class BrowserCategory extends ListFragment {
 
     private static final String SELECTED_ID = "selectedId";
