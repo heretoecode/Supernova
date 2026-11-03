@@ -1047,9 +1047,9 @@ public final class PreviewSettings {
             for (String name : NAMES) {
                 PreferenceCategory found = null;
                 for (int i = 0; i < root.getPreferenceCount(); i++)
-                if (root.getPreference(i) instanceof PreferenceCategory
-                    && name.contentEquals(root.getPreference(i).getTitle()))
-                    found = (PreferenceCategory) root.getPreference(i);
+                    if (root.getPreference(i) instanceof PreferenceCategory
+                        && name.contentEquals(root.getPreference(i).getTitle()))
+                        found = (PreferenceCategory) root.getPreference(i);
                 final PreferenceCategory category = found;
                 TextView button = sidebarButton(c, name, false);
                 button.setTag("semantic:settings:category:" + name);

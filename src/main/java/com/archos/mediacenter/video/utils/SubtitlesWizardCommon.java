@@ -267,6 +267,11 @@ public class SubtitlesWizardCommon {
         }
     }
 
+    /** The cached copy of a subtitle: same file name, inside the subtitle cache folder. */
+    static File cacheFile(File subsDir, Uri subtitle) {
+        return new File(subsDir, FileUtils.getName(subtitle));
+    }
+
     @SuppressWarnings("deprecation") // ACTION_MEDIA_SCANNER_SCAN_FILE used as internal IPC (setPackage targets Nova's own receiver only)
     public boolean renameFile(String path, int index) {
         boolean fileRenamed = false;
@@ -298,8 +303,10 @@ public class SubtitlesWizardCommon {
         if (!cacheOldFilePath.equals(oldFilePath)) {
             String cacheNewFilePath = cacheDirPath + "/" + FileUtils.getName(newUri);
 
-            File cacheOldFile = new File(cacheOldFilePath);
-            File cacheNewFile = new File(cacheNewFilePath);
+            // The cache paths above are file:// URI strings (compared with the subtitle's own URI);
+            // the File objects must be built from the cache folder itself, not from those strings.
+            File cacheOldFile = cacheFile(MediaUtils.getSubsDir(getActivity()), oldUri);
+            File cacheNewFile = cacheFile(MediaUtils.getSubsDir(getActivity()), newUri);
             if (cacheOldFile.exists()) {
                 try {
                     cacheOldFile.renameTo(cacheNewFile);

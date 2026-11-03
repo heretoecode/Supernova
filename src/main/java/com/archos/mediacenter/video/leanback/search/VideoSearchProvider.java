@@ -78,11 +78,17 @@ public class VideoSearchProvider extends ContentProvider {
         };
     }
 
+    /** This provider is exported: any app may call it, so a missing or null search term is simply no results. */
+    static boolean hasSearchText(String[] selectionArgs) {
+        return selectionArgs != null && selectionArgs.length > 0 && selectionArgs[0] != null
+            && !selectionArgs[0].isEmpty();
+    }
+
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         MatrixCursor matrixCursor = null;
 
-        if (selectionArgs != null && selectionArgs.length > 0 && !selectionArgs[0].isEmpty()) {
+        if (hasSearchText(selectionArgs)) {
             String[] extendedSelectionArgs = {
                     "%" + selectionArgs[0] + "%",
                     "%" + selectionArgs[0] + "%"

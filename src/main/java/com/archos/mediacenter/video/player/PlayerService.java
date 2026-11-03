@@ -1731,7 +1731,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     }
 
     public SegmentPrompt segmentPrompt() {
-        return mSegmentPrompt != null && SystemClock.elapsedRealtime() < mSegmentPrompt.expires ? mSegmentPrompt : null;
+        return promptLive(mSegmentPrompt, segmentSkippingEnabled(), SystemClock.elapsedRealtime()) ? mSegmentPrompt
+                                                                                                  : null;
+    }
+
+    /** A pending skip prompt counts only while it has not expired and skipping is still switched on. */
+    static boolean promptLive(SegmentPrompt prompt, boolean skippingEnabled, long now) {
+        return prompt != null && skippingEnabled && now < prompt.expires;
     }
 
     public void skipPrompt() {
