@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/** Lists SMB folders and prompts for server credentials when required. */
 public class SmbListingFragment extends NetworkListingFragment {
 
     private static final Logger log = LoggerFactory.getLogger(SmbListingFragment.class);
