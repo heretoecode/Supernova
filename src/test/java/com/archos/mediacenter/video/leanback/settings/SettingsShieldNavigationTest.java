@@ -1,18 +1,29 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.app.Application;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
 import com.archos.mediacenter.video.leanback.PreviewAsyncFixtures;
-import com.archos.mediacenter.video.leanback.SharedThreePanel;
 import com.archos.mediacenter.video.leanback.TopNavigationTest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -34,10 +45,10 @@ public class SettingsShieldNavigationTest {
     @Before
     public void install() {
         ReflectionHelpers.setStaticField(
-            androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.class, "_instance", null);
+            ViewModelProvider.AndroidViewModelFactory.class, "_instance", null);
         PreviewAsyncFixtures.offlineTransport();
         Application app = RuntimeEnvironment.getApplication();
-        ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", java.util.Locale.getDefault());
+        ReflectionHelpers.setStaticField(CustomApplication.class, "systemLocale", Locale.getDefault());
         ReflectionHelpers.setStaticField(CustomApplication.class, "mContext", app);
         ReflectionHelpers.setStaticField(
             CustomApplication.class, "log", org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
@@ -69,7 +80,7 @@ public class SettingsShieldNavigationTest {
         root.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
         root.layout(0, 0, width, height);
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(250));
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(250));
     }
 
     private View semantic(String value) {
@@ -103,15 +114,15 @@ public class SettingsShieldNavigationTest {
 
     private void capture(String name) {
         try {
-            java.io.File output = new java.io.File("build/reports/preview-ui/" + name + ".png");
+            File output = new File("build/reports/preview-ui/" + name + ".png");
             output.getParentFile().mkdirs();
-            android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(
-                root.getWidth(), root.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
-            root.draw(new android.graphics.Canvas(bitmap));
-            try (java.io.FileOutputStream file = new java.io.FileOutputStream(output)) {
-                assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, file));
+            Bitmap bitmap = Bitmap.createBitmap(
+                root.getWidth(), root.getHeight(), Bitmap.Config.ARGB_8888);
+            root.draw(new Canvas(bitmap));
+            try (FileOutputStream file = new FileOutputStream(output)) {
+                assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, file));
             }
-        } catch (java.io.IOException failed) {
+        } catch (IOException failed) {
             throw new AssertionError(failed);
         }
     }
@@ -140,7 +151,7 @@ public class SettingsShieldNavigationTest {
         assertNotNull(
             "Diagnostic Level must retain its established preference key", settings.findPreference(Diagnostics.LEVEL));
         key(KeyEvent.KEYCODE_DPAD_RIGHT);
-        java.util.Set<String> reached = new java.util.HashSet<>();
+        Set<String> reached = new HashSet<>();
         for (int n = 0; n < 10; n++) {
             View focused = root.findFocus();
             if (focused != null
@@ -164,7 +175,7 @@ public class SettingsShieldNavigationTest {
         try {
             Diagnostics.install(app);
             assertTrue((Boolean) ReflectionHelpers.getStaticField(Diagnostics.class, "qa"));
-            androidx.preference.ListPreference level = settings.findPreference(Diagnostics.LEVEL);
+            ListPreference level = settings.findPreference(Diagnostics.LEVEL);
             assertNotNull(level);
             assertEquals("qa", level.getValue());
             level.setValue("normal");
@@ -224,7 +235,7 @@ public class SettingsShieldNavigationTest {
         assertSame("Right restores the selected backup action", restore, root.findFocus());
         restore.performClick();
         settle();
-        assertEquals(android.content.Intent.ACTION_OPEN_DOCUMENT,
+        assertEquals(Intent.ACTION_OPEN_DOCUMENT,
             Shadows.shadowOf(host.get()).getNextStartedActivityForResult().intent.getAction());
         capture("0139-shield-repair-backup-landing");
     }
