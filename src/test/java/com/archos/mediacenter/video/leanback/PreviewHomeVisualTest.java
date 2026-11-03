@@ -1,9 +1,15 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
+import androidx.test.platform.app.InstrumentationRegistry;
+import java.time.Duration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
@@ -28,7 +34,7 @@ public class PreviewHomeVisualTest {
 
     @Before
     public void remoteInputMode() {
-        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);
+        InstrumentationRegistry.getInstrumentation().setInTouchMode(false);
     }
 
     /** Approved global rule (2 Nov 2026): pop-up menus have no title; the match mode is still announced to TalkBack. */
@@ -50,7 +56,7 @@ public class PreviewHomeVisualTest {
             assertTrue(scroll.getChildAt(0).getHeight() > scroll.getHeight());
             scroll.fullScroll(View.FOCUS_DOWN);
             western.requestFocus();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             root = measure(dialog);
             assertTrue(western.hasFocus());
             bounds(root, western);
@@ -77,7 +83,7 @@ public class PreviewHomeVisualTest {
     public void deleteConfirmationKeepsBothButtonsInsideWindow() throws Exception {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
-            androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+            PreferenceManager.getDefaultSharedPreferences(host.get())
                 .edit()
                 .putBoolean("try_new_ui", true)
                 .commit();
@@ -96,7 +102,7 @@ public class PreviewHomeVisualTest {
             assertTrue(confirm.hasFocus());
             PreviewPagesTest.capture(root, "home-delete-focused");
             cancel.performClick();
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             assertFalse(deleted[0]);
             assertFalse(dialog.isShowing());
         } finally {
@@ -108,7 +114,7 @@ public class PreviewHomeVisualTest {
         // Match real attachment/onShow/layout turns; a single manual measure precedes window setup.
         View root = dialog.getWindow().getDecorView();
         for (int pass = 0; pass < 3; pass++) {
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(60));
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(60));
             int width = dialog.getWindow().getAttributes().width, height = dialog.getWindow().getAttributes().height;
             root.measure(
                 View.MeasureSpec.makeMeasureSpec(width > 0 ? width : 912,
@@ -120,13 +126,13 @@ public class PreviewHomeVisualTest {
         return root;
     }
 
-    private static android.graphics.Bitmap renderRegion(View root, View child) {
-        android.graphics.Bitmap image = android.graphics.Bitmap.createBitmap(root.getWidth(), root.getHeight(),
-                                                                             android.graphics.Bitmap.Config.ARGB_8888);
-        root.draw(new android.graphics.Canvas(image));
+    private static Bitmap renderRegion(View root, View child) {
+        Bitmap image = Bitmap.createBitmap(root.getWidth(), root.getHeight(),
+                                                                             Bitmap.Config.ARGB_8888);
+        root.draw(new Canvas(image));
         Rect area = new Rect(0, 0, child.getWidth(), child.getHeight());
         ((ViewGroup)root).offsetDescendantRectToMyCoords(child, area);
-        return android.graphics.Bitmap.createBitmap(image, area.left, area.top, area.width(), area.height());
+        return Bitmap.createBitmap(image, area.left, area.top, area.width(), area.height());
     }
 
     private static Rect bounds(View root, View child) {
