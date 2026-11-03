@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.streaming;
 
+import android.app.Activity;
 import android.app.Application;
 import android.view.*;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -34,7 +35,7 @@ public class StreamingProviderFocusTest {
 
     @Test
     public void dpadVisitsProviderBetweenPlayAndMoreAndDispatchesExistingAction() {
-        var host = Robolectric.buildActivity(android.app.Activity.class).setup().visible();
+        var host = Robolectric.buildActivity(Activity.class).setup().visible();
         try {
             AtomicInteger launched = new AtomicInteger();
             ArrayObjectAdapter actions = new ArrayObjectAdapter();
