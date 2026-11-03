@@ -9,6 +9,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks provider refresh scope and that background enrichment avoids rebuilding unfiltered pages. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewProviderRefreshTest {
  @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
