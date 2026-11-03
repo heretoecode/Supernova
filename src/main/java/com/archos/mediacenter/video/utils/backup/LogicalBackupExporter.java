@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils.backup;
 import android.content.Context;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.io.*;
 import java.util.*;
 import java.util.function.BooleanSupplier;
@@ -45,7 +46,7 @@ public final class LogicalBackupExporter {
                 new PortableTitleReferences(context, catalog == null ? null : catalog.snapshot);
             var preferences = PreferenceManager.getDefaultSharedPreferences(context);
             Map<String, ?> before = preferences.getAll();
-            var health = context.getSharedPreferences(com.archos.mediaprovider.video.SupernovaLibraryPolicy.HEALTH, 0);
+            var health = context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
             Map<String, ?> healthBefore = health.getAll();
             PortablePhysicalReferences physical =
                 catalog == null ? null : new PortablePhysicalReferences(context, catalog.physical);
