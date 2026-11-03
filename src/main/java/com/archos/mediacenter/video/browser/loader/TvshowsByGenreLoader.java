@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
+/** Loads TV shows filtered by genre. */
 public class TvshowsByGenreLoader extends TvshowsByLoader {
 
     public static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED ASC";
