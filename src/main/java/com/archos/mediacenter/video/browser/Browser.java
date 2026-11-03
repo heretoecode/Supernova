@@ -332,10 +332,12 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
         super.onPause();
     }
 
+    @Override
     public void onStart(){
         super.onStart();
     }
 
+    @Override
     public void onStop(){
         super.onStop();
         mCommonDefaultInvalidate = true;
@@ -493,6 +495,7 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
 
         // Setup key listener to open extender with right key or L1 or R1 or "i"
         list.setOnKeyListener(new OnKeyListener() {
+            @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // All is done on action down because it also moves the focus, hence we can't wait for action up
 
@@ -869,6 +872,7 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
     }
 
     protected View.OnClickListener mEmptyViewButtonClickListener = new View.OnClickListener() {
+        @Override
         public void onClick(View v) {
             // The user clicked on the empty view button.
             // This button is only used so far to start searching infos online.
@@ -949,6 +953,7 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
 
 
 
+    @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             // Remember where the user clicked
