@@ -1,8 +1,10 @@
 package com.archos.mediacenter.video.foundation;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -38,7 +40,7 @@ public final class FoundationAboutActivity extends FragmentActivity {
         private FoundationAboutWorkspace workspace;
 
         @Override
-        public View onCreateView(android.view.LayoutInflater inflater, ViewGroup parent, Bundle saved) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle saved) {
             LinearLayout split = new LinearLayout(requireContext());
             split.setBackground(new PreviewUtilityBackground(requireContext()));
             split.setPadding(dp(28), dp(24), dp(28), dp(24));
@@ -53,7 +55,7 @@ public final class FoundationAboutActivity extends FragmentActivity {
             TextView about = new TextView(requireContext());
             about.setText("About");
             about.setTextSize(20);
-            about.setTextColor(android.graphics.Color.WHITE);
+            about.setTextColor(Color.WHITE);
             about.setGravity(Gravity.CENTER_VERTICAL);
             about.setFocusable(true);
             about.setBackground(PreviewDialog.focus(requireContext()));
