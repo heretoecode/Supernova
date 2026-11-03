@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.content.Context;
+import android.os.SystemClock;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.util.*;
@@ -24,7 +26,7 @@ public final class PutioSyncScheduler {
     /** Runs on the owning worker so transport operations inherit this sync's correlation. */
     static void sync(Context app,String trigger,PutioReadClient client){
         if(!enabled(app))return;
-        long started=android.os.SystemClock.elapsedRealtime();String operation=Diagnostics.operation("putio_sync");
+        long started=SystemClock.elapsedRealtime();String operation=Diagnostics.operation("putio_sync");
         try(Diagnostics.OperationScope ignored=Diagnostics.operationScope(operation)){
             Diagnostics.event("putio_sync_started","operation_id",operation,"trigger",trigger);
             checkInterrupted();PutioReadClient.Account account=client.account();checkInterrupted();
@@ -46,7 +48,7 @@ public final class PutioSyncScheduler {
             }
         }finally{Diagnostics.finishOperation(operation,"putio_sync",started);}
     }
-    private static boolean enabled(Context context){return androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_putio_enabled",true);}
+    private static boolean enabled(Context context){return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_putio_enabled",true);}
     private static void checkInterrupted()throws InterruptedException{if(Thread.currentThread().isInterrupted())throw new InterruptedException();}
     private PutioSyncScheduler(){}
 }
