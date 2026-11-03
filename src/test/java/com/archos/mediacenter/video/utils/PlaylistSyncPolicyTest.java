@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.ProviderInfo;
+import com.archos.mediaprovider.DbHolder;
 import com.archos.mediaprovider.video.*;
 import com.archos.mediacenter.utils.trakt.*;
 import java.util.*;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class PlaylistSyncPolicyTest {
     private Context app;
     private VideoProvider provider;
-    private com.archos.mediaprovider.DbHolder holder;
+    private DbHolder holder;
 
     @Before
     public void setup() {
@@ -35,7 +36,7 @@ public class PlaylistSyncPolicyTest {
         provider.attachInfo(app, info);
         // VideoDb's process singleton retains its first Application across Robolectric test resets.
         // Use a fresh real holder for this fixture's current app database.
-        holder = new com.archos.mediaprovider.DbHolder(new VideoOpenHelper(app));
+        holder = new DbHolder(new VideoOpenHelper(app));
         ReflectionHelpers.setField(provider, "mDbHolder", holder);
         ReflectionHelpers.setField(provider, "mCr", app.getContentResolver());
         ShadowContentResolver.registerProviderInternal(VideoStore.AUTHORITY, provider);
