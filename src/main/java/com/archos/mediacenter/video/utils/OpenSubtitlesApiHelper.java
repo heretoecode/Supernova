@@ -18,8 +18,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.format.DateUtils;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.CustomApplication;
 
+import java.util.concurrent.TimeUnit;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -114,7 +116,7 @@ public class OpenSubtitlesApiHelper {
                     .addInterceptor(logging)
                     .build();
         } else {
-            httpClient = new OkHttpClient.Builder().connectTimeout(5,java.util.concurrent.TimeUnit.SECONDS).readTimeout(10,java.util.concurrent.TimeUnit.SECONDS).callTimeout(15,java.util.concurrent.TimeUnit.SECONDS).build();
+            httpClient = new OkHttpClient.Builder().connectTimeout(5,TimeUnit.SECONDS).readTimeout(10,TimeUnit.SECONDS).callTimeout(15,TimeUnit.SECONDS).build();
         }
         setBaseUrl(API_BASE_URL);
     }
@@ -176,7 +178,7 @@ public class OpenSubtitlesApiHelper {
         authTokenValid = false;
     }
 
-    private static boolean integrationEnabled(){android.content.Context c=com.archos.mediacenter.video.CustomApplication.getAppContext();return c==null||androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_integration_opensubtitles",true);}
+    private static boolean integrationEnabled(){android.content.Context c=com.archos.mediacenter.video.CustomApplication.getAppContext();return c==null||PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_integration_opensubtitles",true);}
     public static synchronized boolean login(String openSubtitlesApiKey, String u, String p) throws IOException {
         if(!integrationEnabled())return false;
         username = u;
