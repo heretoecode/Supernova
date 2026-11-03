@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.foundation.LicenseDisclosure;
 
+/** Hosts the software licences preferences screen. */
 public class VideoPreferencesLicencesActivity extends AppCompatActivity {
 
     @Override
