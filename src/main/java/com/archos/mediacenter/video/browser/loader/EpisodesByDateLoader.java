@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 
 
+/** Loads episodes filtered by date. */
 public class EpisodesByDateLoader extends MoviesByLoader {
 
 
