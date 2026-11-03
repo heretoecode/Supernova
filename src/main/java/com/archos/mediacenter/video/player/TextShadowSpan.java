@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
 
+/** Applies shadow styling to a span of text. */
 public class TextShadowSpan extends CharacterStyle {
 
     private final float radius;
