@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Activity;
-import android.graphics.drawable.ColorDrawable;
 import android.widget.ImageView;
 
 import androidx.annotation.IdRes;
