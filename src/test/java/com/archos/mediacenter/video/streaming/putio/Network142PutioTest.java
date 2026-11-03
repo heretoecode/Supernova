@@ -1,8 +1,10 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.app.*;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -24,7 +26,7 @@ public class Network142PutioTest {
     @Before
     public void setup() {
         host = Robolectric.buildActivity(Activity.class).setup().visible();
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(host.get())
+        PreferenceManager.getDefaultSharedPreferences(host.get())
             .edit()
             .putBoolean("supernova_onboarding_complete", true)
             .commit();
@@ -49,7 +51,7 @@ public class Network142PutioTest {
             browser.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
             browser.layout(0, 0, 960, 540);
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
