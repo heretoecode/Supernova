@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 
 
+/** Loads the Up Next selection for shows being watched. */
 public class WatchingUpNextLoader extends VideoLoader {
     public WatchingUpNextLoader(Context context) {
         super(context);
