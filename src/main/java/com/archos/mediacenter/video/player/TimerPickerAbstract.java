@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 
+/** Defines timer delay values, limits and formatting for playback pickers. */
 public abstract class TimerPickerAbstract extends FrameLayout {
 
     private int mMinute = 0;
