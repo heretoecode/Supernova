@@ -1,10 +1,16 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.os.Looper;
 import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.OpenSubtitlesSearchResult;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -163,7 +169,7 @@ public class PlaybackSubtitlePanelTest {
                                  : View.MeasureSpec.makeMeasureSpec(screen, View.MeasureSpec.AT_MOST);
             decor.measure(View.MeasureSpec.makeMeasureSpec(a.width, View.MeasureSpec.EXACTLY), h);
             decor.layout(0, 0, decor.getMeasuredWidth(), decor.getMeasuredHeight());
-            Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
         }
     }
 
@@ -217,7 +223,7 @@ public class PlaybackSubtitlePanelTest {
             assertTrue(key, v.getTop() > previous);
             previous = v.getTop();
             assertTrue(v.isFocusable());
-            android.graphics.Rect visible = new android.graphics.Rect();
+            Rect visible = new Rect();
             assertTrue(key, v.getGlobalVisibleRect(visible));
             assertEquals("Whole row visible " + key, v.getHeight(), visible.height());
         }
@@ -467,15 +473,15 @@ public class PlaybackSubtitlePanelTest {
 
     static void capture(Dialog dialog, String name) throws Exception {
         View v = dialog.getWindow().getDecorView();
-        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(
-            Math.max(1, v.getWidth()), Math.max(1, v.getHeight()), android.graphics.Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(
+            Math.max(1, v.getWidth()), Math.max(1, v.getHeight()), Bitmap.Config.ARGB_8888);
         bitmap.eraseColor(0xff3d4f7a);
-        v.draw(new android.graphics.Canvas(bitmap));
-        for (java.io.File file : new java.io.File[] {new java.io.File("build/reports/subtitles-ui/" + name + ".png"),
-                                                     new java.io.File("build/reports/preview-ui/" + name + ".png")}) {
+        v.draw(new Canvas(bitmap));
+        for (File file : new File[] {new File("build/reports/subtitles-ui/" + name + ".png"),
+                                                     new File("build/reports/preview-ui/" + name + ".png")}) {
             file.getParentFile().mkdirs();
-            try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) {
-                bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, out);
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             }
         }
         bitmap.recycle();
