@@ -9,6 +9,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import static org.mockito.Mockito.*;
 
+/** Checks hero playback output signals require the current playing backend and fire once. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class HeroPlaybackOutputTest {
     @Test public void outputSignalRequiresCurrentPlayingBackendAndFiresOnce(){
