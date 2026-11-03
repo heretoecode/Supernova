@@ -14,13 +14,11 @@
 
 package com.archos.mediacenter.video.leanback.presenter;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.core.content.ContextCompat;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.adapter.object.Box;
