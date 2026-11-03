@@ -33,6 +33,7 @@ class RemoteViewsFactoryRecentlyAdded extends RemoteViewsFactoryBase {
         if (log.isDebugEnabled()) log.debug("Create RecentlyAdded service for the video widget");
     }
 
+    @Override
     protected boolean loadData(Context context, int maxItemCount) {
         if (log.isDebugEnabled()) log.debug("loadData()");
     	String sortOrder = VideoStore.MediaColumns.DATE_ADDED + " DESC" + " LIMIT " + maxItemCount;
