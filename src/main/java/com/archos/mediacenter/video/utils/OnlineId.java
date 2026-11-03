@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.utils;
 
+/** Stores IMDb and TMDb identifiers for online metadata matching. */
 public class OnlineId {
     private String imdbId;
     private String tmdbId;
