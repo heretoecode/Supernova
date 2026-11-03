@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 
 import androidx.core.content.ContextCompat;
 
@@ -32,6 +31,7 @@ import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.BaseTags;
 
+import java.lang.IllegalArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,7 @@ public class UnavailablePosterBroadcastReceiver extends BroadcastReceiver {
         if (sReceiver != null) {
             try {
                 context.unregisterReceiver(sReceiver);
-            } catch (java.lang.IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
             }
         }
     }
