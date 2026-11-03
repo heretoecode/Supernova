@@ -43,6 +43,7 @@ import com.archos.mediacenter.video.leanback.network.sshj.SshjListingActivity;
 import com.archos.mediacenter.video.leanback.network.upnp.UpnpListingActivity;
 import com.archos.mediacenter.video.leanback.network.webdav.WebdavListingActivity;
 
+/** Hosts TV file listings and handles navigation between folders. */
 public abstract  class ListingActivity extends SingleFragmentActivity {
 
     /**
