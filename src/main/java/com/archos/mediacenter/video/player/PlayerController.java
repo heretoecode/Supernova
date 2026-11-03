@@ -40,6 +40,9 @@ import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.ActionBar;
 
+import com.archos.mediacenter.video.leanback.PreviewAccent;
+import com.archos.mediacenter.video.leanback.PreviewIcon;
+import com.archos.mediacenter.video.leanback.SupernovaStyle;
 import com.archos.mediacenter.video.leanback.overlay.Clock;
 
 import android.text.format.DateFormat;
@@ -75,6 +78,7 @@ import com.archos.mediacenter.video.player.tvmenu.TVCardView;
 import com.archos.mediacenter.video.player.tvmenu.TVMenuAdapter;
 import com.archos.mediacenter.video.player.tvmenu.TVUtils;
 import com.archos.mediacenter.video.utils.MiscUtils;
+import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import java.text.SimpleDateFormat;
@@ -820,9 +824,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             refreshPreviewContext();
             for (int id : new int[] {R.id.preview_audio, R.id.preview_subtitles}) {
                 View control = mControllerViewLeft.findViewById(id);
-                if (control instanceof android.widget.ImageButton)
-                    ((android.widget.ImageButton)control)
-                        .setImageDrawable(new com.archos.mediacenter.video.leanback.PreviewIcon(
+                if (control instanceof ImageButton)
+                    ((ImageButton)control)
+                        .setImageDrawable(new PreviewIcon(
                             id == R.id.preview_audio ? "audio" : "subtitles"));
                 if (control != null)
                     control.setOnClickListener(v -> {
@@ -839,8 +843,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             }
             for (int id : new int[] {R.id.preview_previous, R.id.preview_next}) {
                 View step = mControllerViewLeft.findViewById(id);
-                com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(
-                    step, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+                SupernovaStyle.applyButton(
+                    step, SupernovaStyle.Surface.STANDARD);
                 step.setOnClickListener(v -> {
                     if (PlayerService.sPlayerService != null)
                         PlayerService.sPlayerService.previewNavigateEpisode(id == R.id.preview_previous ? -1 : 1);
@@ -848,8 +852,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             }
             for (int id : new int[] {R.id.preview_speed, R.id.preview_info}) {
                 View control = mControllerViewLeft.findViewById(id);
-                com.archos.mediacenter.video.leanback.SupernovaStyle.applyButton(
-                    control, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+                SupernovaStyle.applyButton(
+                    control, SupernovaStyle.Surface.STANDARD);
                 control.setOnClickListener(v -> {
                     if (!(mContext instanceof PlayerActivity))
                         return;
@@ -865,7 +869,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 });
             }
             mProgress.setProgressTintList(ColorStateList.valueOf(
-                com.archos.mediacenter.video.leanback.PreviewAccent.color(mContext)));
+                PreviewAccent.color(mContext)));
             View more = mControllerViewLeft.findViewById(R.id.preview_more);
             if (more != null)
                 more.setOnClickListener(v -> {
@@ -1762,7 +1766,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             View target = mControllerViewLeft.findViewById(id);
             target.setFocusable(true);
             target.setFocusableInTouchMode(true);
-            if (android.os.Build.VERSION.SDK_INT >= 26)
+            if (Build.VERSION.SDK_INT >= 26)
                 target.setDefaultFocusHighlightEnabled(false);
         }
         TextView title = mControllerViewLeft.findViewById(R.id.preview_playback_title);
@@ -1782,13 +1786,13 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             View v = mControllerViewLeft.findViewById(id);
             if (v instanceof ImageButton) {
                 ImageButton button = (ImageButton)v;
-                button.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                button.setBackgroundColor(Color.TRANSPARENT);
                 if (button.getParent() instanceof ViewGroup && button.getParent() != mControlBar) {
-                    com.archos.mediacenter.video.leanback.SupernovaStyle.applyButtonGroup(
+                    SupernovaStyle.applyButtonGroup(
                         (ViewGroup)button.getParent(),
-                        com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+                        SupernovaStyle.Surface.STANDARD);
                 } else {
-                    button.setImageTintList(com.archos.mediacenter.video.leanback.SupernovaStyle.buttonContent());
+                    button.setImageTintList(SupernovaStyle.buttonContent());
                 }
                 button.setOnFocusChangeListener((view, focused) -> updatePreviewScrubber());
                 button.setNextFocusUpId(R.id.seek_progress);
@@ -1797,21 +1801,21 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         View pauseGroup = mControllerViewLeft.findViewById(R.id.preview_pause_group);
         // Approved global button style (2 Nov 2026): black at rest, white box with black content on focus.
         if (pauseGroup instanceof ViewGroup)
-            com.archos.mediacenter.video.leanback.SupernovaStyle.applyButtonGroup(
-                (ViewGroup)pauseGroup, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+            SupernovaStyle.applyButtonGroup(
+                (ViewGroup)pauseGroup, SupernovaStyle.Surface.STANDARD);
         View moreGroup = mControllerViewLeft.findViewById(R.id.preview_more_group);
         if (moreGroup instanceof ViewGroup)
-            com.archos.mediacenter.video.leanback.SupernovaStyle.applyButtonGroup(
-                (ViewGroup)moreGroup, com.archos.mediacenter.video.leanback.SupernovaStyle.Surface.STANDARD);
+            SupernovaStyle.applyButtonGroup(
+                (ViewGroup)moreGroup, SupernovaStyle.Surface.STANDARD);
         mProgress.setFocusable(true);
         mProgress.setFocusableInTouchMode(true);
-        mProgress.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        mProgress.setBackgroundColor(Color.TRANSPARENT);
         mProgress.setOnFocusChangeListener((v, focused) -> updatePreviewScrubber());
         mProgress.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
             if (l != ol || t != ot || r != or || b != ob)
                 updatePreviewScrubber();
         });
-        if (android.os.Build.VERSION.SDK_INT >= 26) {
+        if (Build.VERSION.SDK_INT >= 26) {
             mProgress.setDefaultFocusHighlightEnabled(false);
             mControlBar.setDefaultFocusHighlightEnabled(false);
         }
@@ -1824,7 +1828,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             TextView label = mControllerViewLeft.findViewById(id);
             if (label != null) {
                 label.setTypeface(
-                    android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
+                    Typeface.create("sans-serif-light", Typeface.NORMAL));
                 label.setFontFeatureSettings("tnum");
                 label.setIncludeFontPadding(false);
             }
@@ -1854,7 +1858,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             return;
         bubble.setVisibility(mProgress.getVisibility() == View.VISIBLE ? View.VISIBLE : View.INVISIBLE);
         long position = Player.sPlayer == null ? 0 : mNextSeek >= 0 ? mNextSeek : Player.sPlayer.getCurrentPosition();
-        com.archos.mediacenter.video.utils.VideoMetadata metadata =
+        VideoMetadata metadata =
             Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
         List<PlaybackChapters.Chapter> chapters =
             metadata == null ? Collections.emptyList() : metadata.getChapters();
