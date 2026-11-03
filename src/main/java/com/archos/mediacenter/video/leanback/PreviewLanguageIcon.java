@@ -226,7 +226,7 @@ public final class PreviewLanguageIcon extends Drawable {
         PreviewLanguageIcon icon = new PreviewLanguageIcon(text.getContext(), code);
         int size = Math.max(1, sizePx);
         icon.setBounds(0, 0, size, size);
-        android.graphics.drawable.Drawable[] existing = text.getCompoundDrawables();
+        Drawable[] existing = text.getCompoundDrawables();
         text.setCompoundDrawables(icon, existing[1], existing[2], existing[3]);
         text.setCompoundDrawablePadding(PreviewDialog.dp(text.getContext(), 8));
     }
