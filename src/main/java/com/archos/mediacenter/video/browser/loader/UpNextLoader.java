@@ -18,6 +18,7 @@ import android.content.Context;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads the library's Up Next video selection. */
 public class UpNextLoader extends VideoLoader {
     public UpNextLoader(Context context) {
         super(context);
