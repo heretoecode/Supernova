@@ -40,6 +40,7 @@ import com.archos.mediaprovider.video.VideoStore.MediaColumns;
 import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
 import com.archos.mediascraper.AutoScrapeService;
 
+/** Displays indexed videos with sorting and browser menu actions. */
 public class BrowserAllVideos extends CursorBrowserByVideo {
 
     private static final boolean DBG = false;
