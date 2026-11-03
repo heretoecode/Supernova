@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
@@ -15,7 +16,7 @@ public class ShortcutTransactionTest {
     @Before
     public void cleanFixture() {
         ShortcutDbAdapter.VIDEO.close();
-        org.robolectric.util.ReflectionHelpers.setField(ShortcutDbAdapter.VIDEO, "mDbHelper", null);
+        ReflectionHelpers.setField(ShortcutDbAdapter.VIDEO, "mDbHelper", null);
         RuntimeEnvironment.getApplication().deleteDatabase("shortcuts_db");
     }
 
