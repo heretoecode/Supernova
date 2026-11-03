@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+/** Checks when category row changes can retain existing rows or require new loaders. */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class CategoryRowsDiffTest {
