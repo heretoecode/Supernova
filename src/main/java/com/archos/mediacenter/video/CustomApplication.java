@@ -16,6 +16,7 @@ package com.archos.mediacenter.video;
 
 import android.annotation.SuppressLint;
 
+import android.os.SystemClock;
 import static com.archos.filecorelibrary.FileUtils.getPermissions;
 import static com.archos.filecorelibrary.FileUtils.hasPermission;
 
@@ -38,7 +39,6 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 
@@ -66,7 +66,6 @@ import com.archos.mediacenter.video.browser.BootupRecommandationService;
 import com.archos.mediacenter.video.picasso.SmbRequestHandler;
 import com.archos.mediacenter.video.picasso.ThumbnailRequestHandler;
 import com.archos.mediacenter.video.player.PrivateMode;
-import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.utils.CodecDiscovery;
 import com.archos.mediacenter.video.utils.LocaleConfigParser;
 import com.archos.mediacenter.video.utils.OpenSubtitlesApiHelper;
@@ -88,6 +87,7 @@ import io.sentry.android.core.SentryAndroid;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
+import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -799,7 +799,7 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                 } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     // API 29-32: Use isDirectPlaybackSupported() via reflection
                     try {
-                        java.lang.reflect.Method method = AudioManager.class.getMethod(
+                        Method method = AudioManager.class.getMethod(
                             "isDirectPlaybackSupported", AudioFormat.class, AudioAttributes.class);
                         isSupported = (Boolean) method.invoke(mAudioManager, format, attrs);
                     } catch (Exception e) {
@@ -1500,8 +1500,8 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
                     || NetworkState.isNetworkConnected(CustomApplication.this))
                 && !com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()
                 && com.archos.mediascraper.AutoScrapeService.getNetworkScanCount() == 0
-                && (previewRefreshAt == 0 || android.os.SystemClock.elapsedRealtime() - previewRefreshAt >= 60000)) {
-                previewRefreshAt = android.os.SystemClock.elapsedRealtime();
+                && (previewRefreshAt == 0 || SystemClock.elapsedRealtime() - previewRefreshAt >= 60000)) {
+                previewRefreshAt = SystemClock.elapsedRealtime();
                 previewRefreshRequestedWallTime = now;
                 android.util.Log.i("SupernovaScan", "Requesting configured automatic indexed-source scan");
                 com.archos.mediacenter.video.leanback.PreviewLibraryScan.requestNetwork(
