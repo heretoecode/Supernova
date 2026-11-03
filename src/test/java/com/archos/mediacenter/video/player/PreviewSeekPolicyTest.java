@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.player;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks accelerated seeking resets correctly and remains within playback bounds. */
 public class PreviewSeekPolicyTest {
     @Test public void exactPressGroupsAndMaximum(){PreviewSeekPolicy p=new PreviewSeekPolicy();int[] expected={10000,10000,10000,30000,30000,30000,60000,60000,60000,120000,120000};for(int n=0;n<expected.length;n++)assertEquals(expected[n],p.next(1,n*200));}
     @Test public void pauseResetsAcceleration(){PreviewSeekPolicy p=new PreviewSeekPolicy();for(int n=0;n<5;n++)p.next(1,n*100);assertEquals(10000,p.next(1,1650));}
