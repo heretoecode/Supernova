@@ -14,6 +14,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 
+/** Checks Up Next protects unseen post-credit material and consumes remote releases without pausing playback. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewUpNextTest {
