@@ -1,9 +1,12 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.view.View;
 import android.widget.*;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.video.utils.*;
+import java.io.IOException;
 import java.util.concurrent.*;
 
 /** Direct account fields. Password entry uses the shared keyboard and privacy-masked diagnostics. */
@@ -26,13 +29,13 @@ final class InlineOpenSubtitles {
         context = c;
         this.target = target;
         this.information = information;
-        android.content.SharedPreferences prefs = c.getSharedPreferences("opensubtitles_credentials", 0);
+        SharedPreferences prefs = c.getSharedPreferences("opensubtitles_credentials", 0);
         username = prefs.getString(OpenSubtitlesCredentialsDialog.OPENSUBTITLES_USERNAME, "");
         password = prefs.getString(OpenSubtitlesCredentialsDialog.OPENSUBTITLES_PASSWORD, "");
-        target.addOnAttachStateChangeListener(new android.view.View.OnAttachStateChangeListener() {
-            public void onViewAttachedToWindow(android.view.View v) {
+        target.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            public void onViewAttachedToWindow(View v) {
             }
-            public void onViewDetachedFromWindow(android.view.View v) {
+            public void onViewDetachedFromWindow(View v) {
                 generation++;
                 if (work != null)
                     work.cancel(true);
@@ -80,7 +83,7 @@ final class InlineOpenSubtitles {
 
     private void focus(String tag) {
         target.post(() -> {
-            android.view.View view = target.findViewWithTag(tag);
+            View view = target.findViewWithTag(tag);
             if (view != null)
                 view.requestFocus();
         });
@@ -101,7 +104,7 @@ final class InlineOpenSubtitles {
             try {
                 valid = OpenSubtitlesApiHelper.login(
                     context.getString(com.archos.mediacenter.video.R.string.opensubtitles_api_key), user, secret);
-            } catch (java.io.IOException failure) {
+            } catch (IOException failure) {
                 /* Never retain exception bodies or credential-bearing URLs. */
             }
             final boolean accepted = valid;
