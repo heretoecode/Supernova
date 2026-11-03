@@ -13,6 +13,7 @@ import java.util.*;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import java.util.function.Function;
 
+/** Displays Settings dialogs for list, multiple-choice and text preferences. */
 final class PreviewPreferenceDialogs {
     static boolean show(PreferenceFragmentCompat f, Preference p) {
         if (p instanceof ListPreference) {
