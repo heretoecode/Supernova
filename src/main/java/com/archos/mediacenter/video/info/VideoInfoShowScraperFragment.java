@@ -76,6 +76,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Searches TV show metadata and reports search and save progress. */
 public class VideoInfoShowScraperFragment extends Fragment implements
         OnItemClickListener, OnClickListener, OnEditorActionListener,
         Handler.Callback {
