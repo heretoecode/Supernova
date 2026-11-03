@@ -4,9 +4,13 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.*;
 import android.graphics.drawable.*;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.CharacterStyle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -125,12 +129,12 @@ public final class SupernovaStyle {
             // be white on white when focused, so the state-following colours are restored.
             if (owner instanceof TextView)
                 keepContentReadable((TextView)owner);
-            if (owner instanceof android.view.ViewGroup) {
+            if (owner instanceof ViewGroup) {
                 boolean boxed = false;
                 for (int s : state)
                     if (s == android.R.attr.state_focused || s == android.R.attr.state_pressed)
                         boxed = true;
-                refreshContent((android.view.ViewGroup)owner, boxed);
+                refreshContent((ViewGroup)owner, boxed);
             }
             return changed;
         }
@@ -143,7 +147,7 @@ public final class SupernovaStyle {
             text.setTextColor(secondary ? secondaryContent() : buttonContent());
         }
 
-        private static void refreshContent(android.view.ViewGroup group, boolean boxed) {
+        private static void refreshContent(ViewGroup group, boolean boxed) {
             for (int i = 0; i < group.getChildCount(); i++) {
                 View child = group.getChildAt(i);
                 if (Boolean.TRUE.equals(child.getTag(com.archos.mediacenter.video.R.id.supernova_group_label))) {
@@ -152,8 +156,8 @@ public final class SupernovaStyle {
                     if (child instanceof TextView)
                         keepContentReadable((TextView)child);
                     child.refreshDrawableState();
-                    if (child instanceof android.view.ViewGroup)
-                        refreshContent((android.view.ViewGroup)child, boxed);
+                    if (child instanceof ViewGroup)
+                        refreshContent((ViewGroup)child, boxed);
                 }
             }
         }
@@ -216,17 +220,17 @@ public final class SupernovaStyle {
      * (e.g. the playback HUD's Settings and play/pause). The group shows the box; the focused icon and
      * the labels turn black on the white focus box. The group must take its state from its children.
      */
-    public static void applyButtonGroup(android.view.ViewGroup group, Surface surface) {
+    public static void applyButtonGroup(ViewGroup group, Surface surface) {
         group.setAddStatesFromChildren(true);
         group.setBackground(button(group.getContext(), surface));
         for (int i = 0; i < group.getChildCount(); i++) {
             View child = group.getChildAt(i);
-            if (child instanceof android.widget.ImageView) {
+            if (child instanceof ImageView) {
                 child.setBackgroundColor(Color.TRANSPARENT);
-                ((android.widget.ImageView)child).setImageTintList(buttonContent());
-                Drawable d = ((android.widget.ImageView)child).getDrawable();
+                ((ImageView)child).setImageTintList(buttonContent());
+                Drawable d = ((ImageView)child).getDrawable();
                 if (isMonochromeIcon(d))
-                    ((android.widget.ImageView)child).setImageDrawable(new StateIcon(d));
+                    ((ImageView)child).setImageDrawable(new StateIcon(d));
             } else if (child instanceof TextView && !child.isFocusable()) {
                 // Not duplicateParentState: the group merges its children's states, so a label copying the
                 // group's state would recurse. ButtonStates marks group labels activated instead.
@@ -251,14 +255,14 @@ public final class SupernovaStyle {
                 Boolean.TRUE.equals(text.getTag(com.archos.mediacenter.video.R.id.supernova_secondary_text));
             text.setTextColor(secondary ? secondaryContent() : buttonContent());
             tintIcons(text);
-        } else if (view instanceof android.widget.ImageView) {
-            android.widget.ImageView image = (android.widget.ImageView)view;
+        } else if (view instanceof ImageView) {
+            ImageView image = (ImageView)view;
             Drawable d = image.getDrawable();
             if (isMonochromeIcon(d))
                 image.setImageDrawable(new StateIcon(d));
         }
-        if (view instanceof android.view.ViewGroup) {
-            android.view.ViewGroup group = (android.view.ViewGroup)view;
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup)view;
             for (int i = 0; i < group.getChildCount(); i++)
                 applyContent(group.getChildAt(i), false);
         }
@@ -269,9 +273,9 @@ public final class SupernovaStyle {
      * text currently has (white at rest, black on focus) at 72% strength, instead of a fixed grey that
      * would vanish on the white focus box.
      */
-    public static final class FadedSpan extends android.text.style.CharacterStyle {
+    public static final class FadedSpan extends CharacterStyle {
         @Override
-        public void updateDrawState(android.text.TextPaint paint) {
+        public void updateDrawState(TextPaint paint) {
             paint.setColor((paint.getColor() & 0x00FFFFFF) | 0xB8000000);
         }
     }
