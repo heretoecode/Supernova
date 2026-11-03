@@ -46,13 +46,17 @@ public class Supernova139SharedCardMetadataTest {
         assertEquals(0, home.votes);
         assertEquals(0, details.votes);
         assertTrue(home.technical.isEmpty());
+        assertTrue("0.154: no format badges on either hero", details.technical.isEmpty());
         assertEquals("", home.context);
-        assertEquals(full.technical, details.technical);
-        assertEquals("2h", details.context);
+        assertEquals("2024 · 2h", details.year);
         assertEquals(4, PreviewGenres.parse(full.genres).size());
         assertEquals(123456, full.votes);
         assertEquals(1, full.technical.size());
-        assertEquals("15 · 2024 · Action, Adventure, Drama · TMDB 8.2/10", SharedMetadata.primary(home).toString());
+        // 0.154: no age rating and no score on the hero cards; Details adds the runtime next to the year.
+        assertEquals("2024 · Action, Adventure, Drama", SharedMetadata.primary(home).toString());
+        assertEquals("2024 · 2h · Action, Adventure, Drama", SharedMetadata.primary(details).toString());
+        assertEquals(1, full.technical.size());
+        assertEquals("15", full.certificate);
     }
 
     @Test
@@ -73,7 +77,8 @@ public class Supernova139SharedCardMetadataTest {
             PreviewPagesTest.layout(page);
             TextView meta = ReflectionHelpers.getField(page, "meta");
             String header = meta.getText().toString();
-            assertTrue(header.contains("TMDB 8.2/10"));
+            assertFalse("0.154: scores stay in the Details tab, not the hero", header.contains("TMDB"));
+            assertTrue(header.startsWith("2024 · 2h"));
             assertFalse(header.contains("votes"));
             assertFalse(header.contains("Fantasy"));
             assertEquals(1, meta.getMaxLines());

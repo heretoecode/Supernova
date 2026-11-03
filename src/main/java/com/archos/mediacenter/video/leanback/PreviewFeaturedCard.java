@@ -45,6 +45,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         card.setElevation(dp(8));
         addView(card, new LayoutParams(-1, -1, Gravity.CENTER));
         card.addView(art(c, entry), new LayoutParams(-1, -1));
+        card.addTextScrim(); // same readability shade as the Details hero
 
         LinearLayout copy = new LinearLayout(c);
         copy.setOrientation(LinearLayout.VERTICAL);
@@ -84,14 +85,17 @@ final class PreviewFeaturedCard extends FrameLayout {
             plot = tagline;
         if (plot == null)
             plot = "";
+        boolean hasTagline = tagline != null && !tagline.trim().isEmpty();
         TextView synopsis = text(plot, 16);
-        synopsis.setSingleLine(true);
+        // Tagline on one line; without one, the synopsis on two (owner, 3 Nov 2026).
+        synopsis.setMaxLines(hasTagline ? 1 : 2);
+        synopsis.setLineSpacing(dp(2), 1);
         if (plot.trim().isEmpty())
             synopsis.setVisibility(GONE);
         synopsis.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-        synopsis.setShadowLayer(dp(2), 0, dp(1), Color.BLACK);
+        synopsis.setShadowLayer(SharedMetadata.heroShadow(c), 0, dp(1), 0xCC000000);
         synopsis.setTag("semantic:featured.synopsis");
-        LinearLayout.LayoutParams synopsisSize = new LinearLayout.LayoutParams(-1, dp(26));
+        LinearLayout.LayoutParams synopsisSize = new LinearLayout.LayoutParams(-1, -2);
         synopsisSize.topMargin = dp(12);
         copy.addView(synopsis, synopsisSize);
         copy.addView(new View(c), new LinearLayout.LayoutParams(1, 0, 1));

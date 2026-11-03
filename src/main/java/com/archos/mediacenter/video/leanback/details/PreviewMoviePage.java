@@ -72,7 +72,7 @@ public final class PreviewMoviePage extends ScrollView {
     private int versionCount;
     private final List<PreviewEpisodeRow> episodeRows = new ArrayList<>();
     private final List<PreviewLandscapeCard> landscapeCards = new ArrayList<>(), extraCards = new ArrayList<>();
-    private final TextView title, meta, plot, play, trailer, context, moreButton, matchMetadata;
+    private final TextView title, meta, plot, heroLine, play, trailer, context, moreButton, matchMetadata;
     private final LinearLayout pills;
     private final LinearLayout providerActions;
     private TextView versions;
@@ -212,16 +212,32 @@ public final class PreviewMoviePage extends ScrollView {
         pills = new LinearLayout(c);
         pills.setVisibility(GONE);
         cardCopy.addView(pills);
+        // The full synopsis feeds the Details tab; the card itself shows the hero line (tagline, else a
+        // two-line synopsis), the same as the Home hero (owner, 3 Nov 2026).
         plot = text("", 14);
-        plot.setMaxLines(4);
-        plot.setLineSpacing(dp(2), 1);
-        plot.setEllipsize(TextUtils.TruncateAt.END);
+        plot.addTextChangedListener(new android.text.TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int a, int b, int d) {
+            }
+
+            public void onTextChanged(CharSequence s, int a, int b, int d) {
+            }
+
+            public void afterTextChanged(android.text.Editable e) {
+                updateHeroLine();
+            }
+        });
+        heroLine = text("", 14);
+        heroLine.setTag("details.hero.line");
+        heroLine.setMaxLines(2);
+        heroLine.setLineSpacing(dp(2), 1);
+        heroLine.setEllipsize(TextUtils.TruncateAt.END);
+        heroLine.setShadowLayer(SharedMetadata.heroShadow(c), 0, dp(1), 0xCC000000);
         LinearLayout.LayoutParams plotSize = new LinearLayout.LayoutParams(
             Math.min(dp(440), getResources().getDisplayMetrics().widthPixels - dp(84)), dp(76));
         plotSize.topMargin = dp(8);
         View synopsisSpace = new View(c);
         cardCopy.addView(synopsisSpace, new LinearLayout.LayoutParams(1, 0, 1));
-        cardCopy.addView(plot, plotSize);
+        cardCopy.addView(heroLine, plotSize);
         matchMetadata = button("Match Metadata", () -> {
             Action match = matchingAction();
             if (match != null)
@@ -349,9 +365,8 @@ public final class PreviewMoviePage extends ScrollView {
             meta.setTextSize(16 * TvLayout.scale(getContext()));
             meta.setMaxLines(1);
             meta.setPadding(0, dp(10), 0, dp(5));
-            plot.setMaxLines(compact ? 1 : cardHeight < dp(330) ? 2 : 4);
-            plot.getLayoutParams().height = -2;
-            LinearLayout.LayoutParams synopsis = (LinearLayout.LayoutParams)plot.getLayoutParams();
+            heroLine.getLayoutParams().height = -2;
+            LinearLayout.LayoutParams synopsis = (LinearLayout.LayoutParams)heroLine.getLayoutParams();
             synopsis.topMargin = dp(compact ? 4 : 8);
             View actions = detailsCard.findViewWithTag("details.actions");
             actions.setPadding(0, dp(compact ? 3 : 12), 0, dp(compact ? 3 : 10));
@@ -959,7 +974,20 @@ public final class PreviewMoviePage extends ScrollView {
         renderDetails("information_refresh");
     }
 
+    /** Tagline when TMDb has one (one line), otherwise the synopsis in two lines (one on a compact card). */
+    private void updateHeroLine() {
+        if (heroLine == null)
+            return;
+        JSONObject data = enrichment != null && enrichment.details != null ? enrichment.details : remoteDetails;
+        String tagline = data == null ? "" : data.optString("tagline", "").trim();
+        boolean useTagline = !tagline.isEmpty() && seasonNumber < 0 && !(movie instanceof Episode);
+        heroLine.setText(useTagline ? tagline : plot.getText());
+        heroLine.setMaxLines(useTagline || compactCard ? 1 : 2);
+        heroLine.setVisibility(heroLine.length() == 0 ? GONE : VISIBLE);
+    }
+
     private void renderDetails(String reason) {
+        updateHeroLine();
         int previous = details.getChildCount();
         View focused = details.findFocus();
         Object focusKey = focused == null ? null : focused.getTag();
@@ -1346,7 +1374,7 @@ public final class PreviewMoviePage extends ScrollView {
             summarySignature = signature;
             SharedMetadata.bindCard(meta, pills, summary, false);
         }
-        plot.setVisibility(plot.length() == 0 ? GONE : VISIBLE);
+        updateHeroLine();
     }
 
     private static String jsonNames(JSONArray values, String key) {

@@ -110,17 +110,23 @@ public final class SharedMetadata {
         badges.setVisibility(badges.getChildCount() == 0 ? View.GONE : View.VISIBLE);
     }
 
-    /** Card policy is shared by Home and Details; the lower facts retain their full data. */
+    /**
+     * Hero card policy, shared by Home and Details (owner, 3 Nov 2026): {@code Year · Genres}, with Details adding
+     * the runtime (films) or seasons (series) next to the year. No age rating, no score and no format badges on
+     * either card; those stay in the Details tab (and the rating in the playback overlay). The lower facts
+     * retain their full data.
+     */
     public static Facts cardFacts(Facts original, boolean home) {
         Facts facts = original.copy();
         facts.votes = 0;
+        facts.rating = 0;
+        facts.certificate = "";
+        facts.technical.clear();
         Set<String> genres = PreviewGenres.parse(facts.genres);
         List<String> compact = new ArrayList<>(genres);
         facts.genres = android.text.TextUtils.join(", ", compact.subList(0, Math.min(3, compact.size())));
-        if (home) {
-            facts.technical.clear();
-            facts.context = "";
-        }
+        facts.year = home ? facts.year : join(facts.year, facts.context);
+        facts.context = "";
         return facts;
     }
 
@@ -129,6 +135,8 @@ public final class SharedMetadata {
         primary.setTextSize(16 * TvLayout.scale(primary.getContext()));
         primary.setSingleLine(true);
         bind(primary, badges, facts, 5);
+        // Readable on bright artwork: a soft shadow under the hero text (approved option 2).
+        primary.setShadowLayer(heroShadow(primary.getContext()), 0, dp(primary.getContext(), 1), 0xCC000000);
     }
 
     public static Facts entry(Context c, Entry entry, boolean home) {
@@ -280,6 +288,11 @@ public final class SharedMetadata {
             if (value != null && !value.isEmpty())
                 present.add(value);
         return TextUtils.join(" · ", present);
+    }
+
+    /** The approved soft shadow radius for text on hero artwork. */
+    public static float heroShadow(Context c) {
+        return 6 * c.getResources().getDisplayMetrics().density;
     }
 
     private static int dp(Context c, int n) {
