@@ -11,6 +11,7 @@ import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks local search, title logos, safe audio summaries and preservation of explicit scan settings. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class Preview411Test {
