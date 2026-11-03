@@ -21,6 +21,7 @@ import androidx.loader.content.CursorLoader;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.loader.MoviesLoader;
 
+/** Loads movie covers for the cover browser. */
 public class AllMoviesProvider extends VideoSingleCursorCoverProvider {
 
 	private final static String TAG = "AllMoviesProvider";
