@@ -1,17 +1,14 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /** Scoped 0.139 Menu Foundation. Only approved Customise Home/Backup consumers opt in. */
@@ -48,7 +45,7 @@ public final class MenuFoundation {
     public static TextView control(Context context, String label, String icon, Runnable action) {
         TextView text = text(context, label, 15);
         text.setSingleLine(true);
-        text.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        text.setEllipsize(TextUtils.TruncateAt.END);
         text.setGravity(Gravity.CENTER_VERTICAL);
         text.setPadding(dp(context, 12), dp(context, 10), dp(context, 12), dp(context, 10));
         text.setMinimumHeight(dp(context, 44));
@@ -77,7 +74,7 @@ public final class MenuFoundation {
     }
 
     /** Tracks the window boundary, so a covered parent never displays a second focus outline. */
-    public static class WindowPanel extends android.widget.LinearLayout {
+    public static class WindowPanel extends LinearLayout {
         boolean active = true;
 
         public WindowPanel(Context context) {
@@ -93,9 +90,9 @@ public final class MenuFoundation {
 
         private static void invalidateChildren(View view) {
             view.invalidate();
-            if (view instanceof android.view.ViewGroup)
-                for (int i = 0; i < ((android.view.ViewGroup)view).getChildCount(); i++)
-                    invalidateChildren(((android.view.ViewGroup)view).getChildAt(i));
+            if (view instanceof ViewGroup)
+                for (int i = 0; i < ((ViewGroup)view).getChildCount(); i++)
+                    invalidateChildren(((ViewGroup)view).getChildAt(i));
         }
     }
 }
