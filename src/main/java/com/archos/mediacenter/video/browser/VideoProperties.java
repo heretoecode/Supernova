@@ -19,6 +19,7 @@ package com.archos.mediacenter.video.browser;
   * This class provides through a file path an access to some media info
   * retrieved from the database.
   */
+/** Stores video metadata and playback state for browser presentation. */
 public class VideoProperties {
 
     public boolean bookmark;
