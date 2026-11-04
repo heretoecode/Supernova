@@ -339,6 +339,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   **revised** to be more distinct — Adventure (compass; was a near-copy of Action & Adventure's mountains), Action &
   Adventure (mountain with flag), Thriller (pulse line; the lightning bolt read as "electric"), Soap (heart in a speech
   bubble; the bubbles read as washing-up); **new** — TV Movie (screen with play), and 11 genres that other sources
-  (Trakt, IMDb) use: Anime, Biography, Disaster, Game Show, Holiday, Martial Arts, Mini-series, Musical, Short, Sport,
+  (Trakt, IMDb) use: Anime, Biography, Disaster (volcano; first drawn as a tornado, which did not read), Game Show, Holiday, Martial Arts, Mini-series, Musical, Short, Sport,
   Superhero. The picker in `03` uses the proposed set.
 - **Status:** awaiting the owner's feedback on `01`–`06`.
