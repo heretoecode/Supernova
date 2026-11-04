@@ -233,9 +233,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   prefix title matches first; typo tolerance on titles only; people/studios only on whole words; file paths only
   when nothing else matches; results grouped and capped per group.
 - **Proposed (`docs/design/proposals/search/01`–`02`):** left — a charcoal panel with a large search field, a row of
-  Voice (Shield remote mic), Space, Delete, Clear, and an A–Z / 0–9 grid of large, even keys (six across, easier with
-  a remote than QWERTY). Right — before typing: recent searches and three short "what you can search" lines; while
+  Voice (Shield remote mic), Space, Delete, Clear, and large, even keys (first shown as an A–Z grid; owner chose QWERTY). Right — before typing: recent searches and three short "what you can search" lines; while
   typing: results grouped Films · TV shows · Episodes · People, each two lines (title + year; type · runtime ·
   resolution only when known · genres), and a blue "Matched …" line when the match was not the title. No file names,
   certificates or "unavailable".
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** keep a traditional QWERTY layout. Revised `01`–`02`: number row, QWERTY rows with the usual
+  half-key stagger, Delete at the end of the Z row, and a bottom row of Voice · Space · Clear; every letter key the same
+  size; keyboard panel widened to fit.
+- **Status:** awaiting the owner's approval of the revised `01`–`02` — then awaiting go-ahead to code.
