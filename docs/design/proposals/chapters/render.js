@@ -1,40 +1,62 @@
-// Proposal (0.156): Chapters list inside the Playback Settings side panel. Run: FONT_DIR=<roboto woff2 dir> node render.js
+// Proposal (0.156, owner 4 Nov 2026): chapters built into the playback progress bar, with a chapter strip below it.
+// Run: FONT_DIR=<roboto woff2 dir> node render.js
 const fs = require('fs'), path = require('path'), { chromium } = require('playwright');
 const out = __dirname, fontDir = process.env.FONT_DIR;
 const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/woff2;base64,${fs.readFileSync(path.join(fontDir, `roboto-latin-${w}-normal.woff2`)).toString('base64')}) format('woff2')}`;
-const P = { cc: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 10.2a2.2 2.2 0 1 0 0 3.6M16.5 10.2a2.2 2.2 0 1 0 0 3.6"/>',
-  audio: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6"/>', play: '<path d="M8 5v14l11-7z"/>',
-  chap: '<path d="M4 6h16M4 12h16M4 18h10"/><path d="M18 16l3 2-3 2z"/>', speed: '<path d="M5 18a8 8 0 1 1 14 0"/><path d="M12 13l4-4"/>',
-  ratio: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10v4M17 10v4"/>', bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>', moon: '<path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5z"/>',
-  chev: '<path d="M9 6l6 6-6 6"/>', back: '<path d="M15 6l-6 6 6 6"/>', now: '<path d="M8 5v14l11-7z"/>' };
-const ic = (k, s = 28) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
-const tabs = `<div class="tabs"><div class="tab">Audio</div><div class="tab">Subtitles</div><div class="tab">Video</div><div class="tab open">More</div></div>`;
-const row = (k, t, v, f) => `<div class="row${f ? ' focus' : ''}">${ic(k)}<span class="lbl">${t}</span><span class="val">${v}</span></div>`;
-const chapters = [['Chapter 1', '0:00', 0], ['Chapter 2', '2:14', 1], ['Chapter 3', '11:40', 0], ['Chapter 4', '22:05', 0], ['Chapter 5', '33:48', 0], ['Chapter 6', '44:12', 0]];
-const scene = `<div class="scene"></div><div class="shade"></div>`;
-const playbackTab = `<div class="panel">${tabs}<div class="gap"></div>` +
-  row('chap', 'Chapters', `Chapter 2 of 6 ${ic('chev', 22)}`, true) + `<div class="h"><span>Playback</span><i></i></div>` + row('speed', 'Playback Speed', '1.0×') + row('play', 'Play mode', `${ic('chev', 22)}`) + row('bell', 'Notifications', `${ic('chev', 22)}`) + `</div>`;
-const list = `<div class="panel">${tabs}<div class="h back">${ic('back', 22)}<span>Chapters</span><i></i></div>` +
-  chapters.map(([n, t, cur], i) => `<div class="crow${i === 2 ? ' focus' : ''}${cur ? ' cur' : ''}"><span class="cn">${cur ? ic('now', 20) : ''}</span><span class="lbl">${n}</span><span class="ct">${t}</span></div>`).join('') +
-  `</div>`;
-const hud = `<div class="hud"><div class="title">Dark Matter · S2 E10</div><div class="bar"><div class="fill" style="width:9%"></div>${[2.14, 11.4, 22.05, 33.8, 44.2].map(m => `<i style="left:${m / 50 * 100}%"></i>`).join('')}</div><div class="times"><span>4:32</span><span>50:06</span></div></div>`;
-const shots = [['01-playback-tab.png', playbackTab, 'More tab: a Chapters row at the top, only when the video has chapters; it shows where you are'],
-  ['02-chapter-list.png', list, 'OK opens the list inside the panel: name and start time, the current chapter marked, OK jumps']];
-const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#F4F6FB;background:#000;position:relative}
-.scene{position:absolute;inset:0;background:radial-gradient(ellipse 40% 50% at 35% 45%,rgba(120,150,190,.55),transparent 70%),linear-gradient(120deg,#1c2a3a 0%,#0d141c 55%,#05070a 100%)}
-.shade{position:absolute;inset:0;background:linear-gradient(270deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,0) 45%)}
-.hud{position:absolute;left:80px;right:740px;bottom:70px}.hud .title{font-size:30px;font-weight:500;margin-bottom:18px}
-.bar{position:relative;height:6px;border-radius:3px;background:rgba(255,255,255,.3)}.fill{height:100%;border-radius:3px;background:#2fb7d8}.bar i{position:absolute;top:-3px;width:3px;height:12px;background:#fff;border-radius:1px}
-.times{display:flex;justify-content:space-between;font-size:22px;margin-top:10px;color:#dfe5f1}
-.panel{position:absolute;right:48px;top:48px;width:640px;border-radius:26px;padding:26px 26px 22px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22)}
-.tabs{display:flex;gap:16px;margin-bottom:6px}.tab{flex:1;height:72px;padding:0 6px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:500;border-radius:24px;background:#2a2d33}.tab.open{background:#3a3e46}
-.h{display:flex;align-items:center;gap:14px;font-size:20px;margin:18px 6px 4px;color:#b7bfcc}.h i{flex:1;height:1px;background:rgba(255,255,255,.18)}.h.back svg{color:#b7bfcc}
-.row,.crow{display:flex;align-items:center;gap:16px;height:74px;border-radius:24px;padding:0 16px;font-size:24px;font-weight:500}.focus{box-shadow:inset 0 0 0 3px #fff}
-.lbl{flex:1;white-space:nowrap}.val{display:flex;align-items:center;gap:6px;font-weight:400;font-size:23px;color:#dfe5f1}.val svg{color:#8f98a8}
-.cn{width:24px;display:flex;color:#5aa9ff}.crow.cur .lbl{color:#5aa9ff}.ct{font-weight:400;font-size:23px;color:#c9d3e6;font-variant-numeric:tabular-nums}
-.gap{height:14px}.label{position:absolute;right:48px;bottom:10px;font-size:18px;color:#c9d3e6}`;
+const P = { skip: '<path d="M5 5l9 7-9 7z" fill="currentColor"/><path d="M18 5v14"/>', pause: '<path d="M8 5v14M16 5v14"/>',
+  gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>' };
+const ic = (k, s = 30) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
+// A stand-in film frame (no real artwork): dusky street scene in gradients.
+const frame = `<div class="video"><i class="sky"></i><i class="glow"></i><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="road"></i><i class="vig"></i></div>`;
+const ch = [['Chapter 1', 0, '0:00'], ['Chapter 2', 2.23, '2:14'], ['Chapter 3', 11.67, '11:40'], ['Chapter 4', 22.08, '22:05'], ['Chapter 5', 33.8, '33:48'], ['Chapter 6', 44.2, '44:12']];
+const LEN = 50.1, NOW = 4.53;
+const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch[i + 1][1] : LEN; const w = (e - s) / LEN * 100, l = s / LEN * 100;
+  const played = Math.max(0, Math.min(1, (NOW - s) / (e - s)));
+  return `<div class="seg${focus === i ? ' hi' : ''}" style="left:${l}%;width:calc(${w}% - 6px)"><b style="width:${played * 100}%"></b></div>`; }).join('');
+const hud = (focus, strip) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
+  <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
+  ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 2</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
+  (strip ? `<div class="strip">${ch.map(([n, s, t], i) => `<div class="cc${i === focus ? ' f' : ''}${i === 1 ? ' now' : ''}"><b>${n}</b><span>${i === 1 ? 'Playing · ' : ''}${t}</span></div>`).join('')}</div>` : '');
+const shots = [
+  ['01-bar-with-chapters.png', frame + `<div class="shade"></div>` + hud(-1, false), 'The progress bar is split at each chapter; the time bubble names the chapter you are in'],
+  ['02-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, true), 'Down from the bar opens the chapters below it; Left/Right picks one (its part of the bar lights up), OK jumps there, Up or Back closes'],
+];
+const css = `${font(400)}${font(500)}${font(700)}*{box-sizing:border-box;margin:0}
+body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:#000}
+.video{position:absolute;inset:0;overflow:hidden}.video i{position:absolute;display:block}
+.sky{inset:0;background:linear-gradient(180deg,#1b2440 0%,#3b3550 38%,#a5654a 62%,#2a1d1c 100%)}
+.glow{left:52%;top:46%;width:520px;height:260px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,190,120,.55),rgba(255,190,120,0));transform:translate(-50%,-50%)}
+.b1{left:0;bottom:22%;width:34%;height:52%;background:#120f14}.b2{right:0;bottom:22%;width:30%;height:60%;background:#0f0c11}
+.b3{left:30%;bottom:22%;width:12%;height:30%;background:#1a1418}.road{left:0;right:0;bottom:0;height:22%;background:linear-gradient(180deg,#2a2224,#0c0a0b)}
+.vig{inset:0;background:radial-gradient(ellipse 80% 70% at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.6))}
+.shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,0) 45%)}
+.skip{position:absolute;height:120px;padding:0 52px 0 40px;border-radius:35px;background:#F4F6FB;color:#0B0D12;font-size:44px;font-weight:500;
+  display:flex;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.45);overflow:hidden}
+.skip span{display:flex;align-items:center;gap:20px}
+.skip .cd{position:absolute;left:28px;right:28px;bottom:14px;height:7px;border-radius:3px;background:rgba(11,13,18,.15)}.skip .cd b{display:block;height:100%;border-radius:3px;background:#0B0D12}
+.skip.a{padding-bottom:23px}.skip.a .cd{bottom:16px}
+.skip.b{background:#AEB4BF}.skip.b .fill{position:absolute;left:0;top:0;bottom:0;background:#F4F6FB;display:block}.skip.b span{position:relative}
+.skip.br{right:96px;bottom:110px}.skip.br.up{bottom:270px}.skip.bl{left:96px;bottom:110px}
+.htitle{position:absolute;left:80px;top:690px;font-size:60px;font-weight:700}.hsub{position:absolute;left:84px;top:768px;font-size:26px}
+.hud{position:absolute;left:70px;right:70px;bottom:90px;height:80px;display:flex;align-items:center;gap:26px}
+.hb{height:72px;min-width:72px;padding:0 20px;border-radius:22px;background:rgba(22,24,28,.62);border:2px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;gap:10px;font-size:22px;font-weight:500}
+.bar{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.22);position:relative}
+.buf{position:absolute;left:0;top:0;bottom:0;width:20%;border-radius:5px;background:rgba(255,255,255,.4)}
+.played{position:absolute;left:0;top:0;bottom:0;width:2.4%;border-radius:5px;background:#fff}
+.thumb{position:absolute;left:2.4%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.25)}
+.bubble{position:absolute;left:2.4%;bottom:40px;transform:translateX(-30%);background:rgba(22,24,28,.92);border:2px solid rgba(255,255,255,.22);border-radius:16px;padding:10px 20px;text-align:center}
+.bubble b{display:block;font-size:30px;font-weight:500}.bubble span{display:block;font-size:19px;color:#c9d3e6;margin-top:2px}
+.seg{position:absolute;top:0;bottom:0;border-radius:5px;background:rgba(255,255,255,.28);overflow:hidden}.seg b{display:block;height:100%;background:#fff}.seg.hi{background:rgba(255,255,255,.6);top:-4px;bottom:-4px}
+.bar{background:none!important}.thumb.off{display:none}
+.hud.up{bottom:230px}.htitle.up{top:550px}.hsub.up{top:628px}.shade.tall{background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,0) 60%)}
+.strip{position:absolute;left:70px;right:70px;bottom:70px;display:flex;gap:18px}
+.cc{flex:1;height:110px;border-radius:22px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18);padding:18px 22px;display:flex;flex-direction:column;justify-content:center}
+.cc b{font-size:26px;font-weight:500}.cc span{font-size:21px;color:#c9d3e6;margin-top:6px}.cc.now span{color:#5aa9ff}
+.cc.f{background:#F4F6FB;border-color:#F4F6FB}.cc.f b{color:#0B0D12}.cc.f span{color:#3a3f48}
+.label{position:absolute;left:56px;top:28px;font-size:20px;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:10px}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
-    await t.setContent(`<html><head><style>${css}</style></head><body>${scene}${hud}${body}<div class="label">${label}</div></body></html>`, { waitUntil: 'load' });
-    await t.evaluate(() => document.fonts.ready); await t.screenshot({ path: path.join(out, f) }); }
+    await t.setContent(`<html><head><style>${css}</style></head><body>${body}<div class="label">${label}</div></body></html>`, { waitUntil: 'load' });
+    await t.evaluate(() => document.fonts.ready);
+    await t.screenshot({ path: path.join(out, f) }); }
   await b.close(); })();
