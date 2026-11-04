@@ -361,4 +361,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   the row — Left/Right changes them and saves straight away: Default speed 0.75× · 1.0× · 1.25× · 1.5× · 2.0×;
   Still watching Off · 2 · 3 · 5 episodes; Sleep timer Off · 30 · 60 · 90 min · End of episode. Rule for all of
   Settings: up to ~5 short options inline; longer lists (languages, countries, genres) open the side-panel list.
-- **Status:** awaiting the owner's look at `03`–`05` — then go-ahead to code.
+- **Status:** page pattern approved by the owner on 4 Nov 2026 (`03`–`05`: single panel, separate tab buttons, inline choices for up to ~5 options); the review's content proposals (removals, renames, Accent & Colour) still await the owner's reaction.
