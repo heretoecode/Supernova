@@ -174,6 +174,15 @@ bounds, secure/tunneled/software/alias/encoder exclusion and stable vendor order
 these are written but not run. Sequential apply, exact tree comparison and all
 five changed/new Java syntax checks passed. No Gradle or production app edit.
 
+`video-supernova156-03-padding-73df6e4d.patch` completes the non-UI app subset:
+JNI wrapper/export signature, independent preference key/state, style reset and
+restore, and engine replay. Eight new Robolectric tests are supplied, unrun.
+All three changed/new Java files parsed; ordered clean apply and complete app
+draft tree comparison passed. The app manifest `video-supernova156.lock.draft.json`
+records the three measured patch hashes/order, native requirement and fixture
+tree. Four ranking JUnit tests passed; the 18 Android tests across the three app
+drafts require Claude's Gradle run after applying the drafts.
+
 ## Box padding end to end
 
 Native `461685e0faeaeb0ba51cde42a141fa62f5447119` adds `SUB_USER_STYLE.padding` (default 2) in Include/sub_style.h; `sub_style_set_padding` in Source/sub_style.c locks, updates the integer value and style serial. `Source/sub_format_ssa.c:sync_styles` maps it to libass Outline for mode 1 (per-line box) and Shadow for mode 2 (unified box). Outline/shadow widths remain real glyph outline/shadow settings. `Source/jni_sub_engine.c:nativeSetPadding` resolves engine, updates style, and calls sub_engine_force_wake; matching exported declaration is in Include/jni_sub_engine.h. New native wrappers must ship atomically with Java's call.
@@ -182,7 +191,7 @@ Port only the non-UI parts of aos-Video `73df6e4d`. `b777104f` changes a Setting
 range and is excluded from this engine plumbing draft:
 
 1. `player/SubtitleEngine.java` alongside setOutlineWidth/setShadowWidth (:504–505): nativeSetPadding declaration and null-handle-guarded setPadding calling redraw3DIfNeeded. Keep the existing native wake plus 3D paused redraw path; do not confuse View.setPadding with subtitle box padding.
-2. `player/SubtitleManager.java`: `KEY_PADDING = pref_play_subtitle_padding_key`, float storage/getter/setter, a Java fallback 2 without resource edits, include in style reset/restore (:238), and propagation when an engine is recreated. Preserve appearance for existing saved boxed backgrounds before separating widths: absent padding in mode 1 inherits the old outline width; mode 2 inherits old shadow width; floating/new defaults use 2. Confirm these meanings against the pre-update native `sync_styles` while drafting. Persist the independent value once and retain legacy zero; do not silently clamp it to a future UI minimum. Correct the stale “shadow hijacked” comment (:438).
+2. `player/SubtitleManager.java`: `KEY_PADDING = pref_play_subtitle_padding_key`, float storage/getter/setter, Java fallback 2 without resource edits, inclusion in style reset/restore (:238), and propagation when an engine is recreated. The delivered draft uses **key absence as the compatibility default**: line boxes inherit effective outline width, block boxes inherit shadow width, floating uses 2. This was confirmed against the actual old native `sync_styles` at :574–596. Compatibility follows later width/mode edits too, preserving both old modes and zero. An explicitly stored padding value becomes independent of widths; removing the key restores compatibility. Restore never writes preferences. This replaces the earlier one-time migration idea, which could preserve one active mode but change the other on the next toggle. Callers persist the new key like other float style keys; no new caller/control is added. Invalid non-finite/negative/out-of-native-int-range explicit input falls back to 2. The stale “shadow hijacked” comment is corrected.
 3. Do not add or modify a Settings control, preview, panel row, label or default resource. Claude/owner decide those separately. Test default/load/reset/migration and engine recreation without asserting a new screen appearance. Do not call the new JNI export on the old packaged engine; deliver as an unapplied draft if atomic engine/application installation is not yet available.
 
 Validation for the later implementation: preference default/load/reset/migration and model bounds; no outline/shadow changes on padding edits; preview/native parity for floating/per-line/unified backgrounds, SRT/ASS/PGS behavior; paused 2D and SBS/top-bottom 3D redraw; engine recreation; setting before/after a track exists; real JNI export/load smoke test and API-23 no missing-symbol failure. Do not call nativeSetPadding on the old packaged engine.
