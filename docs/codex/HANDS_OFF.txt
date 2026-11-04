@@ -1,23 +1,21 @@
-# Hands off while Claude builds 0.154 (owner, 2026-11-03). Never edit these, nor .github/, tools/, build.gradle,
-# settings.gradle, gradle.properties, or anything outside the job you are given. Paths are under src/main/java/com/archos/mediacenter/video/ unless shown.
+# Hands off while Claude builds 0.155 (owner, 2026-11-04). Never edit these, nor .github/, tools/, build.gradle,
+# settings.gradle, gradle.properties, or anything outside the job you are given.
+# Paths are under src/main/java/com/archos/mediacenter/video/ unless shown.
 leanback/filebrowsing/
-leanback/SupernovaStyle.java
+leanback/PreviewLibraryScan.java
+leanback/PreviewScanProgress.java
+leanback/PreviewNetworkScanning.java
+leanback/PreviewNetworkWorkspace.java
+leanback/LibraryHealthPanel.java
+leanback/LibraryHealth.java
+leanback/LibraryHealthActivity.java
+leanback/PreviewIcon.java
 leanback/LandingTile.java
+leanback/SupernovaStyle.java
 leanback/settings/SettingsWorkspace.java
-leanback/settings/PreviewSettings.java
-leanback/PreviewFeaturedCard.java
-leanback/PreviewFocusGlow.java
-leanback/CinematicCard.java
-leanback/SharedMetadata.java
-leanback/SidePanelKit.java
-leanback/EditPagePanel.java
-leanback/details/PreviewMoviePage.java
-leanback/network/ftp/FtpServerCredentialsDialog.java
-leanback/search/VideoSearchProvider.java
-utils/SubtitlesWizardCommon.java
-player/PlayerService.java
-player/PlaybackSubtitlePanel.java  (except toggle() and option() for DP-05)
+streaming/putio/
 assets/foundation/
 docs/0.154/
+docs/0.155/
 docs/design/
 design/
