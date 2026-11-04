@@ -341,4 +341,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   bubble; the bubbles read as washing-up); **new** — TV Movie (screen with play), and 11 genres that other sources
   (Trakt, IMDb) use: Anime, Biography, Disaster (volcano; first drawn as a tornado, which did not read), Game Show, Holiday, Martial Arts, Mini-series, Musical, Short, Sport,
   Superhero. The picker in `03` uses the proposed set.
-- **Status:** awaiting the owner's feedback on `01`–`06`.
+- **Status:** genre icon set approved by the owner on 4 Nov 2026 (`06`, Disaster as a volcano); Customise Home `01`–`04` side panel awaiting a final yes — then awaiting go-ahead to code.
