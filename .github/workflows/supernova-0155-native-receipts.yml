@@ -1,0 +1,27 @@
+name: Supernova 0.155 engine receipts (review)
+# Prints the receipts of the reviewed native run so Claude can pin the archive SHA-256 in the 0.155 build.
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/workflows/supernova-0155-native-receipts.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  receipts:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: supernova-0156-native-arm64-v8a
+          path: native
+          run-id: 41848351713
+          github-token: ${{ github.token }}
+      - name: Print receipts
+        run: |
+          cd native
+          find . -type f -printf '%s %p\n' | sort -k2
+          echo '--- SHA256SUMS'; cat SHA256SUMS
+          echo '--- recomputed'; sha256sum Supernova_0.156_native_arm64-v8a.tar.gz
+          echo '--- archive.json'; cat archive.json
+          echo '--- native-stack.json (head)'; head -c 4000 native-stack.json
