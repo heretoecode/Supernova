@@ -240,4 +240,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** keep a traditional QWERTY layout. Revised `01`–`02`: number row, QWERTY rows with the usual
   half-key stagger, Delete at the end of the Z row, and a bottom row of Voice · Space · Clear; every letter key the same
   size; keyboard panel widened to fit.
-- **Status:** awaiting the owner's approval of the revised `01`–`02` — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** the keyboard is app-wide (the same `PreviewKeyboard` is used for network credentials,
+  server addresses, renaming, etc.), so it needs symbols. Revised (`01`–`04`): letters page = number row, QWERTY with
+  `/` after L and `.` `@` after M, ⇧ Shift for capitals (shows ON, blue edge); bottom row `#+=` · Voice · Space ·
+  Delete · Clear. Symbols page (`#+=`) = `! # $ % & * ( ) - _ = + [ ] { } \ | ~ \` : ; , ? ' " < > ^`, ABC returns. `03` shows
+  it on a server address, `04` on a password.
+- **Status:** awaiting the owner's approval of `01`–`04` — then awaiting go-ahead to code.

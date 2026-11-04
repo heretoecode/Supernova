@@ -9,13 +9,17 @@ const P = { search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>
   tv: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/>', people: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.5 14.2A5 5 0 0 1 21 19"/>' };
 const ic = (k, s = 28) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
 const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</span><span>Movies</span><span>TV Shows</span><span>Documentaries</span><span class="sp"></span><span>Network &amp; Files</span><span class="on">${ic('search', 34)}</span><span class="clock">13:27</span></div>`;
-const rows = ['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+const LAYERS = {
+  abc: [['1','2','3','4','5','6','7','8','9','0'], ['q','w','e','r','t','y','u','i','o','p'], ['a','s','d','f','g','h','j','k','l','/'], ['⇧','z','x','c','v','b','n','m','.','@']],
+  sym: [['1','2','3','4','5','6','7','8','9','0'], ['!','#','$','%','&','*','(',')','-','_'], ['=','+','[',']','{','}','\\','|','~','`'], ['ABC',':',';',',','?','\'','"','<','>','^']],
+};
 const key = (l, focus, cls = '') => `<div class="key${cls}${focus === l ? ' f' : ''}">${l}</div>`;
-const kb = (text, focus) => `<div class="kpanel"><div class="field">${ic('search', 30)}<span class="${text ? 'typed' : 'ph'}">${text || 'Films, shows, episodes, people'}</span><i class="caret"></i></div>
+const kb = (text, focus, layer = 'abc', shift = false, label = '') => `<div class="kpanel">${label ? `<div class="flabel">${label}</div>` : ''}<div class="field">${label ? '' : ic('search', 30)}<span class="${text ? 'typed' : 'ph'}">${text || 'Films, shows, episodes, people'}</span><i class="caret"></i></div>
   <div class="kb">
-  ${rows.map((r, i) => `<div class="krow o${i}">${r.split('').map(l => key(l, focus)).join('')}${i === 3 ? `<div class="key wide${focus === 'Delete' ? ' f' : ''}">${ic('del', 30)}</div>` : ''}</div>`).join('')}
-  <div class="krow"><div class="key mid${focus === 'Voice' ? ' f' : ''}">${ic('mic', 28)}<span>Voice</span></div><div class="key space${focus === 'Space' ? ' f' : ''}">${ic('space', 28)}<span>Space</span></div><div class="key mid${focus === 'Clear' ? ' f' : ''}">${ic('clear', 26)}<span>Clear</span></div></div>
-  </div><div class="khint">Right from the keys goes to the results · Back closes Search</div></div>`;
+  ${LAYERS[layer].map((r, i) => `<div class="krow">${r.map(l => l === '⇧' ? `<div class="key shift${shift ? ' on' : ''}${focus === l ? ' f' : ''}">⇧<small>${shift ? 'ON' : ''}</small></div>`
+      : l === 'ABC' ? `<div class="key shift${focus === l ? ' f' : ''}">ABC</div>` : key(shift && /[a-z]/.test(l) ? l.toUpperCase() : l, focus)).join('')}</div>`).join('')}
+  <div class="krow"><div class="key mid${focus === 'sym' ? ' f' : ''}"><span>${layer === 'abc' ? '#+=' : 'ABC'}</span></div><div class="key mid${focus === 'Voice' ? ' f' : ''}">${ic('mic', 28)}</div><div class="key space${focus === 'Space' ? ' f' : ''}">${ic('space', 28)}<span>Space</span></div><div class="key mid${focus === 'Delete' ? ' f' : ''}">${ic('del', 30)}</div><div class="key mid${focus === 'Clear' ? ' f' : ''}"><span>Clear</span></div></div>
+  </div><div class="khint">${layer === 'abc' ? '/ . @ always on the letters page · #+= for every other symbol · ⇧ for capitals' : 'Symbols page · ABC goes back to letters'}</div></div>`;
 const empty = `<div class="right"><div class="sec">${ic('clock', 26)}Recent searches</div>
   <div class="chips">${['dune', 'mr robot', 'slow horses', 'kingdom', 'tulsa king'].map(c => `<span class="chip">${c}</span>`).join('')}</div>
   <div class="sec gap">What you can search</div>
@@ -31,6 +35,8 @@ const results = `<div class="right"><div class="count">5 results for “dune” 
   <div class="sec">${ic('people', 26)}People · 2</div>
   ${res('#6b5a4a', 'Denis Villeneuve', '', 'Director · 2 titles in your library', 'Matched: directed Dune, Dune: Part Two', false, true)}</div>`;
 const shots = [
+  ['03-keyboard-letters.png', kb('webdav.put.io/TV', '/', 'abc', false, 'Server address') + `<div class="ctx">The same keyboard is used everywhere — here, adding a network share</div>`, 'Letters page: number row, QWERTY, plus / . @ on the page; #+= opens all other symbols; Shift for capitals'],
+  ['04-keyboard-symbols.png', kb('MyP@ss_2026!', '!', 'sym', false, 'Password') + `<div class="ctx">Symbols page: everything a password, URL or file path might need</div>`, 'Symbols page: ! # $ % & * ( ) - _ = + [ ] { } \\ | ~ ` : ; , ? \' " < > ^ — ABC returns to letters'],
   ['01-empty.png', kb('', 't') + empty, 'Before typing: QWERTY keyboard with even keys in a charcoal panel; recent searches and what you can search'],
   ['02-results.png', kb('dune', '') + results, 'Typing: results grouped (Films · Episodes · People), two clean lines each, and why it matched when it isn’t the title'],
 ];
@@ -38,11 +44,12 @@ const css = `${font(400)}${font(500)}${font(700)}*{box-sizing:border-box;margin:
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:radial-gradient(ellipse 70% 60% at 70% 75%,#1d4fd8 0%,rgba(29,79,216,0) 70%),linear-gradient(180deg,#05081a 0%,#0a1650 45%,#10248a 100%)}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8}.nav .brand{font-size:36px;margin-right:40px;letter-spacing:1px}.nav .sp{flex:1}.nav .on{display:flex}.nav .clock{margin-left:10px}
 .kpanel{position:absolute;left:56px;top:112px;width:760px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22);padding:26px}
+.flabel{font-size:20px;color:#b7bfcc;margin:0 4px 10px}.ctx{position:absolute;left:846px;top:140px;right:56px;font-size:26px;color:#c9d3e6}
 .field{height:76px;border-radius:22px;background:#2a2d33;display:flex;align-items:center;gap:14px;padding:0 22px;font-size:30px}.ph{color:#8f98a8}.typed{font-weight:500}.caret{width:3px;height:36px;background:#fff;margin-left:-8px}
 .kb{margin-top:24px;display:flex;flex-direction:column;gap:10px}
-.krow{display:flex;gap:8px}.krow.o2{padding-left:33px}.krow.o3{padding-left:66px}
-.key{width:62px;height:74px;flex:none;border-radius:16px;background:#2a2d33;display:flex;align-items:center;justify-content:center;gap:8px;font-size:30px;font-weight:500}
-.key.f{background:#F4F6FB;color:#0B0D12}.key.wide{width:132px}.key.mid{width:160px;font-size:21px}.key.space{flex:1;width:auto;font-size:21px}
+.krow{display:flex;gap:8px}
+.key{width:62px;position:relative;height:74px;flex:none;border-radius:16px;background:#2a2d33;display:flex;align-items:center;justify-content:center;gap:8px;font-size:30px;font-weight:500}
+.key.f{background:#F4F6FB;color:#0B0D12}.key.shift{width:62px;font-size:24px}.key.shift small{position:absolute;bottom:6px;font-size:12px}.key.shift.on{box-shadow:inset 0 0 0 2px #5aa9ff}.key.mid{width:112px;font-size:22px}.key.space{flex:1;width:auto;font-size:21px}
 .khint{position:absolute;left:26px;right:26px;bottom:22px;font-size:18px;color:#8f98a8}
 .right{position:absolute;left:846px;right:56px;top:112px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.82);border:2px solid rgba(255,255,255,.14);padding:26px 30px;overflow:hidden}
 .sec{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:500;color:#b7bfcc;margin:6px 4px 14px}.sec.gap{margin-top:40px}
