@@ -356,4 +356,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** "Playback" appeared twice top left; dislikes the underline on the open tab. Revised `03`–`04`:
   the page title says Playback once (first tab renamed **General**, the repeated group heading removed); the tabs are
   one segmented control — the open tab a lighter charcoal, the focused tab white, no underline.
-- **Status:** single panel preferred; revised `03`–`04` awaiting the owner's look — then go-ahead to code.
+- **Owner (4 Nov 2026):** tabs as individual buttons? Choices inline to avoid click-through. Revised `03`–`05`: tabs are
+  separate standard buttons (open tab lighter charcoal, focused white); short choices are inline segmented controls in
+  the row — Left/Right changes them and saves straight away: Default speed 0.75× · 1.0× · 1.25× · 1.5× · 2.0×;
+  Still watching Off · 2 · 3 · 5 episodes; Sleep timer Off · 30 · 60 · 90 min · End of episode. Rule for all of
+  Settings: up to ~5 short options inline; longer lists (languages, countries, genres) open the side-panel list.
+- **Status:** awaiting the owner's look at `03`–`05` — then go-ahead to code.
