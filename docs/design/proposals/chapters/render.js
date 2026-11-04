@@ -8,25 +8,26 @@ const P = { skip: '<path d="M5 5l9 7-9 7z" fill="currentColor"/><path d="M18 5v1
 const ic = (k, s = 30) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
 // A stand-in film frame (no real artwork): dusky street scene in gradients.
 const frame = `<div class="video"><i class="sky"></i><i class="glow"></i><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="road"></i><i class="vig"></i></div>`;
-const ch = [['Chapter 1', 0, '0:00'], ['Chapter 2', 2.23, '2:14'], ['Chapter 3', 11.67, '11:40'], ['Chapter 4', 22.08, '22:05'], ['Chapter 5', 33.8, '33:48'], ['Chapter 6', 44.2, '44:12']];
+const ch = [['Recap', 0, '0:00'], ['Intro', 0.87, '0:52'], ['Chapter 1', 1.67, '1:40'], ['Chapter 2', 11.67, '11:40'], ['Chapter 3', 22.08, '22:05'], ['Chapter 4', 33.8, '33:48'], ['Chapter 5', 44.2, '44:12'], ['Credits', 48.4, '48:24']];
+const PLAY = 2;
 const eps = [['Episode 8', '43 min', 'w'], ['Episode 9', '43 min', 'w'], ['Episode 10', '50 min', 'p'], ['Episode 11', '44 min', ''], ['Episode 12', '43 min', ''], ['Episode 13', '44 min', '']];
 const LEN = 50.1, NOW = 4.53;
-const zones = [[0.75, 1.65, 'Intro'], [48.4, 49.9, 'Credits']].map(([a, b]) => `<i class="zone" style="left:${a / LEN * 100}%;width:${(b - a) / LEN * 100}%"></i>`).join('');
+const zones = '';
 const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch[i + 1][1] : LEN; const w = (e - s) / LEN * 100, l = s / LEN * 100;
   const played = Math.max(0, Math.min(1, (NOW - s) / (e - s)));
   return `<div class="seg${focus === i ? ' hi' : ''}" style="left:${l}%;width:calc(${w}% - 6px)"><b style="width:${played * 100}%"></b></div>`; }).join('');
 const hud = (focus, strip, tabFocus = -1) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
   <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}${zones}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
-  ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 2</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
-  (!strip ? tabsRow(-1, -1, true) : '') + (strip === 'ch' ? tabsRow(0, tabFocus) + `<div class="strip">${ch.map(([n, st, t], i) => card(`k${i}`, n, i === 1 ? 'Playing · from ' + t : 'From ' + t, i === 1 ? (NOW - st) / (ch[2][1] - st) : (i < 1 ? 1 : 0), i === focus, i === 1)).join('')}</div>` : '') +
+  ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 1</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
+  (!strip ? tabsRow(-1, -1, true) : '') + (strip === 'ch' ? tabsRow(0, tabFocus) + `<div class="strip">${ch.map(([n, st, t], i) => card(`k${i}`, n, i === PLAY ? 'Playing · from ' + t : 'From ' + t, i === PLAY ? (NOW - st) / (ch[PLAY + 1][1] - st) : (i < PLAY ? 1 : 0), i === focus, i === PLAY)).join('')}</div>` : '') +
   (strip === 'ep' ? tabsRow(1, tabFocus) + `<div class="strip">${eps.map(([n, t, st], i) => card(`s${i}`, n, st === 'p' ? 'Playing · ' + t : st === 'w' ? 'Watched · ' + t : t, st === 'p' ? .09 : st === 'w' ? 1 : 0, i === 2, st === 'p')).join('')}</div>` : '');
 const card = (bg, title, sub, prog, f, now) => `<div class="hc ${bg}${f ? ' f' : ''}"><div class="hcg"></div><div class="hct"><b>${title}</b><span class="${now ? 'now' : ''}">${sub}</span></div>${prog > 0 ? `<i class="hp"><b style="width:${Math.max(4, prog * 100)}%"></b></i>` : ''}</div>`;
 const tabsRow = (open, tf = -1, rest = false) => `<div class="ptabs${rest ? ' rest' : ''}">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}${i === tf ? ' tf' : ''}">${t}</span>`).join('')}</div>`;
 const tip = `<div class="tip"><div class="tr"><span class="k">‹ ›</span>Seek<span class="sep">·</span><span class="k">OK</span>Play / pause</div><div class="tr"><span class="k">↑</span>Play/pause and Settings buttons</div><div class="tr"><span class="k">↓</span>Chapters and Episodes</div></div>`;
 const shots = [
-  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls raised a little so Chapters and Episodes fit comfortably below; breaks in the bar are chapters, striped stretches are the IntroDB parts (here Intro and Credits)'],
+  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls raised a little so Chapters and Episodes fit comfortably below; one break per part: Recap and Intro (IntroDB), the chapters, then Credits'],
   ['02-down-to-chapters.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ch', 0), 'Down from the bar: the controls rise and the Chapters row slides in below; Left/Right switches to Episodes'],
-  ['03-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Down again into the row: the focused card grows and its part of the bar lights up; OK jumps there'],
+  ['03-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(3, 'ch'), 'Down again into the row: the focused card grows and its part of the bar lights up; OK jumps there'],
   ['04-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: opened at the one playing, watched ones marked; OK plays the chosen episode; Up, Up returns to the bar'],
   ['05-first-play-tip.png', frame + `<div class="shade"></div>` + hud(-1, false) + tip, 'First video only: a small tip on how the remote works; gone after 8 seconds or any press'],
 ];

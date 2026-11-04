@@ -615,4 +615,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (`ChapterMarkers`); the IntroDB times are used only for the Skip button. In the mock-ups the small first segment
   was Chapter 1 (0:00–2:14), not the intro. **Proposal:** chapters stay as the breaks; IntroDB parts (intro, recap,
   preview, credits) are drawn as short **striped amber stretches** on top, not extra breaks, and the time bubble names
-  the part ("Intro") while the playhead is inside it. Shown in `01`.
+  the part ("Intro") while the playhead is inside it. **Rejected by the owner** (stripes look wrong).
+- **Agreed direction (owner):** one set of breaks from both sources. Merge the file's chapters with IntroDB's parts
+  into one timeline: IntroDB parts (Recap, Intro, Preview, Credits) become their own segments and cards; the rest keep
+  their chapter names. Rules: a chapter mark within ~5 s of an IntroDB edge snaps to it (no slivers); a chapter that
+  only covers an IntroDB part is replaced by it; if the file has no chapters, the bar breaks only at IntroDB parts
+  (Intro · Episode · Credits). Mock-ups `01`–`03` redone (Recap · Intro · Chapter 1–5 · Credits).
