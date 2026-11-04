@@ -529,7 +529,7 @@ public class Player implements IPlayerControl,
             // fixing this the quick way will break all sort of things
             mVideoMetadata.setFile(uri.getPath());
         }
-        if (log.isDebugEnabled()) log.debug("setVideoURI: {}", uri);
+        if (log.isDebugEnabled()) log.debug("setVideoURI protocol={} outcome=received", Diagnostics.sourceType(uri));
         openVideo();
     }
 
@@ -698,7 +698,7 @@ public class Player implements IPlayerControl,
 
         // we shouldn't clear the target state, because somebody might have
         // called start() previously
-        log.info("openVideo: " + mUri);
+        log.info("openVideo protocol={} outcome=attempt", Diagnostics.sourceType(mUri));
         closeCurrentPlayer();
         final Diagnostics.PlaybackAttempt diagnosticOpen=playbackDiagnostics==null?null:playbackDiagnostics.opening();
         if (mStopPosition != -1) {
