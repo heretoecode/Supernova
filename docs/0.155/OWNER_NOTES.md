@@ -416,3 +416,15 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   bottom corners.
 - The old Interface size option is already hidden on TV builds and stays out.
 - **Status:** approved by the owner on 4 Nov 2026 (`16`–`17`) — awaiting go-ahead to code.
+
+## 28. Settings › Accounts & Services (design)
+- **Mock-ups (`docs/design/proposals/settings/18`–`19`):** tabs Services · Trakt. Services: one row per service
+  (Trakt, OpenSubtitles, IntroDB) — mark, one-line purpose, status ("Connected as …", "Not signed in", "No account
+  needed"), Sign in / Sign out inline, on/off switch (switching off keeps the sign-in); a note points to Playback ›
+  Skipping for skip choices and to Network & Files for shares and their passwords. Trakt tab: scrobble while
+  watching, sync resume points, sync library to Trakt, Sync now (Get from Trakt / Send to Trakt inline), Remove
+  Supernova's data from Trakt… (confirmation).
+- Moved out (approved): Network connections page (shares, SFTP trusted servers, VPN preference) → Network & Files;
+  IntroDB skip modes → Playback › Skipping.
+- Service marks are stand-ins for the services' logos.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
