@@ -18,8 +18,6 @@ import com.archos.mediacenter.video.R;
 
 import com.archos.medialib.IMediaPlayer;
 
-import android.os.Build;
-import android.view.SurfaceControl;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -666,19 +664,45 @@ public class SurfaceController {
         // offset and the same margin -- the two cancel out exactly, offset 0.
         mVideoBoxTop = extendVertically ? ((dh - dch) / 2 + mMarginTop) : 0;
 
+        // Opposite case of the letterbox extension above: the video view is TALLER than the
+        // screen (e.g. "Fit width" on a 3840x2160 file with baked-in black bars, shown on a
+        // 2.2:1 phone: video is scaled to the full width, so its height overflows the screen
+        // and is clipped equally at the top and bottom). mView is centered by the parent
+        // FrameLayout, and so was mSubtitleView because it was sized identically, so the
+        // subtitle canvas overflowed the screen by the same amount: bottom-aligned subtitles,
+        // which live in the baked-in bar at the bottom of the video, were laid out below the
+        // visible area.
+        //
+        // Clip the subtitle canvas to the visible area instead (dchMax, same centering and
+        // margins as mView) and report the video box as a rectangle that is centered in that
+        // canvas and larger than it, i.e. with a negative y. The native side accepts exactly
+        // this shape (see ssa_geom_compute() in aos-avos: full-width box covering the canvas)
+        // and maps it to negative libass margins, so for text subtitles (SRT/ASS):
+        //   - \pos / \move events (signs, typesetting) keep their mapping to the VIDEO and stay
+        //     aligned with the picture, and
+        //   - ordinary bottom/top-aligned dialogue is laid out against the visible canvas, so it
+        //     stays on screen.
+        // GFX (PGS/VobSub) bitmaps are placed relative to the same box, so they keep their exact
+        // position on the video (and therefore stay where the video puts them, even if that is in
+        // the cropped part). 3D (TB/SBS) modes have their own overlay path and are left untouched.
+        boolean clipVertically = !extendVertically && dch > dchMax && dchMax > 0
+                && (mEffectMode & (VideoEffect.TB_MODE | VideoEffect.SBS_MODE)) == 0;
+        if (clipVertically) mVideoBoxTop = (dchMax - dch) / 2;
+
         if (subLp instanceof ViewGroup.MarginLayoutParams subMarginParams) {
             subMarginParams.width = dcw;
             if (extendVertically) {
                 subMarginParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 subMarginParams.setMargins(mMarginLeft, 0, 0, 0);
             } else {
-                subMarginParams.height = dch;
+                subMarginParams.height = clipVertically ? dchMax : dch;
                 subMarginParams.setMargins(mMarginLeft, mMarginTop, 0, 0);
             }
             mSubtitleView.setLayoutParams(subMarginParams);
         } else if (subLp != null) {
             subLp.width = dcw;
-            subLp.height = extendVertically ? ViewGroup.LayoutParams.MATCH_PARENT : dch;
+            subLp.height = extendVertically ? ViewGroup.LayoutParams.MATCH_PARENT
+                                            : (clipVertically ? dchMax : dch);
             mSubtitleView.setLayoutParams(subLp);
         }
 
@@ -720,32 +744,4 @@ public class SurfaceController {
      * mView and mSubtitleView always share the same left margin and width.
      */
     public int getVideoBoxTop() { return mVideoBoxTop; }
-
-    /**
-     * Sets the dataspace on the SurfaceView's SurfaceControl layer so SurfaceFlinger can set up
-     * its HDR composition pipeline from the start, before MediaCodec produces any frames.
-     * Without this, the surface starts as SDR (dataspace 259) and some HWC2 implementations
-     * (e.g. Google TV Streamer) don't dynamically switch to HDR tone-mapping when the dataspace
-     * changes later via the producer (MediaCodec).
-     * @param dataSpace HAL dataspace constant (e.g. 0x10C00000 for BT2020_PQ, 0 to reset)
-     */
-    public void setSurfaceDataSpace(int dataSpace) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: skipped, API {} < 33", Build.VERSION.SDK_INT);
-            return;
-        }
-        if (mSurfaceView == null) {
-            if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: skipped, mSurfaceView is null");
-            return;
-        }
-        SurfaceControl sc = mSurfaceView.getSurfaceControl();
-        if (sc == null || !sc.isValid()) {
-            if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: skipped, SurfaceControl null or invalid");
-            return;
-        }
-        new SurfaceControl.Transaction()
-                .setDataSpace(sc, dataSpace)
-                .apply();
-        if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: applied dataSpace=0x{}", Integer.toHexString(dataSpace));
-    }
 }
