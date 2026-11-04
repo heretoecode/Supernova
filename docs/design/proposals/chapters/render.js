@@ -17,13 +17,14 @@ const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch
 const hud = (focus, strip) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
   <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
   ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 2</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
-  (strip === 'ch' ? tabsRow(0) + `<div class="strip">${ch.map(([n, s, t], i) => `<div class="cc${i === focus ? ' f' : ''}${i === 1 ? ' now' : ''}"><b>${n}</b><span>${i === 1 ? 'Playing · ' : ''}${t}</span></div>`).join('')}</div>` : '') +
-  (strip === 'ep' ? tabsRow(1) + `<div class="strip">${eps.map(([n, t, st], i) => `<div class="ec${i === 2 ? ' f' : ''}"><div class="still s${i}">${st === 'w' ? '<em>Watched</em>' : ''}${st === 'p' ? '<i class="pg"><b style="width:9%"></b></i>' : ''}</div><b>${n}</b><span class="${st === 'p' ? 'now' : ''}">${st === 'p' ? 'Playing · ' : ''}${t}</span></div>`).join('')}</div>` : '');
+  (strip === 'ch' ? tabsRow(0) + `<div class="strip">${ch.map(([n, st, t], i) => card(`k${i}`, n, i === 1 ? 'Playing · from ' + t : 'From ' + t, i === 1 ? (NOW - st) / (ch[2][1] - st) : (i < 1 ? 1 : 0), i === focus, i === 1)).join('')}</div>` : '') +
+  (strip === 'ep' ? tabsRow(1) + `<div class="strip">${eps.map(([n, t, st], i) => card(`s${i}`, n, st === 'p' ? 'Playing · ' + t : st === 'w' ? 'Watched · ' + t : t, st === 'p' ? .09 : st === 'w' ? 1 : 0, i === 2, st === 'p')).join('')}</div>` : '');
+const card = (bg, title, sub, prog, f, now) => `<div class="hc ${bg}${f ? ' f' : ''}"><div class="hcg"></div><div class="hct"><b>${title}</b><span class="${now ? 'now' : ''}">${sub}</span></div>${prog > 0 ? `<i class="hp"><b style="width:${Math.max(4, prog * 100)}%"></b></i>` : ''}</div>`;
 const tabsRow = open => `<div class="ptabs">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}">${t}</span>`).join('')}</div>`;
 const shots = [
   ['01-bar-with-chapters.png', frame + `<div class="shade"></div>` + hud(-1, false), 'The progress bar is split at each chapter; the time bubble names the chapter you are in'],
-  ['02-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Down from the bar opens Chapters and Episodes below it; in Chapters, Left/Right picks one (its part of the bar lights up) and OK jumps there'],
-  ['03-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: this season, opened at the one playing; watched ones say so; OK plays the chosen episode'],
+  ['02-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Chapters: the same cards as the Home rows, each with a picture from the start of the chapter; the focused card grows and its part of the bar lights up; OK jumps there'],
+  ['03-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: the same cards, opened at the one playing (progress bar), watched ones marked; OK plays the chosen episode'],
 ];
 const css = `${font(400)}${font(500)}${font(700)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:#000}
@@ -52,9 +53,13 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .bubble b{display:block;font-size:30px;font-weight:500}.bubble span{display:block;font-size:19px;color:#c9d3e6;margin-top:2px}
 .seg{position:absolute;top:0;bottom:0;border-radius:5px;background:rgba(255,255,255,.28);overflow:hidden}.seg b{display:block;height:100%;background:#fff}.seg.hi{background:rgba(255,255,255,.6);top:-4px;bottom:-4px}
 .bar{background:none!important}.thumb.off{display:none}
-.hud.up{bottom:320px}.htitle.up{top:460px}.hsub.up{top:538px}.shade.tall{background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,0) 60%)}
-.strip{position:absolute;left:70px;right:70px;bottom:60px;display:flex;gap:18px}
-.ptabs{position:absolute;left:70px;bottom:230px;display:flex;gap:14px}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
+.hud.up{bottom:350px}.htitle.up{top:430px}.hsub.up{top:508px}.shade.tall{background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,0) 60%)}
+.strip{position:absolute;left:70px;right:-200px;bottom:52px;display:flex;gap:26px;align-items:center;height:200px}
+.hc{position:relative;flex:none;width:300px;height:169px;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.45)}.hc.f{width:336px;height:189px;box-shadow:0 0 0 3px #fff,0 10px 26px rgba(0,0,0,.55)}
+.hcg{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,0) 60%)}.hct{position:absolute;left:16px;right:16px;bottom:20px}.hct b{display:block;font-size:23px;font-weight:700}.hct span{display:block;font-size:18px;color:#e6ebf5;margin-top:2px}.hct span.now{color:#9fd0ff}
+.hp{position:absolute;left:14px;right:14px;bottom:9px;height:5px;border-radius:3px;background:rgba(255,255,255,.3)}.hp b{display:block;height:100%;border-radius:3px;background:#fff}
+.k0{background:radial-gradient(ellipse at 30% 40%,#c9a46a,#3b2a1a 70%)}.k1{background:radial-gradient(ellipse at 60% 30%,#6aa0c9,#17263b 70%)}.k2{background:radial-gradient(ellipse at 40% 60%,#c96a5a,#3b1a17 70%)}.k3{background:radial-gradient(ellipse at 70% 50%,#7ac98a,#173b22 70%)}.k4{background:radial-gradient(ellipse at 30% 30%,#a08ad0,#221a3b 70%)}.k5{background:radial-gradient(ellipse at 50% 50%,#d0c06a,#3b331a 70%)}
+.ptabs{position:absolute;left:70px;bottom:262px;display:flex;gap:14px}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
 .ec{flex:1;min-width:0;border-radius:22px;padding:10px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18)}.ec.f{background:#F4F6FB;border-color:#F4F6FB}.ec.f b{color:#0B0D12}.ec.f span{color:#3a3f48}
 .ec b{display:block;font-size:22px;font-weight:500;margin:8px 6px 0}.ec span{display:block;font-size:19px;color:#c9d3e6;margin:2px 6px 4px}.ec span.now{color:#5aa9ff}
 .still{position:relative;height:64px;border-radius:14px;overflow:hidden}.still em{position:absolute;right:8px;top:8px;font-style:normal;font-size:16px;font-weight:500;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:9px}

@@ -15,7 +15,7 @@ const segs = (opts, on) => `<span class="val">${opts.map(o => `<b class="${o ===
 const step = v => `<span class="val">${ic('left', 20)}<b class="sel w">${v}</b>${ic('chev', 20)}</span>`;
 const more = v => `<span class="val"><b>${v}</b>${ic('chev', 20)}</span>`;
 const row = (k, t, v, f, cls = '') => `<div class="row${f ? ' focus' : ''} ${cls}">${ic(k)}<span class="lbl">${t}</span>${v}</div>`;
-const head = (saveFocus) => `<div class="hdr"><div><div class="ttl">Edit Page</div><div class="mt">41 titles match · 123 GB</div></div><span class="save${saveFocus ? ' f' : ''}">${ic('check', 24)}Save Changes</span></div>`;
+const head = (saveFocus) => `<div class="hdr"><div><div class="ttl">Edit Page</div><div class="mt">41 titles match · 123 GB</div></div><span class="save${saveFocus ? ' f' : ''}">${ic('check', 24)}Save Changes</span></div><div class="rule"></div>`;
 const main = (focus) => `<div class="panel">${head(focus === 'save')}` +
   row('pen', 'Page Name', more('Documentaries')) + row('film', 'Includes', segs(['Movies', 'TV Shows', 'Both'], 'Both')) +
   `<div class="h"><span>What to show</span><i></i></div>` +
@@ -24,7 +24,7 @@ const main = (focus) => `<div class="panel">${head(focus === 'save')}` +
   row('globe', 'Original Language', more('Any')) + row('studio', 'Studio / Network', more('Any')) +
   `<div class="h"><span>How to show it</span><i></i></div>` +
   row('grid', 'View', segs(['Grid', 'List'], 'Grid')) + row('sort', 'Sort By', segs(['Title', 'Year', 'Date Added'], 'Year')) + row('order', 'Order', segs(['Newest', 'Oldest'], 'Newest')) +
-  row('trash', 'Delete Page', '<span class="dn">Removes this page only. Your media is never deleted.</span>', false, 'del') + `</div>`;
+  `<div class="rule low"></div>` + row('trash', 'Delete Page', '<span class="dn">Removes this page only. Your media is never deleted.</span>', false, 'del') + `</div>`;
 const yearPage = `<div class="panel">${head(false)}<div class="h back">${ic('back', 20)}<span>Year</span><i></i></div>` +
   row('date', 'From', step('2003'), true) + row('date', 'To', step('2006')) +
   `<div class="h"><span>Quick choices</span><i></i></div>` +
@@ -37,7 +37,7 @@ const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}body{width
 .bg{position:absolute;inset:0;background:linear-gradient(160deg,#16255a,#0a1230 60%,#1636a8)}.card{position:absolute;top:300px;width:300px;height:450px;border-radius:20px;opacity:.55}
 .c0{left:80px;background:linear-gradient(160deg,#5d8a4a,#2b4a2a)}.c1{left:420px;background:linear-gradient(160deg,#6a4a4a,#2a1a1a)}.c2{left:760px;background:linear-gradient(160deg,#3a4a6a,#1a2230)}
 .panel{position:absolute;right:48px;top:48px;width:760px;border-radius:26px;padding:24px 26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22)}
-.hdr{display:flex;align-items:center;justify-content:space-between;margin:0 6px 8px}.ttl{font-size:32px;font-weight:500}.mt{font-size:19px;color:#7fe0a8;margin-top:4px}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin:0 6px 14px}.rule{height:1px;background:rgba(255,255,255,.22);margin:0 6px 10px}.rule.low{margin:12px 6px 6px}.ttl{font-size:32px;font-weight:500}.mt{font-size:19px;color:#7fe0a8;margin-top:4px}
 .save{display:flex;align-items:center;gap:10px;height:58px;padding:0 24px;border-radius:20px;background:#2a2d33;font-size:21px;font-weight:500}.save.f{background:#F4F6FB;color:#0B0D12}
 .h{display:flex;align-items:center;gap:14px;font-size:19px;margin:8px 8px 0;height:36px;color:#b7bfcc}.h i{flex:1;height:1px;background:rgba(255,255,255,.18)}
 .row{display:flex;align-items:center;gap:16px;height:56px;border-radius:20px;padding:0 16px;font-size:23px;font-weight:500}.row svg{color:#dfe5ef;flex:none}.focus{box-shadow:inset 0 0 0 3px #fff}

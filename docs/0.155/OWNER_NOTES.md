@@ -522,7 +522,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   Back closes. Only when the video has chapters; with more than six the strip scrolls.
 - **Episodes too** (owner, `03`): Down from the bar opens two tabs, **Chapters · Episodes**. Episodes shows this season's
   episodes with their stills, opened at the one playing ("Playing", progress line); watched ones say Watched; OK plays
-  the chosen one. Each tab appears only when it has something (films get Chapters only). Awaiting review.
+  the chosen one. Each tab appears only when it has something (films get Chapters only).
+- **Cards like the Home rows** (owner): both tabs use the Home row's landscape card — artwork, title and line over a
+  shade, progress bar along the bottom, the focused card grows with the white outline; chapter cards are the same size
+  as episode cards and show a **picture taken from the start of each chapter** (made in the background from the file
+  while playing; until ready, the episode still). Mock-ups `02`–`03` redone. Awaiting review.
 - Licence header spacing loosened (owner: too tight) — `32`.
 - **OMDb lookups (owner question):** one lookup each time a Details page opens (`PreviewDetailsData.java:236–240`),
   not per title added; nothing is kept, so reopening the same title looks it up again. Proposal: remember ratings for a
@@ -542,7 +546,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   top of the screen; the subtitle moves live while you press. Default a little above the edge (5%, inside the TV's safe
   area and still inside the black bar on wide films). The same control in Settings › Audio & Subtitles. Existing saved
   values are converted so nobody's subtitles jump.
-- **Status:** awaiting review.
+- **Owner:** Edit Page changes approved; header (title, match count, Save Changes) now separated from the options by a
+  line, and Delete Page sits at the bottom behind its own line (`01`–`03` updated).
+- **Status:** approved by the owner on 4 Nov 2026 — awaiting go-ahead to code.
 - **Licence page approved** (owner, 4 Nov) after the QR code was centred on the title and facts lines (`32`).
 - **OMDb ratings are not saved (confirmed):** TMDB details are kept on the device (`PreviewDetailsData.cached`), but
   the OMDb ratings are not part of that — they are fetched again on every Details visit. **Fix (0.156):** save them with
