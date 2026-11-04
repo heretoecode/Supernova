@@ -405,4 +405,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   removed.** `15`: the services picker — search field at the top, tick box + logo per service, sized to its content;
   the separate "Search providers" and "Show all providers" rows are folded into it.
 - Logos in the mock-ups are stand-ins; the app uses the official single-colour logos approved in 0.153.
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`14`–`15`) — awaiting go-ahead to code.
