@@ -45,8 +45,8 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerService.java` | 1047 | no |
 | `src/main/java/com/archos/mediacenter/video/player/FocusableTVCardView.java` | 26 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/IPlayerControl.java` | 45 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/NoneEffect.java` | 32 | no |
-| `src/main/java/com/archos/mediacenter/video/player/OpenGLUtils.java` | 78 | no |
+| `src/main/java/com/archos/mediacenter/video/player/NoneEffect.java` | 32 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/OpenGLUtils.java` | 78 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackAgeOverlay.java` | 200 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackChapters.java` | 32 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackResumePolicy.java` | 90 | yes |
@@ -56,7 +56,7 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java` | 5869 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerBrightnessManager.java` | 148 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerController.java` | 3622 | no |
-| `src/main/java/com/archos/mediacenter/video/player/PlayerControlsRelativeLayout.java` | 129 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PlayerControlsRelativeLayout.java` | 129 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerService.java` | 3672 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewAdjustmentValue.java` | 18 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewHudTiming.java` | 14 | yes |
@@ -69,13 +69,13 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/PreviewTrackLabel.java` | 18 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewUpNext.java` | 275 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PrivateMode.java` | 93 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/SDKNotSupportedDialogActivity.java` | 63 | no |
+| `src/main/java/com/archos/mediacenter/video/player/SDKNotSupportedDialogActivity.java` | 63 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SeekTooltipDrawable.java` | 21 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SegmentSkippingPolicy.java` | 19 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SkipProgressDrawable.java` | 95 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/StereoDiveEffect.java` | 654 | no |
-| `src/main/java/com/archos/mediacenter/video/player/StereoMergeArchosEffect.java` | 84 | no |
-| `src/main/java/com/archos/mediacenter/video/player/StereoMergeEffect.java` | 47 | no |
+| `src/main/java/com/archos/mediacenter/video/player/StereoMergeArchosEffect.java` | 84 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/StereoMergeEffect.java` | 47 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleColorPicker.java` | 170 | no |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPicker.java` | 192 | no |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerAbstract.java` | 94 | no |
@@ -86,14 +86,14 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/SubtitlePlaybackBackend.java` | 317 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleSettingsDialog.java` | 341 | no |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleSpacerView.java` | 41 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/SummaryListPreference.java` | 39 | no |
+| `src/main/java/com/archos/mediacenter/video/player/SummaryListPreference.java` | 39 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SurfaceController.java` | 751 | no |
 | `src/main/java/com/archos/mediacenter/video/player/TextShadowSpan.java` | 56 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/TextureSurfaceRenderer.java` | 265 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/TimerPickerAbstract.java` | 98 | no |
+| `src/main/java/com/archos/mediacenter/video/player/TimerPickerAbstract.java` | 98 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/TrackInfoController.java` | 433 | no |
 | `src/main/java/com/archos/mediacenter/video/player/UpdateNextTask.java` | 444 | no |
-| `src/main/java/com/archos/mediacenter/video/player/VideoEffect.java` | 114 | no |
+| `src/main/java/com/archos/mediacenter/video/player/VideoEffect.java` | 114 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/VideoEffectRenderer.java` | 288 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/AudioDelayTVPicker.java` | 358 | no |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/AudioSpeedTVPicker.java` | 311 | no |
@@ -103,12 +103,12 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenu.java` | 359 | no |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuAdapter.java` | 396 | no |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuItem.java` | 276 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuSeparator.java` | 35 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVOnScrollListener.java` | 20 | no |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuSeparator.java` | 35 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVOnScrollListener.java` | 20 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVPillItem.java` | 197 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVScrollView.java` | 54 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVSlaveView.java` | 30 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVUtils.java` | 72 | no |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVScrollView.java` | 54 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVSlaveView.java` | 30 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVUtils.java` | 72 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TimerDelayTVPicker.java` | 300 | no |
 
 
@@ -124,3 +124,38 @@ Reviewed source `160b429f014c86833ae89451f88c58e6acd1e913`. Added **16 full-file
 No new crash finding is claimed. DP-06 is medium confidence because its canceled-touch trigger is concrete but normal TV route frequency is uncertain; DP-07 is high confidence in the arithmetic path, with the device-effect limitation stated. No U1/N1/N2/L1/P1/U2/L2 or DP-01…DP-05 issue was re-reported. Historical findings above remain historical records; this append does not imply their fixes are absent from other branches.
 
 Additional review notes: ArchosSeekBar's optional listener is unguarded, but its only located inflation owner BrightnessDialog installs the listener before use, so no reachable new crash is asserted. ExternalPlayerService's API-33 receiver call is gated by its API-34-only startService path; the annotation alone is not the guard, but there is no normal API-23 start through that helper. FloatingPlayerActivity lacks an unbind, but no manifest declaration/current app launch reference was found, so it is not promoted to a live-user leak finding. PrivateMode is initialized from CustomApplication; no initialization defect is claimed. PreviewPlaybackInfo shuts down its worker in finally and checks dialog visibility before applying metadata. None of these notes certifies complete runtime correctness or replaces device verification.
+
+
+## 2026-11-04 continuation — BRIEF_0155_CODE Part 3
+
+Reviewed source `a7c8027c6` after TV-only stage 6. Added **14 full-file reads, 895 lines** from the
+formerly unread group-1 set: NoneEffect, OpenGLUtils, PlayerControlsRelativeLayout,
+SDKNotSupportedDialogActivity, StereoMergeArchosEffect, StereoMergeEffect, SummaryListPreference,
+TimerPickerAbstract, VideoEffect, and tvmenu/{TVMenuSeparator, TVOnScrollListener, TVScrollView,
+TVSlaveView, TVUtils}. Only those coverage rows were changed to yes and refreshed to the current
+line counts. Group 1 now has **58/84 yes, 26 still unread**. This is a bounded continuation;
+groups 2–4 were not advanced before finishing group 1. No hands-off or removed source was counted.
+The newly added launch/search/sort contracts are implementation work, not retroactively added to
+this historical 84-file audit denominator.
+
+No new confirmed finding was added and no earlier ID was re-reported. Review notes:
+
+- The standard stereo modes are 0, 1, 2, 4 and 8. The Archos broadcast adapter's trailing-zero
+  conversion maps these into its four-element mode table; ordinary defined modes do not establish
+  an out-of-bounds defect. Persisted/forced mode validation needs the larger caller pass.
+- OpenGLUtils retains compiled shader handles after linking and on several early-return paths.
+  Supporting excerpts show StereoDiveEffect creating programs and deleting programs at teardown,
+  while TextureSurfaceRenderer ultimately tears down EGL. This suggests shader-object retention
+  until context destruction; no sustained-context exhaustion or reachable new playback failure
+  was established, so it is not promoted to a crash finding. StereoDiveEffect is still unread in
+  the full-file coverage table; caller excerpts do not earn full coverage.
+- The HUD layout walks parent Views before applying the chapter-bubble safe area and checks its
+  required title/bar/bubble nodes. TVScrollView checks its optional listener. TVUtils stops at a
+  non-View parent. Their inspected paths establish no new null-parent crash; this is not device
+  focus or enlarged-font acceptance evidence.
+- TimerPickerAbstract accepts arbitrary step/min/max inputs, but no reachable zero-step or
+  overflow case was established in this bounded pass. SummaryListPreference and the small menu
+  interfaces/separator add no active async lifetime of their own.
+
+No production code changed for this part. Remaining large player/service/controller/menu/effect
+files still require full reads; JNI/GL output and remote navigation were not exercised.
