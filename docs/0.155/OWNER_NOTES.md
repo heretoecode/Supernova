@@ -155,9 +155,10 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (`PreviewHomeRows.rowControls`). Customise Home at the bottom of Home also needs work (later item).
 - **Want (owner, from the Shield home screen):** no pop-up; buttons to the left of the row that appear only when you
   reach the start of the row.
-- **Proposed (`docs/design/proposals/home-row-controls/01`–`03`):** Left on the first card slides the row right
-  and shows two round buttons, **Hide row** (focused, large white) and **Move row** (small); Down/Up switches between
-  them, Right returns to the cards. OK on Move lifts the row (white outline); Up/Down moves it live, one place at a
+- **Proposed (`docs/design/proposals/home-row-controls/01`–`03`, revised 4 Nov 2026 after the owner asked for the
+  buttons side by side and the same size):** Left on the first card slides the row right and shows two same-size
+  round buttons side by side, **Hide** and **Move**, each labelled underneath; the focused one is white. Left/Right
+  moves between them, and Right from Move returns to the first card. OK on Move lifts the row (white outline); Up/Down moves it live, one place at a
   time, with "Moving · row 2 of 7"; OK or Back drops it. Hide removes the row with an Undo notice (rows come back
   from Customise Home).
 - **Status:** awaiting the owner's approval — then awaiting go-ahead to code.

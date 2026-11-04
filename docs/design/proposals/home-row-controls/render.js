@@ -24,19 +24,20 @@ const cards = {
 const rowDefs = { continue: ['hist', 'Continue Watching'], recent: ['cal', 'Recently Added'], next: ['next', 'Watch Next'] };
 const card = ([t, s, p, c], focus) => `<div class="card${focus ? ' focus' : ''}" style="background:linear-gradient(160deg,${c},#0d1017 85%)"><div class="ct">${t}</div><div class="cs">${s}</div>${p ? `<div class="pb"><i style="width:${p * 100}%"></i></div>` : ''}</div>`;
 // mode: 'hide' (Hide focused) | 'move' (Move focused) | 'moving' (row being moved, now in slot 2)
-const controls = mode => mode === 'moving'
-  ? `<div class="ctl"><div class="rb big on moving">${ic('up', 30, 2.2)}${ic('move', 34, 2)}${ic('down', 30, 2.2)}</div><div class="rl">Moving · row 2 of 7</div></div>`
-  : `<div class="ctl"><div class="rbs"><div class="rb ${mode === 'hide' ? 'big on' : 'small'}">${ic('hide', mode === 'hide' ? 40 : 26)}</div><div class="rb ${mode === 'move' ? 'big on' : 'small'}">${ic('move', mode === 'move' ? 40 : 26)}</div></div><div class="rl">${mode === 'hide' ? 'Hide row' : 'Move row'}</div></div>`;
+const btn = (k, label, on, extra) => `<div class="cb"><div class="rb${on ? ' on' : ''}">${extra || ic(k, 36)}</div><div class="rl${on ? ' on' : ''}">${label}</div></div>`;
+const controls = mode => `<div class="ctl">${btn('hide', 'Hide', mode === 'hide')}${mode === 'moving'
+  ? btn('move', 'Moving', true, `${ic('up', 24, 2.4)}${ic('move', 30, 2)}${ic('down', 24, 2.4)}`)
+  : btn('move', 'Move', mode === 'move')}</div>`;
 const row = (id, mode) => {
   const [icon, name] = rowDefs[id];
   const active = mode && id === 'continue';
-  return `<div class="row${active ? ' active' : ''}${active && mode === 'moving' ? ' lifted' : ''}"><div class="rh">${ic(icon, 30)}${name}${active && mode === 'moving' ? '<span class="hint">↑ ↓ to move · OK or Back when done</span>' : ''}</div>
+  return `<div class="row${active ? ' active' : ''}${active && mode === 'moving' ? ' lifted' : ''}"><div class="rh">${ic(icon, 30)}${name}${active && mode === 'moving' ? '<span class="hint">Row 2 of 7 · ↑ ↓ to move · OK or Back when done</span>' : ''}</div>
     <div class="rc">${active ? controls(mode) : ''}<div class="cards">${cards[id].map((c, i) => card(c, false)).join('')}</div></div></div>`;
 };
 const shots = [
-  ['01-left-reveals-hide.png', ['continue', 'recent', 'next'], 'hide', 'Left on the first card: the row slides right and two round buttons appear — Hide row is focused'],
-  ['02-move-focused.png', ['continue', 'recent', 'next'], 'move', 'Down (or right) moves to Move row; Up goes back to Hide; Right returns to the first card'],
-  ['03-moving-live.png', ['recent', 'continue', 'next'], 'moving', 'OK on Move: the row lifts; Up/Down moves it live (here it is now row 2); OK or Back drops it'],
+  ['01-left-reveals-hide.png', ['continue', 'recent', 'next'], 'hide', 'Left on the first card: the row slides right and two same-size round buttons appear side by side — Hide is focused'],
+  ['02-move-focused.png', ['continue', 'recent', 'next'], 'move', 'Right moves to Move; Left goes back to Hide; Right again returns to the first card'],
+  ['03-moving-live.png', ['recent', 'continue', 'next'], 'moving', 'OK on Move: the row lifts; Up/Down moves it live (here it is now row 2 of 7); OK or Back drops it'],
 ];
 const css = `${font(400)}${font(500)}
 *{box-sizing:border-box;margin:0}
@@ -56,13 +57,11 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .card{width:360px;height:180px;border-radius:18px;position:relative;flex:none;padding:16px;display:flex;flex-direction:column;justify-content:flex-end}
 .ct{font-size:24px;font-weight:500}.cs{font-size:18px;color:#dfe5f1;margin-top:4px}
 .pb{height:6px;border-radius:3px;background:rgba(255,255,255,.25);margin-top:10px;overflow:hidden}.pb i{display:block;height:100%;background:#F4F6FB}
-.ctl{width:210px;flex:none;display:flex;flex-direction:column;align-items:center;gap:12px}
-.rbs{display:flex;flex-direction:column;align-items:center;gap:14px}
-.rb{border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column}
-.rb.small{width:52px;height:52px;background:rgba(42,45,51,.95);color:#e8edf8}
-.rb.big{width:112px;height:112px;background:#F4F6FB;color:#0B0D12}
-.rb.moving{width:112px;height:150px;border-radius:56px;gap:0}
-.rl{font-size:21px;font-weight:500;color:#F4F6FB;white-space:nowrap}
+.ctl{width:236px;flex:none;display:flex;justify-content:center;gap:20px}
+.cb{display:flex;flex-direction:column;align-items:center;gap:12px}
+.rb{width:96px;height:96px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(42,45,51,.95);color:#e8edf8;line-height:0}
+.rb.on{background:#F4F6FB;color:#0B0D12}
+.rl{font-size:21px;font-weight:500;color:#aab3c4;white-space:nowrap}.rl.on{color:#F4F6FB}
 .label{position:absolute;right:56px;bottom:12px;font-size:19px;color:#c9d3e6;background:rgba(5,8,26,.7);padding:4px 10px;border-radius:8px}`;
 (async () => {
   const browser = await chromium.launch();
