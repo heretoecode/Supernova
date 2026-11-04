@@ -1,0 +1,53 @@
+name: Supernova 0.156 pinned arm64 engine
+
+on:
+  workflow_dispatch:
+    inputs:
+      third_party_source:
+        description: Verified 0.146 archive source (archive Release first)
+        type: choice
+        options: [release, actions]
+        default: release
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: supernova-0156-native-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'heretoecode/Supernova'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout exact engine recipe source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install native build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git curl unzip autoconf automake libtool meson ninja-build cmake nasm pkg-config
+      - name: Offline recipe tests
+        run: python3 .github/build/test-supernova156-native-stack.py
+      - name: Build pinned avos and wrappers with verified third-party libraries
+        env:
+          GH_TOKEN: ${{ github.token }}
+          THIRD_PARTY_SOURCE: ${{ inputs.third_party_source }}
+        run: |
+          set -euo pipefail
+          python3 .github/build/build-supernova156-native-stack.py --workspace "$RUNNER_TEMP/native156" --third-party-source "$THIRD_PARTY_SOURCE" --jobs 4 2>&1 | tee native156-build.log
+      - name: Preserve arm64 engine, SHA-256 receipts and logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0156-native-arm64-v8a
+          compression-level: 0
+          path: |
+            ${{ runner.temp }}/native156/delivery/*
+            native156-build.log
+          if-no-files-found: error

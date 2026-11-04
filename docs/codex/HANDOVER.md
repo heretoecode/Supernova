@@ -1,9 +1,42 @@
 # Handover to Claude — 2026-11-04
 
-Branch: `codex/0155-code-2026-11-04`. ENGINE replaces NEXT's order. No Gradle,
-UI/design edits, existing `.github/` edits, workflow dispatch or PR in this run.
-Commit IDs describe completed work. ENGINE items 1–5 are prepared; the next
-task is **ENGINE 6 → NEXT 3, DP-10**. The final engine report records delivery.
+## Engine release — Claude's steps
+
+Branch: `codex/0155-code-2026-11-04`. Follow `BRIEF_0155_ENGINE_BUILD.md`
+from fetched Claude `a5c5b7b3a408ffa3adaa24f5cfbfe2bd1ce4e460`.
+This section supersedes the historical preparation status below.
+
+1. Archive first: manually dispatch `supernova-0156-native-archive.yml` on this
+   branch, no inputs. It verifies run `40843685431` and publishes the four old
+   ABI ZIPs/tarballs and lock/verification/manifest files to Release
+   `native-archive-0146`. Check the Release receipts and downloaded asset hashes.
+2. Native build: manually dispatch `supernova-0156-native-stack.yml` on this
+   branch with `third_party_source=release`. `actions` is an explicit fallback
+   while the old run is available, never an unverified fallback. Expect artifact
+   `supernova-0156-native-arm64-v8a`: `Supernova_0.156_native_arm64-v8a.tar.gz`,
+   `native-stack.json`, `native-supernova156.lock.json`, `archive.json`,
+   `SHA256SUMS`, and `native156-build.log`. The tarball contains rebuilt
+   avos/JNI/nativehelper/FileCore DSOs and verified unchanged FFmpeg/codec DSOs,
+   with the complete library SHA-256 inventory. Review run head SHA and receipts;
+   output hashes/run ID in the new lock deliberately say `pending-first-build`.
+   Those placeholders are never accepted as package hashes.
+3. App build: Claude must replace old native acquisition/preparation/packaging
+   in the existing app workflow; do not run `package-supernova146-native.py`
+   afterward. Exact protected-file changes and app integration status are being
+   completed in ENGINE_BUILD items 2–4. Keep the native workflow output pinned
+   by its reviewed run ID, source SHA and tarball SHA, with arm64-only packaging.
+4. Run app/MediaLib/FileCore tests, native/JNI/ELF/API23/load/alignment tests,
+   lint, then conformance and the Shield matrix before signing/delivery.
+
+Current ENGINE_BUILD item 1: new manual-only workflow, builder, package installer,
+shared validation and real-source lock. Ten offline recipe/package tests and nine
+archive tests pass. All five avos patches apply in order and match the measured
+tree; native ABI/HLS/buffer probes and thirteen upstream host tests pass.
+No workflow or NDK/Gradle build has run. Continue with item 2, app draft 01.
+
+The following table records **earlier engine preparation** and MORE/NEXT work;
+its unapplied-draft and Claude-only overflow statements are historical, superseded
+by this release section as integration proceeds.
 
 | Item (engine release first) | Commits | Files | Tested how | How to apply | Open questions / next action |
 |---|---|---|---|---|---|
