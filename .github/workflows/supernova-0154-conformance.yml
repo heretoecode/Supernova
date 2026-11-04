@@ -1,6 +1,6 @@
 name: Supernova 0.154 unsigned conformance
 # Final 0.154 candidate (arm64-only Shield build): implementation trees frozen in .github/signing/supernova_0154_qa_signing.py.
-# Run 2: the 0.154 check scripts in .github/build are now committed (the folder name is git-ignored by default).
+# Run 3: arm64-only through ndk.abiFilters. Run 2: the 0.154 check scripts in .github/build are now committed (the folder name is git-ignored by default).
 on:
   push:
     branches: [claude/supernova-github-access-yfhe89]
