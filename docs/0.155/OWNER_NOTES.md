@@ -395,3 +395,14 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   result ("1,806 written · 3 skipped (read-only)"); **remove Export database** (Backup & Restore covers it). `11`
   re-rendered.
 - **Status:** approved by the owner on 4 Nov 2026 (`10`–`13`) — awaiting go-ahead to code.
+
+## 26. Settings › Where to Watch (design)
+- **What "Refresh provider list" did (from the code, `StreamingPreferences`):** clears the cached list and re-downloads
+  from TMDb which streaming services exist in the chosen country — which the page already does every time it opens.
+- **Mock-ups (`docs/design/proposals/settings/14`–`15`):** one page, no tabs (one section only). Rows: Show where to
+  watch (switch), Country (flag + name), Your services (their logos; opens a picker), Show first (preferred service).
+  Footer: "Availability from JustWatch via TMDB · service list updated automatically (today)". **Refresh button
+  removed.** `15`: the services picker — search field at the top, tick box + logo per service, sized to its content;
+  the separate "Search providers" and "Show all providers" rows are folded into it.
+- Logos in the mock-ups are stand-ins; the app uses the official single-colour logos approved in 0.153.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
