@@ -26,7 +26,7 @@ const card = ([t, s, p, c], focus) => `<div class="card${focus ? ' focus' : ''}"
 // mode: 'hide' (Hide focused) | 'move' (Move focused) | 'moving' (row being moved, now in slot 2)
 const btn = (k, label, on, extra) => `<div class="cb"><div class="rb${on ? ' on' : ''}">${extra || ic(k, 36)}</div><div class="rl${on ? ' on' : ''}">${label}</div></div>`;
 const controls = mode => `<div class="ctl">${btn('hide', 'Hide', mode === 'hide')}${mode === 'moving'
-  ? btn('move', 'Moving', true, `${ic('up', 24, 2.4)}${ic('move', 30, 2)}${ic('down', 24, 2.4)}`)
+  ? btn('move', 'Moving', true)
   : btn('move', 'Move', mode === 'move')}</div>`;
 const row = (id, mode) => {
   const [icon, name] = rowDefs[id];

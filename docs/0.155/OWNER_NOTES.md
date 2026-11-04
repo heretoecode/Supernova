@@ -163,4 +163,10 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   box in the first `03` odd); Up/Down moves it live, one place at a
   time, with "Moving · row 2 of 7"; OK or Back drops it. Hide removes the row with an Undo notice (rows come back
   from Customise Home).
+- **Moving icon:** the same single Move arrow as before (owner: the up / double / down stack looked duplicated); the
+  button stays white and its label reads "Moving".
+- **Motion (proposed):** no snapping. Each Up/Down glides the carried row into the next slot (about 0.2 s, ease-out)
+  while the row it passes slides the other way at the same time; the page scrolls so the carried row stays at the
+  same height on screen and the others move past it. Holding Up/Down repeats. (0.154 rebuilds the whole page after a
+  move, so it snaps.)
 - **Status:** layout approved by the owner on 4 Nov 2026; revised `00` and `03` awaiting a final look — then awaiting go-ahead to code.
