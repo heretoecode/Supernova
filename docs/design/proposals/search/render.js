@@ -55,7 +55,7 @@ const tips = [['film', 'Titles and episodes', 'Films, TV shows, episode names �
   ['typo', 'Small typos', 'One wrong letter in a longer word still finds it — “Dume” finds Dune']];
 const browse = `<div class="right col"><div class="sec">${ic('clock', 26)}Recent searches<span class="spc"></span><span class="mini">${ic('clear', 20)}Clear recent</span></div>
   <div class="chips">${['dune', 'mr robot', 'slow horses', 'kingdom', 'tulsa king'].map(c => `<span class="chip">${c}</span>`).join('')}</div>
-  <div class="tipsarea"><div class="tipsbox"><div class="sec">What you can search</div>
+  <div class="tipsarea"><div class="tipsbox"><div class="ttl">What you can search</div>
   ${tips.map(([k, t, d]) => `<div class="tip2"><span class="ti">${ic2(k)}</span><div><b>${t}</b><span>${d}</span></div></div>`).join('')}</div></div></div>`;
 const shots = [
   ['05-discover-all.png', kb('dune', '') + discover('All'), 'All: library results only, grouped, with watched state and the typed letters in bold'],
@@ -96,7 +96,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .wp.un{color:#9aa3b3;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22)}.wp.un b{font-weight:400}
 .add{font-size:19px;color:#aab3c4;flex:none;height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:20px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22)}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tile{height:104px;border-radius:20px;background:#2a2d33;padding:18px 22px;display:flex;flex-direction:column;justify-content:center}.tile b{font-size:26px;font-weight:500}.tile span{font-size:19px;color:#c9d3e6;margin-top:6px}
-.right.col{display:flex;flex-direction:column}.tipsarea{flex:1;display:flex;align-items:center;justify-content:center}.tipsbox{width:820px}
+.right.col{display:flex;flex-direction:column}.tipsarea{flex:1;display:flex;align-items:center;justify-content:center}.tipsbox{width:820px}.ttl{font-size:38px;font-weight:500;color:#F4F6FB;margin:0 8px 14px}
 .tip2{display:flex;align-items:center;gap:24px;padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.1)}.tip2:last-child{border-bottom:none}
 .ti{width:40px;display:flex;justify-content:center;flex:none;color:#F4F6FB}
 .tip2 b{display:block;font-size:28px;font-weight:500}.tip2 span{display:block;font-size:22px;color:#c9d3e6;margin-top:4px}

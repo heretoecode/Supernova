@@ -289,4 +289,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   the/a/an are ignored; one wrong letter is allowed in words of 4+ letters. Revised `07`: six rows (Titles and episodes ·
   Original titles · Cast, crew and studios · Any order, part words · Forgiving · Small typos), plain white line icons,
   centred in the space below Recent searches. Wording reflects 0.156 behaviour (file names last, people by whole name).
-- **Status:** awaiting the owner's approval of the revised `07` — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** wording approved; make the "What you can search" heading more prominent. `07`: heading at
+  38px Medium white (rows 28px).
+- **Status:** wording approved; heading size awaiting the owner's look — then awaiting go-ahead to code.
