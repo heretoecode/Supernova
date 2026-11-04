@@ -247,4 +247,22 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   it on a server address, `04` on a password.
 - **Owner (4 Nov 2026):** one panel, not two; and a Clear option beside Recent searches. Revised `01`–`04`: a single
   charcoal panel with a thin divider (keyboard left, results right); "Clear recent" button on the Recent searches line.
-- **Status:** awaiting the owner's approval of `01`–`04` — then awaiting go-ahead to code.
+- **Keyboard rule (owner, 4 Nov 2026):** on Search the keyboard is always shown (and stays while browsing results);
+  in forms (Add Connection, credentials, rename) it is hidden until a field is chosen, slides in with the field's name
+  above it, and Done/Back puts it away and moves to the next field.
+- **Status:** approved by the owner on 4 Nov 2026 (`01`–`04` and the keyboard rule) — awaiting go-ahead to code.
+
+## 19. Suggestions approved by the owner (4 Nov 2026) — designs/checks to follow
+1. **One shared choice list** replacing every old translucent pop-up app-wide (Local Storage long-press, IntroDB
+   choices, Home Move/Hide and any others found), in the solid side-panel style.
+2. **Sleep timer back:** 30 / 60 / 90 minutes or end of this episode (the picker exists but its menu entry is commented
+   out in `PlayerActivity`). Mock-up to follow.
+3. **Supernova screensaver:** slow full-screen backdrops from the library with the title in a corner (Android TV
+   Dream service; none today). Mock-up to follow.
+4. **Fix match from Details:** search and pick the right title without leaving Details. Mock-up to follow.
+5. **Library Health badge:** e.g. "3 new files couldn't be identified" shown on the Network & Files tile.
+6. **Remember audio/subtitle choices per series** — check first how much already exists, then describe.
+7. **"Still watching?"** after a long run of auto-played episodes.
+8. **Consistent empty states** on every page (calm message + one useful button).
+9. **Focus memory everywhere** — audit pages that do not return to where you were.
+- **Status:** approved in principle — each gets its mock-up or description for a final look, then awaits go-ahead to code.
