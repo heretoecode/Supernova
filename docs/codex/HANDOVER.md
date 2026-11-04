@@ -6,12 +6,20 @@ Branch: `codex/0155-code-2026-11-04`. Follow `BRIEF_0155_ENGINE_BUILD.md`
 from fetched Claude `a5c5b7b3a408ffa3adaa24f5cfbfe2bd1ce4e460`.
 This section supersedes the historical preparation status below.
 
-1. Archive first: manually dispatch `supernova-0156-native-archive.yml` on this
-   branch, no inputs. It verifies run `40843685431` and publishes the four old
-   ABI ZIPs/tarballs and lock/verification/manifest files to Release
-   `native-archive-0146`. Check the Release receipts and downloaded asset hashes.
-2. Native build: manually dispatch `supernova-0156-native-stack.yml` on this
-   branch with `third_party_source=release`. `actions` is an explicit fallback
+1. Archive first: Claude starts `supernova-0156-native-archive.yml` with no inputs
+   from the reviewed recipe branch (manual dispatch, or a push changing only its
+   own workflow path on `claude/supernova-github-access-yfhe89`). It verifies run
+   `40843685431` and preserves the four original ABI ZIPs plus lock, verification
+   receipt and manifest in the **orphan branch `native-archive-0146`**, one commit
+   and nothing else. Each file is strictly below 100 MB. An existing branch must
+   match exactly; no overwrite. Check the final fresh-fetch hash verification.
+   No Release is needed. If job-token push is also denied, the owner follows
+   the exact one-time computer commands in `findings/native-archive-plan.md`.
+2. Native build: manually dispatch `supernova-0156-native-stack.yml` on the
+   reviewed recipe branch with `third_party_source=branch` (now the default).
+   It checks the complete archive tree/manifest against the local reviewed
+   lock and all four ZIP hashes, then the selected tarball/receipt/library bytes.
+   `actions` is an explicit fallback
    while the old run is available, never an unverified fallback. Expect artifact
    `supernova-0156-native-arm64-v8a`: `Supernova_0.156_native_arm64-v8a.tar.gz`,
    `native-stack.json`, `native-supernova156.lock.json`, `archive.json`,
