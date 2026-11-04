@@ -35,5 +35,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Status:** open — mock-ups.
 
 ## 6. Panel colour check
-- In the photos the Playback Settings panel reads light slate-blue rather than near-black charcoal. To confirm with
-  the owner whether that is the camera or the panel.
+- Owner confirmed 4 Nov 2026: the panel is the correct charcoal on the TV; the blue tint was the phone camera. Closed.
