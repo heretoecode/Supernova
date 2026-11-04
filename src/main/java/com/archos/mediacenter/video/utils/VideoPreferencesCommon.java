@@ -74,14 +74,11 @@ import com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes;
 import com.archos.mediacenter.video.foundation.FoundationAboutEntry;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.leanback.MainFragment;
-import com.archos.mediacenter.video.leanback.animes.AllAnimesGridFragment;
 import com.archos.mediacenter.video.leanback.animes.AnimesSortOrderEntry;
-import com.archos.mediacenter.video.leanback.movies.AllMoviesGridFragment;
 import com.archos.mediacenter.video.leanback.movies.MoviesSortOrderEntry;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsLicencesActivity;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsMoreLeanbackActivity;
-import com.archos.mediacenter.video.leanback.tvshow.AllTvshowsGridFragment;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowsSortOrderEntry;
 import com.archos.mediacenter.video.streaming.StreamingPreferences;
 import com.archos.mediacenter.video.tvshow.AnimeShowSortOrderEntries;
@@ -1810,9 +1807,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 ListPreference movieSortOrderPref = (ListPreference)findPreference(KEY_MOVIE_SORT_ORDER);
 
                 movieSortOrderPref.setEntries(
-                    MoviesSortOrderEntry.getSortOrderEntries(getActivity(), AllMoviesGridFragment.sortOrderIndexer));
+                    MoviesSortOrderEntry.getSortOrderEntries(getActivity(), LibrarySortPreferences.MOVIES_SORT_ORDERS));
                 movieSortOrderPref.setEntryValues(MoviesSortOrderEntry.getSortOrderEntryValues(
-                    getActivity(), AllMoviesGridFragment.sortOrderIndexer));
+                    getActivity(), LibrarySortPreferences.MOVIES_SORT_ORDERS));
 
                 if (movieSortOrderPref.getValue() == null)
                     movieSortOrderPref.setValue(MoviesLoader.DEFAULT_SORT);
@@ -1820,9 +1817,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 ListPreference tvshowSortOrderPref = (ListPreference)findPreference(KEY_TV_SHOW_SORT_ORDER);
 
                 tvshowSortOrderPref.setEntries(
-                    TvshowsSortOrderEntry.getSortOrderEntries(getActivity(), AllTvshowsGridFragment.sortOrderIndexer));
+                    TvshowsSortOrderEntry.getSortOrderEntries(getActivity(), LibrarySortPreferences.TVSHOWS_SORT_ORDERS));
                 tvshowSortOrderPref.setEntryValues(TvshowsSortOrderEntry.getSortOrderEntryValues(
-                    getActivity(), AllTvshowsGridFragment.sortOrderIndexer));
+                    getActivity(), LibrarySortPreferences.TVSHOWS_SORT_ORDERS));
 
                 if (tvshowSortOrderPref.getValue() == null)
                     tvshowSortOrderPref.setValue(TvshowSortOrderEntries.DEFAULT_SORT);
@@ -1833,9 +1830,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 // since it gets removed from the leanback category earlier
                 if (animesSortOrderPref != null) {
                     animesSortOrderPref.setEntries(AnimesSortOrderEntry.getSortOrderEntries(
-                        getActivity(), AllAnimesGridFragment.sortOrderIndexer));
+                        getActivity(), LibrarySortPreferences.ANIMES_SORT_ORDERS));
                     animesSortOrderPref.setEntryValues(AnimesSortOrderEntry.getSortOrderEntryValues(
-                        getActivity(), AllAnimesGridFragment.sortOrderIndexer));
+                        getActivity(), LibrarySortPreferences.ANIMES_SORT_ORDERS));
 
                     if (animesSortOrderPref.getValue() == null)
                         animesSortOrderPref.setValue(AnimeShowSortOrderEntries.DEFAULT_SORT);

@@ -101,6 +101,7 @@ import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.utils.videodb.XmlDb;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.LibrarySortPreferences;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
 import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.lists.ListDialog;
 import com.archos.mediacenter.video.browser.Delete;
@@ -126,7 +127,6 @@ import com.archos.mediacenter.video.leanback.DetailsBackdropController;
 import com.archos.mediacenter.video.leanback.adapter.object.WebPageLink;
 import com.archos.mediacenter.video.leanback.channels.ChannelManager;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
-import com.archos.mediacenter.video.leanback.movies.AllMoviesGridFragment;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
 import com.archos.mediacenter.video.leanback.presenter.PresenterUtils;
 import com.archos.mediacenter.video.leanback.presenter.ScraperImageBackdropPresenter;
@@ -2950,8 +2950,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             CursorLoader loader = null;
             if (mVideo instanceof Movie) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String sortOrder = prefs.getString(AllMoviesGridFragment.SORT_PARAM_KEY, MoviesLoader.DEFAULT_SORT);
-                boolean showWatched = prefs.getBoolean(AllMoviesGridFragment.SHOW_WATCHED_KEY, true);
+                String sortOrder = prefs.getString(LibrarySortPreferences.MOVIES_SORT_KEY, MoviesLoader.DEFAULT_SORT);
+                boolean showWatched = prefs.getBoolean(LibrarySortPreferences.MOVIES_SHOW_WATCHED_KEY, LibrarySortPreferences.SHOW_WATCHED_DEFAULT);
                 loader = new MoviesLoader(getActivity(), sortOrder, showWatched, true, VideoLoader.GRIDVIDEO_THROTTLE,
                     VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             } else if (mVideo instanceof Episode) {
