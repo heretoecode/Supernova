@@ -43,7 +43,14 @@ ENGINE_BUILD item 2b: app draft 02 applied with `VideoCodecSelectionTest`
 and `PlaybackHdrCapabilitiesTest` (upstream `9ec1bdc26a4ec7086b7bc2b89722a46ef6858d48`).
 Four actual ranking JUnit tests pass at Java 17 with ECJ/JRE21; seven
 Robolectric tests await Claude. Player/utils Java syntax parsed.
-Continue with app draft 03.
+Commit `80f9504d4`.
+
+ENGINE_BUILD item 2c: app draft 03 applied with eight Robolectric padding tests
+(upstream `73df6e4d714eed203237d045b20bac41f4799764`). Legacy preferences
+retain the existing line/block padding, including zero; no Settings control was
+added. New `nativeSetPadding` must ship with this engine, never the old DSOs.
+Player production and test syntax parsed; Robolectric unrun. Continue at item 3,
+upstream `8bbfb666` vertical subtitle canvas port.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
