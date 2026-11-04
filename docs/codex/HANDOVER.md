@@ -1,0 +1,21 @@
+# Handover to Claude — 2026-11-04
+
+Branch: `codex/0155-code-2026-11-04`. ENGINE replaces NEXT's order. No Gradle,
+UI/design edits, existing `.github/` edits, workflow dispatch or PR in this run.
+Commit IDs describe completed work; “current item commit” means the commit that
+adds/updates this row. The final engine report records exact delivery hashes.
+
+| Item (engine release first) | Commits | Files | Tested how | How to apply | Open questions / next action |
+|---|---|---|---|---|---|
+| ENGINE 1 — NOVA 6.6.4 plan | Current item commit | `findings/engine-0156-plan.md` | Offline local `git show` of every named commit; 51-commit native range counted; current app and prepared MediaLib file:line comparison | Documentation only. Freeze avos `5cf3ae9c1f70189d4180a62722150fa76b405a0f` | Next: ENGINE 2 native residual patches. Item 3 needs ranking/HDR and padding plumbing; retry, association and cache fallback already exist. Claude owns subtitle canvas layout and any visual default/control changes. |
+| NEXT 1 — durable old native archive | `56789688a` | New `native-archive-supernova156.py`, offline test and `supernova-0156-native-archive.yml`; `findings/native-archive-plan.md` | Nine offline Python tests passed; existing lock/recipe hashes verified; read-only run metadata checked | Review, then manually dispatch before 27 Jan 2027. Do not substitute a new engine for the preserved old stack | Workflow unrun, Release unpublished by Codex. Existing acquisition unchanged; follow the migration plan and verify Release bytes before switching. |
+| NEXT 2 — DP-08 source log privacy | `46c8cc64e` | `player/Player.java`; `src/test/.../player/PlayerSourceLoggingTest.java` | Java syntax passed; Robolectric written but not run | Already in this branch; compile and run with existing player tests | Verify native source opening and captured logs on the full Android workspace. |
+| MORE 1 — compatibility intent test | `ece96827b` | `src/test/.../browser/QueryCompatibilityTest.java` | Test-only fix; JUnit/Robolectric not run by Codex | Already in branch: pass a copied Intent to Robolectric | Claude's full test run is the validation authority. |
+| MORE 2 — network scan compensation/cancellation draft | `7a26c7488` | New `filecore-supernova155-scan.patch`, `medialib-supernova155-scan.patch`; `findings/stuck-network-scan-draft.md` | Ordered `git apply --check` on prepared dependencies; five standalone JUnit/MockWebServer tests passed; 20 Android tests written but not run | Existing reviewed module patches first; new FileCore draft, then MediaLib draft. Existing build lock intentionally not edited | Remaining integration/termination gates are listed in the findings/report. New DP-10 FileCore hook belongs in a companion patch per ENGINE 6; don't reach into FileCore internals from the app. |
+| MORE 3 — Library Health counts | `5988e19c4` | `findings/library-health-counts.md` | Analysis only, proving tests described | Claude/owner read the count/cleanup reconciliation contract | Health implementation/UI remain hands-off. |
+| MORE 4 — TV-only stage-5 device checklist | `f1edb7184` | `findings/tv-only-stage5-device-checks.md` | 18 steps, named candidate files checked; device checklist not run | Owner runs on Shield; record reachable routes before removals | No UI/resource removal authorized in these briefs. |
+| MORE player hunt progress | `81a22f705`, report `3cd1a00fb` | `findings/deep-hunt-1-player.md`; `reports/2026-11-04-0155-code-hunt1-more.md` | 24 additional complete file reads; historical ledger 82/85 at recorded snapshots | Preserve provenance; ENGINE 6 resumes NEXT after engine work | NEXT 6 still needs complete PlayerActivity/PlayerController/PlayerService reads. DP-09 belongs to Claude; DP-10 is NEXT 3. |
+
+Reports already in `docs/codex/reports/` give the detailed scope and validation
+limits for each earlier run. No previous draft is automatically wired into the
+current dependency preparation or approved as a production build.
