@@ -4,7 +4,7 @@ Read-only preparation under BRIEF_0155_PREP Part 2, implementing the scope of BR
 
 ## Frozen upstream range
 
-`nova-video-player/aos-avos`: `95a9e6b36a07dc996a37adc485d0ef460f1818f2` exclusive through `2540c4f4fd9f04d462d0929f45849fad93e77d00` inclusive, fetched 2026-11-04. There are **48 graph commits (43 non-merge + 5 merge)**, rather than the brief’s 46: the final two are `af12935` and `2540c4f`. Preserve the full tested history instead of applying merge commits as duplicate patches. The per-commit evidence is `git show <SHA>` in that repository; overlap below is an exact changed-path intersection, not a claim that every overlapping hunk conflicts.
+`nova-video-player/aos-avos`: `95a9e6b36a07dc996a37adc485d0ef460f1818f2` exclusive through `2540c4f4fd9f04d462d0929f45849fad93e77d00` inclusive, fetched 2026-11-04. There are **48 graph commits (43 non-merge + 5 merge)**, rather than the brief’s 46: the final two are `af12935` and `2540c4f`. Preserve the full upstream history instead of applying merge commits as duplicate patches. The per-commit evidence is `git show <SHA>` in that repository; overlap below is an exact changed-path intersection, not a claim that every overlapping hunk conflicts.
 
 ## Every upstream commit
 
