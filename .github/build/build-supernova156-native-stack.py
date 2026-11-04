@@ -20,13 +20,20 @@ def acquire_stack(destination, lock, source):
     rows = archive.verification_rows(review, native.BUILD / "native-supernova146.lock.json")
     row = next(item for item in rows if item["abi"] == native.ABI)
     zip_path = destination / ("supernova-0146-native-" + native.ABI + ".zip")
-    if source == "release":
+    if source == "branch":
+        branch_files = destination / "archive-branch"
+        archive.read_branch(branch_files, native.BUILD / "native-supernova146.lock.json",
+                            native.VIDEO / "docs/0.146/NATIVE_CI_ARTIFACT_VERIFICATION.json")
+        shutil.copyfile(branch_files / zip_path.name, zip_path)
+    elif source == "release":
         archive.gh("release", "download", archive.TAG, "--repo", archive.REPOSITORY,
                    "--pattern", zip_path.name, "--dir", str(destination))
-    else:
+    elif source == "actions":
         selected = archive.select_artifacts(archive.api(f"actions/runs/{archive.RUN}/artifacts?per_page=100"), rows)
         artifact = next(item for candidate, item in selected if candidate["abi"] == native.ABI)
         archive.download(f"actions/artifacts/{artifact['id']}/zip", zip_path)
+    else:
+        raise ValueError("Explicit third-party source required")
     old = json.loads((native.BUILD / "native-supernova146.lock.json").read_text())
     tar_path = archive.verify_archive(zip_path, destination, row, old)
     # Verified prebuilt archives contain internal symlinks used by pkg-config.
@@ -68,7 +75,7 @@ def stage(root, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, required=True)
-    parser.add_argument("--third-party-source", choices=("release", "actions"), default="release")
+    parser.add_argument("--third-party-source", choices=("branch", "release", "actions"), default="branch")
     parser.add_argument("--jobs", type=int, default=4)
     parser.add_argument("--ndk", type=Path)
     args = parser.parse_args()

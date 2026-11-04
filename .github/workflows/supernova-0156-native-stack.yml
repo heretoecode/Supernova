@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       third_party_source:
-        description: Verified 0.146 archive source (archive Release first)
+        description: Verified 0.146 archive source (archive branch first)
         type: choice
-        options: [release, actions]
-        default: release
+        options: [branch, release, actions]
+        default: branch
         required: true
 
 permissions:

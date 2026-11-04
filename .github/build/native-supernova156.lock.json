@@ -280,7 +280,7 @@
   },
   "recipe_hashes": {
     ".github/build/native-supernova156.py": "f1992900fe7734519e32b7731330509eb8a76ecfab8ecbf64508dd15d2cfc12e",
-    ".github/build/build-supernova156-native-stack.py": "e91f4870896abfba136a63dccb77bab26d347894c2b52ddc52f05c537b1d22f4",
+    ".github/build/build-supernova156-native-stack.py": "4b41fecc4bc6fe9e0b08a599451bd6905094929620bbff100891287308ebc474",
     ".github/build/package-supernova156-native.py": "36a9def4347c9495fcf58c6464ab441114ece1227bc7791a30de7cec7be32225",
     ".github/build/native-archive-supernova156.py": "5a193cff3d83d0864a7cf8abb6b139565116981368e3d5fffbe2e14ee79af48e",
     ".github/build/filecore-preview414.patch": "1981fcd319913f761d1150dbb862d69d86505e710c3a24a132dbd066b178b9e5",

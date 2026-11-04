@@ -136,10 +136,49 @@ class NativeStackTests(unittest.TestCase):
             builder.build(self.work / "root", self.work, 4)
         run.assert_not_called()
 
+    def test_branch_acquisition_verifies_manifest_before_extracting(self):
+        archive = module("native-archive-supernova156")
+        review = json.loads((native.VIDEO / "docs/0.146/NATIVE_CI_ARTIFACT_VERIFICATION.json").read_text())
+        row = next(item for item in review["artifacts"] if item["abi"] == native.ABI)
+        tar_path = self.work / "old.tar.gz"
+        with tarfile.open(tar_path, "w:gz"):
+            pass
+        def read_branch(destination, lock, verification):
+            self.assertEqual(native.BUILD / "native-supernova146.lock.json", lock)
+            self.assertEqual(native.VIDEO / "docs/0.146/NATIVE_CI_ARTIFACT_VERIFICATION.json", verification)
+            destination.mkdir()
+            (destination / ("supernova-0146-native-" + native.ABI + ".zip")).write_bytes(b"verified")
+        with patch.object(builder.native, "load_module", return_value=archive), \
+                patch.object(archive, "read_branch", side_effect=read_branch) as read, \
+                patch.object(archive, "gh", side_effect=AssertionError("Wrong acquisition source")), \
+                patch.object(archive, "verify_archive", return_value=tar_path) as verify:
+            prebuilt, actual = builder.acquire_stack(self.work, self.lock, "branch")
+        self.assertEqual(row, actual)
+        self.assertEqual(self.work / "verified-stack/prebuilt", prebuilt)
+        read.assert_called_once()
+        verify.assert_called_once()
+        self.assertEqual(b"verified", verify.call_args.args[0].read_bytes())
+
+    def test_branch_verification_failure_has_no_fallback_or_extraction(self):
+        archive = module("native-archive-supernova156")
+        with patch.object(builder.native, "load_module", return_value=archive), \
+                patch.object(archive, "read_branch", side_effect=ValueError("manifest mismatch")), \
+                patch.object(archive, "gh", side_effect=AssertionError("Unverified fallback")), \
+                patch.object(archive, "verify_archive") as verify:
+            with self.assertRaisesRegex(ValueError, "manifest mismatch"):
+                builder.acquire_stack(self.work, self.lock, "branch")
+        verify.assert_not_called()
+
+    def test_unknown_source_fails_closed(self):
+        with self.assertRaisesRegex(ValueError, "Explicit third-party source"):
+            builder.acquire_stack(self.work, self.lock, "unknown")
+
     def test_workflow_manual_only(self):
         workflow = (native.VIDEO / ".github/workflows/supernova-0156-native-stack.yml").read_text()
         trigger = workflow.split("on:\n", 1)[1].split("permissions:", 1)[0]
         self.assertIn("workflow_dispatch:", trigger)
+        self.assertIn("options: [branch, release, actions]", trigger)
+        self.assertIn("default: branch", trigger)
         self.assertNotIn("push:", trigger)
         self.assertNotIn("pull_request:", trigger)
         self.assertIn("supernova-0156-native-arm64-v8a", workflow)
