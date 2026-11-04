@@ -37,7 +37,13 @@ Item 1 commit: `ecab7477d`. No workflow or NDK/Gradle build has run.
 ENGINE_BUILD item 2a: app draft 01 applied as production Java with its three
 Robolectric tests (upstream `5c7215144f72312b086eb314f514c7605d8e6c5f`).
 No HDR SurfaceView transaction remains; the existing HDR window request stays.
-Tests written, not run. Continue with app draft 02.
+Commit `07b4afbb7`; Robolectric tests written, not run. Player syntax parsed.
+
+ENGINE_BUILD item 2b: app draft 02 applied with `VideoCodecSelectionTest`
+and `PlaybackHdrCapabilitiesTest` (upstream `9ec1bdc26a4ec7086b7bc2b89722a46ef6858d48`).
+Four actual ranking JUnit tests pass at Java 17 with ECJ/JRE21; seven
+Robolectric tests await Claude. Player/utils Java syntax parsed.
+Continue with app draft 03.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
