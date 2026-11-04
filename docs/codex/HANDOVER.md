@@ -2,8 +2,8 @@
 
 Branch: `codex/0155-code-2026-11-04`. ENGINE replaces NEXT's order. No Gradle,
 UI/design edits, existing `.github/` edits, workflow dispatch or PR in this run.
-Commit IDs describe completed work; “current item commit” means the commit that
-adds/updates this row. The final engine report records exact delivery hashes.
+Commit IDs describe completed work. ENGINE items 1–5 are prepared; the next
+task is **ENGINE 6 → NEXT 3, DP-10**. The final engine report records delivery.
 
 | Item (engine release first) | Commits | Files | Tested how | How to apply | Open questions / next action |
 |---|---|---|---|---|---|
@@ -12,7 +12,7 @@ adds/updates this row. The final engine report records exact delivery hashes.
 | ENGINE 3 — HDR producer correction, upstream `5c721514` | `4d59e399d` | New `.github/build/video-supernova156-01-hdr-producer-5c721514.patch`, bundling Player/SurfaceController internal HDR deletion and new `PlayerHdrProducerContractTest` | Clean `git apply --check`, exact post-apply tree and all three Java files syntax parsed; three Robolectric tests written but not run | First app draft, apply in the engine integration checkout, then compile/run tests with new native HDR signalling | Current production app unchanged. No layout/control/geometry changes in the patch. |
 | ENGINE 3 — ranked candidates / live HDR, upstream `9ec1bdc2` | `6f04ae3ff` | New `.github/build/video-supernova156-02-codecs-9ec1bdc2.patch`: Player open hook, CodecDiscovery, VideoCodecSelection and two new tests | Clean ordered apply/exact tree and five Java syntax checks. Four actual ranking JUnit tests passed at Java 17 using ECJ/JRE21. Seven Robolectric display/API/filter tests written but not run | Apply after app draft 01; pair native JNI callbacks/candidate loop with the new avos build | Existing audio/spatializer helpers, source generations and DP-08 redaction retained. |
 | ENGINE 3 — box padding plumbing, upstream `73df6e4d` | `93803fe7b` | New `.github/build/video-supernova156-03-padding-73df6e4d.patch`, new app draft manifest; SubtitleEngine/SubtitleManager and eight new tests bundled in patch | Clean ordered apply/exact complete draft tree; three Java files syntax checked. Eight Robolectric tests written but not run | App draft 03 after 01/02, **only with rebuilt new avos JNI exports**. Existing source/native build untouched | Missing key preserves both legacy box modes, widths and zero without preference writes; explicit key separates padding. No Settings/model/preview/resource/control changes. Native rendering/JNI acceptance and full Android test run pending. |
-| ENGINE 4 — owner Shield test plan | Current item commit | `findings/engine-0156-shield-tests.md` | 23 plain-language steps checked against requested format/file matrix; device tests not run | Owner runs after Claude's engine/native/Java integration, with old-build baseline and saved settings | Includes DV 5/7/8/9, AV1/profile10 limits, HDR10/HDR10+/HLG/SDR, TS resume, multivideo, SRT/ASS/PGS boxes, Fit width/zoom, controlled network reopen, 3D and display reconnect. ASS layout integration is Claude's gate. |
+| ENGINE 4 — owner Shield test plan | `2cb013522` | `findings/engine-0156-shield-tests.md` | 23 plain-language steps checked against requested format/file matrix; device tests not run | Owner runs after Claude's engine/native/Java integration, with old-build baseline and saved settings | Includes DV 5/7/8/9, AV1/profile10 limits, HDR10/HDR10+/HLG/SDR, TS resume, multivideo, SRT/ASS/PGS boxes, Fit width/zoom, controlled network reopen, 3D and display reconnect. ASS layout integration is Claude's gate. |
 | NEXT 1 — durable old native archive | `56789688a` | New `native-archive-supernova156.py`, offline test and `supernova-0156-native-archive.yml`; `findings/native-archive-plan.md` | Nine offline Python tests passed; existing lock/recipe hashes verified; read-only run metadata checked | Review, then manually dispatch before 27 Jan 2027. Do not substitute a new engine for the preserved old stack | Workflow unrun, Release unpublished by Codex. Existing acquisition unchanged; follow the migration plan and verify Release bytes before switching. |
 | NEXT 2 — DP-08 source log privacy | `46c8cc64e` | `player/Player.java`; `src/test/.../player/PlayerSourceLoggingTest.java` | Java syntax passed; Robolectric written but not run | Already in this branch; compile and run with existing player tests | Verify native source opening and captured logs on the full Android workspace. |
 | MORE 1 — compatibility intent test | `ece96827b` | `src/test/.../browser/QueryCompatibilityTest.java` | Test-only fix; JUnit/Robolectric not run by Codex | Already in branch: pass a copied Intent to Robolectric | Claude's full test run is the validation authority. |
@@ -24,3 +24,29 @@ adds/updates this row. The final engine report records exact delivery hashes.
 Reports already in `docs/codex/reports/` give the detailed scope and validation
 limits for each earlier run. No previous draft is automatically wired into the
 current dependency preparation or approved as a production build.
+
+For engine integration, use the exact native pin and five new avos patches in
+the native draft lock, replacing the old avos operation sequence together.
+Retain the verified old third-party stack; its libass/font stack is static,
+while FFmpeg/media runtime dependencies are shared. Rebuild wrappers. Apply the
+three app patches in their manifest order and ship the new padding export and
+Java callers together. The app result-tree record describes the exact Codex
+fixture, not a request to overwrite newer Claude code. Then run the bundled
+22 Java tests (four ranking tests already passed offline; 18 Robolectric tests
+remain unrun), full native/JNI/conformance checks and the Shield plan.
+
+Claude's remaining engine coordination: subtitle canvas overflow geometry from
+`8bbfb666` (layout, not edited here); any supported horizontal overflow case;
+actual native/Java installation and build-pin/receipt integration. Padding UI,
+visual resource defaults and the IntroDB library change are excluded from the
+internal engine drafts. All delivered patch hashes were rechecked against both
+new manifests. Existing `.github/` and protected files remain untouched.
+
+Exact continuation: **ENGINE item 6, NEXT item 3 (DP-10)**. Add a new
+`.github/build/filecore-supernova155-*.patch` supplying an owned listing
+cancellation/deadline hook after the existing reviewed FileCore patches and
+earlier scan draft. Do not edit either existing draft or existing build lock,
+and do not reach into FileCore's private clients from app code. Complete the
+UpdateNextTask cancellation/traversal fence and silent/trickle/repeated-replace
+worker-exit/no-late-callback/shared-client tests in one DP-10 commit. Preserve
+file selection; DP-09 is Claude's. Then continue NEXT item 4 and onward.
