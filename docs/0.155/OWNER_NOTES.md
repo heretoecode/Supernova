@@ -9,6 +9,9 @@
 Also queued for 0.155: `docs/0.154/OWNER_NOTES.md` items 13–17 (Network & Files redesign, stuck-scan fix) and
 Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **Nothing is coded until the owner says so.**
 
+> **How mock-ups are shown (owner, 4 Nov 2026):** only final mock-ups the owner needs to judge, sent once, as one
+> numbered group per question. Claude checks renders without opening them in the chat (no draft or check images).
+
 ## Confirmed fixed in 0.154 (owner)
 - Hero More Info icon dark on focus; no age rating or score on hero cards; hero readability improved; focused
   posters have one crisp outline; Playback Settings has no title and no row lines.
