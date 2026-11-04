@@ -605,3 +605,8 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Our own first-play tip** (replaces NOVA's): a small charcoal card on the first video only, three lines with remote
   arrows — "Left/Right seek · OK pause", "Up for Settings", "Down for Chapters and Episodes" — gone after 8 seconds or
   any press. Mock-up once the scheme is agreed.
+- **Owner:** scheme agreed in general; the controls keep today's height and position. Chapters and Episodes show as
+  two small buttons under the bar; the rows only appear when focus moves down to them, and the controls rise to make
+  room. Mock-ups `docs/design/proposals/chapters/01`–`05`: 01 resting, 02 Down to Chapters (rows slide in),
+  03 a chapter card focused, 04 Episodes, 05 the first-play tip. Awaiting review.
+- **Edit Page approved** (owner, 4 Nov) including the centred Delete Page.

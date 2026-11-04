@@ -14,17 +14,20 @@ const LEN = 50.1, NOW = 4.53;
 const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch[i + 1][1] : LEN; const w = (e - s) / LEN * 100, l = s / LEN * 100;
   const played = Math.max(0, Math.min(1, (NOW - s) / (e - s)));
   return `<div class="seg${focus === i ? ' hi' : ''}" style="left:${l}%;width:calc(${w}% - 6px)"><b style="width:${played * 100}%"></b></div>`; }).join('');
-const hud = (focus, strip) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
+const hud = (focus, strip, tabFocus = -1) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
   <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
   ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 2</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
-  (strip === 'ch' ? tabsRow(0) + `<div class="strip">${ch.map(([n, st, t], i) => card(`k${i}`, n, i === 1 ? 'Playing · from ' + t : 'From ' + t, i === 1 ? (NOW - st) / (ch[2][1] - st) : (i < 1 ? 1 : 0), i === focus, i === 1)).join('')}</div>` : '') +
-  (strip === 'ep' ? tabsRow(1) + `<div class="strip">${eps.map(([n, t, st], i) => card(`s${i}`, n, st === 'p' ? 'Playing · ' + t : st === 'w' ? 'Watched · ' + t : t, st === 'p' ? .09 : st === 'w' ? 1 : 0, i === 2, st === 'p')).join('')}</div>` : '');
+  (!strip ? tabsRow(-1, -1, true) : '') + (strip === 'ch' ? tabsRow(0, tabFocus) + `<div class="strip">${ch.map(([n, st, t], i) => card(`k${i}`, n, i === 1 ? 'Playing · from ' + t : 'From ' + t, i === 1 ? (NOW - st) / (ch[2][1] - st) : (i < 1 ? 1 : 0), i === focus, i === 1)).join('')}</div>` : '') +
+  (strip === 'ep' ? tabsRow(1, tabFocus) + `<div class="strip">${eps.map(([n, t, st], i) => card(`s${i}`, n, st === 'p' ? 'Playing · ' + t : st === 'w' ? 'Watched · ' + t : t, st === 'p' ? .09 : st === 'w' ? 1 : 0, i === 2, st === 'p')).join('')}</div>` : '');
 const card = (bg, title, sub, prog, f, now) => `<div class="hc ${bg}${f ? ' f' : ''}"><div class="hcg"></div><div class="hct"><b>${title}</b><span class="${now ? 'now' : ''}">${sub}</span></div>${prog > 0 ? `<i class="hp"><b style="width:${Math.max(4, prog * 100)}%"></b></i>` : ''}</div>`;
-const tabsRow = open => `<div class="ptabs">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}">${t}</span>`).join('')}</div>`;
+const tabsRow = (open, tf = -1, rest = false) => `<div class="ptabs${rest ? ' rest' : ''}">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}${i === tf ? ' tf' : ''}">${t}</span>`).join('')}</div>`;
+const tip = `<div class="tip"><div class="tr"><span class="k">‹ ›</span>Seek<span class="sep">·</span><span class="k">OK</span>Play / pause</div><div class="tr"><span class="k">↑</span>Play/pause and Settings buttons</div><div class="tr"><span class="k">↓</span>Chapters and Episodes</div></div>`;
 const shots = [
-  ['01-bar-with-chapters.png', frame + `<div class="shade"></div>` + hud(-1, false), 'The progress bar is split at each chapter; the time bubble names the chapter you are in'],
-  ['02-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Chapters: the same cards as the Home rows, each with a picture from the start of the chapter; the focused card grows and its part of the bar lights up; OK jumps there'],
-  ['03-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: the same cards, opened at the one playing (progress bar), watched ones marked; OK plays the chosen episode'],
+  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls as today, same height; Chapters and Episodes sit under the bar as two small buttons, no rows yet'],
+  ['02-down-to-chapters.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ch', 0), 'Down from the bar: the controls rise and the Chapters row slides in below; Left/Right switches to Episodes'],
+  ['03-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Down again into the row: the focused card grows and its part of the bar lights up; OK jumps there'],
+  ['04-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: opened at the one playing, watched ones marked; OK plays the chosen episode; Up, Up returns to the bar'],
+  ['05-first-play-tip.png', frame + `<div class="shade"></div>` + hud(-1, false) + tip, 'First video only: a small tip on how the remote works; gone after 8 seconds or any press'],
 ];
 const css = `${font(400)}${font(500)}${font(700)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:#000}
@@ -59,7 +62,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .hcg{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,0) 60%)}.hct{position:absolute;left:16px;right:16px;bottom:20px}.hct b{display:block;font-size:23px;font-weight:700}.hct span{display:block;font-size:18px;color:#e6ebf5;margin-top:2px}.hct span.now{color:#9fd0ff}
 .hp{position:absolute;left:14px;right:14px;bottom:9px;height:5px;border-radius:3px;background:rgba(255,255,255,.3)}.hp b{display:block;height:100%;border-radius:3px;background:#fff}
 .k0{background:radial-gradient(ellipse at 30% 40%,#c9a46a,#3b2a1a 70%)}.k1{background:radial-gradient(ellipse at 60% 30%,#6aa0c9,#17263b 70%)}.k2{background:radial-gradient(ellipse at 40% 60%,#c96a5a,#3b1a17 70%)}.k3{background:radial-gradient(ellipse at 70% 50%,#7ac98a,#173b22 70%)}.k4{background:radial-gradient(ellipse at 30% 30%,#a08ad0,#221a3b 70%)}.k5{background:radial-gradient(ellipse at 50% 50%,#d0c06a,#3b331a 70%)}
-.ptabs{position:absolute;left:70px;bottom:262px;display:flex;gap:14px}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
+.ptabs{position:absolute;left:70px;bottom:262px;display:flex;gap:14px}.ptabs.rest{bottom:26px}.ptabs.rest span{height:46px;font-size:20px;padding:0 20px;border-radius:15px}.ptabs span.tf,.ptabs span.open.tf{background:#F4F6FB!important;color:#0B0D12!important;border-color:#F4F6FB!important}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
 .ec{flex:1;min-width:0;border-radius:22px;padding:10px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18)}.ec.f{background:#F4F6FB;border-color:#F4F6FB}.ec.f b{color:#0B0D12}.ec.f span{color:#3a3f48}
 .ec b{display:block;font-size:22px;font-weight:500;margin:8px 6px 0}.ec span{display:block;font-size:19px;color:#c9d3e6;margin:2px 6px 4px}.ec span.now{color:#5aa9ff}
 .still{position:relative;height:64px;border-radius:14px;overflow:hidden}.still em{position:absolute;right:8px;top:8px;font-style:normal;font-size:16px;font-weight:500;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:9px}
@@ -68,6 +71,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .cc{flex:1;height:110px;border-radius:22px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18);padding:18px 22px;display:flex;flex-direction:column;justify-content:center}
 .cc b{font-size:26px;font-weight:500}.cc span{font-size:21px;color:#c9d3e6;margin-top:6px}.cc.now span{color:#5aa9ff}
 .cc.f{background:#F4F6FB;border-color:#F4F6FB}.cc.f b{color:#0B0D12}.cc.f span{color:#3a3f48}
+.tip{position:absolute;left:50%;top:300px;transform:translateX(-50%);background:rgba(22,24,28,.95);border:2px solid rgba(255,255,255,.22);border-radius:24px;padding:24px 34px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.tr{display:flex;align-items:center;gap:14px;font-size:24px;height:52px}.k{min-width:56px;height:40px;padding:0 10px;border-radius:12px;background:#3a3e46;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:500}.sep{color:#8f98a8;margin:0 6px}
 .label{position:absolute;left:56px;top:28px;font-size:20px;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:10px}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
