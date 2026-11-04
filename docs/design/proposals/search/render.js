@@ -39,21 +39,19 @@ const hl = (t, q) => t.replace(new RegExp('(' + q + ')', 'ig'), '<mark>$1</mark>
 const pill = w => `<span class="wp ${w === 1 ? 'done' : w > 0 ? 'part' : 'un'}">${w > 0 && w < 1 ? `<i style="width:${w * 100}%"></i>` : ''}<b>${w === 1 ? '✓ Watched' : w > 0 ? Math.round(w * 100) + '% watched' : 'Unwatched'}</b></span>`;
 const filt = on => `<div class="filters">${['All', 'Films', 'TV shows', 'Episodes', 'People'].map(f => `<span class="fl${on === f ? ' on' : ''}">${f}</span>`).join('')}</div>`;
 const r2 = (c, t, y, l2, w, focus, q, online) => `<div class="r r2${focus ? ' f' : ''}">${poster(c)}<div class="rt"><div class="t1"><b>${hl(t, q)}</b>${y ? `<span class="yr">${y}</span>` : ''}</div><div class="t2">${l2}</div></div><span class="sp2"></span>${online ? '<span class="add">Not in your library</span>' : pill(w)}</div>`;
-const discover = (on) => `<div class="right"><div class="count">${on === 'All' ? '6' : '4'} results for “dune”</div>${filt(on)}
-  <div class="sec">${ic('film', 26)}In your library</div>
+const discover = (on) => `<div class="right"><div class="count">${on === 'All' ? '3' : '2'} results for “dune” · in your library</div>${filt(on)}
+  <div class="sec">${ic('film', 26)}Films · 2</div>
   ${r2('#c7a46a', 'Dune', '2021', 'Film · 155 min · 4K HDR · Science Fiction, Adventure', 1, true, 'dune')}
   ${r2('#e3a33a', 'Dune: Part Two', '2024', 'Film · 165 min · 4K HDR · Science Fiction, Adventure', .4, false, 'dune')}
-  <div class="sec">${ic('search', 26)}Not in your library · from TMDb</div>
-  ${r2('#8a5a2a', 'Dune', '1984', 'Film · Science Fiction, Adventure', 0, false, 'dune', true)}
-  ${on === 'All' ? r2('#4a5a6a', 'Dune: Prophecy', '2024', 'TV show · Science Fiction, Drama', 0, false, 'dune', true) : r2('#6a4a3a', 'Dune Drifter', '2020', 'Film · Science Fiction', 0, false, 'dune', true)}</div>`;
+  ${on === 'All' ? `<div class="sec">${ic('tv', 26)}Episodes · 1</div>${r2('#5f7a8c', 'Frontier · Dunes', 'S2 E4', 'Episode · 48 min · 1080p', 0, false, 'dune')}` : ''}</div>`;
 const browse = `<div class="right"><div class="sec">${ic('clock', 26)}Recent searches<span class="spc"></span><span class="mini">${ic('clear', 20)}Clear recent</span></div>
   <div class="chips">${['dune', 'mr robot', 'slow horses', 'kingdom', 'tulsa king'].map(c => `<span class="chip">${c}</span>`).join('')}</div>
   <div class="sec gap">${ic('film', 26)}Browse</div>
   <div class="tiles">${[['Unwatched', '412 titles'], ['Recently added', 'Last 30 days · 38'], ['Genres', 'Drama, Thriller, Comedy…'], ['Years', '1960s – 2020s']].map(([t, s2]) => `<div class="tile"><b>${t}</b><span>${s2}</span></div>`).join('')}</div>
   <div class="sec gap">What you can search</div><div class="tipline">Titles, original titles, episodes, cast, crew and studios — punctuation, “the” and small typos don’t matter</div></div>`;
 const shots = [
-  ['05-discover-all.png', kb('dune', '') + discover('All'), 'All: your library first (with watched state, typed letters in bold), then “Not in your library · from TMDb” — OK opens Details'],
-  ['06-filter-films.png', kb('dune', '') + discover('Films'), 'Up from the results reaches the filters: Films shows films only, from your library and from TMDb'],
+  ['05-discover-all.png', kb('dune', '') + discover('All'), 'All: library results only, grouped, with watched state and the typed letters in bold'],
+  ['06-filter-films.png', kb('dune', '') + discover('Films'), 'Up from the results reaches the filters: Films shows only the films in your library'],
   ['07-browse-before-typing.png', kb('', 't') + browse, 'Before typing: recent searches, then Browse shortcuts; coming back from Details returns you to the same search and place'],
   ['03-keyboard-letters.png', kb('webdav.put.io/TV', '/', 'abc', false, 'Server address') + `<div class="ctx">The same keyboard is used everywhere — here, adding a network share</div>`, 'Letters page: number row, QWERTY, plus / . @ on the page; #+= opens all other symbols; Shift for capitals'],
   ['04-keyboard-symbols.png', kb('MyP@ss_2026!', '!', 'sym', false, 'Password') + `<div class="ctx">Symbols page: everything a password, URL or file path might need</div>`, 'Symbols page: ! # $ % & * ( ) - _ = + [ ] { } \\ | ~ ` : ; , ? \' " < > ^ — ABC returns to letters'],
