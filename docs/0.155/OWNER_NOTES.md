@@ -279,4 +279,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   shortcuts (library only), remembering the search and Play/Resume from results stay.
 - **Owner (4 Nov 2026):** remove the **Browse** shortcuts — the library pages already cover browsing, sorting and
   filtering, so they would duplicate them. `07` re-rendered: recent searches and the one-line tip only.
-- **Status:** approved as revised — awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** make "what you can search" prominent again and fill the space (today's large text is
+  right in spirit; the one-line tip was too small). `07` re-rendered: under Recent searches, five rows with an icon tile,
+  30px title and 22px line — Your library · Flexible formatting · Original titles · Minor typos · People & studios.
+- **Status:** awaiting the owner's approval of the revised `07` — then awaiting go-ahead to code.
