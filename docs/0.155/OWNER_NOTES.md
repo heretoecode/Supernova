@@ -106,7 +106,10 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (A in a mixed folder). The focused row's button matches the state: Exclude / Include / Add to library.
 - **Question (owner):** what is the green tick on the right? It is **Watched** (existing in 0.154). Two greens with
   different meanings is confusing; Claude proposes the watched tick in neutral white/grey so green means "in library" only.
-- **Status:** awaiting the owner's choice of A or B and the tick colour — then awaiting go-ahead to code.
+- **Decision (owner, 4 Nov 2026):** option **A** (every row tagged). The watched tick becomes a **larger** solid light
+  disc with a dark tick (about 44px, was a 26px green outline), so green means "in library" only. Mock-up `25`.
+  The folder header gains an "N watched" pill.
+- **Status:** approved as `25` — awaiting go-ahead to code.
 
 ## 12. Local Storage: library rows show only file name and size (check)
 - **Seen (same photo):** in a folder marked "In your library", rows show the raw file name and only the size

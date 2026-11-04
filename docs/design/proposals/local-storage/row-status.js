@@ -26,17 +26,17 @@ const head = (title, pills) => `<div class="head"><div class="ftile">${ic('folde
 const tag = st => st === 'in' ? '<span class="tag in"><i></i>In library</span>'
   : st === 'ex' ? `<span class="tag ex">${ic('ban', 20)}Excluded</span>`
   : st === 'no' ? '<span class="tag no"><i></i>Not added</span>' : '';
-const row = (r, focus, show) => `<div class="row${focus ? ' focus' : ''}${r.st === 'ex' ? ' dim' : ''}">${ic(r.folder ? 'folder' : 'video')}
+const row = (r, focus, show, big) => `<div class="row${focus ? ' focus' : ''}${r.st === 'ex' ? ' dim' : ''}">${ic(r.folder ? 'folder' : 'video')}
   <span class="two"><span class="l1"><span class="name1">${r.n}</span>${show(r.st) ? tag(r.st) : ''}</span><span class="l2">${r.d}</span></span>
   ${focus ? `<span class="ibtns">${btn('play', r.folder ? 'Open' : 'Play')}${r.st === 'ex' ? btn('plus', 'Include') : r.st === 'no' ? btn('plus', 'Add to library') : btn('x', 'Exclude')}</span>` : ''}
-  <span class="st">${r.w ? `<span class="ok">${ic('check', 26)}</span>` : ''}</span></div>`;
+  <span class="st">${r.w ? (big ? `<span class="wbig"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#16181c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4L18 8"/></svg></span>` : `<span class="ok">${ic('check', 26)}</span>`) : ''}</span></div>`;
 const films = [
   { n: '28 Weeks Later', d: '2007 · 100 min · 1080p · English 5.1 · 2.0 GB', st: 'in', w: 1 },
-  { n: '99 Homes', d: '2015 · 112 min · 1080p · English 5.1 · 1.8 GB', st: 'in' },
+  { n: '99 Homes', d: '2015 · 112 min · 1080p · English 5.1 · 1.8 GB', st: 'in', w: 1 },
   { n: 'Aftersun.2022.1080p.WEBRip.x264-RARBG', d: 'Not matched yet · 2.1 GB', st: 'in' },
   { n: 'All of Us Strangers', d: '2023 · 105 min · 1080p · English 5.1 · 2.0 GB', st: 'in' },
   { n: 'Argylle', d: '2024 · 139 min · 1080p · English 5.1 · 2.8 GB', st: 'ex' },
-  { n: 'Asteroid City', d: '2023 · 105 min · 1080p · English 5.1 · 1.1 GB', st: 'in' },
+  { n: 'Asteroid City', d: '2023 · 105 min · 1080p · English 5.1 · 1.1 GB', st: 'in', w: 1 },
   { n: 'Bad Genius', d: '2017 · 130 min · 1080p · Thai 5.1 · 1.9 GB', st: 'ex' },
 ];
 const folders = [
@@ -54,6 +54,8 @@ const shots = [
     'B — only rows that differ from the folder are tagged (here: the two excluded films)'],
   ['24-row-status-mixed-folder.png', 'NVIDIA_SHIELD', '<span class="pill">5 folders</span><span class="pill">578 GB</span><span class="pill">2 in your library · 1 excluded</span>', folders, 2, () => true,
     'A in a mixed folder — what is added, what is not, what is excluded, at a glance'],
+  ['25-row-status-watched-big.png', 'Movies', `<span class="pill">66 videos</span><span class="pill">146 GB</span>${libPill}<span class="pill">2 excluded</span><span class="pill">3 watched</span>`, films, 3, () => true,
+    'Chosen: A, plus a larger watched mark — solid light disc with a dark tick (green now means \u201cin library\u201d only)', true],
 ];
 const css = `${font(400)}${font(500)}
 *{box-sizing:border-box;margin:0}
@@ -84,14 +86,15 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .tag.in{background:rgba(90,209,138,.13);color:#9fe3bb}.tag.in i{background:#5ad18a}
 .tag.ex{background:rgba(255,255,255,.08);color:#c9d3e6}
 .tag.no{background:rgba(255,255,255,.06);color:#aab3c4}.tag.no i{border:1.6px solid #aab3c4}
-.st{width:34px;display:flex;justify-content:center}.ok{color:#5ad18a;display:flex}
+.wbig{width:44px;height:44px;border-radius:50%;background:#E6EAF2;display:flex;align-items:center;justify-content:center}
+.st{width:48px;display:flex;justify-content:center}.ok{color:#5ad18a;display:flex}
 .ibtns{display:flex;gap:12px;margin-right:6px}.ibtns .btn{height:60px;font-size:21px;padding:0 18px 0 14px}
 .label{position:absolute;right:56px;bottom:8px;font-size:19px;color:#c9d3e6}`;
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [f, title, pills, rows, focus, show, label] of shots) {
-    const body = `${nav}<div class="sheet">${head(title, pills)}${rows.map((r, i) => row(r, i === focus, show)).join('')}</div><div class="label">${label}</div>`;
+  for (const [f, title, pills, rows, focus, show, label, big] of shots) {
+    const body = `${nav}<div class="sheet">${head(title, pills)}${rows.map((r, i) => row(r, i === focus, show, big)).join('')}</div><div class="label">${label}</div>`;
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
     await tab.screenshot({ path: path.join(out, f) });
