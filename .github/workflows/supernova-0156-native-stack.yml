@@ -1,11 +1,7 @@
 name: Supernova 0.156 pinned arm64 engine
 
-# Claude, 4 Nov 2026: Codex's draft (9fd8bc94c) with a push trigger limited to this file on Claude's branch (see the
-# archive workflow). A push uses third_party_source=actions (the verified original run) until the archive Release exists.
+# Claude, 4 Nov 2026: Codex's draft (9fd8bc94c). Manual dispatch only (registered by one earlier push-triggered run).
 on:
-  push:
-    branches: [claude/supernova-github-access-yfhe89]
-    paths: [.github/workflows/supernova-0156-native-stack.yml]
   workflow_dispatch:
     inputs:
       third_party_source:
@@ -25,7 +21,7 @@ concurrency:
 
 jobs:
   native:
-    if: github.repository == 'heretoecode/Supernova'
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'heretoecode/Supernova'
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
@@ -42,7 +38,7 @@ jobs:
       - name: Build pinned avos and wrappers with verified third-party libraries
         env:
           GH_TOKEN: ${{ github.token }}
-          THIRD_PARTY_SOURCE: ${{ inputs.third_party_source || 'actions' }}
+          THIRD_PARTY_SOURCE: ${{ inputs.third_party_source }}
         run: |
           set -euo pipefail
           python3 .github/build/build-supernova156-native-stack.py --workspace "$RUNNER_TEMP/native156" --third-party-source "$THIRD_PARTY_SOURCE" --jobs 4 2>&1 | tee native156-build.log
