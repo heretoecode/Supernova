@@ -353,4 +353,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** no need to keep the two-panel layout. Single-panel version `03`–`04`: one charcoal panel —
   "Settings › Playback" top left, section tabs Playback · Resume · Skipping · Picture top right (white underline on the
   open tab, white on focus), a thin rule, then the rows. Up from the rows reaches the tabs; Left/Right switches tab.
-- **Status:** awaiting the owner's choice between two-panel (`01`) and single-panel (`03`) — then go-ahead to code.
+- **Owner (4 Nov 2026):** "Playback" appeared twice top left; dislikes the underline on the open tab. Revised `03`–`04`:
+  the page title says Playback once (first tab renamed **General**, the repeated group heading removed); the tabs are
+  one segmented control — the open tab a lighter charcoal, the focused tab white, no underline.
+- **Status:** single panel preferred; revised `03`–`04` awaiting the owner's look — then go-ahead to code.
