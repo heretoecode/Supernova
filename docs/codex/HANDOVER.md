@@ -2,7 +2,7 @@
 
 ## Unit failures from run 41850284587 — corrected fixtures
 
-The owner reported three failures at `9fd8bc94c`. This follow-up extends
+Commit `e27ac4bf5` repairs the three failures reported at `9fd8bc94c`. It extends
 `SubtitleManagerDefaultsTest.styleKeysCoverEveryStylePreference` to expect 14
 and explicitly include `KEY_PADDING`, retaining all 13 previous key checks.
 `PlaybackHdrCapabilitiesTest.capabilitiesAreReadAgainForEachNativeQuery` now
@@ -142,31 +142,38 @@ recipes have measured digests in the engine lock. Final validation: **16 archive
 + 14 native-stack offline tests pass**. No archive branch has been pushed and
 no workflow, NDK or Gradle build has run here; Claude must perform the live job.
 
-Exact continuation remains **NEXT item 3, DP-10 implementation**. The new
-`findings/dp10-listing-ownership.md` records this run's full `UpdateNextTask`
-read, prepared FileCore/MediaLib transport audit, concrete resource boundaries,
-public-hook state transitions and acceptance tests. No DP-10 app change or new
-cancellation patch is delivered; do not mark DP-10 fixed or advance to NEXT 4.
+Exact continuation remains **NEXT item 3, DP-10 implementation**. There is
+now a concrete **unintegrated draft** at
+`.github/build/filecore-supernova155-listing-cancellation.patch`, after the eight
+prepared FileCore operations and `filecore-supernova155-scan.patch` at `c4b760c`.
+It adds a task-owned `ListingCancellation` lifetime allocated before submission,
+an owner-thread scope entered before factory/setup, whole-operation deadline,
+owned abort registration and cooperative checkpoints. DAV calls, including
+redirect probes and late callStart, join that lifetime without cancelling the
+base client's other calls. No app API reference or protected build wiring was
+changed. **Do not install this draft alone or mark DP-10 fixed.**
 
-Start with a **new** `.github/build/filecore-supernova155-listing-cancellation.patch`
-after the existing `filecore-supernova155-scan.patch`, at prepared FileCore
-`RawLister.java:38` and `webdav/ScanIoScope.java:29–105`. The prepared eight
-FileCore operations plus the scan patch apply cleanly at `c4b760c`. Register a
-task-owned handle before factory/connect/list work starts and fence cancellation
-before registration, close/deadline races and late callbacks. FTP/FTPS create
-clients per attempt, but SFTP/SSHJ/SMBJ/JCIFS use shared sessions/clients/pools;
-blanket disconnect/reset is unsafe. UPnP needs a **new MediaLib companion patch**
-to retain/cancel the submitted Browse handle; interrupting its waiter alone does
-not own the actual request. See the audit before choosing the public API.
+Fresh-checkout apply/check and Java-17 standalone compilation passed. **25
+standalone JUnit tests pass** against pinned OkHttp 5.5.1: 12 new lifecycle/race,
+8 new real-socket, 5 existing scanner tests. Actual runnable/executor exit is
+checked, not a cancelled Future. Four additional actual WebdavRawLister/factory
+Robolectric silent/trickle × explicit/deadline tests are supplied but unrun.
+The new draft's SHA-256 is
+`f60e493b5deeaa4411bfcacc5781e0ccd32c0da77d3880c3b86e77c29910f5da`.
+See `findings/dp10-listing-ownership.md` for the implementation checkpoint.
 
-Then pair the public hook with UpdateNextTask task-local cancellation (including
+Next: complete FTP/FTPS pre-connect and data-socket ownership, isolated SFTP/
+SSHJ/SMBJ/JCIFS listing resources and retry/setup paths, and a **new MediaLib
+UPnP companion patch** retaining/cancelling the submitted Browse handle. Shared
+sessions/pools must survive. These transport hooks are still missing; the public
+lifetime and DAV tests establish only the first part of the earlier audit.
+Then pair the hook with UpdateNextTask task-local cancellation (including
 `cancel(false)`), cooperative filtering/comparator/traversal checkpoints and
 main-queue fencing. Preserve exact file choice/order and repeat/binge behavior;
-DP-09 is Claude's. Deliver the complete DP-10 fix and tests in one commit: actual
-silent/trickling DAV listing termination, repeated replace/cancel, setup/register/
-close races, no callback after main-queue drain, cancellation during traversal,
-and an unaffected concurrent shared playback call. Do not infer worker termination
-from Future cancellation. NEXT item 4 onward remains pending.
+DP-09 is Claude's. Deliver the completed app/transport fix and acceptance tests
+in one **DP-10 fix** commit, separately from this explicitly labelled draft.
+NEXT item 4 onward remains pending. No claim of fixed obsolete app workers,
+callback fencing or non-DAV termination is made by the draft's socket tests.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded

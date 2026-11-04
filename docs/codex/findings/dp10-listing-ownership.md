@@ -1,8 +1,9 @@
 # DP-10 continuation: listing ownership audit
 
-2026-11-04. This is implementation evidence for the existing DP-10, not a new
-finding or a completed fix. No player/dependency production source is changed by
-this audit. NEXT item 3 is still the next code item; do not advance to item 4.
+2026-11-04. This records existing DP-10, not a new finding or a completed fix.
+The original audit below is retained; the follow-up implementation checkpoint
+supersedes its "create a new patch" instruction. NEXT item 3 remains open; do
+not advance to item 4. Production app/build wiring remains unchanged.
 
 ## Reproduced source baseline
 
@@ -99,3 +100,56 @@ is committed here: doing only DAV would leave the factory-wide requirement open.
 
 Existing ScanIoScope tests from the earlier draft are useful supporting tests,
 not evidence that UpdateNextTask or non-DAV transport cancellation is fixed.
+
+## Follow-up implementation checkpoint — task lifetime and DAV draft
+
+New file: `.github/build/filecore-supernova155-listing-cancellation.patch`.
+SHA-256: `f60e493b5deeaa4411bfcacc5781e0ccd32c0da77d3880c3b86e77c29910f5da`.
+This is an **unintegrated prerequisite draft**, not the requested DP-10 fix.
+Never apply it to a release independently of the remaining transport/app work.
+The eight reviewed FileCore operations and the unchanged scan draft
+(`28ec346fe7fb974b0aed3bf1ceca3d8b9c7ae629ee6bd0747c0f14353496c662`)
+apply before it at `c4b760c55102c72d45f68b0d16999fc1f4f013a7`.
+
+| Component | Implemented in draft | Limits / next change |
+|---|---|---|
+| `ListingCancellation` | Single-use token exists before worker submission. `enter()` binds the owner and starts the whole-operation timer before factory/setup. Atomic owned abort registration rejects cancelled/closed lifetimes; cancellation and close detach resources before invoking callbacks, tolerate a broken abort, and serialize the interrupt with owner detachment. Registration close unregisters completed resources. Scope close is owner-checked and idempotent. | Public API supplied only in patch; no production app caller. Abort callbacks must be nonblocking and operation-owned; this is not permission to register cached transport clients. |
+| DAV `ScanIoScope.client` | Existing scanner scope still works. A listing-bound client registers each call on callStart against its captured token, even when execute is late. callEnd/callFailed release registration. Base client/pool/dispatcher remain untouched. | Uses existing scan patch's client wrapper; full Android lister tests await Claude. No other protocol is hooked yet. |
+| `WebdavRawLister` | Checkpoints before client setup, after redirect resolution, during result conversion and before returning. | App filtering/sorting/traversal must remain inside the future app binding; not implemented in UpdateNextTask. |
+
+Prepared the real FileCore baseline in scratch and applied all eight locked
+operations plus the old scan draft. Exported the new patch, then checked and
+applied it to a second fresh detached worktree of that baseline. The applied
+sources compile at Java 17 using ECJ 3.40.0 on JRE21 with JUnit 4.13.2 and the
+prepared dependency's **OkHttp/mockwebserver 5.5.1**, mockwebserver3 5.5.1,
+Okio 3.18.1 and Kotlin stdlib 2.1.21. Ran these actual test classes:
+
+- `ListingCancellationTest`: **12 passed**. Cancel before entry/registration,
+  unregister completed resources, late registration after close, exactly-once
+  abort, abort outside state lock, broken abort isolation, cancellation checkpoint
+  after interrupt clearing, nested/wrong-owner/repeated close, late deadline on
+  a reused worker, and 100 iterations each of register/cancel and close/cancel.
+- `ListingCancellationSocketTest`: **8 passed**. Silent/trickling PROPFIND
+  sockets with explicit abort and deadline; eight repeated worker replacements;
+  call created before cancel but executed after; callStart after normal close;
+  same-base-client concurrent playback finishes with expected bytes. Tests await
+  actual runnables and executor termination and never cancel their Futures.
+- Existing `ScanIoScopeTest`: **5 passed**, providing scanner regression coverage
+  after the wrapper change. Earlier tests were not edited or weakened.
+
+Four new `WebdavListingCancellationTest` cases use the real factory and lister,
+real OPTIONS and valid DAV multistatus bodies; explicit/deadline × silent/trickle.
+They were syntax-parsed, **not run or fully Android type-checked**. No Gradle was
+invoked under MORE rule 4. All six changed/added Java files passed syntax parsing;
+patch and worktree whitespace checks passed. The standalone socket tests consume
+HTTP bodies directly, so they do not substitute for those real lister tests.
+
+Continue by completing the missing transport rows from the audit above, using
+only operation-owned resources and preserving protocol/auth/trust/retry behavior.
+No MediaLib UPnP cancellation patch exists yet. Then integrate the public token
+with UpdateNextTask and add the previously specified app/selection/main-queue
+acceptance coverage. Cancel(false), comparator/traversal cancellation, actual
+obsolete app worker exit and no callback after main-queue drain remain unproved.
+Keep the final production DP-10 fix atomic; keep item 4 pending. The new draft
+moves beyond the earlier source audit but deliberately does not expose a partial
+API to the current application or shut down any shared transport.
