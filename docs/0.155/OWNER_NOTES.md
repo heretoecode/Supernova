@@ -522,3 +522,18 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   not per title added; nothing is kept, so reopening the same title looks it up again. Proposal: remember ratings for a
   week per title.
 - **TMDB key (owner question):** NOVA's own key, carried over in `aos-MediaLib/res/values/donottranslate.xml`.
+
+## 35. Subtitle Vertical Position (owner, player)
+- **Today (code):** three choices Bottom / Middle / Top (`PlaybackSubtitlePanel.java:521`) = values 0 / 128 / 255.
+  `SubtitleManager.setVerticalPosition` turns 0–255 into a gap of at most **one third of the screen height**
+  (`mScreenHeight * pos / 765`), so "Top" is only a third of the way up and "Middle" a sixth. Default 0 = 1 px above
+  the bottom edge of the **screen** (not of the picture).
+- **Black bars:** subtitles are placed from the bottom of the screen, not the picture, so on wide films they land in
+  the bottom black bar — a consequence of that, not a deliberate choice. Styled (ASS) and picture subtitles (PGS/DVD)
+  follow the picture instead.
+- **Proposal (mock-ups `docs/design/proposals/subtitle-position/01`–`02`):** one step control,
+  "Vertical Position ˅ Raised 30% ˄": Right raises a step (5% of the screen height), Left lowers, from Bottom up to the
+  top of the screen; the subtitle moves live while you press. Default a little above the edge (5%, inside the TV's safe
+  area and still inside the black bar on wide films). The same control in Settings › Audio & Subtitles. Existing saved
+  values are converted so nobody's subtitles jump.
+- **Status:** awaiting review.
