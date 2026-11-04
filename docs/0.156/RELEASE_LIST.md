@@ -72,5 +72,5 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 45. ✅ DP-01…DP-07, TV-only stages and the rest of `BRIEF_0155_NEXT.md` as it is reviewed and re-tested.
 
 ## Waiting for the owner
-- OMDb key built into the app (yes/no).
+- OMDb key built into the app: **no, for now** (owner) — kept in `docs/REVISIT_LATER.md`.
 - Final looks on the ◻ items.
