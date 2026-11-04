@@ -191,12 +191,16 @@ def fetch_branch(repo, destination, remote):
     commit = git(repo, "rev-parse", "FETCH_HEAD").decode().strip()
     require(len(git(repo, "rev-list", "--parents", "-n", "1", commit).split()) == 1,
             "Archive must be one orphan commit")
-    entries = git(repo, "ls-tree", "-rz", commit).split(b"\0")
+    entries = git(repo, "ls-tree", "-z", commit).split(b"\0")
+    require({entry.split(b"\t", 1)[1].decode() for entry in entries if entry}
+            == archive_names() | {MANIFEST}, "Archive branch file inventory differs")
     for entry in filter(None, entries):
         metadata, name = entry.split(b"\t", 1)
         path = safe_path(name.decode())
         require(len(path.parts) == 1 and metadata.split()[:2] == [b"100644", b"blob"],
                 "Archive tree must contain only regular root files")
+        require(int(git(repo, "cat-file", "-s", metadata.split()[2].decode())) < MAX_FILE_BYTES,
+                "Archive files must be strictly below 100 MB")
         with (destination / str(path)).open("wb") as stream:
             git(repo, "cat-file", "blob", metadata.split()[2].decode(), output=stream)
     return commit

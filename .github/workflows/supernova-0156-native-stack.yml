@@ -6,7 +6,7 @@ on:
       third_party_source:
         description: Verified 0.146 archive source (archive branch first)
         type: choice
-        options: [branch, release, actions]
+        options: [branch, actions]
         default: branch
         required: true
 

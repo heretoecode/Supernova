@@ -38,14 +38,13 @@ or an identical rerun. Any unexpected branch/history/content fails closed.
 ## Read side and build migration
 
 `build-supernova156-native-stack.py --third-party-source branch` is the new default;
-`supernova-0156-native-stack.yml` exposes `branch`, `release`, `actions` (default
+`supernova-0156-native-stack.yml` exposes `branch`, `actions` (default
 `branch`). The reader fetches the orphan branch afresh, validates its complete
 inventory and every manifest hash, compares its lock/review byte-for-byte with the
 local reviewed files, and anchors all four ZIPs to the **local** review hashes.
 It then performs the existing selected-ABI tarball/receipt/library verification.
 A mismatch or missing branch stops the build; no automatic fallback exists.
 `actions` is an explicit verified fallback while the old run is available.
-The legacy `release` choice remains explicit for compatibility.
 
 Claude then builds the new native engine, reviews its actual receipts, and wires
 the app build as specified in `HANDOVER.md`. The archived bytes remain the old

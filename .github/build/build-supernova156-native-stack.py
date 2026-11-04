@@ -25,9 +25,6 @@ def acquire_stack(destination, lock, source):
         archive.read_branch(branch_files, native.BUILD / "native-supernova146.lock.json",
                             native.VIDEO / "docs/0.146/NATIVE_CI_ARTIFACT_VERIFICATION.json")
         shutil.copyfile(branch_files / zip_path.name, zip_path)
-    elif source == "release":
-        archive.gh("release", "download", archive.TAG, "--repo", archive.REPOSITORY,
-                   "--pattern", zip_path.name, "--dir", str(destination))
     elif source == "actions":
         selected = archive.select_artifacts(archive.api(f"actions/runs/{archive.RUN}/artifacts?per_page=100"), rows)
         artifact = next(item for candidate, item in selected if candidate["abi"] == native.ABI)
@@ -75,7 +72,7 @@ def stage(root, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, required=True)
-    parser.add_argument("--third-party-source", choices=("branch", "release", "actions"), default="branch")
+    parser.add_argument("--third-party-source", choices=("branch", "actions"), default="branch")
     parser.add_argument("--jobs", type=int, default=4)
     parser.add_argument("--ndk", type=Path)
     args = parser.parse_args()
