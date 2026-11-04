@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 import subprocess
+import sys
 import tarfile
 import zipfile
 from pathlib import Path, PurePosixPath
@@ -32,6 +33,10 @@ def require(condition, message):
 def gh(*arguments, output=None):
     result = subprocess.run(["gh", *arguments], stdout=output or subprocess.PIPE,
                             stderr=subprocess.PIPE, check=False)
+    if result.returncode != 0:
+        # gh never echoes the token; show which command failed and GitHub's reason.
+        sys.stderr.write("gh " + " ".join(a for a in arguments if not a.startswith("--notes")) + " failed:\n"
+                         + result.stderr.decode(errors="replace")[-2000:] + "\n")
     require(result.returncode == 0, "GitHub command failed; archive not complete")
     return result.stdout
 
