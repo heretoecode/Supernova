@@ -638,3 +638,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   each picture means reading part of the file over the internet; for big 4K files every 10 s could mean hundreds of MB
   extra, so network files would sample every 30–60 s or only once paused. Risk to playback: low if it backs off when
   buffering, but must be confirmed on the Shield with a 4K HEVC file.
+- **Owner, 4 Nov:** build it fully as an experiment for 0.156, and measure it in Diagnostics; also expand Diagnostics
+  considerably. Codex brief: `docs/codex/BRIEF_0156_THUMBS_DIAGNOSTICS.md` (engine, cache, measurements, diagnostics
+  expansion; no UI). Claude: the picture in the time bubble, the chapter-card pictures, a Settings switch, and the
+  diagnostic hooks inside hands-off files.
