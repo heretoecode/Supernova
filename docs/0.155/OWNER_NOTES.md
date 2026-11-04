@@ -213,4 +213,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   and brings it back with the on-screen controls; Jellyfin's Intro Skipper can show it for the whole intro. Proposed:
   **10 seconds** with the countdown, then it fades, but opening the controls brings it back (selected) until the
   intro ends.
-- **Status:** placement and look decided; size and timing awaiting the owner's approval — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** timing approved as proposed; 136px too big. Revised `01`–`03`: about 120px tall with 44px text
+  (between the 104px and 136px versions).
+- **Status:** placement, look and timing approved; size awaiting the owner's approval — then awaiting go-ahead to code.

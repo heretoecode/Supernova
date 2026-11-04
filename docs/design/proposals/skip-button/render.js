@@ -9,7 +9,7 @@ const P = { skip: '<path d="M5 5l9 7-9 7z" fill="currentColor"/><path d="M18 5v1
 const ic = (k, s = 30) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
 // A stand-in film frame (no real artwork): dusky street scene in gradients.
 const frame = `<div class="video"><i class="sky"></i><i class="glow"></i><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="road"></i><i class="vig"></i></div>`;
-const skip = (left, where) => `<div class="skip ${where}"><span>${ic('skip', 52)}Skip Intro</span><i class="cd"><b style="width:${left * 100}%"></b></i></div>`;
+const skip = (left, where) => `<div class="skip ${where}"><span>${ic('skip', 46)}Skip Intro</span><i class="cd"><b style="width:${left * 100}%"></b></i></div>`;
 const hud = `<div class="htitle">Slow Horses</div><div class="hsub">Season 5 · Episode 2 · Opening titles</div>
   <div class="hud"><div class="hb">${ic('pause', 34)}</div><div class="bar"><div class="buf"></div><div class="played"></div><div class="thumb"></div>
   <div class="bubble"><b>00:01:12</b><span>Intro</span></div></div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>`;
@@ -27,10 +27,10 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .b3{left:30%;bottom:22%;width:12%;height:30%;background:#1a1418}.road{left:0;right:0;bottom:0;height:22%;background:linear-gradient(180deg,#2a2224,#0c0a0b)}
 .vig{inset:0;background:radial-gradient(ellipse 80% 70% at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.6))}
 .shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,0) 45%)}
-.skip{position:absolute;height:136px;padding:0 60px 0 46px;border-radius:40px;background:#F4F6FB;color:#0B0D12;font-size:50px;font-weight:500;
+.skip{position:absolute;height:120px;padding:0 52px 0 40px;border-radius:35px;background:#F4F6FB;color:#0B0D12;font-size:44px;font-weight:500;
   display:flex;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.45);overflow:hidden}
 .skip span{display:flex;align-items:center;gap:20px}
-.skip .cd{position:absolute;left:32px;right:32px;bottom:16px;height:8px;border-radius:3px;background:rgba(11,13,18,.15)}.skip .cd b{display:block;height:100%;border-radius:3px;background:#0B0D12}
+.skip .cd{position:absolute;left:28px;right:28px;bottom:14px;height:7px;border-radius:3px;background:rgba(11,13,18,.15)}.skip .cd b{display:block;height:100%;border-radius:3px;background:#0B0D12}
 .skip.br{right:96px;bottom:110px}.skip.br.up{bottom:270px}.skip.bl{left:96px;bottom:110px}
 .htitle{position:absolute;left:80px;top:690px;font-size:60px;font-weight:700}.hsub{position:absolute;left:84px;top:768px;font-size:26px}
 .hud{position:absolute;left:70px;right:70px;bottom:90px;height:80px;display:flex;align-items:center;gap:26px}
