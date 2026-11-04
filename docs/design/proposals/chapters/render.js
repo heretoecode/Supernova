@@ -11,11 +11,12 @@ const frame = `<div class="video"><i class="sky"></i><i class="glow"></i><i clas
 const ch = [['Chapter 1', 0, '0:00'], ['Chapter 2', 2.23, '2:14'], ['Chapter 3', 11.67, '11:40'], ['Chapter 4', 22.08, '22:05'], ['Chapter 5', 33.8, '33:48'], ['Chapter 6', 44.2, '44:12']];
 const eps = [['Episode 8', '43 min', 'w'], ['Episode 9', '43 min', 'w'], ['Episode 10', '50 min', 'p'], ['Episode 11', '44 min', ''], ['Episode 12', '43 min', ''], ['Episode 13', '44 min', '']];
 const LEN = 50.1, NOW = 4.53;
+const zones = [[0.75, 1.65, 'Intro'], [48.4, 49.9, 'Credits']].map(([a, b]) => `<i class="zone" style="left:${a / LEN * 100}%;width:${(b - a) / LEN * 100}%"></i>`).join('');
 const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch[i + 1][1] : LEN; const w = (e - s) / LEN * 100, l = s / LEN * 100;
   const played = Math.max(0, Math.min(1, (NOW - s) / (e - s)));
   return `<div class="seg${focus === i ? ' hi' : ''}" style="left:${l}%;width:calc(${w}% - 6px)"><b style="width:${played * 100}%"></b></div>`; }).join('');
 const hud = (focus, strip, tabFocus = -1) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
-  <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
+  <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}${zones}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
   ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 2</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
   (!strip ? tabsRow(-1, -1, true) : '') + (strip === 'ch' ? tabsRow(0, tabFocus) + `<div class="strip">${ch.map(([n, st, t], i) => card(`k${i}`, n, i === 1 ? 'Playing · from ' + t : 'From ' + t, i === 1 ? (NOW - st) / (ch[2][1] - st) : (i < 1 ? 1 : 0), i === focus, i === 1)).join('')}</div>` : '') +
   (strip === 'ep' ? tabsRow(1, tabFocus) + `<div class="strip">${eps.map(([n, t, st], i) => card(`s${i}`, n, st === 'p' ? 'Playing · ' + t : st === 'w' ? 'Watched · ' + t : t, st === 'p' ? .09 : st === 'w' ? 1 : 0, i === 2, st === 'p')).join('')}</div>` : '');
@@ -23,7 +24,7 @@ const card = (bg, title, sub, prog, f, now) => `<div class="hc ${bg}${f ? ' f' :
 const tabsRow = (open, tf = -1, rest = false) => `<div class="ptabs${rest ? ' rest' : ''}">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}${i === tf ? ' tf' : ''}">${t}</span>`).join('')}</div>`;
 const tip = `<div class="tip"><div class="tr"><span class="k">‹ ›</span>Seek<span class="sep">·</span><span class="k">OK</span>Play / pause</div><div class="tr"><span class="k">↑</span>Play/pause and Settings buttons</div><div class="tr"><span class="k">↓</span>Chapters and Episodes</div></div>`;
 const shots = [
-  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls as today, same height; Chapters and Episodes sit under the bar as two small buttons, no rows yet'],
+  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls raised a little so Chapters and Episodes fit comfortably below; breaks in the bar are chapters, striped stretches are the IntroDB parts (here Intro and Credits)'],
   ['02-down-to-chapters.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ch', 0), 'Down from the bar: the controls rise and the Chapters row slides in below; Left/Right switches to Episodes'],
   ['03-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Down again into the row: the focused card grows and its part of the bar lights up; OK jumps there'],
   ['04-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: opened at the one playing, watched ones marked; OK plays the chosen episode; Up, Up returns to the bar'],
@@ -45,8 +46,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .skip.a{padding-bottom:23px}.skip.a .cd{bottom:16px}
 .skip.b{background:#AEB4BF}.skip.b .fill{position:absolute;left:0;top:0;bottom:0;background:#F4F6FB;display:block}.skip.b span{position:relative}
 .skip.br{right:96px;bottom:110px}.skip.br.up{bottom:270px}.skip.bl{left:96px;bottom:110px}
-.htitle{position:absolute;left:80px;top:690px;font-size:60px;font-weight:700}.hsub{position:absolute;left:84px;top:768px;font-size:26px}
-.hud{position:absolute;left:70px;right:70px;bottom:90px;height:80px;display:flex;align-items:center;gap:26px}
+.htitle{position:absolute;left:80px;top:630px;font-size:60px;font-weight:700}.hsub{position:absolute;left:84px;top:708px;font-size:26px}
+.hud{position:absolute;left:70px;right:70px;bottom:150px;height:80px;display:flex;align-items:center;gap:26px}
 .hb{height:72px;min-width:72px;padding:0 20px;border-radius:22px;background:rgba(22,24,28,.62);border:2px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;gap:10px;font-size:22px;font-weight:500}
 .bar{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.22);position:relative}
 .buf{position:absolute;left:0;top:0;bottom:0;width:20%;border-radius:5px;background:rgba(255,255,255,.4)}
@@ -62,7 +63,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .hcg{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.78) 0%,rgba(0,0,0,0) 60%)}.hct{position:absolute;left:16px;right:16px;bottom:20px}.hct b{display:block;font-size:23px;font-weight:700}.hct span{display:block;font-size:18px;color:#e6ebf5;margin-top:2px}.hct span.now{color:#9fd0ff}
 .hp{position:absolute;left:14px;right:14px;bottom:9px;height:5px;border-radius:3px;background:rgba(255,255,255,.3)}.hp b{display:block;height:100%;border-radius:3px;background:#fff}
 .k0{background:radial-gradient(ellipse at 30% 40%,#c9a46a,#3b2a1a 70%)}.k1{background:radial-gradient(ellipse at 60% 30%,#6aa0c9,#17263b 70%)}.k2{background:radial-gradient(ellipse at 40% 60%,#c96a5a,#3b1a17 70%)}.k3{background:radial-gradient(ellipse at 70% 50%,#7ac98a,#173b22 70%)}.k4{background:radial-gradient(ellipse at 30% 30%,#a08ad0,#221a3b 70%)}.k5{background:radial-gradient(ellipse at 50% 50%,#d0c06a,#3b331a 70%)}
-.ptabs{position:absolute;left:70px;bottom:262px;display:flex;gap:14px}.ptabs.rest{bottom:26px}.ptabs.rest span{height:46px;font-size:20px;padding:0 20px;border-radius:15px}.ptabs span.tf,.ptabs span.open.tf{background:#F4F6FB!important;color:#0B0D12!important;border-color:#F4F6FB!important}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
+.ptabs{position:absolute;left:70px;bottom:262px;display:flex;gap:14px}.ptabs.rest{bottom:70px}.ptabs.rest span{height:46px;font-size:20px;padding:0 20px;border-radius:15px}.ptabs span.tf,.ptabs span.open.tf{background:#F4F6FB!important;color:#0B0D12!important;border-color:#F4F6FB!important}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
 .ec{flex:1;min-width:0;border-radius:22px;padding:10px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18)}.ec.f{background:#F4F6FB;border-color:#F4F6FB}.ec.f b{color:#0B0D12}.ec.f span{color:#3a3f48}
 .ec b{display:block;font-size:22px;font-weight:500;margin:8px 6px 0}.ec span{display:block;font-size:19px;color:#c9d3e6;margin:2px 6px 4px}.ec span.now{color:#5aa9ff}
 .still{position:relative;height:64px;border-radius:14px;overflow:hidden}.still em{position:absolute;right:8px;top:8px;font-style:normal;font-size:16px;font-weight:500;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:9px}
@@ -73,6 +74,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .cc.f{background:#F4F6FB;border-color:#F4F6FB}.cc.f b{color:#0B0D12}.cc.f span{color:#3a3f48}
 .tip{position:absolute;left:50%;top:300px;transform:translateX(-50%);background:rgba(22,24,28,.95);border:2px solid rgba(255,255,255,.22);border-radius:24px;padding:24px 34px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 .tr{display:flex;align-items:center;gap:14px;font-size:24px;height:52px}.k{min-width:56px;height:40px;padding:0 10px;border-radius:12px;background:#3a3e46;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:500}.sep{color:#8f98a8;margin:0 6px}
+.zone{position:absolute;top:-5px;bottom:-5px;border-radius:3px;background:repeating-linear-gradient(135deg,rgba(255,211,138,.95) 0 4px,rgba(255,211,138,.35) 4px 8px);pointer-events:none}
 .label{position:absolute;left:56px;top:28px;font-size:20px;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:10px}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {

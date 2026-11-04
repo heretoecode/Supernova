@@ -610,3 +610,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   room. Mock-ups `docs/design/proposals/chapters/01`–`05`: 01 resting, 02 Down to Chapters (rows slide in),
   03 a chapter card focused, 04 Episodes, 05 the first-play tip. Awaiting review.
 - **Edit Page approved** (owner, 4 Nov) including the centred Delete Page.
+- **Owner:** raise the controls so the two buttons sit comfortably (done in `01`, 60 px higher).
+- **IntroDB on the bar (owner question):** today IntroDB parts are not drawn on the bar at all — only chapter marks
+  (`ChapterMarkers`); the IntroDB times are used only for the Skip button. In the mock-ups the small first segment
+  was Chapter 1 (0:00–2:14), not the intro. **Proposal:** chapters stay as the breaks; IntroDB parts (intro, recap,
+  preview, credits) are drawn as short **striped amber stretches** on top, not extra breaks, and the time bubble names
+  the part ("Intro") while the playhead is inside it. Shown in `01`.
