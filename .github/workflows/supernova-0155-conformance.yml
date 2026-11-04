@@ -1,5 +1,5 @@
 name: Supernova 0.155 unsigned conformance
-# 0.155 engine release (arm64-only Shield build): app source of this branch + the reviewed prebuilt engine from native
+# Run 2: APK engine check accepts the same library shipped in both modules. 0.155 engine release (arm64-only Shield build): app source of this branch + the reviewed prebuilt engine from native
 # run 41848351713 (built from a8c82ae52; archive SHA-256 42e1990b…ae8c), installed with that commit's own packaging recipe.
 # MediaLib/FileCore are prepared exactly as 0.154, without the retired avos source patches.
 on:

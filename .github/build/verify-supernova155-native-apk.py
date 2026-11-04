@@ -7,9 +7,14 @@ from pathlib import Path
 def verify(apk, evidence):
     record = json.loads(Path(evidence).read_text())
     libraries = record["engine"]["libraries"]
-    expected = {Path(item["path"]).name: item["sha256"] for item in libraries}
-    if len(expected) != len(libraries) or not expected:
-        raise ValueError("Engine receipt library names must be unique and non-empty")
+    expected = {}
+    for item in libraries:
+        name = Path(item["path"]).name
+        # The same DSO may ship in both MediaLib and FileCoreLibrary; Gradle packages one copy, so both must agree.
+        if expected.setdefault(name, item["sha256"]) != item["sha256"]:
+            raise ValueError("Engine receipt has two different builds of " + name)
+    if not expected:
+        raise ValueError("Engine receipt lists no libraries")
     with zipfile.ZipFile(apk) as archive:
         names = archive.namelist()
         if len(names) != len(set(names)) or archive.testzip() is not None:
