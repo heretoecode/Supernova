@@ -19,9 +19,7 @@ jobs:
           github-token: ${{ github.token }}
       - name: Print receipts
         run: |
-          cd native
-          find . -type f -printf '%s %p\n' | sort -k2
-          echo '--- SHA256SUMS'; cat SHA256SUMS
-          echo '--- recomputed'; sha256sum Supernova_0.156_native_arm64-v8a.tar.gz
+          cd native/_temp/native156/delivery
+          echo '--- recomputed'; sha256sum *
           echo '--- archive.json'; cat archive.json
           echo '--- native-stack.json (head)'; head -c 4000 native-stack.json
