@@ -2,7 +2,7 @@
 
 Source snapshot: `72b0756cb`. Read-only: no fixes, tests or builds were performed. The known U1, N1, N2, L1, P1, U2 and L2 findings are excluded.
 
-Coverage: **28 / 84 files fully read**. A yes means every source line was read and the constructors/methods, callbacks, guards and teardown were considered. An excerpt, reference scan or prior-run read is not counted. This is partial progress; no unreviewed file is certified clean.
+Coverage: **44 / 84 files fully read** (28 inherited reads at `72b0756cb`, plus 16 new full reads at `160b429f0`; see continuation below). A yes means every source line was read and the constructors/methods, callbacks, guards and teardown were considered. An excerpt, reference scan or prior-run read is not counted. This is partial progress; no unreviewed file is certified clean.
 
 Priority was kept: work stopped within player/, so no later group received a deep-review yes. Cross-file excerpts used to verify a trigger are supporting evidence only. The four coverage inventories include Part A exclusions as no; those exclusions are listed separately below. Group 4 includes a conservative transitive utils reference/import closure so utility dependencies are not silently omitted.
 
@@ -26,22 +26,22 @@ None in this group. Shared player classes were retained for review; no whole pla
 
 | File | Lines | Fully read (yes/no) |
 |---|---:|---|
-| `src/main/java/com/archos/mediacenter/video/player/ArchosSeekBar.java` | 63 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java` | 157 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerAbstract.java` | 109 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerDialog.java` | 169 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerDialogInterface.java` | 33 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPicker.java` | 155 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerAbstract.java` | 94 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerDialog.java` | 138 | no |
-| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerDialogInterface.java` | 33 | no |
-| `src/main/java/com/archos/mediacenter/video/player/BrightnessDialog.java` | 230 | no |
+| `src/main/java/com/archos/mediacenter/video/player/ArchosSeekBar.java` | 63 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java` | 157 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerAbstract.java` | 109 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerDialog.java` | 169 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerDialogInterface.java` | 33 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPicker.java` | 155 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerAbstract.java` | 94 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerDialog.java` | 138 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerDialogInterface.java` | 33 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/BrightnessDialog.java` | 230 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/ChapterMarkers.java` | 45 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/ChaptersDbClient.java` | 326 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/ChaptersDbPlayback.java` | 81 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/ExternalPlayerService.java` | 170 | no |
+| `src/main/java/com/archos/mediacenter/video/player/ExternalPlayerService.java` | 170 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/ExternalResumeIntent.java` | 108 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerActivity.java` | 79 | no |
+| `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerActivity.java` | 79 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerService.java` | 1047 | no |
 | `src/main/java/com/archos/mediacenter/video/player/FocusableTVCardView.java` | 26 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/IPlayerControl.java` | 45 | yes |
@@ -54,13 +54,13 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackViewingCoverage.java` | 58 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/Player.java` | 1767 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java` | 5869 | no |
-| `src/main/java/com/archos/mediacenter/video/player/PlayerBrightnessManager.java` | 148 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PlayerBrightnessManager.java` | 148 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerController.java` | 3622 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerControlsRelativeLayout.java` | 129 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerService.java` | 3672 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewAdjustmentValue.java` | 18 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewHudTiming.java` | 14 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackInfo.java` | 152 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackInfo.java` | 152 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackLoading.java` | 290 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java` | 832 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewSeekPolicy.java` | 17 | yes |
@@ -68,11 +68,11 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/PreviewTechnicalInfo.java` | 160 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewTrackLabel.java` | 18 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewUpNext.java` | 275 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/PrivateMode.java` | 93 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PrivateMode.java` | 93 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SDKNotSupportedDialogActivity.java` | 63 | no |
 | `src/main/java/com/archos/mediacenter/video/player/SeekTooltipDrawable.java` | 21 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SegmentSkippingPolicy.java` | 19 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/SkipProgressDrawable.java` | 95 | no |
+| `src/main/java/com/archos/mediacenter/video/player/SkipProgressDrawable.java` | 95 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/StereoDiveEffect.java` | 654 | no |
 | `src/main/java/com/archos/mediacenter/video/player/StereoMergeArchosEffect.java` | 84 | no |
 | `src/main/java/com/archos/mediacenter/video/player/StereoMergeEffect.java` | 47 | no |
@@ -110,3 +110,17 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVSlaveView.java` | 30 | no |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVUtils.java` | 72 | no |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TimerDelayTVPicker.java` | 300 | no |
+
+
+## 2026-11-04 continuation — BRIEF_0155_PREP Part 4
+
+Reviewed source `160b429f014c86833ae89451f88c58e6acd1e913`. Added **16 full-file reads, 1,918 lines**, all within the formerly unread group-1 set; the existing 28 yes rows retain their original snapshot provenance and are not claimed as fresh full reads. Current line counts were refreshed only for the newly read files. Group 1 now has 44/84 yes, **40 still unread**. No later group was advanced and no leanback/filebrowsing code was reviewed for this part. This is a bounded continuation; the remaining large player/service/controller/effect/menu files need a separate full pass. Supporting caller excerpts do not earn full-file coverage.
+
+| ID | File:line | Kind | Severity (crash / user-visible / minor) | Confidence (high / medium / low) | What goes wrong, for whom, when | Evidence (quote the lines, explain the path) | Suggested fix (described, not applied) |
+|---|---|---|---|---|---|---|---|
+| DP-06 | `src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java:67` and `AudioSpeedPicker.java:78` | threading/lifecycle | user-visible | medium | In the retained touch-based audio delay/speed dialogs, holding +/− then having a parent intercept/cancel the gesture can leave repeated changes running after the press ended. This is a legacy touch surface, not the modern TV panel's D-pad switches. | Both touch listeners post a repeat after ACTION_DOWN and remove it only on ACTION_UP (`AudioDelayPicker:71–75,96–100`; AudioSpeedPicker:82–86,111–115). Neither handles ACTION_CANCEL or detach. Each runnable unconditionally calls performClick and posts itself again every 150 ms (delay :141–154; speed :139–152), with no pressed/attached/enabled ownership test. A DOWN followed by CANCEL without UP leaves the runnable pending and continually rescheduling; a long hold can also continue scheduling at the limit. PlayerActivity still constructs these dialogs at :4041–4068; ordinary Preview panel interactions do not exercise them. Static defect is clear; availability of an intercepted touch sequence on the owner's TV input is not established. | Stop both repeats on UP, CANCEL and detachment/dismissal; require an active matching press and enabled/attached owner before clicking or rescheduling. Add a looper-driven DOWN→CANCEL test and detach/limit cases, asserting no further listener callbacks and no queued repeats; also verify normal tap/hold and D-pad behavior. |
+| DP-07 | `src/main/java/com/archos/mediacenter/video/player/PlayerBrightnessManager.java:79–108` | logic | minor | high | A decrease-brightness gesture cannot establish a manual brightness override while the window is using system brightness (-1). Repeated decreases do nothing until an increase/other control first creates an override. Limited to the retained gesture brightness path; external-TV displays may ignore brightness overrides entirely. | getLinearBrightness returns 10 for the -1 sentinel (:81), so PlayerController.scrollIncrementalBrightnessUpdate (:2767–2783; gesture caller :2601) asks for level 9 on decrease. setLinearBrightness computes a nonnegative gamma value but compares it to raw curBrightness=-1; decrease only writes under `if (newBrightness < curBrightness)` (:103). That is always false for valid levels, so neither window nor saved setting changes; getLinearBrightness remains 10 on each attempt. Increase uses the opposite comparison and does succeed. | Resolve the system/default sentinel to an effective brightness baseline before directional comparison (or deliberately establish a bounded manual baseline on the first gesture); use the same baseline for displayed level and application. Test a window with screenBrightness=-1 and repeated decreases/increases, plus manual 0/1 boundaries, without depending on real display brightness. |
+
+No new crash finding is claimed. DP-06 is medium confidence because its canceled-touch trigger is concrete but normal TV route frequency is uncertain; DP-07 is high confidence in the arithmetic path, with the device-effect limitation stated. No U1/N1/N2/L1/P1/U2/L2 or DP-01…DP-05 issue was re-reported. Historical findings above remain historical records; this append does not imply their fixes are absent from other branches.
+
+Additional review notes: ArchosSeekBar's optional listener is unguarded, but its only located inflation owner BrightnessDialog installs the listener before use, so no reachable new crash is asserted. ExternalPlayerService's API-33 receiver call is gated by its API-34-only startService path; the annotation alone is not the guard, but there is no normal API-23 start through that helper. FloatingPlayerActivity lacks an unbind, but no manifest declaration/current app launch reference was found, so it is not promoted to a live-user leak finding. PrivateMode is initialized from CustomApplication; no initialization defect is claimed. PreviewPlaybackInfo shuts down its worker in finally and checks dialog visibility before applying metadata. None of these notes certifies complete runtime correctness or replaces device verification.
