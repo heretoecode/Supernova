@@ -1,0 +1,33 @@
+name: Supernova 0.155 record delivered 0.154 evidence
+# One-off: copies the public verification receipt of signed 0.154 (run 41761004673) to branch reports/0154-signed-evidence
+# so it can be committed as docs/0.154/SIGNED_QA_EVIDENCE.json. Push-triggered only by this file.
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/workflows/supernova-0155-record-0154.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  record:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: supernova-0154-signed-qa
+          path: signed
+          run-id: 41761004673
+          github-token: ${{ github.token }}
+      - name: Publish receipt to a report branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ls -la signed
+          sha256sum signed/*
+          mkdir out && cp signed/public-qa-evidence.json out/SIGNED_QA_EVIDENCE.json
+          stat -c '%s' signed/Supernova_0.154.apk > out/apk-size.txt
+          sha256sum signed/Supernova_0.154.apk | cut -d' ' -f1 > out/apk-sha256.txt
+          cd out && git init -q -b reports/0154-signed-evidence && git add . && \
+            git -c user.name=github-actions -c user.email=actions@github.com commit -qm "0.154 signed QA evidence (run 41761004673)" && \
+            git push -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/reports/0154-signed-evidence
