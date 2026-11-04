@@ -222,3 +222,20 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   10 seconds; text and icon centred on the whole button. Final: bottom right, ~120px / 44px text, selected on
   arrival, OK skips, fades after 10 s and returns with the controls until the part ends.
 - **Status:** approved — awaiting go-ahead to code.
+
+## 18. Search page: keyboard, results layout and relevance (design + bug)
+- **Seen (owner photos):** the keyboard keys are uneven, staggered and crowded (blob-shaped keys, tiny Clear / Done /
+  Cancel row, Shift "ON"), not in a charcoal panel. Result rows repeat noise on every line ("Resolution
+  unavailable", the file name, the certificate), on blue bars rather than charcoal.
+- **Relevance bug (Claude, from the code — `PreviewSearch` + `PreviewSearchText.rank`):** "dune" returned
+  **237 results**, including every Ridley Road episode. Each row is matched against title, episode name, file path,
+  cast, crew and studios with typo tolerance on all of them, so short words match far too much. To fix: exact and
+  prefix title matches first; typo tolerance on titles only; people/studios only on whole words; file paths only
+  when nothing else matches; results grouped and capped per group.
+- **Proposed (`docs/design/proposals/search/01`–`02`):** left — a charcoal panel with a large search field, a row of
+  Voice (Shield remote mic), Space, Delete, Clear, and an A–Z / 0–9 grid of large, even keys (six across, easier with
+  a remote than QWERTY). Right — before typing: recent searches and three short "what you can search" lines; while
+  typing: results grouped Films · TV shows · Episodes · People, each two lines (title + year; type · runtime ·
+  resolution only when known · genres), and a blue "Matched …" line when the match was not the title. No file names,
+  certificates or "unavailable".
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
