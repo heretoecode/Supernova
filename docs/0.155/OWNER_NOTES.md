@@ -96,3 +96,21 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Tests:** a hidden file between two visible ones is skipped; every remaining file hidden means no next file;
   repeat wrap-around skips hidden files; cached and uncached next-episode paths both skip them.
 - **Status:** approved — awaiting go-ahead to code (Claude, not Codex: it changes what plays).
+
+## 11. Local Storage: show library status on every row (design)
+- **Seen (owner photo, Backup #1 › NVIDIA_SHIELD › Movies):** only the focused row shows Play / Exclude; the other
+  rows give no hint whether they are in the library or excluded. Today an excluded row is only dimmed with
+  "Excluded" at the end of line 2; included and not-added rows look the same.
+- **Mock-ups:** `docs/design/proposals/local-storage/22` (A: a small tag after the title on every row — ● In library,
+  ⦸ Excluded with the row dimmed, ○ Not added), `23` (B: only rows that differ from their folder are tagged), `24`
+  (A in a mixed folder). The focused row's button matches the state: Exclude / Include / Add to library.
+- **Status:** awaiting the owner's choice of A or B — then awaiting go-ahead to code.
+
+## 12. Local Storage: library rows show only file name and size (check)
+- **Seen (same photo):** in a folder marked "In your library", rows show the raw file name and only the size
+  (e.g. "Aftersun.2022.1080p.WEBRip.x264-RARBG · 2.1 GB"), not the matched title, year, runtime, resolution and audio.
+- **Suspicion (Claude, not confirmed):** `LocalStorageView` looks each file up in the library by its URI string; if
+  the USB drive's path in the library differs from the browser's (e.g. `file:///storage/XXXX-XXXX/...` vs a
+  mount alias), every lookup misses and rows fall back to name + size. To confirm on the next diagnostics export or
+  with one photo of a film from this folder in Movies.
+- **Status:** to investigate in 0.156.
