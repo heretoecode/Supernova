@@ -1,4 +1,4 @@
-"""Offline tests only: no workflow dispatch, artifact download or Release write."""
+"""Offline tests only: no workflow dispatch, artifact download or remote write."""
 import copy
 import hashlib
 import importlib.util
@@ -6,6 +6,7 @@ import io
 import json
 import tarfile
 import tempfile
+import subprocess
 import unittest
 import zipfile
 from pathlib import Path
@@ -116,61 +117,102 @@ class NativeArchiveTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             ARCHIVE.select_artifacts(metadata, rows)
 
-    def test_existing_mismatched_release_asset_is_never_overwritten(self):
-        asset = self.root / "asset.zip"
-        asset.write_bytes(b"reviewed")
-        missing = self.root / "missing.zip"
-        missing.write_bytes(b"missing")
-        release = {"assets": [{"name": asset.name, "id": 9}]}
-        with patch.object(ARCHIVE, "release_or_none", return_value=release), \
-                patch.object(ARCHIVE, "verify_tag"), \
-                patch.object(ARCHIVE, "download", side_effect=lambda _, p: p.write_bytes(b"wrong")):
-            with self.assertRaisesRegex(ValueError, "Existing Release asset differs"):
-                ARCHIVE.publish([missing, asset], "c" * 40, self.destination)
-        # The default gh mock raises if any upload/create/edit was attempted.
+    def branch_fixture(self):
+        lock = self.destination / "native-supernova146.lock.json"
+        lock.write_text(json.dumps(self.lock))
+        rows = []
+        for abi in ARCHIVE.ABIS:
+            path = self.destination / ("supernova-0146-native-" + abi + ".zip")
+            path.write_bytes(("synthetic ZIP " + abi).encode())
+            rows.append({**self.row, "abi": abi, "artifact_sha256": ARCHIVE.digest(path),
+                         "lock_sha256": ARCHIVE.digest(lock)})
+        review = self.destination / "NATIVE_CI_ARTIFACT_VERIFICATION.json"
+        review.write_text(json.dumps({"run_id": ARCHIVE.RUN, "artifacts": rows}))
+        files = sorted(self.destination.iterdir())
+        manifest = self.destination / ARCHIVE.MANIFEST
+        manifest.write_text(json.dumps({"schema": 2, "repository": ARCHIVE.REPOSITORY,
+            "run_id": ARCHIVE.RUN, "branch": ARCHIVE.BRANCH,
+            "source_commit": self.row["native_source_commit"],
+            "files": [{"name": path.name, "bytes": path.stat().st_size, "sha256": ARCHIVE.digest(path)}
+                      for path in files]}))
+        files.append(manifest)
+        remote = self.root / "remote.git"
+        subprocess.run(["git", "init", "--bare", "--quiet", str(remote)], check=True)
+        return files, remote, lock, review
 
-    def test_draft_missing_tag_needs_exact_reviewed_commit(self):
-        with patch.object(ARCHIVE, "api", return_value=[]):
-            ARCHIVE.verify_tag("c" * 40, {"draft": True, "target_commitish": "c" * 40})
-            for release in [{"draft": True, "target_commitish": "main"}, {"draft": False}]:
-                with self.assertRaises(ValueError):
-                    ARCHIVE.verify_tag("c" * 40, release)
+    def test_oversize_fails_before_remote_access(self):
+        files, remote, _, _ = self.branch_fixture()
+        with patch.object(ARCHIVE, "MAX_FILE_BYTES", files[0].stat().st_size), \
+                patch.object(ARCHIVE, "git", side_effect=AssertionError("must fail before git")):
+            with self.assertRaisesRegex(ValueError, "below 100 MB"):
+                ARCHIVE.publish(files, self.destination, str(remote))
 
-    def test_create_verify_publish_and_repeat_without_replacing_assets(self):
-        asset = self.root / "asset.zip"
-        asset.write_bytes(b"reviewed")
-        remote = {}
-        release = None
-        calls = []
+    def test_publish_and_existing_identical_branch_are_immutable(self):
+        files, remote, lock, review = self.branch_fixture()
+        ARCHIVE.publish(files, self.destination, str(remote))
+        head = ARCHIVE.git(remote, "rev-parse", "refs/heads/" + ARCHIVE.BRANCH)
+        # Existing branch must never be pushed, even with identical bytes.
+        original = ARCHIVE.git
+        def no_push(repo, *args, **kwargs):
+            self.assertNotIn("push", args)
+            return original(repo, *args, **kwargs)
+        with patch.object(ARCHIVE, "git", side_effect=no_push):
+            ARCHIVE.publish(files, self.destination, str(remote))
+        self.assertEqual(head, ARCHIVE.git(remote, "rev-parse", "refs/heads/" + ARCHIVE.BRANCH))
+        self.assertEqual(b"1\n", ARCHIVE.git(remote, "rev-list", "--count", head.decode().strip()))
+        downloaded = self.root / "downloaded"
+        ARCHIVE.read_branch(downloaded, lock, review, str(remote))
+        ARCHIVE.verify_same(files, downloaded)
 
-        def invoke(*arguments, **kwargs):
-            nonlocal release
-            calls.append(arguments)
-            if arguments[:2] == ("release", "create"):
-                release = {"id": 1, "draft": True, "target_commitish": "c" * 40, "assets": []}
-            elif arguments[:2] == ("release", "upload"):
-                source = Path(arguments[3])
-                remote[9] = source.read_bytes()
-                release["assets"].append({"id": 9, "name": source.name})
-            elif arguments[:3] == ("api", "--method", "PATCH"):
-                release["draft"] = False
-            else:
-                self.fail("Unexpected GitHub command")
-            return b""
+    def test_existing_different_branch_is_never_rewritten(self):
+        files, remote, _, _ = self.branch_fixture()
+        ARCHIVE.publish(files, self.destination, str(remote))
+        head = ARCHIVE.git(remote, "rev-parse", "refs/heads/" + ARCHIVE.BRANCH)
+        files[0].write_bytes(b"different bytes")
+        with self.assertRaisesRegex(ValueError, "branch bytes differ"):
+            ARCHIVE.publish(files, self.destination, str(remote))
+        self.assertEqual(head, ARCHIVE.git(remote, "rev-parse", "refs/heads/" + ARCHIVE.BRANCH))
 
-        def references(_):
-            return [] if release["draft"] else [{"ref": "refs/tags/" + ARCHIVE.TAG,
-                "object": {"type": "commit", "sha": "c" * 40}}]
+    def test_manifest_hash_mismatch_and_changed_trust_anchor_fail(self):
+        files, _, lock, review = self.branch_fixture()
+        ARCHIVE.verify_manifest(self.destination, lock, review)
+        artifact = self.destination / "supernova-0146-native-x86.zip"
+        original = artifact.read_bytes()
+        artifact.write_bytes(b"tampered")
+        with self.assertRaisesRegex(ValueError, "hash/size mismatch"):
+            ARCHIVE.verify_manifest(self.destination, lock, review)
+        # Even an attacker-updated manifest cannot replace the locally reviewed ZIP hash.
+        manifest_path = self.destination / ARCHIVE.MANIFEST
+        manifest = json.loads(manifest_path.read_text())
+        for item in manifest["files"]:
+            if item["name"] == artifact.name:
+                item.update(bytes=artifact.stat().st_size, sha256=ARCHIVE.digest(artifact))
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, "reviewed hash"):
+            ARCHIVE.verify_manifest(self.destination, lock, review)
 
-        with patch.object(ARCHIVE, "gh", side_effect=invoke), \
-                patch.object(ARCHIVE, "release_or_none", side_effect=lambda: copy.deepcopy(release)), \
-                patch.object(ARCHIVE, "api", side_effect=references), \
-                patch.object(ARCHIVE, "download", side_effect=lambda _, p: p.write_bytes(remote[9])):
-            ARCHIVE.publish([asset], "c" * 40, self.destination)
-            self.assertFalse(release["draft"])
-            self.assertEqual(3, len(calls))
-            ARCHIVE.publish([asset], "c" * 40, self.destination)
-            self.assertEqual(3, len(calls))
+    def test_fresh_fetch_detects_post_push_corruption(self):
+        files, remote, _, _ = self.branch_fixture()
+        original = ARCHIVE.fetch_branch
+        def corrupt(repo, destination, source):
+            commit = original(repo, destination, source)
+            (destination / ARCHIVE.MANIFEST).write_bytes(b"corrupt")
+            return commit
+        with patch.object(ARCHIVE, "fetch_branch", side_effect=corrupt):
+            with self.assertRaisesRegex(ValueError, "branch bytes differ"):
+                ARCHIVE.publish(files, self.destination, str(remote))
+
+    def test_artifact_download_keeps_claude_json_accept_fix(self):
+        with patch.object(ARCHIVE, "gh") as gh:
+            ARCHIVE.download("actions/artifacts/1/zip", self.root / "download")
+        self.assertIn("Accept: application/json", gh.call_args.args)
+
+    def test_workflow_triggers_are_limited(self):
+        workflow = (ARCHIVE.ROOT / ".github/workflows/supernova-0156-native-archive.yml").read_text()
+        trigger = workflow.split("on:\n", 1)[1].split("permissions:", 1)[0]
+        self.assertIn("workflow_dispatch:", trigger)
+        self.assertIn("branches: [claude/supernova-github-access-yfhe89]", trigger)
+        self.assertIn("paths: [.github/workflows/supernova-0156-native-archive.yml]", trigger)
 
 
 if __name__ == "__main__":

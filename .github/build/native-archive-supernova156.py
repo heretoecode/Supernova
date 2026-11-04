@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draft: verify the pinned 0.146 artifacts, optionally preserve them in a Release.
+"""Verify pinned 0.146 artifacts; optionally preserve them on an immutable orphan branch.
 
 No builds, workflow dispatches, or overwrites. Requires gh and GH_TOKEN when used
 online. Tests exercise verification with synthetic archives without GitHub access.
@@ -8,13 +8,20 @@ import argparse
 import hashlib
 import json
 import subprocess
+import shutil
+import tempfile
+import sys
 import tarfile
 import zipfile
 from pathlib import Path, PurePosixPath
 
 REPOSITORY = "heretoecode/Supernova"
 RUN = 40843685431
-TAG = "native-archive-0146"
+BRANCH = "native-archive-0146"
+MANIFEST = "archive-supernova156-manifest.json"
+# Strictly below 100 MB (also below GitHub's 100 MiB limit).
+MAX_FILE_BYTES = 100_000_000
+REMOTE = "https://github.com/" + REPOSITORY + ".git"
 ABIS = ("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -32,6 +39,10 @@ def require(condition, message):
 def gh(*arguments, output=None):
     result = subprocess.run(["gh", *arguments], stdout=output or subprocess.PIPE,
                             stderr=subprocess.PIPE, check=False)
+    if result.returncode != 0:
+        # gh never echoes the token; show which command failed and GitHub's reason.
+        sys.stderr.write("gh " + " ".join(a for a in arguments if not a.startswith("--notes")) + " failed:\n"
+                         + result.stderr.decode(errors="replace")[-2000:] + "\n")
     require(result.returncode == 0, "GitHub command failed; archive not complete")
     return result.stdout
 
@@ -41,9 +52,11 @@ def api(path):
 
 
 def download(path, target):
+    # Artifact ZIPs only accept the JSON media type (GitHub answers 415 to octet-stream and redirects to the ZIP);
+    # Release assets need octet-stream to return bytes instead of metadata.
+    accept = "application/json" if path.startswith("actions/artifacts/") else "application/octet-stream"
     with target.open("wb") as stream:
-        gh("api", "-H", "Accept: application/octet-stream",
-           f"repos/{REPOSITORY}/{path}", output=stream)
+        gh("api", "-H", f"Accept: {accept}", f"repos/{REPOSITORY}/{path}", output=stream)
 
 
 def safe_path(value):
@@ -123,73 +136,126 @@ def verify_archive(artifact, destination, row, lock):
     return archive
 
 
-def release_or_none():
-    # A failed request must not be mistaken for an absent Release.
-    releases = json.loads(gh("api", "--paginate", "--slurp",
-                            f"repos/{REPOSITORY}/releases?per_page=100"))
-    matches = [release for page in releases for release in page if release["tag_name"] == TAG]
-    require(len(matches) <= 1, "Duplicate archive Release")
-    return matches[0] if matches else None
+def git(repo, *arguments, output=None, data=None):
+    # gh obtains the job token from GH_TOKEN, without embedding it in URLs/config/logs.
+    command = ["git", "-c", "credential.helper=", "-c", "credential.helper=!gh auth git-credential",
+               "-C", str(repo), *map(str, arguments)]
+    result = subprocess.run(command, input=data, stdout=output or subprocess.PIPE,
+                            stderr=subprocess.PIPE, check=False)
+    require(result.returncode == 0, "Git archive command failed: " + " ".join(map(str, arguments))
+            + "\n" + result.stderr.decode(errors="replace")[-2000:])
+    return result.stdout
 
 
-def verify_tag(commit, release):
-    matches = [reference for reference in api("git/matching-refs/tags/" + TAG)
-               if reference["ref"] == "refs/tags/" + TAG]
-    require(len(matches) <= 1, "Duplicate archive tag")
-    if not matches:
-        require(release["draft"] and release["target_commitish"] == commit,
-                "Missing archive tag or unreviewed draft target")
-        return
-    reference = matches[0]["object"]
-    while reference["type"] == "tag":
-        reference = api("git/tags/" + reference["sha"])["object"]
-    require(reference["type"] == "commit" and reference["sha"] == commit,
-            "Archive tag must point to the reviewed native source commit")
+def archive_names():
+    return {"supernova-0146-native-" + abi + ".zip" for abi in ABIS} | {
+        "native-supernova146.lock.json", "NATIVE_CI_ARTIFACT_VERIFICATION.json"}
 
 
-def publish(files, commit, destination):
-    release = release_or_none()
-    if release is None:
-        gh("release", "create", TAG, "--repo", REPOSITORY, "--target", commit,
-           "--draft", "--latest=false", "--title", "Pinned 0.146 native archive",
-           "--notes", "Verified preservation of native run 40843685431; not a new engine build. "
-           "See archive-supernova156-manifest.json, the native lock and verification receipts.")
-        release = release_or_none()
-        require(release is not None and release["draft"], "Archive draft was not created")
-    verify_tag(commit, release)
-    assets = {asset["name"]: asset for asset in release["assets"]}
-    # Check existing bytes before uploading anything to an existing Release.
+def verify_manifest(directory, lock_path, review_path):
+    manifest = json.loads((directory / MANIFEST).read_text())
+    review = json.loads(review_path.read_text())
+    rows = verification_rows(review, lock_path)
+    require(manifest["schema"] == 2 and manifest["repository"] == REPOSITORY
+            and manifest["run_id"] == RUN and manifest["branch"] == BRANCH
+            and manifest["source_commit"] == rows[0]["native_source_commit"],
+            "Archive manifest provenance differs")
+    files = manifest["files"]
+    require(len(files) == len(archive_names())
+            and {item["name"] for item in files} == archive_names(), "Archive manifest inventory differs")
+    require({path.name for path in directory.iterdir()} == archive_names() | {MANIFEST},
+            "Archive branch file inventory differs")
+    for item in files:
+        path = directory / item["name"]
+        require(path.is_file() and not path.is_symlink()
+                and path.stat().st_size == item["bytes"] and digest(path) == item["sha256"],
+                "Archive manifest hash/size mismatch")
+    # The manifest is not its own trust anchor. Pin receipts and ZIPs to reviewed local inputs.
+    for local in (lock_path, review_path):
+        require((directory / local.name).read_bytes() == local.read_bytes(), "Archived lock/review differs")
+    for row in rows:
+        require(digest(directory / ("supernova-0146-native-" + row["abi"] + ".zip"))
+                == row["artifact_sha256"], "Archived ZIP differs from reviewed hash")
+    return manifest
+
+
+def check_sizes(files):
+    require(all(path.is_file() and not path.is_symlink()
+                and path.stat().st_size < MAX_FILE_BYTES for path in files),
+            "Archive files must be regular files strictly below 100 MB")
+
+
+def fetch_branch(repo, destination, remote):
+    # Fetch anew even after a push; verify only the fetched commit and its complete tree.
+    git(repo, "fetch", "--no-tags", remote, "refs/heads/" + BRANCH)
+    commit = git(repo, "rev-parse", "FETCH_HEAD").decode().strip()
+    require(len(git(repo, "rev-list", "--parents", "-n", "1", commit).split()) == 1,
+            "Archive must be one orphan commit")
+    entries = git(repo, "ls-tree", "-rz", commit).split(b"\0")
+    for entry in filter(None, entries):
+        metadata, name = entry.split(b"\t", 1)
+        path = safe_path(name.decode())
+        require(len(path.parts) == 1 and metadata.split()[:2] == [b"100644", b"blob"],
+                "Archive tree must contain only regular root files")
+        with (destination / str(path)).open("wb") as stream:
+            git(repo, "cat-file", "blob", metadata.split()[2].decode(), output=stream)
+    return commit
+
+
+def verify_same(files, downloaded):
+    require({path.name for path in files} == {path.name for path in downloaded.iterdir()},
+            "Existing archive branch inventory differs")
     for path in files:
-        if path.name in assets:
-            downloaded = destination / (path.name + ".release-check")
-            download(f"releases/assets/{assets[path.name]['id']}", downloaded)
-            require(digest(downloaded) == digest(path), "Existing Release asset differs")
-            downloaded.unlink()
-    for path in files:
-        if path.name not in assets:
-            # No --clobber: concurrent changes or differing assets fail closed.
-            gh("release", "upload", TAG, str(path), "--repo", REPOSITORY)
-    release = release_or_none()
-    assets = {asset["name"]: asset for asset in release["assets"]}
-    for path in files:
-        require(path.name in assets, "Release missing a required asset")
-        downloaded = destination / (path.name + ".release-check")
-        download(f"releases/assets/{assets[path.name]['id']}", downloaded)
-        require(digest(downloaded) == digest(path), "Existing or uploaded Release asset differs")
-        downloaded.unlink()
-    verify_tag(commit, release)
-    if release["draft"]:
-        gh("api", "--method", "PATCH", f"repos/{REPOSITORY}/releases/{release['id']}",
-           "-F", "draft=false", "-f", "make_latest=false")
-    release = release_or_none()
-    require(release is not None and not release["draft"], "Archive Release is not published")
-    verify_tag(commit, release)
+        other = downloaded / path.name
+        require(path.stat().st_size == other.stat().st_size and digest(path) == digest(other),
+                "Existing archive branch bytes differ")
+
+
+def publish(files, destination, remote=REMOTE):
+    check_sizes(files)  # Before creating any Git object or making any remote write.
+    with tempfile.TemporaryDirectory(prefix="native-archive-git-") as temporary:
+        repo = Path(temporary)
+        git(repo, "init", "--bare", "--quiet")
+        existing = git(repo, "ls-remote", "--heads", remote, "refs/heads/" + BRANCH)
+        if existing.strip():
+            before = repo / "before"
+            before.mkdir()
+            fetch_branch(repo, before, remote)
+            verify_same(files, before)
+        else:
+            entries = []
+            for path in sorted(files):
+                blob = git(repo, "hash-object", "-w", path.resolve()).decode().strip()
+                entries.append("100644 blob " + blob + "\t" + path.name + "\n")
+            tree = git(repo, "mktree", data="".join(entries).encode()).decode().strip()
+            commit = git(repo, "-c", "user.name=Supernova native archive",
+                         "-c", "user.email=native-archive@users.noreply.github.com",
+                         "commit-tree", tree, data=b"Preserve verified native run 40843685431\n").decode().strip()
+            # No force, no parent: concurrent creation with other bytes cannot be overwritten.
+            git(repo, "push", remote, commit + ":refs/heads/" + BRANCH)
+        after = repo / "after"
+        after.mkdir()
+        fetch_branch(repo, after, remote)
+        verify_same(files, after)  # Includes manifest hash, not only payload hashes.
+        verify_manifest(after, destination / "native-supernova146.lock.json",
+                        destination / "NATIVE_CI_ARTIFACT_VERIFICATION.json")
+
+
+def read_branch(destination, lock_path, review_path, remote=REMOTE):
+    destination.mkdir(parents=True, exist_ok=False)
+    with tempfile.TemporaryDirectory(prefix="native-archive-read-") as temporary:
+        repo = Path(temporary)
+        git(repo, "init", "--bare", "--quiet")
+        fetch_branch(repo, destination, remote)
+    check_sizes(list(destination.iterdir()))
+    return verify_manifest(destination, lock_path, review_path)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--destination", required=True, type=Path)
     parser.add_argument("--publish", action="store_true")
+    parser.add_argument("--downloads", type=Path, help="Verify local original artifact ZIPs instead of downloading")
     args = parser.parse_args()
     destination = args.destination.resolve()
     destination.mkdir(parents=True, exist_ok=False)
@@ -201,31 +267,41 @@ def main():
     for name, expected in lock["recipes"].items():
         safe_path(name)
         require(digest(lock_path.parent / name) == expected, "Recipe differs from native lock")
-    run = api(f"actions/runs/{RUN}")
-    require(run["id"] == RUN and run["status"] == "completed" and run["conclusion"] == "success"
-            and run["head_sha"] == rows[0]["native_source_commit"]
-            and run["repository"]["full_name"] == REPOSITORY, "Unexpected native run provenance")
-    selected = select_artifacts(api(f"actions/runs/{RUN}/artifacts?per_page=100"), rows)
+    if args.downloads:
+        selected = [(row, {"name": "supernova-0146-native-" + row["abi"]}) for row in rows]
+    else:
+        run = api(f"actions/runs/{RUN}")
+        require(run["id"] == RUN and run["status"] == "completed" and run["conclusion"] == "success"
+                and run["head_sha"] == rows[0]["native_source_commit"]
+                and run["repository"]["full_name"] == REPOSITORY, "Unexpected native run provenance")
+        selected = select_artifacts(api(f"actions/runs/{RUN}/artifacts?per_page=100"), rows)
     files = []
-    for row, artifact in selected:
-        path = destination / (artifact["name"] + ".zip")
-        download(f"actions/artifacts/{artifact['id']}/zip", path)
-        files.extend([path, verify_archive(path, destination, row, lock)])
+    # Tarballs are verified in scratch space; the immutable branch stores the original ZIPs only.
+    with tempfile.TemporaryDirectory(prefix="native-archive-verify-") as temporary:
+        for row, artifact in selected:
+            path = destination / (artifact["name"] + ".zip")
+            if args.downloads:
+                shutil.copyfile(args.downloads / path.name, path)
+            else:
+                download(f"actions/artifacts/{artifact['id']}/zip", path)
+            check_sizes([path])
+            verify_archive(path, Path(temporary), row, lock)
+            files.append(path)
     for source in (lock_path, review_path):
         target = destination / source.name
         target.write_bytes(source.read_bytes())
         files.append(target)
-    manifest = destination / "archive-supernova156-manifest.json"
-    manifest.write_text(json.dumps({"schema": 1, "repository": REPOSITORY, "run_id": RUN,
-        "source_commit": rows[0]["native_source_commit"], "release_tag": TAG,
-        "artifacts": [{"id": item["id"], "name": item["name"], "expires_at": item["expires_at"]}
-                      for _, item in selected],
+    manifest = destination / MANIFEST
+    manifest.write_text(json.dumps({"schema": 2, "repository": REPOSITORY, "run_id": RUN,
+        "source_commit": rows[0]["native_source_commit"], "branch": BRANCH,
         "files": [{"name": path.name, "bytes": path.stat().st_size, "sha256": digest(path)}
-                  for path in files]}, indent=2) + "\n")
+                  for path in sorted(files)]}, indent=2) + "\n")
     files.append(manifest)
+    check_sizes(files)
+    verify_manifest(destination, lock_path, review_path)
     if args.publish:
-        publish(files, rows[0]["native_source_commit"], destination)
-    print("Verified all four native ABIs" + (" and Release assets" if args.publish else " locally"))
+        publish(files, destination)
+    print("Verified all four native ABIs" + (" and freshly fetched archive branch" if args.publish else " locally"))
 
 
 if __name__ == "__main__":
