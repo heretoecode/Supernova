@@ -32,15 +32,14 @@ const btns = (list, f) => `<span class="ib">${list.map((t, i) => `<span class="b
 const backup = f => shell(0,
   row('Back up now', 'Last backup: never', btns(['Back up'], f === 'now' ? 0 : -1), f === 'now') +
   row('Save backups to', 'A folder on a drive or share you can reach later.', `<span class="sv">${ic('folder', 24)}<span>Backup #1 › Supernova</span></span>${btns(['Change'])}`) +
-  row('What to include', 'Everything: settings, Home and library pages, viewing history, matches and choices.', seg(['Everything', 'Settings only', 'Custom…'], 'Everything', f === 'what'), f === 'what') +
-  row('Include file names and locations', 'Lets a restore reconnect your sources. Reveals folder and share names.', tg(false)) +
+  row('What to include', 'Everything except private items. Choose Custom… to add those.', seg(['Everything', 'Settings only', 'Custom…'], f === 'cust' ? 'Custom…' : 'Everything', f === 'what' || f === 'cust'), f === 'what' || f === 'cust') +
   row('Restore from a backup', 'Choose a backup file; you see what will change before anything is replaced.', btns(['Restore…'])) +
   row('What’s in a backup', 'What is saved, what never is (passwords, media, artwork), and how restore works.', val('')),
   'Backups are not encrypted — keep them somewhere private');
 const diag = f => shell(1,
-  row('Report a problem', 'Saves what just happened with a short reference to quote. Last: 06f6050a · Playback · 16:48', btns(['Report…'], f === 'rep' ? 0 : -1), f === 'rep') +
-  row('Save a diagnostic report', 'A ZIP of recent logs and device details for troubleshooting. Never includes passwords.', btns(['Save…'])) +
-  row('Keep detailed logs', 'Records more detail for troubleshooting. Uses a little storage.', tg(true)),
+  row('Save a diagnostic report', 'A ZIP of everything Supernova has recorded, for finding and fixing problems. Never includes passwords.', btns(['Save…'], f === 'save' ? 0 : -1), f === 'save') +
+  row('Diagnostic logging', 'Records everything the app does in full detail. Uses up to 8 MB.', tg(true)) +
+  row('Clear diagnostic data', 'Deletes everything recorded so far.', btns(['Clear…'])),
   '');
 const adv = f => shell(2,
   `<div class="warn">Only change these if something isn’t working. Reset all restores the defaults.</div>` +
@@ -51,15 +50,29 @@ const adv = f => shell(2,
   row('Audio output', 'How sound reaches the Shield’s audio system.', seg(['Automatic', 'AudioTrack', 'OpenSL'], 'Automatic')) +
   row('Adjust audio delay automatically', 'Keeps sound in sync with some receivers.', tg(true)) +
   `<div class="grp">Other</div>` +
-  row('More options', 'Subtitle character set, network share settings, logging detail.', val('')),
+  row('More options', 'Subtitle character set and network share settings.', val('')),
   '');
+Object.assign(P, { sliders: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>', user: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>', where: '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4"/>', home: '<path d="M4 11l8-7 8 7v9H4z"/><path d="M10 20v-5h4v5"/>', grid: '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>', pin: '<path d="M9 4h6l-1 6 3 3H7l3-3z"/><path d="M12 13v7"/>', hist: '<path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4M12 8v4l3 2"/>', next: '<path d="M5 6h14M5 12h14M5 18h8"/>', tracks: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8v8M20 10v4"/>', match: '<circle cx="12" cy="12" r="8"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/>', note: '<path d="M6 4h9l3 3v13H6z"/><path d="M9 11h6M9 15h4"/>', src: '<path d="M4 6h16v5H4zM4 13h16v5H4z"/><path d="M7 8.5h.01M7 15.5h.01"/>', bm: '<path d="M7 4h10v16l-5-4-5 4z"/>', file: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>', warn: '<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17h.01"/>' });
 const groups = [['Settings', ['Playback, audio, subtitles and appearance', 'Accounts and services (not passwords)', 'Where to Watch']], ['Home & library pages', ['Home rows', 'Your library pages', 'Pinned and hidden titles']], ['Viewing', ['Watch history', 'Resume points', 'Watch Next', 'Per-title track choices']], ['Matches & preferences', ['Media matches', 'Preferred versions', 'Review notes']], ['Sources', ['Library sources', 'File bookmarks']]];
 const custom = `<div class="dim"></div><div class="panel"><div class="ptitle">Custom backup</div>${groups.map(([g, items], gi) => `<div class="pg">${g}</div>${items.map((t, i) => `<div class="opt sm${gi === 0 && i === 0 ? ' f' : ''}"><span class="cb${gi < 4 ? ' on' : ''}">${gi < 4 ? ic('check', 18) : ''}</span>${t}</div>`).join('')}`).join('')}</div>`;
+const cgroups = [['Settings', [['sliders', 'App settings', 1], ['user', 'Accounts and services', 1], ['where', 'Where to Watch', 1]]],
+  ['Home & library', [['home', 'Home rows', 1], ['grid', 'Library pages', 1], ['pin', 'Pinned and hidden titles', 1]]],
+  ['Viewing', [['hist', 'Watch history and resume points', 1], ['next', 'Watch Next', 1], ['tracks', 'Audio and subtitle choices per title', 1]]],
+  ['Matches', [['match', 'Media matches and preferred versions', 1], ['note', 'Review notes', 1]]],
+  ['Private', [['src', 'Library sources', 0], ['bm', 'File bookmarks', 0], ['file', 'File names and locations', 0]]]];
+const warnText = { 'File bookmarks': 'Bookmarks show the names of folders and files you saved, and where they are. Anyone with the backup file can read them.' };
+const cpanel = (mode) => { let rows = '';
+  cgroups.forEach(([g, items]) => { rows += `<div class="csec"><span>${g}</span><i></i></div>`;
+    items.forEach(([k, t, on]) => { const focus = mode === 'top' ? t === 'App settings' : t === 'File bookmarks';
+      const ask = mode === 'warn' && t === 'File bookmarks';
+      rows += `<div class="crow${focus && !ask ? ' f' : ''}${ask ? ' ask' : ''}"><div class="cline">${ic(k, 28)}<span class="ct">${t}</span>${tg(!!on)}</div>${ask ? `<div class="cwarn">${ic('warn', 22)}<span>${warnText[t]}</span></div><div class="cbtns"><span class="btn sm f">Include</span><span class="btn sm">Keep off</span></div>` : ''}</div>`; }); });
+  return `<div class="dim"></div><div class="cpanel"><div class="cscroll${mode === 'top' ? '' : ' end'}">${rows}</div>${mode === 'top' ? '<div class="cfade"></div>' : '<div class="cfade top"></div>'}</div>`; };
 const shots = [
   ['21-backup.png', backup('what'), 'Backup: three choices instead of 25 checkboxes; destination chosen in Supernova’s browser; restore previews changes'],
-  ['22-diagnostics.png', diag('rep'), 'Diagnostics: three plain actions; the duplicate rows and raw digest moved to Advanced'],
+  ['22-diagnostics.png', diag('save'), 'Diagnostics: always records in full detail; save, switch off or clear'],
   ['23-advanced.png', adv('dec'), 'Advanced: the four compatibility pages in one, grouped, short choices inline'],
-  ['24-custom-backup.png', backup('what') + custom, 'Custom…: the categories grouped in plain words, sized to content'],
+  ['24-custom-backup.png', backup('cust') + cpanel('top'), 'Custom…: categories grouped in plain words; the list scrolls'],
+  ['25-custom-private.png', backup('cust') + cpanel('warn'), 'Turning on a private item says what it reveals before it is included'],
 ];
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:radial-gradient(ellipse 70% 60% at 70% 75%,#1d4fd8 0%,rgba(29,79,216,0) 70%),linear-gradient(180deg,#05081a 0%,#0a1650 45%,#10248a 100%)}
@@ -92,6 +105,14 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .ptitle{font-size:30px;font-weight:500;margin:0 6px 6px}.pdesc{font-size:20px;color:#c9d3e6;margin:0 6px 14px}
 .opt{display:flex;align-items:center;gap:16px;height:62px;padding:0 20px;border-radius:20px;font-size:25px;font-weight:500}.opt.f{box-shadow:inset 0 0 0 3px #fff}
 .rad{width:32px;height:32px;border-radius:50%;border:2px solid #aab3c4;display:flex;align-items:center;justify-content:center;flex:none}.rad.on{background:#F4F6FB;border-color:#F4F6FB;color:#0B0D12}
+.cpanel{position:absolute;right:56px;top:112px;width:720px;height:928px;border-radius:26px;background:#1b1d22;border:2px solid rgba(255,255,255,.22);box-shadow:-20px 0 60px rgba(0,0,0,.5);overflow:hidden}
+.cscroll{position:absolute;left:28px;right:28px;top:22px}.cscroll.end{top:auto;bottom:26px}
+.csec{display:flex;align-items:center;gap:16px;height:50px;padding:0 8px;font-size:21px;color:#aab3c4}.csec i{flex:1;height:1px;background:rgba(255,255,255,.18)}
+.crow{border-radius:20px;padding:0 18px}.crow.f{box-shadow:inset 0 0 0 3px #fff}.crow.ask{box-shadow:inset 0 0 0 3px #fff;background:#24272d;padding-bottom:18px}
+.cline{display:flex;align-items:center;gap:20px;height:74px;font-size:25px;font-weight:500}.cline svg{color:#dfe5ef;flex:none}.ct{flex:1}
+.cwarn{display:flex;gap:12px;margin:0 0 16px 48px;font-size:20px;line-height:1.4;color:#ffd38a}.cwarn svg{flex:none;margin-top:3px}
+.cbtns{display:flex;gap:12px;margin-left:48px}
+.cfade{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(0deg,#1b1d22 20%,rgba(27,29,34,0))}.cfade.top{top:0;bottom:auto;height:70px;background:linear-gradient(180deg,#1b1d22 25%,rgba(27,29,34,0))}
 .label{z-index:20;position:absolute;right:56px;bottom:8px;font-size:18px;color:#c9d3e6}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {

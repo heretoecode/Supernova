@@ -432,13 +432,16 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   Play · Skip button · Skip · Smart (Credits: Safe skip instead of Skip). Defaults as today.
 - **Status:** approved by the owner on 4 Nov 2026 (`18`–`20`) — awaiting go-ahead to code.
 
-## 29. Settings › System (mock-ups `docs/design/proposals/settings/21`–`24`)
+## 29. Settings › System (mock-ups `docs/design/proposals/settings/21`–`25`)
 - **Backup** (`21`): Back up now (last backup shown), Save backups to (Supernova's own folder browser), What to include
-  inline: Everything · Settings only · Custom…; Include file names and locations off by default; Restore from a backup
-  (shows what will change first); What's in a backup (short page replacing the two walls of text).
-- **Custom…** (`24`): side panel sized to content, categories in plain words under five groups; Sources off by default.
-- **Diagnostics** (`22`): Report a problem (last reference folded in), Save a diagnostic report, Keep detailed logs.
-  Duplicate first row and Show Latest Reference removed; Issues Digest and Diagnostic Level move to Advanced.
+  inline: Everything (except private items) · Settings only · Custom…; Restore from a backup (shows what will change
+  first); What's in a backup (short page replacing the two walls of text).
+- **Custom…** (`24`, `25`): side panel in the Playback Settings panel style — no title, section names followed by a rule,
+  74 px rows with icon and switch; the list scrolls. **Private** group (Library sources, File bookmarks, File names and
+  locations) off by default; switching one on expands the row with what it reveals and Include / Keep off (owner).
+- **Diagnostics** (`22`, owner): no Report a problem; logging always records in full detail (no level choice). Rows:
+  Save a diagnostic report, Diagnostic logging on/off, Clear diagnostic data. Detail to be cut back for privacy only
+  if the app is ever shared.
 - **Advanced** (`23`): the four compatibility pages in one, grouped Video · Audio · Other, with one warning line.
-- The "Backup could not be prepared" bug is separate: Codex is analysing it (`BRIEF_0155_BACKUP.md`).
+- Diagnostic report review of 4 Nov: `docs/0.155/DIAGNOSTICS_2026-11-04.md`.
 - **Status:** awaiting the owner's review.
