@@ -1,0 +1,104 @@
+diff --git a/Include/av.h b/Include/av.h
+index 8c99e4dfe1cfcd76aca843049cf1f0e74427c7d6..5951a4786916545a7c9a9686d4e8ca0da4db477d 100644
+--- a/Include/av.h
++++ b/Include/av.h
+@@ -662,6 +662,8 @@ typedef struct _video_props {
+
+     // for dolby vision
+     int dv_profile;
++    int dv_source_profile; // Container identity, independent of decoder fallback.
++    int hdr10_plus;        // Verified dynamic HDR10+ side data.
+     int dv_bl_signal_compatibility_id;
+     int dv_bitstream_profile; // original profile, before the Android profile mapping
+     int dv_bl_present_flag;
+diff --git a/Source/avos_mp.c b/Source/avos_mp.c
+index c4aae284d5854dba6cae0c0ec4f376197fe36299..e216a8a0bfd0ab1368a2a2927e9902aeb9268280 100644
+--- a/Source/avos_mp.c
++++ b/Source/avos_mp.c
+@@ -305,6 +305,9 @@ int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_ta
+ 		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_S3DMODE, videop->stereo_mode);
+ 		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_DECODER, decoder);
+ 		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_COLOR_TRC, videop->color_trc);
++		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_DOVI_PROFILE, videop->dv_source_profile);
++		ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_HDR10_PLUS, videop->hdr10_plus);
++        ADD_INT(gap_key + AVOS_MP_METADATA_VIDEO_TRACK_DOVI_COMPAT, videop->dv_bl_signal_compatibility_id);
+ 	}
+ 	if (av && type == TYPE_AUD)
+ 		av->as_max = 1;
+diff --git a/Source/avos_mr.c b/Source/avos_mr.c
+index fe5cf341ef13a8c9096930e5a632fcf889b4abec..49cf2e09ca7e4bfe6af85089d14fec7589844967 100644
+--- a/Source/avos_mr.c
++++ b/Source/avos_mr.c
+@@ -259,6 +259,10 @@ static int avos_mr_fillmetadata(avos_mr_t *mr)
+ 			ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_FPS_SCALE, videop->scale);
+
+ 		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_S3D_MODE, videop->stereo_mode);
++		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_COLOR_TRC, videop->color_trc);
++		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_DOVI_PROFILE, videop->dv_source_profile);
++		ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_HDR10_PLUS, videop->hdr10_plus);
++        ADD_INT(gap_key + AVOS_MR_METADATA_VIDEO_TRACK_DOVI_COMPAT, videop->dv_bl_signal_compatibility_id);
+ 	}
+ 	if (mr->type == TYPE_AUD)
+ 		av->as_max = 1;
+diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
+index 3a291cef682545fe784b0f49dbfe0a1a1527ed0c..3a9400b485bc45241b06064b5a0da0078197608d 100644
+--- a/Source/stream_parser_ffmpeg.c
++++ b/Source/stream_parser_ffmpeg.c
+@@ -645,6 +645,8 @@ serprintf("FF: parse H264 SPS\n");
+                 const AVContentLightMetadata *light = NULL;
+                 for (int j = 0; j < codecpar->nb_coded_side_data; ++j) {
+                     const AVPacketSideData *sd = &codecpar->coded_side_data[j];
++                    if (sd->data && sd->type == AV_PKT_DATA_DYNAMIC_HDR10_PLUS && sd->size > 0)
++                        video->hdr10_plus = 1;
+                     if (sd->data && sd->type == AV_PKT_DATA_MASTERING_DISPLAY_METADATA &&
+                         sd->size >= sizeof(*mastering))
+                         mastering = (const void *)sd->data;
+@@ -691,6 +693,7 @@ serprintf("FF: parse H264 SPS\n");
+                         dovi_mode = acodecs_get_dovi_mode();
+ #endif
+                         video->dv_profile = 0;
++                        video->dv_source_profile = 0;
+                         video->dv_bitstream_profile = 0;
+                         video->dv_bl_present_flag = 0;
+                         video->dv_bl_signal_compatibility_id = 0;
+@@ -699,6 +702,7 @@ serprintf("FF: parse H264 SPS\n");
+                             dv_bl_signal_compatibility_id) + sizeof(((AVDOVIDecoderConfigurationRecord*)0)->dv_bl_signal_compatibility_id);
+                         if (side_data && side_data_size >= dovi_min_size) {
+                             const AVDOVIDecoderConfigurationRecord *record = (const void*)side_data;
++                            video->dv_source_profile = record->dv_profile;
+                             video->dv_bitstream_profile = record->dv_profile;
+                             video->dv_bl_present_flag = record->bl_present_flag;
+                             video->dv_bl_signal_compatibility_id = record->dv_bl_signal_compatibility_id;
+diff --git a/public/avos_mp_metadata.h b/public/avos_mp_metadata.h
+index 7d0cb690a295a239bfa1194bc15b81d4fd223058..07868a50b1aa0e96bf202624a0c65370f9ebaa05 100644
+--- a/public/avos_mp_metadata.h
++++ b/public/avos_mp_metadata.h
+@@ -88,7 +88,10 @@ enum {
+ 	AVOS_MP_METADATA_VIDEO_TRACK_FPS_RATE		= 12,
+ 	AVOS_MP_METADATA_VIDEO_TRACK_FPS_SCALE		= 13,
+ 	AVOS_MP_METADATA_VIDEO_TRACK_COLOR_TRC		= 14,
+-	AVOS_MP_METADATA_VIDEO_TRACK_MAX		= 15,
++	AVOS_MP_METADATA_VIDEO_TRACK_DOVI_PROFILE = 15,
++	AVOS_MP_METADATA_VIDEO_TRACK_HDR10_PLUS = 16,
++    AVOS_MP_METADATA_VIDEO_TRACK_DOVI_COMPAT = 17,
++	AVOS_MP_METADATA_VIDEO_TRACK_MAX = 18,
+
+ 	AVOS_MP_METADATA_AUDIO_TRACK			= 20000,
+ 	// handle multiple audio track attributes:
+diff --git a/public/avos_mr_metadata.h b/public/avos_mr_metadata.h
+index 60f273b011b924e8a77bacde978c506d5ba7db43..9ee7c538d8454557d9fa0601235dcce6f2ff3dd3 100644
+--- a/public/avos_mr_metadata.h
++++ b/public/avos_mr_metadata.h
+@@ -79,7 +79,11 @@ enum {
+ 	AVOS_MR_METADATA_VIDEO_TRACK_S3D_MODE		= 10,
+ 	AVOS_MR_METADATA_VIDEO_TRACK_FPS_RATE		= 11,
+ 	AVOS_MR_METADATA_VIDEO_TRACK_FPS_SCALE		= 12,
+-	AVOS_MR_METADATA_VIDEO_TRACK_MAX		= 13,
++	AVOS_MR_METADATA_VIDEO_TRACK_COLOR_TRC = 13,
++	AVOS_MR_METADATA_VIDEO_TRACK_DOVI_PROFILE = 14,
++	AVOS_MR_METADATA_VIDEO_TRACK_HDR10_PLUS = 15,
++    AVOS_MR_METADATA_VIDEO_TRACK_DOVI_COMPAT = 16,
++	AVOS_MR_METADATA_VIDEO_TRACK_MAX = 17,
+ };
+
+ enum {

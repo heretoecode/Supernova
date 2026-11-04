@@ -64,6 +64,57 @@ ENGINE item 1 refresh on `codex/0155-code-2026-11-04` at `7f2c5eeeaa386cd87b8b54
 
 ## Historical patch applicability at `2540c4f` (refresh in ENGINE item 2)
 
+ENGINE item 2 has now regenerated the stack at `5cf3ae9`; the historical probes
+below explain the original investigation, not the delivered application order.
+
+### Delivered native draft at `5cf3ae9`
+
+Prepared the old `2cf21c4` checkout with all five existing avos operations after
+verifying their recorded hashes. Comparing that complete effective tree with
+upstream `95a9e6b3` isolates **19 residual paths**, rather than blindly carrying
+the 98,712-line snapshot import. The new tip already includes the host linker's
+`-lm` fix, leaving **18 changed paths** in the delivered five-patch sequence:
+
+| Order / new `.github/build/` file | Carry-forward and boundaries |
+|---|---|
+| `avos-supernova156-01-metadata.patch` | Six files: MP/MR key numbers and track strides, independent source Dolby Vision profile and HDR10+ presence. Source profile is assigned only after upstream's DOVI record-length validation, alongside the original bitstream profile; new static-HDR extraction, decoder mapping and fallback remain intact. HDR10+ requires non-null positive-size side data. |
+| `avos-supernova156-02-chapters.patch` | Eight files: existing bounded embedded-chapter count/title/origin parcel, both audio/video call sites and matching signature. Regenerated after metadata; no parser timebase/duration rollback. |
+| `avos-supernova156-03-hls.patch` | Actual existing `hls+` compatibility helper plus current `ffmpeg_open_input` integration; changes the backend URL pointer/demuxer, preserving caller/source URI and existing fd/cancellation paths. |
+| `avos-supernova156-04-native-linkage.patch` | Explicit shared FFmpeg/media runtime modules, system-library filtering and `APP_ALLOW_MISSING_DEPS=false`. Upstream API 23 and OMX removal retained. Existing libass/font stack remains **static archives**; old prose calling that stack shared was incorrect (`build-supernova146-subtitles.py:37–64`, upstream `jni/libass_prebuilt.mk`). |
+| `avos-supernova156-05-test-harness.patch` | Retains two Supernova host harness compile fixes for atempo and pause/resume; no assertion, test or production timing policy removed/weakened. Does not restore the three obsolete modeled subtitle tests superseded upstream by real-stack tests. |
+
+`native-supernova156.lock.draft.json` records exact upstream commit/tree,
+measured SHA-256 values and application order, measured resulting tree
+`50b756e3f96db29d9f0914be268fd066ef7c5b21`, the old lock's actual hash and
+unchanged third-party source/NDK pins. It also records the disposition of all
+five retired avos operations. No release number or source/archive hash was
+invented; the working label remains 0156 and the avos source is Git-pinned.
+
+Reproduce offline with a local upstream checkout containing the frozen blobs:
+
+```sh
+python3 .github/build/verify-native-supernova156-draft.py --avos /path/to/aos-avos --run-host-tests
+```
+
+The verifier clones locally into a disposable directory, checks every patch
+hash and sequential `git apply --check`, applies with index checks and verifies
+the complete result tree. Its C probe checks actual public metadata/chapter ABI
+keys and the actual HLS helper; it also runs the retained upstream buffer-limit
+boundary test. Thirteen selected upstream host tests passed (HDR mapping/static
+metadata, decoder candidate cleanup/bounds, DV AVC/recovery, invalid surface,
+pause/resume and atempo). These are host/source-unit results, not Android JNI or
+playback acceptance. An initial probe compile needed `<sys/types.h>` for the
+public header's `ssize_t`; the corrected probe passed without weakening warnings.
+
+No rework is deferred within these five native residual patches. Production
+integration and release acceptance remain outstanding: replace the old avos
+pin and five operations together, preserve the unchanged third-party stack,
+rebuild all four wrapper ABIs, run actual chapter/metadata parcel probes and
+API-23/ELF/alignment checks, full libass/ASS geometry and sanitizer tests, plus
+the engine's app/JNI and Shield matrix. Host FFmpeg/libass development packages
+are unavailable here, so no full geometry/timebase suite or real media fixture
+acceptance is claimed. Existing pins, locks, workflows and receipts are untouched.
+
 Whole-patch forward `git apply --check` results: preview414 FAIL; supernova135 FAIL; supernova141-chapters PASS; supernova145-buffer-limits FAIL; supernova146-upstream FAIL. Each was checked independently against clean upstream HEAD, not as a proposed sequential stack. No file was patched. Additional per-file forward/reverse probes distinguish surviving additions from already-present or superseded content. Reverse success means textual inclusion; neither direction means manual semantic review, not automatic loss of the feature.
 
 | Existing patch | Result and exact carry-forward work |
@@ -123,7 +174,7 @@ Validation for the later implementation: preference default/load/reset/migration
 
 The brief's `95a9e6b3` is the effective upstream snapshot, while actual workspace checkout is older `2cf21c486c7bf244c49b78d2220197a6d75396dd` plus the ordered patch stack. Update this consistently: `.github/build/nova-ci.xml`, `prepare-supernova146-workspace.py` pin, and inline pin in `supernova-0146-native-host.yml`; retire/rewrite duplicate avos operations and hashes in `supernova146-dependency-patches.json`. Update MediaLib fix operation/hash too. Keep exact pins and clean-tree preconditions in prepare-supernova146-dependencies.py; record the effective tree and each residual patch hash. Freeze the new avos target above, don't fetch a moving branch in CI.
 
-`native-supernova146.lock.json` locks FFmpeg 9.0.2, libass 0.17.5, font stack, other source archives, NDK r30-beta1, recipes and four rebuild ABIs. Avos is selected elsewhere; changing only that JSON would not update it. An avos-only bump need not rebuild or version-bump every third-party library, but it does require rebuilt wrappers against the pinned native stack. Preserve Supernova HLS compatibility, metadata/chapter ABI, font-stack shared linkage, API 23, actual ABI/page-alignment checks and native notice/source provenance. New avos removes OMX/private-header targets: remove stale make recipe references without raising the app's API minimum. Supernova 0.154 packages only arm64-v8a (`verify-supernova154-native-apk.py`), while the historical native stack has four ABIs; explicitly preserve that distinction unless the owner changes packaging scope.
+`native-supernova146.lock.json` locks FFmpeg 9.0.2, libass 0.17.5, font stack, other source archives, NDK r30-beta1, recipes and four rebuild ABIs. Avos is selected elsewhere; changing only that JSON would not update it. An avos-only bump need not rebuild or version-bump every third-party library, but it does require rebuilt wrappers against the pinned native stack. Preserve Supernova HLS compatibility, metadata/chapter ABI, static libass/font-stack archives and shared media-library linkage, API 23, actual ABI/page-alignment checks and native notice/source provenance. New avos removes OMX/private-header targets: remove stale make recipe references without raising the app's API minimum. Supernova 0.154 packages only arm64-v8a (`verify-supernova154-native-apk.py`), while the historical native stack has four ABIs; explicitly preserve that distinction unless the owner changes packaging scope.
 
 `supernova-0154-conformance.yml:31–42` downloads native-stack run **40843685431** and `package-supernova146-native.py:10–47` checks archive SHA256, lock SHA, sources/recipes, installed-file hashes, then builds avos/nativehelper/FileCore wrappers and packages them. Thus the expiring download is principally the pinned third-party native stack; avos wrappers are also rebuilt during packaging. Version a new 0.156 recipe/receipt rather than rewriting the historical 0.146 evidence. Replace the new candidate workflow's artifact source and expected archive hashes together; update package naming, receipt source SHA, avos patch hash and lock hash, and the conformance/signing validators that hardcode run 40843685431 (`record-supernova-0154-conformance.py:43` and corresponding QA validator). Old evidence must not be relabelled as a new build.
 

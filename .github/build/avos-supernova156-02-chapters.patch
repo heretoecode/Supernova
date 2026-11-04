@@ -1,0 +1,136 @@
+diff --git a/Include/avos_mp_priv.h b/Include/avos_mp_priv.h
+index 89d358c32071163017ef3d5f04c30fbd9f501713..ab28d087e8fb5d1a2f05b4ea04af40f0a0ad9d39 100644
+--- a/Include/avos_mp_priv.h
++++ b/Include/avos_mp_priv.h
+@@ -26,7 +26,8 @@ typedef struct avos_mp_audio avos_mp_audio_t;
+
+ avos_mp_video_t *avos_mp_getvideo(avos_mp_t *mp);
+ avos_mp_audio_t *avos_mp_getaudio(avos_mp_t *mp);
+-int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_tag, AV_PROPERTIES *av, const char *mimetype, int duration, int seekable, int pauseable, int decoder); /* return 1 if metadata changed */
++struct STREAM_CHAPTER;
++int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_tag, AV_PROPERTIES *av, const char *mimetype, int duration, int seekable, int pauseable, int decoder, int chapter_count, struct STREAM_CHAPTER **chapters, int chapter_origin_ms); /* return 1 if metadata changed */
+
+ void avos_mp_sendevent(avos_mp_t *mp, int what, int arg1, int arg2);
+ void avos_mp_sendevent_msg(avos_mp_t *mp, int what, int arg1, int arg2, const char *msg);
+diff --git a/Include/stream.h b/Include/stream.h
+index fb7dde06f19f20721379137952dc73c860042275..ba1b7e91f615af23a3a34b67b2af2f426698b67d 100644
+--- a/Include/stream.h
++++ b/Include/stream.h
+@@ -590,6 +590,8 @@ typedef struct STREAM {
+ 	
+ 	STREAM_CHAPTER	*chapters[STREAM_MAX_CHAPTERS];
+ 	int		num_chapters;
++	int embedded_chapters; /* Only parser-supplied chapters may reach the HUD. */
++	int chapter_origin_ms;
+ 	
+ 	int 		aspect_n;		// aspect ratio set by user
+ 	int		aspect_d;		// aspect ratio set by user
+diff --git a/Source/avos_mp.c b/Source/avos_mp.c
+index e216a8a0bfd0ab1368a2a2927e9902aeb9268280..a76824ab2eb48a37eba75006da41d083cadb1a79 100644
+--- a/Source/avos_mp.c
++++ b/Source/avos_mp.c
+@@ -31,6 +31,7 @@
+ #include "athread.h"
+ #include "audio_interface.h"
+ #include "stream_config.h"
++#include "stream.h"
+ #include "device_config.h"
+
+ #define UPNP_FUSE_TO_HTTP
+@@ -197,7 +198,7 @@ avos_mp_audio_t *avos_mp_getaudio(avos_mp_t *mp)
+ 	return (avos_mp_audio_t *)mp->media;
+ }
+
+-int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_tag, AV_PROPERTIES *av, const char *mimetype, int duration, int seekable, int pauseable, int decoder)
++int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_tag, AV_PROPERTIES *av, const char *mimetype, int duration, int seekable, int pauseable, int decoder, int chapter_count, struct STREAM_CHAPTER **chapters, int chapter_origin_ms)
+ {
+ #define ADD_STR(_id, _str) do { \
+ 	if (avos_metadata_append_str(buffer, (_id), (_str)) == -1) \
+@@ -247,6 +248,16 @@ int avos_mp_fillmetadata(avos_mp_t *mp, int type, uint64_t size, ID3_TAG *id3_ta
+
+ 	if (duration > 0)
+ 		ADD_INT(AVOS_MP_METADATA_DURATION, duration);
++	/* Existing metadata parcel is copied under this mutex. No network lookup. */
++	if (!chapters || chapter_count < 0 || chapter_count > STREAM_MAX_CHAPTERS)
++		chapter_count = 0;
++	ADD_INT(AVOS_MP_METADATA_NB_CHAPTER, chapter_count);
++	for (i = 0; i < chapter_count; ++i) {
++		if (!chapters[i]) continue;
++		gap_key = AVOS_MP_METADATA_CHAPTER + i * AVOS_MP_METADATA_CHAPTER_MAX;
++		ADD_INT64(gap_key + AVOS_MP_METADATA_CHAPTER_START, (int64_t)chapters[i]->start - chapter_origin_ms);
++		ADD_STR(gap_key + AVOS_MP_METADATA_CHAPTER_TITLE, chapters[i]->title);
++	}
+ 	ADD_BOOL(AVOS_MP_METADATA_PAUSE_AVAILABLE, pauseable);
+ 	ADD_BOOL(AVOS_MP_METADATA_SEEK_BACKWARD_AVAILABLE, seekable);
+ 	ADD_BOOL(AVOS_MP_METADATA_SEEK_FORWARD_AVAILABLE, seekable);
+diff --git a/Source/avos_mp_audio.c b/Source/avos_mp_audio.c
+index f5a565858274a54b638f653f1941b7c27eb0a640..64923a1d43fdec0b76edf5eaaf6601f7d9c627bb 100644
+--- a/Source/avos_mp_audio.c
++++ b/Source/avos_mp_audio.c
+@@ -99,7 +99,7 @@ static void send_audio_track_info(avos_mp_t *mp, avos_mp_audio_t *audio)
+ 	    audio->last_duration,
+ 	    audio->last_seekable,
+ 	    audio->last_pauseable,
+-	    0);
++	    0, 0, NULL, 0);
+ 	afree(av);
+ 	if (changed) {
+ 		MPLOG("changed");
+diff --git a/Source/avos_mp_video.c b/Source/avos_mp_video.c
+index 00c7d82b2815cc63297241e8557d00ff84287fe3..a595fa8e6afc42600875be32a4544b4e79c96655 100644
+--- a/Source/avos_mp_video.c
++++ b/Source/avos_mp_video.c
+@@ -133,7 +133,7 @@ static void send_metadata(avos_mp_t *mp, avos_mp_video_t *video, int notify)
+ 	    video->last_duration,
+ 	    video->last_seekable,
+ 	    video->last_pauseable,
+-	    decoder);
++	    decoder, video->s->embedded_chapters ? video->s->num_chapters : 0, video->s->chapters, video->s->chapter_origin_ms);
+ 	if (changed && notify) {
+ 		MPLOG("changed");
+ 		avos_mp_sendevent(mp, MEDIA_INFO, MEDIA_INFO_METADATA_UPDATE, 0);
+diff --git a/Source/stream.c b/Source/stream.c
+index 1acea181de5e10ef68df3c8c785fade451425a88..d33f22113375f620cfc7bc33881799deda28aba7 100644
+--- a/Source/stream.c
++++ b/Source/stream.c
+@@ -1552,6 +1552,8 @@ static void _free_chapters( STREAM *s )
+ 		}
+ 	}
+ 	s->num_chapters = 0;
++	s->embedded_chapters = 0;
++	s->chapter_origin_ms = 0;
+ }
+
+ // ************************************************************
+diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
+index 3a9400b485bc45241b06064b5a0da0078197608d..9f5387408f41617e7313f645960cbe6959bb0102 100644
+--- a/Source/stream_parser_ffmpeg.c
++++ b/Source/stream_parser_ffmpeg.c
+@@ -1043,7 +1043,10 @@ DBGP serprintf("chapters:\r\n");
+ 			DBGP serprintf( "[%2d] id %08X  start/end %8lld/%8lld  [%s]\r\n", i, ch->id, start, end,
+ 							t ? t->value : "(no title)" );
+ 			if( priv->s ) {
+-				stream_add_chapter( priv->s, start, end, t ? t->value : "s_unknown" );
++				if (!stream_add_chapter( priv->s, start, end, t ? t->value : "" )) {
++					priv->s->embedded_chapters = 1;
++					priv->s->chapter_origin_ms = priv->start_time;
++				}
+ 			}
+ 		}
+ DBGP serprintf("\r\n");
+diff --git a/public/avos_mp_metadata.h b/public/avos_mp_metadata.h
+index 07868a50b1aa0e96bf202624a0c65370f9ebaa05..837222133cd9d0381e51f8b7fc8383d80243733b 100644
+--- a/public/avos_mp_metadata.h
++++ b/public/avos_mp_metadata.h
+@@ -71,6 +71,11 @@ enum {
+ 	AVOS_MP_METADATA_NB_VIDEO_TRACK			= 9000,
+ 	AVOS_MP_METADATA_NB_AUDIO_TRACK			= 9001,
+ 	AVOS_MP_METADATA_NB_SUBTITLE_TRACK		= 9002,
++	AVOS_MP_METADATA_NB_CHAPTER = 9003,
++	AVOS_MP_METADATA_CHAPTER = 40000,
++	AVOS_MP_METADATA_CHAPTER_START = 0, /* int64, playback-relative milliseconds */
++	AVOS_MP_METADATA_CHAPTER_TITLE = 1,
++	AVOS_MP_METADATA_CHAPTER_MAX = 2,
+
+ 	AVOS_MP_METADATA_VIDEO_TRACK			= 10000,
+ 	AVOS_MP_METADATA_VIDEO_TRACK_FORMAT		= 0,
