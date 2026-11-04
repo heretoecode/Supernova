@@ -126,7 +126,6 @@ import com.archos.mediacenter.utils.videodb.IndexHelper;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.PermissionChecker;
 import com.archos.mediacenter.video.info.VideoInfoContract;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
@@ -695,6 +694,8 @@ public class PlayerActivity extends AppCompatActivity
         mSubtitleManager.setUIExternalSurface(uiSurface);
     }
 
+    private boolean mStereoForced;
+
     @Override
     protected void onCreate(Bundle icicle) {
         if (log.isDebugEnabled())
@@ -767,7 +768,8 @@ public class PlayerActivity extends AppCompatActivity
         mPermissionChecker = new PermissionChecker(hasManageExternalStoragePermission(getApplicationContext()));
         mPermissionChecker.setListener(this);
         VideoEffect.resetForcedMode();
-        VideoEffect.setStereoForced(MainActivity.mStereoForced);
+        mStereoForced = PlayerLaunchContract.stereoForced(this, getIntent());
+        VideoEffect.setStereoForced(mStereoForced);
 
         mResources = getResources();
 
@@ -1742,6 +1744,8 @@ public class PlayerActivity extends AppCompatActivity
             log.debug("onNewIntent: {}", intent);
         ensureLaunchGeneration(intent);
         setIntent(intent);
+        mStereoForced = PlayerLaunchContract.stereoForced(this, intent);
+        VideoEffect.setStereoForced(mStereoForced);
         if (mWasInPictureInPicture) {
             if (PlayerService.sPlayerService != null) {
                 PlayerService.sPlayerService.stopAndSaveVideoState();
@@ -4240,7 +4244,7 @@ public class PlayerActivity extends AppCompatActivity
             }
         }
 
-        if (!isPluggedOnTv() || MainActivity.mStereoForced) {
+        if (!isPluggedOnTv() || mStereoForced) {
             viewType = VideoEffect.EFFECT_STEREO_SPLIT;
         } else {
             viewType = VideoEffect.EFFECT_STEREO_MERGE;

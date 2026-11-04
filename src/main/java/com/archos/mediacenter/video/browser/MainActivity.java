@@ -212,7 +212,6 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
 
     private View mGlobalBackdrop;
 
-    public static Boolean mStereoForced = false;
     private BroadcastReceiver mTraktRelogBroadcastReceiver;
     private AlertDialog mTraktRelogAlertDialog;
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
@@ -223,18 +222,9 @@ public class MainActivity extends BrowserActivity implements ExternalPlayerWithR
     private MenuItem mSearchItem;
     private int mNavigationMode;
     private void updateStereoMode(Intent intent) {
-        mStereoForced = false;
-        try {
-            if (intent.getComponent().getClassName().equals(StereoActivity)) {
-                ActivityInfo ai = getPackageManager().getActivityInfo(getComponentName(), PackageManager.GET_ACTIVITIES|PackageManager.GET_META_DATA);
-                Bundle bundle = ai.metaData;
-                mStereoForced = bundle.getBoolean("stereo_mode");
-            }
-        } catch (NameNotFoundException e) {
-            log.error("Failed to load meta-data, NameNotFound: {}", e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Failed to load meta-data, NullPointer: {}", e.getMessage());
-        }        
+        intent.putExtra(com.archos.mediacenter.video.player.PlayerLaunchContract.STEREO_MODE,
+                com.archos.mediacenter.video.player.PlayerLaunchContract.stereoForced(this, intent));
+        setIntent(intent);
     }
 
     public void setBackground() {

@@ -117,6 +117,9 @@ import org.slf4j.LoggerFactory;
 
 /** Coordinates shared video preference behavior, account actions and settings changes. */
 public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener {
+    public static final String ALLOW_3RD_PARTY_PLAYER = "allow_3rd_party_player";
+    public static final boolean ALLOW_3RD_PARTY_PLAYER_DEFAULT = false;
+
 
     private static final Logger log = LoggerFactory.getLogger(VideoPreferencesCommon.class);
 
@@ -1006,10 +1009,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             return false;
         });
         findPreference(KEY_LICENCES).setOnPreferenceClickListener(preference -> {
-            if (!UiModePolicy.applicationIsInLeanbackMode(getActivity()))
-                startActivity(new Intent(getActivity(), VideoPreferencesLicencesActivity.class));
-            else
-                startActivity(new Intent(getActivity(), VideoSettingsLicencesActivity.class));
+            startActivity(new Intent(getActivity(), VideoSettingsLicencesActivity.class));
             return false;
         });
 

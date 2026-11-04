@@ -26,8 +26,8 @@ import com.archos.mediacenter.video.R;
 /** Hosts video preferences and handles account and metadata service settings actions. */
 public class VideoPreferencesActivity extends AppCompatActivity {
 
-	final public static String ALLOW_3RD_PARTY_PLAYER = "allow_3rd_party_player";
-	final public static boolean ALLOW_3RD_PARTY_PLAYER_DEFAULT = false;
+	final public static String ALLOW_3RD_PARTY_PLAYER = VideoPreferencesCommon.ALLOW_3RD_PARTY_PLAYER;
+	final public static boolean ALLOW_3RD_PARTY_PLAYER_DEFAULT = VideoPreferencesCommon.ALLOW_3RD_PARTY_PLAYER_DEFAULT;
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
     final public static String FOLDER_BROWSING_DEFAULT_FOLDER = "folder_browsing_default_folder";

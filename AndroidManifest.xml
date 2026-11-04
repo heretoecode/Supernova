@@ -126,6 +126,9 @@
             android:exported="false"
             android:theme="@style/FoundationEntry" />
         <meta-data
+            android:name="android.app.default_searchable"
+            android:value="com.archos.mediacenter.video.leanback.search.VideoSearchActivity" />
+        <meta-data
             android:name="to.dualscreen"
             android:value="true" />
 
@@ -155,7 +158,7 @@
             <!-- Points to searchable meta data. -->
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.archos.mediacenter.video.browser.QueryBrowserActivityVideo" />
+                android:value="com.archos.mediacenter.video.leanback.search.VideoSearchActivity" />
 
         </activity>
 
@@ -181,7 +184,7 @@
             <!-- Points to searchable meta data. -->
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.archos.mediacenter.video.browser.QueryBrowserActivityVideo" />
+                android:value="com.archos.mediacenter.video.leanback.search.VideoSearchActivity" />
             <meta-data
                 android:name="stereo_mode"
                 android:value="true" />

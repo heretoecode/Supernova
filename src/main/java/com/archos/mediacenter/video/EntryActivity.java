@@ -69,7 +69,10 @@ public class EntryActivity extends AppCompatActivity {
 
     static Intent tvIntent(Context context, Intent origin) {
         // Copy action, type, URI grants and ClipData as well as data/extras for external launches.
-        return new Intent(origin).setClass(context, MainActivityLeanback.class)
+        return new Intent(origin)
+                .putExtra(com.archos.mediacenter.video.player.PlayerLaunchContract.STEREO_MODE,
+                        com.archos.mediacenter.video.player.PlayerLaunchContract.stereoForced(context, origin))
+                .setClass(context, MainActivityLeanback.class)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
     }
 
