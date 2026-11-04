@@ -57,3 +57,25 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   above the dot; seek bar white played / light grey buffered / dim grey remaining, slightly thicker, chapter marks as
   gaps, larger dot with a soft halo when focused.
 - **Status:** approved — awaiting go-ahead to code.
+
+## 9. Details: flat blue card before the artwork arrives (bug)
+- **Seen (owner photos, Marshals):** Home hero shows the backdrop; pressing through to Details shows the logo and
+  text on a flat navy card for a moment, then the backdrop pops in.
+- **Cause (Claude, from the code):**
+  - The Details card (`CinematicCard`) has a solid navy background (`0xff07131f`), and
+    `PreviewMoviePage.cardArtwork()` loads with `noPlaceholder().noFade()`, so the navy shows until Picasso finishes.
+  - The Home hero already has that same backdrop decoded in memory, but at `resize(960×540)`; Details asks for
+    `fit().centerCrop()` at the card's size. Picasso keys its memory cache by URI *and* size, so it misses and
+    decodes again from disk, or downloads again.
+  - Details can also switch image part-way: `bind()` starts the hero's backdrop, then `setTags()` (or `bindRemote`
+    with the TMDb `w1280` URL) picks a different URI — local file vs remote, or a different default backdrop —
+    which restarts the load and the navy shows again.
+- **Proposed fix (not coded):**
+  1. Hand the hero's on-screen bitmap (or its exact Picasso key) to Details, and show it on the card the moment the
+     page opens, before layout finishes.
+  2. Load the full-size image behind it and cross-fade it in when ready, instead of a hard swap.
+  3. Only change image when the new one is genuinely different, and keep the current one showing while it loads.
+  4. Make the empty-card background charcoal (matching the panels), not navy, for titles with no artwork at all.
+  5. Test: a Robolectric test that Details opened with a seeded bitmap shows a drawable straight away, and keeps a
+     drawable throughout a later URI change.
+- **Status:** awaiting the owner's approval and go-ahead to code.
