@@ -621,3 +621,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   their chapter names. Rules: a chapter mark within ~5 s of an IntroDB edge snaps to it (no slivers); a chapter that
   only covers an IntroDB part is replaced by it; if the file has no chapters, the bar breaks only at IntroDB parts
   (Intro · Episode · Credits). Mock-ups `01`–`03` redone (Recap · Intro · Chapter 1–5 · Credits).
+- **Owner:** direction approved, but the bar stays **one continuous bar**; each part start is a thin line crossing it
+  (as `ChapterMarkers` draws today). When a card is focused, its stretch between two lines lights up. `01`–`04`
+  redone.

@@ -13,9 +13,10 @@ const PLAY = 2;
 const eps = [['Episode 8', '43 min', 'w'], ['Episode 9', '43 min', 'w'], ['Episode 10', '50 min', 'p'], ['Episode 11', '44 min', ''], ['Episode 12', '43 min', ''], ['Episode 13', '44 min', '']];
 const LEN = 50.1, NOW = 4.53;
 const zones = '';
-const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch[i + 1][1] : LEN; const w = (e - s) / LEN * 100, l = s / LEN * 100;
-  const played = Math.max(0, Math.min(1, (NOW - s) / (e - s)));
-  return `<div class="seg${focus === i ? ' hi' : ''}" style="left:${l}%;width:calc(${w}% - 6px)"><b style="width:${played * 100}%"></b></div>`; }).join('');
+const segs = (focus) => { const pct = v => v / LEN * 100;
+  let h = `<div class="track"></div><div class="playedc" style="width:${pct(NOW)}%"></div>`;
+  if (focus >= 0) { const st = ch[focus][1], e = focus + 1 < ch.length ? ch[focus + 1][1] : LEN; h += `<div class="span" style="left:${pct(st)}%;width:${pct(e - st)}%"></div>`; }
+  return h + ch.slice(1).map(([n, st]) => `<i class="tick" style="left:${pct(st)}%"></i>`).join(''); };
 const hud = (focus, strip, tabFocus = -1) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
   <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}${zones}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
   ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 1</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
@@ -25,9 +26,9 @@ const card = (bg, title, sub, prog, f, now) => `<div class="hc ${bg}${f ? ' f' :
 const tabsRow = (open, tf = -1, rest = false) => `<div class="ptabs${rest ? ' rest' : ''}">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}${i === tf ? ' tf' : ''}">${t}</span>`).join('')}</div>`;
 const tip = `<div class="tip"><div class="tr"><span class="k">‹ ›</span>Seek<span class="sep">·</span><span class="k">OK</span>Play / pause</div><div class="tr"><span class="k">↑</span>Play/pause and Settings buttons</div><div class="tr"><span class="k">↓</span>Chapters and Episodes</div></div>`;
 const shots = [
-  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls raised a little so Chapters and Episodes fit comfortably below; one break per part: Recap and Intro (IntroDB), the chapters, then Credits'],
+  ['01-controls-resting.png', frame + `<div class="shade"></div>` + hud(-1, false), 'Controls raised a little so Chapters and Episodes fit comfortably below; a thin line crosses the bar at each part: Recap and Intro (IntroDB), the chapters, then Credits'],
   ['02-down-to-chapters.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ch', 0), 'Down from the bar: the controls rise and the Chapters row slides in below; Left/Right switches to Episodes'],
-  ['03-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(3, 'ch'), 'Down again into the row: the focused card grows and its part of the bar lights up; OK jumps there'],
+  ['03-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(3, 'ch'), 'Down again into the row: the focused card grows and its stretch of the bar lights up between its lines; OK jumps there'],
   ['04-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: opened at the one playing, watched ones marked; OK plays the chosen episode; Up, Up returns to the bar'],
   ['05-first-play-tip.png', frame + `<div class="shade"></div>` + hud(-1, false) + tip, 'First video only: a small tip on how the remote works; gone after 8 seconds or any press'],
 ];
@@ -76,6 +77,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .tip{position:absolute;left:50%;top:300px;transform:translateX(-50%);background:rgba(22,24,28,.95);border:2px solid rgba(255,255,255,.22);border-radius:24px;padding:24px 34px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 .tr{display:flex;align-items:center;gap:14px;font-size:24px;height:52px}.k{min-width:56px;height:40px;padding:0 10px;border-radius:12px;background:#3a3e46;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:500}.sep{color:#8f98a8;margin:0 6px}
 .zone{position:absolute;top:-5px;bottom:-5px;border-radius:3px;background:repeating-linear-gradient(135deg,rgba(255,211,138,.95) 0 4px,rgba(255,211,138,.35) 4px 8px);pointer-events:none}
+.track{position:absolute;inset:0;border-radius:5px;background:rgba(255,255,255,.28)}.playedc{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:#fff}
+.span{position:absolute;top:-3px;bottom:-3px;border-radius:6px;background:rgba(255,255,255,.55)}.tick{position:absolute;top:-6px;width:3px;height:22px;margin-left:-1.5px;border-radius:2px;background:rgba(255,255,255,.9);box-shadow:0 0 0 1.5px rgba(0,0,0,.55)}
 .label{position:absolute;left:56px;top:28px;font-size:20px;background:rgba(0,0,0,.6);padding:6px 14px;border-radius:10px}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
