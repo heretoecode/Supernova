@@ -326,4 +326,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   add Name, Icon, Shows (Films / TV shows / Both as one segmented choice), Genres, Sort by (field + direction in one),
   Maximum titles, "Add new matching titles automatically" switch, and **Delete row** at the bottom. Genres opens a
   solid side panel with tick boxes and counts (Back saves) — the shared choice list (item 19.1).
-- **Status:** first draft for the owner to react to — awaiting feedback.
+- **Owner (4 Nov 2026):** too large — it does not need the full screen. Revised `01`–`04`: a **side panel on the right**
+  (760px, like Playback Settings / Edit Page) over a live, dimmed Home; pages drill in within the panel (list → row
+  settings → Genres, with "‹ back" at the top); while moving a row, Home behind highlights and updates live.
+- **Status:** awaiting the owner's feedback on the revised `01`–`04`.
