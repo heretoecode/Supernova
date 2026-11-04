@@ -443,8 +443,8 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   Save a diagnostic report, Diagnostic logging on/off, Clear diagnostic data. Detail to be cut back for privacy only
   if the app is ever shared.
 - **Advanced** (`23`): the four compatibility pages in one, grouped Video · Audio · Other, with one warning line.
-- Diagnostic report review of 4 Nov: `docs/0.155/DIAGNOSTICS_2026-11-04.md`.
-- **Status:** awaiting the owner's review.
+- Diagnostic report review of 4 Nov: `docs/0.155/DIAGNOSTICS_2026-11-04.md` — all findings approved for 0.156.
+- **Status:** approved by the owner on 4 Nov 2026 (`21`–`25`) — awaiting go-ahead to code.
 
 ## 30. Local Storage: Home in the top bar takes focus while a folder loads (owner video, 4 Nov)
 - **Seen:** opening a folder that hasn't been opened this session, the Home underline lights up while the
@@ -457,7 +457,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   list area takes focus before the list is cleared and before the placeholders are hidden; `focusAfterRender` then
   moves it to the remembered or first row. A Robolectric test opens an uncached folder and checks that focus never
   leaves `LocalStorageView`. Check the other browser (`UniversalFileBrowser.reload()`) for the same gap.
-- **Status:** cause found; awaiting go-ahead to code.
+- **Status:** cause found; owner approved fixing in 0.156.
 
 ## 31. Local Storage: header jumps when switching All files ↔ Videos only (owner video, 4 Nov)
 - **Seen:** for a split second the pills under the folder name (files · folders · size) vanish, the header gets
@@ -470,4 +470,20 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (2) during a reload of the same folder, keep the previous pills on screen until the new counts arrive, then
   replace them in one step (no blank frame). Robolectric test: header height is identical before, during and after a
   filter switch.
-- **Status:** cause found; awaiting go-ahead to code.
+- **Status:** cause found; owner approved fixing in 0.156.
+
+## 0.155 on the Shield
+- Owner, 4 Nov 2026: signed 0.155 (run 41922310251) installs over 0.154 and works.
+
+## 32. Settings › About Supernova (mock-ups `docs/design/proposals/settings/26`–`29`)
+- Tabs: **About · What's new · Licences · Device**, in the approved single-panel pattern.
+- **About** (`26`): name, version and date, "based on NOVA Video Player 6.6.4" said once; Credits & acknowledgements
+  one row away. App information and Technical Information › Application & Build merged into this.
+- **What's new** (`27`): released versions only, written for viewers (from `release-history.json`, reworded).
+- **Licences** (`28`): search across all 66, grouped App libraries · Playback engine; no blank "Find in notice" bar.
+- **Device** (`29`): device, Android, free space; hardware video formats; library counts and sources. The engineering
+  notes ("No new diagnostic viewer…", "Cached count is not authoritative…") are gone.
+- **Bug found:** `assets/foundation/credits.json` still says "based on Nova Video Player 6.6.2"; 0.155 uses 6.6.4.
+  Fix in 0.156.
+- The "S" tile stands in for the app icon.
+- **Status:** awaiting the owner's review.
