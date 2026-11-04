@@ -1,0 +1,652 @@
+diff --git a/src/com/archos/filecorelibrary/ftp/FTPRawLister.java b/src/com/archos/filecorelibrary/ftp/FTPRawLister.java
+index 2847d8d..9f2e426 100644
+--- a/src/com/archos/filecorelibrary/ftp/FTPRawLister.java
++++ b/src/com/archos/filecorelibrary/ftp/FTPRawLister.java
+@@ -30,6 +30,7 @@ import com.archos.filecorelibrary.AuthenticationException;
+ import com.archos.filecorelibrary.FileUtils;
+ import com.archos.filecorelibrary.MetaFile2;
+ import com.archos.filecorelibrary.RawLister;
++import com.archos.filecorelibrary.ListingCancellation;
+ 
+ /**
+  * returns
+@@ -46,6 +47,7 @@ public class FTPRawLister extends RawLister {
+ 
+     @Override
+     public List<MetaFile2> getFileList() throws IOException, AuthenticationException {
++        ListingCancellation.checkpoint();
+         if (log.isDebugEnabled()) log.debug("getFileList: listing {}", mUri);
+         FTPFile[] listFiles = null;
+         FTPClient ftp = null;
+@@ -56,17 +58,22 @@ public class FTPRawLister extends RawLister {
+                 ftp = Session.getInstance().getNewFTPClient(mUri, FTP.BINARY_FILE_TYPE);
+             }
+             if (ftp != null) {
++                ListingCancellation.checkpoint();
+                 ftp.cwd(mUri.getPath());
++                ListingCancellation.checkpoint();
+                 listFiles = ftp.listFiles();
++                ListingCancellation.checkpoint();
+             }
+         } finally {
+             Session.close(ftp);
+         }
+ 
++        ListingCancellation.checkpoint();
+         if (listFiles == null)
+             return null;
+         ArrayList<MetaFile2> list = new ArrayList<MetaFile2>();
+         for (FTPFile f : listFiles) {
++            ListingCancellation.checkpoint();
+             if (f.getName().equals(".") || f.getName().equals(".."))
+                 continue;
+             FTPFile2 sf = new FTPFile2(f, FileUtils.buildChildUri(mUri, f.getName()));
+diff --git a/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java b/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
+index 34a63f6..0a12b75 100644
+--- a/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
++++ b/src/com/archos/filecorelibrary/ftp/FtpsTlsPolicy.java
+@@ -1,5 +1,7 @@
+ package com.archos.filecorelibrary.ftp;
+ 
++import com.archos.filecorelibrary.ListingCancellation;
++import javax.net.SocketFactory;
+ import java.io.IOException;
+ import java.net.Socket;
+ import java.security.GeneralSecurityException;
+@@ -21,7 +23,12 @@ final class FtpsTlsPolicy {
+     // A dedicated trust store is used only by the private-CA regression fixture.
+     static FTPSClient newClient(KeyStore anchors) throws IOException {
+         FTPSClient client = new FTPSClient("TLS", false) {
++            private final ListingCancellation listing = ListingCancellation.current();
+             private Socket pendingData;
++            @Override public void setSocketFactory(SocketFactory factory) {
++                // execPROT replaces the factory; retain that exact TLS delegate under ownership.
++                super.setSocketFactory(ListingSocketFactory.wrap(factory, listing));
++            }
+             @Override protected void _prepareDataSocket_(Socket socket) { pendingData = socket; }
+             @Override protected void _connectAction_() throws IOException {
+                 try { super._connectAction_(); }
+diff --git a/src/com/archos/filecorelibrary/ftp/ListingSocketFactory.java b/src/com/archos/filecorelibrary/ftp/ListingSocketFactory.java
+new file mode 100644
+index 0000000..85156e1
+--- /dev/null
++++ b/src/com/archos/filecorelibrary/ftp/ListingSocketFactory.java
+@@ -0,0 +1,78 @@
++package com.archos.filecorelibrary.ftp;
++
++import com.archos.filecorelibrary.ListingCancellation;
++import java.io.IOException;
++import java.net.InetAddress;
++import java.net.InetSocketAddress;
++import java.net.Socket;
++import javax.net.SocketFactory;
++import org.apache.commons.net.ftp.FTPClient;
++
++/** Owns only sockets allocated for one listing, including pre-connect and TLS data sockets. */
++final class ListingSocketFactory extends SocketFactory {
++    private final SocketFactory delegate;
++    private final ListingCancellation listing;
++
++    private ListingSocketFactory(SocketFactory delegate, ListingCancellation listing) {
++        this.delegate = delegate;
++        this.listing = listing;
++    }
++
++    static SocketFactory wrap(SocketFactory delegate, ListingCancellation listing) {
++        if (listing == null) return delegate;
++        if (delegate instanceof ListingSocketFactory
++                && ((ListingSocketFactory) delegate).listing == listing) return delegate;
++        return new ListingSocketFactory(delegate == null ? SocketFactory.getDefault() : delegate, listing);
++    }
++
++    static void install(FTPClient client) {
++        ListingCancellation listing = ListingCancellation.current();
++        if (listing != null) client.setSocketFactory(wrap(null, listing));
++    }
++
++    @Override public Socket createSocket() throws IOException {
++        listing.throwIfCancelled();
++        final Socket socket = delegate.createSocket();
++        ListingCancellation.Registration registration = listing.own(() -> close(socket));
++        try {
++            listing.throwIfCancelled();
++            return socket;
++        } catch (RuntimeException failure) {
++            close(socket);
++            registration.close();
++            throw failure;
++        }
++    }
++
++    private static void close(Socket socket) {
++        // Socket close only: no FTP ABOR/QUIT, TLS logout, shared client or pool teardown.
++        try { socket.close(); } catch (IOException ignored) { }
++    }
++
++    private Socket connect(InetSocketAddress remote, InetSocketAddress local) throws IOException {
++        Socket socket = createSocket();
++        try {
++            if (local != null) socket.bind(local);
++            listing.throwIfCancelled();
++            socket.connect(remote);
++            listing.throwIfCancelled();
++            return socket;
++        } catch (IOException | RuntimeException failure) {
++            close(socket);
++            throw failure;
++        }
++    }
++
++    @Override public Socket createSocket(String host, int port) throws IOException {
++        return connect(new InetSocketAddress(host, port), null);
++    }
++    @Override public Socket createSocket(InetAddress host, int port) throws IOException {
++        return connect(new InetSocketAddress(host, port), null);
++    }
++    @Override public Socket createSocket(String host, int port, InetAddress local, int localPort) throws IOException {
++        return connect(new InetSocketAddress(host, port), new InetSocketAddress(local, localPort));
++    }
++    @Override public Socket createSocket(InetAddress host, int port, InetAddress local, int localPort) throws IOException {
++        return connect(new InetSocketAddress(host, port), new InetSocketAddress(local, localPort));
++    }
++}
+diff --git a/src/com/archos/filecorelibrary/ftp/Session.java b/src/com/archos/filecorelibrary/ftp/Session.java
+index 376fa8b..2715c9b 100644
+--- a/src/com/archos/filecorelibrary/ftp/Session.java
++++ b/src/com/archos/filecorelibrary/ftp/Session.java
+@@ -30,6 +30,7 @@ import android.net.Uri;
+ import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
+ import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase.Credential;
+ import com.archos.filecorelibrary.AuthenticationException;
++import com.archos.filecorelibrary.ListingCancellation;
+ 
+ public class Session {
+     private static final Logger log = LoggerFactory.getLogger(Session.class);
+@@ -64,7 +65,8 @@ public class Session {
+         if (ftp.isConnected()) {
+             try {
+                 if (log.isDebugEnabled()) log.debug("close: logout");
+-                ftp.logout();
++                ListingCancellation listing = ListingCancellation.current();
++                if (listing == null || !listing.isCancelled()) ftp.logout();
+             } catch (Exception e) {
+                 log.warn("close: caught Exception during logout: {}", e.getMessage());
+             } finally {
+@@ -108,6 +110,7 @@ public class Session {
+     }
+ 
+     private FTPClient connectNewFTPClient(Uri path, int mode) throws SocketException, IOException, AuthenticationException {
++        ListingCancellation.checkpoint();
+         // Use default port if not set
+         int port = path.getPort();
+         if (port < 0) port = 21; // default port
+@@ -122,6 +125,8 @@ public class Session {
+         }
+ 
+         FTPClient ftp = new FTPClient();
++        ListingSocketFactory.install(ftp);
++        ListingCancellation.checkpoint();
+         setupClientLogging(ftp);
+         ftp.setDefaultTimeout(CONNECT_TIMEOUT_MS);
+         ftp.setConnectTimeout(CONNECT_TIMEOUT_MS);
+@@ -134,7 +139,9 @@ public class Session {
+         ftp.setSendDataSocketBufferSize(DATA_SOCKET_SEND_BUFFER_SIZE);
+ 
+         // try to connect
++        ListingCancellation.checkpoint();
+         ftp.connect(path.getHost(), port);
++        ListingCancellation.checkpoint();
+         if (FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+             if (log.isDebugEnabled()) log.debug("connectNewFTPClient: connected to {}", path);
+             // enter passive mode
+@@ -169,6 +176,7 @@ public class Session {
+             // Never retry on authentication failure
+             throw e;
+         } catch (IOException e) {
++            ListingCancellation.checkpoint();
+             log.warn("getNewFTPClient: connection to {} failed ({}), retrying once", path, e.getMessage());
+             try {
+                 return connectNewFTPClient(path, mode);
+@@ -182,6 +190,7 @@ public class Session {
+     }
+ 
+     private FTPSClient connectNewFTPSClient(Uri path, int mode) throws SocketException, IOException, AuthenticationException {
++        ListingCancellation.checkpoint();
+         // Use default port if not set
+         int port = path.getPort();
+         if (port < 0) port = 21; // default port
+@@ -196,6 +205,8 @@ public class Session {
+         }
+ 
+         FTPSClient ftp = FtpsTlsPolicy.newClient();
++        ListingSocketFactory.install(ftp);
++        ListingCancellation.checkpoint();
+         setupClientLogging(ftp);
+         ftp.setDefaultTimeout(CONNECT_TIMEOUT_MS);
+         ftp.setConnectTimeout(CONNECT_TIMEOUT_MS);
+@@ -208,7 +219,9 @@ public class Session {
+         ftp.setSendDataSocketBufferSize(DATA_SOCKET_SEND_BUFFER_SIZE);
+ 
+         // try to connect
++        ListingCancellation.checkpoint();
+         ftp.connect(path.getHost(), port);
++        ListingCancellation.checkpoint();
+         if (FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+             if (log.isDebugEnabled()) log.debug("connectNewFTPSClient: connected to {}", path);
+             // enter passive mode
+@@ -249,6 +262,7 @@ public class Session {
+             // Never retry on authentication failure
+             throw e;
+         } catch (IOException e) {
++            ListingCancellation.checkpoint();
+             log.warn("getNewFTPSClient: connection to {} failed ({}), retrying once", path, e.getMessage());
+             try {
+                 return connectNewFTPSClient(path, mode);
+diff --git a/test/java/com/archos/filecorelibrary/ftp/FtpListingCancellationSocketTest.java b/test/java/com/archos/filecorelibrary/ftp/FtpListingCancellationSocketTest.java
+new file mode 100644
+index 0000000..4d31584
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/ftp/FtpListingCancellationSocketTest.java
+@@ -0,0 +1,313 @@
++package com.archos.filecorelibrary.ftp;
++
++import static org.junit.Assert.*;
++
++import com.archos.filecorelibrary.ListingCancellation;
++import java.io.BufferedReader;
++import java.io.IOException;
++import java.io.InputStreamReader;
++import java.io.OutputStreamWriter;
++import java.io.Writer;
++import java.net.InetAddress;
++import java.net.ServerSocket;
++import java.net.Socket;
++import java.nio.charset.StandardCharsets;
++import java.security.KeyStore;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicInteger;
++import javax.net.SocketFactory;
++import javax.net.ssl.KeyManagerFactory;
++import javax.net.ssl.SSLContext;
++import javax.net.ssl.SSLSocket;
++import okhttp3.tls.HeldCertificate;
++import org.apache.commons.net.ftp.FTPClient;
++import org.apache.commons.net.ftp.FTPSClient;
++import org.junit.Test;
++
++/** Real FTP LIST/control and verified FTPS peers, without Android or a cancelled Future as exit evidence. */
++public class FtpListingCancellationSocketTest {
++    enum Stall { GREETING, LOGIN, LIST, TRICKLE, TLS_CONTROL, TLS_DATA, COMPLETE }
++
++    static final class Peer implements AutoCloseable {
++        final Stall stall;
++        final boolean tls;
++        final CountDownLatch blocked = new CountDownLatch(1);
++        final ServerSocket control = new ServerSocket(0, 8, InetAddress.getLoopbackAddress());
++        final ExecutorService worker = Executors.newSingleThreadExecutor();
++        final Future<?> serving;
++        final KeyStore anchors;
++        final SSLContext context;
++        volatile ServerSocket passive;
++        volatile Socket accepted, data;
++        volatile boolean closing;
++        final AtomicInteger quits = new AtomicInteger();
++
++        Peer(Stall stall, boolean tls) throws Exception {
++            this.stall = stall;
++            this.tls = tls;
++            HeldCertificate cert = new HeldCertificate.Builder().commonName("listing fixture")
++                    .addSubjectAlternativeName("127.0.0.1").build();
++            anchors = KeyStore.getInstance(KeyStore.getDefaultType());
++            anchors.load(null, null);
++            anchors.setCertificateEntry("fixture", cert.certificate());
++            KeyStore keys = KeyStore.getInstance(KeyStore.getDefaultType());
++            keys.load(null, null);
++            keys.setKeyEntry("fixture", cert.keyPair().getPrivate(), "fixture".toCharArray(),
++                    new java.security.cert.Certificate[] {cert.certificate()});
++            KeyManagerFactory km = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
++            km.init(keys, "fixture".toCharArray());
++            context = SSLContext.getInstance("TLS");
++            context.init(km.getKeyManagers(), null, null);
++            serving = worker.submit(() -> {
++                try { serve(); }
++                catch (IOException expectedOnAbort) {
++                    if (!closing && !blocked.await(1, TimeUnit.SECONDS)) throw new AssertionError(expectedOnAbort);
++                }
++                return null;
++            });
++        }
++
++        static void send(Writer out, String line) throws IOException {
++            out.write(line + "\r\n"); out.flush();
++        }
++        static BufferedReader reader(Socket socket) throws IOException {
++            return new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.US_ASCII));
++        }
++        static Writer writer(Socket socket) throws IOException {
++            return new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.US_ASCII);
++        }
++        void waitForClose(Socket socket) throws IOException {
++            blocked.countDown();
++            while (socket.getInputStream().read() != -1) { }
++        }
++        void serve() throws IOException {
++            try (Socket raw = control.accept()) {
++                accepted = raw;
++                raw.setSoTimeout(8000);
++                if (stall == Stall.GREETING) { waitForClose(raw); return; }
++                send(writer(raw), "220 fixture");
++                Socket command = raw;
++                if (tls) {
++                    BufferedReader plainCommands = reader(raw);
++                    String auth = plainCommands.readLine();
++                    if ("FEAT".equals(auth)) {
++                        send(writer(raw), "211 no features");
++                        auth = plainCommands.readLine();
++                    }
++                    if (!"AUTH TLS".equals(auth)) throw new IOException("AUTH required");
++                    send(writer(raw), "234 continue");
++                    if (stall == Stall.TLS_CONTROL) { waitForClose(raw); return; }
++                    SSLSocket secured = (SSLSocket) context.getSocketFactory()
++                            .createSocket(raw, "127.0.0.1", raw.getPort(), true);
++                    secured.setUseClientMode(false);
++                    secured.setSoTimeout(8000);
++                    secured.startHandshake();
++                    command = secured;
++                    accepted = secured;
++                }
++                BufferedReader in = reader(command);
++                Writer out = writer(command);
++                for (String line; (line = in.readLine()) != null;) {
++                    String cmd = line.split(" ", 2)[0];
++                    if (cmd.equals("USER")) {
++                        if (stall == Stall.LOGIN) { waitForClose(command); return; }
++                        send(out, "230 logged in");
++                    } else if (cmd.equals("FEAT")) send(out, "211 no features");
++                    else if (cmd.equals("PASV")) {
++                        passive = new ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"));
++                        passive.setSoTimeout(8000);
++                        int p = passive.getLocalPort();
++                        send(out, "227 passive (127,0,0,1," + p / 256 + "," + p % 256 + ")");
++                    } else if (cmd.equals("SYST")) send(out, "215 UNIX Type: L8");
++                    else if (cmd.equals("LIST")) {
++                        send(out, "150 data");
++                        try (Socket stream = passive.accept()) {
++                            data = stream;
++                            stream.setSoTimeout(8000);
++                            if (stall == Stall.TLS_DATA) { waitForClose(stream); return; }
++                            Socket transfer = stream;
++                            if (tls) {
++                                SSLSocket secured = (SSLSocket) context.getSocketFactory()
++                                        .createSocket(stream, "127.0.0.1", stream.getPort(), true);
++                                secured.setUseClientMode(false);
++                                secured.setSoTimeout(8000);
++                                secured.startHandshake();
++                                transfer = secured;
++                                data = secured;
++                            }
++                            if (stall == Stall.LIST) { waitForClose(transfer); return; }
++                            Writer listing = writer(transfer);
++                            send(listing, "-rw-r--r-- 1 test test 4 Jan 01 2026 fixture.mp4");
++                            blocked.countDown();
++                            if (stall == Stall.TRICKLE) {
++                                while (!closing) {
++                                    send(listing, "-rw-r--r-- 1 test test 4 Jan 01 2026 fixture.mp4");
++                                    // Deliberately keep traffic below socket-read timeout; whole-task deadline must win.
++                                    try { Thread.sleep(15); }
++                                    catch (InterruptedException interrupted) { return; }
++                                }
++                                return;
++                            }
++                            if (transfer != stream) transfer.close();
++                        }
++                        send(out, "226 done");
++                    } else if (cmd.equals("QUIT")) { quits.incrementAndGet(); send(out, "221 bye"); return; }
++                    else send(out, "200 accepted");
++                }
++            }
++        }
++        @Override public void close() throws Exception {
++            closing = true;
++            control.close();
++            if (passive != null) passive.close();
++            if (data != null) data.close();
++            if (accepted != null) accepted.close();
++            try { serving.get(4, TimeUnit.SECONDS); }
++            finally {
++                worker.shutdownNow();
++                assertTrue("peer worker must exit", worker.awaitTermination(4, TimeUnit.SECONDS));
++            }
++        }
++    }
++
++    private void abort(Stall stall, boolean tls, boolean deadline) throws Exception {
++        try (Peer peer = new Peer(stall, tls)) {
++            ListingCancellation listing = new ListingCancellation(deadline ? 2000 : 10000, TimeUnit.MILLISECONDS);
++            ExecutorService worker = Executors.newSingleThreadExecutor();
++            CountDownLatch ended = new CountDownLatch(1);
++            AtomicInteger delivered = new AtomicInteger();
++            Future<?> running = worker.submit(() -> {
++                try (ListingCancellation.Scope scope = listing.enter()) {
++                    FTPClient ftp = tls ? FtpsTlsPolicy.newClient(peer.anchors) : new FTPClient();
++                    ListingSocketFactory.install(ftp);
++                    ftp.setConnectTimeout(8000);
++                    ftp.setDefaultTimeout(8000);
++                    ftp.setAutodetectUTF8(true);
++                    ftp.configure(new org.apache.commons.net.ftp.FTPClientConfig("UNIX"));
++                    try {
++                        ftp.connect("127.0.0.1", peer.control.getLocalPort());
++                        ftp.login("fixture", "fixture");
++                        if (tls) { ((FTPSClient) ftp).execPBSZ(0); ((FTPSClient) ftp).execPROT("P"); }
++                        ftp.enterLocalPassiveMode();
++                        ftp.listFiles();
++                        ListingCancellation.checkpoint();
++                        delivered.incrementAndGet();
++                    } finally {
++                        // Never send QUIT while cancelled; no protocol traffic on aborting thread.
++                        ftp.disconnect();
++                    }
++                } catch (IOException | java.util.concurrent.CancellationException expectedAbort) {
++                    assertTrue("only cancellation may explain failure", listing.isCancelled());
++                } catch (Exception failure) { throw new AssertionError(failure); }
++                finally { ended.countDown(); }
++            });
++            try {
++                assertTrue("peer reached requested stage", peer.blocked.await(5, TimeUnit.SECONDS));
++                if (!deadline) listing.cancel();
++                assertTrue("actual runnable must end", ended.await(4, TimeUnit.SECONDS));
++                running.get(1, TimeUnit.SECONDS); // propagate assertions; never cancel this Future
++                assertEquals(0, delivered.get());
++                assertEquals(0, peer.quits.get());
++            } finally {
++                listing.cancel();
++                worker.shutdownNow();
++                assertTrue("executor must terminate", worker.awaitTermination(4, TimeUnit.SECONDS));
++            }
++        }
++    }
++
++    @Test public void cancelSilentGreeting() throws Exception { abort(Stall.GREETING, false, false); }
++    @Test public void deadlineSilentGreeting() throws Exception { abort(Stall.GREETING, false, true); }
++    @Test public void cancelLogin() throws Exception { abort(Stall.LOGIN, false, false); }
++    @Test public void cancelSilentList() throws Exception { abort(Stall.LIST, false, false); }
++    @Test public void deadlineSilentList() throws Exception { abort(Stall.LIST, false, true); }
++    @Test public void cancelTricklingList() throws Exception { abort(Stall.TRICKLE, false, false); }
++    @Test public void deadlineTricklingList() throws Exception { abort(Stall.TRICKLE, false, true); }
++    @Test public void cancelControlTlsHandshake() throws Exception { abort(Stall.TLS_CONTROL, true, false); }
++    @Test public void deadlineControlTlsHandshake() throws Exception { abort(Stall.TLS_CONTROL, true, true); }
++    @Test public void cancelDataTlsHandshake() throws Exception { abort(Stall.TLS_DATA, true, false); }
++    @Test public void deadlineDataTlsHandshake() throws Exception { abort(Stall.TLS_DATA, true, true); }
++    @Test public void cancelEncryptedTricklingList() throws Exception { abort(Stall.TRICKLE, true, false); }
++    @Test public void deadlineEncryptedTricklingList() throws Exception { abort(Stall.TRICKLE, true, true); }
++    @Test public void repeatedReplacementEndsWorkers() throws Exception {
++        for (int n = 0; n < 8; n++) abort(n % 2 == 0 ? Stall.LIST : Stall.TRICKLE, n % 3 == 0, false);
++    }
++
++    @Test public void cancelBeforeSocketAllocation() throws Exception {
++        ListingCancellation listing = new ListingCancellation(10, TimeUnit.SECONDS);
++        listing.cancel();
++        SocketFactory factory = ListingSocketFactory.wrap(null, listing);
++        assertThrows(java.util.concurrent.CancellationException.class, factory::createSocket);
++    }
++
++    @Test public void cancelBetweenAllocationAndRegistrationClosesLateSocket() throws Exception {
++        ListingCancellation listing = new ListingCancellation(10, TimeUnit.SECONDS);
++        Socket late = new Socket();
++        SocketFactory delegate = new SocketFactory() {
++            @Override public Socket createSocket() { listing.cancel(); return late; }
++            @Override public Socket createSocket(String h, int p) { throw new AssertionError(); }
++            @Override public Socket createSocket(InetAddress h, int p) { throw new AssertionError(); }
++            @Override public Socket createSocket(String h, int p, InetAddress l, int q) { throw new AssertionError(); }
++            @Override public Socket createSocket(InetAddress h, int p, InetAddress l, int q) { throw new AssertionError(); }
++        };
++        assertThrows(java.util.concurrent.CancellationException.class,
++                () -> ListingSocketFactory.wrap(delegate, listing).createSocket());
++        assertTrue(late.isClosed());
++    }
++
++    @Test public void allocatedSocketCannotReconnectAfterCancellation() throws Exception {
++        ListingCancellation listing = new ListingCancellation(10, TimeUnit.SECONDS);
++        try (ListingCancellation.Scope scope = listing.enter(); ServerSocket peer = new ServerSocket(0)) {
++            Socket socket = ListingSocketFactory.wrap(null, listing).createSocket();
++            listing.cancel();
++            assertTrue(socket.isClosed());
++            assertThrows(IOException.class, () -> socket.connect(
++                    new java.net.InetSocketAddress("127.0.0.1", peer.getLocalPort())));
++        } finally { Thread.interrupted(); }
++    }
++
++    private void success(boolean tls) throws Exception {
++        try (Peer peer = new Peer(Stall.COMPLETE, tls)) {
++            ListingCancellation token = new ListingCancellation(10, TimeUnit.SECONDS);
++            try (ListingCancellation.Scope scope = token.enter()) {
++                FTPClient ftp = tls ? FtpsTlsPolicy.newClient(peer.anchors) : new FTPClient();
++                ListingSocketFactory.install(ftp);
++                ftp.setDefaultTimeout(4000);
++                ftp.setConnectTimeout(4000);
++                try {
++                    ftp.connect("127.0.0.1", peer.control.getLocalPort());
++                    ftp.login("fixture", "fixture");
++                    if (tls) { ((FTPSClient) ftp).execPBSZ(0); ((FTPSClient) ftp).execPROT("P"); }
++                    ftp.enterLocalPassiveMode();
++                    assertEquals("fixture.mp4", ftp.listFiles()[0].getName());
++                    assertFalse(token.isCancelled());
++                    assertTrue(ftp.logout());
++                } finally { ftp.disconnect(); }
++            }
++            assertFalse("normal close must not interrupt owner", Thread.currentThread().isInterrupted());
++        }
++    }
++
++    @Test public void liveFtpStillReturnsSameFile() throws Exception { success(false); }
++    @Test public void liveVerifiedFtpsStillReturnsSameFile() throws Exception { success(true); }
++
++    @Test public void unrelatedClientStillListsAfterCancellation() throws Exception {
++        try (Peer peer = new Peer(Stall.COMPLETE, false)) {
++            FTPClient unrelated = new FTPClient();
++            unrelated.setDefaultTimeout(5000);
++            unrelated.connect("127.0.0.1", peer.control.getLocalPort());
++            unrelated.login("fixture", "fixture");
++            unrelated.enterLocalPassiveMode();
++            // Cancel a real, concurrently blocked listing while this connection stays live.
++            abort(Stall.LIST, false, false);
++            try {
++                assertEquals("fixture.mp4", unrelated.listFiles()[0].getName());
++                assertTrue(unrelated.logout());
++            } finally { unrelated.disconnect(); }
++        }
++    }
++}
+diff --git a/test/java/com/archos/filecorelibrary/ftp/FtpRawListingCancellationTest.java b/test/java/com/archos/filecorelibrary/ftp/FtpRawListingCancellationTest.java
+new file mode 100644
+index 0000000..e81146c
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/ftp/FtpRawListingCancellationTest.java
+@@ -0,0 +1,83 @@
++package com.archos.filecorelibrary.ftp;
++
++import static org.junit.Assert.*;
++
++import android.app.Application;
++import android.net.Uri;
++import androidx.test.core.app.ApplicationProvider;
++import com.archos.environment.ArchosUtils;
++import com.archos.filecorelibrary.ListingCancellation;
++import com.archos.filecorelibrary.RawListerFactory;
++import java.net.SocketTimeoutException;
++import java.util.concurrent.CancellationException;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++/** Actual factory -> Session -> FTPRawLister integration. Requires Claude's Android test workspace. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class FtpRawListingCancellationTest {
++    @Before public void context() {
++        ArchosUtils.setGlobalContext(ApplicationProvider.getApplicationContext());
++    }
++
++    @Test public void cancelDuringConnectGreetingDoesNotRetry() throws Exception {
++        listing(FtpListingCancellationSocketTest.Stall.GREETING, false);
++    }
++    @Test public void cancelDuringLoginDoesNotRetry() throws Exception {
++        listing(FtpListingCancellationSocketTest.Stall.LOGIN, false);
++    }
++    @Test public void cancelSilentListing() throws Exception {
++        listing(FtpListingCancellationSocketTest.Stall.LIST, false);
++    }
++    @Test public void deadlineSilentListing() throws Exception {
++        listing(FtpListingCancellationSocketTest.Stall.LIST, true);
++    }
++    @Test public void cancelTricklingListing() throws Exception {
++        listing(FtpListingCancellationSocketTest.Stall.TRICKLE, false);
++    }
++    @Test public void deadlineTricklingListing() throws Exception {
++        listing(FtpListingCancellationSocketTest.Stall.TRICKLE, true);
++    }
++
++    private void listing(FtpListingCancellationSocketTest.Stall stall, boolean deadline) throws Exception {
++        try (FtpListingCancellationSocketTest.Peer peer = new FtpListingCancellationSocketTest.Peer(stall, false)) {
++            ListingCancellation token = new ListingCancellation(deadline ? 3 : 20, TimeUnit.SECONDS);
++            ExecutorService worker = Executors.newSingleThreadExecutor();
++            CountDownLatch ended = new CountDownLatch(1);
++            Future<?> running = worker.submit(() -> {
++                try (ListingCancellation.Scope scope = token.enter()) {
++                    Uri uri = Uri.parse("ftp://127.0.0.1:" + peer.control.getLocalPort() + "/fixture/");
++                    try {
++                        RawListerFactory.getRawListerForUrl(uri).getFileList();
++                        fail("Obsolete listing must not return data");
++                    } catch (Exception expected) {
++                        assertTrue("A setup/auth/parser error must not pass as cancellation", token.isCancelled());
++                    }
++                    assertThrows(CancellationException.class, ListingCancellation::checkpoint);
++                } finally { ended.countDown(); Thread.interrupted(); }
++            });
++            try {
++                assertTrue(peer.blocked.await(4, TimeUnit.SECONDS));
++                if (!deadline) token.cancel();
++                assertTrue("actual runnable must end", ended.await(5, TimeUnit.SECONDS));
++                running.get(1, TimeUnit.SECONDS);
++                peer.control.setSoTimeout(150);
++                assertThrows("No reconnect after cancellation", SocketTimeoutException.class, peer.control::accept);
++                assertEquals("No blocking logout on cancelled control channel", 0, peer.quits.get());
++            } finally {
++                token.cancel();
++                worker.shutdownNow();
++                assertTrue(worker.awaitTermination(3, TimeUnit.SECONDS));
++            }
++        }
++    }
++}

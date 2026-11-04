@@ -153,3 +153,88 @@ obsolete app worker exit and no callback after main-queue drain remain unproved.
 Keep the final production DP-10 fix atomic; keep item 4 pending. The new draft
 moves beyond the earlier source audit but deliberately does not expose a partial
 API to the current application or shut down any shared transport.
+
+
+## Backup-brief continuation — FTP/FTPS socket draft (2026-11-04)
+
+NEXT item 3 remains **open**. New companion:
+`.github/build/filecore-supernova155-ftp-listing-cancellation.patch`.
+Apply after the eight locked FileCore operations, the unchanged scan draft,
+and the unchanged lifetime/DAV draft described above, at upstream `c4b760c`.
+Do not install any of these partial prerequisites as the completed DP-10 fix.
+No production application caller or protected build wiring changed in this run.
+
+| ID | File:line in this companion's prepared result | What changed / evidence | Suggested next action | Severity | Confidence |
+|---|---|---|---|---|---|
+| DP-10 continuation | `src/com/archos/filecorelibrary/ftp/ListingSocketFactory.java:32–45` | Allocate an unconnected socket, register its close against the task, then check cancellation before returning it. A late register closes/rejects it; a closed socket cannot be reconnected. Only operation-owned sockets are registered. | Android socket-close/handshake acceptance, especially Android 11 Conscrypt, still required | user-visible, existing finding | high ownership; device unproved |
+| DP-10 continuation | `ftp/Session.java:111–143,177–180,191–223,263–266` | Install ownership before connect for each independent FTP/FTPS attempt; cancellation checkpoint before a retry stops reopening an obsolete connection. Live credentials/mode/retry policy unchanged. | Run actual Session/factory tests supplied below; add non-cancelled retry/authentication fixtures | user-visible, existing finding | high in source; Android tests unrun |
+| DP-10 continuation | `ftp/FtpsTlsPolicy.java:26–31` | Capture the task lifetime and wrap each replacement SocketFactory, retaining the actual delegate installed by Commons Net `execPROT`. Trust store and control/data hostname verification remain. | Verify platform TLS behavior and rejected CA/hostname cases under ownership | user-visible, existing finding | high |
+| DP-10 continuation | `ftp/Session.java:65–80`; `FTPRawLister.java:48–84` | Cancellation closes sockets without ABOR/QUIT/global session reset; cancelled cleanup skips protocol logout. Checkpoints surround cwd/list and result conversion; no result filtering/order logic changed. | Finish app callback fencing/selection tests before claiming no late app result | user-visible, existing finding | high |
+
+### Validation completed here
+
+- Fresh pinned checkout, each of the eleven patches passed ordered
+  `git apply --check` and `git apply --index`; final tree and companion digest
+  are recorded in the backup report. No existing patch was edited.
+- Java 17 standalone ECJ compilation of real `ListingCancellation`,
+  `ListingSocketFactory`, `FtpsTlsPolicy` and standalone tests; **32 JUnit tests
+  pass**: 20 new FTP/FTPS socket tests and 12 existing lifetime/race tests.
+  These execute real Commons Net 3.13.0 sockets, LIST parsing and the actual
+  TLS policy. They do not stub sockets or cancel Futures to fake worker exit.
+- New coverage: silent greeting, silent login, silent and continuously
+  trickling LIST, explicit cancel/deadline, stalled control and data TLS
+  handshake, encrypted trickling LIST, eight repeated replacements,
+  cancel-before-allocation, cancel-between-allocation-and-registration,
+  closed-before-connect, live FTP and verified FTPS file selection, and an
+  independent live FTP client surviving cancellation of an actually blocked
+  listing. The independent client is on the same loopback host at a different
+  port; same-endpoint playback and other transport-sharing acceptance remains.
+- Each socket test awaits its actual runnable and executor termination and
+  checks that no result is delivered after the cancellation checkpoint. This
+  is **not** UpdateNextTask main-queue/listener acceptance: app integration is
+  still absent. Test-only TLS certificates are generated with current validity;
+  no expired private fixture or relaxed production trust is used.
+- Six new `FtpRawListingCancellationTest` Robolectric cases exercise the actual
+  `RawListerFactory -> FTPRawLister -> Session` route on API 30: greeting/login
+  cancel, silent/trickle explicit/deadline, no queued reconnect and no QUIT.
+  **Written and Java-17 syntax parsed, not executed or full Android type-checked**.
+  All six changed/added Java files parse. No Gradle or device build was run,
+  as required by MORE rule 4.
+
+Standalone compiler/runtime inputs: ECJ 3.40.0 on OpenJDK 21 targeting Java 17;
+JUnit 4.13.2, Hamcrest 1.3, Commons Net 3.13.0 + Commons IO 2.21.0,
+OkHttp/okhttp-tls 5.5.1, Okio 3.18.1, Kotlin stdlib 2.1.21 and SLF4J API 2.0.17.
+Resolve the prepared dependency's normal test classpath; compile the three
+production files above, `test/java/com/archos/filecorelibrary/ListingCancellationTest.java`
+and `test/java/com/archos/filecorelibrary/ftp/FtpListingCancellationSocketTest.java`
+with ECJ `-17`; run both classes with `org.junit.runner.JUnitCore`. The separate
+Robolectric class requires the full Android workspace and is not part of 32.
+
+### Exact next checkpoint (before NEXT item 4)
+
+1. Run/review the six actual factory/Session tests with Claude's full workspace.
+   Finish FTP setup ownership: synchronous `InetSocketAddress`/Commons Net DNS
+   resolution and credential-store loading happen before a socket exists and
+   are **not forcibly cancelled by socket ownership**. This draft makes no
+   unbounded-DNS termination claim. Add a controlled connect-in-progress race,
+   cancellation during retry setup, live retry/auth failure and same-endpoint
+   unrelated playback tests. Measure Android 11 close latency for SSL sockets;
+   only host-JVM close latency is established here. Failed attempt sockets stay
+   owned until task-scope cleanup; validate bounded retries and cleanup there.
+2. Complete the existing audit's isolated JSch, SSHJ, SMBJ and JCIFS resources
+   and setup/retry/probe paths. Never cancel a shared cached session, pool or
+   connection. The FTP companion does not implement these transports.
+3. Create a new MediaLib UPnP companion retaining the submitted Browse handle,
+   with cancellable device lookup/wait and late callback-write fencing.
+4. Pair the completed public hook with an allowed new app draft for
+   `UpdateNextTask` (the NEXT brief permits new patch files, not arbitrary
+   production-file edits): token before execute, cancel(false), cancelled-before-
+   submit/execute races, scope through filter/comparator/traversal, checks before
+   posting and inside main-queue runnable. Keep DP-09 selection/order/repeat/binge
+   logic byte-for-byte except cooperative checkpoints. Run the required real
+   WebDAV silent/trickle app-worker/main-queue tests, repeated replacement,
+   per-transport shared-client survival and exact unchanged URI/ID fixtures.
+5. Only when those prerequisites and acceptance tests are complete, deliver the
+   requested single atomic **DP-10 fix** commit. Then start NEXT item 4 (security
+   and privacy audit), followed by items 5 onward. No later NEXT item was marked
+   complete or reordered in this run.
