@@ -430,4 +430,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Where the IntroDB settings are (owner question):** the on/off switch is the IntroDB row in Accounts & Services; the
   per-part choices are in **Playback › Skipping** (`20`): Intro, Recap, Preview, Outro, Credits, each inline
   Play · Skip button · Skip · Smart (Credits: Safe skip instead of Skip). Defaults as today.
-- **Status:** awaiting the owner's approval of `18`–`20` — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`18`–`20`) — awaiting go-ahead to code.
