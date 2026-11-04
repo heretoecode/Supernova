@@ -568,3 +568,16 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (`PlayerActivity.java:1634–1638`), so the text keeps its full-screen size inside a small window. **Fix:** scale the
   text to the PiP window — **owner decision: turn subtitles off in PiP** (unreadable on a 52" screen); they come back
   when returning to full screen.
+
+## 37. Edit Page panel (owner photos, 4 Nov)
+- **Save Changes loses its tick on focus — cause found:** `EditPagePanel.java:87–91` styles the button
+  (`SupernovaStyle.applyButton`, which makes icons turn dark on focus) **before** adding the tick
+  (`PreviewIcon.apply`), so the tick never gets that treatment and stays white on the white focus box. It is the only
+  place in the code with that order. **Fix (0.156):** make `PreviewIcon.apply` itself use the focus-aware icon, so the
+  order can never matter again anywhere.
+- **No scrolling** (mock-up `docs/design/proposals/edit-page/01`): rows 74 → 56 px and tighter group headings; all 13
+  options including Order and Delete Page fit; panel sized to its content.
+- **Year range** (`02`–`03`): the Year row shows the range ("2003 – 2006", or Any) and opens inside the panel:
+  From and To (Left/Right through the years in the library) and quick choices (Any year, This year, Last 5 years,
+  2020s, 2010s, 2000s, 1990s, Before 1990). Back returns.
+- **Status:** awaiting review.
