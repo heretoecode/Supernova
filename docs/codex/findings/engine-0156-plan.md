@@ -165,6 +165,15 @@ It passed a clean apply check, exact resulting-tree comparison and Java syntax
 parsing. Android tests are written but unrun; apply in the new engine checkout,
 not as a layout change or an unrelated production workflow edit.
 
+`video-supernova156-02-codecs-9ec1bdc2.patch` follows app draft 01. It ports
+the ranked decoder helper/callbacks and pre-open Display capture while retaining
+Supernova audio/spatializer imports and DP-08 logs. Four upstream ranking JUnit
+tests compiled as Java 17 using ECJ and passed on JRE21. Seven new Robolectric
+tests cover live HDR masks/unknowns/vendor exceptions, API guards, candidate
+bounds, secure/tunneled/software/alias/encoder exclusion and stable vendor order;
+these are written but not run. Sequential apply, exact tree comparison and all
+five changed/new Java syntax checks passed. No Gradle or production app edit.
+
 ## Box padding end to end
 
 Native `461685e0faeaeb0ba51cde42a141fa62f5447119` adds `SUB_USER_STYLE.padding` (default 2) in Include/sub_style.h; `sub_style_set_padding` in Source/sub_style.c locks, updates the integer value and style serial. `Source/sub_format_ssa.c:sync_styles` maps it to libass Outline for mode 1 (per-line box) and Shadow for mode 2 (unified box). Outline/shadow widths remain real glyph outline/shadow settings. `Source/jni_sub_engine.c:nativeSetPadding` resolves engine, updates style, and calls sub_engine_force_wake; matching exported declaration is in Include/jni_sub_engine.h. New native wrappers must ship atomically with Java's call.
