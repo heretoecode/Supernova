@@ -20,46 +20,94 @@ This section supersedes the historical preparation status below.
    with the complete library SHA-256 inventory. Review run head SHA and receipts;
    output hashes/run ID in the new lock deliberately say `pending-first-build`.
    Those placeholders are never accepted as package hashes.
-3. App build: Claude must replace old native acquisition/preparation/packaging
-   in the existing app workflow; do not run `package-supernova146-native.py`
-   afterward. Exact protected-file changes and app integration status are being
-   completed in ENGINE_BUILD items 2–4. Keep the native workflow output pinned
-   by its reviewed run ID, source SHA and tarball SHA, with arm64-only packaging.
-4. Run app/MediaLib/FileCore tests, native/JNI/ELF/API23/load/alignment tests,
-   lint, then conformance and the Shield matrix before signing/delivery.
+3. App build: Claude owns the changes below to existing protected build files.
+   Use the reviewed native run's exact head SHA and download only its
+   `supernova-0156-native-arm64-v8a` artifact (pin run ID, not latest successful).
+   Check Actions provenance, then verify `SHA256SUMS`, `archive.json`, the tarball,
+   native source/patch tree, and each library against `native-stack.json`.
+   Do not fill any hash from inference or reuse the 0.146 wrapper hashes.
 
-Current ENGINE_BUILD item 1: new manual-only workflow, builder, package installer,
-shared validation and real-source lock. Ten offline recipe/package tests and nine
-archive tests pass. All five avos patches apply in order and match the measured
-tree; native ABI/HLS/buffer probes and thirteen upstream host tests pass.
-Item 1 commit: `ecab7477d`. No workflow or NDK/Gradle build has run.
+   Existing files Claude must update together:
+   - `.github/build/nova-ci.xml` and `prepare-supernova146-workspace.py`: replace
+     avos `2cf21c4` with `5cf3ae9c1f70189d4180a62722150fa76b405a0f`.
+   - `.github/build/supernova146-dependency-patches.json` and
+     `prepare-supernova146-dependencies.py`: retire **all five** old avos
+     operations listed in `native-supernova156.lock.json.retired_avos_operations`;
+     apply **only** the five `avos-supernova156-*.patch` entries in lock order
+     at the new tip. Check upstream tree `4feb35f62e2e355070ba5e82896650f7e367b413`
+     and patched tree `50b756e3f96db29d9f0914be268fd066ef7c5b21`. Preserve
+     non-avos operations, Foundation identity preparation, Jetty build and test
+     fixtures. The old helper rejects a changed pin; do not run it unchanged
+     and then layer the new avos patches over its historical stack.
+   - In the existing app/conformance workflow (currently
+     `supernova-0154-conformance.yml`, or its Claude-owned successor), replace
+     the old run-40843685431 download/package steps with the new run artifact
+     and `package-supernova156-native.py` below. Do not invoke the old native
+     packager or another ndkBuild afterward; it would overwrite the new DSOs.
+     Keep `-Parm64only` and `-x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild`.
+     Both module `libs/arm64-v8a` directories must be empty before installation.
+   - `.github/build/verify-supernova146-native-apk.py`, existing conformance
+     recorder/scope/source-tree checks and signing QA verifier: teach them the
+     new arm64 `packaging-inputs.json.engine` receipt, the new avos/JNI hashes,
+     app/test trees, version 0.155 and untouched third-party provenance. Do not
+     skip their checks or use the old four-ABI receipt format for the new output.
+   - `build.gradle:232–234` reads the Foundation version from the hands-off
+     `assets/foundation/release-history.json`. Claude must make the resulting
+     **versionName `0.155`, versionCode `155`**, application ID `app.supernova.player`
+     under `-PfoundationVerify` / `-PfoundationRelease`; current branch is still
+     `0.154` / `154`. No Codex version/Gradle/identity edit was made. Preserve
+     the existing release history and verify both APK manifest values. The
+     `0156` filenames are an engine recipe label, not APK version `0.156`.
 
-ENGINE_BUILD item 2a: app draft 01 applied as production Java with its three
-Robolectric tests (upstream `5c7215144f72312b086eb314f514c7605d8e6c5f`).
-No HDR SurfaceView transaction remains; the existing HDR window request stays.
-Commit `07b4afbb7`; Robolectric tests written, not run. Player syntax parsed.
+   Run from the app workspace using the reviewed first-build values (replace
+   the uppercase placeholders with the actual run receipts; they are required):
 
-ENGINE_BUILD item 2b: app draft 02 applied with `VideoCodecSelectionTest`
-and `PlaybackHdrCapabilitiesTest` (upstream `9ec1bdc26a4ec7086b7bc2b89722a46ef6858d48`).
-Four actual ranking JUnit tests pass at Java 17 with ECJ/JRE21; seven
-Robolectric tests await Claude. Player/utils Java syntax parsed.
-Commit `80f9504d4`.
+   ```sh
+   python3 nova/Video/.github/build/package-supernova156-native.py \
+     --root nova \
+     --archive native-artifacts/Supernova_0.156_native_arm64-v8a.tar.gz \
+     --archive-sha256 REVIEWED_TARBALL_SHA256 \
+     --source-commit REVIEWED_NATIVE_WORKFLOW_HEAD_SHA \
+     --evidence native-evidence/packaging-inputs.json
+   ```
 
-ENGINE_BUILD item 2c: app draft 03 applied with eight Robolectric padding tests
-(upstream `73df6e4d714eed203237d045b20bac41f4799764`). Legacy preferences
-retain the existing line/block padding, including zero; no Settings control was
-added. New `nativeSetPadding` must ship with this engine, never the old DSOs.
-Commit `2c263b591`; player production
-and test syntax parsed; Robolectric unrun.
+   This copies the verified native libraries into `MediaLib/libs/arm64-v8a`
+   and `FileCoreLibrary/libs/arm64-v8a`, the same module directories Gradle
+   already packages. Java/app patches are now real source commits; **do not
+   apply their preserved draft patch files again**. New native exports and Java
+   must ship together. The three unchanged draft files/manifest remain a record.
+4. After app build, run full app/MediaLib/FileCore unit tests and lint. New app
+   coverage is 30 tests: four ranking JUnit tests passed offline; 26 Robolectric
+   tests (3 HDR producer, 7 HDR/candidates, 8 padding, 8 overflow) await Claude.
+   Verify native metadata/chapter JNI parcels, padding export, API23 load,
+   ELF dependencies/16 KiB alignment and source/library SHA matching in the APK.
+   Run conformance only after the tests pass; preserve logs, runtime/SBOM/legal
+   evidence, APK and receipt. Then owner/Claude run
+   `findings/engine-0156-shield-tests.md` including actual SRT/ASS/PGS Fit width,
+   dialogue versus positioned events, HDR/DV, resume/seek and display reconnect.
+   Signing and delivery remain Claude's after acceptance.
 
-ENGINE_BUILD item 3: faithful `8bbfb66608707eb383a266e044ad187cb6724081`
-SurfaceController port. Its overflow/sizing block matches upstream byte for byte.
-Eight new Robolectric cases cover canvas clipping, unchanged video geometry,
-subtitle kinds/preferences, listener replay, fullscreen reset, letterbox, 3D,
-HDMI and non-margin layout params (tests written, not run). Java syntax passes.
-Horizontal overflow still needs Claude's evaluation/port of `95f233f9`; this
-brief permits only the vertical change. Continue at item 4, final build wiring
-and 0.155 version hand-off.
+ENGINE_BUILD items 1–4 complete on this branch:
+
+| Item | Commit | Validation / limit |
+|---|---|---|
+| 1 native workflow/lock/packager | `ecab7477d` | 10 new offline tests + 9 archive tests pass; actual five-patch apply/tree and ABI/HLS/buffer probes + 13 upstream host tests pass. No NDK/CI run. |
+| 2a `5c721514` HDR producer | `07b4afbb7` | Exact draft 01, 3 Robolectric tests; syntax parsed, Android tests unrun. |
+| 2b `9ec1bdc2` decoder/HDR | `80f9504d4` | Exact draft 02; 4 Java-17 JUnit tests pass, 7 Robolectric tests unrun. |
+| 2c `73df6e4d` padding | `2c263b591` | Exact draft 03; 8 Robolectric tests unrun. Legacy spacing/zero preserved; no Settings change. |
+| 3 `8bbfb666` canvas | `5f26cf861` | Exact upstream overflow/sizing block, 8 new Robolectric tests unrun; syntax parsed. |
+| 4 build hand-off | This section | Archive → native → app → tests → conformance. No protected wiring edited. |
+
+**Horizontal overflow remains open**: upstream `95f233f9` clips the canvas
+width and adds negative-x video-box reporting (including HDMI and Auto combined
+with vertical letterbox). It is outside this brief's one permitted layout port.
+It can affect landscape zoom/Fit too when `dcw` exceeds visible width, not just
+portrait. Existing behavior is retained; Claude must evaluate supported TV cases
+and obtain any needed authorization before porting it. Do not claim vertical
+coverage proves horizontal behavior.
+
+No workflow, NDK or Gradle build has run here. Exact continuation:
+**ENGINE_BUILD item 5 → NEXT item 3, DP-10**; then NEXT item 4 onward.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
@@ -85,28 +133,8 @@ Reports already in `docs/codex/reports/` give the detailed scope and validation
 limits for each earlier run. No previous draft is automatically wired into the
 current dependency preparation or approved as a production build.
 
-For engine integration, use the exact native pin and five new avos patches in
-the native draft lock, replacing the old avos operation sequence together.
-Retain the verified old third-party stack; its libass/font stack is static,
-while FFmpeg/media runtime dependencies are shared. Rebuild wrappers. Apply the
-three app patches in their manifest order and ship the new padding export and
-Java callers together. The app result-tree record describes the exact Codex
-fixture, not a request to overwrite newer Claude code. Then run the bundled
-22 Java tests (four ranking tests already passed offline; 18 Robolectric tests
-remain unrun), full native/JNI/conformance checks and the Shield plan.
-
-Claude's remaining engine coordination: subtitle canvas overflow geometry from
-`8bbfb666` (layout, not edited here); any supported horizontal overflow case;
-actual native/Java installation and build-pin/receipt integration. Padding UI,
-visual resource defaults and the IntroDB library change are excluded from the
-internal engine drafts. All delivered patch hashes were rechecked against both
-new manifests. Existing `.github/` and protected files remain untouched.
-
-Exact continuation: **ENGINE item 6, NEXT item 3 (DP-10)**. Add a new
-`.github/build/filecore-supernova155-*.patch` supplying an owned listing
-cancellation/deadline hook after the existing reviewed FileCore patches and
-earlier scan draft. Do not edit either existing draft or existing build lock,
-and do not reach into FileCore's private clients from app code. Complete the
-UpdateNextTask cancellation/traversal fence and silent/trickle/repeated-replace
-worker-exit/no-late-callback/shared-client tests in one DP-10 commit. Preserve
-file selection; DP-09 is Claude's. Then continue NEXT item 4 and onward.
+Earlier reports in `docs/codex/reports/` retain preparation details and earlier
+MORE/NEXT findings. `reports/2026-11-04-0155-engine.md` describes the earlier
+unapplied drafts; `reports/2026-11-04-0155-engine-build.md` describes their real
+integration and this run's exact continuation. The release section above is the
+current build authority. Existing preparation reports/patches were preserved.
