@@ -8,9 +8,12 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   posters have one crisp outline; Playback Settings has no title and no row lines.
 
 ## 1. Hero text readability on some artwork (design)
-- **Seen:** Kingdom (bright yellow/pink sky): year · genre and the synopsis still hard to read.
-- **Reminder:** the owner has more examples to show — ask for them before designing.
-- **Status:** open — needs the owner's further photos, then mock-ups.
+- **Seen (owner photos, 4 Nov 2026):** Kingdom — year · genre and synopsis on a bright yellow/pink sky, hard to read;
+  the synopsis runs across the brightest area. Mayday — readable but weak on a busy crowd. Mr. Robot (flat red) fine.
+- **Proposed (Claude):** a soft, vignette-like dark patch behind the text block only (a little stronger than the
+  current left fade, artwork elsewhere untouched); year · genre line in Medium weight, pure white, firmer shadow;
+  synopsis width limited to the left half of the card.
+- **Status:** open — mock-ups.
 
 ## 2. Hero title logo placement (design)
 - **Seen:** Kingdom and Mr. Robot — wide logos sit at the very top of the card with a large gap above the metadata
