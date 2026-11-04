@@ -96,7 +96,7 @@ ENGINE_BUILD items 1–4 complete on this branch:
 | 2b `9ec1bdc2` decoder/HDR | `80f9504d4` | Exact draft 02; 4 Java-17 JUnit tests pass, 7 Robolectric tests unrun. |
 | 2c `73df6e4d` padding | `2c263b591` | Exact draft 03; 8 Robolectric tests unrun. Legacy spacing/zero preserved; no Settings change. |
 | 3 `8bbfb666` canvas | `5f26cf861` | Exact upstream overflow/sizing block, 8 new Robolectric tests unrun; syntax parsed. |
-| 4 build hand-off | This section | Archive → native → app → tests → conformance. No protected wiring edited. |
+| 4 build hand-off | `86136fe9b`, current report | Archive → native → app → tests → conformance. No protected wiring edited. |
 
 **Horizontal overflow remains open**: upstream `95f233f9` clips the canvas
 width and adds negative-x video-box reporting (including HDMI and Auto combined
@@ -108,6 +108,27 @@ coverage proves horizontal behavior.
 
 No workflow, NDK or Gradle build has run here. Exact continuation:
 **ENGINE_BUILD item 5 → NEXT item 3, DP-10**; then NEXT item 4 onward.
+
+DP-10 continuation checkpoint: re-read `UpdateNextTask.java:342–390` and
+`:400–443`. Its code is unchanged in this run. The prepared FileCore wrapper
+operations in the new native lock apply cleanly at `c4b760c`; the earlier
+`filecore-supernova155-scan.patch` also applies after them. That draft supplies
+`webdav.ScanIoScope`, which owns HTTP calls/deadline/worker interruption, but
+does not establish a generic owned listing contract across the factory's
+transports. Next add **a new** `.github/build/filecore-supernova155-*.patch`
+after that scan patch, supplying the public owned listing/cancellation hook.
+Do not edit the existing patch or reach into private/shared clients from Java
+app code. Register ownership before a blocking connect/list can start; fence
+cancel-before-register and close/deadline races. Pair it with task-local
+cancellation and cooperative filter/sort/traversal checkpoints, preserving the
+same candidate order and repeat/binge behavior (DP-09 is Claude's).
+
+Complete in one DP-10 commit with tests: real silent/trickling WebDAV listings,
+repeated replace/cancel (including `cancel(false)`), actual worker termination,
+no late callback after main-queue drain, cancellation during traversal and an
+unaffected concurrent shared playback call. Audit FTP/SFTP/SMB/UPnP connection
+ownership before claiming the generic contract. No DP-10 code fix or new
+FileCore cancellation patch is delivered by this run. NEXT 4 onward is pending.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
