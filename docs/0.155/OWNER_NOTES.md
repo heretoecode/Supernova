@@ -494,4 +494,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   from `credits.json` (NOVA corrected to 6.6.4), TMDB's required wording kept exactly.
 - **One licence opened** (`32`): name, what it does, version, licence, a **QR code** for its website (owner; replaces
   the written address, "Scan for the website"), then the full notice in a scrolling box.
+- **QR size** (owner: far too big): now a small square (76 px) in the facts line, "Website [QR] Scan with your phone". QR codes are square by standard; a rectangular version (rMQR) exists but most phone cameras can't read it.
+- **Credits for every outside service** (owner): About (`26`) lists TMDB, JustWatch, OMDb, IntroDB and TheIntroDB, ChaptersDB, OpenSubtitles.com, Trakt and YouTube; Archos and NOVA thanked in the line under the version. Full list and backups: `docs/0.155/DATA_PROVIDERS.md`.
 - **Status:** awaiting the owner's review.
