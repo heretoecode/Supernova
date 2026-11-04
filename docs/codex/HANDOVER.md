@@ -32,7 +32,12 @@ Current ENGINE_BUILD item 1: new manual-only workflow, builder, package installe
 shared validation and real-source lock. Ten offline recipe/package tests and nine
 archive tests pass. All five avos patches apply in order and match the measured
 tree; native ABI/HLS/buffer probes and thirteen upstream host tests pass.
-No workflow or NDK/Gradle build has run. Continue with item 2, app draft 01.
+Item 1 commit: `ecab7477d`. No workflow or NDK/Gradle build has run.
+
+ENGINE_BUILD item 2a: app draft 01 applied as production Java with its three
+Robolectric tests (upstream `5c7215144f72312b086eb314f514c7605d8e6c5f`).
+No HDR SurfaceView transaction remains; the existing HDR window request stays.
+Tests written, not run. Continue with app draft 02.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
