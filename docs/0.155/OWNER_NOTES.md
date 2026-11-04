@@ -379,3 +379,14 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** no tab for one setting; the language list was far too wide. Revised: tabs Audio · Subtitles ·
   Style; the custom fonts folder is the last row of Subtitles (`09`); the language list panel is 440px wide (was 620).
 - **Status:** approved by the owner on 4 Nov 2026 (`06`–`09`, language list sized to content) — awaiting go-ahead to code.
+
+## 25. Settings › Library & Home (design)
+- **Mock-ups (`docs/design/proposals/settings/10`–`13`), approved pattern:** tabs Library · Details · Home · History.
+  Library: hide watched titles, ignore "The"/"A" when sorting, remember each page's view, show every file in folders.
+  Details (was metadata/scraping): find details automatically, details language (flag), use .nfo files, save .nfo
+  files, make thumbnails for network videos, include adult titles, Export (.nfo files / database) as inline buttons.
+  Home: Customise Home… (opens the approved side panel; shows "8 rows · 6 shown"), hero sources as three switches
+  (Recently added · Trending · Popular). History: keep viewing history, Clear… (confirmation).
+- Moved out (approved): Rescrape → Refresh details in Library Health; "recreate sort titles" joins it there; Clear
+  Watch Next lives in Customise Home; collections rescrape removed.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
