@@ -1,0 +1,4 @@
+gradle exit=0
+2 warnings
+75 warnings
+BUILD SUCCESSFUL in 2m 49s
