@@ -31,7 +31,7 @@ public class QueryCompatibilityTest {
                     .putExtra(SearchManager.QUERY, "fixture").putExtra("custom", 17)
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             origin.setClipData(ClipData.newRawUri("video", uri));
-            try (var host = Robolectric.buildActivity(QueryBrowserActivityVideo.class, origin).create()) {
+            try (var host = Robolectric.buildActivity(QueryBrowserActivityVideo.class, new Intent(origin)).create()) {
                 Intent routed = shadowOf(host.get()).getNextStartedActivity();
                 assertEquals(VideoSearchActivity.class.getName(), routed.getComponent().getClassName());
                 assertEquals(action, routed.getAction());
