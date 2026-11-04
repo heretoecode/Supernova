@@ -109,7 +109,22 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Decision (owner, 4 Nov 2026):** option **A** (every row tagged). The watched tick becomes a **larger** solid light
   disc with a dark tick (about 44px, was a 26px green outline), so green means "in library" only. Mock-up `25`.
   The folder header gains an "N watched" pill.
-- **Status:** approved as `25` — awaiting go-ahead to code.
+- **Owner follow-up (4 Nov 2026):** the tick is not self-explanatory at first glance; use words. Proposed `26`: the
+  right-hand end of each row reads **✓ Watched** (white), **40% watched** (blue, with a small bar) or **Unwatched**
+  (dim grey). Supersedes the disc in `25`.
+- **Status:** `26` awaiting the owner's approval — then awaiting go-ahead to code.
+
+## 13. Local Storage Grid view: artwork, status and long-press menu (design + bug)
+- **Seen (owner photos):** Grid shows a generic file icon on every card, never artwork, though the card's own code
+  comment says "artwork or icon" (`LocalStorageView.Card.bind` only ever sets `PreviewIcon`). Long press opens a
+  translucent Play / Exclude box that sits over the next card with that card's name showing through it.
+- **Proposed (`27`, `28`):** each card shows the film's poster when matched, otherwise a frame from the file,
+  otherwise the icon; a corner dot for the library state (● in, ⦸ excluded and dimmed, ○ not added); a **Watched**
+  badge or a progress bar on the art; a status line under the title ("2015 · In library · Watched"). Long press /
+  Menu opens an opaque panel beside the card: title, status line, then Play/Resume, Details, Mark as
+  watched/unwatched, Exclude/Include/Add to library. Posters depend on item 12 (library lookup) being fixed.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+
 
 ## 12. Local Storage: library rows show only file name and size (check)
 - **Seen (same photo):** in a folder marked "In your library", rows show the raw file name and only the size
