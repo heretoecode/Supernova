@@ -280,9 +280,9 @@
   },
   "recipe_hashes": {
     ".github/build/native-supernova156.py": "f1992900fe7734519e32b7731330509eb8a76ecfab8ecbf64508dd15d2cfc12e",
-    ".github/build/build-supernova156-native-stack.py": "e91f4870896abfba136a63dccb77bab26d347894c2b52ddc52f05c537b1d22f4",
+    ".github/build/build-supernova156-native-stack.py": "a2b4c36ce7975caf7eb42b5478da5ac3a73c9e1719c3a8ad2f31c0daf803d342",
     ".github/build/package-supernova156-native.py": "36a9def4347c9495fcf58c6464ab441114ece1227bc7791a30de7cec7be32225",
-    ".github/build/native-archive-supernova156.py": "286ef583acf6fbef3c15c13df67c4fbe3e508e815803d167d7399b38c9aee458",
+    ".github/build/native-archive-supernova156.py": "c05e939d84e865dadf8b1de922bd6e23ae2c50737737ead7b1907c58f79f7795",
     ".github/build/filecore-preview414.patch": "1981fcd319913f761d1150dbb862d69d86505e710c3a24a132dbd066b178b9e5",
     ".github/build/filecore-preview415.patch": "c4301acfad3bb585731a27e35af52f57abb29ea9ef676083868ec2b6c9a0ec4a",
     ".github/build/filecore-next-qa.patch": "17f883e03d81484eba3e7416c85c18a291c98852f90667d41b5e609235813618",
@@ -291,6 +291,8 @@
     ".github/build/filecore-supernova144-webdav.patch": "1448c3f6463097c83a81c5cc19605d86b146d8a5bb4d08d764190d08d9e8eb34",
     ".github/build/filecore-supernova145-storage.patch": "298d48576a0d159d2018e643a486960c5b7c010d5287f1139f53a6825ec12295",
     ".github/build/filecorelibrary-supernova146-upstream.patch": "bace303c452b19e284ddadda2270630fcd0296146da4260c8e4a3fa7980de700",
-    ".github/build/supernova146-dependency-patches.json": "2765423887f507c9cc8db9a0b67b63430b20610d6fca13a471e924ae67cdb806"
+    ".github/build/supernova146-dependency-patches.json": "2765423887f507c9cc8db9a0b67b63430b20610d6fca13a471e924ae67cdb806",
+    ".github/workflows/supernova-0156-native-archive.yml": "1b5ac171e6ff5cd02a298eeb05f6d8e5376376810a0b0f0d376b9646515be0cd",
+    ".github/workflows/supernova-0156-native-stack.yml": "7e00493314cef8ece898111f8b1394cb54eb9a67a6c60be34d521e4503b5d133"
   }
 }

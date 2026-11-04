@@ -1,7 +1,5 @@
-name: Preserve the pinned 0.146 native engine (manual draft)
+name: Preserve the pinned 0.146 native engine (immutable branch)
 
-# Claude, 4 Nov 2026: Codex's draft (codex/0155-code-2026-11-04 9fd8bc94c). Run 2: artifact download Accept fix. Run 3: show gh errors. Run 4: after the owner set workflow permissions to read and write. A push trigger limited to this file on
-# Claude's branch is added because dispatch-only workflows must exist on the default branch to be started.
 on:
   push:
     branches: [claude/supernova-github-access-yfhe89]
@@ -27,7 +25,9 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
-      - name: Verify every pinned artifact, then preserve and recheck Release assets
+      - name: Offline archive tests
+        run: python3 .github/build/test-native-archive-supernova156.py
+      - name: Verify every pinned artifact, then preserve and freshly fetch the orphan archive branch
         env:
           GH_TOKEN: ${{ github.token }}
         run: >-

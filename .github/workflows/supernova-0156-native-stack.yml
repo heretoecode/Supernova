@@ -1,14 +1,13 @@
 name: Supernova 0.156 pinned arm64 engine
 
-# Claude, 4 Nov 2026: Codex's draft (9fd8bc94c). Manual dispatch only (registered by one earlier push-triggered run).
 on:
   workflow_dispatch:
     inputs:
       third_party_source:
-        description: Verified 0.146 archive source (archive Release first)
+        description: Verified 0.146 archive source (archive branch first)
         type: choice
-        options: [release, actions]
-        default: release
+        options: [branch, actions]
+        default: branch
         required: true
 
 permissions:
