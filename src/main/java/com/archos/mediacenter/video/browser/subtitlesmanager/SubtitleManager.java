@@ -179,7 +179,7 @@ public class SubtitleManager {
 
     /**
      * Get cached subtitle files for a video if they exist
-     * Cache is invalidated when exiting VideoDetailsFragment or VideoInfoActivityFragment
+     * Cache is invalidated when exiting VideoDetailsFragment
      * @param videoUri The video file URI
      * @return List of SubtitleFiles if cached, null otherwise
      */
@@ -243,7 +243,7 @@ public class SubtitleManager {
 
     /**
      * Invalidate cached subtitle data for a specific video
-     * Called when exiting VideoDetailsFragment or VideoInfoActivityFragment to ensure fresh enumeration on next browse
+     * Called when exiting VideoDetailsFragment to ensure fresh enumeration on next browse
      * @param videoUri The video file URI to invalidate cache for
      */
     public static void invalidateCache(Uri videoUri) {
