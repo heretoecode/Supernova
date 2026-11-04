@@ -519,7 +519,10 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Mock-ups** `docs/design/proposals/chapters/01`–`02` (redone): the progress bar is split into one segment per
   chapter and the time bubble names the chapter; Down from the bar opens a strip of chapter cards below it (name, start
   time, "Playing" on the current one); Left/Right picks a card and its segment of the bar lights up; OK jumps; Up or
-  Back closes. Only when the video has chapters; with more than six the strip scrolls. Awaiting review.
+  Back closes. Only when the video has chapters; with more than six the strip scrolls.
+- **Episodes too** (owner, `03`): Down from the bar opens two tabs, **Chapters · Episodes**. Episodes shows this season's
+  episodes with their stills, opened at the one playing ("Playing", progress line); watched ones say Watched; OK plays
+  the chosen one. Each tab appears only when it has something (films get Chapters only). Awaiting review.
 - Licence header spacing loosened (owner: too tight) — `32`.
 - **OMDb lookups (owner question):** one lookup each time a Details page opens (`PreviewDetailsData.java:236–240`),
   not per title added; nothing is kept, so reopening the same title looks it up again. Proposal: remember ratings for a

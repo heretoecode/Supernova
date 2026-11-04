@@ -9,6 +9,7 @@ const ic = (k, s = 30) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" f
 // A stand-in film frame (no real artwork): dusky street scene in gradients.
 const frame = `<div class="video"><i class="sky"></i><i class="glow"></i><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="road"></i><i class="vig"></i></div>`;
 const ch = [['Chapter 1', 0, '0:00'], ['Chapter 2', 2.23, '2:14'], ['Chapter 3', 11.67, '11:40'], ['Chapter 4', 22.08, '22:05'], ['Chapter 5', 33.8, '33:48'], ['Chapter 6', 44.2, '44:12']];
+const eps = [['Episode 8', '43 min', 'w'], ['Episode 9', '43 min', 'w'], ['Episode 10', '50 min', 'p'], ['Episode 11', '44 min', ''], ['Episode 12', '43 min', ''], ['Episode 13', '44 min', '']];
 const LEN = 50.1, NOW = 4.53;
 const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch[i + 1][1] : LEN; const w = (e - s) / LEN * 100, l = s / LEN * 100;
   const played = Math.max(0, Math.min(1, (NOW - s) / (e - s)));
@@ -16,10 +17,13 @@ const segs = (focus) => ch.map(([n, s], i) => { const e = i + 1 < ch.length ? ch
 const hud = (focus, strip) => `<div class="htitle${strip ? ' up' : ''}">Dark Matter</div><div class="hsub${strip ? ' up' : ''}">Season 2 · Episode 10</div>
   <div class="hud${strip ? ' up' : ''}"><div class="hb">${ic('pause', 34)}</div><div class="bar">${segs(focus)}<div class="thumb${strip ? ' off' : ''}" style="left:${NOW / LEN * 100}%"></div>
   ${strip ? '' : `<div class="bubble" style="left:${NOW / LEN * 100}%"><b>00:04:32</b><span>Chapter 2</span></div>`}</div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>` +
-  (strip ? `<div class="strip">${ch.map(([n, s, t], i) => `<div class="cc${i === focus ? ' f' : ''}${i === 1 ? ' now' : ''}"><b>${n}</b><span>${i === 1 ? 'Playing · ' : ''}${t}</span></div>`).join('')}</div>` : '');
+  (strip === 'ch' ? tabsRow(0) + `<div class="strip">${ch.map(([n, s, t], i) => `<div class="cc${i === focus ? ' f' : ''}${i === 1 ? ' now' : ''}"><b>${n}</b><span>${i === 1 ? 'Playing · ' : ''}${t}</span></div>`).join('')}</div>` : '') +
+  (strip === 'ep' ? tabsRow(1) + `<div class="strip">${eps.map(([n, t, st], i) => `<div class="ec${i === 2 ? ' f' : ''}"><div class="still s${i}">${st === 'w' ? '<em>Watched</em>' : ''}${st === 'p' ? '<i class="pg"><b style="width:9%"></b></i>' : ''}</div><b>${n}</b><span class="${st === 'p' ? 'now' : ''}">${st === 'p' ? 'Playing · ' : ''}${t}</span></div>`).join('')}</div>` : '');
+const tabsRow = open => `<div class="ptabs">${['Chapters', 'Episodes'].map((t, i) => `<span class="${i === open ? 'open' : ''}">${t}</span>`).join('')}</div>`;
 const shots = [
   ['01-bar-with-chapters.png', frame + `<div class="shade"></div>` + hud(-1, false), 'The progress bar is split at each chapter; the time bubble names the chapter you are in'],
-  ['02-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, true), 'Down from the bar opens the chapters below it; Left/Right picks one (its part of the bar lights up), OK jumps there, Up or Back closes'],
+  ['02-chapter-strip.png', frame + `<div class="shade tall"></div>` + hud(2, 'ch'), 'Down from the bar opens Chapters and Episodes below it; in Chapters, Left/Right picks one (its part of the bar lights up) and OK jumps there'],
+  ['03-episode-strip.png', frame + `<div class="shade tall"></div>` + hud(-1, 'ep'), 'Episodes: this season, opened at the one playing; watched ones say so; OK plays the chosen episode'],
 ];
 const css = `${font(400)}${font(500)}${font(700)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:#000}
@@ -48,8 +52,14 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .bubble b{display:block;font-size:30px;font-weight:500}.bubble span{display:block;font-size:19px;color:#c9d3e6;margin-top:2px}
 .seg{position:absolute;top:0;bottom:0;border-radius:5px;background:rgba(255,255,255,.28);overflow:hidden}.seg b{display:block;height:100%;background:#fff}.seg.hi{background:rgba(255,255,255,.6);top:-4px;bottom:-4px}
 .bar{background:none!important}.thumb.off{display:none}
-.hud.up{bottom:230px}.htitle.up{top:550px}.hsub.up{top:628px}.shade.tall{background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,0) 60%)}
-.strip{position:absolute;left:70px;right:70px;bottom:70px;display:flex;gap:18px}
+.hud.up{bottom:320px}.htitle.up{top:460px}.hsub.up{top:538px}.shade.tall{background:linear-gradient(0deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,0) 60%)}
+.strip{position:absolute;left:70px;right:70px;bottom:60px;display:flex;gap:18px}
+.ptabs{position:absolute;left:70px;bottom:230px;display:flex;gap:14px}.ptabs span{height:56px;padding:0 26px;border-radius:18px;background:rgba(22,24,28,.7);border:2px solid rgba(255,255,255,.18);display:flex;align-items:center;font-size:23px;font-weight:500;color:#dfe5f1}.ptabs span.open{background:#3a3e46;color:#fff}
+.ec{flex:1;min-width:0;border-radius:22px;padding:10px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18)}.ec.f{background:#F4F6FB;border-color:#F4F6FB}.ec.f b{color:#0B0D12}.ec.f span{color:#3a3f48}
+.ec b{display:block;font-size:22px;font-weight:500;margin:8px 6px 0}.ec span{display:block;font-size:19px;color:#c9d3e6;margin:2px 6px 4px}.ec span.now{color:#5aa9ff}
+.still{position:relative;height:64px;border-radius:14px;overflow:hidden}.still em{position:absolute;right:8px;top:8px;font-style:normal;font-size:16px;font-weight:500;background:rgba(0,0,0,.6);padding:3px 10px;border-radius:9px}
+.still .pg{position:absolute;left:8px;right:8px;bottom:8px;height:5px;border-radius:3px;background:rgba(255,255,255,.35)}.still .pg b{display:block;height:100%;margin:0;background:#2fb7d8;border-radius:3px}
+.s0{background:linear-gradient(135deg,#3b4a63,#1b2230)}.s1{background:linear-gradient(135deg,#5a3d34,#22191a)}.s2{background:linear-gradient(135deg,#2f5560,#162428)}.s3{background:linear-gradient(135deg,#4c3e66,#1d1828)}.s4{background:linear-gradient(135deg,#355c3f,#17231a)}.s5{background:linear-gradient(135deg,#66503a,#241c15)}
 .cc{flex:1;height:110px;border-radius:22px;background:rgba(22,24,28,.78);border:2px solid rgba(255,255,255,.18);padding:18px 22px;display:flex;flex-direction:column;justify-content:center}
 .cc b{font-size:26px;font-weight:500}.cc span{font-size:21px;color:#c9d3e6;margin-top:6px}.cc.now span{color:#5aa9ff}
 .cc.f{background:#F4F6FB;border-color:#F4F6FB}.cc.f b{color:#0B0D12}.cc.f span{color:#3a3f48}
