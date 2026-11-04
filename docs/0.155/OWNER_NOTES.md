@@ -406,3 +406,13 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   the separate "Search providers" and "Show all providers" rows are folded into it.
 - Logos in the mock-ups are stand-ins; the app uses the official single-colour logos approved in 0.153.
 - **Status:** approved by the owner on 4 Nov 2026 (`14`–`15`) — awaiting go-ahead to code.
+
+## 27. Settings › Appearance and the screensaver (design)
+- **Mock-ups (`docs/design/proposals/settings/16`–`17`):** Appearance is one page (no tabs): Interface language (flag;
+  list); Screensaver group — "Supernova screensaver" with its state and **Open Android settings** (Android TV only
+  lets the screensaver be chosen in its own Settings › Device Preferences › Screen saver), Shows (Films · TV shows ·
+  Both), Change picture every (10 · 20 · 30 s), Show the title and clock (switch). Accent & Colour removed (approved).
+  `17`: the screensaver — one library backdrop at a time, slow drift and cross-fade, title and clock small in the
+  bottom corners.
+- The old Interface size option is already hidden on TV builds and stays out.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
