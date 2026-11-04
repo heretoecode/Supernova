@@ -215,4 +215,8 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   intro ends.
 - **Owner (4 Nov 2026):** timing approved as proposed; 136px too big. Revised `01`–`03`: about 120px tall with 44px text
   (between the 104px and 136px versions).
-- **Status:** placement, look and timing approved; size awaiting the owner's approval — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** 120px size fine; text and icon look off-centre because the countdown bar sits underneath.
+  Options: `04` A — keep the bar, centre text and icon in the space above it (equal gaps, checked); `05` B — no bar,
+  the button's white drains away to light grey as the time runs out, text centred on the whole button.
+- **Status:** placement, size and timing approved; countdown style (A or B) awaiting the owner's choice — then
+  awaiting go-ahead to code.

@@ -10,10 +10,14 @@ const ic = (k, s = 30) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" f
 // A stand-in film frame (no real artwork): dusky street scene in gradients.
 const frame = `<div class="video"><i class="sky"></i><i class="glow"></i><i class="b1"></i><i class="b2"></i><i class="b3"></i><i class="road"></i><i class="vig"></i></div>`;
 const skip = (left, where) => `<div class="skip ${where}"><span>${ic('skip', 46)}Skip Intro</span><i class="cd"><b style="width:${left * 100}%"></b></i></div>`;
+const skipA = (left) => `<div class="skip br a"><span>${ic('skip', 46)}Skip Intro</span><i class="cd"><b style="width:${left * 100}%"></b></i></div>`;
+const skipB = (left) => `<div class="skip br b"><i class="fill" style="width:${left * 100}%"></i><span>${ic('skip', 46)}Skip Intro</span></div>`;
 const hud = `<div class="htitle">Slow Horses</div><div class="hsub">Season 5 · Episode 2 · Opening titles</div>
   <div class="hud"><div class="hb">${ic('pause', 34)}</div><div class="bar"><div class="buf"></div><div class="played"></div><div class="thumb"></div>
   <div class="bubble"><b>00:01:12</b><span>Intro</span></div></div><div class="hb">${ic('gear', 30)}<span>Settings</span></div></div>`;
 const shots = [
+  ['04-option-a-text-centred-above-bar.png', frame + skipA(.4), 'Option A: same bar, text and icon centred in the space above it'],
+  ['05-option-b-button-drains.png', frame + skipB(.4), 'Option B: no bar — the white of the button drains away to light grey as time runs out; text centred'],
   ['01-appears-bottom-right.png', frame + skip(1, 'br'), 'Intro starts: Skip Intro appears bottom right, already selected — OK skips. Controls stay hidden.'],
   ['02-countdown.png', frame + skip(.4, 'br'), 'About 4 of 10 seconds left: the bar runs down; at zero the button fades, but it comes back with the controls until the intro ends'],
   ['03-with-controls-open.png', frame + `<div class="shade"></div>` + hud + skip(.7, 'br up'), 'Controls open during the intro (even after the button faded): Skip Intro sits just above them, selected; Down goes to the controls'],
@@ -31,6 +35,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
   display:flex;align-items:center;box-shadow:0 10px 30px rgba(0,0,0,.45);overflow:hidden}
 .skip span{display:flex;align-items:center;gap:20px}
 .skip .cd{position:absolute;left:28px;right:28px;bottom:14px;height:7px;border-radius:3px;background:rgba(11,13,18,.15)}.skip .cd b{display:block;height:100%;border-radius:3px;background:#0B0D12}
+.skip.a{padding-bottom:23px}.skip.a .cd{bottom:16px}
+.skip.b{background:#AEB4BF}.skip.b .fill{position:absolute;left:0;top:0;bottom:0;background:#F4F6FB;display:block}.skip.b span{position:relative}
 .skip.br{right:96px;bottom:110px}.skip.br.up{bottom:270px}.skip.bl{left:96px;bottom:110px}
 .htitle{position:absolute;left:80px;top:690px;font-size:60px;font-weight:700}.hsub{position:absolute;left:84px;top:768px;font-size:26px}
 .hud{position:absolute;left:70px;right:70px;bottom:90px;height:80px;display:flex;align-items:center;gap:26px}
