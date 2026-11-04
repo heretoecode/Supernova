@@ -545,3 +545,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (`SubtitleManager.setVerticalPosition`). New: if a subtitle is on screen, it moves; if none is showing, a sample line
   appears while the row is focused and disappears when you leave it. The value text follows the position
   ("Bottom", "Raised 5%" … "Raised 90%", "Top").
+- **Preview rule (owner, replaces the above):** while focus is anywhere in **Subtitle appearance** (Text Size, Text
+  Colour, Vertical Position, Outline, Background, Background Opacity), the real subtitles are hidden and one sample
+  line is shown instead, drawn with the current settings and updating on every change. Leaving the section (or closing
+  the panel) removes the sample and brings the real subtitles back. Playback carries on underneath. Subtitle Delay is
+  not part of the rule (it needs the real subtitles). If subtitles are off, the sample still shows, so the look can be
+  set in advance.
