@@ -169,4 +169,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   while the row it passes slides the other way at the same time; the page scrolls so the carried row stays at the
   same height on screen and the others move past it. Holding Up/Down repeats. (0.154 rebuilds the whole page after a
   move, so it snaps.)
-- **Status:** layout approved by the owner on 4 Nov 2026; revised `00` and `03` awaiting a final look — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`00`–`03` and the motion as described) — awaiting go-ahead to code.
