@@ -624,3 +624,17 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner:** direction approved, but the bar stays **one continuous bar**; each part start is a thin line crossing it
   (as `ChapterMarkers` draws today). When a card is focused, its stretch between two lines lights up. `01`–`04`
   redone.
+- **Card pictures (owner):** every card in the Chapters row — Recap, Intro, each chapter, Credits — gets a frame taken
+  from the video at its start time (a couple of seconds in, to skip black frames at a cut).
+
+## 39. Thumbnails while seeking (owner question)
+- Netflix and others make these on their servers in advance ("trick-play" picture sheets). Supernova has no server,
+  so the Shield has to make them itself by reading frames from the file.
+- **Proposal (to measure on the Shield before deciding):** while a video plays, a low-priority background job takes
+  one small picture (about 320×180) every 10 s, from the nearest keyframe only (cheap: no full decoding run), and saves
+  them for that video (~2–3 MB per hour). It pauses whenever playback buffers. While seeking, the time bubble shows the
+  nearest picture; until one exists, just the time. Pictures are deleted after the episode is watched (cap ~500 MB).
+- **Cost:** USB/local files: small (a few seconds of work spread over the episode). Network files (Put.io/WebDAV):
+  each picture means reading part of the file over the internet; for big 4K files every 10 s could mean hundreds of MB
+  extra, so network files would sample every 30–60 s or only once paused. Risk to playback: low if it backs off when
+  buffering, but must be confirmed on the Shield with a 4K HEVC file.
