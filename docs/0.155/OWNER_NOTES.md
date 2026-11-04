@@ -458,3 +458,16 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   moves it to the remembered or first row. A Robolectric test opens an uncached folder and checks that focus never
   leaves `LocalStorageView`. Check the other browser (`UniversalFileBrowser.reload()`) for the same gap.
 - **Status:** cause found; awaiting go-ahead to code.
+
+## 31. Local Storage: header jumps when switching All files ↔ Videos only (owner video, 4 Nov)
+- **Seen:** for a split second the pills under the folder name (files · folders · size) vanish, the header gets
+  shorter and the separator line and list jump up, then everything drops back.
+- **Cause (code):** the switch reloads the folder. `LocalStorageView.bindPills()` (`LocalStorageView.java:729`)
+  starts with `pills.removeAllViews()`, and while the new listing is not yet in (`!listed`) and the loading delay has
+  not passed, it adds nothing (`:739–742`). The pills row is `wrap_content` (`:157`), so an empty row has no height
+  and the whole header shrinks.
+- **Fix (0.156):** (1) give the pills row a fixed height equal to one pill, so the header never changes height;
+  (2) during a reload of the same folder, keep the previous pills on screen until the new counts arrive, then
+  replace them in one step (no blank frame). Robolectric test: header height is identical before, during and after a
+  filter switch.
+- **Status:** cause found; awaiting go-ahead to code.
