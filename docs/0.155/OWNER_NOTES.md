@@ -1,5 +1,11 @@
 # 0.155 — owner notes from the 0.154 Shield check (4 Nov 2026)
 
+> **Release order (owner, 4 Nov 2026):** the engine update ships **first, on its own**, as the next version
+> (**0.155**). Everything in these notes, plus the stuck-scan fix, the Network & Files redesign and Codex's
+> non-engine work, follows in the version after it (**0.156**). Existing file names keep their working labels:
+> Codex's `engine-0156-*`, `*supernova156*` and `supernova-0156-*` files are the engine release; this folder
+> (`docs/0.155/`) holds the app/UI release notes.
+
 Also queued for 0.155: `docs/0.154/OWNER_NOTES.md` items 13–17 (Network & Files redesign, stuck-scan fix) and
 Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **Nothing is coded until the owner says so.**
 
