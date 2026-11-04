@@ -277,4 +277,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** Search must not become a discovery page — **no TMDb / "Not in your library" results** for now
   (maybe in the future). `05`–`06` re-rendered with library results only. Filters, watched pill, bold match, Browse
   shortcuts (library only), remembering the search and Play/Resume from results stay.
+- **Owner (4 Nov 2026):** remove the **Browse** shortcuts — the library pages already cover browsing, sorting and
+  filtering, so they would duplicate them. `07` re-rendered: recent searches and the one-line tip only.
 - **Status:** approved as revised — awaiting go-ahead to code.

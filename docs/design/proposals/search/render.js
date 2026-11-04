@@ -46,13 +46,11 @@ const discover = (on) => `<div class="right"><div class="count">${on === 'All' ?
   ${on === 'All' ? `<div class="sec">${ic('tv', 26)}Episodes · 1</div>${r2('#5f7a8c', 'Frontier · Dunes', 'S2 E4', 'Episode · 48 min · 1080p', 0, false, 'dune')}` : ''}</div>`;
 const browse = `<div class="right"><div class="sec">${ic('clock', 26)}Recent searches<span class="spc"></span><span class="mini">${ic('clear', 20)}Clear recent</span></div>
   <div class="chips">${['dune', 'mr robot', 'slow horses', 'kingdom', 'tulsa king'].map(c => `<span class="chip">${c}</span>`).join('')}</div>
-  <div class="sec gap">${ic('film', 26)}Browse</div>
-  <div class="tiles">${[['Unwatched', '412 titles'], ['Recently added', 'Last 30 days · 38'], ['Genres', 'Drama, Thriller, Comedy…'], ['Years', '1960s – 2020s']].map(([t, s2]) => `<div class="tile"><b>${t}</b><span>${s2}</span></div>`).join('')}</div>
   <div class="sec gap">What you can search</div><div class="tipline">Titles, original titles, episodes, cast, crew and studios — punctuation, “the” and small typos don’t matter</div></div>`;
 const shots = [
   ['05-discover-all.png', kb('dune', '') + discover('All'), 'All: library results only, grouped, with watched state and the typed letters in bold'],
   ['06-filter-films.png', kb('dune', '') + discover('Films'), 'Up from the results reaches the filters: Films shows only the films in your library'],
-  ['07-browse-before-typing.png', kb('', 't') + browse, 'Before typing: recent searches, then Browse shortcuts; coming back from Details returns you to the same search and place'],
+  ['07-browse-before-typing.png', kb('', 't') + browse, 'Before typing: recent searches (with Clear recent) and one line on what you can search; no Browse shortcuts'],
   ['03-keyboard-letters.png', kb('webdav.put.io/TV', '/', 'abc', false, 'Server address') + `<div class="ctx">The same keyboard is used everywhere — here, adding a network share</div>`, 'Letters page: number row, QWERTY, plus / . @ on the page; #+= opens all other symbols; Shift for capitals'],
   ['04-keyboard-symbols.png', kb('MyP@ss_2026!', '!', 'sym', false, 'Password') + `<div class="ctx">Symbols page: everything a password, URL or file path might need</div>`, 'Symbols page: ! # $ % & * ( ) - _ = + [ ] { } \\ | ~ ` : ; , ? \' " < > ^ — ABC returns to letters'],
   ['01-empty.png', kb('', 't') + empty, 'Before typing: one panel — keyboard on the left, recent searches (with Clear recent) and what you can search on the right'],
