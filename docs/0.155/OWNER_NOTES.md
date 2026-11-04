@@ -514,3 +514,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (GitHub secret, never in the code), so ratings just work like TMDB — fine while the owner is the only user;
   (2) MDBList, which adds Letterboxd and Trakt scores but also needs a key; (3) Trakt's own score and TMDB's score need
   no extra key but are not IMDb/Rotten Tomatoes/Metacritic. No service gives those three without a key.
+- **Mock-ups** `docs/design/proposals/chapters/01`–`02`: a Chapters row at the top of the player panel's More tab
+  ("Chapter 2 of 6"), opening the list inside the panel: name and start time, the playing chapter marked in blue,
+  OK jumps. Awaiting review.
+- Licence header spacing loosened (owner: too tight) — `32`.
+- **OMDb lookups (owner question):** one lookup each time a Details page opens (`PreviewDetailsData.java:236–240`),
+  not per title added; nothing is kept, so reopening the same title looks it up again. Proposal: remember ratings for a
+  week per title.
+- **TMDB key (owner question):** NOVA's own key, carried over in `aos-MediaLib/res/values/donottranslate.xml`.
