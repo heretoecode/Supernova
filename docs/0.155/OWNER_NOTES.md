@@ -346,4 +346,8 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 ## 23. Settings review (all eight sections)
 - Full review written to `docs/0.155/SETTINGS_REVIEW.md` from the owner's photos (owner brief: move, remove, rename or
   add settings, sections and pages as needed).
-- **Status:** awaiting the owner's reaction to the review — then mock-ups — then go-ahead to code.
+- **First mock-ups (`docs/design/proposals/settings/01`–`02`):** Settings › Playback — left: Settings › Playback with
+  standard charcoal buttons Playback · Resume · Skipping · Picture (white bar marks the open one, white on focus);
+  right: one panel of rows, each a title, one plain line and a single value or switch level with the title. `02`: the
+  solid side-panel choice list (Default playback speed).
+- **Status:** awaiting the owner's reaction to the review and `01`–`02` — then go-ahead to code.
