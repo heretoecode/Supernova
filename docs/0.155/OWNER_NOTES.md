@@ -292,3 +292,20 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** wording approved; make the "What you can search" heading more prominent. `07`: heading at
   38px Medium white (rows 28px).
 - **Status:** wording approved; heading size awaiting the owner's look — then awaiting go-ahead to code.
+
+## 21. Top bar scroll effect on Home, Movies, TV Shows and custom libraries — rebuild (bug + design)
+- **Seen (owner):** scrolling down puts a blue blur under the top bar that does not fully go away when nothing is under
+  it; on the third library (Documentaries) it looks like a blur plus a solid box. Not consistent across the four pages.
+- **Cause (Claude, from the code):**
+  - `PreviewNavigationShade` blurs a small copy of the page's **background artwork**, not the content actually
+    under the bar, then paints a fixed **navy** gradient (`0x0b1624`) on top — hence "blue" and "blur of nothing".
+  - It switches on from `list.canScrollVertically(-1)` (`PreviewPages.notifyScroll`), which stays true whenever the
+    list is not at its very first pixel — the focused-row alignment keeps it slightly scrolled, so the effect lingers.
+  - The custom library (`CustomLibraryActivity`) puts its page header outside the scrolling list, so the bar's effect
+    sits over a fixed header — the "solid box".
+- **Proposed (`docs/design/proposals/top-bar/01`–`03`):** remove the old effect entirely and build one shared one:
+  driven by the page's real scroll distance; nothing at all at the top; content passes behind the bar under a
+  **charcoal** fade (the panels' colour, no blue, no blur of unrelated artwork) that eases in over the first ~120px of
+  scroll and out again as you return; custom libraries use exactly the same page structure (their header scrolls with
+  the content). Tests: at the top the effect is 0 on all four pages; scrolled it is full; returning to the top clears it.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
