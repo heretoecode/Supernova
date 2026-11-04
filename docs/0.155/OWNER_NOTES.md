@@ -245,4 +245,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   `/` after L and `.` `@` after M, ⇧ Shift for capitals (shows ON, blue edge); bottom row `#+=` · Voice · Space ·
   Delete · Clear. Symbols page (`#+=`) = `! # $ % & * ( ) - _ = + [ ] { } \ | ~ \` : ; , ? ' " < > ^`, ABC returns. `03` shows
   it on a server address, `04` on a password.
+- **Owner (4 Nov 2026):** one panel, not two; and a Clear option beside Recent searches. Revised `01`–`04`: a single
+  charcoal panel with a thin divider (keyboard left, results right); "Clear recent" button on the Recent searches line.
 - **Status:** awaiting the owner's approval of `01`–`04` — then awaiting go-ahead to code.

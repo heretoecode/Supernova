@@ -20,7 +20,7 @@ const kb = (text, focus, layer = 'abc', shift = false, label = '') => `<div clas
       : l === 'ABC' ? `<div class="key shift${focus === l ? ' f' : ''}">ABC</div>` : key(shift && /[a-z]/.test(l) ? l.toUpperCase() : l, focus)).join('')}</div>`).join('')}
   <div class="krow"><div class="key mid${focus === 'sym' ? ' f' : ''}"><span>${layer === 'abc' ? '#+=' : 'ABC'}</span></div><div class="key mid${focus === 'Voice' ? ' f' : ''}">${ic('mic', 28)}</div><div class="key space${focus === 'Space' ? ' f' : ''}">${ic('space', 28)}<span>Space</span></div><div class="key mid${focus === 'Delete' ? ' f' : ''}">${ic('del', 30)}</div><div class="key mid${focus === 'Clear' ? ' f' : ''}"><span>Clear</span></div></div>
   </div><div class="khint">${layer === 'abc' ? '/ . @ always on the letters page · #+= for every other symbol · ⇧ for capitals' : 'Symbols page · ABC goes back to letters'}</div></div>`;
-const empty = `<div class="right"><div class="sec">${ic('clock', 26)}Recent searches</div>
+const empty = `<div class="right"><div class="sec">${ic('clock', 26)}Recent searches<span class="spc"></span><span class="mini">${ic('clear', 20)}Clear recent</span></div>
   <div class="chips">${['dune', 'mr robot', 'slow horses', 'kingdom', 'tulsa king'].map(c => `<span class="chip">${c}</span>`).join('')}</div>
   <div class="sec gap">What you can search</div>
   ${[['film', 'Films, TV shows and episodes', 'by title, original title or file name'], ['people', 'People and studios', 'cast, crew and studios in your library'], ['search', 'Forgiving', 'punctuation, “the” and small typos don’t matter']].map(([k, t, s]) => `<div class="tip">${ic(k, 30)}<div><b>${t}</b><span>${s}</span></div></div>`).join('')}</div>`;
@@ -37,13 +37,15 @@ const results = `<div class="right"><div class="count">5 results for “dune” 
 const shots = [
   ['03-keyboard-letters.png', kb('webdav.put.io/TV', '/', 'abc', false, 'Server address') + `<div class="ctx">The same keyboard is used everywhere — here, adding a network share</div>`, 'Letters page: number row, QWERTY, plus / . @ on the page; #+= opens all other symbols; Shift for capitals'],
   ['04-keyboard-symbols.png', kb('MyP@ss_2026!', '!', 'sym', false, 'Password') + `<div class="ctx">Symbols page: everything a password, URL or file path might need</div>`, 'Symbols page: ! # $ % & * ( ) - _ = + [ ] { } \\ | ~ ` : ; , ? \' " < > ^ — ABC returns to letters'],
-  ['01-empty.png', kb('', 't') + empty, 'Before typing: QWERTY keyboard with even keys in a charcoal panel; recent searches and what you can search'],
+  ['01-empty.png', kb('', 't') + empty, 'Before typing: one panel — keyboard on the left, recent searches (with Clear recent) and what you can search on the right'],
   ['02-results.png', kb('dune', '') + results, 'Typing: results grouped (Films · Episodes · People), two clean lines each, and why it matched when it isn’t the title'],
 ];
 const css = `${font(400)}${font(500)}${font(700)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:radial-gradient(ellipse 70% 60% at 70% 75%,#1d4fd8 0%,rgba(29,79,216,0) 70%),linear-gradient(180deg,#05081a 0%,#0a1650 45%,#10248a 100%)}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8}.nav .brand{font-size:36px;margin-right:40px;letter-spacing:1px}.nav .sp{flex:1}.nav .on{display:flex}.nav .clock{margin-left:10px}
-.kpanel{position:absolute;left:56px;top:112px;width:760px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22);padding:26px}
+.sheet{position:absolute;left:56px;right:56px;top:112px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22)}
+.divider{position:absolute;left:832px;top:140px;bottom:68px;width:1px;background:rgba(255,255,255,.14)}
+.kpanel{position:absolute;left:58px;top:114px;width:760px;bottom:42px;padding:24px}
 .flabel{font-size:20px;color:#b7bfcc;margin:0 4px 10px}.ctx{position:absolute;left:846px;top:140px;right:56px;font-size:26px;color:#c9d3e6}
 .field{height:76px;border-radius:22px;background:#2a2d33;display:flex;align-items:center;gap:14px;padding:0 22px;font-size:30px}.ph{color:#8f98a8}.typed{font-weight:500}.caret{width:3px;height:36px;background:#fff;margin-left:-8px}
 .kb{margin-top:24px;display:flex;flex-direction:column;gap:10px}
@@ -51,7 +53,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .key{width:62px;position:relative;height:74px;flex:none;border-radius:16px;background:#2a2d33;display:flex;align-items:center;justify-content:center;gap:8px;font-size:30px;font-weight:500}
 .key.f{background:#F4F6FB;color:#0B0D12}.key.shift{width:62px;font-size:24px}.key.shift small{position:absolute;bottom:6px;font-size:12px}.key.shift.on{box-shadow:inset 0 0 0 2px #5aa9ff}.key.mid{width:112px;font-size:22px}.key.space{flex:1;width:auto;font-size:21px}
 .khint{position:absolute;left:26px;right:26px;bottom:22px;font-size:18px;color:#8f98a8}
-.right{position:absolute;left:846px;right:56px;top:112px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.82);border:2px solid rgba(255,255,255,.14);padding:26px 30px;overflow:hidden}
+.right{position:absolute;left:846px;right:58px;top:114px;bottom:42px;padding:24px 30px;overflow:hidden}
+.spc{flex:1}.mini{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px;border-radius:16px;background:#2a2d33;color:#fff;font-size:20px;font-weight:500}
 .sec{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:500;color:#b7bfcc;margin:6px 4px 14px}.sec.gap{margin-top:40px}
 .chips{display:flex;flex-wrap:wrap;gap:14px}.chip{height:56px;padding:0 24px;border-radius:20px;background:#2a2d33;display:flex;align-items:center;font-size:24px;font-weight:500}
 .tip{display:flex;align-items:center;gap:20px;padding:16px 8px;border-bottom:1px solid rgba(255,255,255,.1)}.tip b{display:block;font-size:26px;font-weight:500}.tip span{display:block;font-size:21px;color:#c9d3e6;margin-top:4px}
@@ -63,14 +66,14 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .label{position:absolute;right:56px;bottom:8px;font-size:18px;color:#c9d3e6}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
-    await t.setContent(`<html><head><style>${css}</style></head><body>${nav}${body}<div class="label">${label}</div></body></html>`, { waitUntil: 'load' });
+    await t.setContent(`<html><head><style>${css}</style></head><body>${nav}<div class="sheet"></div><div class="divider"></div>${body}<div class="label">${label}</div></body></html>`, { waitUntil: 'load' });
     await t.evaluate(() => document.fonts.ready);
     const issues = await t.evaluate(() => { const o = [], r = e => e.getBoundingClientRect();
-      const k = document.querySelector('.kpanel'), g = document.querySelector('.kb'), h = document.querySelector('.khint');
+      const k = document.querySelector('.kpanel'), sh = document.querySelector('.sheet'), g = document.querySelector('.kb'), h = document.querySelector('.khint');
       if (r(g).bottom > r(h).top) o.push('grid hits hint'); if (r(g).bottom > r(k).bottom) o.push('grid overflows panel');
       const rp = document.querySelector('.right'); document.querySelectorAll('.right > *').forEach(e => { if (r(e).bottom > r(rp).bottom - 10) o.push('right overflow: ' + e.className); });
       document.querySelectorAll('.t2,.tip span').forEach(e => { if (r(e).right > r(rp).right - 20) o.push('line too long: ' + e.textContent); });
-      document.querySelectorAll('.krow').forEach(w => { if (r(w.lastElementChild).right > r(k).right - 26) o.push('key row overflows panel'); });
+      document.querySelectorAll('.krow').forEach(w => { if (r(w.lastElementChild).right > r(k).right - 24) o.push('key row overflows panel'); });
       return o; });
     if (issues.length) console.log(f, issues);
     await t.screenshot({ path: path.join(out, f) }); }
