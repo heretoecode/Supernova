@@ -9,7 +9,7 @@ const P = { hist: '<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4M12 8
   spark: '<path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/>', plus: '<path d="M12 5v14M5 12h14"/>', move: '<path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/>',
   edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>', trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', chev: '<path d="M9 6l6 6-6 6"/>', check: '<path d="M5.5 12.5l4 4L18.5 8"/>',
   film: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v18M16 3v18"/>', home: '<path d="M4 11l8-7 8 7v9H4z"/>' };
-const ic = (k, s = 28) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
+const ic = (k, s = 28) => k === 'crime' ? gicon('Crime', s) : `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
 const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span class="on">Home</span><span>Movies</span><span>TV Shows</span><span>Documentaries</span><span class="sp"></span><span>Network &amp; Files</span><span class="clock">14:46</span></div>`;
 const rowsData = [
   ['hist', 'Continue Watching', 'Built-in · unfinished films and next episodes', true],
@@ -19,7 +19,7 @@ const rowsData = [
   ['star', 'Popular on Trakt', 'Built-in · in your library', true],
   ['hist', 'Recently Watched', 'Built-in · what you finished last', false],
   ['spark', 'Because You Watched', 'Built-in · similar titles in your library', false],
-  ['list', 'Crime Nights', 'Your row · Films · Crime · 15 · Date added', true],
+  ['crime', 'Crime Nights', 'Your row · Films · Crime · 15 · Date added', true],
 ];
 const tag = on => on ? '<span class="tag in"><i></i>Shown</span>' : '<span class="tag no"><i></i>Hidden</span>';
 const list = (focus, mode) => `<div class="lcol"><div class="head"><div><div class="title">Customise Home</div><div class="sub">8 rows · 6 shown</div></div>
@@ -31,24 +31,30 @@ const builtIn = `<div class="rcol"><div class="ptitle">${ic('hist', 34)}Continue
   ${set('Shown on Home', '<span class="tg on"><i></i></span>', false)}
   ${set('Position', '1 of 8', false, `<span class="chev">${ic('chev', 22)}</span>`)}
   <div class="note">Built-in row — Supernova chooses what appears in it. You can show, hide or move it.</div></div>`;
-const custom = (focus) => `<div class="pcol"><div class="ptitle">${ic('list', 34)}Crime Nights</div><div class="pdesc">Your own row. Changes appear on Home straight away.</div>
+const custom = (focus) => `<div class="pcol"><div class="ptitle">${ic('crime', 34)}Crime Nights</div><div class="pdesc">Your own row. Changes appear on Home straight away.</div>
   ${set('Name', 'Crime Nights', focus === 'name', `<span class="chev">${ic('edit', 22)}</span>`)}
-  ${set('Icon', ic('list', 26), focus === 'icon', `<span class="chev">${ic('chev', 22)}</span>`)}
+  ${set('Icon', ic('crime', 26), focus === 'icon', `<span class="chev">${ic('chev', 22)}</span>`)}
   ${set('Shows', '<span class="seg"><b>Films</b><b class="on">TV shows</b><b>Both</b></span>'.replace('<b>Films</b><b class="on">TV shows</b>', '<b class="on">Films</b><b>TV shows</b>'), focus === 'shows')}
-  ${set('Genres', 'Crime', focus === 'genres', `<span class="chev">${ic('chev', 22)}</span>`)}
+  ${set('Genres', `<span class="gi" style="margin-right:10px">${gicon('Crime', 26)}</span>Crime`, focus === 'genres', `<span class="chev">${ic('chev', 22)}</span>`)}
   ${set('Sort by', 'Date added · newest first', focus === 'sort', `<span class="chev">${ic('chev', 22)}</span>`)}
   ${set('Maximum titles', '15', focus === 'max', `<span class="chev">${ic('chev', 22)}</span>`)}
   ${set('Add new matching titles automatically', '<span class="tg on"><i></i></span>', focus === 'auto')}
   <div class="dangers"><span class="btn danger${focus === 'delete' ? ' f' : ''}">${ic('trash', 24)}<span>Delete row</span></span></div></div>`;
+const GI = JSON.parse(fs.readFileSync(path.join(__dirname, 'genre-icons.json'), 'utf8'));
+const gicon = (g, sz = 30) => { const k = g.toLowerCase(); const body = k === 'all genres' ? '<path d="M4 5h16l-6 7v6l-4 2v-8z"/>' : GI[k] || '<rect x="2" y="5" width="20" height="14" rx="2"/>';
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`; };
 const genres = [['All genres', 324, false], ['Action & Adventure', 16, false], ['Adventure', 13, false], ['Animation', 3, false], ['Comedy', 47, false], ['Crime', 115, true], ['Documentary', 22, false], ['Drama', 140, false]];
 const picker = `<div class="pcol"><div class="ptitle">Genres</div><div class="pdesc">Pick one or more. Numbers are titles in your library.</div>
-  ${genres.map(([g, n, on], i) => `<div class="opt${i === 5 ? ' f' : ''}"><span class="cb${on ? ' on' : ''}">${on ? ic('check', 22) : ''}</span><span class="on2">${g}</span><span class="cnt">${n}</span></div>`).join('')}
+  ${genres.map(([g, n, on], i) => `<div class="opt${i === 5 ? ' f' : ''}"><span class="cb${on ? ' on' : ''}">${on ? ic('check', 22) : ''}</span><span class="gi">${gicon(g)}</span><span class="on2">${g}</span><span class="cnt">${n}</span></div>`).join('')}
   <div class="pfoot">OK ticks · Back saves and closes</div></div>`;
 const preview = (hl) => `<div class="pv">${['Continue Watching', 'Recently Added', 'Watch Next', 'Trending on Trakt', 'Popular on Trakt'].map((t, i) => `<div class="pr${hl === i ? ' hl' : ''}"><div class="prt">${t}</div><div class="prc">${[0, 1, 2, 3].map(j => `<i style="background:linear-gradient(160deg,hsl(${(i * 70 + j * 35) % 360} 40% 42%),#0d1017 85%)"></i>`).join('')}</div></div>`).join('')}</div>`;
 const back = t => `<div class="crumb">‹ ${t}</div>`;
 const panelList = (focus, mode) => `<div class="panel">${list(focus, mode)}</div>`;
 const panelRow = (html, crumb) => `<div class="panel">${back(crumb)}${html}</div>`;
+const NAMES = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Kids', 'Music', 'Mystery', 'News', 'Reality', 'Romance', 'Science Fiction', 'Soap', 'Talk', 'Thriller', 'TV Movie', 'War', 'Western', 'Action & Adventure', 'Sci-Fi & Fantasy', 'War & Politics'];
+const sheet = `<div class="gsheet"><div class="ptitle">Genre icons already in Supernova (PreviewGenres.Icon)</div><div class="gg">${NAMES.map(n => `<div class="gc${GI[n.toLowerCase()] ? '' : ' miss'}">${gicon(n, 54)}<span>${n}</span>${GI[n.toLowerCase()] ? '' : '<em>no icon yet</em>'}</div>`).join('')}</div></div>`;
 const shots2 = [
+  ['05-genre-icons.png', sheet, 'Every genre has its own monochrome icon in the app today, drawn by PreviewGenres.Icon — except TV Movie, which falls back to a plain frame'],
   ['01-built-in-row.png', preview(0) + panelList(0, 'list'), 'A side panel over Home (live behind it): the row list; Move and Hide on the focused row; OK opens the row'],
   ['02-your-row.png', preview(-1) + panelRow(custom('genres'), 'Customise Home'), 'OK on your own row: its settings in the same panel (‹ back to the list), values on the right'],
   ['03-genres-picker.png', preview(-1) + panelRow(picker, 'Crime Nights'), 'Genres opens as the next page of the same panel: tick boxes and counts; Back saves'],
@@ -84,6 +90,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .side{position:absolute;right:56px;top:112px;bottom:40px;width:640px;border-radius:26px;background:#24272d;border:2px solid rgba(255,255,255,.24);padding:28px;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
 .opt{display:flex;align-items:center;gap:16px;height:72px;padding:0 18px;border-radius:20px;font-size:24px;font-weight:500}.opt.f{box-shadow:inset 0 0 0 3px #fff}.on2{flex:1}.cnt{font-size:22px;color:#c9d3e6;font-weight:400}
 .cb{width:34px;height:34px;border-radius:9px;border:2px solid #aab3c4;display:flex;align-items:center;justify-content:center}.cb.on{background:#F4F6FB;border-color:#F4F6FB;color:#0B0D12}
+.gi{display:flex;color:#e1e9ef}.gsheet{position:absolute;left:56px;right:56px;top:112px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22);padding:30px}
+.gg{display:grid;grid-template-columns:repeat(7,1fr);gap:18px;margin-top:20px}.gc{height:150px;border-radius:20px;background:#22252b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#e1e9ef;font-size:19px;text-align:center;position:relative}.gc.miss{box-shadow:inset 0 0 0 2px #e0a050}.gc em{font-style:normal;font-size:15px;color:#e0a050;position:absolute;bottom:8px}
 .pfoot{position:absolute;left:28px;bottom:22px;font-size:18px;color:#8f98a8}
 .pv{position:absolute;left:56px;top:120px;width:1100px;opacity:.55}.pr{margin-bottom:26px;border-radius:18px;padding:6px}.pr.hl{opacity:1;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
 .prt{font-size:26px;font-weight:500;margin-bottom:10px}.prc{display:flex;gap:16px}.prc i{display:block;width:250px;height:140px;border-radius:14px}

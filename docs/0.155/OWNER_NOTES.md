@@ -329,4 +329,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** too large — it does not need the full screen. Revised `01`–`04`: a **side panel on the right**
   (760px, like Playback Settings / Edit Page) over a live, dimmed Home; pages drill in within the panel (list → row
   settings → Genres, with "‹ back" at the top); while moving a row, Home behind highlights and updates live.
-- **Status:** awaiting the owner's feedback on the revised `01`–`04`.
+- **Owner (4 Nov 2026):** each genre needs its own monochrome icon, using the app's existing ones. The app already
+  draws one per genre in `PreviewGenres.Icon` (24-unit line icons, 1.5 stroke); the mock-ups now use exactly those
+  (translated from the drawing code into `customise-home/genre-icons.json`): the Genres picker, the Genres setting and a
+  genre row's own icon. `05` shows all 27: 26 have their own icon; **TV Movie has none** and falls back to a plain
+  frame — one new icon needed. "All genres" uses the filter icon.
+- **Status:** awaiting the owner's feedback on `01`–`05`.
