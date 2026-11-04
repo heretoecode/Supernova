@@ -1,0 +1,31 @@
+name: Preserve the pinned 0.146 native engine (manual draft)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supernova-0146-native-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'heretoecode/Supernova'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify every pinned artifact, then preserve and recheck Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 .github/build/native-archive-supernova156.py
+          --destination "$RUNNER_TEMP/native-archive-supernova156"
+          --publish
