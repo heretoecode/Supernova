@@ -68,7 +68,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .note{margin:18px 22px;font-size:20px;color:#aab3c4}
 .more{position:absolute;left:14px;bottom:0;font-size:18px;color:#8f98a8}
 .dim{position:absolute;inset:0;background:rgba(0,0,0,.35)}
-.panel{position:absolute;right:56px;top:112px;bottom:40px;width:440px;border-radius:26px;background:#24272d;border:2px solid rgba(255,255,255,.24);padding:28px;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+.panel{position:absolute;right:56px;top:112px;width:max-content;min-width:320px;max-height:928px;border-radius:26px;background:#24272d;border:2px solid rgba(255,255,255,.24);padding:28px;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
 .ptitle{font-size:30px;font-weight:500;margin:0 6px 6px}.pdesc{font-size:20px;color:#c9d3e6;margin:0 6px 14px}
 .opt{display:flex;align-items:center;gap:16px;height:70px;padding:0 20px;border-radius:20px;font-size:25px;font-weight:500}.opt.f{box-shadow:inset 0 0 0 3px #fff}
 .rad{width:32px;height:32px;border-radius:50%;border:2px solid #aab3c4;display:flex;align-items:center;justify-content:center;flex:none}.rad.on{background:#F4F6FB;border-color:#F4F6FB;color:#0B0D12}

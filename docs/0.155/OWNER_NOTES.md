@@ -12,6 +12,10 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 > **How mock-ups are shown (owner, 4 Nov 2026):** only final mock-ups the owner needs to judge, sent once, as one
 > numbered group per question. Claude checks renders without opening them in the chat (no draft or check images).
 
+> **Panel and pop-up size rule (owner, 4 Nov 2026):** every list, choice panel and pop-up is only as big as its content
+> needs — width fits the longest entry plus padding, height fits the entries (scrolling only when they exceed the
+> screen). Applies app-wide, including the shared choice list (item 19.1).
+
 ## Confirmed fixed in 0.154 (owner)
 - Hero More Info icon dark on focus; no age rating or score on hero cards; hero readability improved; focused
   posters have one crisp outline; Playback Settings has no title and no row lines.
