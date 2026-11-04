@@ -218,6 +218,24 @@ Verified by Claude against the code on 2026-11-03 (`docs/codex/findings/`); appr
   Scan Now = network sources (+ Put.io sync); Scan Library = local library folders + the same network request.
 - **Status:** approved; built after 0.154.
 
+### 17. Network & Files landing, Library Scanning and Library Health (design, for the version after 0.154)
+- **Seen (photos, 0.153):** Scan Now and Scan Library are near-duplicates and silently do nothing while a scan is
+  stuck; the scan screen reads like a debug log; Advanced holds Library Health, All Files (removed) and two
+  shortcuts into Settings; Library Health says "issues to review" / "Confirmed missing: 2" (raw webdavs:// addresses)
+  while every category says "No issues".
+- **Decision (owner, 3–4 Nov 2026), mock-ups `docs/design/proposals/network-files-v2/01–07`:**
+  - Tiles: Local Storage · Network Shares · Add Connection / Library Health · Library Scanning · **Scan now**.
+    **Advanced is dropped**; Connection Preferences and Network Compatibility live in Settings only.
+  - **Scan now** is an ordinary tile whose description is live status: last scan + library size at rest; source and
+    progress bar while scanning (OK again offers Stop); "3 new videos · 1 removed" when done; amber reason + retry on
+    failure. Scans USB drives and Put.io.
+  - **Library Scanning:** schedule (**default every hour**), "also scan when Supernova opens" only if the last scan is
+    over an hour old, what gets scanned, recent scans in plain words; no scan buttons.
+  - **Library Health:** each check with a tick or its count; Missing files lists titles (not addresses) with where,
+    since when and old file name, plus Find it again · Remove; watched state and progress kept.
+- **Depends on:** the stuck network-scan fix (item 16).
+- **Status:** approved; built after 0.154.
+
 ## Already queued for 0.154 (decided earlier)
 - arm64-only APK; design artwork out of the APK; video engines stored permanently (expire 27 Jan 2027).
 - NOVA video-engine update (HDR / Dolby Vision) with the 0.154 native work; NOVA subtitle box-padding setting
