@@ -312,3 +312,18 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   ~88% charcoal at the very top (behind the tabs), ~60% at the tabs' lower edge and clear by ~230px, so artwork stays
   visible and fades out towards the top while the tabs stay readable.
 - **Status:** approved by the owner on 4 Nov 2026 (`01`–`04`, fade strength as `04`) — awaiting go-ahead to code.
+
+## 22. Customise Home — redesign (design + bug)
+- **Seen (owner photos):** three nested translucent blue panels; eye icons and drag handles beside every row; the
+  Genres list opens as an overlapping panel with a blank white row stuck in it; built-in rows show an almost empty
+  page; a trash icon floats in a corner.
+- **Proposed (`docs/design/proposals/customise-home/01`–`04`), using the approved patterns:** one charcoal panel
+  split by a thin line (as Search / Local Storage). Left: "Customise Home · 8 rows · 6 shown" with **Add row**, then
+  two-line rows (name + Shown/Hidden tag; second line "Built-in · …" or "Your row · Films · Crime · 15 · Date added");
+  hidden rows dimmed; **Move** and **Hide/Show** buttons appear on the focused row. Move lifts the row and Up/Down
+  moves it live (as on Home, item 14). Right: the selected row — title, one-line description, then settings rows
+  with the value on the right (the item-16 fix): built-in rows show "Shown on Home" switch and Position; your own rows
+  add Name, Icon, Shows (Films / TV shows / Both as one segmented choice), Genres, Sort by (field + direction in one),
+  Maximum titles, "Add new matching titles automatically" switch, and **Delete row** at the bottom. Genres opens a
+  solid side panel with tick boxes and counts (Back saves) — the shared choice list (item 19.1).
+- **Status:** first draft for the owner to react to — awaiting feedback.
