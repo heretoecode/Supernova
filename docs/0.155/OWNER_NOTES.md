@@ -274,4 +274,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   the typed letters bold and underlined in each title; before typing, **Browse** shortcuts (Unwatched, Recently added,
   Genres, Years) under Recent searches; coming back from Details restores the same query, results and position. Play /
   Resume from results via long press or Menu (shared choice list).
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`05`–`07`) — awaiting go-ahead to code.
