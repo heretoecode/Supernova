@@ -41,9 +41,11 @@ def api(path):
 
 
 def download(path, target):
+    # Artifact ZIPs only accept the JSON media type (GitHub answers 415 to octet-stream and redirects to the ZIP);
+    # Release assets need octet-stream to return bytes instead of metadata.
+    accept = "application/json" if path.startswith("actions/artifacts/") else "application/octet-stream"
     with target.open("wb") as stream:
-        gh("api", "-H", "Accept: application/octet-stream",
-           f"repos/{REPOSITORY}/{path}", output=stream)
+        gh("api", "-H", f"Accept: {accept}", f"repos/{REPOSITORY}/{path}", output=stream)
 
 
 def safe_path(value):
