@@ -497,3 +497,20 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **QR size** (owner: far too big): now a small square (76 px) in the facts line, "Website [QR] Scan with your phone". QR codes are square by standard; a rectangular version (rMQR) exists but most phone cameras can't read it.
 - **Credits for every outside service** (owner): About (`26`) lists TMDB, JustWatch, OMDb, IntroDB and TheIntroDB, ChaptersDB, OpenSubtitles.com, Trakt and YouTube; Archos and NOVA thanked in the line under the version. Full list and backups: `docs/0.155/DATA_PROVIDERS.md`.
 - **Status:** awaiting the owner's review.
+- **Licence header compacted** (owner): crumb, name with description beside it, version and licence on one line, QR
+  code with "Website · Scan with your phone" at the right — about 100 px instead of 240 (`32`).
+
+## 33. Chapters in the player (owner, watching Dark Matter S2E10)
+- **Today (code):** chapters come from the file, or from ChaptersDB when the file has none
+  (`PlayerActivity.previewChapters`). The HUD shows only the current chapter's name under the scrub timestamp
+  (`PlayerController.java:1871–1878`) and small marks on the progress bar (`ChapterMarkers`). There is no chapter list
+  and no way to jump to a chapter.
+- **Proposal:** a **Chapters** list in Playback Settings (opens inside the side panel like the track lists): each chapter
+  with its name and start time, the current one marked, OK jumps there. Only shown when the video has chapters.
+  Mock-up to follow.
+
+## 34. Ratings without a personal key (owner question)
+- OMDb needs a key; today it is the owner's, typed into Settings. Options: (1) put one key into the app at build time
+  (GitHub secret, never in the code), so ratings just work like TMDB — fine while the owner is the only user;
+  (2) MDBList, which adds Letterboxd and Trakt scores but also needs a key; (3) Trakt's own score and TMDB's score need
+  no extra key but are not IMDb/Rotten Tomatoes/Metacritic. No service gives those three without a key.
