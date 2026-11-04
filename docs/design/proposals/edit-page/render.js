@@ -36,8 +36,8 @@ const shots = [['01-fits-on-screen.png', bg + main('save'), 'Every option fits w
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#F4F6FB;background:#0b1430;position:relative}
 .bg{position:absolute;inset:0;background:linear-gradient(160deg,#16255a,#0a1230 60%,#1636a8)}.card{position:absolute;top:300px;width:300px;height:450px;border-radius:20px;opacity:.55}
 .c0{left:80px;background:linear-gradient(160deg,#5d8a4a,#2b4a2a)}.c1{left:420px;background:linear-gradient(160deg,#6a4a4a,#2a1a1a)}.c2{left:760px;background:linear-gradient(160deg,#3a4a6a,#1a2230)}
-.panel{position:absolute;right:48px;top:48px;width:760px;border-radius:26px;padding:24px 26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22)}
-.hdr{display:flex;align-items:center;justify-content:space-between;margin:0 6px 14px}.rule{height:1px;background:rgba(255,255,255,.22);margin:0 6px 10px}.rule.low{margin:12px 6px 6px}.ttl{font-size:32px;font-weight:500}.mt{font-size:19px;color:#7fe0a8;margin-top:4px}
+.panel{position:absolute;right:48px;top:48px;width:760px;border-radius:26px;padding:24px 26px 8px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22)}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin:0 6px 14px}.rule{height:1px;background:rgba(255,255,255,.22);margin:0 6px 10px}.rule.low{margin:12px 6px 8px}.ttl{font-size:32px;font-weight:500}.mt{font-size:19px;color:#7fe0a8;margin-top:4px}
 .save{display:flex;align-items:center;gap:10px;height:58px;padding:0 24px;border-radius:20px;background:#2a2d33;font-size:21px;font-weight:500}.save.f{background:#F4F6FB;color:#0B0D12}
 .h{display:flex;align-items:center;gap:14px;font-size:19px;margin:8px 8px 0;height:36px;color:#b7bfcc}.h i{flex:1;height:1px;background:rgba(255,255,255,.18)}
 .row{display:flex;align-items:center;gap:16px;height:56px;border-radius:20px;padding:0 16px;font-size:23px;font-weight:500}.row svg{color:#dfe5ef;flex:none}.focus{box-shadow:inset 0 0 0 3px #fff}

@@ -587,3 +587,21 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner:** Edit Page changes approved; header (title, match count, Save Changes) now separated from the options by a
   line, and Delete Page sits at the bottom behind its own line (`01`–`03` updated).
 - **Status:** approved by the owner on 4 Nov 2026 — awaiting go-ahead to code.
+- Delete Page centred between its line and the panel's bottom edge (`01`).
+
+## 38. Playback controls: remote navigation, and the first-play tip
+- **Today (code, `PlayerController.java:2838–2854`):** the bar has focus; Left/Right seek. **Up** from the bar goes to
+  Settings, **Down** from the bar goes to Play/Pause, Up from Play/Pause comes back to the bar. Left/Right can't move
+  between the three because on the bar they seek.
+- **The blue box on first play is NOVA's** (`PlayerController.java:885–898`, `res/layout/player_help_overlay.xml`):
+  "Press the UP arrow key to display the TV menu", shown once on a TV. It is wrong for Supernova (Up goes to Settings,
+  not a TV menu). Remove it.
+- **Proposal:**
+  - Bar: Left/Right seek; **OK plays/pauses**; **Up** → the buttons (lands on Settings; Left/Right moves between
+    Play/Pause and Settings; Down returns to the bar); **Down** → Chapters · Episodes.
+  - Strip: Left/Right moves along the cards; Up → the Chapters/Episodes tabs (Left/Right switches); Up again → the bar;
+    OK jumps/plays; Back closes the strip.
+  - With no chapters and no episodes, Down does nothing.
+- **Our own first-play tip** (replaces NOVA's): a small charcoal card on the first video only, three lines with remote
+  arrows — "Left/Right seek · OK pause", "Up for Settings", "Down for Chapters and Episodes" — gone after 8 seconds or
+  any press. Mock-up once the scheme is agreed.
