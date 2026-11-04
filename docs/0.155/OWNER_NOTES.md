@@ -182,3 +182,15 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   as they are. Anyone who has explicitly switched it off keeps it off. Test: fresh preferences → enabled in player and
   Settings; a stored `false` is respected.
 - **Status:** approved — awaiting go-ahead to code.
+
+## 16. Settings › IntroDB page (bugs, from the owner's photos 4 Nov 2026)
+- **Values one row out of step:** the right-hand values sit one row too high — "Show Skip (5 seconds)" appears on the
+  IntroDB heading row, Intro's row shows Recap's "Smart", and so on; only the summaries under each title are right.
+- **Each value shown twice:** once as the summary under the title and once on the right.
+- **The choice pop-up** is the old translucent box over the list (same problem as the Local Storage long-press menu).
+- **The master switch is hidden** (see item 15): these choices only take effect while IntroDB is on, which today is
+  only switchable from the player.
+- **Proposed (words, mock-up on request):** one value per row, on the right, aligned with its title; a short line under
+  the heading saying "Skipping is on" with an On/Off switch as the first row; the choice opens as an opaque list in the
+  side panel style.
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
