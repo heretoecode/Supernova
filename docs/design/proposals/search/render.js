@@ -47,17 +47,20 @@ const discover = (on) => `<div class="right"><div class="count">${on === 'All' ?
 const P2 = { list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>', globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
   typo: '<path d="M4 18l4-12 4 12M5.5 14h5"/><circle cx="16.5" cy="15.5" r="3"/><path d="M19 18l2 2"/>' };
 const ic2 = (k, s2 = 34) => `<svg width="${s2}" height="${s2}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${P2[k] || P[k]}</svg>`;
-const tips = [['film', 'Your library', 'Films, TV shows, episodes and file names'], ['list', 'Flexible formatting', 'Punctuation and “The” / “A” at the start are optional'],
-  ['globe', 'Original titles', 'Find a title by its original-language name'], ['typo', 'Minor typos', 'Small spelling mistakes still find the right title'],
-  ['people', 'People & studios', 'Cast, crew and studios — results show who matched']];
-const browse = `<div class="right"><div class="sec">${ic('clock', 26)}Recent searches<span class="spc"></span><span class="mini">${ic('clear', 20)}Clear recent</span></div>
+const tips = [['film', 'Titles and episodes', 'Films, TV shows, episode names — and file names as a last resort'],
+  ['globe', 'Original titles', 'A film or show’s original-language title finds it too'],
+  ['people', 'Cast, crew and studios', 'Actors, directors, writers and studios, by full name or surname'],
+  ['list', 'Any order, part words', '“horses slow” and “slow hor” both find Slow Horses'],
+  ['search', 'Forgiving', 'Capitals, accents, punctuation and a leading “The” don’t matter'],
+  ['typo', 'Small typos', 'One wrong letter in a longer word still finds it — “Dume” finds Dune']];
+const browse = `<div class="right col"><div class="sec">${ic('clock', 26)}Recent searches<span class="spc"></span><span class="mini">${ic('clear', 20)}Clear recent</span></div>
   <div class="chips">${['dune', 'mr robot', 'slow horses', 'kingdom', 'tulsa king'].map(c => `<span class="chip">${c}</span>`).join('')}</div>
-  <div class="sec gap">What you can search</div>
-  ${tips.map(([k, t, d]) => `<div class="tip2"><span class="ti">${ic2(k)}</span><div><b>${t}</b><span>${d}</span></div></div>`).join('')}</div>`;
+  <div class="tipsarea"><div class="tipsbox"><div class="sec">What you can search</div>
+  ${tips.map(([k, t, d]) => `<div class="tip2"><span class="ti">${ic2(k)}</span><div><b>${t}</b><span>${d}</span></div></div>`).join('')}</div></div></div>`;
 const shots = [
   ['05-discover-all.png', kb('dune', '') + discover('All'), 'All: library results only, grouped, with watched state and the typed letters in bold'],
   ['06-filter-films.png', kb('dune', '') + discover('Films'), 'Up from the results reaches the filters: Films shows only the films in your library'],
-  ['07-browse-before-typing.png', kb('', 't') + browse, 'Before typing: recent searches, then what you can search — five larger rows filling the space'],
+  ['07-browse-before-typing.png', kb('', 't') + browse, 'Before typing: recent searches, then what you can search — six rows centred in the remaining space, plain icons'],
   ['03-keyboard-letters.png', kb('webdav.put.io/TV', '/', 'abc', false, 'Server address') + `<div class="ctx">The same keyboard is used everywhere — here, adding a network share</div>`, 'Letters page: number row, QWERTY, plus / . @ on the page; #+= opens all other symbols; Shift for capitals'],
   ['04-keyboard-symbols.png', kb('MyP@ss_2026!', '!', 'sym', false, 'Password') + `<div class="ctx">Symbols page: everything a password, URL or file path might need</div>`, 'Symbols page: ! # $ % & * ( ) - _ = + [ ] { } \\ | ~ ` : ; , ? \' " < > ^ — ABC returns to letters'],
   ['01-empty.png', kb('', 't') + empty, 'Before typing: one panel — keyboard on the left, recent searches (with Clear recent) and what you can search on the right'],
@@ -93,9 +96,10 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .wp.un{color:#9aa3b3;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22)}.wp.un b{font-weight:400}
 .add{font-size:19px;color:#aab3c4;flex:none;height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:20px;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22)}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tile{height:104px;border-radius:20px;background:#2a2d33;padding:18px 22px;display:flex;flex-direction:column;justify-content:center}.tile b{font-size:26px;font-weight:500}.tile span{font-size:19px;color:#c9d3e6;margin-top:6px}
-.tip2{display:flex;align-items:center;gap:22px;padding:16px 8px;border-bottom:1px solid rgba(255,255,255,.1)}.tip2:last-child{border-bottom:none}
-.ti{width:62px;height:62px;border-radius:18px;background:#2a2d33;display:flex;align-items:center;justify-content:center;flex:none}
-.tip2 b{display:block;font-size:30px;font-weight:500}.tip2 span{display:block;font-size:22px;color:#c9d3e6;margin-top:4px}
+.right.col{display:flex;flex-direction:column}.tipsarea{flex:1;display:flex;align-items:center;justify-content:center}.tipsbox{width:820px}
+.tip2{display:flex;align-items:center;gap:24px;padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.1)}.tip2:last-child{border-bottom:none}
+.ti{width:40px;display:flex;justify-content:center;flex:none;color:#F4F6FB}
+.tip2 b{display:block;font-size:28px;font-weight:500}.tip2 span{display:block;font-size:22px;color:#c9d3e6;margin-top:4px}
 .tipline{font-size:21px;color:#c9d3e6;line-height:1.45;margin:0 4px}
 .label{position:absolute;right:56px;bottom:8px;font-size:18px;color:#c9d3e6}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });

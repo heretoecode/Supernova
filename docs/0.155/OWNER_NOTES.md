@@ -282,4 +282,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner (4 Nov 2026):** make "what you can search" prominent again and fill the space (today's large text is
   right in spirit; the one-line tip was too small). `07` re-rendered: under Recent searches, five rows with an icon tile,
   30px title and 22px line — Your library · Flexible formatting · Original titles · Minor typos · People & studios.
+- **Owner (4 Nov 2026):** no grey icon tiles; centre the list in the space; check every claim is true, reword freely.
+  Checked against `PreviewSearch` / `PreviewSearchText`: titles, episode names and file paths are searched; original
+  titles (`original_title_movie` / `_show`); actors, directors, writers and studios (movie and episode columns);
+  query words may come in any order and match the start of a word; case, accents, punctuation and a leading
+  the/a/an are ignored; one wrong letter is allowed in words of 4+ letters. Revised `07`: six rows (Titles and episodes ·
+  Original titles · Cast, crew and studios · Any order, part words · Forgiving · Small typos), plain white line icons,
+  centred in the space below Recent searches. Wording reflects 0.156 behaviour (file names last, people by whole name).
 - **Status:** awaiting the owner's approval of the revised `07` — then awaiting go-ahead to code.
