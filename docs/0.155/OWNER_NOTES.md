@@ -79,3 +79,14 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   5. Test: a Robolectric test that Details opened with a seeded bitmap shows a drawable straight away, and keeps a
      drawable throughout a later URI change.
 - **Status:** approved by the owner on 4 Nov 2026 (no mock-up needed) — awaiting go-ahead to code.
+
+## 10. Auto-next / next episode can play a hidden file (bug, Codex DP-09)
+- **Found by Codex** (`docs/codex/findings/deep-hunt-1-player.md`, DP-09, on `codex/0155-code-2026-11-04`):
+  `player/UpdateNextTask.java` picks the next file in a folder (auto-next/repeat) and the fallback next episode
+  without the user-hidden filter (`Archos_hideFile=0`), so a hidden video can start playing by itself. The playlist
+  query in the same file already filters correctly.
+- **Decision (owner, 4 Nov 2026):** hidden files are skipped by auto-next, repeat and next episode. Playing a hidden
+  file directly, when chosen on purpose, still works.
+- **Tests:** a hidden file between two visible ones is skipped; every remaining file hidden means no next file;
+  repeat wrap-around skips hidden files; cached and uncached next-episode paths both skip them.
+- **Status:** approved — awaiting go-ahead to code (Claude, not Codex: it changes what plays).
