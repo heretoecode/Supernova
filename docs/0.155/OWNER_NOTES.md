@@ -445,3 +445,16 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Advanced** (`23`): the four compatibility pages in one, grouped Video · Audio · Other, with one warning line.
 - Diagnostic report review of 4 Nov: `docs/0.155/DIAGNOSTICS_2026-11-04.md`.
 - **Status:** awaiting the owner's review.
+
+## 30. Local Storage: Home in the top bar takes focus while a folder loads (owner video, 4 Nov)
+- **Seen:** opening a folder that hasn't been opened this session, the Home underline lights up while the
+  placeholder rows show, then focus returns to the list.
+- **Cause (code):** `LocalStorageView.load()` empties the list and redraws it (`render()`, `notifyDataSetChanged`)
+  before anything new can hold focus. Placeholder rows only appear after `LOADING_DELAY_MS`, so for that moment
+  nothing inside the page is focusable and Android gives focus to the first thing it finds: Home. It happens again
+  when the placeholders are hidden and the real rows arrive (`render()` hides them before `focusAfterRender` runs).
+- **Fix (0.156):** keep focus parked inside the page during the swap: an invisible, unhighlighted focus holder in the
+  list area takes focus before the list is cleared and before the placeholders are hidden; `focusAfterRender` then
+  moves it to the remembered or first row. A Robolectric test opens an uncached folder and checks that focus never
+  leaves `LocalStorageView`. Check the other browser (`UniversalFileBrowser.reload()`) for the same gap.
+- **Status:** cause found; awaiting go-ahead to code.
