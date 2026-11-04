@@ -79,7 +79,7 @@ Some optional parts of FFmpeg are licensed under the GNU General Public License
 version 2 or later (GPL v2+). See the file COPYING.GPLv2 for details. None of
 these parts are used by default, you have to explicitly pass --enable-gpl to
 configure to activate them. In this case, FFmpeg's license changes to GPL v2+.`;
-const licPage = shell(2, `<div class="lc"><div class="lcl"><div class="crumb2 i">Licences › Playback engine</div><div class="lcn"><b>FFmpeg</b><span>Reads and decodes almost every video and audio format</span></div>` +
+const licPage = shell(2, `<div class="crumb2 i">Licences › Playback engine</div><div class="lc"><div class="lcl"><div class="lcn"><b>FFmpeg</b><span>Reads and decodes almost every video and audio format</span></div>` +
   `<div class="lcf"><span><i>Version</i>9.0.2, with security fixes</span><span><i>Licence</i>LGPL 2.1 or later</span></div></div>` +
   `<div class="lcq"><svg width="76" height="76" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#000" d="${QR}"/></svg><span>Website<br>Scan with your phone</span></div></div>` +
   `<div class="ltext f"><pre>${notice}</pre><div class="hfade"></div></div>`, '');
@@ -151,7 +151,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .hfade{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(0deg,#16181d 15%,rgba(22,24,29,0))}.hfade.top{top:0;bottom:auto;background:linear-gradient(180deg,#16181d 15%,rgba(22,24,29,0))}
 .hd{flex:1;border-left:1px solid rgba(255,255,255,.12);padding:14px 0 0 32px;position:relative}.hdv{font-size:40px;font-weight:500}.hdd{font-size:21px;color:#aab3c4;margin:4px 0 18px}.hd .ri{font-size:23px;margin:10px 0 0}
 .hcount{position:absolute;left:32px;bottom:10px;font-size:19px;color:#8f98a8}
-.lc{display:flex;align-items:center;gap:30px;margin:10px 14px 30px}.lcl{flex:1}.crumb2.i{margin:0 0 18px}.lcn{display:flex;align-items:baseline;gap:20px}.lcn b{font-size:34px;font-weight:500}.lcn span{font-size:21px;color:#c9d3e6}.lcf{display:flex;gap:44px;font-size:21px;margin-top:20px}.lcf i{font-style:normal;color:#aab3c4;margin-right:10px}.lcq{display:flex;align-items:center;gap:14px}.lcq svg{background:#fff;padding:6px;border-radius:8px;box-sizing:content-box}.lcq span{font-size:19px;color:#aab3c4;line-height:1.35}
+.lc{display:flex;align-items:center;gap:30px;margin:0 14px 30px}.lcl{flex:1}.crumb2.i{margin:6px 14px 12px}.lcn{display:flex;align-items:baseline;gap:20px}.lcn b{font-size:34px;font-weight:500}.lcn span{font-size:21px;color:#c9d3e6}.lcf{display:flex;gap:44px;font-size:21px;margin-top:20px}.lcf i{font-style:normal;color:#aab3c4;margin-right:10px}.lcq{display:flex;align-items:center;gap:14px}.lcq svg{background:#fff;padding:6px;border-radius:8px;box-sizing:content-box}.lcq span{font-size:19px;color:#aab3c4;line-height:1.35}
 .crumb2{font-size:20px;color:#aab3c4;margin:6px 14px 4px}
 .cr{border-radius:20px;padding:14px 22px;margin-bottom:4px}.cr.f{box-shadow:inset 0 0 0 3px #fff}.crn{display:flex;align-items:baseline;gap:16px}.crn b{font-size:25px;font-weight:500}.crn span{font-size:20px;color:#aab3c4}.crt{font-size:21px;color:#dfe5f1;margin-top:6px;line-height:1.4;max-width:1500px}
 .disc{font-size:19px;color:#8f98a8;margin:14px 22px}

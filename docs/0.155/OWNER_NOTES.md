@@ -537,3 +537,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   area and still inside the black bar on wide films). The same control in Settings › Audio & Subtitles. Existing saved
   values are converted so nobody's subtitles jump.
 - **Status:** awaiting review.
+- **Licence page approved** (owner, 4 Nov) after the QR code was centred on the title and facts lines (`32`).
+- **OMDb ratings are not saved (confirmed):** TMDB details are kept on the device (`PreviewDetailsData.cached`), but
+  the OMDb ratings are not part of that — they are fetched again on every Details visit. **Fix (0.156):** save them with
+  the other details and refresh at most once a week per title.
+- **Subtitle position live preview (owner):** today the setting already moves the real subtitles
+  (`SubtitleManager.setVerticalPosition`). New: if a subtitle is on screen, it moves; if none is showing, a sample line
+  appears while the row is focused and disappears when you leave it. The value text follows the position
+  ("Bottom", "Raised 5%" … "Raised 90%", "Top").
