@@ -104,7 +104,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Mock-ups:** `docs/design/proposals/local-storage/22` (A: a small tag after the title on every row — ● In library,
   ⦸ Excluded with the row dimmed, ○ Not added), `23` (B: only rows that differ from their folder are tagged), `24`
   (A in a mixed folder). The focused row's button matches the state: Exclude / Include / Add to library.
-- **Status:** awaiting the owner's choice of A or B — then awaiting go-ahead to code.
+- **Question (owner):** what is the green tick on the right? It is **Watched** (existing in 0.154). Two greens with
+  different meanings is confusing; Claude proposes the watched tick in neutral white/grey so green means "in library" only.
+- **Status:** awaiting the owner's choice of A or B and the tick colour — then awaiting go-ahead to code.
 
 ## 12. Local Storage: library rows show only file name and size (check)
 - **Seen (same photo):** in a folder marked "In your library", rows show the raw file name and only the size
@@ -113,4 +115,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   the USB drive's path in the library differs from the browser's (e.g. `file:///storage/XXXX-XXXX/...` vs a
   mount alias), every lookup misses and rows fall back to name + size. To confirm on the next diagnostics export or
   with one photo of a film from this folder in Movies.
-- **Status:** to investigate in 0.156.
+- **Status:** owner confirmed 4 Nov 2026 that the rows have no details under the title and wants it fixed — investigate and fix in 0.156 (awaiting go-ahead).
