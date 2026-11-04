@@ -1,5 +1,22 @@
 # Handover to Claude — 2026-11-04
 
+## Unit failures from run 41850284587 — corrected fixtures
+
+The owner reported three failures at `9fd8bc94c`. This follow-up extends
+`SubtitleManagerDefaultsTest.styleKeysCoverEveryStylePreference` to expect 14
+and explicitly include `KEY_PADDING`, retaining all 13 previous key checks.
+`PlaybackHdrCapabilitiesTest.capabilitiesAreReadAgainForEachNativeQuery` now
+returns two real `Display.HdrCapabilities` objects (empty, then all four HDR
+formats). `excludesEncoderSoftwareAliasSecureAndTunneledAndKeepsVendorOrder`
+uses Robolectric 4.17 `CodecCapabilitiesBuilder` for real AVC capabilities and
+required secure/tunneled flags. Encoder/software/alias exclusions, both vendor
+positions and end-of-candidates checks remain. Production behavior is unchanged.
+
+Both tests pass Java syntax parsing; codec builder signatures checked against
+the published 4.17 sources. No Gradle or full Robolectric run here, per MORE
+rule 4. Claude: rerun these two test classes, then the full unit suite. DP-10
+continues separately below; these fixture repairs do not claim to fix it.
+
 ## Engine release — Claude's steps
 
 Branch: `codex/0155-code-2026-11-04`. Follow `BRIEF_0155_ENGINE_BUILD.md`

@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils;
 import android.app.Application;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
+import android.media.MediaFormat;
 import android.view.Display;
 
 import org.junit.After;
@@ -12,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.MockedConstruction;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.MediaCodecInfoBuilder.CodecCapabilitiesBuilder;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.ReflectionHelpers.ClassParameter;
 
@@ -55,12 +57,10 @@ public class PlaybackHdrCapabilitiesTest {
     @Test
     public void capabilitiesAreReadAgainForEachNativeQuery() {
         Display display = mock(Display.class);
-        Display.HdrCapabilities caps = mock(Display.HdrCapabilities.class);
         when(display.isValid()).thenReturn(true);
-        when(display.getHdrCapabilities()).thenReturn(caps);
-        when(caps.getSupportedHdrTypes()).thenReturn(new int[0], new int[] {
+        when(display.getHdrCapabilities()).thenReturn(hdrCapabilities(), hdrCapabilities(
                 Display.HdrCapabilities.HDR_TYPE_HDR10, Display.HdrCapabilities.HDR_TYPE_HLG,
-                Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS, Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION});
+                Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS, Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION));
         CodecDiscovery.setPlaybackDisplay(display);
         assertEquals(0, hdr());
         assertEquals(15, hdr());
@@ -110,12 +110,8 @@ public class PlaybackHdrCapabilitiesTest {
         when(software.isSoftwareOnly()).thenReturn(true);
         MediaCodecInfo alias = codec("alias");
         when(alias.isAlias()).thenReturn(true);
-        MediaCodecInfo secure = codec("secure");
-        when(secure.getCapabilitiesForType("video/avc").isFeatureRequired(
-                MediaCodecInfo.CodecCapabilities.FEATURE_SecurePlayback)).thenReturn(true);
-        MediaCodecInfo tunneled = codec("tunneled");
-        when(tunneled.getCapabilitiesForType("video/avc").isFeatureRequired(
-                MediaCodecInfo.CodecCapabilities.FEATURE_TunneledPlayback)).thenReturn(true);
+        MediaCodecInfo secure = codec("secure", MediaCodecInfo.CodecCapabilities.FEATURE_SecurePlayback);
+        MediaCodecInfo tunneled = codec("tunneled", MediaCodecInfo.CodecCapabilities.FEATURE_TunneledPlayback);
         MediaCodecInfo[] infos = {encoder, software, alias, secure, tunneled, codec("vendor-b"), codec("vendor-a")};
         try (MockedConstruction<MediaCodecList> lists = mockConstruction(MediaCodecList.class,
                 (list, context) -> when(list.getCodecInfos()).thenReturn(infos))) {
@@ -125,12 +121,25 @@ public class PlaybackHdrCapabilitiesTest {
         }
     }
 
-    private MediaCodecInfo codec(String name) {
+    private Display.HdrCapabilities hdrCapabilities(int... types) {
+        return ReflectionHelpers.callConstructor(Display.HdrCapabilities.class,
+                ClassParameter.from(int[].class, types), ClassParameter.from(float.class, 1000f),
+                ClassParameter.from(float.class, 500f), ClassParameter.from(float.class, 0.1f));
+    }
+
+    private MediaCodecInfo codec(String name, String... requiredFeatures) {
         MediaCodecInfo info = mock(MediaCodecInfo.class);
-        MediaCodecInfo.CodecCapabilities caps = mock(MediaCodecInfo.CodecCapabilities.class);
         MediaCodecInfo.CodecProfileLevel profile = new MediaCodecInfo.CodecProfileLevel();
-        profile.profile = 1;
-        caps.profileLevels = new MediaCodecInfo.CodecProfileLevel[] {profile};
+        profile.profile = MediaCodecInfo.CodecProfileLevel.AVCProfileBaseline;
+        profile.level = MediaCodecInfo.CodecProfileLevel.AVCLevel51;
+        MediaFormat format = MediaFormat.createVideoFormat("video/avc", 1920, 1080);
+        for (String feature : requiredFeatures) format.setFeatureEnabled(feature, true);
+        MediaCodecInfo.CodecCapabilities caps = CodecCapabilitiesBuilder.newBuilder()
+                .setMediaFormat(format)
+                .setProfileLevels(new MediaCodecInfo.CodecProfileLevel[] {profile})
+                .setColorFormats(new int[] {MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible})
+                .setRequiredFeatures(requiredFeatures)
+                .build();
         when(info.getName()).thenReturn(name);
         when(info.getSupportedTypes()).thenReturn(new String[] {"video/avc"});
         when(info.getCapabilitiesForType("video/avc")).thenReturn(caps);

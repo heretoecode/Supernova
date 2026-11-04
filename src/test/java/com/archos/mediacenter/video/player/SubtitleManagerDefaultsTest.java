@@ -117,14 +117,14 @@ public class SubtitleManagerDefaultsTest {
 
     @Test
     public void styleKeysCoverEveryStylePreference() {
-        assertEquals(13, SubtitleManager.STYLE_KEYS.size());
+        assertEquals(14, SubtitleManager.STYLE_KEYS.size());
         for (String key : new String[] {SubtitleManager.KEY_VPOS, SubtitleManager.KEY_COLOR,
                 SubtitleManager.KEY_BG_OPACITY, SubtitleManager.KEY_BG_MODE,
                 SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.KEY_BOLD,
                 SubtitleManager.KEY_OUTLINE_COLOR, SubtitleManager.KEY_SHADOW_COLOR,
                 SubtitleManager.KEY_BACKGROUND_COLOR, SubtitleManager.KEY_OUTLINE_WIDTH,
                 SubtitleManager.KEY_SHADOW_WIDTH, SubtitleManager.KEY_FONT_SIZE_PT,
-                SubtitleManager.KEY_FONT_SCALE}) {
+                SubtitleManager.KEY_FONT_SCALE, SubtitleManager.KEY_PADDING}) {
             assertTrue(key, SubtitleManager.STYLE_KEYS.contains(key));
         }
     }
