@@ -334,4 +334,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (translated from the drawing code into `customise-home/genre-icons.json`): the Genres picker, the Genres setting and a
   genre row's own icon. `05` shows all 27: 26 have their own icon; **TV Movie has none** and falls back to a plain
   frame — one new icon needed. "All genres" uses the filter icon.
-- **Status:** awaiting the owner's feedback on `01`–`05`.
+- **Owner (4 Nov 2026):** give TV Movie its own icon in the same style; revisit all genre icons and add missing genres.
+  Proposed set `06` (`customise-home/genre-icons-v2.json`, same 24-unit grid, 1.5 stroke, round ends): 22 kept;
+  **revised** to be more distinct — Adventure (compass; was a near-copy of Action & Adventure's mountains), Action &
+  Adventure (mountain with flag), Thriller (pulse line; the lightning bolt read as "electric"), Soap (heart in a speech
+  bubble; the bubbles read as washing-up); **new** — TV Movie (screen with play), and 11 genres that other sources
+  (Trakt, IMDb) use: Anime, Biography, Disaster, Game Show, Holiday, Martial Arts, Mini-series, Musical, Short, Sport,
+  Superhero. The picker in `03` uses the proposed set.
+- **Status:** awaiting the owner's feedback on `01`–`06`.

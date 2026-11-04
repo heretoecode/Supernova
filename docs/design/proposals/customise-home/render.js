@@ -40,7 +40,7 @@ const custom = (focus) => `<div class="pcol"><div class="ptitle">${ic('crime', 3
   ${set('Maximum titles', '15', focus === 'max', `<span class="chev">${ic('chev', 22)}</span>`)}
   ${set('Add new matching titles automatically', '<span class="tg on"><i></i></span>', focus === 'auto')}
   <div class="dangers"><span class="btn danger${focus === 'delete' ? ' f' : ''}">${ic('trash', 24)}<span>Delete row</span></span></div></div>`;
-const GI = JSON.parse(fs.readFileSync(path.join(__dirname, 'genre-icons.json'), 'utf8'));
+const GI = JSON.parse(fs.readFileSync(path.join(__dirname, 'genre-icons-v2.json'), 'utf8')).icons, GS = JSON.parse(fs.readFileSync(path.join(__dirname, 'genre-icons-v2.json'), 'utf8')).status, GI0 = JSON.parse(fs.readFileSync(path.join(__dirname, 'genre-icons.json'), 'utf8'));
 const gicon = (g, sz = 30) => { const k = g.toLowerCase(); const body = k === 'all genres' ? '<path d="M4 5h16l-6 7v6l-4 2v-8z"/>' : GI[k] || '<rect x="2" y="5" width="20" height="14" rx="2"/>';
   return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`; };
 const genres = [['All genres', 324, false], ['Action & Adventure', 16, false], ['Adventure', 13, false], ['Animation', 3, false], ['Comedy', 47, false], ['Crime', 115, true], ['Documentary', 22, false], ['Drama', 140, false]];
@@ -52,8 +52,15 @@ const back = t => `<div class="crumb">‹ ${t}</div>`;
 const panelList = (focus, mode) => `<div class="panel">${list(focus, mode)}</div>`;
 const panelRow = (html, crumb) => `<div class="panel">${back(crumb)}${html}</div>`;
 const NAMES = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Kids', 'Music', 'Mystery', 'News', 'Reality', 'Romance', 'Science Fiction', 'Soap', 'Talk', 'Thriller', 'TV Movie', 'War', 'Western', 'Action & Adventure', 'Sci-Fi & Fantasy', 'War & Politics'];
-const sheet = `<div class="gsheet"><div class="ptitle">Genre icons already in Supernova (PreviewGenres.Icon)</div><div class="gg">${NAMES.map(n => `<div class="gc${GI[n.toLowerCase()] ? '' : ' miss'}">${gicon(n, 54)}<span>${n}</span>${GI[n.toLowerCase()] ? '' : '<em>no icon yet</em>'}</div>`).join('')}</div></div>`;
+const gicon0 = (g, sz) => `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${GI0[g.toLowerCase()] || '<rect x="2" y="5" width="20" height="14" rx="2"/>'}</svg>`;
+const sheet = `<div class="gsheet"><div class="ptitle">Genre icons already in Supernova (PreviewGenres.Icon)</div><div class="gg">${NAMES.map(n => `<div class="gc${GI0[n.toLowerCase()] ? '' : ' miss'}">${gicon0(n, 54)}<span>${n}</span>${GI0[n.toLowerCase()] ? '' : '<em>no icon yet</em>'}</div>`).join('')}</div></div>`;
+const EXTRA = ['Anime', 'Biography', 'Disaster', 'Game Show', 'Holiday', 'Martial Arts', 'Mini-series', 'Musical', 'Short', 'Sport', 'Superhero'];
+const cell2 = n => { const st = GS[n.toLowerCase()]; return `<div class="gc2 ${st}">${gicon(n, 46)}<span>${n}</span>${st !== 'kept' ? `<em>${st}</em>` : ''}</div>`; };
+const sheet2 = `<div class="gsheet"><div class="ptitle">Proposed genre icons — one style, one icon each</div>
+  <div class="gsub">Your library’s genres (TMDb)</div><div class="gg2">${NAMES.map(cell2).join('')}</div>
+  <div class="gsub">Also recognised (Trakt, IMDb and other sources)</div><div class="gg2">${EXTRA.map(cell2).join('')}</div></div>`;
 const shots2 = [
+  ['06-genre-icons-proposed.png', sheet2, 'Kept as they are (no tag), redrawn to be more distinct (blue: revised), and new (green): TV Movie plus 11 more genres'],
   ['05-genre-icons.png', sheet, 'Every genre has its own monochrome icon in the app today, drawn by PreviewGenres.Icon — except TV Movie, which falls back to a plain frame'],
   ['01-built-in-row.png', preview(0) + panelList(0, 'list'), 'A side panel over Home (live behind it): the row list; Move and Hide on the focused row; OK opens the row'],
   ['02-your-row.png', preview(-1) + panelRow(custom('genres'), 'Customise Home'), 'OK on your own row: its settings in the same panel (‹ back to the list), values on the right'],
@@ -92,6 +99,9 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .cb{width:34px;height:34px;border-radius:9px;border:2px solid #aab3c4;display:flex;align-items:center;justify-content:center}.cb.on{background:#F4F6FB;border-color:#F4F6FB;color:#0B0D12}
 .gi{display:flex;color:#e1e9ef}.gsheet{position:absolute;left:56px;right:56px;top:112px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22);padding:30px}
 .gg{display:grid;grid-template-columns:repeat(7,1fr);gap:18px;margin-top:20px}.gc{height:150px;border-radius:20px;background:#22252b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#e1e9ef;font-size:19px;text-align:center;position:relative}.gc.miss{box-shadow:inset 0 0 0 2px #e0a050}.gc em{font-style:normal;font-size:15px;color:#e0a050;position:absolute;bottom:8px}
+.gsub{font-size:22px;font-weight:500;color:#b7bfcc;margin:18px 6px 10px}.gg2{display:grid;grid-template-columns:repeat(10,1fr);gap:12px}
+.gc2{height:118px;border-radius:18px;background:#22252b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:#e1e9ef;font-size:16px;text-align:center;position:relative;padding:0 4px}
+.gc2.revised{box-shadow:inset 0 0 0 2px #5aa9ff}.gc2.new{box-shadow:inset 0 0 0 2px #5ad18a}.gc2 em{font-style:normal;font-size:13px;position:absolute;top:6px;right:9px}.gc2.revised em{color:#8fc3ff}.gc2.new em{color:#9fe3bb}
 .pfoot{position:absolute;left:28px;bottom:22px;font-size:18px;color:#8f98a8}
 .pv{position:absolute;left:56px;top:120px;width:1100px;opacity:.55}.pr{margin-bottom:26px;border-radius:18px;padding:6px}.pr.hl{opacity:1;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
 .prt{font-size:26px;font-weight:500;margin-bottom:10px}.prc{display:flex;gap:16px}.prc i{display:block;width:250px;height:140px;border-radius:14px}
