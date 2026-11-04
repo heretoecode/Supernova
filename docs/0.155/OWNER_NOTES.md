@@ -431,3 +431,14 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   per-part choices are in **Playback › Skipping** (`20`): Intro, Recap, Preview, Outro, Credits, each inline
   Play · Skip button · Skip · Smart (Credits: Safe skip instead of Skip). Defaults as today.
 - **Status:** approved by the owner on 4 Nov 2026 (`18`–`20`) — awaiting go-ahead to code.
+
+## 29. Settings › System (mock-ups `docs/design/proposals/settings/21`–`24`)
+- **Backup** (`21`): Back up now (last backup shown), Save backups to (Supernova's own folder browser), What to include
+  inline: Everything · Settings only · Custom…; Include file names and locations off by default; Restore from a backup
+  (shows what will change first); What's in a backup (short page replacing the two walls of text).
+- **Custom…** (`24`): side panel sized to content, categories in plain words under five groups; Sources off by default.
+- **Diagnostics** (`22`): Report a problem (last reference folded in), Save a diagnostic report, Keep detailed logs.
+  Duplicate first row and Show Latest Reference removed; Issues Digest and Diagnostic Level move to Advanced.
+- **Advanced** (`23`): the four compatibility pages in one, grouped Video · Audio · Other, with one warning line.
+- The "Backup could not be prepared" bug is separate: Codex is analysing it (`BRIEF_0155_BACKUP.md`).
+- **Status:** awaiting the owner's review.
