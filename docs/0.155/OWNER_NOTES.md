@@ -342,3 +342,8 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (Trakt, IMDb) use: Anime, Biography, Disaster (volcano; first drawn as a tornado, which did not read), Game Show, Holiday, Martial Arts, Mini-series, Musical, Short, Sport,
   Superhero. The picker in `03` uses the proposed set.
 - **Status:** approved by the owner on 4 Nov 2026 (side panel `01`–`04`, genre icon set `06` with Disaster as a volcano) — awaiting go-ahead to code.
+
+## 23. Settings review (all eight sections)
+- Full review written to `docs/0.155/SETTINGS_REVIEW.md` from the owner's photos (owner brief: move, remove, rename or
+  add settings, sections and pages as needed).
+- **Status:** awaiting the owner's reaction to the review — then mock-ups — then go-ahead to code.
