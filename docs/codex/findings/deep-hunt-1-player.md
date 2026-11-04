@@ -2,7 +2,7 @@
 
 Source snapshot: `72b0756cb`. Read-only: no fixes, tests or builds were performed. The known U1, N1, N2, L1, P1, U2 and L2 findings are excluded.
 
-Coverage: **44 / 84 files fully read** (28 inherited reads at `72b0756cb`, plus 16 new full reads at `160b429f0`; see continuation below). A yes means every source line was read and the constructors/methods, callbacks, guards and teardown were considered. An excerpt, reference scan or prior-run read is not counted. This is partial progress; no unreviewed file is certified clean.
+Coverage (current inventory at `eeba8c6ca`): **82 / 85 files fully read at the recorded source snapshots** — 58 inherited reads plus 24 new full reads in the BRIEF_0155_MORE item-5 continuation below. The new inventory includes PlayerLaunchContract; no historical inventory file was removed. The three no rows remain unread in full. Historical yes rows are not a claim of a fresh full-file read in this run. Every table line count was refreshed against this branch. A yes means every source line was read at its recorded review snapshot; supporting excerpts never earn yes. This is partial progress, not a clean bill of health.
 
 Priority was kept: work stopped within player/, so no later group received a deep-review yes. Cross-file excerpts used to verify a trigger are supporting evidence only. The four coverage inventories include Part A exclusions as no; those exclusions are listed separately below. Group 4 includes a conservative transitive utils reference/import closure so utility dependencies are not silently omitted.
 
@@ -27,11 +27,11 @@ None in this group. Shared player classes were retained for review; no whole pla
 | File | Lines | Fully read (yes/no) |
 |---|---:|---|
 | `src/main/java/com/archos/mediacenter/video/player/ArchosSeekBar.java` | 63 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java` | 157 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioDelayPicker.java` | 164 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerAbstract.java` | 109 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerDialog.java` | 169 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/AudioDelayPickerDialogInterface.java` | 33 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPicker.java` | 155 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPicker.java` | 162 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerAbstract.java` | 94 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerDialog.java` | 138 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/AudioSpeedPickerDialogInterface.java` | 33 | yes |
@@ -40,9 +40,9 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/ChaptersDbClient.java` | 326 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/ChaptersDbPlayback.java` | 81 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/ExternalPlayerService.java` | 170 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/ExternalResumeIntent.java` | 108 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/ExternalResumeIntent.java` | 112 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerActivity.java` | 79 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerService.java` | 1047 | no |
+| `src/main/java/com/archos/mediacenter/video/player/FloatingPlayerService.java` | 1047 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/FocusableTVCardView.java` | 26 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/IPlayerControl.java` | 45 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/NoneEffect.java` | 32 | yes |
@@ -50,19 +50,20 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackAgeOverlay.java` | 200 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackChapters.java` | 32 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackResumePolicy.java` | 90 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java` | 1137 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/PlaybackSubtitlePanel.java` | 1143 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlaybackViewingCoverage.java` | 58 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/Player.java` | 1767 | no |
-| `src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java` | 5869 | no |
-| `src/main/java/com/archos/mediacenter/video/player/PlayerBrightnessManager.java` | 148 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/Player.java` | 1767 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java` | 5848 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PlayerBrightnessManager.java` | 157 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerController.java` | 3622 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PlayerControlsRelativeLayout.java` | 129 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/PlayerService.java` | 3672 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PlayerLaunchContract.java` | 26 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/PlayerService.java` | 3678 | no |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewAdjustmentValue.java` | 18 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewHudTiming.java` | 14 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackInfo.java` | 152 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackLoading.java` | 290 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java` | 832 | no |
+| `src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java` | 832 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewSeekPolicy.java` | 17 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewTaglines.java` | 20 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/PreviewTechnicalInfo.java` | 160 | yes |
@@ -73,43 +74,43 @@ None in this group. Shared player classes were retained for review; no whole pla
 | `src/main/java/com/archos/mediacenter/video/player/SeekTooltipDrawable.java` | 21 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SegmentSkippingPolicy.java` | 19 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SkipProgressDrawable.java` | 95 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/StereoDiveEffect.java` | 654 | no |
+| `src/main/java/com/archos/mediacenter/video/player/StereoDiveEffect.java` | 654 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/StereoMergeArchosEffect.java` | 84 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/StereoMergeEffect.java` | 47 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleColorPicker.java` | 170 | no |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPicker.java` | 192 | no |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerAbstract.java` | 94 | no |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerDialog.java` | 178 | no |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerDialogInterface.java` | 46 | no |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleEngine.java` | 581 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleColorPicker.java` | 170 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPicker.java` | 192 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerAbstract.java` | 94 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerDialog.java` | 178 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleDelayPickerDialogInterface.java` | 46 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleEngine.java` | 584 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleManager.java` | 829 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitlePlaybackBackend.java` | 317 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/SubtitleSettingsDialog.java` | 341 | no |
+| `src/main/java/com/archos/mediacenter/video/player/SubtitleSettingsDialog.java` | 341 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SubtitleSpacerView.java` | 41 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/SummaryListPreference.java` | 39 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/SurfaceController.java` | 751 | no |
+| `src/main/java/com/archos/mediacenter/video/player/SurfaceController.java` | 751 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/TextShadowSpan.java` | 56 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/TextureSurfaceRenderer.java` | 265 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/TimerPickerAbstract.java` | 98 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/TrackInfoController.java` | 433 | no |
-| `src/main/java/com/archos/mediacenter/video/player/UpdateNextTask.java` | 444 | no |
+| `src/main/java/com/archos/mediacenter/video/player/TrackInfoController.java` | 433 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/UpdateNextTask.java` | 444 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/VideoEffect.java` | 114 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/VideoEffectRenderer.java` | 288 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/AudioDelayTVPicker.java` | 358 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/AudioSpeedTVPicker.java` | 311 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/SubtitleDelayTVPicker.java` | 366 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVCardDialog.java` | 398 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVCardView.java` | 633 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenu.java` | 359 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuAdapter.java` | 396 | no |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuItem.java` | 276 | no |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/AudioDelayTVPicker.java` | 358 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/AudioSpeedTVPicker.java` | 311 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/SubtitleDelayTVPicker.java` | 366 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVCardDialog.java` | 398 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVCardView.java` | 633 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenu.java` | 359 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuAdapter.java` | 396 | yes |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuItem.java` | 276 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuSeparator.java` | 35 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVOnScrollListener.java` | 20 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVPillItem.java` | 197 | no |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVPillItem.java` | 197 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVScrollView.java` | 54 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVSlaveView.java` | 30 | yes |
 | `src/main/java/com/archos/mediacenter/video/player/tvmenu/TVUtils.java` | 72 | yes |
-| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TimerDelayTVPicker.java` | 300 | no |
+| `src/main/java/com/archos/mediacenter/video/player/tvmenu/TimerDelayTVPicker.java` | 300 | yes |
 
 
 ## 2026-11-04 continuation — BRIEF_0155_PREP Part 4
@@ -159,3 +160,35 @@ No new confirmed finding was added and no earlier ID was re-reported. Review not
 
 No production code changed for this part. Remaining large player/service/controller/menu/effect
 files still require full reads; JNI/GL output and remote navigation were not exercised.
+
+
+## 2026-11-04 continuation — BRIEF_0155_MORE item 5, group 1
+
+Reviewed app source `eeba8c6cae66abc7a6f7203e8e0b24e3da003968` after pulling the existing branch. Read HANDS_OFF first. Refreshed the player inventory: all historical 84 Java files remain; `PlayerLaunchContract.java` is the one added file, now included in the denominator. No player file is under the current hands-off list. Updated every table line count; inherited yes rows retain their earlier review provenance.
+
+Added **24 full-file reads, 10,569 lines**: FloatingPlayerService, Player, PlayerLaunchContract, PreviewPlaybackMenus, StereoDiveEffect, SubtitleColorPicker, SubtitleDelayPicker, SubtitleDelayPickerAbstract, SubtitleDelayPickerDialog, SubtitleDelayPickerDialogInterface, SubtitleSettingsDialog, SurfaceController, TrackInfoController, UpdateNextTask, and tvmenu/{AudioDelayTVPicker, AudioSpeedTVPicker, SubtitleDelayTVPicker, TimerDelayTVPicker, TVCardDialog, TVCardView, TVMenu, TVMenuAdapter, TVMenuItem, TVPillItem}. These are 23 formerly unread files plus the new contract. Group 1 is now **82/85 yes**; **PlayerActivity.java (5,848 lines), PlayerController.java (3,622), and PlayerService.java (3,678) remain no**. Their supporting caller excerpts below do not count as full reads. Finish those three before refreshing/advancing groups 2, 3 and 4.
+
+This is read-only hunt work. No app code, resources, manifests, tests, native/dependency patches or configuration changed. No Gradle, Android/JUnit/Robolectric test or Shield run. Findings are static paths with explicit trigger bounds, not observed incidents on the owner's device.
+
+| ID | File:line | What goes wrong | Evidence | Suggested fix (not applied) | Severity | Confidence |
+| --- | --- | --- | --- | --- | --- | --- |
+| DP-08 | `player/Player.java:701` (also `:532`); `res/raw/logback_full.xml:12,24,45` | Opening a network video writes its full source URI, including any user-info, private path or signed query, to ordinary INFO logs. No trace logging or malformed resume extra is required. | `openVideo` calls `log.info("openVideo: " + mUri)` before source setup. The full logging configuration enables Player at INFO and encodes `%msg` directly to Logcat and the rolling file; `CustomApplication.java:1075–1097` installs that configuration. This message does not pass through typed Diagnostics redaction. For a fixture URL containing `?token=PRIVATE_SENTINEL`, that query is part of the message by construction. The debug setter at :532 repeats the disclosure if debug is enabled. This is the playback source logger, distinct from N2's FTP-credential dialog and DP-04's malformed resume-value expansion. | Replace these source messages with a bounded protocol/outcome or existing safe location category; never format the raw URI. Add a captured-logger regression using URI user-info, signed queries, fragments and private file paths; assert neither INFO nor DEBUG contains fixture secrets while source open is still attempted. Audit neighboring source logs separately rather than claiming these two lines sanitize the whole application. Pure internal logging fix is a candidate for item 6 after the ordered hunt. | user-visible (security/privacy) | high |
+| DP-09 | `player/UpdateNextTask.java:112–146,299–308`; supporting `player/PlayerService.java:414–431,2324–2357` | Folder auto-next/repeat, and the legacy/no-cache episode fallback, can choose a video explicitly hidden by the user. A hidden row that sorts immediately after the current file is selected ahead of a later visible row. | Folder predicates contain bucket/path only; findEpisode contains episode/show/season only. Both query the general video provider, without `LoaderUtils.HIDE_USER_HIDDEN_FILTER`. The pinned prepared MediaLib `VideoProvider.java:332–338` selects the video view without adding that predicate; the current view inherits only volume-hidden/media-type/active-server filtering (`VideoOpenHelper.java:1512–1517`), which is different from `Archos_hideFile`. By contrast the playlist SQL here explicitly includes the user-hidden filter at :218. PlayerService consumes the result and starts it on auto-next; the Preview cached-episode branch can bypass this fallback, so that branch is not claimed affected. A minimal SQLite fixture with visible A, hidden B and visible C reproduced B for the exact folder predicate; adding `Archos_hideFile=0` selected C. This was a predicate probe, not an Android playback test. | Owner/Claude: use the same eligibility contract for next-file selection as the relevant visible library; filter before LIMIT and before wrap/episode selection. Test hidden middle/first rows, all-hidden remainder, repeat wrap, cached versus uncached binge, and explicit playback of a hidden file separately. **No fix here: this changes which content plays and therefore visible screen/playback behavior under rule 2.** | user-visible | high |
+| DP-10 | `player/UpdateNextTask.java:337–345,400–434`; supporting `player/PlayerService.java:410–412,1403–1406` | Cancelling obsolete next-file discovery does not stop an already-running raw network listing. A slow/trickling source can retain that task's worker and connection after playback moves on; repeated cancellations can accumulate obsolete workers. | Service replacement/end uses `cancel(false)`. That sets the volatile result fence, calls Future.cancel(false) and executor.shutdown(), neither of which interrupts a running callable. run() performs synchronous raw `getFileList()` with no cancellation checks or owned call cancellation. The completion-wait runnable is queued behind the blocked listing on the same single executor, so its finally cannot release it while the listing is stuck. Pinned prepared FileCore WebdavRawLister:39–45 delegates to synchronous Sardine; WebdavUtils clients specify no whole-call timeout. A silent socket may hit inactivity timeout; a continuing trickle can avoid it. Existing source-scan drafts are not installed and even their thread-local scan scope is not entered by UpdateNextTask. Callback publication itself *is* fenced by isCancelled; no stale next-result claim is made. | Give each lookup owned transport cancellation/deadline and cooperative traversal cancellation; cancel obsolete work without shutting down shared playback/network clients. Test a real-socket silent/trickle listing, repeated replacement/cancel, worker termination and absence of late result callbacks. Preserve native/platform ownership until any noninterruptible work exits. No fix in this read-only item; evaluate the purely internal ownership change at item 6. | user-visible (resource retention under stalled I/O) | high for retention path; impact depends on source/cancellation frequency |
+
+Paths in the findings table beginning `player/` are relative to `src/main/java/com/archos/mediacenter/video/`. MediaLib/FileCore references mean the exact pinned sources plus the existing ordered `supernova146-dependency-patches.json` operations, not the moving upstream tips or the uninstalled scan drafts. Scratch dependency worktrees from the previous run contain draft edits; dependency evidence in this pass was checked against their prepared baseline commit where relevant.
+
+### Review notes and rejected promotions
+
+- Player source generation/instance checks reject obsolete source callbacks; audio-focus listener epochs, pause intent, resume context and surface suspend/reopen paths were read in full. No native/JNI lifetime-safety claim follows from that Java review. Source setup's release interleavings require the backend's synchronization contract, so they were not promoted to a new native crash.
+- FloatingPlayerService binds/unbinds and registers/unregisters its receiver, but its destruction path differs from removeFloatingView and does not itself stop every frontend/window callback. Normal switching invokes onFrontendDetached via PlayerService and removes the old window. Without a proven live teardown sequence bypassing that handoff, no additional orphan-overlay crash/leak is claimed. It is manifest-declared but not established as a normal Shield route.
+- The remaining touch-dialog repeat patterns belong to the already recorded cancelled-touch family; no additional DP-06 report or new ID was generated. Legacy spinner carry/format edge cases were read, but no screen behavior was changed or certified.
+- TV menu/card focus, mirroring and callback code was read. Suspicious negative saved-focus indices and dialog scroll callbacks need a proven caller sequence; no new crash is asserted from an isolated setter contract. TimerDelayTVPicker.createSlaveView inflates an AudioDelayTVPicker root and casts it to the timer type, but the only located createTVTimerDialog invocation is inside a block comment (`PlayerActivity.java:3193–3204`). Consequently this is a dormant template mismatch, **not a confirmed reachable crash and not a finding ID**. An XML root-class probe verified only the type mismatch. Recheck reachability before any future cleanup/fix; no template was edited.
+- SurfaceController's sizing, cutout, HDR and subtitle-canvas code and StereoDiveEffect's GL allocation/draw/deinitialization paths were read without editing presentation. GL output, native transaction lifetime and device focus are untested. Existing OpenGL shader-retention concerns were not re-reported as a confirmed failure.
+- PlayerLaunchContract preserves explicit stereo-mode precedence over alias metadata and catches a missing component; normal callers provide a real Context. No confirmed issue added for that new contract.
+
+### Verification and continuation
+
+The SQLite predicate probe returned hidden fixture ID 2 for the current next-in-bucket predicate and visible ID 3 after applying the established hidden filter. The XML root-class probe confirmed AudioDelayTVPicker versus TimerDelayTVPicker in the dormant timer mirror; the final source caller check rejected promotion to a reachable crash because its menu entry is commented out. These are narrow read-only checks, not app tests. No credentials, live network media or device logs were used.
+
+No U1/N1/N2/L1/P1/U2/L2 or DP-01…DP-07 finding was re-reported. Keep the three large no rows as the next full-file review boundary; do not skip into later groups or item 6 based on this partial player continuation. All fixes, including the internally fixable logging/cancellation candidates, are deferred until the ordered hunt reaches item 6; UI/playback/template changes remain owner/Claude findings under rule 2.
