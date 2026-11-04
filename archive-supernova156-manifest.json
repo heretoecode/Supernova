@@ -1,0 +1,39 @@
+{
+  "schema": 2,
+  "repository": "heretoecode/Supernova",
+  "run_id": 40843685431,
+  "source_commit": "e2ff14b954459dba40328baa5e00fe5b588dcb34",
+  "branch": "native-archive-0146",
+  "files": [
+    {
+      "name": "NATIVE_CI_ARTIFACT_VERIFICATION.json",
+      "bytes": 1795,
+      "sha256": "a9203633a9dc8a842f028f401e824c537480ebf8c50e6279075498f9d9b5f625"
+    },
+    {
+      "name": "native-supernova146.lock.json",
+      "bytes": 6569,
+      "sha256": "a1197ab90201ea5f3bcd7be11223265a28f84440c22272c06299ddc1b1e9064f"
+    },
+    {
+      "name": "supernova-0146-native-arm64-v8a.zip",
+      "bytes": 59888643,
+      "sha256": "d7a94336c9fd1d4e3a8b24bc32955a5ad20db8114fd7303de999b263da5b3daa"
+    },
+    {
+      "name": "supernova-0146-native-armeabi-v7a.zip",
+      "bytes": 53455971,
+      "sha256": "f7807095dbe92201f14a65e1487ee31907acf073dc79fcf3cd8980719fe58b64"
+    },
+    {
+      "name": "supernova-0146-native-x86.zip",
+      "bytes": 56790712,
+      "sha256": "31ec226e28cfcd193493189177f575aea22f65235ec76f07f2cc195300df6691"
+    },
+    {
+      "name": "supernova-0146-native-x86_64.zip",
+      "bytes": 60773507,
+      "sha256": "f2663047f126b5910b3e1cfa41d774052f1efeeb11736bd153d5c618d65513cc"
+    }
+  ]
+}
