@@ -1,0 +1,355 @@
+diff --git a/src/com/archos/filecorelibrary/webdav/ScanIoScope.java b/src/com/archos/filecorelibrary/webdav/ScanIoScope.java
+new file mode 100644
+index 0000000..f885beb
+--- /dev/null
++++ b/src/com/archos/filecorelibrary/webdav/ScanIoScope.java
+@@ -0,0 +1,98 @@
++package com.archos.filecorelibrary.webdav;
++
++import java.io.IOException;
++import java.util.HashSet;
++import java.util.Set;
++import java.util.concurrent.CancellationException;
++import java.util.concurrent.Executors;
++import java.util.concurrent.ScheduledExecutorService;
++import java.util.concurrent.ScheduledFuture;
++import java.util.concurrent.TimeUnit;
++import okhttp3.Call;
++import okhttp3.EventListener;
++import okhttp3.OkHttpClient;
++
++/** Thread-confined scanner scope. Never cancels a shared client's other consumers. */
++public final class ScanIoScope implements AutoCloseable {
++    private static final ThreadLocal<ScanIoScope> CURRENT = new ThreadLocal<>();
++    private static final ScheduledExecutorService CLOCK = Executors.newSingleThreadScheduledExecutor(r -> {
++        Thread t = new Thread(r, "ScanIoDeadline");
++        t.setDaemon(true);
++        return t;
++    });
++    private final Set<Call> calls = new HashSet<>();
++    private final Thread owner = Thread.currentThread();
++    private final ScheduledFuture<?> deadline;
++    private boolean cancelled;
++    private boolean closed;
++
++    public ScanIoScope(long timeout, TimeUnit unit) {
++        if (CURRENT.get() != null) throw new IllegalStateException("Nested scan scope");
++        if (timeout <= 0) throw new IllegalArgumentException("Positive deadline required");
++        deadline = CLOCK.schedule(this::cancel, timeout, unit);
++        CURRENT.set(this);
++    }
++
++    public void cancel() {
++        Set<Call> owned;
++        synchronized (this) {
++            if (closed || cancelled) return;
++            cancelled = true;
++            owned = new HashSet<>(calls);
++            // Deliver the interrupt before close can let this thread move to its next task.
++            owner.interrupt();
++        }
++        for (Call call : owned) call.cancel();
++    }
++
++    public synchronized boolean isCancelled() {
++        return cancelled;
++    }
++
++    public static void checkpoint() {
++        ScanIoScope scope = CURRENT.get();
++        if (scope != null && (scope.isCancelled() || Thread.currentThread().isInterrupted())) {
++            throw new CancellationException("Scan cancelled");
++        }
++    }
++
++    /** Called only while constructing a scanner's Sardine or redirect client. */
++    static OkHttpClient client(OkHttpClient base) {
++        ScanIoScope scope = CURRENT.get();
++        if (scope == null || base == null) return base;
++        checkpoint();
++        return base.newBuilder().eventListenerFactory(call -> {
++            EventListener delegate = base.eventListenerFactory().create(call);
++            return new EventListener() {
++                @Override public void callStart(Call call) {
++                    synchronized (scope) {
++                        if (scope.cancelled || scope.closed) call.cancel();
++                        else scope.calls.add(call);
++                    }
++                    delegate.callStart(call);
++                }
++                @Override public void callEnd(Call call) {
++                    synchronized (scope) { scope.calls.remove(call); }
++                    delegate.callEnd(call);
++                }
++                @Override public void callFailed(Call call, IOException failure) {
++                    synchronized (scope) { scope.calls.remove(call); }
++                    delegate.callFailed(call, failure);
++                }
++            };
++        }).build();
++    }
++
++    @Override public void close() {
++        if (Thread.currentThread() != owner) throw new IllegalStateException("Wrong scan owner");
++        Set<Call> owned;
++        synchronized (this) {
++            closed = true;
++            deadline.cancel(false);
++            owned = new HashSet<>(calls);
++            calls.clear();
++        }
++        CURRENT.remove();
++        for (Call call : owned) call.cancel();
++    }
++}
+diff --git a/src/com/archos/filecorelibrary/webdav/WebdavUtils.java b/src/com/archos/filecorelibrary/webdav/WebdavUtils.java
+index 3290120..bd8d539 100644
+--- a/src/com/archos/filecorelibrary/webdav/WebdavUtils.java
++++ b/src/com/archos/filecorelibrary/webdav/WebdavUtils.java
+@@ -206,5 +206,7 @@ public class WebdavUtils {
+             sardines.put(cred, sardine);
+-            return sardine;
+         }
+-        return sardine;
++        ScanIoScope.checkpoint();
++        OkHttpClient base = httpClients.get(cred);
++        OkHttpClient scoped = ScanIoScope.client(base);
++        return scoped == base ? sardine : new OkHttpSardine(scoped);
+     }
+@@ -215,3 +217,3 @@ public class WebdavUtils {
+             cred = new NetworkCredentialsDatabase.Credential("anonymous", "", buildKeyFromUri(uri).toString(), "", true);
+-        return httpClients.get(cred);
++        return ScanIoScope.client(httpClients.get(cred));
+     }
+@@ -238,3 +240,3 @@ public class WebdavUtils {
+         Request request = new Request.Builder().url(baseUrl + "/").method("OPTIONS", null).build();
+-        try (Response response = sRedirectClient.newCall(request).execute()) {
++        try (Response response = ScanIoScope.client(sRedirectClient).newCall(request).execute()) {
+             // A Web UI can redirect HEAD/GET to its login page while the same URL is a valid
+@@ -299,3 +301,3 @@ public class WebdavUtils {
+         Request request = new Request.Builder().url(url).method("OPTIONS", null).build();
+-        try (Response response = sRedirectClient.newCall(request).execute()) {
++        try (Response response = ScanIoScope.client(sRedirectClient).newCall(request).execute()) {
+             return response.header("DAV") != null;
+diff --git a/test/java/com/archos/filecorelibrary/webdav/ScanIoScopeTest.java b/test/java/com/archos/filecorelibrary/webdav/ScanIoScopeTest.java
+new file mode 100644
+index 0000000..f1303dd
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/webdav/ScanIoScopeTest.java
+@@ -0,0 +1,119 @@
++package com.archos.filecorelibrary.webdav;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertSame;
++import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
++
++import java.io.IOException;
++import java.util.concurrent.CancellationException;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++import okhttp3.Call;
++import okhttp3.OkHttpClient;
++import okhttp3.Request;
++import okhttp3.Response;
++import okhttp3.mockwebserver.MockResponse;
++import okhttp3.mockwebserver.MockWebServer;
++import okhttp3.mockwebserver.SocketPolicy;
++import org.junit.After;
++import org.junit.Test;
++
++/** Real sockets exercise cancellation before headers and while consuming a response body. */
++public class ScanIoScopeTest {
++    @After public void clearInterrupt() { Thread.interrupted(); }
++
++    @Test public void silentServerIsCancelledByWholeSourceDeadline() throws Exception {
++        deadlineFailure(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
++    }
++
++    @Test public void tricklingBodyCannotKeepSourceAliveBeyondDeadline() throws Exception {
++        deadlineFailure(new MockResponse().setBody("x".repeat(16_384))
++                .throttleBody(1, 20, TimeUnit.MILLISECONDS));
++    }
++
++    private void deadlineFailure(MockResponse response) throws Exception {
++        try (MockWebServer server = new MockWebServer()) {
++            server.enqueue(response);
++            server.start();
++            ExecutorService worker = Executors.newSingleThreadExecutor();
++            try {
++                Future<Boolean> result = worker.submit(() -> {
++                    OkHttpClient base = new OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).build();
++                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS)) {
++                        Call call = ScanIoScope.client(base).newCall(new Request.Builder().url(server.url("/TV")).build());
++                        try (Response received = call.execute()) {
++                            received.body().string();
++                            fail("Source should be cancelled");
++                        } catch (IOException expected) {
++                            assertTrue("Deadline must own the failure", scope.isCancelled());
++                            assertTrue(call.isCanceled());
++                        } finally {
++                            Thread.interrupted();
++                        }
++                        try { ScanIoScope.checkpoint(); fail("Cancelled scan must be fenced"); }
++                        catch (CancellationException expected) { /* no late reconciliation */ }
++                        return true;
++                    } finally { Thread.interrupted(); }
++                });
++                assertTrue(result.get(5, TimeUnit.SECONDS));
++                assertTrue(server.takeRequest(1, TimeUnit.SECONDS) != null);
++            } finally {
++                worker.shutdownNow();
++            }
++        }
++    }
++
++    @Test public void disconnectFailsWithoutPretendingDeadlineExpiredAndNextScopeWorks() throws Exception {
++        try (MockWebServer server = new MockWebServer()) {
++            server.enqueue(new MockResponse().setBody("x".repeat(16_384))
++                    .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY));
++            server.enqueue(new MockResponse().setBody("next"));
++            server.start();
++            OkHttpClient base = new OkHttpClient();
++            try (ScanIoScope scope = new ScanIoScope(10, TimeUnit.SECONDS)) {
++                try (Response received = ScanIoScope.client(base).newCall(
++                        new Request.Builder().url(server.url("/TV")).build()).execute()) {
++                    received.body().string();
++                    fail("Truncated body must fail");
++                } catch (IOException expected) { assertFalse(scope.isCancelled()); }
++            }
++            assertSame(base, ScanIoScope.client(base));
++            try (ScanIoScope scope = new ScanIoScope(10, TimeUnit.SECONDS);
++                 Response received = ScanIoScope.client(base).newCall(
++                         new Request.Builder().url(server.url("/Movies")).build()).execute()) {
++                assertEquals("next", received.body().string());
++            }
++        }
++    }
++
++    @Test public void cancellingScannerDoesNotCancelOtherCallOnSharedClient() throws Exception {
++        try (MockWebServer server = new MockWebServer()) {
++            server.enqueue(new MockResponse().setBody("playback"));
++            server.start();
++            OkHttpClient base = new OkHttpClient();
++            Call playback = base.newCall(new Request.Builder().url(server.url("/playback")).build());
++            try (ScanIoScope scope = new ScanIoScope(1, TimeUnit.MINUTES)) {
++                scope.cancel();
++                assertFalse(playback.isCanceled());
++            }
++            Thread.interrupted();
++            try (Response response = playback.execute()) { assertEquals("playback", response.body().string()); }
++            assertSame(base, ScanIoScope.client(base));
++        }
++    }
++
++    @Test public void cancellationBeforeExecuteAlsoCancelsCallCreatedEarlier() throws Exception {
++        OkHttpClient base = new OkHttpClient();
++        try (ScanIoScope scope = new ScanIoScope(1, TimeUnit.MINUTES)) {
++            Call call = ScanIoScope.client(base).newCall(new Request.Builder().url("http://localhost:1/").build());
++            scope.cancel();
++            Thread.interrupted();
++            try (Response response = call.execute()) { fail("Cancelled before execute"); }
++            catch (IOException expected) { assertTrue(call.isCanceled()); }
++        }
++    }
++}
+diff --git a/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java b/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java
+new file mode 100644
+index 0000000..e0bdbdf
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java
+@@ -0,0 +1,91 @@
++package com.archos.filecorelibrary.webdav;
++
++import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
++
++import android.app.Application;
++import android.net.Uri;
++import androidx.test.core.app.ApplicationProvider;
++import com.archos.environment.ArchosUtils;
++import java.util.concurrent.CancellationException;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++import okhttp3.mockwebserver.MockResponse;
++import okhttp3.mockwebserver.MockWebServer;
++import okhttp3.mockwebserver.SocketPolicy;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 28)
++public class WebdavScanDeadlineTest {
++    @Before public void setUp() {
++        Application app = ApplicationProvider.getApplicationContext();
++        ArchosUtils.setGlobalContext(app);
++        WebdavUtils.getInstance(app);
++    }
++
++    @Test public void actualRawListingSilentServerIsCancelled() throws Exception {
++        rawListingFailure(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
++    }
++
++    @Test public void actualRawListingTrickleIsCancelled() throws Exception {
++        rawListingFailure(new MockResponse().setResponseCode(207).setBody("<" + "x".repeat(16_384))
++                .throttleBody(1, 20, TimeUnit.MILLISECONDS));
++    }
++
++    private void rawListingFailure(MockResponse response) throws Exception {
++        try (MockWebServer server = new MockWebServer()) {
++            server.enqueue(response);
++            server.start();
++            Uri uri = Uri.parse(server.url("/TV").toString()).buildUpon().scheme("webdav").build();
++            // Bypass redirect probing in this case; separate test below covers that path.
++            WebdavUtils.setRedirectClientForTesting(new okhttp3.OkHttpClient.Builder()
++                    .addInterceptor(chain -> new okhttp3.Response.Builder().request(chain.request())
++                            .protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK")
++                            .body(okhttp3.ResponseBody.create("", okhttp3.MediaType.get("text/plain"))).build()).build());
++            WebdavUtils.peekInstance().getSardine(uri); // initialise credential lookup before timing I/O
++            WebdavFile2.uriToHttp(uri);
++            ExecutorService worker = Executors.newSingleThreadExecutor();
++            try {
++                Future<Boolean> result = worker.submit(() -> {
++                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS)) {
++                        try { new WebdavRawLister(uri).getFileList(); }
++                        catch (Exception expected) { /* transport may translate cancellation */ }
++                        assertTrue(scope.isCancelled());
++                        try { ScanIoScope.checkpoint(); fail("No late scan writes"); }
++                        catch (CancellationException expected) { return true; }
++                        return false;
++                    } finally { Thread.interrupted(); }
++                });
++                assertTrue(result.get(5, TimeUnit.SECONDS));
++                assertTrue(server.takeRequest(1, TimeUnit.SECONDS) != null);
++            } finally {
++                worker.shutdownNow();
++                WebdavUtils.setRedirectClientForTesting(null);
++            }
++        }
++    }
++
++    @Test public void actualRedirectProbeIsAlsoOwnedByScanScope() throws Exception {
++        try (MockWebServer server = new MockWebServer()) {
++            server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
++            server.start();
++            ExecutorService worker = Executors.newSingleThreadExecutor();
++            try {
++                Future<Boolean> result = worker.submit(() -> {
++                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS)) {
++                        WebdavUtils.peekInstance().resolveRedirect(Uri.parse(server.url("/TV").toString()));
++                        return scope.isCancelled();
++                    } finally { Thread.interrupted(); }
++                });
++                assertTrue(result.get(5, TimeUnit.SECONDS));
++            } finally { worker.shutdownNow(); }
++        }
++    }
++}
