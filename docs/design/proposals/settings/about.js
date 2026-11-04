@@ -30,9 +30,6 @@ Object.assign(P, { info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 
 const tabs = (open) => `<div class="tabs">${[['info', 'About'], ['news', 'What’s new'], ['lic', 'Licences'], ['dev', 'Device']].map(([k, t], i) => `<div class="tb${i === open ? ' open' : ''}">${ic(k, 26)}<span>${t}</span></div>`).join('')}</div>`;
 const shell = (open, body, foot) => `<div class="one"><div class="ohead"><div><div class="crumb">Settings</div><div class="stitle">About Supernova</div></div>${tabs(open)}</div><div class="rule"></div><div class="inner">${body}<div class="more">${foot}</div></div></div>`;
 const info = (t, v) => `<div class="kv"><span>${t}</span><b>${v}</b></div>`;
-const about = shell(0,
-  `<div class="hero"><div class="logo">S</div><div><div class="an">Supernova</div><div class="av">Version 0.155 · 4 November 2026</div><div class="ab">A video player for Android TV, based on NOVA Video Player 6.6.4.</div></div></div>` +
-  row('Credits & acknowledgements', 'NOVA, Archos, TMDB, JustWatch, Trakt and OpenSubtitles.', val(''), true), '');
 const esc = t => t.replace(/&/g, '&amp;');
 const histTop = [['November 2026', [['0.155', '4 Nov'], ['0.154', '3 Nov'], ['0.153', '3 Nov'], ['0.152', '2 Nov'], ['0.151', '2 Nov'], ['0.150', '2 Nov'], ['0.149', '1 Nov']]],
   ['October 2026', [['0.148', '31 Oct'], ['0.147', '29 Oct'], ['0.146', '29 Oct']]]];
@@ -55,9 +52,15 @@ const credits = [['Where Supernova comes from', [['NOVA Video Player', 'The app 
   ['JustWatch, via TMDB', 'Where to Watch', 'Where a title is available comes from JustWatch through TMDB. Availability can change.'],
   ['Trakt', 'Optional watch history sync', 'Signing in is optional and uses your own Trakt account.'],
   ['OpenSubtitles.com', 'Optional subtitle downloads', 'Uses your own OpenSubtitles.com account and its limits.']]]];
+const about = shell(0,
+  `<div class="hero sm"><div class="logo">S</div><div><div class="an">Supernova</div><div class="av">Version 0.155 · 4 November 2026</div><div class="ab">A video player for Android TV, based on NOVA Video Player 6.6.4.</div></div></div>` +
+  credits.map(([g, items]) => `<div class="csec2"><span>${g}</span><i></i></div>` +
+    items.map(([n, r, t], i) => `<div class="cr sm${g.startsWith('Where') && i === 0 ? ' f' : ''}"><div class="crn"><b>${n}</b><span>${r}</span></div><div class="crt">${t}</div></div>`).join('')).join('') +
+  `<div class="disc">No endorsement by any of these projects or services is implied.</div>`, '');
 const creditsPage = shell(0, `<div class="crumb2">About › Credits &amp; acknowledgements</div>` + credits.map(([g, items]) => `<div class="csec2"><span>${g}</span><i></i></div>` +
   items.map(([n, r, t], i) => `<div class="cr${g.startsWith('Where') && i === 0 ? ' f' : ''}"><div class="crn"><b>${n}</b><span>${r}</span></div><div class="crt">${t}</div></div>`).join('')).join('') +
   `<div class="disc">No endorsement by any of these projects or services is implied.</div>`, '');
+const QR = 'M0 0.5h7m1 0h1m1 0h1m1 0h1m1 0h1m3 0h1m3 0h7m-29 1h1m5 0h1m1 0h1m3 0h1m1 0h2m6 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m5 0h4m4 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h3m1 0h2m1 0h2m2 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h1m5 0h1m1 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m3 0h3m1 0h3m5 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-18 1h4m1 0h1m2 0h2m-20 1h1m4 0h3m1 0h2m2 0h1m2 0h1m2 0h2m5 0h2m-29 1h1m1 0h3m5 0h1m1 0h4m2 0h2m3 0h5m-24 1h5m1 0h2m2 0h1m3 0h1m2 0h3m1 0h2m-25 1h4m2 0h1m1 0h1m7 0h1m3 0h3m-25 1h1m1 0h1m1 0h1m1 0h3m5 0h3m3 0h3m2 0h1m1 0h1m-27 1h3m1 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h4m1 0h1m1 0h2m2 0h1m-29 1h1m3 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m5 0h1m1 0h1m-24 1h4m1 0h1m1 0h2m1 0h1m1 0h1m1 0h3m1 0h2m1 0h2m1 0h3m-27 1h1m1 0h5m1 0h1m7 0h1m1 0h1m6 0h3m-28 1h1m2 0h1m1 0h1m1 0h2m1 0h2m1 0h2m3 0h3m1 0h5m1 0h1m-29 1h3m1 0h4m3 0h5m1 0h1m1 0h2m3 0h1m3 0h1m-29 1h1m2 0h1m1 0h1m2 0h1m4 0h2m4 0h7m1 0h1m-28 1h1m4 0h3m2 0h2m2 0h2m1 0h1m1 0h6m1 0h1m1 0h1m-21 1h2m3 0h1m1 0h1m2 0h1m1 0h1m3 0h4m-28 1h7m1 0h2m1 0h5m2 0h3m1 0h1m1 0h1m-25 1h1m5 0h1m5 0h1m1 0h3m1 0h3m3 0h2m1 0h2m-29 1h1m1 0h3m1 0h1m4 0h3m2 0h9m-25 1h1m1 0h3m1 0h1m3 0h1m1 0h2m2 0h1m1 0h3m2 0h1m1 0h3m-28 1h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h2m2 0h1m1 0h6m2 0h1m-28 1h1m5 0h1m1 0h4m2 0h2m5 0h1m2 0h3m1 0h1m-29 1h7m2 0h4m4 0h2m2 0h1m2 0h1m1 0h1';
 const notice = `FFmpeg n9.0.2
 
 # License
@@ -71,8 +74,7 @@ Some optional parts of FFmpeg are licensed under the GNU General Public License
 version 2 or later (GPL v2+). See the file COPYING.GPLv2 for details. None of
 these parts are used by default, you have to explicitly pass --enable-gpl to
 configure to activate them. In this case, FFmpeg's license changes to GPL v2+.`;
-const licPage = shell(2, `<div class="crumb2">Licences › Playback engine</div><div class="lh"><div><div class="lhn">FFmpeg</div><div class="lhs">Reads and decodes almost every video and audio format</div></div></div>` +
-  `<div class="lfacts"><span><i>Version</i>9.0.2, with security fixes</span><span><i>Licence</i>LGPL 2.1 or later</span><span><i>Website</i>ffmpeg.org/legal.html</span></div>` +
+const licPage = shell(2, `<div class="crumb2">Licences › Playback engine</div><div class="lh"><div class="qr"><svg width="150" height="150" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#000" d="${QR}"/></svg><span>Scan for the website</span></div><div><div class="lhn">FFmpeg</div><div class="lhs">Reads and decodes almost every video and audio format</div><div class="lfacts"><span><i>Version</i>9.0.2, with security fixes</span><span><i>Licence</i>LGPL 2.1 or later</span></div></div></div>` +
   `<div class="csec2"><span>Licence text</span><i></i></div><div class="ltext f"><pre>${notice}</pre><div class="hfade"></div></div>`, '');
 const libs = [['App libraries', [['AndroidX', 'Apache 2.0'], ['OkHttp', 'Apache 2.0'], ['Retrofit', 'Apache 2.0'], ['jcifs-ng (Windows shares)', 'LGPL 2.1'], ['sshj (SFTP)', 'Apache 2.0'], ['sardine-android (WebDAV)', 'Apache 2.0']]],
   ['Playback engine', [['FFmpeg', 'LGPL 2.1'], ['libass (styled subtitles)', 'ISC'], ['dav1d (AV1)', 'BSD 2-Clause'], ['HarfBuzz', 'MIT']]]];
@@ -82,11 +84,10 @@ const dev = shell(3,
   `<div class="csec2"><span>Playback</span><i></i></div>` + info('Hardware video', 'H.264 · HEVC · VP9 · Dolby Vision · VP8 · MPEG-2 · VC-1') +
   `<div class="csec2"><span>Library</span><i></i></div>` + info('In your library', '85 films · 324 shows · 1,726 episodes') + info('Sources', '2 · USB drive and Put.io'), '');
 const shots = [
-  ['26-about.png', about, 'About: version, date and NOVA base said once; credits one step away'],
+  ['26-about.png', about, 'About: version and NOVA base once, with the credits on the same page'],
   ['27-whats-new.png', news, 'What’s new: every version since 0.1, newest first; the selected one is described on the right'],
   ['30-whats-new-start.png', newsEnd, 'The start of the list: test builds with no visible change are shown as one quiet line'],
-  ['31-credits.png', creditsPage, 'Credits & acknowledgements: opened from About; Back returns'],
-  ['32-licence.png', licPage, 'One licence opened: what it is, version, licence, website, then the full notice to scroll'],
+  ['32-licence.png', licPage, 'One licence opened: what it is, version and licence, a QR code for its website, then the full notice'],
   ['28-licences.png', lic, 'Licences: search, grouped into app libraries and playback engine'],
   ['29-device.png', dev, 'Device: device, decoders and library in plain words'],
 ];
@@ -146,9 +147,9 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .crumb2{font-size:20px;color:#aab3c4;margin:6px 14px 4px}
 .cr{border-radius:20px;padding:14px 22px;margin-bottom:4px}.cr.f{box-shadow:inset 0 0 0 3px #fff}.crn{display:flex;align-items:baseline;gap:16px}.crn b{font-size:25px;font-weight:500}.crn span{font-size:20px;color:#aab3c4}.crt{font-size:21px;color:#dfe5f1;margin-top:6px;line-height:1.4;max-width:1500px}
 .disc{font-size:19px;color:#8f98a8;margin:14px 22px}
-.lh{margin:10px 14px 16px}.lhn{font-size:38px;font-weight:500}.lhs{font-size:22px;color:#c9d3e6;margin-top:4px}
-.lfacts{display:flex;gap:48px;margin:0 14px 10px;font-size:22px}.lfacts i{font-style:normal;color:#aab3c4;margin-right:12px}
-.ltext{position:relative;border-radius:20px;background:#121418;margin:8px 0 0;height:560px;overflow:hidden;padding:20px 26px}.ltext.f{box-shadow:inset 0 0 0 3px #fff}.ltext pre{font-family:R;font-size:20px;line-height:1.5;color:#dfe5f1;white-space:pre-wrap;margin:0}.ltext .hfade{background:linear-gradient(0deg,#121418 15%,rgba(18,20,24,0))}
+.lh{margin:10px 14px 16px;position:relative;min-height:170px}.qr{position:absolute;right:0;top:-6px;display:flex;flex-direction:column;align-items:center;gap:8px}.qr svg{background:#fff;padding:12px;border-radius:14px;box-sizing:content-box}.qr span{font-size:18px;color:#aab3c4}.hero.sm{margin:6px 14px 10px}.hero.sm .logo{width:96px;height:96px;font-size:52px;border-radius:24px}.hero.sm .an{font-size:34px}.cr.sm{padding:10px 22px;margin-bottom:0}.lhn{font-size:38px;font-weight:500}.lhs{font-size:22px;color:#c9d3e6;margin-top:4px}
+.lfacts{display:flex;gap:48px;margin:22px 0 0;font-size:22px}.lfacts i{font-style:normal;color:#aab3c4;margin-right:12px}
+.ltext{position:relative;border-radius:20px;background:#121418;margin:8px 0 0;height:470px;overflow:hidden;padding:20px 26px}.ltext.f{box-shadow:inset 0 0 0 3px #fff}.ltext pre{font-family:R;font-size:20px;line-height:1.5;color:#dfe5f1;white-space:pre-wrap;margin:0}.ltext .hfade{background:linear-gradient(0deg,#121418 15%,rgba(18,20,24,0))}
 .label{z-index:20;position:absolute;right:56px;bottom:8px;font-size:18px;color:#c9d3e6}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
