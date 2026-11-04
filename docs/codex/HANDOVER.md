@@ -1,5 +1,53 @@
 # Handover to Claude — 2026-11-04
 
+## Latest backup brief and DP-10 checkpoint — 2026-11-04
+
+Read `reports/2026-11-04-0155-backup.md` for this run. It supersedes only the
+older DP-10 continuation below; the engine build/archive instructions remain.
+Pulled Codex `391326f1d`; fetched Claude `51c20fab2` and read HANDS_OFF first.
+
+- **BACKUP item 1 complete**, analysis-only commit `0fd0b8d6e`:
+  `findings/backup-failure.md` enumerates the export/message boundary, category
+  rejection sites, writer/closed-reader/destination/import distinctions, all
+  limits, timeout/cancellation/storage paths, diagnostic coverage and ranked
+  causes/tests. Leading candidate: MATCHES' **4 MiB uncompressed category cap**;
+  illustrative 61,050 valid movie matches need 8,413,815 bytes. This is not proof
+  of the owner's actual matched-file count/cause. The worker swallows the
+  exception without recording it; no Diagnostic Report entry guarantees the
+  cause. Claude owns any backup fix; no backup app code changed.
+- **NEXT item 3 still open**, prerequisite draft commit `cd1a1046f`:
+  new `.github/build/filecore-supernova155-ftp-listing-cancellation.patch`
+  follows all eight locked FileCore operations, scan draft, then lifetime/DAV
+  draft. It owns FTP/FTPS sockets before connect, survives PROT factory
+  replacement, checkpoints retries/list traversal and avoids cancelled logout.
+  No app caller/build integration or selection change. Never apply these
+  partial transport drafts independently as the completed DP-10 fix.
+- Fresh pinned eleven-patch apply/check and final-tree comparison passed.
+  **32 standalone JUnit tests passed** (20 new real FTP/FTPS socket tests +
+  12 existing lifetime/race tests), Java 17 on OpenJDK 21. Six actual
+  factory/Session Robolectric tests are supplied but unrun; all six changed or
+  added Java files parse. No Gradle, device build, workflow or NDK run here.
+
+**Exact next place:** `findings/dp10-listing-ownership.md`, heading
+“Backup-brief continuation”, numbered checkpoint 1. Validate the six actual
+FTP factory/Session tests; finish pre-socket DNS/credential loading, connect and
+retry races and Android 11 TLS-close coverage. Then isolate JSch/SSHJ/SMBJ/JCIFS
+listing resources; create the MediaLib UPnP owned-Browse companion; pair the
+completed hooks with an allowed new UpdateNextTask app draft and all worker/
+main-queue/unchanged-selection acceptance tests. Commit the complete DP-10 fix
+atomically. **NEXT item 4 (security/privacy audit) and onward remain pending**
+until item 3 is complete. Do not mark DP-10 fixed based on socket tests alone.
+
+FTP companion SHA-256:
+`d0776e100ac53107875a7b37742832d5f82d9fcfffd727f278b2cdd9d529df48`.
+Existing lifetime/DAV and scan draft hashes are unchanged. This run touched
+only Codex docs and that one permitted new patch. The three-dot comparison
+against fetched Claude has no hands-off/Gradle change; all `.github/` entries
+are additions with allowed names, including prior work. No existing `.github/`
+file changed in this run. Push only `codex/0155-code-2026-11-04`; no PR, merge,
+rebase, force push or workflow dispatch.
+
+
 ## Unit failures from run 41850284587 — corrected fixtures
 
 Commit `e27ac4bf5` repairs the three failures reported at `9fd8bc94c`. It extends
@@ -142,7 +190,8 @@ recipes have measured digests in the engine lock. Final validation: **16 archive
 + 14 native-stack offline tests pass**. No archive branch has been pushed and
 no workflow, NDK or Gradle build has run here; Claude must perform the live job.
 
-Exact continuation remains **NEXT item 3, DP-10 implementation**. There is
+The following is the **earlier DP-10 checkpoint**, superseded by the latest
+backup-brief section above. There is
 now a concrete **unintegrated draft** at
 `.github/build/filecore-supernova155-listing-cancellation.patch`, after the eight
 prepared FileCore operations and `filecore-supernova155-scan.patch` at `c4b760c`.
