@@ -8,19 +8,44 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.154",
-    "version_code": 154,
-    "date": "2026-11-03",
-    "kind": "Shield QA candidate \u2014 0.153 walk-through improvements and the new Local Storage page; physical verification pending",
+    "version": "0.155",
+    "version_code": 155,
+    "date": "2026-11-04",
+    "kind": "Shield QA candidate \u2014 playback engine update from NOVA 6.6.4; physical verification pending",
     "notes": [
-      "Charcoal menus and panels; Medium-weight button labels; no shadow round the focus box; focused cards have one crisp outline.",
-      "Home and Details heroes match: year, runtime and genres, tagline, a soft shadow and gentle left shade; no age rating, score or badges.",
-      "Playback Settings and Edit Page follow the More menu; Settings and Network & Files share one tile design.",
-      "New Local Storage: friendly drive names, path chips, two-line rows with buttons on the focused row, remembered folders.",
-      "Five bug fixes (subtitle cache rename, FTP port and logs, search provider, skip prompt); arm64-only Shield build."
+      "Playback engine updated to NOVA 6.6.4: Dolby Vision (including profile 9 and AV1) and HDR fixes, retries on another hardware decoder when one fails.",
+      "MPEG-TS duration and resume fixed; correct timing for files with more than one video track.",
+      "Styled (ASS/SSA) subtitles stay on screen in Fit width and zoom; subtitle box padding prepared for a future setting.",
+      "No screen changes; arm64-only Shield build."
     ]
   },
   "history": [
+    {
+      "version": "0.154",
+      "version_code": 154,
+      "date": "2026-11-03",
+      "kind": "Shield QA candidate \u2014 0.153 walk-through improvements and the new Local Storage page; physical verification pending",
+      "notes": [
+        "Charcoal menus and panels; Medium-weight button labels; no shadow round the focus box; focused cards have one crisp outline.",
+        "Home and Details heroes match: year, runtime and genres, tagline, a soft shadow and gentle left shade; no age rating, score or badges.",
+        "Playback Settings and Edit Page follow the More menu; Settings and Network & Files share one tile design.",
+        "New Local Storage: friendly drive names, path chips, two-line rows with buttons on the focused row, remembered folders.",
+        "Five bug fixes (subtitle cache rename, FTP port and logs, search provider, skip prompt); arm64-only Shield build."
+      ],
+      "source_sha": "9121939b64b5c7664d2ac4d079a0974d1b89dd28",
+      "evidence": "docs/0.154/SIGNED_QA_EVIDENCE.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "6a9efbb8ea44a25dc4fb1a34767a5a7bed662baaf3c44a3ef6ab2eea6030f366",
+      "artifact_id": 13289894265,
+      "run_id": 41761004673,
+      "apks": [
+        {
+          "sha256": "adcd2bca74126d9fdfe4fe0c7551a8b4f05c7670b51e60bad3416bb0883538ee",
+          "size": 37877398,
+          "filename": "Supernova_0.154.apk"
+        }
+      ]
+    },
     {
       "version": "0.153",
       "version_code": 153,
