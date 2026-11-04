@@ -171,26 +171,28 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   move, so it snaps.)
 - **Status:** approved by the owner on 4 Nov 2026 (`00`–`03` and the motion as described) — awaiting go-ahead to code.
 
-## 15. Intro/outro skip on by default (bug + owner decision)
-- **Context:** NOVA 6.6.3 (`915347c7`) turned intro/outro skip on by default. Supernova already has the feature
-  (TheIntroDB segments; per-type modes in Settings › Playback: intro = "Show Skip (5 seconds)", recap/preview =
-  "Smart" (skipped when binge-watching), credits = "Safe Auto Skip").
-- **Bug (Claude, from the code):** the master switch disagrees with itself. `PlayerService.DEFAULT_INTRODB_ENABLED`
-  is `false` (what the player actually reads), while the hidden Settings switch defaults to `true`. On a fresh
-  install skipping is therefore off unless it is switched on from the player menu.
-- **Decision (owner, 4 Nov 2026):** on by default. One default (`true`) used everywhere; the per-type modes above stay
-  as they are. Anyone who has explicitly switched it off keeps it off. Test: fresh preferences → enabled in player and
-  Settings; a stored `false` is respected.
-- **Status:** approved — awaiting go-ahead to code.
+## 15. Intro/outro skip on by default — already true in Supernova (correction, 4 Nov 2026)
+- **Claude's earlier note was wrong.** Signed Supernova builds use the switch **Settings › Connections › Service
+  integrations › Enable IntroDB** (`supernova_segment_enabled`), which defaults to **on**; the player reads it
+  (`PlayerService.segmentSkippingEnabled`, `BuildConfig.FOUNDATION`). The default-off `introdb_enabled` key belongs to
+  NOVA's own builds and is not what Supernova uses.
+- **Owner decision stands:** on by default — already the case. No visible change needed.
+- **Tidy-up (internal, no visible change):** a few player paths (e.g. the skip-prompt check and some logging) still
+  read the old `introdb_enabled` key; make every path use the one switch, with a test that a fresh install skips and
+  turning the Service integrations switch off stops all skipping.
+- **Status:** tidy-up approved — awaiting go-ahead to code.
 
 ## 16. Settings › IntroDB page (bugs, from the owner's photos 4 Nov 2026)
 - **Values one row out of step:** the right-hand values sit one row too high — "Show Skip (5 seconds)" appears on the
   IntroDB heading row, Intro's row shows Recap's "Smart", and so on; only the summaries under each title are right.
 - **Each value shown twice:** once as the summary under the title and once on the right.
 - **The choice pop-up** is the old translucent box over the list (same problem as the Local Storage long-press menu).
-- **The master switch is hidden** (see item 15): these choices only take effect while IntroDB is on, which today is
-  only switchable from the player.
-- **Proposed (words, mock-up on request):** one value per row, on the right, aligned with its title; a short line under
-  the heading saying "Skipping is on" with an On/Off switch as the first row; the choice opens as an opaque list in the
-  side panel style.
+- **The master switch lives elsewhere:** Settings › Connections › Service integrations › Enable IntroDB (see item 15).
+  The IntroDB page gives no hint that its choices depend on it.
+- **Same misalignment on Service integrations (owner photo):** the three switches sit one row too high — the first is
+  beside the "Service integrations" heading and the "Enable IntroDB" row appears to have none, though it is the third
+  switch. Likely one shared cause in how these settings rows are laid out; fix once for every Settings page.
+- **Proposed (words, mock-up on request):** every value or switch on its own row, aligned with its title; each value
+  shown once; the IntroDB page says under its heading whether skipping is on, with a link to the switch; the choice
+  opens as an opaque list in the side-panel style.
 - **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
