@@ -308,4 +308,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   **charcoal** fade (the panels' colour, no blue, no blur of unrelated artwork) that eases in over the first ~120px of
   scroll and out again as you return; custom libraries use exactly the same page structure (their header scrolls with
   the content). Tests: at the top the effect is 0 on all four pages; scrolled it is full; returning to the top clears it.
+- **Owner question:** is the artwork still visible behind the bar? Yes — `04` shows posters sliding under it: the fade is
+  ~88% charcoal at the very top (behind the tabs), ~60% at the tabs' lower edge and clear by ~230px, so artwork stays
+  visible and fades out towards the top while the tabs stay readable.
 - **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
