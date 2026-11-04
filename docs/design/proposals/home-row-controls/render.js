@@ -11,7 +11,7 @@ const P = {
   minus: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>', hide: '<path d="M3 3l18 18"/><path d="M10.6 5.2A10 10 0 0 1 12 5c6 0 9.5 7 9.5 7a17 17 0 0 1-3 3.8M6.6 6.6A17 17 0 0 0 2.5 12S6 19 12 19a9.6 9.6 0 0 0 4.4-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
   move: '<path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/>', up: '<path d="M7 14l5-5 5 5"/>', down: '<path d="M7 10l5 5 5-5"/>',
   hist: '<path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4M12 8v4l3 2"/>', cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
-  next: '<path d="M9 6l6 6-6 6"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+  next: '<path d="M9 6l6 6-6 6"/>', back: '<path d="M15 5l-7 7 7 7"/>', info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
 };
 const ic = (k, s = 32, w = 1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
 const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span class="on">Home</span><span>Movies</span><span>TV Shows</span><span>Documentaries</span><span class="sp"></span><span>Network &amp; Files</span><span class="clock">12:52</span></div>`;
@@ -30,11 +30,13 @@ const controls = mode => `<div class="ctl">${btn('hide', 'Hide', mode === 'hide'
   : btn('move', 'Move', mode === 'move')}</div>`;
 const row = (id, mode) => {
   const [icon, name] = rowDefs[id];
-  const active = mode && id === 'continue';
-  return `<div class="row${active ? ' active' : ''}${active && mode === 'moving' ? ' lifted' : ''}"><div class="rh">${ic(icon, 30)}${name}${active && mode === 'moving' ? '<span class="hint">Row 2 of 7 · ↑ ↓ to move · OK or Back when done</span>' : ''}</div>
-    <div class="rc">${active ? controls(mode) : ''}<div class="cards">${cards[id].map((c, i) => card(c, false)).join('')}</div></div></div>`;
+  const active = mode && mode !== 'first' && id === 'continue';
+  const first = mode === 'first' && id === 'continue';
+  return `<div class="row${active ? ' active' : ''}${active && mode === 'moving' ? ' lifted' : ''}${mode === 'moving' && !active ? ' dimrow' : ''}"><div class="rh">${ic(icon, 30)}${name}${active && mode === 'moving' ? '<span class="hint">Row 2 of 7 · ↑ ↓ to move · OK or Back when done</span>' : ''}</div>
+    <div class="rc">${first ? `<div class="chev">${ic('back', 40, 2)}</div>` : active ? controls(mode) : ''}<div class="cards">${cards[id].map((c, i) => card(c, first && i === 0)).join('')}</div></div></div>`;
 };
 const shots = [
+  ['00-first-card-hint.png', ['continue', 'recent', 'next'], 'first', 'On the first card: a faint ‹ to the left says there is more that way; one press Left reveals the buttons'],
   ['01-left-reveals-hide.png', ['continue', 'recent', 'next'], 'hide', 'Left on the first card: the row slides right and two same-size round buttons appear side by side — Hide is focused'],
   ['02-move-focused.png', ['continue', 'recent', 'next'], 'move', 'Right moves to Move; Left goes back to Hide; Right again returns to the first card'],
   ['03-moving-live.png', ['recent', 'continue', 'next'], 'moving', 'OK on Move: the row lifts; Up/Down moves it live (here it is now row 2 of 7); OK or Back drops it'],
@@ -49,7 +51,10 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .more{display:inline-flex;gap:10px;align-items:center;font-size:24px;font-weight:500;margin-top:30px}
 .rows{position:absolute;left:56px;right:0;top:440px}
 .row{margin-bottom:26px;transition:none;border-radius:26px;padding:6px 0 10px}
-.row.lifted{background:rgba(255,255,255,.07);box-shadow:0 0 0 3px #fff, 0 20px 50px rgba(0,0,0,.5);margin-left:-16px;padding-left:16px;margin-right:56px}
+.row.lifted .card{transform:translateY(-6px);box-shadow:0 16px 36px rgba(0,0,0,.55)}
+.row.dimrow{opacity:.4}
+.rc{position:relative}.chev{position:absolute;left:-50px;top:70px;color:rgba(244,246,251,.65)}
+.card.focus{box-shadow:0 0 0 3px #fff}
 .rh{display:flex;align-items:center;gap:14px;font-size:30px;font-weight:500;height:46px;margin-bottom:12px}
 .hint{margin-left:20px;font-size:21px;font-weight:400;color:#c9d3e6}
 .rc{display:flex;align-items:center;gap:26px}
