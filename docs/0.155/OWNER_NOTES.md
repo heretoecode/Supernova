@@ -119,7 +119,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   Proposed `29` (list) / `30` (grid): **one pill** — fills with blue as you watch ("40% watched"), solid white
   "✓ Watched" when finished, faint outline "Unwatched" when not started. The grid uses the same pill on the art and
   drops watched info from the line under the title.
-- **Status:** `29`/`30` awaiting the owner's approval — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`26`–`30`, the single pill as `29`/`30`) — awaiting go-ahead to code.
 
 ## 13. Local Storage Grid view: artwork, status and long-press menu (design + bug)
 - **Seen (owner photos):** Grid shows a generic file icon on every card, never artwork, though the card's own code
@@ -133,7 +133,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Details (owner question):** opens the same film/episode Details page as from Movies or TV Shows (artwork,
   synopsis, cast, Play/Resume). It is only offered for files in the library, and because of item 12 it currently never
   appears. Files not matched or not added get no Details entry. "Mark as unwatched/watched" is new in `28` (not in 0.154).
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Decision (owner, 4 Nov 2026):** for files not in the library, Details looks the film up online (TMDb, from the file
+  name) and opens the same Details page with Play and Add to library and a "not in your library yet" line; with no
+  confident match, a short "Couldn't identify this file" page with Play and Find match. Mock-ups of those two pages to
+  follow.
+- **Status:** grid/menu approved as `27`/`28`/`30` — awaiting go-ahead to code.
 
 
 ## 12. Local Storage: library rows show only file name and size (check)
@@ -144,3 +148,16 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   mount alias), every lookup misses and rows fall back to name + size. To confirm on the next diagnostics export or
   with one photo of a film from this folder in Movies.
 - **Status:** owner confirmed 4 Nov 2026 that the rows have no details under the title and wants it fixed — investigate and fix in 0.156 (awaiting go-ahead).
+
+## 14. Home: row controls as buttons beside the row, not a pop-up (design)
+- **Seen (owner photos):** Left on the first card of a Home row opens a "Move / Hide" pop-up; Move then opens a
+  second numbered list of rows ("1 · Continue Watching …") where choosing a number swaps the rows
+  (`PreviewHomeRows.rowControls`). Customise Home at the bottom of Home also needs work (later item).
+- **Want (owner, from the Shield home screen):** no pop-up; buttons to the left of the row that appear only when you
+  reach the start of the row.
+- **Proposed (`docs/design/proposals/home-row-controls/01`–`03`):** Left on the first card slides the row right
+  and shows two round buttons, **Hide row** (focused, large white) and **Move row** (small); Down/Up switches between
+  them, Right returns to the cards. OK on Move lifts the row (white outline); Up/Down moves it live, one place at a
+  time, with "Moving · row 2 of 7"; OK or Back drops it. Hide removes the row with an Undo notice (rows come back
+  from Customise Home).
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
