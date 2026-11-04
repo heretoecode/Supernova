@@ -204,5 +204,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Proposed (`docs/design/proposals/skip-button/01`–`04`):** white button "Skip Intro", bottom right, already
   selected when it appears — one OK skips; a thin bar inside counts down the 5 seconds, then it fades and the part
   plays; Back/Left/Right/Up dismiss it; with the controls open it sits just above them, still selected, and Down goes
-  to the controls. `04` shows bottom left for comparison.
-- **Status:** awaiting the owner's choice of placement and approval — then awaiting go-ahead to code.
+  to the controls.
+- **Owner (4 Nov 2026):** bottom right, and bigger. Revised `01`–`03`: about 104px tall with 38px text (was 72px / 26px);
+  bottom-left alternative dropped.
+- **Status:** placement decided; size, 5-second timing and look awaiting the owner's approval — then awaiting go-ahead to code.
