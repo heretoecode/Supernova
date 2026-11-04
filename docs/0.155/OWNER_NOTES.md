@@ -389,4 +389,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   (Recently added · Trending · Popular). History: keep viewing history, Clear… (confirmation).
 - Moved out (approved): Rescrape → Refresh details in Library Health; "recreate sort titles" joins it there; Clear
   Watch Next lives in Customise Home; collections rescrape removed.
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Exports (owner, 4 Nov 2026):** today both only show a brief toast; .nfo export runs silently and database export
+  copies to a hidden app folder. Decided: keep **Export .nfo files** — confirmation in the side panel ("Write details
+  files next to 1,809 videos? Read-only shares such as Put.io are skipped."), progress there ("240 of 1,809"), and a
+  result ("1,806 written · 3 skipped (read-only)"); **remove Export database** (Backup & Restore covers it). `11`
+  re-rendered.
+- **Status:** approved by the owner on 4 Nov 2026 (`10`–`13`) — awaiting go-ahead to code.

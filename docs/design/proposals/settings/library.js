@@ -40,7 +40,7 @@ const details = f => shell(1,
   row('Save details as .nfo files', 'Writes them next to your files so other apps can use them.', tg(false)) +
   row('Make thumbnails for network videos', 'Takes a frame from videos with no artwork. Uses some network time.', tg(true)) +
   row('Include adult titles', 'Allows adult titles when looking up details.', tg(false)) +
-  row('Export library', 'Saves details for every title, or the whole library database.', btns(['Export .nfo files', 'Export database'], f === 'export' ? 0 : -1), f === 'export'),
+  row('Export .nfo files', 'Writes a details file next to every video. Read-only shares such as Put.io are skipped.', btns(['Export…'], f === 'export' ? 0 : -1), f === 'export'),
   'Up from the list reaches the tabs · Left/Right switches tab');
 const home = f => shell(2,
   row('Customise Home…', 'Add, hide, move and edit rows; manage Watch Next.', val('8 rows · 6 shown'), f === 'cust') +
