@@ -1,0 +1,98 @@
+diff --git a/jni/Android.mk b/jni/Android.mk
+index ee213eb8c8d21f004052f68a88426c6a014d13a1..822bbeca9460f151fd067bfaf70fd14627a5ca4a 100644
+--- a/jni/Android.mk
++++ b/jni/Android.mk
+@@ -14,6 +14,7 @@
+
+ LOCAL_PATH := $(call my-dir)
+ include $(LOCAL_PATH)/libass_prebuilt.mk
++include $(LOCAL_PATH)/media_prebuilt.mk
+ AVOS_JNI_DIR := $(LOCAL_PATH)
+ AVOS_DIR := $(LOCAL_PATH)/..
+ EXTERNAL_DIR := $(AVOS_DIR)/external
+diff --git a/jni/Application.mk b/jni/Application.mk
+index e96a89f03a81ce0e402caf6dc95d84c3261c5382..3ece2acd40fbf80e5a4d53ca3dfe4ec034fdaef5 100644
+--- a/jni/Application.mk
++++ b/jni/Application.mk
+@@ -12,7 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+
+-APP_ALLOW_MISSING_DEPS=true
++APP_ALLOW_MISSING_DEPS=false
+ APP_CFLAGS :=
+ ifeq (,$(NDK_APP_ABI))
+ APP_ABI := armeabi-v7a
+diff --git a/jni/media_prebuilt.mk b/jni/media_prebuilt.mk
+new file mode 100644
+index 0000000000000000000000000000000000000000..bf3725a6ab6901a6294eefedf553474aa8257f29
+--- /dev/null
++++ b/jni/media_prebuilt.mk
+@@ -0,0 +1,53 @@
++# Copyright2026 Supernova contributors
++# SPDX-License-Identifier: Apache-2.0
++# Explicit source-built runtime modules; no APP_ALLOW_MISSING_DEPS escape hatch.
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavutil
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavutil.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libswresample
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libswresample.so
++LOCAL_SHARED_LIBRARIES := libavutil
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libswscale
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libswscale.so
++LOCAL_SHARED_LIBRARIES := libavutil
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libdav1d
++LOCAL_SRC_FILES := ../../prebuilt/dav1d/lib/$(TARGET_ARCH_ABI)/libdav1d.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libopus
++LOCAL_SRC_FILES := ../../prebuilt/opus/lib/$(TARGET_ARCH_ABI)/libopus.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libmysofa
++LOCAL_SRC_FILES := ../../prebuilt/libmysofa/lib/$(TARGET_ARCH_ABI)/libmysofa.so
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavcodec
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavcodec.so
++LOCAL_SHARED_LIBRARIES := libswresample libavutil libdav1d libopus
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavformat
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavformat.so
++LOCAL_SHARED_LIBRARIES := libavcodec libavutil
++include $(PREBUILT_SHARED_LIBRARY)
++
++include $(CLEAR_VARS)
++LOCAL_MODULE := libavfilter
++LOCAL_SRC_FILES := ../../prebuilt/ffmpeg/dist-full-$(TARGET_ARCH_ABI)/lib/libavfilter.so
++LOCAL_SHARED_LIBRARIES := libswscale libavformat libavcodec libswresample libavutil libmysofa
++include $(PREBUILT_SHARED_LIBRARY)
+diff --git a/ndkbuild.mk b/ndkbuild.mk
+index 596468ae38ef3ccad1fe162260ac89c5c4c8014d..80fbf22de5f90209d1842e2172a7f46978b52a8d 100644
+--- a/ndkbuild.mk
++++ b/ndkbuild.mk
+@@ -46,7 +46,8 @@ LOCAL_CFLAGS := $(CFLAGS) $(DEFINES)
+
+ LOCAL_LDFLAGS := $(LDFLAGS)
+
+-LOCAL_SHARED_LIBRARIES := $(patsubst -l%,lib%, $(addsuffix $(AVOS_LIBS_SUFFIX), $(AVOS_SHARED_LIBS)))
++# System libraries stay in LOCAL_LDLIBS; application DSOs have explicit modules.
++LOCAL_SHARED_LIBRARIES := $(filter-out libEGL libGLESv2 libandroid libjnigraphics,$(patsubst -l%,lib%, $(addsuffix $(AVOS_LIBS_SUFFIX), $(AVOS_SHARED_LIBS))))
+
+ LOCAL_LDLIBS := -L$(TARGET_OUT) -lz \
+ 	$(SHARED_LIBS) \

@@ -1,0 +1,45 @@
+diff --git a/Include/stream_hls_compat.h b/Include/stream_hls_compat.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..d36be8626cdd77dee31c77d6cba35d83268c8c3c
+--- /dev/null
++++ b/Include/stream_hls_compat.h
+@@ -0,0 +1,12 @@
++// Copyright 2026 Supernova contributors
++// SPDX-License-Identifier: Apache-2.0
++#ifndef SUPERNOVA_STREAM_HLS_COMPAT_H
++#define SUPERNOVA_STREAM_HLS_COMPAT_H
++#include <string.h>
++/* FFmpeg9 retired the hls+ protocol alias. Preserve the source URI/bookmark;
++ * strip only the backend transport alias and force the maintained HLS demuxer. */
++static inline int stream_hls_compat_url(const char **url) {
++    if (url && *url && !strncmp(*url, "hls+", 4)) { *url += 4; return 1; }
++    return 0;
++}
++#endif
+diff --git a/Source/stream_parser_ffmpeg.c b/Source/stream_parser_ffmpeg.c
+index 9f5387408f41617e7313f645960cbe6959bb0102..66e895327b382572ded8fb21d7f2393ba6cf89f9 100644
+--- a/Source/stream_parser_ffmpeg.c
++++ b/Source/stream_parser_ffmpeg.c
+@@ -260,9 +260,12 @@ static void ffmpeg_close_fd_input(FF_PRIV *priv)
+ 	}
+ }
+
++#include "stream_hls_compat.h"
++
+ static int ffmpeg_open_input(FF_PRIV *priv, const char *url, AVDictionary **options)
+ {
+-	if (strncmp(url, "fd://", 5)) return avformat_open_input(&priv->fmt, url, NULL, options);
++    const AVInputFormat *input_format = stream_hls_compat_url(&url) ? av_find_input_format("hls") : NULL;
++	if (strncmp(url, "fd://", 5)) return avformat_open_input(&priv->fmt, url, input_format, options);
+ 	int fd;
+ 	int64_t offset, length;
+ 	if (stream_fd_parse_url(url, &fd, &offset, &length)) return AVERROR(EINVAL);
+@@ -279,7 +282,7 @@ static int ffmpeg_open_input(FF_PRIV *priv, const char *url, AVDictionary **opti
+ 	if (!priv->fd_io) { av_free(buffer); return AVERROR(ENOMEM); }
+ 	priv->fmt->pb = priv->fd_io;
+ 	priv->fmt->flags |= AVFMT_FLAG_CUSTOM_IO;
+-	return avformat_open_input(&priv->fmt, NULL, NULL, options);
++	return avformat_open_input(&priv->fmt, NULL, input_format, options);
+ }
+
+ static int ff_force_seek = 1;

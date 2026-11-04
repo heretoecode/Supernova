@@ -1,0 +1,36 @@
+name: Preserve the pinned 0.146 native engine (manual draft)
+
+# Claude, 4 Nov 2026: Codex's draft (codex/0155-code-2026-11-04 9fd8bc94c). A push trigger limited to this file on
+# Claude's branch is added because dispatch-only workflows must exist on the default branch to be started.
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/workflows/supernova-0156-native-archive.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supernova-0146-native-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: github.repository == 'heretoecode/Supernova'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Verify every pinned artifact, then preserve and recheck Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 .github/build/native-archive-supernova156.py
+          --destination "$RUNNER_TEMP/native-archive-supernova156"
+          --publish
