@@ -378,4 +378,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - Stand-in flags in the mock-ups; the app uses its own flag set (missing flags to be added).
 - **Owner (4 Nov 2026):** no tab for one setting; the language list was far too wide. Revised: tabs Audio · Subtitles ·
   Style; the custom fonts folder is the last row of Subtitles (`09`); the language list panel is 440px wide (was 620).
-- **Status:** awaiting the owner's approval of the revised `06`–`09` — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`06`–`09`, language list sized to content) — awaiting go-ahead to code.
