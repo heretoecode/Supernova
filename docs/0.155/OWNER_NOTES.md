@@ -170,3 +170,15 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   same height on screen and the others move past it. Holding Up/Down repeats. (0.154 rebuilds the whole page after a
   move, so it snaps.)
 - **Status:** approved by the owner on 4 Nov 2026 (`00`–`03` and the motion as described) — awaiting go-ahead to code.
+
+## 15. Intro/outro skip on by default (bug + owner decision)
+- **Context:** NOVA 6.6.3 (`915347c7`) turned intro/outro skip on by default. Supernova already has the feature
+  (TheIntroDB segments; per-type modes in Settings › Playback: intro = "Show Skip (5 seconds)", recap/preview =
+  "Smart" (skipped when binge-watching), credits = "Safe Auto Skip").
+- **Bug (Claude, from the code):** the master switch disagrees with itself. `PlayerService.DEFAULT_INTRODB_ENABLED`
+  is `false` (what the player actually reads), while the hidden Settings switch defaults to `true`. On a fresh
+  install skipping is therefore off unless it is switched on from the player menu.
+- **Decision (owner, 4 Nov 2026):** on by default. One default (`true`) used everywhere; the per-type modes above stay
+  as they are. Anyone who has explicitly switched it off keeps it off. Test: fresh preferences → enabled in player and
+  Settings; a stored `false` is respected.
+- **Status:** approved — awaiting go-ahead to code.
