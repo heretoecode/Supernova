@@ -49,8 +49,17 @@ ENGINE_BUILD item 2c: app draft 03 applied with eight Robolectric padding tests
 (upstream `73df6e4d714eed203237d045b20bac41f4799764`). Legacy preferences
 retain the existing line/block padding, including zero; no Settings control was
 added. New `nativeSetPadding` must ship with this engine, never the old DSOs.
-Player production and test syntax parsed; Robolectric unrun. Continue at item 3,
-upstream `8bbfb666` vertical subtitle canvas port.
+Commit `2c263b591`; player production
+and test syntax parsed; Robolectric unrun.
+
+ENGINE_BUILD item 3: faithful `8bbfb66608707eb383a266e044ad187cb6724081`
+SurfaceController port. Its overflow/sizing block matches upstream byte for byte.
+Eight new Robolectric cases cover canvas clipping, unchanged video geometry,
+subtitle kinds/preferences, listener replay, fullscreen reset, letterbox, 3D,
+HDMI and non-margin layout params (tests written, not run). Java syntax passes.
+Horizontal overflow still needs Claude's evaluation/port of `95f233f9`; this
+brief permits only the vertical change. Continue at item 4, final build wiring
+and 0.155 version hand-off.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
