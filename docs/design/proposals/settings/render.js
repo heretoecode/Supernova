@@ -26,7 +26,12 @@ const speeds = ['0.5×', '0.75×', '1.0×', '1.25×', '1.5×', '2.0×'];
 const choice = `<div class="dim"></div><div class="panel"><div class="ptitle">Default playback speed</div><div class="pdesc">Speed new videos start at.</div>
   ${speeds.map((s, i) => `<div class="opt${i === 2 ? ' f' : ''}"><span class="rad${i === 2 ? ' on' : ''}">${i === 2 ? ic('check', 20) : ''}</span>${s}${i === 2 ? '<em>Normal</em>' : ''}</div>`).join('')}
   <div class="pfoot">OK chooses · Back closes</div></div>`;
+const tabs = focus => `<div class="tabs">${[['play', 'Playback'], ['resume', 'Resume'], ['skip', 'Skipping'], ['pic', 'Picture']].map(([k, t], i) => `<div class="tb${i === 0 ? ' open' : ''}${focus === i ? ' f' : ''}">${ic(k, 26)}<span>${t}</span></div>`).join('')}</div>`;
+const one = (focus, tabFocus) => `<div class="one"><div class="ohead"><div><div class="crumb">Settings</div><div class="stitle">Playback</div></div>${tabs(tabFocus)}</div><div class="rule"></div>
+  ${page(focus).replace('<div class="main">', '<div class="inner">').replace('Resume, Skipping and Picture are the next pages on the left', 'Up from the list reaches the tabs · Left/Right switches tab')}</div>`;
 const shots = [
+  ['03-single-panel.png', one('speed', -1), 'One panel: title and section tabs across the top, the rows below — no second panel'],
+  ['04-single-panel-tabs.png', one('', 1), 'Up from the rows reaches the tabs; Left/Right moves between Playback · Resume · Skipping · Picture'],
   ['01-playback.png', side(-1) + page('speed'), 'Settings › Playback: standard buttons on the left; each row says what it does in one line; one value or switch per row, level with its title'],
   ['02-choice.png', side(-1) + page('speed') + choice, 'Choosing a value: a solid side panel (no see-through pop-up); the current choice is ticked'],
 ];
@@ -50,13 +55,19 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .opt{display:flex;align-items:center;gap:16px;height:76px;padding:0 20px;border-radius:20px;font-size:26px;font-weight:500}.opt.f{box-shadow:inset 0 0 0 3px #fff}.opt em{font-style:normal;font-size:20px;color:#c9d3e6;font-weight:400;margin-left:auto}
 .rad{width:34px;height:34px;border-radius:50%;border:2px solid #aab3c4;display:flex;align-items:center;justify-content:center}.rad.on{background:#F4F6FB;border-color:#F4F6FB;color:#0B0D12}
 .pfoot{position:absolute;left:28px;bottom:22px;font-size:18px;color:#8f98a8}
+.one{position:absolute;left:56px;right:56px;top:112px;bottom:40px;border-radius:26px;background:rgba(22,24,28,.97);border:2px solid rgba(255,255,255,.22);padding:22px 28px}
+.ohead{display:flex;align-items:center;justify-content:space-between;margin:0 10px 16px}.one .crumb{margin:0}.one .stitle{margin:2px 0 0}
+.tabs{display:flex;gap:12px}.tb{position:relative;height:64px;border-radius:20px;background:#2a2d33;display:flex;align-items:center;gap:10px;padding:0 22px;font-size:23px;font-weight:500}
+.tb.open::after{content:"";position:absolute;left:22px;right:22px;bottom:-12px;height:4px;border-radius:2px;background:#fff}.tb.f{background:#F4F6FB;color:#0B0D12}
+.rule{height:1px;background:rgba(255,255,255,.14);margin:0 6px 8px}
+.inner{position:relative;height:calc(100% - 120px)}.inner .more{left:14px;bottom:0}
 .label{position:absolute;right:56px;bottom:8px;font-size:18px;color:#c9d3e6}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
     await t.setContent(`<html><head><style>${css}</style></head><body>${nav}${body}<div class="label">${label}</div></body></html>`, { waitUntil: 'load' });
     await t.evaluate(() => document.fonts.ready);
-    const issues = await t.evaluate(() => { const o = [], r = e => e.getBoundingClientRect(); const m = document.querySelector('.main'), mo = document.querySelector('.more');
-      document.querySelectorAll('.main .r').forEach(e => { if (r(e).bottom > r(mo).top - 4) o.push('rows hit footer: ' + e.textContent.slice(0, 30)); const t2 = e.querySelector('.rt'), s = e.lastElementChild; if (t2 !== s && r(t2).right > r(s).left) o.push('text hits value'); });
+    const issues = await t.evaluate(() => { const o = [], r = e => e.getBoundingClientRect(); const mo = document.querySelector('.more');
+      document.querySelectorAll('.main .r, .inner .r').forEach(e => { if (r(e).bottom > r(mo).top - 4) o.push('rows hit footer: ' + e.textContent.slice(0, 30)); const t2 = e.querySelector('.rt'), s = e.lastElementChild; if (t2 !== s && r(t2).right > r(s).left) o.push('text hits value'); });
       return o; });
     if (issues.length) console.log(f, issues);
     await t.screenshot({ path: path.join(out, f) }); }

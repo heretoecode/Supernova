@@ -350,4 +350,7 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   standard charcoal buttons Playback · Resume · Skipping · Picture (white bar marks the open one, white on focus);
   right: one panel of rows, each a title, one plain line and a single value or switch level with the title. `02`: the
   solid side-panel choice list (Default playback speed).
-- **Status:** awaiting the owner's reaction to the review and `01`–`02` — then go-ahead to code.
+- **Owner (4 Nov 2026):** no need to keep the two-panel layout. Single-panel version `03`–`04`: one charcoal panel —
+  "Settings › Playback" top left, section tabs Playback · Resume · Skipping · Picture top right (white underline on the
+  open tab, white on focus), a thin rule, then the rows. Up from the rows reaches the tabs; Left/Right switches tab.
+- **Status:** awaiting the owner's choice between two-panel (`01`) and single-panel (`03`) — then go-ahead to code.
