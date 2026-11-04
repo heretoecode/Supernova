@@ -78,4 +78,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   4. Make the empty-card background charcoal (matching the panels), not navy, for titles with no artwork at all.
   5. Test: a Robolectric test that Details opened with a seeded bitmap shows a drawable straight away, and keeps a
      drawable throughout a later URI change.
-- **Status:** awaiting the owner's approval and go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (no mock-up needed) — awaiting go-ahead to code.
