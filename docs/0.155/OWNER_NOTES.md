@@ -115,7 +115,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Owner follow-up (4 Nov 2026):** the tick is not self-explanatory at first glance; use words. Proposed `26`: the
   right-hand end of each row reads **✓ Watched** (white), **40% watched** (blue, with a small bar) or **Unwatched**
   (dim grey). Supersedes the disc in `25`.
-- **Status:** `26` awaiting the owner's approval — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** words are much clearer, but bar + "40%" + "watched" read as three separate things.
+  Proposed `29` (list) / `30` (grid): **one pill** — fills with blue as you watch ("40% watched"), solid white
+  "✓ Watched" when finished, faint outline "Unwatched" when not started. The grid uses the same pill on the art and
+  drops watched info from the line under the title.
+- **Status:** `29`/`30` awaiting the owner's approval — then awaiting go-ahead to code.
 
 ## 13. Local Storage Grid view: artwork, status and long-press menu (design + bug)
 - **Seen (owner photos):** Grid shows a generic file icon on every card, never artwork, though the card's own code
@@ -126,6 +130,9 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   badge or a progress bar on the art; a status line under the title ("2015 · In library · Watched"). Long press /
   Menu opens an opaque panel beside the card: title, status line, then Play/Resume, Details, Mark as
   watched/unwatched, Exclude/Include/Add to library. Posters depend on item 12 (library lookup) being fixed.
+- **Details (owner question):** opens the same film/episode Details page as from Movies or TV Shows (artwork,
+  synopsis, cast, Play/Resume). It is only offered for files in the library, and because of item 12 it currently never
+  appears. Files not matched or not added get no Details entry. "Mark as unwatched/watched" is new in `28` (not in 0.154).
 - **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
 
 

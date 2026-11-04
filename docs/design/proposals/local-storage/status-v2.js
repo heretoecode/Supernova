@@ -27,9 +27,7 @@ const head = grid => `<div class="head"><div class="ftile">${ic('folder', 44)}</
   <div class="tools">${grid ? btn('list', 'List') : btn('grid', 'Grid')}${btn('sort', 'Sort: Name')}${btn('filter', 'Videos only')}</div></div><div class="rule"></div>`;
 const lib = st => st === 'in' ? '<span class="tag in"><i></i>In library</span>'
   : st === 'ex' ? `<span class="tag ex">${ic('ban', 20)}Excluded</span>` : '<span class="tag no"><i></i>Not added</span>';
-const seen = w => w === 1 ? `<span class="wt done">${ic('tick', 22)}Watched</span>`
-  : w > 0 ? `<span class="wt part"><span class="bar"><i style="width:${w * 100}%"></i></span>${Math.round(w * 100)}% watched</span>`
-  : '<span class="wt un">Unwatched</span>';
+const seen = (w, small) => `<span class="wcell${small ? ' sm' : ''}"><span class="wp ${w === 1 ? 'done' : w > 0 ? 'part' : 'un'}">${w > 0 && w < 1 ? `<i style="width:${w * 100}%"></i>` : ''}<b>${w === 1 ? ic('tick', small ? 18 : 22) + 'Watched' : w > 0 ? Math.round(w * 100) + '% watched' : 'Unwatched'}</b></span></span>`;
 const films = [
   { n: '28 Weeks Later', y: 2007, d: '2007 · 100 min · 1080p · English 5.1 · 2.0 GB', st: 'in', w: 1, c: ['#5b1d12', '#140806'] },
   { n: '99 Homes', y: 2015, d: '2015 · 112 min · 1080p · English 5.1 · 1.8 GB', st: 'in', w: 1, c: ['#3a4f63', '#0e151d'] },
@@ -49,15 +47,18 @@ const poster = r => r.c ? `<div class="art" style="background:linear-gradient(16
   : `<div class="art frame"><span class="fr"></span><em>Frame from the file</em></div>`;
 const card = (r, focus) => `<div class="card${focus ? ' focus' : ''}${r.st === 'ex' ? ' dim' : ''}"><div class="pw">${poster(r)}
   <span class="corner ${r.st}">${r.st === 'ex' ? ic('ban', 22) : '<i></i>'}</span>
-  ${r.w === 1 ? `<span class="wbadge">${ic('tick', 20)}Watched</span>` : ''}${r.w > 0 && r.w < 1 ? `<span class="pbar"><i style="width:${r.w * 100}%"></i></span>` : ''}</div>
+  ${V2 ? `<span class="wbadge2">${seen(r.w, true)}</span>` : `${r.w === 1 ? `<span class="wbadge">${ic('tick', 20)}Watched</span>` : ''}${r.w > 0 && r.w < 1 ? `<span class="pbar"><i style="width:${r.w * 100}%"></i></span>` : ''}`}</div>
   <div class="cn">${r.y ? r.n : 'Aftersun.2022.1080p…'}</div>
-  <div class="cm">${r.y ? r.y + ' · ' : ''}${r.st === 'ex' ? 'Excluded' : r.st === 'no' ? 'Not added' : 'In library'}${r.w === 1 ? ' · Watched' : r.w > 0 ? ' · ' + Math.round(r.w * 100) + '%' : ''}</div></div>`;
+  <div class="cm">${r.y ? r.y + ' · ' : ''}${r.st === 'ex' ? 'Excluded' : r.st === 'no' ? 'Not added' : 'In library'}${V2 ? '' : r.w === 1 ? ' · Watched' : r.w > 0 ? ' · ' + Math.round(r.w * 100) + '%' : ''}</div></div>`;
 const menu = `<div class="menu"><div class="mt">99 Homes</div><div class="ms">2015 · 112 min · In library · Watched</div>
   ${btn('play', 'Play', true)}${btn('info', 'Details')}${btn('eye', 'Mark as unwatched')}${btn('x', 'Exclude')}</div>`;
+let V2 = false;
 const shots = [
   ['26-list-watched-words.png', false, null, 'List: watched state in words on the right — ✓ Watched · 40% watched (with bar) · Unwatched'],
   ['27-grid-artwork-status.png', true, null, 'Grid: artwork (poster, or a frame from the file), library dot on the corner, Watched badge, status line under the title'],
   ['28-grid-long-press-menu.png', true, 'menu', 'Grid, long press / Menu: an opaque panel beside the card — title, status, then actions'],
+  ['29-list-watched-one-pill.png', false, null, 'List: watched state as ONE pill — fills with progress (40% watched), solid when Watched, outline when Unwatched', 2],
+  ['30-grid-watched-one-pill.png', true, null, 'Grid: the same single pill on the artwork; the line under the title keeps year and library state only', 2],
 ];
 const css = `${font(400)}${font(500)}
 *{box-sizing:border-box;margin:0}
@@ -80,7 +81,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .btn.focus{background:#F4F6FB;color:#0B0D12}
 .row{display:flex;align-items:center;gap:20px;height:96px;padding:0 20px;border-radius:24px;font-size:26px;font-weight:500}
 .row.focus{box-shadow:inset 0 0 0 3px #fff}
-.row.dim .name1,.row.dim .l2,.row.dim>svg,.row.dim .wt{opacity:.55}
+.row.dim .name1,.row.dim .l2,.row.dim>svg,.row.dim .wt,.row.dim .wcell{opacity:.55}
 .two{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}.l1{display:flex;align-items:center;gap:14px;white-space:nowrap}
 .l2{font-weight:400;font-size:21px;color:#C9D3E6;white-space:nowrap}
 .tag{font-size:18px;font-weight:500;border-radius:11px;padding:3px 11px;display:inline-flex;align-items:center;gap:7px}
@@ -90,6 +91,14 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .tag.no{background:rgba(255,255,255,.06);color:#aab3c4}.tag.no i{border:1.6px solid #aab3c4}
 .wt{width:210px;flex:none;display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;font-size:21px;font-weight:500}
 .wt.done{color:#F4F6FB}.wt.un{color:#8f98a8;font-weight:400}.wt.part{color:#8fc3ff}
+.wcell{width:230px;flex:none;display:flex;justify-content:flex-end}.wcell.sm{width:auto}
+.wp{position:relative;overflow:hidden;display:inline-flex;align-items:center;height:42px;padding:0 16px;border-radius:21px;font-size:20px;font-weight:500;white-space:nowrap}
+.wp b{position:relative;display:inline-flex;align-items:center;gap:7px;font-weight:500}
+.wp.done{background:#F4F6FB;color:#0B0D12}
+.wp.part{background:rgba(90,169,255,.16);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(90,169,255,.7)}.wp.part i{position:absolute;left:0;top:0;bottom:0;background:rgba(90,169,255,.55)}
+.wp.un{color:#9aa3b3;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.22);font-weight:400}.wp.un b{font-weight:400}
+.sm .wp{height:30px;padding:0 10px;font-size:15px;border-radius:15px}
+.wbadge2{position:absolute;right:8px;top:8px}.wbadge2 .wp.un{background:rgba(14,16,20,.75)}.wbadge2 .wp.part{background:rgba(14,16,20,.75)}
 .bar{width:54px;height:6px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden}.bar i,.pbar i{display:block;height:100%;background:#5aa9ff}
 .ibtns{display:flex;gap:12px;margin-right:6px}.ibtns .btn{height:60px;font-size:21px;padding:0 18px 0 14px}
 .grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:26px 22px;padding:14px 8px}
@@ -111,12 +120,25 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [f, grid, extra, label] of shots) {
+  for (const [f, grid, extra, label, v] of shots) {
+    V2 = v === 2;
     const body = grid ? `<div class="grid">${films.slice(0, 8).map((r, i) => card(r, i === 1)).join('')}${films.slice(8).map(r => card(r)).join('')}</div>`
                       : films.slice(0, 7).map((r, i) => row(r, i === 3)).join('');
     const html = `${nav}<div class="sheet">${head(grid)}${body}</div>${extra ? menu : ''}<div class="label">${label}</div>`;
     await tab.setContent(`<html><head><style>${css}</style></head><body>${html}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
+    const issues = await tab.evaluate(() => {
+      const out = [], r = e => e.getBoundingClientRect();
+      document.querySelectorAll('.card').forEach(c => { const a = c.querySelector('.corner'), b = c.querySelector('.wp');
+        if (a && b && r(b).left < r(a).right + 4) out.push('pill hits corner dot: ' + c.querySelector('.cn').textContent);
+        if (b && r(b).right > r(c.querySelector('.pw')).right) out.push('pill overflows art'); });
+      document.querySelectorAll('.row').forEach(w => { const b = w.querySelector('.wp'), t = w.querySelector('.ibtns');
+        if (b && r(b).right > r(w).right) out.push('pill overflows row');
+        if (b && t && r(t).right > r(b).left) out.push('buttons hit pill'); });
+      document.querySelectorAll('.cn,.name1,.l2').forEach(e => { if (e.scrollWidth > e.clientWidth + 1 && !e.textContent.includes('…')) out.push('clipped: ' + e.textContent); });
+      return out;
+    });
+    if (issues.length) console.log(f, issues);
     await tab.screenshot({ path: path.join(out, f) });
   }
   await browser.close();
