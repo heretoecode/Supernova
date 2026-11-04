@@ -1,5 +1,5 @@
 name: Supernova 0.155 unsigned conformance
-# Run 2: APK engine check accepts the same library shipped in both modules. 0.155 engine release (arm64-only Shield build): app source of this branch + the reviewed prebuilt engine from native
+# Run 3: receipt records test, lint and library-suite results for the signing gate. Run 2: APK engine check accepts duplicates. 0.155 engine release (arm64-only Shield build): app source of this branch + the reviewed prebuilt engine from native
 # run 41848351713 (built from a8c82ae52; archive SHA-256 42e1990b…ae8c), installed with that commit's own packaging recipe.
 # MediaLib/FileCore are prepared exactly as 0.154, without the retired avos source patches.
 on:
@@ -80,15 +80,32 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/delivery"
           cp "${apks[0]}" "$GITHUB_WORKSPACE/delivery/Supernova_0.155_unsigned.apk"
           python3 - "$GITHUB_WORKSPACE/delivery" <<'PYREC'
-          import hashlib,json,subprocess,sys,os
+          import glob,hashlib,json,subprocess,sys,os
+          import xml.etree.ElementTree as ET
           from pathlib import Path
           d=Path(sys.argv[1]);apk=d/'Supernova_0.155_unsigned.apk'
+          def suite(pattern):
+              t=f=e=s=0;classes=set()
+              for x in glob.glob(pattern,recursive=True):
+                  r=ET.parse(x).getroot()
+                  for ts in ([r] if r.tag=='testsuite' else r.iter('testsuite')):
+                      t+=int(ts.get('tests',0));f+=int(ts.get('failures',0));e+=int(ts.get('errors',0));s+=int(ts.get('skipped',0))
+                      classes.add(ts.get('name','').rsplit('.',1)[-1])
+              return dict(tests=t,failures=f,errors=e,skipped=s,classes=sorted(classes))
+          app=suite('build/test-results/testNoamazonReleaseUnitTest/**/*.xml')
+          lint_errors=0
+          for x in glob.glob('build/reports/lint-results*.xml'):
+              lint_errors+=sum(1 for i in ET.parse(x).getroot().iter('issue') if i.get('severity') in ('Error','Fatal'))
           rec={'schema':1,'version_name':'0.155','version_code':155,'application_id':'app.supernova.player',
                'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-               'unsigned_apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'unsigned_apk_bytes':apk.stat().st_size,
+               'signed':False,'apk_sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'apk_bytes':apk.stat().st_size,
+               'unit':{k:app[k] for k in ('tests','failures','errors','skipped')},'unit_classes':app['classes'],
+               'library_suites':{'MediaLib':{k:v for k,v in suite('../MediaLib/build/test-results/**/*.xml').items() if k!='classes'},
+                                 'FileCoreLibrary':{k:v for k,v in suite('../FileCoreLibrary/build/test-results/**/*.xml').items() if k!='classes'}},
+               'lint_errors':lint_errors,'tooling':json.loads(Path('build/tooling-results.json').read_text()),
                'engine':{'run':int(os.environ['ENGINE_RUN']),'source_commit':os.environ['ENGINE_SOURCE'],'archive_sha256':os.environ['ENGINE_ARCHIVE_SHA256']},
-               'native_check':Path('build/native155-apk.txt').read_text()}
-          (d/'unsigned-conformance.json').write_text(json.dumps(rec,indent=2)+'\n');print(json.dumps(rec,indent=2))
+               'engine_apk_check':Path('build/native155-apk.txt').read_text()}
+          (d/'unsigned-conformance.json').write_text(json.dumps(rec,indent=2)+'\n');print(json.dumps({k:v for k,v in rec.items() if k!='unit_classes'},indent=2))
           PYREC
       - name: Preserve complete release validation evidence
         if: always()
