@@ -266,3 +266,12 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 8. **Consistent empty states** on every page (calm message + one useful button).
 9. **Focus memory everywhere** — audit pages that do not return to where you were.
 - **Status:** approved in principle — each gets its mock-up or description for a final look, then awaits go-ahead to code.
+
+## 20. Search: discovery, filters, browse and remembering (design)
+- **Proposed by Claude, mocked on request (`docs/design/proposals/search/05`–`07`):** results from your library first,
+  then **Not in your library · from TMDb** (OK opens the approved "not in your library yet" Details); a filter row
+  **All · Films · TV shows · Episodes · People** reached with Up from the results; the watched pill on library results;
+  the typed letters bold and underlined in each title; before typing, **Browse** shortcuts (Unwatched, Recently added,
+  Genres, Years) under Recent searches; coming back from Details restores the same query, results and position. Play /
+  Resume from results via long press or Menu (shared choice list).
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
