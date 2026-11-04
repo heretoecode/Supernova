@@ -486,4 +486,11 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - **Bug found:** `assets/foundation/credits.json` still says "based on Nova Video Player 6.6.2"; 0.155 uses 6.6.4.
   Fix in 0.156.
 - The "S" tile stands in for the app icon.
+- **What's new, full history** (`27`, `30`, owner): every version since 0.1 (13 Sep 2026), newest first, grouped by
+  month: list on the left, the focused version's changes on the right. 155 versions; 51 with visible changes, the rest
+  shown as one quiet "test build · no visible changes" line (runs merged, e.g. 0.46–0.132 = 87 builds). Every note in
+  `release-history.json` is rewritten for viewers when coded.
+- **Credits** (`31`): opens from About as a page in the same panel; Back returns. Plain-word text from `credits.json`
+  (NOVA corrected to 6.6.4), TMDB's required wording kept exactly.
+- **One licence opened** (`32`): name, what it does, version, licence, website, then the full notice in a scrolling box.
 - **Status:** awaiting the owner's review.

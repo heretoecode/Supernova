@@ -33,10 +33,47 @@ const info = (t, v) => `<div class="kv"><span>${t}</span><b>${v}</b></div>`;
 const about = shell(0,
   `<div class="hero"><div class="logo">S</div><div><div class="an">Supernova</div><div class="av">Version 0.155 · 4 November 2026</div><div class="ab">A video player for Android TV, based on NOVA Video Player 6.6.4.</div></div></div>` +
   row('Credits & acknowledgements', 'NOVA, Archos, TMDB, JustWatch, Trakt and OpenSubtitles.', val(''), true), '');
-const rel = [['0.155', '4 Nov 2026', ['Playback engine updated to NOVA 6.6.4.', 'Styled subtitles stay on screen when the picture is zoomed or set to fit width.', 'Better choice of video decoder and HDR handling.']],
-  ['0.154', '3 Nov 2026', ['Charcoal menus and panels throughout.', 'Home and Details artwork share one look, with clearer text.', 'New Local Storage page for USB drives and internal storage.']],
-  ['0.153', '3 Nov 2026', ['One consistent style for buttons, panels and menus.', 'Streaming button shows the service’s name and logo.']]];
-const news = shell(1, rel.map(([v, d, items], i) => `<div class="rel${i === 0 ? ' f' : ''}"><div class="rh"><b>${v}</b><span>${d}</span></div>${items.map(t => `<div class="ri">${t}</div>`).join('')}</div>`).join(''), '');
+const esc = t => t.replace(/&/g, '&amp;');
+const histTop = [['November 2026', [['0.155', '4 Nov'], ['0.154', '3 Nov'], ['0.153', '3 Nov'], ['0.152', '2 Nov'], ['0.151', '2 Nov'], ['0.150', '2 Nov'], ['0.149', '1 Nov']]],
+  ['October 2026', [['0.148', '31 Oct'], ['0.147', '29 Oct'], ['0.146', '29 Oct']]]];
+const histEnd = [['September 2026', [['0.19', '16 Sep'], ['0.17', '15 Sep'], ['0.16', '15 Sep'], ['0.15', '15 Sep'], ['0.14', '15 Sep', 1], ['0.13', '15 Sep'], ['0.12', '15 Sep'], ['0.11', '14 Sep'], ['0.10', '14 Sep'], ['0.9', '14 Sep'], ['0.8', '14 Sep'], ['0.7', '14 Sep', 1], ['0.6', '14 Sep'], ['0.5', '14 Sep'], ['0.1 – 0.4', '13–14 Sep', 4]]]];
+const detail = {
+  '0.155': ['4 November 2026', ['Playback engine updated to NOVA 6.6.4.', 'Better Dolby Vision and HDR playback, including Dolby Vision in AV1.', 'If a hardware decoder fails, Supernova tries another one.', 'MPEG-TS files show the right length and resume correctly.', 'Styled subtitles stay on screen in Fit width and zoom.']],
+  '0.8': ['14 September 2026', ['A new Home screen: compact rows, a slate look and real tabs for each section.']] };
+const hrow = ([v, d, quiet], sel) => quiet
+  ? `<div class="hv q"><b>${v}</b><span>${quiet > 1 ? quiet + ' test builds · no visible changes' : 'Test build · no visible changes'}</span></div>`
+  : `<div class="hv${sel ? ' f' : ''}"><b>${v}</b><span>${d}</span></div>`;
+const histPage = (groups, pick, fadeTop) => { const [date, items] = detail[pick];
+  const list = groups.map(([m, rows]) => `<div class="csec2"><span>${m}</span><i></i></div>` + rows.map(r => hrow(r, r[0] === pick)).join('')).join('');
+  return shell(1, `<div class="hist"><div class="hl${fadeTop ? ' end' : ''}"><div class="hls">${list}</div>${fadeTop ? '<div class="hfade top"></div>' : '<div class="hfade"></div>'}</div>` +
+    `<div class="hd"><div class="hdv">${pick}</div><div class="hdd">${date}</div>${items.map(t => `<div class="ri">${t}</div>`).join('')}${pick === '0.8' ? '' : '<div class="hcount">155 versions since 13 September 2026</div>'}</div></div>`, ''); };
+const news = histPage(histTop, '0.155', false);
+const newsEnd = histPage(histEnd, '0.8', true);
+const credits = [['Where Supernova comes from', [['NOVA Video Player', 'The app Supernova is built on', 'Supernova is based on NOVA Video Player 6.6.4. Thank you to the NOVA project and everyone who has worked on it. Supernova changes the app in many places; the original notices are kept under Licences.'],
+  ['Archos Video Player Community Edition', 'Where NOVA itself began', 'NOVA grew out of Archos Video Player Community Edition. Thank you to Archos and its original contributors.']]],
+  ['Information and services', [['TMDB', 'Film and TV details and artwork', 'This product uses the TMDB API but is not endorsed or certified by TMDB.'],
+  ['JustWatch, via TMDB', 'Where to Watch', 'Where a title is available comes from JustWatch through TMDB. Availability can change.'],
+  ['Trakt', 'Optional watch history sync', 'Signing in is optional and uses your own Trakt account.'],
+  ['OpenSubtitles.com', 'Optional subtitle downloads', 'Uses your own OpenSubtitles.com account and its limits.']]]];
+const creditsPage = shell(0, `<div class="crumb2">About › Credits &amp; acknowledgements</div>` + credits.map(([g, items]) => `<div class="csec2"><span>${g}</span><i></i></div>` +
+  items.map(([n, r, t], i) => `<div class="cr${g.startsWith('Where') && i === 0 ? ' f' : ''}"><div class="crn"><b>${n}</b><span>${r}</span></div><div class="crt">${t}</div></div>`).join('')).join('') +
+  `<div class="disc">No endorsement by any of these projects or services is implied.</div>`, '');
+const notice = `FFmpeg n9.0.2
+
+# License
+
+Most files in FFmpeg are under the GNU Lesser General Public License version 2.1
+or later (LGPL v2.1+). Read the file COPYING.LGPLv2.1 for details. Some other
+files have MIT/X11/BSD-style licenses. In combination the LGPL v2.1+ applies to
+FFmpeg.
+
+Some optional parts of FFmpeg are licensed under the GNU General Public License
+version 2 or later (GPL v2+). See the file COPYING.GPLv2 for details. None of
+these parts are used by default, you have to explicitly pass --enable-gpl to
+configure to activate them. In this case, FFmpeg's license changes to GPL v2+.`;
+const licPage = shell(2, `<div class="crumb2">Licences › Playback engine</div><div class="lh"><div><div class="lhn">FFmpeg</div><div class="lhs">Reads and decodes almost every video and audio format</div></div></div>` +
+  `<div class="lfacts"><span><i>Version</i>9.0.2, with security fixes</span><span><i>Licence</i>LGPL 2.1 or later</span><span><i>Website</i>ffmpeg.org/legal.html</span></div>` +
+  `<div class="csec2"><span>Licence text</span><i></i></div><div class="ltext f"><pre>${notice}</pre><div class="hfade"></div></div>`, '');
 const libs = [['App libraries', [['AndroidX', 'Apache 2.0'], ['OkHttp', 'Apache 2.0'], ['Retrofit', 'Apache 2.0'], ['jcifs-ng (Windows shares)', 'LGPL 2.1'], ['sshj (SFTP)', 'Apache 2.0'], ['sardine-android (WebDAV)', 'Apache 2.0']]],
   ['Playback engine', [['FFmpeg', 'LGPL 2.1'], ['libass (styled subtitles)', 'ISC'], ['dav1d (AV1)', 'BSD 2-Clause'], ['HarfBuzz', 'MIT']]]];
 const lic = shell(2, `<div class="srch2">${ic('search', 26)}<span>Search 66 licences</span></div>` + libs.map(([g, items]) => `<div class="csec2"><span>${g}</span><i></i></div>` + items.map(([n, l], i) => `<div class="lr${g === 'App libraries' && i === 0 ? ' f' : ''}"><span>${n}</span><span class="lv">${l}</span>${ic('chev', 22)}</div>`).join('')).join(''), '');
@@ -46,7 +83,10 @@ const dev = shell(3,
   `<div class="csec2"><span>Library</span><i></i></div>` + info('In your library', '85 films · 324 shows · 1,726 episodes') + info('Sources', '2 · USB drive and Put.io'), '');
 const shots = [
   ['26-about.png', about, 'About: version, date and NOVA base said once; credits one step away'],
-  ['27-whats-new.png', news, 'What’s new: released versions only, written for viewers'],
+  ['27-whats-new.png', news, 'What’s new: every version since 0.1, newest first; the selected one is described on the right'],
+  ['30-whats-new-start.png', newsEnd, 'The start of the list: test builds with no visible change are shown as one quiet line'],
+  ['31-credits.png', creditsPage, 'Credits & acknowledgements: opened from About; Back returns'],
+  ['32-licence.png', licPage, 'One licence opened: what it is, version, licence, website, then the full notice to scroll'],
   ['28-licences.png', lic, 'Licences: search, grouped into app libraries and playback engine'],
   ['29-device.png', dev, 'Device: device, decoders and library in plain words'],
 ];
@@ -97,6 +137,18 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .csec2{display:flex;align-items:center;gap:16px;height:50px;padding:0 14px;font-size:21px;color:#aab3c4}.csec2 i{flex:1;height:1px;background:rgba(255,255,255,.18)}
 .lr{display:flex;align-items:center;gap:20px;height:62px;padding:0 22px;border-radius:20px;font-size:24px;font-weight:500}.lr.f{box-shadow:inset 0 0 0 3px #fff}.lr span:first-child{flex:1}.lv{font-weight:400;color:#c9d3e6;font-size:21px}.lr svg{color:#8f98a8}
 .kv{display:flex;align-items:center;height:58px;padding:0 22px;font-size:23px}.kv span{width:320px;color:#c9d3e6}.kv b{font-weight:500}
+.hist{display:flex;gap:28px;height:780px}.hl{position:relative;width:560px;flex:none;overflow:hidden}.hls{position:absolute;left:0;right:0;top:0}.hl.end .hls{top:auto;bottom:0}
+.hv{display:flex;align-items:center;gap:18px;height:58px;padding:0 20px;border-radius:18px}.hv b{font-size:24px;font-weight:500;width:120px}.hv span{font-size:20px;color:#aab3c4}.hv.f{box-shadow:inset 0 0 0 3px #fff}
+.hv.q b{color:#8f98a8;font-weight:400}.hv.q span{color:#7d8696}
+.hfade{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(0deg,#16181d 15%,rgba(22,24,29,0))}.hfade.top{top:0;bottom:auto;background:linear-gradient(180deg,#16181d 15%,rgba(22,24,29,0))}
+.hd{flex:1;border-left:1px solid rgba(255,255,255,.12);padding:14px 0 0 32px;position:relative}.hdv{font-size:40px;font-weight:500}.hdd{font-size:21px;color:#aab3c4;margin:4px 0 18px}.hd .ri{font-size:23px;margin:10px 0 0}
+.hcount{position:absolute;left:32px;bottom:10px;font-size:19px;color:#8f98a8}
+.crumb2{font-size:20px;color:#aab3c4;margin:6px 14px 4px}
+.cr{border-radius:20px;padding:14px 22px;margin-bottom:4px}.cr.f{box-shadow:inset 0 0 0 3px #fff}.crn{display:flex;align-items:baseline;gap:16px}.crn b{font-size:25px;font-weight:500}.crn span{font-size:20px;color:#aab3c4}.crt{font-size:21px;color:#dfe5f1;margin-top:6px;line-height:1.4;max-width:1500px}
+.disc{font-size:19px;color:#8f98a8;margin:14px 22px}
+.lh{margin:10px 14px 16px}.lhn{font-size:38px;font-weight:500}.lhs{font-size:22px;color:#c9d3e6;margin-top:4px}
+.lfacts{display:flex;gap:48px;margin:0 14px 10px;font-size:22px}.lfacts i{font-style:normal;color:#aab3c4;margin-right:12px}
+.ltext{position:relative;border-radius:20px;background:#121418;margin:8px 0 0;height:560px;overflow:hidden;padding:20px 26px}.ltext.f{box-shadow:inset 0 0 0 3px #fff}.ltext pre{font-family:R;font-size:20px;line-height:1.5;color:#dfe5f1;white-space:pre-wrap;margin:0}.ltext .hfade{background:linear-gradient(0deg,#121418 15%,rgba(18,20,24,0))}
 .label{z-index:20;position:absolute;right:56px;bottom:8px;font-size:18px;color:#c9d3e6}`;
 (async () => { const b = await chromium.launch(); const t = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   for (const [f, body, label] of shots) {
