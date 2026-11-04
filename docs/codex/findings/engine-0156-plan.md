@@ -157,6 +157,14 @@ the non-UI subset of `73df6e4d`. Already-present changes need verification,
 not duplicate commits. The native/Java clipping mismatch is a release integration
 gate for Claude, not a reason to edit layout code here.
 
+ENGINE item 3 draft progress: new
+`video-supernova156-01-hdr-producer-5c721514.patch` carries the internal
+SurfaceView dataspace deletion and three Robolectric regressions (retain HDR
+window request, API-23 guard, absent window; no surface-controller mutation).
+It passed a clean apply check, exact resulting-tree comparison and Java syntax
+parsing. Android tests are written but unrun; apply in the new engine checkout,
+not as a layout change or an unrelated production workflow edit.
+
 ## Box padding end to end
 
 Native `461685e0faeaeb0ba51cde42a141fa62f5447119` adds `SUB_USER_STYLE.padding` (default 2) in Include/sub_style.h; `sub_style_set_padding` in Source/sub_style.c locks, updates the integer value and style serial. `Source/sub_format_ssa.c:sync_styles` maps it to libass Outline for mode 1 (per-line box) and Shadow for mode 2 (unified box). Outline/shadow widths remain real glyph outline/shadow settings. `Source/jni_sub_engine.c:nativeSetPadding` resolves engine, updates style, and calls sub_engine_force_wake; matching exported declaration is in Include/jni_sub_engine.h. New native wrappers must ship atomically with Java's call.
