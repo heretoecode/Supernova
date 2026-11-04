@@ -362,3 +362,14 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   Still watching Off · 2 · 3 · 5 episodes; Sleep timer Off · 30 · 60 · 90 min · End of episode. Rule for all of
   Settings: up to ~5 short options inline; longer lists (languages, countries, genres) open the side-panel list.
 - **Status:** page pattern approved by the owner on 4 Nov 2026 (`03`–`05`: single panel, separate tab buttons, inline choices for up to ~5 options); review content approved by the owner on 4 Nov 2026: **Accent & Colour removed** (one fixed accent); renames **Where to Watch** and **Accounts & Services**; moves — Rescrape → **Refresh details** in Network & Files › Library Health (collections rescrape removed), Network connections page removed in favour of Network & Files, IntroDB skip modes to Playback. Remaining review items follow SETTINGS_REVIEW.md; each section gets mock-ups — then go-ahead to code.
+
+## 24. Settings › Audio & Subtitles (design)
+- **Mock-ups (`docs/design/proposals/settings/06`–`09`), approved page pattern:** tabs Audio · Subtitles · Style · Fonts.
+  Audio: preferred audio language (flag + name, opens the list), prefer original language (switch), surround sound
+  inline (Automatic · Pass through · Stereo), virtual surround (switch). `07`: language list in the solid side panel —
+  a flag for every language, a neutral badge where no country fits (Original, Latin…). Subtitles: Show subtitles inline
+  (Off · Forced only · Always), preferred subtitle language, languages to search online, prepare next episodes, find
+  subtitles automatically. Style: the live-preview editor approved for Playback Settings (item 4). Fonts: folder shown
+  with font count; Change opens Supernova's Local Storage browser, Clear inline.
+- Stand-in flags in the mock-ups; the app uses its own flag set (missing flags to be added).
+- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
