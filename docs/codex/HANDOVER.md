@@ -4,7 +4,10 @@
 
 Branch: `codex/0155-code-2026-11-04`. Follow `BRIEF_0155_ENGINE_BUILD.md`
 from fetched Claude `a5c5b7b3a408ffa3adaa24f5cfbfe2bd1ce4e460`.
-This section supersedes the historical preparation status below.
+Archive update follows `BRIEF_0155_ARCHIVE_BRANCH.md` fetched from Claude
+`65457a4e36b30dc0b2bc84e17d427b5b8d708294`, including the two fixes from
+`11c60bbb6` / `f4c22771d`. This section supersedes the historical preparation
+status below.
 
 1. Archive first: Claude starts `supernova-0156-native-archive.yml` with no inputs
    from the reviewed recipe branch (manual dispatch, or a push changing only its
@@ -114,29 +117,39 @@ portrait. Existing behavior is retained; Claude must evaluate supported TV cases
 and obtain any needed authorization before porting it. Do not claim vertical
 coverage proves horizontal behavior.
 
-No workflow, NDK or Gradle build has run here. Exact continuation:
-**ENGINE_BUILD item 5 → NEXT item 3, DP-10**; then NEXT item 4 onward.
+ARCHIVE_BRANCH items 1–4 are implemented: `ec6507f81` (branch writer),
+`76c402a19` (branch reader/default), `e3235e233` (owner fallback), `d4735eb89`
+(hand-off), `8f6599d0e` (strict root tree/history checks, complete offline local
+preparation and Actions fallback tests). Both modified workflows and script
+recipes have measured digests in the engine lock. Final validation: **16 archive
++ 14 native-stack offline tests pass**. No archive branch has been pushed and
+no workflow, NDK or Gradle build has run here; Claude must perform the live job.
 
-DP-10 continuation checkpoint: re-read `UpdateNextTask.java:342–390` and
-`:400–443`. Its code is unchanged in this run. The prepared FileCore wrapper
-operations in the new native lock apply cleanly at `c4b760c`; the earlier
-`filecore-supernova155-scan.patch` also applies after them. That draft supplies
-`webdav.ScanIoScope`, which owns HTTP calls/deadline/worker interruption, but
-does not establish a generic owned listing contract across the factory's
-transports. Next add **a new** `.github/build/filecore-supernova155-*.patch`
-after that scan patch, supplying the public owned listing/cancellation hook.
-Do not edit the existing patch or reach into private/shared clients from Java
-app code. Register ownership before a blocking connect/list can start; fence
-cancel-before-register and close/deadline races. Pair it with task-local
-cancellation and cooperative filter/sort/traversal checkpoints, preserving the
-same candidate order and repeat/binge behavior (DP-09 is Claude's).
+Exact continuation remains **NEXT item 3, DP-10 implementation**. The new
+`findings/dp10-listing-ownership.md` records this run's full `UpdateNextTask`
+read, prepared FileCore/MediaLib transport audit, concrete resource boundaries,
+public-hook state transitions and acceptance tests. No DP-10 app change or new
+cancellation patch is delivered; do not mark DP-10 fixed or advance to NEXT 4.
 
-Complete in one DP-10 commit with tests: real silent/trickling WebDAV listings,
-repeated replace/cancel (including `cancel(false)`), actual worker termination,
-no late callback after main-queue drain, cancellation during traversal and an
-unaffected concurrent shared playback call. Audit FTP/SFTP/SMB/UPnP connection
-ownership before claiming the generic contract. No DP-10 code fix or new
-FileCore cancellation patch is delivered by this run. NEXT 4 onward is pending.
+Start with a **new** `.github/build/filecore-supernova155-listing-cancellation.patch`
+after the existing `filecore-supernova155-scan.patch`, at prepared FileCore
+`RawLister.java:38` and `webdav/ScanIoScope.java:29–105`. The prepared eight
+FileCore operations plus the scan patch apply cleanly at `c4b760c`. Register a
+task-owned handle before factory/connect/list work starts and fence cancellation
+before registration, close/deadline races and late callbacks. FTP/FTPS create
+clients per attempt, but SFTP/SSHJ/SMBJ/JCIFS use shared sessions/clients/pools;
+blanket disconnect/reset is unsafe. UPnP needs a **new MediaLib companion patch**
+to retain/cancel the submitted Browse handle; interrupting its waiter alone does
+not own the actual request. See the audit before choosing the public API.
+
+Then pair the public hook with UpdateNextTask task-local cancellation (including
+`cancel(false)`), cooperative filtering/comparator/traversal checkpoints and
+main-queue fencing. Preserve exact file choice/order and repeat/binge behavior;
+DP-09 is Claude's. Deliver the complete DP-10 fix and tests in one commit: actual
+silent/trickling DAV listing termination, repeated replace/cancel, setup/register/
+close races, no callback after main-queue drain, cancellation during traversal,
+and an unaffected concurrent shared playback call. Do not infer worker termination
+from Future cancellation. NEXT item 4 onward remains pending.
 
 The following table records **earlier engine preparation** and MORE/NEXT work;
 its unapplied-draft and Claude-only overflow statements are historical, superseded
