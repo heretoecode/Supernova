@@ -551,3 +551,13 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   the panel) removes the sample and brings the real subtitles back. Playback carries on underneath. Subtitle Delay is
   not part of the rule (it needs the real subtitles). If subtitles are off, the sample still shows, so the look can be
   set in advance.
+
+## 36. Picture in picture (owner, first use)
+- **Getting back to full screen:** Supernova adds no buttons to the PiP window (no `setActions`), so the only way back is
+  Android TV's own PiP menu (press and hold Home on the Shield remote, then Full screen). **Fix (0.156):** OK/Select on
+  the remote while the PiP window is focused, and opening Supernova again, both return to full screen; add Play/Pause
+  and Full screen buttons to the PiP menu (`PictureInPictureParams.setActions`).
+- **Subtitles fill the PiP window:** text size is worked out from the screen's short side
+  (`SubtitleManager.getScreenShortSide`, "pt x short side / 720"); in PiP only the vertical position is rescaled
+  (`PlayerActivity.java:1634–1638`), so the text keeps its full-screen size inside a small window. **Fix:** scale the
+  text to the PiP window (or hide subtitles in PiP if they still can't be read) — to confirm on the Shield.
