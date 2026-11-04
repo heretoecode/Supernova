@@ -372,4 +372,6 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   subtitles automatically. Style: the live-preview editor approved for Playback Settings (item 4). Fonts: folder shown
   with font count; Change opens Supernova's Local Storage browser, Clear inline.
 - Stand-in flags in the mock-ups; the app uses its own flag set (missing flags to be added).
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Owner (4 Nov 2026):** no tab for one setting; the language list was far too wide. Revised: tabs Audio · Subtitles ·
+  Style; the custom fonts folder is the last row of Subtitles (`09`); the language list panel is 440px wide (was 620).
+- **Status:** awaiting the owner's approval of the revised `06`–`09` — then awaiting go-ahead to code.

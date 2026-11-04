@@ -19,7 +19,7 @@ const flag = c => ({ gb: '<rect width="36" height="24" fill="#1f3a93"/><path d="
   la: '<rect width="36" height="24" rx="3" fill="#3a3f48"/><text x="18" y="17" font-size="12" font-family="R" font-weight="500" fill="#fff" text-anchor="middle">LA</text>',
   orig: '<rect width="36" height="24" rx="3" fill="#3a3f48"/><text x="18" y="17" font-size="11" font-family="R" font-weight="500" fill="#fff" text-anchor="middle">ORIG</text>' })[c];
 const fl = c => `<svg class="fl" width="36" height="24" viewBox="0 0 36 24">${flag(c)}</svg>`;
-const tabs = (open, f) => `<div class="tabs">${[['audio', 'Audio'], ['cc', 'Subtitles'], ['style', 'Style'], ['font', 'Fonts']].map(([k, t], i) => `<div class="tb${i === open ? ' open' : ''}${f === i ? ' f' : ''}">${ic(k, 26)}<span>${t}</span></div>`).join('')}</div>`;
+const tabs = (open, f) => `<div class="tabs">${[['audio', 'Audio'], ['cc', 'Subtitles'], ['style', 'Style']].map(([k, t], i) => `<div class="tb${i === open ? ' open' : ''}${f === i ? ' f' : ''}">${ic(k, 26)}<span>${t}</span></div>`).join('')}</div>`;
 const tg = on => `<span class="tg${on ? ' on' : ''}"><i></i></span>`;
 const seg = (opts, on, f) => `<span class="seg${f ? ' f' : ''}">${opts.map(o => `<b class="${o === on ? 'on' : ''}">${o}</b>`).join('')}</span>`;
 const val = v => `<span class="sv">${v}<span class="chev">${ic('chev', 22)}</span></span>`;
@@ -36,8 +36,9 @@ const subs = f => shell(1, -1,
   row('Preferred subtitle language', 'Chosen first when there is more than one.', val(`${fl('gb')}<span>English</span>`)) +
   row('Languages to search online', 'Used by Download Subtitles.', val(`${fl('gb')}${fl('fr')}<span>English, French</span>`)) +
   row('Prepare subtitles for the next episodes', 'Looks them up ahead of time while you watch a series.', tg(true)) +
-  row('Find subtitles when none are included', 'Searches OpenSubtitles automatically.', tg(true)),
-  'Long lists (languages) open the side panel; short choices change with Left/Right');
+  row('Find subtitles when none are included', 'Searches OpenSubtitles automatically.', tg(true)) +
+  row('Custom fonts folder', 'For styled subtitles that ask for fonts that aren’t built in.', `<span class="sv">${ic('folder', 24)}<span>Backup #1 › Fonts · 14 fonts</span></span><span class="ib"><span class="btn sm${f === 'choose' ? ' f' : ''}">Change</span><span class="btn sm">${ic('x', 20)}Clear</span></span>`, f === 'choose'),
+  'Change opens Supernova’s own folder browser, not Android’s Files app');
 const fonts = f => shell(3, -1,
   row('Custom fonts folder', 'Used by styled (ASS/SSA) subtitles that ask for fonts that aren’t built in.', `<span class="sv">${ic('folder', 24)}<span>Backup #1 › Fonts · 14 fonts</span></span><span class="ib"><span class="btn sm${f === 'choose' ? ' f' : ''}">Change</span><span class="btn sm">${ic('x', 20)}Clear</span></span>`, f === 'choose') +
   `<div class="note">Change opens Supernova’s own folder browser (Local Storage), not Android’s Files app.</div>`,
@@ -49,7 +50,7 @@ const shots = [
   ['06-audio.png', audio('surround'), 'Audio: preferred language with its flag; surround sound as an inline choice'],
   ['07-audio-language.png', audio('lang') + picker, 'Language list in the solid side panel: a flag for every language, a badge for Original / Latin and similar'],
   ['08-subtitles.png', subs('show'), 'Subtitles: Show subtitles inline (Off · Forced only · Always); languages open the list'],
-  ['09-fonts.png', fonts('choose'), 'Fonts: the folder chosen and how many fonts it holds; Change opens Supernova’s own browser; Clear inline'],
+  ['09-fonts.png', subs('choose'), 'No separate Fonts tab: the fonts folder is the last row of Subtitles, with Change and Clear inline'],
 ];
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;background:radial-gradient(ellipse 70% 60% at 70% 75%,#1d4fd8 0%,rgba(29,79,216,0) 70%),linear-gradient(180deg,#05081a 0%,#0a1650 45%,#10248a 100%)}
@@ -58,7 +59,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .ohead{display:flex;align-items:center;justify-content:space-between;margin:0 10px 16px}.crumb{font-size:20px;color:#b7bfcc}.stitle{font-size:36px;font-weight:500;margin-top:2px}
 .tabs{display:flex;gap:12px}.tb{height:64px;border-radius:20px;background:#2a2d33;color:#c9d3e6;display:flex;align-items:center;gap:10px;padding:0 22px;font-size:23px;font-weight:500}.tb.open{background:#454b55;color:#fff}.tb.f{background:#F4F6FB;color:#0B0D12}
 .rule{height:1px;background:rgba(255,255,255,.14);margin:0 6px 8px}.inner{position:relative;height:calc(100% - 120px)}
-.r{display:flex;align-items:center;gap:24px;min-height:104px;padding:10px 22px;border-radius:22px;border-bottom:1px solid rgba(255,255,255,.08)}.r.f{box-shadow:inset 0 0 0 3px #fff;border-bottom-color:transparent}
+.r{display:flex;align-items:center;gap:24px;min-height:96px;padding:10px 22px;border-radius:22px;border-bottom:1px solid rgba(255,255,255,.08)}.r.f{box-shadow:inset 0 0 0 3px #fff;border-bottom-color:transparent}
 .rt{flex:1;min-width:0}.rt b{display:block;font-size:27px;font-weight:500}.rt span{display:block;font-size:21px;color:#c9d3e6;margin-top:6px}
 .sv{display:flex;align-items:center;gap:10px;font-size:24px;color:#dfe5f1;white-space:nowrap}.chev{color:#8f98a8;display:flex}.fl{border-radius:3px;flex:none}
 .tg{width:64px;height:34px;border-radius:17px;background:#3a3f48;position:relative;display:inline-block;flex:none}.tg.on{background:#2fb7d8}.tg i{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff}.tg.on i{left:34px}
@@ -67,7 +68,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .note{margin:18px 22px;font-size:20px;color:#aab3c4}
 .more{position:absolute;left:14px;bottom:0;font-size:18px;color:#8f98a8}
 .dim{position:absolute;inset:0;background:rgba(0,0,0,.35)}
-.panel{position:absolute;right:56px;top:112px;bottom:40px;width:620px;border-radius:26px;background:#24272d;border:2px solid rgba(255,255,255,.24);padding:28px;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+.panel{position:absolute;right:56px;top:112px;bottom:40px;width:440px;border-radius:26px;background:#24272d;border:2px solid rgba(255,255,255,.24);padding:28px;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
 .ptitle{font-size:30px;font-weight:500;margin:0 6px 6px}.pdesc{font-size:20px;color:#c9d3e6;margin:0 6px 14px}
 .opt{display:flex;align-items:center;gap:16px;height:70px;padding:0 20px;border-radius:20px;font-size:25px;font-weight:500}.opt.f{box-shadow:inset 0 0 0 3px #fff}
 .rad{width:32px;height:32px;border-radius:50%;border:2px solid #aab3c4;display:flex;align-items:center;justify-content:center;flex:none}.rad.on{background:#F4F6FB;border-color:#F4F6FB;color:#0B0D12}
