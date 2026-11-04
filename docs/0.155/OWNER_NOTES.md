@@ -196,3 +196,13 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   shown once; the IntroDB page says under its heading whether skipping is on, with a link to the switch; the choice
   opens as an opaque list in the side-panel style.
 - **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+
+## 17. Playback: the IntroDB Skip button (design + bug)
+- **Today (Claude, from the code — `PreviewUpNext.segmentPill`):** "Skip Intro" (or Recap/Preview…) appears for
+  5 seconds as a charcoal button bottom right, but it never takes focus: OK does nothing to it, and it can only be
+  reached by opening the controls, going to More and pressing Down. The owner has never noticed it.
+- **Proposed (`docs/design/proposals/skip-button/01`–`04`):** white button "Skip Intro", bottom right, already
+  selected when it appears — one OK skips; a thin bar inside counts down the 5 seconds, then it fades and the part
+  plays; Back/Left/Right/Up dismiss it; with the controls open it sits just above them, still selected, and Down goes
+  to the controls. `04` shows bottom left for comparison.
+- **Status:** awaiting the owner's choice of placement and approval — then awaiting go-ahead to code.
