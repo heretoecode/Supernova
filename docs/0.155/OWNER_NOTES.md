@@ -36,3 +36,12 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 
 ## 6. Panel colour check
 - Owner confirmed 4 Nov 2026: the panel is the correct charcoal on the TV; the blue tint was the phone camera. Closed.
+
+## 7. Playback Settings: colour swatch selection ring is clipped (bug)
+- **Seen (photo):** the ring round the chosen colour (green) looks like a circle with flat, square-ish edges.
+- **Cause (Claude, from the code):** `PlaybackSubtitlePanel.Swatch` draws a 15px-radius dot plus a white ring at
+  radius 18.5px with a 3px stroke (outer edge ≈ 20px) inside a 38×38px view (half-width 19px), so the view clips the
+  ring on four sides.
+- **Want:** a complete, clean ring with a small dark gap between the colour and the ring; the swatch view sized to
+  fit it. Row focus (white outline) and "chosen colour" (ring) stay visibly different.
+- **Status:** agreed bug — awaiting go-ahead to code.
