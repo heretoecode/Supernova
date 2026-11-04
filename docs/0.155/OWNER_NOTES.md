@@ -415,4 +415,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   `17`: the screensaver — one library backdrop at a time, slow drift and cross-fade, title and clock small in the
   bottom corners.
 - The old Interface size option is already hidden on TV builds and stays out.
-- **Status:** awaiting the owner's approval — then awaiting go-ahead to code.
+- **Status:** approved by the owner on 4 Nov 2026 (`16`–`17`) — awaiting go-ahead to code.
