@@ -1,6 +1,6 @@
 name: Preserve the pinned 0.146 native engine (manual draft)
 
-# Claude, 4 Nov 2026: Codex's draft (codex/0155-code-2026-11-04 9fd8bc94c). Run 2: artifact download Accept fix. Run 3: show gh errors. A push trigger limited to this file on
+# Claude, 4 Nov 2026: Codex's draft (codex/0155-code-2026-11-04 9fd8bc94c). Run 2: artifact download Accept fix. Run 3: show gh errors. Run 4: after the owner set workflow permissions to read and write. A push trigger limited to this file on
 # Claude's branch is added because dispatch-only workflows must exist on the default branch to be started.
 on:
   push:
