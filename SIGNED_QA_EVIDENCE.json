@@ -1,0 +1,277 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "adcd2bca74126d9fdfe4fe0c7551a8b4f05c7670b51e60bad3416bb0883538ee",
+  "version_name": "0.154",
+  "version_code": 154,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 21,
+  "source_commit": "9121939b64b5c7664d2ac4d079a0974d1b89dd28",
+  "signed": true,
+  "qa_only": true,
+  "final_release_published": false,
+  "unsigned_apk_sha256": "f8ce19fe5ef198297a84865e58f982cb7e28f67e8d5002b7c9459fe4153afd6b",
+  "payload_matches_tested_unsigned": true,
+  "unsigned_conformance": {
+    "application_id": "app.supernova.player",
+    "version_name": "0.154",
+    "version_code": 154,
+    "provider_authorities": [
+      "app.supernova.player.browser",
+      "app.supernova.player.provider",
+      "app.supernova.player.media;app.supernova.player.scraper",
+      "app.supernova.player.leanback.search.VideoSearchProvider",
+      "app.supernova.player.androidx-startup",
+      "app.supernova.player.com.squareup.picasso",
+      "app.supernova.player.SentryNdkPreloadProvider"
+    ],
+    "native_library_count": 21,
+    "apk_sha256": "f8ce19fe5ef198297a84865e58f982cb7e28f67e8d5002b7c9459fe4153afd6b",
+    "actual_android23_transport_and_trust_tests": 28,
+    "native_security_artifact_run": 40843685431,
+    "unsigned_signature_rejected": true,
+    "runtime_artifact_hashes_matched": 139,
+    "rebuilt_ffmpeg_libraries_matched": 6,
+    "unit_tests": 1343,
+    "unit_failures": 0,
+    "unit_errors": 0,
+    "unit_skips": 0,
+    "tooling": {
+      "tests": 194,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "required_0154_test_classes": [
+      "AudioSpeedSettingsTest",
+      "AudioTrackSelectionPolicyTest",
+      "BackupDirectOptionsTest",
+      "BackupSettingsControllerTest",
+      "BundledNoticePagerTest",
+      "CanonicalMatchProviderTest",
+      "ChaptersDbClientTest",
+      "CombinedCurrentRestoreTest",
+      "CustomLibraryPageTest",
+      "Details139AcceptanceTest",
+      "DetailsEnrichmentDeliveryTest",
+      "DetailsImprovementsTest",
+      "DetailsReferenceRenderTest",
+      "DiagnosticCaptureReuseTest",
+      "DiagnosticsTest",
+      "EditPagePanelTest",
+      "FtpPortInputTest",
+      "Jetty145SecurityTest",
+      "Jetty146BackportTest",
+      "LibraryStatisticsLayoutTest",
+      "LibraryStatisticsTest",
+      "LocalStorageViewTest",
+      "LogicalBackupExporterTest",
+      "MediaMatchJournalTest",
+      "MediaMatchReconciliationTest",
+      "MediaUtilsSubsDirTest",
+      "Network142CredentialsTest",
+      "Network142PutioTest",
+      "Network142RenderTest",
+      "Network142Test",
+      "Network142WebdavTest",
+      "NextHudTest",
+      "NextQaWizardTest",
+      "NextVersionUiTest",
+      "OmdbSupplementTest",
+      "OmdbUserKeyTest",
+      "Playback141RenderTest",
+      "PlaybackAgeOverlayTest",
+      "PlaybackChaptersTest",
+      "PlaybackNetworkRetryTest",
+      "PlaybackSubtitlePanelTest",
+      "PlayerControllerLaunchTest",
+      "PreviewDialogStackTest",
+      "PreviewEnrichmentQueueTest",
+      "PreviewLanguageIconTest",
+      "PreviewMoviePageTest",
+      "PreviewPagesTest",
+      "PreviewPlaybackLoadingTest",
+      "PreviewPlaybackMenusTest",
+      "PreviewSeasonTest",
+      "PreviewSubtitleResultsTest",
+      "ProductionBackupSettingsTest",
+      "PutioConnectionFocusTest",
+      "PutioGrantRevokeTest",
+      "PutioOAuthClientTest",
+      "ReceptionSupplementTest",
+      "SettingsShieldNavigationTest",
+      "SettingsWorkspaceTest",
+      "SkipPromptMasterSwitchTest",
+      "StandardSwitchReferenceTest",
+      "StorageWriteAccessTest",
+      "StreamingProviderFocusTest",
+      "StreamingRepositoryTest",
+      "SubtitleCacheRenameTest",
+      "SubtitleDiscoveryTest",
+      "SubtitleLegacyPreferencesTest",
+      "SubtitleReplacementTest",
+      "Supernova138HomeTest",
+      "Supernova138PlaybackTest",
+      "Supernova138UiTest",
+      "Supernova139HomeEditorTest",
+      "Supernova139LanguageFlagsTest",
+      "Supernova139SharedCardMetadataTest",
+      "Supernova141UiTest",
+      "Supernova154UiTest",
+      "SupernovaStyleConformanceTest",
+      "SupernovaStyleTest",
+      "TransportReadDiagnosticsTest",
+      "UiLanguageNameTest",
+      "VideoSearchProviderInputTest",
+      "WebdavDeleteResponseTest",
+      "WebdavReconciliationSelectionTest",
+      "WebdavTraversalCompletenessTest"
+    ],
+    "library_suites": {
+      "MediaLib": {
+        "tests": 200,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 2,
+        "skipped_cases": [
+          "com.archos.mediaprovider.video.RealDatabasePruningTest.syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent",
+          "com.archos.mediaprovider.video.RealDatabasePruningTest.realDatabaseUpgradesCleanlyAndPassesIntegrityCheck"
+        ]
+      },
+      "FileCoreLibrary": {
+        "tests": 104,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 2,
+        "skipped_cases": [
+          "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest.compareMinimalPropertiesWithAllprop",
+          "com.archos.filecorelibrary.SpeedTestTransferTest.compareTransferRates"
+        ]
+      }
+    },
+    "lint": {
+      "errors": 0,
+      "warnings": 1252
+    },
+    "source_commit": "9121939b64b5c7664d2ac4d079a0974d1b89dd28",
+    "signed": false,
+    "apk_bytes": 37679115,
+    "build_result": "BUILD SUCCESSFUL",
+    "native_hashes_matched": 21,
+    "native_libraries": [
+      {
+        "path": "lib/arm64-v8a/libaudiocompress.so",
+        "sha256": "7da4c610b6fba15339f58212a64eaac35c70e8eb3a89e32b454b86748d946f24"
+      },
+      {
+        "path": "lib/arm64-v8a/libavcodec.so",
+        "sha256": "c90f047da6ef0d9ba514e7e5d5b3d98dd06726cf1b321acb34291afe0517aa55"
+      },
+      {
+        "path": "lib/arm64-v8a/libavfilter.so",
+        "sha256": "433b564c042b58cf303b985ed6bd78df4028fbd46a44ebb964b5cc7d777c3ae8"
+      },
+      {
+        "path": "lib/arm64-v8a/libavformat.so",
+        "sha256": "2e44b6dd85e14c1d4d614735aaa28e333c65b73e6730a358bd781a4307dbd2b0"
+      },
+      {
+        "path": "lib/arm64-v8a/libavos.so",
+        "sha256": "c1604bc2f63c8de3ba3b8d7eddf27befc79db40c3be5ca5fe762db14701f686e"
+      },
+      {
+        "path": "lib/arm64-v8a/libavos_android.so",
+        "sha256": "91327c1795c45caa1f4e6a764376db9fd7a24452881f624b829ffc744eb3617f"
+      },
+      {
+        "path": "lib/arm64-v8a/libavosjni.so",
+        "sha256": "706d2c1e61ea9224a06e4bd5a9a0048f083ba0736021e4207b59e2ed351cf778"
+      },
+      {
+        "path": "lib/arm64-v8a/libavutil.so",
+        "sha256": "5dd3720cf208c61eb80fd3a67efe3e5c692d7ff06645f83180915187637156d3"
+      },
+      {
+        "path": "lib/arm64-v8a/libcputest.so",
+        "sha256": "f7423a80aec49d811e9169a27a83d03aa582b59de17c70632169d50fc3ed745c"
+      },
+      {
+        "path": "lib/arm64-v8a/libdav1d.so",
+        "sha256": "949d2f54236f491c99f321125845944192c29ad26ed2cf3853ac808dccee5164"
+      },
+      {
+        "path": "lib/arm64-v8a/libdeinterlace.so",
+        "sha256": "b7d0197f74bcf2dee97c2443779051aa018d8b72ff12c595ccf7270dbe99a48f"
+      },
+      {
+        "path": "lib/arm64-v8a/libfilecoreutils.so",
+        "sha256": "6be88c41a10975af38e11ca5a3126da2efbaf4621681e0d42bb81f33db8a8ebc"
+      },
+      {
+        "path": "lib/arm64-v8a/libmysofa.so",
+        "sha256": "1850176340c1d492b9ec340336f0f1582b9ec63535e7e54ea188a4d7d146fef2"
+      },
+      {
+        "path": "lib/arm64-v8a/libnvpnativehelper.so",
+        "sha256": "4351fc2ee528e2cd31e39555afe80956d75a7ea99d215f47f1ddc9e5a370af2d"
+      },
+      {
+        "path": "lib/arm64-v8a/libopus.so",
+        "sha256": "4bd89b8727b071f011b421e456160d7189e1c02e513f40a2fd526e9996c77377"
+      },
+      {
+        "path": "lib/arm64-v8a/libsentry-android.so",
+        "sha256": "3bb3813cd2cb3164dddf2e8f28bceeebee89b98c68a74e6d761accb6b59d6960"
+      },
+      {
+        "path": "lib/arm64-v8a/libsentry.so",
+        "sha256": "dfa0435ddbb35710cc57ed0d4e3e91df5201159e1ce2be7a71e1881d2449ba34"
+      },
+      {
+        "path": "lib/arm64-v8a/libsfdec.core.21.so",
+        "sha256": "f2e25ad26188320b8dfa130cf76875f463989ef9cdad94e2b45833b476a6f892"
+      },
+      {
+        "path": "lib/arm64-v8a/libsfdec.so",
+        "sha256": "7af4a26d2a8b292609105a435e0be4fc289e7dea7d53f5c0cf6e6402de789b7c"
+      },
+      {
+        "path": "lib/arm64-v8a/libswresample.so",
+        "sha256": "a1a2019fc7c0f89e098ea2e7fab0a42a271f17feae72b7a96e65c283da4bb0ef"
+      },
+      {
+        "path": "lib/arm64-v8a/libswscale.so",
+        "sha256": "474dd7f343457cf0565d931132112486eb5a53358eb064f0f327a38c1c75996a"
+      }
+    ],
+    "offline_licence_entries": 66,
+    "branding_resource_checks": true,
+    "ffmpeg_source_commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+    "native_build_evidence_sha256": "3d5ae165f3a69736c79b1116744fa66c0f509db2d937f10d75062961bca0edfc",
+    "dynamic_flag_and_provider_resources_retained": true,
+    "embedded_source_commit": "9121939b64b5c7664d2ac4d079a0974d1b89dd28",
+    "implementation_base": "38c2be745e45c9c0686fad5d07d8bcbd30255bf0",
+    "preserved_ten_fixes": true,
+    "implementation_trees": {
+      "src/main": "25de97733d814fa2e72f21876ff272ea37af8f23",
+      "src/test": "30f6cc5da69ba5f01b62bd3d7cdfd6c4297322fa",
+      "res": "88ad8c92b326f3ffaa4a81db6f1e52632036917e",
+      "assets": "bc5aa968754f65949c95fc42b22306c325091b7e",
+      "AndroidManifest.xml": "0054e3359347da4fada1ff9eae75c93486b4829c",
+      "build.gradle": "f8d94cd57135cdff58faf3ba53f97585d467cf7f",
+      "settings.gradle": "7becd5859bacb0e0c4f9bf94f24069e81795a499",
+      "gradle.properties": "1c947b0dba9f10623846e845dbca1796213eb3b7"
+    },
+    "corrections_baseline": "38c2be745e45c9c0686fad5d07d8bcbd30255bf0"
+  },
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false
+}
