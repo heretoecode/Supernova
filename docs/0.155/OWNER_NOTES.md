@@ -642,3 +642,8 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   considerably. Codex brief: `docs/codex/BRIEF_0156_THUMBS_DIAGNOSTICS.md` (engine, cache, measurements, diagnostics
   expansion; no UI). Claude: the picture in the time bubble, the chapter-card pictures, a Settings switch, and the
   diagnostic hooks inside hands-off files.
+
+## Approvals, 4 Nov 2026 (late)
+- Chapters and Episodes in the player (#33, mock-ups `chapters/01`–`05`) — **approved**.
+- Subtitle Vertical Position step control with live sample line and the appearance preview rule (#35) — **approved**.
+- Full 0.156 list: `docs/0.156/RELEASE_LIST.md`.
