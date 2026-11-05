@@ -120,7 +120,6 @@
   1 crammed lines · longest 184 · src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java
   1 crammed lines · longest 183 · src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionFragment.java
   1 crammed lines · longest 180 · src/test/java/com/archos/mediacenter/video/leanback/PreviewBackdropTest.java
-  1 crammed lines · longest 178 · src/main/java/com/archos/mediacenter/video/player/SeekTooltipDrawable.java
   1 crammed lines · longest 178 · src/main/java/com/archos/mediacenter/video/info/VideoInfoShowScraperFragment.java
   1 crammed lines · longest 177 · src/main/java/com/archos/mediacenter/video/player/tvmenu/TVCardDialog.java
   1 crammed lines · longest 176 · src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/PreviewBrowserSurface.java

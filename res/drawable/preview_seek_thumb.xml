@@ -1,1 +1,34 @@
-<selector xmlns:android="http://schemas.android.com/apk/res/android"><item android:state_focused="true"><shape android:shape="oval"><size android:width="10dp" android:height="10dp"/><solid android:color="#FFFFFF"/></shape></item><item><shape android:shape="oval"><size android:width="6dp" android:height="6dp"/><solid android:color="#30D6FF"/></shape></item></selector>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Approved 0.156 HUD: a larger white dot; focused, it gains a soft halo. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size android:width="22dp" android:height="22dp" />
+                    <solid android:color="#40FFFFFF" />
+                </shape>
+            </item>
+            <item android:gravity="center" android:width="14dp" android:height="14dp">
+                <shape android:shape="oval">
+                    <solid android:color="#FFFFFFFF" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size android:width="22dp" android:height="22dp" />
+                    <solid android:color="#00000000" />
+                </shape>
+            </item>
+            <item android:gravity="center" android:width="10dp" android:height="10dp">
+                <shape android:shape="oval">
+                    <solid android:color="#FFFFFFFF" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

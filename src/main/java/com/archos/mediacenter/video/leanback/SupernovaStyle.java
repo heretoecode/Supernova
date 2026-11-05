@@ -69,7 +69,9 @@ public final class SupernovaStyle {
         /** Buttons inside a glass panel (e.g. panel tabs): a lighter charcoal at rest. */
         PANEL,
         /** Large boxed choices (e.g. the Settings grid): charcoal glass at rest. */
-        TILE
+        TILE,
+        /** Player HUD buttons over the picture (approved 0.156): charcoal glass with a faint edge, button corners. */
+        HUD
     }
 
     public static int dp(Context c, float value) {
@@ -86,7 +88,7 @@ public final class SupernovaStyle {
     public static StateListDrawable button(Context c, Surface surface) {
         float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
-        int edge = surface == Surface.TILE ? 0x2EFFFFFF : 0;
+        int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
         StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);

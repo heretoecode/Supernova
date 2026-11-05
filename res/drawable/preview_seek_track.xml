@@ -1,1 +1,26 @@
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android"><item android:id="@android:id/background"><shape><corners android:radius="2dp"/><solid android:color="#687C88"/></shape></item><item android:id="@android:id/secondaryProgress"><clip><shape><corners android:radius="2dp"/><solid android:color="#9AAFB8"/></shape></clip></item><item android:id="@android:id/progress"><clip><shape><corners android:radius="2dp"/><solid android:color="#06BDED"/></shape></clip></item></layer-list>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Approved 0.156 HUD (owner notes 0.155 #8): white played, light grey buffered, dim grey remaining. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="3dp" />
+            <solid android:color="#59FFFFFF" />
+        </shape>
+    </item>
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <corners android:radius="3dp" />
+                <solid android:color="#A6FFFFFF" />
+            </shape>
+        </clip>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="3dp" />
+                <solid android:color="#FFFFFFFF" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

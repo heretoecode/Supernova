@@ -253,6 +253,29 @@ public class NextHudTest {
         }
     }
 
+    /** Approved 0.156 HUD: glass buttons with a faint edge, the time large above a grey chapter name. */
+    @Test
+    public void hudButtonsAreGlassAndTheBubbleShowsALargeTimeOverTheChapter() {
+        ReflectionHelpers.callInstanceMethod(controller, "configurePreviewTransport");
+        for (int id : new int[] {R.id.preview_pause_group, R.id.preview_more_group}) {
+            Drawable background = root.findViewById(id).getBackground();
+            Drawable face = background instanceof StateListDrawable ? background.getCurrent() : background;
+            assertTrue(face instanceof SupernovaStyle.Box);
+        }
+        CharSequence label = PlayerController.scrubLabel("00:17:16", "Chapter 2");
+        assertEquals("00:17:16\nChapter 2", label.toString());
+        android.text.Spanned spanned = (android.text.Spanned)label;
+        android.text.style.RelativeSizeSpan[] sizes =
+            spanned.getSpans(0, 8, android.text.style.RelativeSizeSpan.class);
+        assertEquals(1, sizes.length);
+        assertTrue(sizes[0].getSizeChange() > 1.5f);
+        android.text.style.ForegroundColorSpan[] grey =
+            spanned.getSpans(9, label.length(), android.text.style.ForegroundColorSpan.class);
+        assertEquals(1, grey.length);
+        assertEquals(SupernovaStyle.TEXT_SECONDARY, grey[0].getForegroundColor());
+        assertEquals("00:17:16", PlayerController.scrubLabel("00:17:16", "").toString());
+    }
+
     /** Owner decision 2 Nov 2026: "01:02:26 · Ends at 12:05" with a middle dot that follows Ends at visibility. */
     @Test
     public void middleDotSeparatesTotalRuntimeFromEndsAt() {

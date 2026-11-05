@@ -39,7 +39,6 @@ import androidx.core.widget.TextViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.appcompat.app.ActionBar;
 
-import com.archos.mediacenter.video.leanback.PreviewAccent;
 import com.archos.mediacenter.video.leanback.PreviewIcon;
 import com.archos.mediacenter.video.leanback.SupernovaStyle;
 import com.archos.mediacenter.video.leanback.overlay.Clock;
@@ -865,8 +864,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                     }
                 });
             }
-            mProgress.setProgressTintList(ColorStateList.valueOf(
-                PreviewAccent.color(mContext)));
+            // Approved 0.156 HUD: the played part is white (the track drawable), not the accent colour.
+            mProgress.setProgressTintList(ColorStateList.valueOf(Color.WHITE));
             View more = mControllerViewLeft.findViewById(R.id.preview_more);
             if (more != null)
                 more.setOnClickListener(v -> {
@@ -1743,13 +1742,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
         View pauseGroup = mControllerViewLeft.findViewById(R.id.preview_pause_group);
         // Approved global button style (2 Nov 2026): black at rest, white box with black content on focus.
+        // Approved 0.156 HUD (owner notes 0.155 #8): charcoal glass with a faint edge at rest, white box on focus.
         if (pauseGroup instanceof ViewGroup)
             SupernovaStyle.applyButtonGroup(
-                (ViewGroup)pauseGroup, SupernovaStyle.Surface.STANDARD);
+                (ViewGroup)pauseGroup, SupernovaStyle.Surface.HUD);
         View moreGroup = mControllerViewLeft.findViewById(R.id.preview_more_group);
         if (moreGroup instanceof ViewGroup)
             SupernovaStyle.applyButtonGroup(
-                (ViewGroup)moreGroup, SupernovaStyle.Surface.STANDARD);
+                (ViewGroup)moreGroup, SupernovaStyle.Surface.HUD);
         mProgress.setFocusable(true);
         mProgress.setFocusableInTouchMode(true);
         mProgress.setBackgroundColor(Color.TRANSPARENT);
@@ -1793,6 +1793,24 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mControllerViewLeft.findViewById(id).setNextFocusDownId(R.id.seek_progress);
     }
 
+    static final float SCRUB_BUBBLE_GAP_DP = 18f;
+    static final float SCRUB_TIME_SCALE = 1.7f;
+
+    /** The time bubble's text: the time large and white, the chapter or part smaller and grey beneath it. */
+    static CharSequence scrubLabel(String time, String chapter)
+    {
+        android.text.SpannableStringBuilder label = new android.text.SpannableStringBuilder(time);
+        label.setSpan(new android.text.style.RelativeSizeSpan(SCRUB_TIME_SCALE), 0, time.length(),
+                      android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (chapter == null || chapter.isEmpty())
+            return label;
+        int start = label.length() + 1;
+        label.append("\n").append(chapter);
+        label.setSpan(new android.text.style.ForegroundColorSpan(SupernovaStyle.TEXT_SECONDARY), start,
+                      label.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return label;
+    }
+
     private void updatePreviewScrubber() {
         if (!experimentalUi() || mControllerViewLeft == null || mProgress == null)
             return;
@@ -1809,10 +1827,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             chapters = ((PlayerActivity)mContext)
                            .previewChapters(chapters, Player.sPlayer == null ? 0 : Player.sPlayer.getDuration());
         String chapter = PlaybackChapters.titleAt(chapters, position);
-        bubble.setText(Player.sPlayer != null
-                           ? PreviewHudTiming.timestamp(position) + (chapter.isEmpty() ? "" : "\n" + chapter)
-                       : mCurrentTime == null ? ""
-                                              : mCurrentTime.getText());
+        if (Player.sPlayer != null)
+            bubble.setText(scrubLabel(PreviewHudTiming.timestamp(position), chapter));
+        else
+            bubble.setText(mCurrentTime == null ? "" : mCurrentTime.getText());
         if (mProgress.getWidth() <= 0)
             return;
         bubble.setMaxWidth(mProgress.getWidth());
@@ -1835,8 +1853,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         float left = PreviewHudTiming.pillLeft(x, mProgress.getWidth(), bubble.getMeasuredWidth());
         bubble.setTranslationX(left);
         ((SeekTooltipDrawable)bubble.getBackground()).setPointer(x + bubble.getMeasuredWidth() / 2f - left);
+        // Raised clearly above the dot (approved 0.156 HUD), so the time never sits on it.
         bubble.setTranslationY(mProgress.getY() + mProgress.getHeight() / 2f - bubble.getMeasuredHeight() -
-                               2 * density);
+                               SCRUB_BUBBLE_GAP_DP * density);
         if (mControlBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams safe = (ViewGroup.MarginLayoutParams)mControlBar.getLayoutParams();
             int inset = Math.max(Math.round(24 * density), Math.round(mControllerViewLeft.getHeight() * .04f));
