@@ -52,7 +52,12 @@ what "good" looks like. Plain British English; no code words. Claude merges it w
 
 ## 5. Failures from conformance run 42106873655
 
-Pending — Claude fills this in when the run finishes.
+Finished 5 Nov 2026 21:27 UTC: 1,514 app tests, 13 failed, all in your areas; every screen-side test passes.
+- The eleven restore tests of section 2 (`MediaMatchJournalTest` ×7, `CombinedCurrentRestoreTest` ×4).
+- `PreviewScanLifecycleTest > localQueueBoundariesShareBatchAndObservedTrigger` (new).
+- `PreviewScanLifecycleTest > localTelemetryBroadcastFailureDoesNotBreakImport` (new).
+The app test task failed, so the MediaLib and FileCore module tests did not report in this run; run your module
+suites yourself and fix what fails there too.
 
 ## Hand back
 
