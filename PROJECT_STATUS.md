@@ -20,9 +20,11 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   position and live sample, sleep timer, Still watching?, seek pictures, per-series choices), Search and the shared
   keyboard, the Network & Files landing. Next: Network Shares and Add Connection, Library Health page, Settings
   stage 3, Customise Home, Fix match, empty states, Local Storage grid.
-- **Codex** (engine and data): screen-data items 1–7 ready through `3b8b3daff`, after merging Claude `0e6943603`.
-  All seven screen-data items are ready. 74 component regressions pass; register the six new dependency patches before full conformance.
-  Branch `codex/0155-code-2026-11-04`; APIs/report in `docs/codex/`. Full conformance remains Claude’s.
+- **Codex** (engine and data): screen-data items 1–7 ready through `a041eb382` on
+  `codex/0155-code-2026-11-04`, after the requested merge of Claude `0e6943603`. Each item was pushed separately.
+  All 75 isolated component regressions and 54-file Java/layout/ordered patch checks pass. Claude must register seven
+  new dependency patch operations before full conformance; exact entries, APIs and validation limits are in
+  [`screen-data report`](docs/codex/reports/2026-11-05-0156-screen-data.md) and `docs/codex/findings/0156-ui-hooks.md`.
 - **GitHub:** cleaned up on 5 Nov 2026: this page, `CLAUDE.md`, `AGENTS.md`, the archive, and Issues #31–#102.
 
 ### Known problems being fixed in 0.156

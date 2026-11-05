@@ -1,3 +1,18 @@
+# 0.156 screen data — all items 1–7 ready (5 Nov 2026)
+
+All seven items ready through `a041eb382` on `codex/0155-code-2026-11-04`, after merging Claude `0e6943603` first.
+Each item was committed, documented and pushed separately below. Final checks: **75 isolated component tests pass**,
+54 changed Java files pass Java 17/import/120-column checks, layout checks pass, and both complete dependency patch
+chains match their prepared sources and still accept the CI fixtures. Full Android/provider/remote-write conformance
+and Shield checks remain Claude’s; no Gradle/workflow run was performed.
+
+Register **seven new patch operations**, leaving the existing operations intact: MediaLib scan → history → schedule →
+missing → NFO → NFO cancellation follow-up, plus FileCore connections after its existing operations. Put them before
+the respective CI fixture patches. Exact paths, order and SHA-256 entries are at the end of
+[`reports/2026-11-05-0156-screen-data.md`](reports/2026-11-05-0156-screen-data.md).
+API calls are in [`findings/0156-ui-hooks.md`](findings/0156-ui-hooks.md). No screens/resources were edited; no PR,
+merge into Claude’s branch, rebase, force push, workflow dispatch or fork push. GitHub cleanup is finished.
+
 # 0.156 screen data — item 7 ready (5 Nov 2026)
 
 Item 7 ready at `3b8b3daff` on `codex/0155-code-2026-11-04`. All seven screen-data items are ready. 74 component regressions pass; register the six new dependency patches before full conformance.

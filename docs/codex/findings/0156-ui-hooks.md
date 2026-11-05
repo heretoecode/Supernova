@@ -198,3 +198,10 @@ Code `a45276960`. Register `medialib-supernova156-screen-missing.patch` after th
 ## Screen data item 7 — counted cancellable NFO export
 
 Code `3b8b3daff`. Register `medialib-supernova156-screen-nfo.patch` after the missing-media patch, before CI fixtures. Worker-only `NfoExportJob.preflight(context)` returns immutable Plan.total and knownReadOnly before writing anything. It counts every target video, including those without exportable tags; such videos become failed outcomes. Call `NfoExportJob.start(context, plan)` to get a Job; Job.cancel()/close() stops its own work. One export job is admitted at once. Subscribe with existing `NfoExportProgress.listen(callbackExecutor, consumer)` and close the subscription on exit; snapshots retain done/total/currentTitle/finished and add written/skippedReadOnly/failed/cancelled. Count units are videos (one episode may also need its shared show NFO); companion artwork is best effort. current() is memory-only. A cancelled job may finish with done < total; wait for finished before presenting its result. Job.await is worker-only. Put.io and known read-only protocols skip without credential, metadata or network access. Other sources check parent write capability on the worker. The existing export service uses this same job and cancels its owned job on background/destruction. No screen wording changed.
+
+### Item 7 follow-up — cancellation during output opening
+
+Code `a041eb382`. Apply `medialib-supernova156-screen-nfo-cancel.patch` immediately after the NFO job patch.
+No API change. If cancellation wins while getOutputStream is opening, the rejected stream is closed and the empty
+NFO target removed. Both this race and cancellation during a blocked write have regressions. All previously
+published patches remain unchanged. The report lists the final seven registration operations.
