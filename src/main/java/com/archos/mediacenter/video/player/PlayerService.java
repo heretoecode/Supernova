@@ -1415,6 +1415,12 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mPlaybackSession.setCandidate(ResumeSource.LIVE, previous);
     }
 
+    /** Read-only fallback when a failed native decoder can no longer expose its clock. */
+    int lastPlaybackCheckpoint(Player owner)
+    {
+        return owner == mPlayer ? Math.max(0, mPlaybackSession.lastKnownPositionMs) : 0;
+    }
+
     public PlaybackSnapshot getPlaybackSnapshot()
     {
         int position = captureCurrentPosition(false);
@@ -2853,6 +2859,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public boolean onError(int errorCode, int errorQualCode, String msg)
     {
+        closeSeekThumbnails(false);
         log.warn("Playback failure code={} qualifier={} source={} lastPosition={} duration={} state={}", errorCode,
                  errorQualCode, mPlaybackSession.selectedSource, mPlaybackSession.lastKnownPositionMs,
                  mVideoInfo == null ? 0 : mVideoInfo.duration, mPlayerState);

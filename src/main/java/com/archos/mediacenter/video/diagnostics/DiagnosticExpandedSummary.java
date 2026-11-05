@@ -122,8 +122,9 @@ final class DiagnosticExpandedSummary
         if (!(event.endsWith("_summary") || event.startsWith("backup_") || event.contains("decoder") ||
               event.equals("transport_read") || event.equals("metadata_network_outcome") ||
               event.equals("metadata_request_result") || event.equals("metadata_semantic_failed") ||
-              event.equals("configuration_changed") || event.equals("memory_trim") || event.equals("screen_open") ||
-              event.contains("process_exit") || event.equals("previous_session_unclean_exit")))
+              event.equals("stream_reconnect") || event.equals("configuration_changed") ||
+              event.equals("memory_trim") || event.equals("screen_open") || event.contains("process_exit") ||
+              event.equals("previous_session_unclean_exit")))
             return "";
         StringBuilder fields = new StringBuilder();
         for (String key : new String[] {"media_key",
@@ -169,6 +170,12 @@ final class DiagnosticExpandedSummary
                                         "level",
                                         "heap_bytes",
                                         "native_heap_bytes",
+                                        "idle_ms",
+                                        "recovery_ms",
+                                        "checkpoint_ms",
+                                        "position_quality",
+                                        "cause",
+                                        "result",
                                         "reason",
                                         "description",
                                         "importance",
@@ -211,8 +218,8 @@ final class DiagnosticExpandedSummary
         if (event.startsWith("ui_") || event.startsWith("focus") || event.startsWith("screen_") ||
             event.startsWith("memory_"))
             return "UI";
-        if (event.startsWith("playback_") || event.startsWith("player_") || event.startsWith("seek_") ||
-            event.startsWith("audio_") || event.startsWith("subtitle_"))
+        if (event.startsWith("playback_") || event.startsWith("player_") || event.startsWith("stream_") ||
+            event.startsWith("seek_") || event.startsWith("audio_") || event.startsWith("subtitle_"))
             return "Playback";
         return null;
     }

@@ -1023,8 +1023,9 @@ public final class Diagnostics
             event.equals("main_thread_stall_suspected") || event.equals("focus_anomaly_suspected") ||
             event.startsWith("session_") || event.startsWith("app_session_") || event.equals("startup") ||
             event.equals("playback_begin") || event.equals("playback_end") || event.equals("playback_attempt") ||
-            event.equals("seek_callback_unattributed") || event.equals("scan_started") ||
-            event.equals("scan_complete") || event.equals("scan_partial") || event.equals("incident_capture");
+            event.equals("seek_callback_unattributed") || event.equals("stream_reconnect") ||
+            event.equals("scan_started") || event.equals("scan_complete") || event.equals("scan_partial") ||
+            event.equals("incident_capture");
     }
 
     static String severity(String event)

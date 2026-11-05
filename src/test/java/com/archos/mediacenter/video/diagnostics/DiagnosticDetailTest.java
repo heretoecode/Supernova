@@ -134,6 +134,11 @@ public class DiagnosticDetailTest
                         .put("event", "thumb_session_summary")
                         .put("mean_extract_ms", 17)
                         .put("cache_hit_rate", 0.5));
+        records.add(new JSONObject()
+                        .put("event", "stream_reconnect")
+                        .put("idle_ms", 61000)
+                        .put("recovery_ms", 120)
+                        .put("result", "ready"));
         String result = DiagnosticExpandedSummary.build(records);
         for (String area : new String[] {"Thumbnails", "Playback", "Network", "Scans", "Metadata", "Backup and restore",
                                          "UI", "Settings", "Process exits"})
@@ -141,6 +146,8 @@ public class DiagnosticDetailTest
         assertTrue(result.contains("3 | 100 | 102 | backup_failed / IOException"));
         assertTrue(result.contains("mean_extract_ms=17"));
         assertTrue(result.contains("cache_hit_rate=0.5"));
+        assertTrue(result.contains("recovery_ms=120"));
+        assertTrue(result.contains("stream_reconnect: 1"));
         assertTrue(result.contains("Session one"));
         assertTrue(result.contains("Session two"));
         assertFalse(result.contains("CANARY"));

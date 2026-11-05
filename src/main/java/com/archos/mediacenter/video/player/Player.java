@@ -37,6 +37,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
 
 import android.view.Display;
@@ -180,6 +181,256 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private int mRelativePosition;
     private int mStopPosition;
     private int mSaveStopPosition;
+    private final NetworkRecoveryPolicy networkRecovery = new NetworkRecoveryPolicy();
+    private Recovery networkReconnect, reconnectAwaitingFrame;
+    private boolean networkDisconnected;
+    private long lastShownPosition = -1, lastShownAt;
+    private static final java.util.concurrent.Executor NETWORK_RELEASE =
+        java.util.concurrent.Executors.newSingleThreadExecutor(r -> new Thread(r, "SupernovaNetworkRelease"));
+
+    private java.util.concurrent.Executor networkRelease = NETWORK_RELEASE;
+
+    private static final class Recovery
+    {
+        final String id = java.util.UUID.randomUUID().toString();
+        final String cause, positionQuality;
+        final long started, idle;
+        int target;
+        int playState = PlayerController.STATE_OTHER;
+        boolean positioned, surfaceReady;
+        Runnable timeout;
+        Recovery(String cause, String quality, int target, long idle)
+        {
+            this.cause = cause;
+            this.positionQuality = quality;
+            this.target = target;
+            this.idle = idle;
+            started = SystemClock.elapsedRealtime();
+        }
+    }
+
+    private boolean networkSource()
+    {
+        if (mUri == null)
+            return false;
+        String scheme = mUri.getScheme();
+        return scheme != null && !"file".equalsIgnoreCase(scheme) && !"content".equalsIgnoreCase(scheme);
+    }
+
+    private void reconnectEvent(Recovery request, String result)
+    {
+        Diagnostics.event("stream_reconnect", "operation_id", request.id, "source_kind", Diagnostics.sourceType(mUri),
+                          "idle_ms", request.idle, "cause", request.cause, "recovery_ms",
+                          SystemClock.elapsedRealtime() - request.started, "result", result, "checkpoint_ms",
+                          request.target, "position_quality", request.positionQuality);
+    }
+
+    private void cancelReconnect(String result)
+    {
+        Recovery request = networkReconnect;
+        networkReconnect = null;
+        reconnectAwaitingFrame = null;
+        if (networkRecovery != null)
+            networkRecovery.finished();
+        if (request != null)
+        {
+            mHandler.removeCallbacks(request.timeout);
+            reconnectEvent(request, result);
+            if (Player.sPlayer == this && PlayerService.sPlayerService != null)
+                PlayerService.sPlayerService.seekThumbnailBuffering(false);
+        }
+    }
+
+    private void reconnectReady()
+    {
+        Recovery request = networkReconnect;
+        if (request == null || !request.positioned || !request.surfaceReady || mIsBusy)
+            return;
+        mHandler.removeCallbacks(request.timeout);
+        reconnectEvent(request, mTargetState == STATE_PAUSED ? "ready_paused" : "ready");
+        networkReconnect = null;
+        reconnectAwaitingFrame = request;
+        networkRecovery.finished();
+        if (PlayerService.sPlayerService != null)
+            PlayerService.sPlayerService.seekThumbnailBuffering(false);
+    }
+
+    private int reconnectPlayState()
+    {
+        Recovery request = networkReconnect != null ? networkReconnect : reconnectAwaitingFrame;
+        return request == null ? PlayerController.STATE_OTHER : request.playState;
+    }
+
+    private boolean reconnectNetwork(String cause)
+    {
+        return reconnectNetwork(cause, PlayerController.STATE_OTHER);
+    }
+
+    private int retainedNetworkPosition()
+    {
+        PlayerService service = PlayerService.sPlayerService;
+        int saved = service == null ? 0 : service.lastPlaybackCheckpoint(this);
+        return saved > 0 ? saved : Math.max(0, mStopPosition);
+    }
+
+    private boolean reconnectNetwork(String cause, int playState)
+    {
+        if (mPlaybackEnding || !networkSource() || (!mSessionPrepared && !cause.startsWith("pause")) ||
+            networkReconnect != null)
+            return false;
+        long now = SystemClock.elapsedRealtime();
+        long idle = networkRecovery.idleMs(now);
+        if (!networkRecovery.begin(now, cause.equals("read_failure") || cause.equals("backend_read_error")))
+        {
+            Diagnostics.event("stream_reconnect_failed", "cause", cause, "result", "retry_budget_exhausted");
+            return false;
+        }
+        int position;
+        String quality;
+        if (mIsBusy || mResumeCtx.getSeek() >= 0)
+        {
+            position = Math.max(0, mStopPosition);
+            quality = "pending_seek_target";
+        }
+        else if (lastShownPosition >= 0 && now - lastShownAt <= 2000)
+        {
+            position = (int)Math.min(Integer.MAX_VALUE, lastShownPosition);
+            quality = "render_callback_playback_clock";
+        }
+        else
+        {
+            position = retainedNetworkPosition();
+            quality = "retained_checkpoint";
+            try
+            {
+                int live = Math.max(0, getCurrentPosition());
+                if (live > 0 || position == 0)
+                {
+                    position = live;
+                    quality = "playback_position_proxy";
+                }
+            }
+            catch (RuntimeException unavailable)
+            {
+                Diagnostics.error("stream_reconnect_clock_unavailable", unavailable);
+            }
+        }
+        int duration = mDuration;
+        try
+        {
+            duration = getDuration();
+        }
+        catch (RuntimeException unavailable)
+        {
+            Diagnostics.error("stream_reconnect_duration_unavailable", unavailable);
+        }
+        if (duration > 0)
+            position = Math.min(position, duration - 1);
+        Recovery request = new Recovery(cause, quality, position, idle);
+        request.playState = playState;
+        networkReconnect = request;
+        reconnectAwaitingFrame = null;
+        networkRecovery.resumed();
+        mStopPosition = position;
+        mResumeCtx.setSeek(position);
+        mRestoringSession = mSessionPrepared;
+        mDuration = duration;
+        networkDisconnected = false;
+        reconnectEvent(request, "started");
+        if (PlayerService.sPlayerService != null)
+            PlayerService.sPlayerService.seekThumbnailBuffering(true);
+        IMediaPlayer old = detachCurrentPlayer();
+        final int generation = mOpenGeneration;
+        request.timeout = () ->
+        {
+            if (networkReconnect == request && !mPlaybackEnding)
+                onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, "Network reopen/seek timed out");
+        };
+        mHandler.postDelayed(request.timeout, 30000);
+        networkRelease.execute(() -> {
+            try
+            {
+                if (old != null)
+                    old.release();
+                mHandler.post(() -> {
+                    if (networkReconnect == request && generation == mOpenGeneration && !mPlaybackEnding)
+                        openVideo();
+                });
+            }
+            catch (RuntimeException failure)
+            {
+                mHandler.post(() -> {
+                    if (networkReconnect == request && generation == mOpenGeneration)
+                        onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, failure.getMessage());
+                });
+            }
+        });
+        return true;
+    }
+
+    private void playbackReadFailed(Object backend, java.io.IOException failure)
+    {
+        if (mPlaybackEnding || backend != mMediaPlayer)
+            return;
+        Diagnostics.error("stream_read_failed", failure, "source_kind", Diagnostics.sourceType(mUri));
+        if (networkReconnect != null || !reconnectNetwork("read_failure"))
+            onError(mMediaPlayer, 1001, 1000, failure.getMessage());
+    }
+
+    /** A direct native source has no Java read gate. Retire it on pause to cap further read-ahead. */
+    private void pauseNetworkReads()
+    {
+        if (!networkSource())
+            return;
+        networkRecovery.paused(SystemClock.elapsedRealtime());
+        if (mMediaPlayer == null && networkReconnect != null)
+        {
+            cancelReconnect("paused_before_reopen");
+            networkDisconnected = true;
+            return;
+        }
+        if (!com.archos.medialib.PlaybackReadEvents.paused(mMediaPlayer, true))
+            disconnectUngatedPause();
+    }
+
+    private void disconnectUngatedPause()
+    {
+        if (!networkSource() || mMediaPlayer == null)
+            return;
+        int saved = networkReconnect == null ? retainedNetworkPosition() : networkReconnect.target;
+        try
+        {
+            mStopPosition = isInPlaybackState() ? getCurrentPosition() : saved;
+            if (isInPlaybackState())
+                mDuration = getDuration();
+        }
+        catch (RuntimeException unavailable)
+        {
+            mStopPosition = saved;
+            Diagnostics.error("stream_pause_clock_unavailable", unavailable);
+        }
+        mResumeCtx.setSeek(mStopPosition);
+        mRestoringSession = mSessionPrepared;
+        cancelReconnect("paused_native_source");
+        networkDisconnected = true;
+        IMediaPlayer old = detachCurrentPlayer();
+        final int generation = mOpenGeneration;
+        networkRelease.execute(() -> {
+            try
+            {
+                if (old != null)
+                    old.release();
+            }
+            catch (RuntimeException failure)
+            {
+                mHandler.post(() -> {
+                    if (generation == mOpenGeneration && networkDisconnected)
+                        onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, failure.getMessage());
+                });
+            }
+        });
+    }
+
     private boolean mUpdateMetadata;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
@@ -191,11 +442,14 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             if (mCurrentState == STATE_REFRESH_PREPARED)
             {
                 mCurrentState = STATE_SURFACE_PREPARED;
+                if (networkReconnect != null)
+                    networkReconnect.surfaceReady = true;
+                reconnectReady();
                 if (mRestoringSession)
                 {
                     mRestoringSession = false;
                     if (mTargetState == STATE_PLAYING)
-                        start(PlayerController.STATE_OTHER);
+                        start(reconnectPlayState());
                     else
                         pause(PlayerController.STATE_OTHER);
                     if (mPlayerListener != null)
@@ -459,6 +713,14 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     public Player(Context context, Window window, SurfaceController surfaceController, boolean forceSoftwareDecoding)
     { //force software decoding is specific for floating player
         sPlayer = this;
+        com.archos.medialib.PlaybackReadEvents.install((backend, failure) -> {
+            Player current = sPlayer;
+            if (current != null)
+                current.mHandler.post(() -> {
+                    if (current == sPlayer)
+                        current.playbackReadFailed(backend, failure);
+                });
+        });
         if (log.isDebugEnabled())
             log.debug("Player");
         reset();
@@ -671,6 +933,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     {
         if (mPlaybackEnding)
             return;
+        cancelReconnect("cancelled");
         mPlaybackEnding = true;
         ++mOpenGeneration; // reject source setup already in flight
         mHandler.removeCallbacks(mPreparedAsync);
@@ -681,6 +944,13 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     }
 
     private void closeCurrentPlayer()
+    {
+        IMediaPlayer old = detachCurrentPlayer();
+        if (old != null)
+            old.release();
+    }
+
+    private IMediaPlayer detachCurrentPlayer()
     {
         if (playbackDiagnostics != null)
             playbackDiagnostics.close(Diagnostics.PlaybackOutcome.CANCELLED);
@@ -699,13 +969,26 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             mSurfaceController.setMediaPlayer(null);
         if (mEffectRenderer != null)
             mEffectRenderer.pause();
-        if (old != null)
-            old.release(); // interrupts prepare/seek and joins rendering
+        return old;
     }
 
     private void suspendForSurface()
     {
-        if (isInPlaybackState())
+        suspendForSurface(false);
+    }
+
+    private void suspendForSurface(boolean preserveReconnect)
+    {
+        Recovery pending = preserveReconnect ? networkReconnect : null;
+        if (!preserveReconnect)
+            cancelReconnect("surface_lost");
+        if (pending != null)
+        {
+            mStopPosition = pending.target;
+            mResumeCtx.setSeek(pending.target);
+            pending.positioned = pending.surfaceReady = false;
+        }
+        else if (isInPlaybackState())
         {
             mStopPosition = getCurrentPosition();
             mDuration = getDuration();
@@ -719,6 +1002,10 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     public void stopPlayback()
     {
+        cancelReconnect("cancelled");
+        networkRecovery.reset();
+        networkDisconnected = false;
+        lastShownPosition = -1;
         if (isInPlaybackState())
         {
             mStopPosition = getCurrentPosition();
@@ -778,7 +1065,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     public void openVideo()
     {
-        if (mPlaybackEnding || mUri == null || (mSurfaceHolder == null && mVideoTexture == null))
+        if (mPlaybackEnding || mUri == null || (networkDisconnected && networkReconnect == null) ||
+            (mSurfaceHolder == null && mVideoTexture == null))
         {
             // not ready for playback just yet, will try again later
             return;
@@ -893,7 +1181,11 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
                         player.setScreenOnWhilePlaying(true);
                         if (mResumeCtx.getSeek() != -1 && !mSurfaceController.supportOpenGLVideoEffect() &&
                             player.setStartTime(mResumeCtx.getSeek()))
+                        {
                             mResumeCtx.setSeek(-1);
+                            if (networkReconnect != null)
+                                networkReconnect.positioned = true;
+                        }
                         if (playbackDiagnostics != null)
                             playbackDiagnostics.submitted(diagnosticOpen, getType());
                         player.prepareAsync();
@@ -946,6 +1238,15 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private boolean outputEstablished;
     private void playbackOutput()
     {
+        if (mMediaPlayer != null && mCurrentState == STATE_PLAYING)
+        {
+            lastShownPosition = getCurrentPosition();
+            lastShownAt = SystemClock.elapsedRealtime();
+            Recovery request = reconnectAwaitingFrame;
+            reconnectAwaitingFrame = null;
+            if (request != null)
+                reconnectEvent(request, "resumed_first_frame");
+        }
         if (playbackDiagnostics != null && mMediaPlayer != null)
             playbackDiagnostics.frame(mMediaPlayer, getType());
         if (mCurrentState != STATE_PLAYING || mMediaPlayer == null || outputEstablished)
@@ -1153,14 +1454,27 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             mFocusSuspended = false;
             mResumeAfterFocusLoss = false;
         }
+        if (networkSource() && networkReconnect == null &&
+            (networkDisconnected || networkRecovery.longPause(SystemClock.elapsedRealtime())))
+        {
+            if (reconnectNetwork(networkDisconnected ? "paused_native_source" : "pause_over_60s", state))
+                return;
+        }
+        networkRecovery.resumed();
+        com.archos.medialib.PlaybackReadEvents.paused(mMediaPlayer, false);
+        if (networkReconnect != null)
+        {
+            if (state == PlayerController.STATE_NORMAL)
+                networkReconnect.playState = state;
+            reconnectReady();
+            if (networkReconnect != null)
+                return;
+        }
         if (!isInPlaybackState() || !mMetadataReady)
             return;
         if (!acquireFocus())
         {
-            mMediaPlayer.pause();
-            mCurrentState = STATE_PAUSED;
-            if (mPlayerListener != null)
-                mPlayerListener.onPause(PlayerController.STATE_OTHER);
+            pausePlayback(PlayerController.STATE_OTHER);
             stayAwake(false);
             return;
         }
@@ -1185,11 +1499,34 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         // TODO used to have if (PlayerService.sPlayerService != null) PlayerService.sPlayerService.saveVideoStateIfReady();
         if (log.isDebugEnabled())
             log.debug("pause");
+        RuntimeException pauseFailure = null;
         if (isInPlaybackState())
         {
+            if (networkSource() && !mIsBusy)
+            {
+                try
+                {
+                    mStopPosition = getCurrentPosition();
+                    mDuration = getDuration();
+                }
+                catch (RuntimeException unavailable)
+                {
+                    mStopPosition = retainedNetworkPosition();
+                }
+            }
             // Queue pause even if a preceding native start has not completed yet.
-            mMediaPlayer.pause();
-            mCurrentState = STATE_PAUSED;
+            try
+            {
+                mMediaPlayer.pause();
+                mCurrentState = STATE_PAUSED;
+            }
+            catch (RuntimeException unavailable)
+            {
+                if (!networkSource())
+                    throw unavailable;
+                pauseFailure = unavailable;
+                mCurrentState = STATE_IDLE;
+            }
         }
         if (mPlayerListener != null)
         {
@@ -1200,6 +1537,13 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             if (log.isDebugEnabled())
                 log.debug("pause: no listener");
         }
+        if (pauseFailure != null)
+        {
+            networkRecovery.paused(SystemClock.elapsedRealtime());
+            playbackReadFailed(mMediaPlayer, new java.io.IOException("Network decoder pause failed", pauseFailure));
+            return;
+        }
+        pauseNetworkReads();
         /* on pause, Don't suspend when video is non local or can't seek */
         if (canSeekBackward() && canSeekForward())
         {
@@ -1257,6 +1601,11 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     @Override public void seekTo(int msec)
     {
+        if (networkReconnect != null)
+        {
+            networkReconnect.target = msec;
+            networkReconnect.positioned = false;
+        }
         mStopPosition = msec;
         Diagnostics.event("seek", "target_ms", msec, "state", mCurrentState);
         if (log.isDebugEnabled())
@@ -1299,7 +1648,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
 
     public boolean isPaused()
     {
-        return isInPlaybackState() && !mMediaPlayer.isPlaying();
+        return networkDisconnected || (isInPlaybackState() && !mMediaPlayer.isPlaying());
     }
 
     @Override public boolean isInPlaybackState()
@@ -1515,7 +1864,7 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         if (!mHasAudio)
             return;
         // Close serializes with seek/track switching and preserves the pending seek target.
-        suspendForSurface();
+        suspendForSurface(true);
         openVideo();
     }
 
@@ -1845,6 +2194,14 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
         if (playbackDiagnostics != null)
             playbackDiagnostics.allSeeksComplete(mp, getType());
         mIsBusy = false;
+        if (networkReconnect != null)
+        {
+            networkReconnect.positioned = true;
+            reconnectReady();
+            if (networkReconnect == null && mTargetState == STATE_PLAYING &&
+                (mCurrentState == STATE_SURFACE_PREPARED || mCurrentState == STATE_PAUSED))
+                start(reconnectPlayState());
+        }
         if (mUpdateMetadata)
         {
             if (log.isDebugEnabled())
@@ -1939,6 +2296,15 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     {
         if (mp != mMediaPlayer)
             return true;
+        if (networkReconnect != null)
+            cancelReconnect("failed");
+        else if (NetworkRecoveryPolicy.readError(errorCode, errorQualCode) && networkSource())
+        {
+            Diagnostics.event("stream_backend_read_error", "code", errorCode, "qualifier", errorQualCode, "message",
+                              msg, "source_kind", Diagnostics.sourceType(mUri));
+            if (reconnectNetwork("backend_read_error"))
+                return true;
+        }
         if (playbackDiagnostics != null)
             playbackDiagnostics.failed(mp);
         // Diagnostic strings pass through credential and location redaction.
