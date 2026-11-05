@@ -1,12 +1,17 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleRegistry;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediaprovider.video.PreviewLocalImportTrace;
 import com.archos.mediascraper.AutoScrapeService;
@@ -15,20 +20,59 @@ import java.util.List;
 import java.util.UUID;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.robolectric.*;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
 
 /** Checks scan lifecycle telemetry uses actual progress, batch totals and terminal outcomes. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 public class PreviewScanLifecycleTest
 {
+    private LifecycleRegistry metadataLifecycle;
+
+    @After public void backgroundMetadataFixture()
+    {
+        if (metadataLifecycle != null)
+            metadataLifecycle.setCurrentState(Lifecycle.State.CREATED);
+    }
+
+    private Context foregroundMetadataContext()
+    {
+        Application app = RuntimeEnvironment.getApplication();
+        PreferenceManager.getDefaultSharedPreferences(app)
+            .edit()
+            .putBoolean("supernova_onboarding_complete", true)
+            .commit();
+        metadataLifecycle = (LifecycleRegistry)ProcessLifecycleOwner.get().getLifecycle();
+        metadataLifecycle.setCurrentState(Lifecycle.State.STARTED);
+        Context context = mock(Context.class);
+        when(context.getApplicationContext()).thenReturn(app);
+        when(context.getContentResolver()).thenReturn(app.getContentResolver());
+        when(context.getPackageName()).thenReturn(app.getPackageName());
+        when(context.getSharedPreferences(anyString(), anyInt()))
+            .thenAnswer(call -> app.getSharedPreferences(call.getArgument(0), call.getArgument(1)));
+        return context;
+    }
+
     @Test public void libraryControlIncludesLocalProgressButNetworkControlStaysNetworkOnly()
     {
         Context context = RuntimeEnvironment.getApplication();
@@ -115,15 +159,14 @@ public class PreviewScanLifecycleTest
 
     @Test public void localMetadataQueueReportsActualServiceAcceptance()
     {
-        Context context = mock(Context.class);
-        when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
-        when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
+        Context context = foregroundMetadataContext();
         when(context.startService(any(Intent.class))).thenReturn(null);
         assertFalse(AutoScrapeService.requestService(context));
         when(context.startService(any(Intent.class))).thenReturn(new ComponentName("test", "Metadata"));
         assertTrue(AutoScrapeService.requestService(context));
         when(context.startService(any(Intent.class))).thenThrow(new IllegalStateException("restricted"));
         assertFalse(AutoScrapeService.requestService(context));
+        verify(context, times(3)).startService(any(Intent.class));
     }
 
     @Test public void interruptedLocalImportCannotReportCompletionOrInventCounts()
@@ -235,23 +278,17 @@ public class PreviewScanLifecycleTest
 
     @Test public void metadataQueueDistinguishesAcceptedNullAndRestrictedStarts()
     {
-        Context context = mock(Context.class);
-        when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
-        when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
-        when(context.getPackageName()).thenReturn(RuntimeEnvironment.getApplication().getPackageName());
-        var app = RuntimeEnvironment.getApplication();
-        PreferenceManager.getDefaultSharedPreferences(app)
-            .edit()
-            .putBoolean("supernova_onboarding_complete", true)
-            .commit();
-        when(context.getSharedPreferences(anyString(), anyInt()))
-            .thenAnswer(call -> app.getSharedPreferences(call.getArgument(0), call.getArgument(1)));
+        Context context = foregroundMetadataContext();
         when(context.startService(any(Intent.class))).thenReturn(new ComponentName("test", "Metadata"));
         assertTrue(enqueue(context));
         when(context.startService(any(Intent.class))).thenReturn(null);
         assertFalse(enqueue(context));
         when(context.startService(any(Intent.class))).thenThrow(new IllegalStateException("background restriction"));
         assertFalse(enqueue(context));
+        ArgumentCaptor<Intent> starts = ArgumentCaptor.forClass(Intent.class);
+        verify(context, times(3)).startService(starts.capture());
+        for (Intent intent : starts.getAllValues())
+            assertTrue(intent.getBooleanExtra("FORCE_AFTER_NETWORK_SCAN", false));
     }
 
     private boolean enqueue(Context context)
