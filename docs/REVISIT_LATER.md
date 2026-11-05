@@ -79,6 +79,10 @@ Items already built or scheduled are left out (see the bottom of this file).
   Network & Files shade options (real renders, 5 Nov): owner prefers option 2 (page #16181C, tiles #22252B) and
   option 3 (page #0E1013, tiles #1C1F24), and asked for stronger outlines on unfocused tiles: rendered at 2 px
   28% and 2 px 40% white. Waiting for the owner's pick.
+- **Network & Files as one page with tabs** (owner idea, 5 Nov; not tied to any version, separate from 0.156/0.157):
+  no landing tiles and no panels. Tabs under the top bar: Local Storage · Network Shares (Add connection button) ·
+  Library (Scan now, scanning, recent scans, Library Health). Opens on the last tab used; first visit Local
+  Storage. Folders open below the tabs with a breadcrumb. Mock-ups `docs/design/proposals/network-files-tabs/01`–`04`.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
