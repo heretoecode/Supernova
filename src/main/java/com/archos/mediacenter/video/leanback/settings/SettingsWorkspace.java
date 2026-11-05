@@ -2,14 +2,8 @@ package com.archos.mediacenter.video.leanback.settings;
 
 import android.annotation.SuppressLint;
 import android.content.*;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.view.*;
 import android.widget.*;
 import androidx.appcompat.widget.SwitchCompat;
@@ -295,72 +289,79 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                       : sections.getOrDefault(index, names.get(0));
         if (!names.contains(section))
             section = names.get(0);
-        LinearLayout columns = new LinearLayout(getContext());
-        columns.setTag("settings.category");
-        columns.setBaselineAligned(false);
-        stage.addView(columns, new FrameLayout.LayoutParams(-1, -1));
-        ScrollView left = new ScrollView(getContext());
-        left.setFillViewport(false);
-        left.setVerticalScrollBarEnabled(false);
-        rail = new PreviewFocusRail(getContext());
-        ((PreviewFocusRail)rail).setAnimateFocus(false);
-        rail.setOrientation(VERTICAL);
-        rail.setPadding(dp(12), dp(12), dp(12), dp(12));
-        left.addView(rail);
-        LayoutParams leftSize = new LayoutParams(0, -1, .28f);
-        leftSize.rightMargin = dp(12);
-        columns.addView(left, leftSize);
-        TextView identity = text(SettingsRegistry.LABELS[index], 22);
-        identity.setTypeface(null, Typeface.BOLD);
-        PreviewIcon.apply(identity, SettingsRegistry.ICONS[index], 28);
-        rail.addView(identity);
-        TextView copy = text(SettingsRegistry.DESCRIPTIONS[index], 15);
-        copy.setTextColor(0xffbcc9d9);
-        copy.setPadding(0, dp(10), 0, dp(16));
-        rail.addView(copy);
+        // 0.156 page pattern (owner-approved mock-ups settings/03–05): one panel; the page title once with its
+        // tabs at the right as one control; a rule; then the rows.
+        LinearLayout panel = new LinearLayout(getContext());
+        panel.setTag("settings.category");
+        panel.setOrientation(VERTICAL);
+        panel.setBackground(SupernovaStyle.glass(getContext()));
+        panel.setPadding(dp(14), dp(11), dp(14), dp(8));
+        stage.addView(panel, new FrameLayout.LayoutParams(-1, -1));
+        LinearLayout head = new LinearLayout(getContext());
+        head.setTag("settings.header");
+        head.setGravity(Gravity.CENTER_VERTICAL);
+        head.setPadding(dp(5), 0, dp(5), dp(8));
+        LinearLayout titles = new LinearLayout(getContext());
+        titles.setOrientation(VERTICAL);
+        TextView crumb = text("Settings", 10);
+        crumb.setTextColor(SupernovaStyle.HEADING);
+        titles.addView(crumb);
+        TextView identity = text(SettingsRegistry.LABELS[index], 18);
+        identity.setTag("settings.title");
+        identity.setTypeface(SupernovaStyle.LABEL);
+        identity.setPadding(0, dp(1), 0, 0);
+        titles.addView(identity);
+        head.addView(titles, new LayoutParams(0, -2, 1));
+        rail = new LinearLayout(getContext());
+        rail.setTag("settings.tabs");
+        rail.setGravity(Gravity.CENTER_VERTICAL);
+        head.addView(rail, new LayoutParams(-2, -2));
+        panel.addView(head, new LayoutParams(-1, -2));
+        View rule = new View(getContext());
+        rule.setBackgroundColor(SupernovaStyle.HEADING_LINE);
+        LayoutParams ruleSize = new LayoutParams(-1, Math.max(1, dp(.5f)));
+        ruleSize.leftMargin = dp(3);
+        ruleSize.rightMargin = dp(3);
+        ruleSize.bottomMargin = dp(4);
+        panel.addView(rule, ruleSize);
         right = new LinearLayout(getContext());
+        right.setTag("settings.content");
         right.setOrientation(VERTICAL);
-        right.setPadding(dp(16), dp(12), dp(16), dp(12));
-        columns.addView(right, new LayoutParams(0, -1, .72f));
+        panel.addView(right, new LayoutParams(-1, 0, 1));
         for (String name : names) {
-            TextView link = text(name, 18);
-            String explanation = subsectionDescription(name);
-            SpannableString caption = new SpannableString(name + "\n" + explanation);
-            caption.setSpan(new StyleSpan(Typeface.BOLD), 0, name.length(), 0);
-            caption.setSpan(new RelativeSizeSpan(.8f), name.length() + 1, caption.length(), 0);
-            caption.setSpan(new SupernovaStyle.FadedSpan(), name.length() + 1, caption.length(), 0);
-            link.setText(caption);
-            PreviewIcon.apply(link, subsectionIcon(name), Math.round(26 * scale()));
-            link.setPadding(dp(12), dp(14), dp(12), dp(14));
-            link.setMinHeight(dp(52));
-            link.setFocusable(true);
-            link.setFocusableInTouchMode(true);
-            SupernovaStyle.applyButton(link, SupernovaStyle.Surface.STANDARD);
-            link.setTag("settings.section." + name);
-            LayoutParams size = new LayoutParams(-1, -2);
-            size.bottomMargin = dp(6);
-            rail.addView(link, size);
-            railButtons.add(link);
-            link.setOnFocusChangeListener((v, yes) -> {
+            TextView tab = text(name, 12);
+            tab.setTag("settings.section." + name);
+            PreviewIcon.apply(tab, subsectionIcon(name), Math.round(14 * scale()));
+            tab.setFocusable(true);
+            tab.setFocusableInTouchMode(true);
+            tab.setSingleLine(true);
+            SupernovaStyle.applyButton(tab, SupernovaStyle.Surface.PANEL);
+            tab.setPadding(dp(11), 0, dp(11), 0);
+            tab.setGravity(Gravity.CENTER_VERTICAL);
+            tab.setMinHeight(dp(32));
+            LayoutParams size = new LayoutParams(-2, dp(32));
+            if (!railButtons.isEmpty())
+                size.leftMargin = dp(6);
+            rail.addView(tab, size);
+            railButtons.add(tab);
+            tab.setOnFocusChangeListener((v, yes) -> {
                 if (yes && !section.equals(name))
                     select(name);
             });
-            link.setOnClickListener(v -> {
+            tab.setOnClickListener(v -> {
                 if (!section.equals(name))
                     select(name);
                 enter();
             });
-            link.setOnKeyListener((v, key, event) -> {
+            tab.setOnKeyListener((v, key, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN)
                     return false;
-                if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
                     enter();
                     return true;
                 }
-                if (key == KeyEvent.KEYCODE_DPAD_LEFT)
-                    return true;
-                if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    int n = railButtons.indexOf(link) + (key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
+                if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    int n = railButtons.indexOf(tab) + (key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
                     if (n >= 0 && n < railButtons.size())
                         railButtons.get(n).requestFocus();
                     return true;
@@ -397,20 +398,9 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             .putExtra("supernova_settings_section", section);
         for (TextView v : railButtons) {
             boolean selected = ("settings.section." + section).equals(v.getTag());
+            // The open tab is a lighter charcoal; the focused tab is the white focus box.
             v.setSelected(selected);
-            v.setTextColor(Color.WHITE);
-            v.setBackground(SupernovaStyle.selectedRow(getContext(), selected));
-            if (Build.VERSION.SDK_INT >= 26)
-                v.setDefaultFocusHighlightEnabled(false);
-            v.setForeground(null);
-            String label = String.valueOf(v.getTag()).substring("settings.section.".length());
-            String caption = label + "\n" + subsectionDescription(label);
-            SpannableString copy = new SpannableString(caption);
-            int split = caption.indexOf('\n');
-            copy.setSpan(new StyleSpan(Typeface.BOLD), 0, split, 0);
-            copy.setSpan(new RelativeSizeSpan(.8f), split + 1, caption.length(), 0);
-            copy.setSpan(new SupernovaStyle.FadedSpan(), split + 1, caption.length(), 0);
-            v.setText(copy);
+            v.setBackground(SupernovaStyle.tab(getContext(), selected));
         }
         if (category == 7) {
             LinearLayout shadowRail = new LinearLayout(getContext()), host = new LinearLayout(getContext());
@@ -431,13 +421,6 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             backup.show(selectedRail());
             return;
         }
-        TextView heading = text(section, 24);
-        heading.setTypeface(null, Typeface.BOLD);
-        right.addView(heading);
-        TextView description = text(sectionDescription(), 15);
-        description.setTextColor(0xffbcc9d9);
-        description.setPadding(0, dp(6), 0, dp(12));
-        right.addView(description);
         rightScroll = new ScrollView(getContext());
         rightScroll.setFillViewport(false);
         rightScroll.setVerticalScrollBarEnabled(false);
@@ -463,58 +446,6 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         renderRows();
     }
 
-    private String subsectionDescription(String name) {
-        switch (name) {
-        case "Audio output & tracks":
-            return "Configure audio output, playback compatibility and preferred audio tracks.";
-        case "Library & metadata":
-            return "Choose metadata sources, identification and library display behaviour.";
-        case "Interface & theme":
-            return "Set interface language, theme and accent colours.";
-        case "Streaming services":
-            return "Choose your region, providers and streaming availability.";
-        case "App information":
-            return "Installed Supernova version and build details.";
-        case "Release Notes":
-            return "Changes and delivery history for Supernova builds.";
-        case "Open-source Licences":
-            return "Licences and notices for bundled components.";
-        case "Credits & Acknowledgements":
-            return "Contributors and services behind Supernova.";
-        case "Technical Information":
-            return "Device, decoder and runtime information.";
-        case "Playback":
-            return "Playback speed, external players and projector mode.";
-        case "Video & Display":
-            return "Refresh-rate switching, Dolby Vision and display behaviour.";
-        case "Resume & Progress":
-            return "Resume behaviour and playback progress settings.";
-        case "Diagnostics":
-            return "Local logging, problem references and report export.";
-        case "Backup & restore":
-            return "Export configuration or review a saved backup.";
-        case "Service integrations":
-            return "Enable services while retaining saved accounts.";
-        case "Trakt":
-            return "Account, scrobbling and supported synchronisation.";
-        case "OpenSubtitles":
-            return "Subtitle account and sign-in.";
-        case "IntroDB":
-            return "Intro, recap, preview and credit policies.";
-        case "Home":
-            return "Featured sources and the Home row editor.";
-        case "Watch history":
-            return "Recording and clearing viewing history.";
-        case "Subtitles":
-            return "Default display, languages and search preparation.";
-        case "Network connections":
-            return "Connection preferences and trusted server identities.";
-        default:
-            return name.toLowerCase(Locale.ROOT).contains("compatibility") ? "Device-dependent advanced options."
-            : category == 7 ? "Read bundled Supernova information."
-                            : "Manage the existing " + name.toLowerCase(Locale.ROOT) + " options.";
-        }
-    }
 
     private String subsectionIcon(String name) {
         String lower = name.toLowerCase(Locale.ROOT);
@@ -528,16 +459,6 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         : lower.contains("backup")                                                          ? "folder"
         : lower.contains("integration") || Arrays.asList("Trakt", "IntroDB").contains(name) ? "settings.nodes"
                                                                                             : "info";
-    }
-
-    private String sectionDescription() {
-        if (category == 0 && section.equals("Playback"))
-            return "Control general playback behaviour and how content starts, plays and ends.";
-        if (section.toLowerCase(Locale.ROOT).contains("compatibility"))
-            return "Existing device and advanced-mode options. Change these only when needed for your media or connection.";
-        if (section.equalsIgnoreCase("Audio output & tracks"))
-            return "Configure audio output, playback compatibility and preferred audio tracks.";
-        return subsectionDescription(section);
     }
 
     private boolean integrationDisabled() {
@@ -642,10 +563,25 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             row.refresh();
     }
 
+    /** Short choices are shown inline as a segmented control and changed with Left/Right (owner rule: ≤ ~5). */
+    static boolean inline(ListPreference list) {
+        CharSequence[] entries = list.getEntries();
+        if (entries == null || entries.length < 2 || entries.length > 5)
+            return false;
+        int total = 0;
+        for (CharSequence entry : entries) {
+            if (entry == null || entry.length() > 16)
+                return false;
+            total += entry.length();
+        }
+        return total <= 44;
+    }
+
     private final class Row extends LinearLayout {
         final SettingsRegistry.Entry entry;
         final Preference preference;
         final TextView title, description, value;
+        final LinearLayout segments;
         final SwitchCompat toggle;
 
         // Intentional bridge to the pinned AndroidX 1.2.1 model: preserve its native click/dependency/action semantics.
@@ -654,46 +590,61 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             super(SettingsWorkspace.this.getContext());
             this.entry = entry;
             this.preference = preference;
-            setOrientation(HORIZONTAL);
+            // One value or switch per row, level with its title; the explanation sits under the title.
+            setOrientation(VERTICAL);
             setGravity(Gravity.CENTER_VERTICAL);
-            setPadding(dp(14), dp(12), dp(14), dp(12));
-            setMinimumHeight(Math.max(dp(64), Math.round(48 * getResources().getDisplayMetrics().density)));
+            setPadding(dp(11), dp(8), dp(11), dp(8));
+            setMinimumHeight(Math.max(dp(52), Math.round(48 * getResources().getDisplayMetrics().density)));
             setFocusable(true);
             setFocusableInTouchMode(true);
             setTag("settings.preference." + entry.actualKey(getContext()));
-            Diagnostics.semantic(this, "settings:preference:" +
-                                                                                    entry.actualKey(getContext()));
-            setBackground(SharedThreePanel.accentFocus(getContext()));
+            Diagnostics.semantic(this, "settings:preference:" + entry.actualKey(getContext()));
+            setBackground(SupernovaStyle.rowFocus(getContext()));
             SharedThreePanel.rowSeparator(this);
-            LinearLayout copy = new LinearLayout(getContext());
-            copy.setOrientation(VERTICAL);
-            title = text("", 19);
-            title.setTypeface(null, Typeface.BOLD);
-            description = text("", 15);
-            description.setTextColor(0xffbcc9d9);
-            description.setPadding(0, dp(5), 0, 0);
-            copy.addView(title);
-            copy.addView(description);
-            addView(copy, new LayoutParams(0, -2, 1));
-            value = text("", 15);
+            LinearLayout line = new LinearLayout(getContext());
+            line.setGravity(Gravity.CENTER_VERTICAL);
+            title = text("", 13);
+            title.setTypeface(SupernovaStyle.LABEL);
+            line.addView(title, new LayoutParams(0, -2, 1));
+            value = text("", 12);
+            value.setTag("settings.value");
+            value.setTextColor(0xFFDFE5F1);
             value.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
             value.setPadding(dp(12), 0, 0, 0);
-            value.setMaxWidth(dp(170));
-            addView(value, new LayoutParams(-2, -2));
+            value.setMaxWidth(dp(220));
+            value.setSingleLine(true);
+            value.setEllipsize(TextUtils.TruncateAt.END);
+            line.addView(value, new LayoutParams(-2, -2));
+            segments = new LinearLayout(getContext());
+            segments.setTag("settings.segments");
+            segments.setGravity(Gravity.CENTER_VERTICAL);
+            segments.setPadding(dp(2), dp(2), dp(2), dp(2));
+            segments.setBackground(SupernovaStyle.rounded(getContext(), 0xFF1B1D22, 9));
+            LayoutParams segmentsSize = new LayoutParams(-2, -2);
+            segmentsSize.leftMargin = dp(12);
+            line.addView(segments, segmentsSize);
             toggle = new SwitchCompat(getContext());
+            toggle.setTag("settings.switch");
             toggle.setShowText(false);
             toggle.setTextOn("");
             toggle.setTextOff("");
             toggle.setFocusable(false);
             toggle.setClickable(false);
             toggle.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
-            LayoutParams toggleSize = new LayoutParams(dp(52), dp(48));
+            LayoutParams toggleSize = new LayoutParams(-2, dp(30));
             toggleSize.leftMargin = dp(12);
-            addView(toggle, toggleSize);
+            line.addView(toggle, toggleSize);
             PreviewSettings.styleSwitch(toggle);
+            addView(line, new LayoutParams(-1, -2));
+            description = text("", 10);
+            description.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            description.setPadding(0, dp(3), dp(4), 0);
+            addView(description, new LayoutParams(-1, -2));
             setOnClickListener(v -> {
                 if (!preference.isEnabled() || !preference.isSelectable())
                     return;
+                if (preference instanceof ListPreference && inline((ListPreference)preference))
+                    return; // inline choices change with Left/Right
                 if (!PreviewPreferenceDialogs.show(fragment, preference))
                     preference.performClick();
                 refresh();
@@ -704,25 +655,44 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                     anchors.put(category + ":" + section, String.valueOf(getTag()));
                     rowAnchor = this;
                 }
+                refresh();
             });
             setOnKeyListener((v, key, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN)
                     return false;
-                if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    selectedRail().requestFocus();
+                if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    step(key == KeyEvent.KEYCODE_DPAD_LEFT ? -1 : 1);
                     return true;
                 }
-                if (key == KeyEvent.KEYCODE_DPAD_RIGHT)
-                    return true;
                 if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
                     List<Row> values = new ArrayList<>(bindings.values());
                     int n = values.indexOf(this) + (key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
                     if (n >= 0 && n < values.size())
                         values.get(n).requestFocus();
+                    else if (n < 0)
+                        selectedRail().requestFocus();
                     return true;
                 }
                 return false;
             });
+        }
+
+        /** Left/Right on an inline choice: picks the neighbouring value straight away (and saves it). */
+        void step(int direction) {
+            if (!(preference instanceof ListPreference) || !preference.isEnabled())
+                return;
+            ListPreference list = (ListPreference)preference;
+            if (!inline(list))
+                return;
+            int current = Math.max(0, list.findIndexOfValue(list.getValue()));
+            int next = current + direction;
+            if (next < 0 || next >= list.getEntryValues().length)
+                return;
+            String chosen = list.getEntryValues()[next].toString();
+            if (list.callChangeListener(chosen))
+                list.setValue(chosen);
+            refresh();
+            schedule();
         }
 
         void refresh() {
@@ -731,27 +701,68 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             String help = summary == null ? "" : summary.toString();
             if (!preference.isEnabled())
                 help += (help.isEmpty() ? "" : "\n") + "Unavailable for the current device or account configuration.";
-            description.setText(help);
-            description.setVisibility(help.isEmpty() ? GONE : VISIBLE);
             boolean state = preference instanceof TwoStatePreference;
+            boolean choices = preference instanceof ListPreference && inline((ListPreference)preference);
             toggle.setVisibility(state ? VISIBLE : GONE);
-            value.setVisibility(VISIBLE);
+            segments.setVisibility(choices ? VISIBLE : GONE);
+            value.setVisibility(state || choices ? GONE : VISIBLE);
             toggle.setEnabled(preference.isEnabled());
+            String spoken;
             if (state) {
                 toggle.setChecked(((TwoStatePreference)preference).isChecked());
-                value.setText("");
-                value.setVisibility(GONE);
+                spoken = toggle.isChecked() ? "On" : "Off";
+            } else if (choices) {
+                ListPreference list = (ListPreference)preference;
+                bindSegments(list);
+                CharSequence selected = list.getEntry();
+                spoken = selected == null ? "Not set" : selected.toString();
+                // The chosen value is visible in the control; a summary repeating it would say it twice.
+                if (selected != null && help.contentEquals(selected))
+                    help = "";
             } else if (preference instanceof ListPreference) {
                 CharSequence selected = ((ListPreference)preference).getEntry();
                 value.setText(selected == null ? "Not set" : selected);
-            } else if (preference instanceof MultiSelectListPreference)
+                spoken = value.getText().toString();
+                if (selected != null && help.contentEquals(selected))
+                    help = "";
+            } else if (preference instanceof MultiSelectListPreference) {
                 value.setText(((MultiSelectListPreference)preference).getValues().size() + " selected");
-            else
+                spoken = value.getText().toString();
+            } else {
                 value.setText("›");
+                spoken = "";
+            }
+            description.setText(help);
+            description.setVisibility(help.isEmpty() ? GONE : VISIBLE);
             setAlpha(1f);
             toggle.setAlpha(preference.isEnabled() ? 1f : .4f);
-            setContentDescription(title.getText() + ". " + help + ". " +
-                                  (state ? (toggle.isChecked() ? "On" : "Off") : value.getText()));
+            setContentDescription(title.getText() + ". " + help + ". " + spoken);
+        }
+
+        private void bindSegments(ListPreference list) {
+            CharSequence[] entries = list.getEntries();
+            int chosen = list.findIndexOfValue(list.getValue());
+            boolean focused = hasFocus();
+            if (segments.getChildCount() != entries.length) {
+                segments.removeAllViews();
+                for (CharSequence label : entries) {
+                    TextView option = text(label.toString(), 10);
+                    option.setTypeface(SupernovaStyle.LABEL);
+                    option.setSingleLine(true);
+                    option.setPadding(dp(8), dp(5), dp(8), dp(5));
+                    segments.addView(option, new LayoutParams(-2, -2));
+                }
+            }
+            for (int i = 0; i < entries.length; i++) {
+                TextView option = (TextView)segments.getChildAt(i);
+                boolean on = i == chosen;
+                option.setTag(on ? "settings.segment.on" : "settings.segment");
+                option.setTextColor(on ? (focused ? SupernovaStyle.FOCUS_TEXT : SupernovaStyle.TEXT) : 0xFFAAB3C4);
+                option.setBackground(on ? SupernovaStyle.rounded(getContext(),
+                                                                 focused ? SupernovaStyle.FOCUS_FILL
+                                                                         : SupernovaStyle.TAB_OPEN, 7)
+                                        : null);
+            }
         }
     }
 
@@ -799,7 +810,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (category >= 0 && event.getAction() == KeyEvent.ACTION_DOWN &&
-            event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && right.hasFocus()) {
+            event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT && right.hasFocus() && !(findFocus() instanceof Row)) {
             if (about != null && about.handleBack())
                 return true;
             selectedRail().requestFocus();

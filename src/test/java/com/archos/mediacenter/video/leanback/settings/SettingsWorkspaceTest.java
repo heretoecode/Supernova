@@ -127,27 +127,48 @@ public class SettingsWorkspaceTest {
                 tagged("settings.grid." + i).getContentDescription().toString().startsWith(SettingsRegistry.LABELS[i]));
     }
 
+    /** 0.156 page pattern (mock-ups settings/03–05): tabs in the header, rows below, values level with titles. */
     @Test
-    public void railHasOneImmediateBoundaryDuringRapidFocusChanges() {
+    public void tabsSitInTheHeaderAndRowsKeepTheirValueLevelWithTheTitle() {
         workspace.open(0, "Playback");
         layout();
         View first = tagged("settings.section.Playback"), second = tagged("settings.section.Video & Display");
-        first.requestFocus();
-        second.requestFocus();
-        first.requestFocus();
-        second.requestFocus();
-        ViewGroup rail = (ViewGroup)second.getParent();
-        assertFalse("Child surface must not paint a second focus boundary",
-                    second.getBackground() instanceof StateListDrawable);
-        assertNull("Selected state must not paint a second outline", second.getForeground());
-        assertFalse(((TextView)second).getText().toString().contains("✓"));
-        assertTrue(ReflectionHelpers.getField(rail, "visible"));
-        RectF outline = ReflectionHelpers.getField(rail, "current");
-        assertEquals(second.getTop(), outline.top, 1);
-        assertEquals(second.getBottom(), outline.bottom, 1);
-        assertNull(ReflectionHelpers.getField(rail, "movement"));
-        workspace.enter();
-        assertFalse(ReflectionHelpers.getField(rail, "visible"));
+        assertSame("tabs live in the header", tagged("settings.tabs"), first.getParent());
+        assertTrue(first.requestFocus());
+        key(KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertTrue("Right moves to the next tab", second.hasFocus());
+        assertTrue("the focused tab opens its rows", second.isSelected());
+        key(KeyEvent.KEYCODE_DPAD_LEFT);
+        assertTrue(first.hasFocus());
+        key(KeyEvent.KEYCODE_DPAD_DOWN);
+        View row = root.findFocus();
+        assertNotNull(row);
+        assertTrue(String.valueOf(row.getTag()).startsWith("settings.preference."));
+        key(KeyEvent.KEYCODE_DPAD_UP);
+        assertTrue("Up from the first row returns to the open tab", first.hasFocus());
+        ViewGroup speed = (ViewGroup)tagged("settings.preference.playback_speed");
+        View title = (View)speed.getChildAt(0), toggle = speed.findViewWithTag("settings.switch");
+        assertSame("the switch shares the title's line", title, toggle.getParent());
+    }
+
+    /** Owner rule: up to ~5 short choices sit inline and Left/Right changes them straight away. */
+    @Test
+    public void shortChoicesAreInlineAndLeftRightSavesThem() {
+        workspace.open(6, "Diagnostics");
+        layout();
+        ListPreference level = fragment.findPreference("supernova_diagnostic_level");
+        assertNotNull(level);
+        assertTrue(SettingsWorkspace.inline(level));
+        View row = tagged("settings.preference.supernova_diagnostic_level");
+        assertTrue(row.requestFocus());
+        layout();
+        View segments = row.findViewWithTag("settings.segments");
+        assertEquals(View.VISIBLE, segments.getVisibility());
+        int before = level.findIndexOfValue(level.getValue());
+        int direction = before == 0 ? 1 : -1;
+        key(direction > 0 ? KeyEvent.KEYCODE_DPAD_RIGHT : KeyEvent.KEYCODE_DPAD_LEFT);
+        assertEquals(before + direction, level.findIndexOfValue(level.getValue()));
+        assertTrue("focus stays on the row", row.hasFocus());
     }
 
     @Test
@@ -251,14 +272,14 @@ public class SettingsWorkspaceTest {
             preference.setChecked(checked);
             layout();
             ViewGroup row = (ViewGroup)tagged("settings.preference.playback_speed");
-            assertEquals(View.GONE, row.getChildAt(1).getVisibility());
+            assertEquals(View.GONE, row.findViewWithTag("settings.value").getVisibility());
             assertTrue(row.getContentDescription().toString().endsWith(checked ? "On" : "Off"));
         }
         preference.setEnabled(false);
         layout();
         ViewGroup row = (ViewGroup)tagged("settings.preference.playback_speed");
-        assertEquals(View.GONE, row.getChildAt(1).getVisibility());
-        assertFalse(row.getChildAt(2).isEnabled());
+        assertEquals(View.GONE, row.findViewWithTag("settings.value").getVisibility());
+        assertFalse(row.findViewWithTag("settings.switch").isEnabled());
         assertEquals(1f, row.getAlpha(), 0f);
         assertTrue(row.requestFocus());
         assertTrue(row.hasFocus());
@@ -377,7 +398,7 @@ public class SettingsWorkspaceTest {
         for (int i = 0; i < 8; i++) {
             workspace.open(i, null);
             layout();
-            assertEquals(2, ((ViewGroup)tagged("settings.category")).getChildCount());
+            assertEquals("header, rule, content", 3, ((ViewGroup)tagged("settings.category")).getChildCount());
         }
     }
 

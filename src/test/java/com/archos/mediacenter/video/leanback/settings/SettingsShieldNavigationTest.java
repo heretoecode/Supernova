@@ -139,8 +139,8 @@ public class SettingsShieldNavigationTest {
         settle();
         openDiagnostics();
         assertNull(findType(root, FoundationAboutWorkspace.class));
-        assertEquals(2, ((ViewGroup) root.findViewWithTag("settings.category")).getChildCount());
-        key(KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertEquals(3, ((ViewGroup) root.findViewWithTag("settings.category")).getChildCount());
+        key(KeyEvent.KEYCODE_DPAD_DOWN);
         assertTrue(String.valueOf(root.findFocus().getTag()).startsWith("settings.preference."));
         capture("0143-diagnostics");
     }
@@ -153,7 +153,7 @@ public class SettingsShieldNavigationTest {
         settle();
         assertNotNull(
             "Diagnostic Level must retain its established preference key", settings.findPreference(Diagnostics.LEVEL));
-        key(KeyEvent.KEYCODE_DPAD_RIGHT);
+        key(KeyEvent.KEYCODE_DPAD_DOWN);
         Set<String> reached = new HashSet<>();
         for (int n = 0; n < 10; n++) {
             View focused = root.findFocus();
@@ -213,7 +213,7 @@ public class SettingsShieldNavigationTest {
         assertTrue(PreviewSettings.enterBackup(settings));
         settle();
         ViewGroup split = root.findViewWithTag("settings.category");
-        assertEquals(2, split.getChildCount());
+        assertEquals(3, split.getChildCount());
         for (int n = 0; n < 2; n++)
             assertEquals(View.VISIBLE, split.getChildAt(n).getVisibility());
         View export = root.findViewWithTag("backup.action.export");
@@ -234,8 +234,8 @@ public class SettingsShieldNavigationTest {
         assertTrue("Right stays in the content column", restore.hasFocus());
         key(KeyEvent.KEYCODE_DPAD_LEFT);
         assertTrue(root.findViewWithTag("settings.section.Backup & restore").hasFocus());
-        key(KeyEvent.KEYCODE_DPAD_RIGHT);
-        assertSame("Right restores the selected backup action", restore, root.findFocus());
+        key(KeyEvent.KEYCODE_DPAD_DOWN);
+        assertSame("Down from the tab restores the selected backup action", restore, root.findFocus());
         restore.performClick();
         settle();
         assertEquals(Intent.ACTION_OPEN_DOCUMENT,

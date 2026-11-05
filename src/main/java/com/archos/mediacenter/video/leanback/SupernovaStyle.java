@@ -448,6 +448,26 @@ public final class SupernovaStyle {
      * A clickable path chip (e.g. the file browser's path): no box at rest, the white focus box when focused.
      * Pair with {@link #buttonContent()} for its text and icon.
      */
+    public static final int TAB_OPEN = 0xFF454B55;
+
+    /** A plain filled rounded rectangle (no border, no states). */
+    public static Drawable rounded(Context c, int colour, float radiusDp) {
+        return new Box(colour, 0, 0, dp(c, radiusDp), 0);
+    }
+
+    /**
+     * A page tab (Settings, 0.156): charcoal at rest, a lighter charcoal for the open tab, the white focus box
+     * when focused. Pair with {@link #buttonContent()} for its text and icon.
+     */
+    public static StateListDrawable tab(Context c, boolean open) {
+        StateListDrawable states = new ButtonStates();
+        Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 10), 0);
+        states.addState(new int[] {android.R.attr.state_focused}, focused);
+        states.addState(new int[] {android.R.attr.state_pressed}, focused);
+        states.addState(new int[] {}, new Box(open ? TAB_OPEN : PANEL_REST, 0, 0, dp(c, 10), 0));
+        return states;
+    }
+
     public static StateListDrawable chip(Context c) {
         StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, dp(c, 7), 0);
