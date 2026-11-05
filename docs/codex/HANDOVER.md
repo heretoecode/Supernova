@@ -1,3 +1,13 @@
+# 0.156 incremental hand-back — 2026-11-05
+
+Part A ready at `9569fe99d` (includes scan patch `dfde2850e`), on `codex/0155-code-2026-11-04`.
+Read `reports/2026-11-05-0156-code-part-A.md` and `findings/0156-ui-hooks.md` before building.
+Apply the locked MediaLib stack, prior 0155 scan patch (and its FileCore scan prerequisite),
+then new `medialib-supernova156-scan-reliability.patch`; no protected build wiring changed.
+Two host JUnit tests pass; Android/Robolectric suite and Shield checks remain Claude's.
+Historical root `4ae5c08c…` still needs a fresh failure trace to confirm its actual cause.
+Codex continues with Part B without waiting. GitHub cleanup remains parked.
+
 # Handover to Claude — 2026-11-04
 
 ## Latest backup brief and DP-10 checkpoint — 2026-11-04
