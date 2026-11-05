@@ -103,7 +103,7 @@ public final class OfficialTitleArtwork {
         String provider = providerIdentity(media);
         Bitmap bitmap = provider == null ? null : ALIASES.get(provider + ":" + Locale.getDefault().getLanguage());
         if (bitmap != null) {
-            view.setForeground(new Logo(bitmap, true));
+            view.setForeground(logoFor(view, bitmap, true));
             view.setTextColor(Color.TRANSPARENT);
         }
         READY.put(view, true);
@@ -196,7 +196,7 @@ public final class OfficialTitleArtwork {
         String alias = identity + ":" + language;
         Bitmap existing = knownProvider ? ALIASES.get(alias) : null;
         if (existing != null) {
-            view.setForeground(new Logo(existing, "semantic:featured.title".equals(view.getTag())));
+            view.setForeground(logoFor(view, existing, "semantic:featured.title".equals(view.getTag())));
             view.setTextColor(Color.TRANSPARENT);
             READY.put(view, true);
             trace.ready("memory_alias");
@@ -293,7 +293,7 @@ public final class OfficialTitleArtwork {
                             trace.cancelled();
                             return;
                         }
-                        current.setForeground(new Logo(ready, "semantic:featured.title".equals(current.getTag())));
+                        current.setForeground(logoFor(current, ready, "semantic:featured.title".equals(current.getTag())));
                         current.setTextColor(Color.TRANSPARENT);
                         trace.ready(origin);
                         if (changed != null)
@@ -440,25 +440,40 @@ public final class OfficialTitleArtwork {
             : Bitmap.createBitmap(bitmap, left, top, right - left + 1, bottom - top + 1);
     }
 
+    /**
+     * A title view whose text sits at the bottom of its box (the hero) gets its logo drawn at the bottom too, so a
+     * wide logo sits just above the metadata whatever its shape (owner, 4 Nov 2026, 0.155 notes #2).
+     */
+    private static Logo logoFor(TextView view, Bitmap bitmap, boolean contrast) {
+        int vertical = view.getGravity() & android.view.Gravity.VERTICAL_GRAVITY_MASK;
+        return new Logo(bitmap, contrast, vertical == android.view.Gravity.BOTTOM);
+    }
+
     private static final class Logo extends Drawable {
         private final Bitmap bitmap;
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
         private final boolean contrast;
+        private final boolean alignBottom;
 
         Logo(Bitmap bitmap) {
-            this(bitmap, false);
+            this(bitmap, false, false);
         }
 
-        Logo(Bitmap bitmap, boolean contrast) {
+        Logo(Bitmap bitmap, boolean contrast, boolean alignBottom) {
             this.bitmap = bitmap;
             this.contrast = contrast;
+            this.alignBottom = alignBottom;
         }
 
         @Override
         public void draw(Canvas canvas) {
-            Rect b = getBounds();
-            float scale = Math.min(b.width() / (float) bitmap.getWidth(), b.height() / (float) bitmap.getHeight());
-            float width = bitmap.getWidth() * scale, height = bitmap.getHeight() * scale;
+            Rect bounds = getBounds();
+            float scale = Math.min(bounds.width() / (float) bitmap.getWidth(),
+                bounds.height() / (float) bitmap.getHeight());
+            float width = bitmap.getWidth() * scale;
+            float height = bitmap.getHeight() * scale;
+            int top = alignBottom ? Math.round(bounds.bottom - height) : bounds.top;
+            Rect b = new Rect(bounds.left, top, bounds.right, bounds.bottom);
             if (contrast) {
                 Paint shadow = new Paint(paint);
                 shadow.setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN));

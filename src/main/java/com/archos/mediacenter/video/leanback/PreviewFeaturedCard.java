@@ -57,6 +57,8 @@ final class PreviewFeaturedCard extends FrameLayout {
         title.setSingleLine(true);
         title.setShadowLayer(dp(2), 0, dp(1), Color.BLACK);
         title.setTypeface(null, Typeface.BOLD);
+        // Text and logo sit at the bottom of the title box, just above the metadata (0.155 notes #2).
+        title.setGravity(Gravity.BOTTOM | Gravity.START);
         copy.addView(title, new LinearLayout.LayoutParams(-1, dp(86)));
         if (entry != null)
             OfficialTitleArtwork.bindStable(title, entry.media);
@@ -76,6 +78,10 @@ final class PreviewFeaturedCard extends FrameLayout {
         SharedMetadata.bindCard(metadata, badges,
             entry != null && entry.homeMetadata != null ? entry.homeMetadata : SharedMetadata.entry(c, entry, true),
             true);
+        // Year · genre in Medium, pure white, with a firmer shadow (0.155 notes #1).
+        metadata.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        metadata.setTextColor(Color.WHITE);
+        metadata.setShadowLayer(dp(3), 0, dp(1), 0xF0000000);
         String plot = entry == null ? ""
             : entry.media instanceof Tvshow ? ((Tvshow) entry.media).getPlot()
             : entry.media instanceof Video ? ((Video) entry.media).getDescriptionBody()
@@ -98,6 +104,7 @@ final class PreviewFeaturedCard extends FrameLayout {
         LinearLayout.LayoutParams synopsisSize = new LinearLayout.LayoutParams(-1, -2);
         synopsisSize.topMargin = dp(12);
         copy.addView(synopsis, synopsisSize);
+        card.addTextPatch(title, metadata, synopsis);
         copy.addView(new View(c), new LinearLayout.LayoutParams(1, 0, 1));
         LinearLayout actions = new LinearLayout(c);
         actions.setClipChildren(false);
@@ -125,6 +132,10 @@ final class PreviewFeaturedCard extends FrameLayout {
         if (active instanceof ViewGroup) {
             View copy = active.findViewWithTag("featured.copy");
             copy.getLayoutParams().width = Math.round(width * .86f * .55f);
+            // The synopsis stays in the left half of the card, clear of the brightest part of most artwork.
+            View synopsis = active.findViewWithTag("semantic:featured.synopsis");
+            if (synopsis != null)
+                synopsis.getLayoutParams().width = Math.round(width * .86f * .50f) - copy.getPaddingLeft();
         }
         super.onMeasure(w, h);
     }

@@ -38,7 +38,6 @@
   5 crammed lines · longest 280 · src/test/java/com/archos/mediacenter/video/streaming/putio/PutioFileInfoTest.java
   5 crammed lines · longest 243 · src/main/java/com/archos/mediacenter/video/utils/backup/PortableLocations.java
   5 crammed lines · longest 232 · src/test/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRailTest.java
-  5 crammed lines · longest 232 · src/main/java/com/archos/mediacenter/video/leanback/CinematicCard.java
   5 crammed lines · longest 182 · src/test/java/com/archos/mediacenter/video/leanback/PreviewWatchedScopeDialogTest.java
   5 crammed lines · longest 181 · src/main/java/com/archos/mediacenter/video/streaming/putio/PutioTokenStore.java
   5 crammed lines · longest 177 · src/main/java/com/archos/mediacenter/video/streaming/StreamingPreferences.java
