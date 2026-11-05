@@ -178,8 +178,50 @@
     {
       "kind": "patch",
       "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-scan.patch",
+      "sha256": "34fc5c2c045f19b794fe48da0c132fbe89f2cc8414f0f1079515ab7b97ebb796"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-history.patch",
+      "sha256": "8a48283468db3902d2961bdcca0de772bc150cc348b859d23dc21ed76386aa9c"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-schedule.patch",
+      "sha256": "80d1f18c81d17d47708391856266bcc4069373cd457834d07787ff709f5820d6"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-missing.patch",
+      "sha256": "30249ab8646570c4322e9a1bec79ac61cc2a54f64634f1b5a804d5c207456209"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-nfo.patch",
+      "sha256": "a2cf9a89e24310f8cf2fb9f9bc1137f8f9933012e9d5d89cf45725a75fb7c383"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-nfo-cancel.patch",
+      "sha256": "813c1177ad339c8d9b272991d019cd331ced0b7d9accd49018ba6b78b7f19c5b"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
       "path": ".github/build/medialib-supernova156-test-sardine.patch",
       "sha256": "13a236c1f02ad3aea92faa44a7afd40c2e83da1398c5ee7056454fd11d71de39"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova156-screen-connections.patch",
+      "sha256": "59f4830cac8e56c562ea01755c77b0c54db9754aa2940d37cc2d8e7e0e3ca2b9"
     },
     {
       "kind": "patch",
