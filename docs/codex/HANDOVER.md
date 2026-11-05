@@ -1,3 +1,8 @@
+# 0.156 screen data — item 5 ready (5 Nov 2026)
+
+Item 5 ready at `70a38e719` on `codex/0155-code-2026-11-04`. Nine real connection-probe tests pass (47 component regressions across items 1–5). Items 6–7 continue.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
 # 0.156 screen data — item 4 ready (5 Nov 2026)
 
 Item 4 ready at `9f46af2c1` on `codex/0155-code-2026-11-04`. 38 component regressions pass. Items 5–7 continue; no additional patch for item 4.
