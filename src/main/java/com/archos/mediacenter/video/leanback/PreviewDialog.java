@@ -347,14 +347,14 @@ public final class PreviewDialog {
 
     public static Dialog choose(Context c, String title, String[] labels, int selected, Set<Integer> checked,
                                 boolean dismissOnSelect, IntConsumer action) {
-        View anchor = anchor(c);
         Dialog d = create(c, "choice");
         d.requestWindowFeature(Window.FEATURE_NO_TITLE);
         LinearLayout panel = new LinearLayout(c);
         panel.setOrientation(android.widget.LinearLayout.VERTICAL);
         int pad = dp(c, 12);
         panel.setPadding(pad, pad, Math.round(pad * 1.2f), pad);
-        panel.setBackground(menuSurface(c));
+        // Shared choice list (owner-approved 5 Nov 2026, mock-up suggestions/01): a solid side panel, not glass.
+        panel.setBackground(SupernovaStyle.solidPanel(c));
         panel.setClipChildren(false);
         panel.setClipToPadding(false);
         // Approved global rule (2 Nov 2026): pop-up menus have no title; the title only names the menu for accessibility.
@@ -469,21 +469,17 @@ public final class PreviewDialog {
         int chrome = pad * 2;
         int maxHeight = c.getResources().getDisplayMetrics().heightPixels - dp(c, 48);
         int menuHeight = Math.min(dp(c, height - 60) + chrome, maxHeight);
-        if (anchor != null) {
-            int[] pos = new int[2];
-            anchor.getLocationOnScreen(pos);
-            int[] fit = PreviewMenuPlacement.place(
-                width, menuHeight, pos[0], pos[1], pos[0] + anchor.getWidth(), pos[1] + anchor.getHeight(),
-                c.getResources().getDisplayMetrics().widthPixels, c.getResources().getDisplayMetrics().heightPixels,
-                dp(c, 24), dp(c, 14));
-            WindowManager.LayoutParams params = w.getAttributes();
-            params.gravity = Gravity.TOP | Gravity.LEFT;
-            params.x = fit[0];
-            params.y = fit[1];
-            w.setAttributes(params);
-            width = fit[2];
-            menuHeight = fit[3];
-        }
+        // Docked at the right below the top bar, sized to its content (owner rule: long lists open the side panel).
+        int screenWidth = c.getResources().getDisplayMetrics().widthPixels;
+        int screenHeight = c.getResources().getDisplayMetrics().heightPixels;
+        int top = Math.round(screenHeight * 56f / 540f);
+        menuHeight = Math.min(menuHeight, screenHeight - top - dp(c, 20));
+        WindowManager.LayoutParams params = w.getAttributes();
+        params.gravity = Gravity.TOP | Gravity.LEFT;
+        params.x = Math.max(dp(c, 14), screenWidth - width - Math.round(screenWidth * 28f / 960f));
+        params.y = top;
+        w.setAttributes(params);
+        w.setDimAmount(.35f);
         scroll.setLayoutParams(
             new LinearLayout.LayoutParams(-1, Math.max(dp(c, 30), menuHeight - chrome - footerHeight)));
         w.setLayout(width, menuHeight);

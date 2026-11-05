@@ -430,6 +430,11 @@ public final class SupernovaStyle {
         return glass(c, PANEL_RADIUS_DP);
     }
 
+    /** The shared choice list's solid side panel (0.156): opaque charcoal with the panel edge. */
+    public static Drawable solidPanel(Context c) {
+        return new Box(0xFF16181C, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, PANEL_RADIUS_DP), 0);
+    }
+
     public static Drawable glass(Context c, float radiusDp) {
         return new Box(GLASS, GLASS_EDGE, Math.max(1, dp(c, 1)), dp(c, radiusDp), 0);
     }
