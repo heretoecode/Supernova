@@ -1,6 +1,8 @@
 {
- "purpose": "0.154 final candidate: full unit suite",
+ "purpose": "Background comparison: Home and Movies on Space Black and on flat charcoal",
  "tests": [
-  "com.archos.*"
- ]
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus",
+  "com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest"
+ ],
+ "variants": ["normal", "charcoal"]
 }

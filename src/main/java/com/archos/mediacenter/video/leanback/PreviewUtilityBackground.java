@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
 
@@ -31,6 +32,10 @@ public final class PreviewUtilityBackground extends Drawable {
         Bitmap image =
             BuildConfig.FOUNDATION ? foundationImage : PreviewUtilityBackground.image;
         Rect b = getBounds();
+        if (flatPreview()) {
+            canvas.drawColor(0xff16181c);
+            return;
+        }
         canvas.drawColor(0xff09111a);
         if (image == null)
             return;
@@ -42,6 +47,13 @@ public final class PreviewUtilityBackground extends Drawable {
             paint);
         if (!BuildConfig.FOUNDATION)
             canvas.drawColor(0x44050b12);
+    }
+
+    /** Render tool only: the comparison renders draw flat charcoal. Never true on a device. */
+    private static boolean flatPreview() {
+        if (!"robolectric".equals(Build.FINGERPRINT))
+            return false;
+        return System.getenv("SUPERNOVA_PREVIEW_FLAT") != null;
     }
 
     @Override

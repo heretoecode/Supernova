@@ -1,7 +1,8 @@
 name: Preview renders (real Android views)
 # Runs only the requested Robolectric capture tests and publishes the PNGs they write to
 # build/reports/** onto the 'previews/claude' branch, so changes can be inspected visually
-# before any APK is built. No secrets, no APK, no signing.
+# before any APK is built. No secrets, no APK, no signing. Optional "variants" in the request:
+# "normal" and/or "charcoal" (the comparison renders with the background drawn flat #16181C).
 on:
   push:
     branches: [claude/supernova-github-access-yfhe89]
@@ -9,6 +10,11 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: read
+env:
+  ENGINE_RUN: 41848351713
+  ENGINE_SOURCE: a8c82ae523533e8dc92cc30c203212f08a491148
+  ENGINE_ARCHIVE_SHA256: 42e1990bc5e584747242ecffc8d83d1244f55b9babf72ebeaa3a4be272d2e738
 concurrency:
   group: preview-renders
   cancel-in-progress: true
@@ -21,24 +27,29 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           path: nova/Video
-          fetch-depth: 1
+          fetch-depth: 0
+          persist-credentials: false
       - name: Java21
         uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
         with:
           distribution: temurin
           java-version: '21'
-      - name: Download pinned source-built native artifacts
+      - name: Download the reviewed arm64 engine
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          pattern: supernova-0146-native-*
-          path: native-artifacts
-          run-id: 40843685431
+          name: supernova-0156-native-arm64-v8a
+          path: engine
+          run-id: ${{ env.ENGINE_RUN }}
           github-token: ${{ github.token }}
-      - name: Prepare dependency source
+      - name: Prepare dependency source (same as conformance)
         run: |
           set -euo pipefail
-          python3 nova/Video/.github/build/prepare-supernova146-workspace.py --root nova
-          python3 nova/Video/.github/build/package-supernova146-native.py --root nova --artifacts native-artifacts --workspace "$RUNNER_TEMP/native146-packaging" > /dev/null
+          python3 nova/Video/.github/build/prepare-supernova155-workspace.py --root nova
+          git -C nova/Video worktree add --detach "$RUNNER_TEMP/engine-recipe" "$ENGINE_SOURCE"
+          python3 "$RUNNER_TEMP/engine-recipe/.github/build/package-supernova156-native.py" --root nova \
+            --archive engine/_temp/native156/delivery/Supernova_0.156_native_arm64-v8a.tar.gz \
+            --archive-sha256 "$ENGINE_ARCHIVE_SHA256" --source-commit "$ENGINE_SOURCE" \
+            --evidence "$RUNNER_TEMP/native155/packaging-inputs.json" > /dev/null
           python3 nova/Video/.github/build/build-supernova146-jetty.py --workspace nova/Video/build/supernova146-jetty
           git -C nova/FileCoreLibrary apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-filecore-test-fixtures.patch"
           git -C nova/MediaLib apply "$GITHUB_WORKSPACE/nova/Video/.github/build/next-medialib-test-fixtures.patch"
@@ -48,28 +59,34 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' > /dev/null
           cd nova/Video
           filters=$(python3 -c "import json;print(' '.join('--tests '+t for t in json.load(open('.github/diagnostics/preview-request.json'))['tests']))")
+          variants=$(python3 -c "import json;print(' '.join(json.load(open('.github/diagnostics/preview-request.json')).get('variants',['normal'])))")
           chmod +x gradlew
-          ./gradlew testNoamazonReleaseUnitTest $filters -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --max-workers=4 \
-            -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild > "$RUNNER_TEMP/gradle.log" 2>&1
-          echo "exit=$?" > "$RUNNER_TEMP/test-exit"
-          grep -E "FAILED|tests completed|BUILD" "$RUNNER_TEMP/gradle.log" | tail -40
-          # Compiler errors, so a broken build explains itself.
-          grep -E "\.java:[0-9]+: error:" -A3 "$RUNNER_TEMP/gradle.log" | head -120 | tee -a "$RUNNER_TEMP/test-exit"
-          # Failing assertions, so a red run still explains itself (renders are published either way).
-          python3 - <<'PY' | tee -a "$RUNNER_TEMP/test-exit"
+          : > "$RUNNER_TEMP/test-exit"
+          for variant in $variants; do
+            rm -rf build/reports/preview-ui build/test-results
+            if [ "$variant" = charcoal ]; then export SUPERNOVA_PREVIEW_FLAT=1; else unset SUPERNOVA_PREVIEW_FLAT; fi
+            ./gradlew cleanTestNoamazonReleaseUnitTest testNoamazonReleaseUnitTest $filters -PfoundationVerify -PsupernovaQa \
+              -Puniversal -Parm64only --no-daemon --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild \
+              > "$RUNNER_TEMP/gradle-$variant.log" 2>&1
+            echo "$variant exit=$?" >> "$RUNNER_TEMP/test-exit"
+            grep -E "FAILED|tests completed|BUILD" "$RUNNER_TEMP/gradle-$variant.log" | tail -40
+            grep -E "\.java:[0-9]+: error:" -A3 "$RUNNER_TEMP/gradle-$variant.log" | head -120 | tee -a "$RUNNER_TEMP/test-exit"
+            python3 - <<'PY' | tee -a "$RUNNER_TEMP/test-exit"
           import glob, xml.etree.ElementTree as ET
           for path in glob.glob('build/test-results/**/*.xml', recursive=True):
               for case in ET.parse(path).getroot().iter('testcase'):
                   for bad in list(case.findall('failure')) + list(case.findall('error')):
                       print(f"FAILED {case.get('classname')}.{case.get('name')}: {(bad.get('message') or '')[:400]}")
           PY
+            mkdir -p "$RUNNER_TEMP/previews/$variant"
+            find build/reports -name '*.png' -exec cp {} "$RUNNER_TEMP/previews/$variant/" \; || true
+          done
       - name: Publish renders to previews/claude
         env:
           SOURCE_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/previews"; mkdir -p "$out"
-          find nova/Video/build/reports -name '*.png' -newer nova/Video/.github/diagnostics/preview-request.json -exec cp {} "$out/" \; || true
           cp "$RUNNER_TEMP/test-exit" "$out/TEST_EXIT.txt"
           printf 'source=%s\nrendered=%s\n' "$SOURCE_SHA" "$(date -u +%FT%TZ)" > "$out/SOURCE.txt"
           cd "$out"; ls -1
