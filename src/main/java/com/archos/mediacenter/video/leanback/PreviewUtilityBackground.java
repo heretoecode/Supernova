@@ -51,7 +51,7 @@ public final class PreviewUtilityBackground extends Drawable {
     }
 
     /**
-     * Render tool only: a colour (hex RRGGBB or AARRGGBB) or a number the comparison renders use in place of the normal one.
+     * Render tool only: a colour (hex RRGGBB or AARRGGBB) the comparison renders use in place of the normal one.
      * Never read on a device.
      */
     public static int previewColour(String name, int normal) {
@@ -64,6 +64,16 @@ public final class PreviewUtilityBackground extends Drawable {
         if (value.length() <= 6)
             parsed |= 0xff000000L;
         return (int) parsed;
+    }
+
+    /** Render tool only: a whole number in place of the normal one. Never read on a device. */
+    public static int previewNumber(String name, int normal) {
+        if (!"robolectric".equals(Build.FINGERPRINT))
+            return normal;
+        String value = System.getenv(name);
+        if (value == null || value.isEmpty())
+            return normal;
+        return Integer.parseInt(value);
     }
 
     @Override

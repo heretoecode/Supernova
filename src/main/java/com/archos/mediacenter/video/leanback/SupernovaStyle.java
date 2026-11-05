@@ -93,7 +93,7 @@ public final class SupernovaStyle {
         if (surface == Surface.TILE) {
             rest = PreviewUtilityBackground.previewColour("SUPERNOVA_PREVIEW_TILE", rest);
             edge = PreviewUtilityBackground.previewColour("SUPERNOVA_PREVIEW_TILE_EDGE", edge);
-            edgeWidth = PreviewUtilityBackground.previewColour("SUPERNOVA_PREVIEW_TILE_EDGE_PX", edgeWidth);
+            edgeWidth = PreviewUtilityBackground.previewNumber("SUPERNOVA_PREVIEW_TILE_EDGE_PX", edgeWidth);
         }
         StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, 0);
