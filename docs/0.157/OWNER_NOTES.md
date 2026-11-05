@@ -194,7 +194,13 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 make all of them clearly visible.
 
 **Status:** round 13 (`details-tabs/v13-01`): row separators at 24% white, column dividers at 32%, same 1 px
-thickness. Becomes the rule for separators on Space Black. Planned for 0.157 (0.156 is not held up). Related parked
+thickness. Becomes the rule for separators on Space Black.
+
+**Owner on round 13 (5 Nov 2026):** "the best yet". Make the five headings (Reception, Key information, Technical
+information, Cast, Crew) clearly titles, e.g. with an underline.
+
+**Status:** round 14 (`details-tabs/v14-01`): titles bigger and white, each with a 2 px underline (60% white)
+across its area, firmer than the row separators. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
