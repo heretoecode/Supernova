@@ -41,7 +41,7 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 29. ✅ Customise Home side panel + genre icons v2 (#22).
 30. ✅ Top bar charcoal fade rebuilt (#21).
 31. ✅ Search: QWERTY keyboard, symbols page, results layout, relevance, Clear recent; "What you can search" (#18, #20) —
-    ◻ heading size final look.
+    heading approved.
 32. ✅ Edit Page: no scrolling, year range, separators, Delete Page at the bottom (#37).
 
 ## Network & Files
@@ -56,13 +56,13 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
     About (credits for every service, full version history, licences with search and QR codes, Device) (#23–#29, #32).
 37. ✅ IntroDB tidy-up (#15).
 
-## Approved in principle (#19) — each still gets a final look
-38. ◻ One shared choice list replacing every translucent pop-up.
-39. ◻ Sleep timer back · ◻ "Still watching?".
-40. ◻ Fix match from Details.
-41. ◻ Library Health badge on the Network & Files tile.
-42. ◻ Remember audio/subtitle choices per series.
-43. ◻ Consistent empty states · ◻ focus memory everywhere.
+## Former "in principle" ideas (#19) — all approved 5 Nov 2026 (mock-ups `suggestions/`, `network-files-v2/08`)
+38. ✅ One shared choice list replacing every translucent pop-up.
+39. ✅ Sleep timer back · ✅ "Still watching?".
+40. ✅ Fix match from Details.
+41. ✅ Library Health badge on the Network & Files tile.
+42. ✅ Remember audio/subtitle choices per series.
+43. ✅ Consistent empty states · ✅ focus memory everywhere.
 
 ## Diagnostics (Codex brief `BRIEF_0156_THUMBS_DIAGNOSTICS.md`)
 44. ✅ Always full detail; reasons for every failure; real Android exit reasons; bigger log; playback, network and UI
@@ -73,4 +73,8 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 
 ## Waiting for the owner
 - OMDb key built into the app: **no, for now** (owner) — kept in `docs/REVISIT_LATER.md`.
-- Final looks on the ◻ items.
+- Every design approved (5 Nov 2026). **Only the go-ahead to start coding remains.**
+
+## Also decided 5 Nov 2026
+- Seek previews (experimental) switch in Settings › System › Advanced, on by default.
+- Old IntroDB settings page: covered by Accounts & Services and Playback › Skipping.

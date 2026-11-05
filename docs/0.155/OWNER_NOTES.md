@@ -667,4 +667,4 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   opens the old Library Health page (Incorrect Matches), whose *Find a Match* opens a full-screen search with the old
   keyboard. Proposal `04` replaces that trip: Details › More › **Fix match** opens the side panel on Details itself
   (title prefilled, TMDB results with posters, current match marked, OK applies, Details refreshes). Library Health's
-  Incorrect Matches uses the same panel. "Match is correct" stays in Library Health. Awaiting the owner's yes.
+  Incorrect Matches uses the same panel. "Match is correct" stays in Library Health. **Approved by the owner, 5 Nov 2026.**
