@@ -960,6 +960,8 @@ public final class Diagnostics
         try
         {
             String line = record(event, fields), session = playback;
+            if (line.isEmpty())
+                return;
             long now = SystemClock.elapsedRealtime();
             FLIGHT.add(now, line);
             if (COVERAGE.size() < 256)
@@ -1210,7 +1212,8 @@ public final class Diagnostics
                       "importance", info.getImportance(), "pss_kb", info.getPss(), "rss_kb", info.getRss(),
                       "exit_utc_ms", info.getTimestamp(), "exit_pid", info.getPid(), "evidence", "android_os",
                       "description", info.getDescription(), "process_name", info.getProcessName());
-                // OS ANR/native trace streams may contain file paths and account data. Export bounded method frames only.
+                // OS ANR/native trace streams may contain file paths and account data.
+                // Export bounded method frames only.
                 if (info.getReason() == ApplicationExitInfo.REASON_ANR)
                     try (java.io.InputStream input = info.getTraceInputStream())
                     {
@@ -1567,7 +1570,8 @@ public final class Diagnostics
             if ("heartbeat".equals(event))
                 json.put("dropped_by_event_type", droppedTypes());
             String line = json.toString() + "\n";
-            if (line.getBytes(StandardCharsets.UTF_8).length > 1024 * 1024)
+            // Every destination must be able to retain this record and its newline intact.
+            if (line.getBytes(StandardCharsets.UTF_8).length > LIMIT)
             {
                 DROPPED.incrementAndGet();
                 return "";

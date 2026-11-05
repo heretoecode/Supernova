@@ -5,20 +5,37 @@ import android.net.Uri;
 import android.os.SystemClock;
 import com.archos.mediacenter.video.player.Player;
 import com.archos.medialib.IMediaPlayer;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.zip.*;
-import org.json.*;
-import org.junit.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.*;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
-import static com.archos.mediacenter.video.diagnostics.Diagnostics.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackAttempt;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackOutcome;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /** Checks playback diagnostic attempts, output and seek evidence without inventing successful playback. */
 @RunWith(RobolectricTestRunner.class)
@@ -216,8 +233,7 @@ public class PlaybackDiagnosticStateTest
         }
     }
 
-    @Test
-    public void productionDiagnosticZipContainsTypedEvidenceAndNoSourceOrExceptionMessageCanaries() throws Exception
+    @Test public void productionDiagnosticZipRetainsRedactedExceptionDetailAndTypedEvidence() throws Exception
     {
         open();
         state.prepared(backend, 0);
@@ -234,8 +250,22 @@ public class PlaybackDiagnosticStateTest
                 entries.put(entry.getName(), new String(zip.readAllBytes(), StandardCharsets.UTF_8));
         }
         String exported = String.join("\n", entries.values());
-        for (String canary : List.of("AUTH_CANARY", "FILE_CANARY", "QUERY_CANARY", "EXCEPTION_CANARY", "SECRET_CANARY"))
+        for (String canary : List.of("AUTH_CANARY", "FILE_CANARY", "QUERY_CANARY", "SECRET_CANARY"))
             assertFalse(canary, exported.contains(canary));
+        JSONObject error = null;
+        for (String line : entries.get("events.jsonl").split("\n"))
+        {
+            if (line.isEmpty())
+                continue;
+            JSONObject record = new JSONObject(line);
+            if (record.optString("event").equals("test_failed"))
+                error = record;
+        }
+        assertNotNull(error);
+        assertTrue(error.getString("message").contains("EXCEPTION_CANARY"));
+        assertTrue(error.getString("trace").contains("EXCEPTION_CANARY"));
+        assertTrue(error.getString("trace").contains(IOException.class.getName()));
+        assertEquals("caught_exception", error.getString("trace_origin"));
         assertTrue(exported.contains("playback_attempt"));
         assertTrue(exported.contains("measurement_quality"));
         assertTrue(exported.contains("CALLBACK"));

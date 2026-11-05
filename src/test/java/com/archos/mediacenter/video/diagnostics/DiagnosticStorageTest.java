@@ -1,20 +1,40 @@
 package com.archos.mediacenter.video.diagnostics;
 
 import android.app.Application;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.Locale;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.json.JSONObject;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.*;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /** Checks diagnostic storage bounds, complete-record rotation and cleanup after export failures. */
 @RunWith(RobolectricTestRunner.class)
@@ -181,18 +201,67 @@ public class DiagnosticStorageTest
 
     @Test public void oversizedProducerRecordIsDroppedRatherThanCreatingAnUnparseableOrOversizedFile() throws Exception
     {
+        flush();
         long before = ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get();
+        long writeErrors = ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "WRITE_ERRORS")).get();
+        DiagnosticFlightRecorder recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
+        int flightBytes = recorder.bytes();
         Object[] fields = new Object[40];
         for (int i = 0; i < fields.length; i += 2)
         {
             fields[i] = "field_" + (char)('a' + i / 2);
-            fields[i + 1] = "x".repeat(4096);
+            // Below the former 1 MiB producer cap, but too large for a single retained file.
+            fields[i + 1] = "x".repeat(Diagnostics.LIMIT / 8);
         }
         Diagnostics.event("oversized_probe", fields);
         flush();
-        assertTrue(((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get() > before);
+        assertEquals(before + 1, ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get());
+        assertEquals(writeErrors,
+                     ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "WRITE_ERRORS")).get());
+        assertEquals(flightBytes, recorder.bytes());
+        Set<String> coverage = ReflectionHelpers.getStaticField(Diagnostics.class, "COVERAGE");
+        assertFalse(coverage.contains("oversized_probe"));
         assertFalse(DiagnosticArchive.records(directory).stream().anyMatch(
             x -> x.optString("event").equals("oversized_probe")));
+        for (File file : DiagnosticArchive.files(directory))
+            assertTrue(file.length() <= Diagnostics.LIMIT);
+    }
+
+    @Test public void producerRetainsDetailedRecordsLargerThanTheOld32KiBLimit() throws Exception
+    {
+        flush();
+        String detail = "x".repeat(80 * 1024);
+        long before = ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get();
+        long writeErrors = ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "WRITE_ERRORS")).get();
+        Diagnostics.event("detailed_probe", "detail", detail);
+        flush();
+        JSONObject record = DiagnosticArchive.records(directory)
+                                .stream()
+                                .filter(row -> row.optString("event").equals("detailed_probe"))
+                                .findFirst()
+                                .orElseThrow();
+        assertEquals(detail, record.getString("detail"));
+        assertEquals(before, ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get());
+        assertEquals(writeErrors,
+                     ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "WRITE_ERRORS")).get());
+        for (File file : DiagnosticArchive.files(directory))
+            assertTrue(file.length() <= Diagnostics.LIMIT);
+    }
+
+    @Test public void producerMeasuresUtf8BytesRatherThanCharactersBeforeQueueing() throws Exception
+    {
+        flush();
+        String detail = "\u20ac".repeat(Diagnostics.LIMIT / 2);
+        assertTrue(detail.length() < Diagnostics.LIMIT);
+        long before = ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get();
+        long writeErrors = ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "WRITE_ERRORS")).get();
+        Diagnostics.event("utf8_oversized_probe", "detail", detail);
+        flush();
+        assertEquals(before + 1, ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "DROPPED")).get());
+        assertEquals(writeErrors,
+                     ((AtomicLong)ReflectionHelpers.getStaticField(Diagnostics.class, "WRITE_ERRORS")).get());
+        assertFalse(DiagnosticArchive.records(directory).stream().anyMatch(
+            row -> row.optString("event").equals("utf8_oversized_probe")));
         for (File file : DiagnosticArchive.files(directory))
             assertTrue(file.length() <= Diagnostics.LIMIT);
     }

@@ -1,9 +1,23 @@
 package com.archos.mediacenter.video.diagnostics;
 
-import org.json.*;
-import java.io.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /** Allow-listed diagnostic streams, deduplicated across events, playback and incident copies. */
 final class DiagnosticArchive
@@ -15,8 +29,8 @@ final class DiagnosticArchive
         if (all != null)
             for (File file : all)
                 if (file.isFile() &&
-                    file.getName().matches("(?:(?:events|playback|flight)\\.jsonl(?:\\.[1-4])?|(?:important|incident-" +
-                                           "manual|incident-auto)-[0-9]{8}\\.jsonl(?:\\.[1-3])?)"))
+                    file.getName().matches("(?:(?:events|playback|flight)\\.jsonl(?:\\.[1-4])?|(?:important|incident-"
+                                           + "manual|incident-auto)-[0-9]{8}\\.jsonl(?:\\.[1-3])?)"))
                     result.add(file);
         result.sort(Comparator.comparing(File::getName));
         return result;
@@ -33,7 +47,8 @@ final class DiagnosticArchive
                 String line;
                 while ((line = reader.readLine()) != null)
                 {
-                    if (line.length() > 32768)
+                    // Producer records include a newline and every destination shares the same byte cap.
+                    if (line.getBytes(StandardCharsets.UTF_8).length >= Diagnostics.LIMIT)
                         continue;
                     try
                     {
