@@ -368,3 +368,14 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Switches: on = dark blue track with a white knob; off = light grey track with a dark knob.
   - Colour dots keep their colours; the chosen one gets a black ring.
 - Mock-ups `docs/design/proposals/panel-focus/01`–`03`. **Status:** waiting for the owner.
+
+## 6. No blue for values (owner, 5 Nov 2026)
+- Owner: a single value shown (‹ Any ›, ‹ 5% ›, English (TEXT)) needn't be blue; it is obviously the value. Asked to
+  mark the chosen option of a choice row without blue too.
+- **Decided:** stepper and list values are plain white (black on the focused row).
+- Options for choice rows (Movies | TV Shows | Both, Any | All, Small | Medium | Large), no colour, in
+  `panel-focus/04`–`06`:
+  - A: chosen bright, others dimmed.
+  - B: chosen with a short underline (as the Details titles).
+  - C: chosen in a small chip.
+- **Status:** waiting for the owner's choice.
