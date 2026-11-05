@@ -33,9 +33,10 @@ public class PreviewNextTest {
         PreviewKeyboard keyboard = new PreviewKeyboard(app, input, () -> {
         });
         assertArrayEquals(new String[] {
-            "1234567890", "QWERTYUIOP", "ASDFGHJKL.", "ZXCVBNM,/\\"
+            "1234567890", "QWERTYUIOP", "ASDFGHJKL/", "ZXCVBNM.@"
         }, PreviewKeyboard.ROWS);
-        assertEquals(6, keyboard.getChildCount());
+        // Number row, three letter rows, three (hidden) symbol rows, the bottom row and the forms' Done row.
+        assertEquals(9, keyboard.getChildCount());
         PreviewPagesTest.findText(keyboard, "1").performClick();
         assertEquals("1", input.getText().toString());
         input.setText("A😀");
@@ -43,8 +44,8 @@ public class PreviewNextTest {
         keyboard.findViewWithTag("semantic:keyboard:Backspace").performClick();
         assertEquals("A", input.getText().toString());
         input.setSelection(0, input.length());
-        PreviewPagesTest.findText(keyboard, "Q").performClick();
-        assertEquals("Q", input.getText().toString());
+        PreviewPagesTest.findText(keyboard, "q").performClick();
+        assertEquals("q", input.getText().toString());
     }
 
     @Test
@@ -56,10 +57,13 @@ public class PreviewNextTest {
             0, 0
         };
         keyboard.setActions(() -> actions[0]++, () -> actions[1]++);
-        keyboard.findViewWithTag("semantic:keyboard:Caps Lock").performClick();
         assertFalse(keyboard.capsLocked());
         keyboard.findViewWithTag("semantic:keyboard:A").performClick();
         assertEquals("a", input.getText().toString());
+        keyboard.findViewWithTag("semantic:keyboard:Caps Lock").performClick();
+        assertTrue(keyboard.capsLocked());
+        keyboard.findViewWithTag("semantic:keyboard:A").performClick();
+        assertEquals("aA", input.getText().toString());
         keyboard.findViewWithTag("semantic:keyboard:Clear").performClick();
         assertEquals("", input.getText().toString());
         keyboard.findViewWithTag("semantic:keyboard:Done").performClick();

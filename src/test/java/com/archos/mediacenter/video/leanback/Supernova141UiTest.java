@@ -93,14 +93,13 @@ public class Supernova141UiTest {
             assertEquals(".,/\\", input.getText().toString());
             View caps = panel.findViewWithTag("semantic:keyboard:Caps Lock");
             assertEquals(0, ((ViewGroup)caps.getParent()).indexOfChild(caps));
-            assertTrue(keyboard.capsLocked());
-            assertEquals("ON", ((TextView)caps).getText().toString());
-            caps.performClick();
+            // Approved 0.156 keyboard: lower case by default, Shift (⇧) for capitals.
             assertFalse(keyboard.capsLocked());
-            assertEquals("OFF", ((TextView)caps).getText().toString());
+            assertEquals("⇧", ((TextView)caps).getText().toString());
             panel.findViewWithTag("semantic:keyboard:A").performClick();
             assertEquals(".,/\\a", input.getText().toString());
             caps.performClick();
+            assertTrue(keyboard.capsLocked());
             panel.findViewWithTag("semantic:keyboard:A").performClick();
             assertEquals(".,/\\aA", input.getText().toString());
             assertTrue(caps.isSelected());

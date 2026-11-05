@@ -109,6 +109,18 @@ public class VideoSearchActivity extends FragmentActivity {
         }
     }
 
+    /** Voice search with the Shield remote's microphone (the keyboard's Voice key and the Search button). */
+    public void startVoice() {
+        Intent speak = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speak.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        try {
+            voice.launch(speak);
+        } catch (ActivityNotFoundException unavailable) {
+            if (previewSearch != null)
+                previewSearch.focusQuery();
+        }
+    }
+
     /**
      * Catch the SEARCH key so that the general Android TV search is not launched.
      * Try to relaunch the AVP search instead
@@ -119,8 +131,8 @@ public class VideoSearchActivity extends FragmentActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH && previewSearch != null) {
-            Intent speak=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            try{voice.launch(speak);}catch(ActivityNotFoundException unavailable){previewSearch.focusQuery();}return true;
+            startVoice();
+            return true;
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_SEARCH) {
             Fragment f = getSupportFragmentManager().findFragmentById(R.id.video_search_fragment);

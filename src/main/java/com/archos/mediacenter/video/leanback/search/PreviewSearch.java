@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.*;
 import android.os.SystemClock;
@@ -59,6 +60,7 @@ public final class PreviewSearch extends LinearLayout {
         String genres;
         int rank;
         long showId;
+        boolean people;
 
         Result(Video video, String genres) {
             this.video = video;
@@ -73,9 +75,34 @@ public final class PreviewSearch extends LinearLayout {
         long id() {
             return show == null ? video.getId() : -show.getTvshowId() - 2;
         }
+
+        /** Films · TV shows · Episodes · People (matched by cast, crew or studio rather than the title). */
+        String group() {
+            if (people)
+                return PEOPLE;
+            if (show != null)
+                return SHOWS;
+            return video instanceof Episode ? EPISODES : FILMS;
+        }
     }
 
     private ScrollView guidancePanel;
+    private LinearLayout filters;
+    private LinearLayout recentChips;
+    private View recentLine;
+    private String filter = ALL;
+    private String lastQuery = "";
+
+    static final String ALL = "All";
+    static final String FILMS = "Films";
+    static final String SHOWS = "TV shows";
+    static final String EPISODES = "Episodes";
+    static final String PEOPLE = "People";
+    static final String[] FILTERS = {ALL, FILMS, SHOWS, EPISODES, PEOPLE};
+    static final String RECENT_KEY = "preview_search_recent";
+    static final int RECENT_MAX = 8;
+    static final int GROUP_CAP = 20;
+    static final int MATCH = 0xFFFFFFFF;
 
     public PreviewSearch(Activity activity, int mode, Bundle state) {
         super(activity);
@@ -83,35 +110,44 @@ public final class PreviewSearch extends LinearLayout {
         this.activity = activity;
         this.mode = mode;
         setOrientation(VERTICAL);
-        setPadding(dp(28), dp(12), dp(28), dp(12));
+        setPadding(dp(28), dp(8), dp(28), dp(14));
         setBackgroundColor(Color.TRANSPARENT);
-        status = text("", 12);
-        status.setGravity(Gravity.END);
-        addView(status, new LayoutParams(-1, dp(22)));
-        LinearLayout columns = new LinearLayout(activity);
-        columns.setOrientation(HORIZONTAL);
-        addView(columns, new LayoutParams(-1, 0, 1));
+        // Approved 0.156 Search (mock-ups search/01-07): one charcoal panel, keyboard left, results right.
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(HORIZONTAL);
+        android.graphics.drawable.GradientDrawable glass = new android.graphics.drawable.GradientDrawable();
+        glass.setColor(SupernovaStyle.GLASS);
+        glass.setCornerRadius(dp(Math.round(SupernovaStyle.PANEL_RADIUS_DP)));
+        glass.setStroke(Math.max(1, dp(1)), SupernovaStyle.GLASS_EDGE);
+        panel.setBackground(glass);
+        panel.setPadding(dp(12), dp(12), dp(16), dp(10));
+        addView(panel, new LayoutParams(-1, 0, 1));
         LinearLayout keyboardColumn = new LinearLayout(activity);
         keyboardColumn.setOrientation(VERTICAL);
-        TextView heading = text("Search", 27);
-        heading.setTextColor(-1);
-        keyboardColumn.addView(heading);
-        heading.setPadding(0, 0, 0, dp(10));
-        LayoutParams keyboardSize = new LayoutParams(0, -1, .40f);
-        keyboardSize.rightMargin = dp(24);
-        columns.addView(keyboardColumn, keyboardSize);
+        LayoutParams keyboardSize = new LayoutParams(0, -1, .41f);
+        panel.addView(keyboardColumn, keyboardSize);
+        View divider = new View(activity);
+        divider.setBackgroundColor(SupernovaStyle.HEADING_LINE);
+        LayoutParams dividerSize = new LayoutParams(Math.max(1, dp(1)), -1);
+        dividerSize.leftMargin = dp(18);
+        dividerSize.rightMargin = dp(18);
+        panel.addView(divider, dividerSize);
         LinearLayout search = new LinearLayout(activity);
         search.setGravity(Gravity.CENTER_VERTICAL);
         search.setPadding(dp(12), 0, dp(8), 0);
+        android.graphics.drawable.GradientDrawable field = new android.graphics.drawable.GradientDrawable();
+        field.setColor(SupernovaStyle.PANEL_REST);
+        field.setCornerRadius(dp(12));
+        search.setBackground(field);
         ImageView icon = new ImageView(activity);
         icon.setImageResource(R.drawable.preview_search);
-        search.addView(icon, new LayoutParams(dp(20), dp(20)));
+        search.addView(icon, new LayoutParams(dp(18), dp(18)));
         query = new KeyboardInput(activity);
         query.setId(View.generateViewId());
-        query.setHint("Search Movies and TV Shows");
+        query.setHint("Films, shows, episodes, people");
         query.setTextColor(-1);
-        query.setHintTextColor(0xff8da7b9);
-        query.setTextSize(16);
+        query.setHintTextColor(0xff9aa3b2);
+        query.setTextSize(17);
         query.setSingleLine(true);
         query.setMaxLines(1);
         query.setGravity(Gravity.CENTER_VERTICAL);
@@ -122,50 +158,51 @@ public final class PreviewSearch extends LinearLayout {
         query.setImeOptions(EditorInfo.IME_ACTION_SEARCH |
                             EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         query.setPadding(dp(12), 0, dp(12), 0);
-        search.addView(query, new LayoutParams(0, KeyboardInput.compactHeight(activity), 1));
-        SupernovaStyle.applyButton(search, SupernovaStyle.Surface.STANDARD);
-        keyboardColumn.addView(search);
+        search.addView(query, new LayoutParams(0, dp(38), 1));
+        LayoutParams searchSize = new LayoutParams(-1, -2);
+        searchSize.bottomMargin = dp(8);
+        keyboardColumn.addView(search, searchSize);
         query.setShowSoftInputOnFocus(false);
+
+        LinearLayout resultColumn = new LinearLayout(activity);
+        resultColumn.setOrientation(VERTICAL);
+        panel.addView(resultColumn, new LayoutParams(0, -1, .59f));
+        LinearLayout top = new LinearLayout(activity);
+        top.setGravity(Gravity.CENTER_VERTICAL);
+        filters = new LinearLayout(activity);
+        filters.setGravity(Gravity.CENTER_VERTICAL);
+        for (String name : FILTERS)
+            filters.addView(filterChip(name));
+        top.addView(filters, new LayoutParams(-2, -2));
+        status = text("", 12);
+        status.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+        status.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        top.addView(status, new LayoutParams(0, -2, 1));
+        resultColumn.addView(top, new LayoutParams(-1, -2));
+        filters.setVisibility(GONE);
         results = new PreviewFocusRecycler(activity);
         results.setId(View.generateViewId());
         query.setNextFocusRightId(results.getId());
         layout = new LinearLayoutManager(activity);
         results.setLayoutManager(layout);
         results.setAdapter(adapter);
-        results.setPadding(0, dp(12), 0, 0);
+        results.setPadding(0, dp(4), 0, dp(8));
         results.setClipToPadding(false);
+        results.addItemDecoration(new GroupHeadings());
         FrameLayout resultArea = new FrameLayout(activity);
-        columns.addView(resultArea, new LayoutParams(0, -1, .60f));
+        resultColumn.addView(resultArea, new LayoutParams(-1, 0, 1));
         resultArea.addView(results, new FrameLayout.LayoutParams(-1, -1));
-        ScrollView help = new ScrollView(activity);
-        guidancePanel = help;
-        LinearLayout guidance = new LinearLayout(activity);
-        guidance.setOrientation(VERTICAL);
-        help.addView(guidance);
-        String[][] features = {{"movie", "Your Library", "Search movies, TV shows, episodes and filenames."},
-                               {"formatting", "Flexible Formatting", "Punctuation and opening articles are optional."},
-                               {"language", "Original Titles", "Find a title using its indexed original name."},
-                               {"spelling", "Minor Typos", "Small spelling differences can still match."},
-                               {"people", "People & Studios",
-                                "Search cast, crew and studios where indexed. Select a result to open its details."}};
-        for (String[] feature : features) {
-            TextView title = text(feature[1], 18);
-            PreviewIcon.apply(title, feature[0], 20);
-            title.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-            title.setPadding(0, dp(12), 0, dp(4));
-            guidance.addView(title);
-            TextView explanation = text(feature[2], 15);
-            explanation.setGravity(Gravity.START);
-            explanation.setPadding(dp(29), 0, 0, dp(8));
-            guidance.addView(explanation);
-            View divider = new View(activity);
-            divider.setBackgroundColor(0x337f8996);
-            guidance.addView(divider, new LayoutParams(-1, dp(1)));
-        }
-        resultArea.addView(help, new FrameLayout.LayoutParams(-1, -1));
+        guidancePanel = new ScrollView(activity);
+        guidancePanel.addView(guidance());
+        resultArea.addView(guidancePanel, new FrameLayout.LayoutParams(-1, -1));
         results.setVisibility(GONE);
         Diagnostics.uiRebuild(results, "search.results", "adapter_created", 0, adapter.getItemCount(), true);
         buildKeyboard(keyboardColumn);
+        View spacer = new View(activity);
+        keyboardColumn.addView(spacer, new LayoutParams(-1, 0, 1));
+        TextView hint = text("/ . @ always on the letters page · #+= for every other symbol · ⇧ for capitals", 11);
+        hint.setTextColor(0xff8b93a1);
+        keyboardColumn.addView(hint);
         query.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -188,11 +225,214 @@ public final class PreviewSearch extends LinearLayout {
             selectedId = state.getLong("preview_search_selected", -1);
             scrollState = state.getParcelable("preview_search_scroll");
             restoring = state.getBoolean("preview_search_results_focused", selectedId != -1);
+            filter = state.getString("preview_search_filter", ALL);
             keyboard.restoreKey(state.getString("preview_search_key", "T"));
             query.setText(state.getString("preview_search_query", ""));
         }
         if (!restoring)
             keyboard.focusLastKey();
+    }
+
+    // ---- before typing: recent searches and "What you can search" ------------------------------------------
+
+    private View guidance() {
+        LinearLayout column = new LinearLayout(activity);
+        column.setOrientation(VERTICAL);
+        LinearLayout line = new LinearLayout(activity);
+        line.setGravity(Gravity.CENTER_VERTICAL);
+        TextView heading = text("Recent searches", 14);
+        heading.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        PreviewIcon.apply(heading, "history", 16);
+        line.addView(heading, new LayoutParams(0, -2, 1));
+        TextView clear = TvButton.create(activity, "Clear recent", this::clearRecent, false);
+        clear.setTag("search.recent.clear");
+        line.addView(clear);
+        column.addView(line, new LayoutParams(-1, -2));
+        recentLine = line;
+        recentChips = new LinearLayout(activity);
+        recentChips.setPadding(0, dp(8), 0, dp(4));
+        column.addView(recentChips, new LayoutParams(-1, -2));
+        bindRecent();
+        LinearLayout tips = new LinearLayout(activity);
+        tips.setOrientation(VERTICAL);
+        tips.setPadding(dp(36), dp(20), dp(36), 0);
+        TextView title = text("What you can search", 19);
+        title.setTextColor(SupernovaStyle.TEXT);
+        title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        title.setPadding(0, 0, 0, dp(8));
+        tips.addView(title);
+        String[][] features = {
+            {"movie", "Titles and episodes", "Films, TV shows, episode names — and file names as a last resort"},
+            {"language", "Original titles", "A film or show’s original-language title finds it too"},
+            {"people", "Cast, crew and studios", "Actors, directors, writers and studios, by full name or surname"},
+            {"custom row", "Any order, part words", "“horses slow” and “slow hor” both find Slow Horses"},
+            {"search", "Forgiving", "Capitals, accents, punctuation and a leading “The” don’t matter"},
+            {"spelling", "Small typos", "One wrong letter in a longer word still finds it — “Dume” finds Dune"}};
+        for (int i = 0; i < features.length; i++) {
+            LinearLayout row = new LinearLayout(activity);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(0, dp(7), 0, dp(7));
+            ImageView glyph = new ImageView(activity);
+            glyph.setImageDrawable(new PreviewIcon(features[i][0]));
+            row.addView(glyph, new LayoutParams(dp(18), dp(18)));
+            LinearLayout words = new LinearLayout(activity);
+            words.setOrientation(VERTICAL);
+            words.setPadding(dp(14), 0, 0, 0);
+            TextView name = text(features[i][1], 15);
+            name.setTextColor(SupernovaStyle.TEXT);
+            words.addView(name);
+            TextView line2 = text(features[i][2], 12);
+            line2.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+            words.addView(line2);
+            row.addView(words, new LayoutParams(0, -2, 1));
+            tips.addView(row);
+            if (i + 1 < features.length) {
+                View rule = new View(activity);
+                rule.setBackgroundColor(0x1FFFFFFF);
+                tips.addView(rule, new LayoutParams(-1, Math.max(1, dp(1))));
+            }
+        }
+        column.addView(tips);
+        return column;
+    }
+
+    static List<String> recent(Context context) {
+        String saved = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+                           .getString(RECENT_KEY, "");
+        List<String> values = new ArrayList<>();
+        for (String value : saved.split("\n"))
+            if (!value.trim().isEmpty())
+                values.add(value);
+        return values;
+    }
+
+    /** Remembers a search that led somewhere (a result was opened), newest first, eight at most. */
+    static void remember(Context context, String value) {
+        String clean = value == null ? "" : value.trim().replace('\n', ' ');
+        if (clean.isEmpty())
+            return;
+        List<String> values = recent(context);
+        values.removeIf(old -> old.equalsIgnoreCase(clean));
+        values.add(0, clean);
+        while (values.size() > RECENT_MAX)
+            values.remove(values.size() - 1);
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
+            .putString(RECENT_KEY, TextUtils.join("\n", values)).apply();
+    }
+
+    private void clearRecent() {
+        androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).edit().remove(RECENT_KEY).apply();
+        bindRecent();
+        keyboard.focusLastKey();
+    }
+
+    private void bindRecent() {
+        recentChips.removeAllViews();
+        List<String> values = recent(activity);
+        recentLine.setVisibility(values.isEmpty() ? GONE : VISIBLE);
+        recentChips.setVisibility(values.isEmpty() ? GONE : VISIBLE);
+        for (String value : values) {
+            if (recentChips.getChildCount() >= 5)
+                break;
+            TextView chip = TvButton.create(activity, value, () -> {
+                query.setText(value);
+                query.setSelection(query.length());
+            }, false);
+            chip.setTag("search.recent." + value);
+            LayoutParams gap = new LayoutParams(-2, -2);
+            gap.rightMargin = dp(8);
+            recentChips.addView(chip, gap);
+        }
+    }
+
+    // ---- filters --------------------------------------------------------------------------------------------
+
+    private TextView filterChip(String name) {
+        TextView chip = TvButton.create(activity, name, () -> setFilter(name), false);
+        chip.setTag("search.filter." + name);
+        LayoutParams gap = new LayoutParams(-2, -2);
+        gap.rightMargin = dp(8);
+        chip.setLayoutParams(gap);
+        chip.setOnKeyListener((v, code, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return false;
+            if (code == KeyEvent.KEYCODE_DPAD_DOWN) {
+                focusFirstResult();
+                return true;
+            }
+            if (code == KeyEvent.KEYCODE_DPAD_LEFT && filters.indexOfChild(v) == 0) {
+                keyboard.focusLastKey();
+                return true;
+            }
+            return code == KeyEvent.KEYCODE_DPAD_UP;
+        });
+        return chip;
+    }
+
+    void setFilter(String name) {
+        filter = name;
+        for (int i = 0; i < filters.getChildCount(); i++) {
+            View chip = filters.getChildAt(i);
+            chip.setSelected(("search.filter." + name).equals(chip.getTag()));
+        }
+        adapter.notifyDataSetChanged();
+        updateStatus(null);
+    }
+
+    String filter() {
+        return filter;
+    }
+
+    private void focusFirstResult() {
+        if (visible().isEmpty())
+            return;
+        results.scrollToPosition(0);
+        results.post(() -> {
+            RecyclerView.ViewHolder first = results.findViewHolderForAdapterPosition(0);
+            if (first != null)
+                first.itemView.requestFocus();
+        });
+    }
+
+    /** The results under the current filter; All shows every group, each capped at twenty. */
+    List<Result> visible() {
+        List<Result> shown = new ArrayList<>();
+        Map<String, Integer> counts = new HashMap<>();
+        for (String group : new String[] {FILMS, SHOWS, EPISODES, PEOPLE})
+            for (Result result : items) {
+                if (!group.equals(result.group()))
+                    continue;
+                if (!ALL.equals(filter) && !filter.equals(group))
+                    continue;
+                int count = counts.merge(group, 1, Integer::sum);
+                if (ALL.equals(filter) && count > GROUP_CAP)
+                    continue;
+                shown.add(result);
+            }
+        return shown;
+    }
+
+    int groupCount(String group) {
+        int count = 0;
+        for (Result result : items)
+            if (group.equals(result.group()))
+                count++;
+        return count;
+    }
+
+    private void updateStatus(String error) {
+        if (error != null) {
+            status.setText(error);
+            return;
+        }
+        if (lastQuery.isEmpty()) {
+            status.setText("");
+            return;
+        }
+        int count = ALL.equals(filter) ? items.size() : groupCount(filter);
+        status.setText(count == 0 ? "Nothing in your library matches “" + lastQuery + "”"
+                                  : count + (count == 1 ? " result" : " results") + " for “" + lastQuery +
+                                        "” · in your library");
     }
 
     private void buildKeyboard(LinearLayout column) {
@@ -211,6 +451,10 @@ public final class PreviewSearch extends LinearLayout {
             if (!items.isEmpty())
                 results.requestFocus();
         }, () -> activity.onBackPressed());
+        // Search keeps the keyboard up while browsing results, so there is no Done · Cancel row.
+        keyboard.setDoneRowVisible(false);
+        if (activity instanceof VideoSearchActivity)
+            keyboard.setVoice(((VideoSearchActivity)activity)::startVoice);
     }
 
     @Override
@@ -258,6 +502,7 @@ public final class PreviewSearch extends LinearLayout {
         state.putString("preview_search_key", keyboard.focusedKey());
         state.putString("preview_search_query", query.getText().toString());
         state.putLong("preview_search_selected", selectedId);
+        state.putString("preview_search_filter", filter);
         state.putParcelable("preview_search_scroll", layout.onSaveInstanceState());
     }
 
@@ -277,7 +522,10 @@ public final class PreviewSearch extends LinearLayout {
         if (search.isEmpty()) {
             int previous = items.size();
             items.clear();
+            lastQuery = "";
             results.setVisibility(GONE);
+            filters.setVisibility(GONE);
+            bindRecent();
             guidancePanel.setVisibility(VISIBLE);
             adapter.notifyDataSetChanged();
             Diagnostics.uiRebuild(results, "search.results", "query_cleared", previous, 0, false);
@@ -370,6 +618,10 @@ public final class PreviewSearch extends LinearLayout {
                                                      : VideoStore.Video.VideoColumns.SCRAPER_M_GENRES));
                         Result result = new Result(video, genres);
                         result.rank = rank;
+                        result.people = PreviewSearchText.rankFields(value, titles, Collections.emptyList(),
+                                                                     "") == 0 &&
+                                        PreviewSearchText.rankFields(value, Collections.emptyList(), searchable,
+                                                                     "") > 0;
                         result.showId = longCell(cursor, VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID);
                         found.add(result);
                     }
@@ -411,6 +663,10 @@ public final class PreviewSearch extends LinearLayout {
                             if (rank > 0) {
                                 Result result = new Result(show, "");
                                 result.rank = rank;
+                                result.people = PreviewSearchText.rankFields(value, titles,
+                                                                             Collections.emptyList(), "") == 0 &&
+                                                PreviewSearchText.rankFields(value, Collections.emptyList(),
+                                                    Arrays.asList(show.getActors(), show.getStudio()), "") > 0;
                                 parents.add(result);
                             }
                         }
@@ -437,23 +693,25 @@ public final class PreviewSearch extends LinearLayout {
                 if (request != generation || !isAttachedToWindow())
                     return;
                 boolean focusResults = results.hasFocus();
-                int position = 0;
-                if (selectedId != -1)
-                    for (int i = 0; i < found.size(); i++)
-                        if (found.get(i).id() == selectedId) {
-                            position = i;
-                            break;
-                        }
                 int previous = items.size();
                 items.clear();
                 items.addAll(found);
+                lastQuery = value;
                 results.setVisibility(items.isEmpty() ? GONE : VISIBLE);
-                guidancePanel.setVisibility(items.isEmpty() ? VISIBLE : GONE);
-                adapter.notifyDataSetChanged();
+                filters.setVisibility(items.isEmpty() ? GONE : VISIBLE);
+                guidancePanel.setVisibility(GONE);
+                setFilter(filter);
                 Diagnostics.uiRebuild(results, "search.results", "query_result", previous, items.size(), false);
-                status.setText(message != null   ? message
-                               : found.isEmpty() ? "No matching library titles"
-                                                 : found.size() + " results · In your library");
+                updateStatus(message);
+                // Coming back from Details restores the same query, filter and row (approved search/06).
+                int position = 0;
+                List<Result> shown = visible();
+                if (selectedId != -1)
+                    for (int i = 0; i < shown.size(); i++)
+                        if (shown.get(i).id() == selectedId) {
+                            position = i;
+                            break;
+                        }
                 if (scrollState != null) {
                     layout.onRestoreInstanceState(scrollState);
                     scrollState = null;
@@ -487,7 +745,12 @@ public final class PreviewSearch extends LinearLayout {
         if (e.getAction() == KeyEvent.ACTION_DOWN && e.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP && results.hasFocus()) {
             View focus = results.findFocus(), row = focus == null ? null : results.findContainingItemView(focus);
             if (row != null && results.getChildAdapterPosition(row) == 0) {
-                keyboard.focusLastKey();
+                // Up from the first result reaches the filters (approved search/06).
+                View chip = filters.findViewWithTag("search.filter." + filter);
+                if (chip != null && filters.getVisibility() == VISIBLE)
+                    chip.requestFocus();
+                else
+                    keyboard.focusLastKey();
                 return true;
             }
         }
@@ -551,86 +814,182 @@ public final class PreviewSearch extends LinearLayout {
 
     private class Holder extends RecyclerView.ViewHolder {
         ImageView image;
-        TextView title, metadata, genres, badge, action;
+        TextView title;
+        TextView metadata;
+        TextView pill;
 
         Holder(LinearLayout row) {
             super(row);
             image = new ImageView(activity);
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            row.addView(image, new LayoutParams(dp(92), dp(65)));
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            android.graphics.drawable.GradientDrawable frame = new android.graphics.drawable.GradientDrawable();
+            frame.setColor(0xFF22262D);
+            frame.setCornerRadius(dp(4));
+            image.setBackground(frame);
+            image.setClipToOutline(true);
+            row.addView(image, new LayoutParams(dp(32), dp(48)));
             LinearLayout labels = new LinearLayout(activity);
             labels.setOrientation(VERTICAL);
             labels.setPadding(dp(12), 0, dp(12), 0);
-            badge = text("Top Result", 11);
-            badge.setTextColor(0xff9eb2c0);
-            labels.addView(badge);
-            title = text("", 18);
-            title.setTextColor(-1);
+            title = text("", 16);
+            title.setTextColor(SupernovaStyle.TEXT);
             metadata = text("", 12);
-            genres = text("", 12);
+            metadata.setTextColor(SupernovaStyle.TEXT_SECONDARY);
             labels.addView(title);
             labels.addView(metadata);
-            labels.addView(genres);
             row.addView(labels, new LayoutParams(0, -2, 1));
-            action = text("View Show", 13);
-            action.setGravity(Gravity.CENTER);
-            action.setDuplicateParentStateEnabled(true);
-            action.setBackgroundColor(Color.TRANSPARENT);
-            action.setPadding(dp(8), dp(7), dp(8), dp(7));
-            row.addView(action, new LayoutParams(dp(104), dp(38)));
+            pill = text("", 12);
+            pill.setGravity(Gravity.CENTER);
+            pill.setPadding(dp(10), dp(4), dp(10), dp(4));
+            row.addView(pill, new LayoutParams(-2, -2));
+        }
+    }
+
+    /** "Dune" with the typed letters bold and underlined wherever a word starts with them. */
+    static CharSequence highlighted(String title, String typed) {
+        SpannableStringBuilder text = new SpannableStringBuilder(title == null ? "" : title);
+        if (typed == null || typed.trim().isEmpty() || text.length() == 0)
+            return text;
+        String lower = text.toString().toLowerCase(Locale.ROOT);
+        for (String word : typed.trim().toLowerCase(Locale.ROOT).split("\\s+")) {
+            if (word.isEmpty())
+                continue;
+            int from = 0;
+            while (from <= lower.length() - word.length()) {
+                int at = lower.indexOf(word, from);
+                if (at < 0)
+                    break;
+                boolean start = at == 0 || !Character.isLetterOrDigit(lower.charAt(at - 1));
+                if (start) {
+                    text.setSpan(new android.text.style.StyleSpan(Typeface.BOLD), at, at + word.length(),
+                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    text.setSpan(new android.text.style.UnderlineSpan(), at, at + word.length(),
+                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+                from = at + word.length();
+            }
+        }
+        return text;
+    }
+
+    /** "Film · 155 min · 4K HDR · Science Fiction, Adventure": only what is known, never "unavailable". */
+    static String details(String kind, int minutes, String quality, String genres) {
+        List<String> parts = new ArrayList<>();
+        parts.add(kind);
+        if (minutes > 0)
+            parts.add(minutes + " min");
+        if (quality != null && !quality.isEmpty() && !quality.toLowerCase(Locale.ROOT).contains("unavailable"))
+            parts.add(quality);
+        if (genres != null && !genres.trim().isEmpty())
+            parts.add(genres.trim());
+        return TextUtils.join(" · ", parts);
+    }
+
+    private void bindPill(TextView pill, Video video) {
+        int percent = video == null || video.getDurationMs() <= 0 ? 0
+                                                                  : Math.round(100f * video.getResumeMs() /
+                                                                               video.getDurationMs());
+        android.graphics.drawable.GradientDrawable shape = new android.graphics.drawable.GradientDrawable();
+        shape.setCornerRadius(dp(12));
+        if (video != null && video.isWatched()) {
+            pill.setText("✓ Watched");
+            pill.setTextColor(SupernovaStyle.FOCUS_TEXT);
+            shape.setColor(SupernovaStyle.FOCUS_FILL);
+        } else if (percent > 0 && percent < 100) {
+            pill.setText(percent + "% watched");
+            pill.setTextColor(SupernovaStyle.TEXT);
+            shape.setColor(SupernovaStyle.PANEL_REST);
+            shape.setStroke(Math.max(1, dp(1)), SupernovaStyle.GLASS_EDGE);
+        } else {
+            pill.setVisibility(GONE);
+            return;
+        }
+        pill.setBackground(shape);
+        pill.setVisibility(VISIBLE);
+    }
+
+    /** The group headings ("Films · 2") drawn above the first row of each group, without becoming list items. */
+    private final class GroupHeadings extends RecyclerView.ItemDecoration {
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+
+        GroupHeadings() {
+            paint.setColor(SupernovaStyle.TEXT_SECONDARY);
+            paint.setTextSize(13 * activity.getResources().getDisplayMetrics().scaledDensity);
+        }
+
+        private String heading(int position) {
+            List<Result> shown = visible();
+            if (position < 0 || position >= shown.size())
+                return null;
+            String group = shown.get(position).group();
+            if (position > 0 && group.equals(shown.get(position - 1).group()))
+                return null;
+            return group + " · " + groupCount(group);
+        }
+
+        @Override
+        public void getItemOffsets(android.graphics.Rect out, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            out.set(0, heading(parent.getChildAdapterPosition(view)) == null ? 0 : dp(30), 0, 0);
+        }
+
+        @Override
+        public void onDraw(android.graphics.Canvas canvas, RecyclerView parent, RecyclerView.State state) {
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                View child = parent.getChildAt(i);
+                String text = heading(parent.getChildAdapterPosition(child));
+                if (text != null)
+                    canvas.drawText(text, child.getLeft() + dp(4), child.getTop() - dp(10), paint);
+            }
         }
     }
 
     private class ResultAdapter extends RecyclerView.Adapter<Holder> {
         @Override
         public int getItemCount() {
-            return items.size();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return items.get(position).show == null ? 0 : 1;
+            return visible().size();
         }
 
         public Holder onCreateViewHolder(ViewGroup parent, int type) {
             LinearLayout row = new LinearLayout(activity);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(dp(6), dp(5), dp(6), dp(5));
+            row.setPadding(dp(8), dp(6), dp(12), dp(6));
             row.setFocusable(true);
             row.setFocusableInTouchMode(true);
             row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-            row.setBackgroundColor(0x5506121d);
-            row.setForeground(PreviewDialog.focus(activity));
-            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(-1, dp(type == 1 ? 150 : 72));
-            lp.bottomMargin = dp(8);
+            android.graphics.drawable.StateListDrawable states = new android.graphics.drawable.StateListDrawable();
+            android.graphics.drawable.GradientDrawable focused = new android.graphics.drawable.GradientDrawable();
+            focused.setColor(0x14FFFFFF);
+            focused.setCornerRadius(dp(10));
+            focused.setStroke(dp(2), Color.WHITE);
+            states.addState(new int[] {android.R.attr.state_focused}, focused);
+            states.addState(new int[] {}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+            row.setBackground(states);
+            RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(-1, dp(60));
+            lp.bottomMargin = dp(4);
             row.setLayoutParams(lp);
-            Holder holder = new Holder(row);
-            holder.badge.setVisibility(type == 1 ? VISIBLE : GONE);
-            holder.action.setVisibility(type == 1 ? VISIBLE : GONE);
-            if (type == 1) {
-                holder.image.setLayoutParams(new LayoutParams(dp(98), dp(140)));
-                holder.genres.setSingleLine(false);
-                holder.genres.setMaxLines(2);
-            }
-            return holder;
+            return new Holder(row);
         }
 
         public void onBindViewHolder(Holder h, int position) {
-            Result r = items.get(position);
+            Result r = visible().get(position);
             Diagnostics.semantic(h.itemView, "search.result." + (r.show == null ? "video." : "series.") +
                                                  (r.show == null ? r.video.getId() : r.show.getTvshowId()));
+            String typed = query.getText().toString();
+            ArtworkRequest.cancel(h.image);
+            h.image.setImageDrawable(null);
             if (r.show != null) {
                 Tvshow show = r.show;
-                h.title.setText(show.getName());
-                h.metadata.setText((show.getYear() > 0 ? show.getYear() + " · " : "") + "TV Series");
-                h.genres.setText(show.getPlot());
-                h.genres.setVisibility(TextUtils.isEmpty(show.getPlot()) ? GONE : VISIBLE);
-                ArtworkRequest.cancel(h.image);
-                h.image.setImageDrawable(null);
+                h.title.setText(withYear(highlighted(show.getName(), typed), show.getYear()));
+                String seasons = show.getSeasonCount() > 0
+                                     ? show.getSeasonCount() + (show.getSeasonCount() == 1 ? " season" : " seasons")
+                                     : "";
+                h.metadata.setText(details("TV show", 0, seasons, ""));
+                h.pill.setVisibility(GONE);
                 if (show.getPosterUri() != null)
                     ArtworkRequest.load(
                         h.image, show.getPosterUri(), show.getTvshowId(), "search.results", "poster",
-                        Picasso.get().load(show.getPosterUri()).resize(dp(98), dp(140)).centerInside().noFade());
+                        Picasso.get().load(show.getPosterUri()).resize(dp(32), dp(48)).centerCrop().noFade());
                 h.itemView.setOnFocusChangeListener((v, focused) -> {
                     if (focused) {
                         selectedId = r.id();
@@ -639,6 +998,7 @@ public final class PreviewSearch extends LinearLayout {
                 });
                 h.itemView.setOnClickListener(v -> {
                     selectedId = r.id();
+                    remember(activity, lastQuery.isEmpty() ? typed : lastQuery);
                     hideKeyboard();
                     recordDetailsEntry(v);
                     VideoViewClickedListener.showTvshowDetails(activity, show, new Presenter.ViewHolder(v));
@@ -646,33 +1006,25 @@ public final class PreviewSearch extends LinearLayout {
                 return;
             }
             Video video = r.video;
-            h.title.setText(video instanceof Episode
-                                ? ((Episode)video).getShowName() + " · " + ((Episode)video).getEpisodeName()
-                                : video.getName());
-            List<String> meta = new ArrayList<>();
-            if (video instanceof Movie) {
-                Movie m = (Movie)video;
-                if (m.getYear() > 0)
-                    meta.add(String.valueOf(m.getYear()));
-                if (m.getContentRating() != null && !m.getContentRating().isEmpty())
-                    meta.add(m.getContentRating());
-            } else if (video instanceof Episode) {
+            int minutes = video.getDurationMs() > 0 ? video.getDurationMs() / 60000 : 0;
+            if (video instanceof Episode) {
                 Episode e = (Episode)video;
-                meta.add("S" + e.getSeasonNumber() + " E" + e.getEpisodeNumber());
+                String name = TextUtils.isEmpty(e.getEpisodeName()) ? "Episode " + e.getEpisodeNumber()
+                                                                    : e.getEpisodeName();
+                h.title.setText(highlighted(e.getShowName() + " · " + name, typed));
+                h.metadata.setText(details("Episode · S" + e.getSeasonNumber() + " E" + e.getEpisodeNumber(),
+                                           minutes, PreviewVariants.label(video), ""));
+            } else {
+                int year = video instanceof Movie ? ((Movie)video).getYear() : 0;
+                h.title.setText(withYear(highlighted(video.getName(), typed), year));
+                h.metadata.setText(details("Film", minutes, PreviewVariants.label(video), r.genres));
             }
-            meta.add(PreviewVariants.label(video));
-            if (video.getDurationMs() > 0)
-                meta.add(video.getDurationMs() / 60000 + " min");
-            h.metadata.setText(TextUtils.join("  ·  ", meta));
-            h.genres.setText(r.genres == null ? "" : r.genres);
-            h.genres.setVisibility(TextUtils.isEmpty(r.genres) ? GONE : VISIBLE);
-            ArtworkRequest.cancel(h.image);
-            h.image.setImageDrawable(null);
+            bindPill(h.pill, video);
             Uri art = video instanceof Episode ? ((Episode)video).getPictureUri() : video.getPosterUri();
             if (art != null)
                 ArtworkRequest.load(h.image, art, video.getId(), "search.results",
                                     video instanceof Episode ? "episode_still" : "poster",
-                                    Picasso.get().load(art).resize(dp(92), dp(65)).centerInside().noFade());
+                                    Picasso.get().load(art).resize(dp(32), dp(48)).centerCrop().noFade());
             h.itemView.setOnFocusChangeListener((v, focused) -> {
                 if (focused) {
                     selectedId = video.getId();
@@ -681,6 +1033,7 @@ public final class PreviewSearch extends LinearLayout {
             });
             h.itemView.setOnClickListener(v -> {
                 selectedId = video.getId();
+                remember(activity, lastQuery.isEmpty() ? typed : lastQuery);
                 hideKeyboard();
                 recordDetailsEntry(v);
                 VideoViewClickedListener.showVideoDetails(activity, video, new Presenter.ViewHolder(v), true, -1);
@@ -691,5 +1044,19 @@ public final class PreviewSearch extends LinearLayout {
             ArtworkRequest.cancel(h.image);
             h.image.setImageDrawable(null);
         }
+    }
+
+    /** "Dune  2021": the year small and grey after the title. */
+    private CharSequence withYear(CharSequence title, int year) {
+        SpannableStringBuilder text = new SpannableStringBuilder(title);
+        if (year <= 0)
+            return text;
+        int start = text.length();
+        text.append("  ").append(String.valueOf(year));
+        text.setSpan(new android.text.style.ForegroundColorSpan(SupernovaStyle.TEXT_SECONDARY), start, text.length(),
+                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        text.setSpan(new android.text.style.RelativeSizeSpan(.85f), start, text.length(),
+                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return text;
     }
 }

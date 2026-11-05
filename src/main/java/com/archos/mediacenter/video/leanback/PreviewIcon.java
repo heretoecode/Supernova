@@ -121,6 +121,12 @@ public final class PreviewIcon extends Drawable {
         } else if (kind.equals("caps lock")) {
             line(c, 4, 13, 12, 4, 20, 13, 16, 13, 16, 17, 8, 17, 8, 13, 4, 13);
             c.drawRect(8, 20, 16, 22, p);
+        } else if (kind.equals("mic") || kind.equals("voice")) {
+            // a microphone: voice search with the Shield remote
+            c.drawRoundRect(9, 3, 15, 14, 3, 3, p);
+            c.drawArc(6, 7, 18, 17, 0, 180, false, p);
+            line(c, 12, 17, 12, 21);
+            line(c, 9, 21, 15, 21);
         } else if (kind.equals("space")) {
             line(c, 4, 10, 4, 17, 20, 17, 20, 10);
         } else if (kind.equals("backspace")) {

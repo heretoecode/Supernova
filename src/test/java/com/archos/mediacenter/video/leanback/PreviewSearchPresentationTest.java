@@ -139,10 +139,14 @@ public class PreviewSearchPresentationTest {
             assertNotNull(query);
             assertTrue(query.getFocusables(View.FOCUS_DOWN).isEmpty());
             assertTrue(query.isCursorVisible());
-            assertEquals("Search Movies and TV Shows", query.getHint().toString());
+            assertEquals("Films, shows, episodes, people", query.getHint().toString());
             assertNotNull(search.findViewWithTag("semantic:keyboard:Caps Lock"));
-            assertEquals("ON",
+            assertEquals("⇧",
                 ((TextView) search.findViewWithTag("semantic:keyboard:Caps Lock")).getText().toString());
+            View done = search.findViewWithTag("semantic:keyboard:Done");
+            assertEquals("Search keeps the keyboard up, so no Done row", View.GONE,
+                ((View) done.getParent()).getVisibility());
+            assertNotNull(PreviewPagesTest.findText(search, "What you can search"));
             assertNull(PreviewPagesTest.findText(search, "Shift"));
             PreviewPagesTest.capture(nav, "search-empty-next");
         } finally {
