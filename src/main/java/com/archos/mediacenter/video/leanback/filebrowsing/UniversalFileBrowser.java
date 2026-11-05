@@ -363,6 +363,54 @@ public final class UniversalFileBrowser extends LinearLayout {
         return where + " · " + done;
     }
 
+    /** Recent scans in plain words (approved network-files-v2/05), newest first; empty until any are known. */
+    static String recentScans(Context c) {
+        List<com.archos.mediacenter.video.scanning.ScanProgress> list;
+        try {
+            list = com.archos.mediacenter.video.scanning.LibraryScanController.recentScans();
+        } catch (RuntimeException unavailable) {
+            return "";
+        }
+        if (list == null || list.isEmpty())
+            return "";
+        StringBuilder text = new StringBuilder("Recent scans");
+        for (com.archos.mediacenter.video.scanning.ScanProgress scan : list)
+            text.append("\n\n").append(recentScan(c, scan));
+        return text.toString();
+    }
+
+    static String recentScan(Context c, com.archos.mediacenter.video.scanning.ScanProgress scan) {
+        String when = scan.startedUtcMs > 0
+            ? android.text.format.DateUtils.formatDateTime(c, scan.startedUtcMs,
+                  android.text.format.DateUtils.FORMAT_SHOW_TIME | android.text.format.DateUtils.FORMAT_SHOW_DATE
+                      | android.text.format.DateUtils.FORMAT_ABBREV_MONTH)
+            : "Unknown time";
+        String source = scan.sourceLabel == null || scan.sourceLabel.isEmpty() ? "Library" : scan.sourceLabel;
+        boolean failed = scan.failure != null
+            && scan.failure != com.archos.mediacenter.video.scanning.ScanProgress.Failure.NONE;
+        String result;
+        if (failed) {
+            String reason = scan.failureReason();
+            result = "Didn't finish" + (reason == null || reason.isEmpty() ? "" : ": " + reason);
+        } else {
+            List<String> parts = new ArrayList<>();
+            if (scan.durationMs > 0)
+                parts.add("Finished in " + Math.max(1, Math.round(scan.durationMs / 60000f)) + " min");
+            else
+                parts.add("Finished");
+            List<String> changes = new ArrayList<>();
+            if (scan.added > 0)
+                changes.add(scan.added + " new");
+            if (scan.removed > 0)
+                changes.add(scan.removed + " removed");
+            if (scan.updated > 0)
+                changes.add(scan.updated + " updated");
+            parts.add(changes.isEmpty() ? "nothing new" : TextUtils.join(" · ", changes));
+            result = TextUtils.join(" · ", parts);
+        }
+        return when + " · " + source + "\n" + result;
+    }
+
     static String scanLine(Context c) {
         com.archos.mediacenter.video.scanning.ScanProgress p = scanProgress();
         if (p != null && p.running)
@@ -962,8 +1010,9 @@ public final class UniversalFileBrowser extends LinearLayout {
             stopListing();
             items.removeAllViews();
             crumbs.removeAllViews();
-            scanOverview = SharedThreePanel.text(getContext(),
-                networkLayout != null ? networkScanSummary() : PreviewLibraryScan.overview(getContext()), 16);
+            String recent = recentScans(getContext());
+            scanOverview = SharedThreePanel.text(getContext(), !recent.isEmpty() ? recent
+                : networkLayout != null ? networkScanSummary() : PreviewLibraryScan.overview(getContext()), 16);
             scanOverview.setFocusable(false);
             scanOverview.setFocusableInTouchMode(false);
             scanOverview.setBackground(null);
