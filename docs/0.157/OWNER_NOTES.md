@@ -341,4 +341,8 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
     - The mock-up uses `#16181C` at 100% (solid), the same as `SupernovaStyle.solidPanel` (the shared choice list
       in 0.156), with no outline.
     - The current Details More menu uses glass `#16181C` at 97% with a light edge, over the brighter artwork.
-    - Decision pending: use the solid panel for every pop-up and side panel.
+    - **DECIDED (owner, 5 Nov 2026), global rule:**
+      - Every pop-up, menu and side panel is solid `#16181C` (100%, no transparency), no outline, soft shadow.
+      - The focused row is filled white (`#F4F6FB`) with black text and icon (`#0B0D12`).
+      - Replaces the 97% glass with a light edge, and the white outline focus box.
+      - Built into 0.156 (shared style), so it shows everywhere.

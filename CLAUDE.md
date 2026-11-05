@@ -38,6 +38,11 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   `tools/test_code_layout.py` enforces it; `docs/codex/REFORMAT_QUEUE.txt` lists old files still to reformat (their
   counts may only go down).
 - No pull requests unless the owner asks.
+- **Global look (owner, 5 Nov 2026):**
+  - Full pages sit on the Space Black artwork, with content straight on it.
+  - Pop-ups, menus and side panels are solid `#16181C` with no outline.
+  - The focused item is filled white with black text and icon.
+  - Missing information says "Unknown"; rows are never removed.
 
 ## Who does what
 
