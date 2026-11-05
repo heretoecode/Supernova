@@ -1,16 +1,26 @@
 package com.archos.mediacenter.video.utils.backup;
 
 import android.content.Context;
-import java.io.*;
-import java.security.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
-import org.json.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Private format2.0 preparation for a restore preview. Never opens or changes a live state store. */
 public final class LogicalBackupImport
 {
-    private static final long MAX_COMPRESSED = 24L * 1024 * 1024;
+    private static final long MAX_COMPRESSED = LogicalBackupArchive.MAX_COMPRESSED;
     private static final class Cancelled extends InterruptedIOException
     {
         Cancelled()

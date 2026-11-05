@@ -3,8 +3,14 @@ package com.archos.mediacenter.video.utils.backup;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.DocumentsContract;
-import java.io.*;
-import java.security.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.function.BooleanSupplier;
 
 /** Prepare before opening a picker; success requires a closed destination and exact readable copy. */
@@ -97,7 +103,8 @@ public final class VerifiedBackupPublication
     public static Prepared prepare(File privateArchive, BooleanSupplier cancel) throws IOException
     {
         cancelled(cancel);
-        if (!privateArchive.isFile() || privateArchive.length() <= 0 || privateArchive.length() > 24L * 1024 * 1024)
+        if (!privateArchive.isFile() || privateArchive.length() <= 0 ||
+            privateArchive.length() > LogicalBackupArchive.MAX_COMPRESSED)
             throw new IOException("Private archive exceeds supported limits");
         LogicalBackupArchive.readCategories(privateArchive, cancel);
         try (InputStream input = new FileInputStream(privateArchive))
