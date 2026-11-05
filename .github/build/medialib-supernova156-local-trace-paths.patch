@@ -1,0 +1,133 @@
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -860,11 +860,11 @@
+                              remaining);
+                 }
+                 ImportState.VIDEO.setNumberOfFilesRemainingToDelete(remaining);
++                String path =
++                    batch.isEmpty() ? candidates.get(candidates.size() - 1).path : batch.get(batch.size() - 1).path;
+                 PreviewLocalImportTrace.source(path);
+                 if (context instanceof VideoStoreImportService)
+                 {
+-                    String path =
+-                        batch.isEmpty() ? candidates.get(candidates.size() - 1).path : batch.get(batch.size() - 1).path;
+                     ((VideoStoreImportService)context).updateDeleteNotification(remaining, path);
+                 }
+             }
+@@ -2176,7 +2176,7 @@
+                 purged += deleted;
+                 remaining -= deleted;
+                 ImportState.VIDEO.setNumberOfFilesRemainingToDelete(remaining);
+-                PreviewLocalImportTrace.source(path);
++                PreviewLocalImportTrace.source(storagePath);
+                 if (context instanceof VideoStoreImportService)
+                 {
+                     ((VideoStoreImportService)context).updateDeleteNotification(remaining, storagePath);
+diff --git a/test/java/com/archos/mediaprovider/video/LocalImportDeletionTraceTest.java b/test/java/com/archos/mediaprovider/video/LocalImportDeletionTraceTest.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/LocalImportDeletionTraceTest.java
+@@ -0,0 +1,102 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyString;
++import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.ArgumentMatchers.isNull;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++import android.app.Application;
++import android.content.ContentResolver;
++import android.content.Intent;
++import android.database.MatrixCursor;
++import android.os.Bundle;
++import android.provider.MediaStore;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.Shadows;
++import org.robolectric.annotation.Config;
++
++/** Exercises both deletion loops, including their real worker-local source broadcasts. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 33)
++public class LocalImportDeletionTraceTest
++{
++    private static MatrixCursor row(String[] columns, Object... values)
++    {
++        MatrixCursor cursor = new MatrixCursor(columns);
++        if (values.length != 0)
++            cursor.addRow(values);
++        return cursor;
++    }
++
++    private void assertSource(String expected)
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        PreviewLocalImportTrace.reconciled(0, 0, 1);
++        var broadcasts = Shadows.shadowOf(app).getBroadcastIntents();
++        Intent last = broadcasts.get(broadcasts.size() - 1);
++        assertEquals("reconciled", last.getStringExtra("phase"));
++        assertEquals(expected, last.getStringExtra("source_location"));
++        assertFalse(last.toUri(0).contains("PRIVATE_MOVIE"));
++    }
++
++    @Test public void missingPrimaryDeletionTracesTheSelectedRowAfterItsPathIsKnown() throws Exception
++    {
++        ContentResolver resolver = mock(ContentResolver.class);
++        when(resolver.query(eq(VideoStoreInternal.FILES_IMPORT), any(String[].class), any(Bundle.class), isNull()))
++            .thenReturn(row(new String[] {"_id", "_data"}, 43L, "/storage/emulated/0/PRIVATE_MOVIE.mkv"));
++        when(resolver.query(eq(MediaStore.Files.getContentUri("external")), any(String[].class), any(Bundle.class),
++                            isNull())).thenReturn(row(new String[] {"_id", "_data"}));
++        when(resolver.delete(eq(VideoStoreInternal.FILES_IMPORT), eq("_id IN (?)"), any(String[].class)))
++            .thenReturn(1);
++        PreviewLocalImportTrace.begin(RuntimeEnvironment.getApplication(), false);
++        try
++        {
++            var result = VideoStoreImportImpl.reconcilePrimaryStorageRows(resolver, "/storage/emulated/0");
++            assertEquals(1, result.removed);
++            assertSource("/storage/emulated/0");
++        }
++        finally
++        {
++            PreviewLocalImportTrace.finish(false, false);
++        }
++    }
++
++    @Test public void expiredDeletionTracesTheQueriedStorageRoot()
++    {
++        ContentResolver resolver = mock(ContentResolver.class);
++        when(resolver.query(eq(VideoStoreInternal.FILES_IMPORT), any(String[].class), anyString(),
++                            any(String[].class), anyString())).thenAnswer(call -> {
++            String projection = ((String[])call.getArgument(1))[0];
++            if (projection.contains("count"))
++                return row(new String[] {projection}, 1);
++            if ("_data".equals(projection))
++                return row(new String[] {projection}, "/storage/ABCD-1234/PRIVATE_MOVIE.mkv");
++            return row(new String[] {projection}, 43L);
++        });
++        // countRows uses a null ordering; the batched ID query uses an explicit ordering.
++        when(resolver.query(eq(VideoStoreInternal.FILES_IMPORT), any(String[].class), anyString(),
++                            any(String[].class), isNull())).thenReturn(row(new String[] {"count(*)"}, 1));
++        when(resolver.query(eq(VideoStoreInternal.FILES_IMPORT), eq(new String[] {"_id"}), anyString(),
++                            any(String[].class), anyString()))
++            .thenReturn(row(new String[] {"_id"}, 43L), row(new String[] {"_id"}));
++        when(resolver.delete(eq(VideoStoreInternal.FILES_IMPORT), anyString(), any(String[].class)))
++            .thenReturn(1);
++        PreviewLocalImportTrace.begin(RuntimeEnvironment.getApplication(), false);
++        try
++        {
++            VideoStoreImportImpl.purgeExpiredHiddenFiles(resolver);
++            assertSource("/storage/ABCD-1234");
++        }
++        finally
++        {
++            PreviewLocalImportTrace.finish(false, false);
++        }
++    }
++}
