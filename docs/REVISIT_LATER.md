@@ -34,8 +34,6 @@ Items already built or scheduled are left out (see the bottom of this file).
 - **Discovery in Search** — owner: "maybe in the future but not for now". Search stays library-only in 0.156
   (`docs/0.155/OWNER_NOTES.md` item 20).
 - **Rectangular QR codes** — not used because most phone cameras can't read them; square kept (item 32).
-- **Streaming launch from Where to Watch** — code says launching a service is "paused for this testing edition"
-  (`streaming/StreamingRepository.java:32`). Decide whether Where to Watch should open the service's app.
 
 ## Parked ideas from the older registers
 | ID | Idea | Where it stands |
@@ -56,9 +54,12 @@ Items already built or scheduled are left out (see the bottom of this file).
 | FD-027 | Downloads (copy WebDAV files to the Shield) | Parked |
 | FD-028 | Detailed content warnings at playback start | Parked; no reliable source found (TMDB descriptors empty) |
 | FD-032 | Fully automatic Google Drive release publishing | Parked; today the signed APK is a GitHub artifact because Drive secrets aren't set |
-| — | Smart Collections | Needs a decision |
-| — | Put.io improvements (account, linking, file workflow) | Needs product discussion |
 | — | Less manual GitHub work at the end of Codex sessions | Parked by the owner (workflow/permission automation) |
+
+## Closed by the owner, 5 Nov 2026
+- Smart Collections — not wanted (custom Library Pages cover it). Issue #94.
+- Put.io improvements — already built and working. Issue #95.
+- Where to Watch opening the service — already works; the "paused" code comment was out of date. Issue #102.
 
 ## Moved out of "parked" (built or scheduled)
 - Seek thumbnails (FD-019) — experimental in 0.156. Library Health (FD-015) — built. Network & Files and Settings

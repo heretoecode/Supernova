@@ -40,7 +40,7 @@ import okhttp3.Response;
 /** Country-specific availability. No rental/purchase offers are exposed to the UI. */
 public final class StreamingRepository
 {
-    /** Streaming launch integration is paused for this testing edition. */
+    /** Where to Watch can open the chosen service (on since 0.15x; owner confirmed 5 Nov 2026). */
     public static final boolean LINKS_AVAILABLE = true;
     public static final String ENABLED = "streaming_enabled";
     public static final String COUNTRY = "streaming_country";

@@ -769,7 +769,8 @@
       ],
       "milestone": null,
       "number": 94,
-      "parent": null
+      "parent": null,
+      "state": "closed"
     },
     {
       "key": "parked-put-io-improvements-account-li",
@@ -780,7 +781,8 @@
       ],
       "milestone": null,
       "number": 95,
-      "parent": null
+      "parent": null,
+      "state": "closed"
     },
     {
       "key": "parked-less-manual-github-work-at-the",
@@ -857,7 +859,8 @@
       ],
       "milestone": null,
       "number": 102,
-      "parent": null
+      "parent": null,
+      "state": "closed"
     }
   ]
 }
