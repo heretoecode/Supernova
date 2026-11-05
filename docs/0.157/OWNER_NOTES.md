@@ -118,3 +118,14 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 - `v5-02`: Details as one roomy scrolling page with portraits.
 - `v5-03` / `v5-04`: icons with no background, centred (as today) or bottom right by the title. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
+
+## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
+- **Owner:** the hero card shows the tagline; the full description sits in the Details tab. Move the description into
+  the hero card, freeing space on the Details tab. No mock-up yet; discuss after round 5.
+- **Claude's thoughts:**
+  - Cap the hero at about four lines. Show "…" when longer, and only then repeat the full text at the top of the
+    Details tab.
+  - Use the soft text patch from the Home hero; keep the text in the left half.
+  - Keep the tagline as one italic line above the description (owner to decide).
+  - Optional, as on Disney+: once a series is in progress, show the next episode's synopsis next to "Resume Sx Ey".
+- **Status:** idea noted; waiting for the owner after round 5.
