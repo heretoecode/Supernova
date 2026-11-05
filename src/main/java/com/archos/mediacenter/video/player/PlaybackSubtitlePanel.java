@@ -150,6 +150,18 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         default void setStillWatchingAfter(int episodes) {
         }
 
+        /** Per-series audio/subtitle choices (0.156 #42): null when this is not a series episode. */
+        default Boolean seriesChoices() {
+            return null;
+        }
+
+        default void setSeriesChoices(boolean enabled) {
+        }
+
+        default String seriesName() {
+            return "";
+        }
+
         /** Hides the real subtitles while the appearance sample is shown (0.156 #25). */
         default void appearancePreview(boolean shown) {
         }
@@ -689,6 +701,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             bindings.add(() -> bindTrack(track, current, backend.audioTracks(), "Audio Track", "—"));
             track.setOnClickListener(v -> openTracks("audio"));
         }
+        seriesChoicesRow();
         boolean adjustments = backend.audioDelay() != null || backend.option("boost") != null ||
                               backend.option("night") != null || backend.option("spatial") != null;
         if (!adjustments)
@@ -757,6 +770,35 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             sleepAndStillWatching();
         choiceStepper("playmode", "repeat", "Play Mode");
         option("skip", "skip", "Skip Intros & Credits");
+    }
+
+    /** Approved mock-up {@code suggestions/06}: remember this episode's choices for the whole series. */
+    private void seriesChoicesRow() {
+        if (backend.seriesChoices() == null)
+            return;
+        section("FOR THIS SERIES", false);
+        String name = backend.seriesName().isEmpty() ? "this series" : backend.seriesName();
+        LinearLayout row = row("audio.row.series", "repeat", "Use these choices for " + name);
+        ImageView value = switchView(row);
+        TextView note = text("Every " + name + " episode starts with the audio and subtitles chosen here", 16, META,
+                             false);
+        note.setTag("audio.row.series.note");
+        note.setPadding(s(58), 0, s(16), s(8));
+        body.addView(note);
+        bindings.add(() -> {
+            Boolean on = backend.seriesChoices();
+            boolean enabled = on != null && on;
+            value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, enabled));
+            row.setContentDescription("Use these choices for " + name + ", " + (enabled ? "On" : "Off"));
+        });
+        row.setOnClickListener(v -> {
+            Boolean on = backend.seriesChoices();
+            backend.setSeriesChoices(on == null || !on);
+            refresh();
+        });
+        row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> {
+            backend.setSeriesChoices(direction > 0);
+        }));
     }
 
     static final String[] SLEEP_LABELS = {"Off", "30", "60", "90", "End of episode"};

@@ -139,6 +139,24 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     }
 
     @Override
+    public Boolean seriesChoices() {
+        if (!(owner instanceof PlayerActivity) || ((PlayerActivity)owner).previewEpisode().isEmpty())
+            return null;
+        return ((PlayerActivity)owner).seriesTrackChoicesEnabled();
+    }
+
+    @Override
+    public void setSeriesChoices(boolean enabled) {
+        if (owner instanceof PlayerActivity)
+            ((PlayerActivity)owner).setSeriesTrackChoicesEnabled(enabled);
+    }
+
+    @Override
+    public String seriesName() {
+        return owner instanceof PlayerActivity ? ((PlayerActivity)owner).previewTitle() : "";
+    }
+
+    @Override
     public boolean limitsAvailable() {
         return PlayerService.sPlayerService != null;
     }
