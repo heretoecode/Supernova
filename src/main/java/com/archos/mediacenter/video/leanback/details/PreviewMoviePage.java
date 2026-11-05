@@ -1444,12 +1444,18 @@ public final class PreviewMoviePage extends ScrollView {
         // whatever is showing as its placeholder, so the card never goes blank and the sharp one fades in.
         int heroWidth = Math.round(960 * getResources().getDisplayMetrics().density),
             heroHeight = Math.round(540 * getResources().getDisplayMetrics().density);
-        artworkLoader.load(uri)
+        RequestCreator quick = artworkLoader.load(uri)
             .resize(heroWidth, heroHeight)
             .centerCrop()
             .networkPolicy(NetworkPolicy.OFFLINE)
-            .noFade()
-            .into(cardArtwork, new Callback() {
+            .noFade();
+        // Keep whatever is already showing while the quick copy is looked up; never blank the card.
+        Drawable showing = cardArtwork.getDrawable();
+        if (showing != null)
+            quick.placeholder(showing);
+        else
+            quick.noPlaceholder();
+        quick.into(cardArtwork, new Callback() {
                 public void onSuccess() {
                     fullArtwork(uri, identity, requested);
                 }
