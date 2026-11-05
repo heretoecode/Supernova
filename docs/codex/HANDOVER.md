@@ -1,3 +1,8 @@
+# 0.156 screen data — item 6 ready (5 Nov 2026)
+
+Item 6 ready at `a45276960` on `codex/0155-code-2026-11-04`. Ten inventory/search/SQLite regressions pass (57 component regressions across items 1–6). Item 7 continues.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
 # 0.156 screen data — item 5 ready (5 Nov 2026)
 
 Item 5 ready at `70a38e719` on `codex/0155-code-2026-11-04`. Nine real connection-probe tests pass (47 component regressions across items 1–5). Items 6–7 continue.

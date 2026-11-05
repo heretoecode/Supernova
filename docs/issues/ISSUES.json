@@ -448,7 +448,7 @@
     {
       "key": "0156-35",
       "title": "0.156 #35: Landing tiles, Scan now with live status, Library Scanning, Library Health in plain words.",
-      "body": "Landing tiles, Scan now with live status, Library Scanning, Library Health in plain words (0.154 #17).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 35\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #17\n\n### Screen data item 4 — 5 Nov 2026\nReady at `9f46af2c1`: Put.io service status. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n\n### Screen data item 5 — 5 Nov 2026\nReady at `70a38e719`: unsaved connection tests. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n",
+      "body": "Landing tiles, Scan now with live status, Library Scanning, Library Health in plain words (0.154 #17).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 35\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #17\n\n### Screen data item 4 — 5 Nov 2026\nReady at `9f46af2c1`: Put.io service status. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n\n### Screen data item 5 — 5 Nov 2026\nReady at `70a38e719`: unsaved connection tests. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n\n### Screen data item 6 — 5 Nov 2026\nReady at `a45276960`: missing files and recovery. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n",
       "labels": [
         "network-files",
         "design",
