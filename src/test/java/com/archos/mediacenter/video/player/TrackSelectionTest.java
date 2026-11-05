@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.utils.VideoMetadata;
@@ -53,6 +54,8 @@ import java.util.Locale;
     {
         mOriginalLocale = Locale.getDefault();
         mService = Robolectric.buildService(PlayerService.class).get();
+        // Match onCreate()'s preference setup while keeping the selection fixture isolated.
+        setPrivateField(mService, "mPreferences", PreferenceManager.getDefaultSharedPreferences(mService));
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
         Mockito.when(mMockPlayer.setSubtitleTrack(Mockito.anyInt())).thenReturn(true);

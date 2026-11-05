@@ -15,6 +15,7 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.Application;
+import androidx.preference.PreferenceManager;
 import com.archos.environment.ArchosUtils;
 import static org.junit.Assert.assertEquals;
 
@@ -60,6 +61,8 @@ public class AudioTrackSelectionPolicyTest
         mOriginalLocale = Locale.getDefault();
         ArchosUtils.setGlobalContext(RuntimeEnvironment.getApplication());
         mService = Robolectric.buildService(PlayerService.class).get();
+        // Initialise this callback dependency without starting HDMI/bootstrap workers in onCreate().
+        setPrivateField(mService, "mPreferences", PreferenceManager.getDefaultSharedPreferences(mService));
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
         Mockito.when(mMockPlayer.setSubtitleTrack(Mockito.anyInt())).thenReturn(true);
