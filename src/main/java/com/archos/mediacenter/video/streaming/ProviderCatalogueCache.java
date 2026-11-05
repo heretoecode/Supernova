@@ -18,6 +18,11 @@ final class ProviderCatalogueCache
         return "streaming_catalogue_updated_" + country;
     }
 
+    static String refreshKey(String country)
+    {
+        return "streaming_catalogue_refresh_" + country;
+    }
+
     static long lastUpdated(SharedPreferences prefs, String country)
     {
         return prefs.getLong(updatedKey(country), 0);
@@ -48,7 +53,8 @@ final class ProviderCatalogueCache
             cached = null;
         }
         long updated = lastUpdated(prefs, country);
-        if (cached != null && updated > 0 && now >= updated && now - updated < WEEK_MS)
+        if (cached != null && updated > 0 && !prefs.getBoolean(refreshKey(country), false) && now >= updated &&
+            now - updated < WEEK_MS)
         {
             return Collections.unmodifiableList(cached);
         }
@@ -60,7 +66,11 @@ final class ProviderCatalogueCache
             {
                 rows.put(new JSONObject().put("id", provider.id).put("name", provider.name).put("logo", provider.logo));
             }
-            if (!prefs.edit().putString(key, rows.toString()).putLong(updatedKey(country), now).commit())
+            if (!prefs.edit()
+                     .putString(key, rows.toString())
+                     .putLong(updatedKey(country), now)
+                     .remove(refreshKey(country))
+                     .commit())
             {
                 throw new java.io.IOException("Provider catalogue persistence unavailable");
             }

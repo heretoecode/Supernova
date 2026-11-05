@@ -77,6 +77,7 @@ public final class PreviewSearchText
             return 500 + person;
         List<String> combined = new ArrayList<>(titles);
         combined.addAll(people);
+        combined.removeIf(value -> value == null || value.isEmpty());
         int acrossFields = rank(query, String.join(" ", combined));
         if (acrossFields > 0)
             return 400 + acrossFields;

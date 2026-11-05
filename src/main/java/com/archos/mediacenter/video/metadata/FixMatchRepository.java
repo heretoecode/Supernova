@@ -173,6 +173,8 @@ public final class FixMatchRepository
                 }
                 if (!before.equals(userState(database, videoId)))
                     throw new IOException("Match operation changed playback state");
+                if (cancelled.getAsBoolean() || Thread.currentThread().isInterrupted())
+                    throw new java.io.InterruptedIOException("Match cancelled before commit");
                 database.setTransactionSuccessful();
             }
             finally

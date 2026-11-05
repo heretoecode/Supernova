@@ -17,7 +17,9 @@ public final class LibraryAttentionCount
         this.titles = titles;
         this.sources = sources;
         count = titles + sources;
-        reason = count == 0 ? "" : titles + " titles; " + sources + " sources";
+        reason = count == 0 ? ""
+                            : titles + (titles == 1 ? " title; " : " titles; ") + sources +
+                                  (sources == 1 ? " source" : " sources");
     }
 
     public static LibraryAttentionCount count(Set<Long> indexed, Set<Long> metadataIssues, Map<String, ?> markers)

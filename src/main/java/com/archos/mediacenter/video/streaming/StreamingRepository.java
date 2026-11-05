@@ -435,7 +435,7 @@ public final class StreamingRepository
             if (COUNTRY.equals(key))
             {
                 String region = country(app);
-                preferences.edit().remove(ProviderCatalogueCache.updatedKey(region)).apply();
+                preferences.edit().putBoolean(ProviderCatalogueCache.refreshKey(region), true).apply();
                 IO.execute(() -> refreshProviders(app));
             }
         };

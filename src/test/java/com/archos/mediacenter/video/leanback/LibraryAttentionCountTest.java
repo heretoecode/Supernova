@@ -16,6 +16,6 @@ public class LibraryAttentionCountTest
         assertEquals(1, result.titles);
         assertEquals(1, result.sources);
         assertEquals(2, result.count);
-        assertEquals("1 titles; 1 sources", result.reason);
+        assertEquals("1 title; 1 source", result.reason);
     }
 }
