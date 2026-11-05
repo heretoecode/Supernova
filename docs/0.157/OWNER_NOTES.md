@@ -160,7 +160,16 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
   IMDb and TMDB as coloured wordmarks, all without backgrounds.
 - Technical information adds resolution, bit depth, HDR, frame rate, bitrate and audio languages (data checked when
   built; some may need Codex).
-- No counts on Cast and Crew. Planned for 0.157 (0.156 is not held up). Related parked
+- No counts on Cast and Crew.
+
+**Owner on round 9 (5 Nov 2026)**
+- **Rule: a row is never removed.** Missing values say "Unknown" (Claude chose "Unknown" over "Unavailable" to
+  match the rest of the page); e.g. Frame rate stays with "Unknown".
+- Use the bottom space better: "everything looks a bit pushed up".
+
+**Status:** round 10 (`details-tabs/v10-01`):
+- The page fills exactly two TV screens: the three columns spread over the first, cast and crew over the second.
+- Bigger rows and portraits. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
