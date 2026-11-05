@@ -273,7 +273,8 @@ public final class UniversalFileBrowser extends LinearLayout {
             LandingTile.badge(health, LibraryHealth.needsAttentionCount(getContext()));
             LandingTile.describe((LinearLayout)landingCards.get(4), scheduleLine(getContext()));
             LinearLayout scan = (LinearLayout)landingCards.get(5);
-            boolean busy = PreviewLibraryScan.active() || PreviewLibraryScan.building();
+            com.archos.mediacenter.video.scanning.ScanProgress p = scanProgress();
+            boolean busy = p != null && p.running || PreviewLibraryScan.active() || PreviewLibraryScan.building();
             LandingTile.rename(scan, busy ? "Scanning…" : "Scan now");
             LandingTile.describe(scan, scanLine(getContext()));
             // The tile keeps its name for TalkBack and tests while the title shows Scanning….
@@ -286,6 +287,20 @@ public final class UniversalFileBrowser extends LinearLayout {
 
     private void scanNow() {
         landingSelection = 5;
+        // While a scan runs, OK offers Stop (approved network-files-v2/02).
+        com.archos.mediacenter.video.scanning.ScanProgress now = scanProgress();
+        if (now != null && now.running) {
+            if (now.stopping)
+                return;
+            PreviewDialog.choose(getContext(), "Stop scanning?", new String[] {
+                "Stop scanning", "Keep scanning"
+            }, 1, choice -> {
+                if (choice == 0)
+                    PreviewLibraryScan.stop();
+                refreshLanding.run();
+            });
+            return;
+        }
         // One button for USB drives, library folders and Put.io (the old Scan Now and Scan Library together).
         if (!PreviewLibraryScan.active()) {
             try {
@@ -326,7 +341,37 @@ public final class UniversalFileBrowser extends LinearLayout {
         return hours == 1 ? "hour" : hours + " hours";
     }
 
+    static com.archos.mediacenter.video.scanning.ScanProgress scanProgress() {
+        try {
+            return PreviewLibraryScan.progress();
+        } catch (RuntimeException unavailable) {
+            return null;
+        }
+    }
+
+    /** "Put.io › Films · 312 of 1,808" while running; the reason when the last scan failed. */
+    static String progressLine(com.archos.mediacenter.video.scanning.ScanProgress p) {
+        if (p.stopping)
+            return "Stopping…";
+        String where = p.sourceLabel == null || p.sourceLabel.isEmpty() ? "Looking for new and changed videos"
+                                                                          : p.sourceLabel;
+        if (p.checked < 0)
+            return where + "…";
+        String done = String.format(java.util.Locale.getDefault(), "%,d", p.checked);
+        if (p.total > 0)
+            done += " of " + String.format(java.util.Locale.getDefault(), "%,d", p.total);
+        return where + " · " + done;
+    }
+
     static String scanLine(Context c) {
+        com.archos.mediacenter.video.scanning.ScanProgress p = scanProgress();
+        if (p != null && p.running)
+            return progressLine(p);
+        boolean failed = p != null && p.failure != null
+            && p.failure != com.archos.mediacenter.video.scanning.ScanProgress.Failure.NONE
+            && p.failure != com.archos.mediacenter.video.scanning.ScanProgress.Failure.CANCELLED;
+        if (failed && p.failureReason() != null && !p.failureReason().isEmpty())
+            return "Last scan didn't finish: " + p.failureReason() + "\nOK tries again";
         if (PreviewLibraryScan.active() || PreviewLibraryScan.building())
             return "Looking for new and changed videos…";
         long last = PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time", 0);
