@@ -178,6 +178,24 @@
     {
       "kind": "patch",
       "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-test-sardine.patch",
+      "sha256": "13a236c1f02ad3aea92faa44a7afd40c2e83da1398c5ee7056454fd11d71de39"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova156-test-fixes.patch",
+      "sha256": "97a8226c1af00e1845105086859d8d6c69974d44a0d6501d28b0f1b7fb000b69"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-test-fixes.patch",
+      "sha256": "e5e888946e9ab25c837640ce1a6ce4fc1763db7074a0382952951f02bc2a69b0"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
       "path": ".github/build/medialib-supernova156-screen-scan.patch",
       "sha256": "34fc5c2c045f19b794fe48da0c132fbe89f2cc8414f0f1079515ab7b97ebb796"
     },
@@ -213,27 +231,9 @@
     },
     {
       "kind": "patch",
-      "module": "MediaLib",
-      "path": ".github/build/medialib-supernova156-test-sardine.patch",
-      "sha256": "13a236c1f02ad3aea92faa44a7afd40c2e83da1398c5ee7056454fd11d71de39"
-    },
-    {
-      "kind": "patch",
       "module": "FileCoreLibrary",
       "path": ".github/build/filecore-supernova156-screen-connections.patch",
       "sha256": "59f4830cac8e56c562ea01755c77b0c54db9754aa2940d37cc2d8e7e0e3ca2b9"
-    },
-    {
-      "kind": "patch",
-      "module": "FileCoreLibrary",
-      "path": ".github/build/filecore-supernova156-test-fixes.patch",
-      "sha256": "97a8226c1af00e1845105086859d8d6c69974d44a0d6501d28b0f1b7fb000b69"
-    },
-    {
-      "kind": "patch",
-      "module": "MediaLib",
-      "path": ".github/build/medialib-supernova156-test-fixes.patch",
-      "sha256": "e5e888946e9ab25c837640ce1a6ce4fc1763db7074a0382952951f02bc2a69b0"
     }
   ],
   "supernova155": {
