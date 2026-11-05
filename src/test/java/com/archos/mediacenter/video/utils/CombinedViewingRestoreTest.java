@@ -118,9 +118,17 @@ public class CombinedViewingRestoreTest
         Movie video = mock(Movie.class);
         when(video.getId()).thenReturn(10L);
         when(video.getOnlineId()).thenReturn(123L);
+        when(video.getFilePath()).thenReturn("file:///media/PATH_CANARY.mkv");
         when(video.getFileUri()).thenReturn(Uri.parse("file:///media/PATH_CANARY.mkv"));
         return new PortablePhysicalReferences(app, List.of(video));
     }
+    @Test public void physicalFixtureIncludesTheExactStoredLocationForIdentificationGuards() throws Exception
+    {
+        var video = physical().video(10);
+        assertEquals("file:///media/PATH_CANARY.mkv", video.getFilePath());
+        assertEquals(Uri.parse(video.getFilePath()), video.getFileUri());
+    }
+
     @Before public void setup() throws Exception
     {
         app = RuntimeEnvironment.getApplication();
