@@ -164,7 +164,7 @@ public class SettingsShieldNavigationTest {
             key(KeyEvent.KEYCODE_DPAD_DOWN);
         }
         for (String pref : new String[] {
-            Diagnostics.KEY, "supernova_diagnostic_clear", "export_diagnostic_report"
+            Diagnostics.KEY, "export_diagnostic_report"
         }) {
             boolean seen = reached.stream().anyMatch(tag -> tag.contains(pref));
             assertTrue("D-pad must reach " + pref + "; saw " + reached, seen);

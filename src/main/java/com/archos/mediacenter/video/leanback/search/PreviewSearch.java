@@ -957,14 +957,7 @@ public final class PreviewSearch extends LinearLayout {
             row.setFocusable(true);
             row.setFocusableInTouchMode(true);
             row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-            android.graphics.drawable.StateListDrawable states = new android.graphics.drawable.StateListDrawable();
-            android.graphics.drawable.GradientDrawable focused = new android.graphics.drawable.GradientDrawable();
-            focused.setColor(0x14FFFFFF);
-            focused.setCornerRadius(dp(10));
-            focused.setStroke(dp(2), Color.WHITE);
-            states.addState(new int[] {android.R.attr.state_focused}, focused);
-            states.addState(new int[] {}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
-            row.setBackground(states);
+            row.setBackground(SupernovaStyle.rowFocus(activity));
             RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(-1, dp(60));
             lp.bottomMargin = dp(4);
             row.setLayoutParams(lp);

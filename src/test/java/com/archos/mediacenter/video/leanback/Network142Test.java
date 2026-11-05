@@ -96,13 +96,12 @@ public class Network142Test {
         int index = name.equals("local_storage") ? 0
             : name.equals("network_shares") || name.equals("cloud_services") ? 1
             : name.equals("all_files") ? 0
+            : name.equals("library_health") ? 3
                                                                              : 5;
         ReflectionHelpers.callInstanceMethod(
             browser, "openLandingCard", ReflectionHelpers.ClassParameter.from(int.class, index));
         if (name.equals("cloud_services"))
             PreviewPagesTest.findText(browser, "Put.io · Account and Files").performClick();
-        if (name.equals("library_health"))
-            PreviewPagesTest.findText(browser, "Library Health").performClick();
         layout();
     }
 
@@ -343,7 +342,8 @@ public class Network142Test {
         layout();
         assertTrue(PreferenceManager.getDefaultSharedPreferences(host.get())
                 .getBoolean("auto_rescan_on_app_restart", false));
-        assertTrue(((View) PreviewPagesTest.findText(browser, "On Open / Return: On").getParent()).hasFocus());
+        View on = (View) PreviewPagesTest.findText(browser, "Also scan when Supernova opens: On").getParent();
+        assertTrue(on.hasFocus());
     }
 
     @Test

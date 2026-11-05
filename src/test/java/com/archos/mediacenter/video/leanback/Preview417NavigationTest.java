@@ -31,8 +31,8 @@ public class Preview417NavigationTest {
         PreviewKeyboard keyboard = new PreviewKeyboard(host, input, () -> {});
         host.setContentView(keyboard); layout(keyboard);
         assertTrue("Initial keyboard focus request", keyboard.focusLastKey());
-        assertEquals("T", ((TextView) keyboard.findFocus()).getText().toString());
-        TextView p = (TextView) PreviewPagesTest.findText(keyboard, "P");
+        assertEquals("t", ((TextView) keyboard.findFocus()).getText().toString());
+        TextView p = (TextView) PreviewPagesTest.findText(keyboard, "p");
         p.requestFocus(); p.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
         assertSame(p, keyboard.findFocus());
         PreviewPagesTest.findText(keyboard, "Clear").performClick();

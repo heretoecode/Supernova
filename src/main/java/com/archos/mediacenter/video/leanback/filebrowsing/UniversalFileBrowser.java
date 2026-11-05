@@ -276,6 +276,8 @@ public final class UniversalFileBrowser extends LinearLayout {
             boolean busy = PreviewLibraryScan.active() || PreviewLibraryScan.building();
             LandingTile.rename(scan, busy ? "Scanning…" : "Scan now");
             LandingTile.describe(scan, scanLine(getContext()));
+            // The tile keeps its name for TalkBack and tests while the title shows Scanning….
+            scan.setContentDescription("Scan now. " + scanLine(getContext()));
             // Not under Robolectric: a self-renewing callback would keep a paused test looper busy forever.
             if (!"robolectric".equals(android.os.Build.FINGERPRINT))
                 postDelayed(this, 1000);
@@ -285,8 +287,13 @@ public final class UniversalFileBrowser extends LinearLayout {
     private void scanNow() {
         landingSelection = 5;
         // One button for USB drives, library folders and Put.io (the old Scan Now and Scan Library together).
-        if (!PreviewLibraryScan.active())
-            PreviewLibraryScan.request(getContext());
+        if (!PreviewLibraryScan.active()) {
+            try {
+                PreviewLibraryScan.request(getContext());
+            } catch (RuntimeException unavailable) {
+                Diagnostics.error("scan_now_request_failed", unavailable);
+            }
+        }
         refreshLanding.run();
     }
 

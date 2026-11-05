@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -190,6 +189,8 @@ final class PlayerPartsStrip implements PlayerController.Strip
             mode = CHAPTERS;
         chaptersTab.setSelected(expanded && CHAPTERS.equals(mode));
         episodesTab.setSelected(expanded && EPISODES.equals(mode));
+        openTab(chaptersTab, expanded && CHAPTERS.equals(mode));
+        openTab(episodesTab, expanded && EPISODES.equals(mode));
         TextView first = chapters ? chaptersTab : episodesTab;
         TextView last = series ? episodesTab : chaptersTab;
         first.setNextFocusLeftId(first.getId());
@@ -258,6 +259,8 @@ final class PlayerPartsStrip implements PlayerController.Strip
         row.setVisibility(View.GONE);
         chaptersTab.setSelected(false);
         episodesTab.setSelected(false);
+        openTab(chaptersTab, false);
+        openTab(episodesTab, false);
         highlight.highlight(-1, -1);
         closePictures();
         for (View v : lift)
@@ -581,7 +584,7 @@ final class PlayerPartsStrip implements PlayerController.Strip
         tab.setFocusable(true);
         tab.setFocusableInTouchMode(true);
         tab.setClickable(true);
-        tab.setBackground(tabBackground());
+        tab.setBackground(SupernovaStyle.tab(context, false));
         tab.setTextColor(SupernovaStyle.buttonContent());
         tab.setOnFocusChangeListener((v, focused) -> {
             if (focused) {
@@ -599,13 +602,13 @@ final class PlayerPartsStrip implements PlayerController.Strip
         return tab;
     }
 
-    private StateListDrawable tabBackground()
+    /** The shared page-tab look: the open row's tab a lighter charcoal, the focused tab the white box. */
+    private void openTab(TextView tab, boolean open)
     {
-        StateListDrawable states = new StateListDrawable();
-        states.addState(new int[] {android.R.attr.state_focused}, box(SupernovaStyle.FOCUS_FILL, 0));
-        states.addState(new int[] {android.R.attr.state_selected}, box(0xFF3A3E46, SupernovaStyle.GLASS_EDGE));
-        states.addState(new int[] {}, box(SupernovaStyle.GLASS, SupernovaStyle.GLASS_EDGE));
-        return states;
+        if (tab.isActivated() == open && tab.getBackground() != null)
+            return;
+        tab.setActivated(open);
+        tab.setBackground(SupernovaStyle.tab(context, open));
     }
 
     private GradientDrawable box(int fill, int edge)

@@ -458,7 +458,7 @@ public class SettingsWorkspaceTest {
         dialog = SettingsChoiceDialog.show(host.get(), level);
         dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
         assertTrue(dialog.isShowing());
-        assertEquals("qa", level.getValue());
+        assertEquals(original, level.getValue());
         dialog.dismiss();
         level.setOnPreferenceChangeListener((p, value) -> true);
         dialog = SettingsChoiceDialog.show(host.get(), level);

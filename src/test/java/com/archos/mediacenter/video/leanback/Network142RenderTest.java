@@ -99,6 +99,8 @@ public class Network142RenderTest {
             browser = workspace.browser();
             capture(nav, "0147-shell-landing");
             for (int n = 0; n < 6; n++) {
+                ReflectionHelpers.callInstanceMethod(browser, "networkLanding");
+                layout(nav);
                 browser.findViewWithTag("network.card." + n).performClick();
                 layout(nav);
                 capture(nav, "0147-shell-card-" + n);

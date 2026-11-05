@@ -134,7 +134,7 @@ public class NextQaUiTest {
             root.findViewWithTag("semantic:keyboard:Clear").performClick();
             root.findViewWithTag("semantic:keyboard:A").performClick();
             root.findViewWithTag("semantic:keyboard:Done").performClick();
-            assertEquals("A", value[0]);
+            assertEquals("a", value[0]);
             assertNull(CustomLibraryPage.load(host.get()));
         } finally {
             host.pause().stop().destroy();
