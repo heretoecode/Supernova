@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.player;
 import android.app.*;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Looper;
 import android.view.*;
@@ -275,6 +276,52 @@ public class PlaybackSubtitlePanelTest {
         assertEquals(0, model.get("delay"));
         row("download").performClick();
         assertEquals(1, model.downloads);
+    }
+
+    @Test
+    public void chosenColourRingIsWholeWithADarkGap() {
+        ViewGroup colour = (ViewGroup)row("colour");
+        ImageView chosen = null;
+        for (int i = 0; i < colour.getChildCount(); i++) {
+            View child = colour.getChildAt(i);
+            if (child instanceof ImageView && ((ImageView)child).getDrawable() != null) {
+                Bitmap probe = draw((ImageView)child);
+                // the chosen swatch is the one with the dark gap between its dot and the ring
+                if (hasDarkGap(probe))
+                    chosen = (ImageView)child;
+                probe.recycle();
+            }
+        }
+        assertNotNull("one swatch shows the chosen ring", chosen);
+        Bitmap image = draw(chosen);
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int x = 0; x < w; x++) {
+            assertEquals("nothing touches the top edge", 0, Color.alpha(image.getPixel(x, 0)));
+            assertEquals("nothing touches the bottom edge", 0, Color.alpha(image.getPixel(x, h - 1)));
+        }
+        for (int y = 0; y < h; y++) {
+            assertEquals("nothing touches the left edge", 0, Color.alpha(image.getPixel(0, y)));
+            assertEquals("nothing touches the right edge", 0, Color.alpha(image.getPixel(w - 1, y)));
+        }
+        image.recycle();
+    }
+
+    private static Bitmap draw(ImageView view) {
+        int w = Math.max(1, view.getWidth());
+        int h = Math.max(1, view.getHeight());
+        Bitmap image = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        view.getDrawable().setBounds(0, 0, w, h);
+        view.getDrawable().draw(new Canvas(image));
+        return image;
+    }
+
+    private static boolean hasDarkGap(Bitmap image) {
+        int cy = image.getHeight() / 2;
+        for (int x = 0; x < image.getWidth() / 2; x++)
+            if (image.getPixel(x, cy) == 0xFF16181C)
+                return true;
+        return false;
     }
 
     @Test

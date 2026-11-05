@@ -1079,18 +1079,27 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             this.selected = selected;
         }
 
+        /**
+         * The colour dot, and for the chosen colour a dark gap and a white ring round it, all inside the 38-unit
+         * view: dot 13, gap 2.5, ring 2.5, so the ring's outer edge (18) stays inside it (0.155 notes #7).
+         */
         @Override
         public void draw(Canvas canvas) {
             Rect b = getBounds();
-            float cx = b.exactCenterX(), cy = b.exactCenterY();
+            float cx = b.exactCenterX();
+            float cy = b.exactCenterY();
+            float band = s(5) / 2f;
+            float dot = Math.min(s(13), Math.min(b.width(), b.height()) / 2f - 2 * band - s(1));
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(colour);
-            canvas.drawCircle(cx, cy, s(15), paint);
+            canvas.drawCircle(cx, cy, dot, paint);
             if (selected) {
                 paint.setStyle(Paint.Style.STROKE);
-                paint.setStrokeWidth(s(3));
+                paint.setStrokeWidth(band);
+                paint.setColor(0xFF16181C);
+                canvas.drawCircle(cx, cy, dot + band / 2f, paint);
                 paint.setColor(Color.WHITE);
-                canvas.drawCircle(cx, cy, s(15) + s(2) + s(1.5f), paint);
+                canvas.drawCircle(cx, cy, dot + band * 1.5f, paint);
             }
         }
 
