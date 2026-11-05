@@ -1,0 +1,63 @@
+diff --git a/src/com/archos/mediascraper/NfoWriter.java b/src/com/archos/mediascraper/NfoWriter.java
+index 792565a..94de911 100644
+--- a/src/com/archos/mediascraper/NfoWriter.java
++++ b/src/com/archos/mediascraper/NfoWriter.java
+@@ -106,7 +106,24 @@ public class NfoWriter
+         if (state != null)
+             state.cancellation.check();
+         java.io.OutputStream stream = editor.getOutputStream();
+-        return state == null ? stream : state.cancellation.own(stream);
++        if (state == null)
++            return stream;
++        try
++        {
++            return state.cancellation.own(stream);
++        }
++        catch (IOException stopped)
++        {
++            try
++            {
++                editor.delete();
++            }
++            catch (Exception cleanupFailed)
++            {
++                stopped.addSuppressed(cleanupFailed);
++            }
++            throw stopped;
++        }
+     }
+ 
+     private static final Logger log = LoggerFactory.getLogger(NfoWriter.class);
+diff --git a/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java b/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java
+index 6ed357d..d80a802 100644
+--- a/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java
++++ b/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java
+@@ -137,4 +137,28 @@ public class NfoWriterOutcomeTest
+             worker.join(5000);
+         }
+     }
++    @Test public void cancellationWhileOpeningOutputCannotLeaveAnEmptyNfoFile() throws Exception
++    {
++        File video = new File(temporary.getRoot(), "One.mkv");
++        File target = new File(temporary.getRoot(), "One" + NfoParser.CUSTOM_NFO_EXTENSION);
++        NfoExportCancellation cancellation = new NfoExportCancellation();
++        MovieTags tags = new MovieTags();
++        tags.setTitle("Library title");
++        try (var factory = mockStatic(FileEditorFactoryWithUpnp.class))
++        {
++            FileEditor editor = mock(FileEditor.class);
++            when(editor.getOutputStream()).thenAnswer(call -> {
++                OutputStream opened = new FileOutputStream(target);
++                cancellation.cancel();
++                return opened;
++            });
++            when(editor.delete()).thenAnswer(call -> target.delete());
++            factory.when(() -> FileEditorFactoryWithUpnp.getFileEditorForUrl(Uri.fromFile(target), null))
++                .thenReturn(editor);
++            assertEquals(
++                NfoExportProgress.Outcome.CANCELLED,
++                NfoWriter.exportChecked(Uri.fromFile(video), tags, new NfoWriter.ExportContext(), cancellation));
++        }
++        assertFalse(target.exists());
++    }
+ }
