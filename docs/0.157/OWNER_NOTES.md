@@ -60,5 +60,28 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 - **Reception is a fixed set:** IMDb, Rotten Tomatoes, Metacritic, TMDB (every source Supernova has). Each always
   shows, saying "Unknown" when missing, so every Details page looks the same.
 
-**Status:** second round of mock-ups (no panels, list-style episodes, fixed Reception) — see `details-tabs/v2-*`. Planned for 0.157 (0.156 is not held up). Related parked
+**Owner's comments on round 2 (5 Nov 2026)**
+- Episodes as **horizontal rows**, in keeping with Home and the player's Episodes strip (Claude agreed). One row per
+  season; the focused episode's synopsis shows under its row.
+- **Details on one page:** description, key information (expandable), reception, cast, crew, technical information.
+- **Extras use the Home row cards** (title and details inside the artwork), for consistency. Same for More Like This.
+- **More Like This:** some suggestions elsewhere are baffling ("how on earth did that become a suggestion?").
+  - No limit of 12 and no "must show 12".
+  - Keep TMDB's suggestions, and also look for suggestions from elsewhere.
+
+**Claude's proposal for More Like This (round 3)**
+- Today: TMDB "recommendations", kept if in the library or on the owner's services, stopped at 12. If there are fewer
+  than 12, it tops up with any library title sharing one genre. That genre padding is the likely source of the odd
+  ones.
+- New:
+  - Ask three sources: TMDB "recommendations", TMDB "similar" and Trakt "related" (Trakt is already in Supernova).
+  - Rank titles by how many sources agree. A title suggested by only one source is shown only if it also shares at
+    least two genres.
+  - Keep only what is in the library or on the owner's services, in two rows: **In your library** and **On your
+    services**.
+  - Show however many pass, with no fixed number. **Drop the genre padding.**
+  - If nothing passes, show a calm empty message.
+- The data side is Codex's (non-visual); Claude does the rows.
+
+**Status:** round 3 mock-ups `details-tabs/v3-01`–`v3-04` sent 5 Nov 2026; waiting for the owner. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
