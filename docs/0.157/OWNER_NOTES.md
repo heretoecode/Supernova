@@ -367,7 +367,7 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Arrows black.
   - Switches: on = dark blue track with a white knob; off = light grey track with a dark knob.
   - Colour dots keep their colours; the chosen one gets a black ring.
-- Mock-ups `docs/design/proposals/panel-focus/01`–`03`. **Status:** waiting for the owner.
+- Mock-ups `docs/design/proposals/panel-focus/01`–`03`. **Approved** (owner, 5 Nov 2026), with values changed by section 6.
 
 ## 6. No blue for values (owner, 5 Nov 2026)
 - Owner: a single value shown (‹ Any ›, ‹ 5% ›, English (TEXT)) needn't be blue; it is obviously the value. Asked to
@@ -378,4 +378,8 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - A: chosen bright, others dimmed.
   - B: chosen with a short underline (as the Details titles).
   - C: chosen in a small chip.
-- **Status:** waiting for the owner's choice.
+- **APPROVED (owner, 5 Nov 2026): option C, the chip** (`panel-focus/06`), as a global rule.
+  - The chosen option sits in a small rounded chip: light grey at rest; black with white text on a focused row.
+  - No separators.
+  - Steppers and list values are plain white.
+  - No blue for values anywhere.
