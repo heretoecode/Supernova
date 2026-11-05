@@ -45,68 +45,67 @@ public final class LogicalBackupArchive
     static final long MAX_COMPRESSED = 36L * 1024 * 1024;
     public static final String INSTRUCTIONS =
         "SUPERNOVA LOGICAL BACKUP FORMAT 2.0\n\n"
-        + "This archive contains only the categories listed in manifest.json. Currently registered categories are " +
-          "settings, Home rows, the custom Library page, Watch Next, Continue Watching choices, preferred versions, " +
-          "user review notes, pinned titles, hidden items, watch history, unfinished playback positions, Library " +
-          "sources, browser favourites, saved playlists, per-title playback choices, media identification and " +
-          "optional filenames and locations. It contains no media, artwork, subtitle files, credentials, accounts, " +
-          "permissions or diagnostic recordings.\n"
-        + "Keep this unencrypted archive private: language, provider and preference choices can reveal personal " +
-          "interests.\n\n"
-        + "Before restoring, make a backup of the destination. A compatible reader must validate every archive entry " +
-          "and category schema before offering a restore preview. Select the categories you want to replace and " +
-          "confirm the preview. Selected categories replace their corresponding configuration; a selected empty " +
-          "category clears that configuration. Missing or unselected categories leave the destination unchanged. " +
-          "Home rows never replace independently owned Watch Next membership.\n"
-        + "Reconnect storage and services and grant Android permissions separately. Home membership uses exact " +
-          "logical title identities; unresolved members remain pending, without guessing titles or recreating " +
-          "locations. Watch history and unfinished positions are independent: excluding history loses restored " +
-          "watched states and viewing times; excluding positions loses unfinished offsets. These categories replace " +
-          "the identity-based viewing store and suppress stale native markers for the selected domain. Unselected " +
-          "native viewing state remains independent. Media identification contains provider identities only. " +
-          "Canonical metadata is resolved separately; missing media or unavailable providers remain pending. Later " +
-          "manual identification or removal on the receiving device supersedes queued intent. It never restores " +
-          "scraped artwork, media files, Put.io associations or legacy Collections. Device-specific audio/video " +
-          "choices may need adjustment. Portability, permissions and hardware behavior are not guaranteed.\n"
-        + "Preferred physical versions require validated media matching. They remain pending when that dependency is " +
-          "not ready; restoring them never enables filenames or locations automatically. Review notes do not include " +
-          "system health caches. Physical location fingerprints do not authenticate storage/accounts or prove media " +
-          "contents; ambiguous, credential/query-bearing, missing and differently matched records remain unresolved.\n"
-        + "Pinned movie/show identities and ordering are restored only when uniquely matched. Hidden items remain " +
-          "pending until physical matching is validated. Missing or ambiguous references are kept for later " +
-          "reconciliation. These categories never recreate Put.io associations or legacy user Collections.\n"
-        + "Library sources contain location references for selected roots, exclusions and indexed folders, plus " +
-          "folder names and automatic rescan choices; never access credentials. Indexed-source IP/friendly-locator " +
-          "caches are not included. Older source-schema1 payloads leave indexed folders unchanged. Only the " +
-          "separately selected filenames and locations category contains locator text. Locations can reveal " +
-          "filenames, folders, hosts and shares; it is optional and off by default. Excluding locations leaves " +
-          "unknown sources pending rather than creating guessed roots. Select locations explicitly at restore to " +
-          "recreate the included source paths; sign in, grant permissions and finish source setup separately. " +
-          "Existing Put.io source ownership remains outside selected replacement. Unsafe, authenticated or " +
-          "query-bearing locations are rejected rather than stripped or silently changed.\n"
-        +
-        "Cancel before confirming to leave the destination unchanged. Do not use incomplete files. Export succeeds " +
-        "only after the closed archive and any destination copy pass verification. Interrupted restoration requires " +
-        "recovery by the reader's restore journal; do not assume every failure can roll back external services.\n"
-        + "Saved playlists contain names and TMDB movie/episode membership only. Restored definitions remain " +
-          "local-only and never recreate Trakt account associations or trigger uploads. Selected replacement clears " +
-          "only local playlist definitions; receiving account-owned definitions are preserved. Unknown title " +
-          "membership becomes usable when indexed; definitions on an uninitialized device remain pending until " +
-          "normal media-store setup.\n"
-        + "Browser favourites restore only to exact configured locations or locations explicitly selected from this " +
-          "archive. Unknown favourites remain pending. Restoring only browser favourites leaves indexed folders, FTP " +
-          "credentials and Put.io associations unchanged.\n"
-        + "Per-title playback choices are independent of watched state and resume offsets. Restoration never invents " +
-          "a played timestamp to enable a track choice. A receiving file must match uniquely and the playback " +
-          "backend must enumerate compatible tracks; unsupported, absent or ambiguous choices stay pending. Subtitle " +
-          "None is separate from its source track index and remaps to the receiving track count. Older choices " +
-          "lacking that distinction never guess. Manual track/delay changes supersede restored intent. File indexes " +
-          "and native codec support may differ between devices.\n"
-        + "Legacy Supernova1.0 archives require their dedicated database/schema reader and may contain paths and " +
-          "artwork. The logical workspace does not convert these archives. The older whole-library restore route has " +
-          "different replacement semantics and clears prior default/service authentication; reconnect accounts " +
-          "afterward. New logical selected restoration leaves existing receiving credentials unchanged. No new1.0 " +
-          "whole-library backups are created. Unknown future formats and category schemas must be rejected.\n";
+        + "This archive contains only the categories listed in manifest.json. Currently registered categories are "
+        + "settings, Home rows, the custom Library page, Watch Next, Continue Watching choices, preferred versions, "
+        + "user review notes, pinned titles, hidden items, watch history, unfinished playback positions, Library "
+        + "sources, browser favourites, saved playlists, per-title playback choices, media identification and "
+        + "optional filenames and locations. It contains no media, artwork, subtitle files, credentials, accounts, "
+        + "permissions or diagnostic recordings.\n"
+        + "Keep this unencrypted archive private: language, provider and preference choices can reveal personal "
+        + "interests.\n\n"
+        + "Before restoring, make a backup of the destination. A compatible reader must validate every archive entry "
+        + "and category schema before offering a restore preview. Select the categories you want to replace and "
+        + "confirm the preview. Selected categories replace their corresponding configuration; a selected empty "
+        + "category clears that configuration. Missing or unselected categories leave the destination unchanged. "
+        + "Home rows never replace independently owned Watch Next membership.\n"
+        + "Reconnect storage and services and grant Android permissions separately. Home membership uses exact "
+        + "logical title identities; unresolved members remain pending, without guessing titles or recreating "
+        + "locations. Watch history and unfinished positions are independent: excluding history loses restored "
+        + "watched states and viewing times; excluding positions loses unfinished offsets. These categories replace "
+        + "the identity-based viewing store and suppress stale native markers for the selected domain. Unselected "
+        + "native viewing state remains independent. Media identification contains provider identities only. "
+        + "Canonical metadata is resolved separately; missing media or unavailable providers remain pending. Later "
+        + "manual identification or removal on the receiving device supersedes queued intent. It never restores "
+        + "scraped artwork, media files, Put.io associations or legacy Collections. Device-specific audio/video "
+        + "choices may need adjustment. Portability, permissions and hardware behavior are not guaranteed.\n"
+        + "Preferred physical versions require validated media matching. They remain pending when that dependency is "
+        + "not ready; restoring them never enables filenames or locations automatically. Review notes do not include "
+        + "system health caches. Physical location fingerprints do not authenticate storage/accounts or prove media "
+        + "contents; ambiguous, credential/query-bearing, missing and differently matched records remain unresolved.\n"
+        + "Pinned movie/show identities and ordering are restored only when uniquely matched. Hidden items remain "
+        + "pending until physical matching is validated. Missing or ambiguous references are kept for later "
+        + "reconciliation. These categories never recreate Put.io associations or legacy user Collections.\n"
+        + "Library sources contain location references for selected roots, exclusions and indexed folders, plus "
+        + "folder names and automatic rescan choices; never access credentials. Indexed-source IP/friendly-locator "
+        + "caches are not included. Older source-schema1 payloads leave indexed folders unchanged. Only the "
+        + "separately selected filenames and locations category contains locator text. Locations can reveal "
+        + "filenames, folders, hosts and shares; it is optional and off by default. Excluding locations leaves "
+        + "unknown sources pending rather than creating guessed roots. Select locations explicitly at restore to "
+        + "recreate the included source paths; sign in, grant permissions and finish source setup separately. "
+        + "Existing Put.io source ownership remains outside selected replacement. Unsafe, authenticated or "
+        + "query-bearing locations are rejected rather than stripped or silently changed.\n"
+        + "Cancel before confirming to leave the destination unchanged. Do not use incomplete files. Export succeeds "
+        + "only after the closed archive and any destination copy pass verification. Interrupted restoration requires "
+        + "recovery by the reader's restore journal; do not assume every failure can roll back external services.\n"
+        + "Saved playlists contain names and TMDB movie/episode membership only. Restored definitions remain "
+        + "local-only and never recreate Trakt account associations or trigger uploads. Selected replacement clears "
+        + "only local playlist definitions; receiving account-owned definitions are preserved. Unknown title "
+        + "membership becomes usable when indexed; definitions on an uninitialized device remain pending until "
+        + "normal media-store setup.\n"
+        + "Browser favourites restore only to exact configured locations or locations explicitly selected from this "
+        + "archive. Unknown favourites remain pending. Restoring only browser favourites leaves indexed folders, FTP "
+        + "credentials and Put.io associations unchanged.\n"
+        + "Per-title playback choices are independent of watched state and resume offsets. Restoration never invents "
+        + "a played timestamp to enable a track choice. A receiving file must match uniquely and the playback "
+        + "backend must enumerate compatible tracks; unsupported, absent or ambiguous choices stay pending. Subtitle "
+        + "None is separate from its source track index and remaps to the receiving track count. Older choices "
+        + "lacking that distinction never guess. Manual track/delay changes supersede restored intent. File indexes "
+        + "and native codec support may differ between devices.\n"
+        + "Legacy Supernova1.0 archives require their dedicated database/schema reader and may contain paths and "
+        + "artwork. The logical workspace does not convert these archives. The older whole-library restore route has "
+        + "different replacement semantics and clears prior default/service authentication; reconnect accounts "
+        + "afterward. New logical selected restoration leaves existing receiving credentials unchanged. No new1.0 "
+        + "whole-library backups are created. Unknown future formats and category schemas must be rejected.\n";
 
     private static void cancelled(BooleanSupplier cancel) throws IOException
     {

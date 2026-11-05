@@ -1049,8 +1049,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (cachedMetadata != null)
                 {
                     if (log.isDebugEnabled())
-                        log.debug("prepareSubs: cache HIT for both files AND metadata - using cached AVOS metadata, " +
-                                  "skipping checkSubtitles entirely");
+                        log.debug("prepareSubs: cache HIT for both files AND metadata - using cached AVOS metadata, "
+                                  + "skipping checkSubtitles entirely");
                     // Both file list and AVOS result cached - skip all processing
                     onSubtitleMetadataUpdated(cachedMetadata, cachedMetadata.getSubtitleTrack(0) != null ? 0 : -1);
                     mIsPreparingSubs = false;
@@ -2955,16 +2955,16 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             mNewAudioTrack = newAudioTrack;
             mAudioSubtitleNeedUpdate = true;
             if (log.isDebugEnabled())
-                log.debug("onAudioMetadataUpdated: mVideoInfo == null, mNewAudioTrack={} newAudioTrack={} " +
-                          "mAudioSubtitleNeedUpdate={}",
+                log.debug("onAudioMetadataUpdated: mVideoInfo == null, mNewAudioTrack={} newAudioTrack={} "
+                              + "mAudioSubtitleNeedUpdate={}",
                           mNewAudioTrack, newAudioTrack, mAudioSubtitleNeedUpdate);
             return;
         }
         else
         {
             if (log.isDebugEnabled())
-                log.debug("onAudioMetadataUpdated: mVideoInfo != null, mVideoInfo.audioTrack={} newAudioTrack={} " +
-                          "mAudioSubtitleNeedUpdate={}",
+                log.debug("onAudioMetadataUpdated: mVideoInfo != null, mVideoInfo.audioTrack={} newAudioTrack={} "
+                              + "mAudioSubtitleNeedUpdate={}",
                           mVideoInfo.audioTrack, newAudioTrack, mAudioSubtitleNeedUpdate);
         }
         int nbTrack = vMetadata.getAudioTrackNb();
@@ -3023,15 +3023,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                             (vMetadata.getAudioTrack(i).disposition & VideoUtils.AV_DISPOSITION_DEFAULT) != 0)
                         {
                             if (log.isDebugEnabled())
-                                log.debug("onAudioMetadataUpdated: track #{} -> {} matches original audio language " +
-                                          "{} and is marked default",
+                                log.debug("onAudioMetadataUpdated: track #{} -> {} matches original audio language "
+                                              + "{} and is marked default",
                                           i, trackName, originalLanguage);
                             originalLanguageDefaultMatchTrack = i;
                         }
                     }
                     if (log.isDebugEnabled())
-                        log.debug("onAudioMetadataUpdated: trying to match favorite audioTrack language {} against " +
-                                  "track #{} language {} ({})",
+                        log.debug("onAudioMetadataUpdated: trying to match favorite audioTrack language {} against "
+                                      + "track #{} language {} ({})",
                                   mAudioTrackFavoriteLanguage, i, trackLanguage, trackName);
                     if (ISO639codes.isFavoriteLanguageMatch(mAudioTrackFavoriteLanguage, trackLanguage))
                     {
@@ -3050,8 +3050,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                             (vMetadata.getAudioTrack(i).disposition & VideoUtils.AV_DISPOSITION_DEFAULT) != 0)
                         {
                             if (log.isDebugEnabled())
-                                log.debug("onAudioMetadataUpdated: track #{} -> {} matches favorite audioTrack " +
-                                          "language {} and is marked default",
+                                log.debug("onAudioMetadataUpdated: track #{} -> {} matches favorite audioTrack "
+                                              + "language {} and is marked default",
                                           i, trackName, mAudioTrackFavoriteLanguage);
                             languageDefaultMatchTrack = i;
                         }
@@ -3070,17 +3070,18 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     else
                     {
                         if (log.isDebugEnabled())
-                            log.debug("onAudioMetadataUpdated: skip track: #{} -> {} not matching favorite " +
-                                      "audioTrack language {}",
+                            log.debug("onAudioMetadataUpdated: skip track: #{} -> {} not matching favorite "
+                                          + "audioTrack language {}",
                                       i, trackName, mAudioTrackFavoriteLanguage);
                     }
                 }
                 else
                 {
                     if (log.isDebugEnabled())
-                        log.debug("onAudioMetadataUpdated: not trying to find {} in {} because " +
-                                  "mVideoInfo.audioTrack={} out of range or not supported or firstTimeAudioCalled={}",
-                                  mAudioTrackFavoriteLanguage, trackName, mVideoInfo.audioTrack, firstTimeAudioCalled);
+                        log.debug(
+                            "onAudioMetadataUpdated: not trying to find {} in {} because "
+                                + "mVideoInfo.audioTrack={} out of range or not supported or firstTimeAudioCalled={}",
+                            mAudioTrackFavoriteLanguage, trackName, mVideoInfo.audioTrack, firstTimeAudioCalled);
                 }
             }
         }
@@ -3193,8 +3194,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             vMetadata.getSubtitleTrackNb(); // this contains the number of subtitlesTracks not including the none track
         Integer fallbackTextTrack = null;   // track for external text subs with no language provided
         if (log.isDebugEnabled())
-            log.debug("onSubtitleMetadataUpdated: nbTrack={} newSubtitleTrack={} mVideoInfo.subtitleTrack={} " +
-                      "mHideSubtitles={} mSubsFavoriteLanguage={} firstTimeSubCalled={} mIsPreparingSubs={}",
+            log.debug("onSubtitleMetadataUpdated: nbTrack={} newSubtitleTrack={} mVideoInfo.subtitleTrack={} "
+                          + "mHideSubtitles={} mSubsFavoriteLanguage={} firstTimeSubCalled={} mIsPreparingSubs={}",
                       nbTrack, newSubtitleTrack, mVideoInfo.subtitleTrack, mHideSubtitles, mSubsFavoriteLanguage,
                       firstTimeSubCalled, mIsPreparingSubs);
         // selection logic
@@ -3223,8 +3224,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     if (!savedLang2Letter.equals(currentLang2Letter))
                     {
                         if (log.isDebugEnabled())
-                            log.debug("onSubtitleMetadataUpdated: subtitle language mismatch at index {}: saved={}, " +
-                                      "current={}",
+                            log.debug("onSubtitleMetadataUpdated: subtitle language mismatch at index {}: saved={}, "
+                                          + "current={}",
                                       mVideoInfo.subtitleTrack, savedLang2Letter, currentLang2Letter);
                         mVideoInfo.subtitleTrack = -1;
                         mVideoInfo.subtitleLanguage = null;
@@ -3257,16 +3258,16 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     mVideoInfo.subtitleTrack = Objects.requireNonNullElse(
                         forcedTrack, Objects.requireNonNullElse(defaultExternalTextTrack, noneTrack));
                     if (log.isDebugEnabled())
-                        log.debug("onSubtitleMetadataUpdated: active audio and preferred subtitles match current " +
-                                  "locale {} -> selected forced or untagged default external track {}",
+                        log.debug("onSubtitleMetadataUpdated: active audio and preferred subtitles match current "
+                                      + "locale {} -> selected forced or untagged default external track {}",
                                   currentLocaleLanguage, mVideoInfo.subtitleTrack);
                 }
                 else
                 {
                     Locale locale = Locale.forLanguageTag(mSubsFavoriteLanguage);
                     if (log.isDebugEnabled())
-                        log.debug("onSubtitleMetadataUpdated: favorite: tag={}, display={}; current locale: tag={}, " +
-                                  "country={}, display={}",
+                        log.debug("onSubtitleMetadataUpdated: favorite: tag={}, display={}; current locale: tag={}, "
+                                      + "country={}, display={}",
                                   mSubsFavoriteLanguage, locale.getDisplayLanguage(),
                                   Locale.getDefault().toLanguageTag(), Locale.getDefault().getCountry(),
                                   Locale.getDefault().getDisplayLanguage());
@@ -3287,8 +3288,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         }
                         if (allSubtitleTracksAreForced && log.isDebugEnabled())
                         {
-                            log.debug("onSubtitleMetadataUpdated: all {} subtitle tracks are marked forced -> " +
-                                      "ignoring container forced disposition for full sub candidate selection",
+                            log.debug("onSubtitleMetadataUpdated: all {} subtitle tracks are marked forced -> "
+                                          + "ignoring container forced disposition for full sub candidate selection",
                                       nbTrack);
                         }
                     }
@@ -3324,8 +3325,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         if (lang == null || lang.isEmpty())
                         {
                             if (log.isDebugEnabled())
-                                log.debug("onSubtitleMetadataUpdated: no language found in track/file name -> set it " +
-                                          "to unknown");
+                                log.debug("onSubtitleMetadataUpdated: no language found in track/file name -> set it "
+                                          + "to unknown");
                             lang = getText(R.string.unknown_track_name).toString();
                         }
                         else
@@ -3337,8 +3338,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                             if (isForced)
                             {
                                 if (log.isDebugEnabled())
-                                    log.debug("onSubtitleMetadataUpdated: skip track: {} with identified lang: {} " +
-                                              "because it contains forced sub",
+                                    log.debug("onSubtitleMetadataUpdated: skip track: {} with identified lang: {} "
+                                                  + "because it contains forced sub",
                                               trackName, lang);
                             }
                             else
@@ -3350,8 +3351,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                     if (languageMatchTrack == null)
                                     {
                                         if (log.isDebugEnabled())
-                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} " +
-                                                      "matches favorite language {}",
+                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} "
+                                                          + "matches favorite language {}",
                                                       trackName, lang, mSubsFavoriteLanguage);
                                         languageMatchTrack = i;
                                     }
@@ -3362,8 +3363,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                         (subTrack.disposition & VideoUtils.AV_DISPOSITION_DEFAULT) != 0)
                                     {
                                         if (log.isDebugEnabled())
-                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} " +
-                                                      "matches favorite language {} and is marked default",
+                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} "
+                                                          + "matches favorite language {} and is marked default",
                                                       trackName, lang, mSubsFavoriteLanguage);
                                         languageDefaultMatchTrack = i;
                                     }
@@ -3374,8 +3375,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                         ISO639codes.titleMatchesChineseVariant(mSubsFavoriteLanguage, trackName))
                                     {
                                         if (log.isDebugEnabled())
-                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} " +
-                                                      "matches favorite Chinese variant {}",
+                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} "
+                                                          + "matches favorite Chinese variant {}",
                                                       trackName, lang, mSubsFavoriteLanguage);
                                         languageVariantMatchTrack = i;
                                     }
@@ -3383,8 +3384,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                 else
                                 {
                                     if (log.isDebugEnabled())
-                                        log.debug("onSubtitleMetadataUpdated: skip track: {} identified lang: {} != " +
-                                                  "favorite language {}",
+                                        log.debug("onSubtitleMetadataUpdated: skip track: {} identified lang: {} != "
+                                                      + "favorite language {}",
                                                   trackName, lang, mSubsFavoriteLanguage);
                                 }
                                 if (selectedAudioIsOutsideCurrentLocale &&
@@ -3393,8 +3394,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                     if (englishMatchTrack == null)
                                     {
                                         if (log.isDebugEnabled())
-                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} " +
-                                                      "matches English fallback",
+                                            log.debug("onSubtitleMetadataUpdated: track {} identified lang: {} "
+                                                          + "matches English fallback",
                                                       trackName, lang);
                                         englishMatchTrack = i;
                                     }
@@ -3409,8 +3410,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         if (subTrack.isExternal && isGenericTextSubtitleFormat(lang))
                         {
                             if (log.isDebugEnabled())
-                                log.debug("onSubtitleMetadataUpdated: found external text track {} ({}) -> setting " +
-                                          "fallbackTextTrack={}",
+                                log.debug("onSubtitleMetadataUpdated: found external text track {} ({}) -> setting "
+                                              + "fallbackTextTrack={}",
                                           i, lang, i);
                             fallbackTextTrack = i;
                         }
@@ -3426,8 +3427,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         selectedSubtitleTrack =
                             ISO639codes.selectPreferredTrack(null, englishDefaultMatchTrack, englishMatchTrack);
                         if (selectedSubtitleTrack != null && log.isDebugEnabled())
-                            log.debug("onSubtitleMetadataUpdated: no favorite-language subtitle found -> selected " +
-                                      "English fallback track {}",
+                            log.debug("onSubtitleMetadataUpdated: no favorite-language subtitle found -> selected "
+                                          + "English fallback track {}",
                                       selectedSubtitleTrack);
                     }
                     if (selectedSubtitleTrack != null)
@@ -3470,8 +3471,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         }
                         if (log.isDebugEnabled())
                             log.debug(
-                                "onSubtitleMetadataUpdated: no default sub found mVideoInfo.subtitleTrack: {} -> " +
-                                "setting {} or external text ({}) track if exists -> videoInfo.subtitleTrack={}",
+                                "onSubtitleMetadataUpdated: no default sub found mVideoInfo.subtitleTrack: {} -> "
+                                    + "setting {} or external text ({}) track if exists -> videoInfo.subtitleTrack={}",
                                 mVideoInfo.subtitleTrack, revertTrackName, fallbackTextTrack, newTrack);
                         mVideoInfo.subtitleTrack = newTrack;
                     }
@@ -3480,8 +3481,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         // if none track selected, player gets -1 track
                         // nonTrack is nbTracks
                         if (log.isDebugEnabled())
-                            log.debug("onSubtitleMetadataUpdated: hideSubs or noneTrack -> " +
-                                      "player.setSubtitleTrack(-1) and  videoInfo.subtitleTrack={}",
+                            log.debug("onSubtitleMetadataUpdated: hideSubs or noneTrack -> "
+                                          + "player.setSubtitleTrack(-1) and  videoInfo.subtitleTrack={}",
                                       noneTrack);
                         mVideoInfo.subtitleTrack = noneTrack;
                         mPlayer.setSubtitleTrack(-1);

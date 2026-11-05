@@ -916,8 +916,8 @@ public class PlayerActivity extends AppCompatActivity
                                        final int oldTop, int oldRight, final int oldBottom)
             {
                 if (log.isDebugEnabled())
-                    log.debug("CONFIG addOnLayoutChangeListener: left={}, top={}, right={}, bottom={}, oldLeft={}, " +
-                              "oldTop={}, oldRight={}, oldBottom={}",
+                    log.debug("CONFIG addOnLayoutChangeListener: left={}, top={}, right={}, bottom={}, oldLeft={}, "
+                                  + "oldTop={}, oldRight={}, oldBottom={}",
                               left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom);
                 if (oldBottom != bottom || oldTop != top)
                 {
@@ -1299,8 +1299,8 @@ public class PlayerActivity extends AppCompatActivity
             else
             {
                 if (log.isDebugEnabled())
-                    log.debug("postOnPlayerServiceBind: Skipping mResumeFromLast - external player with position " +
-                              "extras detected");
+                    log.debug("postOnPlayerServiceBind: Skipping mResumeFromLast - external player with position "
+                              + "extras detected");
             }
         }
         final String action = getIntent().getAction();
@@ -1309,8 +1309,8 @@ public class PlayerActivity extends AppCompatActivity
             mResume = RESUME_FROM_LAST_POS;
             getIntent().putExtra(RESUME, mResume);
             if (log.isDebugEnabled())
-                log.debug("postOnPlayerServiceBind: Set mResume=RESUME_FROM_LAST_POS due to mResumeFromLast or " +
-                          "ARCHOS_RESUME action");
+                log.debug("postOnPlayerServiceBind: Set mResume=RESUME_FROM_LAST_POS due to mResumeFromLast or "
+                          + "ARCHOS_RESUME action");
         }
         else
         {
@@ -1626,8 +1626,8 @@ public class PlayerActivity extends AppCompatActivity
         else
         {
             if (log.isDebugEnabled())
-                log.debug("onStop: plain background transition, keeping PlayerService binding and Player.sPlayer " +
-                          "alive for resume");
+                log.debug("onStop: plain background transition, keeping PlayerService binding and Player.sPlayer "
+                          + "alive for resume");
         }
         mLaunchFloatingPlayer = false;
         mResumeFromLast = true;
@@ -1801,8 +1801,8 @@ public class PlayerActivity extends AppCompatActivity
         }
 
         if (log.isDebugEnabled())
-            log.debug("CONFIG updateSizes isPortrait={}, isSeenPortrait={}, isInMultiWindowMode()={}, " +
-                      "isInPictureInPictureMode()={}, layout=({},{}), display=({},{})",
+            log.debug("CONFIG updateSizes isPortrait={}, isSeenPortrait={}, isInMultiWindowMode()={}, "
+                          + "isInPictureInPictureMode()={}, layout=({},{}), display=({},{})",
                       isPortrait, isSeenPortrait, isInMultiWindowMode, isInPictureInPictureMode, layoutWidth,
                       layoutHeight, displayWidth, displayHeight);
 
@@ -2600,8 +2600,8 @@ public class PlayerActivity extends AppCompatActivity
                     if (saveSettingCB.isChecked())
                     {
                         if (log.isDebugEnabled())
-                            log.debug("createTVAudioDelayDialog: audio delay changed to {} with keep setting ON, " +
-                                      "save in prefs",
+                            log.debug("createTVAudioDelayDialog: audio delay changed to {} with keep setting ON, "
+                                          + "save in prefs",
                                       delay);
                         mPreferences.edit().putInt(getString(R.string.save_delay_setting_pref_key), delay).apply();
                     }
@@ -2684,8 +2684,8 @@ public class PlayerActivity extends AppCompatActivity
                               if (saveSettingCB.isChecked())
                               {
                                   if (log.isDebugEnabled())
-                                      log.debug("createTVAudioSpeedDialog: audio speed changed to {} with keep " +
-                                                "setting ON, save in prefs",
+                                      log.debug("createTVAudioSpeedDialog: audio speed changed to {} with keep "
+                                                    + "setting ON, save in prefs",
                                                 speed);
                                   mPreferences.edit()
                                       .putFloat(getString(R.string.save_audio_speed_setting_pref_key), speed)
@@ -5648,8 +5648,8 @@ public class PlayerActivity extends AppCompatActivity
         else if (Objects.equals(trackInfoController, mSubtitleInfoController))
         {
             if (log.isDebugEnabled())
-                log.debug("onTrackSelected: position={}, mVideoInfo.subtitleTrack={}, mVideoInfo.nbSubtitles={}, " +
-                          "subtitleTrackToPosition={}",
+                log.debug("onTrackSelected: position={}, mVideoInfo.subtitleTrack={}, mVideoInfo.nbSubtitles={}, "
+                              + "subtitleTrackToPosition={}",
                           position, mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles,
                           subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles));
             if (position != subtitleTrackToPosition(mVideoInfo.subtitleTrack, mVideoInfo.nbSubtitles))
@@ -5710,8 +5710,8 @@ public class PlayerActivity extends AppCompatActivity
                             .toString();
                     disableSubtitleDelayTVMenuItem(position == 0);
                     if (log.isDebugEnabled())
-                        log.debug("onTrackSelected: position={}, mSubtitleInfoController.getTrackNameAt({}) " +
-                                  "mVideoInfo.subtitleTrack={}",
+                        log.debug("onTrackSelected: position={}, mSubtitleInfoController.getTrackNameAt({}) "
+                                      + "mVideoInfo.subtitleTrack={}",
                                   position, trackName, mVideoInfo.subtitleTrack);
                 }
                 else
@@ -5939,8 +5939,8 @@ public class PlayerActivity extends AppCompatActivity
                 {
                     mIsExternalPlayer = true;
                     if (log.isDebugEnabled())
-                        log.debug("detectExternalPlayerMode: Nova launched as external player by {} " +
-                                  "(hasExternalIndicators={})",
+                        log.debug("detectExternalPlayerMode: Nova launched as external player by {} "
+                                      + "(hasExternalIndicators={})",
                                   mCallingPackage, hasExternalIndicators);
                 }
             }
@@ -6267,8 +6267,8 @@ public class PlayerActivity extends AppCompatActivity
             int nbTrack = vMetadata.getAudioTrackNb();
 
             if (log.isDebugEnabled())
-                log.debug("onAudioMetadataUpdated: newAudio: {}  mVideoInfo.audioTrack: {}  firstTimeUpdated: {}  " +
-                          "nbTrack: {}",
+                log.debug("onAudioMetadataUpdated: newAudio: {}  mVideoInfo.audioTrack: {}  firstTimeUpdated: {}  "
+                              + "nbTrack: {}",
                           newAudioTrack, mVideoInfo.audioTrack, firstTimeUpdated, nbTrack);
 
             mAudioInfoController.clear();
@@ -6313,8 +6313,8 @@ public class PlayerActivity extends AppCompatActivity
             final boolean firstTimeCalled = mSubtitleInfoController.getTrackCount() == 0;
 
             if (log.isDebugEnabled())
-                log.debug("onSubtitleMetadataUpdated: newSubtitle: {}, mVideoInfo.subtitleTrack: {}, " +
-                          "firstTimeCalled: {}, nbTrack: {}",
+                log.debug("onSubtitleMetadataUpdated: newSubtitle: {}, mVideoInfo.subtitleTrack: {}, "
+                              + "firstTimeCalled: {}, nbTrack: {}",
                           newSubtitleTrack, mVideoInfo.subtitleTrack, firstTimeCalled, nbTrack);
 
             mSubtitleInfoController.clear();
@@ -6340,14 +6340,14 @@ public class PlayerActivity extends AppCompatActivity
                         lang =
                             getSubLanguageFromSubPathAndVideoPath(mContext, track.path, vMetadata.getFile().getPath());
                         if (log.isDebugEnabled())
-                            log.debug("onSubtitleMetadataUpdated: extsub name={}, path={}, videoPath={}, " +
-                                      "isExternal={}, langFromPath={}",
+                            log.debug("onSubtitleMetadataUpdated: extsub name={}, path={}, videoPath={}, "
+                                          + "isExternal={}, langFromPath={}",
                                       track.name, track.path, vMetadata.getFile().getPath(), track.isExternal, lang);
                         if (lang != null)
                         {
                             if (log.isDebugEnabled())
-                                log.debug("onSubtitleMetadataUpdated: extsub name might not be null add track name " +
-                                          "with lang={}",
+                                log.debug("onSubtitleMetadataUpdated: extsub name might not be null add track name "
+                                              + "with lang={}",
                                           lang);
                             mSubtitleInfoController.addTrack(lang, true);
                         }
@@ -6362,8 +6362,8 @@ public class PlayerActivity extends AppCompatActivity
                     {
                         // internal subtitle get name from name
                         if (log.isDebugEnabled())
-                            log.debug("onSubtitleMetadataUpdated: intsub add track name with name={} replacing " +
-                                      "language code in {}, disposition={}",
+                            log.debug("onSubtitleMetadataUpdated: intsub add track name with name={} replacing "
+                                          + "language code in {}, disposition={}",
                                       track.name, track.language, track.disposition);
                         String format = VideoUtils.getSubtitleFormatLabel(mContext, track.format);
                         mSubtitleInfoController.addTrack(
