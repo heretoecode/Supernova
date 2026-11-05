@@ -26,4 +26,21 @@ it pass.
 - PreviewScanLifecycleTest > localMetadataQueueReportsActualServiceAcceptance — java.lang.AssertionError at PreviewScanLifecycleTest.java:125
 - PreviewScanLifecycleTest > metadataQueueDistinguishesAcceptedNullAndRestrictedStarts — java.lang.AssertionError at PreviewScanLifecycleTest.java:250
 
+**Added after conformance run 42046189841 (on `9c4c6a3d1`, 5 Nov 2026).** The hang is fixed and the run completes
+(36 min). These new failures are also in your areas:
+
+- AudioTrackSelectionPolicyTest (all 14 tests) and TrackSelectionTest > testCsvTrackSelectionSuite — NPE at
+  `PlayerService.onAudioMetadataUpdated` line 3078 (`mPreferences` is null when the tests build the service; added
+  with the audio_output diagnostics in `9757306f1`).
+- FirstPlayHelpRemovalTest > bothControllerLayoutsLackNovaHelpEvenForFreshPreferences — InflateException
+  (UnsupportedOperationException in `TypedArray.getDimensionPixelSize`, RelativeLayout params) at line 27: inflating
+  the controller layouts outside a themed context.
+- ThumbnailDiskCacheTest (3 tests: restartRebuilds…, lruCapEvicts…, manualWatchedCleanup…) — fails in
+  `ThumbnailDiskCache.<init>` / `writeIndex` (line 141).
+- LargeLogicalBackupTest > actualExporterRetainsEveryMatchAndPreviousBackupForOwnersDefaultSelection — IOException
+  from `MediaMatchInventory.validatePhysical` line 164 via `LogicalBackupExporter.preparePrivate`.
+
+Claude fixed its own two (the Skip test, a lint error in `PlayerActivity`) and removed the obsolete Diagnostic Level
+test (the level was dropped as approved).
+
 Hand back as before: a line in `docs/codex/HANDOVER.md` and a report in `docs/codex/reports/`.

@@ -172,28 +172,6 @@ public class SettingsShieldNavigationTest {
     }
 
     @Test
-    public void diagnosticLevelDefaultsToCurrentDetailedBehaviorAndRespondsToChanges() {
-        Application app = RuntimeEnvironment.getApplication();
-        Thread.UncaughtExceptionHandler previous = Thread.getDefaultUncaughtExceptionHandler();
-        try {
-            Diagnostics.install(app);
-            assertTrue((Boolean) ReflectionHelpers.getStaticField(Diagnostics.class, "qa"));
-            ListPreference level = settings.findPreference(Diagnostics.LEVEL);
-            assertNotNull(level);
-            assertEquals("qa", level.getValue());
-            level.setValue("normal");
-            settle();
-            assertFalse((Boolean) ReflectionHelpers.getStaticField(Diagnostics.class, "qa"));
-            level.setValue("qa");
-            settle();
-            assertTrue((Boolean) ReflectionHelpers.getStaticField(Diagnostics.class, "qa"));
-        } finally {
-            Diagnostics.setEnabled(app, false);
-            Thread.setDefaultUncaughtExceptionHandler(previous);
-        }
-    }
-
-    @Test
     @Config(qualifiers = "w640dp-h360dp-land-mdpi")
     public void compactBackupKeepsTwoColumnsWithinThePhysicalViewport() {
         backupLandingKeepsTwoColumnsAndTwoVerticalActions();
