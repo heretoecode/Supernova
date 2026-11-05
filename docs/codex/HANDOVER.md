@@ -1,3 +1,12 @@
+# 0.156 Part B incremental hand-back — 2026-11-05
+
+Part B ready at `87c0fb23d`, after Part A `2d46bf90a`, on `codex/0155-code-2026-11-04`.
+Read `reports/2026-11-05-0156-code-part-B.md` and the Part B section of
+`findings/0156-ui-hooks.md`. Eight host JUnit tests pass; Android/Shield validation
+remains Claude's. New timeline, episode, picture, subtitle preview, sleep/card,
+series-track and bar-key APIs are documented there. Codex continues with Part C.
+GitHub cleanup remains parked.
+
 # 0.156 incremental hand-back — 2026-11-05
 
 Part A ready at `9569fe99d` (includes scan patch `dfde2850e`), on `codex/0155-code-2026-11-04`.

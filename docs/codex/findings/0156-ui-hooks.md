@@ -34,3 +34,54 @@ actual failure is not proven by source review. The patch fixes known provider-ow
 root scheduling, deferred metadata handoff, and cross-process overlap. Capture a new
 report after integration to identify any remaining root-resolution/listing/database
 failure. Do not describe the historical source-specific cause as confirmed.
+
+## Part B
+
+- Bar/cards/time bubble: `PlayerActivity.previewParts(embeddedChapters, durationMs)`
+  returns `PlaybackParts`; use `parts()` and `partAt(positionMs)`. Re-query when the
+  existing chapter or IntroDB provider callbacks update. Both file and verified
+  ChaptersDB starts participate; the older `previewChapters` API remains for old HUD callers.
+- Episodes: `PlayerService.previewSeasonEpisodes()` returns immutable items with
+  title, episode number, still URI, media URI/ID, duration, watched and resume fields.
+  `previewAdjacentEpisode(1)` is the next playable file (including across seasons).
+  These consume the existing in-memory library snapshot; absent snapshot means empty
+  until the normal library loader supplies it. Hidden rows are excluded regardless
+  of the Library's show-hidden display preference.
+- Pictures: `new PartPictures(timeline, episodeStill, frameSource, pictureReady)`;
+  display `pictures()` immediately. Each starts with the episode still and requests
+  a frame at start + 2 seconds (clamped inside very short parts). Close when switching
+  media/closing the strip. Part D's SeekThumbnails supplies `FrameSource`.
+- Subtitle position: use `SubtitleManager.getVerticalPosition()` and
+  `setVerticalPosition(percent)` (0..90, step 5). The setter saves the new key itself.
+  Default is 5. Do not write a new percentage into the old KEY_VPOS on Settings;
+  use `SubtitleVerticalPosition.save(prefs, percent)` and restore the manager.
+  Migration retains an exact legacy pixel calculation until the first explicit
+  adjustment. Settings reset must remove both new keys (they are in STYLE_KEYS).
+- Appearance focus: `manager.setAppearancePreview(true)` suppresses the real track,
+  even when currently None. Request `appearanceSample(localizedText, canvasWidth,
+  canvasHeight)` after each style change and place that bitmap on the screen.
+  `setAppearancePreview(false)` on leaving the appearance section or closing restores
+  the selected track. Delay is excluded. This is a Java sample using current colors,
+  family, size, outline, shadow, background and position; compare custom libass font
+  substitution on Shield. PiP and appearance suppression compose independently.
+- PiP actions and subtitle suppression are wired in PlayerActivity. Existing Play,
+  Pause and Restore labels/resources are reused. OK/Enter requests full screen when
+  Android delivers that key to the Activity; system interception/Shield menu behavior
+  needs device confirmation. Reopening another Supernova Activity brings PlayerActivity
+  forward, preserving the original playback intent rather than starting a new media item.
+- Sleep: `PlayerService.playbackLimits().setTimer(Timer.MINUTES_30 / MINUTES_60 /
+  MINUTES_90 / END_OF_EPISODE / OFF)`. Query `timer()` and `remainingMs()`; -1 means
+  episode end. Add/remove a `Consumer<PlaybackLimits.Event>` for card updates.
+  STILL_WATCHING opens the card; call `answerStillWatching(true/false)` for its buttons.
+  The next episode is held while asking; unanswered means STOP at 60 seconds.
+  Keys `still_watching_enabled=true`, `still_watching_episodes=3`; sleep starts Off
+  each playback service session and is not restored as a running wall-clock timer.
+- Series switch: `PlayerActivity.seriesTrackChoicesEnabled()` /
+  `setSeriesTrackChoicesEnabled(boolean)`; default off per series to preserve existing
+  behavior. Enabling snapshots the chosen descriptions; successful manual choices are
+  remembered. PlayerService matches descriptions when metadata enumerates the next file.
+- Bar OK: call `PlayerController.handleBarPlayPause(event)` **only with the bar focused**.
+  It toggles on initial down and consumes repeats/releases, leaving arrows untouched.
+  No other part of Claude's remote scheme was changed.
+- NOVA overlay show code, includes, layout and its translated menu-tip strings are gone.
+  Old animation/drawable assets are left to their owner; GitHub cleanup remains parked.
