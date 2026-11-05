@@ -38,6 +38,9 @@ final class CustomiseHomeEditor {
     private Row selected, draft, moving;
     private List<Row> moveOriginal;
     private TextView hint;
+    private TextView summary;
+    private View listPage;
+    private View editorPage;
     private boolean dismissed;
     private Runnable releaseBackdrop = () -> {
     };
@@ -55,7 +58,11 @@ final class CustomiseHomeEditor {
         screen.setTag("home.editor");
         screen.setPadding(dp(18), dp(16), dp(18), dp(16));
         screen.setBackground(MenuFoundation.surface(context, false));
+        // Approved 0.156 (customise-home/01-04): a side panel on the right over a live, dimmed Home; pages drill in
+        // within the panel (row list, then the row's settings with Back at the top).
         TextView heading = MenuFoundation.text(context, "Customise Home", 23);
+        summary = MenuFoundation.text(context, "", 13);
+        summary.setTextColor(MenuFoundation.SECONDARY);
 
         hint = MenuFoundation.text(context, "OK to move a row · Right to edit · Back to return", 12);
         hint.setTextColor(MenuFoundation.SECONDARY);
@@ -66,8 +73,10 @@ final class CustomiseHomeEditor {
         LinearLayout left = column();
         left.setClipChildren(true);
         left.addView(heading);
+        left.addView(summary);
         left.addView(hint);
-        columns.addView(left, new LinearLayout.LayoutParams(0, -1, .37f));
+        columns.addView(left, new LinearLayout.LayoutParams(0, -1, 1));
+        listPage = left;
         ScrollView rows = new ScrollView(context);
         rows.setFillViewport(true);
         rows.setClipToPadding(true);
@@ -84,9 +93,10 @@ final class CustomiseHomeEditor {
         editor.setPadding(dp(16), dp(10), dp(16), dp(10));
         editor.setBackground(MenuFoundation.surface(context, true));
         viewport.addView(editor);
-        LinearLayout.LayoutParams right = new LinearLayout.LayoutParams(0, -1, .63f);
-        right.leftMargin = dp(18);
+        LinearLayout.LayoutParams right = new LinearLayout.LayoutParams(0, -1, 1);
         columns.addView(viewport, right);
+        editorPage = viewport;
+        viewport.setVisibility(View.GONE);
         selected = model.rows.get(0);
         renderRows();
         renderEditor();
@@ -101,6 +111,11 @@ final class CustomiseHomeEditor {
                 return true;
             if (moving != null) {
                 finishMove(false);
+                return true;
+            }
+            // Back from a saved row's settings returns to the list; an unfinished new row still asks first.
+            if (editorPage.getVisibility() == View.VISIBLE && (draft == null || selected != draft)) {
+                showList();
                 return true;
             }
             requestExit();
@@ -123,9 +138,9 @@ final class CustomiseHomeEditor {
         dialog.show();
         Window window = dialog.getWindow();
         window.setBackgroundDrawableResource(android.R.color.transparent);
-        window.setDimAmount(.58f);
-        window.setLayout(
-            Math.min(dp(900), TvLayout.safeWidth(context)), Math.min(dp(468), TvLayout.safeHeight(context)));
+        window.setDimAmount(.35f);
+        window.setGravity(Gravity.END | Gravity.TOP);
+        window.setLayout(Math.min(dp(PANEL_WIDTH_DP), TvLayout.safeWidth(context)), TvLayout.safeHeight(context));
         if (Build.VERSION.SDK_INT >= 31) {
             window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
             WindowManager.LayoutParams blur = window.getAttributes();
@@ -133,6 +148,46 @@ final class CustomiseHomeEditor {
             window.setAttributes(blur);
         }
         bodies.get(0).requestFocus();
+    }
+
+    static final int PANEL_WIDTH_DP = 380;
+
+    private void showEditor() {
+        listPage.setVisibility(View.GONE);
+        editorPage.setVisibility(View.VISIBLE);
+    }
+
+    private void showList() {
+        editorPage.setVisibility(View.GONE);
+        listPage.setVisibility(View.VISIBLE);
+        View body = selected == null ? null : list.findViewWithTag(selected.id);
+        if (body != null)
+            body.requestFocus();
+        else if (!bodies.isEmpty())
+            bodies.get(0).requestFocus();
+    }
+
+    /** "Built-in · unfinished films and next episodes" or "Your row · Films · Crime · 15". */
+    private String rowLine(Row row) {
+        if (row.custom())
+            return row.name.isEmpty() ? "Your row · not saved yet" : "Your row";
+        switch (row.id) {
+            case "continue":
+                return "Built-in · unfinished films and next episodes";
+            case "recent":
+                return "Built-in · newest in your library";
+            case "watchnext":
+                return "Built-in · titles you saved for later";
+            case "trending":
+            case "popular":
+                return "Built-in · in your library";
+            case "watched":
+                return "Built-in · what you finished last";
+            case "similar":
+                return "Built-in · similar titles in your library";
+            default:
+                return "Built-in";
+        }
     }
 
     private LinearLayout column() {
@@ -169,8 +224,12 @@ final class CustomiseHomeEditor {
             line.setClipChildren(false);
             line.setClipToPadding(false);
             String name = row.name.isEmpty() ? "New Row" : shortLabel(row);
+            String label = name + "  ·  " + (row.visible ? "Shown" : "Hidden") + "\n" + rowLine(row);
             TextView body =
-                MenuFoundation.control(context, name, PreviewHomeRows.iconName(row), () -> startOrPlace(row));
+                MenuFoundation.control(context, label, PreviewHomeRows.iconName(row), () -> startOrPlace(row));
+            body.setSingleLine(false);
+            body.setMaxLines(2);
+            body.setAlpha(row.visible ? 1f : .55f);
             body.setTag(row.id);
             body.setContentDescription(name + ", OK to reorder");
             Drawable grip = new PreviewIcon("grip");
@@ -182,7 +241,8 @@ final class CustomiseHomeEditor {
             });
             line.addView(body, new LinearLayout.LayoutParams(0, -2, 1));
             bodies.add(body);
-            TextView eye = MenuFoundation.control(context, "", row.visible ? "eye" : "eye-off", () -> {
+            TextView eye = MenuFoundation.control(context, row.visible ? "Hide" : "Show",
+                                                  row.visible ? "eye-off" : "eye", () -> {
                 row.visible = !row.visible;
                 if (row != draft)
                     committed();
@@ -197,7 +257,7 @@ final class CustomiseHomeEditor {
                 if (focused)
                     select(row);
             });
-            LinearLayout.LayoutParams eyeSize = new LinearLayout.LayoutParams(dp(44), -2);
+            LinearLayout.LayoutParams eyeSize = new LinearLayout.LayoutParams(-2, -2);
             eyeSize.leftMargin = dp(10);
             line.addView(eye, eyeSize);
             eyes.add(eye);
@@ -208,7 +268,12 @@ final class CustomiseHomeEditor {
             size.bottomMargin = dp(8);
             list.addView(line, size);
         }
-        TextView create = MenuFoundation.control(context, "Create Row", "plus", () -> {
+        int shown = 0;
+        for (Row row : model.rows)
+            if (row.visible)
+                shown++;
+        summary.setText(model.rows.size() + " rows · " + shown + " shown");
+        TextView create = MenuFoundation.control(context, "Add row", "plus", () -> {
             if (draft != null) {
                 selected = draft;
                 renderEditor();
@@ -361,6 +426,7 @@ final class CustomiseHomeEditor {
     }
 
     private void firstField() {
+        showEditor();
         View name = editor.findViewWithTag("home.editor.name");
         if (name != null)
             name.requestFocus();
@@ -642,11 +708,8 @@ final class CustomiseHomeEditor {
                 if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
                     if (index > 0 && sameLine(fields.get(index - 1), view))
                         fields.get(index - 1).requestFocus();
-                    else {
-                        View eye = screen.findViewWithTag(selected.id + ":visibility");
-                        if (eye != null)
-                            eye.requestFocus();
-                    }
+                    else
+                        showList();
                     return true;
                 }
                 if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
