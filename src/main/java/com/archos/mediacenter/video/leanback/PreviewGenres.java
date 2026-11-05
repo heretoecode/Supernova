@@ -131,13 +131,14 @@ public final class PreviewGenres {
                 line(c, 4, 21, 19, 3, 21, 3, 21, 6, 6, 21);
                 line(c, 4, 13, 11, 20);
             } else if (kind.equals("action & adventure")) {
-                line(c, 2, 22, 10, 6, 17, 22, 2, 22);
-                line(c, 14, 16, 22, 3, 22, 8, 17, 18);
-                line(c, 13, 13, 20, 18);
+                // Approved icon set v2 (customise-home/06): a mountain with a flag.
+                line(c, 2, 21, 9, 9, 13, 15, 16, 11, 22, 21, 2, 21);
+                line(c, 9, 9, 9, 3, 14, 4.5f, 9, 6);
             } else if (kind.equals("adventure")) {
-                line(c, 2, 21, 10, 5, 16, 21, 2, 21);
-                line(c, 13, 15, 18, 7, 23, 21, 16, 21);
-                line(c, 10, 5, 10, 1, 16, 3, 10, 5);
+                // v2: a compass, so it no longer copies Action & Adventure.
+                c.drawCircle(12, 12, 9, paint);
+                line(c, 15.5f, 8.5f, 13.5f, 13.5f, 8.5f, 15.5f, 10.5f, 10.5f, 15.5f, 8.5f);
+                c.drawPoint(12, 12, paint);
             } else if (kind.equals("animation")) {
                 line(c, 5, 17, 17, 3, 21, 7, 9, 21, 5, 21, 5, 17);
                 line(c, 14, 6, 18, 10);
@@ -204,7 +205,8 @@ public final class PreviewGenres {
                 c.restore();
                 c.drawPoint(3, 3, paint);
             } else if (kind.equals("thriller")) {
-                line(c, 14, 2, 5, 13, 12, 13, 10, 22, 20, 10, 13, 10, 14, 2);
+                // v2: a pulse line (the lightning bolt read as "electric").
+                line(c, 2, 13, 7, 13, 9.5f, 7, 13, 19, 15.5f, 11, 17, 13, 22, 13);
             } else if (kind.equals("war & politics")) {
                 line(c, 2, 8, 12, 2, 22, 8, 2, 8);
                 line(c, 3, 22, 21, 22);
@@ -226,20 +228,125 @@ public final class PreviewGenres {
                 line(c, 2, 12, 7, 6, 17, 6, 22, 12, 17, 18, 7, 18, 2, 12);
                 c.drawCircle(12, 12, 3, paint);
             } else if (kind.equals("soap")) {
-                c.drawCircle(8, 15, 6, paint);
-                c.drawCircle(17, 7, 4, paint);
-                c.drawCircle(18, 19, 2, paint);
+                // v2: a heart in a speech bubble (the bubbles read as washing-up).
+                line(c, 4, 4, 20, 4, 21, 5, 21, 15, 20, 16, 10, 16, 5, 20, 5, 16, 4, 16, 3, 15, 3, 5, 4, 4);
+                heart(c, 12, 13.5f, 4);
             } else if (kind.equals("news")) {
                 c.drawRect(2, 3, 22, 21, paint);
                 c.drawRect(5, 7, 11, 13, paint);
                 line(c, 14, 7, 19, 7);
                 line(c, 14, 12, 19, 12);
                 line(c, 5, 17, 19, 17);
-            } else {
+            } else if (!drawMore(c)) {
                 c.drawRoundRect(2, 5, 22, 19, 2, 2, paint);
                 line(c, 9, 8, 16, 12, 9, 16, 9, 8);
             }
             c.restore();
+        }
+
+        private void heart(Canvas c, float cx, float bottom, float size) {
+            Path heart = new Path();
+            heart.moveTo(cx, bottom);
+            heart.cubicTo(cx - size * 1.6f, bottom - size, cx - size, bottom - size * 2.2f, cx, bottom - size * 1.3f);
+            heart.cubicTo(cx + size, bottom - size * 2.2f, cx + size * 1.6f, bottom - size, cx, bottom);
+            c.drawPath(heart, paint);
+        }
+
+        /** Genres added in icon set v2 (approved 4 Nov 2026, customise-home/06). */
+        private boolean drawMore(Canvas c) {
+            switch (kind) {
+            case "tv movie":
+                c.drawRoundRect(2, 4, 22, 17, 2, 2, paint);
+                line(c, 8, 21, 16, 21);
+                line(c, 10, 7.5f, 15, 10.5f, 10, 13.5f, 10, 7.5f);
+                return true;
+            case "anime":
+                line(c, 12, 2, 14.2f, 8.3f, 21, 9, 15.7f, 13, 17.6f, 19.6f, 12, 16, 6.4f, 19.6f, 8.3f, 13, 3, 9,
+                     9.8f, 8.3f, 12, 2);
+                c.drawPoint(10, 10.5f, paint);
+                c.drawPoint(14, 10.5f, paint);
+                return true;
+            case "biography":
+                c.drawRoundRect(3, 4, 21, 20, 2, 2, paint);
+                c.drawCircle(8.5f, 10, 2.2f, paint);
+                line(c, 5, 16.5f, 6, 14.5f, 11, 14.5f, 12, 16.5f);
+                line(c, 14, 9, 18, 9);
+                line(c, 14, 12, 18, 12);
+                line(c, 14, 15, 17, 15);
+                return true;
+            case "disaster":
+                line(c, 2, 21, 9, 10, 15, 10, 22, 21, 2, 21);
+                line(c, 9, 10, 10.5f, 12.5f, 12, 10.5f, 13.5f, 12.5f, 15, 10);
+                line(c, 12, 7, 12, 3);
+                line(c, 8.5f, 7.5f, 6.5f, 4.5f);
+                line(c, 15.5f, 7.5f, 17.5f, 4.5f);
+                return true;
+            case "game show":
+                c.drawRoundRect(4, 13, 20, 21, 2, 2, paint);
+                c.drawArc(7, 6, 17, 16, 180, 180, false, paint);
+                line(c, 12, 2, 12, 4);
+                line(c, 5, 5, 6.5f, 6.5f);
+                line(c, 19, 5, 17.5f, 6.5f);
+                return true;
+            case "holiday":
+                c.drawRoundRect(3, 9, 21, 21, 1, 1, paint);
+                line(c, 2, 9, 22, 9);
+                line(c, 12, 9, 12, 21);
+                c.drawOval(7, 4.5f, 12, 8.5f, paint);
+                c.drawOval(12, 4.5f, 17, 8.5f, paint);
+                return true;
+            case "martial arts":
+                line(c, 2, 12, 22, 12);
+                line(c, 9, 12, 6, 21);
+                line(c, 15, 12, 18, 21);
+                c.drawArc(9, 8.5f, 15, 15.5f, 180, 180, false, paint);
+                return true;
+            case "mini-series":
+                c.drawRoundRect(2, 8, 16, 19, 1.5f, 1.5f, paint);
+                line(c, 5, 5, 18, 5, 18, 16);
+                line(c, 8, 2, 21, 2, 21, 13);
+                return true;
+            case "musical":
+                c.drawArc(-3, 3, 6, 21, -90, 180, false, paint);
+                c.drawArc(18, 3, 27, 21, 90, 180, false, paint);
+                line(c, 3, 3, 21, 3);
+                line(c, 12, 8, 12, 15);
+                c.drawCircle(10.2f, 15.6f, 1.8f, paint);
+                line(c, 12, 8, 15, 9);
+                return true;
+            case "short":
+                c.drawCircle(12, 13, 8, paint);
+                line(c, 12, 13, 12, 9);
+                line(c, 10, 2, 14, 2);
+                line(c, 12, 2, 12, 5);
+                line(c, 18.5f, 6.5f, 20, 5);
+                return true;
+            case "sport":
+            case "sports":
+                c.drawCircle(12, 12, 9.5f, paint);
+                line(c, 12, 7.5f, 16.3f, 10.6f, 14.6f, 15.6f, 9.4f, 15.6f, 7.7f, 10.6f, 12, 7.5f);
+                line(c, 12, 2.5f, 12, 7.5f);
+                line(c, 21.4f, 10, 16.3f, 10.6f);
+                line(c, 17.8f, 19.5f, 14.6f, 15.6f);
+                line(c, 6.2f, 19.5f, 9.4f, 15.6f);
+                line(c, 2.6f, 10, 7.7f, 10.6f);
+                return true;
+            case "superhero":
+                Path mask = new Path();
+                mask.moveTo(2, 9);
+                mask.cubicTo(5, 7, 8, 7, 12, 9);
+                mask.cubicTo(16, 7, 19, 7, 22, 9);
+                mask.cubicTo(21.5f, 14, 19, 16, 16, 16);
+                mask.cubicTo(14, 16, 13, 14.5f, 12, 13);
+                mask.cubicTo(11, 14.5f, 10, 16, 8, 16);
+                mask.cubicTo(5, 16, 2.5f, 14, 2, 9);
+                c.drawPath(mask, paint);
+                c.drawCircle(7.5f, 11, 1.3f, paint);
+                c.drawCircle(16.5f, 11, 1.3f, paint);
+                return true;
+            default:
+                return false;
+            }
         }
 
         @Override
