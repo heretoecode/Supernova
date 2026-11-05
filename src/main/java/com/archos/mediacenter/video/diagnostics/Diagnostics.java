@@ -94,7 +94,7 @@ public final class Diagnostics
     private static final AtomicLong ROUTINE_REJECTED = new AtomicLong(), IMPORTANT_REJECTED = new AtomicLong();
     private static final Map<String, Long> incidentCounts = new HashMap<>();
     private static String incidentId = "";
-    private static volatile boolean qa;
+    private static long storageGeneration;
     private static volatile long freezeUntil, mainAck = SystemClock.elapsedRealtime();
     private static volatile int foreground;
     private static final Set<String> COVERAGE = java.util.Collections.synchronizedSet(new TreeSet<>());
@@ -355,7 +355,7 @@ public final class Diagnostics
         context = app.getApplicationContext();
         enabled = PreferenceManager.getDefaultSharedPreferences(app).getBoolean(KEY, defaultEnabled());
         installTransportReads();
-        qa = "qa".equals(PreferenceManager.getDefaultSharedPreferences(app).getString(LEVEL, "qa"));
+        PreferenceManager.getDefaultSharedPreferences(app).getString(LEVEL, "qa");
         if (!heartbeatInstalled)
         {
             heartbeatInstalled = true;
@@ -690,6 +690,36 @@ public final class Diagnostics
             }
     }
 
+    /** Clear saved evidence while retaining the logging on/off preference. Queued old events are fenced. */
+    public static synchronized void clearAll(Context caller) throws IOException
+    {
+        context = caller.getApplicationContext();
+        synchronized (LOCK)
+        {
+            storageGeneration++;
+            File directory = directory();
+            for (File file : DiagnosticArchive.files(directory))
+            {
+                if (file.exists() && !file.delete())
+                    throw new IOException("Diagnostic cleanup unavailable");
+            }
+            FLIGHT.clear();
+            COVERAGE.clear();
+            incidentCounts.clear();
+            activeIncident = null;
+            incidentId = "";
+            captureUntil = freezeUntil = 0;
+            captureIncident = null;
+            captureFlight = null;
+            caller.getSharedPreferences("supernova_diagnostic_session", Context.MODE_PRIVATE)
+                .edit()
+                .remove("latest_manual_reference")
+                .remove("latest_manual_category")
+                .remove("latest_manual_time")
+                .apply();
+        }
+    }
+
     private static void removeLogs(File file)
     {
         File[] children = file.listFiles();
@@ -875,22 +905,28 @@ public final class Diagnostics
             DiagnosticFlightRecorder.Capture retainedCapture = captureFlight;
             DiagnosticFlightRecorder.Capture failureFlight =
                 anomaly ? (retainedCapture == null ? FLIGHT.capture(now) : retainedCapture) : null;
+            final long generation = storageGeneration;
             final String postTarget = !anomaly && now < captureUntil ? captureIncident : null;
             if (important(event) || anomaly)
                 IMPORTANT.execute(() -> {
-                    if (!enabled)
-                        return;
-                    writeImportant(line);
-                    if (anomaly)
-                        freeze(event, failureState, failureFlight);
+                    synchronized (Diagnostics.class)
+                    {
+                        if (!enabled || generation != storageGeneration)
+                            return;
+                        writeImportant(line);
+                        if (anomaly)
+                            freeze(event, failureState, failureFlight);
+                    }
                 });
             WORK.execute(() -> {
-                if (!enabled)
-                    return;
-                if (qa || !detail)
+                synchronized (LOCK)
+                {
+                    if (!enabled || generation != storageGeneration)
+                        return;
                     write(line, session);
-                if (postTarget != null)
-                    appendPostFlight(postTarget, line);
+                    if (postTarget != null)
+                        appendPostFlight(postTarget, line);
+                }
             });
         }
         catch (RuntimeException ignored)
@@ -952,7 +988,7 @@ public final class Diagnostics
     private static final SharedPreferences.OnSharedPreferenceChangeListener CONFIG = (prefs, key) ->
     {
         if (LEVEL.equals(key))
-            qa = "qa".equals(prefs.getString(LEVEL, "qa"));
+            prefs.getString(LEVEL, "qa");
         if (key != null && Arrays
                                .asList(LEVEL, "try_new_ui", "remember_library_views", "hide_watched",
                                        "sort_ignore_articles", "preview_accent41", "streaming_enabled")
@@ -1030,7 +1066,7 @@ public final class Diagnostics
                   WORK.getQueue().size(), "dropped", DROPPED.get(), "routine_queue_rejected", ROUTINE_REJECTED.get(),
                   "important_queue_rejected", IMPORTANT_REJECTED.get(), "write_errors", WRITE_ERRORS.get(),
                   "retention_pruned_bytes", RETENTION_PRUNED_BYTES.get(), "flight_bytes", FLIGHT.bytes(), "level",
-                  qa ? "QA_SOAK" : "NORMAL");
+                  "FULL");
             lastCpu = cpu;
             if (trendSamples >= 6)
             {
@@ -1346,8 +1382,8 @@ public final class Diagnostics
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         String confirmation = "Reference: " + id + "\nCategory: " + category +
                               "\nTime: " + format.format(new Date(time)) +
-                              ("\n\nUse this reference with your screenshot or video. Export Diagnostic Report to " +
-                               "preserve the evidence.");
+                              ("\n\nUse this reference with your screenshot or video. Export Diagnostic Report to "
+                               + "preserve the evidence.");
         Bitmap qr = null;
         try
         {
@@ -1392,8 +1428,8 @@ public final class Diagnostics
         // Remove complete locations, not merely their user-info/query components.
         String clean = value.replaceAll("(?i)[a-z][a-z0-9+.-]*://[^\\s]+", "[location]")
                            .replaceAll("(?:^|\\s)/[^\\s]+", " [path]")
-                           .replaceAll("(?i)(bearer\\s+|(?:password|passwd|token|secret|api[_-]?key|authorization|" +
-                                       "cookie)\\s*[:=]\\s*)[^\\s,;]+",
+                           .replaceAll("(?i)(bearer\\s+|(?:password|passwd|token|secret|api[_-]?key|authorization|"
+                                           + "cookie)\\s*[:=]\\s*)[^\\s,;]+",
                                        "[redacted]");
         return clean.length() > 4096 ? clean.substring(0, 4096) : clean;
     }
@@ -1631,15 +1667,14 @@ public final class Diagnostics
                 }
                 entry(zip, "decoders.txt", decoders.toString().getBytes(StandardCharsets.UTF_8));
                 entry(zip, "README.txt",
-                      ("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and " +
-                       "playback session IDs.\nLogging defaults to " +
-                       (defaultEnabled() ? "on" : "off") +
-                       (". Disabling stops new events, not export of existing bounded logs.\nException messages, " +
-                        "credentials, raw media paths, headers and preference dumps are excluded.\nRoutine streams " +
-                        "are size-bounded. Important events use a separate queue and up to seven-day, daily " +
-                        "size-bounded retention; all recorder-owned files share an 8 MiB cap. Oldest files may be " +
-                        "removed sooner. Copies are deduplicated by process/sequence in the summaries.\nNo native " +
-                        "decoder A/V clock precision or physical Shield playback success is implied.\n"))
+                      ("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and "
+                       + "playback session IDs.\nLogging defaults to " + (defaultEnabled() ? "on" : "off") +
+                       (". Disabling stops new events, not export of existing bounded logs.\nException messages, "
+                        + "credentials, raw media paths, headers and preference dumps are excluded.\nRoutine streams "
+                        + "are size-bounded. Important events use a separate queue and up to seven-day, daily "
+                        + "size-bounded retention; all recorder-owned files share an 8 MiB cap. Oldest files may be "
+                        + "removed sooner. Copies are deduplicated by process/sequence in the summaries.\nNo native "
+                        + "decoder A/V clock precision or physical Shield playback success is implied.\n"))
                           .getBytes(StandardCharsets.UTF_8));
                 entry(zip, "summary.txt", summary(snapshot).getBytes(StandardCharsets.UTF_8));
                 entry(zip, "manifest.json",
@@ -1651,8 +1686,8 @@ public final class Diagnostics
                 }
                 entry(zip, "coverage.txt",
                       ("Completeness: PARTIAL\nObserved event types: " + coverage +
-                       ("\nNative decoder and every direct network transport are not fully observable. No " +
-                        "app-quality score.\nDropped: ") +
+                       ("\nNative decoder and every direct network transport are not fully observable. No "
+                        + "app-quality score.\nDropped: ") +
                        DROPPED.get() + "; write errors: " + WRITE_ERRORS.get() + "; queued: " + WORK.getQueue().size() +
                        "; retention-pruned bytes: " + RETENTION_PRUNED_BYTES.get() + "\n")
                           .getBytes(StandardCharsets.UTF_8));
