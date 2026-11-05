@@ -46,6 +46,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - Every artwork card (posters, hero, Home rows, Details tabs, player strip) has a faint 28% white edge; the focused
     one grows with a solid white ring. No blue caption bars.
   - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
+  - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
+    carousel dots. Tabs: the open one in a grey chip, the focused one filled white.
   - Missing information says "Unknown"; rows are never removed.
 
 ## Who does what

@@ -451,9 +451,10 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Heroes 1776×820 (about 2.17:1), with the row and tabs peeking at the bottom.
   - The open tab is shown as a chip (as chosen options), matching the global chip rule; focused, it is filled
     white.
-- Open questions:
-  - Hero size as round 2?
-  - The open tab: chip (round 2) or white underline (round 1)?
+- **APPROVED (owner, 5 Nov 2026), round 2 (`hero-tabs/v2-01`–`v2-04`):**
+  - Home and Details heroes the same size, 1776×820 at 1080p (about 2.17:1), the row and tabs peeking below.
+  - Home carousel dots.
+  - The open tab as a grey chip; the focused tab filled white.
 
 ## 10. Legacy NOVA clean-out (owner, 5 Nov 2026)
 - Owner: unused legacy NOVA code (like the first-play blue help box) shouldn't be in the app; can Codex find and
