@@ -51,7 +51,7 @@ public final class PreviewUtilityBackground extends Drawable {
     }
 
     /**
-     * Render tool only: a colour (hex RRGGBB) the comparison renders use in place of the normal one.
+     * Render tool only: a colour (hex RRGGBB or AARRGGBB) or a number the comparison renders use in place of the normal one.
      * Never read on a device.
      */
     public static int previewColour(String name, int normal) {
@@ -60,7 +60,10 @@ public final class PreviewUtilityBackground extends Drawable {
         String value = System.getenv(name);
         if (value == null || value.isEmpty())
             return normal;
-        return 0xff000000 | Integer.parseInt(value, 16);
+        long parsed = Long.parseLong(value, 16);
+        if (value.length() <= 6)
+            parsed |= 0xff000000L;
+        return (int) parsed;
     }
 
     @Override

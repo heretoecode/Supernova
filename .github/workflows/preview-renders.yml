@@ -71,7 +71,7 @@ jobs:
           : > "$RUNNER_TEMP/test-exit"
           while read -r variant settings; do
             rm -rf build/reports/preview-ui build/test-results
-            unset SUPERNOVA_PREVIEW_BG SUPERNOVA_PREVIEW_TILE
+            unset SUPERNOVA_PREVIEW_BG SUPERNOVA_PREVIEW_TILE SUPERNOVA_PREVIEW_TILE_EDGE SUPERNOVA_PREVIEW_TILE_EDGE_PX
             for setting in $settings; do export "$setting"; done
             ./gradlew cleanTestNoamazonReleaseUnitTest testNoamazonReleaseUnitTest $filters -PfoundationVerify -PsupernovaQa \
               -Puniversal -Parm64only --no-daemon --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild \

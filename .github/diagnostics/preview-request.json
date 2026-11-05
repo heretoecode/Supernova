@@ -1,13 +1,16 @@
 {
- "purpose": "Network & Files: background and tile shade options",
+ "purpose": "Network & Files: options 2 and 4 with stronger tile outlines",
  "tests": [
   "com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus"
  ],
  "variants": {
-  "today": {},
-  "flat": {"SUPERNOVA_PREVIEW_BG": "16181c"},
-  "option1": {"SUPERNOVA_PREVIEW_BG": "0e1013"},
-  "option2": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b"},
-  "option3": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24"}
+  "option2-edge28": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b",
+                     "SUPERNOVA_PREVIEW_TILE_EDGE": "47ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
+  "option2-edge40": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b",
+                     "SUPERNOVA_PREVIEW_TILE_EDGE": "66ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
+  "option3-edge28": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24",
+                     "SUPERNOVA_PREVIEW_TILE_EDGE": "47ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"},
+  "option3-edge40": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24",
+                     "SUPERNOVA_PREVIEW_TILE_EDGE": "66ffffff", "SUPERNOVA_PREVIEW_TILE_EDGE_PX": "2"}
  }
 }
