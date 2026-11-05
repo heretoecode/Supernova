@@ -1,13 +1,20 @@
 package com.archos.mediacenter.video.streaming.putio;
 
-import android.content.*;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediaprovider.ArchosMediaFile;
-import com.archos.mediaprovider.video.*;
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
+import com.archos.mediaprovider.video.VideoStore;
+import com.archos.mediaprovider.video.VideoStoreInternal;
 import com.archos.mediascraper.AutoScrapeService;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /** Native scanned-file ingestion; never synthesises scraper matches or edits playback history. */
 final class PutioLibraryBridge implements PutioSync.Library

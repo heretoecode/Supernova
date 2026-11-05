@@ -1,6 +1,11 @@
 package com.archos.mediacenter.video.streaming.putio;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /** Traversal is complete only after every folder and cursor succeeds; never writes library state. */
 public final class PutioSnapshotReader
