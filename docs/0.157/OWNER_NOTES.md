@@ -487,3 +487,17 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Automatic changes pause while the owner is on the hero and never happen while a row below is focused.
   - Follows the system "remove animations" setting (instant swap, still no flash).
 - Pairs with the 0.157 hero size change (1776×820) and the dots.
+
+## 12. Details tabs pop in (owner, 5 Nov 2026)
+- Owner: opening a film, the Details tab is there at once but the other tab titles "load in" one by one; it does not
+  look seamless or professional. Wants the Details page to feel instant.
+- Cause (`PreviewMoviePage.rebuildTabs`): a tab is only added once its content has arrived. Extras waits for the
+  trailer list, More Like This for the recommendations; each arrival clears and rebuilds the whole tab row, so the
+  titles appear one at a time and the row shifts.
+- Proposal (waiting for the owner's go-ahead):
+  - The full set of tabs is drawn with the page: Details, Extras, Seasons & Episodes (series only), More Like This.
+    The row never rebuilds or moves after that.
+  - Content fills in inside its tab. While it loads, a quiet "Loading…" line (or card shapes); if nothing is found,
+    "No extras found" / "Nothing similar found". Matches the global rule: missing things say so, rows are never
+    removed.
+  - Optional: what has been fetched before is kept, so going back to a title shows its tabs filled straight away.
