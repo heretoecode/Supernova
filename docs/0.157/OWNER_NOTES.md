@@ -357,3 +357,14 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
       - One shared value, so it can be tuned in one place after the Shield check.
     - Also investigate in 0.157: the owner's Edit Page photo looks far more see-through than its code's 97%; find the
       cause so 90% really shows as 90% on the Shield.
+
+## 5. The global panel look on Playback Settings and Edit Page (owner, 5 Nov 2026)
+- The owner asked whether the new look (90% `#16181C`, no outline, filled-white focus) applies to Playback Settings
+  and Edit Page too, given their in-row controls. **Yes, it is global.**
+- On a focused row everything switches to dark ink, so nothing is white on white:
+  - Labels and icons black.
+  - The chosen value of a choice or stepper in dark Supernova blue `#0B57D0`, bold; other choices dark grey.
+  - Arrows black.
+  - Switches: on = dark blue track with a white knob; off = light grey track with a dark knob.
+  - Colour dots keep their colours; the chosen one gets a black ring.
+- Mock-ups `docs/design/proposals/panel-focus/01`–`03`. **Status:** waiting for the owner.
