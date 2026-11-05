@@ -174,3 +174,7 @@ Friendly names are copied from shortcut/storage metadata on a worker. A source-l
 `LibraryScanController.sourceName(indexedRootUri, friendlyName)`; progress immediately uses the cached name.
 No raw exception message or credential is included in failureReason. Stop does not interrupt a database applyBatch;
 the existing atomic provider transaction finishes or rolls back before the worker releases its ownership.
+
+## Screen data item 2 — recent scans
+
+Code `d59573789`. `LibraryScanController.recentScans()` returns the newest ten finished source scans as an immutable memory-only list (initially empty until asynchronous load). Each ScanProgress includes start UTC time, observed duration, source label, added/removed/updated counts and plain failureReason. -1 means unknown. Native local/network terminal events now carry committed removal counts. Entries include cancelled/not-started requests; duplicate terminal broadcasts do not add duplicates. The atomic bounded file is under noBackupFilesDir, outside existing logical backup categories, so no backup category was expanded.
