@@ -18,7 +18,7 @@ Google Drive was searched via the Google Drive skill. The existing Supernova fol
 - [Settings technical specification](SETTINGS_TECHNICAL_SPEC.md): reusable model/view contract, components, persistence/listeners, dependencies, exceptional flows, known issues, implementation order and acceptance matrix.
 - [165-row disposition ledger](SETTINGS_DISPOSITION.md) and [machine-readable evidence](SETTINGS_VERIFICATION.json): original audit fields preserved with destination, disposition, declaration/default/reference checks and runtime test status.
 - [Asset manifest](ASSET_MANIFEST.md): canonical background/resource equality and hashes, real typography/palette/icon sources, exact icon gaps and missing capture evidence.
-- [Reproducible verification](verify.py): offline, no build. `python docs/investigations/handover-2026-10-27/verify.py` regenerates both ledgers.
+- [Reproducible verification](verify.py): offline, no build. `python docs/archive/early-planning/investigations/handover-2026-10-27/verify.py` regenerates both ledgers.
 
 ## Verified versus outstanding
 

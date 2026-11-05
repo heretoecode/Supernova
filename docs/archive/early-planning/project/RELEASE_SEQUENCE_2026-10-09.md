@@ -4,9 +4,9 @@
 
 ## Stage A — Current fixes-only corrective release (first)
 - Accepted baseline: Preview 4.1.7 Final, source `7efb4195639205a6526281491af40c0dab1776b7`.
-- Frozen source of truth: `docs/qa/4.1.7-final-shield-qa.md` (35 entries). Active work branch `codex/post-4.1.7-shield-fixes`.
+- Frozen source of truth: `docs/archive/early-planning/qa/4.1.7-final-shield-qa.md` (35 entries). Active work branch `codex/post-4.1.7-shield-fixes`.
 - Deliverable: correction APK using existing package/signing lineage; physical Shield regression verification and conformance against all frozen items. **No branding/identity, backup rewrite, diagnostics expansion or broad new features.**
-- Newly observed Advanced/Diagnostics focus defect overlaps existing Settings hierarchy items 22–23, but explicit nested Diagnostics solution is recorded separately in `docs/qa/POST_4_1_7_ADDITIONAL_SHIELD_FINDINGS_2026-10-09.md`; user **approved inclusion on 9 October 2026**, now recorded in the frozen QA document's dated scope-addition section; no source change has yet been made. MobLand playback interruption requires diagnostic evidence before assigning cause/fix.
+- Newly observed Advanced/Diagnostics focus defect overlaps existing Settings hierarchy items 22–23, but explicit nested Diagnostics solution is recorded separately in `docs/archive/early-planning/qa/POST_4_1_7_ADDITIONAL_SHIELD_FINDINGS_2026-10-09.md`; user **approved inclusion on 9 October 2026**, now recorded in the frozen QA document's dated scope-addition section; no source change has yet been made. MobLand playback interruption requires diagnostic evidence before assigning cause/fix.
 - Gate to next stage: user accepts corrective build/QA status, unresolved blockers recorded, branch/release status documented. Do not invent an exact completion date or imply current Codex work is complete.
 
 ## Stage B — Foundation Release (second)

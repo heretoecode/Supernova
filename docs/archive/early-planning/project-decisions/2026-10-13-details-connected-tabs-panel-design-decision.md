@@ -27,7 +27,7 @@ Other tabs (Extras, Seasons & Episodes, More Like This) may contain interactive 
 ## Content preservation and scope
 The framed panel is shared tab chrome; this **does not constitute approval of a redesigned Details information layout**. Preserve existing content requirements: full synopsis within Details tab, up to eight cast and eight crew, Key Information, Reception, Technical Information. Owner's genuine Shield photograph of Dune: Part Two illustrates cramped/truncated current UI but is not stored in GitHub. Do not delete fields, hide technical information, reduce text to unreadable sizes, add scrolling or focusable Details elements to satisfy layout constraints without owner discussion.
 
-The comprehensive forensic source/UI audit has been commissioned in `docs/project-decisions/2026-10-13-details-tab-forensic-source-and-ui-audit-brief.md`. Owner intends to **wait for the currently running Codex backup/restore investigation to finish**, then give Codex the Details audit prompt, not start another Codex instance. Audit first, then source-grounded visual design and separate approval; no coding/build/merge authorisation from this document.
+The comprehensive forensic source/UI audit has been commissioned in `docs/archive/early-planning/project-decisions/2026-10-13-details-tab-forensic-source-and-ui-audit-brief.md`. Owner intends to **wait for the currently running Codex backup/restore investigation to finish**, then give Codex the Details audit prompt, not start another Codex instance. Audit first, then source-grounded visual design and separate approval; no coding/build/merge authorisation from this document.
 
 ## Implementation verification criteria for a later approved task
 1. Active tab outline is continuous with content frame, including top border interruption/raised tab shape, sides and bottom.
@@ -39,4 +39,4 @@ The comprehensive forensic source/UI audit has been commissioned in `docs/projec
 7. Movie and TV variants, missing tabs, different resolutions and scaling remain usable without clipped outlines or inaccessible controls.
 8. Do not imply the source audit or final UI implementation has already occurred.
 
-Related decisions: `docs/project-decisions/2026-10-13-supernova-0139-consolidated-handover-scope.md`; `docs/project-decisions/CURRENT_ROADMAP_AND_DECISIONS.md`.
+Related decisions: `docs/archive/early-planning/project-decisions/2026-10-13-supernova-0139-consolidated-handover-scope.md`; `docs/archive/early-planning/project-decisions/CURRENT_ROADMAP_AND_DECISIONS.md`.

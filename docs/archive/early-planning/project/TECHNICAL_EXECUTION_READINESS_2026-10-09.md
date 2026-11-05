@@ -33,10 +33,10 @@ Foundation Release is identity/maintenance-only: unique package ID, new signing 
 ## 5. Scope and documentation guardrails
 - Current Shield fixes-only branch remains untouched; avoid mixing fixes, new features, identity/signing changes or speculative refactors.
 - Wider Settings, Network & Files and full installed-APK walkthroughs are deliberately set aside.
-- Read `PROJECT_STATUS.md`, `docs/qa/4.1.7-final-shield-qa.md`, `docs/design/README.md`, `docs/design/BACKUP_RESTORE.md`, `docs/design/ABOUT_SETTINGS.md`, `docs/project/CURRENT_CHAT_DECISIONS_2026-10-08.md` before starting implementation.
+- Read `PROJECT_STATUS.md`, `docs/archive/early-planning/qa/4.1.7-final-shield-qa.md`, `docs/design/README.md`, `docs/design/BACKUP_RESTORE.md`, `docs/design/ABOUT_SETTINGS.md`, `docs/archive/early-planning/project/CURRENT_CHAT_DECISIONS_2026-10-08.md` before starting implementation.
 - The user's diagnostic ZIP is not yet provided. **Remind the user conversationally before the next Codex handover; no scheduled reminder.**
 
 ## 9 October follow-up: release sequencing and new QA evidence
-- Release gates now explicit in `docs/project/RELEASE_SEQUENCE_2026-10-09.md`: fixes-only first, Foundation second, independent approved-feature releases afterwards. Read-only audits and isolated preparation need not wait.
-- Video-reviewed Advanced Diagnostics access defect is recorded in `docs/design/SETTINGS.md` and `docs/qa/POST_4_1_7_ADDITIONAL_SHIELD_FINDINGS_2026-10-09.md`. Source review identifies direct diagnostic preferences in Advanced and nested compatibility categories only; D-pad entry selects nested category list, leaving diagnostic controls stranded. Preserve current export action; create Diagnostics child and Advanced intro per user-approved targeted correction, **only when scope-authorised**.
+- Release gates now explicit in `docs/archive/early-planning/project/RELEASE_SEQUENCE_2026-10-09.md`: fixes-only first, Foundation second, independent approved-feature releases afterwards. Read-only audits and isolated preparation need not wait.
+- Video-reviewed Advanced Diagnostics access defect is recorded in `docs/design/SETTINGS.md` and `docs/archive/early-planning/qa/POST_4_1_7_ADDITIONAL_SHIELD_FINDINGS_2026-10-09.md`. Source review identifies direct diagnostic preferences in Advanced and nested compatibility categories only; D-pad entry selects nested category list, leaving diagnostic controls stranded. Preserve current export action; create Diagnostics child and Advanced intro per user-approved targeted correction, **only when scope-authorised**.
 - MobLand playback reprepare is a separate unconfirmed incident; diagnostic ZIP still awaited.

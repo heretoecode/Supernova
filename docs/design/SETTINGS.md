@@ -26,13 +26,13 @@ Use a national flag only for a true locale such as en-GB. Generic language uses 
 Shield QA requires the intended three-panel structure and nested/indented navigation to be corrected where physical presentation diverges.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` UI-058–060 and UI-009; 4.1.2 audit/handover; 4.1.4 release notes; current Shield QA.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` UI-058–060 and UI-009; 4.1.2 audit/handover; 4.1.4 release notes; current Shield QA.
 
 
 ## Superseded historical category structure
 An older 13-category foundation (General; Home & Discovery; Playback; Video & Audio; Subtitles; Library; Sources & Storage; Appearance; Trakt; Streaming; Integrations; Advanced; About) is **SUPERSEDED** by the current 12-category rail above. Do not restore it by accident. Historical “Remember library view preferences” semantics remain valid: Grid/List, Filters, Sort and Order are remembered separately for Movies and TV Shows.
 
-See `docs/project/HISTORY_RECONCILIATION.md` for the historical lineage.
+See `docs/archive/early-planning/project/HISTORY_RECONCILIATION.md` for the historical lineage.
 
 ## 9 October 2026 — observed Advanced / Diagnostics focus defect (video evidence)
 **Physical user video:** `IMG_4760.mp4` (20.7 s, portrait recording of Shield TV). Video reviewed in chat; **not committed to GitHub**, so retain this written observation rather than claiming the video is in repo. Hovering Advanced shows Diagnostic Logging, Diagnostic detail, Issues Digest, Report a Problem, Show Latest Reference and Export Diagnostic Report in the middle workspace. OK/RIGHT on Advanced expands Video Compatibility, Audio Compatibility, Network Compatibility, Subtitle Compatibility in an indented rail and moves focus there. There is no obvious usable path to the displayed diagnostic controls; Export Diagnostic Report is effectively inaccessible from this route.

@@ -103,7 +103,7 @@ Original bytes are not known to be recoverable as a complete set. Identifiers ar
 Older workflow used Google Drive “Nova video player preview”, timestamped handover ZIPs and “latest handover wins”. That was valid at the time but is superseded by GitHub as durable project memory and current repository authority. Old handovers remain evidence, not the current control plane.
 
 ## Future-product discussions recovered
-The durable future authorities are `docs/design/PARKED_FUTURE.md` and `docs/project/DECISIONS_AND_ROADMAP.md`. Historical discussion also explored architecture/language modernisation and AI-assisted product capabilities. Those conversations did **not** establish enough final product/design detail to authorise implementation. They must remain exploration/NEEDS DECISION unless separately activated and specified.
+The durable future authorities are `docs/design/PARKED_FUTURE.md` and `docs/archive/early-planning/project/DECISIONS_AND_ROADMAP.md`. Historical discussion also explored architecture/language modernisation and AI-assisted product capabilities. Those conversations did **not** establish enough final product/design detail to authorise implementation. They must remain exploration/NEEDS DECISION unless separately activated and specified.
 
 This includes:
 - selective Kotlin/Jetpack Compose modernisation versus Java/XML;

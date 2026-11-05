@@ -21,6 +21,6 @@ Authority: User confirmed “yes, let's promote this to the next version” afte
 - This is **planning approval only**. No Codex handover, implementation, build, branch merge or protected-branch modification is authorised.
 
 ## Relationship to other decisions
-- Supersedes the **Library Health — PARKED** entries in `docs/project/DECISIONS_AND_ROADMAP.md`, `docs/design/RECENT_PRODUCT_DECISIONS_2026-10-08.md` and `docs/project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md` **for 0.135 scope only**; other parked features remain parked.
+- Supersedes the **Library Health — PARKED** entries in `docs/archive/early-planning/project/DECISIONS_AND_ROADMAP.md`, `docs/design/RECENT_PRODUCT_DECISIONS_2026-10-08.md` and `docs/archive/early-planning/project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md` **for 0.135 scope only**; other parked features remain parked.
 - The user-confirmed 0.135 checkbox register remains authoritative for the separate nine unselected checklist items: [0.135 user checklist](SUPERNOVA_0.135_USER_CHECKLIST_SCOPE_2026-10-09.md).
 - [Playback HUD design](../design/PLAYBACK_HUD_0.135_APPROVED_2026-10-10.md) and [Custom Library Page approval](SUPERNOVA_0.135_CUSTOM_LIBRARY_PAGE_APPROVAL_2026-10-09.md) are separate confirmed 0.135 decisions.

@@ -27,4 +27,4 @@ Historical approved blue/black utility background remains evidence for Search/Se
 National flags only for actual locales. Generic languages use neutral language/globe iconography; avoid implying nationality.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` UI-001–004, UI-007, UI-009; 4.1.2 UI audit; current Shield QA.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` UI-001–004, UI-007, UI-009; 4.1.2 UI audit; current Shield QA.

@@ -8,7 +8,7 @@
 - Exact-source remote preservation commit: `b71d3bc8274ff135c4fbeda1df57b7a08f9cbcea`.
 - Both commits have root tree `16c5a3628363a8eb811f260232cd7c020250e673`. This verifies the complete tracked tree, including paths, file modes and blob contents, not merely selected files.
 - All 40 changed files against Preview 4.1.5 were additionally checked by path and blob hash through the remote compare API (960 insertions, 281 deletions).
-- The original implementation report is preserved at `docs/preview-next/IMPLEMENTATION.md`; its pre-preservation status statements are historical, superseded by this report.
+- The original implementation report is preserved at `docs/archive/previews/preview-next/IMPLEMENTATION.md`; its pre-preservation status statements are historical, superseded by this report.
 - The original local commit and branch have not been discarded or reset. Unrelated working-tree deletions were not staged or uploaded.
 - `Supernova_01ba8175.bundle` preserves the original commit and passes `git bundle verify`. This incremental bundle requires baseline commit `77b2617ad1e48b7a7a85ba28463de0961af5ba4d`, which already exists in the canonical repository. A durable downloadable copy was saved separately.
 

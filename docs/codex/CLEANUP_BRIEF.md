@@ -67,7 +67,7 @@ Delete every file in `.github/workflows/` **except** these 12: `preview-renders.
 
 ## Section 4 — old screenshots in `docs/` (one commit per folder: `Remove old images from docs/<folder>`)
 Delete files ending `.png`, `.jpg`, `.jpeg`, `.webp`, `.gif`, `.mp4`, `.mov` (any case) under
-`docs/0.138` … `docs/0.149`, `docs/next-version` and `docs/details-2026-10-27`. **Keep every other file**
+`docs/0.138` … `docs/0.149`, `docs/next-version` and `docs/archive/early-planning/details-2026-10-27`. **Keep every other file**
 (all `.md`, `.json`, `.svg`, `.html`, `.txt`, …), and keep `docs/design`, `docs/foundation` and every other
 folder untouched apart from link fixes.
 Then, in any `.md`/`.html` file anywhere under `docs/`, replace each link or `<img>` that pointed to a deleted

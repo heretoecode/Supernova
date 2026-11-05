@@ -31,7 +31,7 @@ Inventory evidence includes declaration lines plus literal/constant consumer lea
 | `docs/design/ABOUT_SETTINGS.md` | 52 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/docs/design/ABOUT_SETTINGS.md) |
 | `docs/design/GLOBAL_VISUAL_SYSTEM.md` | 30 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/docs/design/GLOBAL_VISUAL_SYSTEM.md) |
 | `docs/design/SETTINGS.md` | 42 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/docs/design/SETTINGS.md) |
-| `docs/preview-4.1.7/REQUIREMENTS.md` | 1226 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/docs/preview-4.1.7/REQUIREMENTS.md) |
+| `docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` | 1226 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/docs/preview-4.1.7/REQUIREMENTS.md) |
 | `res/xml/preferences_more_leanback.xml` | 21 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/res/xml/preferences_more_leanback.xml) |
 | `res/xml/preferences_video.xml` | 726 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/res/xml/preferences_video.xml) |
 | `src/main/java/com/archos/mediacenter/video/CustomApplication.java` | 1534 | [source](https://github.com/heretoecode/Supernova/blob/b347707defdbf2ab3ae83d920ba9fa7af3936220/src/main/java/com/archos/mediacenter/video/CustomApplication.java) |

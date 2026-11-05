@@ -46,7 +46,7 @@ Use the same Details quality/component as local. Where a provider/platform genui
 Returning to Movies/TV must restore the originating item and library state. Nested Details content should likewise restore the originating control where still valid.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` UI-022–031; `docs/archive/root-history/NOVA_CODEX_RETURN_HANDOVER_4.1.2.md`; current Shield QA.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` UI-022–031; `docs/archive/root-history/NOVA_CODEX_RETURN_HANDOVER_4.1.2.md`; current Shield QA.
 
 ## Historical approved visual references recovered from Project Library
 A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered during the preservation pass. It is historical evidence; later written 4.1.7 decisions override conflicts. It records these mock-up identifiers so the visual lineage is not lost:

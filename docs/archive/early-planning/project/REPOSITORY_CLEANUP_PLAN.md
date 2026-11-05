@@ -18,7 +18,7 @@ This record documents how the repository is being converted into durable project
 - root-level `NOVA_*` handovers, UI audits and older Shield/screenshot evidence;
 - older Preview 3.x/4.0/4.1.x records under `docs/`;
 - earlier build/recovery/diagnostic records;
-- `docs/preview-next/` as historical forward-looking work;
+- `docs/archive/previews/preview-next/` as historical forward-looking work;
 - legacy/upstream `doc/` technical documentation.
 
 These records are **SUPERSEDED as current-state entry points**, not necessarily incorrect historical evidence.

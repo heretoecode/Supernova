@@ -6,9 +6,9 @@ The historical renderer writes `0140-reference-fixture-*` filenames; copies here
 
 | Viewport / text scale | Before | After | Portrait diameter before → after |
 |---|---|---|---|
-| 1280×720 / 1 | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/before/before-1280-1.0.png) | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/after/after-1280-1.0.png) | 40 → 40 px |
-| 1920×1080 / 1 | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/before/before-1920-1.0.png) | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/after/after-1920-1.0.png) | 64 → 63 px |
-| 1920×1080 / 1.5 | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/before/before-1920-1.5.png) | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/after/after-1920-1.5.png) | 48 → 50 px |
-| 3840×2160 / 1 | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/before/before-3840-1.0.png) | (image removed 2026-11; in git history: docs/details-2026-10-27/visuals/after/after-3840-1.0.png) | 128 → 127 px |
+| 1280×720 / 1 | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/before/before-1280-1.0.png) | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/after/after-1280-1.0.png) | 40 → 40 px |
+| 1920×1080 / 1 | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/before/before-1920-1.0.png) | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/after/after-1920-1.0.png) | 64 → 63 px |
+| 1920×1080 / 1.5 | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/before/before-1920-1.5.png) | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/after/after-1920-1.5.png) | 48 → 50 px |
+| 3840×2160 / 1 | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/before/before-3840-1.0.png) | (image removed 2026-11; in git history: docs/archive/early-planning/details-2026-10-27/visuals/after/after-3840-1.0.png) | 128 → 127 px |
 
 Default-size portrait differences of one physical pixel reflect weighted-layout rounding; enlarged-text portraits retain the useful-size assertion. All original visibility, text-fit and non-clipping assertions remain enabled. See [physical Shield QA](SHIELD_QA.md) for real artwork, timing, review content and D-pad acceptance. No user recording reproduction or device performance gain is inferred from static renders.

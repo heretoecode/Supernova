@@ -595,10 +595,10 @@ All E/T references below are immutable GitHub code/evidence links. Ranges identi
 | T01 | [src/test/java/com/archos/mediacenter/video/player/PreviewPlaybackMenusTest.java][T01] |
 | T02 | [src/test/java/com/archos/mediacenter/video/player/Supernova138PlaybackTest.java][T02] |
 | D01 | [docs/Future Development/01 Under Discussion/FD-002-playback-hud-redesign.md][D01] |
-| D02 | [docs/qa/4.1.7-final-shield-qa.md][D02] |
-| D03 | [docs/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md][D03] |
+| D02 | [docs/archive/early-planning/qa/4.1.7-final-shield-qa.md][D02] |
+| D03 | [docs/archive/early-planning/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md][D03] |
 | D04 | [docs/design/PLAYBACK_HUD_0.135_APPROVED_2026-10-10.md][D04] |
-| D05 | [docs/Releases/0.140-release-scope-and-codex-handover.md][D05] |
+| D05 | [docs/archive/early-planning/Releases/0.140-release-scope-and-codex-handover.md][D05] |
 
 [E01]: https://github.com/heretoecode/Supernova/blob/d173e8dd9ea41834118a32e240518d91e15e11d1/docs/0.139/CONTINUATION.md "docs/0.139/CONTINUATION.md"
 [E02]: https://github.com/heretoecode/Supernova/blob/a4841c1dbaac5e1037fb19f9f11882848b435e0b/res/layout/player_controller_experimental.xml#L1-L51 "res/layout/player_controller_experimental.xml:1–51"
@@ -666,10 +666,10 @@ All E/T references below are immutable GitHub code/evidence links. Ranges identi
 [T01]: https://github.com/heretoecode/Supernova/blob/a4841c1dbaac5e1037fb19f9f11882848b435e0b/src/test/java/com/archos/mediacenter/video/player/PreviewPlaybackMenusTest.java "src/test/java/com/archos/mediacenter/video/player/PreviewPlaybackMenusTest.java"
 [T02]: https://github.com/heretoecode/Supernova/blob/a4841c1dbaac5e1037fb19f9f11882848b435e0b/src/test/java/com/archos/mediacenter/video/player/Supernova138PlaybackTest.java "src/test/java/com/archos/mediacenter/video/player/Supernova138PlaybackTest.java"
 [D01]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/Future%20Development/01%20Under%20Discussion/FD-002-playback-hud-redesign.md "docs/Future Development/01 Under Discussion/FD-002-playback-hud-redesign.md"
-[D02]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/qa/4.1.7-final-shield-qa.md "docs/qa/4.1.7-final-shield-qa.md"
-[D03]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md "docs/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md"
+[D02]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/qa/4.1.7-final-shield-qa.md "docs/archive/early-planning/qa/4.1.7-final-shield-qa.md"
+[D03]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md "docs/archive/early-planning/project/QA_0137_PLAYBACK_HUD_SEEKBAR_FOCUS_AND_LAYOUT_2026-10-12.md"
 [D04]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/design/PLAYBACK_HUD_0.135_APPROVED_2026-10-10.md "docs/design/PLAYBACK_HUD_0.135_APPROVED_2026-10-10.md"
-[D05]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/Releases/0.140-release-scope-and-codex-handover.md "docs/Releases/0.140-release-scope-and-codex-handover.md"
+[D05]: https://github.com/heretoecode/Supernova/blob/71be45aace7c2f71b010848a2249c148595c9286/docs/Releases/0.140-release-scope-and-codex-handover.md "docs/archive/early-planning/Releases/0.140-release-scope-and-codex-handover.md"
 
 Additional pinpoint evidence:
 

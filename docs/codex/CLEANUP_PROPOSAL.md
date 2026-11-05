@@ -87,7 +87,7 @@ check protects them, and removing them needs that check redesigned (Claude, in a
 ## 4. Old screenshots and renders in `docs/` (about 110 MB of 145 MB)
 Tests and the build use only JSON/Markdown files in `docs/` — never the images — so all text stays.
 **Delete images (png/jpg/webp/gif/mp4) only, in:** `docs/0.138` … `docs/0.149` (about 89 MB),
-`docs/next-version` (14 MB), `docs/details-2026-10-27` (6 MB).
+`docs/next-version` (14 MB), `docs/archive/early-planning/details-2026-10-27` (6 MB).
 **Keep:** `docs/design` (the approved designs and current mock-ups), `docs/foundation`, every `.md`/`.json`.
 Where a Markdown file links to a deleted image, Codex replaces the link with
 `(image removed 2026-11; in git history)` rather than leaving a broken link.

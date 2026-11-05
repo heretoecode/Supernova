@@ -31,4 +31,4 @@ Current Shield corrections:
 Manual correction must preserve playback/watched state, row membership, physical file associations and versions where applicable. It must not preserve an incorrect identity merely to preserve its artwork.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` UI-020–021, matching requirements and UI-047–049; 4.1.2 handover/audit; 4.1.7 Shield QA.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` UI-020–021, matching requirements and UI-047–049; 4.1.2 handover/audit; 4.1.7 Shield QA.

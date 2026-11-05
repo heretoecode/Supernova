@@ -30,7 +30,7 @@ This directory is the repository's design-memory layer. A future developer/AI mu
 - [../project/GITHUB_DOCUMENTATION_CHECK_2026-10-09.md](../project/GITHUB_DOCUMENTATION_CHECK_2026-10-09.md) — current documentation consistency and outstanding execution checks.
 
 ## Latest recent-discussion closure register
-`docs/project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md` classifies recovered 7–9 October topics as approved, parked, superseded, engineering/QA or assigned to the three remaining walkthroughs. It explicitly flags unresolved compact Cast & Crew and playback submenu/More details for the installed-APK walkthrough rather than inventing approvals.
+`docs/archive/early-planning/project/RECENT_DISCUSSIONS_CLOSURE_REGISTER_2026-10-09.md` classifies recovered 7–9 October topics as approved, parked, superseded, engineering/QA or assigned to the three remaining walkthroughs. It explicitly flags unresolved compact Cast & Crew and playback submenu/More details for the installed-APK walkthrough rather than inventing approvals.
 
 ## Recovered historical design evidence
 The preservation pass reconciled current repository authority with older release/audit records and Project Library design records. Historical approved visual identifiers have been retained in relevant surface documents. Some original generated-image bytes are no longer available as a complete recoverable set; this is explicitly recorded rather than hidden.
@@ -38,7 +38,7 @@ The preservation pass reconciled current repository authority with older release
 Historical records also show that implementation agents for earlier previews inspected supplied approved/reference images (six in the 4.1.2 lineage; five in the 4.1.4 handover). Their implementation/audit results remain evidence even where the original image bytes are absent.
 
 ## Current coding boundary
-The active next development job remains the frozen **35-item fixes-only** Shield QA scope in `docs/qa/4.1.7-final-shield-qa.md`. Parked design work in this directory does not expand that scope. In particular, the parked Home exposed-card Featured redesign is not activated by being documented here.
+The active next development job remains the frozen **35-item fixes-only** Shield QA scope in `docs/archive/early-planning/qa/4.1.7-final-shield-qa.md`. Parked design work in this directory does not expand that scope. In particular, the parked Home exposed-card Featured redesign is not activated by being documented here.
 
 ## Repository self-containment standard
 A fresh developer/AI should be able to determine from GitHub:

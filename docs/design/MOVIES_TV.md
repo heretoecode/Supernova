@@ -57,7 +57,7 @@ A historical Shield defect caused some Movies posters to disappear after Scan Li
 4.1.7 Final Shield QA: vertical focused-row positioning; control-bar vertical alignment; exact Details return focus; artwork request/failure behaviour.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` UI-012–021; `docs/archive/root-history/NOVA_CODEX_RETURN_HANDOVER_4.1.2.md`; `docs/qa/4.1.7-final-shield-qa.md`.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` UI-012–021; `docs/archive/root-history/NOVA_CODEX_RETURN_HANDOVER_4.1.2.md`; `docs/archive/early-planning/qa/4.1.7-final-shield-qa.md`.
 
 ## Historical approved visual references recovered from Project Library
 A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered during the preservation pass. It is historical evidence; later written 4.1.7 decisions override conflicts. It records these mock-up identifiers so the visual lineage is not lost:
@@ -77,7 +77,7 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
 
 
-See `docs/project/HISTORY_RECONCILIATION.md` for recovered historical decisions and supersession context.
+See `docs/archive/early-planning/project/HISTORY_RECONCILIATION.md` for recovered historical decisions and supersession context.
 
 ## Later toolbar redesign — APPROVED design / NOT authorised fixes-only implementation
 **SUPERSEDES** the earlier Toolbar paragraph prescribing an underline/divider-only focus effect: controls are **always-visible subtle rounded outlined boxes** with icon + label and Supernova accent focus. Place the left cluster Filters, Sort, Order, List/Grid, Columns **below stats and above** the full-width divider; do not straddle the divider. Custom Library Page only: Edit at far right after generous spacing with the same outlined style; built-in Movies and TV pages do not show Edit. This is a later design approval, **not** evidence of a code change or permission to expand frozen fixes-only work. See `RECENT_PRODUCT_DECISIONS_2026-10-08.md`.

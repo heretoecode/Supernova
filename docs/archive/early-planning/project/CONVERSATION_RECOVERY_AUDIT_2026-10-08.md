@@ -1,10 +1,10 @@
 # Conversation recovery audit — 7–8 October 2026
 
 **Status: DOCUMENTATION RECOVERY COMMITTED TO MAIN; SOURCE-HISTORY COVERAGE LIMITED.**
-**Authority:** `PROJECT_STATUS.md` and the frozen `docs/qa/4.1.7-final-shield-qa.md` remain authoritative for implementation. All decisions here are planning records, not an instruction to start coding, change signing/version, merge branches or expand the fixes-only release.
+**Authority:** `PROJECT_STATUS.md` and the frozen `docs/archive/early-planning/qa/4.1.7-final-shield-qa.md` remain authoritative for implementation. All decisions here are planning records, not an instruction to start coding, change signing/version, merge branches or expand the fixes-only release.
 
 ## Scope and method
-Reviewed the recoverable project conversation context, including the recent 7–8 October dialogue and supplied summaries of earlier Supernova design discussions. Compared to `main` copies of `PROJECT_STATUS.md`, `docs/README.md`, `docs/design/{HOME,MOVIES_TV,DETAILS,PLAYBACK,SEARCH_MATCHING,NETWORK_FILES,SETTINGS,PARKED_FUTURE,BACKUP_RESTORE,RECENT_PRODUCT_DECISIONS_2026-10-08}.md`, `docs/project/{DECISIONS_AND_ROADMAP,PLANNING_RECONCILIATION_2026-10-08}.md`. Existing authoritative 4.1.7 QA and preview records remain protected; they were not edited. Verified three backup mock-up assets via direct GitHub file fetch.
+Reviewed the recoverable project conversation context, including the recent 7–8 October dialogue and supplied summaries of earlier Supernova design discussions. Compared to `main` copies of `PROJECT_STATUS.md`, `docs/README.md`, `docs/design/{HOME,MOVIES_TV,DETAILS,PLAYBACK,SEARCH_MATCHING,NETWORK_FILES,SETTINGS,PARKED_FUTURE,BACKUP_RESTORE,RECENT_PRODUCT_DECISIONS_2026-10-08}.md`, `docs/archive/early-planning/project/{DECISIONS_AND_ROADMAP,PLANNING_RECONCILIATION_2026-10-08}.md`. Existing authoritative 4.1.7 QA and preview records remain protected; they were not edited. Verified three backup mock-up assets via direct GitHub file fetch.
 
 **Limitations:** This environment does not expose every message of the historically oversized chat or the prior failed-response audit. A full verbatim audit of the entire chat, all original mock-ups and every earlier approval **cannot be certified**. The recovered content is the available conversation context and repository material; it is not proof of code implementation or physical Shield validation. Main and the separate `codex/post-4.1.7-shield-fixes` planning branch had diverged in documentation; changes below intentionally reconcile recoverable decisions into main without touching the active Codex branch.
 
@@ -22,8 +22,8 @@ Reviewed the recoverable project conversation context, including the recent 7–
 1. `docs/design/RECENT_PRODUCT_DECISIONS_2026-10-08.md` — recovered detailed approvals and boundaries; commit `b5814470209aa86269926111973de830b97fef67`.
 2. `docs/design/BACKUP_RESTORE.md` — backup compatibility and restore-guide requirement; commit `0f4e1ebe8249c5299dc5b376676a133353354d26`.
 3. `docs/design/MOVIES_TV.md` — later boxed-toolbar design supersession; commit `5bdc3654a57ebc2eed835f2a46847da7eb8597bb`.
-4. `docs/project/PLANNING_RECONCILIATION_2026-10-08.md` — links to recovered authoritative documents; commit `75984bfe2c9fb6061b5757f3b916ca3c5d958b36`.
-5. `docs/project/CONVERSATION_RECOVERY_AUDIT_2026-10-08.md` — this recovery record; its own commit is recorded by GitHub history for this path, as a file cannot know its own final commit SHA in advance.
+4. `docs/archive/early-planning/project/PLANNING_RECONCILIATION_2026-10-08.md` — links to recovered authoritative documents; commit `75984bfe2c9fb6061b5757f3b916ca3c5d958b36`.
+5. `docs/archive/early-planning/project/CONVERSATION_RECOVERY_AUDIT_2026-10-08.md` — this recovery record; its own commit is recorded by GitHub history for this path, as a file cannot know its own final commit SHA in advance.
 
 ## Verified mock-up references
 - `docs/design/approved-mockups/backup-restore/backup-restore-export-approved.png` — exists.

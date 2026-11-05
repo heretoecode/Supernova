@@ -59,6 +59,6 @@ AI concepts discussed included natural-language/smart search, richer discovery/r
 
 ## Historical reconciliation
 
-Read `docs/project/HISTORY_RECONCILIATION.md` for recovered older decisions, superseded designs, explicit rejections, visual provenance, scanning/focus invariants and historical workflow context that remain useful for interpreting the project.
+Read `docs/archive/early-planning/project/HISTORY_RECONCILIATION.md` for recovered older decisions, superseded designs, explicit rejections, visual provenance, scanning/focus invariants and historical workflow context that remain useful for interpreting the project.
 
 No item in the parked/future sections should be treated as permission to implement it during a fixes-only task.

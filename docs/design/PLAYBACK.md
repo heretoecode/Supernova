@@ -37,7 +37,7 @@ Shield defect: HUD colour/style state can be lost after leaving and returning. R
 Playback return to calling surfaces must restore originating focus where valid.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` playback requirements; Preview 4.1.2 handover/audit; Preview 4.1.4 release notes; `docs/qa/4.1.7-final-shield-qa.md`.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` playback requirements; Preview 4.1.2 handover/audit; Preview 4.1.4 release notes; `docs/archive/early-planning/qa/4.1.7-final-shield-qa.md`.
 
 ## Historical approved visual references recovered from Project Library
 A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered during the preservation pass. It is historical evidence; later written 4.1.7 decisions override conflicts. It records these mock-up identifiers so the visual lineage is not lost:
@@ -57,4 +57,4 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
 
 
-See `docs/project/HISTORY_RECONCILIATION.md` for older HUD concepts that are explicitly superseded by current physical-QA authority.
+See `docs/archive/early-planning/project/HISTORY_RECONCILIATION.md` for older HUD concepts that are explicitly superseded by current physical-QA authority.

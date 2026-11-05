@@ -2,7 +2,7 @@
 
 Ideas and decisions the owner wants to come back to. Check this list when planning each release.
 Gathered 4 Nov 2026 from this session and the older registers (`docs/Future Development/`, `docs/design/PARKED_FUTURE.md`,
-`docs/project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md`, `docs/design/CODEX_WORK_QUEUE_2026-10-27.md`).
+`docs/archive/early-planning/project-decisions/POST_0139_NON_MAINTENANCE_FEATURE_BACKLOG.md`, `docs/design/CODEX_WORK_QUEUE_2026-10-27.md`).
 Items already built or scheduled are left out (see the bottom of this file).
 
 ## Ratings without a personal OMDb key — added 4 Nov 2026
