@@ -66,16 +66,6 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 42. ✅ Remember audio/subtitle choices per series.
 43. ✅ Consistent empty states · ✅ focus memory everywhere.
 
-## Added 5 Nov 2026 (owner)
-46. ✅ Global panel look:
-    - Every pop-up, menu and side panel solid `#16181C` (no transparency, no outline).
-    - The focused row filled white with black text and icon.
-47. ✅ Details More menu:
-    - Restart only when there is a resume point.
-    - A proper icon for every entry.
-    - "Fix Match" (was Report Incorrect Match); Subtitles and Artwork as separate entries; Full Description.
-    - Mock-ups `docs/design/proposals/more-menu/`.
-
 ## Diagnostics (Codex brief `BRIEF_0156_THUMBS_DIAGNOSTICS.md`)
 44. ✅ Always full detail; reasons for every failure; real Android exit reasons; bigger log; playback, network and UI
     measurements; settings changes; clearer summary with top-20 errors.

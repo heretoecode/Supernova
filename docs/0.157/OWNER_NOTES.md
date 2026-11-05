@@ -5,8 +5,9 @@
 - Description in the hero card, with More › Full description (`hero-01`–`04`; polish when built).
 - More Like This from three sources (TMDB recommendations, TMDB similar, Trakt related).
 - Smooth logo transition.
-- Still open: Extras (Home row cards, `v3-03`, not yet commented on); colour vs monochrome service logos (colour used
-  in the approved More Like This).
+- Also for 0.157:
+  - The More menu fixes (section 4).
+  - The global panel look: solid `#16181C`, no outline, filled-white focus.
 
 Same rules as `docs/0.155/OWNER_NOTES.md`: each point is written down, mocked up, approved, then coded. Nothing here is
 approved yet.
@@ -345,4 +346,5 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
       - Every pop-up, menu and side panel is solid `#16181C` (100%, no transparency), no outline, soft shadow.
       - The focused row is filled white (`#F4F6FB`) with black text and icon (`#0B0D12`).
       - Replaces the 97% glass with a light edge, and the white outline focus box.
-      - Built into 0.156 (shared style), so it shows everywhere.
+      - **For 0.157** (owner, 5 Nov 2026), together with the More menu fixes; built into the shared style so it
+        shows everywhere.
