@@ -1223,6 +1223,76 @@ public final class PreviewPages extends FrameLayout {
             render("storage_changed");
     }
 
+    /**
+     * Approved empty page (0.156 #43, mock-up suggestions/07): one calm line, why the page is empty and one useful
+     * button. Rows and pages are never silently blank.
+     */
+    static final class EmptyPage {
+        final String reason;
+        final String button;
+        final String icon;
+        final Runnable action;
+
+        EmptyPage(String reason, String button, String icon, Runnable action) {
+            this.reason = reason;
+            this.button = button;
+            this.icon = icon;
+            this.action = action;
+        }
+
+        @Override
+        public String toString() {
+            return reason + "|" + button;
+        }
+    }
+
+    private boolean filtersActive() {
+        return !genres[tab].isEmpty() || years[tab] != 0 || !selectedYears[tab].isEmpty() || !providers[tab].isEmpty();
+    }
+
+    EmptyPage emptyPage() {
+        if (customLibrary != null && customEdit != null)
+            return new EmptyPage("No titles in your library match this page’s choices.", "Edit Page", "edit",
+                                 customEdit);
+        if (filtersActive())
+            return new EmptyPage(!providers[tab].isEmpty()
+                                     ? "Nothing in your library is known to be on the services you chose."
+                                     : "No titles match the filters you chose.",
+                                 "Clear filters", "close", () -> {
+                                     genres[tab] = "";
+                                     years[tab] = 0;
+                                     selectedYears[tab] = "";
+                                     providers[tab] = "";
+                                     render("filters_cleared");
+                                 });
+        return new EmptyPage(tab == 2 ? "Your library has no TV shows yet." : "Your library has no films yet.",
+                             "Open Network & Files", "network", () -> networkSection(""));
+    }
+
+    private void bindEmptyPage(LinearLayout v, String title, EmptyPage page) {
+        v.setOrientation(LinearLayout.VERTICAL);
+        v.setGravity(Gravity.CENTER_HORIZONTAL);
+        v.setPadding(0, dp(48), 0, dp(48));
+        v.setTag("library.empty");
+        ImageView icon = new ImageView(getContext());
+        icon.setImageDrawable(new PreviewIcon("empty"));
+        v.addView(icon, new LinearLayout.LayoutParams(dp(26), dp(26)));
+        TextView heading = text(title, 21);
+        heading.setTextColor(SupernovaStyle.TEXT);
+        heading.setGravity(Gravity.CENTER);
+        heading.setPadding(0, dp(12), 0, dp(6));
+        v.addView(heading);
+        TextView reason = text(page.reason, 13);
+        reason.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        reason.setGravity(Gravity.CENTER);
+        reason.setPadding(0, 0, 0, dp(14));
+        v.addView(reason);
+        TextView button = TvButton.create(getContext(), page.button, page.action, false);
+        PreviewIcon.apply(button, page.icon, 14);
+        button.setTag("library.empty.action");
+        v.addView(button, new LinearLayout.LayoutParams(-2, -2));
+    }
+
     private void header(String title, boolean controls) {
         cells.add(new Cell(HEADER, title, controls));
     }
@@ -1571,9 +1641,7 @@ public final class PreviewPages extends FrameLayout {
             if (customPlaceholder != null)
                 header(customPlaceholder, false);
             else if (loaded && entries.isEmpty())
-                header(providers[tab].isEmpty() ? "No matching titles"
-                                                : "No known matches in cached provider availability",
-                       false);
+                cells.add(new Cell(NOTICE, "Nothing on this page yet", emptyPage()));
         } else {
             cells.add(new Cell(NETWORK, "Network & Files", null));
         }
@@ -2240,6 +2308,9 @@ public final class PreviewPages extends FrameLayout {
             v.setOnClickListener(null);
             v.setBackground(null);
             v.setOrientation(LinearLayout.HORIZONTAL);
+            v.setGravity(Gravity.CENTER_VERTICAL);
+            if ("library.empty".equals(v.getTag()))
+                v.setTag(null);
             v.setPadding(0, dp(6), 0, dp(6));
             v.setLayoutParams(new RecyclerView.LayoutParams(-1, -2));
             if (tab == 0) {
@@ -2316,6 +2387,8 @@ public final class PreviewPages extends FrameLayout {
                         progress.postDelayed(this, 1000);
                     }
                 });
+            } else if (c.type == NOTICE && c.value instanceof EmptyPage) {
+                bindEmptyPage(v, c.title, (EmptyPage)c.value);
             } else if (c.type == NOTICE) {
                 v.setOrientation(LinearLayout.VERTICAL);
                 TextView title = text(c.title, 18);
