@@ -2,7 +2,7 @@ name: Preview renders (real Android views)
 # Runs only the requested Robolectric capture tests and publishes the PNGs they write to
 # build/reports/** onto the 'previews/claude' branch, so changes can be inspected visually
 # before any APK is built. No secrets, no APK, no signing. Optional "variants" in the request:
-# "normal" and/or "charcoal" (the comparison renders with the background drawn flat #16181C).
+# {"name": {"SUPERNOVA_PREVIEW_BG": "RRGGBB", "SUPERNOVA_PREVIEW_TILE": "RRGGBB"}} (render tool only).
 on:
   push:
     branches: [claude/supernova-github-access-yfhe89]
@@ -59,15 +59,23 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' > /dev/null
           cd nova/Video
           filters=$(python3 -c "import json;print(' '.join('--tests '+t for t in json.load(open('.github/diagnostics/preview-request.json'))['tests']))")
-          variants=$(python3 -c "import json;print(' '.join(json.load(open('.github/diagnostics/preview-request.json')).get('variants',['normal'])))")
+          python3 - > "$RUNNER_TEMP/variants" <<'PY'
+          import json
+          variants = json.load(open('.github/diagnostics/preview-request.json')).get('variants', {'normal': {}})
+          if isinstance(variants, list):
+              variants = {v: ({'SUPERNOVA_PREVIEW_BG': '16181c'} if v == 'charcoal' else {}) for v in variants}
+          for name, env in variants.items():
+              print(name, *[k + '=' + v for k, v in env.items()])
+          PY
           chmod +x gradlew
           : > "$RUNNER_TEMP/test-exit"
-          for variant in $variants; do
+          while read -r variant settings; do
             rm -rf build/reports/preview-ui build/test-results
-            if [ "$variant" = charcoal ]; then export SUPERNOVA_PREVIEW_FLAT=1; else unset SUPERNOVA_PREVIEW_FLAT; fi
+            unset SUPERNOVA_PREVIEW_BG SUPERNOVA_PREVIEW_TILE
+            for setting in $settings; do export "$setting"; done
             ./gradlew cleanTestNoamazonReleaseUnitTest testNoamazonReleaseUnitTest $filters -PfoundationVerify -PsupernovaQa \
               -Puniversal -Parm64only --no-daemon --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild \
-              > "$RUNNER_TEMP/gradle-$variant.log" 2>&1
+              > "$RUNNER_TEMP/gradle-$variant.log" 2>&1 < /dev/null
             echo "$variant exit=$?" >> "$RUNNER_TEMP/test-exit"
             grep -E "FAILED|tests completed|BUILD" "$RUNNER_TEMP/gradle-$variant.log" | tail -40
             grep -E "\.java:[0-9]+: error:" -A3 "$RUNNER_TEMP/gradle-$variant.log" | head -120 | tee -a "$RUNNER_TEMP/test-exit"
@@ -80,7 +88,7 @@ jobs:
           PY
             mkdir -p "$RUNNER_TEMP/previews/$variant"
             find build/reports -name '*.png' -exec cp {} "$RUNNER_TEMP/previews/$variant/" \; || true
-          done
+          done < "$RUNNER_TEMP/variants"
       - name: Publish renders to previews/claude
         env:
           SOURCE_SHA: ${{ github.sha }}

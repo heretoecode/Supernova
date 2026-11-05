@@ -1,8 +1,13 @@
 {
- "purpose": "Background comparison: Home and Movies on Space Black and on flat charcoal",
+ "purpose": "Network & Files: background and tile shade options",
  "tests": [
-  "com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus",
-  "com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest"
+  "com.archos.mediacenter.video.leanback.PreviewPagesTest.renderActualPagesAndCheckTabFocus"
  ],
- "variants": ["normal", "charcoal"]
+ "variants": {
+  "today": {},
+  "flat": {"SUPERNOVA_PREVIEW_BG": "16181c"},
+  "option1": {"SUPERNOVA_PREVIEW_BG": "0e1013"},
+  "option2": {"SUPERNOVA_PREVIEW_BG": "16181c", "SUPERNOVA_PREVIEW_TILE": "22252b"},
+  "option3": {"SUPERNOVA_PREVIEW_BG": "0e1013", "SUPERNOVA_PREVIEW_TILE": "1c1f24"}
+ }
 }

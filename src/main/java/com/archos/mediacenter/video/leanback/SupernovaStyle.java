@@ -88,6 +88,8 @@ public final class SupernovaStyle {
     public static StateListDrawable button(Context c, Surface surface) {
         float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
+        if (surface == Surface.TILE)
+            rest = PreviewUtilityBackground.previewColour("SUPERNOVA_PREVIEW_TILE", rest);
         int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
         StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, 0);

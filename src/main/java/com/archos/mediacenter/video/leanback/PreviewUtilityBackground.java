@@ -32,8 +32,9 @@ public final class PreviewUtilityBackground extends Drawable {
         Bitmap image =
             BuildConfig.FOUNDATION ? foundationImage : PreviewUtilityBackground.image;
         Rect b = getBounds();
-        if (flatPreview()) {
-            canvas.drawColor(0xff16181c);
+        int flat = previewColour("SUPERNOVA_PREVIEW_BG", 0);
+        if (flat != 0) {
+            canvas.drawColor(flat);
             return;
         }
         canvas.drawColor(0xff09111a);
@@ -49,11 +50,17 @@ public final class PreviewUtilityBackground extends Drawable {
             canvas.drawColor(0x44050b12);
     }
 
-    /** Render tool only: the comparison renders draw flat charcoal. Never true on a device. */
-    private static boolean flatPreview() {
+    /**
+     * Render tool only: a colour (hex RRGGBB) the comparison renders use in place of the normal one.
+     * Never read on a device.
+     */
+    public static int previewColour(String name, int normal) {
         if (!"robolectric".equals(Build.FINGERPRINT))
-            return false;
-        return System.getenv("SUPERNOVA_PREVIEW_FLAT") != null;
+            return normal;
+        String value = System.getenv(name);
+        if (value == null || value.isEmpty())
+            return normal;
+        return 0xff000000 | Integer.parseInt(value, 16);
     }
 
     @Override
