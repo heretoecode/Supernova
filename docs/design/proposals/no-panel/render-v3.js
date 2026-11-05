@@ -42,6 +42,25 @@ const library = `${nav('Movies')}
 <div class="grid">${Array.from({ length: 16 }, (_, i) => `<div class="poster"><div class="pa" style="background:linear-gradient(160deg,${art[i % 8][0]},${art[i % 8][1]})${i === 1 ? ';box-shadow:0 0 0 4px #fff' : ''}"></div>
 <div class="pt">${['Arrival', 'Blade Runner 2049', 'Conclave', 'Dune', 'Ex Machina', 'Flow', 'Gravity', 'Heat'][i % 8]}</div>
 <div class="py">${2010 + i}</div></div>`).join('')}</div></div>`;
+
+const sicon = d => `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#c9d3e6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const stats = [['<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>', '1,214', 'Titles'],
+  ['<path d="M3 3l18 18"/><path d="M10.6 5.1A9.8 9.8 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-3 4M6.2 6.2A13 13 0 0 0 2 12c1 2.5 5 7 10 7a9.6 9.6 0 0 0 4.3-1"/>', '86', 'Unwatched'],
+  ['<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', '12', 'In progress'],
+  ['<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>', '9.4 TB', 'Total size'],
+  ['<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', '14', 'Added this month'],
+  ['<path d="M4 15l2-9h12l2 9"/><rect x="3" y="15" width="18" height="5" rx="1.5"/>', '310', 'On this Shield · 2.1 TB'],
+  ['<rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/>', '904', 'On the network · 7.3 TB'],
+  ['<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5"/><path d="M4 4v4.5h4.5M12 8v4l3 2"/>', '5 Nov', 'Last updated · 20:40']];
+const stats8 = `<div class="stats">${stats.map(([d, v, l]) => `<div class="stat">${sicon(d)}<div class="sv">${v}</div><div class="sl">${l}</div></div>`).join('')}</div>`;
+const libstats = `${nav('Movies')}
+<div class="page2">${stats8}
+<div class="status"><span class="warn">!</span><b>Scan needs attention</b><span>2 files couldn't be read · see Library Health</span></div>
+<div class="tb"><span class="b o">Filters</span><span class="b o">Sort: Date added</span><span class="b o">Newest first</span>
+<span class="b o">List view</span><span class="sp2"></span><span class="b focus">Edit Library</span></div>
+<div class="grid2">${Array.from({ length: 16 }, (_, i) => `<div class="poster"><div class="pa2" style="background:linear-gradient(160deg,${art[i % 8][0]},${art[i % 8][1]})${i === 0 ? ';box-shadow:0 0 0 4px #fff' : ''}"></div>
+<div class="pt">${['Arrival', 'Blade Runner 2049', 'Conclave', 'Dune', 'Ex Machina', 'Flow', 'Gravity', 'Heat'][i % 8]}</div>
+<div class="py">${2016 + i} · ${100 + i * 7} min</div></div>`).join('')}</div></div>`;
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8;z-index:3}
@@ -68,11 +87,18 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}
 .facts{display:flex;gap:12px;margin-top:12px;font-size:24px;color:#dfe5f1}.facts span{background:rgba(255,255,255,.08);border-radius:14px;padding:6px 14px}
 .grid{margin-top:36px;display:grid;grid-template-columns:repeat(8,1fr);gap:28px 26px}
+.page2{position:absolute;left:72px;right:72px;top:126px;bottom:30px}
+.stats{display:grid;grid-template-columns:repeat(8,1fr)}.stat{padding:0 18px;border-left:2px solid rgba(255,255,255,.16)}.stat:first-child{border-left:0;padding-left:0}
+.sv{font-size:44px;font-weight:500;margin-top:8px}.sl{font-size:21px;color:#C9D3E6;margin-top:2px;white-space:nowrap}
+.status{display:flex;align-items:center;gap:14px;font-size:24px;margin-top:26px;padding-top:22px;border-top:2px solid rgba(255,255,255,.14)}.status b{font-weight:500}.status span:last-child{color:#C9D3E6}
+.warn{width:30px;height:30px;border-radius:50%;border:2px solid #f0b44c;color:#f0b44c;display:inline-flex;align-items:center;justify-content:center;font-size:18px;font-weight:500}
+.tb{display:flex;gap:16px;margin-top:26px}.sp2{flex:1}.b.o{background:#2a2d33}
+.grid2{margin-top:30px;display:grid;grid-template-columns:repeat(8,1fr);gap:26px}.pa2{height:310px;border-radius:14px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
 .pa{height:300px;border-radius:14px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}.pt{font-size:23px;font-weight:500;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.py{font-size:20px;color:#C9D3E6;margin-top:4px}`;
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [f, body] of [['03-home.png', home], ['04-settings-playback.png', settings], ['05-movies-library.png', library]]) {
+  for (const [f, body] of [['03-home.png', home], ['04-settings-playback.png', settings], ['05-movies-library.png', library], ['06-movies-with-stats.png', libstats]]) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
     await tab.screenshot({ path: path.join(__dirname, f) });
