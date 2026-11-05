@@ -434,6 +434,27 @@ public class PlayerActivity extends AppCompatActivity
     private int mNewAudioTrack = -1;
     private ChaptersDbPlayback previewChapterSource;
 
+    /** Shared engine data for Claude's bar, cards and time bubble. May be called again as providers complete. */
+    public PlaybackParts previewParts(List<PlaybackChapters.Chapter> embedded, long duration)
+    {
+        List<PlaybackChapters.Chapter> external = Collections.emptyList();
+        if (mVideoInfo != null && mVideoInfo.isScraped && !isFinishing() && !isDestroyed())
+        {
+            if (previewChapterSource == null)
+            {
+                previewChapterSource = new ChaptersDbPlayback(this);
+            }
+            external = previewChapterSource.chapters(mVideoInfo.uri, Collections.emptyList(),
+                mVideoInfo.isShow ? "tv" : "movie",
+                mVideoInfo.isShow ? mVideoInfo.scraperShowId : mVideoInfo.scraperMovieId,
+                mVideoInfo.isShow ? mVideoInfo.scraperShowImdbId : null,
+                mVideoInfo.scraperSeasonNr, mVideoInfo.scraperEpisodeNr, duration);
+        }
+        return PlaybackPartSources.merge(embedded, external,
+            PlayerService.sPlayerService == null ? null : PlayerService.sPlayerService.getIntroSegments(),
+            duration, mVideoInfo != null && mVideoInfo.isShow);
+    }
+
     List<PlaybackChapters.Chapter> previewChapters(List<PlaybackChapters.Chapter> embedded,
                                                              long duration) {
         if (embedded != null && !embedded.isEmpty())
