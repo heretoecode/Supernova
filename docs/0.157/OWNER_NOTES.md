@@ -504,12 +504,6 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - **APPROVED for 0.157 (owner, 5 Nov 2026):** go with the recommendation (all tabs drawn with the page, content
   fills in, "Loading…" then a "none found" line). Tab titles must never pop in: "avoid that at all costs".
 
-## 13. Library Health without a panel (owner look, 5 Nov 2026)
-- Owner asked to see the Library Health page with no panel: the panel colour (#16181C) fills the whole page and
-  the rows sit straight on it. Mock-up `docs/design/proposals/no-panel/01`. A look only; nothing decided.
-- Then: use the full page (bigger text, more space, rearranged). `no-panel/02`: larger header (60px title,
-  facts incl. "Last checked"), five tall rows filling the height, focused row filled white, "All clear" ticks.
-
 ## 14. Seek loading spinner off screen (owner photos, Dark Matter on WebDAV, 5 Nov 2026)
 - Seen: a small spinning blue circle in the bottom-left corner while seeking, half off the screen.
 - Cause: NOVA's `seek_state` spinner (shown while the player is busy after a seek) sits in the control bar *below*

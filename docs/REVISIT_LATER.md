@@ -65,3 +65,8 @@ Items already built or scheduled are left out (see the bottom of this file).
 - Seek thumbnails (FD-019) — experimental in 0.156. Library Health (FD-015) — built. Network & Files and Settings
   redesigns, playback HUD (FD-002/005/006) — built or in 0.156. Broader screen audits (FD-029) — done through the
   0.154–0.156 reviews. Age rating overlay (FD-001) — built.
+
+## Exploring (owner, 5 Nov 2026) — not tied to any version, may not happen
+- **Pages without a panel:** what pages look like with no panel, the charcoal (#16181C) filling the whole page and
+  the content using the full width. Mock-ups `docs/design/proposals/no-panel/01` (Library Health, panel removed)
+  and `02` (Library Health using the full page: bigger header and text, tall rows). Just a look for now.
