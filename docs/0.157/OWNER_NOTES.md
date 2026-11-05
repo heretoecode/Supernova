@@ -509,3 +509,13 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   the rows sit straight on it. Mock-up `docs/design/proposals/no-panel/01`. A look only; nothing decided.
 - Then: use the full page (bigger text, more space, rearranged). `no-panel/02`: larger header (60px title,
   facts incl. "Last checked"), five tall rows filling the height, focused row filled white, "All clear" ticks.
+
+## 14. Seek loading spinner off screen (owner photos, Dark Matter on WebDAV, 5 Nov 2026)
+- Seen: a small spinning blue circle in the bottom-left corner while seeking, half off the screen.
+- Cause: NOVA's `seek_state` spinner (shown while the player is busy after a seek) sits in the control bar *below*
+  the transport row, so it falls under the bar's bottom edge; it uses Android's default blue.
+- Done in 0.156 (bug fix, not a design): it no longer shows in Supernova's HUD, because the bar now grows for
+  Chapters · Episodes and it would have pushed the controls up on every seek.
+- Proposed replacement (mock-ups `docs/design/proposals/seek-loading/01`–`02`, awaiting the owner):
+  - A: a small white ring beside the time in the bubble, "Chapter 2 · loading".
+  - B: the seek dot itself becomes a spinning white ring until the picture is ready.
