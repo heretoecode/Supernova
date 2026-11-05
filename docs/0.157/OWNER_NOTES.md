@@ -503,3 +503,7 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Optional: what has been fetched before is kept, so going back to a title shows its tabs filled straight away.
 - **APPROVED for 0.157 (owner, 5 Nov 2026):** go with the recommendation (all tabs drawn with the page, content
   fills in, "Loading…" then a "none found" line). Tab titles must never pop in: "avoid that at all costs".
+
+## 13. Library Health without a panel (owner look, 5 Nov 2026)
+- Owner asked to see the Library Health page with no panel: the panel colour (#16181C) fills the whole page and
+  the rows sit straight on it. Mock-up `docs/design/proposals/no-panel/01`. A look only; nothing decided.
