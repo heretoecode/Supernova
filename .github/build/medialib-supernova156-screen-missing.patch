@@ -1,0 +1,568 @@
+diff --git a/src/com/archos/mediaprovider/video/MissingMediaActions.java b/src/com/archos/mediaprovider/video/MissingMediaActions.java
+new file mode 100644
+index 0000000..9915603
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/MissingMediaActions.java
+@@ -0,0 +1,146 @@
++package com.archos.mediaprovider.video;
++
++import android.content.ContentValues;
++import android.content.Context;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
++import android.net.Uri;
++import java.io.IOException;
++import java.util.ArrayList;
++import java.util.List;
++
++/** Worker-only guarded library mutations. No filesystem delete or watched/bookmark update exists here. */
++public final class MissingMediaActions
++{
++    public record StoredFile(long id, String path, long size)
++    {
++    }
++
++    public static List<StoredFile> read(Context context) throws IOException
++    {
++        java.io.File file = VideoOpenHelper.getDatabaseFile(context);
++        if (!file.isFile())
++            throw new IOException("Library inventory is unavailable");
++        try (SQLiteDatabase database = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY))
++        {
++            List<StoredFile> rows = new ArrayList<>();
++            try (Cursor cursor =
++                     database.query("files", new String[] {"_id", "_data", "_size"}, null, null, null, null, "_id"))
++            {
++                while (cursor.moveToNext())
++                    if (!cursor.isNull(0) && !cursor.isNull(1))
++                        rows.add(new StoredFile(cursor.getLong(0), cursor.getString(1),
++                                                cursor.isNull(2) ? -1 : cursor.getLong(2)));
++            }
++            return List.copyOf(rows);
++        }
++    }
++
++    public static boolean relink(Context context, StoredFile expected, Uri root, String replacement) throws IOException
++    {
++        if (expected.size < 0 || replacement == null || root == null)
++            throw new IOException("File identity is unavailable");
++        String scope = SupernovaLibraryPolicy.canonical(root);
++        if (!SupernovaLibraryPolicy.contains(scope, SupernovaLibraryPolicy.canonical(Uri.parse(expected.path))) ||
++            !SupernovaLibraryPolicy.contains(scope, SupernovaLibraryPolicy.canonical(Uri.parse(replacement))))
++            throw new IOException("Replacement is outside the source");
++        if (!name(expected.path).equals(name(replacement)))
++            throw new IOException("Replacement file name differs");
++        return mutate(context, expected, replacement);
++    }
++
++    public static boolean remove(Context context, StoredFile expected) throws IOException
++    {
++        return mutate(context, expected, null);
++    }
++
++    private static boolean mutate(Context context, StoredFile expected, String replacement) throws IOException
++    {
++        boolean changed;
++        try (ScanProcessLock lock =
++                 ScanProcessLock.acquire(new java.io.File(context.getFilesDir(), "supernova-scan.lock"),
++                                         () -> Thread.currentThread().isInterrupted());
++             VideoOpenHelper helper = new VideoOpenHelper(context))
++        {
++            changed = change(helper.getWritableDatabase(), expected, replacement);
++        }
++        if (changed)
++        {
++            android.content.SharedPreferences health = context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
++            String key = "media:" + expected.id;
++            if (SupernovaLibraryPolicy.canonical(Uri.parse(expected.path)).equals(health.getAll().get(key)))
++                if (!health.edit().remove(key).remove("missing_since:" + expected.id).commit())
++                    throw new IOException("Library changed; health state could not be saved");
++            context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
++        }
++        return changed;
++    }
++
++    static boolean change(SQLiteDatabase database, StoredFile expected, String replacement) throws IOException
++    {
++        database.beginTransaction();
++        try
++        {
++            String guard = "_id=? AND _data=? AND " + (expected.size < 0 ? "(_size IS NULL OR _size<0)" : "_size=?");
++            String[] args = expected.size < 0 ? new String[] {"" + expected.id, expected.path}
++                                              : new String[] {"" + expected.id, expected.path, "" + expected.size};
++            long remote;
++            try (Cursor row = database.query("files", new String[] {"remote_id"}, guard, args, null, null, null))
++            {
++                if (!row.moveToFirst() || row.isNull(0))
++                    return false;
++                remote = row.getLong(0);
++            }
++            boolean scanned = expected.id >= VideoOpenHelper.SCANNED_ID_OFFSET;
++            if (remote != expected.id)
++                throw new IOException("Library identity changed");
++            long raw = scanned ? remote - VideoOpenHelper.SCANNED_ID_OFFSET : remote;
++            String table = scanned ? "files_scanned" : "files_import";
++            String[] physical = expected.size < 0 ? new String[] {"" + raw, expected.path}
++                                                  : new String[] {"" + raw, expected.path, "" + expected.size};
++            if (replacement == null)
++            {
++                if (database.delete(table, guard, physical) != 1)
++                    return false;
++                database.delete("files", guard, args);
++            }
++            else
++            {
++                for (String check : new String[] {"files", table})
++                    try (Cursor conflict = database.query(check, new String[] {"_id"}, "_data=?",
++                                                          new String[] {replacement}, null, null, null))
++                    {
++                        if (conflict.moveToFirst())
++                            return false;
++                    }
++                ContentValues physicalValues = new ContentValues();
++                physicalValues.put("_data", replacement);
++                physicalValues.put("_display_name", name(replacement));
++                if (database.updateWithOnConflict(table, physicalValues, guard, physical,
++                                                  SQLiteDatabase.CONFLICT_ABORT) != 1)
++                    return false;
++                ContentValues libraryValues = new ContentValues(physicalValues);
++                libraryValues.put("volume_hidden", 0);
++                // Scanned-path triggers may already have forwarded _data; assert the stable public identity instead.
++                if (database.updateWithOnConflict("files", libraryValues, "_id=? AND remote_id=?",
++                                                  new String[] {"" + expected.id, "" + remote},
++                                                  SQLiteDatabase.CONFLICT_ABORT) != 1)
++                    throw new IOException("Library row disappeared");
++            }
++            database.setTransactionSuccessful();
++            return true;
++        }
++        finally
++        {
++            database.endTransaction();
++        }
++    }
++
++    private static String name(String path)
++    {
++        return path.startsWith("/") ? new java.io.File(path).getName() : Uri.parse(path).getLastPathSegment();
++    }
++    private MissingMediaActions()
++    {
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+index 609d4e1..f580b95 100644
+--- a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
++++ b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+@@ -4,81 +4,200 @@ import android.content.Context;
+ import android.content.SharedPreferences;
+ import android.net.Uri;
+ import androidx.preference.PreferenceManager;
+-import java.util.*;
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.LinkedHashSet;
++import java.util.List;
++import java.util.Locale;
++import java.util.Set;
+ 
+ /** Foundation policy only: storage failures never imply destructive library reconciliation. */
+-public final class SupernovaLibraryPolicy {
+-    public static final String HEALTH="supernova_library_health_v1";
+-    public static boolean retainsRecords(Context c){return c!=null&&"app.supernova.player".equals(c.getPackageName());}
+-    public static boolean configured(Context c){return !retainsRecords(c)||PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_onboarding_complete",false);}
++public final class SupernovaLibraryPolicy
++{
++    public static final String HEALTH = "supernova_library_health_v1";
++    public static boolean retainsRecords(Context c)
++    {
++        return c != null && "app.supernova.player".equals(c.getPackageName());
++    }
++    public static boolean configured(Context c)
++    {
++        return !retainsRecords(c) ||
++            PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_onboarding_complete", false);
++    }
+     /** Upgrade-only inventory migration, on the caller's worker; fresh empty inventory stays gated. */
+-    public static void initialiseSetup(Context context){
+-        if(!retainsRecords(context))return;
+-        SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(context);
+-        if(p.contains("supernova_onboarding_complete"))return;
+-        Set<String> roots=new LinkedHashSet<>(p.getStringSet("supernova_library_roots",Collections.emptySet()));
+-        for(Uri root:historicalLocalRoots(context))roots.add(canonical(root));
+-        try(android.database.Cursor cursor=context.getContentResolver().query(VideoStoreInternal.FILES_IMPORT,new String[]{VideoStore.MediaColumns.DATA},null,null,null)){
+-            if(cursor==null)throw new IllegalStateException("Existing library inventory could not be read");
+-            boolean priorInventory=cursor.moveToFirst();
+-            if(cursor!=null&&priorInventory)do{String path=cursor.getString(0);if(path==null)continue;Uri location=Uri.parse(path);if(location.getScheme()!=null&&!"file".equalsIgnoreCase(location.getScheme())){List<String> segments=new ArrayList<>(location.getPathSegments());if(!segments.isEmpty())segments.remove(segments.size()-1);roots.add(canonical(location.buildUpon().path("/"+android.text.TextUtils.join("/",segments)).build()));}}while(cursor.moveToNext());
+-            p.edit().putStringSet("supernova_library_roots",roots).putBoolean("supernova_library_policy_initialized",true)
+-                .putBoolean("supernova_onboarding_complete",priorInventory||!roots.isEmpty()).commit();
++    public static void initialiseSetup(Context context)
++    {
++        if (!retainsRecords(context))
++            return;
++        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(context);
++        if (p.contains("supernova_onboarding_complete"))
++            return;
++        Set<String> roots = new LinkedHashSet<>(p.getStringSet("supernova_library_roots", Collections.emptySet()));
++        for (Uri root : historicalLocalRoots(context))
++            roots.add(canonical(root));
++        try (android.database.Cursor cursor = context.getContentResolver().query(
++                 VideoStoreInternal.FILES_IMPORT, new String[] {VideoStore.MediaColumns.DATA}, null, null, null))
++        {
++            if (cursor == null)
++                throw new IllegalStateException("Existing library inventory could not be read");
++            boolean priorInventory = cursor.moveToFirst();
++            if (cursor != null && priorInventory)
++                do
++                {
++                    String path = cursor.getString(0);
++                    if (path == null)
++                        continue;
++                    Uri location = Uri.parse(path);
++                    if (location.getScheme() != null && !"file".equalsIgnoreCase(location.getScheme()))
++                    {
++                        List<String> segments = new ArrayList<>(location.getPathSegments());
++                        if (!segments.isEmpty())
++                            segments.remove(segments.size() - 1);
++                        roots.add(canonical(
++                            location.buildUpon().path("/" + android.text.TextUtils.join("/", segments)).build()));
++                    }
++                } while (cursor.moveToNext());
++            p.edit()
++                .putStringSet("supernova_library_roots", roots)
++                .putBoolean("supernova_library_policy_initialized", true)
++                .putBoolean("supernova_onboarding_complete", priorInventory || !roots.isEmpty())
++                .commit();
+         }
+     }
+-    public static String canonical(Uri uri){
+-        List<String> segments=new ArrayList<>();for(String segment:uri.getPathSegments()){
+-            if(segment.equals(".")||segment.isEmpty())continue;
+-            if(segment.equals("..")){if(!segments.isEmpty())segments.remove(segments.size()-1);}else segments.add(segment);
++    public static String canonical(Uri uri)
++    {
++        List<String> segments = new ArrayList<>();
++        for (String segment : uri.getPathSegments())
++        {
++            if (segment.equals(".") || segment.isEmpty())
++                continue;
++            if (segment.equals(".."))
++            {
++                if (!segments.isEmpty())
++                    segments.remove(segments.size() - 1);
++            }
++            else
++                segments.add(segment);
+         }
+-        String path="/"+android.text.TextUtils.join("/",segments);
+-        Uri.Builder builder=uri.buildUpon().scheme(uri.getScheme()==null?"file":uri.getScheme().toLowerCase(Locale.ROOT)).clearQuery().fragment(null).path(path);
+-        if(uri.getScheme()==null||"file".equalsIgnoreCase(uri.getScheme()))builder.encodedAuthority("");
+-        if(uri.getHost()!=null)builder.encodedAuthority(uri.getHost().toLowerCase(Locale.ROOT)+(uri.getPort()<0?"":":"+uri.getPort()));
++        String path = "/" + android.text.TextUtils.join("/", segments);
++        Uri.Builder builder = uri.buildUpon()
++                                  .scheme(uri.getScheme() == null ? "file" : uri.getScheme().toLowerCase(Locale.ROOT))
++                                  .clearQuery()
++                                  .fragment(null)
++                                  .path(path);
++        if (uri.getScheme() == null || "file".equalsIgnoreCase(uri.getScheme()))
++            builder.encodedAuthority("");
++        if (uri.getHost() != null)
++            builder.encodedAuthority(uri.getHost().toLowerCase(Locale.ROOT) +
++                                     (uri.getPort() < 0 ? "" : ":" + uri.getPort()));
+         return builder.build().toString();
+     }
+-    public static boolean contains(String parent,String child){return parent.equals(child)||child.startsWith(parent.endsWith("/")?parent:parent+"/");}
++    public static boolean contains(String parent, String child)
++    {
++        return parent.equals(child) || child.startsWith(parent.endsWith("/") ? parent : parent + "/");
++    }
+     /** Includes offline removable volumes already represented by the installed library. */
+-    public static Set<Uri> historicalLocalRoots(Context context){
+-        Set<Uri> roots=new LinkedHashSet<>();
+-        try(android.database.Cursor cursor=context.getContentResolver().query(VideoStoreInternal.FILES_IMPORT,new String[]{VideoStore.MediaColumns.DATA},"_data LIKE '/%' OR _data LIKE 'file:%'",null,null)){
+-            if(cursor==null)throw new IllegalStateException("Existing library locations could not be read");
+-            while(cursor.moveToNext()){String location=cursor.getString(0);if(location!=null)roots.add(localRoot(Uri.parse(location)));}
++    public static Set<Uri> historicalLocalRoots(Context context)
++    {
++        Set<Uri> roots = new LinkedHashSet<>();
++        try (android.database.Cursor cursor = context.getContentResolver().query(
++                 VideoStoreInternal.FILES_IMPORT, new String[] {VideoStore.MediaColumns.DATA},
++                 "_data LIKE '/%' OR _data LIKE 'file:%'", null, null))
++        {
++            if (cursor == null)
++                throw new IllegalStateException("Existing library locations could not be read");
++            while (cursor.moveToNext())
++            {
++                String location = cursor.getString(0);
++                if (location != null)
++                    roots.add(localRoot(Uri.parse(location)));
++            }
+         }
+         return roots;
+     }
+-    public static Uri localRoot(Uri location){
+-        List<String> path=location.getPathSegments();int length=0;
+-        if(path.size()>=2&&path.get(0).equals("storage"))length=path.get(1).equals("emulated")&&path.size()>=3?3:2;
+-        else if(path.size()>=3&&path.get(0).equals("mnt")&&(path.get(1).equals("media_rw")||path.get(1).equals("expand")))length=3;
+-        else if(!path.isEmpty()&&path.get(0).equals("sdcard"))length=1;
+-        else length=Math.max(0,path.size()-1);
+-        return Uri.parse("file:///").buildUpon().path("/"+android.text.TextUtils.join("/",path.subList(0,length))).build();
++    public static Uri localRoot(Uri location)
++    {
++        List<String> path = location.getPathSegments();
++        int length = 0;
++        if (path.size() >= 2 && path.get(0).equals("storage"))
++            length = path.get(1).equals("emulated") && path.size() >= 3 ? 3 : 2;
++        else if (path.size() >= 3 && path.get(0).equals("mnt") &&
++                 (path.get(1).equals("media_rw") || path.get(1).equals("expand")))
++            length = 3;
++        else if (!path.isEmpty() && path.get(0).equals("sdcard"))
++            length = 1;
++        else
++            length = Math.max(0, path.size() - 1);
++        return Uri.parse("file:///")
++            .buildUpon()
++            .path("/" + android.text.TextUtils.join("/", path.subList(0, length)))
++            .build();
+     }
+-    public static boolean excluded(Context c,Uri uri){
+-        if(!retainsRecords(c)||uri==null)return false;
+-        if(!configured(c))return true;
+-        SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(c);String key=canonical(uri);
+-        for(String excluded:p.getStringSet("supernova_library_exclusions",Collections.emptySet()))if(contains(excluded,key))return true;
+-        if(p.getBoolean("supernova_library_policy_initialized",false)){
+-            for(String root:p.getStringSet("supernova_library_roots",Collections.emptySet()))if(contains(root,key))return false;
++    public static boolean excluded(Context c, Uri uri)
++    {
++        if (!retainsRecords(c) || uri == null)
++            return false;
++        if (!configured(c))
++            return true;
++        SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(c);
++        String key = canonical(uri);
++        for (String excluded : p.getStringSet("supernova_library_exclusions", Collections.emptySet()))
++            if (contains(excluded, key))
++                return true;
++        if (p.getBoolean("supernova_library_policy_initialized", false))
++        {
++            for (String root : p.getStringSet("supernova_library_roots", Collections.emptySet()))
++                if (contains(root, key))
++                    return false;
+             return true;
+         }
+         return false;
+     }
+-    public static void availability(Context c,long id,Uri uri,boolean missing){
+-        if(!retainsRecords(c))return;
+-        SharedPreferences.Editor editor=c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit();
+-        if(!missing&&!c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).contains("media:"+id))return;
+-        if(missing)editor.putString("media:"+id,canonical(uri));else editor.remove("media:"+id);
++    public static void availability(Context c, long id, Uri uri, boolean missing)
++    {
++        if (!retainsRecords(c))
++            return;
++        SharedPreferences health = c.getSharedPreferences(HEALTH, Context.MODE_PRIVATE);
++        String key = "media:" + id, since = "missing_since:" + id, location = canonical(uri);
++        Object previous = health.getAll().get(key);
++        if (!missing && !location.equals(previous))
++            return;
++        SharedPreferences.Editor editor = health.edit();
++        if (missing)
++        {
++            editor.putString(key, location);
++            if (!location.equals(previous) || !health.contains(since))
++                editor.putLong(since, System.currentTimeMillis());
++        }
++        else
++            editor.remove(key).remove(since);
+         editor.apply();
+     }
+-    public static void sourceAvailable(Context c,Uri root,boolean available){
+-        if(!retainsRecords(c)||root==null)return;
+-        SharedPreferences.Editor editor=c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit();
+-        if(available){for(String key:c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).getAll().keySet())if(key.startsWith("offline:")&&contains(canonical(root),key.substring(8))||key.startsWith("problem:")&&contains(canonical(root),key.substring(8)))editor.remove(key);}else editor.putLong("offline:"+canonical(root),System.currentTimeMillis());
++    public static void sourceAvailable(Context c, Uri root, boolean available)
++    {
++        if (!retainsRecords(c) || root == null)
++            return;
++        SharedPreferences.Editor editor = c.getSharedPreferences(HEALTH, Context.MODE_PRIVATE).edit();
++        if (available)
++        {
++            for (String key : c.getSharedPreferences(HEALTH, Context.MODE_PRIVATE).getAll().keySet())
++                if (key.startsWith("offline:") && contains(canonical(root), key.substring(8)) ||
++                    key.startsWith("problem:") && contains(canonical(root), key.substring(8)))
++                    editor.remove(key);
++        }
++        else
++            editor.putLong("offline:" + canonical(root), System.currentTimeMillis());
+         editor.apply();
+     }
+-    public static void sourceProblem(Context c,Uri uri){if(retainsRecords(c)&&uri!=null)c.getSharedPreferences(HEALTH,Context.MODE_PRIVATE).edit().putLong("problem:"+canonical(uri),System.currentTimeMillis()).apply();}
+-    private SupernovaLibraryPolicy(){}
++    public static void sourceProblem(Context c, Uri uri)
++    {
++        if (retainsRecords(c) && uri != null)
++            c.getSharedPreferences(HEALTH, Context.MODE_PRIVATE)
++                .edit()
++                .putLong("problem:" + canonical(uri), System.currentTimeMillis())
++                .apply();
++    }
++    private SupernovaLibraryPolicy()
++    {
++    }
+ }
+diff --git a/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java b/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java
+new file mode 100644
+index 0000000..0e6d02c
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java
+@@ -0,0 +1,149 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import android.content.ContextWrapper;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
++import java.io.File;
++import java.nio.file.Files;
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Rule;
++import org.junit.Test;
++import org.junit.rules.TemporaryFolder;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class MissingMediaActionsTest
++{
++    @Rule public TemporaryFolder temporary = new TemporaryFolder();
++    private SQLiteDatabase database;
++    @Before public void setup()
++    {
++        database = SQLiteDatabase.create(null);
++        database.execSQL(
++            "CREATE TABLE files (_id INTEGER PRIMARY KEY,_data TEXT UNIQUE,_size INTEGER,remote_id INTEGER,"
++            + "_display_name TEXT,volume_hidden INTEGER,bookmark INTEGER,Archos_bookmark INTEGER,"
++            + "Archos_lastTimePlayed INTEGER,Archos_traktSeen INTEGER,Archos_hiddenByUser INTEGER,metadata TEXT)");
++        for (String table : new String[] {"files_import", "files_scanned"})
++            database.execSQL("CREATE TABLE " + table +
++                             " (_id INTEGER PRIMARY KEY,_data TEXT UNIQUE,_size INTEGER,_display_name TEXT)");
++        database.execSQL("CREATE TRIGGER forward_scanned_path AFTER UPDATE OF _data ON files_scanned BEGIN "
++                         + "UPDATE files SET _data=NEW._data WHERE remote_id=OLD._id+2000000000; END");
++    }
++    @After public void close()
++    {
++        database.close();
++    }
++    private void row(long id, String path)
++    {
++        database.execSQL("INSERT INTO files VALUES (?,?,123,?,'Old.mkv',1,45,67,89,1,1,'metadata')",
++                         new Object[] {id, path, id});
++        database.execSQL("INSERT INTO " + (id >= 2000000000L ? "files_scanned" : "files_import") +
++                             " VALUES (?,?,123,'Old.mkv')",
++                         new Object[] {id >= 2000000000L ? id - 2000000000L : id, path});
++    }
++    private void preserved(long id, String path)
++    {
++        try (Cursor row =
++                 database.rawQuery("SELECT _data,bookmark,Archos_bookmark,Archos_lastTimePlayed,"
++                                       + "Archos_traktSeen,Archos_hiddenByUser,metadata FROM files WHERE _id=?",
++                                   new String[] {"" + id}))
++        {
++            assertTrue(row.moveToFirst());
++            assertEquals(path, row.getString(0));
++            assertEquals(45, row.getLong(1));
++            assertEquals(67, row.getLong(2));
++            assertEquals(89, row.getLong(3));
++            assertEquals(1, row.getLong(4));
++            assertEquals(1, row.getLong(5));
++            assertEquals("metadata", row.getString(6));
++        }
++    }
++    @Test public void localAndScannedRelinkKeepPublicIdentityMetadataWatchedAndBothProgressColumns() throws Exception
++    {
++        row(44, "/storage/drive/Old.mkv");
++        row(2000000044L, "smb://nas/Films/Old.mkv");
++        assertTrue(MissingMediaActions.change(database,
++                                              new MissingMediaActions.StoredFile(44, "/storage/drive/Old.mkv", 123),
++                                              "/storage/drive/Moved/Old.mkv"));
++        assertTrue(MissingMediaActions.change(
++            database, new MissingMediaActions.StoredFile(2000000044L, "smb://nas/Films/Old.mkv", 123),
++            "smb://nas/Films/Moved/Old.mkv"));
++        preserved(44, "/storage/drive/Moved/Old.mkv");
++        preserved(2000000044L, "smb://nas/Films/Moved/Old.mkv");
++    }
++    @Test public void staleIdentityAndConflictingDestinationLeaveEveryRowUnchanged() throws Exception
++    {
++        row(44, "/Old.mkv");
++        row(45, "/Moved/Old.mkv");
++        assertFalse(MissingMediaActions.change(database, new MissingMediaActions.StoredFile(44, "/Wrong.mkv", 123),
++                                               "/New.mkv"));
++        assertFalse(
++            MissingMediaActions.change(database, new MissingMediaActions.StoredFile(44, "/Old.mkv", 124), "/New.mkv"));
++        assertFalse(MissingMediaActions.change(database, new MissingMediaActions.StoredFile(44, "/Old.mkv", 123),
++                                               "/Moved/Old.mkv"));
++        preserved(44, "/Old.mkv");
++        preserved(45, "/Moved/Old.mkv");
++    }
++    @Test public void databaseFailureRollsBackPhysicalAndLibraryLocationsTogether()
++    {
++        row(44, "/Old.mkv");
++        database.execSQL(
++            "CREATE TRIGGER reject_relink BEFORE UPDATE ON files BEGIN SELECT RAISE(ABORT,'fixture'); END");
++        assertThrows(Exception.class,
++                     ()
++                         -> MissingMediaActions.change(
++                             database, new MissingMediaActions.StoredFile(44, "/Old.mkv", 123), "/Moved/Old.mkv"));
++        preserved(44, "/Old.mkv");
++        try (Cursor physical = database.rawQuery("SELECT _data FROM files_import WHERE _id=44", null))
++        {
++            assertTrue(physical.moveToFirst());
++            assertEquals("/Old.mkv", physical.getString(0));
++        }
++    }
++    @Test public void removeOnlyTouchesLibraryRowsAndDoesNotDeleteTheActualFile() throws Exception
++    {
++        File real = temporary.newFile("Old.mkv");
++        Files.write(real.toPath(), new byte[123]);
++        row(44, real.getPath());
++        assertTrue(
++            MissingMediaActions.change(database, new MissingMediaActions.StoredFile(44, real.getPath(), 123), null));
++        assertTrue(real.isFile());
++        assertEquals(123, real.length());
++        try (Cursor rows = database.rawQuery("SELECT COUNT(*) FROM files", null))
++        {
++            assertTrue(rows.moveToFirst());
++            assertEquals(0, rows.getInt(0));
++        }
++    }
++    @Test public void missingSinceIsFirstObservationForTheSameIdentityAndClearsOnRecovery()
++    {
++        Context context = new ContextWrapper(RuntimeEnvironment.getApplication()) {
++            @Override public String getPackageName()
++            {
++                return "app.supernova.player";
++            }
++        };
++        var health = context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
++        android.net.Uri file = android.net.Uri.parse("smb://nas/Films/Old.mkv");
++        SupernovaLibraryPolicy.availability(context, 44, file, true);
++        assertTrue(health.getLong("missing_since:44", 0) > 0);
++        health.edit().putLong("missing_since:44", 123).commit();
++        SupernovaLibraryPolicy.availability(context, 44, file, true);
++        assertEquals(123, health.getLong("missing_since:44", 0));
++        SupernovaLibraryPolicy.availability(context, 44, file, false);
++        assertFalse(health.contains("media:44"));
++        assertFalse(health.contains("missing_since:44"));
++    }
++}
