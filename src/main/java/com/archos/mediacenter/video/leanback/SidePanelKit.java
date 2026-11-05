@@ -28,6 +28,17 @@ public final class SidePanelKit {
 
     public final Context context;
     private final float k;
+    private int rowHeight = ROW_HEIGHT, sectionGap = 18;
+
+    /** Compact rows (54 instead of 74) and tighter headings, for panels that must fit without scrolling. */
+    public void compact() {
+        rowHeight = 54;
+        sectionGap = 10;
+    }
+
+    public int rowHeight() {
+        return rowHeight;
+    }
 
     /** {@code scale}: screen pixels per mock-up pixel (screen width / 1920). */
     public SidePanelKit(Context context) {
@@ -77,7 +88,7 @@ public final class SidePanelKit {
         LinearLayout heading = new LinearLayout(context);
         heading.setGravity(Gravity.CENTER_VERTICAL);
         heading.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        heading.setPadding(s(6), s(first ? 4 : 18), s(6), s(4));
+        heading.setPadding(s(6), s(first ? 4 : sectionGap), s(6), s(4));
         heading.setTag("panel.heading");
         String lower = title.toLowerCase(java.util.Locale.ROOT);
         heading.addView(text(lower.isEmpty() ? lower : Character.toUpperCase(lower.charAt(0)) + lower.substring(1),
@@ -113,7 +124,7 @@ public final class SidePanelKit {
         LinearLayout row = new LinearLayout(context);
         row.setTag(tag);
         row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setMinimumHeight(Math.round(s(ROW_HEIGHT) * context.getResources().getConfiguration().fontScale));
+        row.setMinimumHeight(Math.round(s(rowHeight) * context.getResources().getConfiguration().fontScale));
         row.setPadding(s(16), 0, s(16), 0);
         row.setFocusable(true);
         row.setFocusableInTouchMode(true);

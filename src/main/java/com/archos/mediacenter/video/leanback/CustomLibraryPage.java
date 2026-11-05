@@ -12,7 +12,8 @@ public final class CustomLibraryPage {
     public String name = "Library Page", icon = "Library", type = "both", view = "grid", sort = "title",
                   watched = "all", language = "", studio = "", collection = "";
     public boolean allGenres, descending;
-    public int year;
+    /** Year range: {@code year} is the first year, {@code yearTo} the last (0 = open). Both 0 = any year. */
+    public int year, yearTo;
     public double rating;
     public final Set<String> genres = new TreeSet<>();
 
@@ -34,6 +35,7 @@ public final class CustomLibraryPage {
                 .put("allGenres", allGenres)
                 .put("descending", descending)
                 .put("year", year)
+                .put("yearTo", yearTo)
                 .put("rating", rating)
                 .put("language", language)
                 .put("studio", studio)
@@ -61,6 +63,8 @@ public final class CustomLibraryPage {
             page.studio = value.optString("studio");
             page.collection = value.optString("collection");
             page.year = value.optInt("year");
+            // Pages saved before 0.156 had one year; it becomes the range year–year.
+            page.yearTo = value.optInt("yearTo", page.year);
             page.rating = value.optDouble("rating", 0);
             JSONArray genres = value.optJSONArray("genres");
             if (genres != null)
@@ -78,11 +82,32 @@ public final class CustomLibraryPage {
         if (!Arrays.asList("movies", "tv", "both").contains(type))
             return "Choose Movies, TV Shows or Both.";
         if (!Arrays.asList("Library", "Movies", "TV Shows", "Documentaries").contains(icon) || year < 0 || year > 9999
+            || yearTo < 0 || yearTo > 9999 || year > 0 && yearTo > 0 && yearTo < year
             || !Arrays.asList("grid", "list").contains(view) || !Arrays.asList("title", "year", "added").contains(sort)
             || !Arrays.asList("all", "watched", "unwatched", "progress").contains(watched) || Double.isNaN(rating)
             || rating < 0 || rating > 10)
             return "Choose valid page filters and display options.";
         return null;
+    }
+
+    /** True when a title's year falls in the page's range (any year when no range is set). */
+    boolean inYears(int titleYear) {
+        if (year <= 0 && yearTo <= 0)
+            return true;
+        if (titleYear <= 0)
+            return false;
+        return (year <= 0 || titleYear >= year) && (yearTo <= 0 || titleYear <= yearTo);
+    }
+
+    /** "Any", "2005", "2003 – 2006", "From 2010", "Up to 1989". */
+    String yearSummary() {
+        if (year <= 0 && yearTo <= 0)
+            return "Any";
+        if (year > 0 && yearTo == year)
+            return String.valueOf(year);
+        if (year > 0 && yearTo > 0)
+            return year + " – " + yearTo;
+        return year > 0 ? "From " + year : "Up to " + yearTo;
     }
 
     public boolean save(Context c) {
@@ -106,7 +131,7 @@ public final class CustomLibraryPage {
             Set<String> available = PreviewGenres.parse(entry.genres);
             boolean match = genres.isEmpty()
                 || (allGenres ? available.containsAll(genres) : genres.stream().anyMatch(available::contains));
-            if (!match || year > 0 && entry.year() != year || !language.isEmpty() && !language.equals(entry.language)
+            if (!match || !inYears(entry.year()) || !language.isEmpty() && !language.equals(entry.language)
                 || !studio.isEmpty() && !PreviewGenres.parse(entry.studio).contains(studio)
                 || !collection.isEmpty() && !collection.equals(entry.collection))
                 continue;

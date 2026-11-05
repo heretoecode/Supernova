@@ -55,12 +55,14 @@ public final class EditPagePanel extends LinearLayout {
     private String page; // null on the main list; "genres", "language" or "studio" on a pick list
     private String returnTo;
     private Dialog dialog;
+    private View headerRule;
 
     EditPagePanel(Activity owner, Host host) {
         super(owner);
         this.owner = owner;
         this.host = host;
         kit = new SidePanelKit(owner);
+        kit.compact(); // owner, 4 Nov 2026: every option fits on screen without scrolling
         setOrientation(VERTICAL);
         setTag("edit.panel");
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -103,8 +105,16 @@ public final class EditPagePanel extends LinearLayout {
         });
         header.addView(save, new LayoutParams(-2, kit.s(46)));
         LayoutParams headerSize = new LayoutParams(-1, -2);
-        headerSize.bottomMargin = kit.s(10);
+        headerSize.bottomMargin = kit.s(14);
         addView(header, headerSize);
+        // The title, live match count and Save Changes are the panel's header: a line separates them from the
+        // options (owner, 4 Nov 2026).
+        headerRule = new View(owner);
+        headerRule.setTag("edit.header.rule");
+        headerRule.setBackgroundColor(SidePanelKit.HEADING_RULE);
+        LayoutParams ruleSize = new LayoutParams(-1, Math.max(1, kit.s(2)));
+        ruleSize.bottomMargin = kit.s(6);
+        addView(headerRule, ruleSize);
 
         scroll = new SidePanelKit.FittedScroll(owner);
         scroll.setVerticalScrollBarEnabled(false); // focus scrolls it; a bar over the values only clutters
@@ -168,7 +178,7 @@ public final class EditPagePanel extends LinearLayout {
 
     /** Screen height less the 96px top and 40px bottom margins, the panel padding and the header. */
     private int maxBodyHeight() {
-        return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 16) - kit.s(84);
+        return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 16) - kit.s(70);
     }
 
     private void focusInitial() {
@@ -204,10 +214,10 @@ public final class EditPagePanel extends LinearLayout {
         if (oldBack != null)
             removeView(oldBack);
         header.setVisibility(VISIBLE);
+        headerRule.setVisibility(VISIBLE);
         scroll.setMax(maxBodyHeight());
         CustomLibraryPage d = host.draft();
 
-        kit.section(body, "PAGE", true);
         LinearLayout name = kit.row(body, "edit.row.name", "edit", "Page Name", this::focusTop);
         TextView nameValue = kit.opener(name);
         bindings.add(() -> {
@@ -232,12 +242,13 @@ public final class EditPagePanel extends LinearLayout {
         choices("edit.row.match", "filter", "Match", new String[] {"Any", "All"},
                 () -> d.allGenres ? 1 : 0, n -> d.allGenres = n == 1);
 
-        List<Integer> years = years();
-        stepper("edit.row.year", "date", "Year",
-                ()
-                    -> years.indexOf(d.year),
-                years.size(),
-                n -> d.year = years.get(n), n -> years.get(n) == 0 ? "Any" : String.valueOf(years.get(n)));
+        LinearLayout year = kit.row(body, "edit.row.year", "date", "Year", this::focusTop);
+        TextView yearValue = kit.opener(year);
+        bindings.add(() -> {
+            yearValue.setText(d.yearSummary());
+            year.setContentDescription("Year, " + d.yearSummary());
+        });
+        year.setOnClickListener(v -> openYears());
         stepper("edit.row.watched", "eye", "Watched",
                 () -> index(WATCHED, d.watched), WATCHED.length, n -> d.watched = WATCHED[n], n -> WATCHED_LABELS[n]);
         stepper("edit.row.rating", "star", "Minimum Rating",
@@ -253,12 +264,18 @@ public final class EditPagePanel extends LinearLayout {
         orderRow();
 
         if (!host.isNew()) {
-            View gap = new View(owner);
-            body.addView(gap, new LayoutParams(-1, kit.s(4)));
+            // Delete Page sits at the bottom behind its own line, away from Save Changes (owner, 4 Nov 2026).
+            View rule = new View(owner);
+            rule.setTag("edit.delete.rule");
+            rule.setBackgroundColor(SidePanelKit.HEADING_RULE);
+            LayoutParams ruleSize = new LayoutParams(-1, Math.max(1, kit.s(2)));
+            ruleSize.topMargin = kit.s(8);
+            ruleSize.bottomMargin = kit.s(6);
+            body.addView(rule, ruleSize);
             LinearLayout delete = new LinearLayout(owner);
             delete.setTag("edit.row.delete");
             delete.setGravity(Gravity.CENTER_VERTICAL);
-            delete.setMinimumHeight(kit.s(48));
+            delete.setMinimumHeight(kit.s(kit.rowHeight()));
             delete.setPadding(kit.s(16), 0, kit.s(16), 0);
             delete.setFocusable(true);
             delete.setFocusableInTouchMode(true);
@@ -417,6 +434,8 @@ public final class EditPagePanel extends LinearLayout {
                 years.add(entry.year());
         if (host.draft().year > 0)
             years.add(host.draft().year);
+        if (host.draft().yearTo > 0)
+            years.add(host.draft().yearTo);
         List<Integer> values = new ArrayList<>();
         values.add(0);
         values.addAll(years);
@@ -479,6 +498,7 @@ public final class EditPagePanel extends LinearLayout {
         body.removeAllViews();
         bindings.clear();
         header.setVisibility(GONE);
+        headerRule.setVisibility(GONE);
         LinearLayout back = new LinearLayout(owner);
         back.setTag("edit.page.back");
         back.setGravity(Gravity.CENTER_VERTICAL);
@@ -584,6 +604,58 @@ public final class EditPagePanel extends LinearLayout {
         SidePanelKit.dropTrailingRule(body);
         if (initial != null)
             initial.requestFocus();
+        else
+            back.requestFocus();
+    }
+
+    /**
+     * Year range (owner, 4 Nov 2026; mock-up edit-page/03): From and To step through the years in the library
+     * (Left/Right), or pick a quick choice. Back returns to the main list.
+     */
+    private void openYears() {
+        LinearLayout back = openPage("year", "Year");
+        CustomLibraryPage d = host.draft();
+        List<Integer> descending = years();
+        List<Integer> years = new ArrayList<>();
+        years.add(0);
+        for (int i = descending.size() - 1; i > 0; i--)
+            years.add(descending.get(i));
+        stepper("edit.year.from", "date", "From", () -> Math.max(0, years.indexOf(d.year)), years.size(), n -> {
+            d.year = years.get(n);
+            if (d.year > 0 && d.yearTo > 0 && d.yearTo < d.year)
+                d.yearTo = d.year;
+        }, n -> n == 0 ? "Any" : String.valueOf(years.get(n)));
+        stepper("edit.year.to", "date", "To", () -> Math.max(0, years.indexOf(d.yearTo)), years.size(), n -> {
+            d.yearTo = years.get(n);
+            if (d.year > 0 && d.yearTo > 0 && d.yearTo < d.year)
+                d.year = d.yearTo;
+        }, n -> n == 0 ? "Any" : String.valueOf(years.get(n)));
+        kit.section(body, "Quick choices", false);
+        int now = Calendar.getInstance().get(Calendar.YEAR);
+        int decade = now / 10 * 10;
+        Object[][] quick = {{"Any year", 0, 0},
+                            {"This year", now, now},
+                            {"Last 5 years", now - 4, now},
+                            {decade + "s", decade, decade + 9},
+                            {(decade - 10) + "s", decade - 10, decade - 1},
+                            {(decade - 20) + "s", decade - 20, decade - 11},
+                            {(decade - 30) + "s", decade - 30, decade - 21},
+                            {"Before " + (decade - 30), 0, decade - 31}};
+        for (int i = 0; i < quick.length; i++) {
+            int from = (Integer)quick[i][1], to = (Integer)quick[i][2];
+            LinearLayout row = pickRow("edit.year.quick." + i, (String)quick[i][0], null,
+                                       d.year == from && d.yearTo == to);
+            row.setOnClickListener(v -> {
+                d.year = from;
+                d.yearTo = to;
+                closePage();
+                changed();
+            });
+        }
+        refresh();
+        View from = body.findViewWithTag("edit.year.from");
+        if (from != null)
+            from.requestFocus();
         else
             back.requestFocus();
     }

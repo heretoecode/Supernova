@@ -193,6 +193,13 @@ public class EditPagePanelTest {
                 assertTrue(tag, top > previous);
                 previous = top;
             }
+            View delete = in(a, "edit.row.delete");
+            View scroller = (View)in(a, "edit.row.name").getParent().getParent();
+            assertTrue("every option fits without scrolling (owner, 4 Nov 2026)",
+                       ((ViewGroup)scroller).getChildAt(0).getHeight() <= scroller.getHeight());
+            assertTrue(delete.isShown());
+            assertNotNull("a line under the header", in(a, "edit.header.rule"));
+            assertNotNull("a line above Delete Page", in(a, "edit.delete.rule"));
             assertEquals("Save Changes", ((TextView)in(a, "edit.save")).getText().toString());
             assertEquals("Documentary, History +1", value(in(a, "edit.row.genres")));
             assertEquals("Order labels follow the title sort", "A–Z",
