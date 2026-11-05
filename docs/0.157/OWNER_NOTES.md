@@ -140,7 +140,13 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 
 **Status:** Details tab round 7 (`details-tabs/v7-01`, no About):
 - Reception leads; then Cast and Crew portraits.
-- Key and Technical information as quieter two-column lists at the foot. Planned for 0.157 (0.156 is not held up). Related parked
+- Key and Technical information as quieter two-column lists at the foot.
+
+**Owner on round 7 (5 Nov 2026):** still not happy. Wanted layout, in two segments:
+- **Top:** three columns, each vertical — Reception (left), Key information, Technical information.
+- **Below:** a row of cast, then a row of crew, at the bottom.
+
+**Status:** round 8 (`details-tabs/v8-01`) sent 5 Nov 2026. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
