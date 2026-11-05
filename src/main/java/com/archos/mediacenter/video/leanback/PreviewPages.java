@@ -1075,8 +1075,18 @@ public final class PreviewPages extends FrameLayout {
         notifyScroll();
     }
 
+    private java.util.function.IntConsumer scrollOffsetListener = offset -> {
+    };
+
+    /** The page's real scroll distance in pixels (0 at the top), for the top bar's fade. */
+    public void setScrollOffsetListener(java.util.function.IntConsumer listener) {
+        scrollOffsetListener = listener;
+        notifyScroll();
+    }
+
     private void notifyScroll() {
         scrollListener.accept(list.canScrollVertically(-1));
+        scrollOffsetListener.accept(Math.max(0, list.computeVerticalScrollOffset()));
     }
 
     public boolean atTop() {

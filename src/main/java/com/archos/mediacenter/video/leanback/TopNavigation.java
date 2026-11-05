@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PixelFormat;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -44,35 +45,13 @@ public final class TopNavigation extends LinearLayout {
     private final View content;
     private final FrameLayout stage;
     private final boolean scrollingContent;
-    private final Drawable navigationScene = new Drawable() {
-        @Override
-        public void draw(Canvas canvas) {
-            Drawable background = getBackground();
-            if (background != null)
-                background.draw(canvas);
-            int saved = canvas.save();
-            canvas.translate(stage.getLeft(), stage.getTop());
-            stage.draw(canvas);
-            canvas.restoreToCount(saved);
-        }
-        @Override
-        public void setAlpha(int alpha) {
-        }
-        @Override
-        public void setColorFilter(ColorFilter filter) {
-        }
-        @Override
-        public int getOpacity() {
-            return PixelFormat.TRANSLUCENT;
-        }
-    };
     private final FrameLayout scanStatus;
     private final FrameLayout status;
     private final BooleanSupplier firstRow;
     private TextView selected;
     private int selectedIndex;
     private final TextView[] tabs = new TextView[7];
-    private final PreviewNavigationShade navigationShade = new PreviewNavigationShade();
+    private final Paint fadePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public TopNavigation(Context c, View content, IntConsumer navigate, BooleanSupplier firstRow) {
         super(c);
@@ -371,20 +350,50 @@ public final class TopNavigation extends LinearLayout {
             }
         }
 
-        if (child == bar) {
-            navigationShade.invalidate();
-            navigationShade.draw(canvas, navigationScene, getWidth(), dp(116) * .8f, scrimAlpha);
-            if (scrimAlpha > 0 && navigationShade.hasPendingSample())
-                postInvalidateDelayed(100);
-        }
+        if (child == bar)
+            drawFade(canvas);
         return super.drawChild(canvas, child, time);
     }
 
-    @Override
-    public void invalidateDrawable(Drawable who) {
-        super.invalidateDrawable(who);
-        if (navigationShade != null)
-            navigationShade.invalidate();
+    /** Charcoal (the panels' colour) at its strongest behind the tabs, clear ~115dp down. */
+    static final int FADE_COLOUR = 0x16181C;
+    static final float FADE_TOP = .88f, FADE_AT_TABS = .60f;
+    static final int FADE_HEIGHT_DP = 115, FADE_IN_DP = 60;
+
+    /**
+     * Owner-approved 4 Nov 2026 (docs/design/proposals/top-bar/01–04): content passes behind the bar under a charcoal
+     * fade that eases in over the first ~60dp of scroll and out again; nothing at all at the top of a page; no blur
+     * and no blue.
+     */
+    private void drawFade(Canvas canvas) {
+        if (scrimAlpha <= 0)
+            return;
+        float height = dp(FADE_HEIGHT_DP);
+        int top = Math.round(255 * FADE_TOP), tabs = Math.round(255 * FADE_AT_TABS);
+        fadePaint.setShader(new LinearGradient(0, 0, 0, height,
+                                               new int[] {top << 24 | FADE_COLOUR, tabs << 24 | FADE_COLOUR,
+                                                          FADE_COLOUR},
+                                               new float[] {0, .49f, 1}, Shader.TileMode.CLAMP));
+        fadePaint.setAlpha(scrimAlpha);
+        canvas.drawRect(0, 0, getWidth(), height, fadePaint);
+        fadePaint.setShader(null);
+    }
+
+    /** How far the page has scrolled, in pixels: the fade follows it (0 at the top, full after ~60dp). */
+    public void setScrollOffset(int pixels) {
+        boolean allowed = selectedIndex >= 0 && selectedIndex <= 2 || selectedIndex == 6;
+        int alpha = allowed ? Math.max(0, Math.min(255, Math.round(255f * pixels / dp(FADE_IN_DP)))) : 0;
+        if (scrimAnimation != null)
+            scrimAnimation.cancel();
+        scrolled = alpha > 0;
+        if (alpha != scrimAlpha) {
+            scrimAlpha = alpha;
+            invalidate();
+        }
+    }
+
+    int fadeAlpha() {
+        return scrimAlpha;
     }
 
     public void setArtwork(Uri uri) {
@@ -431,7 +440,6 @@ public final class TopNavigation extends LinearLayout {
         if (scrimAnimation != null)
             scrimAnimation.cancel();
         scrimAlpha = scrolled ? 255 : 0;
-        navigationShade.release();
         artwork.release();
         super.onDetachedFromWindow();
     }

@@ -354,10 +354,10 @@ public final class CustomLibraryActivity extends LeanbackActivity {
                     if (navigation != null)
                         navigation.setArtwork(uri);
                 });
-                // Owner 2 Nov 2026: like Movies/TV, scrolling content blurs and fades under the top bar.
-                sharedLibrary.setScrollListener(scrolled -> {
+                // Same charcoal fade under the top bar as Home, Movies and TV Shows, driven by the real scroll.
+                sharedLibrary.setScrollOffsetListener(offset -> {
                     if (navigation != null)
-                        navigation.setScrolled(scrolled);
+                        navigation.setScrollOffset(offset);
                 });
             }
             if (sharedLibrary.getParent() instanceof ViewGroup)

@@ -5,14 +5,12 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Looper;
 import android.view.View;
 import android.widget.ScrollView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.Duration;
-import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -48,23 +46,29 @@ public class PreviewNavigationShadeTest {
         assertTrue(Color.red(covered)<Color.red(clear));
         assertEquals(Color.RED,clear);image.recycle();host.finish();
     }
-    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE) public void navigationShadeFadesToTransparentWithoutASeparator(){
-        Bitmap image=Bitmap.createBitmap(240,160,Bitmap.Config.ARGB_8888);
-        ColorDrawable source=new ColorDrawable(0xff355878);source.setBounds(0,0,240,160);
-        PreviewNavigationShade shade=new PreviewNavigationShade();shade.draw(new Canvas(image),source,240,116,255);
-        assertTrue(Color.alpha(image.getPixel(120,5))>Color.alpha(image.getPixel(120,100)));
-        assertEquals(0,Color.alpha(image.getPixel(120,120)));
-        shade.release();image.recycle();
-    }
-    @Test public void uniformBackgroundStaysUniform(){
-        int[] pixels=new int[35];Arrays.fill(pixels,0xff173956);
-        PreviewNavigationShade.blur(pixels,7,5);for(int colour:pixels)assertEquals(0xff173956,colour);
-    }
-    @Test public void isolatedDetailSoftensAcrossBothAxesWithoutChangingAlpha(){
-        int[] pixels=new int[49];Arrays.fill(pixels,0xff000000);pixels[24]=0xffffffff;
-        PreviewNavigationShade.blur(pixels,7,7);
-        assertTrue((pixels[24]&255)>0);assertTrue((pixels[24]&255)<255);
-        assertTrue((pixels[23]&255)>0);assertTrue((pixels[17]&255)>0);
-        for(int colour:pixels)assertEquals(255,colour>>>24);
+    /** Owner-approved 4 Nov 2026 (top-bar/01–04): nothing at the top, charcoal (never blue) once scrolled. */
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers="w960dp-h540dp-land-mdpi")
+    public void fadeFollowsTheRealScrollAndIsCharcoalNotBlue() {
+        Activity host = Robolectric.buildActivity(Activity.class).setup().get();
+        ScrollView scroll = new ScrollView(host);
+        TopNavigation nav = new TopNavigation(host, scroll, index -> {}, () -> true);
+        host.setContentView(nav);
+        nav.selectTab(1);
+        nav.setScrollOffset(0);
+        assertEquals("nothing at all at the top", 0, nav.fadeAlpha());
+        nav.setScrollOffset(10);
+        int partial = nav.fadeAlpha();
+        assertTrue(partial > 0 && partial < 255);
+        nav.setScrollOffset(10_000);
+        assertEquals(255, nav.fadeAlpha());
+        nav.setScrollOffset(0);
+        assertEquals("returning to the top clears it", 0, nav.fadeAlpha());
+        nav.selectTab(4);
+        nav.setScrollOffset(10_000);
+        assertEquals("utility pages have no fade", 0, nav.fadeAlpha());
+        assertEquals(0x16, TopNavigation.FADE_COLOUR >> 16 & 255);
+        assertTrue("no blue cast", (TopNavigation.FADE_COLOUR & 255) - (TopNavigation.FADE_COLOUR >> 16 & 255) < 8);
+        host.finish();
     }
 }

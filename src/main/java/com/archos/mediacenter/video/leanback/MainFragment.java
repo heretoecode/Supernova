@@ -432,7 +432,7 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mNavigation = new TopNavigation(
             requireContext(), pages, this::navigateTop, () -> mPreviewPages == null || mPreviewPages.atTop());
         mPreviewPages.setArtworkListener(mNavigation::setArtwork);
-        mPreviewPages.setScrollListener(mNavigation::setScrolled);
+        mPreviewPages.setScrollOffsetListener(mNavigation::setScrollOffset);
         int requestedTab = requireActivity().getIntent().getIntExtra("preview_tab", mActiveTab);
         if (requestedTab >= 0 && requestedTab < 4) {
             mActiveTab = requestedTab;
