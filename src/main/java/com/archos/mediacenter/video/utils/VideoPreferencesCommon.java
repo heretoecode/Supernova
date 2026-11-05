@@ -2413,9 +2413,11 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         String count = plan == null ? "every video in your library"
                                     : String.format(java.util.Locale.getDefault(), "%,d videos", plan.total);
         String question = "Write details files next to " + count + "? Read-only shares such as Put.io are skipped.";
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(mPreferencesFragment.requireContext(), question, new String[] {
+        String[] choices = {
             "Write details files", "Cancel"
-        }, 1, choice -> {
+        };
+        android.content.Context context = mPreferencesFragment.requireContext();
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(context, question, choices, 1, choice -> {
             if (choice != 0)
                 return;
             Intent intent =
