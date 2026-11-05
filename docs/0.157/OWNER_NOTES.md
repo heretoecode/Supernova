@@ -100,5 +100,21 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 - Episodes without the synopsis.
 - Details rearranged: description and reception first, key information as a grid, then cast, crew and technical.
 - More Like This with the app's own service logos in one uniform dark chip, monochrome (`v4-03`) and full colour
-  (`v4-04`). Planned for 0.157 (0.156 is not held up). Related parked
+  (`v4-04`).
+
+**Owner's comments on round 4 (5 Nov 2026)**
+- Seasons & Episodes now liked.
+- Asked whether Season 1's heading opens a season-only Details page: **it already does** (`PreviewSeasonActivity`).
+  It keeps working in the redesign, shown with a › and the usual white focus.
+- More Like This marks:
+  - **No background behind icons:** icons stand alone, as everywhere else in the app.
+  - Not sure about the top-left position.
+- Details:
+  - **Cast and crew with pictures,** as today; plain text "reads like a book".
+  - The layout felt too compacted.
+
+**Status:** round 5 mock-ups sent:
+- `v5-01`: clickable season headings.
+- `v5-02`: Details as one roomy scrolling page with portraits.
+- `v5-03` / `v5-04`: icons with no background, centred (as today) or bottom right by the title. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
