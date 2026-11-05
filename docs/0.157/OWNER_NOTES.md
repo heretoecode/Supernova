@@ -130,7 +130,15 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
   - Hero only, up to about five lines; the Details tab never repeats it.
   - A rare longer one opens in full from the hero's More menu ("Full description").
 
-**Status:** round 6 mock-ups `details-tabs/v6-01`–`v6-03` sent 5 Nov 2026. Planned for 0.157 (0.156 is not held up). Related parked
+**Owner's verdict on round 6 (5 Nov 2026)**
+- **Seasons & Episodes: approved** (`v6-01`).
+- **More Like This: approved** (`v6-03`):
+  - Library titles without a play icon.
+  - Centred full-colour service logos with no background.
+  - Title · year on one line.
+- **Details: not yet.** Key information and Technical information get far too much prominence.
+
+**Status:** hero-with-description mock-ups `hero-01`–`hero-04` sent 5 Nov 2026; Details tab to be reworked. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
@@ -142,4 +150,4 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Use the soft text patch from the Home hero; keep the text in the left half.
   - Keep the tagline as one italic line above the description (owner to decide).
   - Optional, as on Disney+: once a series is in progress, show the next episode's synopsis next to "Resume Sx Ey".
-- **Status:** idea noted; waiting for the owner after round 5.
+- **Status:** mock-ups `details-tabs/hero-01`–`hero-04` sent 5 Nov 2026 (fits; long one with …; More menu; full text panel).
