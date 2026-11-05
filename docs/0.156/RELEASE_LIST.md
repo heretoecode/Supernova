@@ -90,6 +90,10 @@ Built and fully tested (conformance run 41984891190 green, 07e6074d2):
 - #32 Edit Page: no scrolling, header and Delete lines, year range (backups carry the range)
 - #18/#30 top bar: charcoal fade driven by the real scroll (blue blur removed)
 Committed, build running: #11 Details no flat card · #23 Skip button (option B).
+Committed, waiting for the next build: #33 Local Storage status tags + single watched pill · #38 shared choice list
+(solid side panel on the right) · Seek previews switch (System › Advanced) · #27 hero text patch, Medium year · genre,
+half-width synopsis, logo on the metadata · #28 Home row Hide/Move beside the row with a live move (the faint ‹ hint
+on the first card is still to do).
 Next (Claude): Local Storage status tags/grid/menu (#33), Customise Home (#29), Search UI (#31), Network & Files
 pages (#34–35), Settings stage 3 (System/About pages, Where to Watch, Appearance), player controls + strip (#19–22,
 needs Codex Part B).
