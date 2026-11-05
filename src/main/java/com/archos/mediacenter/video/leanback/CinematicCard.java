@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 /** Shared artwork region, visually active while its real action buttons hold focus. */
 public final class CinematicCard extends FrameLayout {
     public CinematicCard(Context c){super(c);setFocusable(false);setClickable(false);setClipChildren(false);setClipToPadding(false);
-        GradientDrawable background=new GradientDrawable();background.setColor(0xff07131f);background.setCornerRadius(PreviewDialog.dp(c,12));setBackground(background);setClipToOutline(true);}
+        GradientDrawable background=new GradientDrawable();background.setColor(0xff1b1d22);background.setCornerRadius(PreviewDialog.dp(c,12));setBackground(background);setClipToOutline(true);}
     @Override public void requestChildFocus(View child,View focused){super.requestChildFocus(child,focused);setForeground(new PreviewFocusGlow(getContext(),12));}
     @Override public void clearChildFocus(View child){super.clearChildFocus(child);post(()->{if(!hasFocus())setForeground(null);});}
     /**

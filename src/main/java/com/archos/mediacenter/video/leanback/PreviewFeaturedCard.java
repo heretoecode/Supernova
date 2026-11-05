@@ -195,7 +195,7 @@ final class PreviewFeaturedCard extends FrameLayout {
 
     private void rounded(View v, Context c) {
         GradientDrawable bg = new GradientDrawable();
-        bg.setColor(0xff07131f);
+        bg.setColor(0xff1b1d22);
         bg.setCornerRadius(dp(12));
         v.setBackground(bg);
         v.setClipToOutline(true);

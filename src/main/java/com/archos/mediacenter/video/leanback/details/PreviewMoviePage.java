@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -45,6 +46,8 @@ import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediascraper.*;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.text.NumberFormat;
@@ -1436,7 +1439,36 @@ public final class PreviewMoviePage extends ScrollView {
         artworkUri = uri.toString();
         String identity = boundTitle, requested = artworkUri;
         artworkLoader = Picasso.get();
-        artworkLoader.load(uri).fit().centerCrop().noPlaceholder().noFade().into(
+        // Owner report (notes #9): no flat card while the backdrop loads. First show the copy the Home hero already
+        // decoded (same Picasso key: hero size, centre-crop; memory/disk only), then load the full-size image with
+        // whatever is showing as its placeholder, so the card never goes blank and the sharp one fades in.
+        int heroWidth = Math.round(960 * getResources().getDisplayMetrics().density),
+            heroHeight = Math.round(540 * getResources().getDisplayMetrics().density);
+        artworkLoader.load(uri)
+            .resize(heroWidth, heroHeight)
+            .centerCrop()
+            .networkPolicy(NetworkPolicy.OFFLINE)
+            .noFade()
+            .into(cardArtwork, new Callback() {
+                public void onSuccess() {
+                    fullArtwork(uri, identity, requested);
+                }
+                public void onError(Exception error) {
+                    fullArtwork(uri, identity, requested);
+                }
+            });
+    }
+
+    private void fullArtwork(Uri uri, String identity, String requested) {
+        if (!identity.equals(boundTitle) || !requested.equals(artworkUri))
+            return;
+        Drawable showing = cardArtwork.getDrawable();
+        RequestCreator full = artworkLoader.load(uri).fit().centerCrop();
+        if (showing != null)
+            full.placeholder(showing);
+        else
+            full.noPlaceholder();
+        full.into(
             cardArtwork, new Callback() {
                 public void onSuccess() {
                     if (!identity.equals(boundTitle) || !requested.equals(artworkUri))
