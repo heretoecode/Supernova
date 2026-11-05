@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.utils.backup;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;

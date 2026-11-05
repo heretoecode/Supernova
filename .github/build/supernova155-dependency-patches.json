@@ -132,9 +132,54 @@
       "module": "FileCoreLibrary",
       "path": ".github/build/filecorelibrary-supernova146-upstream.patch",
       "sha256": "bace303c452b19e284ddadda2270630fcd0296146da4260c8e4a3fa7980de700"
+    },
+    {
+      "kind": "patch",
+      "module": "FileCoreLibrary",
+      "path": ".github/build/filecore-supernova155-scan.patch",
+      "sha256": "28ec346fe7fb974b0aed3bf1ceca3d8b9c7ae629ee6bd0747c0f14353496c662"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova155-scan.patch",
+      "sha256": "2437ae523e17f1bb0407b6f8cd77cce04a7446870fa346bf0139baec9815f8e8"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-scan-reliability.patch",
+      "sha256": "9673ea260bfb2b62c1d06a780abe2b3fc6c888320b04f808f061622a3d9c4536"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-nfo-progress.patch",
+      "sha256": "92c15fb61012c2b8500d5e198fa4fc29ee4a413035de8092dd8c89c1c0ffa206"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-keyframe-retriever.patch",
+      "sha256": "c5197de4b3b73414bf20653f77be08ec2696d51fb308b7b8bab2e77caada0224"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-metadata-diagnostics.patch",
+      "sha256": "f95a30b8c4f1eb1d50088801129abe394074a2f762fa0964e13c0eff158028ac"
+    },
+    {
+      "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-network-recovery.patch",
+      "sha256": "39421597e5b2771273474dcd4eceec9503f5f6efebe67fd04dde277a08bcc2a0"
     }
   ],
   "supernova155": {
     "note": "0.155 engine release: native/avos is not prepared from source in the app build; the reviewed prebuilt arm64 engine (native run 41848351713, archive 42e1990b\u2026) is installed by package-supernova156-native.py. Retired avos operations: .github/build/avos-preview414.patch, .github/build/avos-supernova135.patch, .github/build/avos-supernova141-chapters.patch, .github/build/avos-supernova145-buffer-limits.patch, .github/build/avos-supernova146-upstream.patch"
+  },
+  "supernova156": {
+    "note": "0.156: Codex Parts A-D and B17a MediaLib/FileCore changes, applied in hand-back order (docs/codex/HANDOVER.md); verified to apply cleanly on the pinned sources 5 Nov 2026."
   }
 }
