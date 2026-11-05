@@ -10,6 +10,8 @@ import android.os.SystemClock;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediaprovider.video.LibraryScanControl;
 import java.util.Locale;
+import java.util.List;
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -30,7 +32,7 @@ public final class LibraryScanController
         thread.setDaemon(true);
         return thread;
     });
-    private static volatile ScanProgressTracker tracker = new ScanProgressTracker(value -> {});
+    private static volatile ScanProgressTracker tracker = new ScanProgressTracker(LibraryScanController::finished);
     private static final AtomicBoolean STOP_PENDING = new AtomicBoolean();
     private record SourceDescription(String kind, String location)
     {
@@ -39,6 +41,7 @@ public final class LibraryScanController
     private static Context application;
     private static BroadcastReceiver receiver;
     private static String requested = "";
+    private static volatile ScanHistoryStore history;
 
     public static synchronized void install(Context context)
     {
@@ -55,9 +58,21 @@ public final class LibraryScanController
             {
                 // A test/runtime may have destroyed the previous Application's receiver registry.
             }
-            tracker = new ScanProgressTracker(value -> {});
+            tracker = new ScanProgressTracker(LibraryScanController::finished);
         }
         application = app;
+        ScanHistoryStore store = new ScanHistoryStore(new File(app.getNoBackupFilesDir(), "scan-history-v1"));
+        history = store;
+        IO.execute(() -> {
+            try
+            {
+                store.load();
+            }
+            catch (Exception failure)
+            {
+                Diagnostics.error("scan_history_load_failed", failure);
+            }
+        });
         receiver = new BroadcastReceiver() {
             @Override public void onReceive(Context context, Intent event)
             {
@@ -71,6 +86,30 @@ public final class LibraryScanController
         else
             application.registerReceiver(receiver, filter);
         refreshSourceNames();
+    }
+
+    /** Most recent ten finished source scans, newest first; immutable and memory-only. */
+    public static List<ScanProgress> recentScans()
+    {
+        ScanHistoryStore store = history;
+        return store == null ? List.of() : store.recent();
+    }
+
+    private static void finished(ScanProgress value)
+    {
+        ScanHistoryStore store = history;
+        if (store == null)
+            return;
+        IO.execute(() -> {
+            try
+            {
+                store.append(value);
+            }
+            catch (Exception failure)
+            {
+                Diagnostics.error("scan_history_write_failed", failure);
+            }
+        });
     }
 
     /** Asynchronous source-name refresh; no view, Activity or renderer is retained. */

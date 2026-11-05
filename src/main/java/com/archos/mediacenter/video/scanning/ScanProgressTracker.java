@@ -101,8 +101,8 @@ final class ScanProgressTracker
         boolean wasRunning = row.value == null || row.value.running;
         row.phase = phase;
         row.order = ++sequence;
-        row.value = new ScanProgress(batch, source, label, Math.max(0, checked), total, Math.max(0, added), removed,
-                                     Math.max(0, updated), row.value == null ? utc : row.value.startedUtcMs,
+        row.value = new ScanProgress(batch, source, label, Math.max(0, checked), total, added, removed, updated,
+                                     row.value == null ? utc : row.value.startedUtcMs,
                                      Math.max(0, elapsed - row.started), !terminal, stopping, reason);
         if (terminal && wasRunning)
         {
@@ -150,8 +150,8 @@ final class ScanProgressTracker
         {
             ScanProgress item = source.value;
             checked += item.checked;
-            added += item.added;
-            updated += item.updated;
+            added = added < 0 || item.added < 0 ? -1 : added + item.added;
+            updated = updated < 0 || item.updated < 0 ? -1 : updated + item.updated;
             total = total < 0 || item.total < 0 ? -1 : total + item.total;
             removed = removed < 0 || item.removed < 0 ? -1 : removed + item.removed;
             if (item.running)

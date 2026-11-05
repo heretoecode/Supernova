@@ -1,0 +1,224 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkScanLedger.java b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+index 9b10f02..3d00f34 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScanLedger.java
++++ b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+@@ -218,6 +218,12 @@ final class NetworkScanLedger
+     }
+ 
+     static synchronized void finish(Member member, boolean failed, boolean success, int checked, int added, int updated)
++    {
++        finish(member, failed, success, checked, added, updated, -1);
++    }
++
++    static synchronized void finish(Member member, boolean failed, boolean success, int checked, int added, int updated,
++                                    int removed)
+     {
+         if (!pending(member))
+             return;
+@@ -241,7 +247,7 @@ final class NetworkScanLedger
+         AutoScrapeService.NetworkScanCompletion completion =
+             AutoScrapeService.completeNetworkScan(member.batch, failed, success);
+         NetworkScannerServiceVideo.previewScanEvent(member.context, member.uri, phase, Long.toString(member.batch), -1,
+-                                                    checked, added, updated);
++                                                    checked, added, updated, removed);
+         try
+         {
+             NetworkScannerServiceVideo.previewFinish(member.context, member.uri, Long.toString(member.batch),
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 5ab062f..f6e4f65 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -913,6 +913,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     private static final String IN_FOLDER_SELECT =
+         "(" + MediaColumns.DATA + " LIKE ?||'%' OR " + MediaColumns.DATA + " LIKE ?||'%')";
+     private int previewAdded, previewUpdated;
++    private int previewRemoved = -1;
+     private Uri previewRoot;
+     private long previewLastProgress;
+     private String previewBatchId;
+@@ -944,10 +945,15 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     private void previewScanEvent(Uri root, String phase)
+     {
+         previewScanEvent(this, root, phase, previewBatchId, -1, "started".equals(phase) ? 0 : sFilesFoundCount,
+-                         previewAdded, previewUpdated);
++                         previewAdded, previewUpdated, previewRemoved);
+     }
+     static void previewScanEvent(android.content.Context context, Uri root, String phase, String batch, int total,
+                                  int checked, int added, int updated)
++    {
++        previewScanEvent(context, root, phase, batch, total, checked, added, updated, -1);
++    }
++    static void previewScanEvent(android.content.Context context, Uri root, String phase, String batch, int total,
++                                 int checked, int added, int updated, int removed)
+     {
+         try
+         {
+@@ -964,6 +970,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 .putExtra("total", "complete".equals(phase) ? checked : -1)
+                 .putExtra("added", added)
+                 .putExtra("updated", updated)
++                .putExtra("removed", removed)
+                 .putExtra("sources_total", total)
+                 .putExtra("batch_id", batch)
+                 .putExtra("source_location", (root.getHost() == null ? "" : root.getHost()) +
+@@ -1038,7 +1045,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 if (member != null)
+                 {
+                     NetworkScanLedger.finish(member, scanHadDbError || !scanResolved, scanResolved, sFilesFoundCount,
+-                                             previewAdded, previewUpdated);
++                                             previewAdded, previewUpdated, previewRemoved);
+                 }
+                 else
+                 {
+@@ -1107,6 +1114,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         }
+         mFoundFiles = 0;
+         sFilesFoundCount = 0;
++        previewRemoved = -1;
+         previewRoot = what;
+         previewLastProgress = 0;
+         sRemainingDeletes = 0;
+@@ -1244,6 +1252,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 int insertCount = bulkHandler.getInsertHandled();
+                 int updateCount = bulkHandler.getUpdatesHandled();
+                 int deleteCount = bulkHandler.getDeletesHandled();
++                previewRemoved = deleteCount;
+                 previewAdded = insertCount;
+                 previewUpdated = updateCount;
+                 previewScanEvent(what, traversalHadError ? "partial" : "reconciled");
+diff --git a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
+index e6393eb..e9ed281 100644
+--- a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
++++ b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
+@@ -17,6 +17,7 @@ public final class PreviewLocalImportTrace
+     private final String batch = UUID.randomUUID().toString(), mode;
+     private final long started = SystemClock.elapsedRealtime();
+     private long checked, added, updated, lastProgress;
++    private int removed = -1;
+     private boolean partial, countsKnown;
+     private String sourceLocation = "";
+     private PreviewLocalImportTrace(Context context, boolean full)
+@@ -105,10 +106,15 @@ public final class PreviewLocalImportTrace
+         }
+     }
+     public static void reconciled(int added, int updated)
++    {
++        reconciled(added, updated, -1);
++    }
++    public static void reconciled(int added, int updated, int removed)
+     {
+         PreviewLocalImportTrace t = CURRENT.get();
+         if (t != null)
+         {
++            t.removed = removed;
+             t.added = Math.max(0, added);
+             t.updated = Math.max(0, updated);
+             t.countsKnown = added >= 0 && updated >= 0;
+@@ -165,8 +171,9 @@ public final class PreviewLocalImportTrace
+                                        .putExtra("checked", checked)
+                                        .putExtra("total", "complete".equals(phase) ? checked : -1L)
+                                        .putExtra("source_location", sourceLocation)
+-                                       .putExtra("added", added)
+-                                       .putExtra("updated", updated)
++                                       .putExtra("added", countsKnown ? added : -1L)
++                                       .putExtra("removed", removed)
++                                       .putExtra("updated", countsKnown ? updated : -1L)
+                                        .putExtra("counts_known", countsKnown)
+                                        .putExtra("source_kind", "local")
+                                        .putExtra("elapsed_ms", Math.max(0, SystemClock.elapsedRealtime() - started))));
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+index 9fc65fa..4acfc0b 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -188,7 +188,7 @@ public class VideoStoreImportImpl
+             int countEnd = getLocalCount(mCr);
+             log.info("full import +:" + copy + " ~:" + reconciliation.updated + " -:" + del + " " + countStart + "=>" +
+                      countEnd);
+-            PreviewLocalImportTrace.reconciled(copy, reconciliation.updated);
++            PreviewLocalImportTrace.reconciled(copy, reconciliation.updated, reconciliation.removed);
+             ImportState.VIDEO.setDeleting(false);
+             // then trigger scan of new data
+             doScan(mCr, mContext, mBlackList);
+@@ -247,7 +247,7 @@ public class VideoStoreImportImpl
+             int countEnd = getLocalCount(mCr);
+             log.info("part import +:" + copy + " ~:" + reconciliation.updated + " -:" + del + " " + countStart + "=>" +
+                      countEnd);
+-            PreviewLocalImportTrace.reconciled(copy, reconciliation.updated);
++            PreviewLocalImportTrace.reconciled(copy, reconciliation.updated, reconciliation.removed);
+             ImportState.VIDEO.setDeleting(false);
+             // then trigger scan of new data
+             doScan(mCr, mContext, mBlackList);
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java b/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java
+new file mode 100644
+index 0000000..d484bc6
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/NetworkHistoryCountersTest.java
+@@ -0,0 +1,29 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++
++import android.app.Application;
++import android.net.Uri;
++import android.content.Intent;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.Shadows;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class NetworkHistoryCountersTest
++{
++    @Test public void terminalEventCarriesMeasuredRemovedCount()
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        NetworkScannerServiceVideo.previewScanEvent(app, Uri.parse("webdavs://example.test/Films"), "complete",
++                                                    "history", 1, 12, 3, 2, 4);
++        Intent event = Shadows.shadowOf(app).getBroadcastIntents().get(0);
++        assertEquals(4, event.getIntExtra("removed", -1));
++        assertEquals(3, event.getIntExtra("added", -1));
++        assertEquals(2, event.getIntExtra("updated", -1));
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/ScanHistoryCountersTest.java b/test/java/com/archos/mediaprovider/video/ScanHistoryCountersTest.java
+new file mode 100644
+index 0000000..fdf5f68
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/ScanHistoryCountersTest.java
+@@ -0,0 +1,33 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++
++import android.app.Application;
++import android.content.Intent;
++import java.util.List;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++import org.robolectric.Shadows;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class ScanHistoryCountersTest
++{
++    @Test public void localHistoryReportsCommittedRemovalCountsAndUnknownBeforeReconciliation()
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        PreviewLocalImportTrace.begin(app, true);
++        PreviewLocalImportTrace.reconciled(3, 2, 1);
++        PreviewLocalImportTrace.finish(true, false);
++        List<Intent> events = Shadows.shadowOf(app).getBroadcastIntents();
++        assertEquals(-1, events.get(0).getLongExtra("added", 99));
++        Intent finished = events.get(events.size() - 1);
++        assertEquals("complete", finished.getStringExtra("phase"));
++        assertEquals(3, finished.getLongExtra("added", -1));
++        assertEquals(2, finished.getLongExtra("updated", -1));
++        assertEquals(1, finished.getIntExtra("removed", -1));
++    }
++}

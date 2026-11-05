@@ -133,4 +133,14 @@ public class LibraryScanControllerTest
         assertEquals("next", LibraryScanController.progress().batchId);
         assertEquals(ScanProgress.Failure.ADDRESS, LibraryScanController.progress().failure);
     }
+    @Test public void finishedHistoryIncludesOnlyOneRecordPerSource() throws Exception
+    {
+        LibraryScanController.accept(event("history", "started"));
+        LibraryScanController.accept(event("history", "complete").putExtra("added", 7).putExtra("removed", 2));
+        LibraryScanController.accept(event("history", "complete"));
+        LibraryScanController.IO.submit(() -> {}).get(5, TimeUnit.SECONDS);
+        assertEquals(1, LibraryScanController.recentScans().size());
+        assertEquals(7, LibraryScanController.recentScans().get(0).added);
+        assertEquals(2, LibraryScanController.recentScans().get(0).removed);
+    }
 }
