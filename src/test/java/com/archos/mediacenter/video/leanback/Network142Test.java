@@ -336,8 +336,8 @@ public class Network142Test {
         select("network_shares");
         PreviewPagesTest.findText(browser, "Network Scanning").performClick();
         layout();
-        assertNotNull(PreviewPagesTest.findText(browser, "On Open / Return: Off"));
-        View toggle = (View) PreviewPagesTest.findText(browser, "On Open / Return: Off").getParent();
+        assertNotNull(PreviewPagesTest.findText(browser, "Also scan when Supernova opens: Off"));
+        View toggle = (View) PreviewPagesTest.findText(browser, "Also scan when Supernova opens: Off").getParent();
         toggle.requestFocus();
         toggle.performClick();
         layout();

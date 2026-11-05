@@ -913,11 +913,12 @@ public final class UniversalFileBrowser extends LinearLayout {
             scanOverview.setBackground(null);
             items.addView(scanOverview);
             facts.setVisibility(GONE);
-            heading.setText("Network Scanning");
-            information.setText("Automatic checks use the existing scanner. Scans continue when you leave this page.");
+            heading.setText("Library Scanning");
+            information.setText("Checks your drives and Put.io for new and removed videos. The Scan now tile on "
+                                + "Network & Files starts a scan straight away.");
             actions.removeAllViews();
             int period = NetworkAutoRefresh.getRescanPeriod(getContext());
-            contextToggle("Automatic", period > 0, () -> {
+            contextToggle("Scan automatically", period > 0, () -> {
                 if (period > 0)
                     prefs.edit().putInt("preview_scan_frequency", period).apply();
                 NetworkScannerUtil.scheduleNewRescan(
@@ -925,11 +926,10 @@ public final class UniversalFileBrowser extends LinearLayout {
                 scanControls();
                 actions.getChildAt(0).requestFocus();
             });
-            addAction("Frequency: "
-                    + Math.max(15, (period > 0 ? period : prefs.getInt("preview_scan_frequency", 3600000)) / 60000)
-                    + " minutes",
+            addAction("How often: every "
+                    + every(period > 0 ? period : prefs.getInt("preview_scan_frequency", 3600000)),
                 ()
-                    -> PreviewDialog.choose(getContext(), "Frequency",
+                    -> PreviewDialog.choose(getContext(), "How often",
                         new String[] {
                             "15 minutes", "30 minutes", "1 hour", "6 hours", "24 hours"
                         },
@@ -946,16 +946,15 @@ public final class UniversalFileBrowser extends LinearLayout {
                             scanControls();
                             actions.getChildAt(1).requestFocus();
                         }));
-            contextToggle("On Open / Return", prefs.getBoolean("auto_rescan_on_app_restart", false), () -> {
+            contextToggle("Also scan when Supernova opens", prefs.getBoolean("auto_rescan_on_app_restart", false),
+                          () -> {
                 prefs.edit()
                     .putBoolean("auto_rescan_on_app_restart", !prefs.getBoolean("auto_rescan_on_app_restart", false))
                     .apply();
                 scanControls();
                 actions.getChildAt(2).requestFocus();
             });
-            addAction("Sources Included", () -> PreviewNetworkScanning.sources(getContext()));
-            addAction("Scan Now", () -> PreviewLibraryScan.requestNetwork(getContext()));
-            addAction("Scan Library", () -> PreviewLibraryScan.request(getContext()));
+            addAction("What gets scanned", () -> PreviewNetworkScanning.sources(getContext()));
         });
     }
 
