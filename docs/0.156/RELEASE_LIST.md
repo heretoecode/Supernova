@@ -81,6 +81,10 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 - Seek previews (experimental) switch in Settings › System › Advanced, on by default.
 - Old IntroDB settings page: covered by Accounts & Services and Playback › Skipping.
 
+- Blue values stay as in the approved 0.156 mock-ups; the global "no blue values" sweep is done once, in 0.157
+  (owner, 5 Nov 2026).
+- The first-play tip shows once per install, so it appears once after updating to 0.156 (owner, 5 Nov 2026).
+
 ## Progress (Claude, updated 5 Nov 2026 16:10 UTC)
 Built and fully tested (conformance run 41984891190 green, 07e6074d2):
 - #6 Local Storage focus kept in page · #7 header no longer jumps · #9 icons follow focus at the source
