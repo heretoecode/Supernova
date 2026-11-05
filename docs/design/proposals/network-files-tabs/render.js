@@ -1,4 +1,4 @@
-// Exploring (owner, 5 Nov 2026), not tied to any version: Network & Files as one page with tabs, no panels.
+// Exploring (owner, 5–6 Nov 2026), not tied to any version: Network & Files as one page with tabs, no panels.
 // Run: FONT_DIR=<roboto woff2 dir> node render.js
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +23,7 @@ const I = {
   pc: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/>',
   chev: '<path d="M9 6l6 6-6 6"/>',
   grid: '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+  list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.1M4 12h.1M4 18h.1"/>',
   sort: '<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>',
   filter: '<path d="M4 5h16l-6 8v6l-4-2v-4z"/>',
   play: '<path d="M7 4l13 8-13 8z"/>',
@@ -31,6 +32,7 @@ const I = {
   edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
   test: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
   remove: '<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/>',
+  exclude: '<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
   open: '<path d="M9 6l6 6-6 6"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>',
@@ -38,134 +40,148 @@ const I = {
   more: '<path d="M5 12h.1M12 12h.1M19 12h.1"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
-const tabs = (open, focusTab) => `<div class="tabs">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
-  .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k], 30)}${t}</span>`).join('')}</div>`;
+const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
+  .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k], 30)}${t}</span>`).join('')}</div>
+  <div class="summary">${summary.map(([v, l]) => `<span><b>${v}</b> ${l}</span>`).join('<i>·</i>')}</div></div>`;
 const bar = (used, total) => `<div class="bar"><i style="width:${Math.round(used / total * 100)}%"></i></div>`;
-const row = (ic, name, line, right, focus, extra = '') => `<div class="row ${focus ? 'focus' : ''}">
-  <span class="ri">${icon(I[ic], 40)}</span><div class="rt"><div class="rn">${name}</div><div class="rl">${line}</div>${extra}</div>
-  <div class="rr">${right}</div>${right.includes('class="acts"') ? '' : `<span class="rc">${icon(I.chev, 30)}</span>`}</div>`;
+// Library / reachability states: one column, same place on every row.
+const S = {
+  in: ['#5fd38d', 'In library'], out: ['#8a93a3', 'Excluded'], none: ['', 'Not added'],
+  up: ['#5fd38d', 'Reachable'], down: ['#f2b544', 'Not reachable'], newf: ['', 'Not added yet'], ok: ['#5fd38d', 'Connected'],
+};
+const state = k => k ? `<span class="state ${k}">${S[k][0] ? `<i style="background:${S[k][0]}"></i>` : '<i class="ring"></i>'}${S[k][1]}</span>` : '';
 const acts = list => `<span class="acts">${list.map(([ic, t]) => `<span class="ab">${icon(I[ic], 26)}${t}</span>`).join('')}</span>`;
-const dot = (c, t) => `<span class="st"><i style="background:${c}"></i>${t}</span>`;
+const row = (ic, name, line, st, actions, focus, extra = '') => `<div class="row ${focus ? 'focus' : ''}">
+  <span class="ri">${icon(I[ic], 40)}</span><div class="rt"><div class="rn">${name}</div><div class="rl">${line}</div>${extra}</div>
+  <div class="rs">${state(st)}</div><div class="ra">${focus && actions ? acts(actions) : `<span class="rc">${icon(I.chev, 30)}</span>`}</div></div>`;
 const art = [['#5b3a2e', '#1f1512'], ['#2e4a5b', '#121c22'], ['#4b5b2e', '#1a2012'], ['#5b2e4a', '#20121a'], ['#2e5b4f', '#12201d']];
-const titles = ['Conclave', 'Flow', 'The Brutalist', 'Anora', 'Dune: Part Two'];
 
-const local = `${nav}<div class="page">${tabs('local', 'local')}
-<div class="sec">Devices</div>
-${row('tv', 'This Shield', '310 videos · 14.2 GB free of 32 GB', '', false, bar(17.8, 32))}
-${row('usb', 'Backup #1', 'SanDisk USB drive · 1,203 videos · 1.1 TB free of 2 TB', '', false, bar(0.9, 2))}
+const local = `${nav}<div class="page">${head('local', 'local', [['2', 'devices'], ['1,513', 'videos'], ['1.1 TB', 'free']])}
+${row('tv', 'This Shield', '310 videos · 14.2 GB free of 32 GB', '', null, false, bar(17.8, 32))}
+${row('usb', 'Backup #1', 'SanDisk USB drive · 1,203 videos · 1.1 TB free of 2 TB', '', null, false, bar(0.9, 2))}
 </div>`;
 
-const shares = `${nav}<div class="page">${tabs('shares', '')}
-<div class="sech"><div class="sec">Your connections</div><span class="b">${icon(I.plus, 28)}Add connection</span></div>
-${row('cloud', 'Put.io · heretostream', '98.9 GB of 107 GB used · library sync automatic, last 3 hours ago', dot('#5fd38d', 'Reachable'), false)}
-${row('shares', 'Living-room NAS', 'SMB · 3 folders in your library · 512 videos', acts([['open', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']]), true)}
-${row('pc', 'Office PC', 'SFTP · not in your library', dot('#f2b544', 'Not reachable · last seen yesterday'), false)}
+const crumbrow = (trail, tools) => `<div class="crumbrow"><div class="crumbs">${trail.map((t, i) => i === trail.length - 1 ? `<span>${t}</span>` : `${t} <b>›</b> `).join('')}</div>${tools || ''}</div>`;
+const tools = gridOn => `<div class="tools"><span class="b">${icon(gridOn ? I.list : I.grid, 26)}${gridOn ? 'List' : 'Grid'}</span><span class="b">${icon(I.sort, 26)}Sort: Name</span><span class="b">${icon(I.filter, 26)}Videos only</span></div>`;
+const fileacts = [['play', 'Play'], ['info', 'Details'], ['check', 'Mark as watched'], ['exclude', 'Exclude']];
+const files = [['folder', '4K', 'Folder · 86 videos', 'in'], ['folder', 'Old rips', 'Folder · 31 videos', 'out'],
+  ['film', 'Conclave (2024).mkv', '2024 · 14.2 GB', 'in'], ['film', 'home-video-2019.mp4', '1.1 GB', 'none'],
+  ['film', 'Nosferatu (2024).mkv', '2024 · 18.9 GB', 'in']];
+const folder = `${nav}<div class="page">${head('local', '', [['412', 'videos here'], ['398', 'in library'], ['14', 'not added']])}
+${crumbrow(['Local Storage', 'Backup #1', 'Films'], tools(false))}
+${files.map(([ic, n, l, st], i) => row(ic, n, l, st, fileacts, i === 2)).join('')}
+</div>`;
+
+const cards = [['4K', 'Folder', 'in', 1], ['Old rips', 'Folder', 'out', 1], ['Conclave', '2024', 'in'], ['home-video-2019', '1.1 GB', 'none'],
+  ['Nosferatu', '2024', 'in'], ['Flow', '2024', 'in'], ['Anora', '2024', 'in'], ['The Brutalist', '2024', 'in']];
+const gridv = `${nav}<div class="page">${head('local', '', [['412', 'videos here'], ['398', 'in library'], ['14', 'not added']])}
+${crumbrow(['Local Storage', 'Backup #1', 'Films'], tools(true))}
+<div class="g4">${cards.map(([t, l, st, f], i) => `<div class="rc4 ${i === 2 ? 'focus' : ''}" style="${f ? '' : `background:linear-gradient(160deg,${art[i % 5][0]},${art[i % 5][1]})`}">
+${f ? `<span class="fic">${icon(I.folder, 64)}</span>` : ''}<span class="cst">${state(st)}</span>
+<div class="shade"><div class="ct">${t}</div><div class="cl">${l}</div></div></div>`).join('')}</div>
+</div>`;
+
+const shares = (focusIdx) => `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
+<div class="sec">Your connections</div>
+${row('cloud', 'Put.io · heretostream', '98.9 of 107 GB used · synced 3 hours ago', 'up', [['open', 'Open'], ['scan', 'Sync now'], ['test', 'Test']], focusIdx === 0)}
+${row('shares', 'Living-room NAS', 'SMB · 3 folders in your library · 512 videos', 'up', [['open', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']], focusIdx === 1)}
+${row('pc', 'Office PC', 'SFTP · not in your library · last seen yesterday', 'down', [['test', 'Try again'], ['edit', 'Edit'], ['remove', 'Remove']], focusIdx === 2)}
+<div class="row add ${focusIdx === 3 ? 'focus' : ''}"><span class="ri">${icon(I.plus, 40)}</span><div class="rt"><div class="rn">Add a connection</div>
+<div class="rl">A computer, NAS, WebDAV, SFTP or FTP server</div></div><div class="ra"><span class="rc">${icon(I.chev, 30)}</span></div></div>
 <div class="sec">Found on your network</div>
-${row('pc', 'DESKTOP-7Q', 'SMB · not added yet', '<span class="hint">Add</span>', false)}
+${row('pc', 'DESKTOP-7Q', 'SMB · Windows computer', 'newf', [['plus', 'Add']], focusIdx === 4)}
 </div>`;
 
-const types = `${nav}<div class="page">${tabs('shares', '')}
-<div class="crumbs">Network Shares <b>›</b> <span>Add a connection</span></div>
-<div class="sec first">Recommended for you</div>
-${row('cloud', 'Put.io', 'Sign in with your Put.io account · browsing, library sync and search in one', '<span class="ok">Already connected</span>', false)}
-<div class="sec">On your home network</div>
-${row('pc', 'A computer or NAS', 'Windows, Mac, Linux or a NAS (Synology, QNAP…) · Supernova finds them for you', acts([['search', 'Find on my network'], ['plus', 'Enter address']]), true)}
-<div class="sec">On the internet</div>
-${row('globe', 'A WebDAV server', 'Cloud storage and servers that offer WebDAV (secure HTTPS)', '', false)}
-${row('lock', 'An SFTP server', 'A server you reach over SSH', '', false)}
-${row('more', 'More types', 'FTP, FTP with TLS, and plain (unencrypted) WebDAV', '', false)}
+const types = `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
+${crumbrow(['Network Shares', 'Add a connection'])}
+${row('cloud', 'Put.io', 'Sign in with your Put.io account', 'ok', null, false)}
+${row('pc', 'A computer or NAS', 'Windows, Mac, Linux or a NAS · Supernova finds them for you', '', [['search', 'Find on my network'], ['plus', 'Enter address']], true)}
+${row('globe', 'A WebDAV server', 'Cloud storage and servers that offer WebDAV', '', null, false)}
+${row('lock', 'An SFTP server', 'A server you reach over SSH', '', null, false)}
+${row('more', 'More types', 'FTP, FTP with TLS, and plain (unencrypted) WebDAV', '', null, false)}
 </div>`;
 
 const field = (l, v, dim, eye) => `<div class="fld"><span class="fl">${l}</span><span class="fv ${dim ? 'dim' : ''}">${v}</span>${eye ? `<span class="fe">${icon(I.eye, 30)}</span>` : ''}</div>`;
-const form = `${nav}<div class="page">${tabs('shares', '')}
-<div class="crumbs">Network Shares <b>›</b> Add a connection <b>›</b> <span>WebDAV server</span></div>
-<div class="two form">
-<div class="col">
+const form = `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
+${crumbrow(['Network Shares', 'Add a connection', 'WebDAV server'])}
+<div class="two form"><div class="col">
 ${field('Name', 'Put.io Films')}${field('Address', 'webdav.put.io')}${field('Port', '443 · default for HTTPS', true)}
 ${field('Folder', '/Films')}${field('Username', 'heretostream')}${field('Password', '••••••••••••', false, true)}
 <div class="kv"><span>Remember password</span><span class="sw on"><i></i></span></div>
 <div class="btnrow"><span class="b focus">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
-</div>
-<div class="col"><div class="rn">Test connection</div><div class="rl p">Checks the address and password without saving anything.</div>
+</div><div class="col"><div class="rn">Test connection</div><div class="rl p">Checks the address and password without saving anything.</div>
 <div class="rn gap">Tips</div><div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.</div></div>
 </div></div>`;
 
-const library = `${nav}<div class="page">${tabs('library', '')}
-<div class="two">
-<div class="col"><div class="sec">Scanning</div>
+const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'need a look'], ['scanned', '12 min ago']])}
+<div class="two"><div class="col"><div class="sec">Scanning</div>
 <div class="scanbox"><span class="b focus big">${icon(I.scan, 32)}Scan now</span>
 <div class="sl"><div class="rn">Last scan 12 minutes ago</div><div class="rl">Put.io › Films · 2 min 14 s · 3 new, 1 updated</div></div></div>
-<div class="kv"><span>Automatic scan</span><b>Every hour</b></div>
-<div class="kv"><span>When Supernova opens</span><b>On</b></div>
+<div class="kv"><span>Automatic scan</span><b>Every hour</b></div><div class="kv"><span>When Supernova opens</span><b>On</b></div>
 <div class="sec small">Recent scans</div>
 <div class="mini"><span>Today 23:28</span><span>Put.io › Films</span><span>3 new · 1 updated</span></div>
 <div class="mini"><span>Today 22:28</span><span>Living-room NAS</span><span>No changes</span></div>
-<div class="mini"><span>Today 21:28</span><span>Backup #1</span><span class="warnc">Stopped: drive removed</span></div>
-</div>
+<div class="mini"><span>Today 21:28</span><span>Backup #1</span><span class="warnc">Stopped: drive removed</span></div></div>
 <div class="col"><div class="sec">Library Health</div>
-${row('folder', 'Missing files', 'In your library but no longer found', '<span class="count amber">3</span>', false)}
-${row('film', "Couldn't be read", 'Files Supernova could not open', '<span class="count amber">2</span>', false)}
-${row('library', 'Not matched', 'Videos without a film or show', '<span class="count">14</span>', false)}
+<div class="hrow"><span class="ri">${icon(I.folder, 40)}</span><div class="rt"><div class="rn">Missing files</div><div class="rl">In your library but no longer found</div></div><span class="count amber">3</span></div>
+<div class="hrow"><span class="ri">${icon(I.film, 40)}</span><div class="rt"><div class="rn">Couldn't be read</div><div class="rl">Files Supernova could not open</div></div><span class="count amber">2</span></div>
+<div class="hrow"><span class="ri">${icon(I.library, 40)}</span><div class="rt"><div class="rn">Not matched</div><div class="rl">Videos without a film or show</div></div><span class="count">14</span></div>
 </div></div></div>`;
 
-const files = [['folder', '4K', 'Folder · in your library', ''], ['folder', 'Classics', 'Folder · in your library', ''],
-  ['film', 'Conclave (2024).mkv', '2024 · in your library · 14.2 GB', ''], ['film', 'home-video-2019.mp4', 'Not added · 1.1 GB', ''],
-  ['film', 'Nosferatu (2024).mkv', '2024 · in your library · 18.9 GB', '']];
-const toolbar = (gridOn) => `<div class="crumbrow"><div class="crumbs">Local Storage <b>›</b> Backup #1 <b>›</b> <span>Films</span></div>
-<div class="tools"><span class="b">${icon(gridOn ? I.film : I.grid, 26)}${gridOn ? 'List' : 'Grid'}</span><span class="b">${icon(I.sort, 26)}Sort: Name</span><span class="b">${icon(I.filter, 26)}Videos only</span></div></div>`;
-const folder = `${nav}<div class="page">${tabs('local', '')}${toolbar(false)}
-${files.map(([ic, n, l], i) => row(ic, n, l, i === 2 ? acts([['play', 'Play'], ['info', 'Details'], ['check', 'Mark as watched'], ['remove', 'Exclude']]) : '', i === 2)).join('')}
-</div>`;
-const gtitles = ['4K', 'Classics', 'Conclave', 'home-video-2019', 'Nosferatu', 'Flow', 'Anora', 'The Brutalist', 'Dune: Part Two', 'Heat', 'Arrival', 'Gravity', 'Ex Machina', 'Sicario', 'Prisoners', 'Her'];
-const gridv = `${nav}<div class="page">${tabs('local', '')}${toolbar(true)}
-<div class="g8">${gtitles.map((t, i) => `<div class="gc"><div class="gp ${i === 2 ? 'focus' : ''}" style="${i < 2 ? '' : `background:linear-gradient(160deg,${art[i % 5][0]},${art[i % 5][1]})`}">${i < 2 ? icon(I.folder, 60) : ''}${i >= 2 && i !== 3 ? '<i class="sd"></i>' : ''}</div><div class="gt">${t}</div><div class="gl">${i < 2 ? 'Folder' : i === 3 ? 'Not added' : '2024'}</div></div>`).join('')}</div>
-</div>`;
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8}
 .nav .brand{font-size:36px;margin-right:40px;letter-spacing:1px}.nav .sp{flex:1}.nav .on{font-weight:500;color:#fff}.nav .clock{margin-left:20px}
-.page{position:absolute;left:96px;right:96px;top:124px;bottom:40px}
-.tabs{display:flex;gap:14px}.tab{height:68px;padding:0 30px;border-radius:22px;display:inline-flex;align-items:center;gap:14px;font-size:28px;font-weight:500;color:#dfe5f1}
+.page{position:absolute;left:96px;right:96px;top:120px;bottom:40px}
+.tabrow{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:2px solid rgba(255,255,255,.10);margin-bottom:10px}
+.tray{display:inline-flex;gap:6px;padding:6px;border-radius:28px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
+.tab{height:64px;padding:0 28px;border-radius:22px;display:inline-flex;align-items:center;gap:14px;font-size:28px;font-weight:500;color:#dfe5f1}
 .tab.open{background:#454B55;color:#fff}.tab.focus{background:#F4F6FB;color:#0B0D12}
-.sec{font-size:26px;font-weight:500;color:#B7BFCC;margin:46px 0 14px;letter-spacing:.3px}.sec.small{margin-top:34px;font-size:24px}
-.sech{display:flex;align-items:flex-end;justify-content:space-between}.sech .b{margin-bottom:10px}
-.row{display:flex;align-items:center;gap:28px;min-height:112px;padding:18px 30px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
-.row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl,.row.focus .st{color:#3A4256}
-.ri{color:#c9d3e6}.row.focus .ri{color:#0B0D12}.rt{flex:1}.rn{font-size:32px;font-weight:500}.rl{font-size:24px;color:#C9D3E6;margin-top:6px}
-.rr{font-size:24px}.rc{color:rgba(255,255,255,.35)}.row.focus .rc{color:#0B0D12}
+.summary{display:flex;gap:14px;font-size:26px;color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary i{font-style:normal;color:#6b7383}
+.sec{font-size:26px;font-weight:500;color:#B7BFCC;margin:34px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
+.row{display:flex;align-items:center;gap:28px;min-height:108px;padding:16px 30px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
+.row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl{color:#3A4256}
+.ri{color:#c9d3e6;width:40px}.row.focus .ri{color:#0B0D12}.rt{flex:1;min-width:0}.rn{font-size:32px;font-weight:500}.rl{font-size:24px;color:#C9D3E6;margin-top:6px}
+.rs{width:250px}.ra{width:620px;display:flex;justify-content:flex-end}.rc{color:rgba(255,255,255,.35)}.row.focus .rc{color:#0B0D12}
+.state{display:inline-flex;align-items:center;gap:12px;height:46px;padding:0 20px;border-radius:23px;font-size:24px;font-weight:500;background:rgba(255,255,255,.08);color:#fff}
+.state i{width:14px;height:14px;border-radius:50%}.state i.ring{box-shadow:inset 0 0 0 2px #8a93a3}
+.state.out{color:#aab2c0;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.4)}.state.none,.state.newf{background:transparent;box-shadow:inset 0 0 0 2px rgba(255,255,255,.22);color:#dfe5f1}
+.state.down{color:#f6cf7f}
+.row.focus .state{background:#e3e7ee;color:#0B0D12}.row.focus .state.none{background:transparent;box-shadow:inset 0 0 0 2px #9aa3b2}
 .bar{margin-top:14px;width:560px;height:8px;border-radius:4px;background:rgba(255,255,255,.14)}.bar i{display:block;height:100%;border-radius:4px;background:#C9D3E6}
-.st{display:inline-flex;align-items:center;gap:12px;color:#dfe5f1}.st i{width:14px;height:14px;border-radius:50%}
-.hint{font-size:24px;font-weight:500;color:#dfe5f1}
-.cards{display:flex;gap:24px}.card{width:400px;height:225px;border-radius:16px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
-.ct{font-size:26px;font-weight:500;margin-top:14px}.cl{font-size:22px;color:#C9D3E6;margin-top:4px}
-.b{height:64px;padding:0 26px;border-radius:20px;background:#2a2d33;display:inline-flex;align-items:center;gap:12px;font-size:26px;font-weight:500}
+.acts{display:flex;gap:12px}.ab{white-space:nowrap;height:56px;padding:0 20px;border-radius:18px;background:#dde1ea;color:#0B0D12;display:inline-flex;align-items:center;gap:10px;font-size:24px;font-weight:500}
+.ab:first-child{background:#0B0D12;color:#fff}
+.row.add .ri{color:#fff}.row.add.focus .ri{color:#0B0D12}.row.add .rn{font-weight:500}
+.crumbrow{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px;min-height:58px}
+.crumbs{font-size:30px;color:#C9D3E6}.crumbs b{color:#7d8696;margin:0 10px;font-weight:400}.crumbs span{color:#fff;font-weight:500}
+.tools{display:flex;gap:12px}.b{height:58px;padding:0 24px;border-radius:20px;background:#2a2d33;display:inline-flex;align-items:center;gap:12px;font-size:24px;font-weight:500}
 .b.focus{background:#F4F6FB;color:#0B0D12}.b.big{height:76px;padding:0 34px;font-size:30px}
+.g4{display:grid;grid-template-columns:repeat(4,400px);gap:34px 42px;margin-top:22px}
+.rc4{position:relative;width:400px;height:225px;border-radius:16px;background:#22252B;box-shadow:0 0 0 2px rgba(255,255,255,.28);overflow:hidden}
+.rc4.focus{transform:scale(1.1);box-shadow:0 0 0 4px #fff;z-index:2}
+.fic{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);color:#c9d3e6}
+.cst{position:absolute;right:12px;top:12px}.cst .state{height:38px;font-size:20px;padding:0 14px;background:rgba(10,12,16,.72)}
+.cst .state.none{background:rgba(10,12,16,.72)}
+.shade{position:absolute;left:0;right:0;bottom:0;padding:44px 20px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.ct{font-size:26px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl{font-size:20px;color:#d6dce8;margin-top:2px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:80px}
 .scanbox{display:flex;align-items:center;gap:30px;margin-bottom:22px}
-.kv{display:flex;justify-content:space-between;font-size:28px;padding:20px 4px;border-bottom:2px solid rgba(255,255,255,.08)}.kv span{color:#C9D3E6}.kv b{font-weight:500}
-.mini{display:grid;grid-template-columns:200px 1fr auto;font-size:24px;padding:12px 4px;color:#dfe5f1}.mini span:first-child{color:#9aa3b2}
-.warnc{color:#f2b544}
+.kv{display:flex;justify-content:space-between;align-items:center;font-size:28px;padding:20px 4px;border-bottom:2px solid rgba(255,255,255,.08)}.kv span{color:#C9D3E6}.kv b{font-weight:500}
+.mini{display:grid;grid-template-columns:200px 1fr auto;font-size:24px;padding:12px 4px;color:#dfe5f1}.mini span:first-child{color:#9aa3b2}.warnc{color:#f2b544}
+.hrow{display:flex;align-items:center;gap:28px;min-height:108px;padding:16px 30px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .count{min-width:56px;height:56px;padding:0 16px;border-radius:28px;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;font-size:28px;font-weight:500}
 .count.amber{background:#F2B544;color:#111}
-.crumbs{font-size:30px;color:#C9D3E6;margin:44px 0 18px}.crumbs b{color:#7d8696;margin:0 10px;font-weight:400}.crumbs span{color:#fff;font-weight:500}
-.acts{display:flex;gap:12px}.ab{height:56px;padding:0 22px;border-radius:18px;background:#2a2d33;color:#fff;display:inline-flex;align-items:center;gap:10px;font-size:24px;font-weight:500}
-.row.focus .ab{background:#dde1ea;color:#0B0D12}.row.focus .ab:first-child{background:#0B0D12;color:#fff}
-.ok{color:#5fd38d;font-size:24px}.sec.first{margin-top:10px}
-.crumbrow{display:flex;align-items:center;justify-content:space-between;margin:34px 0 14px}.crumbrow .crumbs{margin:0}
-.tools{display:flex;gap:12px}.tools .b{height:58px;font-size:24px}
-.g8{display:grid;grid-template-columns:repeat(8,1fr);gap:26px 22px;margin-top:10px}
-.gp{height:118px;border-radius:14px;box-shadow:0 0 0 2px rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;color:#c9d3e6;position:relative}
-.gp.focus{box-shadow:0 0 0 4px #fff;transform:scale(1.06)}.sd{position:absolute;right:10px;top:10px;width:14px;height:14px;border-radius:50%;background:#5fd38d}
-.gt{font-size:22px;font-weight:500;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gl{font-size:19px;color:#C9D3E6;margin-top:2px}
-.form{margin-top:6px}.fld{display:flex;align-items:center;height:74px;padding:0 26px;border-radius:18px;background:rgba(255,255,255,.06);margin-bottom:12px;font-size:28px}
+.form{margin-top:4px}.fld{display:flex;align-items:center;height:72px;padding:0 26px;border-radius:18px;background:rgba(255,255,255,.06);margin-bottom:12px;font-size:28px}
 .fl{width:180px;color:#C9D3E6;font-size:24px}.fv{flex:1}.fv.dim{color:#8a93a3}.fe{color:#c9d3e6}
-.btnrow{display:flex;gap:16px;margin-top:20px}.p{line-height:1.45;margin-top:10px}.p b{color:#fff;font-weight:500}.gap{margin-top:40px}
+.btnrow{display:flex;gap:16px;margin-top:18px}.p{line-height:1.45;margin-top:10px}.p b{color:#fff;font-weight:500}.gap{margin-top:40px}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [f, body] of [['01-local-storage.png', local], ['02-network-shares.png', shares], ['03-library.png', library], ['04-inside-a-folder.png', folder],
-    ['05-folder-grid.png', gridv], ['06-add-connection.png', types], ['07-add-connection-form.png', form]]) {
+  const pages = [['01-local-storage.png', local], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
+    ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
+    ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library]];
+  for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
     await tab.screenshot({ path: path.join(__dirname, f) });

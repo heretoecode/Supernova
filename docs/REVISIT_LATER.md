@@ -84,7 +84,12 @@ Items already built or scheduled are left out (see the bottom of this file).
   Library (Scan now, scanning, recent scans, Library Health). Opens on the last tab used; first visit Local
   Storage. Folders open below the tabs with a breadcrumb, keeping Grid/List, Sort, Videos only/All files and the
   inline actions; no "Recently added" (owner). Network Shares holds saved connections (Open, Edit, Test, Remove)
-  and Add connection, which opens in the same tab. Mock-ups `docs/design/proposals/network-files-tabs/01`–`07`.
+  and Add connection, which opens in the same tab. Mock-ups `docs/design/proposals/network-files-tabs/01`–`09`.
+  v3 (owner notes 6 Nov): tabs in a tray with a line under the tab row; a summary per tab at the right of the tab
+  row; one status column on every row (In library · Excluded · Not added; Reachable · Not reachable) that stays put
+  when the row is focused, with the row's buttons after it; grid uses the Home row card (16:9, title and year
+  inside on a shade, state chip top right); Add a connection is the last row of Your connections, not a corner
+  button, because it opens a page, not a pop-up.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
