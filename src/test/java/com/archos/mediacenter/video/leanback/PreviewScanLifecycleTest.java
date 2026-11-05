@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediaprovider.video.PreviewLocalImportTrace;
+import com.archos.mediaprovider.video.ScanSchedulePolicy;
 import com.archos.mediascraper.AutoScrapeService;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -133,10 +134,26 @@ public class PreviewScanLifecycleTest
         assertTrue(PreviewLocalScanState.status(context).contains("cancelled"));
     }
 
-    @Test public void localQueueBoundariesShareBatchAndObservedTrigger()
+    private Context localTraceContext()
     {
+        Application app = RuntimeEnvironment.getApplication();
+        PreferenceManager.getDefaultSharedPreferences(app).edit().remove(ScanSchedulePolicy.LAST_COMPLETED).commit();
         Context context = mock(Context.class);
         when(context.getPackageName()).thenReturn("test");
+        when(context.getSharedPreferences(anyString(), anyInt()))
+            .thenAnswer(call -> app.getSharedPreferences(call.getArgument(0), call.getArgument(1)));
+        return context;
+    }
+
+    private void assertSuccessfulLocalCompletionRecorded()
+    {
+        assertTrue(PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+                       .getLong(ScanSchedulePolicy.LAST_COMPLETED, 0) > 0);
+    }
+
+    @Test public void localQueueBoundariesShareBatchAndObservedTrigger()
+    {
+        Context context = localTraceContext();
         Handler handler = new Handler(Looper.getMainLooper());
         Message message = Message.obtain();
         message.getData().putString("preview_trigger", "resume");
@@ -144,6 +161,7 @@ public class PreviewScanLifecycleTest
         PreviewLocalImportTrace.starting(message);
         PreviewLocalImportTrace.begin(context, true);
         PreviewLocalImportTrace.finish(true, false);
+        assertSuccessfulLocalCompletionRecorded();
         ArgumentCaptor<Intent> sent = ArgumentCaptor.forClass(Intent.class);
         verify(context, times(4)).sendBroadcast(sent.capture());
         List<Intent> rows = sent.getAllValues();
@@ -184,12 +202,12 @@ public class PreviewScanLifecycleTest
 
     @Test public void localTelemetryBroadcastFailureDoesNotBreakImport()
     {
-        Context context = mock(Context.class);
-        when(context.getPackageName()).thenReturn("test");
+        Context context = localTraceContext();
         doThrow(new IllegalStateException("receiver unavailable")).when(context).sendBroadcast(any(Intent.class));
         PreviewLocalImportTrace.begin(context, true);
         PreviewLocalImportTrace.checked();
         PreviewLocalImportTrace.finish(true, false);
+        assertSuccessfulLocalCompletionRecorded();
     }
 
     @Test public void libraryProgressKeepsConcurrentPhasesAndHonestRemainingCounts()
