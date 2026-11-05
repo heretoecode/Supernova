@@ -152,7 +152,7 @@ public class SettingsShieldNavigationTest {
         assertTrue(diagnostics.requestFocus());
         settle();
         assertNotNull(
-            "Diagnostic Level must retain its established preference key", settings.findPreference(Diagnostics.LEVEL));
+            "Clear diagnostic data is offered", settings.findPreference("supernova_diagnostic_clear"));
         key(KeyEvent.KEYCODE_DPAD_DOWN);
         Set<String> reached = new HashSet<>();
         for (int n = 0; n < 10; n++) {
@@ -164,7 +164,7 @@ public class SettingsShieldNavigationTest {
             key(KeyEvent.KEYCODE_DPAD_DOWN);
         }
         for (String pref : new String[] {
-            Diagnostics.KEY, Diagnostics.LEVEL, "export_diagnostic_report"
+            Diagnostics.KEY, "supernova_diagnostic_clear", "export_diagnostic_report"
         }) {
             boolean seen = reached.stream().anyMatch(tag -> tag.contains(pref));
             assertTrue("D-pad must reach " + pref + "; saw " + reached, seen);

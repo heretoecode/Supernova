@@ -90,7 +90,7 @@ final class SettingsLayout {
         page(6,
              "Backup & restore", new String[] {},
              "Diagnostics", new String[] {"export_diagnostic_report", "supernova_diagnostic_logging",
-                                          "supernova_diagnostic_level"},
+                                          "supernova_diagnostic_clear"},
              "Advanced", new String[] {"seek_thumbnails_enabled", "force_software_decoding", "dec_choice", "parser_sync_mode",
                                        "stream_max_iframe_size", "audio_interface_choice", "audio_decoder_choice",
                                        "force_passthrough", "audio_speed_audiotrack", "enable_dynamic_audio_delay",

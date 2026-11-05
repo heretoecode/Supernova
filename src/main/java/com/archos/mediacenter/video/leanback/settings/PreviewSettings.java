@@ -52,6 +52,27 @@ import java.util.function.Consumer;
 
 /** Organizes and styles TV Settings preferences, navigation and focus handling. */
 public final class PreviewSettings {
+    static final String DIAGNOSTIC_CLEAR = "supernova_diagnostic_clear";
+
+    private static void confirmClearDiagnostics(PreferenceFragmentCompat fragment) {
+        android.content.Context context = fragment.requireContext();
+        PreviewDialog.choose(context, "Clear diagnostic data?", new String[] {
+            "Clear diagnostic data", "Keep it"
+        }, 1, choice -> {
+            if (choice != 0)
+                return;
+            android.content.Context app = context.getApplicationContext();
+            new Thread(() -> {
+                try {
+                    Diagnostics.clearAll(app);
+                } catch (java.io.IOException failed) {
+                    Diagnostics.error("diagnostics_clear_failed", failed);
+                }
+            }, "diagnostics-clear").start();
+            android.widget.Toast.makeText(context, "Diagnostic data cleared", android.widget.Toast.LENGTH_SHORT).show();
+        });
+    }
+
     private static final WeakHashMap<Context, WeakReference<TextView>> HELP =
         new WeakHashMap<>();
     private static final
@@ -282,9 +303,8 @@ public final class PreviewSettings {
         }
         SwitchPreferenceCompat diagnostics = new SwitchPreferenceCompat(fragment.requireContext());
         diagnostics.setKey(Diagnostics.KEY);
-        diagnostics.setTitle("Diagnostic Logging");
-        diagnostics.setSummary(
-            "Detailed diagnostic logging starts enabled. Bounded local reports exclude credentials.");
+        diagnostics.setTitle("Diagnostic logging");
+        diagnostics.setSummary("Records in full detail on this device. Reports never include passwords.");
         diagnostics.setDefaultValue(Diagnostics.defaultEnabled());
         diagnostics.setOnPreferenceChangeListener((p, value) -> {
             if ((Boolean) value) {
@@ -296,18 +316,17 @@ public final class PreviewSettings {
             return false;
         });
         categories.get("Advanced").addPreference(diagnostics);
-        ListPreference diagnosticLevel = new ListPreference(fragment.requireContext());
-        diagnosticLevel.setKey(Diagnostics.LEVEL);
-        diagnosticLevel.setTitle("Diagnostic Level");
-        diagnosticLevel.setEntries(new String[] {
-            "Normal", "Detailed (QA)"
+        // Approved 0.156 (owner notes 0.155 #29): logging always records in full detail, so there is no level
+        // choice; Clear diagnostic data removes every saved log and report.
+        Preference clear = new Preference(fragment.requireContext());
+        clear.setKey(DIAGNOSTIC_CLEAR);
+        clear.setTitle("Clear diagnostic data");
+        clear.setSummary("Delete every saved log and report on this device.");
+        clear.setOnPreferenceClickListener(p -> {
+            confirmClearDiagnostics(fragment);
+            return true;
         });
-        diagnosticLevel.setEntryValues(new String[] {
-            "normal", "qa"
-        });
-        diagnosticLevel.setDefaultValue("qa");
-        diagnosticLevel.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
-        categories.get("Advanced").addPreference(diagnosticLevel);
+        categories.get("Advanced").addPreference(clear);
         for (String label : new String[] {
             "Issues Digest", "Report a Problem", "Show Latest Reference"
         }) {
@@ -327,9 +346,8 @@ public final class PreviewSettings {
         }
         Preference export = new Preference(fragment.requireContext());
         export.setKey("export_diagnostic_report");
-        export.setTitle("Export Diagnostic Report");
-        export.setSummary(
-            "Save recent logs and safe device/build information as a ZIP. Choose a destination using Android Files.");
+        export.setTitle("Save a diagnostic report");
+        export.setSummary("Recent logs and device details as a ZIP, saved where you choose.");
         export.setOnPreferenceClickListener(p -> {
             fragment.startActivity(new Intent(
                 fragment.requireContext(), DiagnosticExportActivity.class));
@@ -472,7 +490,7 @@ public final class PreviewSettings {
             advanced.addPreference(diagnosticGroup);
             for (String key : new String[] {
                 Diagnostics.KEY,
-                 Diagnostics.LEVEL, "preview_diagnostic_Issues Digest",
+                 DIAGNOSTIC_CLEAR, "preview_diagnostic_Issues Digest",
                  "preview_diagnostic_Report a Problem", "preview_diagnostic_Show Latest Reference",
                  "export_diagnostic_report"
             })

@@ -154,12 +154,12 @@ public class SettingsWorkspaceTest {
     /** Owner rule: up to ~5 short choices sit inline and Left/Right changes them straight away. */
     @Test
     public void shortChoicesAreInlineAndLeftRightSavesThem() {
-        workspace.open(6, "Diagnostics");
+        workspace.open(6, "Advanced");
         layout();
-        ListPreference level = fragment.findPreference("supernova_diagnostic_level");
+        ListPreference level = fragment.findPreference("supernova_pcm_speed_engine");
         assertNotNull(level);
         assertTrue(SettingsWorkspace.inline(level));
-        View row = tagged("settings.preference.supernova_diagnostic_level");
+        View row = tagged("settings.preference.supernova_pcm_speed_engine");
         assertTrue(row.requestFocus());
         layout();
         View segments = row.findViewWithTag("settings.segments");
@@ -427,9 +427,9 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void navigationStateSurvivesRecreationWithoutReplayingAnAction() {
-        workspace.open(6, "Diagnostics");
+        workspace.open(6, "Advanced");
         layout();
-        View row = tagged("settings.preference.supernova_diagnostic_level");
+        View row = tagged("settings.preference.supernova_pcm_speed_engine");
         row.requestFocus();
         Bundle state = new Bundle();
         fragment.onSaveInstanceState(state);
@@ -441,18 +441,18 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void choiceCancelAndAcceptedSelectionRestoreOpenerAndRespectVeto() {
-        workspace.open(6, "Diagnostics");
+        workspace.open(6, "Advanced");
         layout();
-        View opener = tagged("settings.preference.supernova_diagnostic_level");
-        ListPreference level = fragment.findPreference("supernova_diagnostic_level");
+        View opener = tagged("settings.preference.supernova_pcm_speed_engine");
+        ListPreference level = fragment.findPreference("supernova_pcm_speed_engine");
         assertNotNull(level);
         opener.requestFocus();
         Dialog dialog = SettingsChoiceDialog.show(host.get(), level);
         assertNotNull(dialog);
         dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").requestFocus();
-        assertEquals("qa", level.getValue());
+        String original = level.getValue();
         dialog.getWindow().getDecorView().findViewWithTag("settings.choice.cancel").performClick();
-        assertEquals("qa", level.getValue());
+        assertEquals(original, level.getValue());
         assertTrue(opener.hasFocus());
         level.setOnPreferenceChangeListener((p, value) -> false);
         dialog = SettingsChoiceDialog.show(host.get(), level);

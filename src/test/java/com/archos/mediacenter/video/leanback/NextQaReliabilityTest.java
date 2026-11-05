@@ -85,7 +85,8 @@ public class NextQaReliabilityTest {
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content, settings).commitNow();
             View root = settings.requireView();
             PreviewPagesTest.layout(root);
-            assertNotNull(settings.findPreference(Diagnostics.LEVEL));
+            // Diagnostics always record in full, so there is no level choice any more.
+            assertNull(settings.findPreference(Diagnostics.LEVEL));
             assertTrue(Diagnostics.defaultEnabled());
             for (String label : new String[] {
                 "Playback", "Video", "Audio", "Subtitles", "Library & Metadata", "Home",
