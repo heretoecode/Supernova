@@ -1,0 +1,1838 @@
+diff --git a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+index 2c86ba1..4482a26 100644
+--- a/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
++++ b/src/com/archos/mediacenter/utils/ShortcutDbAdapter.java
+@@ -24,14 +24,14 @@ import android.database.sqlite.SQLiteOpenHelper;
+ import android.net.Uri;
+ import android.util.Log;
+ 
+-
+ import com.archos.filecorelibrary.FileUtils;
+ 
+ import java.io.Serializable;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+-public enum ShortcutDbAdapter {
++public enum ShortcutDbAdapter
++{
+ 
+     VIDEO(ShortcutDbAdapter.DATABASE_VIDEO_TABLE, ShortcutDbAdapter.DATABASE_CREATE_VIDEO5);
+ 
+@@ -43,9 +43,9 @@ public enum ShortcutDbAdapter {
+ 
+     public static final String KEY_PATH = "path";
+     public static final String KEY_IPPATH = "ippath";
+-    public static final String KEY_FRIENDLY_URI= "friendly_url";
++    public static final String KEY_FRIENDLY_URI = "friendly_url";
+     // indicates if a folder needs to be rescanned automatically
+-    public static final String KEY_RESCAN= "rescan";
++    public static final String KEY_RESCAN = "rescan";
+ 
+     public static final String KEY_NAME = "name";
+     public static final String KEY_ROWID = "_id";
+@@ -54,19 +54,19 @@ public enum ShortcutDbAdapter {
+     private static final String DATABASE_VIDEO_TABLE = "shortcuts_table_video";
+ 
+     private static final String DATABASE_CREATE_VIDEO =
+-        "create table shortcuts_table_video (_id integer primary key autoincrement, " + KEY_PATH + " text not null, " +  KEY_NAME + " text not null, " + KEY_IPPATH + " text" + ", "+KEY_FRIENDLY_URI+" text);";
++            "create table shortcuts_table_video (_id integer primary key autoincrement, " +
++        KEY_PATH + " text not null, " + KEY_NAME + " text not null, " + KEY_IPPATH + " text"
++        + ", " + KEY_FRIENDLY_URI + " text);";
+ 
+     private static final String DATABASE_CREATE_VIDEO5 =
+-            "create table shortcuts_table_video (_id integer primary key autoincrement, "
+-                    + KEY_PATH + " text not null, "
+-                    + KEY_NAME + " text not null, "
+-                    + KEY_IPPATH + " text" + ", "
+-                    + KEY_FRIENDLY_URI + " text" + ", "
+-                    + KEY_RESCAN + " INTEGER DEFAULT (1)" +
+-                    ");";
+-
++            "create table shortcuts_table_video (_id integer primary key autoincrement, " +
++        KEY_PATH + " text not null, " + KEY_NAME + " text not null, " + KEY_IPPATH + " text"
++        + ", " + KEY_FRIENDLY_URI + " text"
++        + ", " + KEY_RESCAN + " INTEGER DEFAULT (1)"
++        + ");";
+ 
+-    private static final String[] SHORTCUT_COLS = { KEY_ROWID, KEY_PATH, KEY_IPPATH, KEY_NAME, KEY_FRIENDLY_URI, KEY_RESCAN };
++    private static final String[] SHORTCUT_COLS = {KEY_ROWID, KEY_PATH,         KEY_IPPATH,
++                                                   KEY_NAME,  KEY_FRIENDLY_URI, KEY_RESCAN};
+ 
+     private DatabaseHelper mDbHelper;
+     // The path is the only info the other classes need to know.
+@@ -74,43 +74,41 @@ public enum ShortcutDbAdapter {
+     private SQLiteDatabase mDb;
+     private final String mDatabaseTable;
+ 
+-    public boolean isDbOpen() {
++    public boolean isDbOpen()
++    {
+         return mDb != null && mDb.isOpen();
+     }
+ 
+-    public boolean isHimselfOrAncestorShortcut(Context context, String path) {
++    public boolean isHimselfOrAncestorShortcut(Context context, String path)
++    {
+         open(context);
+         Uri uri = Uri.parse(path);
+-        List<String> uriToCheck = new ArrayList<>();// every ancestors
++        List<String> uriToCheck = new ArrayList<>(); // every ancestors
+         String where = KEY_PATH + " in (";
+-        while (uri != null && (uri.getHost() != null && !uri.getHost().isEmpty()
+-                || uri.getPath() != null && !uri.getPath().isEmpty())) { // while we have something like scheme://host/path or scheme://host or scheme://path
++        while (uri != null &&
++               (uri.getHost() != null && !uri.getHost().isEmpty() || uri.getPath() != null && !uri.getPath().isEmpty()))
++        { // while we have something like scheme://host/path or scheme://host or scheme://path
+             String uriString = uri.toString();
+             uriToCheck.add(uriString);
+-            if(uriString.endsWith("/")) //also removing last "/"
++            if (uriString.endsWith("/")) //also removing last "/"
+                 uriToCheck.add(uriString.substring(0, uriString.length() - 1));
+             uri = FileUtils.getParentUrl(uri);
+-
+         }
+-        if (!uriToCheck.isEmpty()) { //building where string : " path in {?, ?, ?}
++        if (!uriToCheck.isEmpty())
++        { //building where string : " path in {?, ?, ?}
+             boolean isFirst = true;
+-            for (String stringUri : uriToCheck) {
++            for (String stringUri : uriToCheck)
++            {
+                 if (!isFirst)
+                     where += ", ";
+                 where += "?";
+                 isFirst = false;
+-
+             }
+             where += ")";
+-            Cursor c = mDb.query(mDatabaseTable,
+-                    SHORTCUT_COLS,
+-                    where,
+-                    uriToCheck.toArray(new String[0]),
+-                    null,
+-                    null,
+-                    null);
++            Cursor c =
++                mDb.query(mDatabaseTable, SHORTCUT_COLS, where, uriToCheck.toArray(new String[0]), null, null, null);
+             c.moveToFirst();
+-            boolean ret = c.getCount()>0;
++            boolean ret = c.getCount() > 0;
+             c.close();
+             close();
+             return ret;
+@@ -119,85 +117,99 @@ public enum ShortcutDbAdapter {
+         return false;
+     }
+ 
+-
+-    public static class Shortcut implements Serializable{
++    public static class Shortcut implements Serializable
++    {
+         private final String mName;
+         private final String mUri;
+         private final String mFriendlyUri;
+         private Long mId;
+         private boolean mRescan;
+ 
+-        public String getUri() {
++        public String getUri()
++        {
+             return mUri;
+         }
+-        public String getName() {
++        public String getName()
++        {
+             return mName;
+         }
+-        public boolean getRescan() {
++        public boolean getRescan()
++        {
+             return mRescan;
+         }
+ 
+-        public Long getID() {
++        public Long getID()
++        {
+             return mId;
+         }
+-        public void setID(Long id) {
++        public void setID(Long id)
++        {
+             mId = id;
+         }
+-        public String getFriendlyUri() {
++        public String getFriendlyUri()
++        {
+             return mFriendlyUri;
+         }
+-        public Shortcut(String name, String uri, String friendlyUri){
++        public Shortcut(String name, String uri, String friendlyUri)
++        {
+             mName = name;
+             mUri = uri;
+             mId = Long.valueOf(-1);
+             mRescan = true;
+-            if(friendlyUri!=null&&!friendlyUri.isEmpty())
++            if (friendlyUri != null && !friendlyUri.isEmpty())
+                 mFriendlyUri = friendlyUri;
+             else
+                 mFriendlyUri = mUri;
+         }
+-        public Shortcut(String name, String uri){
++        public Shortcut(String name, String uri)
++        {
+             this(name, uri, uri);
+         }
+ 
+-        @Override
+-        public boolean equals(Object o) {
+-            if (this == o) return true;
+-            if (o == null || getClass() != o.getClass()) return false;
++        @Override public boolean equals(Object o)
++        {
++            if (this == o)
++                return true;
++            if (o == null || getClass() != o.getClass())
++                return false;
+ 
+-            Shortcut shortcut = (Shortcut) o;
++            Shortcut shortcut = (Shortcut)o;
+ 
+             return !(mUri != null ? !mUri.equals(shortcut.mUri) : shortcut.mUri != null);
+-
+         }
+ 
+-        @Override
+-        public int hashCode() {
++        @Override public int hashCode()
++        {
+             return mUri != null ? mUri.hashCode() : 0;
+         }
+     }
+-    ShortcutDbAdapter(String databaseTable, String databaseCreate) {
++    ShortcutDbAdapter(String databaseTable, String databaseCreate)
++    {
+         mDatabaseTable = databaseTable;
+     }
+ 
+     /*
+      * Open the shortcut database
+      */
+-    private void open(Context ct) throws SQLException {
+-        if(mDbHelper==null&&ct!=null)
++    private void open(Context ct) throws SQLException
++    {
++        if (mDbHelper == null && ct != null)
+             mDbHelper = new DatabaseHelper(ct.getApplicationContext());
+-        if(mDbHelper!=null)
++        if (mDbHelper != null)
+             mDb = mDbHelper.getWritableDatabase();
+     }
+ 
+     /*
+      * Close the shortcut database
+      */
+-    public void close() {
+-        if (mDb != null && mDb.isOpen()) {
++    public void close()
++    {
++        if (mDb != null && mDb.isOpen())
++        {
+             mDb.close();
+         }
+-        if (mDbHelper != null) {
++        if (mDbHelper != null)
++        {
+             mDbHelper.close();
+         }
+     }
+@@ -206,70 +218,119 @@ public enum ShortcutDbAdapter {
+      * NEW 2015: better have direct access to the cursor
+      * @return
+      */
+-    public Cursor queryAllShortcuts(Context context) {
++    public Cursor queryAllShortcuts(Context context)
++    {
+         return getAllShortcuts(context, null, null);
+     }
+ 
++    /** Worker-only copied source names/locations, without opening or closing the singleton connection. */
++    public List<Shortcut> readCopiedShortcuts(Context context)
++    {
++        if (!context.getDatabasePath(DATABASE_NAME).isFile())
++            return java.util.Collections.emptyList();
++        try (SQLiteDatabase db = SQLiteDatabase.openDatabase(context.getDatabasePath(DATABASE_NAME).getPath(), null,
++                                                             SQLiteDatabase.OPEN_READONLY))
++        {
++            db.execSQL("SAVEPOINT supernova_source_names");
++            try
++            {
++                try (Cursor rows = db.query(mDatabaseTable, SHORTCUT_COLS, null, null, null, null, KEY_ROWID))
++                {
++                    return java.util.Collections.unmodifiableList(cursorToShortcutList(rows));
++                }
++            }
++            finally
++            {
++                db.execSQL("RELEASE SAVEPOINT supernova_source_names");
++            }
++        }
++        catch (SQLiteException unavailable)
++        {
++            return null;
++        }
++    }
++
+     /**
+      * Returns a copied list of URIs that are marked for automatic rescan.
+      * Uses a local DatabaseHelper so the singleton mDb/mDbHelper state is never touched.
+      * Safe to call from any thread.
+      */
+-    public List<Uri> getRescanUris(Context context) {
++    public List<Uri> getRescanUris(Context context)
++    {
+         List<Uri> uris = new ArrayList<>();
+         DatabaseHelper helper = new DatabaseHelper(context.getApplicationContext());
+-        try {
++        try
++        {
+             SQLiteDatabase db = helper.getReadableDatabase();
+-            Cursor c = db.query(mDatabaseTable,
+-                    new String[]{KEY_PATH, KEY_RESCAN},
+-                    KEY_RESCAN + " = 1",
+-                    null, null, null, null);
+-            try {
+-                while (c.moveToNext()) {
++            Cursor c = db.query(mDatabaseTable, new String[] {KEY_PATH, KEY_RESCAN}, KEY_RESCAN + " = 1", null, null,
++                                null, null);
++            try
++            {
++                while (c.moveToNext())
++                {
+                     String path = c.getString(c.getColumnIndexOrThrow(KEY_PATH));
+-                    if (path != null) uris.add(Uri.parse(path));
++                    if (path != null)
++                        uris.add(Uri.parse(path));
+                 }
+-            } finally {
++            }
++            finally
++            {
+                 c.close();
+             }
+-        } catch (Exception e) {
++        }
++        catch (Exception e)
++        {
+             Log.w(TAG, "getRescanUris: failed", e);
+-        } finally {
++        }
++        finally
++        {
+             helper.close();
+         }
+         return uris;
+     }
+ 
+     /** Returns every indexed root, or null if the database could not be read. */
+-    public List<Uri> getIndexedUris(Context context) {
++    public List<Uri> getIndexedUris(Context context)
++    {
+         List<Uri> uris = new ArrayList<>();
+         DatabaseHelper helper = new DatabaseHelper(context.getApplicationContext());
+-        try {
++        try
++        {
+             SQLiteDatabase db = helper.getReadableDatabase();
+-            Cursor c = db.query(mDatabaseTable, new String[]{KEY_PATH},
+-                    null, null, null, null, null);
+-            try {
+-                while (c.moveToNext()) {
++            Cursor c = db.query(mDatabaseTable, new String[] {KEY_PATH}, null, null, null, null, null);
++            try
++            {
++                while (c.moveToNext())
++                {
+                     String path = c.getString(c.getColumnIndexOrThrow(KEY_PATH));
+-                    if (path != null) uris.add(Uri.parse(path));
++                    if (path != null)
++                        uris.add(Uri.parse(path));
+                 }
+-            } finally {
++            }
++            finally
++            {
+                 c.close();
+             }
+-        } catch (Exception e) {
++        }
++        catch (Exception e)
++        {
+             Log.w(TAG, "getIndexedUris: failed", e);
+             return null;
+-        } finally {
++        }
++        finally
++        {
+             helper.close();
+         }
+         return uris;
+     }
+ 
+-    public int numberOfShortcuts(Context context) {
++    public int numberOfShortcuts(Context context)
++    {
+         Cursor shortcuts = getAllShortcuts(context, null, null);
+         if (shortcuts == null)
+             return 0;
+-        else {
++        else
++        {
+             int count = shortcuts.getCount();
+             shortcuts.close();
+             return count;
+@@ -281,7 +342,8 @@ public enum ShortcutDbAdapter {
+      * This new version does not need the ipPath parameter, it just use the regular path + a name
+      * @return true if it succeeded
+      */
+-    public boolean addShortcut(Context context, Shortcut shortcut) {
++    public boolean addShortcut(Context context, Shortcut shortcut)
++    {
+         SQLiteDatabase db = new DatabaseHelper(context).getWritableDatabase();
+         ContentValues val = new ContentValues(2);
+         val.put(KEY_PATH, shortcut.getUri());
+@@ -301,10 +363,11 @@ public enum ShortcutDbAdapter {
+      * NEW 2015: better have direct access to the DB
+      * @return true if it succeeded
+      */
+-    public boolean deleteShortcut(Context context, long shortcutId) {
++    public boolean deleteShortcut(Context context, long shortcutId)
++    {
+         open(context);
+         SQLiteDatabase db = new DatabaseHelper(context).getWritableDatabase();
+-        boolean success = (db.delete(mDatabaseTable, KEY_ROWID + " = ?", new String[]{Long.toString(shortcutId)}) > 0);
++        boolean success = (db.delete(mDatabaseTable, KEY_ROWID + " = ?", new String[] {Long.toString(shortcutId)}) > 0);
+ 
+         db.close();
+         return success;
+@@ -314,18 +377,14 @@ public enum ShortcutDbAdapter {
+      * NEW 2015: better have direct access to the DB
+      * @return the (first) shortcut ID if this path is in the shortcut database
+      */
+-    public long isShortcut(Context context, String path) {
++    public long isShortcut(Context context, String path)
++    {
+         open(context);
+-        Cursor c = mDb.query(mDatabaseTable,
+-                SHORTCUT_COLS,
+-                KEY_PATH + " = ?",
+-                new String[]{path},
+-                null,
+-                null,
+-                null);
++        Cursor c = mDb.query(mDatabaseTable, SHORTCUT_COLS, KEY_PATH + " = ?", new String[] {path}, null, null, null);
+         c.moveToFirst();
+-        long id=-1;
+-        if (c.getCount()>0) {
++        long id = -1;
++        if (c.getCount() > 0)
++        {
+             id = c.getLong(c.getColumnIndexOrThrow(KEY_ROWID));
+         }
+         c.close();
+@@ -333,79 +392,127 @@ public enum ShortcutDbAdapter {
+         return id;
+     }
+ 
+-    public boolean deleteShortcut(Context context, String uri) {
++    public boolean deleteShortcut(Context context, String uri)
++    {
+         // Delete the shortcut stored in the provided row
+         boolean ret;
+-        String [] where = {
+-                uri, uri
+-        };
++        String[] where = {uri, uri};
+         open(context);
+-        ret = mDb.delete(mDatabaseTable, KEY_PATH + " = ? OR "+KEY_IPPATH +" = ?", where) > 0;
++        ret = mDb.delete(mDatabaseTable, KEY_PATH + " = ? OR " + KEY_IPPATH + " = ?", where) > 0;
+         close();
+         return ret;
+     }
+ 
+-    public Cursor getAllShortcuts(Context context, String where, String [] whereArgs) {
+-        try {
++    public Cursor getAllShortcuts(Context context, String where, String[] whereArgs)
++    {
++        try
++        {
+             open(context);
+-            if (mDb == null || !mDb.isOpen()) {
++            if (mDb == null || !mDb.isOpen())
++            {
+                 Log.e(TAG, "getAllShortcuts: Database is closed or null!");
+                 return null;
+             }
+-            return mDb.query(mDatabaseTable,
+-                    SHORTCUT_COLS,
+-                    where,
+-                    whereArgs,
+-                    null,
+-                    null,
+-                    null);
+-        }
+-        catch (SQLiteException | NullPointerException e) {
++            return mDb.query(mDatabaseTable, SHORTCUT_COLS, where, whereArgs, null, null, null);
++        }
++        catch (SQLiteException | NullPointerException e)
++        {
+             // The table corresponding to this type does not exist yet
+             Log.w(TAG, "getAllShortcuts: Exception occurred", e);
+             return null;
+         }
+     }
+ 
+-    public void setRescanShortcut(Context context, boolean toRescan, String shortcutName) {
++    public void setRescanShortcut(Context context, boolean toRescan, String shortcutName)
++    {
+         // mark shortcut to be considered for automatic/global rescan
+         open(context);
+         ContentValues cv = new ContentValues(1);
+         cv.put(KEY_RESCAN, toRescan ? 1 : 0);
+-        mDb.update(mDatabaseTable, cv, KEY_NAME + " = ?", new String[]{shortcutName});
++        mDb.update(mDatabaseTable, cv, KEY_NAME + " = ?", new String[] {shortcutName});
+         close();
+     }
+ 
+-    public void setRescanShortcutById(Context context, boolean toRescan, long shortcutId) {
++    public void setRescanShortcutById(Context context, boolean toRescan, long shortcutId)
++    {
+         open(context);
+-        try {
++        try
++        {
+             ContentValues values = new ContentValues(1);
+             values.put(KEY_RESCAN, toRescan ? 1 : 0);
+-            mDb.update(mDatabaseTable, values, KEY_ROWID + " = ?", new String[]{Long.toString(shortcutId)});
+-        } finally { close(); }
++            mDb.update(mDatabaseTable, values, KEY_ROWID + " = ?", new String[] {Long.toString(shortcutId)});
++        }
++        finally
++        {
++            close();
++        }
+     }
+ 
+     /** Root changes and preference commit form one user transaction; database failure rolls back stable IDs. */
+-    public synchronized boolean applySupernovaRoots(Context context,java.util.List<String> added,java.util.List<String> removed,java.util.function.BooleanSupplier savePreferences){
+-        open(context);mDb.beginTransaction();try{
+-            java.util.Map<String,Long> roots=new java.util.HashMap<>();try(Cursor cursor=mDb.query(mDatabaseTable,SHORTCUT_COLS,null,null,null,null,null)){while(cursor.moveToNext())roots.put(com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(Uri.parse(cursor.getString(1))),cursor.getLong(0));}
+-            for(String root:removed){if(root.startsWith("file:"))continue;Long id=roots.get(root);if(id==null||mDb.delete(mDatabaseTable,KEY_ROWID+"=?",new String[]{String.valueOf(id)})!=1)return false;roots.remove(root);}
+-            for(String root:added){if(root.startsWith("file:")||roots.containsKey(root))continue;Uri uri=Uri.parse(root);ContentValues row=new ContentValues();row.put(KEY_PATH,root);row.put(KEY_NAME,uri.getLastPathSegment()==null?uri.getHost():uri.getLastPathSegment());row.put(KEY_RESCAN,1);if(mDb.insertOrThrow(mDatabaseTable,null,row)<0)return false;}
+-            if(!savePreferences.getAsBoolean())return false;mDb.setTransactionSuccessful();return true;
+-        }finally{mDb.endTransaction();close();}
++    public synchronized boolean applySupernovaRoots(Context context, java.util.List<String> added,
++                                                    java.util.List<String> removed,
++                                                    java.util.function.BooleanSupplier savePreferences)
++    {
++        open(context);
++        mDb.beginTransaction();
++        try
++        {
++            java.util.Map<String, Long> roots = new java.util.HashMap<>();
++            try (Cursor cursor = mDb.query(mDatabaseTable, SHORTCUT_COLS, null, null, null, null, null))
++            {
++                while (cursor.moveToNext())
++                    roots.put(
++                        com.archos.mediaprovider.video.SupernovaLibraryPolicy.canonical(Uri.parse(cursor.getString(1))),
++                        cursor.getLong(0));
++            }
++            for (String root : removed)
++            {
++                if (root.startsWith("file:"))
++                    continue;
++                Long id = roots.get(root);
++                if (id == null || mDb.delete(mDatabaseTable, KEY_ROWID + "=?", new String[] {String.valueOf(id)}) != 1)
++                    return false;
++                roots.remove(root);
++            }
++            for (String root : added)
++            {
++                if (root.startsWith("file:") || roots.containsKey(root))
++                    continue;
++                Uri uri = Uri.parse(root);
++                ContentValues row = new ContentValues();
++                row.put(KEY_PATH, root);
++                row.put(KEY_NAME, uri.getLastPathSegment() == null ? uri.getHost() : uri.getLastPathSegment());
++                row.put(KEY_RESCAN, 1);
++                if (mDb.insertOrThrow(mDatabaseTable, null, row) < 0)
++                    return false;
++            }
++            if (!savePreferences.getAsBoolean())
++                return false;
++            mDb.setTransactionSuccessful();
++            return true;
++        }
++        finally
++        {
++            mDb.endTransaction();
++            close();
++        }
+     }
+ 
+-    public List<Shortcut> cursorToShortcutList(Cursor cursor){
+-        List<Shortcut>shortcuts = new ArrayList<>();
+-        if(cursor.getCount()>0){
++    public List<Shortcut> cursorToShortcutList(Cursor cursor)
++    {
++        List<Shortcut> shortcuts = new ArrayList<>();
++        if (cursor.getCount() > 0)
++        {
+             cursor.moveToFirst();
+-            do{
++            do
++            {
+                 shortcuts.add(cursorToShortcut(cursor));
+-            }while (cursor.moveToNext());
++            } while (cursor.moveToNext());
+         }
+         return shortcuts;
+     }
+-    private Shortcut cursorToShortcut(Cursor cursor){
++    private Shortcut cursorToShortcut(Cursor cursor)
++    {
+         int rowIdColumnIndex = cursor.getColumnIndex(KEY_ROWID);
+         int pathColumnIndex = cursor.getColumnIndex(KEY_PATH);
+         int nameColumnIndex = cursor.getColumnIndex(KEY_NAME);
+@@ -418,36 +525,42 @@ public enum ShortcutDbAdapter {
+         shortcut.setID(rowId);
+         return shortcut;
+     }
+-    private static class DatabaseHelper extends SQLiteOpenHelper {
++    private static class DatabaseHelper extends SQLiteOpenHelper
++    {
+ 
+-        DatabaseHelper(Context context) {
++        DatabaseHelper(Context context)
++        {
+             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+         }
+ 
+-        @Override
+-        public void onCreate(SQLiteDatabase db) {
+-            if (DBG) Log.d(TAG, "onCreate: creating db " + DATABASE_VIDEO_TABLE);
++        @Override public void onCreate(SQLiteDatabase db)
++        {
++            if (DBG)
++                Log.d(TAG, "onCreate: creating db " + DATABASE_VIDEO_TABLE);
+             // This method is only called once when the database is created for the first time
+             db.execSQL(DATABASE_CREATE_VIDEO5);
+         }
+ 
+-        @Override
+-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
++        @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
++        {
+             Log.d(TAG, "onUpgrade: upgrading database from version " + oldVersion + " to " + newVersion);
+-            if (oldVersion < 2) {
+-                db.execSQL("ALTER TABLE "+DATABASE_VIDEO_TABLE+" ADD COLUMN " + KEY_IPPATH + " TEXT");
++            if (oldVersion < 2)
++            {
++                db.execSQL("ALTER TABLE " + DATABASE_VIDEO_TABLE + " ADD COLUMN " + KEY_IPPATH + " TEXT");
+             }
+-            if (oldVersion < 3) {
+-                db.execSQL("ALTER TABLE "+DATABASE_VIDEO_TABLE+" ADD COLUMN " + KEY_NAME + " TEXT");
++            if (oldVersion < 3)
++            {
++                db.execSQL("ALTER TABLE " + DATABASE_VIDEO_TABLE + " ADD COLUMN " + KEY_NAME + " TEXT");
+             }
+-            if (oldVersion < 4) {
+-                db.execSQL("ALTER TABLE "+DATABASE_VIDEO_TABLE+" ADD COLUMN " + KEY_FRIENDLY_URI + " TEXT");
++            if (oldVersion < 4)
++            {
++                db.execSQL("ALTER TABLE " + DATABASE_VIDEO_TABLE + " ADD COLUMN " + KEY_FRIENDLY_URI + " TEXT");
+             }
+-            if (oldVersion < 5) {
+-                db.execSQL("ALTER TABLE "+DATABASE_VIDEO_TABLE+" ADD COLUMN " + KEY_RESCAN + " INTEGER DEFAULT (1)");
++            if (oldVersion < 5)
++            {
++                db.execSQL("ALTER TABLE " + DATABASE_VIDEO_TABLE + " ADD COLUMN " + KEY_RESCAN +
++                           " INTEGER DEFAULT (1)");
+             }
+         }
+     }
+-
+-
+ }
+diff --git a/src/com/archos/mediaprovider/video/LibraryScanControl.java b/src/com/archos/mediaprovider/video/LibraryScanControl.java
+new file mode 100644
+index 0000000..164b370
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/LibraryScanControl.java
+@@ -0,0 +1,35 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.Intent;
++import com.archos.mediascraper.AutoScrapeService;
++import com.archos.mediascraper.ScanMetadataHandoff;
++
++/** Worker-only cancellation entry. Never removes library rows or marks an active worker complete early. */
++public final class LibraryScanControl
++{
++    public static void stop(Context context)
++    {
++        NetworkScanLedger.cancelAll();
++        ScanMetadataHandoff.cancelPending(context);
++        try
++        {
++            context.stopService(new Intent(context, NetworkScannerServiceVideo.class));
++        }
++        finally
++        {
++            try
++            {
++                context.stopService(new Intent(context, VideoStoreImportService.class));
++            }
++            finally
++            {
++                context.stopService(new Intent(context, AutoScrapeService.class));
++            }
++        }
++    }
++
++    private LibraryScanControl()
++    {
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+index 04494bc..5569c42 100644
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -65,6 +65,13 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+     // Note: cleared as soon as delayed scan broadcasts are queued, not when the scans complete,
+     // so it does not protect against overlapping scan batches — that is pre-existing behaviour.
+     private static final AtomicBoolean sRescanInProgress = new AtomicBoolean(false);
++    private static final String REQUEST_GENERATION = "supernova_scan_request_generation";
++    private static final java.util.concurrent.ExecutorService PREPARATION =
++        java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
++            Thread thread = new Thread(r, "NetworkScanPreparation");
++            thread.setDaemon(true);
++            return thread;
++        });
+     private static Application mApplication;
+ 
+     public static final String ACTION_RESCAN_INDEXED_FOLDERS = "com.archos.mediaprovider.video.NetworkAutoRefresh";
+@@ -101,16 +108,19 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+             // goAsync keeps the BroadcastReceiver context alive until finish() is called,
+             // allowing the DB queries inside handleRescan to run on a background thread.
+             final PendingResult pendingResult = goAsync();
+-            new Thread(() -> {
++            final Intent request = new Intent(intent);
++            if (!request.hasExtra(REQUEST_GENERATION))
++                request.putExtra(REQUEST_GENERATION, NetworkScanLedger.generation());
++            PREPARATION.execute(() -> {
+                 try
+                 {
+-                    handleRescan(context, intent);
++                    handleRescan(context, request);
+                 }
+                 finally
+                 {
+                     pendingResult.finish();
+                 }
+-            }, "NetworkAutoRefresh-bg").start();
++            });
+         }
+     }
+ 
+@@ -134,6 +144,7 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+ 
+     private void doRescan(Context context, Intent intent)
+     {
++        long requestGeneration = intent.getLongExtra(REQUEST_GENERATION, NetworkScanLedger.generation());
+         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+         /*
+             do not scan if auto scan and already scan lately (for example on restart of device) or if already scanning
+@@ -226,7 +237,7 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+                 final Context appContext = context.getApplicationContext();
+                 Handler handler = new Handler(Looper.getMainLooper());
+                 final java.util.List<NetworkScanLedger.Member> members =
+-                    NetworkScanLedger.register(appContext, eligible);
++                    NetworkScanLedger.register(appContext, eligible, requestGeneration);
+                 if (!members.isEmpty())
+                 {
+                     int scanCount = 0;
+@@ -377,6 +388,7 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+             return;
+         Intent intent = new Intent(context, NetworkAutoRefresh.class);
+         intent.setAction(ACTION_FORCE_RESCAN_INDEXED_FOLDERS);
++        intent.putExtra(REQUEST_GENERATION, NetworkScanLedger.generation());
+         intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
+         context.sendBroadcast(intent);
+     }
+diff --git a/src/com/archos/mediaprovider/video/NetworkScanLedger.java b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+index c6ab7c2..9b10f02 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScanLedger.java
++++ b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+@@ -17,6 +17,17 @@ import java.util.concurrent.TimeUnit;
+ /** Exact ownership for counted scheduler work; all transitions use the same monitor. */
+ final class NetworkScanLedger
+ {
++    private static long generation;
++
++    static synchronized long generation()
++    {
++        return generation;
++    }
++
++    static synchronized List<Member> register(Context context, List<Uri> roots, long expectedGeneration)
++    {
++        return expectedGeneration == generation ? register(context, roots) : java.util.Collections.emptyList();
++    }
+     static final String EXTRA_MEMBER = "scan_member_extra";
+     static final long START_ACK_MS = 15_000L;
+     static final long SOURCE_MS = 300_000L;
+@@ -189,6 +200,18 @@ final class NetworkScanLedger
+         }
+     }
+ 
++    static synchronized void cancelAll()
++    {
++        generation++;
++        for (Member member : new ArrayList<>(MEMBERS.values()))
++        {
++            member.failureStage = "user_cancelled";
++            if (member.sourceDeadline != null)
++                member.sourceDeadline.cancel(false);
++            reject(member);
++        }
++    }
++
+     static synchronized void finish(Member member, boolean failed, boolean success)
+     {
+         finish(member, failed, success, 0, 0, 0);
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 26d6dbd..5ab062f 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -294,7 +294,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     }
+ 
+     @SuppressWarnings("deprecation")
+-    // WIFI_MODE_FULL_HIGH_PERF: intentionally used across API levels to preserve Wi-Fi throughput during background indexing
++    // WIFI_MODE_FULL_HIGH_PERF: intentionally used across API levels to preserve Wi-Fi throughput during background
++    // indexing
+     @Override
+     public void onCreate()
+     {
+@@ -393,7 +394,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 log.debug("scanner preference extras present");
+             mRecordOnFailPreference = recordOnFailPreference;
+             if (mRecordEndOfScanPreference ==
+-                null) //reset only when null to avoid pred not being written when another intent with no pref comes just after (this will be written when service stops)
++                null) // reset only when null to avoid pred not being written when another intent with no pref comes
++                // just after (this will be written when service stops)
+                 mRecordEndOfScanPreference = recordEndOfScanPreference;
+         }
+         else
+@@ -911,6 +913,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     private static final String IN_FOLDER_SELECT =
+         "(" + MediaColumns.DATA + " LIKE ?||'%' OR " + MediaColumns.DATA + " LIKE ?||'%')";
+     private int previewAdded, previewUpdated;
++    private Uri previewRoot;
++    private long previewLastProgress;
+     private String previewBatchId;
+     static String previewBatch(long batchId)
+     {
+@@ -957,6 +961,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             event.putExtra("phase", phase)
+                 .putExtra("source_id", id.toString())
+                 .putExtra("checked", checked)
++                .putExtra("total", "complete".equals(phase) ? checked : -1)
+                 .putExtra("added", added)
+                 .putExtra("updated", updated)
+                 .putExtra("sources_total", total)
+@@ -1102,6 +1107,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         }
+         mFoundFiles = 0;
+         sFilesFoundCount = 0;
++        previewRoot = what;
++        previewLastProgress = 0;
+         sRemainingDeletes = 0;
+         sIsDeleting = false;
+         MetaFile2 f = null;
+@@ -1574,6 +1581,15 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             if (mBlacklist.isFilenameBlacklisted(FileUtils.getName(file.getUri())))
+                 return;
+             sFilesFoundCount++;
++            if (mService != null && mService.previewRoot != null)
++            {
++                long now = android.os.SystemClock.elapsedRealtime();
++                if (now - mService.previewLastProgress >= 1000)
++                {
++                    mService.previewLastProgress = now;
++                    mService.previewScanEvent(mService.previewRoot, "indexing");
++                }
++            }
+             if (mService != null)
+             {
+                 String dirPath = FileUtils.getParentUrl(file.getUri().toString());
+@@ -1639,7 +1655,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                     log.trace("FileVisitListener.onFile: File is new, serverId={}, {}", mServerId,
+                               file.getUri().toString());
+                 mAlreadyAddedUpnpFiles.add(
+-                    uniqueId); // needed because main difference with usual indexing : a same file can be found twice in one round
++                    uniqueId); // needed because main difference with usual indexing : a same file can be found twice in
++                // one round
+                 mBulkHandler.addInsert(new FileScanInfo(file, mStorageId), mServerId);
+             }
+             else if (log.isTraceEnabled())
+diff --git a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
+index bd3695b..e6393eb 100644
+--- a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
++++ b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
+@@ -5,7 +5,7 @@ import android.content.Intent;
+ import android.os.SystemClock;
+ import java.util.UUID;
+ 
+-/** Worker-local, bounded telemetry; never changes import decisions or records media paths. */
++/** Worker-local, bounded telemetry; never changes import decisions or records individual media locations. */
+ public final class PreviewLocalImportTrace
+ {
+     private static final ThreadLocal<PreviewLocalImportTrace> CURRENT = new ThreadLocal<>();
+@@ -18,6 +18,7 @@ public final class PreviewLocalImportTrace
+     private final long started = SystemClock.elapsedRealtime();
+     private long checked, added, updated, lastProgress;
+     private boolean partial, countsKnown;
++    private String sourceLocation = "";
+     private PreviewLocalImportTrace(Context context, boolean full)
+     {
+         this.context = context;
+@@ -70,6 +71,25 @@ public final class PreviewLocalImportTrace
+             }
+         }
+     }
++    public static void source(String path)
++    {
++        PreviewLocalImportTrace trace = CURRENT.get();
++        if (trace != null && path != null)
++        {
++            android.net.Uri uri = android.net.Uri.parse(path);
++            java.util.List<String> parts = uri.getPathSegments();
++            trace.sourceLocation = "";
++            if (parts.size() >= 2 && "storage".equals(parts.get(0)))
++            {
++                trace.sourceLocation = "/storage/" + parts.get(1);
++                if ("emulated".equals(parts.get(1)) && parts.size() >= 3)
++                    trace.sourceLocation += "/" + parts.get(2);
++            }
++            else if (parts.size() >= 3 && "mnt".equals(parts.get(0)) && "media_rw".equals(parts.get(1)))
++                trace.sourceLocation = "/storage/" + parts.get(2);
++        }
++    }
++
+     public static void checked()
+     {
+         PreviewLocalImportTrace t = CURRENT.get();
+@@ -143,6 +163,8 @@ public final class PreviewLocalImportTrace
+                                        .putExtra("mode", mode)
+                                        .putExtra("trigger", trigger)
+                                        .putExtra("checked", checked)
++                                       .putExtra("total", "complete".equals(phase) ? checked : -1L)
++                                       .putExtra("source_location", sourceLocation)
+                                        .putExtra("added", added)
+                                        .putExtra("updated", updated)
+                                        .putExtra("counts_known", countsKnown)
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+index 4503c6f..9fc65fa 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -92,7 +92,7 @@ public class VideoStoreImportImpl
+     private static volatile boolean mIsImportInterrupted = false;
+     static boolean previewImportInterrupted()
+     {
+-        return mIsImportInterrupted;
++        return mIsImportInterrupted || Thread.currentThread().isInterrupted();
+     }
+ 
+     public VideoStoreImportImpl(Context context)
+@@ -399,8 +399,8 @@ public class VideoStoreImportImpl
+             Integer storageId = storageManager.getStorageId(path);
+             if (storageId == null && log.isDebugEnabled())
+             {
+-                log.debug("getMountedStorageLocations: no resolved storage id for {}; preserving the " +
+-                          "MediaStore/existing value",
++                log.debug("getMountedStorageLocations: no resolved storage id for {}; preserving the "
++                              + "MediaStore/existing value",
+                           path);
+             }
+             locations.add(new StorageLocation(path, storageId, false));
+@@ -436,7 +436,7 @@ public class VideoStoreImportImpl
+ 
+         for (StorageLocation location : locations)
+         {
+-            if (mIsImportInterrupted)
++            if (previewImportInterrupted())
+             {
+                 snapshot.complete = false;
+                 break;
+@@ -457,7 +457,7 @@ public class VideoStoreImportImpl
+         try
+         {
+             loadImportedIdentityPages(cr, location, storagePrefix, snapshot);
+-            if (!snapshot.complete || mIsImportInterrupted)
++            if (!snapshot.complete || previewImportInterrupted())
+                 return;
+ 
+             String[] projection =
+@@ -487,7 +487,7 @@ public class VideoStoreImportImpl
+                                                   ReconciliationSnapshot snapshot)
+     {
+         long lastSeenId = -1;
+-        while (!mIsImportInterrupted)
++        while (!previewImportInterrupted())
+         {
+             Cursor imported = null;
+             int rowsRead = 0;
+@@ -505,7 +505,7 @@ public class VideoStoreImportImpl
+                 }
+                 // Some providers have been observed to ignore QUERY_ARG_LIMIT. Enforce the
+                 // boundary here as well so one CursorWindow never grows into an unbounded pass.
+-                while (rowsRead < WINDOW_SIZE && imported.moveToNext() && !mIsImportInterrupted)
++                while (rowsRead < WINDOW_SIZE && imported.moveToNext() && !previewImportInterrupted())
+                 {
+                     rowsRead++;
+                     ImportIdentity identity = readImportIdentity(imported);
+@@ -523,7 +523,7 @@ public class VideoStoreImportImpl
+                 if (imported != null)
+                     imported.close();
+             }
+-            if (mIsImportInterrupted)
++            if (previewImportInterrupted())
+             {
+                 snapshot.complete = false;
+                 return;
+@@ -549,7 +549,7 @@ public class VideoStoreImportImpl
+                                                     ReconciliationSnapshot snapshot)
+     {
+         long lastSeenId = -1;
+-        while (!mIsImportInterrupted)
++        while (!previewImportInterrupted())
+         {
+             Cursor mediaStore = null;
+             int rowsRead = 0;
+@@ -566,7 +566,7 @@ public class VideoStoreImportImpl
+                 }
+                 // Keep the client-side cap because some MediaStore implementations ignore the
+                 // requested limit even though the selection and ordering are honored.
+-                while (rowsRead < WINDOW_SIZE && mediaStore.moveToNext() && !mIsImportInterrupted)
++                while (rowsRead < WINDOW_SIZE && mediaStore.moveToNext() && !previewImportInterrupted())
+                 {
+                     rowsRead++;
+                     MediaStoreIdentity identity = readMediaStoreIdentity(mediaStore, location);
+@@ -583,7 +583,7 @@ public class VideoStoreImportImpl
+                 if (mediaStore != null)
+                     mediaStore.close();
+             }
+-            if (mIsImportInterrupted)
++            if (previewImportInterrupted())
+             {
+                 snapshot.complete = false;
+                 return;
+@@ -634,7 +634,7 @@ public class VideoStoreImportImpl
+                                                               Context context)
+     {
+         LocalReconciliationResult result = new LocalReconciliationResult();
+-        if (cr == null || snapshot == null || !snapshot.complete || mIsImportInterrupted)
++        if (cr == null || snapshot == null || !snapshot.complete || previewImportInterrupted())
+         {
+             return result;
+         }
+@@ -651,7 +651,7 @@ public class VideoStoreImportImpl
+     {
+         for (MediaStoreIdentity destination : snapshot.mediaStoreById.values())
+         {
+-            if (mIsImportInterrupted)
++            if (previewImportInterrupted())
+                 return;
+             ImportIdentity source = snapshot.importedById.get(destination.id);
+             if (source == null || TextUtils.equals(source.path, destination.path))
+@@ -725,7 +725,7 @@ public class VideoStoreImportImpl
+         Set<Long> remappedDestinationIds = new HashSet<>();
+         for (Map.Entry<IdentityKey, List<ImportIdentity>> entry : oldBuckets.entrySet())
+         {
+-            if (mIsImportInterrupted)
++            if (previewImportInterrupted())
+                 return;
+             List<MediaStoreIdentity> destinations = newBuckets.get(entry.getKey());
+             if (destinations == null)
+@@ -772,7 +772,7 @@ public class VideoStoreImportImpl
+                                                  LocalReconciliationResult result, Set<Long> remappedSourceIds,
+                                                  Context context)
+     {
+-        if (mIsImportInterrupted)
++        if (previewImportInterrupted())
+             return;
+         if (SupernovaLibraryPolicy.retainsRecords(context))
+         {
+@@ -823,7 +823,7 @@ public class VideoStoreImportImpl
+         {
+             for (int i = 0; i < totalMissing; i += BATCH_SIZE)
+             {
+-                if (mIsImportInterrupted)
++                if (previewImportInterrupted())
+                     break;
+                 int end = Math.min(i + BATCH_SIZE, totalMissing);
+                 List<ImportIdentity> candidates = missingList.subList(i, end);
+@@ -860,6 +860,7 @@ public class VideoStoreImportImpl
+                              remaining);
+                 }
+                 ImportState.VIDEO.setNumberOfFilesRemainingToDelete(remaining);
++                PreviewLocalImportTrace.source(path);
+                 if (context instanceof VideoStoreImportService)
+                 {
+                     String path =
+@@ -1116,7 +1117,7 @@ public class VideoStoreImportImpl
+         try
+         {
+             int count = 0;
+-            while (c.moveToNext() && count < WINDOW_SIZE && !mIsImportInterrupted)
++            while (c.moveToNext() && count < WINDOW_SIZE && !previewImportInterrupted())
+             {
+                 count++;
+                 PreviewLocalImportTrace.checked();
+@@ -1141,6 +1142,7 @@ public class VideoStoreImportImpl
+                     //we silently ignore empty lines - it means content has been deleted while scanning
+                     continue;
+                 }
++                PreviewLocalImportTrace.source(path);
+                 if (context instanceof VideoStoreImportService)
+                 {
+                     ((VideoStoreImportService)context).updateScanNotification(remaining, path);
+@@ -1168,12 +1170,12 @@ public class VideoStoreImportImpl
+                 catch (MediaRetrieverServiceClient.ServiceManagementException e)
+                 {
+                     PreviewLocalImportTrace.problem("handleScanCursor", e);
+-                    if (mIsImportInterrupted)
++                    if (previewImportInterrupted())
+                     {
+                         // Expected: MediaRetrieverService was stopped by lifecycle onStop while
+                         // import was still running. interruptImport() was called; we break here.
+-                        log.warn("handleScanCursor: MediaRetrieverServiceClient.ServiceManagementException caught " +
+-                                 "during teardown");
++                        log.warn("handleScanCursor: MediaRetrieverServiceClient.ServiceManagementException caught "
++                                 + "during teardown");
+                     }
+                     else
+                     {
+@@ -1337,7 +1339,8 @@ public class VideoStoreImportImpl
+     /** executes metadata scan of files defined by Uri */
+     public void doScan(Uri what)
+     {
+-        // TODO MARC only works with local storage does not work with FileEditor editor = FileEditorFactoryWithUpnp.getFileEditorForUrl(what, null);
++        // TODO MARC only works with local storage does not work with FileEditor editor =
++        // FileEditorFactoryWithUpnp.getFileEditorForUrl(what, null);
+         // TODO MARC this makes fail the associate sub on remote storage
+         mIsImportInterrupted = false;
+         if (log.isDebugEnabled())
+@@ -1380,7 +1383,7 @@ public class VideoStoreImportImpl
+         Cursor c = null;
+         int cursorCount = 0;
+         long afterId = -1;
+-        while (!mIsImportInterrupted)
++        while (!previewImportInterrupted())
+         {
+             try
+             {
+@@ -1631,7 +1634,8 @@ public class VideoStoreImportImpl
+                                                                       "format",
+                                                                       FileColumns.PARENT};
+ 
+-    // Note: adb pushed files are not visible by on an onchange because _size=NULL to get the right size, cold boot or trigger a mediascan after adb push...
++    // Note: adb pushed files are not visible by on an onchange because _size=NULL to get the right size, cold boot or
++    // trigger a mediascan after adb push...
+ 
+     private final static String[] FILES_PROJECTION_BP = new String[] {BaseColumns._ID,
+                                                                       MediaColumnsDATA,
+@@ -1683,14 +1687,14 @@ public class VideoStoreImportImpl
+     /** Inserts unmatched MediaStore rows already collected by reconciliation. */
+     private static int copySnapshotData(ContentResolver cr, ReconciliationSnapshot snapshot, String minId)
+     {
+-        if (cr == null || snapshot == null || !snapshot.complete || mIsImportInterrupted)
++        if (cr == null || snapshot == null || !snapshot.complete || previewImportInterrupted())
+             return 0;
+         long minimum = parseLong(minId, Long.MIN_VALUE);
+         BulkInserter inserter = new BulkInserter(VideoStoreInternal.FILES_IMPORT, cr, 2000);
+         int pending = 0;
+         for (MediaStoreIdentity identity : snapshot.mediaStoreById.values())
+         {
+-            if (mIsImportInterrupted)
++            if (previewImportInterrupted())
+                 break;
+             if (identity.id <= minimum || snapshot.importedIds.contains(identity.id))
+                 continue;
+@@ -1739,7 +1743,8 @@ public class VideoStoreImportImpl
+             }
+         }
+         try
+-        { // for some reasons external_primary is not readable on some devices hinting READ_EXTERNAL_STORAGE permission missing
++        { // for some reasons external_primary is not readable on some devices hinting READ_EXTERNAL_STORAGE permission
++            // missing
+             allFiles = CustomCursor.wrap(
+                 cr.query(MediaStore.Files.getContentUri("external"), projection, where, whereArgs, BaseColumns._ID));
+         }
+@@ -1761,7 +1766,7 @@ public class VideoStoreImportImpl
+                 Cursor c = cr.query(VideoStoreInternal.FILES_IMPORT, new String[] {"_id"}, null, null, null);
+                 if (c != null)
+                 {
+-                    while (c.moveToNext() && !mIsImportInterrupted)
++                    while (c.moveToNext() && !previewImportInterrupted())
+                         ids.add(c.getLong(0));
+                     c.close();
+                 }
+@@ -1775,7 +1780,8 @@ public class VideoStoreImportImpl
+                 int window = WINDOW_SIZE;
+                 int index = 0;
+                 int cursor_count = 0;
+-                // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to fit into CursorWindow crash
++                // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big
++                // to fit into CursorWindow crash
+                 // note that the db is NOT being modified during import --> use an index
+                 allFiles.close();
+                 do
+@@ -1837,7 +1843,7 @@ public class VideoStoreImportImpl
+                     {
+                         if (log.isDebugEnabled())
+                             log.debug("copyData: new batch cursor has size {}", allFilesCount);
+-                        while (allFiles.moveToNext() && !mIsImportInterrupted)
++                        while (allFiles.moveToNext() && !previewImportInterrupted())
+                         {
+                             cursor_count++;
+                             if (log.isTraceEnabled())
+@@ -1896,7 +1902,7 @@ public class VideoStoreImportImpl
+                     index += window;
+                     if (allFiles != null)
+                         allFiles.close();
+-                } while (window < numberOfRows && window > 0 && !mIsImportInterrupted);
++                } while (window < numberOfRows && window > 0 && !previewImportInterrupted());
+             }
+             else
+                 allFiles.close();
+@@ -1932,7 +1938,7 @@ public class VideoStoreImportImpl
+         Cursor c = null;
+         try
+         {
+-            while (!mIsImportInterrupted)
++            while (!previewImportInterrupted())
+             {
+                 try
+                 {
+@@ -1984,7 +1990,7 @@ public class VideoStoreImportImpl
+         Cursor c = null;
+         try
+         {
+-            while (!mIsImportInterrupted)
++            while (!previewImportInterrupted())
+             {
+                 try
+                 {
+@@ -2154,7 +2160,7 @@ public class VideoStoreImportImpl
+         int purged = 0;
+         try
+         {
+-            while (!mIsImportInterrupted)
++            while (!previewImportInterrupted())
+             {
+                 List<Long> ids = queryIds(cr, selection, args);
+                 if (ids.isEmpty())
+@@ -2170,6 +2176,7 @@ public class VideoStoreImportImpl
+                 purged += deleted;
+                 remaining -= deleted;
+                 ImportState.VIDEO.setNumberOfFilesRemainingToDelete(remaining);
++                PreviewLocalImportTrace.source(path);
+                 if (context instanceof VideoStoreImportService)
+                 {
+                     ((VideoStoreImportService)context).updateDeleteNotification(remaining, storagePath);
+@@ -2271,7 +2278,7 @@ public class VideoStoreImportImpl
+     private static int deleteMatchingInBatches(ContentResolver cr, String selection, String[] args)
+     {
+         int total = 0;
+-        while (!mIsImportInterrupted)
++        while (!previewImportInterrupted())
+         {
+             List<Long> ids = queryIds(cr, selection, args);
+             if (ids.isEmpty())
+@@ -2582,7 +2589,8 @@ public class VideoStoreImportImpl
+             {
+                 if (log.isDebugEnabled())
+                     log.debug("checkDatabaseForUnmountedVolumes: checking volume {}", volumePath);
+-                // If this volume is not in mounted list and not already in unmounted list, check if it's really unmounted
++                // If this volume is not in mounted list and not already in unmounted list, check if it's really
++                // unmounted
+                 if (!mountedVolumePaths.contains(volumePath) && !unmountedVolumePaths.contains(volumePath))
+                 {
+                     // Check if volume is in ExtStorageManager's current mounted list
+@@ -2600,8 +2608,8 @@ public class VideoStoreImportImpl
+                 else
+                 {
+                     if (log.isDebugEnabled())
+-                        log.debug("checkDatabaseForUnmountedVolumes: volume {} is in mounted list or already in " +
+-                                  "unmounted list",
++                        log.debug("checkDatabaseForUnmountedVolumes: volume {} is in mounted list or already in "
++                                      + "unmounted list",
+                                   volumePath);
+                 }
+             }
+@@ -2682,7 +2690,7 @@ public class VideoStoreImportImpl
+             StringBuilder toHide = new StringBuilder();
+             StringBuilder toUnhide = new StringBuilder();
+ 
+-            while (c.moveToNext() && !mIsImportInterrupted)
++            while (c.moveToNext() && !previewImportInterrupted())
+             {
+                 long id = c.getLong(0);
+                 String filePath = c.getString(1);
+@@ -2805,7 +2813,7 @@ public class VideoStoreImportImpl
+         String[] projection = projectionHasStorageId ? REMOTE_LIST_PROJECTION_BP : REMOTE_LIST_PROJECTION_AP;
+         try
+         {
+-            while (!mIsImportInterrupted)
++            while (!previewImportInterrupted())
+             {
+                 try
+                 {
+@@ -2833,7 +2841,7 @@ public class VideoStoreImportImpl
+                     if (c != null)
+                     {
+                         int storageIdx = projectionHasStorageId ? c.getColumnIndex("storage_id") : -1;
+-                        while (c.moveToNext() && count < WINDOW_SIZE && !mIsImportInterrupted)
++                        while (c.moveToNext() && count < WINDOW_SIZE && !previewImportInterrupted())
+                         {
+                             count++;
+                             sb.append(prefix).append(c.getString(0));
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportService.java b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+index da8e8f3..0c3e1ae 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportService.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+@@ -338,12 +338,13 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             boolean previewInitialStart = !sActive;
+             if (sActive)
+             { // not first start
+-                // Post-Android P: Use incremental import since our enhanced volume management handles external storage properly
++                // Post-Android P: Use incremental import since our enhanced volume management handles external storage
++                // properly
+                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P)
+                 {
+                     if (log.isDebugEnabled())
+-                        log.debug("onStartCommand: intent == null || intent.getAction() == null, sActive == true, do " +
+-                                  "MESSAGE_IMPORT_INCR (post-Android P)");
++                        log.debug("onStartCommand: intent == null || intent.getAction() == null, sActive == true, do "
++                                  + "MESSAGE_IMPORT_INCR (post-Android P)");
+                     ArchosUtils.addBreadcrumb(SentryLevel.INFO, "VideoStoreImportService.onStartCommand",
+                                               "intent null, sActive true do MESSAGE_IMPORT_INCR (post-Android P)");
+                     m = mHandler.obtainMessage(MESSAGE_IMPORT_INCR, DONT_KILL_SELF, 0);
+@@ -352,8 +353,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                 {
+                     // Pre-Android P: Keep full import for external USB storage compatibility
+                     if (log.isDebugEnabled())
+-                        log.debug("onStartCommand: intent == null || intent.getAction() == null, sActive == true, do " +
+-                                  "MESSAGE_IMPORT_FULL (pre-Android P)");
++                        log.debug("onStartCommand: intent == null || intent.getAction() == null, sActive == true, do "
++                                  + "MESSAGE_IMPORT_FULL (pre-Android P)");
+                     ArchosUtils.addBreadcrumb(SentryLevel.INFO, "VideoStoreImportService.onStartCommand",
+                                               "intent null, sActive true do MESSAGE_IMPORT_FULL (pre-Android P)");
+                     m = mHandler.obtainMessage(MESSAGE_IMPORT_FULL, DONT_KILL_SELF, 0);
+@@ -364,8 +365,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             {
+                 // do a full import here to make sure that we have initial data
+                 if (log.isDebugEnabled())
+-                    log.debug("onStartCommand: intent == null || intent.getAction() == null, sActive == false, do " +
+-                              "MESSAGE_IMPORT_FULL");
++                    log.debug("onStartCommand: intent == null || intent.getAction() == null, sActive == false, do "
++                              + "MESSAGE_IMPORT_FULL");
+                 ArchosUtils.addBreadcrumb(SentryLevel.INFO, "VideoStoreImportService.onStartCommand",
+                                           "intent null, sActive false do MESSAGE_IMPORT_FULL");
+                 m = mHandler.obtainMessage(MESSAGE_IMPORT_FULL, DONT_KILL_SELF, 0);
+@@ -383,7 +384,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             // forward startId to handler thread
+             // /!\ if an action is added CHECK in startIfHandles if action is listed /!\
+             String action = intent.getAction();
+-            // stopForeground needs to be called at each action finished when service gets idle: this is taken care by handleMessage
++            // stopForeground needs to be called at each action finished when service gets idle: this is taken care by
++            // handleMessage
+             if (Intent.ACTION_MEDIA_SCANNER_FINISHED.equals(action) ||
+                 ArchosMediaIntent.ACTION_VIDEO_SCANNER_STORAGE_PERMISSION_GRANTED.equals(action))
+             {
+@@ -502,7 +504,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         try
+         {
+             context.startService(
+-                intent); // triggers an initial video import on local storage because files might have been created meanwhile
++                intent); // triggers an initial video import on local storage because files might have been created
++                         // meanwhile
+         }
+         catch (IllegalStateException e)
+         {
+@@ -774,7 +777,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+ 
+         try
+         {
+-            // tidy up the accumulated actor director writer studio genre piled up in v_.*_deletable tables in one shot during deletes
++            // tidy up the accumulated actor director writer studio genre piled up in v_.*_deletable tables in one shot
++            // during deletes
+             // it has been moved from scraperTables triggers here to gain in efficiency
+             db.execSQL("delete from actor where _id in (select _id from v_actor_deletable)");
+             db.execSQL("delete from director where _id in (select _id from v_director_deletable)");
+@@ -793,7 +797,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                 c.close();
+         }
+ 
+-        // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to fit into CursorWindow crash
++        // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to fit
++        // into CursorWindow crash
+         // note that the db is being modified during import
+         // The goal here is to remove from delete_files table all files that are still referenced in the database
+         // so that they are not deleted from disk in the next loop.
+@@ -855,8 +860,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         {
+             PreviewLocalImportTrace.problem("processDeleteFileAndVobCallback",
+                                             new IllegalStateException("Import stage did not complete"));
+-            log.error("processDeleteFileAndVobCallback: protection phase failed, ABORTING disk deletion to prevent " +
+-                      "data loss");
++            log.error("processDeleteFileAndVobCallback: protection phase failed, ABORTING disk deletion to prevent "
++                      + "data loss");
+             return;
+         }
+ 
+@@ -886,7 +891,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         try
+         {
+             // note: seems that the delete is performed not as a table trigger anymore but elsewhere
+-            // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to fit into CursorWindow crash
++            // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to
++            // fit into CursorWindow crash
+             // note that the db is being modified during import
+             while (isForeground)
+             {
+@@ -897,8 +903,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                         "SELECT * FROM delete_files ORDER BY " + BaseColumns._ID + " ASC LIMIT " + WINDOW_SIZE, null);
+                     cCount = c.getCount();
+                     if (log.isDebugEnabled())
+-                        log.debug("processDeleteFileAndVobCallback: delete_files new batch fetching window={} -> " +
+-                                  "cursor has size {}",
++                        log.debug("processDeleteFileAndVobCallback: delete_files new batch fetching window={} -> "
++                                      + "cursor has size {}",
+                                   WINDOW_SIZE, cCount);
+                     if (cCount == 0)
+                     {
+@@ -916,7 +922,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                                       count);
+                         DeleteFileCallbackArgs = new String[] {path, String.valueOf(count)};
+                         delCb.callback(DeleteFileCallbackArgs);
+-                        // purge the db: delete row even if file delete callback fails (file deletion could be handled elsewhere
++                        // purge the db: delete row even if file delete callback fails (file deletion could be handled
++                        // elsewhere
+                         try
+                         {
+                             // path should not be null but deal with it and remove entry in this case
+@@ -942,8 +949,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                         {
+                             PreviewLocalImportTrace.problem("processDeleteFileAndVobCallback",
+                                                             new IllegalStateException("Import stage did not complete"));
+-                            log.error("processDeleteFileAndVobCallback: delete_files batch made no progress ({} " +
+-                                      "remaining), stopping cleanup for this import",
++                            log.error("processDeleteFileAndVobCallback: delete_files batch made no progress ({} "
++                                          + "remaining), stopping cleanup for this import",
+                                       remainingDeleteFiles);
+                             break;
+                         }
+@@ -952,8 +959,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                 catch (RuntimeException e)
+                 {
+                     PreviewLocalImportTrace.problem("processDeleteFileAndVobCallback", e);
+-                    log.error("processDeleteFileAndVobCallback: SQLException or IllegalStateException or " +
+-                              "CursorWindowAllocationException",
++                    log.error("processDeleteFileAndVobCallback: SQLException or IllegalStateException or "
++                                  + "CursorWindowAllocationException",
+                               e);
+                     if (CRASH_ON_ERROR)
+                         throw new RuntimeException(e);
+@@ -976,7 +983,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+             }
+         }
+ 
+-        // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to fit into CursorWindow crash
++        // break down the scan in batch of WINDOW_SIZE in order to avoid SQLiteBlobTooBigException: Row too big to fit
++        // into CursorWindow crash
+         // note that the db is being modified during import
+         while (isForeground)
+         {
+@@ -986,10 +994,11 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                                 null);
+                 cCount = c.getCount();
+                 if (log.isDebugEnabled())
+-                    log.debug("processDeleteFileAndVobCallback: delete_files new batch fetching window={} -> cursor " +
+-                              "has size {}",
++                    log.debug("processDeleteFileAndVobCallback: delete_files new batch fetching window={} -> cursor "
++                                  + "has size {}",
+                               WINDOW_SIZE, cCount);
+-                // TOFIX crashes with CursorWindowAllocationException when doing getCount() though rawQuery is paginated catch it via RuntimeException
++                // TOFIX crashes with CursorWindowAllocationException when doing getCount() though rawQuery is paginated
++                // catch it via RuntimeException
+                 if (cCount == 0)
+                 {
+                     if (log.isDebugEnabled())
+@@ -1004,7 +1013,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+                         log.trace("processDeleteFileAndVobCallback: vob_insert {} path {}", id, path);
+                     VobUpdateCallbackArgs = new String[] {path};
+                     vobCb.callback(VobUpdateCallbackArgs);
+-                    // purge the db: delete row even if file delete callback fails (file deletion could be handled elsewhere
++                    // purge the db: delete row even if file delete callback fails (file deletion could be handled
++                    // elsewhere
+                     try
+                     {
+                         if (path == null)
+@@ -1119,7 +1129,8 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         {
+             if (log.isDebugEnabled())
+                 log.debug("onChange");
+-            // to avoid sending message to dead thread because mHandlerThread is no more, need to relaunch the service so that it is recreated in onCreate
++            // to avoid sending message to dead thread because mHandlerThread is no more, need to relaunch the service
++            // so that it is recreated in onCreate
+             // happens really often
+             if (importOk() && mHandler != null)
+             {
+@@ -1197,6 +1208,7 @@ public class VideoStoreImportService extends Service implements Handler.Callback
+         {
+             PreviewLocalImportTrace.cancelQueued(mHandler);
+             mHandlerThread.quit();
++            mHandlerThread.interrupt();
+             mHandlerThread = null;
+         }
+         // Clean up the importer
+diff --git a/src/com/archos/mediascraper/ScanMetadataHandoff.java b/src/com/archos/mediascraper/ScanMetadataHandoff.java
+index a4a0e48..acaa93f 100644
+--- a/src/com/archos/mediascraper/ScanMetadataHandoff.java
++++ b/src/com/archos/mediascraper/ScanMetadataHandoff.java
+@@ -81,6 +81,12 @@ public final class ScanMetadataHandoff
+         }
+     }
+ 
++    /** Explicit Stop must not restart identification when the process next enters the foreground. */
++    public static synchronized void cancelPending(Context context)
++    {
++        prefs(context).edit().remove(PENDING).remove(FORCE).commit();
++    }
++
+     private ScanMetadataHandoff()
+     {
+     }
+diff --git a/test/java/com/archos/mediacenter/utils/ShortcutSourceSnapshotTest.java b/test/java/com/archos/mediacenter/utils/ShortcutSourceSnapshotTest.java
+new file mode 100644
+index 0000000..fee183f
+--- /dev/null
++++ b/test/java/com/archos/mediacenter/utils/ShortcutSourceSnapshotTest.java
+@@ -0,0 +1,93 @@
++package com.archos.mediacenter.utils;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertNotNull;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
++import java.util.List;
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class ShortcutSourceSnapshotTest
++{
++    private Context context;
++
++    @Before public void setup()
++    {
++        context = RuntimeEnvironment.getApplication();
++        ShortcutDbAdapter.VIDEO.close();
++        context.deleteDatabase("shortcuts_db");
++    }
++
++    @After public void close()
++    {
++        ShortcutDbAdapter.VIDEO.close();
++    }
++
++    @Test public void readingAnAbsentSourceStoreDoesNotCreateIt()
++    {
++        assertTrue(ShortcutDbAdapter.VIDEO.readCopiedShortcuts(context).isEmpty());
++        assertFalse(context.getDatabasePath("shortcuts_db").exists());
++        assertFalse(ShortcutDbAdapter.VIDEO.isDbOpen());
++    }
++
++    @Test public void copiedNamesRemainValidAfterClosingTheSingletonConnection()
++    {
++        assertTrue(ShortcutDbAdapter.VIDEO.addShortcut(
++            context, new ShortcutDbAdapter.Shortcut("Films", "webdavs://webdav.put.io/Films")));
++        ShortcutDbAdapter.VIDEO.close();
++        List<ShortcutDbAdapter.Shortcut> sources = ShortcutDbAdapter.VIDEO.readCopiedShortcuts(context);
++        assertNotNull(sources);
++        assertEquals(1, sources.size());
++        assertEquals("Films", sources.get(0).getName());
++        assertEquals("webdavs://webdav.put.io/Films", sources.get(0).getUri());
++        assertFalse(ShortcutDbAdapter.VIDEO.isDbOpen());
++    }
++
++    @Test public void readerDoesNotCloseTheOpenSingletonAndReturnsDetachedRows()
++    {
++        assertTrue(ShortcutDbAdapter.VIDEO.addShortcut(
++            context, new ShortcutDbAdapter.Shortcut("Films", "webdavs://server/Films")));
++        try (Cursor owner = ShortcutDbAdapter.VIDEO.queryAllShortcuts(context))
++        {
++            assertTrue(ShortcutDbAdapter.VIDEO.isDbOpen());
++            List<ShortcutDbAdapter.Shortcut> before = ShortcutDbAdapter.VIDEO.readCopiedShortcuts(context);
++            assertTrue(ShortcutDbAdapter.VIDEO.isDbOpen());
++            assertTrue(owner.moveToFirst());
++            assertEquals("Films", owner.getString(owner.getColumnIndexOrThrow(ShortcutDbAdapter.KEY_NAME)));
++            assertTrue(ShortcutDbAdapter.VIDEO.addShortcut(
++                context, new ShortcutDbAdapter.Shortcut("Series", "webdavs://server/Series")));
++            assertEquals(1, before.size());
++            assertEquals(2, ShortcutDbAdapter.VIDEO.readCopiedShortcuts(context).size());
++        }
++    }
++
++    @Test public void readerDoesNotRunSchemaUpgrades()
++    {
++        assertTrue(ShortcutDbAdapter.VIDEO.addShortcut(
++            context, new ShortcutDbAdapter.Shortcut("Films", "webdavs://server/Films")));
++        ShortcutDbAdapter.VIDEO.close();
++        String path = context.getDatabasePath("shortcuts_db").getPath();
++        try (SQLiteDatabase database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE))
++        {
++            database.setVersion(4);
++        }
++        assertEquals(1, ShortcutDbAdapter.VIDEO.readCopiedShortcuts(context).size());
++        try (SQLiteDatabase database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY))
++        {
++            assertEquals(4, database.getVersion());
++        }
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/LibraryScanControlTest.java b/test/java/com/archos/mediaprovider/video/LibraryScanControlTest.java
+new file mode 100644
+index 0000000..af6e405
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/LibraryScanControlTest.java
+@@ -0,0 +1,134 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import android.net.Uri;
++import com.archos.filecorelibrary.webdav.ScanIoScope;
++import com.archos.mediascraper.AutoScrapeService;
++import java.util.List;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++import org.robolectric.util.ReflectionHelpers;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class LibraryScanControlTest
++{
++    @Test public void stopRejectsQueuedSourcesButRetainsRunningOwnershipUntilFinallyAndNextBatchWorks() throws Exception
++    {
++        Context app = RuntimeEnvironment.getApplication();
++        AutoScrapeService.resetNetworkScanCount();
++        List<NetworkScanLedger.Member> members = NetworkScanLedger.register(
++            app, List.of(Uri.parse("webdav://server/one"), Uri.parse("webdav://server/two")));
++        NetworkScanLedger.Member running = members.get(0);
++        assertTrue(NetworkScanLedger.accept(running, new Object()));
++        ExecutorService worker = Executors.newSingleThreadExecutor();
++        CountDownLatch entered = new CountDownLatch(1);
++        CountDownLatch cancelled = new CountDownLatch(1);
++        CountDownLatch release = new CountDownLatch(1);
++        try
++        {
++            Future<?> task = worker.submit(() -> {
++                try (ScanIoScope scope = new ScanIoScope(1, TimeUnit.MINUTES))
++                {
++                    assertTrue(NetworkScanLedger.begin(running, scope));
++                    entered.countDown();
++                    boolean done = false;
++                    while (!done)
++                    {
++                        try
++                        {
++                            done = release.await(5, TimeUnit.SECONDS);
++                            assertTrue("Test gate did not release", done);
++                        }
++                        catch (InterruptedException stopped)
++                        {
++                            assertTrue(scope.isCancelled());
++                            cancelled.countDown();
++                        }
++                    }
++                }
++                finally
++                {
++                    NetworkScanLedger.finish(running, false, true);
++                    Thread.interrupted();
++                }
++            });
++            assertTrue(entered.await(5, TimeUnit.SECONDS));
++            NetworkScanLedger.cancelAll();
++            assertTrue(cancelled.await(5, TimeUnit.SECONDS));
++            assertEquals(1, AutoScrapeService.getNetworkScanCount());
++            assertTrue(NetworkScanLedger.pending(running));
++            assertFalse(NetworkScanLedger.pending(members.get(1)));
++            release.countDown();
++            task.get(5, TimeUnit.SECONDS);
++            assertEquals(0, AutoScrapeService.getNetworkScanCount());
++            NetworkScanLedger.Member next =
++                NetworkScanLedger.register(app, List.of(Uri.parse("webdav://server/new"))).get(0);
++            assertTrue(NetworkScanLedger.accept(next, new Object()));
++            NetworkScanLedger.reject(next);
++            assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        }
++        finally
++        {
++            release.countDown();
++            worker.shutdownNow();
++            NetworkScanLedger.cancelAll();
++            AutoScrapeService.resetNetworkScanCount();
++        }
++    }
++
++    @Test public void laterImportsCannotClearAnInterruptedOlderWorkersCancellation() throws Exception
++    {
++        ReflectionHelpers.setStaticField(VideoStoreImportImpl.class, "mIsImportInterrupted", false);
++        ExecutorService worker = Executors.newSingleThreadExecutor();
++        try
++        {
++            assertTrue(worker
++                           .submit(() -> {
++                               Thread.currentThread().interrupt();
++                               try
++                               {
++                                   return VideoStoreImportImpl.previewImportInterrupted();
++                               }
++                               finally
++                               {
++                                   Thread.interrupted();
++                               }
++                           })
++                           .get(5, TimeUnit.SECONDS));
++            assertFalse(worker.submit(VideoStoreImportImpl::previewImportInterrupted).get(5, TimeUnit.SECONDS));
++        }
++        finally
++        {
++            worker.shutdownNow();
++        }
++    }
++
++    @Test public void stoppedPreparationCannotRegisterAfterStopAndAFreshGenerationCanRegister()
++    {
++        Context app = RuntimeEnvironment.getApplication();
++        AutoScrapeService.resetNetworkScanCount();
++        long old = NetworkScanLedger.generation();
++        NetworkScanLedger.cancelAll();
++        List<Uri> roots = List.of(Uri.parse("webdav://server/Films"));
++        assertTrue(NetworkScanLedger.register(app, roots, old).isEmpty());
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        List<NetworkScanLedger.Member> next = NetworkScanLedger.register(app, roots, NetworkScanLedger.generation());
++        assertEquals(1, next.size());
++        NetworkScanLedger.reject(next.get(0));
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java b/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
+index ddd3b46..6c42d39 100644
+--- a/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
++++ b/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
+@@ -99,7 +99,17 @@ public class NetworkScanTransportTest
+                  false);
+     }
+ 
++    @Test public void userStopCancelsActualSilentListingWithoutSuccessfulHandoff() throws Exception
++    {
++        exercise(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE), true, true);
++    }
++
+     private void exercise(MockResponse response, boolean expire) throws Exception
++    {
++        exercise(response, expire, false);
++    }
++
++    private void exercise(MockResponse response, boolean expire, boolean userStop) throws Exception
+     {
+         Context context = RuntimeEnvironment.getApplication();
+         ArchosUtils.setGlobalContext(context);
+@@ -150,7 +160,10 @@ public class NetworkScanTransportTest
+             if (expire)
+             {
+                 assertEquals(1, AutoScrapeService.getNetworkScanCount());
+-                deadlines.get(1).run(); // real production source-deadline callback, no wall-clock wait
++                if (userStop)
++                    NetworkScanLedger.cancelAll();
++                else
++                    deadlines.get(1).run(); // real production source-deadline callback, no wall-clock wait
+             }
+             worker.shutdown();
+             assertTrue("Call cancellation must unblock the scan executor",
+diff --git a/test/java/com/archos/mediascraper/ScanMetadataCancellationTest.java b/test/java/com/archos/mediascraper/ScanMetadataCancellationTest.java
+new file mode 100644
+index 0000000..3c820b1
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/ScanMetadataCancellationTest.java
+@@ -0,0 +1,28 @@
++package com.archos.mediascraper;
++
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import android.content.SharedPreferences;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class ScanMetadataCancellationTest
++{
++    @Test public void stopClearsBothDurableHandoffAndForcedNetworkOwnership()
++    {
++        SharedPreferences prefs =
++            RuntimeEnvironment.getApplication().getSharedPreferences("scan-metadata-handoff", Context.MODE_PRIVATE);
++        assertTrue(prefs.edit().putBoolean("pending", true).putBoolean("force", true).commit());
++        ScanMetadataHandoff.cancelPending(RuntimeEnvironment.getApplication());
++        assertFalse(prefs.getBoolean("pending", false));
++        assertFalse(prefs.getBoolean("force", false));
++    }
++}
