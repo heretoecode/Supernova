@@ -1,5 +1,13 @@
 # 0.157 — owner notes (from 5 Nov 2026)
 
+**Approved so far (5 Nov 2026):**
+- Details tabs: Seasons & Episodes (`details-tabs/v6-01`), More Like This (`v6-03`), Details (`v15-b`).
+- Description in the hero card, with More › Full description (`hero-01`–`04`; polish when built).
+- More Like This from three sources (TMDB recommendations, TMDB similar, Trakt related).
+- Smooth logo transition.
+- Still open: Extras (Home row cards, `v3-03`, not yet commented on); colour vs monochrome service logos (colour used
+  in the approved More Like This).
+
 Same rules as `docs/0.155/OWNER_NOTES.md`: each point is written down, mocked up, approved, then coded. Nothing here is
 approved yet.
 
@@ -207,7 +215,24 @@ only the title text?
 
 **Status:** round 15: titles underlined under the text only, two versions:
 - `v15-a`: Supernova blue, the same as the open tab.
-- `v15-b`: white. Planned for 0.157 (0.156 is not held up). Related parked
+- `v15-b`: white.
+
+**APPROVED by the owner (5 Nov 2026): the Details tab as `details-tabs/v15-b`**
+- On Space Black: Reception (IMDb, Rotten Tomatoes, Metacritic, TMDB, Awards), Key information and Technical
+  information as three vertical columns; then a Cast row and a Crew row (8 portraits each, no counts).
+- Titles white, with a short white underline under the text only.
+- Separators 24% white (rows) / 32% (columns).
+- Every row is always shown ("Unknown" when missing).
+- Nothing on the tab is focusable: Down/Up scroll, Up again returns to the tabs.
+
+**Logo transition (owner, 5 Nov 2026)**
+- Today the official title logo in the hero card shrinks to a small logo above the tabs when you go down into them.
+  Keep that, and make it very smooth.
+- Plan:
+  - One continuous move: the logo glides and scales from its hero position to the compact top-left position, in
+    step with the scroll (about 250 ms, ease-out); the hero fades underneath.
+  - Up reverses it exactly.
+  - No disappear-and-reappear. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
