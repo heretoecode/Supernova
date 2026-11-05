@@ -17,11 +17,12 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
-public class MediaMatchInventoryTest {
+public class MediaMatchInventoryTest
+{
     private Context app;
 
-    @Before
-    public void setup() {
+    @Before public void setup()
+    {
         app = RuntimeEnvironment.getApplication();
         app.deleteDatabase("media.db");
         PreferenceManager.getDefaultSharedPreferences(app)
@@ -31,21 +32,28 @@ public class MediaMatchInventoryTest {
             .commit();
     }
 
-    private void seed() {
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
+    private void seed()
+    {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
             var db = helper.getWritableDatabase();
-            db.execSQL(
-                "INSERT INTO files(_id,remote_id,media_type,_data,ArchosMediaScraper_type,ArchosMediaScraper_id,bookmark) VALUES(10,10,3,'file:///PRIVATE_ONE.mkv',11,100,4444),(11,11,3,'file:///PRIVATE_TWO.mkv',11,200,5555),(12,12,3,'file:///episode.mkv',12,300,-2),(13,13,3,'file:///unmatched.mkv',0,0,0),(14,14,3,'putio:///ACCOUNT_CANARY/file',11,400,0)");
-            db.execSQL(
-                "INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie,plot_movie) VALUES(100,10,123,9,'One','Original facts'),(200,11,456,8,'Two','Other facts'),(400,14,987,0,'Remote','Private')");
+            db.execSQL("INSERT INTO " +
+                       "files(_id,remote_id,media_type,_data,ArchosMediaScraper_type,ArchosMediaScraper_id,bookmark) " +
+                       "VALUES(10,10,3,'file:///PRIVATE_ONE.mkv',11,100,4444),(11,11,3,'file:///" +
+                       "PRIVATE_TWO.mkv',11,200,5555),(12,12,3,'file:///episode.mkv',12,300,-2),(13,13,3,'file:///" +
+                       "unmatched.mkv',0,0,0),(14,14,3,'putio:///ACCOUNT_CANARY/file',11,400,0)");
+            db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie,plot_movie) " +
+                       "VALUES(100,10,123,9,'One','Original facts'),(200,11,456,8,'Two','Other " +
+                       "facts'),(400,14,987,0,'Remote','Private')");
             db.execSQL("INSERT INTO SHOW(_id,s_online_id,name_show) VALUES(20,789,'Show')");
-            db.execSQL(
-                "INSERT INTO EPISODE(_id,video_id,show_episode,season_episode,number_episode,e_online_id,name_episode) VALUES(300,12,20,0,2,999,'Episode')");
+            db.execSQL("INSERT INTO " +
+                       "EPISODE(_id,video_id,show_episode,season_episode,number_episode,e_online_id,name_episode) " +
+                       "VALUES(300,12,20,0,2,999,'Episode')");
         }
     }
 
-    @Test
-    public void absentReceivingStoreRemainsAbsentAndDoesNotAllocateOriginPreferences() throws Exception {
+    @Test public void absentReceivingStoreRemainsAbsentAndDoesNotAllocateOriginPreferences() throws Exception
+    {
         var before = PreferenceManager.getDefaultSharedPreferences(app).getAll();
         var inventory = MediaMatchInventory.capture(app);
         assertTrue(inventory.owners.isEmpty());
@@ -55,8 +63,8 @@ public class MediaMatchInventoryTest {
         assertEquals(64, inventory.signature.length());
     }
 
-    @Test
-    public void actualMovieEpisodeAndUnmatchedOwnersRemainDistinctAndPutioIsExcluded() throws Exception {
+    @Test public void actualMovieEpisodeAndUnmatchedOwnersRemainDistinctAndPutioIsExcluded() throws Exception
+    {
         seed();
         var before = PreferenceManager.getDefaultSharedPreferences(app).getAll();
         var inventory = MediaMatchInventory.capture(app);
@@ -72,51 +80,63 @@ public class MediaMatchInventoryTest {
         assertEquals(before, PreferenceManager.getDefaultSharedPreferences(app).getAll());
     }
 
-    @Test
-    public void signatureTracksIdentificationAndPathButNotUnselectedWatchPinOrScrapedFacts() throws Exception {
+    @Test public void signatureTracksIdentificationAndPathButNotUnselectedWatchPinOrScrapedFacts() throws Exception
+    {
         seed();
         String original = MediaMatchInventory.capture(app).signature;
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
             var db = helper.getWritableDatabase();
             db.execSQL("UPDATE files SET bookmark=7777,Archos_lastTimePlayed=200 WHERE _id=10");
             db.execSQL("UPDATE MOVIE SET Nova_pinned=5,plot_movie='Updated facts' WHERE _id=100");
         }
         assertEquals(original, MediaMatchInventory.capture(app).signature);
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
             helper.getWritableDatabase().execSQL("UPDATE MOVIE SET m_online_id=888 WHERE _id=100");
         }
         String changed = MediaMatchInventory.capture(app).signature;
         assertNotEquals(original, changed);
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
             helper.getWritableDatabase().execSQL("UPDATE files SET _data='file:///moved.mkv' WHERE _id=10");
         }
         assertNotEquals(changed, MediaMatchInventory.capture(app).signature);
     }
 
-    @Test
-    public void pointerCannotBorrowAnotherFilesMetadataEvenWhenNativeViewStillJoinsItsOwnMovie() throws Exception {
+    @Test public void pointerCannotBorrowAnotherFilesMetadataEvenWhenNativeViewStillJoinsItsOwnMovie() throws Exception
+    {
         seed();
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
             var db = helper.getWritableDatabase();
             db.execSQL("UPDATE files SET ArchosMediaScraper_type=0 WHERE _id=10");
             db.execSQL("UPDATE files SET ArchosMediaScraper_id=200 WHERE _id=10");
             db.execSQL("UPDATE files SET ArchosMediaScraper_type=11 WHERE _id=10");
         }
-        try {
+        try
+        {
             MediaMatchInventory.capture(app);
             fail();
-        } catch (IOException expected) {
         }
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
-            try {
+        catch (IOException expected)
+        {
+        }
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
+            try
+            {
                 PortableMediaMatches.read(helper.getReadableDatabase());
                 fail();
-            } catch (IOException expected) {
+            }
+            catch (IOException expected)
+            {
             }
         }
         try (VideoOpenHelper helper = new VideoOpenHelper(app);
-            var rows = helper.getReadableDatabase().rawQuery(
-                "SELECT video_id,m_online_id,Nova_pinned FROM MOVIE WHERE _id=200", null)) {
+             var rows = helper.getReadableDatabase().rawQuery(
+                 "SELECT video_id,m_online_id,Nova_pinned FROM MOVIE WHERE _id=200", null))
+        {
             assertTrue(rows.moveToFirst());
             assertEquals(11, rows.getLong(0));
             assertEquals(456, rows.getLong(1));
@@ -124,24 +144,29 @@ public class MediaMatchInventoryTest {
         }
     }
 
-    @Test
-    public void changedPhysicalPreviewIsRejectedReadOnlyWithoutMovingMetadata() throws Exception {
+    @Test public void changedPhysicalPreviewIsRejectedReadOnlyWithoutMovingMetadata() throws Exception
+    {
         seed();
         var physical = new PortablePhysicalReferences(app, LogicalBackupCatalog.capture(app, () -> false).physical);
-        try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
             helper.getWritableDatabase().execSQL("UPDATE files SET _data='file:///changed.mkv' WHERE _id=10");
         }
-        try {
+        try
+        {
             MediaMatchInventory.capture(app).validatePhysical(physical);
             fail();
-        } catch (IOException expected) {
+        }
+        catch (IOException expected)
+        {
         }
         assertEquals("AUTH_CANARY", PreferenceManager.getDefaultSharedPreferences(app).getString("oauth_token", null));
     }
 
     @Test
     public void completeBackupCatalogReadsCanonicalMatchesInItsUnfilteredSnapshotWithoutCredentialsOrLocations()
-        throws Exception {
+        throws Exception
+    {
         seed();
         var preferences = PreferenceManager.getDefaultSharedPreferences(app);
         var before = preferences.getAll();
@@ -153,9 +178,7 @@ public class MediaMatchInventoryTest {
         var payload = MediaMatchIntents.export(app, catalog.matches, MediaMatchInventory.capture(app), physical);
         PortableMediaMatches.validate(payload);
         assertEquals(3, payload.getJSONArray("rows").length());
-        for (String forbidden : new String[] {
-            "AUTH_CANARY", "file:///", "putio:", "Original facts"
-        })
+        for (String forbidden : new String[] {"AUTH_CANARY", "file:///", "putio:", "Original facts"})
             assertFalse(payload.toString().contains(forbidden));
         assertTrue(LogicalBackupArchive.registered().contains(BackupCategory.MATCHES));
         assertEquals(before.get("oauth_token"), preferences.getAll().get("oauth_token"));

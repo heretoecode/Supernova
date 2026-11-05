@@ -18,8 +18,7 @@ import org.robolectric.annotation.Config;
 @Config(application = Application.class, sdk = 30, qualifiers = "land")
 public class FirstPlayHelpRemovalTest
 {
-    @Test
-    public void bothControllerLayoutsLackNovaHelpEvenForFreshPreferences()
+    @Test public void bothControllerLayoutsLackNovaHelpEvenForFreshPreferences()
     {
         Context context = RuntimeEnvironment.getApplication();
         for (int layout : new int[] {R.layout.player_controller_experimental, R.layout.player_controller_inside})
