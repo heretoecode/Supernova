@@ -63,6 +63,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -80,6 +81,7 @@ import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Formatter;
@@ -1066,6 +1068,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             mControlBarShowing = show;
             if (!show)
                 sControlBarMaxHeight = 0;
+            if (!show && strip != null)
+                strip.collapse();
             adjustView();
             setVisibility(mControlBar, show, true);
             if (experimentalUi() && mControllerViewLeft != null) {
@@ -1612,18 +1616,57 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     private final BarPlayPauseKeys barPlayPauseKeys = new BarPlayPauseKeys();
-    private Runnable stripOpener;
-
-    /** The Chapters · Episodes strip registers here; without it, Down from the bar does nothing. */
-    void setStripOpener(Runnable opener)
+    /** The Chapters · Episodes strip below the bar (0.156 #21). */
+    interface Strip
     {
-        stripOpener = opener;
+        boolean open();
+
+        boolean contains(View focused);
+
+        void vertical(boolean up, View focused);
+
+        boolean back();
+
+        void collapse();
+    }
+
+    private Strip strip;
+    private PlayerPartsStrip partsStrip;
+
+    /** The strip registers here; without one, Down from the bar does nothing. */
+    void setStrip(Strip next)
+    {
+        strip = next;
     }
 
     private void openStripBelowBar()
     {
-        if (stripOpener != null)
-            stripOpener.run();
+        if (strip != null)
+            strip.open();
+    }
+
+    private void keepControlsShowing()
+    {
+        if (mControlBarShowing)
+            sendFadeOut(SHOW_TIMEOUT);
+    }
+
+    private void installPartsStrip()
+    {
+        if (partsStrip != null || !(mContext instanceof PlayerActivity) || !(mControlBar instanceof LinearLayout))
+            return;
+        ChapterMarkers markers = mControllerViewLeft.findViewById(R.id.preview_chapter_markers);
+        List<View> lift = new ArrayList<>();
+        for (int id : new int[] {R.id.preview_playback_title, R.id.preview_playback_episode}) {
+            View v = mControllerViewLeft.findViewById(id);
+            if (v != null)
+                lift.add(v);
+        }
+        PlayerPartsStrip.Highlight highlight = markers != null ? markers : (start, end) -> {};
+        partsStrip = new PlayerPartsStrip(mContext, new PlayerStripSource((PlayerActivity)mContext), mProgress,
+                                          highlight, this::keepControlsShowing, lift);
+        ((LinearLayout)mControlBar).addView(partsStrip.view(), new LinearLayout.LayoutParams(-1, -2));
+        setStrip(partsStrip);
     }
 
     /** Claude's remote scheme calls this while the timeline bar has focus. */
@@ -1791,6 +1834,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusUpId(R.id.preview_more);
         for (int id : new int[] {R.id.preview_subtitles, R.id.preview_audio, R.id.preview_more})
             mControllerViewLeft.findViewById(id).setNextFocusDownId(R.id.seek_progress);
+        installPartsStrip();
     }
 
     static final float SCRUB_BUBBLE_GAP_DP = 18f;
@@ -1811,6 +1855,15 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         return label;
     }
 
+    /** The parts as line positions and names for the bar and the bubble. */
+    static List<PlaybackChapters.Chapter> partLines(PlaybackParts parts)
+    {
+        List<PlaybackChapters.Chapter> lines = new ArrayList<>();
+        for (PlaybackParts.Part part : parts.parts())
+            lines.add(new PlaybackChapters.Chapter(part.startMs, part.name));
+        return lines;
+    }
+
     private void updatePreviewScrubber() {
         if (!experimentalUi() || mControllerViewLeft == null || mProgress == null)
             return;
@@ -1823,10 +1876,19 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             Player.sPlayer == null ? null : Player.sPlayer.getVideoMetadata();
         List<PlaybackChapters.Chapter> chapters =
             metadata == null ? Collections.emptyList() : metadata.getChapters();
-        if (mContext instanceof PlayerActivity)
-            chapters = ((PlayerActivity)mContext)
-                           .previewChapters(chapters, Player.sPlayer == null ? 0 : Player.sPlayer.getDuration());
+        if (mContext instanceof PlayerActivity) {
+            // One timeline from the file's chapters and IntroDB's parts (0.156 #21): the lines on the bar and the
+            // name in the time bubble both come from it.
+            long length = Player.sPlayer == null ? 0 : Player.sPlayer.getDuration();
+            PlaybackParts parts = ((PlayerActivity)mContext).previewParts(chapters, length);
+            if (parts != null && parts.parts().size() > 1)
+                chapters = partLines(parts);
+            else
+                chapters = ((PlayerActivity)mContext).previewChapters(chapters, length);
+        }
         String chapter = PlaybackChapters.titleAt(chapters, position);
+        if (partsStrip != null)
+            partsStrip.refresh();
         if (Player.sPlayer != null)
             bubble.setText(scrubLabel(PreviewHudTiming.timestamp(position), chapter));
         else
@@ -2788,7 +2850,9 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 // Approved 0.156 remote scheme (owner notes #38): Up from the bar goes to the buttons (Settings);
                 // Down from the buttons returns to the bar; Down from the bar opens Chapters and Episodes when
                 // the video has any, and otherwise does nothing.
-                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                if (strip != null && strip.contains(focused)) {
+                    strip.vertical(keyCode == KeyEvent.KEYCODE_DPAD_UP, focused);
+                } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                     if (focused == mProgress)
                         mControllerViewLeft.findViewById(R.id.preview_more).requestFocus();
                 } else if (focused != mProgress) {
@@ -3432,6 +3496,8 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     public boolean handleBackPressed() {
         if (experimentalUi()) {
             if (PreviewPlaybackMenus.back())
+                return true;
+            if (strip != null && strip.back())
                 return true;
             if (mControlBarShowing) {
                 hide();

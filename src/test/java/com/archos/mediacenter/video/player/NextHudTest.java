@@ -322,7 +322,31 @@ public class NextHudTest {
         int[] stripOpened = {
             0
         };
-        controller.setStripOpener(() -> stripOpened[0]++);
+        controller.setStrip(new PlayerController.Strip() {
+            @Override
+            public boolean open() {
+                stripOpened[0]++;
+                return true;
+            }
+
+            @Override
+            public boolean contains(View focused) {
+                return false;
+            }
+
+            @Override
+            public void vertical(boolean up, View focused) {
+            }
+
+            @Override
+            public boolean back() {
+                return false;
+            }
+
+            @Override
+            public void collapse() {
+            }
+        });
         seek.requestFocus();
         controller.onKey(KeyEvent.KEYCODE_DPAD_UP,
                          new KeyEvent(100, 100, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP, 0));

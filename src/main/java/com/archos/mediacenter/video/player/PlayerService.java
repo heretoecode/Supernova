@@ -2846,6 +2846,16 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         advancePlayback(false);
     }
 
+    /** Plays the chosen episode from the player's Episodes row (0.156 #21). */
+    public void previewPlayEpisode(long id, Uri uri)
+    {
+        if (uri == null)
+            return;
+        mNextUri = uri;
+        mNextVideoId = id;
+        advancePlayback(false);
+    }
+
     public boolean previewAutoNextEnabled()
     {
         return mPlayMode == PLAYMODE_BINGE && mNextUri != null;
