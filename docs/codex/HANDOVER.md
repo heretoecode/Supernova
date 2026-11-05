@@ -1,3 +1,19 @@
+# 0.156 late Part B17a ready — 2026-11-05
+
+B17a ready at `afb3a755d`, after D hand-back `edc5a4281`, on
+`codex/0155-code-2026-11-04`. Original Parts A–D and the newly added network
+reconnection item are handed back. Read `reports/2026-11-05-0156-code-part-B-addendum.md`
+and `findings/network-stream-recovery.md`.
+
+Six new host tests and all 19 D regressions pass (25 total). Parser/API and ordered
+patch checks pass; full Android/Robolectric/native/Shield checks remain Claude's.
+Register `medialib-supernova156-network-recovery.patch` after the four A/C/D patches.
+Paused proxy reads share a 64 KiB allowance; failed generations are abandoned;
+replacement transport/decoder seeks before playing. Direct native readers retire
+on pause; their unreported internal retries still require native/Shield confirmation.
+No new UI calls, protected screen/build edits or fork pushes. PortableCustomPage
+remains untouched. GitHub cleanup remains parked.
+
 # 0.156 Part D incremental hand-back — 2026-11-05
 
 Part D ready at `207242079` (engine/recorder `9757306f1`), after Part C `490347566`,

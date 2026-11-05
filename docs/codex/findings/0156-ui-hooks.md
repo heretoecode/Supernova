@@ -151,3 +151,11 @@ Diagnostics stay always full while enabled. `clearAll(context)` is a worker call
 See `findings/diagnostics-hooks.md` for exact protected screen/native insertion points
 and coverage limits, and `findings/seek-thumbnails.md` for extraction choice, measured
 host timings, request-target timestamp quality and the Shield test sequence.
+
+## Late B17a — network stream recovery
+
+Code `afb3a755d`; no new UI call or control change. Existing player pause/start,
+proxy read errors and native-reported I/O failures invoke the recovery engine.
+Apply `medialib-supernova156-network-recovery.patch` after the four A/C/D patches.
+Recovery preserves session/track/seek intent and emits stream_reconnect boundaries;
+see `findings/network-stream-recovery.md` for gate behavior and native visibility limits.
