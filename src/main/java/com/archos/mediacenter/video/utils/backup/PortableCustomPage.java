@@ -46,6 +46,13 @@ public final class PortableCustomPage {
                     actual = new HashSet<>();
         for (Iterator<String> keys = page.keys(); keys.hasNext();)
             actual.add(keys.next());
+        // 0.156 year range: "yearTo" is optional so backups made before it still restore.
+        if (actual.remove("yearTo")) {
+            Object yearTo = page.get("yearTo");
+            if (!(yearTo instanceof Integer || yearTo instanceof Long) || ((Number) yearTo).longValue() < 0
+                || ((Number) yearTo).longValue() > 9999)
+                throw new JSONException("Invalid Library page year range");
+        }
         if (!actual.equals(expected))
             throw new JSONException("Unsupported Library definition fields");
         text(page.getString("name"), 40, false);

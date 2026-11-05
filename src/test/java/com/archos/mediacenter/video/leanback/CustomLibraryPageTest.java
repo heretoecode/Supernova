@@ -162,6 +162,7 @@ public class CustomLibraryPageTest {
         page.watched = "watched";
         assertEquals("Two", page.entries(library).get(0).media.getName());
         page.year = 2000;
+        page.yearTo = 2000; // 0.156: year range; one year is year–year
         assertTrue(page.entries(library).isEmpty());
     }
 

@@ -57,17 +57,13 @@ public class NextQaWizardTest {
                 (RecyclerView)pages.getChildAt(0);
             list.scrollBy(0, Math.round(160 * root.getResources().getDisplayMetrics().density));
             PreviewPagesTest.layout(root);
-            if (list.canScrollVertically(-1)) {
-                assertTrue("top bar switches to its blurred scrolled state",
-                           (boolean)ReflectionHelpers.getField(navigation, "scrolled"));
-            }
-            // Deterministic wiring check, independent of how much fixture content there is to scroll.
-            Consumer<Boolean> listener = ReflectionHelpers.getField(pages, "scrollListener");
-            assertNotNull("custom page reports scrolling to the top bar", listener);
-            listener.accept(true);
-            assertTrue((boolean)ReflectionHelpers.getField(navigation, "scrolled"));
-            listener.accept(false);
-            assertFalse((boolean)ReflectionHelpers.getField(navigation, "scrolled"));
+            // 0.156: the custom page drives the same charcoal fade as Home, from its real scroll distance.
+            java.util.function.IntConsumer listener = ReflectionHelpers.getField(pages, "scrollOffsetListener");
+            assertNotNull("custom page reports its scroll to the top bar", listener);
+            listener.accept(10_000);
+            assertEquals(255, navigation.fadeAlpha());
+            listener.accept(0);
+            assertEquals(0, navigation.fadeAlpha());
             PreviewPagesTest.capture(root, "custom-scrolled-under-top-bar");
         } finally {
             host.pause().stop().destroy();
