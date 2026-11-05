@@ -38,7 +38,6 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 
 - **Bring `main` up to date** — `main` still holds the pre-0.140 code; it needs a pull request from the working
   branch that the owner approves.
-- **Archive `heretoecode/aos-AVP`** (not used by any build) in its repository settings.
 - **Decisions:** Smart Collections; Put.io improvements; whether Where to Watch should open the service's app.
   These are GitHub Issues labelled `decision-needed`.
 - Parked for later: the Details page redesign and library statistics colouring

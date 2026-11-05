@@ -58,7 +58,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 | `main` | Old (pre-0.140). Not updated yet; bringing it up to date needs a PR the owner approves. |
 | Native engine archive | `native-archive-0146` |
 | `heretoecode/aos-MediaLib` | Fork used by **every** build. Keep. |
-| `heretoecode/aos-AVP` | Not used. To be archived by the owner in repository settings. |
+| `heretoecode/aos-AVP` | Not used. Archived by the owner on 5 Nov 2026 (read-only). |
 
 Other `codex/*`, `automation/*` and `archive/*` branches are history; leave them alone.
 

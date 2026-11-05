@@ -35,5 +35,5 @@ workflows or Gradle files changed.
 
 ## Left for the owner
 - Bring `main` up to date (a pull request the owner approves).
-- Archive `heretoecode/aos-AVP` in its repository settings.
+- ~~Archive `heretoecode/aos-AVP`~~ — done by the owner, 5 Nov 2026. Codex told the cleanup is done.
 - The repository description, if wanted ("custom Android TV & Nvidia Shield media player" is still accurate).
