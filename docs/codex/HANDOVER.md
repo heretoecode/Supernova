@@ -391,3 +391,4 @@ MORE/NEXT findings. `reports/2026-11-04-0155-engine.md` describes the earlier
 unapplied drafts; `reports/2026-11-04-0155-engine-build.md` describes their real
 integration and this run's exact continuation. The release section above is the
 current build authority. Existing preparation reports/patches were preserved.
+0.156 FINAL ready at a1e8120d3 — reports/2026-11-05-0156-final.md; patch replacement and deferrals recorded.
