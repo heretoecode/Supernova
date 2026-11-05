@@ -169,7 +169,16 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 
 **Status:** round 10 (`details-tabs/v10-01`):
 - The page fills exactly two TV screens: the three columns spread over the first, cast and crew over the second.
-- Bigger rows and portraits. Planned for 0.157 (0.156 is not held up). Related parked
+- Bigger rows and portraits.
+
+**Owner on round 10 (5 Nov 2026)**
+- Move Reception, Key information and Technical information slightly further down.
+- **Nothing on the Details tab is focusable;** it is for reading only.
+- Claude's proposal for moving around:
+  - Down scrolls to cast and crew; Up scrolls back.
+  - One more Up returns to the tabs; Left/Right switch tabs.
+
+**Status:** round 11 (`details-tabs/v11-01`) sent. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
