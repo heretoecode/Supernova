@@ -343,12 +343,17 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
       in 0.156), with no outline.
     - The current Details More menu uses glass `#16181C` at 97% with a light edge, over the brighter artwork.
     - **DECIDED (owner, 5 Nov 2026), global rule:**
-      - Every pop-up, menu and side panel is solid `#16181C` (100%, no transparency), no outline, soft shadow.
+      - (Superseded below: 90% opacity, not solid.) Every pop-up, menu and side panel `#16181C`, no outline, soft shadow.
       - The focused row is filled white (`#F4F6FB`) with black text and icon (`#0B0D12`).
       - Replaces the 97% glass with a light edge, and the white outline focus box.
       - **For 0.157** (owner, 5 Nov 2026), together with the More menu fixes; built into the shared style so it
         shows everywhere.
     - Owner then asked about keeping some transparency. In Supernova "glass" is only 97% opacity plus a light
       1 px edge, with no blur: real blur needs Android 12, and the Shield runs 11.
-    - Comparison sheet `more-menu/03-opacity-100-97-90-80.png`: all with no outline, filled-white focus. **Opacity
-      to choose.**
+    - Comparison sheet `more-menu/03-opacity-100-97-90-80.png`: all with no outline, filled-white focus.
+    - **DECIDED (owner, 5 Nov 2026), global rule:**
+      - Every pop-up, menu and side panel is `#16181C` at **90%** opacity, with no outline.
+      - The focused item is filled white with black text and icon.
+      - One shared value, so it can be tuned in one place after the Shield check.
+    - Also investigate in 0.157: the owner's Edit Page photo looks far more see-through than its code's 97%; find the
+      cause so 90% really shows as 90% on the Shield.

@@ -40,7 +40,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - No pull requests unless the owner asks.
 - **Global look (owner, 5 Nov 2026):**
   - Full pages sit on the Space Black artwork, with content straight on it.
-  - Pop-ups, menus and side panels are solid `#16181C` with no outline, and the focused item is filled white with
+  - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
     black text and icon (built in 0.157).
   - Missing information says "Unknown"; rows are never removed.
 
