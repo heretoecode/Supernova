@@ -383,3 +383,20 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - No separators.
   - Steppers and list values are plain white.
   - No blue for values anywhere.
+
+## 7. Library statistics on library pages (owner photo, Documentaries page, 5 Nov 2026; GitHub #100)
+- Owner: the stats box keeps the old blue Supernova look; should it match the buttons below?
+- Claude's review:
+  - A pale blue box on Space Black (against the new rule).
+  - Ten stats in two uneven rows, with tiny text.
+  - Old date format "5/11/26".
+  - Blue caption bars under the posters.
+- Proposal (`docs/design/proposals/library-stats/01`, `02`):
+  - One even row of 8: big white number, grey label, an icon, visible separators. Stats: Titles, Unwatched, In
+    progress, Total size, Added this month, On this Shield (+ size), On the network (+ size), Last updated
+    ("5 Nov · 14:40").
+  - Library status on its own line with a reason, e.g. "Scan needs attention · see Library Health".
+  - Toolbar in the button style; Edit Library white.
+  - Poster captions as plain white title + grey line, no blue bar.
+  - `01`: straight on Space Black (as Details). `02`: in a 90% charcoal strip.
+- **Status:** waiting for the owner.
