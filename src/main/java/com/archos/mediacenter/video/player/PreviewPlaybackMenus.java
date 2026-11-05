@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.player;
 
+import com.archos.mediacenter.video.diagnostics.FocusSearchGuard;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -798,7 +799,7 @@ final class PreviewPlaybackMenus {
         View cursor = focused;
         while (cursor != scope && cursor.getParent() instanceof View)
             cursor = (View)cursor.getParent();
-        return cursor == scope ? FocusFinder.getInstance().findNextFocus(scope, focused, direction) : null;
+        return cursor == scope ? FocusSearchGuard.findNextFocus(scope, focused, direction) : null;
     }
 
     private static void focusContent() {

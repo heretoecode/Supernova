@@ -1,4 +1,5 @@
 package com.archos.mediacenter.video.leanback.settings;
+import com.archos.mediacenter.video.diagnostics.FocusSearchGuard;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -956,7 +957,7 @@ public final class PreviewSettings {
                                 if (list.hasFocus() && list.dispatchKeyEvent(event))
                                     return true;
                                 View focused = middle.findFocus();
-                                View next = FocusFinder.getInstance().findNextFocus(
+                                View next = FocusSearchGuard.findNextFocus(
                                     middle, focused, key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
                                 if (next != null && next != focused)
                                     next.requestFocus();
@@ -990,7 +991,7 @@ public final class PreviewSettings {
                         if (helpScroll.hasFocus()) {
                             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
                                 View focused = helpScroll.findFocus();
-                                View next = FocusFinder.getInstance().findNextFocus(helpBody, focused,
+                                View next = FocusSearchGuard.findNextFocus(helpBody, focused,
                                     key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
                                 if (next != null && next != focused)
                                     next.requestFocus();
