@@ -647,3 +647,15 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
 - Chapters and Episodes in the player (#33, mock-ups `chapters/01`–`05`) — **approved**.
 - Subtitle Vertical Position step control with live sample line and the appearance preview rule (#35) — **approved**.
 - Full 0.156 list: `docs/0.156/RELEASE_LIST.md`.
+
+## 40. Final looks for the "approved in principle" ideas (#19) and other decisions, 5 Nov 2026
+- **Owner decisions:** Seek previews (experimental) on/off switch in Settings › System › Advanced, on by default;
+  item 16 (old IntroDB settings page) treated as approved — covered by Accounts & Services and Playback › Skipping.
+- **Mock-ups** `docs/design/proposals/suggestions/01`–`07`: shared choice list (side panel, no title, a context line,
+  grouped choices) · Sleep timer inline in the player's More tab (Off | 30 | 60 | 90 | End of episode) · "Still
+  watching?" after N auto-played episodes (default 3; stops after 60 s without an answer) · Fix match side panel from
+  Details · Library Health count on its Network & Files tile · per-series audio/subtitle choices (switch in the Audio
+  tab) · empty pages (one line, why, one button). Focus memory everywhere has no screen of its own: every page returns
+  focus to where you left it (audit list to follow in the code work).
+- Search heading size: `search/07` (38 px) re-shown for the final look.
+- **Status:** awaiting the owner's review.
