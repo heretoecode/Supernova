@@ -440,8 +440,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - **Home hero cue: dots (A), approved by the owner (5 Nov 2026).**
 - Correction: the row cards are 16:9; the **hero is not**. It is about 2.5:1 in the mock-up (today about 2.3:1); a
   16:9 hero at full width would fill the screen.
+- Mock-ups `docs/design/proposals/hero-tabs/01`–`04`:
+  - Both heroes at 2.4:1 (1776×740 at 1080p); 2:1 would push the tabs and rows off screen.
+  - Details tabs with no tab focused (open tab white with a white underline) and with a tab focused (filled white).
 - Open questions:
-  - Hero shape: about 2.4:1 or 2:1?
+  - Hero shape: 2.4:1 as mocked?
   - Details tabs: the open tab's highlight white instead of blue, to match the white title underlines and the
     no-blue rule?
 
