@@ -1,3 +1,14 @@
+# 0.156 added conformance failures ready — 2026-11-05
+
+Added test fixes ready at `8d9a91e0e` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of
+Claude’s `be1291e11`. The second section of `BRIEF_0156_TEST_FIXES.md` is addressed; every failure is classified in
+[`reports/2026-11-05-0156-test-fixes-followup.md`](reports/2026-11-05-0156-test-fixes-followup.md).
+Ten isolated component tests pass, including both backup guard regressions and all three cache tests.
+All seven changed Java files pass parser/import/line checks; layout checks pass. Full service/resource/large-export
+conformance remains Claude’s. **No new dependency patch registration or UI wiring is needed.**
+The 61,050-row mixed-source backup fixture and all prior assertions remain, with stronger identity checks.
+GitHub cleanup remains completed.
+
 # 0.156 test fixes ready — 2026-11-05
 
 Test fixes ready at `b91dd25c5` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of
