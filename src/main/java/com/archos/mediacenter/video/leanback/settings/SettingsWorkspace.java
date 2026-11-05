@@ -34,7 +34,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     private RecyclerView.Adapter<?> observed;
     private int category = -1, gridSelection;
     private String section = "";
-    private boolean queued, disposed, subtitleEnabled;
+    private boolean queued, disposed, subtitleEnabled, rebuilding;
     private View rowAnchor;
     private final SharedPreferences.OnSharedPreferenceChangeListener preferenceObserver = (p, k) -> schedule();
     private final RecyclerView.AdapterDataObserver observer = new RecyclerView.AdapterDataObserver() {
@@ -346,7 +346,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             rail.addView(tab, size);
             railButtons.add(tab);
             tab.setOnFocusChangeListener((v, yes) -> {
-                if (yes && !section.equals(name))
+                // While the rows are rebuilt, focus can pass over a tab for a moment; that must not switch page.
+                if (yes && !rebuilding && !section.equals(name))
                     select(name);
             });
             tab.setOnClickListener(v -> {
@@ -542,6 +543,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             String anchor = focused == null ? anchors.get(category + ":" + section) : String.valueOf(focused.getTag());
             Map<String, Row> previous = new LinkedHashMap<>(bindings);
             bindings.clear();
+            rebuilding = true;
             body.removeAllViews();
             for (SettingsRegistry.Entry e : candidates) {
                 Preference p = e.resolve(fragment.getPreferenceScreen());
@@ -569,6 +571,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
                         selectedRail().requestFocus();
                 }
             }
+            rebuilding = false;
         }
         for (Row row : bindings.values())
             row.refresh();

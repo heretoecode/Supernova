@@ -132,7 +132,7 @@ public class SettingsWorkspaceTest {
     public void tabsSitInTheHeaderAndRowsKeepTheirValueLevelWithTheTitle() {
         workspace.open(0, "Playback");
         layout();
-        View first = tagged("settings.section.Playback"), second = tagged("settings.section.Video & Display");
+        View first = tagged("settings.section.Playback"), second = tagged("settings.section.Resume & Progress");
         assertSame("tabs live in the header", tagged("settings.tabs"), first.getParent());
         assertTrue(first.requestFocus());
         key(KeyEvent.KEYCODE_DPAD_RIGHT);
