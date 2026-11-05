@@ -436,7 +436,14 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - Heroes: Home and Details the same size and position. Home's carousel cue options:
   - A: dots on the card.
   - B: slim side peeks.
-- Mock-ups `docs/design/proposals/one-size/01`–`04`. **Status:** hero cue to choose.
+- Mock-ups `docs/design/proposals/one-size/01`–`04`.
+- **Home hero cue: dots (A), approved by the owner (5 Nov 2026).**
+- Correction: the row cards are 16:9; the **hero is not**. It is about 2.5:1 in the mock-up (today about 2.3:1); a
+  16:9 hero at full width would fill the screen.
+- Open questions:
+  - Hero shape: about 2.4:1 or 2:1?
+  - Details tabs: the open tab's highlight white instead of blue, to match the white title underlines and the
+    no-blue rule?
 
 ## 10. Legacy NOVA clean-out (owner, 5 Nov 2026)
 - Owner: unused legacy NOVA code (like the first-play blue help box) shouldn't be in the app; can Codex find and
