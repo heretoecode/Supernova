@@ -140,6 +140,7 @@ public final class PreviewPages extends FrameLayout {
     }
 
     private final List<Cell> cells = new ArrayList<>();
+    private HomeRowMover rowMover;
     private int tab;
     private PreviewNetworkWorkspace sharedBrowser, networkBrowser, homeSetupBrowser;
     private final FocusAnchor[] anchors = new FocusAnchor[4];
@@ -452,7 +453,7 @@ public final class PreviewPages extends FrameLayout {
                     }
                 }
                 if (item != null && anchor != null && target < cells.size() && cells.get(target).type == RAIL) {
-                    RecyclerView rail = (RecyclerView)((ViewGroup)item).getChildAt(0);
+                    RecyclerView rail = railIn(item);
                     List<Entry> entries = (List<Entry>)cells.get(target).value;
                     int inner = Math.min(anchor.inner, Math.max(0, entries.size() - 1));
                     for (int i = 0; i < entries.size(); i++)
@@ -692,10 +693,8 @@ public final class PreviewPages extends FrameLayout {
                 visible.add((Entry)cell.value);
             else if (cell.type == RAIL) {
                 View item = list.getChildAt(n);
-                if (item instanceof ViewGroup && ((ViewGroup)item).getChildCount() > 0 &&
-                    ((ViewGroup)item).getChildAt(0) instanceof RecyclerView)
-                    collectVisibleRail((RecyclerView)((ViewGroup)item).getChildAt(0), (List<Entry>)cell.value, visible,
-                                       next);
+                if (railIn(item) != null)
+                    collectVisibleRail(railIn(item), (List<Entry>)cell.value, visible, next);
             }
         }
         for (int n = last + 1; n < Math.min(cells.size(), last + 13); n++)
@@ -1263,8 +1262,55 @@ public final class PreviewPages extends FrameLayout {
             .apply();
     }
 
+    /** The row's card rail: the item's only child, or its last child while the row controls are showing. */
+    static RecyclerView railIn(View item) {
+        if (!(item instanceof ViewGroup))
+            return null;
+        ViewGroup group = (ViewGroup)item;
+        int count = group.getChildCount();
+        if (count == 1 && group.getChildAt(0) instanceof RecyclerView)
+            return (RecyclerView)group.getChildAt(0);
+        if (count == 2 && group.getChildAt(0) instanceof HomeRowControls && group.getChildAt(1) instanceof RecyclerView)
+            return (RecyclerView)group.getChildAt(1);
+        return null;
+    }
+
+    HomeRowMover rowMover() {
+        if (rowMover == null)
+            rowMover = new HomeRowMover(getContext(), new HomeRowMover.Host() {
+                @Override
+                public RecyclerView list() {
+                    return list;
+                }
+
+                @Override
+                public List<Cell> cells() {
+                    return cells;
+                }
+
+                @Override
+                public RecyclerView.Adapter<?> adapter() {
+                    return adapter;
+                }
+
+                @Override
+                public void rerender() {
+                    render();
+                }
+            });
+        return rowMover;
+    }
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (tab == 0 && rowMover != null && event.getKeyCode() == KeyEvent.KEYCODE_BACK && !rowMover.moving()) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && rowMover.showing()) {
+                rowMover.dismiss(true);
+                return true;
+            }
+            if (event.getAction() == KeyEvent.ACTION_DOWN && rowMover.undoOnBack())
+                return true;
+        }
         if (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.ACTION_UP)
             recordRemoteInput();
         int remoteKey = event.getKeyCode();
@@ -1288,12 +1334,12 @@ public final class PreviewPages extends FrameLayout {
             int position = item == null ? -1 : list.getChildAdapterPosition(item);
             if (position >= 0 && cells.get(position).type == RAIL && !cells.get(position).homeRowId.isEmpty() &&
                 item instanceof ViewGroup) {
-                View child = ((ViewGroup)item).getChildAt(0);
-                if (child instanceof RecyclerView) {
-                    RecyclerView rail = (RecyclerView)child;
+                RecyclerView rail = railIn(item);
+                if (rail != null) {
                     View card = rail.findContainingItemView(focus);
                     if (card != null && rail.getChildAdapterPosition(card) == 0) {
-                        PreviewHomeRows.rowControls(getContext(), cells.get(position).homeRowId, this::render);
+                        // Hide and Move appear beside the row (0.155 notes #14); no pop-up.
+                        rowMover().reveal((LinearLayout)item, rail, cells.get(position).homeRowId);
                         return true;
                     }
                 }
@@ -2179,8 +2225,10 @@ public final class PreviewPages extends FrameLayout {
                 return;
             }
             LinearLayout v = (LinearLayout)h.itemView;
-            if (c.type == RAIL && v.getChildCount() == 1 && v.getChildAt(0) instanceof RecyclerView) {
-                RecyclerView rail = (RecyclerView)v.getChildAt(0);
+            if (rowMover != null && rowMover.owns(v) && !rowMover.rowId().equals(c.homeRowId))
+                rowMover.dismiss(false);
+            if (c.type == RAIL && railIn(v) != null) {
+                RecyclerView rail = railIn(v);
                 if (rail.getAdapter() instanceof RailAdapter) {
                     ((RailAdapter)rail.getAdapter()).update((List<Entry>)c.value);
                     return;

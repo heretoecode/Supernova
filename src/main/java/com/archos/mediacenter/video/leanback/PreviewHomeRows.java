@@ -290,38 +290,6 @@ public final class PreviewHomeRows {
         new PreviewHomeRows(c).editor(changed);
     }
 
-    public static void rowControls(Context c, String id, Runnable changed) {
-        PreviewHomeRows model = new PreviewHomeRows(c);
-        Row selected = null;
-        for (Row row : model.rows)
-            if (row.id.equals(id)) {
-                selected = row;
-                break;
-            }
-        if (selected == null)
-            return;
-        final Row row = selected;
-        PreviewDialog.choose(c, row.name, new String[] {
-            "Move", "Hide"
-        }, 0, choice -> {
-            if (choice == 1) {
-                row.visible = false;
-                model.save();
-                changed.run();
-                return;
-            }
-            String[] positions = new String[model.rows.size()];
-            for (int n = 0; n < positions.length; n++)
-                positions[n] = (n + 1) + " · " + model.rows.get(n).name;
-            PreviewDialog.choose(c, "Move row to", positions, model.rows.indexOf(row), position -> {
-                model.rows.remove(row);
-                model.rows.add(Math.min(position, model.rows.size()), row);
-                model.save();
-                changed.run();
-            });
-        });
-    }
-
     private void editor(Runnable changed) {
         new CustomiseHomeEditor(context, this, changed).show();
     }

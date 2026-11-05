@@ -7,6 +7,11 @@ import android.widget.*;
 /** Non-modal feedback; never takes remote focus. */
 public final class PreviewNotice {
     public static void show(Context context, String message, boolean error) {
+        show(context, message, error, error ? 5500 : 3000);
+    }
+
+    /** As {@link #show(Context, String, boolean)}, shown for {@code durationMs} (e.g. while an Undo is offered). */
+    public static void show(Context context, String message, boolean error, long durationMs) {
         if (!(context instanceof Activity)) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             return;
@@ -35,7 +40,7 @@ public final class PreviewNotice {
             note.postDelayed(
                 ()
                     -> note.animate().alpha(0).setDuration(180).withEndAction(() -> root.removeView(note)).start(),
-                error ? 5500 : 3000);
+                durationMs);
         });
     }
 
