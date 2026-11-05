@@ -1,3 +1,23 @@
+# 0.156 Part D incremental hand-back — 2026-11-05
+
+Part D ready at `207242079` (engine/recorder `9757306f1`), after Part C `490347566`,
+on `codex/0155-code-2026-11-04`. Original Parts A–D are handed back in order.
+The freshly fetched Claude brief `c37bd36d2` adds B17a (network reconnect after
+long pause/read failure). Codex is continuing with that late Part B addendum;
+it is not yet implemented at this checkpoint. PortableCustomPage remains untouched.
+Read `reports/2026-11-05-0156-code-part-D.md`, `findings/seek-thumbnails.md` and
+`findings/diagnostics-hooks.md`; UI calls are appended to `findings/0156-ui-hooks.md`.
+Nineteen host tests pass; Java 17 parser/API and ordered patch checks pass.
+Android/Robolectric/native/Shield validation remains Claude's.
+
+Register the new MediaLib patches in order: A scan reliability, C NFO progress,
+D keyframe retriever, then D metadata diagnostics. App code needs those APIs;
+existing dependency/build files were deliberately not edited. Shield must confirm
+protocol/codec coverage, cancellation and playback interference. Native counters,
+FileCore per-minute/open/status hooks and protected screen hooks are documented
+explicitly; unknown values are not reported as measured zeroes.
+GitHub cleanup remains parked. No PR/merge/rebase/force push/workflow was performed.
+
 # 0.156 Part C incremental hand-back — 2026-11-05
 
 Part C ready at `841c47328`, after Part B `ebd46f688`, on `codex/0155-code-2026-11-04`.

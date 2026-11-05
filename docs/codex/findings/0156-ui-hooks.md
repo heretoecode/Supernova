@@ -130,3 +130,24 @@ failure. Do not describe the historical source-specific cause as confirmed.
   `current()` supports immediate restoration. Done counts export attempts whose writer
   task finished (or rows that could not be exported), not a guarantee every file was
   writable. Cancellation can finish with done < total. No new export screen/wording.
+
+## Part D — asynchronous previews and expanded diagnostics
+
+Code `207242079`. `PlayerService.seekThumbnails()` returns the service-owned engine
+once prepared; it can be null. Keep the episode still/placeholder in that case.
+For the time bubble call `nearest(positionMs)`; it never reads disk on the UI thread.
+Subscribe with `addListener(positionMs -> refreshCurrentBubble())`, and close that
+subscription when its UI is removed. For parts pass this engine to the existing
+`PartPictures(parts, episodeStill, frameSource, ready)`; it requests start+2 seconds.
+Close `PartPictures` on page/source replacement. The service, not the screen, closes
+`SeekThumbnails`. All picture callbacks arrive on main and are fenced after close.
+
+The `seek_thumbnails_enabled` preference defaults true and the live listener cancels
+work when switched off. Slow extraction back-off also delays priority picture jobs.
+Lifecycle, seek, stop, playback completion and explicit/bulk watched cleanup are
+wired; no screen, row, new resource or settings wording changed in Part D.
+
+Diagnostics stay always full while enabled. `clearAll(context)` is a worker call.
+See `findings/diagnostics-hooks.md` for exact protected screen/native insertion points
+and coverage limits, and `findings/seek-thumbnails.md` for extraction choice, measured
+host timings, request-target timestamp quality and the Shield test sequence.
