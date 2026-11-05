@@ -190,6 +190,23 @@ public final class StreamingRepository
 
     private static JSONObject api(Context context, String path, String country, int page) throws Exception
     {
+        return api(context, path, country, page, Collections.emptyMap());
+    }
+
+    /** Exact TMDB title/ID discovery for the explicit Fix match operation. */
+    public static JSONObject matchSearch(Context context, String path, Map<String, String> parameters) throws Exception
+    {
+        if (!path.matches("(?:search/(?:movie|tv)|(?:movie|tv)/[1-9][0-9]{0,9}|find/tt[0-9]{7,10})") ||
+            !Set.of("query", "external_source").containsAll(parameters.keySet()))
+        {
+            throw new IOException("Invalid match search");
+        }
+        return api(context, path, null, 0, parameters);
+    }
+
+    private static JSONObject api(Context context, String path, String country, int page,
+                                  Map<String, String> parameters) throws Exception
+    {
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path)
                               .buildUpon()
                               .appendQueryParameter("api_key", context.getString(R.string.tmdb_api_key))
@@ -198,6 +215,10 @@ public final class StreamingRepository
             url.appendQueryParameter("page", String.valueOf(page));
         if (country != null)
             url.appendQueryParameter("watch_region", country);
+        for (Map.Entry<String, String> parameter : parameters.entrySet())
+        {
+            url.appendQueryParameter(parameter.getKey(), parameter.getValue());
+        }
         String operation = Diagnostics.operation("metadata_request");
         long started = SystemClock.elapsedRealtime();
         try (Diagnostics.OperationScope ignored = Diagnostics.operationScope(operation))
@@ -228,6 +249,18 @@ public final class StreamingRepository
     {
         if (value.has("success") && !value.optBoolean("success", false))
             throw new IOException("Service rejected metadata request");
+        if (path.startsWith("search/"))
+        {
+            if (value.optJSONArray("results") == null)
+                throw new IOException("Missing match results");
+            return;
+        }
+        if (path.startsWith("find/"))
+        {
+            if (value.optJSONArray("movie_results") == null || value.optJSONArray("tv_results") == null)
+                throw new IOException("Missing identifier match results");
+            return;
+        }
         if (path.startsWith("watch/providers/"))
         {
             if (value.optJSONArray("results") == null)
