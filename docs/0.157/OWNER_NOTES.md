@@ -146,7 +146,21 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 - **Top:** three columns, each vertical — Reception (left), Key information, Technical information.
 - **Below:** a row of cast, then a row of crew, at the bottom.
 
-**Status:** round 8 (`details-tabs/v8-01`) sent 5 Nov 2026. Planned for 0.157 (0.156 is not held up). Related parked
+**Status:** round 8 (`details-tabs/v8-01`) sent 5 Nov 2026.
+
+**Owner on round 8 (5 Nov 2026):** "getting there".
+- Reception icons with **no background**; each item bigger; all three top columns the same text size, each filling
+  its area (Reception looked crammed top left).
+- **Expand Technical information** to fill its column.
+- Unsure whether Cast and Crew should show a count ("8 of 32"). Claude's view: drop it; there is no way to see
+  the rest, so the count teases.
+
+**Status:** round 9 (`details-tabs/v9-01`):
+- Reception adds **Awards** (already in the code via OMDb) and uses the app's own tomato and Metacritic marks, with
+  IMDb and TMDB as coloured wordmarks, all without backgrounds.
+- Technical information adds resolution, bit depth, HDR, frame rate, bitrate and audio languages (data checked when
+  built; some may need Codex).
+- No counts on Cast and Crew. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
