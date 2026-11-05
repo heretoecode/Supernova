@@ -52,5 +52,13 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
   the online episode data.
 - Task: find a new way to display the information in the four tabs.
 
-**Status:** mock-ups `docs/design/proposals/details-tabs/01`–`05` sent 5 Nov 2026; waiting for the owner's comments. Planned for 0.157 (0.156 is not held up). Related parked
+**Owner's comments on mock-ups 01–05 (5 Nov 2026)**
+- Reference (not to copy): Disney+ (*Love/Hate*). Hero on top; tabs (Episodes, Suggested, Details) below. Highlighting
+  a tab scrolls the page up. Episodes are a list: seasons on the left, then each episode's still, title, synopsis
+  and runtime. The owner uses Disney+, Prime Video and Netflix and borrows ideas from all three.
+- **No obvious panels.** Each section (Key information, Reception, …) needs its own area, but not a boxed panel.
+- **Reception is a fixed set:** IMDb, Rotten Tomatoes, Metacritic, TMDB (every source Supernova has). Each always
+  shows, saying "Unknown" when missing, so every Details page looks the same.
+
+**Status:** second round of mock-ups (no panels, list-style episodes, fixed Reception) — see `details-tabs/v2-*`. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
