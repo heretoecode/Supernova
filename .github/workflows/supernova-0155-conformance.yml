@@ -60,6 +60,13 @@ jobs:
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0'
           cd nova/Video
           chmod +x gradlew
+          # Watchdog: if tests are still running after 50 minutes, print a thread dump of every test JVM so a hang
+          # names itself (what each test thread is waiting on), then Gradle's own 70-minute test timeout ends it.
+          ( sleep 3000
+            for pid in $(pgrep -f 'Gradle Test Executor|GradleWorkerMain'); do
+              echo "===== thread dump of test JVM $pid ====="
+              "$JAVA_HOME/bin/jstack" "$pid" || true
+            done ) 2>&1 | tee "$GITHUB_WORKSPACE/test-thread-dumps.txt" &
           ./gradlew foundationDependencyInventory testNoamazonReleaseUnitTest :MediaLib:testReleaseUnitTest :FileCoreLibrary:testReleaseUnitTest lintNoamazonRelease assembleNoamazonRelease --continue \
             -PfoundationVerify -PsupernovaQa -Puniversal -Parm64only --no-daemon --no-build-cache --no-configuration-cache --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild 2>&1 | tee build/supernova155-conformance.log
           python3 - <<'PYTOOLS'
@@ -123,6 +130,7 @@ jobs:
             nova/MediaLib/build/test-results/**
             nova/FileCoreLibrary/build/test-results/**
             nova/supernova155-source-preparation.json
+            test-thread-dumps.txt
           if-no-files-found: warn
       - name: Preserve exact unsigned payload and conformance receipt
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

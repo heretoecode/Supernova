@@ -397,8 +397,10 @@ android {
             // Robolectric API37 FileDescriptor bridge on JDK21.
             jvmArgs "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED"
             maxParallelForks = 2
+            // A hung test fails the task instead of silently holding the build until the 2-hour runner limit.
+            timeout = java.time.Duration.ofMinutes(70)
             testLogging {
-                events "passed", "skipped", "failed", "standardOut", "standardError"
+                events "started", "passed", "skipped", "failed", "standardOut", "standardError"
                 outputs.upToDateWhen {false}
                 showStandardStreams = true
             }

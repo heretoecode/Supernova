@@ -12,6 +12,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
+// org.json needs the Android runtime (plain JUnit gets "Method ... not mocked").
+@org.junit.runner.RunWith(org.robolectric.RobolectricTestRunner.class)
+@org.robolectric.annotation.Config(application = android.app.Application.class, sdk = 28)
 public class DiagnosticDetailTest
 {
     private Map<String, Object> fields(Object[] fields)
