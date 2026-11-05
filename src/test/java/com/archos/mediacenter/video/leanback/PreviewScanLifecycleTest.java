@@ -139,7 +139,7 @@ public class PreviewScanLifecycleTest
         Application app = RuntimeEnvironment.getApplication();
         PreferenceManager.getDefaultSharedPreferences(app).edit().remove(ScanSchedulePolicy.LAST_COMPLETED).commit();
         Context context = mock(Context.class);
-        when(context.getPackageName()).thenReturn("test");
+        when(context.getPackageName()).thenReturn(app.getPackageName());
         when(context.getSharedPreferences(anyString(), anyInt()))
             .thenAnswer(call -> app.getSharedPreferences(call.getArgument(0), call.getArgument(1)));
         return context;
