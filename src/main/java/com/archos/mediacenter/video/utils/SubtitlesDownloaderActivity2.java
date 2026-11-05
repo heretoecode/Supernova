@@ -1034,13 +1034,29 @@ public class SubtitlesDownloaderActivity2 extends AppCompatActivity {
         dismissPreviewProgress();
         if (isFinishing() || isDestroyed())
             return;
-        previewProgress = PreviewOperationDialog.show(
-            this, "Download Subtitles", message, () -> {
-                if (mOpenSubtitlesTask != null)
-                    mOpenSubtitlesTask.cancel();
-                setResult(Activity.RESULT_CANCELED);
-                finish();
-            });
+        Runnable cancel = () -> {
+            if (mOpenSubtitlesTask != null)
+                mOpenSubtitlesTask.cancel();
+            setResult(Activity.RESULT_CANCELED);
+            finish();
+        };
+        if (getIntent().getBooleanExtra(PLAYBACK_SETTINGS_POPUP, false)) {
+            // From Playback Settings: the wait happens in the same side panel as the results (0.155 notes #5).
+            boolean searching = message.startsWith("Searching");
+            previewProgress = com.archos.mediacenter.video.leanback.SubtitleResultsPanel.working(this, message,
+                videoName(), searching ? "Back cancels the search" : "Back cancels the download", cancel);
+            return;
+        }
+        previewProgress = PreviewOperationDialog.show(this, "Download Subtitles", message, cancel);
+    }
+
+    /** The video's file name, for the line under "Searching OpenSubtitles…". */
+    private String videoName() {
+        String url = getIntent().getStringExtra(FILE_URL);
+        if (url == null)
+            return "";
+        String name = android.net.Uri.parse(url).getLastPathSegment();
+        return name == null ? "" : name;
     }
 
     private void dismissPreviewProgress() {

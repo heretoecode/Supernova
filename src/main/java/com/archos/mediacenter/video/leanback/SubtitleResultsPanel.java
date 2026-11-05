@@ -121,6 +121,81 @@ public final class SubtitleResultsPanel {
         return dialog;
     }
 
+    /**
+     * The searching (or downloading) state inside the same side panel as the results, instead of a pop-up in the
+     * middle of the screen (owner, 4 Nov 2026, 0.155 notes #5, mock-up {@code 0155-checks/05}): a status card with
+     * a spinner, grey placeholder rows, and "Back cancels" at the foot. Back or the header arrow calls
+     * {@code cancel}.
+     */
+    public static Dialog working(Context context, String message, String detail, String footer, Runnable cancel) {
+        SubtitlePanelStyle p = new SubtitlePanelStyle(context, false, true);
+        Dialog dialog = PreviewDialog.create(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        LinearLayout panel = p.panel();
+        panel.setTag("subtitles.download.working");
+        p.header(panel, "Download Subtitles", dialog::cancel);
+        LinearLayout status = new LinearLayout(context);
+        status.setTag("subtitles.download.status");
+        status.setGravity(Gravity.CENTER_VERTICAL);
+        status.setFocusable(true);
+        status.setFocusableInTouchMode(true);
+        status.setPadding(p.px(22), p.px(18), p.px(22), p.px(18));
+        status.setBackground(p.surface(0xff24262b, 0x00000000, 19));
+        ProgressBar spinner = new ProgressBar(context);
+        spinner.setIndeterminate(true);
+        spinner.setIndeterminateTintList(android.content.res.ColorStateList.valueOf(0xffc9d6e6));
+        LinearLayout.LayoutParams spinnerSize = new LinearLayout.LayoutParams(p.px(40), p.px(40));
+        spinnerSize.rightMargin = p.px(20);
+        status.addView(spinner, spinnerSize);
+        LinearLayout copy = new LinearLayout(context);
+        copy.setOrientation(LinearLayout.VERTICAL);
+        TextView title = p.text(message, 25);
+        title.setTag("subtitles.download.message");
+        title.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        title.setSingleLine(true);
+        title.setEllipsize(TextUtils.TruncateAt.END);
+        copy.addView(title, new LinearLayout.LayoutParams(-1, -2));
+        if (detail != null && !detail.trim().isEmpty()) {
+            TextView line = p.text(detail, 21);
+            line.setTextColor(0xffc9d6e6);
+            line.setSingleLine(true);
+            line.setEllipsize(TextUtils.TruncateAt.END);
+            line.setPadding(0, p.px(6), 0, 0);
+            copy.addView(line, new LinearLayout.LayoutParams(-1, -2));
+        }
+        status.addView(copy, new LinearLayout.LayoutParams(0, -2, 1));
+        panel.addView(status, new LinearLayout.LayoutParams(-1, -2));
+        LinearLayout placeholders = new LinearLayout(context);
+        placeholders.setOrientation(LinearLayout.VERTICAL);
+        placeholders.setPadding(p.px(18), p.px(24), p.px(18), 0);
+        for (int i = 0; i < 4; i++) {
+            placeholders.addView(bar(context, p, .66f, p.px(16), i == 0 ? 0 : p.px(36)));
+            placeholders.addView(bar(context, p, .33f, p.px(12), p.px(10)));
+        }
+        LinearLayout.LayoutParams body = new LinearLayout.LayoutParams(-1, 0, 1);
+        panel.addView(placeholders, body);
+        TextView foot = p.text(footer, 20);
+        foot.setTag("subtitles.download.footer");
+        foot.setTextColor(0xff9aa3b0);
+        foot.setPadding(p.px(6), p.px(12), 0, p.px(4));
+        panel.addView(foot, new LinearLayout.LayoutParams(-1, -2));
+        dialog.setOnCancelListener(d -> cancel.run());
+        p.show(dialog, panel, p.px(765));
+        p.capSideHeight(dialog, panel);
+        status.requestFocus();
+        return dialog;
+    }
+
+    /** A grey placeholder line, {@code share} of the panel's width. */
+    private static View bar(Context context, SubtitlePanelStyle p, float share, int height, int top) {
+        View line = new View(context);
+        line.setBackground(p.surface(0xff2a2d33, 0x00000000, height / 2));
+        LinearLayout.LayoutParams size = new LinearLayout.LayoutParams(Math.round(p.px(700) * share), height);
+        size.topMargin = top;
+        line.setLayoutParams(size);
+        return line;
+    }
+
     private static String safe(String value, String fallback) {
         return value == null || value.trim().isEmpty() ? fallback : value;
     }
