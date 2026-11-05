@@ -70,3 +70,4 @@ Items already built or scheduled are left out (see the bottom of this file).
 - **Pages without a panel:** what pages look like with no panel, the charcoal (#16181C) filling the whole page and
   the content using the full width. Mock-ups `docs/design/proposals/no-panel/01` (Library Health, panel removed)
   and `02` (Library Health using the full page: bigger header and text, tall rows). Just a look for now.
+  `03` Home, `04` Settings › Playback, `05` Movies library, all on the charcoal with no panel.
