@@ -348,3 +348,7 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
       - Replaces the 97% glass with a light edge, and the white outline focus box.
       - **For 0.157** (owner, 5 Nov 2026), together with the More menu fixes; built into the shared style so it
         shows everywhere.
+    - Owner then asked about keeping some transparency. In Supernova "glass" is only 97% opacity plus a light
+      1 px edge, with no blur: real blur needs Android 12, and the Shield runs 11.
+    - Comparison sheet `more-menu/03-opacity-100-97-90-80.png`: all with no outline, filled-white focus. **Opacity
+      to choose.**
