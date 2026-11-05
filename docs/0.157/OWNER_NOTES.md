@@ -507,3 +507,5 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 ## 13. Library Health without a panel (owner look, 5 Nov 2026)
 - Owner asked to see the Library Health page with no panel: the panel colour (#16181C) fills the whole page and
   the rows sit straight on it. Mock-up `docs/design/proposals/no-panel/01`. A look only; nothing decided.
+- Then: use the full page (bigger text, more space, rearranged). `no-panel/02`: larger header (60px title,
+  facts incl. "Last checked"), five tall rows filling the height, focused row filled white, "All clear" ticks.
