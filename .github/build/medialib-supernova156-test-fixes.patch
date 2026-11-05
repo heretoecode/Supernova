@@ -1,0 +1,835 @@
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java b/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
+index b978881..ddd3b46 100644
+--- a/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
++++ b/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
+@@ -21,6 +21,7 @@ import com.archos.environment.ArchosUtils;
+ import com.archos.filecorelibrary.webdav.WebdavFile2;
+ import com.archos.filecorelibrary.webdav.WebdavRawLister;
+ import com.archos.filecorelibrary.webdav.WebdavUtils;
++import com.archos.filecorelibrary.webdav.ScanIoScope;
+ import com.archos.mediascraper.AutoScrapeService;
+ import java.lang.reflect.Field;
+ import java.util.ArrayList;
+@@ -31,33 +32,75 @@ import java.util.concurrent.ScheduledFuture;
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import okhttp3.mockwebserver.MockResponse;
++import okhttp3.mockwebserver.Dispatcher;
+ import okhttp3.mockwebserver.MockWebServer;
+ import okhttp3.mockwebserver.SocketPolicy;
++import okhttp3.mockwebserver.RecordedRequest;
+ import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.Robolectric;
++import org.robolectric.Shadows;
+ import org.robolectric.RuntimeEnvironment;
+ import org.robolectric.annotation.Config;
+ 
+ /** End-to-end ledger cancellation -> raw DAV call -> scanner finally, with real sockets. */
+ @RunWith(RobolectricTestRunner.class)
+ @Config(application = Application.class, sdk = 28)
+-public class NetworkScanTransportTest {
+-    @Test public void silentRawListingReleasesBatchOnlyAfterCancellationUnwinds() throws Exception {
++public class NetworkScanTransportTest
++{
++    private static final String LISTING = "<d:multistatus xmlns:d=\"DAV:\"><d:response>"
++                                          + "<d:href>/TV/file.mkv</d:href><d:propstat><d:prop><d:displayname>"
++                                          + "x".repeat(16_384) +
++                                          "</d:displayname></d:prop><d:status>HTTP/1.1 200 OK</d:status>"
++                                          + "</d:propstat></d:response></d:multistatus>";
++
++    public static class TransportScanner extends NetworkScannerServiceVideo
++    {
++        final AtomicInteger writesAfterListing = new AtomicInteger();
++
++        @Override ScanResult performScan(Uri uri)
++        {
++            try
++            {
++                new WebdavRawLister(uri).getFileList();
++                ScanIoScope.checkpoint();
++                writesAfterListing.incrementAndGet();
++                return new ScanResult(true, false);
++            }
++            catch (Exception failure)
++            {
++                return new ScanResult(false, false);
++            }
++        }
++    }
++    @Test public void silentRawListingReleasesBatchOnlyAfterCancellationUnwinds() throws Exception
++    {
+         exercise(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE), true);
+     }
+ 
+-    @Test public void tricklingRawListingCannotOutliveSourceDeadline() throws Exception {
+-        exercise(new MockResponse().setResponseCode(207).setBody("<" + "x".repeat(16_384))
+-                .throttleBody(1, 20, TimeUnit.MILLISECONDS), true);
++    @Test public void tricklingRawListingCannotOutliveSourceDeadline() throws Exception
++    {
++        exercise(new MockResponse()
++                     .setResponseCode(207)
++                     .setHeader("Content-Type", "application/xml")
++                     .setBody(LISTING)
++                     .throttleBody(1, 20, TimeUnit.MILLISECONDS),
++                 true);
+     }
+ 
+-    @Test public void disconnectTerminatesWithoutSuccessHandoff() throws Exception {
+-        exercise(new MockResponse().setResponseCode(207).setBody("<" + "x".repeat(16_384))
+-                .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY), false);
++    @Test public void disconnectTerminatesWithoutSuccessHandoff() throws Exception
++    {
++        exercise(new MockResponse()
++                     .setResponseCode(207)
++                     .setHeader("Content-Type", "application/xml")
++                     .setBody(LISTING)
++                     .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY),
++                 false);
+     }
+ 
+-    private void exercise(MockResponse response, boolean expire) throws Exception {
++    private void exercise(MockResponse response, boolean expire) throws Exception
++    {
+         Context context = RuntimeEnvironment.getApplication();
+         ArchosUtils.setGlobalContext(context);
+         WebdavUtils.getInstance(context);
+@@ -66,30 +109,30 @@ public class NetworkScanTransportTest {
+         ScheduledExecutorService clock = mock(ScheduledExecutorService.class);
+         List<Runnable> deadlines = new ArrayList<>();
+         when(clock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS))).thenAnswer(call -> {
+-            deadlines.add(call.getArgument(0)); return mock(ScheduledFuture.class);
++            deadlines.add(call.getArgument(0));
++            return mock(ScheduledFuture.class);
+         });
+         NetworkScanLedger.clock = clock;
+-        AtomicInteger writesAfterListing = new AtomicInteger();
+-        NetworkScannerServiceVideo service = new NetworkScannerServiceVideo() {
+-            @Override ScanResult performScan(Uri uri) {
+-                try {
+-                    new WebdavRawLister(uri).getFileList();
+-                    com.archos.filecorelibrary.webdav.ScanIoScope.checkpoint();
+-                    writesAfterListing.incrementAndGet();
+-                    return new ScanResult(true, false);
+-                } catch (Exception failure) { return new ScanResult(false, false); }
+-            }
+-        };
+-        ExecutorService worker = (ExecutorService) field("mScanExecutor").get(service);
++        TransportScanner service = Robolectric.buildService(TransportScanner.class).get();
++        ExecutorService worker = (ExecutorService)field("mScanExecutor").get(service);
+         NetworkScanLedger.Member member = null;
+-        try (MockWebServer server = new MockWebServer()) {
+-            server.enqueue(new MockResponse().setHeader("DAV", "1").setResponseCode(200));
++        try (MockWebServer server = new MockWebServer())
++        {
++            // Return the slow response after receiving the complete PROPFIND request.
++            // QueueDispatcher.peek would throttle its upload as well as the response body.
++            server.setDispatcher(new Dispatcher() {
++                @Override public MockResponse dispatch(RecordedRequest request)
++                {
++                    if ("OPTIONS".equals(request.getMethod()))
++                        return new MockResponse().setHeader("DAV", "1").setResponseCode(200);
++                    return response;
++                }
++            });
+             server.start();
+             Uri uri = Uri.parse(server.url("/TV").toString()).buildUpon().scheme("webdav").build();
+             WebdavUtils.peekInstance().getSardine(uri);
+             WebdavFile2.uriToHttp(uri); // warm credential lookup/redirect probe before timed traversal
+             assertNotNull(server.takeRequest(1, TimeUnit.SECONDS));
+-            server.enqueue(response);
+             member = NetworkScanLedger.register(context, List.of(uri)).get(0);
+             assertTrue(NetworkScanLedger.accept(member, service));
+             field("mHandler").set(service, new Handler(Looper.getMainLooper()));
+@@ -101,29 +144,41 @@ public class NetworkScanTransportTest {
+             data.putString(NetworkScanLedger.EXTRA_MEMBER, member.id);
+             message.setData(data);
+             service.handleMessage(message);
+-            assertNotNull(server.takeRequest(3, TimeUnit.SECONDS));
+-            if (expire) {
++            RecordedRequest listing = server.takeRequest(3, TimeUnit.SECONDS);
++            assertNotNull(listing);
++            assertEquals("PROPFIND", listing.getMethod());
++            if (expire)
++            {
+                 assertEquals(1, AutoScrapeService.getNetworkScanCount());
+                 deadlines.get(1).run(); // real production source-deadline callback, no wall-clock wait
+             }
+             worker.shutdown();
+-            assertTrue("Call cancellation must unblock the scan executor", worker.awaitTermination(5, TimeUnit.SECONDS));
++            assertTrue("Call cancellation must unblock the scan executor",
++                       worker.awaitTermination(5, TimeUnit.SECONDS));
+             assertEquals(0, AutoScrapeService.getNetworkScanCount());
+-            assertEquals(0, writesAfterListing.get());
++            assertEquals(0, service.writesAfterListing.get());
+             assertFalse(NetworkScanLedger.pending(member));
+-            long successes = org.robolectric.Shadows.shadowOf((Application) context).getBroadcastIntents().stream()
+-                    .filter(i -> "batch_complete".equals(i.getStringExtra("phase"))
+-                            || "metadata_queued".equals(i.getStringExtra("phase"))).count();
++            long successes = Shadows.shadowOf((Application)context)
++                                 .getBroadcastIntents()
++                                 .stream()
++                                 .filter(i
++                                         -> "batch_complete".equals(i.getStringExtra("phase")) ||
++                                                "metadata_queued".equals(i.getStringExtra("phase")))
++                                 .count();
+             assertEquals(0, successes);
+-        } finally {
++        }
++        finally
++        {
+             worker.shutdownNow();
+-            if (member != null) NetworkScanLedger.reject(member);
++            if (member != null)
++                NetworkScanLedger.reject(member);
+             NetworkScanLedger.clock = savedClock;
+             AutoScrapeService.resetNetworkScanCount();
+         }
+     }
+ 
+-    private static Field field(String name) throws Exception {
++    private static Field field(String name) throws Exception
++    {
+         Field field = NetworkScannerServiceVideo.class.getDeclaredField(name);
+         field.setAccessible(true);
+         return field;
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java b/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java
+index a41ea7f..7e71732 100644
+--- a/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java
++++ b/test/java/com/archos/mediaprovider/video/NetworkScannerServiceVideoTest.java
+@@ -14,6 +14,13 @@
+ 
+ package com.archos.mediaprovider.video;
+ 
++import org.robolectric.Shadows;
++import static org.junit.Assert.assertNotNull;
++import static org.junit.Assert.assertTrue;
++import android.app.NotificationManager;
++import android.app.Notification;
++import android.content.Context;
++
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertSame;
+ import static org.junit.Assert.fail;
+@@ -29,122 +36,126 @@ import org.junit.Before;
+ import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.Robolectric;
+ import org.robolectric.annotation.Config;
+ 
+ import java.lang.reflect.Field;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+-@RunWith(RobolectricTestRunner.class)
+-@Config(sdk = 33)
+-public class NetworkScannerServiceVideoTest {
++@RunWith(RobolectricTestRunner.class) @Config(sdk = 33) public class NetworkScannerServiceVideoTest
++{
++
++    public static class FailingScanner extends NetworkScannerServiceVideo
++    {
++        final RuntimeException failure = new RuntimeException("injected scan failure");
++        boolean traversalReached;
++
++        @Override ScanResult performScan(Uri what)
++        {
++            traversalReached = true;
++            throw failure;
++        }
++    }
+ 
+-    @Before
+-    public void setUp() {
++    @Before public void setUp()
++    {
+         AutoScrapeService.resetNetworkScanCount();
+     }
+ 
+-    @After
+-    public void tearDown() {
++    @After public void tearDown()
++    {
+         AutoScrapeService.resetNetworkScanCount();
+     }
+ 
+-    @Test
+-    public void duplicateQueuedRequestReleasesItsBatchSlot() throws Exception {
+-        NetworkScannerServiceVideo service = org.robolectric.Robolectric.buildService(NetworkScannerServiceVideo.class).get();
++    @Test public void duplicateQueuedRequestReleasesItsBatchSlot() throws Exception
++    {
++        NetworkScannerServiceVideo service = Robolectric.buildService(NetworkScannerServiceVideo.class).get();
+         Uri uri = Uri.parse("smb://server/share");
+         queuedRequests(service).put(uri.toString(), new Object());
+         long batchId = AutoScrapeService.startNetworkScanBatch(1);
+         Intent intent = new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, uri)
+-                .putExtra(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, batchId);
++                            .putExtra(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, batchId);
+ 
+         service.onStartCommand(intent, 0, 1);
+ 
+         assertEquals(0, AutoScrapeService.getNetworkScanCount());
+     }
+ 
+-    @Test
+-    public void uncheckedScanFailureStillCompletesBatch() {
+-        RuntimeException failure = new RuntimeException("injected scan failure");
+-        NetworkScannerServiceVideo service = new NetworkScannerServiceVideo() {
+-            @Override
+-            ScanResult performScan(Uri what) {
+-                throw failure;
+-            }
+-        };
++    @Test public void uncheckedScanFailureStillCompletesBatch()
++    {
++        FailingScanner service = Robolectric.buildService(FailingScanner.class).get();
+         long batchId = AutoScrapeService.startNetworkScanBatch(1);
+ 
+-        try {
++        try
++        {
+             service.doScan(Uri.parse("smb://server/share"), batchId);
+             fail("Expected the injected scan failure");
+-        } catch (RuntimeException actual) {
+-            assertSame(failure, actual);
++        }
++        catch (RuntimeException actual)
++        {
++            assertSame(service.failure, actual);
+         }
+ 
++        assertTrue(service.traversalReached);
+         assertEquals(0, AutoScrapeService.getNetworkScanCount());
+     }
+ 
+-    @Test
+-    public void updateScanNotificationPostsNotification() {
+-        NetworkScannerServiceVideo service = org.robolectric.Robolectric.buildService(NetworkScannerServiceVideo.class).create().get();
++    @Test public void updateScanNotificationPostsNotification()
++    {
++        NetworkScannerServiceVideo service = Robolectric.buildService(NetworkScannerServiceVideo.class).create().get();
+         service.updateScanNotification("smb://server/share/folder", 25);
+-        android.app.NotificationManager nm = (android.app.NotificationManager) service.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+-        android.app.Notification notif = org.robolectric.Shadows.shadowOf(nm).getNotification(NetworkScannerServiceVideo.NOTIFICATION_ID);
+-        org.junit.Assert.assertNotNull(notif);
+-        org.junit.Assert.assertTrue(notif.extras.getCharSequence(android.app.Notification.EXTRA_TITLE).toString().contains("25"));
++        NotificationManager nm = (NotificationManager)service.getSystemService(Context.NOTIFICATION_SERVICE);
++        Notification notif = Shadows.shadowOf(nm).getNotification(NetworkScannerServiceVideo.NOTIFICATION_ID);
++        assertNotNull(notif);
++        assertTrue(notif.extras.getCharSequence(Notification.EXTRA_TITLE).toString().contains("25"));
+     }
+ 
+-    @Test
+-    public void updateDeleteNotificationPostsNotification() {
+-        NetworkScannerServiceVideo service = org.robolectric.Robolectric.buildService(NetworkScannerServiceVideo.class).create().get();
++    @Test public void updateDeleteNotificationPostsNotification()
++    {
++        NetworkScannerServiceVideo service = Robolectric.buildService(NetworkScannerServiceVideo.class).create().get();
+         service.updateDeleteNotification("smb://server/share/folder", 50);
+-        android.app.NotificationManager nm = (android.app.NotificationManager) service.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+-        android.app.Notification notif = org.robolectric.Shadows.shadowOf(nm).getNotification(NetworkScannerServiceVideo.NOTIFICATION_ID);
+-        org.junit.Assert.assertNotNull(notif);
+-        org.junit.Assert.assertTrue(notif.extras.getCharSequence(android.app.Notification.EXTRA_TITLE).toString().contains("50"));
++        NotificationManager nm = (NotificationManager)service.getSystemService(Context.NOTIFICATION_SERVICE);
++        Notification notif = Shadows.shadowOf(nm).getNotification(NetworkScannerServiceVideo.NOTIFICATION_ID);
++        assertNotNull(notif);
++        assertTrue(notif.extras.getCharSequence(Notification.EXTRA_TITLE).toString().contains("50"));
+     }
+ 
+-    @Test
+-    public void videoStoreImportServiceUpdateDeleteNotificationPostsNotification() {
+-        VideoStoreImportService service = org.robolectric.Robolectric.buildService(VideoStoreImportService.class).create().get();
++    @Test public void videoStoreImportServiceUpdateDeleteNotificationPostsNotification()
++    {
++        VideoStoreImportService service = Robolectric.buildService(VideoStoreImportService.class).create().get();
+         service.updateDeleteNotification(12, "/sdcard/Movies/test.mp4");
+-        android.app.NotificationManager nm = (android.app.NotificationManager) service.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+-        android.app.Notification notif = org.robolectric.Shadows.shadowOf(nm).getNotification(VideoStoreImportService.NOTIFICATION_ID);
+-        org.junit.Assert.assertNotNull(notif);
+-        org.junit.Assert.assertTrue(notif.extras.getCharSequence(android.app.Notification.EXTRA_TITLE).toString().contains("12"));
++        NotificationManager nm = (NotificationManager)service.getSystemService(Context.NOTIFICATION_SERVICE);
++        Notification notif = Shadows.shadowOf(nm).getNotification(VideoStoreImportService.NOTIFICATION_ID);
++        assertNotNull(notif);
++        assertTrue(notif.extras.getCharSequence(Notification.EXTRA_TITLE).toString().contains("12"));
+     }
+ 
+-    @Test
+-    public void formatNotificationBodySplitsShareAndSubdir() {
+-        String[] lines = NetworkScannerServiceVideo.formatNotificationBody(
+-                "smb://server/share",
+-                "smb://server/share/Movies/Action"
+-        );
++    @Test public void formatNotificationBodySplitsShareAndSubdir()
++    {
++        String[] lines =
++            NetworkScannerServiceVideo.formatNotificationBody("smb://server/share", "smb://server/share/Movies/Action");
+         assertEquals("smb://server/share", lines[0]);
+         assertEquals("/Movies/Action", lines[1]);
+ 
+-        String[] rootLines = NetworkScannerServiceVideo.formatNotificationBody(
+-                "smb://server/share",
+-                "smb://server/share"
+-        );
++        String[] rootLines =
++            NetworkScannerServiceVideo.formatNotificationBody("smb://server/share", "smb://server/share");
+         assertEquals("smb://server/share", rootLines[0]);
+         assertEquals("/", rootLines[1]);
+     }
+ 
+-    @Test
+-    public void formatNotificationBodyPreservesPortNumbers() {
+-        String[] lines = NetworkScannerServiceVideo.formatNotificationBody(
+-                "upnp://192.168.1.50:50001/v/Media",
+-                "upnp://192.168.1.50:50001/v/Media/Movies"
+-        );
++    @Test public void formatNotificationBodyPreservesPortNumbers()
++    {
++        String[] lines = NetworkScannerServiceVideo.formatNotificationBody("upnp://192.168.1.50:50001/v/Media",
++                                                                           "upnp://192.168.1.50:50001/v/Media/Movies");
+         assertEquals("upnp://192.168.1.50:50001/v/Media", lines[0]);
+         assertEquals("/Movies", lines[1]);
+     }
+ 
+     @SuppressWarnings("unchecked")
+-    private static ConcurrentHashMap<String, Object> queuedRequests(
+-            NetworkScannerServiceVideo service) throws Exception {
++    private static ConcurrentHashMap<String, Object> queuedRequests(NetworkScannerServiceVideo service) throws Exception
++    {
+         Field field = NetworkScannerServiceVideo.class.getDeclaredField("mScanRequests");
+         field.setAccessible(true);
+-        return (ConcurrentHashMap<String, Object>) field.get(service);
++        return (ConcurrentHashMap<String, Object>)field.get(service);
+     }
+ }
+diff --git a/test/java/com/archos/mediascraper/AutoScrapeServiceNetworkScanTest.java b/test/java/com/archos/mediascraper/AutoScrapeServiceNetworkScanTest.java
+index d0305bf..b6212a0 100644
+--- a/test/java/com/archos/mediascraper/AutoScrapeServiceNetworkScanTest.java
++++ b/test/java/com/archos/mediascraper/AutoScrapeServiceNetworkScanTest.java
+@@ -25,6 +25,9 @@ import android.app.Application;
+ import android.content.Intent;
+ 
+ import androidx.preference.PreferenceManager;
++import androidx.lifecycle.Lifecycle;
++import androidx.lifecycle.LifecycleRegistry;
++import androidx.lifecycle.ProcessLifecycleOwner;
+ import androidx.test.core.app.ApplicationProvider;
+ 
+ import org.junit.After;
+@@ -44,41 +47,48 @@ import java.util.concurrent.Executors;
+ import java.util.concurrent.Future;
+ import java.util.concurrent.TimeUnit;
+ 
+-@RunWith(RobolectricTestRunner.class)
+-@Config(sdk = 33)
+-public class AutoScrapeServiceNetworkScanTest {
++@RunWith(RobolectricTestRunner.class) @Config(sdk = 33) public class AutoScrapeServiceNetworkScanTest
++{
+ 
+     private static final long STANDALONE = AutoScrapeService.STANDALONE_SCAN_BATCH_ID;
+     private Application application;
+     private ShadowApplication shadowApplication;
++    private LifecycleRegistry lifecycle;
+ 
+-    @Before
+-    public void setUp() {
++    @Before public void setUp()
++    {
+         AutoScrapeService.resetNetworkScanCount();
+         application = ApplicationProvider.getApplicationContext();
+         shadowApplication = Shadows.shadowOf(application);
+         drainStartedServices();
+-        PreferenceManager.getDefaultSharedPreferences(application).edit()
+-                .putBoolean(AutoScrapeService.KEY_ENABLE_AUTO_SCRAP, true)
+-                .commit();
++        lifecycle = (LifecycleRegistry)ProcessLifecycleOwner.get().getLifecycle();
++        lifecycle.setCurrentState(Lifecycle.State.STARTED);
++        PreferenceManager.getDefaultSharedPreferences(application)
++            .edit()
++            .putBoolean("supernova_onboarding_complete", true)
++            .putBoolean(AutoScrapeService.KEY_ENABLE_AUTO_SCRAP, true)
++            .commit();
+     }
+ 
+-    @After
+-    public void tearDown() {
++    @After public void tearDown()
++    {
++        lifecycle.setCurrentState(Lifecycle.State.CREATED);
+         AutoScrapeService.resetNetworkScanCount();
+         drainStartedServices();
+     }
+ 
+-    private void drainStartedServices() {
+-        while (shadowApplication.getNextStartedService() != null) {
++    private void drainStartedServices()
++    {
++        while (shadowApplication.getNextStartedService() != null)
++        {
+             // Drain Robolectric's service-start queue between tests.
+         }
+     }
+ 
+-    @Test
+-    public void completionHandlerStartsForcedScrapeForCleanSuccessfulOwner() {
++    @Test public void completionHandlerStartsForcedScrapeForCleanSuccessfulOwner()
++    {
+         AutoScrapeService.NetworkScanCompletion completion =
+-                new AutoScrapeService.NetworkScanCompletion(true, false, true);
++            new AutoScrapeService.NetworkScanCompletion(true, false, true);
+ 
+         AutoScrapeService.handleNetworkScanCompletion(application, completion);
+ 
+@@ -89,22 +99,22 @@ public class AutoScrapeServiceNetworkScanTest {
+         assertNull(shadowApplication.getNextStartedService());
+     }
+ 
+-    @Test
+-    public void completionHandlerDoesNotStartScrapeForIneligibleOutcomes() {
++    @Test public void completionHandlerDoesNotStartScrapeForIneligibleOutcomes()
++    {
+         AutoScrapeService.handleNetworkScanCompletion(application,
+-                new AutoScrapeService.NetworkScanCompletion(false, false, true));
++                                                      new AutoScrapeService.NetworkScanCompletion(false, false, true));
+         AutoScrapeService.handleNetworkScanCompletion(application,
+-                new AutoScrapeService.NetworkScanCompletion(true, true, true));
++                                                      new AutoScrapeService.NetworkScanCompletion(true, true, true));
+         AutoScrapeService.handleNetworkScanCompletion(application,
+-                new AutoScrapeService.NetworkScanCompletion(true, false, false));
++                                                      new AutoScrapeService.NetworkScanCompletion(true, false, false));
+ 
+         assertNull(shadowApplication.getNextStartedService());
+     }
+ 
+-    @Test
+-    public void standaloneScanCompletesImmediately() {
++    @Test public void standaloneScanCompletesImmediately()
++    {
+         AutoScrapeService.NetworkScanCompletion completion =
+-                AutoScrapeService.completeNetworkScan(STANDALONE, false, true);
++            AutoScrapeService.completeNetworkScan(STANDALONE, false, true);
+ 
+         assertTrue(completion.completedBatch);
+         assertFalse(completion.batchHadError);
+@@ -112,12 +122,10 @@ public class AutoScrapeServiceNetworkScanTest {
+         assertEquals(0, AutoScrapeService.getNetworkScanCount());
+     }
+ 
+-    @Test
+-    public void standaloneErrorDoesNotLeakIntoNextScan() {
+-        AutoScrapeService.NetworkScanCompletion failed =
+-                AutoScrapeService.completeNetworkScan(STANDALONE, true, false);
+-        AutoScrapeService.NetworkScanCompletion next =
+-                AutoScrapeService.completeNetworkScan(STANDALONE, false, true);
++    @Test public void standaloneErrorDoesNotLeakIntoNextScan()
++    {
++        AutoScrapeService.NetworkScanCompletion failed = AutoScrapeService.completeNetworkScan(STANDALONE, true, false);
++        AutoScrapeService.NetworkScanCompletion next = AutoScrapeService.completeNetworkScan(STANDALONE, false, true);
+ 
+         assertTrue(failed.completedBatch);
+         assertTrue(failed.batchHadError);
+@@ -127,14 +135,12 @@ public class AutoScrapeServiceNetworkScanTest {
+         assertTrue(next.batchHadSuccess);
+     }
+ 
+-    @Test
+-    public void batchCompletesOnlyAfterLastScanAndAggregatesErrors() {
++    @Test public void batchCompletesOnlyAfterLastScanAndAggregatesErrors()
++    {
+         long batchId = AutoScrapeService.startNetworkScanBatch(2);
+ 
+-        AutoScrapeService.NetworkScanCompletion first =
+-                AutoScrapeService.completeNetworkScan(batchId, true, false);
+-        AutoScrapeService.NetworkScanCompletion last =
+-                AutoScrapeService.completeNetworkScan(batchId, false, true);
++        AutoScrapeService.NetworkScanCompletion first = AutoScrapeService.completeNetworkScan(batchId, true, false);
++        AutoScrapeService.NetworkScanCompletion last = AutoScrapeService.completeNetworkScan(batchId, false, true);
+ 
+         assertFalse(first.completedBatch);
+         assertFalse(first.batchHadError);
+@@ -143,15 +149,15 @@ public class AutoScrapeServiceNetworkScanTest {
+         assertEquals(0, AutoScrapeService.getNetworkScanCount());
+     }
+ 
+-    @Test
+-    public void resetClearsCountAndPendingBatchError() {
++    @Test public void resetClearsCountAndPendingBatchError()
++    {
+         long batchId = AutoScrapeService.startNetworkScanBatch(2);
+         AutoScrapeService.completeNetworkScan(batchId, true, false);
+ 
+         AutoScrapeService.resetNetworkScanCount();
+         long nextBatchId = AutoScrapeService.startNetworkScanBatch(1);
+         AutoScrapeService.NetworkScanCompletion completion =
+-                AutoScrapeService.completeNetworkScan(nextBatchId, false, true);
++            AutoScrapeService.completeNetworkScan(nextBatchId, false, true);
+ 
+         assertTrue(completion.completedBatch);
+         assertFalse(completion.batchHadError);
+@@ -163,8 +169,8 @@ public class AutoScrapeServiceNetworkScanTest {
+      * The batch membership is registered atomically at batch start, so the count reflects
+      * the whole batch before any member reports back.
+      */
+-    @Test
+-    public void startRegistersAllMembersAtomically() {
++    @Test public void startRegistersAllMembersAtomically()
++    {
+         long batchId = AutoScrapeService.startNetworkScanBatch(3);
+         assertEquals(3, AutoScrapeService.getNetworkScanCount());
+ 
+@@ -178,8 +184,8 @@ public class AutoScrapeServiceNetworkScanTest {
+      * Finding 1: an overlapping auto-refresh must not reset a still-active batch. Starting a
+      * batch while one is in progress is rejected (sentinel id) and leaves the active count intact.
+      */
+-    @Test
+-    public void overlappingBatchIsRejectedAndDoesNotResetActiveBatch() {
++    @Test public void overlappingBatchIsRejectedAndDoesNotResetActiveBatch()
++    {
+         long firstBatch = AutoScrapeService.startNetworkScanBatch(2);
+         assertNotEquals(STANDALONE, firstBatch);
+         assertEquals(2, AutoScrapeService.getNetworkScanCount());
+@@ -201,18 +207,16 @@ public class AutoScrapeServiceNetworkScanTest {
+      * releases its slot via completeNetworkScan, so the batch still reaches zero and the
+      * earlier members' success is preserved.
+      */
+-    @Test
+-    public void rejectedDuplicateMemberReleasesBatchSlot() {
++    @Test public void rejectedDuplicateMemberReleasesBatchSlot()
++    {
+         long batchId = AutoScrapeService.startNetworkScanBatch(2);
+ 
+         // first member scans and indexes successfully
+-        AutoScrapeService.NetworkScanCompletion first =
+-                AutoScrapeService.completeNetworkScan(batchId, false, true);
++        AutoScrapeService.NetworkScanCompletion first = AutoScrapeService.completeNetworkScan(batchId, false, true);
+         assertFalse(first.completedBatch);
+ 
+         // second member is rejected as a duplicate and releases its slot (resolved=false)
+-        AutoScrapeService.NetworkScanCompletion released =
+-                AutoScrapeService.completeNetworkScan(batchId, false, false);
++        AutoScrapeService.NetworkScanCompletion released = AutoScrapeService.completeNetworkScan(batchId, false, false);
+ 
+         assertTrue(released.completedBatch);
+         assertFalse(released.batchHadError);
+@@ -224,23 +228,21 @@ public class AutoScrapeServiceNetworkScanTest {
+      * Concern 4: a standalone scan that runs while a counted batch is active must complete
+      * as its own one-off batch and must not decrement the active batch's count.
+      */
+-    @Test
+-    public void standaloneCompletionWhileBatchActiveDoesNotTouchBatch() {
++    @Test public void standaloneCompletionWhileBatchActiveDoesNotTouchBatch()
++    {
+         long batchId = AutoScrapeService.startNetworkScanBatch(2);
+         assertEquals(2, AutoScrapeService.getNetworkScanCount());
+ 
+         AutoScrapeService.NetworkScanCompletion standalone =
+-                AutoScrapeService.completeNetworkScan(STANDALONE, false, true);
++            AutoScrapeService.completeNetworkScan(STANDALONE, false, true);
+ 
+         // standalone completes itself but leaves the active batch untouched
+         assertTrue(standalone.completedBatch);
+         assertEquals(2, AutoScrapeService.getNetworkScanCount());
+ 
+         // the batch still completes only after its own two members finish
+-        AutoScrapeService.NetworkScanCompletion first =
+-                AutoScrapeService.completeNetworkScan(batchId, false, true);
+-        AutoScrapeService.NetworkScanCompletion last =
+-                AutoScrapeService.completeNetworkScan(batchId, false, true);
++        AutoScrapeService.NetworkScanCompletion first = AutoScrapeService.completeNetworkScan(batchId, false, true);
++        AutoScrapeService.NetworkScanCompletion last = AutoScrapeService.completeNetworkScan(batchId, false, true);
+         assertFalse(first.completedBatch);
+         assertTrue(last.completedBatch);
+         assertEquals(0, AutoScrapeService.getNetworkScanCount());
+@@ -250,16 +252,14 @@ public class AutoScrapeServiceNetworkScanTest {
+      * Concern 2: the batch must report success when an earlier member resolved successfully
+      * even if the final member to complete the batch did not resolve (e.g. unreachable server).
+      */
+-    @Test
+-    public void unresolvedFinalMemberStillReportsBatchSuccess() {
++    @Test public void unresolvedFinalMemberStillReportsBatchSuccess()
++    {
+         long batchId = AutoScrapeService.startNetworkScanBatch(2);
+ 
+         // earlier member resolved and indexed successfully
+-        AutoScrapeService.NetworkScanCompletion first =
+-                AutoScrapeService.completeNetworkScan(batchId, false, true);
++        AutoScrapeService.NetworkScanCompletion first = AutoScrapeService.completeNetworkScan(batchId, false, true);
+         // final member could not resolve (no error, but nothing indexed)
+-        AutoScrapeService.NetworkScanCompletion last =
+-                AutoScrapeService.completeNetworkScan(batchId, false, false);
++        AutoScrapeService.NetworkScanCompletion last = AutoScrapeService.completeNetworkScan(batchId, false, false);
+ 
+         assertFalse(first.completedBatch);
+         assertTrue(last.completedBatch);
+@@ -271,18 +271,18 @@ public class AutoScrapeServiceNetworkScanTest {
+      * Concern 4: error aggregation must be isolated per batch. An error in one batch must
+      * not leak into a later, freshly started batch.
+      */
+-    @Test
+-    public void errorAggregationIsolatedByBatchId() {
++    @Test public void errorAggregationIsolatedByBatchId()
++    {
+         long firstBatch = AutoScrapeService.startNetworkScanBatch(1);
+         AutoScrapeService.NetworkScanCompletion firstDone =
+-                AutoScrapeService.completeNetworkScan(firstBatch, true, false);
++            AutoScrapeService.completeNetworkScan(firstBatch, true, false);
+         assertTrue(firstDone.completedBatch);
+         assertTrue(firstDone.batchHadError);
+ 
+         long secondBatch = AutoScrapeService.startNetworkScanBatch(1);
+         assertNotEquals(firstBatch, secondBatch);
+         AutoScrapeService.NetworkScanCompletion secondDone =
+-                AutoScrapeService.completeNetworkScan(secondBatch, false, true);
++            AutoScrapeService.completeNetworkScan(secondBatch, false, true);
+ 
+         assertTrue(secondDone.completedBatch);
+         assertFalse(secondDone.batchHadError);
+@@ -293,8 +293,8 @@ public class AutoScrapeServiceNetworkScanTest {
+      * Concern 4: a stale completion carrying an old batch id (e.g. a scan that outlived its
+      * batch) must be ignored and must not decrement or complete the current batch.
+      */
+-    @Test
+-    public void staleCompletionFromOlderBatchIsIgnored() {
++    @Test public void staleCompletionFromOlderBatchIsIgnored()
++    {
+         long oldBatch = AutoScrapeService.startNetworkScanBatch(1);
+         // old batch is closed (e.g. via reset) before its scan reports back
+         AutoScrapeService.resetNetworkScanCount();
+@@ -303,8 +303,7 @@ public class AutoScrapeServiceNetworkScanTest {
+         assertEquals(1, AutoScrapeService.getNetworkScanCount());
+ 
+         // the stale completion from the old batch must not touch the new batch
+-        AutoScrapeService.NetworkScanCompletion stale =
+-                AutoScrapeService.completeNetworkScan(oldBatch, true, true);
++        AutoScrapeService.NetworkScanCompletion stale = AutoScrapeService.completeNetworkScan(oldBatch, true, true);
+         assertFalse(stale.completedBatch);
+         assertFalse(stale.batchHadError);
+         assertFalse(stale.batchHadSuccess);
+@@ -312,16 +311,15 @@ public class AutoScrapeServiceNetworkScanTest {
+ 
+         // the new batch still completes cleanly via its own member, unaffected by the
+         // stale error
+-        AutoScrapeService.NetworkScanCompletion newDone =
+-                AutoScrapeService.completeNetworkScan(newBatch, false, true);
++        AutoScrapeService.NetworkScanCompletion newDone = AutoScrapeService.completeNetworkScan(newBatch, false, true);
+         assertTrue(newDone.completedBatch);
+         assertFalse(newDone.batchHadError);
+         assertTrue(newDone.batchHadSuccess);
+         assertEquals(0, AutoScrapeService.getNetworkScanCount());
+     }
+ 
+-    @Test
+-    public void concurrentCompletionHasSingleOwnerAndAggregatesError() throws Exception {
++    @Test public void concurrentCompletionHasSingleOwnerAndAggregatesError() throws Exception
++    {
+         final int scanCount = 16;
+         final long batchId = AutoScrapeService.startNetworkScanBatch(scanCount);
+ 
+@@ -329,8 +327,10 @@ public class AutoScrapeServiceNetworkScanTest {
+         CountDownLatch ready = new CountDownLatch(scanCount);
+         CountDownLatch start = new CountDownLatch(1);
+         List<Future<AutoScrapeService.NetworkScanCompletion>> futures = new ArrayList<>();
+-        try {
+-            for (int i = 0; i < scanCount; i++) {
++        try
++        {
++            for (int i = 0; i < scanCount; i++)
++            {
+                 final boolean hadError = i == 0;
+                 futures.add(executor.submit(() -> {
+                     ready.countDown();
+@@ -344,10 +344,11 @@ public class AutoScrapeServiceNetworkScanTest {
+ 
+             int completionOwners = 0;
+             boolean completedBatchHadError = false;
+-            for (Future<AutoScrapeService.NetworkScanCompletion> future : futures) {
+-                AutoScrapeService.NetworkScanCompletion completion =
+-                        future.get(5, TimeUnit.SECONDS);
+-                if (completion.completedBatch) {
++            for (Future<AutoScrapeService.NetworkScanCompletion> future : futures)
++            {
++                AutoScrapeService.NetworkScanCompletion completion = future.get(5, TimeUnit.SECONDS);
++                if (completion.completedBatch)
++                {
+                     completionOwners++;
+                     completedBatchHadError = completion.batchHadError;
+                 }
+@@ -356,7 +357,9 @@ public class AutoScrapeServiceNetworkScanTest {
+             assertEquals(1, completionOwners);
+             assertTrue(completedBatchHadError);
+             assertEquals(0, AutoScrapeService.getNetworkScanCount());
+-        } finally {
++        }
++        finally
++        {
+             start.countDown();
+             executor.shutdownNow();
+             assertTrue("Executor did not terminate", executor.awaitTermination(5, TimeUnit.SECONDS));
+diff --git a/test/java/com/archos/mediascraper/ScanMetadataHandoffTest.java b/test/java/com/archos/mediascraper/ScanMetadataHandoffTest.java
+index 4eeb48b..9df60fb 100644
+--- a/test/java/com/archos/mediascraper/ScanMetadataHandoffTest.java
++++ b/test/java/com/archos/mediascraper/ScanMetadataHandoffTest.java
+@@ -2,6 +2,8 @@ package com.archos.mediascraper;
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertNotNull;
++import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.assertFalse;
+ 
+ import android.app.Application;
+ import android.content.ComponentName;
+@@ -15,16 +17,29 @@ import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.robolectric.RobolectricTestRunner;
+ import org.robolectric.RuntimeEnvironment;
++import org.robolectric.Shadows;
++import android.os.Looper;
++import androidx.preference.PreferenceManager;
++import org.junit.After;
+ import org.robolectric.annotation.Config;
+ 
+ @RunWith(RobolectricTestRunner.class)
+ @Config(application = Application.class, sdk = 30)
+ public class ScanMetadataHandoffTest
+ {
++    @After public void leaveBackgrounded()
++    {
++        ((LifecycleRegistry)ProcessLifecycleOwner.get().getLifecycle()).setCurrentState(Lifecycle.State.CREATED);
++    }
++
+     @Test public void longImportDefersMetadataUntilForegroundAndPreservesNetworkForce() throws Exception
+     {
+         LifecycleRegistry lifecycle = (LifecycleRegistry)ProcessLifecycleOwner.get().getLifecycle();
+         lifecycle.setCurrentState(Lifecycle.State.CREATED);
++        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
++            .edit()
++            .putBoolean("supernova_onboarding_complete", true)
++            .commit();
+         int[] starts = {0};
+         Context context = new ContextWrapper(RuntimeEnvironment.getApplication()) {
+             @Override public Context getApplicationContext()
+@@ -39,15 +54,22 @@ public class ScanMetadataHandoffTest
+                     throw new IllegalStateException("App backgrounded after 61050-row import");
+                 }
+                 starts[0]++;
+-                assertEquals(true, intent.getBooleanExtra("FORCE_AFTER_NETWORK_SCAN", false));
++                assertTrue(intent.getBooleanExtra("FORCE_AFTER_NETWORK_SCAN", false));
+                 return intent.getComponent();
+             }
+         };
+         Intent intent = new Intent(context, AutoScrapeService.class).putExtra("FORCE_AFTER_NETWORK_SCAN", true);
+         assertNotNull(ScanMetadataHandoff.request(context, intent));
++        Shadows.shadowOf(Looper.getMainLooper()).idle();
+         assertEquals(0, starts[0]);
++        assertTrue(
++            context.getSharedPreferences("scan-metadata-handoff", Context.MODE_PRIVATE).getBoolean("pending", false));
++        lifecycle.setCurrentState(Lifecycle.State.STARTED);
++        assertEquals(1, starts[0]);
++        assertFalse(
++            context.getSharedPreferences("scan-metadata-handoff", Context.MODE_PRIVATE).getBoolean("pending", false));
++        lifecycle.setCurrentState(Lifecycle.State.CREATED);
+         lifecycle.setCurrentState(Lifecycle.State.STARTED);
+-        assertNotNull(ScanMetadataHandoff.request(context, new Intent(context, AutoScrapeService.class)));
+         assertEquals(1, starts[0]);
+     }
+ }

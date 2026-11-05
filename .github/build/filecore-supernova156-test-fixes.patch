@@ -1,0 +1,234 @@
+diff --git a/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java b/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java
+index e0bdbdf..b25edd6 100644
+--- a/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java
++++ b/test/java/com/archos/filecorelibrary/webdav/WebdavScanDeadlineTest.java
+@@ -1,20 +1,32 @@
+ package com.archos.filecorelibrary.webdav;
+ 
+ import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertNotNull;
+ import static org.junit.Assert.fail;
+ 
+ import android.app.Application;
+ import android.net.Uri;
+ import androidx.test.core.app.ApplicationProvider;
+ import com.archos.environment.ArchosUtils;
++import com.archos.filecorelibrary.MetaFile2;
++import java.util.List;
+ import java.util.concurrent.CancellationException;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.Future;
+ import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicInteger;
++import okhttp3.OkHttpClient;
++import okhttp3.Response;
++import okhttp3.Protocol;
++import okhttp3.ResponseBody;
++import okhttp3.MediaType;
+ import okhttp3.mockwebserver.MockResponse;
++import okhttp3.mockwebserver.Dispatcher;
+ import okhttp3.mockwebserver.MockWebServer;
+ import okhttp3.mockwebserver.SocketPolicy;
++import okhttp3.mockwebserver.RecordedRequest;
+ import org.junit.Before;
+ import org.junit.Test;
+ import org.junit.runner.RunWith;
+@@ -23,69 +35,168 @@ import org.robolectric.annotation.Config;
+ 
+ @RunWith(RobolectricTestRunner.class)
+ @Config(application = Application.class, sdk = 28)
+-public class WebdavScanDeadlineTest {
+-    @Before public void setUp() {
++public class WebdavScanDeadlineTest
++{
++    private static final String LISTING =
++        "<d:multistatus xmlns:d=\"DAV:\"><d:response>"
++        + "<d:href>/TV/file.mkv</d:href><d:propstat><d:prop><d:displayname>"
++        + "x".repeat(16_384) + "</d:displayname><d:getcontentlength>123</d:getcontentlength><d:resourcetype/>"
++        + "</d:prop><d:status>HTTP/1.1 200 OK</d:status></d:propstat></d:response></d:multistatus>";
++
++    @Before public void setUp()
++    {
+         Application app = ApplicationProvider.getApplicationContext();
+         ArchosUtils.setGlobalContext(app);
+         WebdavUtils.getInstance(app);
+     }
+ 
+-    @Test public void actualRawListingSilentServerIsCancelled() throws Exception {
++    @Test public void actualRawListingSilentServerIsCancelled() throws Exception
++    {
+         rawListingFailure(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+     }
+ 
+-    @Test public void actualRawListingTrickleIsCancelled() throws Exception {
+-        rawListingFailure(new MockResponse().setResponseCode(207).setBody("<" + "x".repeat(16_384))
+-                .throttleBody(1, 20, TimeUnit.MILLISECONDS));
++    @Test public void actualRawListingTrickleIsCancelled() throws Exception
++    {
++        rawListingFailure(new MockResponse()
++                              .setResponseCode(207)
++                              .setHeader("Content-Type", "application/xml")
++                              .setBody(LISTING)
++                              .throttleBody(1, 20, TimeUnit.MILLISECONDS));
++    }
++
++    @Test public void sameRawListingResponseSucceedsWhenItIsNotThrottled() throws Exception
++    {
++        try (MockWebServer server = new MockWebServer())
++        {
++            server.enqueue(new MockResponse().setHeader("DAV", "1").setResponseCode(200));
++            server.enqueue(
++                new MockResponse().setResponseCode(207).setHeader("Content-Type", "application/xml").setBody(LISTING));
++            server.start();
++            Uri uri = Uri.parse(server.url("/TV").toString()).buildUpon().scheme("webdav").build();
++            List<MetaFile2> files = new WebdavRawLister(uri).getFileList();
++            assertEquals(1, files.size());
++            assertEquals("file.mkv", files.get(0).getUri().getLastPathSegment());
++            assertNotNull(server.takeRequest(1, TimeUnit.SECONDS));
++            RecordedRequest listing = server.takeRequest(1, TimeUnit.SECONDS);
++            assertNotNull(listing);
++            assertEquals("PROPFIND", listing.getMethod());
++        }
+     }
+ 
+-    private void rawListingFailure(MockResponse response) throws Exception {
+-        try (MockWebServer server = new MockWebServer()) {
+-            server.enqueue(response);
++    private void rawListingFailure(MockResponse response) throws Exception
++    {
++        try (MockWebServer server = new MockWebServer())
++        {
++            AtomicInteger listings = new AtomicInteger();
++            // QueueDispatcher.peek also applies throttleBody to the incoming PROPFIND body.
++            // Dispatch only after reading the request so this fixture throttles the response alone.
++            server.setDispatcher(new Dispatcher() {
++                @Override public MockResponse dispatch(RecordedRequest request)
++                {
++                    if (listings.getAndIncrement() == 0)
++                        return new MockResponse()
++                            .setResponseCode(207)
++                            .setHeader("Content-Type", "application/xml")
++                            .setBody(LISTING);
++                    return response;
++                }
++            });
+             server.start();
+             Uri uri = Uri.parse(server.url("/TV").toString()).buildUpon().scheme("webdav").build();
+             // Bypass redirect probing in this case; separate test below covers that path.
+-            WebdavUtils.setRedirectClientForTesting(new okhttp3.OkHttpClient.Builder()
+-                    .addInterceptor(chain -> new okhttp3.Response.Builder().request(chain.request())
+-                            .protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK")
+-                            .body(okhttp3.ResponseBody.create("", okhttp3.MediaType.get("text/plain"))).build()).build());
++            WebdavUtils.setRedirectClientForTesting(
++                new OkHttpClient.Builder()
++                    .addInterceptor(chain
++                                    -> new Response.Builder()
++                                           .request(chain.request())
++                                           .protocol(Protocol.HTTP_1_1)
++                                           .code(200)
++                                           .message("OK")
++                                           .body(ResponseBody.create("", MediaType.get("text/plain")))
++                                           .build())
++                    .build());
+             WebdavUtils.peekInstance().getSardine(uri); // initialise credential lookup before timing I/O
+             WebdavFile2.uriToHttp(uri);
+             ExecutorService worker = Executors.newSingleThreadExecutor();
+-            try {
++            try
++            {
++                // Warm thread-local XML and the scoped HTTP path on the actual I/O worker.
++                Future<Integer> warmed = worker.submit(() -> {
++                    try (ScanIoScope warmup = new ScanIoScope(5, TimeUnit.SECONDS))
++                    {
++                        return new WebdavRawLister(uri).getFileList().size();
++                    }
++                });
++                assertEquals(1, (int)warmed.get(5, TimeUnit.SECONDS));
++                RecordedRequest warmup = server.takeRequest(1, TimeUnit.SECONDS);
++                assertNotNull(warmup);
++                assertEquals("PROPFIND", warmup.getMethod());
+                 Future<Boolean> result = worker.submit(() -> {
+-                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS)) {
+-                        try { new WebdavRawLister(uri).getFileList(); }
+-                        catch (Exception expected) { /* transport may translate cancellation */ }
++                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS))
++                    {
++                        try
++                        {
++                            new WebdavRawLister(uri).getFileList();
++                        }
++                        catch (Exception expected)
++                        { /* transport may translate cancellation */
++                        }
+                         assertTrue(scope.isCancelled());
+-                        try { ScanIoScope.checkpoint(); fail("No late scan writes"); }
+-                        catch (CancellationException expected) { return true; }
++                        try
++                        {
++                            ScanIoScope.checkpoint();
++                            fail("No late scan writes");
++                        }
++                        catch (CancellationException expected)
++                        {
++                            return true;
++                        }
+                         return false;
+-                    } finally { Thread.interrupted(); }
++                    }
++                    finally
++                    {
++                        Thread.interrupted();
++                    }
+                 });
+                 assertTrue(result.get(5, TimeUnit.SECONDS));
+-                assertTrue(server.takeRequest(1, TimeUnit.SECONDS) != null);
+-            } finally {
++                RecordedRequest listing = server.takeRequest(1, TimeUnit.SECONDS);
++                assertNotNull(listing);
++                assertEquals("PROPFIND", listing.getMethod());
++            }
++            finally
++            {
+                 worker.shutdownNow();
+                 WebdavUtils.setRedirectClientForTesting(null);
+             }
+         }
+     }
+ 
+-    @Test public void actualRedirectProbeIsAlsoOwnedByScanScope() throws Exception {
+-        try (MockWebServer server = new MockWebServer()) {
++    @Test public void actualRedirectProbeIsAlsoOwnedByScanScope() throws Exception
++    {
++        try (MockWebServer server = new MockWebServer())
++        {
+             server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE));
+             server.start();
+             ExecutorService worker = Executors.newSingleThreadExecutor();
+-            try {
++            try
++            {
+                 Future<Boolean> result = worker.submit(() -> {
+-                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS)) {
++                    try (ScanIoScope scope = new ScanIoScope(250, TimeUnit.MILLISECONDS))
++                    {
+                         WebdavUtils.peekInstance().resolveRedirect(Uri.parse(server.url("/TV").toString()));
+                         return scope.isCancelled();
+-                    } finally { Thread.interrupted(); }
++                    }
++                    finally
++                    {
++                        Thread.interrupted();
++                    }
+                 });
+                 assertTrue(result.get(5, TimeUnit.SECONDS));
+-            } finally { worker.shutdownNow(); }
++            }
++            finally
++            {
++                worker.shutdownNow();
++            }
+         }
+     }
+ }
