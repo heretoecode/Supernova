@@ -81,19 +81,22 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 - Seek previews (experimental) switch in Settings › System › Advanced, on by default.
 - Old IntroDB settings page: covered by Accounts & Services and Playback › Skipping.
 
-## Progress (Claude, updated 5 Nov 2026 07:40 UTC)
+## Progress (Claude, updated 5 Nov 2026 16:00 UTC)
 Built and fully tested (conformance run 41984891190 green, 07e6074d2):
 - #6 Local Storage focus kept in page · #7 header no longer jumps · #9 icons follow focus at the source
   (Save Changes tick) · #14 NOVA 6.6.4 in Credits/About/licences · crammed-code smoke alarm (tools/test_code_layout.py)
-- #36 Settings stage 1–2: single-panel pattern (tabs in the header, values level with titles, inline choices with
-  Left/Right) and the new section layout / plain-English rows (SettingsLayout.java)
-- #32 Edit Page: no scrolling, header and Delete lines, year range (backups carry the range)
-- #18/#30 top bar: charcoal fade driven by the real scroll (blue blur removed)
-Committed, build running: #11 Details no flat card · #23 Skip button (option B).
-Committed, waiting for the next build: #33 Local Storage status tags + single watched pill · #38 shared choice list
-(solid side panel on the right) · Seek previews switch (System › Advanced) · #27 hero text patch, Medium year · genre,
-half-width synopsis, logo on the metadata · #28 Home row Hide/Move beside the row with a live move and the faint ‹ hint on
-the first card.
-Next (Claude): Local Storage status tags/grid/menu (#33), Customise Home (#29), Search UI (#31), Network & Files
-pages (#34–35), Settings stage 3 (System/About pages, Where to Watch, Appearance), player controls + strip (#19–22,
-needs Codex Part B).
+- #36 Settings stage 1–2: single-panel pattern and the new section layout / plain-English rows (SettingsLayout.java)
+- #32 Edit Page: no scrolling, header and Delete lines, year range
+- #18/#30 top bar: charcoal fade driven by the real scroll
+Committed, in the build running now (42053895432): #11 Details no flat card · #23 Skip button (option B) · #33 Local
+Storage status tags + single watched pill · #38 shared choice list · Seek previews switch · #27 hero text and logo ·
+#28 Home row Hide/Move · #10 tab icons and swatch ring · #25 Download Subtitles in the panel · Codex Parts A–D merged.
+Committed 5 Nov afternoon, waiting for the next build (player):
+- #20 remote scheme (Up to the buttons, Left/Right between them, OK on the bar plays/pauses, Down to the strip)
+- #22 our own first-play tip · #19 HUD look (glass buttons, large time over a grey chapter, white seek bar, halo dot)
+- #21 Chapters · Episodes strip (merged chapters + IntroDB parts, cards with pictures, lit stretch of the bar)
+- #24 subtitle Vertical Position step control · #25 live appearance sample · #39 Sleep timer and Still watching?
+- #26 seek preview pictures above the time bubble · #42 per-series audio/subtitle switch
+Next (Claude): Search UI (#31), Network & Files pages (#34–35, #41 badge), Settings stage 3 (System/About, Where to
+Watch, Appearance, Audio & Subtitles incl. Vertical Position), Customise Home (#29), Fix match (#40), empty states and
+focus memory (#43), Local Storage grid and menu (#33). Codex: the failing tests in `docs/codex/BRIEF_0156_TEST_FIXES.md`.
