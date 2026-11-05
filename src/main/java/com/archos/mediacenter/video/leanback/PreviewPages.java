@@ -1013,6 +1013,7 @@ public final class PreviewPages extends FrameLayout {
         });
         list.setLayoutManager(layout);
         list.setAdapter(adapter);
+        rowMover().watchFirstCards(() -> tab == 0);
         list.setItemAnimator(null);
         Diagnostics.uiRebuild(list, "library.adapter", "adapter_created", 0,
                                                                        adapter.getItemCount(), true);

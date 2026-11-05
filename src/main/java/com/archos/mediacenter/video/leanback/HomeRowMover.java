@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /**
  * Hide and Move for Home rows, beside the row instead of a pop-up (owner, 4 Nov 2026, 0.155 notes #14).
@@ -58,9 +59,64 @@ final class HomeRowMover implements HomeRowControls.Actions {
         }
     };
 
+    private final FirstCardHint hint = new FirstCardHint();
+    private View hinted;
+
     HomeRowMover(Context context, Host host) {
         this.context = context;
         this.host = host;
+    }
+
+    /**
+     * Shows a faint ‹ in the left margin while a Home row's first card has focus, saying there is more that way
+     * (mock-up {@code home-row-controls/00}); {@code active} says whether the page is Home.
+     */
+    void watchFirstCards(BooleanSupplier active) {
+        host.list().getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            View row = active.getAsBoolean() && controls == null ? firstCardRow(newFocus) : null;
+            showHint(row);
+        });
+    }
+
+    /** The Home row item whose first card is {@code focus}, or null. */
+    View firstCardRow(View focus) {
+        RecyclerView list = host.list();
+        if (focus == null || !isInside(focus, list)) {
+            return null;
+        }
+        View row = list.findContainingItemView(focus);
+        int position = row == null ? -1 : list.getChildAdapterPosition(row);
+        List<PreviewPages.Cell> cells = host.cells();
+        if (position < 0 || position >= cells.size() || cells.get(position).homeRowId.isEmpty()) {
+            return null;
+        }
+        RecyclerView rowRail = PreviewPages.railIn(row);
+        View card = rowRail == null ? null : rowRail.findContainingItemView(focus);
+        return card != null && rowRail.getChildAdapterPosition(card) == 0 ? row : null;
+    }
+
+    View hintedRow() {
+        return hinted;
+    }
+
+    private void showHint(View row) {
+        if (row == hinted) {
+            return;
+        }
+        if (hinted != null) {
+            hinted.getOverlay().remove(hint);
+        }
+        hinted = row;
+        if (row == null) {
+            return;
+        }
+        RecyclerView rowRail = PreviewPages.railIn(row);
+        int margin = rowRail == null ? dp(28) : rowRail.getPaddingLeft();
+        int size = dp(14);
+        int left = Math.max(0, margin / 2 - size / 2);
+        int top = row.getHeight() / 2 - size;
+        hint.setBounds(left, top, left + size, top + size * 2);
+        row.getOverlay().add(hint);
     }
 
     boolean showing() {
@@ -102,6 +158,7 @@ final class HomeRowMover implements HomeRowControls.Actions {
         rail.animate().translationX(0).setDuration(GLIDE_MS).start();
         controls.setAlpha(0f);
         controls.animate().alpha(1f).setDuration(GLIDE_MS).start();
+        showHint(null);
         controls.hide.requestFocus();
         host.list().getViewTreeObserver().addOnGlobalFocusChangeListener(focusWatcher);
     }
@@ -416,5 +473,43 @@ final class HomeRowMover implements HomeRowControls.Actions {
 
     private int dp(int value) {
         return PreviewDialog.dp(context, value);
+    }
+
+    /** A thin, faint ‹ drawn in the row's overlay, so it never moves the cards or takes focus. */
+    static final class FirstCardHint extends android.graphics.drawable.Drawable {
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+
+        FirstCardHint() {
+            paint.setStyle(android.graphics.Paint.Style.STROKE);
+            paint.setStrokeCap(android.graphics.Paint.Cap.ROUND);
+            paint.setStrokeJoin(android.graphics.Paint.Join.ROUND);
+            paint.setColor(0x8CFFFFFF);
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas canvas) {
+            android.graphics.Rect b = getBounds();
+            paint.setStrokeWidth(Math.max(2f, b.width() * .16f));
+            android.graphics.Path chevron = new android.graphics.Path();
+            chevron.moveTo(b.right - b.width() * .25f, b.top + b.height() * .2f);
+            chevron.lineTo(b.left + b.width() * .25f, b.exactCenterY());
+            chevron.lineTo(b.right - b.width() * .25f, b.bottom - b.height() * .2f);
+            canvas.drawPath(chevron, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     }
 }

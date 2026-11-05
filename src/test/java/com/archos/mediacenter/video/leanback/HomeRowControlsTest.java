@@ -153,6 +153,24 @@ public class HomeRowControlsTest {
     }
 
     @Test
+    public void firstCardShowsTheFaintHintAndOtherCardsDoNot() {
+        mover.watchFirstCards(() -> true);
+        LinearLayout row = rowItem(1);
+        RecyclerView rail = PreviewPages.railIn(row);
+        View first = rail.findViewWithTag("card0");
+        View second = rail.findViewWithTag("card1");
+        assertNotNull(first);
+        first.requestFocus();
+        idle();
+        assertSame(row, mover.firstCardRow(first));
+        assertSame(row, mover.hintedRow());
+        second.requestFocus();
+        idle();
+        assertNull(mover.firstCardRow(second));
+        assertNull(mover.hintedRow());
+    }
+
+    @Test
     public void hideRemovesTheRowAndBackBringsItBack() {
         String hidden = cells.get(1).homeRowId;
         LinearLayout row = rowItem(1);
@@ -191,6 +209,30 @@ public class HomeRowControlsTest {
         Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
+    /** Two focusable cards per rail. */
+    private static final class Cards extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int type) {
+            View card = new View(parent.getContext());
+            card.setFocusable(true);
+            card.setFocusableInTouchMode(true);
+            card.setLayoutParams(new RecyclerView.LayoutParams(180, 100));
+            return new RecyclerView.ViewHolder(card) {
+            };
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            holder.itemView.setTag("card" + position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return 2;
+        }
+    }
+
     private final class Rows extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @NonNull
         @Override
@@ -214,6 +256,7 @@ public class HomeRowControlsTest {
             RecyclerView rail = new RecyclerView(item.getContext());
             rail.setLayoutManager(new LinearLayoutManager(item.getContext(), RecyclerView.HORIZONTAL, false));
             rail.setPadding(48, 10, 48, 10);
+            rail.setAdapter(new Cards());
             item.addView(rail, new LinearLayout.LayoutParams(-1, 125));
         }
 
