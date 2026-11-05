@@ -20,7 +20,8 @@ public final class PreviewVersionsDialog {
         panel.setPadding(pad, pad, pad, pad);
         panel.setBackground(PreviewDialog.menuSurface(activity));
         TextView title = text(activity, "Versions", 19);
-        panel.addView(title);
+        // Approved global rule (2 Nov 2026): pop-up menus have no title.
+        panel.setContentDescription(title.getText());
         ScrollView scroll = new ScrollView(activity);
         LinearLayout rows = new LinearLayout(activity);
         rows.setOrientation(LinearLayout.VERTICAL);
@@ -46,13 +47,16 @@ public final class PreviewVersionsDialog {
             markers[i] = marker;
             marker.setVisibility(video.getId() == current.getId() ? View.VISIBLE : View.INVISIBLE);
             row.addView(marker, new LinearLayout.LayoutParams(PreviewDialog.dp(activity, 92), -2));
-            if (video.getId() == current.getId()) initial = i;
+            if (video.getId() == current.getId())
+                initial = i;
             row.setContentDescription(facts.getText() + (marker.getVisibility() == View.VISIBLE ? ", Current" : ""));
             row.setOnClickListener(v -> {
+                PreviewVariants.remember(activity, video);
                 select.accept(video);
                 for (int n = 0; n < markers.length; n++) {
                     markers[n].setVisibility(n == index ? View.VISIBLE : View.INVISIBLE);
-                    choices[n].setContentDescription(PreviewVariants.details(activity, versions.get(n)) + (n == index ? ", Current" : ""));
+                    choices[n].setContentDescription(PreviewVariants.details(activity, versions.get(n)) +
+                                                     (n == index ? ", Current" : ""));
                 }
                 row.requestFocus();
             });
@@ -65,9 +69,12 @@ public final class PreviewVersionsDialog {
         window.setBackgroundDrawableResource(android.R.color.transparent);
         window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         window.setDimAmount(.32f);
-        window.setLayout(Math.min(PreviewDialog.dp(activity, 760), activity.getResources().getDisplayMetrics().widthPixels - pad * 4),
-                Math.min(PreviewDialog.dp(activity, 80 + versions.size() * 105), activity.getResources().getDisplayMetrics().heightPixels - pad * 4));
-        if (choices.length > 0) choices[initial].requestFocus();
+        window.setLayout(Math.min(PreviewDialog.dp(activity, 760),
+                                  activity.getResources().getDisplayMetrics().widthPixels - pad * 4),
+                         Math.min(PreviewDialog.dp(activity, 80 + versions.size() * 105),
+                                  activity.getResources().getDisplayMetrics().heightPixels - pad * 4));
+        if (choices.length > 0)
+            choices[initial].requestFocus();
         return dialog;
     }
 
@@ -79,5 +86,6 @@ public final class PreviewVersionsDialog {
         return text;
     }
 
-    private PreviewVersionsDialog() { }
+    private PreviewVersionsDialog() {
+    }
 }

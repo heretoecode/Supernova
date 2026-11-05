@@ -16,9 +16,12 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
+import com.archos.mediacenter.video.utils.SortUtils;
+import com.archos.mediascraper.GenreUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads anime videos using the requested projection, selection and sort order. */
 public class AnimesLoader extends VideoLoader {
 
     static public String DEFAULT_SORT = "name COLLATE LOCALIZED ASC";
@@ -70,7 +73,7 @@ public class AnimesLoader extends VideoLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.MOVIE, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.MOVIE, mSortOrder);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class AnimesLoader extends VideoLoader {
         sb.append(" AND ");
         sb.append(VideoStore.Video.VideoColumns.SCRAPER_MOVIE_ID + " IS NOT NULL");
         sb.append(" AND ");
-        sb.append(VideoStore.Video.VideoColumns.SCRAPER_M_GENRES + " LIKE '%" + getContext().getString(com.archos.medialib.R.string.movie_genre_animation) + "%'");
+        sb.append(GenreUtils.getAnimeSelection(getContext(), false, true));
         if (!mShowWatched) {
             sb.append(" AND ");
             sb.append(LoaderUtils.HIDE_WATCHED_FILTER);

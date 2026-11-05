@@ -22,6 +22,7 @@ import android.provider.MediaStore;
 
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.filecoreextension.UriUtils;
+import com.archos.mediacenter.video.player.PlaybackChapters;
 import com.archos.medialib.IMediaMetadataRetriever;
 import com.archos.medialib.IMediaPlayer;
 import com.archos.medialib.LibAvos;
@@ -29,6 +30,8 @@ import com.archos.medialib.MediaFactory;
 import com.archos.medialib.MediaMetadata;
 import com.archos.mediaprovider.video.VideoStore;
 
+import java.util.Collections;
+import java.util.List;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map;
 
+/** Collects video, audio, subtitle and chapter metadata and saves it to the media library. */
 public class VideoMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -50,6 +54,8 @@ public class VideoMetadata implements Serializable {
     private AudioTrack[] mAudioTrackList;
     private SubtitleTrack[] mSubtitleTrackList;
     private int mDuration;
+    private List<PlaybackChapters.Chapter> mChapters=Collections.emptyList();
+    public List<PlaybackChapters.Chapter> getChapters(){return mChapters==null?Collections.emptyList():mChapters;}
     private int mVideoWidth;
     private int mVideoHeight;
     private long mFileSize;
@@ -84,6 +90,9 @@ public class VideoMetadata implements Serializable {
             s3dMode = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_S3D);
             decoder = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DECODER);
             colorTrc = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
+            dolbyVisionProfile=getMetadataInt(data,gapKey+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE);
+            dolbyVisionCompatibility=getMetadataInt(data,gapKey+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT);
+            hdr10Plus=getMetadataInt(data,gapKey+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_HDR10_PLUS)>0;
         }
         
         VideoTrack(IMediaMetadataRetriever retriever) {
@@ -98,8 +107,10 @@ public class VideoMetadata implements Serializable {
             fpsScale = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_FPS_SCALE);
             s3dMode = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_S3D_MODE);
             decoder = LibAvos.MP_DECODER_ANY;
-            MediaMetadata nativeMetadata=retriever.getMediaMetadata();
-            colorTrc = nativeMetadata==null?0:getMetadataInt(nativeMetadata,IMediaPlayer.METADATA_KEY_VIDEO_TRACK+IMediaPlayer.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
+            colorTrc=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_COLOR_TRC);
+            dolbyVisionProfile=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_DOVI_PROFILE);
+            dolbyVisionCompatibility=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_DOVI_COMPAT);
+            hdr10Plus=getMetadataRetrieverInt(retriever,gapKey+IMediaMetadataRetriever.METADATA_KEY_VIDEO_TRACK_HDR10_PLUS)>0;
         }
 
         public final String format;
@@ -113,6 +124,10 @@ public class VideoMetadata implements Serializable {
         public final int s3dMode;
         public final int decoder;
         public final int colorTrc; // AVCOL_TRC_* (e.g. 16=SMPTE2084/PQ, 18=HLG)
+        public final int dolbyVisionProfile;
+        public final int dolbyVisionCompatibility;
+        public final boolean hdr10Plus;
+        public String dynamicRange(){return dolbyVisionProfile>0?"Dolby Vision":hdr10Plus?"HDR10+":colorTrc==16?"HDR (PQ)":colorTrc==18?"HLG":"";}
     }
 
     public static class AudioTrack implements Serializable {
@@ -167,8 +182,7 @@ public class VideoMetadata implements Serializable {
             name = getMetadataString(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_NAME);
             path = getMetadataString(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_PATH);
             isExternal = (path != null) && (!path.isEmpty()); // it is "" for internal subs
-            if (isExternal) isGfx = false;
-            else isGfx = getMetadataBool(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_IS_GFX);
+            kind = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_KIND);
             format = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_FORMAT);
             language = getMetadataString(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE);
             disposition = getMetadataInt(data, gapKey + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_DISPOSITION);
@@ -180,8 +194,7 @@ public class VideoMetadata implements Serializable {
             name = getMetadataRetrieverString(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_NAME);
             path = getMetadataRetrieverString(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_PATH);
             isExternal = (path != null) && (!path.isEmpty());
-            if (isExternal) isGfx = false;
-            else isGfx = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_IS_GFX) == 1;
+            kind = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_KIND);
             format = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_FORMAT);
             language = getMetadataRetrieverString(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE);
             disposition = getMetadataRetrieverInt(retriever, gapKey + IMediaMetadataRetriever.METADATA_KEY_SUBTITLE_TRACK_DISPOSITION);
@@ -190,7 +203,11 @@ public class VideoMetadata implements Serializable {
         public final String name;
         public final String path;
         public final boolean isExternal;
-        public final boolean isGfx;
+        /**
+         * Raw SUB_KIND exactly as native sent it (0 if absent). Deliberately not interpreted
+         * here: SubtitleManager.kindFromNative() is the one place that gives it meaning.
+         */
+        public final int kind;
         public final int format;
         public final String language;
         public final int disposition;
@@ -219,6 +236,7 @@ public class VideoMetadata implements Serializable {
         mAudioTrackList = other.mAudioTrackList != null ? Arrays.copyOf(other.mAudioTrackList, other.mAudioTrackList.length) : null;
         mSubtitleTrackList = other.mSubtitleTrackList != null ? Arrays.copyOf(other.mSubtitleTrackList, other.mSubtitleTrackList.length) : null;
         mDuration = other.mDuration;
+        mChapters=other.getChapters();
         mVideoWidth = other.mVideoWidth;
         mVideoHeight = other.mVideoHeight;
         mFileSize = other.mFileSize;
@@ -229,6 +247,7 @@ public class VideoMetadata implements Serializable {
         mAudioTrackList = null;
         mSubtitleTrackList = null;
         mDuration = 0;
+        mChapters=Collections.emptyList();
         mVideoWidth = 0;
         mVideoHeight = 0;
         mFileSize = 0;
@@ -249,6 +268,7 @@ public class VideoMetadata implements Serializable {
             mFileSize = data.getLong(IMediaPlayer.METADATA_KEY_FILE_SIZE);
         if (data.has(IMediaPlayer.METADATA_KEY_DURATION))
             mDuration = data.getInt(IMediaPlayer.METADATA_KEY_DURATION);
+        mChapters=PlaybackChapters.read(data,mDuration);
         if (data.has(IMediaPlayer.METADATA_KEY_VIDEO_WIDTH))
             mVideoWidth = data.getInt(IMediaPlayer.METADATA_KEY_VIDEO_WIDTH);
         if (data.has(IMediaPlayer.METADATA_KEY_VIDEO_HEIGHT))

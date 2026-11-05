@@ -17,7 +17,6 @@
 package com.archos.customizedleanback.widget;
 
 import androidx.leanback.widget.BrowseFrameLayout;
-import androidx.core.view.ViewCompat;
 import android.transition.Scene;
 import android.transition.Slide;
 import android.transition.Transition;

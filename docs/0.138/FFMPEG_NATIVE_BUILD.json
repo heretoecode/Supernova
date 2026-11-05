@@ -1,0 +1,314 @@
+{
+  "schema": 1,
+  "abis": {
+    "arm64-v8a": {
+      "libraries": [
+        {
+          "file": "libavcodec.so",
+          "sha256": "05ee2f99d6ea7552ada0de71b45aedd2251e45b1c69099762c6ea6dee0dbe4fa",
+          "exports": 165,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libdav1d.so",
+            "libm.so",
+            "libopus.so",
+            "libswresample.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavfilter.so",
+          "sha256": "33cad280e66f44659685bb284045c6983748d8db4b7bf94c1460f98661df4dd3",
+          "exports": 67,
+          "needed": [
+            "libavcodec.so",
+            "libavformat.so",
+            "libavutil.so",
+            "libc.so",
+            "libm.so",
+            "libmysofa.so",
+            "libswresample.so",
+            "libswscale.so"
+          ]
+        },
+        {
+          "file": "libavformat.so",
+          "sha256": "90a9a3186dc7bc29a8ad1ca8d20a4b974dff898675c822741f6020b3a444df84",
+          "exports": 153,
+          "needed": [
+            "libavcodec.so",
+            "libavutil.so",
+            "libc.so",
+            "libdl.so",
+            "libm.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavutil.so",
+          "sha256": "e78d911f159338aff5b3382fdd59ff0ac143b348358841937cc6c86de18f2410",
+          "exports": 622,
+          "needed": [
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswresample.so",
+          "sha256": "c52948c6fbf0a6d11e7363c70cd9bedbff2da028942625685667954892df8673",
+          "exports": 23,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswscale.so",
+          "sha256": "b2bc5027e2357da8a7a83f61590cf1198701f5710819ecb694e9ad77cc670caf",
+          "exports": 39,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        }
+      ],
+      "config_h_sha256": "a47150a7e042c430e5de32ad1984c6263fc93b1644c7f45c43c79a9c22928a31",
+      "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6"
+    },
+    "armeabi-v7a": {
+      "libraries": [
+        {
+          "file": "libavcodec.so",
+          "sha256": "4df197170984e31d6881cbeed39533e006c5f1b88b457c941632c314483bf072",
+          "exports": 165,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libdav1d.so",
+            "libm.so",
+            "libopus.so",
+            "libswresample.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavfilter.so",
+          "sha256": "6b5342ce12461d461efe6895fd06f99ab0bae4c2b95950ef7a76ab9d52bfb65d",
+          "exports": 67,
+          "needed": [
+            "libavcodec.so",
+            "libavformat.so",
+            "libavutil.so",
+            "libc.so",
+            "libm.so",
+            "libmysofa.so",
+            "libswresample.so",
+            "libswscale.so"
+          ]
+        },
+        {
+          "file": "libavformat.so",
+          "sha256": "eeb1693f824bc4ca7e87890fe6282c4b9981cbc2e3773fe6f65c92e4d471e4a0",
+          "exports": 153,
+          "needed": [
+            "libavcodec.so",
+            "libavutil.so",
+            "libc.so",
+            "libdl.so",
+            "libm.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavutil.so",
+          "sha256": "43b75d97dd7c478e4e762451f5fe57d6d963009b38e4f480b5fa330ffb438126",
+          "exports": 622,
+          "needed": [
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswresample.so",
+          "sha256": "77269204e33367ac0071ae7df873c7057039c43e5587abd68a34acaf46570871",
+          "exports": 23,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswscale.so",
+          "sha256": "094aebc0363d4438977ddb506cb85b14d7bb19e687fb322b8a532b9c0206c69d",
+          "exports": 39,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        }
+      ],
+      "config_h_sha256": "576e2dbcaf1111e91f83c2ebb1d021b4ae93701eb8357d654f2d771806cda8a5",
+      "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6"
+    },
+    "x86": {
+      "libraries": [
+        {
+          "file": "libavcodec.so",
+          "sha256": "b4577c638e92287ec7e00b67179338db4a0ef43948080d5443e2c7a9c01bfdf4",
+          "exports": 165,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libdav1d.so",
+            "libm.so",
+            "libopus.so",
+            "libswresample.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavfilter.so",
+          "sha256": "007c29e567fae921605f4e4cf85a166684454a26a4cbb3935f31e0c2abcc6c59",
+          "exports": 67,
+          "needed": [
+            "libavcodec.so",
+            "libavformat.so",
+            "libavutil.so",
+            "libc.so",
+            "libm.so",
+            "libmysofa.so",
+            "libswresample.so",
+            "libswscale.so"
+          ]
+        },
+        {
+          "file": "libavformat.so",
+          "sha256": "b3e51955e75307813f9b4f8084e7a731f495d7ca27f0877feced67329eda975c",
+          "exports": 153,
+          "needed": [
+            "libavcodec.so",
+            "libavutil.so",
+            "libc.so",
+            "libdl.so",
+            "libm.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavutil.so",
+          "sha256": "6a14d02c1ab8646a79ccecb3520ec686da95e242eb09140f4c95d4c736dc6439",
+          "exports": 622,
+          "needed": [
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswresample.so",
+          "sha256": "3f2419a3476220ae439abb55f23d2a7c5cc2be8897c07d84f32fb53f87f20899",
+          "exports": 23,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswscale.so",
+          "sha256": "eb449f21e511a00227b1f54298f9ab88a3c99f76d1cbf3cb924631ce55518a92",
+          "exports": 39,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        }
+      ],
+      "config_h_sha256": "5c7c52e2eb657b306b6e72dcd8cd916ced7fbfb2013c2981d35d4a6ba604d7ed",
+      "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6"
+    },
+    "x86_64": {
+      "libraries": [
+        {
+          "file": "libavcodec.so",
+          "sha256": "9046ee4fd9f4a68b14f0d4c2fbc932eef539f8c23a01287b9427b8b40d8aa31c",
+          "exports": 165,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libdav1d.so",
+            "libm.so",
+            "libopus.so",
+            "libswresample.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavfilter.so",
+          "sha256": "dc0f9169ca4b7617bae036e54fa289321a01db0a8f6567c92fe9cdb3f2d5a888",
+          "exports": 67,
+          "needed": [
+            "libavcodec.so",
+            "libavformat.so",
+            "libavutil.so",
+            "libc.so",
+            "libm.so",
+            "libmysofa.so",
+            "libswresample.so",
+            "libswscale.so"
+          ]
+        },
+        {
+          "file": "libavformat.so",
+          "sha256": "7c120ca29370733a02e65add05d5042afc1dabb7b46bc0ae60d5333c91450955",
+          "exports": 153,
+          "needed": [
+            "libavcodec.so",
+            "libavutil.so",
+            "libc.so",
+            "libdl.so",
+            "libm.so",
+            "libz.so"
+          ]
+        },
+        {
+          "file": "libavutil.so",
+          "sha256": "a5e9740de8bb82a1272155f4320b79d8eaaa70fc04f76a1c1c0540e27a242099",
+          "exports": 622,
+          "needed": [
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswresample.so",
+          "sha256": "9c01b5dfca86526566f66b28ae76fd954fe0197aeae726a3eae937382598e012",
+          "exports": 23,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        },
+        {
+          "file": "libswscale.so",
+          "sha256": "0a7b6a742e7c943fc0d6bf944bd99dc53ecd1a9f475b7c7b30dbb6bf09877e08",
+          "exports": 39,
+          "needed": [
+            "libavutil.so",
+            "libc.so",
+            "libm.so"
+          ]
+        }
+      ],
+      "config_h_sha256": "131ff393b00b869d8ddafb999ff4efd9ef8e3a9f3bae70b47b439058ec4c4e8c",
+      "config_components_sha256": "4f8d8ad5f6eaac96b385e1018ddd129e45adb6cae06892c48d29d3a566c00aa6"
+    }
+  },
+  "source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593"
+}

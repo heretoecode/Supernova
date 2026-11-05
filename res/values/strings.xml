@@ -461,11 +461,8 @@
     <!-- torrent -->
     <string name="error">An error occurred</string>
     <string name="error_protocol_not_supported">Error: protocol not supported</string>
-    <string name="error_loading_torrent">Error while loading torrent</string>
-    <string name="error_downloading_not_enough_space">Error while downloading torrent : not enough space</string>
     <string name="loading_torrent">Loading torrent…</string>
     <string name="error_no_video_file">No video files</string>
-    <string name="torrent_file_to_play">Choose a file to play</string>
 
     <!-- Shortcuts -->
     <string name="browse_net_server">Browse a network share</string>
@@ -652,7 +649,6 @@
     <string name="network_reindex">Re-scan content</string>
 
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Press the UP arrow key\nto display the TV menu</string>
 
     <string name="help_overlay_network_indexing_text1">Press this menu item to integrate the content of this folder and its subfolders to the Video Library.</string>
     <string name="help_overlay_network_indexing_text2">It will allow you to get posters and descriptions for the movies and TV shows.</string>
@@ -822,16 +818,11 @@
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
 
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Download path</string>
     <string name="torrent_blocklist">Blocklist</string>
     <string name="blocklist_empty">URL shouldn\'t be empty</string>
     <string name="blocklist_invalid">Blocklist invalid</string>
-    <string name="blocklist_file_not_found">File not found</string>
     <string name="blocklist_success">Blocklist refresh success</string>
-    <string name="blocklist_unknown_error">Unknown</string>
-    <string name="blocklist_not_loaded">Not loaded</string>
-    <string name="torrent_blocklist_url">Blocklist Url</string>
 
     <string name="sdk_not_supported">Android 4.3 is not supported yet.\nWe\'re working hard to fix it and hope to have a new version soon!</string>
     <string name="manually_create_share">Add indexed folder by URI</string>
@@ -985,7 +976,7 @@
     <string name="media_library_export_in_progress">Exporting media library, credentials, and shortcuts</string>
     <string name="media_library_import_in_progress">Importing media library, credentials, and shortcuts</string>
     <string name="media_library_export_success">Media library, credentials, and shortcuts exported successfully to:\n%s</string>
-    <string name="media_library_import_success">Media library, credentials, and shortcuts imported successfully. Restarting app...</string>
+    <string name="media_library_import_success">Media library, credentials, and shortcuts imported successfully. Restarting app&#8230;</string>
     <string name="media_library_import_error">Error importing media library</string>
     <string name="media_library_export_error">Error exporting media library</string>
     <string name="media_library_export_dir_not_found">Export directory not found</string>
@@ -1032,7 +1023,7 @@
     <string name="supported_refresh_rates">Supported refresh rates:</string>
 
     <string name="upgrade_info">Upgrade information</string>
-    <string name="v5_v6_upgrade_info">WARNING: this Nova major update requires to rescan all video collection for multimedia information re-aquisition.
+    <string name="v5_v6_upgrade_info">WARNING: this Nova major update requires to rescan all video collection for multimedia information re-acquisition.
         It is strongly advised to restart from a clean install to avoid problems. Please check FAQ for details.</string>
 
     <string name="external_player_service_title">External player playback</string>

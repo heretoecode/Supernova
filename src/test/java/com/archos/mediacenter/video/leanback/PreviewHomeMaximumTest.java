@@ -1,39 +1,55 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.app.Application;
+import android.app.Dialog;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import androidx.test.platform.app.InstrumentationRegistry;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.annotation.GraphicsMode;
+import org.robolectric.shadows.ShadowDialog;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+/** Checks home row count input, unlimited choices and rejection of invalid limits. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewHomeMaximumTest {
-    @Test @org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
+    @Test @GraphicsMode(GraphicsMode.Mode.NATIVE)
     @Config(qualifiers="w960dp-h540dp-land-mdpi") public void invalidExactValueKeepsSharedKeyboardOpen()throws Exception{
-        androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().setInTouchMode(false);
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> controller=
-                org.robolectric.Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        InstrumentationRegistry.getInstrumentation().setInTouchMode(false);
+        ActivityController<TopNavigationTest.Host> controller=
+                Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
-            java.util.concurrent.atomic.AtomicInteger accepted=new java.util.concurrent.atomic.AtomicInteger(-1);
+            AtomicInteger accepted=new AtomicInteger(-1);
             PreviewTextInput.showValidated(controller.get(),"Maximum items","bad",10,
                     value->PreviewHomeRows.parseMaximum(value)==null?"Enter a whole number":null,
                     value->accepted.set(PreviewHomeRows.parseMaximum(value)));
-            android.app.Dialog dialog=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-            android.view.View root=dialog.getWindow().getDecorView();
-            PreviewPagesTest.findText(root,"Select").performClick();
+            Dialog dialog=ShadowDialog.getLatestDialog();
+            View root=dialog.getWindow().getDecorView();
+            PreviewPagesTest.findText(root,"Done").performClick();
             assertTrue(dialog.isShowing());assertEquals(-1,accepted.get());
-            android.widget.EditText input=findInput(root);assertNotNull(input);assertNotNull(input.getError());input.setText("37");
+            EditText input=findInput(root);assertNotNull(input);assertNotNull(input.getError());input.setText("37");
             PreviewHomeVisualTest.measure(dialog);
-            android.view.View select=PreviewPagesTest.findText(root,"Select");select.requestFocus();
+            View select=PreviewPagesTest.findText(root,"Done");select.requestFocus();
             assertTrue(select.hasFocus());PreviewPagesTest.capture(PreviewHomeVisualTest.measure(dialog),"home-maximum-keyboard-focused");
-            PreviewPagesTest.findText(root,"Select").performClick();
+            PreviewPagesTest.findText(root,"Done").performClick();
             assertEquals(37,accepted.get());assertFalse(dialog.isShowing());
         }finally{controller.pause().stop().destroy();}
     }
-    private static android.widget.EditText findInput(android.view.View view){
-        if(view instanceof android.widget.EditText)return (android.widget.EditText)view;
-        if(view instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)view;
-            for(int i=0;i<group.getChildCount();i++){android.widget.EditText found=findInput(group.getChildAt(i));if(found!=null)return found;}}
+    private static EditText findInput(View view){
+        if(view instanceof EditText)return (EditText)view;
+        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;
+            for(int i=0;i<group.getChildCount();i++){EditText found=findInput(group.getChildAt(i));if(found!=null)return found;}}
         return null;
     }
     @Test public void exactCountAndNoLimitAreRepresentable(){

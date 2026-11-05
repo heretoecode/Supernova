@@ -395,11 +395,8 @@
     <!-- torrent -->
     <string name="error">Bir hata oluştu</string>
     <string name="error_protocol_not_supported">Hata: protokol desteklenmiyor</string>
-    <string name="error_loading_torrent">Torrent yüklenirken hata oluştu</string>
-    <string name="error_downloading_not_enough_space">Torrent indirilirken hata oluştu: yeterli alan yok</string>
     <string name="loading_torrent">Torrent yükleniyor…</string>
     <string name="error_no_video_file">Video dosyası yok</string>
-    <string name="torrent_file_to_play">Oynatmak için bir dosya seçin</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Bir ağ paylaşımına göz atın</string>
     <string name="add_ssh_server">Bir FTP sunucusuna göz atın</string>
@@ -548,7 +545,7 @@
     <string name="pref_format_mode_title">Biçim</string>
     <string name="format_fullscreen">Tam Ekran</string>
     <string name="format_optimized">Optimize edildi</string>
-    <string name="format_original">Orjinal</string>
+    <string name="format_original">Orijinal</string>
     <string name="format_stretched">Gergin</string>
     <string name="format_43">4:3</string>
     <string name="format_169">16:9</string>
@@ -559,7 +556,6 @@
     <string name="rotation_unlocked">Otomatik ekran döndürme etkin</string>
     <string name="network_reindex">İçeriği yeniden tara</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">TV menüsünü görüntülemek için YUKARI ok tuşuna\nbasın</string>
     <string name="help_overlay_network_indexing_text1">Bu klasörün ve alt klasörlerinin içeriğini Video Kütüphanesine entegre etmek için bu menü öğesine tıklayın.</string>
     <string name="help_overlay_network_indexing_text2">Filmler ve TV şovları için posterler ve açıklamalar almanızı sağlayacaktır.</string>
     <string name="help_overlay_scraper_text">Videolarınız için çevrimiçi poster ve açıklama aramak için bu menü öğesine basın. </string>
@@ -713,16 +709,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">İndirme yolu</string>
     <string name="torrent_blocklist">Engelleme listesi</string>
     <string name="blocklist_empty">URL boş olmamalıdır</string>
     <string name="blocklist_invalid">Engelleme listesi geçersiz</string>
-    <string name="blocklist_file_not_found">Dosya bulunamadı</string>
     <string name="blocklist_success">Engelleme listesi yenileme başarılı</string>
-    <string name="blocklist_unknown_error">Bilinmeyen</string>
-    <string name="blocklist_not_loaded">Yüklü değil</string>
-    <string name="torrent_blocklist_url">Engelleme Listesi Url\'si</string>
     <string name="sdk_not_supported">Android 4.3 henüz desteklenmiyor.\nBunu düzeltmek için çok çalışıyoruz ve yakında yeni bir sürümümüz olmasını umuyoruz!</string>
     <string name="manually_create_share">URI ile dizinlenmiş klasör ekle</string>
     <string name="share_infos_incomplete">Yolu doldurman gerek</string>
@@ -851,7 +842,7 @@
     <string name="media_library_export_in_progress">Medya kütüphanesi + kimlik bilgileri + kısayolları dışa aktarılıyor</string>
     <string name="media_library_import_in_progress">Medya kütüphanesi + kimlik bilgileri + kısayolları içe aktarılıyor</string>
     <string name="media_library_export_success">Medya kütüphanesi, kimlik bilgileri ve kısayollar başarıyla şu konuma aktarıldı:\n%s</string>
-    <string name="media_library_import_success">Medya kütüphanesi, kimlik bilgileri ve kısayollar başarıyla içe aktarıldı. Uygulama yeniden başlatılıyor...</string>
+    <string name="media_library_import_success">Medya kütüphanesi, kimlik bilgileri ve kısayollar başarıyla içe aktarıldı. Uygulama yeniden başlatılıyor&#8230;</string>
     <string name="media_library_import_error">Medya kütüphanesini içe aktarırken hata oluştu</string>
     <string name="media_library_export_error">Medya kütüphanesini dışa aktarırken hata oluştu</string>
     <string name="media_library_export_dir_not_found">Dışa aktarma dizini bulunamadı</string>

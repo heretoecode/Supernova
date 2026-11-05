@@ -1,0 +1,877 @@
+{
+  "schema": 1,
+  "source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "runtime": "Android API 23 bionic; x86_64 native, other ABIs QEMU user; no framework/hardware playback claim",
+  "corpus": [
+    {
+      "file": "h264-aac.mp4",
+      "sha256": "0fdc96737af31536002b3cf697b42967c593a42d0ad6a3e8ab2a14ec325ef4c3",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:v",
+        "libx264",
+        "-threads",
+        "1",
+        "-pix_fmt",
+        "yuv420p",
+        "-c:a",
+        "aac"
+      ]
+    },
+    {
+      "file": "hevc.mkv",
+      "sha256": "7d2f23f150ef90a8034e4a0e7c4b8d691b45d222256003a61e4546aea9a3261c",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-c:v",
+        "libx265",
+        "-threads",
+        "1",
+        "-x265-params",
+        "pools=none:frame-threads=1:log-level=error"
+      ]
+    },
+    {
+      "file": "av1.mkv",
+      "sha256": "65dfe31e5cdcdb7b00744af093cffdc644fa093fb2b2a381622dafb3156c2110",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-c:v",
+        "libaom-av1",
+        "-threads",
+        "1",
+        "-cpu-used",
+        "8",
+        "-crf",
+        "40"
+      ]
+    },
+    {
+      "file": "vp9-opus.webm",
+      "sha256": "4a8b8795577b3da356fdb8b3697505b40f55727128cf10e42c656317cae23014",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:v",
+        "libvpx-vp9",
+        "-threads",
+        "1",
+        "-deadline",
+        "realtime",
+        "-cpu-used",
+        "8",
+        "-c:a",
+        "libopus"
+      ]
+    },
+    {
+      "file": "mpeg2-ac3.ts",
+      "sha256": "47d0741cd33d6ddf94a320884538c43140955ff84f9c8cfe9873525c9ce228d7",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "testsrc2=size=96x64:rate=12:duration=1",
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:v",
+        "mpeg2video",
+        "-threads",
+        "1",
+        "-c:a",
+        "ac3"
+      ]
+    },
+    {
+      "file": "opus.ogg",
+      "sha256": "dfb5f134be0bf822f9732f215f1eba7c68f9282091d10ba28f5a943ebfde0548",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "libopus"
+      ]
+    },
+    {
+      "file": "vorbis.ogg",
+      "sha256": "ef2ba6286db68571ee153fd1b1782ef73ee4ee670fac8b92f615d1da0e224fa6",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "libvorbis"
+      ]
+    },
+    {
+      "file": "flac.flac",
+      "sha256": "acfba778177dfe9adc7929b054ec6ecf73d6b8f879e8b9cc06592f22f23b06d4",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "flac"
+      ]
+    },
+    {
+      "file": "pcm.wav",
+      "sha256": "99b5678baf25c565385191973f331448cf715879253e98e92c0497ba1f4da44e",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "pcm_s16le"
+      ]
+    },
+    {
+      "file": "mp3.mp3",
+      "sha256": "454b1e2713b518e4ea05c44a22c7b37400c990696db5445b9b2b753f9cd6e306",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "libmp3lame"
+      ]
+    },
+    {
+      "file": "alac.m4a",
+      "sha256": "ec57987feb6fa78d50f8c5595c6a2a42930b491e67d1398398130a12d6dd36fa",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "alac"
+      ]
+    },
+    {
+      "file": "eac3.eac3",
+      "sha256": "b097937c8d6c35a0f613df374a94a2a66120909dacb60148519476fb5ed8488c",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "eac3"
+      ]
+    },
+    {
+      "file": "dts.dts",
+      "sha256": "270ada6d4dbf1f0d8c2b477dc2ce484da7fdf91281e7d76288ce71cd8eba163f",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "sine=frequency=997:sample_rate=48000:duration=1",
+        "-c:a",
+        "dca",
+        "-strict",
+        "-2"
+      ]
+    },
+    {
+      "file": "ac3-51.ac3",
+      "sha256": "8905d3b42ea38319fa3191cce5c24e459cb6eba6c5e50fb8585d24c391ba64f9",
+      "generation_arguments": [
+        "-f",
+        "lavfi",
+        "-i",
+        "aevalsrc=0.1*sin(997*2*PI*t)|0.1*sin(500*2*PI*t)|0.1*sin(250*2*PI*t)|0.1*sin(100*2*PI*t)|0.1*sin(750*2*PI*t)|0.1*sin(1250*2*PI*t):s=48000:d=1",
+        "-channel_layout",
+        "5.1",
+        "-c:a",
+        "ac3"
+      ]
+    }
+  ],
+  "abis": [
+    {
+      "abi": "arm64-v8a",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "0d900c96b2b63529d0275ac5f00bd2553af835a77b6bfb1ccff288083a23757e",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\t8d61b122\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\td14890b2\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\tf77e3a3a\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\td14890b2\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t7a9118c3\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\t4d0eb5dd\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\tfdaf7bec\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\t5e685007\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\t321f4db5\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\t1a28d0d7\n"
+        }
+      ],
+      "all_comparisons_passed": true
+    },
+    {
+      "abi": "armeabi-v7a",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "6174ed485cdd1728f87044a296ae7584f2735b79595c8057762d4859d926d887",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\t41868aeb\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\t91d1662a\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\t7eb0f036\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\t91d1662a\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t23dfe130\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\td86cabb8\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\taae53ae8\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\tf5516181\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\t2a883887\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\t1915d0d6\n"
+        }
+      ],
+      "all_comparisons_passed": true
+    },
+    {
+      "abi": "x86",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "6174ed485cdd1728f87044a296ae7584f2735b79595c8057762d4859d926d887",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\t0cea89f9\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\t91d1662a\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\t7eb0f036\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\t91d1662a\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t23dfe130\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\td86cabb8\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\taae53ae8\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\tf5516181\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\t2a883887\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\t965cd0d6\n"
+        }
+      ],
+      "all_comparisons_passed": true
+    },
+    {
+      "abi": "x86_64",
+      "registry_rows": 1372,
+      "registry_sha256": "1149bfce3f60db0aedc36f1267f3e5996184336aaf7dcd55dae061f5d7e708a8",
+      "atempo_sha256": "6174ed485cdd1728f87044a296ae7584f2735b79595c8057762d4859d926d887",
+      "decode_cases": 16,
+      "decode_results": [
+        {
+          "file": "h264-aac.mp4",
+          "decoder": "",
+          "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48128\td69a80d5\n"
+        },
+        {
+          "file": "hevc.mkv",
+          "decoder": "",
+          "output": "decoded\t0\thevc\t12\t0\t35083577\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "vp9-opus.webm",
+          "decoder": "",
+          "output": "decoded\t0\tvp9\t12\t0\t78e9199b\ndecoded\t1\topus\t51\t48000\t88c6adc1\n"
+        },
+        {
+          "file": "mpeg2-ac3.ts",
+          "decoder": "",
+          "output": "decoded\t0\tmpeg2video\t12\t0\t29f3117b\ndecoded\t1\tac3\t32\t49152\t8d93ec1f\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "",
+          "output": "decoded\t0\topus\t51\t48000\t88c6adc1\n"
+        },
+        {
+          "file": "vorbis.ogg",
+          "decoder": "",
+          "output": "decoded\t0\tvorbis\t48\t47872\t1591dbfb\n"
+        },
+        {
+          "file": "flac.flac",
+          "decoder": "",
+          "output": "decoded\t0\tflac\t11\t48000\tdb3de663\n"
+        },
+        {
+          "file": "pcm.wav",
+          "decoder": "",
+          "output": "decoded\t0\tpcm_s16le\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "mp3.mp3",
+          "decoder": "",
+          "output": "decoded\t0\tmp3float\t43\t48000\td2ff6b75\n"
+        },
+        {
+          "file": "alac.m4a",
+          "decoder": "",
+          "output": "decoded\t0\talac\t12\t48000\tdb3de663\n"
+        },
+        {
+          "file": "eac3.eac3",
+          "decoder": "",
+          "output": "decoded\t0\teac3\t32\t49152\t1b7a2f3d\n"
+        },
+        {
+          "file": "dts.dts",
+          "decoder": "",
+          "output": "decoded\t0\tdca\t94\t48128\t6fc262ea\n"
+        },
+        {
+          "file": "ac3-51.ac3",
+          "decoder": "",
+          "output": "decoded\t0\tac3\t32\t49152\tfc32acd6\n"
+        },
+        {
+          "file": "av1.mkv",
+          "decoder": "libdav1d",
+          "output": "decoded\t0\tlibdav1d\t12\t0\tb9cf1cac\n"
+        },
+        {
+          "file": "opus.ogg",
+          "decoder": "libopus",
+          "output": "decoded\t0\tlibopus\t51\t48000\t965cd0d6\n"
+        }
+      ],
+      "all_comparisons_passed": true
+    }
+  ],
+  "total_decode_cases": 64,
+  "all_comparisons_passed": true,
+  "candidate_libraries": {
+    "arm64-v8a": [
+      {
+        "file": "libavcodec.so",
+        "sha256": "f3dc7c7c3e2dfc9cf4ec3a106f8d0fb06a4b89a39a5c43f902124e0d75b12ba2",
+        "exports": 165,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libdav1d.so",
+          "libm.so",
+          "libopus.so",
+          "libswresample.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavfilter.so",
+        "sha256": "0828f3575813f55e702278aa1100efb58cb1e53922e5b087489d0a15fc715601",
+        "exports": 67,
+        "needed": [
+          "libavcodec.so",
+          "libavformat.so",
+          "libavutil.so",
+          "libc.so",
+          "libm.so",
+          "libmysofa.so",
+          "libswresample.so",
+          "libswscale.so"
+        ]
+      },
+      {
+        "file": "libavformat.so",
+        "sha256": "fb8c5e82b0e0ad604092daac555e9d958da1b7b39228582bba4dda283e4f11f0",
+        "exports": 153,
+        "needed": [
+          "libavcodec.so",
+          "libavutil.so",
+          "libc.so",
+          "libdl.so",
+          "libm.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavutil.so",
+        "sha256": "78048004112cab8a4e355e10f96eeb98ceaaaff2141ece2c817fe633891e75ab",
+        "exports": 622,
+        "needed": [
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswresample.so",
+        "sha256": "1c71fb08f899866970444c0fdc7a3f42bb4af72f40b382fbcbfa255618c1f3b0",
+        "exports": 23,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswscale.so",
+        "sha256": "274c4ac59af1d63eac333c32847967000bfa81931aacdb9f3c87a5b88a70cab3",
+        "exports": 39,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      }
+    ],
+    "armeabi-v7a": [
+      {
+        "file": "libavcodec.so",
+        "sha256": "ce3a8eab36a55f9329702d4295fce0c2015c165b11975ea9dcf5e76cf241f489",
+        "exports": 165,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libdav1d.so",
+          "libm.so",
+          "libopus.so",
+          "libswresample.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavfilter.so",
+        "sha256": "7c24576c73f8a020f4b67e00d49f7a4b50f1c29e562aaa4f748c9b1df25eea8f",
+        "exports": 67,
+        "needed": [
+          "libavcodec.so",
+          "libavformat.so",
+          "libavutil.so",
+          "libc.so",
+          "libm.so",
+          "libmysofa.so",
+          "libswresample.so",
+          "libswscale.so"
+        ]
+      },
+      {
+        "file": "libavformat.so",
+        "sha256": "fafc0ff5cc66789fdbcd28923a3a49e426875476a62844acfaa9c80caf91b374",
+        "exports": 153,
+        "needed": [
+          "libavcodec.so",
+          "libavutil.so",
+          "libc.so",
+          "libdl.so",
+          "libm.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavutil.so",
+        "sha256": "9f8cabc608f6f7f43b55a4e5072b4226650e2172808a49c54c3b0ab7d59686d1",
+        "exports": 622,
+        "needed": [
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswresample.so",
+        "sha256": "059a8c6fe290720dc7c21b5b771fe63aaa5ca970c04f724b1298ca2c19d7888b",
+        "exports": 23,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswscale.so",
+        "sha256": "bef9ea60f02a9c32da8d47648b0f05cbdf75e97c026b30a32cd800a1e1a23280",
+        "exports": 39,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      }
+    ],
+    "x86": [
+      {
+        "file": "libavcodec.so",
+        "sha256": "d3f47c27781d7bc137f2177b89bc736e1c55ea52b6cbe0569d4ffc4ea74de784",
+        "exports": 165,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libdav1d.so",
+          "libm.so",
+          "libopus.so",
+          "libswresample.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavfilter.so",
+        "sha256": "38e2983058ea1b2f3304d4ed13e51950fc104a826836b811e999bb9bacb3803f",
+        "exports": 67,
+        "needed": [
+          "libavcodec.so",
+          "libavformat.so",
+          "libavutil.so",
+          "libc.so",
+          "libm.so",
+          "libmysofa.so",
+          "libswresample.so",
+          "libswscale.so"
+        ]
+      },
+      {
+        "file": "libavformat.so",
+        "sha256": "eaf0b02a058defa4b954002944366a6bb1eb574862a8463738194e55fe62a713",
+        "exports": 153,
+        "needed": [
+          "libavcodec.so",
+          "libavutil.so",
+          "libc.so",
+          "libdl.so",
+          "libm.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavutil.so",
+        "sha256": "478f709b4333da0c75ae8ac946458ffe7c06871485e2c1d5b7e9c5ec64d33661",
+        "exports": 622,
+        "needed": [
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswresample.so",
+        "sha256": "cdec5d6e7ddbd71095ab636e269c295ab8a6d711626165e574cd03ac78717927",
+        "exports": 23,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswscale.so",
+        "sha256": "18cd82567ae0761b7cbe83bc0b3c1ab26252f4fb3aebd9bebb1aae77c5b51bf0",
+        "exports": 39,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      }
+    ],
+    "x86_64": [
+      {
+        "file": "libavcodec.so",
+        "sha256": "b2d719344c7a30d2ef3934627764013b028322017b6274321c113d9d3eb76993",
+        "exports": 165,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libdav1d.so",
+          "libm.so",
+          "libopus.so",
+          "libswresample.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavfilter.so",
+        "sha256": "ec579ad0ae7a609a45161fba8abccc4accbde8ae17bedda3625db712debff1df",
+        "exports": 67,
+        "needed": [
+          "libavcodec.so",
+          "libavformat.so",
+          "libavutil.so",
+          "libc.so",
+          "libm.so",
+          "libmysofa.so",
+          "libswresample.so",
+          "libswscale.so"
+        ]
+      },
+      {
+        "file": "libavformat.so",
+        "sha256": "1adbef251a8ebc1b5c006b73fe49ad14658aebf301dccc8102fdbdcfb993bae4",
+        "exports": 153,
+        "needed": [
+          "libavcodec.so",
+          "libavutil.so",
+          "libc.so",
+          "libdl.so",
+          "libm.so",
+          "libz.so"
+        ]
+      },
+      {
+        "file": "libavutil.so",
+        "sha256": "d6e81fd907466dbfb142cbf0f99969165a085e0f5fa857d16549c3ef7165b59c",
+        "exports": 622,
+        "needed": [
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswresample.so",
+        "sha256": "ccd777518967344913f18ff78f33a24105c531b0b0ae3bb799482e4be911cbb5",
+        "exports": 23,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      },
+      {
+        "file": "libswscale.so",
+        "sha256": "7872726545e6675c19ba1964a5e8021e7c520aa09a16a6ff3c45bc87b5d358ce",
+        "exports": 39,
+        "needed": [
+          "libavutil.so",
+          "libc.so",
+          "libm.so"
+        ]
+      }
+    ]
+  }
+}

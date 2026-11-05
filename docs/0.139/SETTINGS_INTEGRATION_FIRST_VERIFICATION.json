@@ -1,0 +1,37 @@
+{
+  "source_sha": "0c319762fcd48b5860dbaf10bb3009a316439795",
+  "result": "FAIL",
+  "classes": 5,
+  "tests": 24,
+  "failures": 4,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest"
+  ],
+  "failures_detail": [
+    {
+      "test": "connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting",
+      "message": "java.lang.AssertionError: expected:<19> but was:<7>"
+    },
+    {
+      "test": "exportLaunchesAndroidPickerOnlyAfterPrivateVerification",
+      "message": "java.lang.NullPointerException: Cannot read the array length because \"files\" is null"
+    },
+    {
+      "test": "connectedFlatInformationBackRestoresOpenerThenPermanentSidebar",
+      "message": "java.lang.AssertionError"
+    },
+    {
+      "test": "realSettingsRailKeepsItsWidthAndAllCategoriesOccupyOnlyRightWorkspace",
+      "message": "java.lang.AssertionError: expected:<219> but was:<224>"
+    }
+  ],
+  "duration": "2m 27s",
+  "log_sha256": "6c5e3f5636cf856e4c7e3d41d737620208e74c0340c1aaa29a34e87c55048bed",
+  "correction": "Freeze the measured permanent rail width while merging the right panes; use the VM Application store in operation fixture assertions; add precise focus assertions and investigate. Retest required."
+}

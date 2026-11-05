@@ -1,0 +1,63 @@
+{
+  "result": "PASS",
+  "verified_at_utc": "2026-10-15T16:49:31.012706+00:00",
+  "run_id": 38746280548,
+  "job_id": 116460931791,
+  "source_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "url": "https://github.com/heretoecode/Supernova/actions/runs/38746280548",
+  "job_started_utc": "2026-10-15T13:52:04Z",
+  "job_completed_utc": "2026-10-15T14:27:10Z",
+  "gradle_duration": "20m41s",
+  "tests": 1007,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "classes": 209,
+  "passed": 1007,
+  "lint": {
+    "result": "PASS",
+    "errors": 0,
+    "warnings": 1771
+  },
+  "unsigned_assembly": "PASS",
+  "python_tests": 81,
+  "runtime_artifact_hashes_matched": 138,
+  "required_regression_classes_present": [
+    "BackupSettingsControllerTest",
+    "BundledNoticePagerTest",
+    "CanonicalMatchProviderTest",
+    "CombinedCurrentRestoreTest",
+    "Details139AcceptanceTest",
+    "LogicalBackupExporterTest",
+    "MediaMatchJournalTest",
+    "MediaMatchReconciliationTest",
+    "PreviewSeasonTest",
+    "ProductionBackupSettingsTest",
+    "SubtitleDiscoveryTest",
+    "Supernova138HomeTest",
+    "Supernova138PlaybackTest",
+    "Supernova138UiTest",
+    "Supernova139HomeEditorTest",
+    "TransportReadDiagnosticsTest"
+  ],
+  "native_rebuild_runtime": "PASS: four ABIs, 24 rebuilt FFmpeg libraries, 64 paired software decode cases",
+  "artifact": {
+    "id": 11982055924,
+    "name": "supernova-0139-unsigned-evidence",
+    "bytes": 101143693,
+    "sha256": "dbbabb9d1d7d3eee583d5ab7f52dd5d8756d7a7e6e4dbe09c82cfc145be5eed7",
+    "github_digest_matches": true,
+    "zip_crc": true,
+    "safe_paths": true,
+    "entries": 324,
+    "expires_at_utc": "2026-10-29T14:26:59Z"
+  },
+  "conformance_receipt": "CI_APPROVED_CONFORMANCE_2026-10-15.json",
+  "binary_receipt": "CI_APPROVED_PACKAGING_2026-10-15.json",
+  "job_log_excerpt_sha256": "cc403953f062a4ef02150a00dc8400756f42e2aa3d4636b37686599c239c205d",
+  "limits": [
+    "Unsigned conformance only; no signed APK, upgrade/installability, physical Shield or Drive139 delivery.",
+    "The 43 whole-workstream rows retain their outstanding state/render/hardware matrices; automated passes do not close them.",
+    "Historical failures and superseded runs remain source-pinned in their original receipts."
+  ]
+}

@@ -16,8 +16,8 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
 
+/** Loads anime movies filtered by rating. */
 public class AnimesByRatingLoader extends AnimesByLoader {
 
     private static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE NOCASE DESC";
@@ -34,6 +34,7 @@ public class AnimesByRatingLoader extends AnimesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         return "SELECT\n" +
                 "    CAST(m_rating as int) as _id,\n" +

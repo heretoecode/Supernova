@@ -1,0 +1,39 @@
+{
+  "result": "FAIL",
+  "source_sha": "8e917bd3a8d3f965fbf5f07843d2de1523111096",
+  "test_classes": 208,
+  "unit_tests": 996,
+  "unit_failures": 2,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "failed_tests": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "test": "smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+      "message": "java.lang.AssertionError: AUDIO outside physical horizontal bounds\nAUDIO clipped by ancestor viewport\nDIAGNOSTICS outside physical horizontal bounds\nDIAGNOSTICS clipped by ancestor viewport\nINTEGRATIONS outside physical horizontal bounds\nINTEGRATIONS clipped by ancestor viewport\nLIBRARY outside physical horizontal bounds\nLIBRARY clipped by ancestor viewport\nNETWORK outside physical horizontal bounds\nNETWORK clipped by ancestor viewport\nSTREAMING outside physical horizontal bounds\nSTREAMING clipped by ancestor viewport\nSUBTITLES outside physical horizontal bounds\nSUBTITLES clipped by ancestor viewport\nVIDEO outside physical horizontal bounds\nVIDEO clipped by ancestor viewport\nCUSTOM_PAGES outside physical horizontal bounds\nCUSTOM_PAGES clipped by ancestor viewport\nHIDDEN outside physical horizontal bounds\nHIDDEN clipped by ancestor viewport\nMATCHES outside physical horizontal bounds\nMATCHES clipped by ancestor viewport\nPINNED outside physical horizontal bounds\nPINNED clipped by ancestor viewport\nREVIEW outside physical horizontal bounds\nREVIEW clipped by ancestor viewport\nPLAYLISTS outside physical horizontal bounds\nPLAYLISTS clipped by ancestor viewport\nWATCH_NEXT outside physical horizontal bounds\nWATCH_NEXT clipped by ancestor viewport\nCONTINUE_CHOICES outside physical horizontal bounds\nCONTINUE_CHOICES clipped by ancestor viewport\nPOSITIONS below existing44dp target role\nTITLE_PLAYBACK outside physical horizontal bounds\nTITLE_PLAYBACK clipped by ancestor viewport\nTITLE_PLAYBACK below existing44dp target role\nHISTORY outside physical horizontal bounds\nHISTORY clipped by ancestor viewport\nHISTORY below existing44dp target role\nBOOKMARKS outside physical horizontal bounds\nBOOKMARKS clipped by ancestor viewport\nBOOKMARKS below existing44dp target role\nSOURCES outside physical horizontal bounds\nSOURCES clipped by ancestor viewport\nSOURCES below existing44dp target role\nLOCATIONS outside physical horizontal bounds\nLOCATIONS clipped by ancestor viewport\nLOCATIONS below existing44dp target role\nLOCATIONS incomplete text height"
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest",
+      "test": "actualOlderSettingsLogicalReviewSurvivesRecreationAndRequiresSelectedConfirmation",
+      "message": "java.lang.AssertionError: Checking selected replacement and receiving identities\u2026 expected:<RESTORE_PREVIEW> but was:<PREPARING_RESTORE>"
+    }
+  ],
+  "followup": "b2a17cbe changes only the older Settings test wait helper. Dialog performClick is posted; prior helper could check idle before dispatch and assert during PREPARING_RESTORE. Preserve failure and validate corrected helper before any fixed claim.",
+  "batch_result": "FAIL",
+  "batch_exit_code": 1,
+  "batch_duration": "19m50s",
+  "tasks": {
+    "total": 133,
+    "executed": 19,
+    "up_to_date": 114
+  },
+  "lint": {
+    "result": "PASS",
+    "errors": 0,
+    "warnings": 1771
+  },
+  "unsigned_assembly": "Completed; not signed or accepted",
+  "unsigned_apk_bytes": 87672329,
+  "unsigned_apk_sha256": "bccb0b9628be845047359afd01e526a41c2dce475c6b9af662d2b6d0372a90be",
+  "log_sha256": "2aafbbcb4f6bfa6d6ad29a50f8ea33084c490eb39830adf44927e9f1f1ca61f3"
+}

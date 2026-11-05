@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -32,6 +33,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
 
+/** Displays an audio speed picker dialog and reports speed changes. */
 public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListener,
         AudioSpeedPicker.OnAudioSpeedChangedListener, AudioSpeedPickerDialogInterface {
 
@@ -51,6 +53,7 @@ public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListen
     };
     private final CheckBox mSaveSettingCB;
 
+    @SuppressLint("InflateParams") // Custom content view for AlertDialog.setView() has no parent container at inflation
     public AudioSpeedPickerDialog(Context context, OnAudioSpeedChangeListener callBack, float speed) {
         super(context);
 
@@ -73,11 +76,13 @@ public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListen
         setCancelable(true);
         setCanceledOnTouchOutside(true);
     }
+    @Override
     public void onAttachedToWindow(){
         super.onAttachedToWindow();
         mSaveSettingCB.setChecked( PreferenceManager.getDefaultSharedPreferences(getContext()).getFloat(getContext().getResources().getString(R.string.save_audio_speed_setting_pref_key), 1.0f)!=1.0f);
 
     }
+    @Override
     public void handleMessage(Message msg) {
         switch(msg.what) {
             case CHANGE_SPEED:
@@ -106,12 +111,14 @@ public class AudioSpeedPickerDialog extends AlertDialog implements OnClickListen
         mHandler.sendMessageDelayed(msg, CHANGE_SPEED_TIMEOUT);
     }
 
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         if (mCallBack != null) {
             mCallBack.onAudioSpeedChange(mAudioSpeedPicker, mAudioSpeedPicker.getSpeed());
         }
     }
 
+    @Override
     public void updateSpeed(float speed) {
         mAudioSpeedPicker.updateSpeed(speed);
     }

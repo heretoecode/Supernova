@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-30",
+  "official_documentation": "https://chaptersdb.com/api",
+  "public_script": "https://chaptersdb.com/assets/index-DMvcmQJD.js",
+  "script_sha256": "db4b116aa5f927ebb8cbc673f97bb0d63861009ff401e8427b53beca180fa020",
+  "official_api_use_statement": "All endpoints are free to use and require no authentication. The API returns JSON responses for easy integration with your applications.",
+  "provider_rate_policy": "No numerical policy located; client throttle/backoff/cache limits are application policy.",
+  "owner_matching_decision": "Keep unverified sets hidden; preserve strict matching",
+  "probes": [
+    {
+      "url": "https://chaptersdb.com/api/v1/search?q=bad%20times",
+      "status": 200,
+      "type": "application/json; charset=utf-8",
+      "response_keys": [
+        "results",
+        "count",
+        "query"
+      ],
+      "id": null,
+      "imdbId": null,
+      "tvdbId": null,
+      "structured_runtime_present": false,
+      "structured_edition_present": false
+    },
+    {
+      "url": "https://chaptersdb.com/api/v1/search?query=bad%20times",
+      "error": "HTTP Error 400: Bad Request",
+      "response_summary": "SPA HTML shell (not API JSON)"
+    },
+    {
+      "url": "https://chaptersdb.com/api/v1/show/tt6628394",
+      "status": 200,
+      "type": "application/json; charset=utf-8",
+      "response_keys": [
+        "id",
+        "slug",
+        "title",
+        "type",
+        "year",
+        "tvdbId",
+        "imdbId",
+        "chapters",
+        "chapterCount"
+      ],
+      "id": "2c1475ea-9627-4a18-93fe-046f89b91596",
+      "imdbId": "tt6628394",
+      "tvdbId": "",
+      "structured_runtime_present": false,
+      "structured_edition_present": false
+    },
+    {
+      "url": "https://chaptersdb.com/api/v1/show/2c1475ea-9627-4a18-93fe-046f89b91596",
+      "status": 200,
+      "type": "application/json; charset=utf-8",
+      "response_keys": [
+        "id",
+        "slug",
+        "title",
+        "type",
+        "year",
+        "tvdbId",
+        "imdbId",
+        "chapters",
+        "chapterCount"
+      ],
+      "id": "2c1475ea-9627-4a18-93fe-046f89b91596",
+      "imdbId": "tt6628394",
+      "tvdbId": "",
+      "structured_runtime_present": false,
+      "structured_edition_present": false
+    },
+    {
+      "url": "https://chaptersdb.com/api/v1/download/5e2438cd-3170-4078-afa4-a120ec5f5d0f",
+      "status": 200,
+      "type": "text/html; charset=UTF-8",
+      "response_summary": "SPA HTML shell (not API JSON)"
+    },
+    {
+      "route": "show/tt0112178",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_keys": [
+        "id",
+        "slug",
+        "title",
+        "type",
+        "year",
+        "tvdbId",
+        "imdbId",
+        "episodes",
+        "episodeCount"
+      ],
+      "id": "d40e78af-b1d0-4ab5-9f73-4d5e1e32f0f1",
+      "imdbId": "tt0112178",
+      "tvdbId": "74550",
+      "structured_runtime_present": false,
+      "structured_edition_present": false
+    },
+    {
+      "route": "show/74550",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_keys": [
+        "id",
+        "slug",
+        "title",
+        "type",
+        "year",
+        "tvdbId",
+        "imdbId",
+        "episodes",
+        "episodeCount"
+      ],
+      "id": "d40e78af-b1d0-4ab5-9f73-4d5e1e32f0f1",
+      "imdbId": "tt0112178",
+      "tvdbId": "74550",
+      "structured_runtime_present": false,
+      "structured_edition_present": false
+    },
+    {
+      "route": "episode/star-trek-voyager-s01e01-caretaker",
+      "status": 200,
+      "content_type": "application/json; charset=utf-8",
+      "response_keys": [
+        "id",
+        "slug",
+        "title",
+        "tvdbId",
+        "show"
+      ],
+      "id": "c27ef7b4-786a-4c0b-8ff1-3dcc6d049dc6",
+      "imdbId": null,
+      "tvdbId": "",
+      "structured_runtime_present": false,
+      "structured_edition_present": false
+    },
+    {
+      "route": "chapters/c27ef7b4-786a-4c0b-8ff1-3dcc6d049dc6/download",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "response_summary": "MkvToolNix start/name lines only, no end/runtime"
+    }
+  ]
+}

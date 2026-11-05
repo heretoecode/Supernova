@@ -1,0 +1,119 @@
+{
+  "baseline_tip": "b04938a804ba192e51a6707cbffc1b46cc97bcff",
+  "candidate_source": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "scope": "All first-parent Supernova commits after the verified0.145 documentation tip; the separate upstream matrix covers all438 upstream deltas",
+  "commits": [
+    {
+      "commit": "f6b83102b4c182424124dd63359c13bcba04b7b2",
+      "subject": "Begin 0.146 from verified 0.145 and integrate shared NOVA source trees"
+    },
+    {
+      "commit": "ccc7f852b9153552b33e00c7bee1e26c6f7a9d38",
+      "subject": "Correct native replay fixtures and prepare pinned OpenSSL cross-build"
+    },
+    {
+      "commit": "d6cf58b7b04c15e1b4cbdb94a65d6140228b429f",
+      "subject": "Integrate native subtitle and playback bridges with preserved controls; add reviewed Jetty source backport candidate"
+    },
+    {
+      "commit": "264e2bf1b4d6342964d1f7d17b651df83334e327",
+      "subject": "Enable release library test variants and replace global TLS bypass with scoped trust"
+    },
+    {
+      "commit": "d12da4246f4015bfdf9b9af8b0e302e81750bd89",
+      "subject": "Keep native source patch manifest aligned and exclude generated Python bytecode"
+    },
+    {
+      "commit": "35af33fb7e1d36eda82ec992909c5b1f562afa73",
+      "subject": "Pin and source-build the complete four-ABI FFmpeg9 OpenSSL4.1 and libass stack"
+    },
+    {
+      "commit": "5906f98a232f8476a26d5efa86ca59200ff78f56",
+      "subject": "Fix integrated compiler contracts and WAL foreign-key configuration; adapt regression fixtures"
+    },
+    {
+      "commit": "67ed87a6265643eda0071959c35394df05815ba5",
+      "subject": "Enforce Jetty patch application and pinned Java8 API; capture complete runtime review inputs"
+    },
+    {
+      "commit": "dfa016c68c71cb869e9b238e40256ad75c1b2565",
+      "subject": "Preserve legacy HLS URLs on FFmpeg9; add four-ABI runtime evidence and actual API23 harness"
+    },
+    {
+      "commit": "82315f7e033d0ca0343069264973e1e8ccd667f5",
+      "subject": "Complete authority validation with IPv6 scope compatibility; align stable NOVA dependency families"
+    },
+    {
+      "commit": "d81f6c5fddd9fbb120f8b44909f8eb336a3c6365",
+      "subject": "Adapt native subtitle settings and browser lifecycle; correct network integration fixtures"
+    },
+    {
+      "commit": "b3ed471d6a51ef7165639a188dfe5e5be32993f5",
+      "subject": "Use checked-in Unix Gradle wrapper for Android 23 harness"
+    },
+    {
+      "commit": "05c8802cdca10232c02ae43bc3666544ef88df0c",
+      "subject": "Preserve playback speed preference behavior; expose compatible native controls and verify runtime inventory"
+    },
+    {
+      "commit": "0e5f48c1cdfd0801c14e5ed955843cebbe182e8a",
+      "subject": "Stage exact native packaging and full release conformance; refresh licences and visible browser errors"
+    },
+    {
+      "commit": "e2ff14b954459dba40328baa5e00fe5b588dcb34",
+      "subject": "Backport newly reported native security fixes and restrict fontconfig XML features"
+    },
+    {
+      "commit": "533931d4462d6850a2a649006ece590b6e3f40d3",
+      "subject": "Scope Jetty Android transport to supported optional features and port layout semantics"
+    },
+    {
+      "commit": "9f836021532d6e4291e23f6436ce72a0c99e48ef",
+      "subject": "Supply API23 NIO desugaring and validate security-patched native bytes"
+    },
+    {
+      "commit": "3318c2e1fd46dec8c0e09c13770a8ef9a63dd6d1",
+      "subject": "Freeze validated API23 runtime, release assets and exact-payload signing gates"
+    },
+    {
+      "commit": "79e0b95d5f3be53840473a1c07e45b28d5e4497f",
+      "subject": "Isolate subtitle policy fixtures from deferred application startup"
+    },
+    {
+      "commit": "30bc1e9af31fe740b10de1ef199ec44f49639ad0",
+      "subject": "Show the integrated NOVA6.6.2 upstream in About and verify diagnostic default/opt-out"
+    },
+    {
+      "commit": "8ead283227ebdfa96aadc0c183d8ceeca02be2db",
+      "subject": "Retain complete bundled libmysofa resampler and kdtree notices"
+    },
+    {
+      "commit": "301f5253942b72338f0d22879f476242a1c07558",
+      "subject": "Release activity-owned playback settings views when the window closes"
+    },
+    {
+      "commit": "0e145106e58aeb3065e16a9c7f45b2a4e03a3976",
+      "subject": "Verify FTPS certificate chains and both channel identities with actual TLS regressions"
+    },
+    {
+      "commit": "db77e40ce0d289a60b0701837c39be8f647d8aca",
+      "subject": "Use only the verified Kotlin runtime in the Java API23 harness"
+    },
+    {
+      "commit": "564ca2743bcb03aed9272cf73ea2d2bdff38a802",
+      "subject": "Keep internal services private and preserve credential dialog dismissal ownership"
+    },
+    {
+      "commit": "a8abe0a1e036ff8c2bbfbee26f1d15d5fb4c1c66",
+      "subject": "Use strict explicit FTPS hostname verification on Android23"
+    },
+    {
+      "commit": "6574132911d37b21fa676bf06a659f70bf3ba531",
+      "subject": "Treat peer-close timing as expected only in rejected FTPS fixture cases"
+    },
+    {
+      "commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+      "subject": "Freeze exact Android23 FTPS evidence and complete upstream validation candidate"
+    }
+  ]
+}

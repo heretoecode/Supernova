@@ -1,0 +1,19 @@
+{
+  "artifact_sha256": "cda7123ce991ed3c9d0ff07b0053fb5b787a89d3c210053e110ae8d66c8100ae",
+  "artifact_bytes": 47874995,
+  "independent_archive_digest_and_crc": "pass",
+  "junit_xml_files": 30,
+  "modules": {
+    "Video": {
+      "passed": 182,
+      "total": 182
+    }
+  },
+  "retained_skipped_cases": [],
+  "lint_severities": {},
+  "physical_shield": "NOT RUN",
+  "run_id": 41133244888,
+  "artifact_id": 13014218459,
+  "source_commit": "83aede983501c0ad728576a144d2a0ef51998190",
+  "conclusion": "success"
+}

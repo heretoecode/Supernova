@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Defines shared audio delay values, limits and formatting for playback pickers. */
 public abstract class AudioDelayPickerAbstract extends FrameLayout {
 
     private static final Logger log = LoggerFactory.getLogger(AudioDelayPickerAbstract.class);

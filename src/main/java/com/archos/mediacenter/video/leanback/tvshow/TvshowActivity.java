@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
+/** Hosts the TV show details screen. */
 public class TvshowActivity extends LeanbackActivity {
 
     public static final String SLIDE_TRANSITION_EXTRA = "slide_transition";
@@ -34,7 +35,7 @@ public class TvshowActivity extends LeanbackActivity {
         super.onCreate(savedInstanceState);
         // Set the enter animation only when asked
         if (getIntent().getBooleanExtra(SLIDE_TRANSITION_EXTRA, false)) {
-            int direction = getIntent().getIntExtra(SLIDE_DIRECTION_EXTRA, Gravity.RIGHT);
+            int direction = getIntent().getIntExtra(SLIDE_DIRECTION_EXTRA, Gravity.END);
             getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
             getWindow().setEnterTransition(new Slide(direction));
         }

@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.utils;
 
+/** Stores IMDb and TMDb identifiers for online metadata matching. */
 public class OnlineId {
     private String imdbId;
     private String tmdbId;
@@ -40,6 +41,6 @@ public class OnlineId {
         if (imdbId != null) {
             // remove all non numeric characters from imdbID (often starts with tt)
             return imdbId.replaceAll("[^\\d]", "");
-        } else return imdbId;
+            } else return imdbId;
     }
 }

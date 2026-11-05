@@ -1,0 +1,30 @@
+{
+  "base": "b4a6ee7a010c9b5b6af8731108f3973477bfc7f5",
+  "validated_source": "83aede983501c0ad728576a144d2a0ef51998190",
+  "last_application_change": "cfb65fac535ab1c64bf6773d58b25e11105c6bf9",
+  "unchanged": {
+    "AndroidManifest.xml": true,
+    "build.gradle": true,
+    "settings.gradle": true,
+    "gradle.properties": true,
+    "assets/foundation": true,
+    "res/xml": true,
+    ".github/signing": true
+  },
+  "original_build_and_native_inputs_unchanged": true,
+  "original_input_files_compared": 88,
+  "tested_git_objects": {
+    "src/main": "f70391c0653278c9e11c3ac36b39cec584254967",
+    "src/test": "06cae2e79b0afe7bce0dbbdc41f90e0ba8ac1c2f",
+    "res": "df320ea71beb115264cbca30a50e8587ce86cbdc",
+    "assets": "53ff8376c97036f62334998977275425f8d863d5",
+    ".github/workflows": "5ceef2dc727091d947a2330ef18081d502765f20",
+    "AndroidManifest.xml": "0054e3359347da4fada1ff9eae75c93486b4829c",
+    "build.gradle": "3a516bfe54c6f75dad901501c78d5be2c52fe7e1"
+  },
+  "new_test_only_overlays": {
+    ".github/build/next-medialib-test-fixtures.patch": "8ca9f52e81a1c93f76b8f15f937800757505ad66004c7a67148c2aac691e50c4",
+    ".github/build/next-filecore-test-fixtures.patch": "1cd857d81162250c888ac3edcd65d3f8f23a1c52e70b90c2f8fe5695e8a2b948"
+  },
+  "physical_shield": "NOT RUN"
+}

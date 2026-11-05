@@ -1,0 +1,17 @@
+{
+  "source_sha": "65840ca126d8d4394c7d51931cc5843fe5eaa248",
+  "dependency_sha": "7fed3c9c77e110cd8932a6c478089139e608fced",
+  "result": "FAIL",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "duration": "39s",
+  "log_sha256": "c035b51368d9a851cda13884a9dc692e0a15a847f8a269c2a4e6330615ad53a7",
+  "tests": 8,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}

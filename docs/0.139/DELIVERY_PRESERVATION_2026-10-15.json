@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "source_commit": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+  "approved_implementation": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "non_documentation_source_unchanged": true,
+  "html_css_preserved": true,
+  "html_0138_and_older_history_preserved": true,
+  "existing_published_0137_and_older_history_preserved": true,
+  "no_main_merge": true,
+  "no_design_change": true,
+  "no_0140_work": true,
+  "no_signing_identity_change": true,
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false
+}

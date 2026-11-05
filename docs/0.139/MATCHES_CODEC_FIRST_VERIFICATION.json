@@ -1,0 +1,30 @@
+{
+  "result": "FAIL",
+  "source_sha": "eedd8ad8",
+  "dependency_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "log_sha256": "579a87153b18bd15641f169ef2e8c76be1791cb6a9efd896a8660ed781a6bbb6",
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.MediaMatchReconciliationTest"
+  ],
+  "tests": 38,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "failed_tests": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "test": "unsupportedDefaultSelectionShowsExactCategoriesAndDoesNotCreatePartialBackup",
+      "message": "java.lang.AssertionError: expected:<IDLE> but was:<PREPARING_EXPORT>"
+    },
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+      "test": "unsupportedApprovedCategoryFailsWithoutSilentlyDroppingIt",
+      "message": "java.lang.AssertionError: Backup verified. Choose where to save it. expected:<FAILED> but was:<EXPORT_READY>"
+    }
+  ],
+  "diagnosis": "Two former unsupported-MATCHES expectations are obsolete with codec26. Replace them with positive real model/controller round trips; production preview also needs MATCHES in its inventory selection."
+}

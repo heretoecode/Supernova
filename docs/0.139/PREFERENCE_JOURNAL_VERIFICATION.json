@@ -1,0 +1,21 @@
+{
+  "source_sha": "37f600de1e62897806f2eaa1832f4dbc0bdae324",
+  "classes": 5,
+  "tests": 20,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "checks": [
+    "Selected settings replacement, present-empty clearing, missing categories preserved",
+    "Process death at journal and preference checkpoints rolls back selected originals",
+    "Process death after durable completion retains restored values",
+    "Cancellation and injected I/O failure roll back before completion",
+    "Stale preview, pending recovery and unregistered codecs rejected before mutation",
+    "Invalid recovery journal retains evidence without partial rollback",
+    "Unselected credentials and unrelated preferences preserved; auth canary absent from private journal"
+  ],
+  "limits": [
+    "Synthetic process-death checkpoints; no physical power loss or filesystem failure simulation",
+    "Preference codecs only; database, SAF, hardware-specific safety and production lifecycle integration remain incomplete"
+  ]
+}

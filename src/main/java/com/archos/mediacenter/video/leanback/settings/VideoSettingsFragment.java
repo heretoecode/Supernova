@@ -15,20 +15,26 @@
 package com.archos.mediacenter.video.leanback.settings;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
+/** Displays TV Settings preference screens and their dialogs. */
 public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
-
     private PrefsFragment mPrefsFragment;
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
@@ -54,7 +60,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
     }
 
     @Override
-    public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Note: Don't apply window theme for leanback preferences
@@ -69,7 +75,7 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
             }
         };
         PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .registerOnSharedPreferenceChangeListener(mThemeChangeListener);
+            .registerOnSharedPreferenceChangeListener(mThemeChangeListener);
     }
 
     @Override
@@ -77,50 +83,138 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    .unregisterOnSharedPreferenceChangeListener(mThemeChangeListener);
+                .unregisterOnSharedPreferenceChangeListener(mThemeChangeListener);
         }
         super.onDestroyView();
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
-        @Override public void onDisplayPreferenceDialog(androidx.preference.Preference pref){
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&PreviewPreferenceDialogs.show(this,pref))return;
+        SettingsWorkspace workspace;
+        private Bundle workspaceState;
+        private BackupSettingsController backupController;
+        private Bundle backupViewState;
+
+        @Override
+        public void onCreate(Bundle state) {
+            super.onCreate(state);
+            workspaceState = state;
+            if (SettingsWorkspace.enabled(requireContext())) {
+                backupController = new BackupSettingsController(this);
+                backupViewState = state == null ? null : state.getBundle("supernova_backup_view");
+            }
+        }
+
+        @Override
+        public void onDisplayPreferenceDialog(Preference pref) {
+            if (SettingsWorkspace.enabled(requireContext()) && PreviewPreferenceDialogs.show(this, pref))
+                return;
             super.onDisplayPreferenceDialog(pref);
         }
 
-        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);
-        }
-        @Override public android.view.View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup container,Bundle state){
-            android.view.View nativeView=super.onCreateView(inflater,container,state);
-            if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
-            androidx.recyclerview.widget.RecyclerView list=getListView();if(list.getParent() instanceof android.view.ViewGroup)((android.view.ViewGroup)list.getParent()).removeView(list);
-            android.widget.FrameLayout full=new android.widget.FrameLayout(requireContext());int pad=Math.round(28*getResources().getDisplayMetrics().density);full.setPadding(pad,0,pad,pad);full.addView(list,new android.widget.FrameLayout.LayoutParams(-1,-1));return full;
+        @Override
+        public RecyclerView onCreateRecyclerView(
+            LayoutInflater inflater, ViewGroup parent, Bundle state) {
+            return SettingsWorkspace.enabled(requireContext()) ? PreviewSettings.grid(requireContext())
+                                                               : super.onCreateRecyclerView(inflater, parent, state);
         }
 
-        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.adapter(screen):super.onCreateAdapter(screen);}
+        @Override
+        public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle state) {
+            View nativeView = super.onCreateView(inflater, container, state);
+            if (!SettingsWorkspace.enabled(requireContext()))
+                return nativeView;
+            RecyclerView list = getListView();
+            if (list.getParent() instanceof ViewGroup)
+                ((ViewGroup) list.getParent()).removeView(list);
+            FrameLayout full = new FrameLayout(requireContext());
+            int pad = Math.round(28 * getResources().getDisplayMetrics().density);
+            full.setPadding(pad, 0, pad, pad);
+            full.addView(list, new FrameLayout.LayoutParams(-1, -1));
+            return full;
+        }
+
+        @Override
+        protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
+            return SettingsWorkspace.enabled(requireContext()) ? PreviewSettings.adapter(screen)
+                                                               : super.onCreateAdapter(screen);
+        }
+
         private VideoPreferencesCommon mPreferencesCommon = new VideoPreferencesCommon(this);
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             mPreferencesCommon.onCreatePreferences(savedInstanceState, rootKey);
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.organise(this);
+            if (SettingsWorkspace.enabled(requireContext()))
+                PreviewSettings.organise(this);
         }
 
         @Override
-        public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+        public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
-            if (getListView() != null) {
-                getListView().setBackgroundColor(ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
+            final RecyclerView list = getListView();
+            if (list != null) {
+                list.setBackgroundColor(SettingsWorkspace.enabled(requireContext())
+                        ? Color.TRANSPARENT
+                        : ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
-            if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
+            if (!SettingsWorkspace.enabled(requireContext())
+                && requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false)) {
                 scrollToPreference("streaming_category");
                 requireActivity().getIntent().removeExtra("show_streaming_settings");
             }
-            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.sidebar(this);
+            if (SettingsWorkspace.enabled(requireContext())) {
+                ViewGroup host = (ViewGroup) getListView().getParent();
+                host.setPadding(0, 0, 0, 0);
+                getListView().setVisibility(View.GONE);
+                workspace = new SettingsWorkspace(this, backupController, workspaceState);
+                host.addView(workspace, new FrameLayout.LayoutParams(-1, -1));
+                workspaceState = null;
+            }
+            if (backupController != null && backupViewState != null) {
+                backupController.restoreViewState(backupViewState);
+                backupViewState = null;
+            }
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
+
+            // Fix for #1898: on phones (touch input), tapping a row never gives it Android
+            // view focus, so the leanback GridLayoutManager has no focused child to anchor
+            // its scroll position to and snaps back to the top on the next layout pass
+            // (e.g. after a CheckBoxPreference toggle). On Android TV this does not happen
+            // since dpad navigation always keeps a row focused. Requesting focus on the
+            // touched row restores that anchor without affecting dpad navigation.
+            if (list != null) {
+                list.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                    @Override
+                    public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+                        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+                            View child = recyclerView.findChildViewUnder(event.getX(), event.getY());
+                            if (child != null && !child.hasFocus())
+                                child.requestFocus();
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
+                    }
+
+                    @Override
+                    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onDestroyView() {
+            if (workspace != null) {
+                workspace.dispose();
+                workspace = null;
+            }
+            super.onDestroyView();
         }
 
         @Override
@@ -131,9 +225,12 @@ public class VideoSettingsFragment extends LeanbackSettingsFragmentCompat {
 
         @Override
         public void onSaveInstanceState(Bundle outState) {
+            if (workspace != null)
+                workspace.save(outState);
+            if (backupController != null)
+                outState.putBundle("supernova_backup_view", backupController.saveViewState());
             super.onSaveInstanceState(outState);
             mPreferencesCommon.onSaveInstanceState(outState);
         }
-
     }
 }

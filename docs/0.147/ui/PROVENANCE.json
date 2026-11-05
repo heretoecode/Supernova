@@ -1,0 +1,116 @@
+{
+  "source_commit": "f4abf7cb880243ba00481f82beee19d20bc72e33",
+  "run_id": 40945894979,
+  "artifact_id": 12930276206,
+  "artifact_sha256": "13775250f7160a556011abba219e0b9a8d3aeabe82e6c939ef6016b702380d27",
+  "renderer": "Android/Robolectric native graphics; synthetic test fixtures",
+  "physical_shield_capture": false,
+  "focused_tests": 88,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "images": [
+    {
+      "file": "0142-form-connect-focus.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "8e7392ea1a886cd1b63d9e26d241654d446e6881333b347b36fd89e84b2ee31e"
+    },
+    {
+      "file": "0147-age-rating-1080p.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "f5f61b3aab70ae7e6eaad089e19c710d4157652cc1775c6788f498c127129caa"
+    },
+    {
+      "file": "0147-age-rating-4k.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "1d95912fe1875ac533ca888a9a0ea9a9f26db6c3eba1d21552eff5896ac02972"
+    },
+    {
+      "file": "0147-age-rating-720p.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "fc6153a63592fe592886f46c2321c509ad69b459b18f4d9ad1a64e4a997e8645"
+    },
+    {
+      "file": "0147-network-4k.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "154dd9fe827e8004bffa405097161d8aec9c5fdfb8f38f55f1bf623ac550c775"
+    },
+    {
+      "file": "0147-network-720p.png",
+      "width": 1280,
+      "height": 720,
+      "sha256": "0ef8c998c5aa048b55375a91b9d778d5ba2214ebcc27d561038bac1c35392e1b"
+    },
+    {
+      "file": "0147-network-locations-empty.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "dab5097e60d589900207f5d75a1c7a34339c2f5d0084fe7fc7216ed2aeedddce"
+    },
+    {
+      "file": "0147-settings-global-category.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "0882581009d03a14b7b5d0966177bbff763d89fc7eac9e4cc996a0861d1a6af6"
+    },
+    {
+      "file": "0147-settings-global-grid.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "3e629713848a4fbd149fcb4e406fa8c9ee11327b8fec1e1e9d898aa35bbff31b"
+    },
+    {
+      "file": "0147-shell-card-0.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "366b491614c544d8c42592cf475be57f4864b1149f1067a524d99f96c11bf5bd"
+    },
+    {
+      "file": "0147-shell-card-1.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "4b42f88c32191cfbcd67a1b45cbc7a30843f9d7294a3cb117b3029b1faa2c499"
+    },
+    {
+      "file": "0147-shell-card-2.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "de071e51d8792b404c3232bf503725a45937f77063af7f1c7767442d5cf3f183"
+    },
+    {
+      "file": "0147-shell-card-3.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "45959912a0ccda34baba4762d2a7f852003dcdb0e1929779c11ea38483b604af"
+    },
+    {
+      "file": "0147-shell-card-4.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e0b65be7f67a73ae3b37e4a1a69a31d551b0a63a054b79d95d4051363fa765cf"
+    },
+    {
+      "file": "0147-shell-card-5.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "b6f2e26772d2e89f5bddc1d36d876118c1b9c2a8f1c1c901d1d744032cd5b0ad"
+    },
+    {
+      "file": "0147-shell-landing.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "8684202430e56c0d808c5d65b3a2fa354b040d6bb4b0a910a78d692d1845a54c"
+    },
+    {
+      "file": "0147-shell-webdav-form.png",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "dba50c94f4b331b6d21084245d512f1883eeab02110dd2c04c6beffba8be5e5d"
+    }
+  ]
+}

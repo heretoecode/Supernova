@@ -1,0 +1,10 @@
+{
+  "run_id": 37961683385,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/37961683385",
+  "workflow_commit": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1",
+  "operation": "validate",
+  "conclusion": "success",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "matches_first_signed_foundation": true,
+  "apk_signed": false
+}

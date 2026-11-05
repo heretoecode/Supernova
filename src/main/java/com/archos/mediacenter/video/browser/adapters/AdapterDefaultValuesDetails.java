@@ -20,37 +20,41 @@ import com.archos.mediacenter.video.R;
 import android.content.Context;
 import android.content.res.Resources;
 
+/** Supplies default artwork and layout dimensions for detailed browser rows. */
 public enum AdapterDefaultValuesDetails implements AdapterDefaultValues {
 
     INSTANCE;
 
+    @Override
     public int getDefaultDirectoryThumbnail() {
         return R.drawable.filetype_video_folder_vertical;
     }
 
+    @Override
     public int getDefaultShortcutThumbnail() {
         return R.drawable.filetype_video_folder_indexed_vertical;
     }
 
+    @Override
     public int getDefaultVideoThumbnail() {
         return R.drawable.filetype_video_large;
     }
 
+    @Override
     public int getMediaSyncIcon(int state) {
         return R.drawable.label_video_disabled; // not required here
     }
 
+    @Override
     public int getLayoutId() {
         return R.layout.browser_item_details;
     }
 
+    @Override
     public int getLayoutId(int itemType) {
         int layoutId;
 
         switch (itemType) {
-            case ItemViewType.ITEM_VIEW_TYPE_HEADER_SHOW:
-                layoutId = R.layout.browser_item_header_show;
-                break;
             case ItemViewType.ITEM_VIEW_TYPE_SHOW:
                 layoutId = R.layout.browser_item_details_show;
                 break;
@@ -63,6 +67,7 @@ public enum AdapterDefaultValuesDetails implements AdapterDefaultValues {
         return layoutId;
     }
 
+    @Override
     public int[] getThumnailHeightWidth(Context context) {
         Resources res = context.getResources();
         return new int[] {
@@ -71,6 +76,7 @@ public enum AdapterDefaultValuesDetails implements AdapterDefaultValues {
         };
     }
 
+    @Override
     public int getExpandedZone() {
         return R.id.expanded;
     }

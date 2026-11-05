@@ -4,6 +4,7 @@ package com.archos.mediacenter.video.streaming;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import androidx.preference.*;
 import com.archos.mediacenter.video.R;
 import org.json.JSONArray;
@@ -174,7 +175,7 @@ public final class StreamingPreferences {
     private void updateSummary(Set<String> chosen) {
         List<String> names = new ArrayList<>();
         for (StreamingRepository.Provider p : catalogue) if (chosen.contains(Integer.toString(p.id))) names.add(p.name);
-        providers.setSummary(names.isEmpty() ? fragment.getString(R.string.streaming_select_providers) : android.text.TextUtils.join(", ", names));
+        providers.setSummary(names.isEmpty() ? fragment.getString(R.string.streaming_select_providers) : TextUtils.join(", ", names));
     }
     private void updatePreferred(Set<String> chosen) {
         List<CharSequence> names = new ArrayList<>(), ids = new ArrayList<>();

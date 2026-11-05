@@ -18,6 +18,7 @@ import androidx.leanback.widget.AbstractDetailsDescriptionPresenter;
 
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
 
+/** Binds network shortcut descriptions to the Details page. */
 public class ShortcutDetailsPresenter extends AbstractDetailsDescriptionPresenter {
 
     @Override

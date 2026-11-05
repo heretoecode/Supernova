@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.content.Context;
+import android.os.SystemClock;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.util.*;
@@ -12,9 +14,10 @@ public final class PutioSyncScheduler {
     public static void request(Context context){request(context,"unknown");}
     public static void request(Context context,String origin){
         final String trigger=Arrays.asList("manual","startup","resume","scheduled").contains(origin)?origin:"unknown";
+        if(!enabled(context))return;
         if(!BUSY.compareAndSet(false,true))return;Context app=context.getApplicationContext();
         StreamingRepository.IO.submit(()->{try{
-            String token=new PutioTokenStore(app).read();if(token==null)return;
+            if(!enabled(app))return;String token=new PutioTokenStore(app).read();if(token==null)return;
             sync(app,trigger,new PutioReadClient(token));
         }catch(Exception failure){
             Diagnostics.event("putio_sync_incomplete","reason","LOCAL_UNAVAILABLE","trigger",trigger);
@@ -22,7 +25,8 @@ public final class PutioSyncScheduler {
     }
     /** Runs on the owning worker so transport operations inherit this sync's correlation. */
     static void sync(Context app,String trigger,PutioReadClient client){
-        long started=android.os.SystemClock.elapsedRealtime();String operation=Diagnostics.operation("putio_sync");
+        if(!enabled(app))return;
+        long started=SystemClock.elapsedRealtime();String operation=Diagnostics.operation("putio_sync");
         try(Diagnostics.OperationScope ignored=Diagnostics.operationScope(operation)){
             Diagnostics.event("putio_sync_started","operation_id",operation,"trigger",trigger);
             checkInterrupted();PutioReadClient.Account account=client.account();checkInterrupted();
@@ -44,6 +48,7 @@ public final class PutioSyncScheduler {
             }
         }finally{Diagnostics.finishOperation(operation,"putio_sync",started);}
     }
+    private static boolean enabled(Context context){return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_putio_enabled",true);}
     private static void checkInterrupted()throws InterruptedException{if(Thread.currentThread().isInterrupted())throw new InterruptedException();}
     private PutioSyncScheduler(){}
 }

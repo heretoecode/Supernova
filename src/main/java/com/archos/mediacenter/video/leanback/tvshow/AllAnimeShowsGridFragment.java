@@ -19,15 +19,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.widget.CursorObjectAdapter;
 import androidx.leanback.widget.FocusHighlight;
@@ -60,6 +57,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays an anime show grid with loading, sorting and selection handling. */
 public class AllAnimeShowsGridFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "AllAnimeShowsGridFragment";
@@ -234,6 +232,7 @@ public class AllAnimeShowsGridFragment extends MyVerticalGridFragment implements
                 mSortOrderItem = AnimeShowsSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
@@ -333,7 +332,7 @@ public class AllAnimeShowsGridFragment extends MyVerticalGridFragment implements
                 return new AllAnimeShowsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("showWatched"));
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override

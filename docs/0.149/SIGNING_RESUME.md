@@ -1,0 +1,13 @@
+# Signing continuation — resolved and delivered
+
+The owner updated the existing signing environment permissions and restarted the previously blocked workflow. [Run 41331247034, attempt 2](https://github.com/heretoecode/Supernova/actions/runs/41331247034/attempts/2) **succeeded**. No approval remains pending; signing, independent CI verification, private-material cleanup and artifact publication all passed. No new build, release or signing identity was introduced by delivery.
+
+The original attempt 1 was rejected before any steps because `codex/agreed-fixes-2026-11-01` was not permitted in `supernova-foundation-signing`. That historical blocker is resolved. [Access/history record](SIGNING_ACCESS.json) preserves the rejection and successful continuation; no further owner action is required for this delivered candidate.
+
+Signing consumed the exact payload from [successful conformance 41328625056](https://github.com/heretoecode/Supernova/actions/runs/41328625056), source `cb28b1b936891374bc801f0b58b3397926fc3086`. The workflow checked exact source, complete test/lint/native/resource proof and unsigned hash before key access, signed with the existing certificate, checked non-signature entry parity and published [signed artifact 13093937009](https://github.com/heretoecode/Supernova/actions/runs/41331247034/artifacts/13093937009). Private material remained inside protected CI and cleanup passed; no local signing key was accessed.
+
+The signed artifact was downloaded and independently verified with official Android build-tools 36. Its signature verifies for API23–36 (v1/v2/v3); certificate remains `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. Manifest, ZIP integrity/unique entries, alignment, all 84 native hashes, 64 offline licence entries, retained resources and full non-signature payload parity pass. Package/certificate/versionCode prerequisites match upgrade from 0.148; an actual installed upgrade is not claimed.
+
+[Supernova_0.149.apk is delivered in the existing Drive APK folder](https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk). Exactly one new file was uploaded; all 16 existing entries remain. The complete raw download is byte-identical to the verified signed artifact and was independently checked again. SHA-256: `cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c`.
+
+[Current delivery status](STATUS.md) · [public signing receipt](SIGNED_QA_EVIDENCE.json) · [local signed verification](INDEPENDENT_SIGNED_APK_VERIFICATION.json) · [Drive download verification](DRIVE_APK_READBACK_VERIFICATION.json) · [physical Shield acceptance still pending](SHIELD_QA.md).

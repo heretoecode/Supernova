@@ -1,0 +1,28 @@
+{
+  "source_sha": "684be1c5d401f7906fffe9c923f1a8433e4a18b1",
+  "result": "FAIL",
+  "classes": 4,
+  "tests": 30,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest"
+  ],
+  "failures_detail": [
+    {
+      "test": "sourceExportKeepsHiddenMembershipLogicalAndNeverCopiesMetadataArtworkAccountsOrLocationsByDefault",
+      "message": "org.junit.ComparisonFailure: expected:<[\"[tmdb:movie:123]\",\"tmdb:tv:789\"]> but was:<[\"[unresolved:ca6ddfc1-4ece-4a12-9d4a-3324d6511ed2:v10]\",\"tmdb:tv:789\"]>"
+    },
+    {
+      "test": "actualCatalogIncludesHiddenWatchedExcludedFilesAndOrphanShowsWithoutAudio",
+      "message": "java.lang.AssertionError: expected:<2> but was:<0>"
+    }
+  ],
+  "duration": "2m 14s",
+  "log_sha256": "b94e87792dabea168e0375999c575ed6cb3079532ff97d7843caeb5d37017b0d",
+  "correction": "Native fixture used scraper type1, but actual BaseTags.MOVIE is11. Correct fixture to production enum; rerun required."
+}

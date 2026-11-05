@@ -1,0 +1,19 @@
+{
+  "result": "FAIL",
+  "source_sha": "2fe303c4caaffe17d3a944d4dd58d1e5d0c33ff5",
+  "dependency_sha": "3b8cd3650fe95452534fa201c3d093d00e5dcc94",
+  "duration": "52s",
+  "log_sha256": "267803c503124579e50a307a2b659932f4d3ee54804a1da37394e644b8ba1a4c",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.LegacySchema62MigrationTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "reason": "Cross-kind fixture inserted a movie through native triggers and deleted its old episode/last parent before creating the intended retained-owner state. Inventory correctly refused malformed identification. All other executed cases passed.",
+  "tests": 39,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}

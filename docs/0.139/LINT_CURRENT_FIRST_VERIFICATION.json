@@ -1,0 +1,67 @@
+{
+  "source_sha": "6ce3eeb03c9c97f6a9bf4c60a5af098209fea278",
+  "result": "FAIL",
+  "duration": "2m2s",
+  "errors": 5,
+  "warnings": 1768,
+  "report_sha256": "d3129d35824c323514db90e8bd6776679432e50c1682e7bf6202603d8a599c07",
+  "log_sha256": "64998c44ec03be61787f60549a7724e288f2518839472a06e9d6576c338d7c11",
+  "blocking_issues": [
+    {
+      "id": "NewApi",
+      "message": "Call requires API level 24 (current min is 23): `java.lang.String#chars`",
+      "locations": [
+        {
+          "file": "/workspace/supernova139-lists-build/Video/src/main/java/com/archos/mediacenter/video/utils/backup/PortableBookmarks.java",
+          "line": "15",
+          "column": "52"
+        }
+      ]
+    },
+    {
+      "id": "NewApi",
+      "message": "Call requires API level 24 (current min is 23): `java.lang.String#chars`",
+      "locations": [
+        {
+          "file": "/workspace/supernova139-lists-build/Video/src/main/java/com/archos/mediacenter/video/utils/backup/PortableLocations.java",
+          "line": "15",
+          "column": "27"
+        }
+      ]
+    },
+    {
+      "id": "NewApi",
+      "message": "Call requires API level 24 (current min is 23): `java.lang.String#chars`",
+      "locations": [
+        {
+          "file": "/workspace/supernova139-lists-build/Video/src/main/java/com/archos/mediacenter/video/utils/backup/PortableLocations.java",
+          "line": "23",
+          "column": "84"
+        }
+      ]
+    },
+    {
+      "id": "WrongConstant",
+      "message": "Must be one of: Typeface.NORMAL, Typeface.BOLD, Typeface.ITALIC, Typeface.BOLD_ITALIC",
+      "locations": [
+        {
+          "file": "/workspace/supernova139-lists-build/Video/src/main/java/com/archos/mediacenter/video/leanback/InlineMenuSelector.java",
+          "line": "22",
+          "column": "74"
+        }
+      ]
+    },
+    {
+      "id": "AppCompatCustomView",
+      "message": "This custom view should extend `androidx.appcompat.widget.AppCompatTextView` instead",
+      "locations": [
+        {
+          "file": "/workspace/supernova139-lists-build/Video/src/main/java/com/archos/mediacenter/video/leanback/InlineMenuSelector.java",
+          "line": "10",
+          "column": "40"
+        }
+      ]
+    }
+  ],
+  "limits": "Lint only, native build excluded. Follow-up preserves min23 and explicit light typography; no warning-baseline suppression or minimum API increase."
+}

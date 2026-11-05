@@ -20,16 +20,19 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.leanback.app.GuidedStepSupportFragment;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
+import com.archos.mediacenter.video.leanback.PreviewSubtitleChooser;
 
+/** Hosts the TV subtitle file wizard and handles returning from it. */
 public class SubtitlesWizardActivity extends LeanbackActivity {
-    private com.archos.mediacenter.video.leanback.PreviewSubtitleChooser previewChooser;
+    private PreviewSubtitleChooser previewChooser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
-            previewChooser=com.archos.mediacenter.video.leanback.PreviewSubtitleChooser.create(this);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
+            previewChooser=PreviewSubtitleChooser.create(this);
             previewChooser.start();return;
         }
         GuidedStepSupportFragment fragment = new SubtitlesWizardFragment();

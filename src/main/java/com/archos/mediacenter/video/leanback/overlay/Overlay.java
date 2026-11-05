@@ -15,6 +15,10 @@
 package com.archos.mediacenter.video.leanback.overlay;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.app.DetailsSupportFragment;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -26,6 +30,7 @@ import android.view.ViewGroup;
 import com.archos.customizedleanback.app.MyVerticalGridFragment;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.TopNavigation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +79,7 @@ public class Overlay {
             throw new IllegalStateException("Overlay is not compatible with this fragment: "+fragment);
         }
 
-        com.archos.mediacenter.video.leanback.TopNavigation previewNav=findPreviewNavigation(fragmentView);
+        TopNavigation previewNav=findPreviewNavigation(fragmentView);
         ViewGroup parentView = previewNav!=null
             ? previewNav.getStatusContainer()
             : (ViewGroup)fragmentView.findViewById(parentViewId);
@@ -87,24 +92,25 @@ public class Overlay {
         mScanProgress = new ScannerAndScraperProgress(mContext, mOverlayRoot);
         mClock = new Clock(mContext, mOverlayRoot);
         if (previewNav!=null) {
-            com.archos.mediacenter.video.leanback.TopNavigation nav = previewNav;
+            TopNavigation nav = previewNav;
             View clock = mOverlayRoot.findViewById(R.id.clock);
             ((ViewGroup)clock.getParent()).removeView(clock);
-            clock.setPadding(0, 0, 0, 0);
-            ((android.widget.TextView)clock).setGravity(android.view.Gravity.CENTER);
-            ((android.widget.TextView)clock).setTypeface(android.graphics.Typeface.create("sans-serif-light",android.graphics.Typeface.NORMAL));
+            int clockPadding=Math.round(6*mContext.getResources().getDisplayMetrics().density);clock.setPadding(0,clockPadding,0,clockPadding);
+            ((TextView)clock).setTextSize(19);((TextView)clock).setIncludeFontPadding(true);
+            ((TextView)clock).setGravity(Gravity.CENTER_VERTICAL|Gravity.END);
+            ((TextView)clock).setTypeface(Typeface.create("sans-serif-light",Typeface.NORMAL));
             View fallbackClock=nav.getStatusContainer().findViewWithTag("preview-default-clock");if(fallbackClock!=null)nav.getStatusContainer().removeView(fallbackClock);
-            nav.getStatusContainer().addView(clock, new android.widget.FrameLayout.LayoutParams(-1, -1));
+            nav.getStatusContainer().addView(clock, new FrameLayout.LayoutParams(-1, -1));
             mScanProgress.useFloatingStyle();
             View progress = mOverlayRoot.findViewById(R.id.progress_group);
             ((ViewGroup)progress.getParent()).removeView(progress);
-            nav.getScanContainer().addView(progress, new android.widget.FrameLayout.LayoutParams(-2, -2, android.view.Gravity.END | android.view.Gravity.BOTTOM));
+            nav.getScanContainer().addView(progress, new FrameLayout.LayoutParams(-2, -2, Gravity.END | Gravity.BOTTOM));
         }
     }
 
-    private static com.archos.mediacenter.video.leanback.TopNavigation findPreviewNavigation(View view){
-        if(view instanceof com.archos.mediacenter.video.leanback.TopNavigation)return (com.archos.mediacenter.video.leanback.TopNavigation)view;
-        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){com.archos.mediacenter.video.leanback.TopNavigation found=findPreviewNavigation(group.getChildAt(i));if(found!=null)return found;}}
+    private static TopNavigation findPreviewNavigation(View view){
+        if(view instanceof TopNavigation)return (TopNavigation)view;
+        if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++){TopNavigation found=findPreviewNavigation(group.getChildAt(i));if(found!=null)return found;}}
         return null;
     }
 

@@ -1,0 +1,21 @@
+{
+  "source_sha": "30ae262b62141ac974154f9d3e0fe6247bed6bc2",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 31,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.LegacyViewingSnapshotTest",
+    "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest"
+  ],
+  "duration": "2m28s",
+  "log_path": "/workspace/scratch/supernova139-legacy-viewing-source-first.log",
+  "log_sha256": "111f5e9cfe03c920a01568ec7da912a798382510987aceb96a45620d5217e5c5",
+  "coverage": "Read-only legacy viewing snapshot and source exporter, portable viewing-state and viewing-history regressions. Native timestamps are not fabricated completion times.",
+  "limits": "Synthetic native SQLite fixtures; no actual historical owner archive, player output or Shield acceptance. Native build tasks excluded."
+}

@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.picasso.FidelityTransformation;
 import com.archos.mediascraper.ScraperImage;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -124,7 +125,7 @@ public abstract class ScraperImagePresenter extends Presenter {
                         .resize(decodeWidth, decodeHeight)
                         .centerCrop()
                         .onlyScaleDown()
-                        .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(targetWidth, targetHeight))
+                        .transform(new FidelityTransformation(targetWidth, targetHeight))
                         .noFade()
                         .error(R.drawable.filetype_new_image)
                         .into(mImageViewTarget);
@@ -135,7 +136,7 @@ public abstract class ScraperImagePresenter extends Presenter {
                         .resize(decodeWidth, decodeHeight)
                         .centerCrop()
                         .onlyScaleDown()
-                        .transform(new com.archos.mediacenter.video.picasso.FidelityTransformation(targetWidth, targetHeight))
+                        .transform(new FidelityTransformation(targetWidth, targetHeight))
                         .noFade()
                         .error(R.drawable.filetype_new_image)
                         .into(mImageViewTarget);

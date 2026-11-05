@@ -1,0 +1,551 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "0f20d7db872abeeb2edbcb65d4e24ea0454ec7fbe948397ebaee54bd60d14e9f",
+  "version_name": "0.133",
+  "version_code": 133,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "verified_rebuilt_ffmpeg_libraries": 24,
+  "ffmpeg_source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "native_build_evidence_sha256": "b2e4b3c8e5abe185fcbc54be319c3601fa25606bdbb31db84dfbfb6fea3a6fa5",
+  "source_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+  "apk_filename": "Supernova-Foundation.apk",
+  "apk_bytes": 102167440,
+  "debuggable": false,
+  "test_only": false,
+  "signature_verified": true,
+  "signature_verification_summary": [
+    "Verifies",
+    "Verified using v1 scheme (JAR signing): true",
+    "Verified using v2 scheme (APK Signature Scheme v2): true",
+    "Verified using v3 scheme (APK Signature Scheme v3): true",
+    "Verified using v3.1 scheme (APK Signature Scheme v3.1): false",
+    "Verified using v4 scheme (APK Signature Scheme v4): false",
+    "Verified for SourceStamp: false",
+    "Number of signers: 1",
+    "WARNING: META-INF/com/android/build/gradle/app-metadata.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/version-control-info.textproto not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/SENTRY_THIRD_PARTY_NOTICES.md not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/io/sentry/sentry-android-replay/verification.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/native-image/io.sentry/sentry/native-image.properties not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/services/java.security.Provider not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/services/l5 not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/.",
+    "WARNING: META-INF/services/org.slf4j.spi.SLF4JServiceProvider not protected by signature. Unauthorized modifications to this JAR entry will not be detected. Delete or move the entry outside of META-INF/."
+  ],
+  "verification": "Independent downloaded-artifact verification passed",
+  "signed": true,
+  "branding_visible_pixel_checks": [
+    {
+      "resource": "drawable/foundation_banner",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_banner.png",
+      "visible_rgba_sha256": "a2118c0dc20e92a922f684f06019c3bdd1319337aee504079a7cab22fabf7909"
+    },
+    {
+      "resource": "drawable/foundation_splash_image",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_splash_image.png",
+      "visible_rgba_sha256": "68c5c91db10c5f325fc47df92397692ee0d0f592326f42d97337d8bf376f3500"
+    },
+    {
+      "resource": "drawable/foundation_ring",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_ring.png",
+      "visible_rgba_sha256": "f679eb5aef0cc498ac60eb5ceae19a19754b5880373aad84da13e0690f7ee7e9"
+    },
+    {
+      "resource": "drawable/foundation_space_black",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_space_black.png",
+      "visible_rgba_sha256": "678fd0ea0a3129b39adec42f299a8492d1e336b11d29d3a3255147a071b35ed3"
+    },
+    {
+      "resource": "drawable/foundation_adaptive_foreground",
+      "configuration": "nodpi",
+      "source": "res/drawable-nodpi/foundation_adaptive_foreground.png",
+      "visible_rgba_sha256": "164464621e41a94127908bfa6045d55af9d480993fba17359c87f3fd391acc7f"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "mdpi",
+      "source": "res/mipmap-mdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "1c6d44f7ac5cb1aa363e5725523c65fc4acc36187895fbd26e3d860509086153"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "hdpi",
+      "source": "res/mipmap-hdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "56048dd30c85eaef050d49a6d1a6995b75484fed6f8052f3a41faf9deda15cec"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "xhdpi",
+      "source": "res/mipmap-xhdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "b457acca1ce26c540dbec56562063c58329a36cd693639a42d75bbb1a7fe8b58"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "xxhdpi",
+      "source": "res/mipmap-xxhdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "bf987f75b09d23ae300e7227fe7623996f08ce8c93c11b3e3a9ed2c45144a97f"
+    },
+    {
+      "resource": "mipmap/foundation_launcher",
+      "configuration": "xxxhdpi",
+      "source": "res/mipmap-xxxhdpi/foundation_launcher.png",
+      "visible_rgba_sha256": "a925658a0bc17389fae2f219b84f94983366cfaea2a2d9b5e102114c6caf779d"
+    }
+  ],
+  "native_libraries": [
+    {
+      "path": "lib/arm64-v8a/libaudiocompress.so",
+      "bytes": 5816,
+      "sha256": "5b59206853b0bd8cab3edfcab34a38bf0f7d184b04e70af61d740ca813bf7480"
+    },
+    {
+      "path": "lib/arm64-v8a/libavcodec.so",
+      "bytes": 11017568,
+      "sha256": "f3dc7c7c3e2dfc9cf4ec3a106f8d0fb06a4b89a39a5c43f902124e0d75b12ba2"
+    },
+    {
+      "path": "lib/arm64-v8a/libavfilter.so",
+      "bytes": 3960344,
+      "sha256": "0828f3575813f55e702278aa1100efb58cb1e53922e5b087489d0a15fc715601"
+    },
+    {
+      "path": "lib/arm64-v8a/libavformat.so",
+      "bytes": 6908680,
+      "sha256": "fb8c5e82b0e0ad604092daac555e9d958da1b7b39228582bba4dda283e4f11f0"
+    },
+    {
+      "path": "lib/arm64-v8a/libavos.so",
+      "bytes": 1658368,
+      "sha256": "d43c83d03ee05c81bcd58e0cede2ab6d407653f867b8f6680f88c440f7365d54"
+    },
+    {
+      "path": "lib/arm64-v8a/libavos_android.so",
+      "bytes": 10848,
+      "sha256": "52fa131185cbd672904d26d9c31353c809b68f46748919fdd2bc16a82bddc70a"
+    },
+    {
+      "path": "lib/arm64-v8a/libavosjni.so",
+      "bytes": 47208,
+      "sha256": "7a81b7d64cda4068dae25998e50a563cbab5c5845faf5a97eea1719b6458765d"
+    },
+    {
+      "path": "lib/arm64-v8a/libavutil.so",
+      "bytes": 737560,
+      "sha256": "78048004112cab8a4e355e10f96eeb98ceaaaff2141ece2c817fe633891e75ab"
+    },
+    {
+      "path": "lib/arm64-v8a/libcputest.so",
+      "bytes": 8072,
+      "sha256": "1697020ae3044bef03071a2b29bbbd65e251607a796f3683e77f1fbb11ea0945"
+    },
+    {
+      "path": "lib/arm64-v8a/libdav1d.so",
+      "bytes": 925312,
+      "sha256": "770672fea19cf4a27a495e766866be748acde8cd7bc09c44117f61e42054847a"
+    },
+    {
+      "path": "lib/arm64-v8a/libdeinterlace.so",
+      "bytes": 9408,
+      "sha256": "da903de8d3c7dc61b2df7b68054121172a8a8f63e732b20ca8c0438570d34b90"
+    },
+    {
+      "path": "lib/arm64-v8a/libfilecoreutils.so",
+      "bytes": 8976,
+      "sha256": "1552a2b836d38b7f90761cd10a9f35e7473d4757c9dcf760618ac8b7a3fa08f6"
+    },
+    {
+      "path": "lib/arm64-v8a/libmysofa.so",
+      "bytes": 270720,
+      "sha256": "fd5fa560d9898c060bb01c3e0ddf5f2495dc93d395995d46f4d66ec837577265"
+    },
+    {
+      "path": "lib/arm64-v8a/libnvpnativehelper.so",
+      "bytes": 188552,
+      "sha256": "0b5db05d7399cffcef62d5ae545a67c2d6061f75c1d7b7ac674ecf8b0d0bd0c4"
+    },
+    {
+      "path": "lib/arm64-v8a/libopus.so",
+      "bytes": 1965248,
+      "sha256": "561238411635d57abc06cce87d533fc90900da8753329421211ee480b49fb54c"
+    },
+    {
+      "path": "lib/arm64-v8a/libsentry-android.so",
+      "bytes": 19824,
+      "sha256": "8a8d4ac356f4927c41390166db93b9990a02a900497e85a445027dd405500ec5"
+    },
+    {
+      "path": "lib/arm64-v8a/libsentry.so",
+      "bytes": 800712,
+      "sha256": "18f256ec29f7a3813209657900c934524f96fb6f3b46ab8d2c7241c4ba02bd62"
+    },
+    {
+      "path": "lib/arm64-v8a/libsfdec.core.21.so",
+      "bytes": 102024,
+      "sha256": "665a2af9a82325831b4032d64bcf5d0817d0eee5cef81a3cfe048f3ad3904bc9"
+    },
+    {
+      "path": "lib/arm64-v8a/libsfdec.so",
+      "bytes": 8280,
+      "sha256": "173f319c8e2e3426d0cf317cb5dc68f3bea3238a9e908b71a23af5d5e2f33136"
+    },
+    {
+      "path": "lib/arm64-v8a/libswresample.so",
+      "bytes": 98768,
+      "sha256": "1c71fb08f899866970444c0fdc7a3f42bb4af72f40b382fbcbfa255618c1f3b0"
+    },
+    {
+      "path": "lib/arm64-v8a/libswscale.so",
+      "bytes": 915328,
+      "sha256": "274c4ac59af1d63eac333c32847967000bfa81931aacdb9f3c87a5b88a70cab3"
+    },
+    {
+      "path": "lib/arm64-v8a/libtorrentd.so",
+      "bytes": 10821608,
+      "sha256": "8dc5276a08aa801668e25fd3bb757cbc10df83f7929e758020ed58132ec4db59"
+    },
+    {
+      "path": "lib/armeabi-v7a/libaudiocompress.so",
+      "bytes": 5144,
+      "sha256": "d63f86496121e4b8c80a83326d3a079f2c477fb795003804e7982a4acff94599"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavcodec.so",
+      "bytes": 8477624,
+      "sha256": "ce3a8eab36a55f9329702d4295fce0c2015c165b11975ea9dcf5e76cf241f489"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavfilter.so",
+      "bytes": 2543584,
+      "sha256": "7c24576c73f8a020f4b67e00d49f7a4b50f1c29e562aaa4f748c9b1df25eea8f"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavformat.so",
+      "bytes": 4743088,
+      "sha256": "fafc0ff5cc66789fdbcd28923a3a49e426875476a62844acfaa9c80caf91b374"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavos.so",
+      "bytes": 1390724,
+      "sha256": "efce5ce038bafe5041df3bf5aefefae151f0a6821d3a2a810778c4b58ceaaa4b"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavos_android.so",
+      "bytes": 7740,
+      "sha256": "b840a1bda0b8434e6e667e10c2b48a76698cde5431a554ceee05a4805c08611f"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavosjni.so",
+      "bytes": 35124,
+      "sha256": "1c76c13163afb7fdb87b749b6e94ebaa7484074d8b3a12d78368baf5b70ea3b6"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavutil.so",
+      "bytes": 524712,
+      "sha256": "9f8cabc608f6f7f43b55a4e5072b4226650e2172808a49c54c3b0ab7d59686d1"
+    },
+    {
+      "path": "lib/armeabi-v7a/libcputest.so",
+      "bytes": 7856,
+      "sha256": "8991191d308b45642ca48b0ee472a6b030ca8e9c0286255c5b5483433d50f5ae"
+    },
+    {
+      "path": "lib/armeabi-v7a/libdav1d.so",
+      "bytes": 887464,
+      "sha256": "5f9b8181370b02ec75ccddb1e4a98fe5f87a2916fc3624116eea0c59fb24f13d"
+    },
+    {
+      "path": "lib/armeabi-v7a/libdeinterlace.so",
+      "bytes": 9148,
+      "sha256": "cf55c73bc07e340e104303eb98a8c74d18d870c21185cf046269f3cdabe7ad45"
+    },
+    {
+      "path": "lib/armeabi-v7a/libfilecoreutils.so",
+      "bytes": 7180,
+      "sha256": "a697ef6a4ce83773028ccd3d34990121aab00d634857d6572ee9c67198a97e11"
+    },
+    {
+      "path": "lib/armeabi-v7a/libmysofa.so",
+      "bytes": 197628,
+      "sha256": "a167a9a126af1eb85c371810ebc944bc65f272213cba912b1195f82c0956200b"
+    },
+    {
+      "path": "lib/armeabi-v7a/libnvpnativehelper.so",
+      "bytes": 122104,
+      "sha256": "e27ce915d895e8b6a04ac30a332398aa06fc03d05e2bd2416c1c33cb89cdb0a1"
+    },
+    {
+      "path": "lib/armeabi-v7a/libopus.so",
+      "bytes": 1453144,
+      "sha256": "197881c8b234b605406a80afee1a0cc5b57a21307b65c028a17fa5f7acac648e"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsentry-android.so",
+      "bytes": 14152,
+      "sha256": "638b2b41675d86072797410be550f023b88b82d42a3d5fb181ea08ec8153a767"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsentry.so",
+      "bytes": 523780,
+      "sha256": "3711f04c9bec2ee0ed48939e3066916a7c4b4214057c8fd28991893f1374d72f"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsfdec.core.21.so",
+      "bytes": 64676,
+      "sha256": "2a0a39dde8c50ac548b283fc2ef9e4024cb8a7e733704f158cf595e5243d9ba1"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsfdec.so",
+      "bytes": 5980,
+      "sha256": "4d9e3e9aead9c3a4f17e0fe6b9ecdbf41785e8690d674875be5d638aae9d1c9d"
+    },
+    {
+      "path": "lib/armeabi-v7a/libswresample.so",
+      "bytes": 75624,
+      "sha256": "059a8c6fe290720dc7c21b5b771fe63aaa5ca970c04f724b1298ca2c19d7888b"
+    },
+    {
+      "path": "lib/armeabi-v7a/libswscale.so",
+      "bytes": 448300,
+      "sha256": "bef9ea60f02a9c32da8d47648b0f05cbdf75e97c026b30a32cd800a1e1a23280"
+    },
+    {
+      "path": "lib/armeabi-v7a/libtorrentd.so",
+      "bytes": 8814148,
+      "sha256": "d897668ec92cd50d6ceda0a82b35636c7802b3fcd77226964e1bed76b6cb493b"
+    },
+    {
+      "path": "lib/x86/libaudiocompress.so",
+      "bytes": 5368,
+      "sha256": "8a5b5570c82d8a5620d7deaa116bb4350b8fcebe5d194d4eb6096dca4126cd44"
+    },
+    {
+      "path": "lib/x86/libavcodec.so",
+      "bytes": 12533308,
+      "sha256": "d3f47c27781d7bc137f2177b89bc736e1c55ea52b6cbe0569d4ffc4ea74de784"
+    },
+    {
+      "path": "lib/x86/libavfilter.so",
+      "bytes": 4393424,
+      "sha256": "38e2983058ea1b2f3304d4ed13e51950fc104a826836b811e999bb9bacb3803f"
+    },
+    {
+      "path": "lib/x86/libavformat.so",
+      "bytes": 5879144,
+      "sha256": "eaf0b02a058defa4b954002944366a6bb1eb574862a8463738194e55fe62a713"
+    },
+    {
+      "path": "lib/x86/libavos.so",
+      "bytes": 1823076,
+      "sha256": "53b9b142387cf0f575728305a82648150b3fdcc5ff8aafec4e37e8307251b882"
+    },
+    {
+      "path": "lib/x86/libavos_android.so",
+      "bytes": 9204,
+      "sha256": "e32402d33a45a9b5d5a9329f4e8276da69196a80827e54ba26322405ef7958ec"
+    },
+    {
+      "path": "lib/x86/libavosjni.so",
+      "bytes": 42380,
+      "sha256": "506ddbdffe2a3ff16f2688c7d83b65efb7b000831614af2dcf6b6c24c3c67b78"
+    },
+    {
+      "path": "lib/x86/libavutil.so",
+      "bytes": 743252,
+      "sha256": "478f709b4333da0c75ae8ac946458ffe7c06871485e2c1d5b7e9c5ec64d33661"
+    },
+    {
+      "path": "lib/x86/libcputest.so",
+      "bytes": 6944,
+      "sha256": "001cbb30a9bca53c5e9c63948bce438eb9f2480d49489f57b4e664c995d555fe"
+    },
+    {
+      "path": "lib/x86/libdav1d.so",
+      "bytes": 1305652,
+      "sha256": "d42f1abd597d4bc9f5808ac9685ae9e35e70ef5e361d57c3c86dd74af52a5b26"
+    },
+    {
+      "path": "lib/x86/libdeinterlace.so",
+      "bytes": 9508,
+      "sha256": "a2c343a9c3f031f6c3f987c3479feb95053e75c84f6fd40bdb38d472de8492e5"
+    },
+    {
+      "path": "lib/x86/libfilecoreutils.so",
+      "bytes": 7372,
+      "sha256": "fa656f714978b224135ff9f9436ef21b97118bff1c097d6cc8c052c4e0f1567d"
+    },
+    {
+      "path": "lib/x86/libmysofa.so",
+      "bytes": 215420,
+      "sha256": "a3684ecf7dcc9afcfe18c67c573570d74f7caa500cff5f4ac68f6ab72849e93d"
+    },
+    {
+      "path": "lib/x86/libnvpnativehelper.so",
+      "bytes": 161512,
+      "sha256": "6161813bcfad7e7d277957cef5e982945eb8be759fc84a2c35b23a15536211eb"
+    },
+    {
+      "path": "lib/x86/libopus.so",
+      "bytes": 1620160,
+      "sha256": "af6560c8b9e296db3a1be2484fb8f755f8185224a1c27045063fddf0daee5911"
+    },
+    {
+      "path": "lib/x86/libsentry-android.so",
+      "bytes": 17312,
+      "sha256": "86ecc7f8288ae5111a6ffc5dd957d7c90917bf97a3aa05075e17e8a2f68a3766"
+    },
+    {
+      "path": "lib/x86/libsentry.so",
+      "bytes": 826024,
+      "sha256": "bb2f73d6b6af62de258a6d45686da7c14309f73df20ba276f0dd2da80d97b6d2"
+    },
+    {
+      "path": "lib/x86/libsfdec.core.21.so",
+      "bytes": 84212,
+      "sha256": "ca9a54723ab5b75f651360e83803d71ba713227d9830ad31437fd6cf5fccee13"
+    },
+    {
+      "path": "lib/x86/libsfdec.so",
+      "bytes": 7912,
+      "sha256": "1f9ec5169ff8dfd4cf6a334d8df0a219d188722a8a948036070846a89f57ec17"
+    },
+    {
+      "path": "lib/x86/libswresample.so",
+      "bytes": 110272,
+      "sha256": "cdec5d6e7ddbd71095ab636e269c295ab8a6d711626165e574cd03ac78717927"
+    },
+    {
+      "path": "lib/x86/libswscale.so",
+      "bytes": 1063984,
+      "sha256": "18cd82567ae0761b7cbe83bc0b3c1ab26252f4fb3aebd9bebb1aae77c5b51bf0"
+    },
+    {
+      "path": "lib/x86/libtorrentd.so",
+      "bytes": 9772596,
+      "sha256": "0361b8bb76394206500a5b4b14950772660de6782886de13ace398ee0efa588e"
+    },
+    {
+      "path": "lib/x86_64/libaudiocompress.so",
+      "bytes": 6440,
+      "sha256": "24ac07e32d0b834acfd063073b77f05458bad7e8fee365dcfa1c74794afab666"
+    },
+    {
+      "path": "lib/x86_64/libavcodec.so",
+      "bytes": 14508488,
+      "sha256": "b2d719344c7a30d2ef3934627764013b028322017b6274321c113d9d3eb76993"
+    },
+    {
+      "path": "lib/x86_64/libavfilter.so",
+      "bytes": 4937184,
+      "sha256": "ec579ad0ae7a609a45161fba8abccc4accbde8ae17bedda3625db712debff1df"
+    },
+    {
+      "path": "lib/x86_64/libavformat.so",
+      "bytes": 7304048,
+      "sha256": "1adbef251a8ebc1b5c006b73fe49ad14658aebf301dccc8102fdbdcfb993bae4"
+    },
+    {
+      "path": "lib/x86_64/libavos.so",
+      "bytes": 1890704,
+      "sha256": "93d0afa2089b82e24f05ec4e6b0f032458628053e02bfa76ce2013db82591545"
+    },
+    {
+      "path": "lib/x86_64/libavos_android.so",
+      "bytes": 10624,
+      "sha256": "d6b75c25919083d17785ea44949b83372b83842e902646eb9c709678e7531d7f"
+    },
+    {
+      "path": "lib/x86_64/libavosjni.so",
+      "bytes": 45048,
+      "sha256": "b8b505628de9a61df4c804f320395191fd0c695281686f6312f0d563a6ac489c"
+    },
+    {
+      "path": "lib/x86_64/libavutil.so",
+      "bytes": 922344,
+      "sha256": "d6e81fd907466dbfb142cbf0f99969165a085e0f5fa857d16549c3ef7165b59c"
+    },
+    {
+      "path": "lib/x86_64/libcputest.so",
+      "bytes": 8032,
+      "sha256": "8897f8f8cc3dd0bdbcaffa6d6b30be814defe4bb71aa6a3e47b62d3c757c70ce"
+    },
+    {
+      "path": "lib/x86_64/libdav1d.so",
+      "bytes": 2568888,
+      "sha256": "759a32b0d39c31c61d7fb36196874b9fcb2caf64f265211ea05eed492b61e432"
+    },
+    {
+      "path": "lib/x86_64/libdeinterlace.so",
+      "bytes": 10944,
+      "sha256": "4f85b3c147aa541bb6dea8459beb91525da77a555e03ca3f140e5c97ed7173ca"
+    },
+    {
+      "path": "lib/x86_64/libfilecoreutils.so",
+      "bytes": 9016,
+      "sha256": "7053a9ce5e3f0641a51084f919ada635bff5360056d5a10df460236062d85335"
+    },
+    {
+      "path": "lib/x86_64/libmysofa.so",
+      "bytes": 267408,
+      "sha256": "a85b3f04b52b2d8180734eeb585169ad0bbef651d9ec11c2bace61190ebb46c6"
+    },
+    {
+      "path": "lib/x86_64/libnvpnativehelper.so",
+      "bytes": 178080,
+      "sha256": "76ce845c89a15e8aae643e069ea24fff7df95cd3631caa8af91055d13368c08c"
+    },
+    {
+      "path": "lib/x86_64/libopus.so",
+      "bytes": 2015808,
+      "sha256": "4105fbeea2e6b7751d63a71edd2ba3c2a48e3adc5028ae70b06bd0375554a9a8"
+    },
+    {
+      "path": "lib/x86_64/libsentry-android.so",
+      "bytes": 19280,
+      "sha256": "ceed438dd0a0d3db1154ddb4d789b889b806b02f416f07f6e0ec910ef51df58b"
+    },
+    {
+      "path": "lib/x86_64/libsentry.so",
+      "bytes": 785432,
+      "sha256": "5abcf31bc27b17981a3ca961de4fda4c5eaed9379463f8ae34731ce1d5aeb6ea"
+    },
+    {
+      "path": "lib/x86_64/libsfdec.core.21.so",
+      "bytes": 96768,
+      "sha256": "77bfcf37ae24f27bef30f2351e1fcefd5c0b92e122d5a062e9f6e9bcd1dc92a4"
+    },
+    {
+      "path": "lib/x86_64/libsfdec.so",
+      "bytes": 8248,
+      "sha256": "0f280a19dc8b21a09af425321aa36eaae19c12fc5d5bb652c3a099b9533ea2d8"
+    },
+    {
+      "path": "lib/x86_64/libswresample.so",
+      "bytes": 140288,
+      "sha256": "ccd777518967344913f18ff78f33a24105c531b0b0ae3bb799482e4be911cbb5"
+    },
+    {
+      "path": "lib/x86_64/libswscale.so",
+      "bytes": 1241720,
+      "sha256": "7872726545e6675c19ba1964a5e8021e7c520aa09a16a6ff3c45bc87b5d358ce"
+    },
+    {
+      "path": "lib/x86_64/libtorrentd.so",
+      "bytes": 11205408,
+      "sha256": "4dd8246df053f419e788fa71db63aecf4995651e138823cf2eebc6170a544faf"
+    }
+  ],
+  "offline_licence_entries": 57
+}

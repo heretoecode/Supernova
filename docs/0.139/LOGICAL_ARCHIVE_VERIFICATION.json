@@ -1,0 +1,14 @@
+{
+  "source_sha": "e5b5eb4e8f9eddc448240767064471e8a7b47ee9",
+  "classes": 3,
+  "tests": 11,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "task": "testNoamazonReleaseUnitTest",
+  "limits": [
+    "Settings-only archive foundation, no complete Backup43 acceptance",
+    "SAF publication, logical media categories, category journal, legacy import and new-device reconciliation not implemented in this core",
+    "No hardware/Shield claim"
+  ]
+}

@@ -19,13 +19,11 @@ import android.util.Log;
 
 import androidx.loader.content.AsyncTaskLoader;
 
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by vapillon on 10/04/15.
@@ -63,7 +61,7 @@ public class VideosSelectionLoader extends MoviesLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.VIDEO_VIEW, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.VIDEO_VIEW, mSortOrder);
     }
 
     @Override

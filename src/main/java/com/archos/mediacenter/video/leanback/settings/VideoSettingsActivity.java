@@ -14,19 +14,32 @@
 
 package com.archos.mediacenter.video.leanback.settings;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
 
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
+/** Hosts the TV Settings screen and handles returning from it. */
 public class VideoSettingsActivity extends LeanbackActivity {
-    private com.archos.mediacenter.video.leanback.TopNavigation previewNavigation;
+    private TopNavigation previewNavigation;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -38,13 +51,46 @@ public class VideoSettingsActivity extends LeanbackActivity {
             setTheme(R.style.MyLeanbackTheme_Preferences_Black);
         }
         super.onCreate(savedInstanceState);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))overridePendingTransition(0,0);
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false)){
-            android.widget.FrameLayout full=new android.widget.FrameLayout(this);full.setId(R.id.settingsFragment);full.setBackgroundColor(android.graphics.Color.TRANSPARENT);com.archos.mediacenter.video.leanback.TopNavigation nav=new com.archos.mediacenter.video.leanback.TopNavigation(this,full,index->{if(index==4)return;if(index==5){startActivity(new android.content.Intent(this,com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));return;}android.content.Intent intent=new android.content.Intent(this,com.archos.mediacenter.video.leanback.MainActivityLeanback.class);intent.putExtra("preview_tab",index);intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(intent);finish();},()->false);previewNavigation=nav;nav.selectTab(4);nav.setScrolled(true);setContentView(nav);new androidx.core.view.WindowInsetsControllerCompat(getWindow(),nav).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            if(savedInstanceState==null)getSupportFragmentManager().beginTransaction().replace(R.id.settingsFragment,new VideoSettingsFragment.PrefsFragment()).commit();
-        }else setContentView(R.layout.activity_video_settings);
-        if (previewNavigation != null) {
-            overridePendingTransition(0,0);
+        if (SettingsWorkspace.enabled(this))
+            overridePendingTransition(0, 0);
+        if (SettingsWorkspace.enabled(this)) {
+            FrameLayout full = new FrameLayout(this);
+            full.setId(R.id.settingsFragment);
+            previewNavigation = new TopNavigation(this, full,
+                index
+                -> {
+                    if (index == 4)
+                        return;
+                    if (index == 5)
+                        startActivity(new Intent(
+                            this, VideoSearchActivity.class));
+                    else {
+                        startActivity(new Intent(this, MainActivityLeanback.class)
+                                .putExtra("preview_tab", index)
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                        finish();
+                    }
+                },
+                () -> {
+                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.settingsFragment);
+                    return f instanceof VideoSettingsFragment.PrefsFragment
+                        && ((VideoSettingsFragment.PrefsFragment) f).workspace != null
+                        && ((VideoSettingsFragment.PrefsFragment) f).workspace.atNavigationBoundary();
+                });
+            previewNavigation.selectTab(4);
+            setContentView(previewNavigation);
+            new WindowInsetsControllerCompat(getWindow(), full)
+                .hide(WindowInsetsCompat.Type.systemBars());
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if (savedInstanceState == null)
+                getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.settingsFragment, new VideoSettingsFragment.PrefsFragment())
+                    .commit();
+        } else
+            setContentView(R.layout.activity_video_settings);
+        if (SettingsWorkspace.enabled(this) || previewNavigation != null) {
+            overridePendingTransition(0, 0);
         } else if (Build.VERSION.SDK_INT >= 34) {
             overrideActivityTransition(OVERRIDE_TRANSITION_OPEN, R.anim.slide_in_from_right, 0);
         } else {
@@ -54,16 +100,37 @@ public class VideoSettingsActivity extends LeanbackActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                Fragment fragment = getSupportFragmentManager()
-                        .findFragmentById(R.id.settingsFragment);
-                if (fragment instanceof LeanbackSettingsFragmentCompat
-                        && fragment.getChildFragmentManager().popBackStackImmediate()) {
+                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.settingsFragment);
+                if (fragment instanceof VideoSettingsFragment.PrefsFragment
+                    && ((VideoSettingsFragment.PrefsFragment) fragment).workspace != null) {
+                    if (((VideoSettingsFragment.PrefsFragment) fragment).workspace.back())
+                        return;
+                    if (previewNavigation != null && previewNavigation.focusNavigation())
+                        return;
+                    finish();
+                    overridePendingTransition(0, 0);
                     return;
                 }
-                if(fragment instanceof androidx.preference.PreferenceFragmentCompat){androidx.recyclerview.widget.RecyclerView list=((androidx.preference.PreferenceFragmentCompat)fragment).getListView();if(list.hasFocus()&&list.getTag() instanceof android.view.View){((android.view.View)list.getTag()).requestFocus();return;}}
-                if(previewNavigation!=null&&previewNavigation.focusNavigation())return;
+                if (fragment instanceof LeanbackSettingsFragmentCompat
+                    && fragment.getChildFragmentManager().popBackStackImmediate()) {
+                    return;
+                }
+                if (fragment instanceof PreferenceFragmentCompat) {
+                    RecyclerView list =
+                        ((PreferenceFragmentCompat) fragment).getListView();
+                    if (list.hasFocus() && list.getTag() instanceof View) {
+                        ((View) list.getTag()).requestFocus();
+                        return;
+                    }
+                }
+                if (previewNavigation != null && previewNavigation.focusNavigation())
+                    return;
                 finish();
-                if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(VideoSettingsActivity.this).getBoolean("try_new_ui",false)){overridePendingTransition(0,0);return;}
+                if (PreferenceManager.getDefaultSharedPreferences(VideoSettingsActivity.this)
+                        .getBoolean("try_new_ui", false)) {
+                    overridePendingTransition(0, 0);
+                    return;
+                }
                 if (Build.VERSION.SDK_INT >= 34) {
                     overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE, 0, R.anim.slide_out_to_right);
                 } else {
@@ -83,5 +150,4 @@ public class VideoSettingsActivity extends LeanbackActivity {
     public void finish() {
         super.finish();
     }
-
 }

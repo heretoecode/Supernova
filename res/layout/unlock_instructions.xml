@@ -35,6 +35,6 @@
             android:padding="5dip"
             android:background="@drawable/button_selector_holo_dark"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"  android:contentDescription="@null"/>
     
 </RelativeLayout>

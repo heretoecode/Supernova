@@ -1,0 +1,16 @@
+{
+  "source_sha": "a101ec550549f67518af947078db9ca510f1cb82",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 2,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest"
+  ],
+  "duration": "2m 52s",
+  "log_sha256": "b16c857307c28763c97a659f54e287bc87e51f49cf8b44f3417375c01f72b810",
+  "failure_detail": "Provider fixture bypassed unrelated onCreate lifecycle, but omitted the real query database holder and ContentResolver fields. Supply those and close the native holder after tests; rerun required."
+}

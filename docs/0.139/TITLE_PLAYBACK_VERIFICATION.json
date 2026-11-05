@@ -1,0 +1,33 @@
+{
+  "source_sha": "c87938747117cd6d19a2f8f4137e1e5e308d2394",
+  "result": "PASS",
+  "classes": 5,
+  "tests": 23,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest"
+  ],
+  "duration": "2m 21s",
+  "log_sha256": "9dd1b1d8cf2032e76f0cccb3aec3704d530ff6949c336e7499232fe8d7b8dac4",
+  "checks": [
+    "Native narrow per-title reader preserves signed millisecond delay, supported ratio, language and packed20-bit tracks",
+    "Explicit zero track choices distinguished from never-played defaults without including source timestamps in payload",
+    "Positive payload contains only physical reference and four player-choice fields; no history, positions, credentials, filenames or subtitle bytes",
+    "Preparation requires validated physical matching and receiving track-compatibility callback; changed paths/incompatible tracks remain pending across export",
+    "Present-empty stages clearing only owned choices without changing supplied receiving state",
+    "Hidden/review/preferred and cancelled playback checkpoint regression checks"
+  ],
+  "limits": [
+    "Title playback codec is not registered in archive or production export/restore",
+    "Receiving native track probe and safe application adapter remain open; callback tests are synthetic",
+    "VideoDbInfo currently ignores tracks unless lastTimePlayed>0: production restoration must support explicit restored choices without inventing history",
+    "Cross-store recovery and post-index reconciliation remain pending",
+    "No Shield/native decoder/signed-upgrade acceptance"
+  ]
+}

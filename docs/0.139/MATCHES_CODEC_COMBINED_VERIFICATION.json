@@ -1,0 +1,32 @@
+{
+  "result": "PASS",
+  "source_sha": "f5e1b6fbe2a33b3ebc2fa4134f11d2c601ce9541",
+  "dependency_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "duration": "1m24s",
+  "log_sha256": "f8a078370df38237740a1068f5b8c3dc90b21c1036664366d68c171fcac2d742",
+  "classes": 9,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+    "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+    "com.archos.mediacenter.video.utils.MediaMatchReconciliationTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "tests": 68,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "coverage": [
+    "All26 registered categories export and strict archive validation without creating fresh media/viewing stores",
+    "Public Matches archive excludes source paths, metadata, credentials and private manual/journal state",
+    "Production Matches-only preview uses actual receiving inventory and preserves bookmarks/pins/authentication",
+    "Default connected Settings selection including Matches reaches Android picker only after verified archive; locations/bookmarks remain defaultOff",
+    "Canonical metadata plus six-store restoration: eight pre-decision rollback boundaries and decision/three native acknowledgement replay boundaries",
+    "Queued post-index/provider/manual supersession and historical pending-only/schema regressions"
+  ],
+  "limits": "Error-injected process death on native SQLite/Robolectric, not OS force-stop or physical Shield. Current unfiltered/lint/R8 and native decode/signing/upgrade gates remain."
+}

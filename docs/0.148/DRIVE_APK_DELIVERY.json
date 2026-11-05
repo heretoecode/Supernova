@@ -1,0 +1,21 @@
+{
+  "file_id": "1Fz8PJYvYpbwKJv_W0wg3frpRLlhLYMuw",
+  "name": "Supernova_0.148.apk",
+  "url": "https://drive.google.com/file/d/1Fz8PJYvYpbwKJv_W0wg3frpRLlhLYMuw/view?usp=drivesdk",
+  "parent_folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "source_commit": "30d4961e4e5b0e412ec35fe8d27cd6197cea8b26",
+  "version_name": "0.148",
+  "version_code": 148,
+  "apk_bytes": 95585975,
+  "apk_sha256": "44c156c55798799cca8de8b3388e9d2ba23c7e328238193b8b4a50a4bd0f2898",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "complete_drive_readback_byte_equal": true,
+  "signature_and_payload_verified_before_upload": true,
+  "signature_and_payload_verified_again_after_drive_download": true,
+  "existing_entries_preserved": 15,
+  "entries_after_upload": 16,
+  "sharing_or_existing_file_changes": false,
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "checked_at": "2026-10-31T10:12:53.957601+00:00"
+}

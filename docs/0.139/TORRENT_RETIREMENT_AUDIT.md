@@ -1,0 +1,9 @@
+# BitTorrent retirement impact gate
+
+Signed0.138 APK independently verified.92 ELF objects inspected with `readelf -d`; no shared object declares a torrent DT_NEEDED dependency. Four ABI libtorrentd.so executables link only libc/libm/libdl. Corresponding public proof is TORRENT_NATIVE_DEPENDENCIES.json. AVOS source at pinned2cf21c486c7bf244c49b78d2220197a6d75396dd has no torrent loader/daemon dependency found by static source search. Do not remove shared OpenSSL/Boost/Jetty/UPnP or transport libraries, and do not claim arbitrary dynamic loading is disproved by DT_NEEDED alone.
+
+App-owned reachability: TorrentLoaderActivity external magnet/.torrent entry; TorrentObserverService launches libtorrentd.so and owns daemon shutdown; PlayUtils MIME dispatch; PlayerService observer/session/localhost callback; PlayerActivity legacy progress callbacks; subtitle/details lifecycle observer calls; ExternalPlayerResultListener daemon shutdown; torrent path/blocklist preferences. Four standalone Java feature files plus these exclusive callers can retire. Retain existing media files, source data, unknown historical preferences and dedicated legacy archive compatibility; no directory cleanup or DB drop.
+
+Manifest must remove torrent/magnet claims and dedicated activity/service. Existing general video types/path filters remain; broad application/* advertising is narrowed because it also claims torrent. PlayUtils must explicitly reject direct torrent/magnet launches truthfully. Packaging excludes only **/libtorrentd.so; final merged manifest, R8 dex, four-ABI binary inventory and normal local/network/UPnP playback require verification. Old libtorrent notice remains until artifact/legal coverage is checked; existing legal texts are not deleted merely from this audit.
+
+This gate authorizes source removal under the owner's existing approved scope, not a release or signed upgrade claim.

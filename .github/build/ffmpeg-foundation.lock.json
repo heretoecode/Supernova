@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "source_tag": "n8.0.1",
+  "annotated_tag_object": "d22ecc4f6f3fca77b3e71b18641ceddb25973e97",
+  "github_tag_signature_verification": "valid",
+  "ndk": "30.0.14904198-beta1",
+  "android_api": 21,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "inputs": {
+    "ffmpeg": {
+      "url": "https://codeload.github.com/FFmpeg/FFmpeg/tar.gz/894da5ca7d742e4429ffb2af534fcda0103ef593",
+      "sha256": "9dad3557314f1b7923b61aff15e30079e964c3b41276bbd43dd8bb15b8028b5f"
+    },
+    "opus_headers": {
+      "url": "https://codeload.github.com/xiph/opus/tar.gz/2d862ea1",
+      "sha256": "af2b302306888c5b529dfc5a18d806fab510c22ef9df95056f39be1d6a41bc39"
+    },
+    "dav1d_headers": {
+      "url": "https://codeload.github.com/videolan/dav1d/tar.gz/54706fc6",
+      "sha256": "b59d9fc6e52393c98f65fac0b1134f6cd12a9538211269afb8ee8591c48d300d"
+    },
+    "ndk": {
+      "url": "https://dl.google.com/android/repository/android-ndk-r30-beta1-linux.zip",
+      "sha256": "d90fefe472186aa999942a76cb595537548aafdb449494ecd2cf455c9b3f95a5"
+    }
+  },
+  "header_source_commits": {
+    "opus": "2d862ea14b233e5a3f3afaf74d96050691af3cd5",
+    "dav1d": "54706fc6bc0cdecab7e9593974a4039cc038fca7"
+  },
+  "patches": {
+    ".github/build/ffmpeg-opus-n8.0.1.patch": "4c854940f8be5e7dc6bf50cad390c9a1d340973ecd84323baaf8e67a0411dec2",
+    "native/ffmpeg-android-builder/atempo.patch": "28ef0153b4994e0eaad249cf4dd11a5ff89c64eb216f28d057db5800a6ebb6b4"
+  },
+  "toolchain_change": "Same NDK/API/features as baseline; host changes Darwin to Linux.",
+  "patched_source_sha256": {
+    "configure": "b00e3801cb1b453df28c2056f3472660b71bde8c76f158fe01a3f0ca2643d444",
+    "libavfilter/af_atempo.c": "2693b419340cfdc7b4e852d51ea84ac882df6548532cf0c58b47ba4e3b6070a5"
+  },
+  "static_openssl_source": {
+    "url": "https://codeload.github.com/openssl/openssl/tar.gz/openssl-3.5.7",
+    "source_commit": "8cf17aaeb4599f8af87fefd810b5b5fee90fe69e",
+    "sha256": "d71a811bfbd9153d7b30cbe476263302ee4b04a9a47ffea6e6a782326805c93f",
+    "scope": "Existing unchanged OpenSSL static archives; matching public release source included in companion source bundle. No OpenSSL binary replacement."
+  }
+}

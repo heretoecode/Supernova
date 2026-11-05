@@ -4,4 +4,9 @@
     <item name="preview_settings_return" type="id"/>
     <item name="preview_diagnostic_semantic" type="id"/>
     <item name="preview_track_language" type="id"/>
+    <item name="preview_row_top" type="id"/>
+    <item name="supernova_secondary_text" type="id"/>
+    <item name="supernova_group_label" type="id"/>
+    <!-- Shared helpers retain this ID after the phone layouts are retired. -->
+    <item type="id" name="private_mode_indicator" />
 </resources>

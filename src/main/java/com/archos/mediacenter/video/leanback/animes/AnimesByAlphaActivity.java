@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.archos.mediacenter.video.leanback.SingleFragmentActivity;
 
+/** Hosts the TV screen for browsing anime movies alphabetically. */
 public class AnimesByAlphaActivity extends SingleFragmentActivity {
     @Override
     public Fragment getFragmentInstance() {

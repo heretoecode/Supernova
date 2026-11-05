@@ -14,7 +14,10 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.widget.TextView;
+import androidx.leanback.widget.DetailsOverviewRow;
 import androidx.leanback.widget.FullWidthDetailsOverviewRowPresenter;
 import androidx.leanback.widget.HorizontalGridView;
 import androidx.leanback.widget.Presenter;
@@ -24,6 +27,10 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
+import com.archos.mediacenter.video.player.PrivateMode;
+import com.archos.mediacenter.video.streaming.StreamingRepository;
 
 /**
  * Created by alexandre on 20/02/17.
@@ -58,22 +65,25 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
 
         mViewHolder = (ViewHolder)holder;
         
-        android.widget.TextView footer = holder.view.findViewById(R.id.streaming_footer);
-        android.content.Context context = holder.view.getContext();
-        Object title = ((androidx.leanback.widget.DetailsOverviewRow)item).getItem();
-        boolean streaming = com.archos.mediacenter.video.streaming.StreamingRepository.LINKS_AVAILABLE && !mHideActions && !com.archos.mediacenter.video.player.PrivateMode.isActive()
-            && com.archos.mediacenter.video.streaming.StreamingRepository.prefs(context).getBoolean("streaming_enabled", true)
-            && !com.archos.mediacenter.video.streaming.StreamingRepository.selected(context).isEmpty();
+        TextView footer = holder.view.findViewById(R.id.streaming_footer);
+        Context context = holder.view.getContext();
+        Object title = ((DetailsOverviewRow)item).getItem();
+        boolean streaming = StreamingRepository.LINKS_AVAILABLE && !mHideActions && !PrivateMode.isActive()
+            && StreamingRepository.prefs(context).getBoolean("streaming_enabled", true)
+            && !StreamingRepository.selected(context).isEmpty();
         if (footer != null) {
-            String scope = title instanceof com.archos.mediacenter.video.browser.adapters.object.Episode
-                ? "Season " + ((com.archos.mediacenter.video.browser.adapters.object.Episode)title).getSeasonNumber() + " · Episode availability unverified"
-                : title instanceof com.archos.mediacenter.video.browser.adapters.object.Tvshow ? "Series-level availability" : "";
-            footer.setText("JustWatch via TMDb · " + com.archos.mediacenter.video.streaming.StreamingRepository.country(context)
+            String scope = title instanceof Episode
+                ? "Season " + ((Episode)title).getSeasonNumber() + " · Episode availability unverified"
+                : title instanceof Tvshow ? "Series-level availability" : "";
+            footer.setText("JustWatch via TMDb · " + StreamingRepository.country(context)
                 + (scope.isEmpty() ? "" : " · " + scope));
             footer.setVisibility(streaming ? View.VISIBLE : View.GONE);
         }
         updateBackgroundColor(getBackgroundColor());
         updateActionsBackgroundColor(getActionsBackgroundColor());
+
+        onLayoutOverviewFrame(mViewHolder, mViewHolder.getState(), true);
+        onLayoutLogo(mViewHolder, mViewHolder.getState(), true);
     }
 
     @Override
@@ -81,6 +91,12 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
         View v = viewHolder.getLogoViewHolder().view;
         ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)
                 v.getLayoutParams();
+        if (lp.width <= 0) {
+            lp.width = v.getResources().getDimensionPixelSize(R.dimen.details_poster_width);
+        }
+        if (lp.height <= 0) {
+            lp.height = v.getResources().getDimensionPixelSize(R.dimen.details_poster_height);
+        }
         switch (getAlignmentMode()) {
             case ALIGN_MODE_START:
             default:
@@ -108,6 +124,9 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
             int frameMarginStart;
             int descriptionMarginStart = 0;
             int logoWidth = viewHolder.getLogoViewHolder().view.getLayoutParams().width;
+            if (logoWidth <= 0) {
+                logoWidth = res.getDimensionPixelSize(R.dimen.details_poster_width);
+            }
             switch (getAlignmentMode()) {
                 case ALIGN_MODE_START:
                 default:
@@ -133,10 +152,12 @@ public class ArchosDetailsOverviewRowPresenter extends FullWidthDetailsOverviewR
                     }
                     break;
             }
-            MarginLayoutParams lpRoot =
-                    (MarginLayoutParams) ((ViewGroup)viewHolder.getOverviewView().getParent()).getLayoutParams();
-            lpRoot.leftMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_start);
-            lpRoot.rightMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_end);
+            ViewGroup parent = (ViewGroup) viewHolder.getOverviewView().getParent();
+            if (parent != null && parent.getLayoutParams() instanceof MarginLayoutParams) {
+                MarginLayoutParams lpRoot = (MarginLayoutParams) parent.getLayoutParams();
+                lpRoot.leftMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_start);
+                lpRoot.rightMargin = res.getDimensionPixelSize(androidx.leanback.R.dimen.lb_details_overview_margin_end);
+            }
             MarginLayoutParams lpFrame =
                     (MarginLayoutParams) viewHolder.getOverviewView().getLayoutParams();
             lpFrame.topMargin = isBanner ? 0

@@ -1,0 +1,32 @@
+{
+  "source_sha": "8915b5ca1f4a8b4c765034054002c340457e8d9a",
+  "result": "PASS",
+  "classes": 7,
+  "tests": 45,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+    "com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticStateTest",
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.player.HeroPlaybackOutputTest"
+  ],
+  "duration": "2m 23s",
+  "log_sha256": "7f1c5f45ba18eb0f3e1fff5c4e16cda277d0c95b7d4e12d0bb7ece957ad8148f",
+  "checks": [
+    "Typed open/seek attempts with producer-time playback session and generated process-local identity",
+    "Single seek callbacks retain target and parent; overlapping callbacks are explicitly unattributed",
+    "Prepared is not first output; stale backends and superseded worker attempts do not finish current attempts",
+    "Actual Player seek/output callbacks feed existing bounded recorder",
+    "Production diagnostic ZIP excludes location/authentication/exception-message canaries and describes default logging truthfully"
+  ],
+  "limits": [
+    "No decoded/presented timestamps; callback or proxy measurements explicitly identified",
+    "No actual incident diagnosis or physical Shield/native decoder acceptance",
+    "Global storage cap, export lock reduction, direct transport expansion and device overhead matrix remain pending"
+  ]
+}

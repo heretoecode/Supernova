@@ -1,0 +1,1893 @@
+{
+  "CVE-2026-107675": {
+    "id": "CVE-2026-107675",
+    "summary": "FFmpeg through 9.0.2 Missing SSH Host Key Verification in sftp Protocol",
+    "details": "FFmpeg through 9.0.2 contains a missing host key verification vulnerability in the libssh-based sftp protocol handler that allows network attackers to impersonate SFTP servers. Attackers performing man-in-the-middle, DNS, or ARP spoofing can capture passwords supplied in sftp URLs, serve forged media, or receive uploaded output.",
+    "modified": "2026-10-28T02:30:33.628755846Z",
+    "published": "2026-10-08T15:28:41.235Z",
+    "database_specific": {
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107675.json",
+      "cna_assigner": "VulnCheck",
+      "cwe_ids": [
+        "CWE-322"
+      ]
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg"
+      },
+      {
+        "type": "WEB",
+        "url": "https://ffmpeg.org/"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107675.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-107675"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/ffmpeg-through-9.0.2-missing-ssh-host-key-verification-in-sftp-protocol"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/2b822b7fb6ed195546bc9fd9bdb794e98222bdce"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/24384"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavformat/libssh.c#L60-L110"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://git.ffmpeg.org/ffmpeg.git",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE",
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "GIT",
+            "repo": "https://github.com/ffmpeg/ffmpeg",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "AFFECTED_FIELD",
+                  "strategy": "StandardRange"
+                },
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE",
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "n9.0.2",
+          "n9.0.1",
+          "n9.0",
+          "n8.2-dev",
+          "n8.1-dev",
+          "n7.2-dev",
+          "n7.1-dev",
+          "n6.2-dev",
+          "n6.1-dev",
+          "n5.2-dev",
+          "n5.1-dev",
+          "n4.5-dev",
+          "n4.4-dev",
+          "n4.3-dev",
+          "n4.2-dev",
+          "n4.1-dev",
+          "n3.5-dev",
+          "n3.4-dev",
+          "n3.3-dev",
+          "n3.2-dev",
+          "n3.1-dev",
+          "n2.9-dev",
+          "n2.8-dev",
+          "n2.7-dev",
+          "n2.6-dev",
+          "n2.5-dev",
+          "n2.4-dev",
+          "n2.3-dev",
+          "n2.2-dev",
+          "n2.0",
+          "n2.1-dev",
+          "n1.3-dev",
+          "n1.2-dev",
+          "n1.1-dev",
+          "n0.12-dev",
+          "n0.11-dev",
+          "n0.8",
+          "N"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-107675.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:P/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-107676": {
+    "id": "CVE-2026-107676",
+    "summary": "FFmpeg through 9.0.2 Uninitialized Memory Disclosure via HDR10+ Metadata Serializer",
+    "details": "FFmpeg through 9.0.2 contains an uninitialized memory disclosure vulnerability in av_dynamic_hdr_plus_to_t35() that leaves up to three payload bytes uninitialized when tone_mapping_flag is 0. Attackers can supply crafted Matroska T.35 BlockAdditional or HEVC/AV1 SEI metadata so that remuxing or transcoding writes leaked process memory into output files.",
+    "modified": "2026-10-28T02:30:41.541323125Z",
+    "published": "2026-10-08T15:28:41.795Z",
+    "database_specific": {
+      "cwe_ids": [
+        "CWE-908"
+      ],
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107676.json",
+      "cna_assigner": "VulnCheck"
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg"
+      },
+      {
+        "type": "WEB",
+        "url": "https://ffmpeg.org/"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107676.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-107676"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/ffmpeg-through-9.0.2-uninitialized-memory-disclosure-via-hdr10-metadata-serializer"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/2c2f6e96e31795ae95a8f8323a493ffbc493111f"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/24590"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavutil/hdr_dynamic_metadata.c#L374-L385"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://git.ffmpeg.org/ffmpeg.git",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE"
+                }
+              ]
+            }
+          },
+          {
+            "type": "GIT",
+            "repo": "https://github.com/ffmpeg/ffmpeg",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "AFFECTED_FIELD",
+                  "strategy": "StandardRange"
+                },
+                {
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "n9.0.2",
+          "n9.0.1",
+          "n9.0",
+          "n8.2-dev",
+          "n8.1-dev",
+          "n7.2-dev",
+          "n7.1-dev",
+          "n6.2-dev",
+          "n6.1-dev",
+          "n5.2-dev",
+          "n5.1-dev",
+          "n4.5-dev",
+          "n4.4-dev",
+          "n4.3-dev",
+          "n4.2-dev",
+          "n4.1-dev",
+          "n3.5-dev",
+          "n3.4-dev",
+          "n3.3-dev",
+          "n3.2-dev",
+          "n3.1-dev",
+          "n2.9-dev",
+          "n2.8-dev",
+          "n2.7-dev",
+          "n2.6-dev",
+          "n2.5-dev",
+          "n2.4-dev",
+          "n2.3-dev",
+          "n2.2-dev",
+          "n2.0",
+          "n2.1-dev",
+          "n1.3-dev",
+          "n1.2-dev",
+          "n1.1-dev",
+          "n0.12-dev",
+          "n0.11-dev",
+          "n0.8",
+          "N"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-107676.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:L/AC:L/AT:N/PR:N/UI:P/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-107677": {
+    "id": "CVE-2026-107677",
+    "summary": "FFmpeg through 9.0.2 DASH Demuxer Infinite Loop via Empty SegmentTemplate Media",
+    "details": "FFmpeg through 9.0.2 contains a denial of service vulnerability in the DASH demuxer that allows attackers to trigger an infinite loop by supplying an empty SegmentTemplate media URL. Attackers can craft an .mpd manifest declaring SegmentTemplate media=\"\" so get_current_fragment() calls av_strireplace() with an empty search string, consuming CPU indefinitely.",
+    "modified": "2026-10-28T02:30:40.195323288Z",
+    "published": "2026-10-08T15:28:42.682Z",
+    "database_specific": {
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107677.json",
+      "cna_assigner": "VulnCheck",
+      "cwe_ids": [
+        "CWE-835"
+      ]
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg"
+      },
+      {
+        "type": "WEB",
+        "url": "https://ffmpeg.org/"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107677.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-107677"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/ffmpeg-through-9.0.2-dash-demuxer-infinite-loop-via-empty-segmenttemplate-media"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/ed27bfcbbbc0872c0195eaf4dd2c0c93b9f1778e"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/24592"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavformat/dashdec.c#L1726"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavutil/avstring.c#L230-L238"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://git.ffmpeg.org/ffmpeg.git",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE",
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "GIT",
+            "repo": "https://github.com/ffmpeg/ffmpeg",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "AFFECTED_FIELD",
+                  "strategy": "StandardRange"
+                },
+                {
+                  "source": "CPE_RANGE",
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "n9.0.2",
+          "n9.0.1",
+          "n9.0",
+          "n8.2-dev",
+          "n8.1-dev",
+          "n7.2-dev",
+          "n7.1-dev",
+          "n6.2-dev",
+          "n6.1-dev",
+          "n5.2-dev",
+          "n5.1-dev",
+          "n4.5-dev",
+          "n4.4-dev",
+          "n4.3-dev",
+          "n4.2-dev",
+          "n4.1-dev",
+          "n3.5-dev",
+          "n3.4-dev",
+          "n3.3-dev",
+          "n3.2-dev",
+          "n3.1-dev",
+          "n2.9-dev",
+          "n2.8-dev",
+          "n2.7-dev",
+          "n2.6-dev",
+          "n2.5-dev",
+          "n2.4-dev",
+          "n2.3-dev",
+          "n2.2-dev",
+          "n2.0",
+          "n2.1-dev",
+          "n1.3-dev",
+          "n1.2-dev",
+          "n1.1-dev",
+          "n0.12-dev",
+          "n0.11-dev",
+          "n0.8",
+          "N"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-107677.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-107678": {
+    "id": "CVE-2026-107678",
+    "summary": "FFmpeg through 9.0.2 Stack Exhaustion via Recursive Free of pssh Boxes",
+    "details": "FFmpeg through 9.0.2 contains a stack exhaustion vulnerability in av_encryption_init_info_free() in libavutil/encryption_info.c, which recursively frees AVEncryptionInitInfo linked lists built by the MOV demuxer's mov_read_pssh(). Attackers can supply a crafted MP4 file with tens of thousands of small pssh boxes to exhaust the stack and crash the process, while also causing quadratic CPU consumption.",
+    "modified": "2026-10-28T02:30:46.183572934Z",
+    "published": "2026-10-08T15:28:43.274Z",
+    "database_specific": {
+      "cna_assigner": "VulnCheck",
+      "cwe_ids": [
+        "CWE-674"
+      ],
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107678.json"
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg"
+      },
+      {
+        "type": "WEB",
+        "url": "https://ffmpeg.org/"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107678.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-107678"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/ffmpeg-through-9.0.2-stack-exhaustion-via-recursive-free-of-pssh-boxes"
+      },
+      {
+        "type": "REPORT",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/24593"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavformat/mov.c#L8070"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavutil/encryption_info.c#L219-L231"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://git.ffmpeg.org/ffmpeg.git",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE",
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "GIT",
+            "repo": "https://github.com/ffmpeg/ffmpeg",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "source": "AFFECTED_FIELD",
+                  "strategy": "StandardRange",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ]
+                },
+                {
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "n9.0.2",
+          "n9.0.1",
+          "n9.0",
+          "n8.2-dev",
+          "n8.1-dev",
+          "n7.2-dev",
+          "n7.1-dev",
+          "n6.2-dev",
+          "n6.1-dev",
+          "n5.2-dev",
+          "n5.1-dev",
+          "n4.5-dev",
+          "n4.4-dev",
+          "n4.3-dev",
+          "n4.2-dev",
+          "n4.1-dev",
+          "n3.5-dev",
+          "n3.4-dev",
+          "n3.3-dev",
+          "n3.2-dev",
+          "n3.1-dev",
+          "n2.9-dev",
+          "n2.8-dev",
+          "n2.7-dev",
+          "n2.6-dev",
+          "n2.5-dev",
+          "n2.4-dev",
+          "n2.3-dev",
+          "n2.2-dev",
+          "n2.0",
+          "n2.1-dev",
+          "n1.3-dev",
+          "n1.2-dev",
+          "n1.1-dev",
+          "n0.12-dev",
+          "n0.11-dev",
+          "n0.8",
+          "N"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-107678.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:L/AC:H/AT:P/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-107696": {
+    "id": "CVE-2026-107696",
+    "summary": "FFmpeg through 9.0.2 Infinite Loop via RTSP Redirect Handling in rtsp.c",
+    "details": "FFmpeg through 9.0.2 contains an infinite loop vulnerability in ff_rtsp_connect() in libavformat/rtsp.c that follows RTSP 3xx redirects without any redirect limit. Attackers controlling an RTSP server can answer every request with a 302 redirect to itself or another server, causing endless reconnects that saturate a CPU core.",
+    "modified": "2026-10-28T02:30:53.236177306Z",
+    "published": "2026-10-08T17:30:27.515Z",
+    "database_specific": {
+      "cna_assigner": "VulnCheck",
+      "cwe_ids": [
+        "CWE-835"
+      ],
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107696.json"
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/107xxx/CVE-2026-107696.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-107696"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/ffmpeg-through-9.0.2-infinite-loop-via-rtsp-redirect-handling-in-rtsp-c"
+      },
+      {
+        "type": "FIX",
+        "url": "https://code.ffmpeg.org/FFmpeg/FFmpeg/pulls/24902"
+      },
+      {
+        "type": "PACKAGE",
+        "url": "https://github.com/FFmpeg/FFmpeg"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/FFmpeg/FFmpeg/blob/n9.0.2/libavformat/rtsp.c#L2225"
+      },
+      {
+        "type": "EVIDENCE",
+        "url": "https://gist.github.com/OxBat/648a0bd60c898f2ffb418e131ce26013"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://git.ffmpeg.org/ffmpeg.git",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE",
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*"
+                }
+              ]
+            }
+          },
+          {
+            "type": "GIT",
+            "repo": "https://github.com/ffmpeg/ffmpeg",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "last_affected": "946fcce07b6dcd0331c8cc609192aeff5e1924f8"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "source": "AFFECTED_FIELD",
+                  "strategy": "StandardRange",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ]
+                },
+                {
+                  "cpe": "cpe:2.3:a:ffmpeg:ffmpeg:*:*:*:*:*:*:*:*",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "last_affected": "9.0.2"
+                    }
+                  ],
+                  "source": "CPE_RANGE"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "n9.0.2",
+          "n9.0.1",
+          "n9.0",
+          "n8.2-dev",
+          "n8.1-dev",
+          "n7.2-dev",
+          "n7.1-dev",
+          "n6.2-dev",
+          "n6.1-dev",
+          "n5.2-dev",
+          "n5.1-dev",
+          "n4.5-dev",
+          "n4.4-dev",
+          "n4.3-dev",
+          "n4.2-dev",
+          "n4.1-dev",
+          "n3.5-dev",
+          "n3.4-dev",
+          "n3.3-dev",
+          "n3.2-dev",
+          "n3.1-dev",
+          "n2.9-dev",
+          "n2.8-dev",
+          "n2.7-dev",
+          "n2.6-dev",
+          "n2.5-dev",
+          "n2.4-dev",
+          "n2.3-dev",
+          "n2.2-dev",
+          "n2.0",
+          "n2.1-dev",
+          "n1.3-dev",
+          "n1.2-dev",
+          "n1.1-dev",
+          "n0.12-dev",
+          "n0.11-dev",
+          "n0.8",
+          "N"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-107696.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:P/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-50811": {
+    "id": "CVE-2026-50811",
+    "details": "An out-of-bounds read vulnerability exists in FreeType 2.14.3 and versions before commit 5a280ecde6f324de0d226261036e736e0cb49a71 in src/truetype/ttgxvar.c, in the TT_Get_Var_Design implementation used by FT_Get_Var_Design_Coordinates",
+    "modified": "2026-10-28T11:16:46.195593923Z",
+    "published": "2026-07-07T00:00:00Z",
+    "related": [
+      "SUSE-SU-2026:22750-1",
+      "SUSE-SU-2026:22815-1",
+      "SUSE-SU-2026:22922-1",
+      "SUSE-SU-2026:23074-1",
+      "openSUSE-SU-2026:11257-1",
+      "openSUSE-SU-2026:21362-1"
+    ],
+    "database_specific": {
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/50xxx/CVE-2026-50811.json",
+      "cna_assigner": "mitre"
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://gist.github.com/junius-sec/6dd0fb25b643f89914083a38e5e57ace"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/50xxx/CVE-2026-50811.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-50811"
+      },
+      {
+        "type": "REPORT",
+        "url": "https://gitlab.freedesktop.org/freetype/freetype/-/issues/1436"
+      },
+      {
+        "type": "FIX",
+        "url": "https://github.com/freetype/freetype/commit/5a280ecde6f324de0d226261036e736e0cb49a71"
+      },
+      {
+        "type": "FIX",
+        "url": "https://gitlab.freedesktop.org/freetype/freetype/-/commit/5a280ecde6f324de0d226261036e736e0cb49a71"
+      },
+      {
+        "type": "EVIDENCE",
+        "url": "https://gitlab.freedesktop.org/freetype/freetype/-/work_items/1436"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://github.com/freetype/freetype",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "fixed": "5a280ecde6f324de0d226261036e736e0cb49a71"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "source": "DESCRIPTION",
+                  "range": [
+                    {
+                      "introduced": "0"
+                    },
+                    {
+                      "fixed": "5a280ecde6f324de0d226261036e736e0cb49a71"
+                    }
+                  ]
+                },
+                {
+                  "source": "REFERENCES_COMMIT",
+                  "range": [
+                    {
+                      "fixed": "5a280ecde6f324de0d226261036e736e0cb49a71"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "type": "GIT",
+            "repo": "https://gitlab.freedesktop.org/freetype/freetype",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "fixed": "5a280ecde6f324de0d226261036e736e0cb49a71"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "fixed": "5a280ecde6f324de0d226261036e736e0cb49a71"
+                    }
+                  ],
+                  "source": "REFERENCES_COMMIT"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "VER-2-14-3",
+          "VER-2-14-2",
+          "VER-2-14-1",
+          "VER-2-14-0",
+          "VER-2-13-3",
+          "VER-2-13-2",
+          "VER-2-13-1",
+          "VER-2-13-0",
+          "VER-2-12-1",
+          "VER-2-12-0",
+          "VER-2-11-1",
+          "VER-2-11-0",
+          "VER-2-10-4",
+          "VER-2-10-3",
+          "VER-2-10-2",
+          "VER-2-10-1",
+          "VER-2-10-0",
+          "VER-2-9-1",
+          "VER-2-9",
+          "VER-2-8-1",
+          "VER-2-8",
+          "VER-2-7-1",
+          "VER-2-7",
+          "VER-2-6-4",
+          "VER-2-6-3",
+          "VER-2-6-2",
+          "VER-2-6-1",
+          "VER-2-6",
+          "VER-2-5-5",
+          "VER-2-5-4",
+          "VER-2-5-3",
+          "VER-2-5-2",
+          "VER-2-5-1",
+          "VER-2-5-0-1",
+          "VER-2-5-0",
+          "VER-2-4-12",
+          "VER-2-4-12-beta",
+          "VER-2-4-11",
+          "VER-2-4-10",
+          "VER-2-4-9",
+          "VER-2-4-8",
+          "VER-2-4-7",
+          "VER-2-4-6",
+          "VER-2-4-5",
+          "VER-2-4-4",
+          "VER-2-4-3",
+          "VER-2-4-2",
+          "VER-2-4-1",
+          "VER-2-4-0",
+          "VER-2-3-12",
+          "VER-2-3-11",
+          "VER-2-3-10",
+          "VER-2-3-9",
+          "VER-2-3-8",
+          "VER-2-3-7",
+          "VER-2-3-6",
+          "VER-2-3-5-REAL",
+          "VER-2-3-5",
+          "VER-2-3-4",
+          "VER-2-3-3",
+          "VER-2-3-2",
+          "VER-2-3-1-FINAL",
+          "VER-2-3-1",
+          "VER-2-3-0-FINAL",
+          "VER-2-3-0-RC2",
+          "VER-2-3-0",
+          "VER-2-3-0-RC1",
+          "VER-2-2-1",
+          "VER-2-2-0-RC4",
+          "VER-2-2-0",
+          "VER-2-2-0-RC3",
+          "VER-2-2-0-RC2",
+          "VER-2-2-0-RC1",
+          "DATE-050920",
+          "VER-2-1-10",
+          "VER-2-1-9",
+          "VER-2-1-8",
+          "VER-2-1-8-RC1",
+          "import",
+          "VER-2-1-7",
+          "VER-2-1-6",
+          "VER-2-1-5-RC1",
+          "start",
+          "VER-2-1-4",
+          "VER-2-1-4-RC2",
+          "VER-2-1-4-RC1",
+          "VER-2-1-3",
+          "VER-2-1-3-RC3",
+          "VER-2-1-3-RC2",
+          "VER-2-1-3-RC1",
+          "VER-2-1-2",
+          "VER-2-1-2-RC1",
+          "VER-2-1-1",
+          "VER-2-1-1-RC1",
+          "freetype",
+          "VER-2-1-0",
+          "VER-2-0-8",
+          "VER-2-0-7",
+          "VER-2-0-6",
+          "PRE-2-0-6",
+          "VER-2-0-5",
+          "freetype2",
+          "VER-2-0-4",
+          "VER-2-0-3",
+          "VER-2-0-2",
+          "VER-2-0-2-TEST",
+          "VER-2-0-1",
+          "PRE-2-0-1",
+          "VER-2-0",
+          "RELEASE-2-0",
+          "BETA-8",
+          "BETA-7",
+          "BETA-6",
+          "BETA-5",
+          "VER-2-BETA4",
+          "VER-2-BETA3",
+          "VER-2-BETA2"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-50811.json",
+          "vanir_signatures": [
+            {
+              "signature_type": "Function",
+              "signature_version": "v1",
+              "source": "https://gitlab.freedesktop.org/freetype/freetype@5a280ecde6f324de0d226261036e736e0cb49a71",
+              "target": {
+                "function": "TT_Get_Var_Design",
+                "file": "src/truetype/ttgxvar.c"
+              },
+              "deprecated": false,
+              "digest": {
+                "function_hash": "67638530267081724749391199023050628700",
+                "length": 885
+              },
+              "id": "CVE-2026-50811-0391ff23"
+            },
+            {
+              "source": "https://github.com/freetype/freetype/commit/5a280ecde6f324de0d226261036e736e0cb49a71",
+              "target": {
+                "file": "src/truetype/ttgxvar.c",
+                "function": "TT_Get_Var_Design"
+              },
+              "deprecated": false,
+              "digest": {
+                "function_hash": "67638530267081724749391199023050628700",
+                "length": 885
+              },
+              "id": "CVE-2026-50811-2cf372d9",
+              "signature_type": "Function",
+              "signature_version": "v1"
+            },
+            {
+              "target": {
+                "file": "src/truetype/ttgxvar.c"
+              },
+              "deprecated": false,
+              "digest": {
+                "threshold": 0.9,
+                "line_hashes": [
+                  "195895906710187975170174630409437592606",
+                  "137450690754134506210955721201448754920",
+                  "286308038687769032919133930468828242869",
+                  "326404890790858753644663316961655587413",
+                  "330105789488085907553602371271459448304",
+                  "262832447848903356461302394196451081311",
+                  "122732601368999233266463203114361092312",
+                  "16716590707232747194990498320212565642",
+                  "217451593212209063518132931984345868297",
+                  "153829895764254231256950089503103642861",
+                  "98972036857807755563195389049828820193",
+                  "209030522374735951875611210977017326149",
+                  "338518261901487876705452295134416993313",
+                  "214006455344920416390915234779845660157",
+                  "213688302575916538522951853027069557361",
+                  "217825001381831356444722881925360154361",
+                  "257478937820411516815884555849464536847",
+                  "130151760074173373835863300861271706584",
+                  "240591326092362505714015336782538516156",
+                  "221621425049608985024168854460004222010",
+                  "8925698823106352984328570540158963999",
+                  "118864073080055445377202041086253788916",
+                  "263231201348721175038672093807157202591",
+                  "333051444795678385351776823331368096908",
+                  "206687993625447971531655560779843055142",
+                  "291684257928601545633908125476587680964",
+                  "203136629253015378752981257480371598130",
+                  "54975243164901124249743476226652786641",
+                  "75841643931188352366867062379666271127",
+                  "17607752657786545278918038510218344037",
+                  "193643678928480652826029661769938286885"
+                ]
+              },
+              "id": "CVE-2026-50811-9c670ba1",
+              "signature_type": "Line",
+              "signature_version": "v1",
+              "source": "https://github.com/freetype/freetype/commit/5a280ecde6f324de0d226261036e736e0cb49a71"
+            },
+            {
+              "signature_version": "v1",
+              "source": "https://gitlab.freedesktop.org/freetype/freetype@5a280ecde6f324de0d226261036e736e0cb49a71",
+              "target": {
+                "file": "src/truetype/ttgxvar.c"
+              },
+              "deprecated": false,
+              "digest": {
+                "line_hashes": [
+                  "195895906710187975170174630409437592606",
+                  "137450690754134506210955721201448754920",
+                  "286308038687769032919133930468828242869",
+                  "326404890790858753644663316961655587413",
+                  "330105789488085907553602371271459448304",
+                  "262832447848903356461302394196451081311",
+                  "122732601368999233266463203114361092312",
+                  "16716590707232747194990498320212565642",
+                  "217451593212209063518132931984345868297",
+                  "153829895764254231256950089503103642861",
+                  "98972036857807755563195389049828820193",
+                  "209030522374735951875611210977017326149",
+                  "338518261901487876705452295134416993313",
+                  "214006455344920416390915234779845660157",
+                  "213688302575916538522951853027069557361",
+                  "217825001381831356444722881925360154361",
+                  "257478937820411516815884555849464536847",
+                  "130151760074173373835863300861271706584",
+                  "240591326092362505714015336782538516156",
+                  "221621425049608985024168854460004222010",
+                  "8925698823106352984328570540158963999",
+                  "118864073080055445377202041086253788916",
+                  "263231201348721175038672093807157202591",
+                  "333051444795678385351776823331368096908",
+                  "206687993625447971531655560779843055142",
+                  "291684257928601545633908125476587680964",
+                  "203136629253015378752981257480371598130",
+                  "54975243164901124249743476226652786641",
+                  "75841643931188352366867062379666271127",
+                  "17607752657786545278918038510218344037",
+                  "193643678928480652826029661769938286885"
+                ],
+                "threshold": 0.9
+              },
+              "id": "CVE-2026-50811-f4d0c464",
+              "signature_type": "Line"
+            }
+          ],
+          "vanir_signatures_modified": "2026-10-28T11:16:46Z"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V3",
+        "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L"
+      }
+    ]
+  },
+  "CVE-2026-76844": {
+    "id": "CVE-2026-76844",
+    "summary": "zlib 1.2.11 through 1.3.2 Heap Buffer Overflow via Stale gzwrite Pointer After Failed Write",
+    "details": "zlib 1.2.11 through 1.3.2 contains a heap buffer overflow: after an underlying write() fails, gz_write() returns without resetting strm.next_in, leaving it pointed at the caller's buffer. A later gz* write call then derives a position from the stale pointer and writes past a heap allocation; any write() failure reaches it, including EPIPE on a blocking descriptor, and in versions before 1.3.1.2 the failed write must be followed by a gzclearerr() call.",
+    "aliases": [
+      "GHSA-g84c-rxfj-3j2c"
+    ],
+    "modified": "2026-10-28T11:17:48.991906765Z",
+    "published": "2026-08-24T13:12:01.148Z",
+    "database_specific": {
+      "cna_assigner": "VulnCheck",
+      "cwe_ids": [
+        "CWE-787"
+      ],
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/76xxx/CVE-2026-76844.json"
+    },
+    "references": [
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/76xxx/CVE-2026-76844.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-76844"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/zlib-1.3.1.2-through-1.3.2-heap-buffer-overflow-via-gz-vacate"
+      },
+      {
+        "type": "FIX",
+        "url": "https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148"
+      },
+      {
+        "type": "PACKAGE",
+        "url": "https://github.com/madler/zlib"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/madler/zlib/blob/v1.3.2/gzwrite.c#L393"
+      },
+      {
+        "type": "EVIDENCE",
+        "url": "https://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://github.com/madler/zlib",
+            "events": [
+              {
+                "introduced": "cacf7f1d4e3d44d871b605da3b647f07d718623f"
+              },
+              {
+                "fixed": "df84af25dc1942490e1d1c899a07619152a46148"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "strategy": "StandardRange",
+                  "range": [
+                    {
+                      "introduced": "1.2.11"
+                    },
+                    {
+                      "last_affected": "1.3.2"
+                    }
+                  ],
+                  "source": "AFFECTED_FIELD"
+                },
+                {
+                  "range": [
+                    {
+                      "fixed": "df84af25dc1942490e1d1c899a07619152a46148"
+                    }
+                  ],
+                  "source": "REFERENCES_COMMIT"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "v1.3.2",
+          "v1.3.1.2",
+          "v1.3.1",
+          "v1.3",
+          "v1.2.13",
+          "v1.2.12",
+          "v1.2.11"
+        ],
+        "database_specific": {
+          "vanir_signatures": [
+            {
+              "digest": {
+                "line_hashes": [
+                  "321090108084038968139662894088929200997",
+                  "2390431503662171455844889591158512276",
+                  "135295985711956928995159240810902034005",
+                  "87796769545444147572130438046479323601",
+                  "235441658041769278382234619656069783544"
+                ],
+                "threshold": 0.9
+              },
+              "id": "CVE-2026-76844-d61a29f0",
+              "signature_type": "Line",
+              "signature_version": "v1",
+              "source": "https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148",
+              "target": {
+                "file": "gzwrite.c"
+              },
+              "deprecated": false
+            },
+            {
+              "target": {
+                "file": "gzwrite.c",
+                "function": "gz_write"
+              },
+              "deprecated": false,
+              "digest": {
+                "function_hash": "263750299263033607512351826485480615201",
+                "length": 1343
+              },
+              "id": "CVE-2026-76844-dc9ae361",
+              "signature_type": "Function",
+              "signature_version": "v1",
+              "source": "https://github.com/madler/zlib/commit/df84af25dc1942490e1d1c899a07619152a46148"
+            }
+          ],
+          "vanir_signatures_modified": "2026-10-28T11:17:48Z",
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-76844.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:N/VI:H/VA:H/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-85091": {
+    "id": "CVE-2026-85091",
+    "summary": "zlib 1.3.1.2 through 1.3.2 Heap Buffer Overflow via gz_vacate",
+    "details": "zlib versions 1.3.1.2 through 1.3.2 contain a heap buffer overflow vulnerability in the gz_vacate() function when processing non-blocking gzwrite() operations with stale external buffer pointers. Attackers can trigger the overflow by calling gzprintf() or gzvprintf() after a write stall, causing an unchecked memmove() to write beyond the internal input buffer boundary.",
+    "modified": "2026-10-28T02:30:40.472495269Z",
+    "published": "2026-09-03T01:04:44.460Z",
+    "related": [
+      "openSUSE-SU-2026:12206-1"
+    ],
+    "database_specific": {
+      "cwe_ids": [
+        "CWE-787"
+      ],
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/85xxx/CVE-2026-85091.json",
+      "cna_assigner": "VulnCheck"
+    },
+    "references": [
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/85xxx/CVE-2026-85091.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-85091"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://www.vulncheck.com/advisories/zlib-1.3.1.2-through-1.3.2-heap-buffer-overflow-via-gz-vacate"
+      },
+      {
+        "type": "PACKAGE",
+        "url": "https://github.com/madler/zlib"
+      },
+      {
+        "type": "ARTICLE",
+        "url": "https://github.com/madler/zlib/blob/v1.3.2/gzwrite.c#L393"
+      },
+      {
+        "type": "EVIDENCE",
+        "url": "https://gist.github.com/thesmartshadow/e0b9481792afb7c31e86fee1ff084490"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://github.com/madler/zlib",
+            "events": [
+              {
+                "introduced": "570720b0c24f9686c33f35a1b3165c1f568b96be"
+              },
+              {
+                "last_affected": "da607da739fa6047df13e66a2af6b8bec7c2a498"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "strategy": "StandardRange",
+                  "range": [
+                    {
+                      "introduced": "1.3.1.2"
+                    },
+                    {
+                      "last_affected": "1.3.2"
+                    }
+                  ],
+                  "source": "AFFECTED_FIELD"
+                },
+                {
+                  "source": "DESCRIPTION",
+                  "range": [
+                    {
+                      "introduced": "1.3.1.2"
+                    },
+                    {
+                      "last_affected": "1.3.2"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "v1.3.2",
+          "v1.3.1.2"
+        ],
+        "database_specific": {
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-85091.json"
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V4",
+        "score": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:N/VI:H/VA:H/SC:N/SI:N/SA:N"
+      }
+    ]
+  },
+  "CVE-2026-95512": {
+    "id": "CVE-2026-95512",
+    "summary": "Freetype: freetype: denial of service via repeated subroutine allocations in cid font loader",
+    "details": "A flaw was found in FreeType, specifically within its CID font loader. A remote attacker could exploit this vulnerability by tricking a user into opening content that embeds or references a specially crafted CID-keyed font. This crafted font can cause repeated allocations and decryptions of subroutine data across multiple font dictionaries, leading to excessive memory and CPU consumption. This can result in a denial of service (DoS) for the application or service processing the font, potentially causing it to hang or terminate.",
+    "modified": "2026-10-28T11:21:45.384914017Z",
+    "published": "2026-10-02T09:05:11.245Z",
+    "database_specific": {
+      "unresolved_ranges": [
+        {
+          "extracted_events": [
+            {
+              "range": [
+                {
+                  "fixed": "2.14.3-2.1.hum1"
+                }
+              ],
+              "source": "AFFECTED_FIELD",
+              "strategy": "InverseAffectedRanges"
+            }
+          ]
+        }
+      ],
+      "cna_assigner": "redhat",
+      "cwe_ids": [
+        "CWE-400"
+      ],
+      "osv_generated_from": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/95xxx/CVE-2026-95512.json"
+    },
+    "references": [
+      {
+        "type": "WEB",
+        "url": "https://access.redhat.com/downloads/content/package-browser/"
+      },
+      {
+        "type": "WEB",
+        "url": "https://catalog.redhat.com/software/containers/"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://access.redhat.com/errata/RHSA-2026:74952"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://access.redhat.com/security/cve/CVE-2026-95512"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://github.com/CVEProject/cvelistV5/tree/main/cves/2026/95xxx/CVE-2026-95512.json"
+      },
+      {
+        "type": "ADVISORY",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-95512"
+      },
+      {
+        "type": "REPORT",
+        "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2462295"
+      },
+      {
+        "type": "FIX",
+        "url": "https://gitlab.freedesktop.org/freetype/freetype/-/commit/f3ca71c9900fe860849b3163a6e2c1e765b291d9"
+      }
+    ],
+    "affected": [
+      {
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://gitlab.freedesktop.org/freetype/freetype",
+            "events": [
+              {
+                "introduced": "0"
+              },
+              {
+                "fixed": "f3ca71c9900fe860849b3163a6e2c1e765b291d9"
+              }
+            ],
+            "database_specific": {
+              "extracted_events": [
+                {
+                  "range": [
+                    {
+                      "fixed": "f3ca71c9900fe860849b3163a6e2c1e765b291d9"
+                    }
+                  ],
+                  "source": "REFERENCES_COMMIT"
+                }
+              ]
+            }
+          }
+        ],
+        "versions": [
+          "VER-2-14-3",
+          "VER-2-14-2",
+          "VER-2-14-1",
+          "VER-2-14-0",
+          "VER-2-13-3",
+          "VER-2-13-2",
+          "VER-2-13-1",
+          "VER-2-13-0",
+          "VER-2-12-1",
+          "VER-2-12-0",
+          "VER-2-11-1",
+          "VER-2-11-0",
+          "VER-2-10-4",
+          "VER-2-10-3",
+          "VER-2-10-2",
+          "VER-2-10-1",
+          "VER-2-10-0",
+          "VER-2-9-1",
+          "VER-2-9",
+          "VER-2-8-1",
+          "VER-2-8",
+          "VER-2-7-1",
+          "VER-2-7",
+          "VER-2-6-4",
+          "VER-2-6-3",
+          "VER-2-6-2",
+          "VER-2-6-1",
+          "VER-2-6",
+          "VER-2-5-5",
+          "VER-2-5-4",
+          "VER-2-5-3",
+          "VER-2-5-2",
+          "VER-2-5-1",
+          "VER-2-5-0-1",
+          "VER-2-5-0",
+          "VER-2-4-12",
+          "VER-2-4-12-beta",
+          "VER-2-4-11",
+          "VER-2-4-10",
+          "VER-2-4-9",
+          "VER-2-4-8",
+          "VER-2-4-7",
+          "VER-2-4-6",
+          "VER-2-4-5",
+          "VER-2-4-4",
+          "VER-2-4-3",
+          "VER-2-4-2",
+          "VER-2-4-1",
+          "VER-2-4-0",
+          "VER-2-3-12",
+          "VER-2-3-11",
+          "VER-2-3-10",
+          "VER-2-3-9",
+          "VER-2-3-8",
+          "VER-2-3-7",
+          "VER-2-3-6",
+          "VER-2-3-5-REAL",
+          "VER-2-3-5",
+          "VER-2-3-4",
+          "VER-2-3-3",
+          "VER-2-3-2",
+          "VER-2-3-1-FINAL",
+          "VER-2-3-1",
+          "VER-2-3-0-FINAL",
+          "VER-2-3-0-RC2",
+          "VER-2-3-0",
+          "VER-2-3-0-RC1",
+          "VER-2-2-1",
+          "VER-2-2-0-RC4",
+          "VER-2-2-0",
+          "VER-2-2-0-RC3",
+          "VER-2-2-0-RC2",
+          "VER-2-2-0-RC1",
+          "DATE-050920",
+          "VER-2-1-10",
+          "VER-2-1-9",
+          "VER-2-1-8",
+          "VER-2-1-8-RC1",
+          "import",
+          "VER-2-1-7",
+          "VER-2-1-6",
+          "VER-2-1-5-RC1",
+          "start",
+          "VER-2-1-4",
+          "VER-2-1-4-RC2",
+          "VER-2-1-4-RC1",
+          "VER-2-1-3",
+          "VER-2-1-3-RC3",
+          "VER-2-1-3-RC2",
+          "VER-2-1-3-RC1",
+          "VER-2-1-2",
+          "VER-2-1-2-RC1",
+          "VER-2-1-1",
+          "VER-2-1-1-RC1",
+          "freetype",
+          "VER-2-1-0",
+          "VER-2-0-8",
+          "VER-2-0-7",
+          "VER-2-0-6",
+          "PRE-2-0-6",
+          "VER-2-0-5",
+          "freetype2",
+          "VER-2-0-4",
+          "VER-2-0-3",
+          "VER-2-0-2",
+          "VER-2-0-2-TEST",
+          "VER-2-0-1",
+          "PRE-2-0-1",
+          "VER-2-0",
+          "RELEASE-2-0",
+          "BETA-8",
+          "BETA-7",
+          "BETA-6",
+          "BETA-5",
+          "VER-2-BETA4",
+          "VER-2-BETA3",
+          "VER-2-BETA2"
+        ],
+        "database_specific": {
+          "vanir_signatures_modified": "2026-10-28T11:21:45Z",
+          "source": "https://storage.googleapis.com/cve-osv-conversion/osv-output/CVE-2026-95512.json",
+          "vanir_signatures": [
+            {
+              "deprecated": false,
+              "digest": {
+                "function_hash": "259200994032010936063787211057547714652",
+                "length": 2256
+              },
+              "id": "CVE-2026-95512-12e845e8",
+              "signature_type": "Function",
+              "signature_version": "v1",
+              "source": "https://gitlab.freedesktop.org/freetype/freetype@f3ca71c9900fe860849b3163a6e2c1e765b291d9",
+              "target": {
+                "function": "cid_read_subrs",
+                "file": "src/cid/cidload.c"
+              }
+            },
+            {
+              "signature_type": "Line",
+              "signature_version": "v1",
+              "source": "https://gitlab.freedesktop.org/freetype/freetype@f3ca71c9900fe860849b3163a6e2c1e765b291d9",
+              "target": {
+                "file": "src/cid/cidload.c"
+              },
+              "deprecated": false,
+              "digest": {
+                "line_hashes": [
+                  "152937411635740086459520367050448665719",
+                  "258548005201226190369177455865505328921",
+                  "163262093634245156726322638498547476430",
+                  "76349760283979859109882062457365616182",
+                  "75300275272473090163666232914083773528",
+                  "111457709484502055113258564062513310293",
+                  "166662914078464676203562358056447768179",
+                  "195681934156291992527615608160036954699"
+                ],
+                "threshold": 0.9
+              },
+              "id": "CVE-2026-95512-b1c4b76c"
+            }
+          ]
+        }
+      }
+    ],
+    "schema_version": "1.9.2",
+    "severity": [
+      {
+        "type": "CVSS_V3",
+        "score": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H"
+      }
+    ]
+  },
+  "OSV-2021-777": {
+    "id": "OSV-2021-777",
+    "summary": "Heap-use-after-free in xmlAddNextSibling",
+    "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlAddNextSibling\nxmlXIncludeCopyRange\nxmlXIncludeCopyXPointer\n```\n",
+    "modified": "2026-10-19T14:29:28.053903Z",
+    "published": "2021-05-20T00:00:30.166614Z",
+    "references": [
+      {
+        "type": "REPORT",
+        "url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=34461"
+      }
+    ],
+    "affected": [
+      {
+        "package": {
+          "name": "libxml2",
+          "ecosystem": "OSS-Fuzz",
+          "purl": "pkg:generic/libxml2"
+        },
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://gitlab.gnome.org/GNOME/libxml2.git",
+            "events": [
+              {
+                "introduced": "6c128fd58a0e4641c23a345d413672494622db1b"
+              }
+            ]
+          }
+        ],
+        "versions": [
+          "CVE-2021-3541",
+          "v2.9.11",
+          "v2.9.12",
+          "v2.9.13",
+          "v2.9.14",
+          "v2.10.0",
+          "v2.10.1",
+          "v2.10.2",
+          "v2.10.3",
+          "v2.10.4",
+          "v2.11.0",
+          "v2.11.1",
+          "v2.11.2",
+          "v2.11.3",
+          "v2.11.4",
+          "v2.11.5",
+          "v2.11.6",
+          "v2.12.0",
+          "v2.12.1",
+          "v2.12.2",
+          "v2.12.3",
+          "v2.12.4",
+          "v2.12.5",
+          "v2.11.7",
+          "v2.12.6",
+          "v2.11.8",
+          "v2.12.7",
+          "v2.12.8",
+          "v2.13.0",
+          "v2.13.1",
+          "v2.13.2",
+          "v2.13.3",
+          "v2.11.9",
+          "v2.12.9",
+          "v2.13.4",
+          "v2.13.5",
+          "v2.13.6",
+          "v2.12.10",
+          "v2.13.7",
+          "v2.14.0",
+          "v2.14.1",
+          "v2.13.8",
+          "v2.14.2",
+          "v2.14.3",
+          "v2.14.4",
+          "v2.14.5",
+          "v2.13.9",
+          "v2.14.6",
+          "v2.15.0",
+          "v2.15.1",
+          "v2.15.2",
+          "v2.15.3",
+          "v2.15.4"
+        ],
+        "ecosystem_specific": {
+          "severity": "HIGH"
+        },
+        "database_specific": {
+          "source": "https://github.com/google/oss-fuzz-vulns/blob/main/vulns/libxml2/OSV-2021-777.yaml"
+        }
+      }
+    ],
+    "schema_version": "1.9.1"
+  },
+  "OSV-2024-698": {
+    "id": "OSV-2024-698",
+    "summary": "Heap-use-after-free in xmlCharEncCloseFunc",
+    "details": "OSS-Fuzz report: https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774\n\n```\nCrash type: Heap-use-after-free READ 4\nCrash state:\nxmlCharEncCloseFunc\nhtmlSaveFileFormat\nparseAndPrintFile\n```\n",
+    "modified": "2026-10-19T15:14:23.633109Z",
+    "published": "2024-07-31T00:12:19.254629Z",
+    "references": [
+      {
+        "type": "REPORT",
+        "url": "https://bugs.chromium.org/p/oss-fuzz/issues/detail?id=70774"
+      }
+    ],
+    "affected": [
+      {
+        "package": {
+          "name": "libxml2",
+          "ecosystem": "OSS-Fuzz",
+          "purl": "pkg:generic/libxml2"
+        },
+        "ranges": [
+          {
+            "type": "GIT",
+            "repo": "https://gitlab.gnome.org/GNOME/libxml2.git",
+            "events": [
+              {
+                "introduced": "36ea881b9d92166568b1d107181a05f673fd4ab1"
+              }
+            ]
+          }
+        ],
+        "versions": [
+          "v2.14.0",
+          "v2.14.1",
+          "v2.14.2",
+          "v2.14.3",
+          "v2.14.4",
+          "v2.14.5",
+          "v2.14.6",
+          "v2.15.0",
+          "v2.15.1",
+          "v2.15.2",
+          "v2.15.3",
+          "v2.15.4"
+        ],
+        "ecosystem_specific": {
+          "severity": "HIGH"
+        },
+        "database_specific": {
+          "source": "https://github.com/google/oss-fuzz-vulns/blob/main/vulns/libxml2/OSV-2024-698.yaml"
+        }
+      }
+    ],
+    "schema_version": "1.9.1"
+  }
+}

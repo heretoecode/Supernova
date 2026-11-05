@@ -5,52 +5,114 @@ import android.view.*;
 import android.widget.*;
 import com.archos.mediacenter.video.R;
 import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks shared keyboard actions, audio sort state and playback HUD control placement. */
 @RunWith(RobolectricTestRunner.class)
-@Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
+@Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewNextTest {
-    @Test public void keyboardHasPermanentNumbersAndDeletesWholeCodePoints() {
-        Application app=RuntimeEnvironment.getApplication();
-        EditText input=new EditText(app);
-        PreviewKeyboard keyboard=new PreviewKeyboard(app,input,()->{});
-        assertArrayEquals(new String[]{"1234567890","QWERTYUIOP","ASDFGHJKL","ZXCVBNM"},PreviewKeyboard.ROWS);
-        assertEquals(5,keyboard.getChildCount());
-        PreviewPagesTest.findText(keyboard,"1").performClick();
-        assertEquals("1",input.getText().toString());
-        input.setText("A😀");input.setSelection(input.length());
-        PreviewPagesTest.findText(keyboard,"Backspace").performClick();
-        assertEquals("A",input.getText().toString());
-        input.setSelection(0,input.length());
-        PreviewPagesTest.findText(keyboard,"Q").performClick();
-        assertEquals("Q",input.getText().toString());
+    @Before
+    public void isolatePreviewTransport() {
+        PreviewAsyncFixtures.offlineTransport();
     }
-    @Test public void audioSortStateSurvivesColumnModelRecreation() {
-        Application app=RuntimeEnvironment.getApplication();
-        PreviewLibraryColumns columns=new PreviewLibraryColumns(app,false);
+
+    @After
+    public void drainPreviewWorkers() throws Exception {
+        PreviewAsyncFixtures.drain();
+    }
+
+    @Test
+    public void keyboardHasPermanentNumbersAndDeletesWholeCodePoints() {
+        Application app = RuntimeEnvironment.getApplication();
+        EditText input = new EditText(app);
+        PreviewKeyboard keyboard = new PreviewKeyboard(app, input, () -> {
+        });
+        assertArrayEquals(new String[] {
+            "1234567890", "QWERTYUIOP", "ASDFGHJKL.", "ZXCVBNM,/\\"
+        }, PreviewKeyboard.ROWS);
+        assertEquals(6, keyboard.getChildCount());
+        PreviewPagesTest.findText(keyboard, "1").performClick();
+        assertEquals("1", input.getText().toString());
+        input.setText("A😀");
+        input.setSelection(input.length());
+        keyboard.findViewWithTag("semantic:keyboard:Backspace").performClick();
+        assertEquals("A", input.getText().toString());
+        input.setSelection(0, input.length());
+        PreviewPagesTest.findText(keyboard, "Q").performClick();
+        assertEquals("Q", input.getText().toString());
+    }
+
+    @Test
+    public void keyboardCapsClearSelectAndCancelUseSharedActions() {
+        var app = RuntimeEnvironment.getApplication();
+        EditText input = new EditText(app);
+        PreviewKeyboard keyboard = new PreviewKeyboard(app, input, null);
+        int[] actions = {
+            0, 0
+        };
+        keyboard.setActions(() -> actions[0]++, () -> actions[1]++);
+        keyboard.findViewWithTag("semantic:keyboard:Caps Lock").performClick();
+        assertFalse(keyboard.capsLocked());
+        keyboard.findViewWithTag("semantic:keyboard:A").performClick();
+        assertEquals("a", input.getText().toString());
+        keyboard.findViewWithTag("semantic:keyboard:Clear").performClick();
+        assertEquals("", input.getText().toString());
+        keyboard.findViewWithTag("semantic:keyboard:Done").performClick();
+        keyboard.findViewWithTag("semantic:keyboard:Cancel").performClick();
+        assertArrayEquals(new int[] {
+            1, 1
+        }, actions);
+    }
+
+    @Test
+    public void audioSortStateSurvivesColumnModelRecreation() {
+        Application app = RuntimeEnvironment.getApplication();
+        PreviewLibraryColumns columns = new PreviewLibraryColumns(app, false);
         assertTrue(columns.available().contains(PreviewLibraryColumns.Column.AUDIO));
-        columns.setSort(PreviewLibraryColumns.Column.AUDIO,false);
-        PreviewLibraryColumns restored=new PreviewLibraryColumns(app,false);
-        assertEquals(PreviewLibraryColumns.Column.AUDIO,restored.sortColumn);
+        columns.setSort(PreviewLibraryColumns.Column.AUDIO, false);
+        PreviewLibraryColumns restored = new PreviewLibraryColumns(app, false);
+        assertEquals(PreviewLibraryColumns.Column.AUDIO, restored.sortColumn);
         assertFalse(restored.ascending);
     }
-    @Test public void hudHasExactlyFiveVisibleControlGroups() {
-        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+
+    @Test
+    public void hudKeepsNativeControlsInApprovedSecondaryAndMainRows() {
+        var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
-            View hud=LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental,null);
-            ViewGroup transport=hud.findViewById(R.id.preview_transport);
-            assertEquals(5,transport.getChildCount());
-            int[] ids={R.id.preview_subtitles,R.id.preview_audio,R.id.pause,R.id.preview_info,R.id.preview_more};
-            for(int i=0;i<ids.length;i++) {
-                View button=hud.findViewById(ids[i]);
-                assertEquals(View.VISIBLE,button.getVisibility());
-                assertSame(transport.getChildAt(i),button.getParent());
+            View hud = LayoutInflater.from(host.get()).inflate(R.layout.player_controller_experimental, null);
+            ViewGroup transport = hud.findViewById(R.id.preview_transport);
+            // 2 Nov 2026: "·" separator between total runtime and Ends at adds an eighth child.
+            assertEquals(8, transport.getChildCount());
+            View dot = hud.findViewById(R.id.preview_end_separator);
+            assertEquals(transport.indexOfChild(hud.findViewById(R.id.time)) + 1, transport.indexOfChild(dot));
+            assertEquals(
+                transport.indexOfChild(dot) + 1, transport.indexOfChild(hud.findViewById(R.id.preview_end_time)));
+            int[] ids = {
+                R.id.preview_subtitles, R.id.preview_audio, R.id.preview_more
+            };
+            for (int i = 0; i < ids.length; i++) {
+                View button = hud.findViewById(ids[i]);
+                assertEquals(View.VISIBLE, button.getVisibility());
+                assertSame(transport, button.getParent().getParent());
             }
-            for(int id:new int[]{R.id.preview_previous,R.id.preview_next,R.id.backward,R.id.forward})
-                assertEquals(View.GONE,hud.findViewById(id).getVisibility());
-        } finally {host.pause().stop().destroy();}
+            View pause = hud.findViewById(R.id.pause);
+            assertTrue(pause instanceof ImageButton);
+            assertEquals(View.VISIBLE, pause.getVisibility());
+            assertSame(transport, pause.getParent().getParent());
+            assertNotNull(hud.findViewById(R.id.preview_pause_label));
+            assertTrue(hud.findViewById(R.id.seek_progress) instanceof SeekBar);
+            for (int id :
+                new int[] {
+                    R.id.preview_info, R.id.preview_previous, R.id.preview_next, R.id.backward, R.id.forward
+                })
+                assertEquals(View.GONE, hud.findViewById(id).getVisibility());
+        } finally {
+            host.pause().stop().destroy();
+        }
     }
 }

@@ -43,6 +43,7 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
 
+/** Displays subtitle styling controls and applies color and size selections. */
 public class SubtitleSettingsDialog extends AlertDialog implements
         SeekBar.OnSeekBarChangeListener, View.OnTouchListener, SubtitleColorPicker.ColorPickListener {
 
@@ -62,6 +63,7 @@ public class SubtitleSettingsDialog extends AlertDialog implements
     private View mRightVerticalButton;
     private static int REPEAT_TOUCH_ACTION = 0;
     private Handler mHandler = new Handler(Looper.getMainLooper()){
+        @Override
         public void handleMessage(Message msg) {
             if(mTouchedView != null){
                 onAction(mTouchedView);
@@ -155,6 +157,7 @@ public class SubtitleSettingsDialog extends AlertDialog implements
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    @Override
     public void onProgressChanged(SeekBar seekBar, int progress,
             boolean fromTouch) {
         if (seekBar == mSizeSeekBar) {

@@ -22,8 +22,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -31,7 +29,6 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.widget.CursorObjectAdapter;
 import androidx.leanback.widget.FocusHighlight;
@@ -50,8 +47,6 @@ import com.archos.mediacenter.video.browser.adapters.mappers.CollectionCursorMap
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import com.archos.mediacenter.video.browser.loader.AllCollectionsLoader;
 import com.archos.mediacenter.video.browser.loader.AllCollectionsNoAnimeLoader;
-import com.archos.mediacenter.video.browser.loader.TvshowsByAlphaLoader;
-import com.archos.mediacenter.video.browser.loader.TvshowsNoAnimeByAlphaLoader;
 import com.archos.mediacenter.video.leanback.CompatibleCursorMapperConverter;
 import com.archos.mediacenter.video.leanback.DisplayMode;
 import com.archos.mediacenter.video.leanback.VideoViewClickedListener;
@@ -62,10 +57,12 @@ import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.DbUtils;
 import com.archos.mediacenter.video.utils.PrivateModeUIHelper;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays a collection grid with loading, sorting and selection handling. */
 public class AllCollectionsGridFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = AllCollectionsGridFragment.class.getSimpleName();
@@ -121,7 +118,7 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
 
         mCollectionWatched = mPrefs.getBoolean(COLLECTION_WATCHED_KEY, true);
         mSeparateAnimeFromShowMovie = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
-        mSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         updateBackground();
 
@@ -259,6 +256,7 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
                 mSortOrderItem = CollectionsSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
@@ -317,7 +315,7 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
         super.onResume();
         mOverlay.resume();
         updateBackground();
-        boolean newSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        boolean newSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
         if (newSortIgnoreArticles != mSortIgnoreArticles) {
             mSortIgnoreArticles = newSortIgnoreArticles;
             Bundle args = new Bundle();
@@ -339,13 +337,13 @@ public class AllCollectionsGridFragment extends MyVerticalGridFragment implement
         if (id == ALL_COLLECTIONS_LOADER_ID) {
             if (args == null) {
                 if (mSeparateAnimeFromShowMovie) return new AllCollectionsNoAnimeLoader(getActivity());
-                else return new AllCollectionsLoader(getActivity());
+                    else return new AllCollectionsLoader(getActivity());
             } else {
                 if (mSeparateAnimeFromShowMovie) return new AllCollectionsNoAnimeLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
-                else return new AllCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
+                    else return new AllCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override

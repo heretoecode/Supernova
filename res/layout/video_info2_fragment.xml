@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/genres_banner" />
+        app:srcCompat="@drawable/genres_banner"  android:contentDescription="@null"/>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -77,7 +77,7 @@
             android:clickable="true"
             android:src="@drawable/button_icon_play"
             android:visibility="gone"
-            app:elevation="4dp"/>
+            app:elevation="4dp" android:focusable="true" android:contentDescription="@string/play_selection"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

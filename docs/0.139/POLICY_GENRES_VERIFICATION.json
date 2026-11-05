@@ -1,0 +1,33 @@
+{
+  "result": "PASS",
+  "source_sha": "c72f70503154c8919290386f3e7564840d30e4f9",
+  "medialib_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "filecore_sha": "f7f8d90",
+  "duration": "1m15s",
+  "classes": 10,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.DiagnosticRestorePolicyTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest",
+    "com.archos.mediacenter.video.leanback.HomeGenreLiveTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.diagnostics.TransportReadDiagnosticsTest",
+    "com.archos.mediacenter.video.utils.PortableMediaMatchesTest",
+    "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "tests": 54,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "log_sha256": "f0eabd220a4ff8ef17972c59fa9f69d8635afaa8e51da237e9f6f876c3fd10ab",
+  "coverage": [
+    "Logical logging-off applies live recorder/stream policy only at durable completion, including recovery; rollback preserves old policy",
+    "Unselected and missing diagnostic fields never create invented preferences; saved logs and logical receiving authentication retained",
+    "Legacy whole replacement follows historical supported-default/auth-disconnect contract without extending its schema",
+    "Connected Genre snapshot counts preserve focus/order/scroll/zero selection; actual scanner broadcasts and reduced motion control spinner; dismiss stops it",
+    "Updated registered26/public identity/no-legacy-fallback guards; existing six-store/canonical journal, direct-read and production model regressions"
+  ],
+  "limits": "Synthetic/native SQLite/graphics and real loopback transport. No Shield/OS force-stop or final packaging/CI acceptance."
+}

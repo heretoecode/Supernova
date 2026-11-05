@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import androidx.core.graphics.ColorUtils;
 
 /** Persistent carousel state: retarget from the visible pill widths, never flash replacement dots. */
 final class PreviewFeaturedIndicators extends View {
@@ -17,10 +18,11 @@ final class PreviewFeaturedIndicators extends View {
         setContentDescription("Featured carousel, Left or Right on More Info to change title");
     }
     void setPosition(int count,int selected){
-        if(count<0||count>8)throw new IllegalArgumentException("Invalid Featured count");
+        if(count<0)throw new IllegalArgumentException("Invalid Featured count");
         if(morph!=null)morph.cancel();
         if(count==0){weights=new float[0];invalidate();return;}
-        int target=Math.floorMod(selected,count);
+        int actual=count;int position=Math.floorMod(selected,actual);count=Math.min(8,actual);int target=actual<=8?position:Math.min(7,Math.round(position*7f/(actual-1)));
+        setContentDescription("Featured title "+(position+1)+" of "+actual+", Left or Right on More Info to change title");
         if(weights.length!=count){weights=new float[count];weights[target]=1;invalidate();return;}
         float[] origin=weights.clone();
         morph=ValueAnimator.ofFloat(0,1);morph.setDuration(200);morph.setInterpolator(new DecelerateInterpolator());
@@ -35,7 +37,7 @@ final class PreviewFeaturedIndicators extends View {
         float total=weights.length*11*density+19*density,left=(getWidth()-total)/2+3*density;
         float top=(getHeight()-5*density)/2;
         for(float weight:weights){float width=(5+19*weight)*density;
-            paint.setColor(androidx.core.graphics.ColorUtils.blendARGB(0x7792aabd,PreviewAccent.color(getContext()),weight));
+            paint.setColor(ColorUtils.blendARGB(0x7792aabd,PreviewAccent.color(getContext()),weight));
             canvas.drawRoundRect(left,top,left+width,top+5*density,2.5f*density,2.5f*density,paint);
             left+=width+6*density;
         }

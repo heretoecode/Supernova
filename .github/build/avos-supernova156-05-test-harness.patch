@@ -1,0 +1,45 @@
+diff --git a/test/test_atempo_missing_state.py b/test/test_atempo_missing_state.py
+index 187decb2178a72542b4d8d9673428d24e2157750..db2f63c3deea3d1556f8789496918fcde4b63342 100644
+--- a/test/test_atempo_missing_state.py
++++ b/test/test_atempo_missing_state.py
+@@ -40,7 +40,8 @@ typedef struct { struct ctx *priv; } STREAM_FILTER_AUDIO;
+ static void legacy(AVFilterContext *c,int *ring,int64_t *a,int64_t *b,
+     int64_t *in,int64_t *out,double *tempo) {
+     (void)c;(void)a;(void)b;(void)out;(void)tempo;
+-    if(ring)*ring=100; if(in)*in=1100;
++    if (ring) { *ring = 100; }
++    if (in) { *in = 1100; }
+ }
+ static void extended(AVFilterContext *c,int *ring,int64_t *a,int64_t *b,
+     int64_t *in,int64_t *out,double *tempo,int64_t *media) {
+diff --git a/test/test_pause_resume_policy.py b/test/test_pause_resume_policy.py
+index 93d1d452f5e55cc7393340e05e3c398bd6d7f468..2a33c0d946296417fc6d7e6ba13adfb39ed3e038 100644
+--- a/test/test_pause_resume_policy.py
++++ b/test/test_pause_resume_policy.py
+@@ -11,7 +11,7 @@ PREAMBLE = r'''
+ #include <assert.h>
+ #include <stdio.h>
+ #include <string.h>
+-#define DBG if (0)
++#define DBG
+ #define DBG3 if (0)
+ #define serprintf printf
+ static int64_t now_ms = 10000;
+@@ -153,7 +153,7 @@ int main(void) {
+         run_c(r'''
+ #include <assert.h>
+ #define AUDIO_WRITE_RETRY -99
+-#define DBG if (0)
++#define DBG
+ #define LOG(...) ((void)0)
+ struct track { int track_paused; unsigned pause_generation; };
+ static int classify(struct track *at,int ret,int write_started_paused,unsigned write_pause_generation) {
+@@ -187,7 +187,7 @@ int main(void) {
+ #include <assert.h>
+ #include <stdio.h>
+ #include <string.h>
+-#define DBG if (0)
++#define DBG
+ #define DBG3 if (0)
+ #define serprintf printf
+ static int scenario, capacity_calls, write_calls, accepted, waits, aborted;

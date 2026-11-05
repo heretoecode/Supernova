@@ -1,0 +1,25 @@
+{
+  "run_id": 40884118521,
+  "source_commit": "a8abe0a1e036ff8c2bbfbee26f1d15d5fb4c1c66",
+  "runtime_input_run": 40845026473,
+  "artifact_id": 12902341043,
+  "artifact_sha256": "a0fa224df7f13bfe187282783e824addb54664cbc6ddc1940b28df31e43b9a5b",
+  "api": 23,
+  "abi": "x86_64",
+  "statistics": {
+    "tests": 28,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_classes": [
+    "com.archos.filecorelibrary.ftp.FtpsTlsPolicyAndroid23Test",
+    "com.archos.mediacenter.filecoreextension.upnp2.Jetty145SecurityTest",
+    "com.archos.mediacenter.filecoreextension.upnp2.Jetty146BackportTest",
+    "com.archos.mediacenter.filecoreextension.upnp2.NativeTrustRootsAndroid23Test"
+  ],
+  "scope": "Actual Android23 framework:22 Jetty,1 NativeTrustRoots,5 real local FTPS/TLS cases. Superseded only by the rejected-peer test fixture close-race correction; production TLS policy unchanged. No Shield/real-provider claim.",
+  "jetty_lock_sha256": "4cdc5a1b53a8ecebfaed26060b6b11e10ede5b78f7899fd7971b14e9b75a32a2",
+  "medialib_patch_sha256": "6dddea39b77c5102cccb1db4165fbd017ff4edbd014fa9c125550178f154c27a",
+  "filecore_patch_sha256": "e2aa25ea5c56335636720d80914e0cae137c1b14d2cbb4393a8ee5e9f40420e0"
+}

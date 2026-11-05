@@ -1,0 +1,25 @@
+{
+  "result": "PASS",
+  "source_sha": "6cf1bfef81468961191e943e8cb0a5d4a6e336e1",
+  "dependency_sha": "3b8cd3650fe95452534fa201c3d093d00e5dcc94",
+  "duration": "45s",
+  "log_sha256": "afb43b6aabda1da9e7c116c4ff8fa94b86c58226647149a3495c9d3f8bae6660",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.LegacySchema62MigrationTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "coverage": [
+    "Canonical re-identification after a clear retains owned movie ID and pin",
+    "Episode -> existing retained movie switch preserves old episode/show/pin/Collection and active joined fields",
+    "Coordinated empty MATCHES selected replacement, durable native redo and later receiving identification supersession",
+    "Production model route and prior recovery/legacy63 tests"
+  ],
+  "limits": "New metadata rows/new parent creation, reverse cross-kind, post-index reconciliation and codec26 registration still open. Synthetic Native63 only; no physical/signed upgrade proof.",
+  "tests": 39,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

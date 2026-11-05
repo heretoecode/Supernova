@@ -15,9 +15,10 @@
 package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
+import com.archos.mediacenter.video.utils.SortUtils;
 
-import com.archos.mediacenter.video.R;
 
+/** Loads non-anime TV shows filtered by an alphabetical selection. */
 public class TvshowsNoAnimeByAlphaLoader extends TvshowsNoAnimeByLoader {
 
     public static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED ASC";
@@ -34,8 +35,9 @@ public class TvshowsNoAnimeByAlphaLoader extends TvshowsNoAnimeByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
-        String col = com.archos.mediacenter.video.utils.SortUtils.getAlphaBucketColumn(context, com.archos.mediacenter.video.utils.SortUtils.SortScope.SHOW);
+        String col = SortUtils.getAlphaBucketColumn(context, SortUtils.SortScope.SHOW);
         return "SELECT\n" +
                 "    UNICODE(SUBSTR(" + col + ",1,1)) AS _id,\n" +
                 "    UPPER(SUBSTR(" + col + ",1,1)) AS name,\n" +

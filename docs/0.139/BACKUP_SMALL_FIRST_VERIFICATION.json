@@ -1,0 +1,12 @@
+{
+  "result": "FAIL",
+  "source_sha": "57dead83",
+  "duration": "31s",
+  "classes": 1,
+  "tests": 7,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "log_sha256": "c153e3a620a1b310fec148d786902e284b2e503cc5067958eb9096b17e8f071b",
+  "reason": "Actual connected640x360 Settings uses inherited horizontally scrolling SharedThreePanel viewport. Rail occupies~394px, most right-hand columns are outside physical screen, and Filenames/locations text is clipped. Larger-profile controller cases pass. Capture inspected; do not hide/disable this acceptance failure or shrink typography blindly."
+}

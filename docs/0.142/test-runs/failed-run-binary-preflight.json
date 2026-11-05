@@ -1,0 +1,20 @@
+{
+  "application_id": "app.supernova.player",
+  "version_name": "0.142",
+  "version_code": 142,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "apk_sha256": "55f19a3eac8c165b942a1eb740d5dbbc80f6bf53e5bb95a0636a3f55a7dd5813",
+  "rebuilt_ffmpeg_libraries_matched": 24,
+  "unsigned_signature_rejected": true,
+  "source_run": 40023022572,
+  "scope": "Independent binary preflight only. This run failed one test; no conformance clearance or signing is claimed."
+}

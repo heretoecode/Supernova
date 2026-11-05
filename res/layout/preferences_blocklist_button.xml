@@ -12,6 +12,6 @@
         android:background="@drawable/list_selector_holo_dark"
         android:paddingRight="5dip"
         android:paddingLeft="5dip"
-        app:srcCompat="@drawable/label_refresh" />
+        app:srcCompat="@drawable/label_refresh"  android:contentDescription="@null"/>
 
 </LinearLayout>

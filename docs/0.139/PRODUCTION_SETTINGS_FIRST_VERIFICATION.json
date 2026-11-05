@@ -1,0 +1,21 @@
+{
+  "source_sha": "f0f629f63241d20ef00e71393bb0065d0a6b5431",
+  "result": "FAIL",
+  "classes": 7,
+  "tests": 35,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest"
+  ],
+  "log_sha256": "b5fe99383d64524a6a1bd7969522aeceea5111cfe6b42bafec6682e2a3359caf",
+  "duration": "2m 39s",
+  "reason": "Production full-fragment test failed; cleanup masked the original exception with null PreferenceScreen. All other dual-reader checks passed, including corrected private tampering fixture. Follow-up preserves the original failure before diagnosing full initialization."
+}

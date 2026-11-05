@@ -1,0 +1,15 @@
+# Additional 0.147 Shield QA — next-release backlog (30 October 2026)
+
+Status: User-requested next-release fixes and design adjustments; not implemented. User supplied screenshots and five clips IMG_5061–IMG_5065; reviewed in chat, NOT uploaded to GitHub. Preserve signed 0.147 and draft PR #27.
+
+1. **Documentaries initial stats visibility:** Statistics exist but are HIDDEN on first load. Scrolling down and back up makes them appear. Investigate initial layout, scroll restoration, header visibility and focus. Acceptance: visible immediately without scrolling; all custom library pages. Also fix the previously reported mismatch where TV Shows content displays but Documentaries top tab is highlighted.
+2. **Library background:** Owner confirms approved static default Supernova Space Black background for Movies, TV Shows and every custom library; stop focused-item background artwork updates. Preserve Home/details artwork and poster images.
+3. **Global keyboard:** Input caret renders near TOP of search box while text is vertically centred; align caret with text. Caps Lock on/off indicator currently just a tiny line under the icon when active; replace with unambiguous active/inactive visual state. Test keyboard remote focus and accessibility.
+4. **Details hero artwork:** MobLand screenshot shows heavy blue/grey full-card wash on details hero compared with clearer Home hero. Remove full-card filter; retain only minimal local text-legibility gradient, preserving readable metadata/buttons and true artwork colour.
+5. **Settings focus ghosting:** Playback & Video > Video & Display shows trailing/ghost focus highlight during D-pad scrolling. Fix animation/state layering so only one crisp focus target appears, including rapid navigation.
+6. **Toggle status:** Settings toggles can look like white boxes when enabled; ON needs visible approved accent, OFF neutral, independently from focus highlight. Preserve actual preference state and keyboard/remote operation.
+7. **Connections & Integrations:** Move Service Integrations enable/disable switches to TOP of page and group OpenSubtitles and Trakt underneath. Audit dependencies and authentication, don't invent services or remove settings.
+8. **Language flags:** Audio & Subtitles > Subtitle Reading Language and ALL Settings language lists must display a consistent visible flag/icon for every entry. This is a repeated missed fix. Inventory all supported locales, map and test actual drawable resources on Android TV, and use a consistent documented policy for languages without a single country flag (rather than assigning a misleading nationality). Require exhaustive automated coverage and Shield screenshots.
+9. **Playback age rating:** Previously reported absent during real playback; reproduce with media known to contain configured-region certification, inspect metadata/overlay composition/timing; never fabricate ratings.
+
+For every item record source-level root cause, regression tests, UI evidence and physical Shield QA separately. Do not mark resolved on software tests alone. Do not modify delivered 0.147, merge main or publish a release.

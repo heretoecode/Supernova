@@ -16,24 +16,18 @@ package com.archos.mediacenter.video.leanback.adapter.object;
 
 import android.net.Uri;
 
-import com.archos.filecorelibrary.FileUtils;
-import com.archos.filecorelibrary.contentstorage.ContentStorageFileEditor;
-import com.archos.filecorelibrary.ftp.FtpFileEditor;
-import com.archos.filecorelibrary.jcifs.JcifsFileEditor;
-import com.archos.filecorelibrary.localstorage.LocalStorageFileEditor;
-import com.archos.filecorelibrary.sftp.SftpFileEditor;
-import com.archos.filecorelibrary.zip.ZipFileEditor;
-import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.utils.VideoUtils;
 
 import java.io.Serializable;
 
+/** Represents a network shortcut with its URI and artwork. */
 public class GenericNetworkShortcut extends Shortcut implements Serializable {
 
     public GenericNetworkShortcut(long id, String fullPath, String name, String friendlyUri) {
         super(id, fullPath, friendlyUri, name);
     }
 
+    @Override
     public Uri getUri() {
         return Uri.parse(mFullPath);
     }

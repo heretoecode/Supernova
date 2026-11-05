@@ -4,6 +4,7 @@ import java.io.*;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/** Checks subtitle downloads stage complete data and reject empty, cancelled, interrupted or oversized responses. */
 public class SubtitleTransferTest {
     @Test public void completeResponseIsStagedUnchanged() throws Exception {
         byte[] payload="1\n00:00:00,000 --> 00:00:01,000\nExample\n".getBytes("UTF-8");
@@ -16,14 +17,24 @@ public class SubtitleTransferTest {
         assertFails(new ByteArrayInputStream(new byte[]{1}),true);
     }
     @Test public void interruptedResponseFails() throws Exception {
-        assertFails(new InputStream(){public int read() throws IOException {throw new IOException("Disconnected");}},false);
+        assertFails(new InputStream(){
+        @Override
+        public int read() throws IOException {throw new IOException("Disconnected");}},false);
     }
     @Test public void oversizedResponseFailsWithoutRetainingPayloadInMemory() throws Exception {
-        InputStream infinite=new InputStream(){public int read(){return 1;}public int read(byte[] b){return b.length;}};
+        InputStream infinite=new InputStream(){
+        @Override
+        public int read(){return 1;}
+        @Override
+        public int read(byte[] b){return b.length;}};
         assertFails(infinite,false);
     }
     private static void assertFails(InputStream input,boolean cancelled) throws Exception {
-        try {SubtitleTransfer.stage(input,new OutputStream(){public void write(int b){}public void write(byte[] b,int o,int n){}},()->cancelled);fail("Expected rejected response");}
+        try {SubtitleTransfer.stage(input,new OutputStream(){
+        @Override
+        public void write(int b){}
+        @Override
+        public void write(byte[] b,int o,int n){}},()->cancelled);fail("Expected rejected response");}
         catch(IOException expected) {assertNotNull(expected.getMessage());}
     }
 }

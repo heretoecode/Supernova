@@ -1,6 +1,10 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import java.io.IOException;
 import org.json.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -22,8 +26,8 @@ public final class PreviewDiscovery {
         }
     }
     public static PreviewDiscovery load(Context context) {
-        PreviewDiscovery out=new PreviewDiscovery();
-        android.content.SharedPreferences cache=context.getSharedPreferences("preview_discovery",Context.MODE_PRIVATE);
+        PreviewDiscovery out=new PreviewDiscovery();if(!PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_integration_trakt",true)||!SupernovaLibraryPolicy.configured(context))return out;
+        SharedPreferences cache=context.getSharedPreferences("preview_discovery",Context.MODE_PRIVATE);
         String raw=cache.getString("charts",null);
         if(raw==null||System.currentTimeMillis()-cache.getLong("time",0)>TTL){
             try{
@@ -38,8 +42,8 @@ public final class PreviewDiscovery {
                         if(Thread.currentThread().isInterrupted())return out;
                         Request request=new Request.Builder().url("https://api.trakt.tv/"+kind+"s/"+chart+"?page="+page+"&limit=100").header("trakt-api-version","2").header("trakt-api-key",key).build();
                         try(Response response=client.newCall(request).execute()){
-                            if(!response.isSuccessful()||response.body()==null)throw new java.io.IOException("Chart unavailable");
-                            String body=response.body().string();if(body.length()>2000000)throw new java.io.IOException("Chart too large");
+                            if(!response.isSuccessful()||response.body()==null)throw new IOException("Chart unavailable");
+                            String body=response.body().string();if(body.length()>2000000)throw new IOException("Chart too large");
                             JSONArray a=new JSONArray(body);for(int i=0;i<a.length();i++)all.put(a.get(i));if(a.length()<100)break;
                         }
                     }

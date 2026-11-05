@@ -1,25 +1,32 @@
 package com.archos.mediacenter.video.streaming.putio;
+import android.app.Application;
+import android.os.SystemClock;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import java.lang.reflect.Method;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+import org.robolectric.util.ReflectionHelpers;
+/** Checks put.io account parsing selects safe fields and reports malformed responses without leaking payloads. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioAccountTest {
     @Test public void malformedAccountIsCorrelatedWithSuccessfulTransportWithoutLeakingBody()throws Exception{
-        android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
+        Application app=RuntimeEnvironment.getApplication();
+        Diagnostics.setEnabled(app,true);
         try{
             PutioReadClient client=new PutioReadClient("fixture-private-token");
             okhttp3.OkHttpClient fake=new okhttp3.OkHttpClient.Builder().addInterceptor(chain->new okhttp3.Response.Builder()
                     .request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK")
                     .body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("application/json"),"{status:OK,info:{username:'fixture-private-name'}}")).build()).build();
-            org.robolectric.util.ReflectionHelpers.setField(client,"http",fake);
+            ReflectionHelpers.setField(client,"http",fake);
             try{client.account();fail();}catch(PutioReadClient.Unavailable expected){assertEquals(PutioReconciliation.Failure.INVALID_PAGE,expected.reason);}
-            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");
-            java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
-            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());
+            Object recorder=ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");
+            Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,SystemClock.elapsedRealtime());
             assertFalse(evidence.contains("fixture-private-token"));assertFalse(evidence.contains("fixture-private-name"));
             String operation=null;int failures=0;
             for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
@@ -29,7 +36,7 @@ public class PutioAccountTest {
             for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);if(!operation.equals(row.optString("operation_id")))continue;
                 if("provider_transport_complete".equals(row.optString("event")))transports++;if("operation_end".equals(row.optString("event")))ends++;}
             assertEquals(1,transports);assertEquals(1,ends);
-        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
+        }finally{Diagnostics.setEnabled(app,false);}
     }
     @Test public void selectsOnlyDisplayAndStorageFields()throws Exception{
         PutioReadClient.Account account=PutioReadClient.parseAccount(new JSONObject("{status:OK,info:{user_id:7,username:viewer,account_status:active,disk:{used:500,size:1000},download_token:must_not_escape,mail:private}}"));

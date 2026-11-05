@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">Скорость аудио</string>
+  <string name="preferences_audio_speed_mode_summary">Выбор фильтра скорости звука, используемого для изменения скорости воспроизведения. ⚠️ Экспериментально, может привести к разрывам и искажениям в видео и аудио</string>
+  <string name="audio_speed_mode_disabled">Отключено</string>
+  <string name="audio_speed_mode_audiotrack">Родной системы (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">Сбалансированный (Fmpeg atempo)</string>
+  <string name="audio_speed_mode_sonic">Голос и речь (Sonic)</string>
+  <string name="subtitles_show_full_for_local_audio_title">Показывать субтитры для аудио на локальном языке</string>
+  <string name="subtitles_show_full_for_local_audio_summary">Отключено по умолчанию, поэтому только принудительные субтитры автоматически выбираются, когда аудио соответствует вашему языку субтитров; включите чтобы также авто-выбирать полные субтитры</string>
+  <string name="ui_choice_title">Кажется, вы используете Nova Video Player на телевизоре.\nЕсли это так, мы рекомендуем использовать наш новый ТВ-интерфейс</string>
+  <string name="ui_choice_tv">ТВ-интерфейс</string>
+  <string name="ui_choice_tablet">Планшетный интерфейс</string>
+  <string name="ui_choice_help">Вы можете изменить свой выбор в настройках приложения позже</string>
+  <string name="workgroup">Рабочая группа</string>
+</resources>

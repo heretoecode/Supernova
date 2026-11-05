@@ -16,11 +16,13 @@ package com.archos.mediacenter.video.utils;
 
 import android.app.Activity;
 import android.content.res.Resources;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import android.widget.RelativeLayout;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.PrivateMode;
 
@@ -67,15 +69,15 @@ public class PrivateModeUIHelper {
         if (rootViewGroup instanceof FrameLayout) {
             // FrameLayout supports gravity for positioning
             FrameLayout.LayoutParams frameParams = new FrameLayout.LayoutParams(sizePx, sizePx);
-            frameParams.gravity = android.view.Gravity.BOTTOM | android.view.Gravity.END;
+            frameParams.gravity = Gravity.BOTTOM | Gravity.END;
             frameParams.setMargins(0, 0, marginPx, marginPx);
             params = frameParams;
-        } else if (rootViewGroup instanceof android.widget.RelativeLayout) {
+        } else if (rootViewGroup instanceof RelativeLayout) {
             // RelativeLayout uses alignParentBottom/End rules
-            android.widget.RelativeLayout.LayoutParams relativeParams = 
-                new android.widget.RelativeLayout.LayoutParams(sizePx, sizePx);
-            relativeParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM);
-            relativeParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_END);
+            RelativeLayout.LayoutParams relativeParams = 
+                new RelativeLayout.LayoutParams(sizePx, sizePx);
+            relativeParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            relativeParams.addRule(RelativeLayout.ALIGN_PARENT_END);
             relativeParams.setMargins(0, 0, marginPx, marginPx);
             params = relativeParams;
         } else {

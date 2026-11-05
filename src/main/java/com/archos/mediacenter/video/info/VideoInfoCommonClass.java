@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.info;
 
+import android.text.SpannableStringBuilder;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.generateTrackName;
 
 import android.content.Context;
@@ -30,6 +31,7 @@ import com.archos.mediacenter.filecoreextension.upnp2.StreamUriFinder;
 import com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.medialib.IMediaPlayer;
 import com.archos.medialib.LibAvos;
@@ -55,7 +57,9 @@ public class VideoInfoCommonClass {
     public static String getParentPath(Video video) {
         String path = video.getFriendlyPath();
         if (path != null && path.contains("/")) {
-            return path.substring(0, path.lastIndexOf("/"));
+            // the stored path is a URI where delimiters like '#' have to stay percent-encoded: decode
+            // it so the user sees the real folder name
+            return FileUtils.decodeUri(Uri.parse(path.substring(0, path.lastIndexOf("/"))));
         }
         return "";
     }
@@ -176,14 +180,15 @@ public class VideoInfoCommonClass {
         // Audio track(s)
         int audioTrackNb = videoMetadata.getAudioTrackNb();
         if (audioTrackNb > 0) {
-            StringBuilder sb = new StringBuilder();
+            SpannableStringBuilder lines=new SpannableStringBuilder();
             boolean isRtl = c.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
             String dirMarker = isRtl ? "\u200F" : "\u200E";
 
             for (int i = 0; i < audioTrackNb; i++) {
                 if (i > 0) {
-                    sb.append("<br>");
+                    lines.append("\n");
                 }
+                StringBuilder sb=new StringBuilder();
                 sb.append(dirMarker);
                 VideoMetadata.AudioTrack audio = videoMetadata.getAudioTrack(i);
                 if (audioTrackNb == 1) {  // name of the track only if there is only one
@@ -204,8 +209,9 @@ public class VideoInfoCommonClass {
                 if (audio.vbr) {
                     sb.append(resources.getText(R.string.info_audio_vbr)).append(SEP);
                 }
+                lines.append(PreviewLanguageIcon.inline(c,audio.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
             }
-            return HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY);
+            return lines;
         } else {
             return null;
         }

@@ -1,0 +1,23 @@
+{
+  "checked_at_utc": "2026-10-22T21:50:33.647360+00:00",
+  "kind": "Additional final language/retained wizard regression checks",
+  "classes": 4,
+  "tests": 28,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "test_classes": [
+    "com.archos.mediacenter.video.leanback.NextQaWizardTest",
+    "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+    "com.archos.mediacenter.video.leanback.Supernova138UiTest",
+    "com.archos.mediacenter.video.leanback.Supernova141UiTest"
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 1785,
+    "command": "lintNoamazonRelease -PfoundationVerify -PsupernovaQa -Puniversal",
+    "source_commit": "8e0ba16d59de59f5a9f7cf14dac7746f91592646",
+    "checked_at_utc": "2026-10-22T21:52:20.147655+00:00"
+  },
+  "physical_device": false
+}

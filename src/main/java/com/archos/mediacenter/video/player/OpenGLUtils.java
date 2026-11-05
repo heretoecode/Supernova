@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.player;
 import android.opengl.GLES20;
 import android.util.Log;
 
+/** Creates OpenGL programs and checks rendering errors. */
 public class OpenGLUtils{
 
    static final private String TAG = "OpenGLUtils";

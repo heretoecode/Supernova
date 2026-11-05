@@ -1,0 +1,14 @@
+{
+  "source_commit": "f4abf7cb880243ba00481f82beee19d20bc72e33",
+  "archive_sha256": "c5dd04673926f9a0dcf62c2f939e7ccda66844eb8d4a019671792382ecd96a22",
+  "apk_sha256": "d8dff5a34e946c182f3de0aaad4d402daebfc92982521f4fbd035c85257d8a04",
+  "apk_bytes": 95371632,
+  "archive_and_apk_crc_verified": true,
+  "embedded_exact_source_verified": true,
+  "native_hashes_matched_to_0146_and_ci": 84,
+  "uncompressed_native_entries_16kb_aligned": 0,
+  "unsigned_conformance_gate_accepted": true,
+  "signing_performed": false,
+  "physical_shield_verified": false,
+  "scope": "Complete byte readback, source marker, native payload and alignment checks; CI independently runs manifest/resource analyzers and unsigned signature rejection."
+}

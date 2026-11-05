@@ -1,0 +1,32 @@
+{
+  "source_sha": "83b82894a6c3c5b821d4a01a8b7e37e3024d864b",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 52,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.BackupCycleTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest"
+  ],
+  "duration": "2m 25s",
+  "log_sha256": "6f7afdf18c02e5872d8d76959fc63bf6baaeab1ad444bda672d77757be794235",
+  "checks": [
+    "Verified archive write/import/codec validation and combined replacement for appearance/review/history/positions",
+    "Real CustomApplication.attachBaseContext recovers journal before initialization, including null application context at attachment",
+    "All prior preference/health/viewing failure-boundary checks and legacy backup/journal regressions"
+  ],
+  "limits": [
+    "Eighteen registered archive codecs; remaining eight categories and production Backup workspace still unfinished",
+    "Media database and legacy watched/resume marker recovery still pending",
+    "Android process death simulated with Error; actual force-stop/Shield/SAF provider matrix not exercised",
+    "Protected signing environment does not allow current0.139 branch; environment-secrets API403; no signed0.139APK"
+  ]
+}

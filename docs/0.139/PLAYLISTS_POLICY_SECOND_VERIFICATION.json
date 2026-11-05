@@ -1,0 +1,16 @@
+{
+  "source_sha": "8770df68f12dc2c580a4230d651e5e3d953d5197",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 2,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest"
+  ],
+  "duration": "2m 6s",
+  "log_sha256": "4a1d351c640a69f7bccb019d7ff63ead132a3e7546a674c74a357921c4b0a650",
+  "failure_detail": "Local-only real Trakt sync with mocked transport passed. Membership URI returned1 expected2. Add native seed-count assertion and bounded synthetic row evidence to identify where the discrepancy occurs; no fix claimed."
+}

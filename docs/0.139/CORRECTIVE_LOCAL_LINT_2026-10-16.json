@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "counts": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 1772,
+    "Information": 0
+  },
+  "source_commit": "82b4862ffc1bb24e1b77981eb84f036ed426daa0",
+  "limit": "Local release lint; exact-source CI repeats it. Native inputs reused from original signed APK.",
+  "new_warning": "One SetTextI18n warning on the programmatic selected-action description in BackupSettingsController; no new lint errors."
+}

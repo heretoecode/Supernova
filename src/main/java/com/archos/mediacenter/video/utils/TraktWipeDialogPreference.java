@@ -18,11 +18,11 @@ import com.archos.mediacenter.utils.trakt.Trakt;
 
 import android.content.Context;
 
-import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 
+/** Provides a preference action for clearing Trakt data. */
 public class TraktWipeDialogPreference extends Preference {
     public TraktWipeDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);

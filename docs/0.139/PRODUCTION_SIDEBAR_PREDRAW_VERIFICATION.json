@@ -1,0 +1,17 @@
+{
+  "source_sha": "a75cca1fd0d56f20081d80e1f32bc698b8491008",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "42s",
+  "log_sha256": "a0801ba84cdb1bce4faec4f51c2c2c438bf7459c0570572b9ee688074971d9e0",
+  "reason": "Actual pre-draw/transition now reaches content608 and scroll50. Remaining14/34 clip comes from missing content top20 offset: child rect is in content coordinates while viewport is in ScrollView coordinates. Follow-up translates into one coordinate space and removes temporary tracing."
+}

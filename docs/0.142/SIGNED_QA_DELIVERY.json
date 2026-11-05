@@ -1,0 +1,102 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "af03d26719b00601ca08da5ad562c1f196ec536c6397ac5b4603c2337d7c8514",
+  "version_name": "0.142",
+  "version_code": 142,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "signature_schemes": [
+    "Verified using v1 scheme (JAR signing): true",
+    "Verified using v2 scheme (APK Signature Scheme v2): true",
+    "Verified using v3 scheme (APK Signature Scheme v3): true",
+    "Verified using v3.1 scheme (APK Signature Scheme v3.1): false",
+    "Verified using v4 scheme (APK Signature Scheme v4): false"
+  ],
+  "native_hashes_independently_matched": 88,
+  "payload_matches_prior_exact_source_unsigned_independently": false,
+  "source_commit": "b347707defdbf2ab3ae83d920ba9fa7af3936220",
+  "apk_bytes": 87907280,
+  "signature_verified": true,
+  "zip_crc_verified": true,
+  "alignment_verified": true,
+  "qa_only": true,
+  "final_release_accepted": false,
+  "physical_shield_verified": false,
+  "signed_upgrade_verified": false,
+  "run_id": 40080144690,
+  "workflow_commit": "8b248f08b3afd6dd45b77a84936b3ae0f7a781f0",
+  "verified_at": "2026-10-24T09:43:48.244930+00:00",
+  "download_url": "https://drive.google.com/file/d/1CxWm1pxf5K005ZzIO4RWKzQyPF0YQcu4/view?usp=drivesdk",
+  "drive_file_id": "1CxWm1pxf5K005ZzIO4RWKzQyPF0YQcu4",
+  "drive_parent_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "drive_readback_bytes": 87907280,
+  "drive_readback_sha256": "af03d26719b00601ca08da5ad562c1f196ec536c6397ac5b4603c2337d7c8514",
+  "drive_byte_equal": true,
+  "drive_signature_verified": true,
+  "signing_run_url": "https://github.com/heretoecode/Supernova/actions/runs/40080144690",
+  "signing_run_result": "success",
+  "temporary_key_cleanup": "success",
+  "qa_distribution_authorized_by_owner": true,
+  "final_release_published": false,
+  "main_merged": false,
+  "playback_hud_redesign": "deferred pending final design approval",
+  "signed_artifact": {
+    "id": 12555637213,
+    "bytes": 83428816,
+    "archive_sha256": "b8101b52b2793a32ab92def706657ee1c27e23e5ea345cc60bcd8b360c5afe37",
+    "archive_crc_verified": true
+  },
+  "ffmpeg_source_artifact": {
+    "id": 12554874774,
+    "name": "supernova-0142-qa-ffmpeg-source",
+    "bytes": 11174426,
+    "archive_sha256": "4799d814eb66995e9076328407653fb78447e2872e844b0f071f2c31600fb367",
+    "archive_hash_verified": true,
+    "archive_crc_verified": true,
+    "native_evidence_hash_matches_signed_build": true
+  },
+  "unsigned_apk_sha256_in_signing_run": "2bbcc4c46e76e8b4f2a2e270b805db1c87f229e11f25562cecc158873f4c4f6a",
+  "tested_payload_parity_verified_in_ci": true,
+  "test_summary": {
+    "unit_tests": 1094,
+    "unit_failures": 0,
+    "unit_errors": 0,
+    "unit_skips": 0,
+    "lint": {
+      "errors": 0,
+      "warnings": 1788
+    },
+    "runtime_artifact_hashes_matched": 138,
+    "rebuilt_ffmpeg_libraries_matched": 24
+  },
+  "tooling_tests": 102,
+  "physical_checklist_total": 73,
+  "physical_cases_passed": 0,
+  "cross_build_comparison": {
+    "prior_build_utc": "2026-10-24 03:50",
+    "signed_build_utc": "2026-10-24 09:13",
+    "changed_entries": [
+      "classes.dex",
+      "assets/dexopt/baseline.prof"
+    ],
+    "dex_identical_after_build_timestamp_and_header_checksum_normalization": true,
+    "same_run_tested_payload_parity_verified": true,
+    "prior_apk_byte_identical": false,
+    "explanation": "Existing build.gradle PREVIEW_BUILD_UTC changes on each build; profile references compiled DEX checksum. Signing-run proof verifies actual tested unsigned payload; cross-run byte identity is not claimed."
+  },
+  "drive_html_file_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+  "drive_html_readback_bytes": 36290,
+  "drive_html_readback_sha256": "0f1862e4626b241c10569a223e0c7cff1ce46bc1cd159b4b82985a028a6a9a89",
+  "drive_html_updated_in_place": true,
+  "earlier_apk_files_preserved": 8,
+  "drive_apk_folder_count": 9
+}

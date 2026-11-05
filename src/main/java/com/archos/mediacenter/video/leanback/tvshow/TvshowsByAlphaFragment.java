@@ -28,6 +28,7 @@ import com.archos.mediacenter.video.browser.loader.TvshowsNoAnimeByAlphaLoader;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays TV shows grouped alphabetically with sorting controls. */
 public class TvshowsByAlphaFragment extends TvshowsByFragment {
 
     private static final String SORT_PARAM_KEY = TvshowsByAlphaFragment.class.getName() + "_SORT";
@@ -54,7 +55,7 @@ public class TvshowsByAlphaFragment extends TvshowsByFragment {
     @Override
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie) return new TvshowsNoAnimeByAlphaLoader(context);
-        else return new TvshowsByAlphaLoader(context);
+            else return new TvshowsByAlphaLoader(context);
     }
 
     @Override

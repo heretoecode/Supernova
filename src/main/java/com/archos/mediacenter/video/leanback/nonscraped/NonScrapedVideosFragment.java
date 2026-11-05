@@ -19,15 +19,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.widget.CursorObjectAdapter;
 import androidx.leanback.widget.FocusHighlight;
@@ -60,6 +57,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.AutoScrapeService;
 
 
+/** Displays videos without scraped metadata and handles loading, sorting and selection. */
 public class NonScrapedVideosFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "NonScrapedVideosFragment";
@@ -195,6 +193,7 @@ public class NonScrapedVideosFragment extends MyVerticalGridFragment implements 
                 mSortOrderItem = NonScrapedSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
@@ -296,7 +295,7 @@ public class NonScrapedVideosFragment extends MyVerticalGridFragment implements 
                 return new NonScrapedVideosLoader(getActivity(), args.getString("sort"));
             }
         }
-        else return null;
+            else return null;
     }
 
     @Override

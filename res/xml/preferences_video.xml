@@ -29,6 +29,13 @@
             android:summary="@string/preferences_force_software_decoding_summary"
             android:title="@string/preferences_force_software_decoding"
             app:iconSpaceReserved="false"/>
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="seek_thumbnails_enabled"
+            android:persistent="true"
+            android:summary="Shows a small picture above the seek bar while you skip through a video. Experimental."
+            android:title="Seek previews (experimental)"
+            app:iconSpaceReserved="false"/>
         <ListPreference
             android:defaultValue="0"
             android:entries="@array/dec_choice_entries"
@@ -100,6 +107,14 @@
             android:persistent="true"
             android:summary="@string/preferences_audio_speed_audiotrack_summary"
             android:title="@string/preferences_audio_speed_audiotrack"
+            app:iconSpaceReserved="false"/>
+        <ListPreference
+            android:key="supernova_pcm_speed_engine"
+            android:title="PCM playback speed engine"
+            android:defaultValue="2"
+            android:entries="@array/supernova_pcm_speed_engines"
+            android:entryValues="@array/supernova_pcm_speed_engine_values"
+            app:useSimpleSummaryProvider="true"
             app:iconSpaceReserved="false"/>
         <CheckBoxPreference
             android:defaultValue="true"
@@ -412,6 +427,34 @@
             android:title="@string/subtitles_hide_default"
             app:iconSpaceReserved="false"/>
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="subtitle_use_margins"
+            android:summary="@string/subtitle_use_margins_summary"
+            android:title="@string/subtitle_use_margins_title"
+            app:iconSpaceReserved="false"/>
+
+        <com.archos.mediacenter.video.utils.FontsFolderSafPreference
+            android:key="subtitle_fonts_folder_uri"
+            android:summary="@string/subtitle_fonts_folder_summary"
+            android:title="@string/subtitle_fonts_folder_title"
+            app:iconSpaceReserved="false"/>
+
+        <ListPreference
+            android:dialogTitle="@string/subtitle_default_font_title"
+            android:key="subtitle_default_font"
+            android:title="@string/subtitle_default_font_title"
+            android:enabled="false"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="subtitles_show_full_for_local_audio"
+            android:summary="@string/subtitles_show_full_for_local_audio_summary"
+            android:title="@string/subtitles_show_full_for_local_audio_title"
+            app:iconSpaceReserved="false"/>
+
         <ListPreference
             android:dialogTitle="@string/favSubLang_title"
             android:entries="@array/entries_list_preference"
@@ -601,6 +644,18 @@
             android:title="@string/scraper_language_title"
             app:iconSpaceReserved="false"/>
 
+        <!-- Owner decision 2 Nov 2026: the owner's own free OMDb key enables IMDb, Rotten Tomatoes,
+             Metacritic and awards in Details > Reception. Stored on the device only. -->
+        <EditTextPreference
+            android:key="omdb_api_key"
+            android:title="Ratings key (OMDb)"
+            android:summary="Adds IMDb, Rotten Tomatoes, Metacritic and awards to Reception. Get a free key at omdbapi.com."
+            android:dialogTitle="OMDb API key"
+            android:dialogMessage="Enter the free key emailed to you by omdbapi.com. Leave blank to turn these ratings off."
+            android:inputType="textNoSuggestions"
+            android:persistent="true"
+            app:iconSpaceReserved="false"/>
+
         <CheckBoxPreference
             android:defaultValue="@bool/network_nfo_parse_default"
             android:key="@string/network_nfo_parse_prefkey"
@@ -680,21 +735,6 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/torrent_category"
-        app:iconSpaceReserved="false">
-        <com.archos.mediacenter.video.utils.TorrentPathDialogPreference
-            android:dialogTitle="@string/torrent_path"
-            android:key="preferences_torrent_path"
-            android:title="@string/torrent_path"
-            app:iconSpaceReserved="false" />
-    
-        <com.archos.mediacenter.video.utils.TorrentBlocklistDialogPreference
-            android:dialogTitle="@string/torrent_blocklist"
-            android:key="preferences_torrent_blocklist"
-            android:title="@string/torrent_blocklist" 
-            android:widgetLayout="@layout/preferences_blocklist_button"
-            app:iconSpaceReserved="false"/>
-    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preferences_video_about"
         android:key="about_category"

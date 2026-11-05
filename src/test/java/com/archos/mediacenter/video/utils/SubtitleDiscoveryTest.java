@@ -1,0 +1,284 @@
+package com.archos.mediacenter.video.utils;
+
+import android.app.Application;
+import android.content.Context;
+import android.net.Uri;
+import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
+import com.archos.mediacenter.video.leanback.SharedMetadata;
+import com.archos.medialib.IMediaPlayer;
+import com.archos.medialib.MediaMetadata;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.time.Instant;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
+import org.robolectric.*;
+import org.robolectric.annotation.Config;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
+
+/** Checks subtitle discovery caching, queue priority, backoff and file-scoped metadata. */
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 28)
+public class SubtitleDiscoveryTest {
+    Application app;
+    AtomicInteger requests;
+
+    @Before
+    public void before() {
+        app = RuntimeEnvironment.getApplication();
+        requests = new AtomicInteger();
+        app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).edit().clear().commit();
+        PreferenceManager.getDefaultSharedPreferences(app).edit().clear().commit();
+        app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
+            .edit()
+            .clear()
+            .commit();
+        SubtitleDiscovery.setProviderForTests((c, q, l) -> {
+            requests.incrementAndGet();
+            OpenSubtitlesApiHelper.cachedDiscoverySucceeded();
+            return new ArrayList<>(Arrays.asList(new OpenSubtitlesSearchResult("12", "subtitle.srt", l)));
+        });
+    }
+
+    OpenSubtitlesQueryParams query() {
+        OpenSubtitlesQueryParams q = new OpenSubtitlesQueryParams();
+        q.setTmdbId("7");
+        q.setIsShow(true);
+        q.setSeasonNumber(1);
+        q.setEpisodeNumber(2);
+        return q;
+    }
+
+    @Test
+    public void cacheSurvivesNewRequestAndReimportIdentityButSeparatesLanguages() throws Exception {
+        OpenSubtitlesQueryParams q = query();
+        assertEquals(1, SubtitleDiscovery.manual(app, q, "en").size());
+        OpenSubtitlesQueryParams reimport = query();
+        assertEquals(1, SubtitleDiscovery.manual(app, reimport, "en").size());
+        assertEquals(1, requests.get());
+        assertEquals(1, SubtitleDiscovery.manual(app, reimport, "fr").size());
+        assertEquals(2, requests.get());
+    }
+
+    @Test
+    public void genuineNegativeResultsCacheAndExpireWithoutCachingFailures() throws Exception {
+        SubtitleDiscovery.setProviderForTests((c, q, l) -> {
+            requests.incrementAndGet();
+            OpenSubtitlesApiHelper.cachedDiscoverySucceeded();
+            return new ArrayList<>();
+        });
+        assertTrue(SubtitleDiscovery.manual(app, query(), "en").isEmpty());
+        assertTrue(SubtitleDiscovery.manual(app, query(), "en").isEmpty());
+        assertEquals(1, requests.get());
+        String key = SubtitleDiscovery.key(query(), "en");
+        app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).edit().remove("cache:" + key).commit();
+        assertTrue(SubtitleDiscovery.manual(app, query(), "en").isEmpty());
+        assertEquals(2, requests.get());
+        app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).edit().remove("cache:" + key).commit();
+        SubtitleDiscovery.setProviderForTests((c, q, l) -> {
+            requests.incrementAndGet();
+            throw new IOException("429 fixture");
+        });
+        try {
+            SubtitleDiscovery.manual(app, query(), "en");
+            fail();
+        } catch (IOException expected) {
+        }
+        try {
+            SubtitleDiscovery.manual(app, query(), "en");
+            fail();
+        } catch (IOException expected) {
+        }
+        assertEquals(3, requests.get());
+        assertFalse(app.getSharedPreferences("supernova-subtitle-discovery-v1", 0).contains("cache:" + key));
+    }
+
+    @Test
+    public void providerPauseSurvivesProcessStateAndManualCannotIgnoreIt() {
+        app.getSharedPreferences("supernova-subtitle-discovery-v1", 0)
+            .edit()
+            .putLong("provider_until", System.currentTimeMillis() + 3600000)
+            .commit();
+        try {
+            SubtitleDiscovery.manual(app, query(), "en");
+            fail();
+        } catch (IOException expected) {
+        }
+        assertEquals(0, requests.get());
+    }
+
+    @Test
+    public void queueDeduplicatesAndPromotesManualAbovePlaybackAndSpeculation() {
+        SubtitleDiscoveryPolicy.Queue queue = new SubtitleDiscoveryPolicy.Queue();
+        queue.offer("season", query(), "en", 5);
+        queue.offer("hero", query(), "en", 4);
+        queue.offer("playback", query(), "en", 1);
+        queue.offer("season", query(), "en", 0);
+        assertEquals(3, queue.size());
+        assertEquals("season", queue.take().key);
+        assertEquals("playback", queue.take().key);
+        queue.clearSpeculation();
+        assertNull(queue.take());
+        assertEquals(SubtitleDiscoveryPolicy.intentScope(episode(1, 1, false)),
+            SubtitleDiscoveryPolicy.intentScope(episode(1, 2, false)));
+        assertNotEquals(SubtitleDiscoveryPolicy.intentScope(episode(1, 1, false)),
+            SubtitleDiscoveryPolicy.intentScope(episode(2, 1, false)));
+        Entry filmA = new Entry(
+                  new NonIndexedVideo(Uri.parse("file:///a.mkv"), Uri.parse("file:///a.mkv"), "A", null), 0, 0, ""),
+              filmB = new Entry(
+                  new NonIndexedVideo(Uri.parse("file:///b.mkv"), Uri.parse("file:///b.mkv"), "B", null), 0, 0, "");
+        assertNotEquals(SubtitleDiscoveryPolicy.intentScope(filmA), SubtitleDiscoveryPolicy.intentScope(filmB));
+    }
+
+    Entry episode(int season, int number, boolean watched) {
+        return new Entry(new Episode(number + season * 100, 7, season, number, "Episode", 0, 0, "", "", "Series",
+                             "/s/ep" + number, null, null, 100000, 0, 0, 0, watched, false, false, false, 1, 0, 1920,
+                             1080, null, null, null, null, 0, 1, 1000),
+            0, 7, "");
+    }
+
+    @Test
+    public void playbackPreparesOnlyRemainingAvailableCurrentSeasonEpisodes() {
+        Entry playing = episode(1, 2, false), first = episode(1, 1, false), gap = episode(1, 4, false),
+              done = episode(1, 5, true), nextSeason = episode(2, 1, false), laterSeason = episode(2, 2, false);
+        assertEquals(Arrays.asList(gap),
+            SubtitleDiscoveryPolicy.remainingSeason(
+                app, playing, Arrays.asList(laterSeason, nextSeason, done, gap, first)));
+        assertEquals(Arrays.asList(laterSeason),
+            SubtitleDiscoveryPolicy.remainingSeason(app, nextSeason, Arrays.asList(laterSeason, nextSeason, gap)));
+    }
+
+    @Test
+    public void currentSeasonSkipsKnownMissingFiles() {
+        Entry playing = episode(1, 1, false), missing = episode(1, 2, false), next = episode(1, 3, false);
+        app.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
+            .edit()
+            .putString("media:" + ((Video) missing.media).getId(), "Missing file")
+            .commit();
+        assertEquals(
+            Arrays.asList(next), SubtitleDiscoveryPolicy.remainingSeason(app, playing, Arrays.asList(missing, next)));
+    }
+
+    @Test
+    public void changedLanguagePreferenceDropsQueuedProviderRequest() {
+        PreferenceManager.getDefaultSharedPreferences(app)
+            .edit()
+            .putBoolean(SubtitleDiscovery.ENABLED, true)
+            .putStringSet("languages_list", new HashSet<>(Arrays.asList("fr")))
+            .commit();
+        SubtitleDiscoveryPolicy.Queue queue =
+            ReflectionHelpers.getStaticField(SubtitleDiscovery.class, "QUEUE");
+        while (queue.take() != null) {
+        }
+        queue.offer("stale", query(), "en", SubtitleDiscoveryPolicy.HERO);
+        ReflectionHelpers.callStaticMethod(SubtitleDiscovery.class, "drain",
+            ReflectionHelpers.ClassParameter.from(Context.class, app));
+        assertEquals(0, requests.get());
+        assertEquals(0, queue.size());
+    }
+
+    @Test
+    public void retryAfterSecondsAndHttpDateAndExponentialBackoffAreHonoured() {
+        long now = Instant.parse("2026-10-12T00:00:00Z").toEpochMilli();
+        assertEquals(now + 120000, SubtitleDiscoveryPolicy.retryAfter("120", now));
+        assertEquals(now + 60000, SubtitleDiscoveryPolicy.retryAfter("Mon, 12 Oct 2026 00:01:00 GMT", now));
+        assertEquals(now + 600000, SubtitleDiscoveryPolicy.backoff(now, 1, now + 600000));
+        assertTrue(SubtitleDiscoveryPolicy.backoff(now, 2, 0) > SubtitleDiscoveryPolicy.backoff(now, 1, 0));
+    }
+
+    @Test
+    public void localSidecarIsVerifiedWithoutCallingProviderAndLanguageIsNotGuessed() throws Exception {
+        File folder = new File(app.getCacheDir(), "sidecars");
+        folder.mkdirs();
+        File file = new File(folder, "Film.mkv");
+        Files.write(file.toPath(), new byte[] {
+            1
+        });
+        Files.write(new File(folder, "Film.en.srt").toPath(),
+            "1\n00:00:01,000 --> 00:00:02,000\nHello\n".getBytes(StandardCharsets.UTF_8));
+        Video video = new NonIndexedVideo(Uri.fromFile(file), Uri.fromFile(file), "Film", null);
+        SubtitleDiscovery.recordLocal(app, video, null);
+        assertTrue(SubtitleDiscovery.localMatches(app, video, "en"));
+        assertFalse(SubtitleDiscovery.localMatches(app, video, "fr"));
+        assertEquals(Arrays.asList("Subtitles"), SubtitleDiscovery.localBadges(app, video));
+        assertEquals(0, requests.get());
+    }
+
+    @Test
+    public void importingAndOptingOutCannotStartProviderRequests() {
+        SubtitleDiscovery.offer(app, episode(1, 1, false), SubtitleDiscoveryPolicy.PLAYBACK);
+        SubtitleDiscovery.home(app, new PreviewLibraryLoader.Snapshot());
+        assertEquals(0, requests.get());
+    }
+
+    @Test
+    public void measuredCaptionsAudioChannelsAndDescriptionStayFileScoped() throws Exception {
+        File file = new File(app.getCacheDir(), "measured.mkv");
+        Files.write(file.toPath(), new byte[] {
+            1
+        });
+        Video video = new NonIndexedVideo(Uri.fromFile(file), Uri.fromFile(file), "Measured", null);
+        MediaMetadata source = Mockito.mock(MediaMetadata.class);
+        Mockito.when(source.has(ArgumentMatchers.anyInt())).thenReturn(true);
+        AtomicInteger flags = new AtomicInteger((1 << 16) | 128);
+        Mockito.when(source.getInt(ArgumentMatchers.anyInt())).thenAnswer(call -> {
+            int key = call.getArgument(0);
+            if (key == IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK
+                || key == IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK)
+                return 1;
+            if (key
+                == IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
+                    + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_DISPOSITION)
+                return flags.get();
+            if (key
+                == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                    + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_DISPOSITION)
+                return flags.get() == 0 ? 0 : 256;
+            return 0;
+        });
+        Mockito.when(source.getString(ArgumentMatchers.anyInt())).thenAnswer(call -> {
+            int key = call.getArgument(0);
+            if (key
+                == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                    + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_FORMAT)
+                return "AAC";
+            if (key
+                == IMediaPlayer.METADATA_KEY_AUDIO_TRACK
+                    + IMediaPlayer.METADATA_KEY_AUDIO_TRACK_CHANNELS)
+                return "5.1";
+            if (key
+                == IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK
+                    + IMediaPlayer.METADATA_KEY_SUBTITLE_TRACK_LANGUAGE)
+                return "eng";
+            return "";
+        });
+        VideoMetadata measured = new VideoMetadata();
+        measured.setData(source);
+        video.setMetadata(measured);
+        SubtitleDiscovery.recordLocal(app, video, measured);
+        assertEquals(Arrays.asList("Captions/SDH", "AD"), SubtitleDiscovery.localBadges(app, video));
+        assertTrue(SubtitleDiscovery.localMatches(app, video, "en"));
+        assertEquals(Arrays.asList("AAC · 5.1", "Captions/SDH", "AD"),
+            SharedMetadata.technical(app, video));
+        Video other = new NonIndexedVideo(Uri.fromFile(new File(app.getCacheDir(), "other.mkv")),
+            Uri.fromFile(new File(app.getCacheDir(), "other.mkv")), "Other", null);
+        assertTrue(SubtitleDiscovery.localBadges(app, other).isEmpty());
+        flags.set(0);
+        VideoMetadata refreshed = new VideoMetadata();
+        refreshed.setData(source);
+        SubtitleDiscovery.recordLocal(app, video, refreshed);
+        assertEquals(Arrays.asList("Subtitles"), SubtitleDiscovery.localBadges(app, video));
+        assertEquals(0, requests.get());
+    }
+}

@@ -1,0 +1,37 @@
+2026-10-15T13:52:06.6169836Z Complete job name: conformance
+2026-10-15T13:52:37.4489222Z (Reading database ... 100%
+2026-10-15T13:52:47.8675323Z (Reading database ... 100%
+2026-10-15T13:53:18.4472972Z Foundation source conformance passed
+2026-10-15T14:02:43.3976871Z (Reading database ... 100%
+2026-10-15T14:02:43.8879699Z (Reading database ... 100%
+2026-10-15T14:05:08.5040331Z [36;1mpython3 .github/build/record-supernova-0139-conformance.py --root .. --apk "${unsigned_apks[0]}" \[0m
+2026-10-15T14:05:08.5043299Z [36;1m  --output "$RUNNER_TEMP/supernova-foundation-conformance.json"[0m
+2026-10-15T14:05:13.7158474Z [=======================================] 100% Computing updates...
+2026-10-15T14:06:01.5923214Z ......................10%.......................20%.......................30%.......................40%.......................50%.......................60%.......................70%.......................80%.......................90%.......................100%
+2026-10-15T14:07:24.9922473Z     private String signature(Cell c){String base=tab+":"+c.title+":"+c.headingIcon+":"+c.type+":"+(tab>0&&tab<3?listMode[tab]+":"+sorts[tab]+":"+ascending[tab]+":"+genres[tab]+":"+selectedYears[tab]+":"+unmatched[tab]+":"+providers[tab]+":"+columns[tab].sortColumn+":"+columns[tab].ascending+":"+columns[tab].visible():"");if(c.value instanceof Entry)base+=entrySignature((Entry)c.value);else if(c.type==RAIL){StringBuilder rail=new StringBuilder(base);for(Entry e:(List<Entry>)c.value)rail.append(entrySignature(e));base=rail.toString();}else base+=String.valueOf(c.value);if(c.type==HERO&&tab>0)base+=PreviewLibrarySummary.describe(getContext(),snapshot,tab==2);if(c.type==NETWORK_PANEL||c.type==NETWORK){StringBuilder sources=new StringBuilder(base);for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:librarySources)sources.append(source.getName()).append(source.getUri());for(com.archos.mediacenter.video.leanback.adapter.object.Shortcut source:savedLocations)sources.append(source.getName()).append(source.getUri());base=sources.append(files).toString();}return base;}
+2026-10-15T14:10:21.2259904Z PortableViewingStateTest > absentMediaAndUnmatchedIdentitiesRemainStoredWithoutTitleGuesses STANDARD_OUT
+2026-10-15T14:10:45.1296376Z LegacyViewingSnapshotTest > putioFileAssociationsAreExcludedAndUnmatchedLocalHistoryUsesOnlyOpaqueFingerprint STANDARD_OUT
+2026-10-15T14:10:56.2921007Z     14:10:55.795 [SDK 30 Main Thread] DEBUG com.archos.mediaprovider.video.VideoStoreImportImpl -- handleScanCursor: ImportState.VIDEO.setRemainingCount 2359 count 141
+2026-10-15T14:10:56.4879049Z     14:10:56.078 [SDK 30 Main Thread] DEBUG com.archos.mediaprovider.video.VideoStoreImportImpl -- handleScanCursor: ImportState.VIDEO.setRemainingCount 1771 count 729
+2026-10-15T14:10:56.5438228Z     14:10:56.211 [SDK 30 Main Thread] DEBUG com.archos.mediaprovider.video.VideoStoreImportImpl -- handleScanCursor: ImportState.VIDEO.setRemainingCount 1493 count 1007
+2026-10-15T14:10:56.6303102Z     14:10:56.405 [SDK 30 Main Thread] DEBUG com.archos.mediaprovider.video.VideoStoreImportImpl -- handleScanCursor: ImportState.VIDEO.setRemainingCount 1007 count 1493
+2026-10-15T14:10:56.6585292Z     14:10:56.524 [SDK 30 Main Thread] DEBUG com.archos.mediaprovider.video.VideoStoreImportImpl -- handleScanCursor: ImportState.VIDEO.setRemainingCount 729 count 1771
+2026-10-15T14:11:59.6258936Z PreviewMoviePageTest > unmatchedHeroExposesTheExistingMatchHandlerAndHonestPlaceholders STANDARD_OUT
+2026-10-15T14:14:44.5345493Z ViewingHistoryTest > unmatchedIdentityJoinsExactFileRepresentationsButNeverMergesDifferentQueryItems STANDARD_OUT
+2026-10-15T14:14:44.5475389Z ViewingHistoryTest > unmatchedIdentityJoinsExactFileRepresentationsButNeverMergesDifferentQueryItems STANDARD_ERROR
+2026-10-15T14:18:30.6569457Z     TEST [Hide subtitles on with mismatched forced subtitle language] Result -> Audio: 0 [int, eng] (expected: 0 [int, eng]), Subtitle: none (-1) (expected: none (-1))
+2026-10-15T14:18:50.2410077Z     14:18:50.170 [SDK 28 Main Thread] DEBUG com.archos.mediaprovider.video.ScraperTables -- upgradeTo: 40
+2026-10-15T14:19:31.4431771Z     14:19:31.377 [SDK 28 Main Thread] DEBUG com.archos.mediaprovider.video.VideoOpenHelper -- onUpgrade: 49 - adding movie release_date column for improved sorting
+2026-10-15T14:20:12.1325330Z MediaMatchInventoryTest > actualMovieEpisodeAndUnmatchedOwnersRemainDistinctAndPutioIsExcluded STANDARD_OUT
+2026-10-15T14:20:12.2395216Z MediaMatchInventoryTest > actualMovieEpisodeAndUnmatchedOwnersRemainDistinctAndPutioIsExcluded STANDARD_OUT
+2026-10-15T14:21:37.7421007Z PortableBookmarksTest > exportOmitsLocatorsDefaultNamesFriendlyPathsAndPutioButRetainsCustomLabel STANDARD_OUT
+2026-10-15T14:21:51.8285950Z PortableMediaMatchesTest > nativeSourceIncludesHiddenWatchedMovieAndSpecialEpisodeButExcludesPutioAndUnmatched STANDARD_OUT
+2026-10-15T14:21:54.4265060Z PortableMediaMatchesTest > nativeSourceIncludesHiddenWatchedMovieAndSpecialEpisodeButExcludesPutioAndUnmatched STANDARD_ERROR
+2026-10-15T14:22:07.5261007Z
+2026-10-15T14:26:41.7267062Z BUILD SUCCESSFUL in 20m 41s
+2026-10-15T14:26:42.0126273Z Reviewed runtime artifact hashes matched: 138
+2026-10-15T14:26:48.1707515Z Actual APK rebuilt FFmpeg libraries matched: 24
+2026-10-15T14:26:53.2659897Z Ran 81 tests in 4.934s
+2026-10-15T14:26:53.2660147Z OK
+2026-10-15T14:26:58.7653585Z Public unsigned Foundation conformance evidence recorded; no APK/keys/logs published.
+2026-10-15T14:26:58.7823457Z   path: /home/runner/work/_temp/supernova-foundation-conformance.json

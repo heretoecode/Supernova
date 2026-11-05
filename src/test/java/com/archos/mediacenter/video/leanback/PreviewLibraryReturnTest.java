@@ -1,30 +1,41 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.os.Looper;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Snapshot;
+import com.squareup.picasso.Picasso;
+import java.time.Duration;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(org.robolectric.RobolectricTestRunner.class)
+/** Checks library grid and list returns preserve the selected item, scroll position and view mode. */
+@RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewLibraryReturnTest {
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void gridReturnRetainsExactItemAndScrolledPositionAfterRefresh(){checkReturn(false);}
     @Test public void listReturnRetainsExactRowAndViewModeAfterRefresh(){checkReturn(true);}
 
     private void checkReturn(boolean table){
-        try{com.squareup.picasso.Picasso.get();}catch(IllegalStateException missing){com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("preview_library_1_list",table).apply();
+        try{Picasso.get();}catch(IllegalStateException missing){Picasso.setSingletonInstance(new Picasso.Builder(RuntimeEnvironment.getApplication()).build());}
+        PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("preview_library_1_list",table).apply();
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try{
             long[] opened={-1};PreviewPages pages=new PreviewPages(host.get(),(holder,item)->opened[0]=((Movie)item).getId());
@@ -34,17 +45,18 @@ public class PreviewLibraryReturnTest {
             RecyclerView list=(RecyclerView)pages.getChildAt(0);GridLayoutManager layout=(GridLayoutManager)list.getLayoutManager();
             // 60 records sorted newest first, plus the summary and toolbar cells.
             int position=28;layout.scrollToPositionWithOffset(position,120);PreviewPagesTest.layout(container);
-            View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());PreviewPagesTest.layout(container);
-            int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?24:4,layout.getSpanSizeLookup().getSpanSize(position));
+            View item=list.findViewHolderForAdapterPosition(position).itemView;assertEquals("v34",item.getTag());assertTrue(item.requestFocus());settle(container);
+            int top=item.getTop();int first=layout.findFirstVisibleItemPosition();assertTrue(first>2);assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(position));
             item.performClick();assertEquals(34,opened[0]);
             child.setVisibility(View.VISIBLE);assertTrue(child.requestFocus());assertFalse(pages.hasFocus());
             pages.setSnapshot(snapshot(true));PreviewPagesTest.layout(container);assertSame(child,container.findFocus());
-            child.setVisibility(View.GONE);pages.requestFocus();PreviewPagesTest.layout(container);
+            child.setVisibility(View.GONE);pages.requestFocus();settle(container);
             assertNotNull(pages.findFocus());assertEquals("v34",pages.findFocus().getTag());
-            View restored=list.findContainingItemView(pages.findFocus());assertEquals(top,restored.getTop());assertEquals(first,layout.findFirstVisibleItemPosition());
-            assertEquals(table?24:4,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
+            View restored=list.findContainingItemView(pages.findFocus());assertEquals("Centred row may round by one pixel",top,restored.getTop(),1);assertEquals(first,layout.findFirstVisibleItemPosition());
+            assertEquals(table?120:20,layout.getSpanSizeLookup().getSpanSize(list.getChildAdapterPosition(restored)));
         }finally{host.pause().stop().destroy();}
     }
+    private void settle(View root){for(int i=0;i<6;i++){PreviewPagesTest.layout(root);Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(50));}}
     private Snapshot snapshot(boolean updated){
         Snapshot result=new Snapshot();
         for(int id=1;id<=60;id++){

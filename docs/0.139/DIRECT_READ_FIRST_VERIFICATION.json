@@ -1,0 +1,13 @@
+{
+  "result": "FAIL",
+  "source_sha": "682e44a6",
+  "medialib_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "filecore_sha": "f7f8d90",
+  "duration": "1m5s",
+  "log_sha256": "8a6e3e0c479c5900d4cecde751d0ad7da1b65295cfbb1e2a253fe3ca2077030c",
+  "tests": 28,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "reason": "Actual WebDAV loopback read timed out receiving headers. Other direct-read semantic/privacy and existing diagnostic checks passed. Investigate endpoint/server state rather than replacing production adapter."
+}

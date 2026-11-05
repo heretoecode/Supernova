@@ -1,0 +1,14 @@
+{
+  "source_sha": "9930cfac750999dd89da0b0a04c793a32acb844f",
+  "result": "FAIL",
+  "classes": 1,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest"
+  ],
+  "duration": "33s",
+  "log_sha256": "15d1d78930eec853a4cd9f2068bbe5c274450bc92182887d6441146826ecdbf7",
+  "tests": 12,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}

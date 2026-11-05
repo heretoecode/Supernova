@@ -1,0 +1,32 @@
+{
+  "source_sha": "22df26ceb6ecd8a2b15dfff6113e97f7ab460fe8",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 10,
+  "tests": 71,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackSessionTest"
+  ],
+  "duration": "2m 53s",
+  "log_sha256": "100c20cedd9eebd646de0ce88b977da994dc73a8d34c9f1023398a50606fb11d",
+  "coverage": [
+    "25 registered source codecs with verified schema2 title archive roundtrip and manifest declaration",
+    "Actual PlayerService full subtitle metadata callback uses raw Off, never UI None index",
+    "Callback acknowledgement/manual supersession/missing metadata/rejection/guard coverage",
+    "Pending title reconciliation waits for index and preserves existing receiving choices",
+    "Actual native receiving signatures plus source/persistence/journal/export/Settings operations regressions"
+  ],
+  "limits": "Synthetic native SQLite, backend metadata and player transport fixtures; not actual decoder/output, full foreground service/provider/SAF/force-stop or Shield acceptance. Media matches remains unregistered. Full release validation, signed upgrade/APK and delivery remain unfinished."
+}

@@ -179,7 +179,7 @@ public class SubtitleManager {
 
     /**
      * Get cached subtitle files for a video if they exist
-     * Cache is invalidated when exiting VideoDetailsFragment or VideoInfoActivityFragment
+     * Cache is invalidated when exiting VideoDetailsFragment
      * @param videoUri The video file URI
      * @return List of SubtitleFiles if cached, null otherwise
      */
@@ -243,7 +243,7 @@ public class SubtitleManager {
 
     /**
      * Invalidate cached subtitle data for a specific video
-     * Called when exiting VideoDetailsFragment or VideoInfoActivityFragment to ensure fresh enumeration on next browse
+     * Called when exiting VideoDetailsFragment to ensure fresh enumeration on next browse
      * @param videoUri The video file URI to invalidate cache for
      */
     public static void invalidateCache(Uri videoUri) {
@@ -266,6 +266,7 @@ public class SubtitleManager {
     public void preFetchHTTPSubtitlesAndPrepareUpnpSubs(final Uri upnpNiceUri, final Uri fileUri){
         if (log.isDebugEnabled()) log.debug("preFetchHTTPSubtitlesAndPrepareUpnpSubs on {}, {}", upnpNiceUri, fileUri);
         Thread mainThread = new Thread() {
+            @Override
             public void run() {
                 prefetchedListOfSubs = new ArrayList<>();
                 // Track pending enumeration operations to ensure completion before calling onSuccess
@@ -449,6 +450,7 @@ public class SubtitleManager {
 
     public void preFetchSubtitles(final Uri videoUri) {
         new Thread(){
+            @Override
             public void run(){
                 privatePrefetchSub(videoUri);
             }
@@ -494,7 +496,7 @@ public class SubtitleManager {
             List<MetaFile2> subs;
             // do not prefetch first level subs for local files to avoid duplicate on local videos since they are already captured afterwards
             if (FileUtils.isLocal(videoUri)) subs = getSubtitleListExcludingFirstLevelSubs(videoUri);
-            else subs = getSubtitleList(videoUri);
+                else subs = getSubtitleList(videoUri);
             if (!subs.isEmpty() && subsDir != null){
                 Uri target = Uri.fromFile(subsDir);
                 final CountDownLatch latch = new CountDownLatch(subs.size()); // Initialize the CountDownLatch with a count of 1
@@ -827,7 +829,7 @@ public class SubtitleManager {
         String lastPart = null;
         if (subFilenameWithoutExtension.startsWith(videoFilenameWithoutExtension + ".")) {
             lastPart = subFilenameWithoutExtension.substring(videoFilenameWithoutExtension.length() + 1);
-        } else lastPart = subFilenameWithoutExtension;
+            } else lastPart = subFilenameWithoutExtension;
         if (log.isDebugEnabled()) log.debug("getSubLanguageFromSubPathAndVideoPath: ({} - {})={}", subPath, videoPath, lastPart);
         // treat yts Simplified.chi.srt Traditional.chi.srt Latin American.spa.srt English.srt Brazilian.por.srt and reuse s_ special strings for this
         String lang = convertYTSSubNamingExceptions(lastPart);

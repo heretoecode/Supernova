@@ -1,0 +1,77 @@
+{
+  "checked_at_utc": "2026-11-01T17:38:54.178111+00:00",
+  "environment": "supernova-foundation-signing",
+  "deployment_branch_policy": {
+    "custom_branch_policies": true,
+    "protected_branches": false
+  },
+  "allowed_branch_rules": [
+    "codex/agreed-fixes-2026-11-01",
+    "codex/foundation-release",
+    "codex/supernova-0.135",
+    "codex/supernova-0.137-qa-2026-10-11",
+    "codex/supernova-0.138-qa-2026-10-12",
+    "codex/supernova-0.139-implementation-2026-10-13",
+    "codex/supernova-0.140-implementation-2026-10-16",
+    "codex/supernova-0.141-implementation-2026-10-22",
+    "codex/supernova-0.142-implementation-2026-10-23",
+    "codex/supernova-0.143-implementation-2026-10-27",
+    "codex/supernova-0.144-implementation-2026-10-28",
+    "codex/supernova-0.145-maintenance-2026-10-28",
+    "codex/supernova-0.146-upstream-completion-2026-10-28",
+    "codex/supernova-0.147-implementation-2026-10-29",
+    "codex/supernova-next-implementation-2026-10-30",
+    "codex/supernova-next-refinement-2026-10-10"
+  ],
+  "candidate_branch": "codex/agreed-fixes-2026-11-01",
+  "exact_candidate_branch_rule_present": true,
+  "signing_identity_changed": false,
+  "private_key_accessed": true,
+  "signed_candidate_available": true,
+  "protected_environment_bypassed": false,
+  "historical_attempt_1": {
+    "run_id": 41331247034,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/41331247034",
+    "conclusion": "failure",
+    "job_id": 124921640177,
+    "steps_executed": 0,
+    "head_commit": "2e677a82ea5ce13425144c062118c93461d067e5",
+    "conformance_run_id": 41328625056,
+    "source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+    "annotations": [
+      {
+        "annotation_level": "failure",
+        "message": "Branch \"codex/agreed-fixes-2026-11-01\" is not allowed to deploy to supernova-foundation-signing due to environment protection rules.",
+        "title": ".github#L1"
+      },
+      {
+        "annotation_level": "failure",
+        "message": "The deployment was rejected or didn't satisfy other protection rules.",
+        "title": ""
+      }
+    ]
+  },
+  "previous_branch_rules_retained": true,
+  "successful_signing_attempt": {
+    "conclusion": "success",
+    "head_sha": "2e677a82ea5ce13425144c062118c93461d067e5",
+    "html_url": "https://github.com/heretoecode/Supernova/actions/runs/41331247034",
+    "id": 41331247034,
+    "run_attempt": 2,
+    "status": "completed",
+    "updated_at": "2026-11-01T17:33:24Z",
+    "source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+    "conformance_run_id": 41328625056,
+    "artifact_id": 13093937009,
+    "artifact_name": "supernova-0149-signed-qa",
+    "artifact_archive_sha256": "e06f178b1436ff113ba19b79f849acda797468858a1f48ebc9e5a767d98eb100",
+    "approval_pending": false,
+    "independent_verification": "INDEPENDENT_SIGNED_APK_VERIFICATION.json"
+  },
+  "private_key_access_scope": "Existing protected CI signing job only; no key accessed locally",
+  "private_key_accessed_locally": false,
+  "deployment_protections_changed_by_agent": false,
+  "owner_updated_environment_permissions": true,
+  "status": "Resolved; signed APK delivered and full Drive download verified",
+  "local_secret_metadata_read_history": "HTTP 403 Resource not accessible by integration; secret presence is unknown"
+}

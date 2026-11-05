@@ -1,0 +1,15 @@
+{
+  "source_commit": "82b4862ffc1bb24e1b77981eb84f036ed426daa0",
+  "signing_run_id": 38897967011,
+  "signing_url": "https://github.com/heretoecode/Supernova/actions/runs/38897967011",
+  "unsigned_run_id": 38897948111,
+  "unsigned_url": "https://github.com/heretoecode/Supernova/actions/runs/38897948111",
+  "branch": "codex/supernova-0.139-implementation-2026-10-13",
+  "workflow": ".github/workflows/supernova-0139-qa.yml",
+  "approved_qa_distribution": true,
+  "environment": "supernova-foundation-signing",
+  "environment_policies_modified": false,
+  "secrets_or_certificate_modified": false,
+  "status_at_dispatch": "IN_PROGRESS",
+  "physical_shield_retest": "NOT_RUN"
+}

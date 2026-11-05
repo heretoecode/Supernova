@@ -1,0 +1,27 @@
+{
+  "base_sha": "5758074049bc153ac4967b4ecd21886469270076",
+  "tracked_patch_sha256": "03de9dfff9e9082b8d60ddf852083574bf284afa6bb4ffad87010326f82f764b",
+  "untracked_sources": [
+    {
+      "path": "src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java",
+      "sha256": "bf3075fd0e8b534f30451c04574bf5a829853f60f3c8d999ee17031074bffd6f"
+    },
+    {
+      "path": "src/com/archos/mediaprovider/video/ProviderDiscoveryGate.java",
+      "sha256": "50d89e9ca6105cdfd140a4a77c6d08fda0dd05cd6020f74cd3c9bbc169906f3c"
+    },
+    {
+      "path": "src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java",
+      "sha256": "922e6390992f6d82f9fa09172784f0f0ce55c305d37b776c318470bf6b647684"
+    },
+    {
+      "path": "src/com/archos/mediaprovider/video/SupernovaViewingPolicy.java",
+      "sha256": "54dc376c25896c451c8a7e7afdae2ab2ef2ed7b9c03777a53b2db99c05556dd0"
+    }
+  ],
+  "construction": "Read-only snapshot of established patched shared MediaLib into a separate detached worktree. Original shared tree unchanged.",
+  "isolated_baseline_commit": "ebac4f4659482fb917af83e346d84d3fd95f8950",
+  "isolated_policy_commit": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "policy_patch_sha256": "362305f0bba7dfccff58058e9cd1b4a2650674bdede355b6d88c0f46643f629e",
+  "verification": "Compiled in isolated lists build; first two native tests failed due to incomplete provider fixture. Behavioral retest pending. Patch adds local-only status4 and correct list-owner membership queries; append after0.138 patch chain in distinct0.139 recipe."
+}

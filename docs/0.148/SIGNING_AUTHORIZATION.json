@@ -1,0 +1,129 @@
+{
+  "source_commit": "30d4961e4e5b0e412ec35fe8d27cd6197cea8b26",
+  "environment": {
+    "id": 23840886327,
+    "node_id": "EN_kwDOUUDOZc8AAAAFjQcONw",
+    "name": "supernova-foundation-signing",
+    "url": "https://api.github.com/repos/heretoecode/Supernova/environments/supernova-foundation-signing",
+    "html_url": "https://github.com/heretoecode/Supernova/deployments/activity_log?environments_filter=supernova-foundation-signing",
+    "created_at": "2026-10-09T02:52:39Z",
+    "updated_at": "2026-10-09T02:55:10Z",
+    "can_admins_bypass": false,
+    "protection_rules": [
+      {
+        "id": 68198606,
+        "node_id": "GA_kwDOUUDOZc4EEKDO",
+        "type": "branch_policy"
+      }
+    ],
+    "deployment_branch_policy": {
+      "protected_branches": false,
+      "custom_branch_policies": true
+    }
+  },
+  "deployment_branch_policies": {
+    "total_count": 15,
+    "branch_policies": [
+      {
+        "id": 62439781,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+        "name": "codex/foundation-release",
+        "type": "branch"
+      },
+      {
+        "id": 62580297,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+        "name": "codex/supernova-0.135",
+        "type": "branch"
+      },
+      {
+        "id": 62672957,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+        "name": "codex/supernova-0.137-qa-2026-10-11",
+        "type": "branch"
+      },
+      {
+        "id": 62775528,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+        "name": "codex/supernova-0.138-qa-2026-10-12",
+        "type": "branch"
+      },
+      {
+        "id": 63180517,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MzE4MDUxNw==",
+        "name": "codex/supernova-0.139-implementation-2026-10-13",
+        "type": "branch"
+      },
+      {
+        "id": 63311363,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MzMxMTM2Mw==",
+        "name": "codex/supernova-0.140-implementation-2026-10-16",
+        "type": "branch"
+      },
+      {
+        "id": 64078070,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDA3ODA3MA==",
+        "name": "codex/supernova-0.141-implementation-2026-10-22",
+        "type": "branch"
+      },
+      {
+        "id": 64160739,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDE2MDczOQ==",
+        "name": "codex/supernova-0.142-implementation-2026-10-23",
+        "type": "branch"
+      },
+      {
+        "id": 64554584,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDU1NDU4NA==",
+        "name": "codex/supernova-0.143-implementation-2026-10-27",
+        "type": "branch"
+      },
+      {
+        "id": 64692799,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDY5Mjc5OQ==",
+        "name": "codex/supernova-0.144-implementation-2026-10-28",
+        "type": "branch"
+      },
+      {
+        "id": 64706508,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDcwNjUwOA==",
+        "name": "codex/supernova-0.145-maintenance-2026-10-28",
+        "type": "branch"
+      },
+      {
+        "id": 64803247,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDgwMzI0Nw==",
+        "name": "codex/supernova-0.146-upstream-completion-2026-10-28",
+        "type": "branch"
+      },
+      {
+        "id": 64843851,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NDg0Mzg1MQ==",
+        "name": "codex/supernova-0.147-implementation-2026-10-29",
+        "type": "branch"
+      },
+      {
+        "id": 65011507,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2NTAxMTUwNw==",
+        "name": "codex/supernova-next-implementation-2026-10-30",
+        "type": "branch"
+      },
+      {
+        "id": 62634362,
+        "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+        "name": "codex/supernova-next-refinement-2026-10-10",
+        "type": "branch"
+      }
+    ]
+  },
+  "branch_authorised": true,
+  "existing_policies_preserved": true,
+  "protection_rules_unchanged": true,
+  "authorisation": "Owner added the exact PR29 branch and explicitly requested resuming signing.",
+  "checked_at": "2026-10-31T10:06:00.896862+00:00",
+  "conformance_run": 41185088587,
+  "conformance_conclusion": "success",
+  "later_changes_documentation_only": true,
+  "policy_unchanged_after_signing": true,
+  "post_signing_checked_at": "2026-10-31T10:18:13.659784+00:00"
+}

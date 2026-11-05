@@ -71,6 +71,7 @@ public class CursorAdapterByVideo extends PresenterAdapterByCursor implements Ad
     }
 
 
+    @Override
     public boolean hasLocalSubtitles(String fileNameWithoutExtension) {
         if (mAvailableSubtitlesFiles.size() > 0) {
 
@@ -91,6 +92,7 @@ public class CursorAdapterByVideo extends PresenterAdapterByCursor implements Ad
         return video;
     }
 
+    @Override
     public Object getItem(int position){
         return getVideoItem(position);
     }

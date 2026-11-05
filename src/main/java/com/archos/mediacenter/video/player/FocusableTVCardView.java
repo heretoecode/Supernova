@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.ScrollView;
 
 
+/** Defines saving and restoring focus for TV playback cards. */
 public interface FocusableTVCardView {
     public boolean saveFocus(final View sv);
     public void restoreFocus(ScrollView sv);

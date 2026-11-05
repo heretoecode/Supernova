@@ -1,0 +1,6 @@
+{
+ "purpose": "0.154 final candidate: full unit suite",
+ "tests": [
+  "com.archos.*"
+ ]
+}

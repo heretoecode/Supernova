@@ -1,0 +1,18 @@
+{
+  "source_sha": "aa5c5904b9dc2ab7ae04f7f3b39f1910b20e1ec0",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 4,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest"
+  ],
+  "failure_messages": [
+    "android.database.sqlite.SQLiteException: no such table: movies (code 1 SQLITE_ERROR): , while compiling: INSERT INTO movies(_id,m_online_id,Nova_pinned,name_movie) VALUES(10,123,400,'TITLE_CANARY')"
+  ],
+  "limits": [
+    "Executed failure was an incorrect synthetic table name (movies instead of MOVIE). Fixture also attempted standalone ScraperProvider creation; source reader used unsupported BASE query routes. Corrected source and real delegate fixture require a fresh run."
+  ]
+}

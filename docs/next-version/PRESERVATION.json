@@ -1,0 +1,28 @@
+{
+  "base": "b4a6ee7a010c9b5b6af8731108f3973477bfc7f5",
+  "application_checkpoint": "53eb9e02438f126d1458b068d00f407264a5f8b6",
+  "validated_source": "7011e877d026e745a079846827ababe03c2af798",
+  "unchanged": {
+    "AndroidManifest.xml": true,
+    "build.gradle": true,
+    "settings.gradle": true,
+    "gradle.properties": true,
+    "assets/foundation": true,
+    "res/xml": true,
+    ".github/signing": true
+  },
+  "original_build_and_native_inputs_unchanged": true,
+  "new_test_only_overlays": {
+    ".github/build/next-medialib-test-fixtures.patch": "8ca9f52e81a1c93f76b8f15f937800757505ad66004c7a67148c2aac691e50c4",
+    ".github/build/next-filecore-test-fixtures.patch": "1cd857d81162250c888ac3edcd65d3f8f23a1c52e70b90c2f8fe5695e8a2b948"
+  },
+  "tested_git_objects": {
+    "src/main": "208aa9a845ce8fbd28d35b5673bd770ea8e0beaa",
+    "src/test": "94948114e16de0dbafaec864270ae30cd8fddfea",
+    "res": "93420266cb8de633eb0de21f19f0cfcfd535a479",
+    "assets": "53ff8376c97036f62334998977275425f8d863d5",
+    ".github/workflows": "bd72585b8057e2ba91df785895f3c4fef8f68a8a",
+    "AndroidManifest.xml": "0054e3359347da4fada1ff9eae75c93486b4829c",
+    "build.gradle": "3a516bfe54c6f75dad901501c78d5be2c52fe7e1"
+  }
+}

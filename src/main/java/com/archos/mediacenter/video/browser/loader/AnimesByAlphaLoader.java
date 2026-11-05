@@ -15,9 +15,10 @@
 package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
+import com.archos.mediacenter.video.utils.SortUtils;
 
-import com.archos.mediacenter.video.R;
 
+/** Loads anime movies filtered by an alphabetical selection. */
 public class AnimesByAlphaLoader extends AnimesByLoader {
 
     private static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED ASC";
@@ -34,8 +35,9 @@ public class AnimesByAlphaLoader extends AnimesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
-        String col = com.archos.mediacenter.video.utils.SortUtils.getAlphaBucketColumn(context, com.archos.mediacenter.video.utils.SortUtils.SortScope.MOVIE);
+        String col = SortUtils.getAlphaBucketColumn(context, SortUtils.SortScope.MOVIE);
         return "SELECT\n" +
                 "    UNICODE(SUBSTR(" + col + ",1,1)) as _id,\n" +
                 "    UPPER(SUBSTR(" + col + ",1,1)) as name,\n" +

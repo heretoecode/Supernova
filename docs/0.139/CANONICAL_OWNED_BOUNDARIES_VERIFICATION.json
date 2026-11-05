@@ -1,0 +1,24 @@
+{
+  "source_sha": "97e7b3fff02390ef246e4bab2acdfc26fb29863d",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "PASS",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "duration": "34s",
+  "log_sha256": "e4c49f1b69f8d513cceb937e402588359c3fce14e867db992885eb8a794f2a75",
+  "coverage": [
+    "Canonical owner/pin/Collection plus normalized graph/native trigger tests",
+    "Null pin stays Null and fetched runtime does not fill unselected file duration",
+    "Changed file kind fails before replacement; owned insert rejects missing provider transaction",
+    "Existing dependency/staged journal checks"
+  ],
+  "limits": "Staged movie-only canonical API. Full native redo/recovery, episode/cross-kind, metadata acquisition/notification, production and26thcodec remain open.",
+  "tests": 10,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

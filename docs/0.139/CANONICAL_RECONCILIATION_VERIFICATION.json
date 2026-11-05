@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "source_sha": "1e34b0c0f2cafe503c2ba11e19956224a613408b",
+  "dependency_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "duration": "53s",
+  "log_sha256": "e1b67ee3abfdfaf0c00099e7ba6980744b6a742b8724721abcdf11f760ee50fb",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchReconciliationTest",
+    "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "tests": 46,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "coverage": [
+    "Queued provider retry and post-index physical binding",
+    "Automatic indexing versus subsequent explicit receiving choices",
+    "Original manual baseline retained across unresolved retries",
+    "Stale preview rejected before journal/native changes",
+    "Canonical native and schema9 journal regressions"
+  ],
+  "limits": "Synthetic SQLite/provider fixtures; async worker lifecycle, codec26 and physical acceptance require follow-up."
+}

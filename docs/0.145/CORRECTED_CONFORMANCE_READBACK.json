@@ -1,0 +1,25 @@
+{
+  "run": 40753216952,
+  "source_commit": "c92c68d617cc6fe1e11a1f5cdd032a919811ffaa",
+  "result": "success",
+  "artifact_id": 12847382275,
+  "artifact_name": "supernova-0145-unsigned-evidence",
+  "artifact_bytes": 27024850,
+  "artifact_sha256": "6e6a87ae62f7df5852379ba3f359199f65bd8dad1e6aec033984e64227057871",
+  "artifact_digest_independently_matched": true,
+  "xml_suites": 241,
+  "xml_totals": {
+    "tests": 1147,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1795
+  },
+  "runtime_hashes_matched": 138,
+  "ffmpeg_hashes_matched": 24,
+  "packaged_native_hashes_matched": 88,
+  "software_png_fixtures": 150
+}

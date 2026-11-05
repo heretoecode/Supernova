@@ -1,0 +1,23 @@
+{
+  "source_sha": "137ca8b6e8d1ac6825fb8132128c2569bb6f1ac8",
+  "result": "FAIL",
+  "classes": 9,
+  "tests": 35,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.BackupCycleTest",
+    "com.archos.mediacenter.video.utils.BackupStageRevalidationTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest"
+  ],
+  "duration": "2m 38s (combined run)",
+  "log_sha256": "454e31e0e307297466aac2bdde8ca3073b19b8dc4acc839ac23a7ff7b912b8d5",
+  "failure_detail": "Legacy reader intentionally clears old authentication, as already asserted by earlier BackupCycleTest. New test incorrectly expected the logical selected restore contract. Correct legacy expectation and describe differing semantics; rerun required."
+}

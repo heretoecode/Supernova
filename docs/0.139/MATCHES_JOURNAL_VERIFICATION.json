@@ -1,0 +1,26 @@
+{
+  "source_sha": "a0493354fa026238f500f422ac9929d060fb901f",
+  "result": "PASS",
+  "classes": 5,
+  "tests": 36,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "48s",
+  "log_sha256": "1d97e39315279787a1eb6a1265185debf8ed5df6e079479338b8f7c0963e228b",
+  "coverage": [
+    "Staged guarded match intent joins default/health/viewing private journal",
+    "Five pre-decision process-death boundaries restore exact preferences and viewing originals with unchanged native pointer/pin/facts/account state",
+    "Durable intent decision leaves correction explicitly pending, without claiming native canonical metadata application",
+    "Native identification changes refuse stale preview before any journal/preferences write",
+    "Moved reference preservation and existing combined viewing/preference journal regressions"
+  ],
+  "limits": "Error-injected native SQLite/Robolectric checks, not actual OS force-stop. Still25 registered codecs; MATCHES is unregistered until canonical native material/application/redo/reconciliation/manual hooks and production integration. No139 APK or delivery."
+}

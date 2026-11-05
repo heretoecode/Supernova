@@ -12,6 +12,6 @@
         android:layout_marginLeft="16dip"
         android:layout_marginRight="16dip"
         android:layout_marginTop="8dip"
-        android:text="smb://" />
+        android:text="smb://"  android:inputType="textUri"/>
 
 </RelativeLayout>

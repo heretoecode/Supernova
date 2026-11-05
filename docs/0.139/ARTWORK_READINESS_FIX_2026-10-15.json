@@ -1,0 +1,18 @@
+{
+  "result": "PASS",
+  "source_sha": "6ded8d3733b7c11aacdf8fa4a03ecf8dbd749d84",
+  "class_names": [
+    "com.archos.mediacenter.video.diagnostics.ArtworkRequestTest",
+    "com.archos.mediacenter.video.leanback.PreviewArtworkPickerTest",
+    "com.archos.mediacenter.video.leanback.Preview412Test",
+    "com.archos.mediacenter.video.leanback.PreviewRemoteLogoTest",
+    "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest"
+  ],
+  "tests": 19,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "log_sha256": "1718d8aaeb931731aeda44fbfa739d29e4e4d0bf48b7d1472589f05192767d26",
+  "scope": "Actual native pixel/logo binding, kind/provider/locale/cache-only/fallback/download retry/negative cache, artwork requests/picker/remote fixtures. Test helper now drains main callbacks and requires actual view readiness as well as executor counters. Production artwork behavior unchanged.",
+  "limits": "Focused5-class result; newest clean full CI38730716137 must be collected. Not whole43/hardware/signing acceptance."
+}

@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.leanback.tvshow;
 
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import androidx.leanback.widget.Presenter;
 import android.view.LayoutInflater;
@@ -27,12 +28,12 @@ import android.widget.TextView;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
-import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediascraper.ShowTags;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/** Binds TV show descriptions to their views on the Details page. */
 public class TvshowDetailsDescriptionPresenter extends Presenter {
 
     private static final String TAG = "TvshowDetailsDescriptionPresenter";
@@ -138,6 +139,7 @@ public class TvshowDetailsDescriptionPresenter extends Presenter {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void setTextOrSetGoneIfZero(TextView mTextView, float value) {
         if (value == 0f) {
             mTextView.setVisibility(View.GONE);

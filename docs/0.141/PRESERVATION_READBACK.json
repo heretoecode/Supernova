@@ -1,0 +1,26 @@
+{
+  "checked_at_utc": "2026-10-23T11:19:19.622951+00:00",
+  "observed_remote_refs": {
+    "refs/heads/codex/preview-4.1.7": "ff5bd83300c8efdc6aaaf4993e2b87c1c7594271",
+    "refs/heads/codex/supernova-0.140-implementation-2026-10-16": "cf257aaa59ad8d59b2ab7252d5beae174f5879c5",
+    "refs/heads/docs/project-decisions-2026-10-12": "306e1b35689104c3307cfc06b4d3193ba343be31",
+    "refs/heads/main": "75d9f012fa4f65869eef5d972ad4725df504bd9c"
+  },
+  "earlier_refs_unchanged": true,
+  "draft_pr": 19,
+  "branch": "codex/supernova-0.141-implementation-2026-10-22",
+  "base": "cf257aaa59ad8d59b2ab7252d5beae174f5879c5",
+  "main_merge": false,
+  "separate_maintenance_started": false,
+  "application_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "application_and_build_inputs_unchanged_since_tested_source": false,
+  "pr_is_draft": true,
+  "pr_state": "OPEN",
+  "signed_candidate_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "signing_workflow_definition_commit": "d5a374ee953ebac663089081b120bb995ac4b384",
+  "observed_delivery_parent_commit": "d5a374ee953ebac663089081b120bb995ac4b384",
+  "application_inputs_unchanged_since_tested_source": true,
+  "build_procedure_exception": "Only 0.141 signing workflow source pin/ancestor guard and its tooling assertions changed; source4f, pinned dependency/native/build/signing scripts and application inputs unchanged.",
+  "signing_key_changed": false,
+  "historical_pre_delivery_observed_tip": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46"
+}

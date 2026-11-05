@@ -1,0 +1,136 @@
+{
+  "native_artifact_run": 40843685431,
+  "scope": "Actual Android23bionic FFmpeg subtitle decoding followed by the compiled AVOS SRT/SSA/GFX backend; frame rasterization, expiry/PGS clear and seek flush; no real EGL/ART or Shield visual acceptance implied",
+  "fixtures": [
+    {
+      "file": "qa.srt",
+      "sha256": "508f4daf0523df160b7f0112db7db9edefb90d81254ee55b368e5f17d4d0e65b"
+    },
+    {
+      "file": "qa.vtt",
+      "sha256": "6bbf85db1609561b67a36cd00cb2830ec90a80049a348ea8f61d9d51b791edc2"
+    },
+    {
+      "file": "qa.ass",
+      "sha256": "c4564bd6c3e56d84b4d7c53e8b95eb92debf35bd19ffabd0d947d324f9c46236"
+    },
+    {
+      "file": "qa.sup",
+      "sha256": "ac9a1721d39f909e38ac180672e9167f5febd0f1f7c128ceebae4bb946669f87"
+    }
+  ],
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "arm64-v8a",
+      "file": "qa.sup",
+      "returncode": 0,
+      "output": "PASS codec=pgssub rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "file": "qa.sup",
+      "returncode": 0,
+      "output": "PASS codec=pgssub rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86",
+      "file": "qa.sup",
+      "returncode": 0,
+      "output": "PASS codec=pgssub rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.srt",
+      "returncode": 0,
+      "output": "PASS codec=srt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.vtt",
+      "returncode": 0,
+      "output": "PASS codec=webvtt rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.ass",
+      "returncode": 0,
+      "output": "PASS codec=ssa rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86_64",
+      "file": "qa.sup",
+      "returncode": 0,
+      "output": "PASS codec=pgssub rendered=1 clear=1 seek-flush=empty\n",
+      "stderr": "WARNING: linker: /test/subtitle-format-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    }
+  ]
+}

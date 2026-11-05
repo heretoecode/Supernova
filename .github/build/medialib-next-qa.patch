@@ -1,0 +1,43 @@
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -1175,13 +1175,14 @@
+         mIsImportInterrupted = false;
+         Cursor c = null;
+         int cursorCount = 0;
++        long afterId = -1;
+         while (!mIsImportInterrupted) {
+             try {
+                 // for some reasons this does return a cursor with size > WINDOW_SIZE
+                 // thus only process WINDOW_SIZE entries in handleScanCursor
+                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) { // API>30 requires bundle to LIMIT
+                     final Bundle bundle = new Bundle();
+-                    bundle.putString(ContentResolver.QUERY_ARG_SQL_SELECTION, WHERE_UNSCANNED);
++                    bundle.putString(ContentResolver.QUERY_ARG_SQL_SELECTION, WHERE_UNSCANNED + " AND _id > " + afterId);
+                     bundle.putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, null);
+                     bundle.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, new String[]{BaseColumns._ID});
+                     bundle.putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION, ContentResolver.QUERY_SORT_DIRECTION_ASCENDING);
+@@ -1191,12 +1192,23 @@
+                     c = cr.query(VideoStoreInternal.FILES, ID_DATA_PROJ, bundle, null);
+                 } else {
+                     c = cr.query(VideoStoreInternal.FILES, ID_DATA_PROJ,
+-                            WHERE_UNSCANNED, null, BaseColumns._ID + " ASC LIMIT " + WINDOW_SIZE);
++                            WHERE_UNSCANNED + " AND _id > " + afterId, null, BaseColumns._ID + " ASC LIMIT " + WINDOW_SIZE);
+                 }
+                 if (c != null) cursorCount = c.getCount();
+                 else cursorCount = 0;
+                 if (log.isDebugEnabled()) log.debug("doScan: new batch fetching window={} 0<= entries <={}, new batch cursor has size {}", WINDOW_SIZE, WINDOW_SIZE, cursorCount);
++                // Excluded rows deliberately retain scan_state. Offset-zero paging otherwise
++                // revisits the same full batch forever and starves included media on other drives.
++                long nextId = afterId;
++                if (c != null && cursorCount > 0 && c.moveToPosition(Math.min(cursorCount, WINDOW_SIZE)-1))
++                    nextId = c.getLong(0);
++                if (cursorCount > 0 && nextId <= afterId) {
++                    PreviewLocalImportTrace.problem();
++                    break; // Report partial, retain every record, and retry on a future request.
++                }
++                if (c != null) c.moveToPosition(-1);
+                 handleScanCursor(c, cr, context, blacklist);
++                afterId = nextId;
+                 if (cursorCount < WINDOW_SIZE) { // avoid infinite loop: trusts that handleScanCursor processes all entries
+                     if (log.isDebugEnabled()) log.debug("doScan: no more data after handleScanCursor, c.getCount()={}<WINDOW_SIZE={} exit loop", cursorCount, WINDOW_SIZE);
+                     break;

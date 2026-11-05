@@ -2,24 +2,127 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.text.InputFilter;
+import android.text.method.PasswordTransformationMethod;
 import android.view.*;
 import android.widget.*;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /** Small remote-operated keyboard; hardware keyboard editing remains available. */
 public final class PreviewTextInput {
-    public static void show(Context c,String title,String previous,int limit,Consumer<String> accept){
-        showValidated(c,title,previous,limit,value->value.isEmpty()?"Enter a name":null,accept);
+    public static void show(Context c, String title, String previous, int limit, Consumer<String> accept) {
+        showValidated(c, title, previous, limit, value -> value.isEmpty() ? "Enter a name" : null, accept);
     }
-    public static void showValidated(Context c,String title,String previous,int limit,java.util.function.Function<String,String> validate,Consumer<String> accept){
-        Dialog d=PreviewDialog.create(c);d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        LinearLayout panel=new LinearLayout(c);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(dp(c,20),dp(c,16),dp(c,20),dp(c,16));panel.setBackground(PreviewDialog.surface(c,false));
-        TextView heading=new TextView(c);heading.setText(title);heading.setTextColor(-1);heading.setTextSize(20);panel.addView(heading);
-        EditText input=new EditText(c);input.setSingleLine(true);input.setShowSoftInputOnFocus(false);input.setText(previous);input.setTextColor(-1);input.setTextSize(16);input.setBackground(PreviewDialog.focus(c));input.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(limit)});panel.addView(input,new LinearLayout.LayoutParams(-1,dp(c,44)));input.setSelection(input.length());
-        PreviewKeyboard keyboard=new PreviewKeyboard(c,input,null);panel.addView(keyboard);
-        LinearLayout actions=new LinearLayout(c);TextView save=button(c,"Select",()->{String value=input.getText().toString().trim();String error=validate.apply(value);if(error!=null){input.setError(error);return;}d.dismiss();accept.accept(value);});actions.addView(save,new LinearLayout.LayoutParams(0,dp(c,38),1));actions.addView(button(c,"Cancel",d::dismiss),new LinearLayout.LayoutParams(0,dp(c,38),1));panel.addView(actions);keyboard.setLeaveDown(save::requestFocus);
-        d.setContentView(panel);d.show();d.getWindow().setBackgroundDrawableResource(android.R.color.transparent);d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);d.getWindow().setDimAmount(.35f);d.getWindow().setLayout(Math.min(dp(c,560),c.getResources().getDisplayMetrics().widthPixels-dp(c,64)),-2);keyboard.focusLastKey();
+
+    public static void showFoundation(Context c, String title, String previous, int limit, Consumer<String> accept) {
+        showInput(c, title, previous, limit, value -> value.isEmpty() ? "Enter a name" : null, accept, false, true);
     }
-    private static int dp(Context c,int n){return PreviewDialog.dp(c,n);}
-    private static TextView button(Context c,String label,Runnable action){TextView v=new TextView(c);v.setText(label);v.setTextColor(-1);v.setTextSize(14);v.setGravity(Gravity.CENTER);v.setFocusable(true);v.setBackground(PreviewDialog.focus(c));v.setOnClickListener(w->action.run());return v;}
+
+    public static void showValidated(Context c, String title, String previous, int limit,
+                                     Function<String, String> validate, Consumer<String> accept) {
+        showInput(c, title, previous, limit, validate, accept, false);
+    }
+
+    public static void showSecret(Context c, String title, String previous, Consumer<String> accept) {
+        showInput(c, title, previous, 512, value -> null, accept, true);
+    }
+
+    private static void showInput(Context c, String title, String previous, int limit,
+                                  Function<String, String> validate, Consumer<String> accept,
+                                  boolean secret) {
+        showInput(c, title, previous, limit, validate, accept, secret, false);
+    }
+
+    private static void showInput(Context c, String title, String previous, int limit,
+                                  Function<String, String> validate, Consumer<String> accept,
+                                  boolean secret, boolean foundation) {
+        Dialog d = PreviewDialog.create(c);
+        d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        LinearLayout panel = foundation ? new MenuFoundation.WindowPanel(c) : new LinearLayout(c);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        if (secret)
+            Diagnostics.semantic(panel, "private.credential");
+        panel.setPadding(dp(c, 20), dp(c, 16), dp(c, 20), dp(c, 16));
+        panel.setBackground(foundation ? MenuFoundation.surface(c, false) : PreviewDialog.dialogSurface(c));
+        TextView heading = new TextView(c);
+        heading.setText(title.equalsIgnoreCase("Page name") ? "Page Name" : title);
+        heading.setGravity(Gravity.CENTER);
+        heading.setTextColor(-1);
+        heading.setTextSize(20);
+        panel.addView(heading);
+        EditText input = new KeyboardInput(c);
+        input.setSingleLine(true);
+        input.setShowSoftInputOnFocus(false);
+        input.setText(previous);
+        if (secret) {
+            input.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            Diagnostics.semantic(input, "private.credential");
+        }
+        input.setTextSize(16);
+        SupernovaStyle.applyButton(input, SupernovaStyle.Surface.STANDARD);
+        input.setPadding(dp(c, 12), 0, dp(c, 12), 0);
+        if (title.equalsIgnoreCase("Row Name")) {
+            input.setHint("Enter a name for your row…");
+            input.setHintTextColor(0xff8197a8);
+        }
+        if (title.equalsIgnoreCase("Page name")) {
+            input.setHint("Name your library page");
+            input.setHintTextColor(0xff8197a8);
+        }
+        input.setFilters(new InputFilter[] {new InputFilter.LengthFilter(limit)});
+        panel.addView(input, new LinearLayout.LayoutParams(-1, KeyboardInput.compactHeight(c)));
+        input.setSelection(input.length());
+        PreviewKeyboard keyboard = new PreviewKeyboard(c, input, null);
+        panel.addView(keyboard);
+        if (foundation)
+            keyboard.useMenuFoundation();
+        keyboard.setActions(() -> {
+            String value = secret ? input.getText().toString() : input.getText().toString().trim();
+            String error = validate.apply(value);
+            if (error != null) {
+                input.setError(error);
+                return;
+            }
+            d.dismiss();
+            accept.accept(value);
+        }, d::dismiss);
+        // The denser keyboard variant may use more width; oversized text scrolls safely.
+        int width = Math.min(dp(c, 560), TvLayout.safeWidth(c));
+        panel.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                      View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        ScrollView viewport = new ScrollView(c);
+        viewport.setFillViewport(true);
+        viewport.addView(panel);
+        d.setContentView(viewport);
+        d.show();
+        d.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        d.getWindow().setDimAmount(.35f);
+        d.getWindow().setLayout(width, Math.min(panel.getMeasuredHeight(), Math.round(TvLayout.safeHeight(c) * .9f)));
+        d.setOnKeyListener((dialog, code, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN ||
+                event.getUnicodeChar() == 0 && code != KeyEvent.KEYCODE_DEL && code != KeyEvent.KEYCODE_FORWARD_DEL)
+                return false;
+            return input.onKeyDown(code, event);
+        });
+        keyboard.focusLastKey();
+    }
+
+    private static int dp(Context c, int n) {
+        return PreviewDialog.dp(c, n);
+    }
+
+    private static TextView button(Context c, String label, Runnable action) {
+        TextView v = new TextView(c);
+        v.setText(label);
+        v.setTextColor(-1);
+        v.setTextSize(14);
+        v.setGravity(Gravity.CENTER);
+        v.setFocusable(true);
+        v.setBackground(PreviewDialog.focus(c));
+        v.setOnClickListener(w -> action.run());
+        return v;
+    }
 }

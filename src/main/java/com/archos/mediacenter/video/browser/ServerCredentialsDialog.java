@@ -43,6 +43,7 @@ import com.archos.mediacenter.video.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects server connection credentials and reports connect or cancel actions. */
 public abstract class ServerCredentialsDialog extends DialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(ServerCredentialsDialog.class);
@@ -138,7 +139,7 @@ public abstract class ServerCredentialsDialog extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parentView) {
                 if (UriUtils.requiresDomain(mType))
                     v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
-                else v.findViewById(R.id.domain).setVisibility(View.GONE);
+                    else v.findViewById(R.id.domain).setVisibility(View.GONE);
             }
         });
         mAddressEt = (EditText)v.findViewById(R.id.remote);
@@ -180,6 +181,7 @@ public abstract class ServerCredentialsDialog extends DialogFragment {
             }
         })
         .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog,int id) {
                 String username = mUsernameEt.getText().toString().trim();
                 final String password = mPasswordEt.getText().toString();

@@ -38,32 +38,38 @@ public class UpnpListingFragment extends NetworkListingFragment {
     /**
      * For UPnP we display a warning dialog before indexing a folder
      */
+    @Override
     protected String getTitleForAskForIndexing() {
         return getActivity().getString(R.string.upnp_indexing_warning_title);
     }
 
+    @Override
     protected Integer getMessageForAskForIndexing() {
         return R.string.upnp_indexing_warning_message;
     }
 
+    @Override
     protected Integer getPositiveForAskForIndexing() {
         return R.string.add_to_indexed_folders;
     }
 
+    @Override
     protected Integer getNegativeForAskForIndexing() {
         return R.string.add_ssh_shortcut;
     }
 
+    @Override
     protected String getShortcutName() {  //to avoid name like "33" in upnp indexed folders
         return getArguments().getString(ARG_TITLE)!=null?getArguments().getString(ARG_TITLE): FileUtils.getName(mUri);
     }
 
+    @Override
     protected String getFriendlyUri() {
         String shortcutName = getArguments().getString(ARG_TITLE)!=null?getArguments().getString(ARG_TITLE):FileUtils.getName(mUri); //to avoid name like "33" in upnp
         String friendlyUri = "upnp://";
         String friendlyName = UpnpServiceManager.getSingleton(getActivity()).getDeviceFriendlyName(mUri.getHost());
         if(friendlyName!=null) friendlyUri += friendlyName;
-        else friendlyUri += mUri.getHost();
+            else friendlyUri += mUri.getHost();
         friendlyUri += "/" + shortcutName;
         if (log.isDebugEnabled()) log.debug("getFriendlyUri={}", friendlyUri);
         return friendlyUri;

@@ -1,0 +1,19 @@
+{
+  "scope": "Actual FFmpeg source libraries, loopback RTSP302 server; ASan+UBSan; original negative control stalls after33 requests, patched stops after9 requests/8 redirects",
+  "results": [
+    {
+      "variant": "original",
+      "exit_code": 124,
+      "requests": 33,
+      "first_method": "OPTIONS",
+      "log_sha256": "2cf494933576de094d3cb2f42fb786bb43f33e217f802d2c38e5140c09e7fdc6"
+    },
+    {
+      "variant": "patched",
+      "exit_code": 0,
+      "requests": 9,
+      "first_method": "OPTIONS",
+      "log_sha256": "c5a0994143f59afc08ff84581d52574d93ef0fb164804f7a2deeb0247e257d99"
+    }
+  ]
+}

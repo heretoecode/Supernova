@@ -33,9 +33,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewHomeRows;
 import com.archos.mediacenter.video.ui.NovaProgressDialog;
+import com.archos.mediacenter.video.utils.DirectShowLookup;
+import com.archos.mediacenter.video.utils.backup.MediaMatchManualChanges;
 import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.BaseTags;
@@ -44,6 +48,7 @@ import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.NfoWriter;
 import com.archos.mediascraper.ScrapeDetailResult;
 import com.archos.mediascraper.ScrapeSearchResult;
+import com.archos.mediascraper.ScrapeStatus;
 import com.archos.mediascraper.Scraper;
 import com.archos.mediascraper.ScraperImage;
 import com.archos.mediascraper.SearchResult;
@@ -63,6 +68,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Searches TV show metadata and saves tags for the selected result. */
 public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFragment {
 
     private static final Logger log = LoggerFactory.getLogger(ManualShowScrappingSearchFragment.class);
@@ -115,13 +121,13 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
     protected ScrapeSearchResult performSearch(String text) {
         mTagsToSearchResultMap.clear();
         try {
-            ScrapeSearchResult direct = com.archos.mediacenter.video.utils.DirectShowLookup.find(requireContext().getApplicationContext(), text);
+            ScrapeSearchResult direct = DirectShowLookup.find(requireContext().getApplicationContext(), text);
             if (direct != null) return direct;
         } catch (Exception error) {
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (isAdded()) Toast.makeText(requireContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             });
-            return new ScrapeSearchResult(new ArrayList<>(), false, com.archos.mediascraper.ScrapeStatus.ERROR, error);
+            return new ScrapeSearchResult(new ArrayList<>(), false, ScrapeStatus.ERROR, error);
         }
         mSearchInfo.setUserInput(text+ " S1E1");
         // search for param + " S1E1" so we get show results only, filename is ignored but has to be != null
@@ -176,7 +182,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
         // Hence we need to get the ShowTags from the EpisodeTags
         if (newTags instanceof ShowTags) {
             final ShowTags newShowTags = (ShowTags)newTags;
-            if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
+            if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)){
                 // The shared Match Preview already required explicit Use This Match.
                 mEpisodeSaveTask=new EpSaveTask();mEpisodeSaveTask.execute(newShowTags);return;
             }
@@ -340,6 +346,10 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
             // TODO MARC not sure we need all
             b.putBoolean(Scraper.ITEM_REQUEST_ALL_EPISODES, true);
             b.putBoolean(Scraper.ITEM_REQUEST_REFRESH_SHOW_METADATA, true);
+            // Only the actual confirmed save needs every season: getTagFromSearchResult()
+            // above reuses this same bundle shape for a lightweight preview per candidate
+            // in the results list, where fetching all seasons per candidate would be wasteful.
+            b.putBoolean(Scraper.ITEM_REQUEST_ALL_SEASONS, true);
             ScrapeDetailResult detail = Scraper.getDetails(sr, b);
             HashMap<String, EpisodeTags> epMap = null;
             if (detail.isOkay()) {
@@ -370,6 +380,8 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
             }
 
             // Update all episodes
+            List<Long> manualOwners=new ArrayList<>();for(EpisodeTags episode:targetEpisodesList)manualOwners.add(episode.getVideoId());
+            try{MediaMatchManualChanges.mark(mContext,manualOwners);}catch(IOException unavailable){log.warn("Manual matching protection unavailable",unavailable);return null;}
             final long newShowId = newShow.save(mContext, 0); // second argument is not used in case of ShowTags
             if(newShowId<=0)return null;
             newShow.setId(newShowId);
@@ -418,7 +430,7 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
                     return null;
                 }
             }
-            com.archos.mediacenter.video.leanback.PreviewHomeRows.reconcileShowIdentity(mContext,mShowId,newShowId);
+            PreviewHomeRows.reconcileShowIdentity(mContext,mShowId,newShowId);
             TraktService.onNewVideo(mContext);
             log.info("saving in the end:" + t.step() + " thats:" + t.total());
             return newShow;
@@ -447,7 +459,17 @@ public class ManualShowScrappingSearchFragment extends ManualScrappingSearchFrag
 
         private EpisodeTags getEpisode(Map<String, EpisodeTags> map, int episode, int season, ShowTags show) {
             // TODO: handle map being null to avoid crash
-            EpisodeTags newEpTag = map.get(season + "|" + episode);
+            // Note: map is keyed "showId|season|episode|language" (see ShowIdEpisodes.getEpisodes),
+            // not "season|episode", so look it up by matching fields instead of guessing the key.
+            EpisodeTags newEpTag = null;
+            if (map != null) {
+                for (EpisodeTags candidate : map.values()) {
+                    if (candidate.getSeason() == season && candidate.getEpisode() == episode) {
+                        newEpTag = candidate;
+                        break;
+                    }
+                }
+            }
             if (newEpTag == null) {
                 newEpTag = new EpisodeTags();
                 // assume episode / season of request

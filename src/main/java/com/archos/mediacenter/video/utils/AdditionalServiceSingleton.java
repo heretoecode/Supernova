@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 
 import org.courville.supernova.IAdditionalService;
 
@@ -30,6 +29,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Manages a shared connection to the additional media service. */
 public class AdditionalServiceSingleton {
 
     private static final String TAG = "AdditionalServiceSingleton";

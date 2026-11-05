@@ -20,8 +20,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -32,7 +30,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
-import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.database.CursorMapper;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.leanback.widget.CursorObjectAdapter;
@@ -54,12 +51,12 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.browser.loader.TvshowsSelectionLoader;
 import com.archos.mediacenter.video.leanback.CompatibleCursorMapperConverter;
+import com.archos.mediacenter.video.leanback.CategoryBrowseFragment;
+import com.archos.mediacenter.video.leanback.CategoryRowsDiff;
 import com.archos.mediacenter.video.leanback.VideoViewClickedListener;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
 import com.archos.mediacenter.video.leanback.presenter.PosterImageCardPresenter;
-import com.archos.mediaprovider.ImportState;
 import com.archos.mediaprovider.video.LoaderUtils;
-import com.archos.mediaprovider.video.NetworkScannerReceiver;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.PrivateModeUIHelper;
 import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
@@ -70,7 +67,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
 
-public abstract class TvshowsByFragment extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+/** Provides shared category loading, sorting and row presentation for TV show browsers. */
+public abstract class TvshowsByFragment extends CategoryBrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final Logger log = LoggerFactory.getLogger(TvshowsByFragment.class);
 
@@ -95,7 +93,6 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
      */
     private Cursor mCurrentCategoriesCursor;
     private boolean mRowsLoadDeferred;
-    private boolean mBackgroundWorkWasOngoing;
 
     private String mDefaultSort;
 
@@ -116,6 +113,14 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
 
     protected boolean shouldDeferRowLoadersDuringBackgroundWork() {
         return false;
+    }
+
+    /**
+     * Translates a category (subset) name before it is shown as a row header. The default keeps
+     * it unchanged; genre fragments override this to render the genre in the current app locale.
+     */
+    protected String getSubsetDisplayName(String subsetName) {
+        return subsetName;
     }
 
     public TvshowsByFragment() {
@@ -161,7 +166,6 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
         updateBackground();
 
         setHeadersState(HEADERS_ENABLED);
-        setHeadersTransitionOnBackEnabled(true);
 
         // Apply theme-aware colors
         ThemeManager themeManager = ThemeManager.getInstance(getActivity());
@@ -200,7 +204,9 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        mBackgroundWorkWasOngoing = isBackgroundWorkOngoing();
+        if (mRowsLoadDeferred && !LoaderUtils.isCategoryRowsDeferralActive()) {
+            LoaderManager.getInstance(this).restartLoader(-1, null, this);
+        }
         mOverlay.resume();
     }
 
@@ -212,10 +218,12 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
 
     private void setupEventListeners() {
         setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 mSortOrderItem = sortOrder2Item(mSortOrder);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(getSortOrderEntries(), mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
@@ -223,8 +231,12 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
                                     // Save the sort mode
                                     mPrefs.edit().putString(getSortOrderParamKey(), mSortOrder).apply();
                                     boolean deferRowLoaders = shouldDeferRowLoadersDuringBackgroundWork() && isBackgroundWorkOngoing();
-                                    loadCategoriesRows(mCurrentCategoriesCursor, !deferRowLoaders);
-                                    mRowsLoadDeferred = deferRowLoaders;
+                                    if (deferRowLoaders) {
+                                        deferCategoriesRows(mCurrentCategoriesCursor);
+                                    } else {
+                                        loadCategoriesRows(mCurrentCategoriesCursor, true);
+                                        mRowsLoadDeferred = false;
+                                    }
                                 }
                                 dialog.dismiss();
                             }
@@ -249,28 +261,27 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor c) {
         if (getActivity() == null) return;
-        boolean backgroundWorkOngoing = isBackgroundWorkOngoing();
-        if (mRowsLoadDeferred && mBackgroundWorkWasOngoing && !backgroundWorkOngoing) {
-            mBackgroundWorkWasOngoing = false;
+        boolean backgroundWorkOngoing = LoaderUtils.isCategoryRowsDeferralActive();
+        if (cursorLoader.getId() != -1 && mRowsLoadDeferred && !backgroundWorkOngoing) {
             LoaderManager.getInstance(this).restartLoader(-1, null, this);
             return;
         }
-        mBackgroundWorkWasOngoing = backgroundWorkOngoing;
         // List of categories
         if (cursorLoader.getId() == -1) {
             boolean deferRowLoaders = shouldDeferRowLoadersDuringBackgroundWork() && backgroundWorkOngoing;
             if (deferRowLoaders) {
-                showDeferredLoadingState();
-                mCurrentCategoriesCursor = c;
-                mRowsLoadDeferred = true;
+                deferCategoriesRows(c);
                 return;
             }
             mEmptyView.setText(R.string.you_have_no_tv_shows);
             mEmptyView.setVisibility(c.getCount() > 0 ? View.GONE : View.VISIBLE);
 
             if (mCurrentCategoriesCursor != null) {
-                if (!mRowsLoadDeferred && !isCategoriesListModified(mCurrentCategoriesCursor, c)) {
-                    // no actual modification, no need to rebuild all the rows
+                if (!mRowsLoadDeferred && mRowsAdapter.size() == c.getCount()
+                        && CategoryRowsDiff.canKeepRowsAfterRemovals(mCurrentCategoriesCursor, c,
+                                TvshowsByAlphaLoader.COLUMN_SUBSET_ID, TvshowsByAlphaLoader.COLUMN_SUBSET_NAME,
+                                TvshowsByAlphaLoader.COLUMN_LIST_OF_TVSHOWS_IDS)) {
+                    // Existing subset loaders observe the database change and retain row focus.
                     mCurrentCategoriesCursor = c; // keep the reference to the new cursor because the old one won't be valid anymore
                     return;
                 }
@@ -293,7 +304,6 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
         if (cursorLoader.getId() == -1) {
             mCurrentCategoriesCursor = null;
             mRowsLoadDeferred = false;
-            mBackgroundWorkWasOngoing = false;
             return;
         }
         CursorObjectAdapter adapter = mAdaptersMap.get(cursorLoader.getId());
@@ -302,37 +312,6 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
         }
     }
 
-
-    private boolean isCategoriesListModified(Cursor oldCursor, Cursor newCursor) {
-
-        // Modified for sure if has different length
-        if (oldCursor.getCount() != newCursor.getCount()) {
-            if (log.isDebugEnabled()) log.debug("Difference found in the category list (size changed)");
-            return true;
-        }
-
-        // these two column index are the same but it looks nicer like this :-)
-        final int oldSubsetNameColumn = oldCursor.getColumnIndex(TvshowsByAlphaLoader.COLUMN_SUBSET_NAME);
-        final int newSubsetNameColumn = newCursor.getColumnIndex(TvshowsByAlphaLoader.COLUMN_SUBSET_NAME);
-
-        // Check all names
-        oldCursor.moveToFirst();
-        newCursor.moveToFirst();
-        while (!oldCursor.isAfterLast() && !newCursor.isAfterLast()) {
-            final String oldName = oldCursor.getString(oldSubsetNameColumn);
-            final String newName = newCursor.getString(newSubsetNameColumn);
-            if (oldName != null && !oldName.equals(newName)) {
-                // difference found
-                if (log.isDebugEnabled()) log.debug("Difference found in the category list ({} vs {})", oldName, newName);
-                return true;
-            }
-            oldCursor.moveToNext();
-            newCursor.moveToNext();
-        }
-        // no difference found
-        if (log.isDebugEnabled()) log.debug("No difference found in the category list");
-        return false;
-    }
 
     private void loadCategoriesRows(Cursor c, boolean loadSubsetRows) {
         if (c == null) return;
@@ -362,7 +341,7 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
             // Build the row
             CursorObjectAdapter subsetAdapter = new CursorObjectAdapter(mTvshowPresenter);
             subsetAdapter.setMapper(mTvshowMapper);
-            rows.add(new ListRow(subsetId, new HeaderItem(subsetName), subsetAdapter));
+            rows.add(new ListRow(subsetId, new HeaderItem(getSubsetDisplayName(subsetName)), subsetAdapter));
             mAdaptersMap.append(subsetId, subsetAdapter);
 
             if (loadSubsetRows) {
@@ -400,10 +379,16 @@ public abstract class TvshowsByFragment extends BrowseSupportFragment implements
         mEmptyView.setVisibility(View.VISIBLE);
     }
 
+    private void deferCategoriesRows(Cursor c) {
+        mCurrentCategoriesCursor = c;
+        mRowsLoadDeferred = true;
+        if (mRowsAdapter.size() == 0) {
+            showDeferredLoadingState();
+        }
+    }
+
     private boolean isBackgroundWorkOngoing() {
-        return NetworkScannerReceiver.isScannerWorking()
-                || LoaderUtils.getScrapeInProgress()
-                || ImportState.VIDEO.isInitialImport();
+        return LoaderUtils.isCategoryRowsDeferralActive();
     }
 
     private void updateBackground() {

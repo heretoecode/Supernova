@@ -19,6 +19,7 @@ import android.os.Environment;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads videos without scraped metadata that match a search query. */
 public class SearchNonScrapedVideoLoader extends VideoLoader {
 
     // search based on scraper title and file title

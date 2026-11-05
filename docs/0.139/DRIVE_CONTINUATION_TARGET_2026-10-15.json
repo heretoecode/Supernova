@@ -1,0 +1,21 @@
+{
+  "result": "EXISTING_TARGET_CONFIRMED",
+  "target_folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "target_folder_url": "https://drive.google.com/drive/folders/1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "target_folder_name": "APKs",
+  "parent_supernova_folder_id": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+  "known_baseline_file_id": "1_KdbMEUyTDPEYjmKD-UDG4hud-EBCJlO",
+  "known_baseline_name": "Supernova_0.138.apk",
+  "known_baseline_url": "https://drive.google.com/file/d/1_KdbMEUyTDPEYjmKD-UDG4hud-EBCJlO/view?usp=drivesdk",
+  "baseline_parent_readback": [
+    "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM"
+  ],
+  "baseline_download_bytes": 103518717,
+  "baseline_download_sha256": "6f46a40c9698e9219b6e26c2f09277de93462d3b9721a9b0b2bfd64814cd04ee",
+  "signed139_uploaded": false,
+  "limits": [
+    "An empty folder search returned no items despite known baseline metadata. No file absence or write denial was inferred.",
+    "No139file or duplicate folder was created; signed139 is unavailable because signing branch-policy write is denied.",
+    "Upload capability was not tested with unsigned or unrelated data; preserve all existing files/sharing."
+  ]
+}

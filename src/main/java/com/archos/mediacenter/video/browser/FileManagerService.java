@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+/** Runs file copy operations and reports their progress to listeners. */
 public class FileManagerService extends Service implements OperationEngineListener, DefaultLifecycleObserver {
 
     private static final Logger log = LoggerFactory.getLogger(FileManagerService.class);
@@ -156,6 +157,7 @@ public class FileManagerService extends Service implements OperationEngineListen
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
     }
 
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         if (log.isDebugEnabled()) log.debug("onStartCommand");
@@ -480,8 +482,8 @@ public class FileManagerService extends Service implements OperationEngineListen
         nm.cancel(OPEN_NOTIFICATION_ID);
 
         // Build the intent to send when the user clicks on the notification in the notification panel
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setAction(MainActivity.LAUNCH_DIALOG);
+        Intent notificationIntent = new Intent(this, com.archos.mediacenter.video.EntryActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 

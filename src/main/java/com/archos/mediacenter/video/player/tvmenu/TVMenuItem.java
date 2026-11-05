@@ -14,7 +14,10 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.widget.CompoundButton;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.text.HtmlCompat;
 import android.text.SpannableString;
 import android.util.AttributeSet;
@@ -27,8 +30,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,8 +86,8 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
     }
     public void setFocus(boolean hasFocus){
         if (log.isDebugEnabled()) log.debug("setFocus hasFocus:{}", hasFocus);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui",false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui",false)) {
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if(hasFocus){
@@ -110,10 +115,16 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
             ((Checkable)findViewById(R.id.info_text)).setChecked(checked);
     }
 
+    @Override
     public boolean isChecked(){
         if(findViewById(R.id.info_text)!=null && findViewById(R.id.info_text) instanceof Checkable)
             return ((Checkable)findViewById(R.id.info_text)).isChecked();
         return false;
+    }
+
+    public boolean isSwitchable() {
+        View infoText = findViewById(R.id.info_text);
+        return infoText instanceof SwitchCompat || infoText instanceof Switch;
     }
 
     @Override
@@ -179,25 +190,8 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
         if(TVUtils.isOKKey(keyCode) &&ocl!=null) {
             return true;
         }
-        if (this.getParent() != null && this.getParent() instanceof TVMenu) {
-            ViewParent p;
-            View v = this;
-            while((p=v.getParent())!=null){
-                if(p instanceof TVCardView) {
-                    if (log.isDebugEnabled()) log.debug("onKeyDown keyCode:{} in TVCardView, propagate", keyCode);
-                    return ((TVCardView) p).onKeyDown(keyCode, event);
-                } else if(p instanceof TVCardDialog) {
-                    if (log.isDebugEnabled()) log.debug("onKeyDown keyCode:{} in TVCardDialog, propagate", keyCode);
-                    return ((TVCardDialog) p).onKeyDown(keyCode, event);
-                } else if(p instanceof View) {
-                    if (log.isDebugEnabled()) log.debug("onKeyDown keyCode:{} in View, propagate", keyCode);
-                    v = (View) p;
-                } else {
-                    if (log.isDebugEnabled()) log.debug("onKeyDown keyCode:{} in unknown parent, break", keyCode);
-                    break;
-                }
-            }
-               
+        if (this.getParent() instanceof TVMenu) {
+            return TVUtils.dispatchToCardParent(this, keyCode, event);
         }
         if (log.isDebugEnabled()) log.debug("onKeyDown keyCode:{} not handled", keyCode);
         return false;
@@ -232,6 +226,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
         return ((TextView)findViewById(R.id.info_text)).getLineCount()*((TextView)findViewById(R.id.info_text)).getLineHeight();
     }
 
+    @SuppressLint("InflateParams") // Slave TVMenuItem is inflated detached to be added to slave TVMenu hierarchy
     @Override
     public View createSlaveView() {
         // TODO Auto-generated method stub
@@ -240,7 +235,7 @@ public class TVMenuItem extends LinearLayout implements Checkable, TVSlaveView{
             slaveView = (TVMenuItem)LayoutInflater.from(mContext)
                     .inflate(R.layout.menu_item_checkable_layout, null);
         }
-        else if(findViewById(R.id.info_text)!=null && findViewById(R.id.info_text) instanceof Switch){
+        else if (findViewById(R.id.info_text) != null && (findViewById(R.id.info_text) instanceof CompoundButton)) {
             slaveView = (TVMenuItem)LayoutInflater.from(mContext)
                     .inflate(R.layout.menu_item_switchable_layout, null);
         }

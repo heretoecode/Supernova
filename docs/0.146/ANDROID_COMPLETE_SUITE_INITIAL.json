@@ -1,0 +1,35 @@
+{
+  "run_id": 40842646565,
+  "source_commit": "0e5f48c1cdfd0801c14e5ed955843cebbe182e8a",
+  "overall_workflow": "failed at duplicate Jetty metadata resource merge after tests; corrected metadata filenames in later source",
+  "artifact_digest": "5e67ccc6d618245ca8d29f5d5884e9bd44fa13717f2ea86702464e71332b173d",
+  "tests": {
+    "Video": {
+      "tests": 1209,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skipped_cases": []
+    },
+    "MediaLib": {
+      "tests": 200,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_cases": [
+        "com.archos.mediaprovider.video.RealDatabasePruningTest.syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent",
+        "com.archos.mediaprovider.video.RealDatabasePruningTest.realDatabaseUpgradesCleanlyAndPassesIntegrityCheck"
+      ]
+    },
+    "FileCoreLibrary": {
+      "tests": 99,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_cases": [
+        "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest.compareMinimalPropertiesWithAllprop",
+        "com.archos.filecorelibrary.SpeedTestTransferTest.compareTransferRates"
+      ]
+    }
+  }
+}

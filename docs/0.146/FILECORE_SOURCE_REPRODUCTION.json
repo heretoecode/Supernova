@@ -1,0 +1,7 @@
+{
+  "upstream_base": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+  "method": "Fresh detached worktree; all locked FileCore patches applied in sequence with independent hashes and git apply --check; complete Git index tree equals preserved integration workspace",
+  "reproduced_tree": "70c544336a44aa573f4e48c6e9a10dc63ce7b26a",
+  "integration_tree": "70c544336a44aa573f4e48c6e9a10dc63ce7b26a",
+  "dependency_lock_sha256": "2765423887f507c9cc8db9a0b67b63430b20610d6fca13a471e924ae67cdb806"
+}

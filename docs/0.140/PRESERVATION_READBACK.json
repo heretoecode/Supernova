@@ -1,0 +1,32 @@
+{
+  "checked_at_utc": "2026-10-16 20:11:45 UTC",
+  "refs": [
+    {
+      "ref": "main",
+      "expected": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
+      "actual": "75d9f012fa4f65869eef5d972ad4725df504bd9c",
+      "matches": true,
+      "exit_code": 0
+    },
+    {
+      "ref": "codex/supernova-0.139-implementation-2026-10-13",
+      "expected": "d173e8dd9ea41834118a32e240518d91e15e11d1",
+      "actual": "d173e8dd9ea41834118a32e240518d91e15e11d1",
+      "matches": true,
+      "exit_code": 0
+    },
+    {
+      "ref": "docs/project-decisions-2026-10-12",
+      "expected": "9f0a81efcf0a6065787186b2763439fa372aced5",
+      "actual": "9f0a81efcf0a6065787186b2763439fa372aced5",
+      "matches": true,
+      "exit_code": 0
+    }
+  ],
+  "all_original_refs_match": true,
+  "main_merge_performed": false,
+  "earlier_branches_reset": false,
+  "apk_source_commit": "866f21f11f27dea4846ddd3cac57d98b281eecbb",
+  "implementation_branch": "codex/supernova-0.140-implementation-2026-10-16",
+  "later_branch_changes": "Documentation/evidence only; verified signed APK and Drive/HTML delivery recorded separately."
+}

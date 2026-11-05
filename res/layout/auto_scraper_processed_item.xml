@@ -17,7 +17,7 @@
         android:layout_marginLeft="@dimen/auto_scraper_poster_margin_left"
         android:layout_marginRight="@dimen/content_list_space_between_thumbnail_and_name"
         android:layout_marginTop="@dimen/auto_scraper_poster_margin_top"
-        android:scaleType="center" />
+        android:scaleType="center"  android:contentDescription="@null"/>
 
     <!-- Text line 1 = name -->
 

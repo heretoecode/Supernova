@@ -1,0 +1,310 @@
+package com.archos.mediacenter.video.leanback;
+import android.app.Application;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Rect;
+import android.os.Looper;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
+import com.squareup.picasso.Picasso;
+import java.time.Duration;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.robolectric.*;
+import org.robolectric.annotation.Config;
+import org.robolectric.annotation.GraphicsMode;
+import java.util.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import org.robolectric.util.ReflectionHelpers;
+
+/** Checks custom library page statistics, filters, saved drafts and manual membership. */
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 28)
+public class CustomLibraryPageTest {
+    private Entry movie(long id, String name, int year, String genres, boolean watched) {
+        Movie video = mock(Movie.class);
+        when(video.getId()).thenReturn(id);
+        when(video.getName()).thenReturn(name);
+        when(video.getYear()).thenReturn(year);
+        when(video.isWatched()).thenReturn(watched);
+        when(video.getRating()).thenReturn(8f);
+        return new Entry(video, id, 0, genres);
+    }
+
+    @Test
+    @Config(sdk = 30, qualifiers = "w960dp-h540dp-land-xhdpi")
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    public void populatedCustomViewportShowsStatisticsBeforeAnyScrollAndAfterRefresh() throws Exception {
+        PreviewAsyncFixtures.offlineTransport();
+        Snapshot previous = PreviewLibraryLoader.cached, library = new Snapshot();
+        for (int i = 1; i <= 45; i++) {
+            Movie movie = new Movie(i, "/movie" + i, "Film " + i, i, "Fixture synopsis", 2024, 7, "", null, 100000, 0,
+                0, 0, false, false, false, false, i, i, 3840, 2160, "Atmos", null, null, null, 0, 1, 1000, 0);
+            library.movies.add(new Entry(movie, i, 0, "Drama"));
+        }
+        PreviewLibraryLoader.cached = library;
+        SharedPreferences prefs =
+            PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+        String savedPage = prefs.getString(CustomLibraryPage.KEY, null);
+        CustomLibraryPage custom = new CustomLibraryPage();
+        custom.name = "QA Library";
+        custom.save(RuntimeEnvironment.getApplication());
+        var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
+            try {
+                Picasso.get();
+            } catch (IllegalStateException absent) {
+                Picasso.setSingletonInstance(
+                    new Picasso.Builder(host.get()).build());
+            }
+            FrameLayout workspace = new FrameLayout(host.get());
+            TopNavigation root = new TopNavigation(host.get(), workspace, i -> {
+            }, () -> true);
+            root.selectTab(6);
+            host.get().setContentView(root);
+            PreviewPages pages = new PreviewPages(host.get(), (holder, item) -> {
+            });
+            pages.configureCustomLibrary(custom, () -> {
+            });
+            pages.setSnapshot(library);
+            LinearLayout body = new LinearLayout(host.get());
+            body.addView(pages, new LinearLayout.LayoutParams(-1, -1));
+            workspace.addView(body, new FrameLayout.LayoutParams(-1, -1));
+            pages.focusFromNavigation();
+            layoutCustomViewport(root);
+            View stats = root.findViewWithTag("library.statistics");
+            Rect visible = new Rect();
+            assertNotNull(stats);
+            assertTrue(stats.getGlobalVisibleRect(visible));
+            assertEquals(stats.getHeight(), visible.height());
+            assertNotNull(PreviewPagesTest.findText(stats, "45"));
+            PreviewPagesTest.capture(root, "custom-populated-first-frame-api30");
+            RecyclerView list =
+                (RecyclerView) pages.getChildAt(0);
+            assertFalse("No initial scroll past statistics", list.canScrollVertically(-1));
+            pages.post(() -> pages.setSnapshot(library));
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            layoutCustomViewport(root);
+            stats = root.findViewWithTag("library.statistics");
+            assertTrue(stats.getGlobalVisibleRect(visible));
+            assertEquals(stats.getHeight(), visible.height());
+            assertFalse(list.canScrollVertically(-1));
+            PreviewPagesTest.capture(root, "custom-populated-after-refresh-api30");
+        } finally {
+            host.pause().stop().destroy();
+            if (savedPage == null)
+                prefs.edit().remove(CustomLibraryPage.KEY).commit();
+            else
+                prefs.edit().putString(CustomLibraryPage.KEY, savedPage).commit();
+            PreviewLibraryLoader.cached = previous;
+            PreviewAsyncFixtures.drain();
+        }
+    }
+
+    private static void layoutCustomViewport(View root) {
+        Resources resources = root.getResources();
+        int width = Math.round(resources.getConfiguration().screenWidthDp * resources.getDisplayMetrics().density),
+            height = Math.round(resources.getConfiguration().screenHeightDp * resources.getDisplayMetrics().density);
+        for (int i = 0; i < 4; i++) {
+            root.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+            root.layout(0, 0, width, height);
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(60));
+        }
+    }
+
+    @Test
+    public void initialCustomFocusDoesNotScrollPastStatisticsBeforeLayout() {
+        Application c = RuntimeEnvironment.getApplication();
+        PreviewPages pages = new PreviewPages(c, (holder, item) -> {
+        });
+        pages.configureCustomLibrary(new CustomLibraryPage(), () -> {
+        });
+        pages.setSnapshot(new Snapshot());
+        assertTrue(pages.focusFromNavigation());
+        RecyclerView list =
+            (RecyclerView) pages.getChildAt(0);
+        assertEquals("Pending initial scroll must retain statistics at adapter row zero", 0,
+            (int) ReflectionHelpers.getField(list.getLayoutManager(), "mPendingScrollPosition"));
+    }
+
+    @Test
+    public void oneSlotSurvivesRenameAndDeleteNeverChangesMedia() {
+        Application c = RuntimeEnvironment.getApplication();
+        CustomLibraryPage page = new CustomLibraryPage();
+        page.name = "Films";
+        assertTrue(page.save(c));
+        page.name = "My Films";
+        assertEquals("Films", CustomLibraryPage.load(c).name);
+        assertTrue(page.save(c));
+        assertEquals("My Films", CustomLibraryPage.load(c).name);
+        assertTrue(CustomLibraryPage.delete(c));
+        assertNull(CustomLibraryPage.load(c));
+    }
+
+    @Test
+    public void genreAnyAllAndWatchedFiltersUseActualLibraryData() {
+        Snapshot library = new Snapshot();
+        library.movies.add(movie(1, "One", 2000, "Drama|Comedy", false));
+        library.movies.add(movie(2, "Two", 2001, "Drama", true));
+        CustomLibraryPage page = new CustomLibraryPage();
+        page.genres.addAll(Set.of("Drama", "Comedy"));
+        assertEquals(2, page.entries(library).size());
+        page.allGenres = true;
+        assertEquals("One", page.entries(library).get(0).media.getName());
+        page.allGenres = false;
+        page.watched = "watched";
+        assertEquals("Two", page.entries(library).get(0).media.getName());
+        page.year = 2000;
+        page.yearTo = 2000; // 0.156: year range; one year is year–year
+        assertTrue(page.entries(library).isEmpty());
+    }
+
+    @Test
+    public void tvWatchedFilterRequiresTheCompleteSeriesRatherThanOneCompletedEpisode() {
+        Snapshot library = new Snapshot();
+        Entry partial = new Entry(new Tvshow(10, "Partly watched", null, 1, 3, 1, "/tv/partial"), 1, 10, "Drama");
+        Entry complete = new Entry(new Tvshow(11, "Completed", null, 1, 3, 3, "/tv/complete"), 1, 11, "Drama");
+        Entry empty = new Entry(new Tvshow(12, "No indexed episodes", null, 0, 0, 0, "/tv/empty"), 1, 12, "Drama");
+        library.shows.addAll(Arrays.asList(partial, complete, empty));
+        Episode episode = new Episode(30, 30, 1, 1, "Episode 1", 0, 0, "", "", "Partly watched", "/tv/partial/1", null,
+            null, 100000, 0, 0, 0, true, false, false, false, 1, 100, 1920, 1080, null, null, null, null, 0, 1, 1000);
+        library.watched.add(new Entry(episode, 1, 10, "Drama"));
+        library.continuingShows.add(new Entry(episode, 1, 10, "Drama"));
+        CustomLibraryPage page = new CustomLibraryPage();
+        page.type = "tv";
+        page.watched = "watched";
+        assertEquals(Collections.singletonList(complete), page.entries(library));
+        page.watched = "unwatched";
+        assertEquals(2, page.entries(library).size());
+        assertTrue(page.entries(library).contains(partial));
+        assertTrue(page.entries(library).contains(empty));
+        page.watched = "progress";
+        assertEquals(Collections.singletonList(partial), page.entries(library));
+    }
+
+    @Test
+    public void serializedDraftPreservesBackwardStepEditsAndValidation() {
+        CustomLibraryPage page = new CustomLibraryPage();
+        page.name = "Custom";
+        page.type = "movies";
+        page.genres.add("Drama");
+        page.view = "list";
+        page.descending = true;
+        CustomLibraryPage restored = CustomLibraryPage.decode(page.encode());
+        assertEquals(page.encode(), restored.encode());
+        assertNull(restored.validation());
+        restored.name = " ";
+        assertNotNull(restored.validation());
+    }
+
+    @Test
+    public void smartRowDynamicOffFreezesMembershipAndKeepsManualAdditions() {
+        Application c = RuntimeEnvironment.getApplication();
+        Snapshot library = new Snapshot();
+        Entry one = movie(1, "One", 2000, "Drama", false), two = movie(2, "Two", 2001, "Comedy", false);
+        library.movies.add(one);
+        library.movies.add(two);
+        PreviewHomeRows model = new PreviewHomeRows(c);
+        PreviewHomeRows.Row row = new PreviewHomeRows.Row("custom:test", "Test");
+        model.rows.add(row);
+        row.dynamic = true;
+        row.genreRule = "Drama";
+        row.members.add(two.key());
+        assertEquals(2, model.members(row, library).size());
+        model.setDynamic(row, false, library);
+        library.movies.add(movie(3, "Three", 2002, "Drama", false));
+        assertEquals(2, model.members(row, library).size());
+        model.setDynamic(row, true, library);
+        assertEquals(3, model.members(row, library).size());
+        row.visible = false;
+        assertEquals(3, model.members(row, library).size());
+    }
+
+    @Test
+    public void customPageInitialArtworkComesFromDisplayedOrderRatherThanMovies() {
+        Application c = RuntimeEnvironment.getApplication();
+        PreferenceManager.getDefaultSharedPreferences(c)
+            .edit()
+            .clear()
+            .putBoolean("supernova_onboarding_complete", true)
+            .commit();
+        try {
+            Picasso.get();
+        } catch (IllegalStateException absent) {
+            Picasso.setSingletonInstance(new Picasso.Builder(c).build());
+        }
+        Snapshot library = new Snapshot();
+        library.movies.add(movie(1, "Movie", 2000, "Drama", false));
+        Entry doc = movie(2, "Documentary", 2001, "Documentary", false);
+        library.movies.add(doc);
+        CustomLibraryPage page = new CustomLibraryPage();
+        page.name = "Documentaries";
+        page.type = "movies";
+        page.genres.add("Documentary");
+        PreviewPages pages = new PreviewPages(c, (holder, item) -> {
+        });
+        pages.configureCustomLibrary(page, () -> {
+        });
+        pages.setSnapshot(library);
+        assertSame(doc, ReflectionHelpers.callInstanceMethod(pages, "featured"));
+        page.genres.clear();
+        page.genres.add("No matches");
+        pages.configureCustomLibrary(page, () -> {
+        });
+        assertNull(ReflectionHelpers.callInstanceMethod(pages, "featured"));
+    }
+
+    @Test
+    public void customTvStatisticsRebindWhenOnlyEpisodeStorageChanges() {
+        Application c = RuntimeEnvironment.getApplication();
+        PreferenceManager.getDefaultSharedPreferences(c)
+            .edit()
+            .putBoolean("supernova_onboarding_complete", true)
+            .commit();
+        Snapshot snapshot = new Snapshot();
+        Entry show = new Entry(new Tvshow(10, "Documentary series", null, 1, 1, 0, "/tv"), 1, 10, "Documentary");
+        snapshot.shows.add(show);
+        Episode episode = mock(Episode.class);
+        when(episode.getId()).thenReturn(101L);
+        when(episode.getName()).thenReturn("Episode");
+        Entry file = new Entry(episode, 1, 10, "Documentary");
+        snapshot.episodes.add(file);
+        CustomLibraryPage page = new CustomLibraryPage();
+        page.type = "tv";
+        page.name = "Documentaries";
+        PreviewPages pages = new PreviewPages(c, (holder, item) -> {
+        });
+        pages.configureCustomLibrary(page, () -> {
+        });
+        pages.setSnapshot(snapshot);
+        RecyclerView list =
+            (RecyclerView) pages.getChildAt(0);
+        int[] changes = {
+            0
+        };
+        list.getAdapter().registerAdapterDataObserver(
+            new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeChanged(int start, int count, Object payload) {
+                    if (start == 0)
+                        changes[0]++;
+                }
+                @Override
+                public void onItemRangeChanged(int start, int count) {
+                    if (start == 0)
+                        changes[0]++;
+                }
+            });
+        file.bytes = 123456;
+        file.knownSizes = 1;
+        pages.setSnapshot(snapshot);
+        assertTrue("Statistics must refresh without recycling the header by scrolling", changes[0] > 0);
+    }
+}

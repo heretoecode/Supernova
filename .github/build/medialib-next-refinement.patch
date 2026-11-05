@@ -1,0 +1,138 @@
+diff --git a/src/com/archos/mediacenter/utils/trakt/Trakt.java b/src/com/archos/mediacenter/utils/trakt/Trakt.java
+--- a/src/com/archos/mediacenter/utils/trakt/Trakt.java
++++ b/src/com/archos/mediacenter/utils/trakt/Trakt.java
+@@ -1111,15 +1111,15 @@
+     }
+
+     public static boolean isTraktV1Enabled(Context context, SharedPreferences pref) {
+-        return getUserFromPreferences(pref)!=null;
++        return pref.getBoolean("supernova_integration_trakt",true)&&getUserFromPreferences(pref)!=null;
+     }
+
+     public static boolean isTraktV2Enabled(Context context, SharedPreferences pref) {
+-        return getAccessTokenFromPreferences(pref)!=null;
++        return pref.getBoolean("supernova_integration_trakt",true)&&getAccessTokenFromPreferences(pref)!=null;
+     }
+
+     public static boolean isLiveScrobblingEnabled(SharedPreferences pref) {
+-        return pref.getBoolean(KEY_TRAKT_LIVE_SCROBBLING, true);
++        return pref.getBoolean("supernova_integration_trakt",true)&&pref.getBoolean(KEY_TRAKT_LIVE_SCROBBLING, true);
+     }
+
+     public static int getFlagSyncPreference(SharedPreferences preferences) {
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -286,6 +286,7 @@
+     }
+
+     public static void forceRescan(Context context){
++        if(!SupernovaLibraryPolicy.configured(context))return;
+         Intent intent = new Intent(context, NetworkAutoRefresh.class);
+         intent.setAction(ACTION_FORCE_RESCAN_INDEXED_FOLDERS);
+         intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -298,6 +298,7 @@
+
+     @Override
+     public int onStartCommand(Intent intent, int flags, int startId) {
++        if(!SupernovaLibraryPolicy.configured(this)){stopForeground(true);stopSelf(startId);return START_NOT_STICKY;}
+         // intents delivered here
+         if (log.isDebugEnabled()) log.debug("onStartCommand:{} flags:{} startId:{} getAction {}", intent, flags, startId, ((intent != null) ? intent.getAction() : "null"));
+         
+diff --git a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+--- a/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
++++ b/src/com/archos/mediaprovider/video/SupernovaLibraryPolicy.java
+@@ -10,6 +10,22 @@
+ public final class SupernovaLibraryPolicy {
+     public static final String HEALTH="supernova_library_health_v1";
+     public static boolean retainsRecords(Context c){return c!=null&&"app.supernova.player".equals(c.getPackageName());}
++    public static boolean configured(Context c){return !retainsRecords(c)||PreferenceManager.getDefaultSharedPreferences(c).getBoolean("supernova_onboarding_complete",false);}
++    /** Upgrade-only inventory migration, on the caller's worker; fresh empty inventory stays gated. */
++    public static void initialiseSetup(Context context){
++        if(!retainsRecords(context))return;
++        SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(context);
++        if(p.contains("supernova_onboarding_complete"))return;
++        Set<String> roots=new LinkedHashSet<>(p.getStringSet("supernova_library_roots",Collections.emptySet()));
++        for(Uri root:historicalLocalRoots(context))roots.add(canonical(root));
++        try(android.database.Cursor cursor=context.getContentResolver().query(VideoStoreInternal.FILES_IMPORT,new String[]{VideoStore.MediaColumns.DATA},null,null,null)){
++            if(cursor==null)throw new IllegalStateException("Existing library inventory could not be read");
++            boolean priorInventory=cursor.moveToFirst();
++            if(cursor!=null&&priorInventory)do{String path=cursor.getString(0);if(path==null)continue;Uri location=Uri.parse(path);if(location.getScheme()!=null&&!"file".equalsIgnoreCase(location.getScheme())){List<String> segments=new ArrayList<>(location.getPathSegments());if(!segments.isEmpty())segments.remove(segments.size()-1);roots.add(canonical(location.buildUpon().path("/"+android.text.TextUtils.join("/",segments)).build()));}}while(cursor.moveToNext());
++            p.edit().putStringSet("supernova_library_roots",roots).putBoolean("supernova_library_policy_initialized",true)
++                .putBoolean("supernova_onboarding_complete",priorInventory||!roots.isEmpty()).commit();
++        }
++    }
+     public static String canonical(Uri uri){
+         List<String> segments=new ArrayList<>();for(String segment:uri.getPathSegments()){
+             if(segment.equals(".")||segment.isEmpty())continue;
+@@ -41,6 +57,7 @@
+     }
+     public static boolean excluded(Context c,Uri uri){
+         if(!retainsRecords(c)||uri==null)return false;
++        if(!configured(c))return true;
+         SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(c);String key=canonical(uri);
+         for(String excluded:p.getStringSet("supernova_library_exclusions",Collections.emptySet()))if(contains(excluded,key))return true;
+         if(p.getBoolean("supernova_library_policy_initialized",false)){
+diff --git a/src/com/archos/mediaprovider/video/VideoProvider.java b/src/com/archos/mediaprovider/video/VideoProvider.java
+--- a/src/com/archos/mediaprovider/video/VideoProvider.java
++++ b/src/com/archos/mediaprovider/video/VideoProvider.java
+@@ -170,7 +170,9 @@
+         if (log.isDebugEnabled()) log.debug("onCreate");
+         final Context context = getContext();
+
+-        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
++        Runnable observeProcess=()->ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
++        if(android.os.Looper.myLooper()==android.os.Looper.getMainLooper())observeProcess.run();
++        else new Handler(android.os.Looper.getMainLooper()).post(observeProcess);
+
+         mImageThumbFolder = context.getDir(IMAGE_THUMB_FOLDER_NAME, Context.MODE_PRIVATE).getPath();
+
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportService.java b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportService.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+@@ -272,6 +272,7 @@
+     @SuppressWarnings("deprecation") // ACTION_MEDIA_SCANNER_SCAN_FILE reused as internal IPC action string
+     @Override
+     public int onStartCommand(Intent intent, int flags, int startId) {
++        if(!SupernovaLibraryPolicy.configured(this)){ImportState.VIDEO.setState(ImportState.State.IDLE);stopForeground(true);stopSelf(startId);return START_NOT_STICKY;}
+         // intents are delivered here.
+         if (log.isDebugEnabled()) log.debug("onStartCommand:{} flags:{} startId:{} getAction {}", intent, flags, startId, ((intent != null) ? intent.getAction() : "null"));
+         ArchosUtils.addBreadcrumb(SentryLevel.INFO, "VideoStoreImportService.onStartCommand", "created notification + startService " + NOTIFICATION_ID + " notification null? " + (n == null));
+@@ -508,6 +509,7 @@
+     /** starts import, fullMode decides which import implementation is used */
+     private boolean previewImportAttempted;
+     private void doImport(boolean fullMode) {
++        if(!SupernovaLibraryPolicy.configured(this))return;
+         PreviewLocalImportTrace.begin(this, fullMode);
+         previewImportAttempted = false;
+         boolean returned = false;
+diff --git a/src/com/archos/mediascraper/AutoScrapeService.java b/src/com/archos/mediascraper/AutoScrapeService.java
+--- a/src/com/archos/mediascraper/AutoScrapeService.java
++++ b/src/com/archos/mediascraper/AutoScrapeService.java
+@@ -199,6 +199,7 @@
+     }
+
+     public static boolean requestService(Context context) {
++        if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(context))return false;
+         if (log.isDebugEnabled()) log.debug("startService in foreground");
+         mContext = context.getApplicationContext();
+         try {
+@@ -214,6 +215,7 @@
+     }
+
+     private static boolean requestServiceAfterNetworkScan(Context context) {
++        if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(context))return false;
+         if (log.isDebugEnabled()) log.debug("startServiceAfterNetworkScan - forced start after network scan");
+         mContext = context.getApplicationContext();
+         Intent intent = new Intent(context, AutoScrapeService.class);
+@@ -434,6 +436,7 @@
+
+     @Override
+     public int onStartCommand(Intent intent, int flags, int startId) {
++        if(!com.archos.mediaprovider.video.SupernovaLibraryPolicy.configured(this)){stopForeground(true);stopSelf(startId);return START_NOT_STICKY;}
+         try {
+             super.onStartCommand(intent, flags, startId);
+             if (log.isDebugEnabled()) log.debug("onStartCommand");

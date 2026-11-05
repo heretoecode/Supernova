@@ -1,0 +1,180 @@
+diff --git a/src/com/archos/mediacenter/filecoreextension/upnp2/NovaJettyServletContainer.java b/src/com/archos/mediacenter/filecoreextension/upnp2/NovaJettyServletContainer.java
+index f0282cf..5f46ac2 100644
+--- a/src/com/archos/mediacenter/filecoreextension/upnp2/NovaJettyServletContainer.java
++++ b/src/com/archos/mediacenter/filecoreextension/upnp2/NovaJettyServletContainer.java
+@@ -16,11 +16,22 @@ package com.archos.mediacenter.filecoreextension.upnp2;
+ 
+ import java.io.IOException;
+ import java.nio.channels.ClosedChannelException;
++import java.nio.ByteBuffer;
++import java.nio.charset.StandardCharsets;
++import java.util.Enumeration;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.atomic.AtomicLong;
+ 
+ import javax.servlet.Servlet;
+-
++import javax.servlet.ServletException;
++import javax.servlet.http.HttpServletRequest;
++import javax.servlet.http.HttpServletResponse;
++
++import org.eclipse.jetty.http.HttpFields;
++import org.eclipse.jetty.server.Request;
++import org.eclipse.jetty.server.HttpConnectionFactory;
++import org.eclipse.jetty.server.handler.HandlerWrapper;
++import org.eclipse.jetty.server.handler.ErrorHandler;
+ import org.eclipse.jetty.server.Server;
+ import org.eclipse.jetty.server.ServerConnector;
+ import org.eclipse.jetty.servlet.ServletContextHandler;
+@@ -94,6 +105,8 @@ public class NovaJettyServletContainer implements ServletContainerAdapter {
+                 }
+             }
+         };
++        connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration().setSendServerVersion(false);
++        connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration().setSendXPoweredBy(false);
+         connector.setHost(host);
+         connector.setPort(port);
+ 
+@@ -126,9 +139,27 @@ public class NovaJettyServletContainer implements ServletContainerAdapter {
+         if (contextPath != null && !contextPath.isEmpty()) {
+             servletHandler.setContextPath(contextPath);
+         }
++        servletHandler.setErrorHandler(new PrivateErrorHandler());
+         final ServletHolder s = new ServletHolder(servlet);
+         servletHandler.addServlet(s, "/*");
+-        server.setHandler(servletHandler);
++        HandlerWrapper framingBoundary = new HandlerWrapper() {
++            @Override public void handle(String target, Request base, HttpServletRequest request,
++                                         HttpServletResponse response) throws IOException, ServletException {
++                // UPnP carries one message per exchange; do not reuse a legacy-parser
++                // connection after a peer supplied ambiguous framing. jUPnP's client
++                // already sends Connection: close for the same protocol.
++                response.setHeader("Connection", "close");
++                if (!validFraming(request)) {
++                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
++                    response.setContentLength(0);
++                    base.setHandled(true);
++                    return;
++                }
++                super.handle(target, base, request, response);
++            }
++        };
++        framingBoundary.setHandler(servletHandler);
++        server.setHandler(framingBoundary);
+     }
+ 
+     @Override
+@@ -161,5 +192,61 @@ public class NovaJettyServletContainer implements ServletContainerAdapter {
+ 
+     protected void resetServer() {
+         server = new Server(); // Has its own QueuedThreadPool
++        PrivateErrorHandler errors = new PrivateErrorHandler();
++        errors.setServer(server);
++        server.addBean(errors);
++    }
++    private static boolean validFraming(HttpServletRequest request) {
++        Enumeration<String> lengths = request.getHeaders("Content-Length");
++        boolean hasLength = lengths.hasMoreElements();
++        if (hasLength) {
++            String length = lengths.nextElement();
++            if (lengths.hasMoreElements() || length == null || length.isEmpty()) return false;
++            for (int i = 0; i < length.length(); i++) {
++                char c = length.charAt(i);
++                if (c < '0' || c > '9') return false;
++            }
++            try { Long.parseLong(length); }
++            catch (NumberFormatException invalidLength) { return false; }
++        }
++        Enumeration<String> encodings = request.getHeaders("Transfer-Encoding");
++        if (encodings.hasMoreElements()) {
++            String encoding = encodings.nextElement();
++            if (hasLength || encodings.hasMoreElements() || !"chunked".equalsIgnoreCase(encoding)) return false;
++        }
++        return true;
+     }
++
++    // No exception message, filesystem path, request target or stack in error bodies.
++    private static final class PrivateErrorHandler extends ErrorHandler {
++        PrivateErrorHandler() {
++            setShowStacks(false);
++            setShowMessageInTitle(false);
++        }
++        private static byte[] body(int status) {
++            return ("Request failed (" + status + ").\n").getBytes(StandardCharsets.US_ASCII);
++        }
++        @Override public void handle(String target, Request base, HttpServletRequest request,
++                                     HttpServletResponse response) throws IOException {
++            if (!response.isCommitted()) {
++                int status = response.getStatus();
++                byte[] bytes = body(status);
++                response.reset();
++                response.setStatus(status);
++                response.setHeader("Connection", "close");
++                response.setHeader("Cache-Control", "no-store");
++                response.setContentType("text/plain;charset=US-ASCII");
++                response.setContentLength(bytes.length);
++                response.getOutputStream().write(bytes);
++            }
++            base.setHandled(true);
++        }
++        @Override public ByteBuffer badMessageError(int status, String reason, HttpFields fields) {
++            fields.put("Content-Type", "text/plain;charset=US-ASCII");
++            fields.put("Cache-Control", "no-store");
++            fields.put("Connection", "close");
++            return ByteBuffer.wrap(body(status));
++        }
++    }
++
+ }
+diff --git a/src/com/archos/mediacenter/filecoreextension/upnp2/NovaUpnpService.java b/src/com/archos/mediacenter/filecoreextension/upnp2/NovaUpnpService.java
+index 962c57e..480691c 100644
+--- a/src/com/archos/mediacenter/filecoreextension/upnp2/NovaUpnpService.java
++++ b/src/com/archos/mediacenter/filecoreextension/upnp2/NovaUpnpService.java
+@@ -22,7 +22,6 @@ import org.jupnp.android.AndroidUpnpServiceImpl;
+ import org.jupnp.model.ServerClientTokens;
+ import org.jupnp.transport.impl.ServletStreamServerConfigurationImpl;
+ import org.jupnp.transport.impl.ServletStreamServerImpl;
+-import org.jupnp.transport.impl.jetty.JettyStreamClientImpl;
+ import org.jupnp.transport.impl.jetty.StreamClientConfigurationImpl;
+ import org.jupnp.transport.spi.NetworkAddressFactory;
+ import org.jupnp.transport.spi.StreamClient;
+@@ -40,7 +39,7 @@ public class NovaUpnpService extends AndroidUpnpServiceImpl {
+         return new AndroidUpnpServiceConfiguration() {
+             @Override
+             public StreamClient createStreamClient() {
+-                return new JettyStreamClientImpl(
++                return new ValidatingJettyStreamClient(
+                         new StreamClientConfigurationImpl(getSyncProtocolExecutorService()) {
+                             @Override
+                             public String getUserAgentValue(int majorVersion, int minorVersion) {
+diff --git a/src/com/archos/mediacenter/filecoreextension/upnp2/ValidatingJettyStreamClient.java b/src/com/archos/mediacenter/filecoreextension/upnp2/ValidatingJettyStreamClient.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediacenter/filecoreextension/upnp2/ValidatingJettyStreamClient.java
+@@ -0,0 +1,26 @@
++// Copyright 2026 Supernova contributors
++// Licensed under the Apache License, Version 2.0.
++package com.archos.mediacenter.filecoreextension.upnp2;
++
++import java.net.URI;
++import org.eclipse.jetty.client.api.Request;
++import org.jupnp.model.message.StreamRequestMessage;
++import org.jupnp.transport.impl.jetty.JettyStreamClientImpl;
++import org.jupnp.transport.impl.jetty.StreamClientConfigurationImpl;
++import org.jupnp.transport.spi.InitializationException;
++
++/** Validate the JDK URI authority before passing UPnP metadata to legacy Jetty. */
++public final class ValidatingJettyStreamClient extends JettyStreamClientImpl {
++    public ValidatingJettyStreamClient(StreamClientConfigurationImpl configuration) throws InitializationException {
++        super(configuration);
++    }
++    @Override protected Request createRequest(StreamRequestMessage message) {
++        URI uri = message.getOperation().getURI();
++        if (uri == null || !uri.isAbsolute() || uri.getHost() == null || uri.getHost().isEmpty()
++                || !("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))) {
++            // Do not log malformed URI text: discovered metadata can contain credentials.
++            return null;
++        }
++        return super.createRequest(message);
++    }
++}

@@ -1,0 +1,11 @@
+{
+  "source_sha": "beaf8441255c4ec4bbb3a0f5d24a0a9ca1ced90e",
+  "classes": 8,
+  "tests": 41,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "result": "FAIL",
+  "failure": "Legacy Home test cast a heading Boolean to list after semantic row-heading tagging. Corrected data-cell selection in90aebf25; Supernova138HomeTest subsequently PASS atf9b6a011.",
+  "subchecks": "Hero policy, active backend output gate, carousel adapter/focus continuity and shared metadata tests PASS; no complete hero acceptance claim."
+}

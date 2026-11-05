@@ -19,6 +19,7 @@ import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 
 import com.archos.mediacenter.video.leanback.network.NetworkListingFragment;
 
+/** Hosts WebDAV file listings in the TV file browser. */
 public class WebdavListingActivity extends ListingActivity {
 
     @Override

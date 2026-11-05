@@ -1,0 +1,179 @@
+diff --git a/Include/stream_buffer_limits.h b/Include/stream_buffer_limits.h
+new file mode 100644
+index 0000000..ee33dae
+--- /dev/null
++++ b/Include/stream_buffer_limits.h
+@@ -0,0 +1,38 @@
++/*
++ * Copyright 2026 Courville Software
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#ifndef STREAM_BUFFER_LIMITS_H
++#define STREAM_BUFFER_LIMITS_H
++
++#include <limits.h>
++#include <stdint.h>
++
++#define STREAM_MIB (1024 * 1024)
++
++// Account for the legacy ring overlap or the CBE's second copy before narrowing.
++static inline int stream_buffer_mib_valid(int mib, int copies, int overlap)
++{
++	int64_t bytes = (int64_t)mib * STREAM_MIB;
++	return mib >= 0 && copies > 0 && overlap >= 0 &&
++		bytes <= (INT_MAX - (int64_t)overlap) / copies;
++}
++
++static inline int stream_buffer_mib_bytes(int mib)
++{
++	return stream_buffer_mib_valid(mib, 1, 0) ? (int)((int64_t)mib * STREAM_MIB) : -1;
++}
++
++#endif
+diff --git a/Source/stream.c b/Source/stream.c
+index 5cac699..db73f05 100644
+--- a/Source/stream.c
++++ b/Source/stream.c
+@@ -18,6 +18,7 @@
+ #include "types.h"
+ #include "global.h"
+ #include "stream.h"
++#include "stream_buffer_limits.h"
+ #include "debug.h"
+ #include "util.h"
+ #include "astdlib.h"
+@@ -69,7 +70,7 @@ DECLARE_DEBUG_TOGGLE ("sfvs", 	stream_use_fake_video_sink );
+ DECLARE_DEBUG_TOGGLE ("sfas", 	stream_use_fake_audio_sink );
+ DECLARE_DEBUG_TOGGLE ("snvs", 	stream_use_new_video_sink );
+ 
+-// buffer used as cache before parser to tackle buffering issues in MB
++// Compressed media budget in MiB: demuxed packets for FFmpeg, raw data for legacy parsers.
+ // history 2015 12->24MB (20 NOK) for high bitrate 4k streaming
+ static int default_stream_buffer_size = 24;
+ // to cope with video frames size (can be HUGE, needs to be increased with resolution increase)
+@@ -1221,7 +1222,7 @@ void stream_set_buffer_size( STREAM *s, int buffer_size )
+ 	if( !s )
+ 		return;
+ DBGS serprintf("stream_set_buffer_size: %ld\r\n", buffer_size );
+-	s->buffer_size = buffer_size;
++	s->buffer_size = stream_buffer_mib_valid(buffer_size, 1, VIDEO_OVERLAP_SIZE) ? buffer_size : 24;
+ }
+ 
+ // ************************************************************
+@@ -1929,7 +1930,8 @@ static void _perform_stream_abort( void )
+ void define_default_stream_buffer_size(int size)
+ {
+ 	DBG serprintf("stream:define_default_stream_buffer_size %d\n", size);
+-	default_stream_buffer_size = size;
++	// Preserve zero as the existing STREAM_DEFAULT_BUFFER_SIZE fallback.
++	default_stream_buffer_size = stream_buffer_mib_valid(size, 1, VIDEO_OVERLAP_SIZE) ? size : 24;
+ }
+ 
+ int get_default_stream_buffer_size()
+@@ -1941,7 +1943,9 @@ int get_default_stream_buffer_size()
+ void define_default_stream_max_iframe_size(int size)
+ {
+ 	DBG serprintf("stream:define_default_stream_max_iframe_size %d\n", size);
+-	default_video_mindata_size = size * 1024 * 1024;
++	// CBE allocates capacity plus an equally large overlap. Zero selects the default.
++	default_video_mindata_size = size > 0 && stream_buffer_mib_valid(size, 2, 0)
++		? stream_buffer_mib_bytes(size) : VIDEO_MINDATA_SIZE;
+ }
+ 
+ int get_default_stream_max_iframe_size()
+diff --git a/Source/stream_parser.c b/Source/stream_parser.c
+index 7dc8dc0..754ccbe 100644
+--- a/Source/stream_parser.c
++++ b/Source/stream_parser.c
+@@ -227,7 +227,8 @@ serprintf("no mem for sub chunks!\r\n");
+ 	
+ 	if( !( flags & STREAM_PARSER_NO_PREBUFFER ) ) {
+ 		// read mindata + 50% into buffer so that we can parse file header
+-		if( stream_parser_prebuffer( s, s->buffer, s->parser_mindata_size * 3 / 2 ) ) {
++		int prebuffer_bytes = (int)MIN((int64_t)INT_MAX, (int64_t)s->parser_mindata_size * 3 / 2);
++		if( stream_parser_prebuffer( s, s->buffer, prebuffer_bytes ) ) {
+ serprintf("user abort in parser open!\n");
+ 			stream_parser_close( s );
+ 			return 1;
+diff --git a/Source/stream_video.c b/Source/stream_video.c
+index 60ca7e2..a7f72d9 100644
+--- a/Source/stream_video.c
++++ b/Source/stream_video.c
+@@ -21,6 +21,7 @@
+ #include "device_config.h"
+ #include "util.h"
+ #include "stream.h"
++#include "stream_buffer_limits.h"
+ #include "stream_alloc.h"
+ #include "stream_rc.h"
+ #include "stream_parser.h"
+@@ -1968,7 +1969,8 @@ serprintf("RESIZE BUFFER!\n");
+ serprintf("\n");
+ 
+ 	// resize, we can ignore if that fails, since in that case we just use the old buffer..
+-	int new_size = stream_buffer_large * 1024 * 1024;
++	if (!stream_buffer_mib_valid(stream_buffer_large, 1, VIDEO_OVERLAP_SIZE)) return;
++	int new_size = stream_buffer_mib_bytes(stream_buffer_large);
+ 
+ 	stream_buffer_resize_and_rebuffer( s->buffer, new_size );
+ }
+@@ -2151,7 +2153,8 @@ DBGS serprintf("opening parser: [%s] with %d MB\r\n", s->parser->name, s->buffer
+ 			stream_parse_parts( s );
+ 		}
+ 		s->abort = s->user_abort;
+-		if( s->parser->open( s, s->buffer_size * 1024 * 1024, flags ) ) {
++		int buffer_bytes = stream_buffer_mib_bytes(s->buffer_size);
++		if( buffer_bytes < 0 || s->parser->open( s, buffer_bytes, flags ) ) {
+ serprintf("error opening parser: %d\r\n", s->video_error );
+ 			if ( !s->video_error ) {
+ 				stream_set_error( s, VE_FILE_ERROR );
+diff --git a/test/stream_buffer_limits.c b/test/stream_buffer_limits.c
+new file mode 100644
+index 0000000..b83228b
+--- /dev/null
++++ b/test/stream_buffer_limits.c
+@@ -0,0 +1,32 @@
++/*
++ * Copyright 2026 Courville Software
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *      http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include "stream_buffer_limits.h"
++#include <assert.h>
++
++int main(void)
++{
++	assert(stream_buffer_mib_bytes(24) == 24 * STREAM_MIB);
++	assert(stream_buffer_mib_bytes(0) == 0);
++	assert(stream_buffer_mib_bytes(-1) == -1);
++	assert(stream_buffer_mib_bytes(INT_MAX) == -1);
++	assert(stream_buffer_mib_valid(2041, 1, 6 * STREAM_MIB));
++	assert(!stream_buffer_mib_valid(2042, 1, 6 * STREAM_MIB));
++	assert(stream_buffer_mib_valid(1023, 2, 0));
++	assert(!stream_buffer_mib_valid(1024, 2, 0));
++	assert(!stream_buffer_mib_valid(INT_MAX, 2, 0));
++	return 0;
++}

@@ -3,16 +3,24 @@ package com.archos.mediacenter.video.leanback;
 import android.app.Application;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.LinearLayout;
 import androidx.preference.*;
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks Settings shortcuts and child returns preserve the correct rail and opener identity. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewSettingsEntryTest {
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     public static class Settings extends PreferenceFragmentCompat {
         @Override public void onCreatePreferences(Bundle state,String rootKey){
             PreferenceScreen root=getPreferenceManager().createPreferenceScreen(requireContext());setPreferenceScreen(root);
@@ -22,17 +30,17 @@ public class PreviewSettingsEntryTest {
             }
             PreviewSettings.style(root);
         }
-        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(LayoutInflater inflater,ViewGroup parent,Bundle state){return PreviewSettings.grid(requireContext());}
-        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen root){return PreviewSettings.adapter(root);}
+        @Override public RecyclerView onCreateRecyclerView(LayoutInflater inflater,ViewGroup parent,Bundle state){return PreviewSettings.grid(requireContext());}
+        @Override protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen root){return PreviewSettings.adapter(root);}
         @Override public void onViewCreated(View view,Bundle state){super.onViewCreated(view,state);PreviewSettings.sidebar(this);}
     }
     @Test public void subtitleShortcutTargetsRailWithoutChangingSettingsOrEnteringOptions(){
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{
             host.get().getIntent().putExtra("preview_settings_category","Subtitles");Settings fragment=new Settings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);View subtitles=root.findViewWithTag("semantic:settings:category:Subtitles");
             assertTrue(subtitles.hasFocus());assertFalse(fragment.getListView().hasFocus());assertFalse(host.get().getIntent().hasExtra("preview_settings_category"));
-            assertTrue(subtitles.getParent() instanceof PreviewFocusRail);assertNull(subtitles.getBackground());
+            assertTrue(subtitles.getParent() instanceof LinearLayout);assertNotNull(subtitles.getBackground());
             assertFalse(((SwitchPreferenceCompat)fragment.findPreference("Subtitles-option")).isChecked());
             subtitles.performClick();PreviewPagesTest.layout(root);assertTrue(fragment.getListView().hasFocus());
             // ViewRoot dispatches an unhandled DPAD key through focusSearch; a direct child
@@ -52,7 +60,7 @@ public class PreviewSettingsEntryTest {
         }
     }
     @Test public void childReturnUsesStableIdentityWhenLabelsMatch(){
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try{
             NestedSettings fragment=new NestedSettings();host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
             View root=fragment.requireView();PreviewPagesTest.layout(root);

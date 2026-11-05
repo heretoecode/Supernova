@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.utils;
 
+import android.app.Application;
 import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
@@ -28,8 +29,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+/** Checks movie, show and collection sort-order resolution, including null and compound video views. */
 @RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE, application = android.app.Application.class, sdk = 28)
+@Config(manifest = Config.NONE, application = Application.class, sdk = 28)
 public class SortUtilsTest {
 
     private Context context;

@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.leanback.details;
 
+import android.app.Application;
 import androidx.leanback.widget.Action;
+import androidx.leanback.widget.ArrayObjectAdapter;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowActionAdapter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,10 +10,11 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+/** Checks Details menu actions use current watched state and distinct movie and TV namespaces. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMoreActionsTest {
     @Test public void watchedCommandResolvesLatestStateWhileMenuStaysOpen(){
-        androidx.leanback.widget.ArrayObjectAdapter actions=new androidx.leanback.widget.ArrayObjectAdapter();
+        ArrayObjectAdapter actions=new ArrayObjectAdapter();
         Action original=new Action(VideoActionAdapter.ACTION_MARK_AS_WATCHED,"Mark watched");actions.add(original);
         assertSame(original,PreviewMoreActions.current(actions,original,false));
         Action updated=new Action(VideoActionAdapter.ACTION_MARK_AS_NOT_WATCHED,"Mark unwatched");actions.clear();actions.add(updated);

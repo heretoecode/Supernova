@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.browser.loader;
 
+import android.app.Application;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.archos.mediaprovider.video.VideoStore;
@@ -10,7 +11,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+/** Checks that watched counts deduplicate video versions while keeping seasons and episodes distinct. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class SeasonsWatchedCountTest {
     @Test public void wholeShowCountDistinguishesSeasonAndEpisodeWhileDeduplicatingVersions(){
         try(SQLiteDatabase db=SQLiteDatabase.create(null)){

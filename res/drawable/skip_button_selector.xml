@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- XML mirror of the shared button style (SupernovaStyle, approved 2 Nov 2026): black 72% at rest,
+     white box with black text on focus, 12dp corners, same size in every state.
+     SupernovaStyleConformanceTest checks these values against SupernovaStyle. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFF4F6FB" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFF4F6FB" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#B8000000" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</selector>

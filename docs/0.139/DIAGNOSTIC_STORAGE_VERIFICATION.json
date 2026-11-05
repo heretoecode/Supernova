@@ -1,0 +1,37 @@
+{
+  "source_sha": "21f176adbe36de0cc7ff8bcda33c49799b9333fc",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 50,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticStorageTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+    "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+    "com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticStateTest",
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.player.HeroPlaybackOutputTest"
+  ],
+  "duration": "2m 28s",
+  "log_sha256": "dc71aeccb36eeaaf81b00fa0b75a5f96e4fc5c9784ace5ece6fdc6c1da5df789",
+  "checks": [
+    "Typed open/seek attempts with producer-time playback session and generated process-local identity",
+    "Single seek callbacks retain target and parent; overlapping callbacks are explicitly unattributed",
+    "Prepared is not first output; stale backends and superseded worker attempts do not finish current attempts",
+    "Actual Player seek/output callbacks feed existing bounded recorder",
+    "Production diagnostic ZIP excludes location/authentication/exception-message canaries and describes default logging truthfully",
+    "Actual writes enforce an 8MiB global recorder cap and leave unowned files intact",
+    "Blocked ZIP destination does not hold recorder write lock; exported logs preserve snapshot state",
+    "Failed export deletes owned temporary snapshot and leaves live logs available for retry",
+    "Oversized producer records are dropped; large incident copies rotate at complete JSON record boundaries"
+  ],
+  "limits": [
+    "Snapshot copy remains bounded I/O under recorder lock; physical device overhead not measured",
+    "No decoded/presented timestamps, direct-transport completeness or physical Shield acceptance",
+    "No actual private incident supplied; no diagnosis of owner playback failures"
+  ]
+}

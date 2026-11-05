@@ -1,7 +1,10 @@
 package com.archos.mediacenter.video.diagnostics;
 
+import android.app.Application;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
@@ -9,17 +12,18 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
+/** Checks diagnostic archive durations, session deduplication and incident classification. */
 @RunWith(RobolectricTestRunner.class)
-@Config(application=android.app.Application.class,sdk=28)
+@Config(application=Application.class,sdk=28)
 public class DiagnosticArchiveTest {
     @Test public void operationDurationNeedsBothBoundariesAndUsesMonotonicTime()throws Exception{
         write("events.jsonl","{process:'p',sequence:1,event:'artwork_operation_begin',utc_ms:9000,elapsed_ms:100,operation_id:'art'}\n"
                 +"{process:'p',sequence:2,event:'artwork_ready',utc_ms:9100,elapsed_ms:25,operation_id:'art',parent_operation_id:'details'}\n"
                 +"{process:'p',sequence:3,event:'operation_end',utc_ms:8000,elapsed_ms:150,operation_id:'art'}\n"
                 +"{process:'p',sequence:4,event:'operation_end',utc_ms:9200,elapsed_ms:200,operation_id:'truncated'}\n");
-        org.json.JSONArray operations=DiagnosticArchive.manifest(temporary.getRoot()).getJSONArray("operation_summaries");
+        JSONArray operations=DiagnosticArchive.manifest(temporary.getRoot()).getJSONArray("operation_summaries");
         assertEquals(2,operations.length());
-        org.json.JSONObject complete=operations.getJSONObject(0),partial=operations.getJSONObject(1);
+        JSONObject complete=operations.getJSONObject(0),partial=operations.getJSONObject(1);
         assertEquals("art",complete.getString("operation_id"));assertEquals(50,complete.getLong("duration_ms"));
         assertEquals("details",complete.getString("parent_operation_id"));
         assertEquals("measured_begin_to_end",complete.getString("duration_status"));
@@ -29,7 +33,7 @@ public class DiagnosticArchiveTest {
         write("events.jsonl","{process:'p',sequence:1,event:'app_session_begin',utc_ms:1000,elapsed_ms:10,app_session:'a'}\n"
                 +"{process:'p',sequence:2,event:'app_session_end',utc_ms:4000,elapsed_ms:3010,app_session:'a'}\n"
                 +"{process:'p',sequence:3,event:'heartbeat',utc_ms:5000,elapsed_ms:4010,app_session:'b'}\n");
-        org.json.JSONObject manifest=DiagnosticArchive.manifest(temporary.getRoot());org.json.JSONArray intervals=manifest.getJSONArray("app_session_summaries");
+        JSONObject manifest=DiagnosticArchive.manifest(temporary.getRoot());JSONArray intervals=manifest.getJSONArray("app_session_summaries");
         assertEquals(2,intervals.length());assertEquals(3000,intervals.getJSONObject(0).getLong("duration_ms"));assertTrue(intervals.getJSONObject(1).isNull("duration_ms"));
         assertEquals(0,manifest.getInt("playback_sessions"));assertTrue(Diagnostics.important("app_session_end"));
     }
@@ -38,7 +42,7 @@ public class DiagnosticArchiveTest {
                 +"{process:'p',sequence:2,event:'playback_end',utc_ms:999999,elapsed_ms:3010,session:'complete'}\n"
                 +"{process:'p',sequence:3,event:'playback_end',utc_ms:1000000,elapsed_ms:4000,session:'carried'}\n"
                 +"{process:'p',sequence:4,event:'scan_requested',utc_ms:1000001,operation_id:'scan1'}\n");
-        org.json.JSONObject manifest=DiagnosticArchive.manifest(temporary.getRoot());org.json.JSONArray sessions=manifest.getJSONArray("playback_session_summaries");
+        JSONObject manifest=DiagnosticArchive.manifest(temporary.getRoot());JSONArray sessions=manifest.getJSONArray("playback_session_summaries");
         assertEquals(3000,sessions.getJSONObject(0).getLong("duration_ms"));assertTrue(sessions.getJSONObject(1).isNull("duration_ms"));
         assertEquals(1,manifest.getInt("scans_requested_retained"));assertEquals("scan1",manifest.getJSONArray("operation_summaries").getJSONObject(0).getString("operation_id"));
         assertTrue(DiagnosticArchive.linkedSummary(temporary.getRoot()).contains("duration_ms=3000"));assertTrue(DiagnosticArchive.linkedSummary(temporary.getRoot()).contains("incomplete_retained_evidence"));
@@ -47,7 +51,7 @@ public class DiagnosticArchiveTest {
         write("events.jsonl","{\"process\":\"a\",\"sequence\":1,\"event\":\"startup\",\"utc_ms\":1000,\"dropped\":7}\n"
                 +"{\"process\":\"a\",\"sequence\":2,\"event\":\"heartbeat\",\"utc_ms\":4000,\"dropped\":9}\n"
                 +"{\"process\":\"b\",\"sequence\":1,\"event\":\"PREVIOUS_SESSION_UNCLEAN_EXIT\",\"utc_ms\":5000,\"dropped\":2}\n");
-        org.json.JSONObject summary=DiagnosticArchive.manifest(temporary.getRoot());
+        JSONObject summary=DiagnosticArchive.manifest(temporary.getRoot());
         assertEquals(11,summary.getLong("dropped_events_retained_process_maxima"));
         assertEquals(1,summary.getInt("launches_retained"));
         assertEquals(1,summary.getInt("suspected_unclean_exits_retained"));

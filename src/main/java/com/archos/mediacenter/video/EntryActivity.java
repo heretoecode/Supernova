@@ -14,29 +14,25 @@
 
 package com.archos.mediacenter.video;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 
-import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.MainActivity;
+import com.archos.mediacenter.video.foundation.FoundationUiPolicy;
 import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.PreviewStartupSurface;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Locale;
 
 /**
- * Hub activity to launch either the leanback activity or the regular tablet/phone activity
- * depending on the user preferences
+ * TV entry point retaining the original launch intent's data and extras.
  * Created by vapillon on 08/06/15.
  */
 public class EntryActivity extends AppCompatActivity {
@@ -47,38 +43,16 @@ public class EntryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Apply theme before super.onCreate() to avoid visual flash
-        ThemeManager themeManager = ThemeManager.getInstance(this);
+        FoundationUiPolicy.apply(this);
         // EntryActivity uses launcher theme which is already neutral black
-        // The actual theme will be set in the launched activity (MainActivity or MainActivityLeanback)
+        // The TV activity applies its own theme.
         ((CustomApplication) getApplication()).loadLocale();
         super.onCreate(savedInstanceState);
         
         // Apply window theme after super.onCreate()
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false))getWindow().setBackgroundDrawable(new com.archos.mediacenter.video.leanback.PreviewStartupSurface(this));else themeManager.applyWindowTheme(this);
-
+        getWindow().setBackgroundDrawable(new PreviewStartupSurface(this));
         if (log.isDebugEnabled()) log.debug("onCreate");
-
-        Class activityToLaunch = null;
-        if (UiChoiceDialog.applicationIsInLeanbackMode(this)) {
-            activityToLaunch = MainActivityLeanback.class;
-        } else {
-            activityToLaunch = MainActivity.class;
-        }
-
-        final Intent originIntent = getIntent();
-        Intent i = new Intent();
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        i.setClass(this, activityToLaunch);
-
-        if (originIntent.getData()!=null) {
-            i.setData(originIntent.getData());
-        }
-
-        if (originIntent.getExtras()!=null) {
-            i.putExtras(originIntent.getExtras());
-        }
-
-        startActivity(i);;
+        startActivity(tvIntent(this, getIntent()));
 
         finish();
 
@@ -91,6 +65,15 @@ public class EntryActivity extends AppCompatActivity {
             }
         };
         ThemeManager.getInstance(this).registerThemeChangeListener(mThemeChangeListener);
+    }
+
+    static Intent tvIntent(Context context, Intent origin) {
+        // Copy action, type, URI grants and ClipData as well as data/extras for external launches.
+        return new Intent(origin)
+                .putExtra(com.archos.mediacenter.video.player.PlayerLaunchContract.STEREO_MODE,
+                        com.archos.mediacenter.video.player.PlayerLaunchContract.stereoForced(context, origin))
+                .setClass(context, MainActivityLeanback.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
     }
 
     @Override

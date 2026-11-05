@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Provides a WebView with custom key-event handling. */
 public class NovaWebView extends WebView {
 
     private static final Logger log = LoggerFactory.getLogger(NovaWebView.class);

@@ -1,6 +1,6 @@
 # Supernova — next Codex fixes (agreed 1 November 2026)
 
-**Status:** Handover prepared; implementation and Shield QA pending.
+**Status:** Implementation committed on `codex/agreed-fixes-2026-11-01`; automated regression, compilation and lint checks passed; physical Shield QA and final packaged flag rendering pending. See [implementation and validation](2026-11-01-validation.md) for actual evidence and limitations.
 
 1. Library page 3: statistics visible immediately, no scrolling.
 2. Home / Filters: stop remote-focus flickering.

@@ -21,6 +21,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.loader.VideoLoader;
 
+/** Adapts movie collection cursor entries into video objects and cover artwork. */
 public class MovieCollectionAdapter extends PresenterAdapterByCursor implements AdapterByVideoObjectsInterface{
     private final VideoCursorMapper mMovieCollectionsCursorMapper;
     public MovieCollectionAdapter(Context context, Cursor c) {
@@ -34,11 +35,13 @@ public class MovieCollectionAdapter extends PresenterAdapterByCursor implements 
         return null;
     }
 
+    @Override
     public String getCover() {
         int coverColumn = getCursor().getColumnIndex(VideoLoader.COLUMN_COVER_PATH);
         return coverColumn >= 0 ? getCursor().getString(coverColumn) : null;
     }
 
+    @Override
     public Object getItem(int position){
         getCursor().moveToPosition(position);
         return mMovieCollectionsCursorMapper.bind(getCursor());

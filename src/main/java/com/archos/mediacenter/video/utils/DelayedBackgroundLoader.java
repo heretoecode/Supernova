@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.utils;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
@@ -28,6 +27,7 @@ import com.archos.mediascraper.ScraperImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Loads background artwork through the image processing pipeline. */
 public class DelayedBackgroundLoader extends ImageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DelayedBackgroundLoader.class);

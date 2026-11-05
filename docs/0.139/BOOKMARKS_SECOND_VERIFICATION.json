@@ -1,0 +1,9 @@
+{
+  "source_sha": "587dc3a716ebfbe8559d2e50f76e11f3cf425637",
+  "result": "FAIL",
+  "phase": "compileNoamazonReleaseUnitTestJavaWithJavac",
+  "tests_executed": 0,
+  "duration": "21s",
+  "log_sha256": "91fb75b9a9c231ccc74d87420f7ed7fef1e7538b0f3f46a2928ac2c0ac6a07a7",
+  "correction": "Use actual production ShortcutDb.STATIC singleton, not enum construction. Fresh native tests required."
+}

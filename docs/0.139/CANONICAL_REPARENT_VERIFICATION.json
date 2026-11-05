@@ -1,0 +1,22 @@
+{
+  "source_sha": "5fac7b0b72c45fe870d5377134b4856155c23eeb",
+  "dependency_sha": "9b4589c3e3b3e2e470c27e2d850d9adca6372d1f",
+  "result": "PASS",
+  "duration": "39s",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "log_sha256": "00b780fde1938dea6124b28402abdb9518c472328310a7552e61eadc40da1215",
+  "coverage": [
+    "Verified episode replacement to another existing receiving parent retains old SHOW/Collection/pin and target SHOW/pin",
+    "Actual native joined episode facts switch to requested target; private redo reproduces full state",
+    "Stale target pin refused before mutation; FK integrity and existing native/journal recovery tests"
+  ],
+  "limits": "Existing compatible receiving target only; new parent creation, unidentified/cross-kind/clear, reconciliation/controller/codec26 still open.",
+  "tests": 21,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

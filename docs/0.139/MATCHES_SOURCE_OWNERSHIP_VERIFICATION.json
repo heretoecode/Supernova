@@ -1,0 +1,26 @@
+{
+  "source_sha": "d11cbe260bdfcb7a8ecfea248dbb29674337593a",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 3,
+  "tests": 15,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.PortableMediaMatchesTest"
+  ],
+  "duration": "37s",
+  "log_sha256": "e2827099bf2c5eafc3b18f298d1368c0ab18de8e6ec835a7790496c210504624",
+  "coverage": [
+    "Read-only unfiltered receiving movie/episode/unmatched identification and exact metadata ownership",
+    "No absent-store or origin preference creation; Putio excluded",
+    "Native pointer cannot borrow metadata owned by a different file even when the Library view joins a different existing row",
+    "Identification/URI signature staleness without coupling unselected watch/pin/scraped facts",
+    "Source schema and native dependency regressions",
+    "Public source reader also rejects foreign metadata pointers even when native view retains an owned join"
+  ],
+  "limits": "No canonical metadata application/private redo/production26th codec integration yet; Matches remains unregistered. Native SQL fixtures, not actual provider/device output."
+}

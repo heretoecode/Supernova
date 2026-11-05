@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1110" viewBox="0 0 960 740">
+<rect x="0" y="0" width="960" height="740" rx="0" fill="#070b12" stroke="#637182"/>
+<text x="28" y="29" font-family="sans-serif" font-size="21" fill="#ffffff" text-anchor="start">HUD — measured proposal for owner review</text>
+<text x="28" y="53" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">Diagram only · no production screenshot, media artwork, locked geometry or navigation approval</text>
+<text x="28" y="74" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">960 × 540 logical dp viewport below; density and actual font metrics require app captures</text>
+<rect x="0" y="90" width="960" height="540" rx="0" fill="#101722" stroke="#8794a1"/>
+<line x1="28" y1="90" x2="28" y2="630" stroke="#354454" stroke-width="1"/>
+<line x1="932" y1="90" x2="932" y2="630" stroke="#354454" stroke-width="1"/>
+<rect x="28" y="290" width="380" height="64" rx="5" fill="none" stroke="#8292a3" stroke-dasharray="5 4"/>
+<text x="42" y="316" font-family="sans-serif" font-size="20" fill="#d9e3ee" text-anchor="start">Existing title logo / text fallback</text>
+<text x="42" y="341" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">380 × 64 maximum target; actual bytes retained</text>
+<text x="28" y="375" font-family="sans-serif" font-size="13" fill="#d9e3ee" text-anchor="start">Existing metadata · 13 sp · 4 dp gap</text>
+<text x="470" y="315" font-family="sans-serif" font-size="14" fill="#d9e3ee" text-anchor="start">Middle-left title placement</text>
+<text x="470" y="339" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">Safe inset 28 dp; no new artwork or full-screen wash</text>
+<rect x="28" y="562" width="44" height="44" rx="22" fill="#172738" stroke="#6fb7ed"/>
+<path d="M45 575 L45 593 M55 575 L55 593" stroke="#ffffff" stroke-width="3"/>
+<rect x="84" y="572" width="476" height="24" rx="5" fill="none" stroke="#6fb7ed" stroke-dasharray="5 4"/>
+<line x1="84" y1="584" x2="560" y2="584" stroke="#586675" stroke-width="4"/>
+<line x1="84" y1="584" x2="280" y2="584" stroke="#9dbddd" stroke-width="4"/>
+<circle cx="280" cy="584" r="5" fill="#ffffff"/>
+<rect x="250" y="535" width="60" height="22" rx="5" fill="#1b2532" stroke="#c9d5e0"/>
+<text x="280" y="550" font-family="sans-serif" font-size="11" fill="#ffffff" text-anchor="middle">hh:mm:ss</text>
+<path d="M276 557 L280 561 L284 557" fill="#1b2532" stroke="#c9d5e0"/>
+<text x="620" y="589" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">HH:MM:SS</text>
+<text x="742" y="589" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Ends at hh:mm</text>
+<rect x="816" y="564" width="116" height="40" rx="20" fill="#17212e" stroke="#637182"/>
+<g transform="translate(826 573) scale(.9166667)" stroke="#ffffff" fill="none" stroke-width="1.5">
+<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(0 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(45 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(90 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(135 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(180 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(225 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(270 12 12)"/>
+<line x1="12" y1="2" x2="12" y2="5" transform="rotate(315 12 12)"/>
+</g>
+<text x="854" y="589" font-family="sans-serif" font-size="14" fill="#ffffff" text-anchor="start">Settings</text>
+<line x1="10" y1="584" x2="950" y2="584" stroke="#6fb7ed" stroke-width="0.3"/>
+<line x1="50" y1="511" x2="50" y2="559" stroke="#637182" stroke-width="1"/>
+<text x="50" y="501" font-family="sans-serif" font-size="12" fill="#b6d8f4" text-anchor="middle">44</text>
+<line x1="322" y1="511" x2="322" y2="559" stroke="#637182" stroke-width="1"/>
+<text x="322" y="501" font-family="sans-serif" font-size="12" fill="#b6d8f4" text-anchor="middle">Flexible seek</text>
+<line x1="620" y1="511" x2="620" y2="559" stroke="#637182" stroke-width="1"/>
+<text x="620" y="501" font-family="sans-serif" font-size="12" fill="#b6d8f4" text-anchor="middle">Total</text>
+<line x1="742" y1="511" x2="742" y2="559" stroke="#637182" stroke-width="1"/>
+<text x="742" y="501" font-family="sans-serif" font-size="12" fill="#b6d8f4" text-anchor="middle">Ends at</text>
+<line x1="874" y1="511" x2="874" y2="559" stroke="#637182" stroke-width="1"/>
+<text x="874" y="501" font-family="sans-serif" font-size="12" fill="#b6d8f4" text-anchor="middle">116 × 40</text>
+<text x="28" y="432" font-family="sans-serif" font-size="13" fill="#d9e3ee" text-anchor="start">One transport centre · 12 dp group gaps · seek 24 dp target / 4 dp track</text>
+<text x="28" y="453" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">Bubble remains visible with HUD; measured within seek bounds, notch 4 dp, gap 2 dp</text>
+<text x="28" y="474" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">Total/Ends at widths shown are placeholders; real measured text precedes seek allocation</text>
+<text x="28" y="650" font-family="sans-serif" font-size="13" fill="#d9e3ee" text-anchor="start">A: seek initial → Up Settings / Down Play-Pause; opposite direction returns to seek.</text>
+<text x="28" y="674" font-family="sans-serif" font-size="13" fill="#d9e3ee" text-anchor="start">B: seek initial → Down buttons; Left/Right between buttons; Up returns to seek.</text>
+<text x="28" y="698" font-family="sans-serif" font-size="12" fill="#d9e3ee" text-anchor="start">Both: Left/Right on seek retain existing seeking. Settings close restores its invoking control.</text>
+<text x="28" y="722" font-family="sans-serif" font-size="12" fill="#ffd49a" text-anchor="start">Approval pending: geometry, A/B graph and paused Ends at presentation. No application HUD change.</text>
+</svg>

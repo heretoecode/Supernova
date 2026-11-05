@@ -1,0 +1,34 @@
+{
+  "source_sha": "b6ccd6a241e51f32d45dc8fbd038a284811b4ac9",
+  "result": "PASS",
+  "classes": 5,
+  "tests": 36,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.BackupCycleTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 23s",
+  "log_sha256": "3e007203ac34a0724d9b3710e9d85f5ffaf2646e586213e31f3051c8ecfc5c38",
+  "checks": [
+    "Native preference/health/viewing rollback at journal/default/health/viewing/pre-completion boundaries using a fresh coordinator",
+    "Durable completion keeps all new stores despite late cancellation/interruption",
+    "IOException and cancellation after viewing database commit recover all selected original state",
+    "Stale viewing preview rejected before journal or preference writes",
+    "Corrupt third-store before image rejected before any recovery mutation and retained for inspection",
+    "Unselected later positions preserved during history-only recovery; negative completion marker restored",
+    "Absent viewing store not created by preview and removed after rollback of its newly created restore database",
+    "Existing preference/version1-version2 journal, legacy backup-cycle and viewing-state regressions"
+  ],
+  "limits": [
+    "Process death simulated by Error at durable boundaries, not an actual Android force-stop",
+    "Journal schema3 covers default/health preferences and identity history only; media database and legacy watched columns remain pending",
+    "Production Settings/export/restore and startup integration not complete",
+    "No signing or Shield validation"
+  ]
+}

@@ -15,8 +15,8 @@
 package com.archos.mediacenter.video.player;
 
 import android.content.Context;
-import android.util.Log;
 
+/** Selects the video effect type that applies no effect. */
 public class NoneEffect extends VideoEffect
 {
 

@@ -1,0 +1,2552 @@
+{
+  "source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+  "run_id": 41328625056,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/41328625056",
+  "conclusion": "success",
+  "unsigned_artifact_id": 13093101711,
+  "evidence_artifact_id": 13093680537,
+  "evidence_archive_sha256": "0e6186ab7ebc67500a8be35e7d8435bb2d1ca5bb26a56b70cf1bec7ad0074727",
+  "unsigned_archive_sha256": "9b647b1aa9a3f6f17ba401f46595c62c15e8f89963415f95602101269a0e2b08",
+  "independent_junit_statistics": {
+    "Video": {
+      "tests": 1276,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "MediaLib": {
+      "tests": 200,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    "FileCoreLibrary": {
+      "tests": 104,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    }
+  },
+  "independent_lint_statistics": {
+    "errors": 0,
+    "warnings": 1252
+  },
+  "test_classes": [
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.filecoreextension.upnp2.Jetty145SecurityTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.filecoreextension.upnp2.Jetty146BackportTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.utils.MediaUtilsSubsDirTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.utils.introdb.IntroDbMovieContractTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.AudioRouteNotificationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.browser.loader.SeasonsWatchedCountTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.ArtworkRequestTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.ArtworkTraceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticCaptureReuseTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticStorageTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.DiagnosticsTest",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticStateTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.diagnostics.TransportReadDiagnosticsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.foundation.BundledNoticePagerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.foundation.DoubleRingTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.foundation.FoundationAboutActivityTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.foundation.FoundationApplicationIdentityTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.foundation.FoundationAboutTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.foundation.FoundationVersionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.CategoryRowsDiffTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.CustomLibraryPageTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Details139AcceptanceTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Editor142RenderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.HeroRotationPolicyTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.HomeGenreLiveTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.HomeIntentCodecTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.LegacyViewingSnapshotTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.LibraryStatisticsLayoutTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.LibraryStatisticsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Network142CredentialsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Network142RenderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Network142Test",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Network142WebdavTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.NextQaBrowserFocusTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.NextQaReliabilityTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.NextQaUiTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.NextQaWizardTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.NextVersionUiTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PlaybackCompatibilityTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PortableViewingChoicesTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PortableViewingStateTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview411Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview412Test",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview413Test",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview414Test",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview415Test",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview417NavigationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview41ProgressTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Preview41RowsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewArtworkPickerTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewBackdropTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewDialogStackTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewDiscoveryTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewEnrichmentQueueTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewFeaturedIndicatorsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewHomeVisualTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewLanguageIconTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewLibraryReturnTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMatchMembershipTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMatchReviewTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMatchSearchTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMediaClassificationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMediaInfoTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMetadataCacheTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewMoviePageTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewNextTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewOperationDialogTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewProviderRefreshTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewRebuildTelemetryTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewRemoteLogoTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewScanLifecycleTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewScanProgressTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewSearchNativeIndexTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewStartupTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewSourceRemovalTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewSubtitleChooserTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewSubtitleResultsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewTechnicalEnrichmentTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewVersionsDialogTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialogTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.SetupPolicyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.SharedDirectoryPickerTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova138HomeTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova138UiTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova139LanguageFlagsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova139SharedCardMetadataTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.Supernova141UiTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.TopNavigationTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.VersionPreferenceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.WebdavDeleteResponseTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.WebdavReconciliationSelectionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.WebdavTraversalCompletenessTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.DetailsEnrichmentDeliveryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.DetailsImprovementsTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewDetailsCacheTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewDetailsFactsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewEpisodeChoiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewExtraDurationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewMoreActionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewPeopleRailTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.PreviewSeasonTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.details.ReceptionSupplementTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.network.NetworkCredentialFlowTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.presenter.FoundationCardContainmentTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.scrapping.PreviewMatchFragmentTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupDirectOptionsTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.search.PreviewSearchTextTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.PreviewBuildInfoTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.metadata.OmdbSupplementTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.leanback.settings.SettingsWorkspaceTest",
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.picasso.FidelityTransformationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.AudioSpeedSettingsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.AudioTrackSelectionPolicyTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.ChaptersDbClientTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.ExternalResumeIntentTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.HeroPlaybackOutputTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.NextHudTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.Playback141RenderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackAgeOverlayTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackChaptersTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackNetworkRetryTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackResumePolicyTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackRouteRecoveryTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackSubtitlePanelTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlaybackViewingCoverageTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PlayerControllerLaunchTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PreviewAdjustmentValueTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PreviewPlaybackLoadingTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PreviewPlaybackMenusTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PreviewSeekPolicyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PreviewTechnicalInfoTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.PreviewUpNextTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.SegmentSkippingPolicyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.StorageWriteAccessTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.SubtitleLegacyPreferencesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.SubtitleManagerDefaultsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.SubtitleManagerKindTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.SubtitleTrackSelectionPolicyTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.Supernova138PlaybackTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.player.TrackSelectionTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.StreamingPreferencesTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.StreamingProviderFocusTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.StreamingRepositoryTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.Supernova139ProviderMarksTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.Network142PutioTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.ProviderDiscoveryGateTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioAccountTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioAssociationStoreTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioBrowserBackTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioFileInfoTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioGrantRevokeTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioOAuthClientTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioReconciliationTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioRootLocationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioSnapshotReaderTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioSyncSchedulerTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioSyncTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.streaming.putio.PutioTokenStoreTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.BackupCycleTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.BackupPrivacyTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.BackupStageRevalidationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CombinedPlaylistMediaTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.DiagnosticRestorePolicyTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.DirectEpisodeLookupTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.DirectMovieLookupTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.DynamicRangeMetadataTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.IndexedSourceRecoveryTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.LegacySchema62MigrationTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.LegacyViewingRestoreTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.MarkChangesTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.MediaMatchJournalTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.MediaMatchReconciliationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PlaylistStateRecoveryTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableBookmarksTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableCustomPageTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableMediaMatchesTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableMinimumApiTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableSettingsRegistryTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.Preview415BridgeTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.RestoreJournalTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.SortUtilsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.RestorePublicationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.SubtitleDiscoveryTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.SubtitleReplacementTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.SubtitleTransferTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.TitlePlaybackJournalTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.TitlePlaybackSessionTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.VerifiedBackupPublicationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediacenter.video.utils.VerifiedBackupTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediaprovider.video.PreviewMatchStateTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediaprovider.video.PreviewPutioNativeImportTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediaprovider.video.SupernovaLegacyVolumeVisibilityTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediaprovider.video.SupernovaNetworkAvailabilityTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "Video",
+      "class": "com.archos.mediaprovider.video.SupernovaRetentionTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediacenter.filecoreextension.upnp2.UpnpFile2Test",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediacenter.utils.ChineseReproTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediacenter.filecoreextension.upnp2.UpnpServiceManagerRegistryReplayTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediacenter.utils.MediaUtilsSubsDirTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediacenter.utils.TrackNamingTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediacenter.utils.UpnpItemDataTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.medialib.ContentFileDescriptorTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.medialib.StreamBufferSettingsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.DbHolderTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.DatabaseMigrationTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.CategoryRowsRefreshTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.NetworkScannerServiceVideoTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.RealDatabasePruningTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.ScraperProviderInsertTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.VideoProviderTransactionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.VideoStoreIdRemapDatabaseTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.VideoStoreImportReconciliationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.VolumeHiddenFilesReconciliationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.AutoScrapeServiceNetworkScanTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.AutoScrapeServicePersistenceTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.EpisodeTagsPersistenceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.GenreUtilsTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.NfoEpisodeHandlerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.LocalImagesTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.NfoMovieHandlerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.NfoParserTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.NfoShowHandlerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.NfoWriterTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.ShowTagsPersistenceTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.perf.ScraperPerfCascadeOrderTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.perf.ScraperPerfClassificationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.perf.ScraperPerfNoCascadeTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.perf.ScraperPerfQueryCountTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.preprocess.MovieScraperFileTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.preprocess.NonScrapableFolderTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.preprocess.ScraperIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.preprocess.SortTitleUtilsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.themoviedb3.TmdbTitleLanguageTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediascraper.xml.ShowScraper4TitleCollisionFallbackTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.BackgroundInitializationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.FileUtilsUriTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.NetworkCryptoTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.OwnedStreamsTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.ReadOptionsTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.SpeedTestTransferTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.StreamOverHttpBufferTest",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.StreamOverHttpCancellationTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.StreamOverHttpReadPolicyTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.TransferDiagnosticTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.contentstorage.ContentStorageStreamTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.ftp.FtpUtilsTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.ftp.FtpsTlsPolicyTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.samba.NetworkCredentialsDatabaseCredentialTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.sshj.SshjStreamLifecycleTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.webdav.WebdavSecurityAndRangeTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.hierynomus.msfscc.fileinformation.SmbjFileLengthTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.jcraft.jsch.SFTPSessionLifecycleTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "tooling_tests": 147,
+  "apk_build": "PASS; unsigned",
+  "signed": "PASS; signing run 41331247034 attempt 2",
+  "emulator_and_shield_visual_parity": "NOT VERIFIED",
+  "physical_shield_qa": "NOT RUN",
+  "signed_artifact_id": 13093937009,
+  "delivery_verified": true,
+  "drive_file_id": "1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG",
+  "drive_url": "https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk",
+  "signed_apk_sha256": "cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c",
+  "complete_drive_readback_byte_equal": true,
+  "validation_reused_without_development_changes": true
+}

@@ -2,6 +2,7 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.ShortcutDbAdapter;
 import com.archos.mediacenter.video.browser.ShortcutDb;
 import com.archos.mediaprovider.NetworkScanner;
@@ -15,7 +16,7 @@ public final class PreviewFolderActions {
         if (ShortcutDbAdapter.VIDEO.isShortcut(c,folder.toString()) <= 0
                 && !ShortcutDbAdapter.VIDEO.addShortcut(c,new ShortcutDbAdapter.Shortcut(name,folder.toString()))) return;
         // This is a classification hint, never a fabricated title match.
-        androidx.preference.PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_source_kind:"+folder,kind).apply();
+        PreferenceManager.getDefaultSharedPreferences(c).edit().putString("preview_source_kind:"+folder,kind).apply();
         NetworkScanner.scanVideos(c,folder);
     }
     public static void save(Context c, Uri folder, String name) {

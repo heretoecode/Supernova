@@ -31,6 +31,13 @@ import java.io.Serializable;
  * Created by vapillon on 10/04/15.
  */
 public class Video extends Base implements Serializable {
+    private String previewDynamicRange="";
+    private int previewDolbyVisionProfile,previewDolbyVisionCompatibility;
+    public int getPreviewDolbyVisionProfile(){return previewDolbyVisionProfile;}
+    public int getPreviewDolbyVisionCompatibility(){return previewDolbyVisionCompatibility;}
+    public void setPreviewDolbyVision(int profile,int compatibility){previewDolbyVisionProfile=profile;previewDolbyVisionCompatibility=compatibility;}
+    public String getPreviewDynamicRange(){return previewDynamicRange==null?"":previewDynamicRange;}
+    public void setPreviewDynamicRange(String range){previewDynamicRange=range;}
 
     private final static String TAG = "Video";
     private final static boolean DBG = false;
@@ -38,7 +45,7 @@ public class Video extends Base implements Serializable {
     final long mId;
     final String mFilePath;
     private final boolean mIsTraktLibrary;
-    private final long mLastTimePlayed;
+    private long mLastTimePlayed;
     private final int mCalculatedWidth;
     private final int  mCalculatedHeight;
     private final String mAudioFormat;
@@ -61,7 +68,7 @@ public class Video extends Base implements Serializable {
 
     final int mVideo3dMode; // one of ARCHOS_STEREO_2D, ARCHOS_STEREO_3D_UNKNOWN, ARCHOS_STEREO_3D_SBS, ARCHOS_STEREO_3D_TB, ARCHOS_STEREO_3D_ANAGLYPH
     final int mGuessedDefinition; // one of ARCHOS_DEFINITION_UNKNOWN, ARCHOS_DEFINITION_720P, ARCHOS_DEFINITION_1080P
-    final boolean mIsTraktSeen;
+    boolean mIsTraktSeen;
     final boolean mIsUserHidden;
 
     /** Optional metadata obtained by actually reading/decoding the file */
@@ -162,6 +169,7 @@ public class Video extends Base implements Serializable {
     public long getSize(){return mSize;}
 
     public void setResumeMs(int resumeMs) { mResumeMs = resumeMs; }
+    public void applyIdentityHistory(boolean completed,long played,int position){mIsTraktSeen=completed;mLastTimePlayed=played;mResumeMs=position;}
     public void setAutomaticResumeMs(int resumeMs) {
         mAutomaticResumeMs = resumeMs > 0 ? resumeMs : null;
         mResumeMs = resumeMs;
@@ -322,7 +330,7 @@ public class Video extends Base implements Serializable {
 
     public void setStreamingUri(Uri uri) {
         if (uri != null) mStreamingUri = uri.toString();
-        else mStreamingUri = null;
+            else mStreamingUri = null;
     }
 
     public void setFriendlyPath(String friendlyUri){
@@ -331,7 +339,7 @@ public class Video extends Base implements Serializable {
     public String getFriendlyPath(){
         if(mFriendlyPath !=null)
             return mFriendlyPath;
-        else return getFilePath();
+            else return getFilePath();
     }
 
     public void setDuration(int duration) {

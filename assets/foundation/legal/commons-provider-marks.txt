@@ -1,0 +1,26 @@
+Additional provider marks from Wikimedia Commons
+
+Original visible logo geometry is preserved and rendered with white fill in transparent Android vectors. Original viewBox/aspect and required clip geometry are retained. Nonpainting helper paths and definitions do not create decorative backgrounds.
+
+Commons describes these source files as public-domain text/geometric logos. The logos remain trademarks of their respective brand owners. Their use identifies the actual streaming providers; no endorsement is implied.
+
+File:Disney+ logo.svg
+Source: https://commons.wikimedia.org/wiki/File:Disney%2B_logo.svg
+Source checksum SHA256: ad0ea07cb6627c268dae721d9647019e6e3ce1b51c8f4ba8ec8ddf4618546140
+Declared status: Public domain
+
+File:Amazon Prime Video logo.svg
+Source: https://commons.wikimedia.org/wiki/File:Amazon_Prime_Video_logo.svg
+Source checksum SHA256: 8aaa625b2e8a8ba5247e1035e111b73feb312df08c9ff04e2ef59240595f29a2
+Declared status: Public domain
+
+File:BritBox 2026.svg
+Source: https://commons.wikimedia.org/wiki/File:BritBox_2026.svg
+Source checksum SHA256: caba672a0798531a7ed4d8a85e2171e44ed0619079c769b1480c38e58b23d7f9
+Declared status: Public domain
+
+File:HBO Max (2025).svg
+Source: https://commons.wikimedia.org/wiki/File:HBO_Max_(2025).svg
+Source checksum SHA256: c8728242f74e388ef3a507745875335528a4980123f2c4cae9f08d666fbda63b
+Declared status: Public domain
+

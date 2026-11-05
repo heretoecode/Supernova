@@ -1,0 +1,25 @@
+{
+  "source_sha": "6dd08f168d0f0e7a93c32a92e26b5766df82f07b",
+  "dependency_sha": "e0a6dadc81e9668acca91419ef9d3dd268ab295f",
+  "result": "PASS",
+  "duration": "36s",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "log_sha256": "e52c91ccaa56ef8d5bfc27f00fbace086e88634a15a22aa3fc66d73c445ba0b8",
+  "coverage": [
+    "Private canonical movie and episode redo batches survive JSON/Parcel roundtrip and reproduce exact original-to-prepared native state",
+    "Already completed state is recognized without reapplying",
+    "Unselected bookmark changes are preserved; independently changed native graph fails closed",
+    "SDK mismatch, corrupted digest, oversized primary counter and string schema refused",
+    "Existing staged journal, cancellation and native dependency regressions"
+  ],
+  "limits": "Native redo helper is staged, not coordinated into production PreferenceRestoreTransaction or codec26. Broad native graph guard deliberately blocks independent metadata changes. Synthetic SQLite process-death boundaries only.",
+  "tests": 19,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

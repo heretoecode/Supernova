@@ -1,0 +1,137 @@
+{
+  "queried_at": "2026-10-29T08:35:09.199616+00:00",
+  "scope": "Exact15 native source commits; OSV commit coverage varies and absence of findings does not prove absence of vulnerabilities. Runtime archive hashes and enabled build features are separate evidence.",
+  "records": [
+    {
+      "name": "ffmpeg",
+      "commit": "946fcce07b6dcd0331c8cc609192aeff5e1924f8",
+      "result": {
+        "vulns": [
+          {
+            "id": "CVE-2026-107675",
+            "modified": "2026-10-28T02:30:33.628755Z"
+          },
+          {
+            "id": "CVE-2026-107676",
+            "modified": "2026-10-28T02:30:41.541323Z"
+          },
+          {
+            "id": "CVE-2026-107677",
+            "modified": "2026-10-28T02:30:40.195323Z"
+          },
+          {
+            "id": "CVE-2026-107678",
+            "modified": "2026-10-28T02:30:46.183572Z"
+          },
+          {
+            "id": "CVE-2026-107696",
+            "modified": "2026-10-28T02:30:53.236177Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "openssl",
+      "commit": "2f4e3a5fec05394068cfa7379890ab552483a8a6",
+      "result": {}
+    },
+    {
+      "name": "libass",
+      "commit": "4a05d8127f525943ebf45fdc6497c9e665947f0d",
+      "result": {}
+    },
+    {
+      "name": "zlib",
+      "commit": "da607da739fa6047df13e66a2af6b8bec7c2a498",
+      "result": {
+        "vulns": [
+          {
+            "id": "CVE-2026-76844",
+            "modified": "2026-10-28T11:17:48.991906Z"
+          },
+          {
+            "id": "CVE-2026-85091",
+            "modified": "2026-10-28T02:30:40.472495Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "libpng",
+      "commit": "cd952f49f95bb27154ae77dbb103032d95f6e580",
+      "result": {}
+    },
+    {
+      "name": "libxml2",
+      "commit": "96498992efa48d52b0e8b83058bd88dbdaf153c1",
+      "result": {
+        "vulns": [
+          {
+            "id": "OSV-2021-777",
+            "modified": "2026-10-19T14:29:28.053903Z"
+          },
+          {
+            "id": "OSV-2024-698",
+            "modified": "2026-10-19T15:14:23.633109Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "freetype",
+      "commit": "0a0221a1347e2f1e07c395263540026e9a0aa7c7",
+      "result": {
+        "vulns": [
+          {
+            "id": "CVE-2026-50811",
+            "modified": "2026-10-28T11:16:46.195593Z"
+          },
+          {
+            "id": "CVE-2026-95512",
+            "modified": "2026-10-28T11:21:45.384914Z"
+          }
+        ]
+      }
+    },
+    {
+      "name": "fribidi",
+      "commit": "b93119f5fdc7ea47672cc304c1455ffa6dfe7536",
+      "result": {}
+    },
+    {
+      "name": "harfbuzz",
+      "commit": "35f656a1a2bab548ea7f54a6dd3fba2b09680d14",
+      "result": {}
+    },
+    {
+      "name": "libunibreak",
+      "commit": "28a2756b864c343f438cd22537d49d394d4666a5",
+      "result": {}
+    },
+    {
+      "name": "fontconfig",
+      "commit": "0f236723a3c26bd9745e32ba2b3ee21e5f809295",
+      "result": {}
+    },
+    {
+      "name": "opus",
+      "commit": "084bb7327ce90171c4dcf2a58fe6ac58ae821dbf",
+      "result": {}
+    },
+    {
+      "name": "dav1d",
+      "commit": "54706fc6bc0cdecab7e9593974a4039cc038fca7",
+      "result": {}
+    },
+    {
+      "name": "libmysofa",
+      "commit": "6cc5b15a73e9bd97810d03767082edda7f315881",
+      "result": {}
+    },
+    {
+      "name": "dlg",
+      "commit": "395ccad2c1e0daae535c4d20bb0a3f2424648e17",
+      "result": {}
+    }
+  ]
+}

@@ -23,6 +23,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.utils.MiscUtils;
 
 
+/** Hosts the saved server credentials settings screen. */
 public class CredentialsManagerPreferenceActivity extends AppCompatActivity {
 
     @Override

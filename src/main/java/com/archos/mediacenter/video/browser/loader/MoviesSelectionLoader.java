@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 /**
@@ -33,7 +34,7 @@ public class MoviesSelectionLoader extends VideosSelectionLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.MOVIE, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.MOVIE, mSortOrder);
     }
 
     @Override

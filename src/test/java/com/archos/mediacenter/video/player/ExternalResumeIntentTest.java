@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/** Checks external resume intents accept valid positions, preserve priority and redact other values. */
 public class ExternalResumeIntentTest {
 
     @Test
@@ -71,6 +72,24 @@ public class ExternalResumeIntentTest {
         assertTrue(description.contains("position(Integer)=12000"));
         assertTrue(description.contains("headers(Bundle)"));
         assertFalse(description.contains("secret"));
+    }
+
+    @Test
+    public void traceDescriptionOnlyExpandsIntegerAndLongResumeValues() {
+        Bundle bundle = mock(Bundle.class);
+        when(bundle.toString()).thenReturn("Authorization=private-bundle-token");
+        for (Object invalid : new Object[] {"https://private/token", bundle, null, 12.5f}) {
+            String description = ExternalResumeIntent.describeForTrace(
+                    intentWith(ExternalResumeIntent.POSITION, invalid));
+            assertTrue(description, description.contains("=<invalid>"));
+            assertFalse(description, description.contains("private"));
+        }
+        for (Object valid : new Object[] {12_000, 13_000L}) {
+            String description = ExternalResumeIntent.describeForTrace(
+                    intentWith(ExternalResumeIntent.POSITION, valid));
+            assertTrue(description, description.contains("=" + valid));
+            assertFalse(description, description.contains("<invalid>"));
+        }
     }
 
     private static Intent intentWith(String key, Object value) {

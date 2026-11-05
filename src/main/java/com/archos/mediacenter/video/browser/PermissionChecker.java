@@ -15,16 +15,15 @@
 package com.archos.mediacenter.video.browser;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Process;
 import android.provider.Settings;
 
 import androidx.appcompat.app.AlertDialog;
@@ -42,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.List;
 
 import io.sentry.SentryLevel;
 
@@ -323,15 +321,15 @@ public class PermissionChecker {
                                         // cf. https://sentry.io/organizations/nova-video-player/issues/3697512720
                                         log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_APPLICATION_DETAILS_SETTINGS trying ACTION_MANAGE_APPLICATIONS_SETTINGS", eanf);
                                         try {
-                                            mActivity.startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)); // since API3
+                                            mActivity.startActivity(new Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)); // since API3
                                         } catch (ActivityNotFoundException eanf2) {
                                             log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_MANAGE_APPLICATIONS_SETTINGS trying ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS", eanf2);
                                             try {
-                                                mActivity.startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS)); // since API9
+                                                mActivity.startActivity(new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS)); // since API9
                                             } catch (ActivityNotFoundException eanf3) {
                                                 log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS trying ACTION_APPLICATION_SETTINGS", eanf3);
                                                 try {
-                                                    mActivity.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_SETTINGS)); // since API1
+                                                    mActivity.startActivity(new Intent(Settings.ACTION_APPLICATION_SETTINGS)); // since API1
                                                 } catch (ActivityNotFoundException eanf4) {
                                                     log.warn("onRequestPermissionsResult: caught exception, no Activity found to handle intent ACTION_APPLICATION_SETTINGS: we are out of option...", eanf4);
                                                 }
@@ -339,13 +337,13 @@ public class PermissionChecker {
                                         }
                                     }
                                 }
-                            } else checkAndRequestPermission(mActivity);
+                                } else checkAndRequestPermission(mActivity);
                         }
                     }
             ).setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            android.os.Process.killProcess(android.os.Process.myPid());
+                            Process.killProcess(Process.myPid());
                         }
                     }
             ).setCancelable(false).show();

@@ -401,11 +401,8 @@
     <!-- torrent -->
     <string name="error">Произошла ошибка</string>
     <string name="error_protocol_not_supported">Ошибка: протокол не поддерживается</string>
-    <string name="error_loading_torrent">Ошибка при загрузке торрента</string>
-    <string name="error_downloading_not_enough_space">Ошибка при загрузке торрента: недостаточно места</string>
     <string name="loading_torrent">Загрузка торрента…</string>
     <string name="error_no_video_file">Нет видео файлов</string>
-    <string name="torrent_file_to_play">Выберите файл для воспроизведения</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Просмотр сетевого ресурса</string>
     <string name="add_ssh_server">Просмотр FTP-сервера</string>
@@ -567,7 +564,6 @@
     <string name="rotation_unlocked">Автоповорот экрана включен</string>
     <string name="network_reindex">Пересканировать содержимое</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Нажмите кнопку ВВЕРХ\nдля отображения меню</string>
     <string name="help_overlay_network_indexing_text1">Нажмите эту кнопку, чтобы добавить содержимое этой папки и всех вложенных подпапок в библиотеку.</string>
     <string name="help_overlay_network_indexing_text2">Это позволит вам получить постеры и описания для фильмов и сериалов.</string>
     <string name="help_overlay_scraper_text">Нажмите на этот пункт для онлайн-поиска постеров и описания видео. </string>
@@ -721,16 +717,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Торренты</string>
     <string name="torrent_path">Путь загрузки</string>
     <string name="torrent_blocklist">Черный список</string>
     <string name="blocklist_empty">URL не должен быть пустым</string>
     <string name="blocklist_invalid">Неверный черный список</string>
-    <string name="blocklist_file_not_found">Файл не найден</string>
     <string name="blocklist_success">Черный список обновлен успешно</string>
-    <string name="blocklist_unknown_error">Неизвестно</string>
-    <string name="blocklist_not_loaded">Не загружен</string>
-    <string name="torrent_blocklist_url">Url черного списка</string>
     <string name="sdk_not_supported">Android 4.3 пока не поддерживается.\nМы делаем всё возможное и надеемся скоро выпустить новую версию!</string>
     <string name="manually_create_share">Добавить индексированную папку по URI</string>
     <string name="share_infos_incomplete">Необходимо заполнить путь</string>

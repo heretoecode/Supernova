@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.autoscraper;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
@@ -25,6 +24,7 @@ import com.archos.mediacenter.utils.imageview.ImageProcessor;
 import com.archos.mediacenter.utils.imageview.LoadTaskItem;
 import com.archos.mediacenter.utils.imageview.LoadResult.Status;
 
+/** Loads and crops poster files for the automatic metadata scraper. */
 public class PosterProcessor extends ImageProcessor {
     private static final boolean DBG = false;
     private static final String TAG = PosterProcessor.class.getSimpleName();

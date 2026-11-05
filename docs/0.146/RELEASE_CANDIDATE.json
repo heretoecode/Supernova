@@ -1,0 +1,78 @@
+{
+  "status": "Signed QA APK delivered and independently verified; physical/device acceptance pending",
+  "application_source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "branch": "codex/supernova-0.146-upstream-completion-2026-10-28",
+  "version_name": "0.146",
+  "version_code": 146,
+  "unsigned_apk": {
+    "sha256": "c8812d47a022391390177d107022d21b8b240c21ec578172383d6d399e558937",
+    "bytes": 95366288,
+    "artifact_url": "https://github.com/heretoecode/Supernova/actions/runs/40886034550/artifacts/12903599884",
+    "signature_rejected": true
+  },
+  "validation": {
+    "conformance_run": 40886034550,
+    "conclusion": "success",
+    "application_tests": 1209,
+    "medialib_cases": 200,
+    "filecore_cases": 104,
+    "total_app_library_cases": 1513,
+    "passed_app_library_cases": 1509,
+    "skipped_library_cases": 4,
+    "failures": 0,
+    "errors": 0,
+    "tooling_checks": 131,
+    "actual_android23_framework_cases": 28,
+    "exact_apk_native_cases": 36,
+    "lint": {
+      "errors": 0,
+      "warnings": 1489
+    },
+    "runtime_hashes_matched": 139,
+    "native_hashes_matched": 84,
+    "ffmpeg_hashes_matched": 24
+  },
+  "sources": {
+    "drive_folder": "https://drive.google.com/drive/folders/1KwxezR3qdquBXun9MD3PMMenEG0jTk1h",
+    "archive_sha256": "6579930f7f5699c8b9699e3f8fea6dc71c1103d8cff0a4380acf6f1ecd0b089b",
+    "bytes": 507860792,
+    "full_ordered_drive_readback_verified": true
+  },
+  "html_release_notes": {
+    "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+    "sha256": "c8ed82559f7adf9fa2b1e1d5f7711fbf86d7e442972aefcc72cab620b8ffaa34",
+    "historical_articles_preserved": 14,
+    "full_drive_readback_verified": true
+  },
+  "signing": {
+    "environment": "supernova-foundation-signing",
+    "exact_branch_authorized": true,
+    "attempted": true,
+    "signed_apk_drive_url": "https://drive.google.com/file/d/100G08JITx7byXjN4BvfLSm2imB7FOXin/view?usp=drivesdk",
+    "signed_apk_sha256": "79829e5181d22d69400157b6da234c7327bfb4b7dfe36a4997a24db29dc86ca7",
+    "signed_apk_certificate_verified": true,
+    "required_certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+    "public_gate_actual_payload_passed": true,
+    "protection_changed_by_assistant": false,
+    "run_id": 40896722823,
+    "run_url": "https://github.com/heretoecode/Supernova/actions/runs/40896722823",
+    "conclusion": "success",
+    "signed_apk_bytes": 95569591,
+    "tested_payload_parity_verified": true,
+    "full_drive_readback_verified": true,
+    "private_signing_cleanup_verified": true
+  },
+  "draft_pr": "https://github.com/heretoecode/Supernova/pull/26",
+  "main_merged": false,
+  "public_release_published": false,
+  "unverified": [
+    "Physical Shield/ART/JNI/EGL/3D visuals and remote layout acceptance",
+    "HDMI/ARC/SPDIF/private-listening and real provider/IPv6/FTPS/NAS interoperability",
+    "Installed signed upgrade/rollback and real database fixtures",
+    "Hardware CPU/memory/thermal/performance and exhaustive fuzzing",
+    "Original October27 diagnostic ZIP and A4/hero references unavailable",
+    "Malicious CID exploit font unavailable; source/build/valid-font evidence only",
+    "Exact upstream released-APK component manifest unpublished; immutable release-time source snapshots reviewed",
+    "Independent second full native-stack rebuild/external security assessment not claimed"
+  ]
+}

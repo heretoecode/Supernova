@@ -1,0 +1,706 @@
+{
+  "queried_at": "2026-10-29T07:51:24.155394+00:00",
+  "scope": "Initial independently retrieved129-of139 coordinates; full final inventory still required. Version results do not clear reviewed source backports/forks.",
+  "records": [
+    {
+      "coordinate": "androidx.activity:activity-ktx:1.9.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.activity:activity:1.9.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.annotation:annotation-experimental:1.4.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.annotation:annotation-jvm:1.10.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.appcompat:appcompat-resources:1.8.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.appcompat:appcompat:1.8.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.arch.core:core-common:2.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.arch.core:core-runtime:2.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.asynclayoutinflater:asynclayoutinflater:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.browser:browser:1.9.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.cardview:cardview:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.collection:collection-jvm:1.6.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.concurrent:concurrent-futures:1.1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.constraintlayout:constraintlayout-core:1.1.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.constraintlayout:constraintlayout:2.2.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.coordinatorlayout:coordinatorlayout:1.1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.core:core-ktx:1.19.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.core:core-viewtree:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.core:core:1.19.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.core:core:1.19.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.cursoradapter:cursoradapter:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.customview:customview-poolingcontainer:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.customview:customview:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.customview:customview:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.documentfile:documentfile:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.drawerlayout:drawerlayout:1.1.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.dynamicanimation:dynamicanimation:1.1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.emoji2:emoji2-views-helper:1.3.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.emoji2:emoji2:1.3.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.exifinterface:exifinterface:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.fragment:fragment-ktx:1.9.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.fragment:fragment:1.9.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.interpolator:interpolator:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.leanback:leanback-grid:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.leanback:leanback-preference:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.leanback:leanback:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.legacy:legacy-support-core-ui:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.legacy:legacy-support-core-utils:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-common-java8:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-common-jvm:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-livedata-core-ktx:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-livedata-core:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-livedata:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-process:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.lifecycle:lifecycle-viewmodel:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.loader:loader:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.media:media:1.8.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.palette:palette:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.preference:preference:1.2.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.print:print:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.profileinstaller:profileinstaller:1.4.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.recyclerview:recyclerview:1.4.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.resourceinspection:resourceinspection-annotation:1.0.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.savedstate:savedstate-ktx:1.4.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.slidingpanelayout:slidingpanelayout:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.slidingpanelayout:slidingpanelayout:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.startup:startup-runtime:1.2.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.transition:transition:1.5.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.tvprovider:tvprovider:1.1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.vectordrawable:vectordrawable-animated:1.1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.vectordrawable:vectordrawable:1.1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.versionedparcelable:versionedparcelable:1.1.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.viewpager2:viewpager2:1.1.0-beta02",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.viewpager:viewpager:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "androidx.window:window:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.abovevacant:epitaph:0.1.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.android.tools:desugar_jdk_libs:2.1.5",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.android.tools:desugar_jdk_libs_configuration:2.1.5",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player.jupnp:org.jupnp.android:3.0.5-nova3",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player.jupnp:org.jupnp.support:3.0.5-nova3",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player.jupnp:org.jupnp:3.0.5-nova3",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player:jcifs-ng:v2.1.11-nova12",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player:jsch-mwiede:jsch-2.28.7-readahead3",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player:sardine-android:v0.9-nova",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.nova-video-player:smbj:v0.15.0-nova2",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.tony19:logback-android:3.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.google.android.material:material:1.14.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.google.code.gson:gson:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.google.errorprone:error_prone_annotations:2.27.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.google.guava:listenablefuture:1.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.google.zxing:core:3.5.3",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.hierynomus:asn-one:0.6.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.hierynomus:sshj:0.41.2",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.jakewharton.threetenabp:threetenabp:1.4.9",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.squareup.okhttp3:logging-interceptor:5.5.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.squareup.okio:okio-jvm:3.18.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.squareup.picasso:picasso:2.8",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.squareup.retrofit2:converter-gson:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.squareup.retrofit2:retrofit:2.11.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.uwetrottmann.tmdb2:tmdb-java:2.13.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "com.uwetrottmann.trakt5:trakt-java:6.21.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "commons-codec:commons-codec:1.23.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "commons-io:commons-io:2.21.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "commons-net:commons-net:3.13.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "io.sentry:sentry-android-core:8.53.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "io.sentry:sentry-android-ndk:8.53.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "io.sentry:sentry-android-replay:8.53.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "io.sentry:sentry-android:8.53.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "io.sentry:sentry-native-ndk:0.16.2",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "io.sentry:sentry:8.61.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "javax.servlet:javax.servlet-api:4.0.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "net.engio:mbassador:1.3.2",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.20.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.apache.commons:commons-text:1.15.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.apache.httpcomponents.core5:httpcore5:5.4.4",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.2",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.bouncycastle:bcpkix-jdk18on:1.86",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.bouncycastle:bcprov-jdk18on:1.86",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.bouncycastle:bcutil-jdk18on:1.86",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-client:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-http:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {
+        "vulns": [
+          {
+            "id": "GHSA-355h-qmc2-wpwf",
+            "modified": "2026-09-10T03:50:42.440988Z"
+          },
+          {
+            "id": "GHSA-qh8g-58pp-2wxh",
+            "modified": "2026-09-10T03:50:19.940231Z"
+          }
+        ]
+      }
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-security:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {
+        "vulns": [
+          {
+            "id": "GHSA-2fvj-hgj9-j2gr",
+            "modified": "2026-09-10T03:51:10.292148Z"
+          }
+        ]
+      }
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-server:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {
+        "vulns": [
+          {
+            "id": "GHSA-7p3p-8qv8-m2vh",
+            "modified": "2026-09-10T03:51:11.096731Z"
+          }
+        ]
+      }
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-servlet:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-util-ajax:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-util:9.4.58.v20250814",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jetbrains.kotlin:kotlin-stdlib:2.2.21",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jetbrains:annotations:23.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jspecify:jspecify:1.0.0",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.simpleframework:simple-xml:2.7.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.slf4j:slf4j-api:2.0.20",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.threeten:threetenbp:1.7.1",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "oro:oro:2.0.8",
+      "kind": "resolved-coordinate",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jupnp:org.jupnp:3.0.5",
+      "kind": "additional-upstream-lineage-query, not proof of fork equivalence",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jupnp:org.jupnp.android:3.0.5",
+      "kind": "additional-upstream-lineage-query, not proof of fork equivalence",
+      "result": {}
+    },
+    {
+      "coordinate": "org.jupnp:org.jupnp.support:3.0.5",
+      "kind": "additional-upstream-lineage-query, not proof of fork equivalence",
+      "result": {}
+    },
+    {
+      "coordinate": "com.github.mwiede:jsch:2.28.7",
+      "kind": "additional-upstream-lineage-query, not proof of fork equivalence",
+      "result": {}
+    },
+    {
+      "coordinate": "com.hierynomus:smbj:0.15.0",
+      "kind": "additional-upstream-lineage-query, not proof of fork equivalence",
+      "result": {}
+    },
+    {
+      "coordinate": "eu.agno3.jcifs:jcifs-ng:2.1.11",
+      "kind": "additional-upstream-lineage-query, not proof of fork equivalence",
+      "result": {}
+    }
+  ]
+}

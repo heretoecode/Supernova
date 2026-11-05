@@ -17,11 +17,12 @@ package com.archos.mediacenter.video.browser.loader;
 import android.content.Context;
 import android.provider.BaseColumns;
 
-import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Loads selected TV shows with their metadata and sort order. */
 public class TvshowsSelectionLoader extends VideoLoader {
 
     private static final String TAG = "TvshowsSelectionLoader";
@@ -56,7 +57,7 @@ public class TvshowsSelectionLoader extends VideoLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.SHOW, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.SHOW, mSortOrder);
     }
 
     @Override

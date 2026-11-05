@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "baseline": "Additive 0.151 extension; the original 165 definitions and the 0.146 extension remain unchanged",
+  "rows": [
+    {
+      "id": "N15101",
+      "key": "omdb_api_key",
+      "destination": "Library & Home",
+      "subsection": "Library & metadata",
+      "disposition": "Owner decision 2 Nov 2026: owner's own OMDb key, stored on the device, enables IMDb, Rotten Tomatoes, Metacritic and awards in Details > Reception"
+    }
+  ]
+}

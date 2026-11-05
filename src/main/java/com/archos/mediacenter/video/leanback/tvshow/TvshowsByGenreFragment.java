@@ -23,6 +23,7 @@ import android.view.View;
 import android.util.SparseArray;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediascraper.GenreUtils;
 import com.archos.mediacenter.video.browser.loader.TvshowsByGenreLoader;
 import com.archos.mediacenter.video.browser.loader.TvshowsNoAnimeByGenreLoader;
 import com.archos.mediaprovider.video.VideoStore;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Displays TV shows grouped by genre with sorting controls. */
 public class TvshowsByGenreFragment extends TvshowsByFragment {
 
     private static final Logger log = LoggerFactory.getLogger(TvshowsByGenreFragment.class);
@@ -45,7 +47,7 @@ public class TvshowsByGenreFragment extends TvshowsByFragment {
         //sortOrderIndexer.put(1, new TvshowsSortOrderEntry(R.string.sort_by_date_added_desc, VideoStore.MediaColumns.DATE_ADDED + " DESC"));
         //sortOrderIndexer.put(2, new TvshowsSortOrderEntry(R.string.sort_by_duration_asc,    SortOrder.DURATION.getAsc()));
         //sortOrderIndexer.put(3, new TvshowsSortOrderEntry(R.string.sort_by_rating_asc,      SortOrder.SCRAPER_M_RATING.getDesc()));
-        // TODO: look in BrowserAllTvShows.java for all the sort possibilities
+        // TODO: enumerate the remaining TV sort possibilities
         sortOrderIndexer.put(0, new TvshowsSortOrderEntry(R.string.sort_by_name_asc,        VideoStore.Video.VideoColumns.SCRAPER_TITLE + " COLLATE LOCALIZED ASC"));
         sortOrderIndexer.put(1, new TvshowsSortOrderEntry(R.string.sort_by_date_added_desc, "max(" + VideoStore.Video.VideoColumns.DATE_ADDED + ") DESC"));
         sortOrderIndexer.put(2, new TvshowsSortOrderEntry(R.string.sort_by_date_played_desc, "max(" + VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED + ") DESC"));
@@ -64,7 +66,7 @@ public class TvshowsByGenreFragment extends TvshowsByFragment {
     @Override
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie) return new TvshowsNoAnimeByGenreLoader(context);
-        else return new TvshowsByGenreLoader(context);
+            else return new TvshowsByGenreLoader(context);
     }
 
     @Override
@@ -90,6 +92,11 @@ public class TvshowsByGenreFragment extends TvshowsByFragment {
     @Override
     protected boolean shouldDeferRowLoadersDuringBackgroundWork() {
         return true;
+    }
+
+    @Override
+    protected String getSubsetDisplayName(String subsetName) {
+        return GenreUtils.getGenreDisplayName(getActivity(), subsetName, true);
     }
 
 }

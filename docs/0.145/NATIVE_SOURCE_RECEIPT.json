@@ -1,0 +1,22 @@
+{
+  "archive": "Supernova_0.145_FFmpeg_Source.tar.xz",
+  "bytes": 11160992,
+  "sha256": "e8eac3cc7f334a90026041039681e8fab22d64901e40877229377fee81997372",
+  "source_bundle_integrity_verified": true,
+  "source_and_build_recipes_and_lgpl_license_present": true,
+  "frozen_build_recipes_and_locked_patch_hashes_matched": true,
+  "patched_ffmpeg_source_hashes_matched": true,
+  "native_decode_comparisons": 64,
+  "all_comparisons_passed": true,
+  "source_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "ffmpeg_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "drive": {
+    "file_id": "1jsId2rJ10jyZ3bvuArKfB4QCHSGrx_o3",
+    "url": "https://drive.google.com/file/d/1jsId2rJ10jyZ3bvuArKfB4QCHSGrx_o3/view?usp=drivesdk",
+    "parent_id": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+    "bytes": 11160992,
+    "sha256": "e8eac3cc7f334a90026041039681e8fab22d64901e40877229377fee81997372",
+    "full_readback_verified": true,
+    "checked_at": "2026-10-28T20:58:08.220377+00:00"
+  }
+}

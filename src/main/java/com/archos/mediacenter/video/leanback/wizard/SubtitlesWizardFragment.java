@@ -16,6 +16,8 @@ package com.archos.mediacenter.video.leanback.wizard;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.app.GuidedStepSupportFragment;
@@ -30,7 +32,10 @@ import com.archos.mediacenter.video.utils.SubtitlesWizardCommon;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+/** Displays guided choices for managing a video's subtitle files. */
 public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
 
     public static final int NO_FILE_MESSAGE_ID = 100;
@@ -46,8 +51,8 @@ public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
     private Overlay mOverlay;
 
     private SubtitlesWizardCommon mWizardCommon;
-    private final java.util.concurrent.ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
-    private final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final ExecutorService worker = Executors.newSingleThreadExecutor();
+    private final Handler main = new Handler(Looper.getMainLooper());
     private boolean closed;
     private boolean busy;
 
@@ -112,7 +117,7 @@ public class SubtitlesWizardFragment extends GuidedStepSupportFragment {
         worker.execute(() -> {
             boolean changed = actionData.delete
                 ? mWizardCommon.deleteFile(fileData.path, fileData.index, fileData.current)
-                : mWizardCommon.renameFile(fileData.path, fileData.index);
+                : mWizardCommon.associateFile(fileData.path, fileData.index);
             main.post(() -> {
                 busy = false;
                 if (!closed && isAdded()) {

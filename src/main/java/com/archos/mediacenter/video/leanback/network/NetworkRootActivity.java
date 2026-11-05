@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.SingleFragmentActivity;
 
+/** Hosts the TV network-root browsing screen. */
 public class NetworkRootActivity extends SingleFragmentActivity {
     @Override
     public Fragment getFragmentInstance() {

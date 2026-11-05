@@ -1,0 +1,13 @@
+{
+  "source_sha": "c22915b74faa1df064750bc7f1379a1fe3de0844",
+  "classes": 6,
+  "tests": 25,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limits": [
+    "Settings registry only, not complete backup acceptance",
+    "No Shield playback/SAF/compositor tests",
+    "White Library focus native render needs conformance review"
+  ]
+}

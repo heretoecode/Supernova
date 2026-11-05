@@ -1,0 +1,19 @@
+{
+  "run": 41118855808,
+  "source_commit": "7011e877d026e745a079846827ababe03c2af798",
+  "artifact_id": 13008374956,
+  "artifact_sha256": "9d845669f60c67e31ccacdadb7e11e79c123074230d6a9a05b4c85ba91607f82",
+  "artifact_bytes": 90811697,
+  "independent_archive_digest_and_crc": "pass",
+  "apk_file": "Supernova_next_development_unsigned.apk",
+  "apk_sha256": "20c1ef4bab4091b5f817f0d06665d712bc0fbe602149f66b6ea4f2cc0aacae7c",
+  "apk_bytes": 95373272,
+  "apk_zip_crc": "pass",
+  "independent_packaged_native_hashes_verified": 84,
+  "unsigned_signature_status": "CI apksigner verify rejected the APK signature as required; independent local apksigner was not rerun (no SDK installed).",
+  "version_name": "0.147",
+  "version_code": 147,
+  "release_status": "Unsigned development build only; not a signed new-version QA delivery",
+  "physical_shield": "NOT RUN",
+  "drive_upload": false
+}

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "run_id": 37961864830,
+  "workflow_commit": "4448f67c2b7399a36bcee6e8580ace6f2cd91ab1",
+  "application_commit": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+  "conclusion": "success",
+  "junit_pass_count": 429,
+  "python_guard_tests": 36,
+  "native_decode_cases": 64,
+  "all_native_comparisons_passed": true,
+  "source": "Public completed job test-pass lines plus independently downloaded native runtime evidence; raw logs and signing material are not committed."
+}

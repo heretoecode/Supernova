@@ -1,0 +1,11 @@
+{
+  "source_sha": "81c135ace89e198c383506af86dd0e5a1c652a99",
+  "result": "PASS",
+  "duration": "1m 21s",
+  "errors": 0,
+  "warnings": 1768,
+  "report_sha256": "441f9aa27128ef5f89bf88df1d668b1dbb8dfb9f4dbb5bc932d46f39840307e7",
+  "log_sha256": "152f9b986cffc33eb78f6bb9ddc731aad1fe03885ce3d12361729da5d45f2b6a",
+  "coverage": "Release lint after API23 string/control validation fixes and AppCompat selector/base typography correction. No minimum API increase or suppression baseline added.",
+  "limits": "Existing warnings retained for review; native tasks excluded. Not R8/APK/native/device or whole43 acceptance."
+}

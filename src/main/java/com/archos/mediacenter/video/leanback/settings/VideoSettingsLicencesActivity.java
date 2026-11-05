@@ -17,9 +17,11 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.os.Bundle;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.foundation.LicenseDisclosure;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.utils.ThemeManager;
 
+/** Hosts the TV software licences screen. */
 public class VideoSettingsLicencesActivity extends LeanbackActivity {
 
     @Override
@@ -31,6 +33,6 @@ public class VideoSettingsLicencesActivity extends LeanbackActivity {
             setTheme(R.style.MyLeanbackTheme_Preferences_Black);
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_settings_licences);
+        setContentView(new LicenseDisclosure(this));
     }
 }

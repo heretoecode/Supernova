@@ -412,11 +412,8 @@
     <!-- torrent -->
     <string name="error">Une erreur est survenue</string>
     <string name="error_protocol_not_supported">Erreur: protocole non pris en charge</string>
-    <string name="error_loading_torrent">Erreur pendant le téléchargement du torrent</string>
-    <string name="error_downloading_not_enough_space">Erreur pendant le téléchargement du torrent : pas assez d\'espace disponible</string>
     <string name="loading_torrent">Chargement du torrent…</string>
     <string name="error_no_video_file">Aucun fichier vidéo</string>
-    <string name="torrent_file_to_play">Choix de la vidéo</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Parcourir un partage réseau</string>
     <string name="add_ssh_server">Parcourir un serveur FTP</string>
@@ -581,7 +578,6 @@
     <string name="rotation_unlocked">Rotation automatique de l\'écran activé</string>
     <string name="network_reindex">Recharger le contenu</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Appuyez sur la flèche du haut \npour afficher le menu TV</string>
     <string name="help_overlay_network_indexing_text1">Sélectionnez cette action pour ajouter le contenu de ce dossier et de ses sous-dossiers à la bibliothèque vidéo.</string>
     <string name="help_overlay_network_indexing_text2">Cela vous permettra d\'obtenir des affiches et des informations pour vos films et vos séries.</string>
     <string name="help_overlay_scraper_text">Sélectionnez cette action pour rechercher des affiches et des informations en ligne pour vos vidéos. </string>
@@ -739,16 +735,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Dossier de téléchargement</string>
     <string name="torrent_blocklist">Liste noire</string>
     <string name="blocklist_empty">L\'URL ne peut être vide</string>
     <string name="blocklist_invalid">Blocklist invalide</string>
-    <string name="blocklist_file_not_found">Fichier introuvable</string>
     <string name="blocklist_success">Blocklist mise à jour</string>
-    <string name="blocklist_unknown_error">Erreur inconnue</string>
-    <string name="blocklist_not_loaded">Non chargée</string>
-    <string name="torrent_blocklist_url">Url de la blocklist</string>
     <string name="sdk_not_supported">Android 4.3 n\'est pas encore supporté.\nNous travaillons sur ce problème et espérons publier une nouvelle version sous peu!</string>
     <string name="manually_create_share">Ajouter un dossier indexé par URI</string>
     <string name="share_infos_incomplete">Veuillez donner le chemin du partage</string>
@@ -891,7 +882,7 @@
     <string name="media_library_export_in_progress">Exportation de la médiathèque, des identifiants et des raccourcis</string>
     <string name="media_library_import_in_progress">Importation de la médiathèque, des identifiants et des raccourcis</string>
     <string name="media_library_export_success">Médiathèque, identifiants et raccourcis exportés avec succès vers:\n%s</string>
-    <string name="media_library_import_success">La médiathèque, les identifiants et les raccourcis ont été importés avec succès. Redémarrage de l\'application...</string>
+    <string name="media_library_import_success">La médiathèque, les identifiants et les raccourcis ont été importés avec succès. Redémarrage de l\'application&#8230;</string>
     <string name="media_library_import_error">Erreur lors de l\'importation de la médiathèque</string>
     <string name="media_library_export_error">Erreur lors de l\'exportation de la médiathèque</string>
     <string name="media_library_export_dir_not_found">Répertoire d\'exportation introuvable</string>

@@ -1,5 +1,7 @@
 # Network & Files — Design and Behaviour Authority
 
+> 0.142 development supersession: the owner's 2026-10-23 implementation instruction authorises the [six-section blueprint](NETWORK_FILES_BLUEPRINT_DRAFT_2026-10-23.md) and [next-release handover](../handovers/SUPERNOVA_NEXT_RELEASE_CODEX_HANDOVER_2026-10-23.md). The three-panel/five-entry text below is preserved as delivered 0.141 design lineage, not the current candidate layout. Actual capabilities are grounded in FD-003; older idealised Scan Source/classification controls are not evidence of a reachable backend. Candidate implementation and outstanding physical acceptance are recorded in [docs/0.142](../0.142/RELEASE_REPORT.md).
+
 Status: **APPROVED/current; three-panel physical correction active**
 
 ## Core model
@@ -44,7 +46,7 @@ An older approved Network & Files design used a compact source/location tile lan
 Shield QA says Network & Files still needs the intended three-panel structure/visual correction. Preserve the semantics above while correcting presentation; do not regress into the classic browser.
 
 ## Evidence
-`docs/preview-4.1.7/REQUIREMENTS.md` UI-050–057; Preview 4.1.4 release notes; 4.1.2 handover/audit; current Shield QA.
+`docs/archive/previews/preview-4.1.7/REQUIREMENTS.md` UI-050–057; Preview 4.1.4 release notes; 4.1.2 handover/audit; current Shield QA.
 
 ## Historical approved visual references recovered from Project Library
 A legacy `NOVA_DESIGN_REFERENCES` record dated 16 September 2026 was recovered during the preservation pass. It is historical evidence; later written 4.1.7 decisions override conflicts. It records these mock-up identifiers so the visual lineage is not lost:
@@ -64,4 +66,4 @@ The same historical record explicitly rejected permanent left-sidebar primary na
 **Asset status:** the identifier/provenance record is recovered; the corresponding original generated image bytes are not currently available as a complete recoverable image set. Identifiers are not substitutes for images. If image bytes are recovered later they should be committed under `docs/design/assets/` with a manifest and status.
 
 
-See `docs/project/HISTORY_RECONCILIATION.md` for the older Network foundation and supersession context.
+See `docs/archive/early-planning/project/HISTORY_RECONCILIATION.md` for the older Network foundation and supersession context.

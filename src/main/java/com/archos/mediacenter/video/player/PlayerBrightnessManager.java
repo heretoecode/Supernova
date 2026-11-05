@@ -15,6 +15,7 @@
 package com.archos.mediacenter.video.player;
 
 import android.app.Activity;
+import android.provider.Settings;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Window;
@@ -77,14 +78,22 @@ public class PlayerBrightnessManager implements DefaultLifecycleObserver {
     }
 
     public static int getLinearBrightness(Window window) { // get the brightness value between 0 and 30
-        float currentBrightness = getBrightness(window);
-        if (currentBrightness == -1) return 10; // when brightness is set to auto, return a default value
-        else return brightnessToLevelGamma(currentBrightness);
+        return brightnessToLevelGamma(getEffectiveBrightness(window));
+    }
+
+    private static float getEffectiveBrightness(Window window) {
+        float brightness = getBrightness(window);
+        if (brightness == WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE) {
+            int systemBrightness = Settings.System.getInt(window.getContext().getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS, 128);
+            return Math.max(0f, Math.min(systemBrightness / 255f, 1f));
+        }
+        return brightness;
     }
 
     public static void setLinearBrightness(int level, boolean direction, Window window) {
         float newBrightness = levelToBrightnessGamma(level);
-        float curBrightness = getBrightness(window);
+        float curBrightness = getEffectiveBrightness(window);
         if (log.isDebugEnabled()) log.debug("setLinearBrightness: level={}, direction={}, curBrightness={}, newBrightness={}", level, direction, curBrightness, newBrightness);
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         // only apply change is it goes into the right increase/decrease direction to avoid glitch

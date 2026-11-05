@@ -2,113 +2,250 @@ package com.archos.mediacenter.video.leanback;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.view.*;
 import android.widget.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /** Shared TV keyboard. Spatial movement is explicit and cannot escape through an empty result pane. */
 public final class PreviewKeyboard extends LinearLayout {
-    public static final String[] ROWS = {"1234567890", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"};
+    public static final String[] ROWS = {"1234567890", "QWERTYUIOP", "ASDFGHJKL.", "ZXCVBNM,/\\"};
     private final List<List<TextView>> keys = new ArrayList<>();
     private TextView lastKey;
     private Runnable leaveDown;
-    public void setLeaveDown(Runnable action) { leaveDown = action; }
+    private boolean caps = true;
+    private Runnable confirm, cancel;
+
+    public void setActions(Runnable select, Runnable dismiss) {
+        confirm = select;
+        cancel = dismiss;
+    }
+
+    public boolean capsLocked() {
+        return caps;
+    }
+
+    private void toggleCaps() {
+        caps = !caps;
+        for (int r = 1; r < ROWS.length; r++)
+            for (TextView key : keys.get(r)) {
+                String value = key.getTag().toString().substring("semantic:keyboard:".length());
+                key.setText(caps ? value : value.toLowerCase(Locale.ROOT));
+            }
+        capsState(keys.get(4).get(0));
+    }
+
+    public void setLeaveDown(Runnable action) {
+        leaveDown = action;
+    }
 
     public PreviewKeyboard(Context context, EditText input, Runnable leaveRight) {
         super(context);
         setOrientation(VERTICAL);
         setClipChildren(false);
         setClipToPadding(false);
-        for (int rowIndex = 0; rowIndex <= ROWS.length; rowIndex++) {
+        for (int rowIndex = 0; rowIndex <= ROWS.length + 1; rowIndex++) {
             final int r = rowIndex;
             LinearLayout row = new LinearLayout(context);
+            row.setGravity(Gravity.CENTER);
             row.setClipChildren(false);
             row.setClipToPadding(false);
-            LayoutParams lp = new LayoutParams(-1, dp(38));
-            lp.topMargin = dp(5);
+            LayoutParams lp = new LayoutParams(-1, dp(32));
+            if (r >= 4) {
+                Paint metrics = new Paint();
+                metrics.setTextSize(12 * context.getResources().getDisplayMetrics().scaledDensity);
+                lp.height = Math.max(lp.height, Math.round(metrics.getFontSpacing()) + dp(10));
+            }
+            lp.topMargin = dp(3);
             // Equal key widths, with the familiar stagger on the two shorter letter rows.
-            if (r == 2) { lp.leftMargin = dp(12); lp.rightMargin = dp(12); }
-            if (r == 3) { lp.leftMargin = dp(36); lp.rightMargin = dp(36); }
+            if (r == 2) {
+                lp.leftMargin = dp(12);
+                lp.rightMargin = dp(12);
+            }
+            if (r == 3) {
+                lp.leftMargin = dp(36);
+                lp.rightMargin = dp(36);
+            }
             addView(row, lp);
             List<TextView> rowKeys = new ArrayList<>();
             keys.add(rowKeys);
-            String[] labels = r == 4 ? new String[]{"Clear", "Space", "Backspace"} : ROWS[r].split("");
+            String[] labels = r == 4   ? new String[] {"Caps Lock", "Space", "Backspace"}
+                              : r == 5 ? new String[] {"Clear", "Done", "Cancel"}
+                                       : ROWS[r].split("");
             for (String label : labels) {
-                if (label.isEmpty()) continue;
+                if (label.isEmpty())
+                    continue;
                 final int col = rowKeys.size();
                 TextView key = key(label, () -> {
-                    if (r != 4) replace(input, label);
-                    else if (col == 0) input.setText("");
-                    else if (col == 1) replace(input, " ");
-                    else {
+                    if (r < 4)
+                        replace(input, caps ? label : label.toLowerCase(Locale.ROOT));
+                    else if (label.equals("Caps Lock"))
+                        toggleCaps();
+                    else if (label.equals("Clear"))
+                        input.setText("");
+                    else if (label.equals("Space"))
+                        replace(input, " ");
+                    else if (label.equals("Done")) {
+                        if (confirm != null)
+                            confirm.run();
+                        else if (leaveRight != null)
+                            leaveRight.run();
+                    } else if (label.equals("Cancel")) {
+                        if (cancel != null)
+                            cancel.run();
+                    } else {
                         int start = selection(input), end = Math.max(start, input.getSelectionEnd());
-                        if (start != end) input.getText().delete(start, end);
-                        else if (start > 0) input.getText().delete(input.getText().toString().offsetByCodePoints(start, -1), start);
+                        if (start != end)
+                            input.getText().delete(start, end);
+                        else if (start > 0)
+                            input.getText().delete(input.getText().toString().offsetByCodePoints(start, -1), start);
                     }
                 });
                 key.setTag("semantic:keyboard:" + label);
-                key.setOnFocusChangeListener((v, focused) -> { if (focused) lastKey = (TextView) v; });
+                if (r >= 4) {
+                    key.setTextSize(12);
+                    key.setPadding(dp(6), 0, dp(6), 0);
+                    key.setGravity(Gravity.CENTER);
+                    PreviewIcon.apply(key, label, 14);
+                    SupernovaStyle.applyButton(key, SupernovaStyle.Surface.STANDARD);
+                    key.setCompoundDrawablePadding(dp(4));
+                    if (label.equals("Caps Lock")) {
+                        key.setText("");
+                        capsState(key);
+                    }
+                }
+                LayoutParams keySize = new LayoutParams(0, -1, 1);
+                if (r >= 4) {
+                    keySize = new LayoutParams(0, -1, r == 4 && label.equals("Space") ? 3f : 1f);
+                    lp.leftMargin = 0;
+                    lp.rightMargin = 0;
+                }
+                if (label.equals("Backspace")) {
+                    key.setText("");
+                    key.setContentDescription("Backspace");
+                }
+                keySize.leftMargin = dp(2);
+                keySize.rightMargin = dp(2);
+                key.setOnFocusChangeListener((v, focused) -> {
+                    if (focused)
+                        lastKey = (TextView)v;
+                });
                 key.setOnKeyListener((v, code, event) -> {
-                    if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
+                    if (event.getAction() != KeyEvent.ACTION_DOWN)
+                        return false;
                     if (code == KeyEvent.KEYCODE_DPAD_LEFT) {
-                        if (col > 0) keys.get(r).get(col - 1).requestFocus();
+                        if (col > 0)
+                            keys.get(r).get(col - 1).requestFocus();
                         return true;
                     }
                     if (code == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                        if (col + 1 < keys.get(r).size()) keys.get(r).get(col + 1).requestFocus();
-                        else if (leaveRight != null) leaveRight.run();
+                        if (col + 1 < keys.get(r).size())
+                            keys.get(r).get(col + 1).requestFocus();
+                        else if (leaveRight != null)
+                            leaveRight.run();
                         return true;
                     }
                     if (code == KeyEvent.KEYCODE_DPAD_UP || code == KeyEvent.KEYCODE_DPAD_DOWN) {
                         int targetRow = r + (code == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
-                        if (targetRow < 0) return false; // The host owns entry into global navigation.
-                        if (targetRow >= keys.size()) { if (leaveDown != null) leaveDown.run(); return true; }
+                        if (targetRow < 0)
+                            return false; // The host owns entry into global navigation.
+                        if (targetRow >= keys.size()) {
+                            if (leaveDown != null)
+                                leaveDown.run();
+                            return true;
+                        }
                         nearest(keys.get(targetRow), v).requestFocus();
                         return true;
                     }
                     return false;
                 });
                 rowKeys.add(key);
-                row.addView(key, new LayoutParams(0, -1, 1));
+                row.addView(key, keySize);
             }
         }
         lastKey = keys.get(1).get(4); // T, as specified for first entry.
     }
 
     private TextView nearest(List<TextView> row, View source) {
-        float centre = source.getLeft() + source.getWidth() / 2f + ((View) source.getParent()).getLeft();
+        float centre = source.getLeft() + source.getWidth() / 2f + ((View)source.getParent()).getLeft();
         TextView result = row.get(0);
         float distance = Float.MAX_VALUE;
         for (TextView candidate : row) {
-            float x = candidate.getLeft() + candidate.getWidth() / 2f + ((View) candidate.getParent()).getLeft();
-            if (Math.abs(x - centre) < distance) { result = candidate; distance = Math.abs(x - centre); }
+            float x = candidate.getLeft() + candidate.getWidth() / 2f + ((View)candidate.getParent()).getLeft();
+            if (Math.abs(x - centre) < distance) {
+                result = candidate;
+                distance = Math.abs(x - centre);
+            }
         }
         return result;
     }
 
-    public boolean focusLastKey() { return lastKey.requestFocus(); }
-    public boolean atTop() { return keys.get(0).contains(findFocus()); }
-    public String focusedKey() { return lastKey.getText().toString(); }
-    public void restoreKey(String label) {
-        for (List<TextView> row : keys) for (TextView key : row)
-            if (key.getText().toString().equals(label)) { lastKey = key; return; }
+    private void capsState(TextView key) {
+        key.setSelected(caps);
+        key.setText(caps ? "ON" : "OFF");
+        key.setTextColor(caps ? PreviewAccent.color(getContext()) : Color.WHITE);
+        key.setTypeface(null, caps ? Typeface.BOLD : Typeface.NORMAL);
+        key.setContentDescription("Caps Lock " + (caps ? "On" : "Off"));
+        key.setForeground(null);
     }
-    private static int selection(EditText input) { return input.getSelectionStart() < 0 ? input.length() : input.getSelectionStart(); }
+
+    public void useMenuFoundation() {
+        for (List<TextView> row : keys)
+            for (TextView key : row)
+                SupernovaStyle.applyButton(key, SupernovaStyle.Surface.STANDARD);
+    }
+
+    public boolean focusLastKey() {
+        return lastKey.requestFocus();
+    }
+
+    public boolean atTop() {
+        return keys.get(0).contains(findFocus());
+    }
+
+    public String focusedKey() {
+        return String.valueOf(lastKey.getTag()).replace("semantic:keyboard:", "");
+    }
+
+    public void restoreKey(String label) {
+        for (List<TextView> row : keys)
+            for (TextView key : row)
+                if (key.getText().toString().equals(label) ||
+                    String.valueOf(key.getTag()).equals("semantic:keyboard:" + label)) {
+                    lastKey = key;
+                    return;
+                }
+    }
+
+    private static int selection(EditText input) {
+        return input.getSelectionStart() < 0 ? input.length() : input.getSelectionStart();
+    }
+
     private static void replace(EditText input, String value) {
         int start = selection(input), end = Math.max(start, input.getSelectionEnd());
         input.getText().replace(start, end, value);
-        input.setSelection(start + value.length());
+        input.setSelection(Math.min(input.length(), start + value.length()));
     }
+
     private TextView key(String label, Runnable action) {
         TextView key = new TextView(getContext());
-        key.setText(label); key.setTextColor(Color.WHITE); key.setTextSize(14);
+        key.setText(label);
+        key.setTextColor(Color.WHITE);
+        key.setTextSize(14);
         key.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
-        key.setGravity(Gravity.CENTER); key.setFocusable(true); key.setFocusableInTouchMode(true); key.setId(View.generateViewId());
-        key.setBackground(PreviewDialog.focus(getContext()));
+        key.setGravity(Gravity.CENTER);
+        key.setFocusable(true);
+        key.setFocusableInTouchMode(true);
+        key.setId(View.generateViewId());
+        SupernovaStyle.applyButton(key, SupernovaStyle.Surface.STANDARD);
         key.setOnClickListener(v -> action.run());
         return key;
     }
-    private int dp(int n) { return PreviewDialog.dp(getContext(), n); }
+
+    private int dp(int n) {
+        return PreviewDialog.dp(getContext(), n);
+    }
 }

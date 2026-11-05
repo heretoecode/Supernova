@@ -34,6 +34,7 @@ import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.ArrayList;
 
+/** Displays video lists and loads their contents with sorting controls. */
 public class VideosByListFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = VideosByListFragment.class.getName() + "_SORT";
@@ -53,6 +54,7 @@ public class VideosByListFragment extends VideosByFragment {
         SearchOrbView searchOrbView = (SearchOrbView) view.findViewById(R.id.title_orb);
         searchOrbView.setOrbIcon(ContextCompat.getDrawable(getActivity(), R.drawable.orb_minus));
         setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 ArrayList<String> names = new ArrayList<String>();
 
@@ -64,6 +66,7 @@ public class VideosByListFragment extends VideosByFragment {
                 if (names.size() > 0) {
                     new AlertDialog.Builder(getActivity())
                             .setItems(names.toArray(new String[names.size()]), new DialogInterface.OnClickListener() {
+                                @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Row row = (Row)getRowsAdapter().get(which);
                                     String id = String.valueOf(row.getId());

@@ -1,0 +1,37 @@
+{
+  "source_sha": "137ca8b6e8d1ac6825fb8132128c2569bb6f1ac8",
+  "result": "PASS",
+  "classes": 5,
+  "tests": 24,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest"
+  ],
+  "duration": "2m 38s (combined run)",
+  "log_sha256": "454e31e0e307297466aac2bdde8ca3073b19b8dc4acc839ac23a7ff7b912b8d5",
+  "native_captures": [
+    {
+      "path": "docs/0.139/ui/settings-backup/0139-settings-backup-main.png",
+      "sha256": "e6d98996abe4bceaebc11917f6fc6ab73b6a1543c2fcca1357c5971aa51a6645"
+    },
+    {
+      "path": "docs/0.139/ui/settings-backup/0139-settings-backup-details.png",
+      "sha256": "feea45f2cdb703bac45dc4cc641b858f073c12824d25f0e26565e7326a7cd7e2"
+    },
+    {
+      "path": "docs/0.139/ui/settings-backup/0139-settings-backup-instructions.png",
+      "sha256": "eacd598c7b0c3016b4ecd30491dc96a04c7642d41ff156c56f4baee2e77a360d"
+    },
+    {
+      "path": "docs/0.139/ui/settings-backup/0139-settings-restore-selection.png",
+      "sha256": "8acefbc4f6280c9f4113af9b36f5cff3f7dcb6d5a00838fd48d1639f7ce89b05"
+    }
+  ],
+  "limits": "Actual controller/sidebar with a minimal PreferenceFragment fixture, not full VideoPreferencesCommon activity, compositor/media background, large-font matrix, real document provider or Shield. Picker ACTION_CREATE_DOCUMENT and cancellation observed. All26 categories, unchanged measured sidebar width, focused replacement and opener return, selected restore confirmation exercised. Source contains23 codecs; missing approved domains still block default export."
+}

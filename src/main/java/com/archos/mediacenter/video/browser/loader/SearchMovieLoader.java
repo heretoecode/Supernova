@@ -18,6 +18,7 @@ import android.content.Context;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads movies matching a search query. */
 public class SearchMovieLoader extends VideoLoader {
 
     // search based on scraper title and file title

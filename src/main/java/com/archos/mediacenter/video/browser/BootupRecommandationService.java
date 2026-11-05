@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+/** Starts recommendation updates in response to broadcasts and application lifecycle events. */
 public class BootupRecommandationService extends BroadcastReceiver implements DefaultLifecycleObserver {
 	private static final String TAG = "BootupActivity";
 	private static final boolean DBG = false;

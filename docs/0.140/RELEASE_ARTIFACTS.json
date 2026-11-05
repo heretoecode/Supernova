@@ -1,0 +1,20 @@
+{
+  "source_commit": "866f21f11f27dea4846ddd3cac57d98b281eecbb",
+  "run_id": 38959928321,
+  "run_url": "https://github.com/heretoecode/Supernova/actions/runs/38959928321",
+  "signed_artifact": {
+    "id": 12073928084,
+    "name": "supernova-0140-signed-qa",
+    "bytes": 83408644,
+    "sha256": "e02a688e2fb305a710b31d19578838c9c1c5053a9ce0a529daf2bbed1781dc46",
+    "archive_digest_verified": true
+  },
+  "native_source_artifact": {
+    "id": 12074217494,
+    "name": "supernova-0140-qa-ffmpeg-source",
+    "bytes": 11174413,
+    "sha256": "403542bf966ee73b5b9a64c482b5e1864a2dc3d3cce12b913c1f09baff30d76c",
+    "archive_digest_verified": true
+  },
+  "temporary_authenticated_urls_retained": false
+}

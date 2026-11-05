@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,14 +24,17 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.player.AudioSpeedPickerAbstract;
+import com.archos.mediacenter.video.player.PreviewAdjustmentValue;
 
 
+/** Provides a remote-controlled audio speed picker for TV playback menus. */
 public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSlaveView {
 
     private final String TAG = "AudioSpeedTVPicker";
@@ -87,8 +91,8 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
     }
 
     public void setFocus(boolean hasFocus) {
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if (hasFocus) {
@@ -180,21 +184,8 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
             return true;
         }
 
-        // else, we send it to parent
-        ViewParent p;
-        View v = this;
-        while ((p = v.getParent()) != null) {
-            if (p instanceof TVCardView) {
-                return ((TVCardView) p).onKeyDown(keyCode, event);
-            } else if (p instanceof TVCardDialog) {
-                return ((TVCardDialog) p).onKeyDown(keyCode, event);
-            } else if (p instanceof View) {
-                v = (View) p;
-            } else {
-                break;
-            }
-        }
-        return false;
+        // else, we send it to the enclosing card
+        return TVUtils.dispatchToCardParent(this, keyCode, event);
     }
 
     @Override
@@ -211,8 +202,8 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
     }
 
     public void updateTextViewSpeed() {
-        setText(com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
-                ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.speed(getSpeed()):getFormattedSpeed().toString());
+        setText(PreviewAdjustmentValue.enabled(mContext)
+                ?PreviewAdjustmentValue.speed(getSpeed()):getFormattedSpeed().toString());
     }
 
     public void setTextSize(int size) {
@@ -302,9 +293,10 @@ public class AudioSpeedTVPicker extends AudioSpeedPickerAbstract implements TVSl
         updateSpeedText(getSpeed());
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View createSlaveView() {
-        // TODO Auto-generated method stub
+        // Detached template view created for secondary display/slave mirroring
         setSlaveView((AudioSpeedTVPicker) LayoutInflater.from(mContext)
                 .inflate(R.layout.audio_speed_tv_picker, null));
         return slaveView;

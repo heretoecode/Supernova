@@ -1,0 +1,24 @@
+{
+  "result": "PASS",
+  "source_sha": "7ad98356a2d56b329ad37e0c1f02d13388b5863e",
+  "dependency_sha": "db6c13a69ada5aba822c96fe3a687cb65b4535e0",
+  "duration": "43s",
+  "log_sha256": "d1defbfe1027f90f6dd8c66f57d26b8d26feffc4bfb078b9e6706431dd2a94a5",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "coverage": [
+    "Verified fresh movie metadata for an indexed unmatched file; exact native graph redo",
+    "Occupied reserved metadata ID refused without replacing receiving owner/pin",
+    "Episode -> new movie preserves old episode, last parent pin/Collection and file viewing state",
+    "Existing canonical guards, clear/schema9 and production model tests"
+  ],
+  "limits": "New episode/parent creation, reverse cross-kind, post-index reconciliation/manual source hooks and codec26 registration remain open. No actual Shield/codec/signing proof.",
+  "tests": 40,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

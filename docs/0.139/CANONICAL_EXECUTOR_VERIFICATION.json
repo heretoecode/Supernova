@@ -1,0 +1,24 @@
+{
+  "source_sha": "23de9f8fd2e6c81eb9c9168c2a3a744ece797736",
+  "dependency_sha": "67e2c4c60b7afcd305756bef88aad6340c01829e",
+  "result": "PASS",
+  "duration": "32s",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest"
+  ],
+  "log_sha256": "17e42822d577b12fc050452908207e8f1d9d0e7307fc4aa1b9db39123c1c1d2d",
+  "coverage": [
+    "Executor uses caller native transaction, requires compatible Native62 and rejects missing transaction",
+    "No premature content observer publication; canonical movie rollback exact",
+    "Episode cancellation after primary mutation rolls back parent, pin and normalized guest graph",
+    "Exact material identity, physical guard and full/partial library publication race regressions"
+  ],
+  "limits": "Staged executor; production native redo/journal, different-parent/cross-kind and codec26 not complete. Private redo serialization changes follow this tested dependency.",
+  "tests": 16,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

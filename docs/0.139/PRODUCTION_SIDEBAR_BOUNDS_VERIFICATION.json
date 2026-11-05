@@ -1,0 +1,15 @@
+{
+  "source_sha": "16f708d7552699e9742e05ddc0eb03891f93314b",
+  "result": "FAIL",
+  "classes": 1,
+  "tests": 3,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "35s",
+  "log_sha256": "0ffc8a79178a127c5c2431d03601e0849edfedb23af29d439000fa0bdde48272",
+  "reason": "Trace identifies cause: expansion ChangeBounds temporarily sets actual content height452 while measured final height608 and viewport492/padding40. Early desired50 is correctly clamped to0. Follow-up reveals the active sidebar target after the existing transition completes; no arbitrary delay or layout/style change."
+}

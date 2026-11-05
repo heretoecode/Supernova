@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.*;
 
+/** Checks version selection preserves dialog state and resume positions without exposing private locations. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28)
 public class PreviewVersionsDialogTest {

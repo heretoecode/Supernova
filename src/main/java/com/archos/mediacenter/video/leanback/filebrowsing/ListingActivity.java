@@ -13,6 +13,11 @@
 // limitations under the License.
 
 package com.archos.mediacenter.video.leanback.filebrowsing;
+import android.view.WindowManager;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.R;
 
 import static com.archos.filecorelibrary.smbj.SmbjUtils.isSMBjEnabled;
 import static com.archos.filecorelibrary.sshj.SshjUtils.isSSHjEnabled;
@@ -23,7 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.IntentCompat;
 import androidx.fragment.app.Fragment;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -39,6 +43,7 @@ import com.archos.mediacenter.video.leanback.network.sshj.SshjListingActivity;
 import com.archos.mediacenter.video.leanback.network.upnp.UpnpListingActivity;
 import com.archos.mediacenter.video.leanback.network.webdav.WebdavListingActivity;
 
+/** Hosts TV file listings and handles navigation between folders. */
 public abstract  class ListingActivity extends SingleFragmentActivity {
 
     /**
@@ -96,7 +101,7 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
         }
         else if ("smb".equals(scheme)) {
             if (isSMBjEnabled()) return SmbjListingActivity.class;
-            else return SmbListingActivity.class;
+                else return SmbListingActivity.class;
         }
         else if ("upnp".equals(scheme)) {
             return UpnpListingActivity.class;
@@ -112,7 +117,7 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
         }
         else if ("sftp".equals(scheme)) {
             if (isSSHjEnabled()) return SshjListingActivity.class;
-            else return FtpListingActivity.class;
+                else return FtpListingActivity.class;
         }
         else if ("sshj".equals(scheme)) {
             return SshjListingActivity.class;
@@ -174,6 +179,7 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
      * Imlements SingleFragmentActivity
      * @return
      */
+    @Override
     public Fragment getFragmentInstance() {
         ListingFragment frag = getStartingFragment();
         Bundle args = new Bundle();
@@ -191,9 +197,9 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
-            getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            new androidx.core.view.WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView()).hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView()).hide(WindowInsetsCompat.Type.systemBars());
         }
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             private long mBackStartedAt;
@@ -205,6 +211,8 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
 
             @Override
             public void handleOnBackPressed() {
+                Fragment active=getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if(active instanceof ListingFragment&&((ListingFragment)active).browserBack(ListingActivity.this::finish)){mBackStartedAt=0;return;}
                 long pressDuration = mBackStartedAt == 0
                         ? 0 : SystemClock.elapsedRealtime() - mBackStartedAt;
                 mBackStartedAt = 0;
@@ -249,9 +257,10 @@ public abstract  class ListingActivity extends SingleFragmentActivity {
         // Quit file browsing on BACK long press
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             MultiBackHintManager.getInstance(this).onBackLongPressed();
-            finish();
+            Fragment active=getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            if(active instanceof ListingFragment)((ListingFragment)active).browserExit(this::finish);else finish();
             return true;
         }
-        else return super.onKeyLongPress(keyCode, event);
+            else return super.onKeyLongPress(keyCode, event);
     }
 }

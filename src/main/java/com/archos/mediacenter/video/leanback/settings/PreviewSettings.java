@@ -1,275 +1,1416 @@
 package com.archos.mediacenter.video.leanback.settings;
+import com.archos.mediacenter.video.diagnostics.FocusSearchGuard;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+import android.transition.ChangeBounds;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.transition.TransitionSet;
 import android.view.*;
 import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Toast;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.preference.*;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.archos.filecorelibrary.sftp.SftpHostTrust;
+import com.archos.mediacenter.utils.introdb.IntroSegments;
+import com.archos.mediacenter.video.BuildConfig;
+import com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.foundation.FoundationAboutWorkspace;
+import com.archos.mediacenter.video.leanback.PreviewFocusRecycler;
+import com.archos.mediacenter.video.leanback.SharedThreePanel;
+import com.archos.mediacenter.video.leanback.StandardSwitchDrawable;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediacenter.video.player.SegmentSkippingPolicy;
+import com.archos.mediacenter.video.utils.SubtitleDiscovery;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.NetworkScannerUtil;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.PreviewIcon;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.PreviewHomeRows;
 import com.archos.mediacenter.video.leanback.PreviewAccent;
-public final class PreviewSettings {
- private static final java.util.WeakHashMap<android.content.Context,java.lang.ref.WeakReference<TextView>> HELP=new java.util.WeakHashMap<>();
- private static final String[] ORIGINAL_NAMES={"General","Home & Discovery","Playback","Video & Audio","Subtitles","Library","Sources & Storage","Appearance","Trakt","Streaming","Integrations","Advanced","About","Legacy"};
- public static void organise(PreferenceFragmentCompat fragment){
-  PreferenceScreen root=fragment.getPreferenceScreen();if(root==null)return;
-  Map<String,PreferenceCategory> categories=new LinkedHashMap<>();
-  String[] keys={"preferences_about","category_leanback_user_interface","preview_playback","preferences_category_video","preview_subtitles","scraper_category","netshare_category","category_user_interface","trakt_category","streaming_category","preview_integrations","preferences_category_advanced_video","about_category","preview_legacy"};
-  for(int i=0;i<keys.length;i++){Preference p=root.findPreference(keys[i]);PreferenceCategory c=p instanceof PreferenceCategory?(PreferenceCategory)p:new PreferenceCategory(fragment.requireContext());if(p==null){c.setKey(keys[i]);root.addPreference(c);}c.setTitle(ORIGINAL_NAMES[i]);c.setOrder(i*100);categories.put(ORIGINAL_NAMES[i],c);}
-  java.util.List<PreferenceCategory> old=new ArrayList<>();for(int i=0;i<root.getPreferenceCount();i++)if(root.getPreference(i) instanceof PreferenceCategory)old.add((PreferenceCategory)root.getPreference(i));
-  for(PreferenceCategory c:old){String title=String.valueOf(c.getTitle()).toLowerCase(Locale.ROOT);if(!categories.containsValue(c)){PreferenceCategory dest=categories.get(title.contains("language")?"Subtitles":title.contains("torrent")?"Advanced":"Sources & Storage");while(c.getPreferenceCount()>0){Preference p=c.getPreference(0);c.removePreference(p);dest.addPreference(p);}c.setVisible(false);}}
-  if(root.findPreference("preview_sftp_trust")==null){
-   Preference trust=new Preference(fragment.requireContext());trust.setKey("preview_sftp_trust");trust.setTitle("SFTP server identities");
-   trust.setSummary("First connection stores a server identity. Changed identities are rejected. Only reset after verifying a legitimate server key change.");
-   trust.setOnPreferenceClickListener(p->{String[] hosts=com.archos.filecorelibrary.sftp.SftpHostTrust.hosts();
-    if(hosts.length==0){PreviewDialog.read(fragment.requireContext(),"SFTP server identities","No identities recorded yet. First-use trust does not protect an already compromised first connection.");return true;}
-    PreviewDialog.choose(fragment.requireContext(),"Recorded SFTP servers",hosts,-1,n->PreviewDialog.choose(fragment.requireContext(),"Reset this server identity only after independently verifying its new key",new String[]{"Cancel","Reset identity for "+hosts[n]},0,i->{if(i==1)com.archos.filecorelibrary.sftp.SftpHostTrust.forget(hosts[n]);}));return true;});
-   categories.get("Sources & Storage").addPreference(trust);
-  }
-  move(root,categories.get("Appearance"),"ui_lang");move(root,categories.get("About"),"preferences_version");
-  for(String key:new String[]{"playback_speed","audio_speed_audiotrack","resume","repeat_mode","playback_repeat_mode"})move(root,categories.get("Playback"),key);
-  if(root.findPreference("remember_library_views")==null){SwitchPreferenceCompat remember=new SwitchPreferenceCompat(fragment.requireContext());remember.setKey("remember_library_views");remember.setTitle("Remember library view preferences");remember.setSummary("Keep Movies and TV Shows views, filters, sort and order separately");remember.setDefaultValue(true);categories.get("Library").addPreference(remember);}
-  for(String key:new String[]{"subtitles_credentials","subtitles_hide_default","favSubLang","languages_list","codepage"})move(root,categories.get("Subtitles"),key);
-  for(String key:new String[]{"display_resume_box","hide_controls_on_pause","player_projector_mode_key"})move(root,categories.get("Playback"),key);
-  move(root,categories.get("Library"),"rescan_storage");
-  Preference fullScan=root.findPreference("rescan_storage");if(fullScan!=null){fullScan.setTitle("Full Library Scan");fullScan.setSummary("Scan local storage and indexed network folders; retry unmatched descriptions");}
-  SwitchPreferenceCompat automatic=new SwitchPreferenceCompat(fragment.requireContext());automatic.setKey("auto_rescan_on_app_restart");automatic.setTitle("Scan network library on return");automatic.setSummary("Check indexed sources, including WebDAV, when Supernova opens or returns to the foreground");automatic.setDefaultValue(true);categories.get("Library").addPreference(automatic);
-  ListPreference interval=new ListPreference(fragment.requireContext());interval.setKey("preview_scan_interval_control");interval.setPersistent(false);interval.setTitle("Automatic network scan interval");interval.setEntries(new String[]{"Off","15 minutes","30 minutes","1 hour","6 hours","24 hours"});interval.setEntryValues(new String[]{"0","900000","1800000","3600000","21600000","86400000"});int savedPeriod=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());interval.setValue(String.valueOf(savedPeriod));interval.setSummaryProvider(p->{int period=com.archos.mediaprovider.video.NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());return period<=0?"Off":period/60000+" minutes · Android may defer background jobs";});interval.setOnPreferenceChangeListener((p,value)->{com.archos.mediaprovider.video.NetworkScannerUtil.scheduleNewRescan(fragment.requireContext(),0,Integer.parseInt(value.toString()),true);return true;});categories.get("Library").addPreference(interval);
-  // Only the inert UI placeholder is removed. No updater or saved preference existed.
-  Preference updates=root.findPreference("preview_updates");if(updates!=null&&updates.getParent()!=null)updates.getParent().removePreference(updates);
-  // Existing torrent preferences own working onClick handlers and retain their folder picker.
-  for(String key:new String[]{"preferences_video_os","preferences_video_tmdb","preferences_video_trakt"}){Preference attribution=root.findPreference(key);if(attribution!=null){attribution.setEnabled(false);attribution.setSelectable(false);}}
-  for(String key:new String[]{"always_leanback_on_tv_key","reset_last_played_row","reset_last_played_section","preferences_movie_sort_order","preferences_tv_show_sort_order","preferences_animes_sort_order","try_new_ui","smart_recently_rows","separate_anime_movie_show","show_last_added_row","show_last_played_row","show_watching_up_next_row","show_all_movies_row","show_all_tv_shows_row","show_all_animes_row","show_documentaries","hide_trailer_row","show_by_rating","app_theme"}){
-   Preference p=root.findPreference(key);if(p!=null){move(root,categories.get("Legacy"),key);p.setEnabled(false);p.setSelectable(false);p.setSummary(key.equals("player_projector_mode_key")?"Legacy: aligns video and effects to the top of the screen. Existing value is preserved; presentation control retired pending device QA.":key.equals("app_theme")?"Legacy theme retained for classic surfaces. Use Accent & Colour in Appearance.":"Deprecated in this interface — underlying behaviour and saved value preserved");}
-  }
-  Preference accent=new Preference(fragment.requireContext());accent.setKey("preview_accent_picker");accent.setTitle("Accent & Colour");accent.setSummary("Focus, selected controls and subtle utility gradients");accent.setOnPreferenceClickListener(p->{PreviewAccent.choose(fragment.requireContext(),()->fragment.requireActivity().recreate());return true;});categories.get("Appearance").addPreference(accent);
-  Preference rows=new Preference(fragment.requireContext());rows.setKey("preview_home_editor");rows.setTitle("Home rows");rows.setSummary("Create, rename, hide and reorder rows; manage Watch Next");rows.setOnPreferenceClickListener(p->{PreviewHomeRows.customise(fragment.requireContext(),()->{});return true;});categories.get("Home & Discovery").addPreference(rows);
-  Preference clear=new Preference(fragment.requireContext());clear.setKey("preview_clear_watch_next");clear.setTitle("Clear Watch Next");clear.setSummary("Remove all Watch Next titles after confirmation. Library and playback history are kept.");clear.setOnPreferenceClickListener(p->{PreviewHomeRows.clearWatchNext(fragment.requireContext());return true;});categories.get("Home & Discovery").addPreference(clear);
-  String[] sources={"recent","trending","popular"},sourceNames={"Featured: Recently Added","Featured: Trakt Trending","Featured: Trakt Popular"};for(int n=0;n<sources.length;n++){SwitchPreferenceCompat enabled=new SwitchPreferenceCompat(fragment.requireContext());enabled.setKey("preview_featured_"+sources[n]);enabled.setTitle(sourceNames[n]);enabled.setSummary("Select from matching local-library titles; offline local fallback");enabled.setDefaultValue(true);categories.get("Home & Discovery").addPreference(enabled);}
-  SwitchPreferenceCompat diagnostics=new SwitchPreferenceCompat(fragment.requireContext());diagnostics.setKey(com.archos.mediacenter.video.diagnostics.Diagnostics.KEY);diagnostics.setTitle("Diagnostic Logging");diagnostics.setSummary("Off by default. Bounded, privacy-filtered logs for development and Shield QA.");diagnostics.setDefaultValue(false);diagnostics.setOnPreferenceChangeListener((p,value)->{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(fragment.requireContext(),(Boolean)value);return true;});categories.get("Advanced").addPreference(diagnostics);
-  ListPreference level=new ListPreference(fragment.requireContext());level.setKey(com.archos.mediacenter.video.diagnostics.Diagnostics.LEVEL);level.setTitle("Diagnostic detail");level.setEntries(new String[]{"Normal","QA / Soak"});level.setEntryValues(new String[]{"normal","qa"});level.setDefaultValue("normal");level.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());categories.get("Advanced").addPreference(level);
-  for(String label:new String[]{"Issues Digest","Report a Problem","Show Latest Reference"}){Preference item=new Preference(fragment.requireContext());item.setKey("preview_diagnostic_"+label);item.setTitle(label);item.setOnPreferenceClickListener(p->{if(label.equals("Issues Digest"))com.archos.mediacenter.video.diagnostics.Diagnostics.showDigest(fragment.requireContext());else if(label.equals("Show Latest Reference"))com.archos.mediacenter.video.diagnostics.Diagnostics.showLatestReference(fragment.requireContext());else com.archos.mediacenter.video.diagnostics.Diagnostics.reportProblem(fragment.requireContext());return true;});categories.get("Advanced").addPreference(item);}
-  Preference export=new Preference(fragment.requireContext());export.setKey("export_diagnostic_report");export.setTitle("Export Diagnostic Report");export.setSummary("Save recent logs and safe device/build information as a ZIP. Choose a destination using Android Files.");export.setOnPreferenceClickListener(p->{fragment.startActivity(new android.content.Intent(fragment.requireContext(),com.archos.mediacenter.video.diagnostics.DiagnosticExportActivity.class));return true;});categories.get("Advanced").addPreference(export);
-  PreviewBuildInfo.install(fragment,categories.get("About"));
-  consolidate(fragment,root,categories);
-  auditPresentation(root);
-  style(root);
+import java.util.WeakHashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
- }
- private static final String[] NAMES={"Playback","Video","Audio","Subtitles","Library & Metadata","Home","Appearance","Streaming","Network","Integrations","Advanced","About"};
- private static void consolidate(PreferenceFragmentCompat fragment,PreferenceScreen root,Map<String,PreferenceCategory> categories){
-  PreferenceCategory video=categories.get("Video & Audio");video.setTitle("Video");
-  categories.get("Sources & Storage").setTitle("Network");
-  categories.get("Library").setTitle("Library & Metadata");
-  categories.get("Home & Discovery").setTitle("Home");
-  PreferenceCategory audio=new PreferenceCategory(fragment.requireContext());audio.setKey("preview_audio");audio.setTitle("Audio");root.addPreference(audio);
-  categories.put("Audio",audio);
-  PreferenceCategory general=categories.get("General");
-  while(general.getPreferenceCount()>0){Preference p=general.getPreference(0);general.removePreference(p);categories.get("About").addPreference(p);}general.setVisible(false);
-  for(String key:new String[]{"favAudioLang","prefer_original_audio_track","force_audio_passthrough_multiple","player_spatialization_enabled"})move(root,audio,key);
-  for(String key:new String[]{"allow_3rd_party_player","network_bookmarks",fragment.getString(R.string.reset_brightness_on_start_key)})move(root,categories.get("Playback"),key);
-  for(String key:new String[]{"hide_watched","sort_ignore_articles","preference_display_all_files","pref_create_remote_thumbs"})move(root,categories.get("Library"),key);
-  PreferenceCategory advanced=categories.get("Advanced");
-  String[][] compatibility={
-   {"Video Compatibility","force_software_decoding","dec_choice","parser_sync_mode","enable_cutout_mode_short_edges","enable_cutout_both_sidesx","stream_max_iframe_size"},
-   {"Audio Compatibility","audio_interface_choice","audio_decoder_choice","force_passthrough","audio_speed_audiotrack","enable_dynamic_audio_delay","disable_downmix","enable_downmix_androidtv"},
-   {"Network Compatibility","pref_smbj","pref_smbv2","pref_smb_resolv","pref_smb_disable_tcp_discovery","pref_smb_disable_udp_discovery","pref_smb_disable_mdns_discovery","pref_sshj","stream_buffer_size"},
-   {"Subtitle Compatibility","codepage"}};
-  for(String[] group:compatibility){PreferenceCategory section=new PreferenceCategory(fragment.requireContext());section.setKey("preview_compat_"+group[0]);section.setTitle(group[0]);advanced.addPreference(section);for(int i=1;i<group.length;i++)move(root,section,group[i]);}
-  PreferenceCategory integrations=categories.get("Integrations"),trakt=categories.get("Trakt");root.removePreference(trakt);integrations.addPreference(trakt);
-  PreferenceCategory subtitles=new PreferenceCategory(fragment.requireContext());subtitles.setKey("preview_opensubtitles");subtitles.setTitle("OpenSubtitles");integrations.addPreference(subtitles);move(root,subtitles,"subtitles_credentials");
-  PreferenceCategory intro=new PreferenceCategory(fragment.requireContext());intro.setKey("preview_introdb");intro.setTitle("IntroDB");integrations.addPreference(intro);
-  SwitchPreferenceCompat skip=new SwitchPreferenceCompat(fragment.requireContext());skip.setKey(com.archos.mediacenter.video.player.PlayerService.KEY_INTRODB_ENABLED);skip.setTitle("Automatic segment skipping");skip.setSummary("Use IntroDB segment timings with the existing playback-mode rules");skip.setDefaultValue(com.archos.mediacenter.video.player.PlayerService.DEFAULT_INTRODB_ENABLED);intro.addPreference(skip);
-  Preference hidden=root.findPreference("subtitles_hide_default");
-  if(hidden instanceof TwoStatePreference){TwoStatePreference original=(TwoStatePreference)hidden;original.setVisible(false);SwitchPreferenceCompat positive=new SwitchPreferenceCompat(fragment.requireContext());positive.setKey("preview_subtitles_by_default");positive.setTitle("Subtitles by Default");positive.setPersistent(false);positive.setChecked(!original.isChecked());positive.setOnPreferenceChangeListener((p,value)->{original.setChecked(!(Boolean)value);return true;});categories.get("Subtitles").addPreference(positive);}
-  // Source scheduling has one home, backed by NetworkAutoRefresh, in Network & Files.
-  for(String key:new String[]{"rescan_storage","auto_rescan_on_app_restart","preview_scan_interval_control","share_folders","preferences_torrent_path","preferences_torrent_blocklist","uimode","uimode_leanback"}){Preference p=root.findPreference(key);if(p!=null)p.setVisible(false);}
-  categories.get("Legacy").setVisible(false);
- }
- private static String contextFor(Preference p){String text=String.valueOf(p.getTitle())+"\n\n"+(p.getSummary()==null?"Select to change this setting.":p.getSummary());
-  if(p instanceof ListPreference){ListPreference list=(ListPreference)p;CharSequence[] entries=list.getEntries(),values=list.getEntryValues();if(entries!=null&&values!=null){text+="\n";for(int i=0;i<Math.min(entries.length,6);i++)text+="\n"+(values[i].toString().equals(list.getValue())?"●  ":"○  ")+entries[i];}}
-  else if(p instanceof TwoStatePreference)text+="\n\nCurrent value: "+(((TwoStatePreference)p).isChecked()?"On":"Off");
-  if(String.valueOf(p.getKey()).toLowerCase(Locale.ROOT).contains("sub"))text+="\n\nSubtitle preview\nThe next chapter begins.";
-  return text;
- }
- private static void focusFirst(androidx.recyclerview.widget.RecyclerView list){list.post(new Runnable(){int attempts;public void run(){if(!list.isAttachedToWindow())return;if(list.hasPendingAdapterUpdates()){if(attempts++<16)list.postOnAnimation(this);return;}for(int i=0;i<list.getChildCount();i++){View child=list.getChildAt(i);if(child.isFocusable()&&child.isEnabled()&&child.requestFocus())return;}if(attempts++<16)list.postOnAnimation(this);}});}
- public static void auditPresentation(PreferenceGroup root){
-  for(String key:new String[]{"smart_recently_rows","separate_anime_movie_show","show_last_added_row","show_last_played_row","show_watching_up_next_row","show_all_movies_row","show_all_tv_shows_row","show_all_animes_row","show_documentaries","hide_trailer_row","show_by_rating"}){Preference pref=root.findPreference(key);if(pref!=null){pref.setEnabled(false);pref.setSelectable(false);pref.setSummary("Legacy interface only — saved value preserved");}}
-  style(root);
- }
- public static void style(PreferenceGroup group){for(int i=0;i<group.getPreferenceCount();i++){Preference p=group.getPreference(i);p.setIconSpaceReserved(false);p.setLayoutResource(p instanceof PreferenceCategory?R.layout.preview_preference_category:R.layout.preview_preference);if(!(p instanceof PreferenceCategory)){PreviewIcon icon=new PreviewIcon(String.valueOf(p.getTitle()));p.setIcon(icon);}if(p instanceof CheckBoxPreference)p.setWidgetLayoutResource(R.layout.preview_preference_checkbox);if(p instanceof PreferenceGroup)style((PreferenceGroup)p);}}
- private static TextView helpFor(android.content.Context context){java.lang.ref.WeakReference<TextView> ref=HELP.get(context);return ref==null?null:ref.get();}
- // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
- @android.annotation.SuppressLint("RestrictedApi")
- public static androidx.recyclerview.widget.RecyclerView.Adapter<?> adapter(PreferenceScreen root){return new PreferenceGroupAdapter(root){@Override public void onBindViewHolder(PreferenceViewHolder holder,int position){super.onBindViewHolder(holder,position);Preference p=getItem(position);com.archos.mediacenter.video.diagnostics.Diagnostics.semantic(holder.itemView,"settings.preference."+p.getKey());boolean category=p instanceof PreferenceCategory;holder.itemView.setBackgroundColor(category?android.graphics.Color.TRANSPARENT:0x280e2332);holder.itemView.setOnFocusChangeListener((v,focused)->{if(focused){TextView help=helpFor(activityContext(v.getContext()));if(help!=null)help.setText(contextFor(p));}});holder.itemView.setForeground(category?null:PreviewDialog.focus(holder.itemView.getContext()));holder.itemView.setFocusable(!category&&p.isEnabled()&&p.isSelectable());holder.itemView.setFocusableInTouchMode(!category&&p.isEnabled()&&p.isSelectable());if(holder.itemView.hasFocus()){TextView help=helpFor(activityContext(holder.itemView.getContext()));if(help!=null)help.setText(contextFor(p));}holder.itemView.setAlpha(category||p.isEnabled()?1f:.38f);androidx.recyclerview.widget.RecyclerView.LayoutParams lp=new androidx.recyclerview.widget.RecyclerView.LayoutParams(-1,category?-2:PreviewDialog.dp(holder.itemView.getContext(),54));lp.setMargins(0,0,PreviewDialog.dp(holder.itemView.getContext(),0),PreviewDialog.dp(holder.itemView.getContext(),4));holder.itemView.setLayoutParams(lp);android.view.View widget=holder.findViewById(android.R.id.widget_frame);if(widget!=null&&!(p instanceof androidx.preference.TwoStatePreference)){android.view.ViewGroup.LayoutParams wp=widget.getLayoutParams();wp.width=PreviewDialog.dp(holder.itemView.getContext(),48);wp.height=PreviewDialog.dp(holder.itemView.getContext(),30);widget.setLayoutParams(wp);fitBadge(widget);}tintSwitches(holder.itemView);holder.setDividerAllowedAbove(false);holder.setDividerAllowedBelow(false);}};}
- // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
- @android.annotation.SuppressLint("RestrictedApi")
- public static androidx.recyclerview.widget.RecyclerView grid(android.content.Context c){
-  com.archos.mediacenter.video.leanback.PreviewFocusRecycler list=new com.archos.mediacenter.video.leanback.PreviewFocusRecycler(c){
-   @Override protected boolean locksHorizontalEdges(){return false;}
-   @Override protected boolean focusablePosition(int p){if(!(getAdapter() instanceof PreferenceGroupAdapter))return false;Preference item=((PreferenceGroupAdapter)getAdapter()).getItem(p);return item!=null&&!(item instanceof PreferenceCategory)&&item.isEnabled()&&item.isSelectable();}
-   @Override public View focusSearch(View focused,int direction){View item=findContainingItemView(focused);int pos=item==null?-1:getChildAdapterPosition(item);androidx.recyclerview.widget.GridLayoutManager lm=(androidx.recyclerview.widget.GridLayoutManager)getLayoutManager();if(direction==View.FOCUS_LEFT&&pos>=0&&lm.getSpanSizeLookup().getSpanIndex(pos,1)==0&&getTag() instanceof View){Object back=getTag(R.id.preview_settings_return);if(back instanceof Runnable){((Runnable)back).run();View restored=getRootView().findFocus();if(restored!=null)return restored;}return (View)getTag();}return super.focusSearch(focused,direction);}
-  };
-  androidx.recyclerview.widget.GridLayoutManager layout=new androidx.recyclerview.widget.GridLayoutManager(c,1);layout.setSpanSizeLookup(new androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup(){public int getSpanSize(int position){if(!(list.getAdapter() instanceof PreferenceGroupAdapter))return 1;return ((PreferenceGroupAdapter)list.getAdapter()).getItem(position) instanceof PreferenceCategory?1:1;}});list.setLayoutManager(layout);list.setClipToPadding(false);return list;
- }
- private static void tintSwitches(View view){int colour=PreviewAccent.color(view.getContext());android.content.res.ColorStateList tint=new android.content.res.ColorStateList(new int[][]{new int[]{android.R.attr.state_checked},new int[]{}},new int[]{colour,0xff738493});if(view instanceof androidx.appcompat.widget.SwitchCompat){((androidx.appcompat.widget.SwitchCompat)view).setThumbTintList(tint);((androidx.appcompat.widget.SwitchCompat)view).setTrackTintList(tint.withAlpha(90));}else if(view instanceof android.widget.CompoundButton)((android.widget.CompoundButton)view).setButtonTintList(tint);if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++)tintSwitches(((ViewGroup)view).getChildAt(i));}
- private static void fitBadge(View view){if(view instanceof ImageView){ImageView image=(ImageView)view;image.setScaleType(ImageView.ScaleType.FIT_CENTER);ViewGroup.LayoutParams size=image.getLayoutParams();size.width=ViewGroup.LayoutParams.MATCH_PARENT;size.height=ViewGroup.LayoutParams.MATCH_PARENT;image.setLayoutParams(size);}else if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;for(int i=0;i<group.getChildCount();i++)fitBadge(group.getChildAt(i));}}
- private static void move(PreferenceScreen root,PreferenceCategory dest,String key){Preference p=root.findPreference(key);if(p==null||p.getParent()==dest)return;PreferenceGroup parent=p.getParent();if(parent!=null)parent.removePreference(p);dest.addPreference(p);}
- public static void sidebar(PreferenceFragmentCompat fragment) {
-  android.content.Context c = fragment.requireContext();
-  androidx.recyclerview.widget.RecyclerView list = fragment.getListView();
-  ViewGroup parent = (ViewGroup) list.getParent();
-  int index = parent.indexOfChild(list);
-  ViewGroup.LayoutParams original = list.getLayoutParams();
-  parent.removeView(list);
-  LinearLayout split = new LinearLayout(c);
-  split.setPadding(0, dp(fragment, 12), 0, dp(fragment, 8));
-  split.setClipChildren(false);
-  LinearLayout links = new com.archos.mediacenter.video.leanback.PreviewFocusRail(c);
-  links.setOrientation(LinearLayout.VERTICAL);
-  links.setClipChildren(false);
-  LinearLayout.LayoutParams rail = new LinearLayout.LayoutParams(0, -1, .23f);
-  rail.rightMargin = dp(fragment, 12);
-  split.addView(links, rail);
-  LinearLayout middle = new LinearLayout(c);
-  middle.setOrientation(LinearLayout.VERTICAL);
-  middle.setClipChildren(false);
-  LinearLayout children = new LinearLayout(c);
-  children.setOrientation(LinearLayout.VERTICAL);
-  children.setClipChildren(false);
-  middle.addView(children, new LinearLayout.LayoutParams(-1, -2));
-  middle.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
-  split.addView(middle, new LinearLayout.LayoutParams(0, -1, .44f));
-  TextView help = new TextView(c);
-  help.setTextSize(14); help.setTextColor(0xffe1e9ef);
-  help.setLineSpacing(dp(fragment, 4), 1);
-  help.setPadding(dp(fragment, 16), dp(fragment, 12), dp(fragment, 12), dp(fragment, 12));
-  ScrollView helpScroll = new ScrollView(c);
-  helpScroll.addView(help); helpScroll.setFocusable(false);
-  helpScroll.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-  LinearLayout.LayoutParams helpSize = new LinearLayout.LayoutParams(0, -1, .33f);
-  helpSize.leftMargin = dp(fragment, 12);
-  split.addView(helpScroll, helpSize);
-  HELP.put(activityContext(c), new java.lang.ref.WeakReference<>(help));
-  parent.addView(split, index, original);
-  PreferenceScreen root = fragment.getPreferenceScreen();
-  Map<Preference, Boolean> visibility = new IdentityHashMap<>();
-  for (int i = 0; i < root.getPreferenceCount(); i++) {
-   Preference p = root.getPreference(i);
-   if (p instanceof PreferenceGroup) {
-    PreferenceGroup group = (PreferenceGroup) p;
-    for (int k = 0; k < group.getPreferenceCount(); k++)
-     visibility.put(group.getPreference(k), group.getPreference(k).isVisible());
-   }
-  }
-  final TextView[] selectedRail = {null}, childOpener = {null};
-  final String[] categoryToken={""},childToken={""};
-  final Runnable[] returnToCategory = {null};
-  List<TextView> railButtons = new ArrayList<>();
-  String requestedCategory = fragment.requireActivity().getIntent().getStringExtra("preview_settings_category");
-  boolean streaming = fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false);
-  fragment.requireActivity().getIntent().removeExtra("preview_settings_category");
-  fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
-  TextView initial = null;
-  for (String name : NAMES) {
-   PreferenceCategory found = null;
-   for (int i = 0; i < root.getPreferenceCount(); i++)
-    if (root.getPreference(i) instanceof PreferenceCategory && name.contentEquals(root.getPreference(i).getTitle()))
-     found = (PreferenceCategory) root.getPreference(i);
-   final PreferenceCategory category = found;
-   TextView button = sidebarButton(c, name, false);
-   button.setBackground(null);
-   button.setTag("semantic:settings:category:" + name);
-   links.addView(button, new LinearLayout.LayoutParams(-1, 0, 1));
-   railButtons.add(button);
-   Runnable showCategory = () -> {
-    if(selectedRail[0]!=button){categoryToken[0]="";childToken[0]="";}
-    int previous=children.getChildCount();
-    children.removeAllViews(); childOpener[0] = null;
-    selectedRail[0] = button; list.setTag(button);
-    for (int i = 0; i < root.getPreferenceCount(); i++) root.getPreference(i).setVisible(root.getPreference(i) == category);
-    if (category != null) for (int k = 0; k < category.getPreferenceCount(); k++) {
-     Preference p = category.getPreference(k);
-     p.setVisible(Boolean.TRUE.equals(visibility.get(p)) && !(p instanceof PreferenceCategory));
+/** Organizes and styles TV Settings preferences, navigation and focus handling. */
+public final class PreviewSettings {
+    private static final WeakHashMap<Context, WeakReference<TextView>> HELP =
+        new WeakHashMap<>();
+    private static final
+        WeakHashMap<Context, Consumer<Preference>> EDITORS =
+        new WeakHashMap<>();
+    private static final String[] ORIGINAL_NAMES = {
+        "General", "Home & Discovery", "Playback", "Video & Audio",
+        "Subtitles", "Library", "Sources & Storage", "Appearance", "Trakt", "Streaming", "Integrations", "Advanced",
+        "About", "Legacy"
+    };
+
+    public static void organise(PreferenceFragmentCompat fragment) {
+        PreferenceScreen root = fragment.getPreferenceScreen();
+        if (root == null)
+            return;
+        Map<String, PreferenceCategory> categories = new LinkedHashMap<>();
+        String[] keys = {
+            "preferences_about", "category_leanback_user_interface", "preview_playback",
+            "preferences_category_video", "preview_subtitles", "scraper_category", "netshare_category",
+            "category_user_interface", "trakt_category", "streaming_category", "preview_integrations",
+            "preferences_category_advanced_video", "about_category", "preview_legacy"
+        };
+        for (int i = 0; i < keys.length; i++) {
+            Preference p = root.findPreference(keys[i]);
+            PreferenceCategory c = p instanceof PreferenceCategory ? (PreferenceCategory) p
+                                                                   : new PreferenceCategory(fragment.requireContext());
+            if (p == null) {
+                c.setKey(keys[i]);
+                root.addPreference(c);
+            }
+            c.setTitle(ORIGINAL_NAMES[i]);
+            c.setOrder(i * 100);
+            categories.put(ORIGINAL_NAMES[i], c);
+        }
+        java.util.List<PreferenceCategory> old = new ArrayList<>();
+        for (int i = 0; i < root.getPreferenceCount(); i++)
+            if (root.getPreference(i) instanceof PreferenceCategory)
+                old.add((PreferenceCategory) root.getPreference(i));
+        for (PreferenceCategory c : old) {
+            String title = String.valueOf(c.getTitle()).toLowerCase(Locale.ROOT);
+            if (!categories.containsValue(c)) {
+                PreferenceCategory dest = categories.get(title.contains("language") ? "Subtitles"
+                                                                                    : "Sources & Storage");
+                while (c.getPreferenceCount() > 0) {
+                    Preference p = c.getPreference(0);
+                    c.removePreference(p);
+                    dest.addPreference(p);
+                }
+                c.setVisible(false);
+            }
+        }
+        if (root.findPreference("preview_sftp_trust") == null) {
+            Preference trust = new Preference(fragment.requireContext());
+            trust.setKey("preview_sftp_trust");
+            trust.setTitle("SFTP server identities");
+            trust.setSummary(
+                "First connection stores a server identity. Changed identities are rejected. Only reset after verifying a legitimate server key change.");
+            trust.setOnPreferenceClickListener(p -> {
+                String[] hosts = SftpHostTrust.hosts();
+                if (hosts.length == 0) {
+                    PreviewDialog.read(fragment.requireContext(), "SFTP server identities",
+                        "No identities recorded yet. First-use trust does not protect an already compromised first connection.");
+                    return true;
+                }
+                PreviewDialog.choose(fragment.requireContext(), "Recorded SFTP servers", hosts, -1,
+                    n -> PreviewDialog.choose(fragment.requireContext(),
+                        "Reset this server identity only after independently verifying its new key",
+                        new String[] {
+                            "Cancel", "Reset identity for " + hosts[n]
+                        }, 0, i -> {
+                            if (i == 1)
+                                SftpHostTrust.forget(hosts[n]);
+                        }));
+                return true;
+            });
+            categories.get("Sources & Storage").addPreference(trust);
+        }
+        move(root, categories.get("Appearance"), "ui_lang");
+        move(root, categories.get("About"), "preferences_version");
+        for (String key :
+            new String[] {
+                "playback_speed", "audio_speed_audiotrack", "resume", "repeat_mode", "playback_repeat_mode"
+            })
+            move(root, categories.get("Playback"), key);
+        if (root.findPreference("remember_library_views") == null) {
+            SwitchPreferenceCompat remember = new SwitchPreferenceCompat(fragment.requireContext());
+            remember.setKey("remember_library_views");
+            remember.setTitle("Remember library view preferences");
+            remember.setSummary("Keep Movies and TV Shows views, filters, sort and order separately");
+            remember.setDefaultValue(true);
+            categories.get("Library").addPreference(remember);
+        }
+        for (String key : new String[] {
+            "subtitles_credentials", "subtitles_hide_default", "favSubLang",
+                 "languages_list", "codepage", "subtitles_show_full_for_local_audio", "subtitle_fonts_folder_uri",
+                 "subtitle_default_font", "subtitle_use_margins"
+        })
+            move(root, categories.get("Subtitles"), key);
+        if (root.findPreference(SubtitleDiscovery.ENABLED) == null) {
+            SwitchPreferenceCompat discovery = new SwitchPreferenceCompat(fragment.requireContext());
+            discovery.setKey(SubtitleDiscovery.ENABLED);
+            discovery.setTitle("Prepare Subtitle Searches");
+            discovery.setSummary(
+                "Check your chosen languages when viewing titles or starting playback. Cache results privately; downloads remain your choice. No provider searches during library import.");
+            discovery.setDefaultValue(false);
+            categories.get("Subtitles").addPreference(discovery);
+            SwitchPreferenceCompat season = new SwitchPreferenceCompat(fragment.requireContext());
+            season.setKey(SubtitleDiscovery.PREFETCH);
+            season.setTitle("Prepare Current Season");
+            season.setSummary(
+                "Pace searches for remaining local episodes after this season starts playing. Prepare only the next episode at a season boundary.");
+            season.setDefaultValue(true);
+            categories.get("Subtitles").addPreference(season);
+        }
+        for (String key : new String[] {
+            "display_resume_box", "hide_controls_on_pause", "player_projector_mode_key"
+        })
+            move(root, categories.get("Playback"), key);
+        move(root, categories.get("Library"), "rescan_storage");
+        Preference fullScan = root.findPreference("rescan_storage");
+        if (fullScan != null) {
+            fullScan.setTitle("Full Library Scan");
+            fullScan.setSummary("Scan local storage and indexed network folders; retry unmatched descriptions");
+        }
+        SwitchPreferenceCompat automatic = new SwitchPreferenceCompat(fragment.requireContext());
+        automatic.setKey("auto_rescan_on_app_restart");
+        automatic.setTitle("Scan network library on return");
+        automatic.setSummary(
+            "Check indexed sources, including WebDAV, when Supernova opens or returns to the foreground");
+        automatic.setDefaultValue(true);
+        categories.get("Library").addPreference(automatic);
+        ListPreference interval = new ListPreference(fragment.requireContext());
+        interval.setKey("preview_scan_interval_control");
+        interval.setPersistent(false);
+        interval.setTitle("Automatic network scan interval");
+        interval.setEntries(new String[] {
+            "Off", "15 minutes", "30 minutes", "1 hour", "6 hours", "24 hours"
+        });
+        interval.setEntryValues(new String[] {
+            "0", "900000", "1800000", "3600000", "21600000", "86400000"
+        });
+        int savedPeriod = NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());
+        interval.setValue(String.valueOf(savedPeriod));
+        interval.setSummaryProvider(p -> {
+            int period = NetworkAutoRefresh.getRescanPeriod(fragment.requireContext());
+            return period <= 0 ? "Off" : period / 60000 + " minutes · Android may defer background jobs";
+        });
+        interval.setOnPreferenceChangeListener((p, value) -> {
+            NetworkScannerUtil.scheduleNewRescan(
+                fragment.requireContext(), 0, Integer.parseInt(value.toString()), true);
+            return true;
+        });
+        categories.get("Library").addPreference(interval);
+        // Only the inert UI placeholder is removed. No updater or saved preference existed.
+        Preference updates = root.findPreference("preview_updates");
+        if (updates != null && updates.getParent() != null)
+            updates.getParent().removePreference(updates);
+        for (String key : new String[] {
+            "preferences_video_os", "preferences_video_tmdb", "preferences_video_trakt"
+        }) {
+            Preference attribution = root.findPreference(key);
+            if (attribution != null) {
+                attribution.setEnabled(false);
+                attribution.setSelectable(false);
+            }
+        }
+        for (String key :
+            new String[] {
+                "always_leanback_on_tv_key", "reset_last_played_row", "reset_last_played_section",
+                "preferences_movie_sort_order", "preferences_tv_show_sort_order", "preferences_animes_sort_order",
+                "try_new_ui", "smart_recently_rows", "separate_anime_movie_show", "show_last_added_row",
+                "show_last_played_row", "show_watching_up_next_row", "show_all_movies_row", "show_all_tv_shows_row",
+                "show_all_animes_row", "show_documentaries", "hide_trailer_row", "show_by_rating", "app_theme"
+            }) {
+                Preference p = root.findPreference(key);
+                if (p != null) {
+                    move(root, categories.get("Legacy"), key);
+                    p.setEnabled(false);
+                    p.setSelectable(false);
+                    p.setSummary(key.equals("player_projector_mode_key")
+                        ? "Legacy: aligns video and effects to the top of the screen. Existing value is preserved; presentation control retired pending device QA."
+                        : key.equals("app_theme")
+                        ? "Legacy theme retained for classic surfaces. Use Accent & Colour in Appearance."
+                        : "Deprecated in this interface — underlying behaviour and saved value preserved");
+                }
+            }
+        Preference accent = new Preference(fragment.requireContext());
+        accent.setKey("preview_accent_picker");
+        accent.setTitle("Accent & Colour");
+        accent.setSummary("Focus, selected controls and subtle utility gradients");
+        accent.setOnPreferenceClickListener(p -> {
+            PreviewAccent.choose(fragment.requireContext(), () -> fragment.requireActivity().recreate());
+            return true;
+        });
+        categories.get("Appearance").addPreference(accent);
+        Preference rows = new Preference(fragment.requireContext());
+        rows.setKey("preview_home_editor");
+        rows.setTitle("Home rows");
+        rows.setSummary("Create, rename, hide and reorder rows; manage Watch Next");
+        rows.setOnPreferenceClickListener(p -> {
+            PreviewHomeRows.customise(fragment.requireContext(), () -> {
+            });
+            return true;
+        });
+        categories.get("Home & Discovery").addPreference(rows);
+        Preference clear = new Preference(fragment.requireContext());
+        clear.setKey("preview_clear_watch_next");
+        clear.setTitle("Clear Watch Next");
+        clear.setSummary("Remove all Watch Next titles after confirmation. Library and playback history are kept.");
+        clear.setOnPreferenceClickListener(p -> {
+            PreviewHomeRows.clearWatchNext(fragment.requireContext());
+            return true;
+        });
+        categories.get("Home & Discovery").addPreference(clear);
+        String[] sources = {
+            "recent", "trending", "popular"
+        },
+                 sourceNames = {
+                     "Featured: Recently Added", "Featured: Trakt Trending", "Featured: Trakt Popular"
+                 };
+        for (int n = 0; n < sources.length; n++) {
+            SwitchPreferenceCompat enabled = new SwitchPreferenceCompat(fragment.requireContext());
+            enabled.setKey("preview_featured_" + sources[n]);
+            enabled.setTitle(sourceNames[n]);
+            enabled.setSummary("Select from matching local-library titles; offline local fallback");
+            enabled.setDefaultValue(true);
+            categories.get("Home & Discovery").addPreference(enabled);
+        }
+        SwitchPreferenceCompat diagnostics = new SwitchPreferenceCompat(fragment.requireContext());
+        diagnostics.setKey(Diagnostics.KEY);
+        diagnostics.setTitle("Diagnostic Logging");
+        diagnostics.setSummary(
+            "Detailed diagnostic logging starts enabled. Bounded local reports exclude credentials.");
+        diagnostics.setDefaultValue(Diagnostics.defaultEnabled());
+        diagnostics.setOnPreferenceChangeListener((p, value) -> {
+            if ((Boolean) value) {
+                Diagnostics.setEnabled(fragment.requireContext(), true);
+                return true;
+            }
+            Diagnostics.chooseDisable(
+                fragment.requireContext(), checked -> diagnostics.setChecked(checked));
+            return false;
+        });
+        categories.get("Advanced").addPreference(diagnostics);
+        ListPreference diagnosticLevel = new ListPreference(fragment.requireContext());
+        diagnosticLevel.setKey(Diagnostics.LEVEL);
+        diagnosticLevel.setTitle("Diagnostic Level");
+        diagnosticLevel.setEntries(new String[] {
+            "Normal", "Detailed (QA)"
+        });
+        diagnosticLevel.setEntryValues(new String[] {
+            "normal", "qa"
+        });
+        diagnosticLevel.setDefaultValue("qa");
+        diagnosticLevel.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+        categories.get("Advanced").addPreference(diagnosticLevel);
+        for (String label : new String[] {
+            "Issues Digest", "Report a Problem", "Show Latest Reference"
+        }) {
+            Preference item = new Preference(fragment.requireContext());
+            item.setKey("preview_diagnostic_" + label);
+            item.setTitle(label);
+            item.setOnPreferenceClickListener(p -> {
+                if (label.equals("Issues Digest"))
+                    Diagnostics.showDigest(fragment.requireContext());
+                else if (label.equals("Show Latest Reference"))
+                    Diagnostics.showLatestReference(fragment.requireContext());
+                else
+                    Diagnostics.reportProblem(fragment.requireContext());
+                return true;
+            });
+            categories.get("Advanced").addPreference(item);
+        }
+        Preference export = new Preference(fragment.requireContext());
+        export.setKey("export_diagnostic_report");
+        export.setTitle("Export Diagnostic Report");
+        export.setSummary(
+            "Save recent logs and safe device/build information as a ZIP. Choose a destination using Android Files.");
+        export.setOnPreferenceClickListener(p -> {
+            fragment.startActivity(new Intent(
+                fragment.requireContext(), DiagnosticExportActivity.class));
+            return true;
+        });
+        categories.get("Advanced").addPreference(export);
+        if (!BuildConfig.FOUNDATION)
+            PreviewBuildInfo.install(fragment, categories.get("About"));
+        for (String[] choice :
+            new String[][] {
+                {
+                    ViewingHistory.TRACK, "Track Watch History"
+                },
+                {
+                    ViewingHistory.RESUME, "Remember Playback Position"
+                }
+            }) {
+                SwitchPreferenceCompat enabled = new SwitchPreferenceCompat(fragment.requireContext());
+                enabled.setKey(choice[0]);
+                enabled.setTitle(choice[1]);
+                enabled.setDefaultValue(true);
+                enabled.setSummary(choice[0].equals(ViewingHistory.TRACK)
+                    ? "Keep viewing history until explicitly cleared. Turning this off keeps existing history."
+                    : "Save unfinished playback positions independently of viewing-history tracking.");
+                categories.get("Library").addPreference(enabled);
+            }
+        for (String[] backup : new String[][] {
+            {
+                "supernova_backup_history", "Include Watch History in Backups"
+            },
+                 {
+                     "supernova_backup_resume", "Include Playback Positions in Backups"
+                 }
+        }) {
+            CheckBoxPreference selected = new CheckBoxPreference(fragment.requireContext());
+            selected.setKey(backup[0]);
+            selected.setTitle(backup[1]);
+            selected.setDefaultValue(true);
+            selected.setSummary(
+                "Controls backup inclusion independently of tracking. Backups can reveal viewing habits.");
+            categories.get("Advanced").addPreference(selected);
+        }
+        Preference clearHistory = new Preference(fragment.requireContext());
+        clearHistory.setTitle("Clear Viewing History");
+        clearHistory.setKey("supernova_clear_history");
+        clearHistory.setOnPreferenceClickListener(p -> {
+            PreviewDialog.confirmDelete(fragment.requireContext(), "Clear Viewing History?",
+                "Saved watch history will be removed. Unfinished playback positions, media files and sources are kept.",
+                () -> ViewingHistory.clear(fragment.requireContext(),
+                        () -> Toast
+                                .makeText(fragment.requireContext(),
+                                    "Watch history cleared. Unfinished playback positions kept.",
+                                    Toast.LENGTH_LONG)
+                                .show()));
+            return true;
+        });
+        categories.get("Library").addPreference(clearHistory);
+        consolidate(fragment, root, categories);
+        auditPresentation(root);
+        style(root);
     }
-    com.archos.mediacenter.video.diagnostics.Diagnostics.uiState("settings",name,"workspace","none","none",0);
-    help.setText(name + "\n\nPress OK or Right to enter this category.");
-    list.scrollToPosition(0);
-    com.archos.mediacenter.video.diagnostics.Diagnostics.uiRebuild(children,"settings.sections","category_changed",previous,children.getChildCount(),false);
-   };
-   Runnable enter = () -> {
-    showCategory.run();
-    if(categoryToken[0].isEmpty())categoryToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(button,"settings.category");
-    if (category != null) for (int k = 0; k < category.getPreferenceCount(); k++) {
-     Preference p = category.getPreference(k);
-     if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p))) continue;
-     TextView child = sidebarButton(c, String.valueOf(p.getTitle()), false);
-     child.setTag("semantic:settings:section:" + p.getKey());
-     children.addView(child, new LinearLayout.LayoutParams(-1, dp(fragment, 40)));
-     Runnable openChild = () -> {
-      childToken[0]=com.archos.mediacenter.video.diagnostics.Diagnostics.focusEntry(child,"settings.child");
-      childOpener[0] = child; children.setVisibility(View.GONE); list.setTag(child);
-      for (int n = 0; n < category.getPreferenceCount(); n++) category.getPreference(n).setVisible(category.getPreference(n) == p);
-      help.setText(String.valueOf(p.getTitle())); list.scrollToPosition(0); focusFirst(list);
-     };
-     child.setOnClickListener(v -> openChild.run());
-     child.setOnKeyListener((v, key, event) -> {
-      if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
-      if (key == KeyEvent.KEYCODE_DPAD_RIGHT) { openChild.run(); return true; }
-      if (key == KeyEvent.KEYCODE_DPAD_LEFT) { boolean restored=button.requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(categoryToken[0],button,button,false,restored);categoryToken[0]="";return true; }
-      return false;
-     });
+
+    private static final String[] NAMES = {
+        "Playback", "Video", "Audio", "Subtitles", "Library & Metadata", "Home",
+        "Appearance", "Streaming", "Network", "Integrations", "Advanced", "About"
+    };
+
+    private static void consolidate(
+        PreferenceFragmentCompat fragment, PreferenceScreen root, Map<String, PreferenceCategory> categories) {
+            PreferenceCategory video = categories.get("Video & Audio");
+            video.setTitle("Video");
+            categories.get("Sources & Storage").setTitle("Network");
+            categories.get("Library").setTitle("Library & Metadata");
+            categories.get("Home & Discovery").setTitle("Home");
+            PreferenceCategory audio = new PreferenceCategory(fragment.requireContext());
+            audio.setKey("preview_audio");
+            audio.setTitle("Audio");
+            root.addPreference(audio);
+            categories.put("Audio", audio);
+            PreferenceCategory general = categories.get("General");
+            while (general.getPreferenceCount() > 0) {
+                Preference p = general.getPreference(0);
+                general.removePreference(p);
+                categories.get("About").addPreference(p);
+            }
+            general.setVisible(false);
+            for (String key : new String[] {
+                "favAudioLang", "prefer_original_audio_track",
+                 "force_audio_passthrough_multiple", "player_spatialization_enabled"
+            })
+                move(root, audio, key);
+            for (String key : new String[] {
+                "allow_3rd_party_player", "network_bookmarks",
+                 fragment.getString(R.string.reset_brightness_on_start_key)
+            })
+                move(root, categories.get("Playback"), key);
+            for (String key : new String[] {
+                 "hide_watched", "sort_ignore_articles", "preference_display_all_files", "pref_create_remote_thumbs"
+            })
+                move(root, categories.get("Library"), key);
+            PreferenceCategory advanced = categories.get("Advanced");
+            String[][] compatibility = {
+                {
+                    "Video Compatibility", "force_software_decoding", "dec_choice", "parser_sync_mode",
+                    "enable_cutout_mode_short_edges", "enable_cutout_both_sidesx", "stream_max_iframe_size"
+                },
+                {
+                    "Audio Compatibility", "audio_interface_choice", "audio_decoder_choice", "force_passthrough",
+                    "audio_speed_audiotrack", "supernova_pcm_speed_engine", "enable_dynamic_audio_delay", "disable_downmix",
+                    "enable_downmix_androidtv"
+                },
+                {
+                    "Network Compatibility", "pref_smbj", "pref_smbv2", "pref_smb_resolv", "pref_smb_disable_tcp_discovery",
+                    "pref_smb_disable_udp_discovery", "pref_smb_disable_mdns_discovery", "pref_sshj", "stream_buffer_size"
+                },
+                {
+                    "Subtitle Compatibility", "codepage"
+                }
+            };
+            for (String[] group : compatibility) {
+                PreferenceCategory section = new PreferenceCategory(fragment.requireContext());
+                section.setKey("preview_compat_" + group[0]);
+                section.setTitle(group[0]);
+                advanced.addPreference(section);
+                for (int i = 1; i < group.length; i++)
+                    move(root, section, group[i]);
+            }
+            PreferenceCategory backupGroup = new PreferenceCategory(fragment.requireContext());
+            backupGroup.setKey("preview_backup_restore");
+            backupGroup.setTitle("Backup & Restore");
+            advanced.addPreference(backupGroup);
+            for (String key : new String[] {
+                "media_library_export_prefkey", "media_library_import_prefkey",
+                 "supernova_backup_history", "supernova_backup_resume"
+            })
+                move(root, backupGroup, key);
+            PreferenceCategory diagnosticGroup = new PreferenceCategory(fragment.requireContext());
+            diagnosticGroup.setKey("preview_diagnostics_group");
+            diagnosticGroup.setTitle("Diagnostics");
+            advanced.addPreference(diagnosticGroup);
+            for (String key : new String[] {
+                Diagnostics.KEY,
+                 Diagnostics.LEVEL, "preview_diagnostic_Issues Digest",
+                 "preview_diagnostic_Report a Problem", "preview_diagnostic_Show Latest Reference",
+                 "export_diagnostic_report"
+            })
+                move(root, diagnosticGroup, key);
+            PreferenceCategory integrations = categories.get("Integrations"), trakt = categories.get("Trakt");
+            root.removePreference(trakt);
+            integrations.addPreference(trakt);
+            integrationToggle(fragment, trakt, "supernova_integration_trakt", "Enable Trakt");
+            PreferenceCategory subtitles = new PreferenceCategory(fragment.requireContext());
+            subtitles.setKey("preview_opensubtitles");
+            subtitles.setTitle("OpenSubtitles");
+            integrations.addPreference(subtitles);
+            move(root, subtitles, "subtitles_credentials");
+            integrationToggle(fragment, subtitles, "supernova_integration_opensubtitles", "Enable OpenSubtitles");
+            PreferenceCategory intro = new PreferenceCategory(fragment.requireContext());
+            intro.setKey("preview_introdb");
+            intro.setTitle("IntroDB");
+            integrations.addPreference(intro);
+            SwitchPreferenceCompat skip = new SwitchPreferenceCompat(fragment.requireContext());
+            skip.setKey(SegmentSkippingPolicy.MASTER);
+            skip.setTitle("Enable IntroDB");
+            skip.setSummary("Use available segment boundaries. Uncertain material plays normally.");
+            skip.setDefaultValue(true);
+            skip.setVisible(false);
+            intro.addPreference(skip);
+            for (IntroSegments.Type type :
+            IntroSegments.Type.values()) {
+                ListPreference policy = new ListPreference(fragment.requireContext());
+                policy.setKey(SegmentSkippingPolicy.key(type));
+                policy.setTitle(type.name().substring(0, 1) + type.name().substring(1).toLowerCase(java.util.Locale.ROOT));
+                policy.setEntries(new String[] {
+                    "Play Normally", "Show Skip (5 seconds)",
+                    type == IntroSegments.Type.CREDITS ? "Safe Auto Skip"
+                                                                                        : "Auto Skip",
+                    "Smart"
+                });
+                policy.setEntryValues(new String[] {
+                    "NORMAL", "PROMPT", "AUTO", "SMART"
+                });
+                policy.setDefaultValue(SegmentSkippingPolicy.defaultMode(type).name());
+                policy.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+                intro.addPreference(policy);
+            }
+
+            Preference hidden = root.findPreference("subtitles_hide_default");
+            if (hidden instanceof TwoStatePreference) {
+                TwoStatePreference original = (TwoStatePreference) hidden;
+                original.setVisible(false);
+                SwitchPreferenceCompat positive = new SwitchPreferenceCompat(fragment.requireContext());
+                positive.setKey("preview_subtitles_by_default");
+                positive.setTitle("Subtitles by Default");
+                positive.setPersistent(false);
+                positive.setChecked(!original.isChecked());
+                positive.setOnPreferenceChangeListener((p, value) -> {
+                    boolean inverse = !(Boolean) value;
+                    if (!original.callChangeListener(inverse))
+                        return false;
+                    original.setChecked(inverse);
+                    return true;
+                });
+                categories.get("Subtitles").addPreference(positive);
+            }
+            // Source scheduling has one home, backed by NetworkAutoRefresh, in Network & Files.
+            for (String key : new String[] {
+                "rescan_storage", "auto_rescan_on_app_restart", "preview_scan_interval_control",
+                 "share_folders", "uimode", "uimode_leanback"
+            }) {
+                Preference p = root.findPreference(key);
+                if (p != null)
+                    p.setVisible(false);
+            }
+            categories.get("Legacy").setVisible(false);
+        }
+
+    private static void integrationToggle(
+        PreferenceFragmentCompat fragment, PreferenceCategory group, String key, String title) {
+            SwitchPreferenceCompat enabled = new SwitchPreferenceCompat(fragment.requireContext());
+            enabled.setKey(key);
+            enabled.setTitle(title);
+            enabled.setDefaultValue(true);
+            enabled.setOrder(-100);
+            enabled.setVisible(false);
+            enabled.setSummary("Connection credentials are kept when disabled.");
+            group.addPreference(enabled);
+        }
+
+    private static void collectVisibility(PreferenceGroup group, Map<Preference, Boolean> visibility) {
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference child = group.getPreference(i);
+            visibility.put(child, child.isVisible());
+            if (child instanceof PreferenceGroup)
+                collectVisibility((PreferenceGroup) child, visibility);
+        }
     }
-    children.setVisibility(View.VISIBLE);
-    if (children.getChildCount() > 0) children.getChildAt(0).requestFocus(); else focusFirst(list);
-   };
-   button.setOnFocusChangeListener((v, focused) -> { if (focused) { if(selectedRail[0]!=button)showCategory.run(); returnToCategory[0] = enter; } });
-   button.setOnClickListener(v -> enter.run());
-   button.setOnKeyListener((v, key, event) -> {
-    if (event.getAction() != KeyEvent.ACTION_DOWN) return false;
-    if (key == KeyEvent.KEYCODE_DPAD_RIGHT) { enter.run(); return true; }
-    if (key == KeyEvent.KEYCODE_DPAD_LEFT) return true;
-    int position = railButtons.indexOf(button);
-    if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
-     if (position + 1 < railButtons.size()) railButtons.get(position + 1).requestFocus();
-     return true;
+
+    private static void restoreVisibility(PreferenceGroup group, Map<Preference, Boolean> visibility) {
+        String enable = "trakt_category".equals(group.getKey()) ? "supernova_integration_trakt"
+            : "preview_opensubtitles".equals(group.getKey()) ? "supernova_integration_opensubtitles"
+            : "preview_introdb".equals(group.getKey())
+            ? SegmentSkippingPolicy.MASTER
+            : null;
+        boolean enabled = enable == null
+            || PreferenceManager.getDefaultSharedPreferences(group.getContext()).getBoolean(enable, true);
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference child = group.getPreference(i);
+            child.setVisible(
+                Boolean.TRUE.equals(visibility.get(child)) && (enabled || Objects.equals(enable, child.getKey())));
+            if (child instanceof PreferenceGroup)
+                restoreVisibility((PreferenceGroup) child, visibility);
+        }
     }
-    if (key == KeyEvent.KEYCODE_DPAD_UP) {
-     if (position > 0) railButtons.get(position - 1).requestFocus();
-     else { View ancestor = split; while (ancestor.getParent() instanceof View) { ancestor = (View) ancestor.getParent(); if (ancestor instanceof com.archos.mediacenter.video.leanback.TopNavigation) { ((com.archos.mediacenter.video.leanback.TopNavigation) ancestor).focusNavigation(); break; } } }
-     return true;
+
+    private static String contextFor(Preference p) {
+        String text = String.valueOf(p.getTitle()) + "\n\n"
+            + (p.getSummary() == null ? "Select to change this setting." : p.getSummary());
+        if (p instanceof ListPreference) {
+            ListPreference list = (ListPreference) p;
+            CharSequence[] entries = list.getEntries(), values = list.getEntryValues();
+            if (entries != null && values != null) {
+                text += "\n";
+                for (int i = 0; i < Math.min(entries.length, 6); i++)
+                    text += "\n" + (values[i].toString().equals(list.getValue()) ? "●  " : "○  ") + entries[i];
+            }
+        } else if (p instanceof TwoStatePreference)
+            text += "\n\nCurrent value: " + (((TwoStatePreference) p).isChecked() ? "On" : "Off");
+        if (String.valueOf(p.getKey()).toLowerCase(Locale.ROOT).contains("sub"))
+            text += "\n\nSubtitle preview\nThe next chapter begins.";
+        return text;
     }
-    return false;
-   });
-   if (initial == null || name.equals(requestedCategory) || requestedCategory==null && streaming && name.equals("Streaming")) initial = button;
-  }
-  androidx.activity.OnBackPressedCallback back = new androidx.activity.OnBackPressedCallback(false) {
-   @Override public void handleOnBackPressed() {
-    if (childOpener[0] != null && returnToCategory[0] != null) {
-     View requested=childOpener[0];Object key=requested.getTag();String token=childToken[0];returnToCategory[0].run();
-     View target=null;
-     for (int i = 0; i < children.getChildCount(); i++) {
-      TextView child = (TextView) children.getChildAt(i);
-      if (java.util.Objects.equals(key,child.getTag())) { target=child;break; }
-     }
-     boolean fallback=target==null;if(target==null)target=selectedRail[0];boolean restored=target!=null&&target.requestFocus();
-     com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(token,requested,target,fallback,restored);childToken[0]="";
-    } else if (selectedRail[0] != null) {boolean restored=selectedRail[0].requestFocus();com.archos.mediacenter.video.diagnostics.Diagnostics.focusRestored(categoryToken[0],selectedRail[0],selectedRail[0],false,restored);categoryToken[0]="";}
-   }
-  };
-  fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
-  list.setTag(R.id.preview_settings_return, (Runnable) back::handleOnBackPressed);
-  ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, newView) -> back.setEnabled(middle.hasFocus());
-  split.getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
-  split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-   public void onViewAttachedToWindow(View view) { }
-   public void onViewDetachedFromWindow(View view) {
-    if(view.getViewTreeObserver().isAlive())view.getViewTreeObserver().removeOnGlobalFocusChangeListener(focusListener);
-   }
-  });
-  if (initial != null) { TextView first = initial; first.post(first::requestFocus); }
- }
- private static TextView sidebarButton(android.content.Context c,String name,boolean child){TextView button=new TextView(c);button.setText(name);button.setTextSize(13);button.setTextColor(android.graphics.Color.WHITE);button.setGravity(Gravity.CENTER_VERTICAL);button.setPadding(PreviewDialog.dp(c,child?24:10),0,PreviewDialog.dp(c,10),0);PreviewIcon.apply(button,name,17);button.setFocusable(true);button.setFocusableInTouchMode(true);button.setBackground(PreviewDialog.focus(c));return button;}
- private static android.content.Context activityContext(android.content.Context c){while(c instanceof android.content.ContextWrapper&&!(c instanceof android.app.Activity))c=((android.content.ContextWrapper)c).getBaseContext();return c;}
- private static int dp(PreferenceFragmentCompat f,int v){return Math.round(v*f.getResources().getDisplayMetrics().density);}
+
+    private static void focusFirstView(ViewGroup group) {
+        ArrayList<View> controls = new ArrayList<>();
+        group.addFocusables(controls, View.FOCUS_DOWN);
+        for (View view : controls)
+            if (view != group && view.isShown() && view.requestFocus())
+                return;
+    }
+
+    private static void focusFirst(RecyclerView list) {
+        list.post(new Runnable() {
+            int attempts;
+            @Override
+            public void run() {
+                if (!list.isAttachedToWindow())
+                    return;
+                if (list.hasPendingAdapterUpdates()) {
+                    if (attempts++ < 16)
+                        list.postOnAnimation(this);
+                    return;
+                }
+                for (int i = 0; i < list.getChildCount(); i++) {
+                    View child = list.getChildAt(i);
+                    if (child.isFocusable() && child.isEnabled() && child.requestFocus())
+                        return;
+                }
+                if (attempts++ < 16)
+                    list.postOnAnimation(this);
+            }
+        });
+    }
+
+    public static void auditPresentation(PreferenceGroup root) {
+        for (String key : new String[] {
+            "smart_recently_rows", "separate_anime_movie_show", "show_last_added_row",
+                 "show_last_played_row", "show_watching_up_next_row", "show_all_movies_row", "show_all_tv_shows_row",
+                 "show_all_animes_row", "show_documentaries", "hide_trailer_row", "show_by_rating"
+        }) {
+            Preference pref = root.findPreference(key);
+            if (pref != null) {
+                pref.setEnabled(false);
+                pref.setSelectable(false);
+                pref.setSummary("Legacy interface only — saved value preserved");
+            }
+        }
+        style(root);
+    }
+
+    public static void style(PreferenceGroup group) {
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference p = group.getPreference(i);
+            p.setIconSpaceReserved(false);
+            p.setLayoutResource(
+                p instanceof PreferenceCategory ? R.layout.preview_preference_category : R.layout.preview_preference);
+            if (!(p instanceof PreferenceCategory)) {
+                PreviewIcon icon = new PreviewIcon(String.valueOf(p.getTitle()));
+                p.setIcon(icon);
+            }
+            if (p instanceof CheckBoxPreference)
+                p.setWidgetLayoutResource(R.layout.preview_preference_checkbox);
+            if (p instanceof PreferenceGroup)
+                style((PreferenceGroup) p);
+        }
+    }
+
+    private static TextView helpFor(Context context) {
+        WeakReference<TextView> ref = HELP.get(context);
+        return ref == null ? null : ref.get();
+    }
+
+    // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
+    @SuppressLint("RestrictedApi")
+    public static RecyclerView.Adapter<?> adapter(PreferenceScreen root) {
+        return new PreferenceGroupAdapter(root) {
+            @Override
+            public void onBindViewHolder(PreferenceViewHolder holder, int position) {
+                super.onBindViewHolder(holder, position);
+                Preference p = getItem(position);
+                Diagnostics.semantic(
+                    holder.itemView, "settings.preference." + p.getKey());
+                boolean category = p instanceof PreferenceCategory;
+                holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                holder.itemView.setOnFocusChangeListener((v, focused) -> {
+                    if (focused) {
+                        TextView help = helpFor(activityContext(v.getContext()));
+                        if (help != null)
+                            help.setText(contextFor(p));
+                        Consumer<Preference> editor = EDITORS.get(activityContext(v.getContext()));
+                        if (editor != null)
+                            editor.accept(p);
+                    }
+                });
+                holder.itemView.setForeground(category
+                        ? null
+                        : SharedThreePanel.accentFocus(
+                              holder.itemView.getContext()));
+                if (!category)
+                    SharedThreePanel.rowSeparator(holder.itemView);
+                holder.itemView.setFocusable(!category && p.isEnabled() && p.isSelectable());
+                holder.itemView.setFocusableInTouchMode(!category && p.isEnabled() && p.isSelectable());
+                if (holder.itemView.hasFocus()) {
+                    TextView help = helpFor(activityContext(holder.itemView.getContext()));
+                    if (help != null)
+                        help.setText(contextFor(p));
+                }
+                if (p instanceof ListPreference || p instanceof MultiSelectListPreference)
+                    holder.itemView.setOnClickListener(v -> {
+                        Consumer<Preference> editor = EDITORS.get(activityContext(v.getContext()));
+                        if (editor != null)
+                            editor.accept(p);
+                        View right = holder.itemView.getRootView().findViewWithTag("settings.inline.choices");
+                        if (right instanceof ViewGroup) {
+                            ViewGroup group = (ViewGroup) right;
+                            for (int n = 0; n < group.getChildCount(); n++)
+                                if (group.getChildAt(n).isFocusable()) {
+                                    group.getChildAt(n).requestFocus();
+                                    break;
+                                }
+                        }
+                    });
+                View summary = holder.findViewById(android.R.id.summary);
+                if (summary != null)
+                    summary.setVisibility(View.GONE);
+                holder.itemView.setAlpha(category || p.isEnabled() ? 1f : .38f);
+                RecyclerView.LayoutParams lp =
+                    new RecyclerView.LayoutParams(
+                        -1, category ? -2 : PreviewDialog.dp(holder.itemView.getContext(), 54));
+                lp.setMargins(0, 0, 0, PreviewDialog.dp(holder.itemView.getContext(), 6));
+                holder.itemView.setLayoutParams(lp);
+                android.view.View widget = holder.findViewById(android.R.id.widget_frame);
+                if (widget != null && !(p instanceof androidx.preference.TwoStatePreference)) {
+                    android.view.ViewGroup.LayoutParams wp = widget.getLayoutParams();
+                    wp.width = PreviewDialog.dp(holder.itemView.getContext(), 48);
+                    wp.height = PreviewDialog.dp(holder.itemView.getContext(), 30);
+                    widget.setLayoutParams(wp);
+                    fitBadge(widget);
+                }
+                tintSwitches(holder.itemView);
+                holder.setDividerAllowedAbove(false);
+                holder.setDividerAllowedBelow(false);
+            }
+        };
+    }
+
+    // Intentional extension of the pinned AndroidX 1.2.1 preference adapter to preserve native preference semantics. Recheck on AndroidX upgrades.
+    @SuppressLint("RestrictedApi")
+    public static RecyclerView grid(Context c) {
+        PreviewFocusRecycler list =
+            new PreviewFocusRecycler(c) {
+                @Override
+                protected boolean locksHorizontalEdges() {
+                    return false;
+                }
+                @Override
+                protected boolean focusablePosition(int p) {
+                    if (!(getAdapter() instanceof PreferenceGroupAdapter))
+                        return false;
+                    Preference item = ((PreferenceGroupAdapter) getAdapter()).getItem(p);
+                    return item != null && !(item instanceof PreferenceCategory) && item.isEnabled()
+                        && item.isSelectable();
+                }
+                @Override
+                public View focusSearch(View focused, int direction) {
+                    View item = findContainingItemView(focused);
+                    int pos = item == null ? -1 : getChildAdapterPosition(item);
+                    GridLayoutManager lm =
+                        (GridLayoutManager) getLayoutManager();
+                    if (direction == View.FOCUS_LEFT && pos >= 0 && lm.getSpanSizeLookup().getSpanIndex(pos, 1) == 0
+                        && getTag() instanceof View) {
+                            Object back = getTag(R.id.preview_settings_return);
+                            if (back instanceof Runnable) {
+                                ((Runnable) back).run();
+                                View restored = getRootView().findFocus();
+                                if (restored != null)
+                                    return restored;
+                            }
+                            return (View) getTag();
+                        }
+                    return super.focusSearch(focused, direction);
+                }
+            };
+        GridLayoutManager layout =
+            new GridLayoutManager(c, 1);
+        layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            public int getSpanSize(int position) {
+                if (!(list.getAdapter() instanceof PreferenceGroupAdapter))
+                    return 1;
+                return ((PreferenceGroupAdapter) list.getAdapter()).getItem(position) instanceof PreferenceCategory ? 1
+                                                                                                                    : 1;
+            }
+        });
+        list.setLayoutManager(layout);
+        list.setClipToPadding(false);
+        return list;
+    }
+
+    public static void styleSwitch(SwitchCompat toggle) {
+        Context context = toggle.getContext();
+        Drawable thumb = new SettingsSwitchThumb(context);
+        toggle.setShowText(false);
+        toggle.setThumbDrawable(thumb);
+        toggle.setTrackTintList(null);
+        toggle.setTrackDrawable(new StandardSwitchDrawable(context, false));
+        toggle.getTrackDrawable().setState(toggle.getDrawableState());
+        toggle.setSplitTrack(false);
+        toggle.setSwitchMinWidth(
+            PreviewDialog.dp(context, StandardSwitchDrawable.WIDTH_DP));
+        toggle.setThumbTintList(ColorStateList.valueOf(Color.WHITE));
+    }
+
+    static void tintSwitches(View view) {
+        int colour = PreviewAccent.color(view.getContext());
+        ColorStateList tint = new ColorStateList(
+            new int[][] {
+                new int[] {
+                    android.R.attr.state_checked
+                }, new int[] {
+                }
+            }, new int[] {
+                colour, 0xff738493
+            });
+        if (view instanceof SwitchCompat) {
+            styleSwitch((SwitchCompat) view);
+        } else if (view instanceof CheckBox) {
+            CheckBox box = (CheckBox) view;
+            box.setButtonTintList(null);
+            box.setButtonDrawable(new StandardSwitchDrawable(box.getContext()));
+        } else if (view instanceof CompoundButton)
+            ((CompoundButton) view).setButtonTintList(tint);
+        if (view instanceof ViewGroup)
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++)
+                tintSwitches(((ViewGroup) view).getChildAt(i));
+    }
+
+    private static void fitBadge(View view) {
+        if (view instanceof ImageView) {
+            ImageView image = (ImageView) view;
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            ViewGroup.LayoutParams size = image.getLayoutParams();
+            size.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            size.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            image.setLayoutParams(size);
+        } else if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++)
+                fitBadge(group.getChildAt(i));
+        }
+    }
+
+    private static void move(PreferenceScreen root, PreferenceCategory dest, String key) {
+        Preference p = root.findPreference(key);
+        if (p == null || p.getParent() == dest)
+            return;
+        PreferenceGroup parent = p.getParent();
+        if (parent != null)
+            parent.removePreference(p);
+        dest.addPreference(p);
+    }
+
+    public static void sidebar(PreferenceFragmentCompat fragment) {
+        sidebar(fragment, null);
+    }
+
+    public static boolean enterBackup(PreferenceFragmentCompat fragment) {
+        View root = fragment.getView();
+        if (root == null)
+            return false;
+        View workspace = root.findViewWithTag("settings.workspace");
+        if (workspace instanceof SettingsWorkspace) {
+            ((SettingsWorkspace) workspace).open(6, "Backup & restore");
+            ((SettingsWorkspace) workspace).enter();
+            return true;
+        }
+        View child = root.findViewWithTag("semantic:settings:section:preview_backup_restore");
+        if (child == null) {
+            View advanced = root.findViewWithTag("semantic:settings:category:Advanced");
+            if (advanced == null)
+                return false;
+            advanced.performClick();
+            child = root.findViewWithTag("semantic:settings:section:preview_backup_restore");
+        }
+        if (child == null)
+            return false;
+        child.requestFocus();
+        child.performClick();
+        return true;
+    }
+
+    public static void sidebar(PreferenceFragmentCompat fragment, BackupSettingsController backup) {
+        sidebar(fragment, backup, false);
+    }
+
+    public static void sidebar(
+        PreferenceFragmentCompat fragment, BackupSettingsController backup, boolean restoringBackup) {
+            Context c = fragment.requireContext();
+            RecyclerView list = fragment.getListView();
+            ViewGroup parent = (ViewGroup) list.getParent();
+            int index = parent.indexOfChild(list);
+            ViewGroup.LayoutParams original = list.getLayoutParams();
+            parent.removeView(list);
+            LinearLayout links = new LinearLayout(c);
+            links.setOrientation(LinearLayout.VERTICAL);
+            ScrollView navigationScroll = new ScrollView(c);
+            navigationScroll.setFillViewport(true);
+            navigationScroll.setClipToPadding(true);
+            navigationScroll.addView(links);
+            links.setPadding(0, 0, 0, dp(fragment, 20));
+            LinearLayout middle = new LinearLayout(c);
+            middle.setOrientation(LinearLayout.VERTICAL);
+            middle.addView(list, new LinearLayout.LayoutParams(-1, -1));
+            LinearLayout overviewBody = new LinearLayout(c);
+            overviewBody.setOrientation(LinearLayout.VERTICAL);
+            overviewBody.setVisibility(View.GONE);
+            middle.addView(overviewBody, new LinearLayout.LayoutParams(-1, -1));
+            TextView help = SharedThreePanel.text(c, "", 16);
+            LinearLayout helpBody = new LinearLayout(c);
+            helpBody.setOrientation(LinearLayout.VERTICAL);
+            SharedThreePanel.heading(helpBody, "Information");
+            helpBody.addView(help);
+            LinearLayout choices = new LinearLayout(c);
+            choices.setOrientation(LinearLayout.VERTICAL);
+            choices.setTag("settings.inline.choices");
+            helpBody.addView(choices);
+            ScrollView helpScroll = new ScrollView(c);
+            helpScroll.addView(helpBody);
+            helpScroll.setFocusable(true);
+            helpScroll.setFocusableInTouchMode(true);
+            EDITORS.put(activityContext(c), p -> {
+                boolean providers = p.getKey() != null && p.getKey().startsWith("streaming_providers_");
+                help.setMaxLines(providers ? 2 : Integer.MAX_VALUE);
+                helpBody.setLayoutParams(new ScrollView.LayoutParams(-1, providers ? -1 : -2));
+                choices.setLayoutParams(new LinearLayout.LayoutParams(-1, providers ? 0 : -2, providers ? 1 : 0));
+                helpScroll.setFillViewport(providers);
+                InlinePreferenceChoices.show(choices, p);
+            });
+            final View[] rememberedLeft = {
+                null
+            }, rememberedCentre = {
+                null
+            };
+            SharedThreePanel split =
+            new SharedThreePanel(c) {
+                @Override
+                public boolean dispatchKeyEvent(KeyEvent event) {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                        int key = event.getKeyCode();
+                        if (backup != null && backup.navigation(event))
+                            return true;
+                        if (backup != null && backup.hasFocus())
+                            return super.dispatchKeyEvent(event);
+                        if (middle.hasFocus()) {
+                            if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                                if (list.hasFocus() && list.dispatchKeyEvent(event))
+                                    return true;
+                                View focused = middle.findFocus();
+                                View next = FocusSearchGuard.findNextFocus(
+                                    middle, focused, key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
+                                if (next != null && next != focused)
+                                    next.requestFocus();
+                                return true;
+                            }
+                            rememberedCentre[0] = middle.findFocus();
+                            if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                if (rememberedLeft[0] != null)
+                                    rememberedLeft[0].requestFocus();
+                                return true;
+                            }
+                            if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                helpScroll.requestFocus();
+                                return true;
+                            }
+                        }
+                        if (navigationScroll.hasFocus()
+                            && (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN)) {
+                                ArrayList<View> controls = new ArrayList<>();
+                                links.addFocusables(controls, View.FOCUS_DOWN);
+                                View focused = links.findFocus();
+                                int current = controls.indexOf(focused),
+                                next = current + (key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1);
+                                if (next >= 0 && next < controls.size()) {
+                                    controls.get(next).requestFocus();
+                                    return true;
+                                }
+                                if (key == KeyEvent.KEYCODE_DPAD_DOWN)
+                                    return true;
+                            }
+                        if (helpScroll.hasFocus()) {
+                            if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                                View focused = helpScroll.findFocus();
+                                View next = FocusSearchGuard.findNextFocus(helpBody, focused,
+                                    key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
+                                if (next != null && next != focused)
+                                    next.requestFocus();
+                                else
+                                    helpScroll.smoothScrollBy(0,
+                                        key == KeyEvent.KEYCODE_DPAD_UP ? -PreviewSettings.dp(fragment, 72)
+                                                                        : PreviewSettings.dp(fragment, 72));
+                                return true;
+                            }
+                            if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                if (rememberedCentre[0] == null || !rememberedCentre[0].requestFocus())
+                                    focusFirst(list);
+                                return true;
+                            }
+                            if (key == KeyEvent.KEYCODE_DPAD_RIGHT)
+                                return true;
+                        }
+                    }
+                    return super.dispatchKeyEvent(event);
+                }
+            };
+            split.setPadding(0, dp(fragment, 12), 0, dp(fragment, 8));
+            split.panels(navigationScroll, middle, helpScroll);
+            split.widths(.28f, .46f, .26f);
+            if (backup != null)
+                backup.attach(split, middle, helpScroll);
+            final FoundationAboutWorkspace about =
+            BuildConfig.FOUNDATION
+            ? new FoundationAboutWorkspace(
+                  fragment, split, middle, helpScroll, links)
+            : null;
+            HELP.put(activityContext(c), new WeakReference<>(help));
+            parent.addView(SharedThreePanel.viewport(split), index, original);
+            PreferenceScreen root = fragment.getPreferenceScreen();
+            Map<Preference, Boolean> visibility = new IdentityHashMap<>();
+            collectVisibility(root, visibility);
+            List<TextView> parents = new ArrayList<>(), nested = new ArrayList<>();
+            final TextView[] expanded = {
+                null
+            };
+            final Runnable collapse = () -> {
+                for (TextView child : nested)
+                    links.removeView(child);
+                nested.clear();
+                expanded[0] = null;
+                if (about != null)
+                    about.collapseNavigation();
+            };
+            String requested = fragment.requireActivity().getIntent().getStringExtra("preview_settings_category");
+            boolean streaming = fragment.requireActivity().getIntent().getBooleanExtra("show_streaming_settings", false);
+            fragment.requireActivity().getIntent().removeExtra("preview_settings_category");
+            fragment.requireActivity().getIntent().removeExtra("show_streaming_settings");
+            TextView initial = null;
+            for (String name : NAMES) {
+                PreferenceCategory found = null;
+                for (int i = 0; i < root.getPreferenceCount(); i++)
+                    if (root.getPreference(i) instanceof PreferenceCategory
+                        && name.contentEquals(root.getPreference(i).getTitle()))
+                        found = (PreferenceCategory) root.getPreference(i);
+                final PreferenceCategory category = found;
+                TextView button = sidebarButton(c, name, false);
+                button.setTag("semantic:settings:category:" + name);
+                if (Arrays.asList("Advanced", "Integrations", "About").contains(name))
+                    button.setText(name + "  ›");
+                links.addView(button,
+                new LinearLayout.LayoutParams(-1,
+                    Math.max(dp(fragment, 32),
+                        Math.round(22 * c.getResources().getDisplayMetrics().scaledDensity) + dp(fragment, 8))));
+                parents.add(button);
+                Runnable show = () -> {
+                    if (backup != null)
+                        backup.hide();
+                    rememberedLeft[0] = button;
+                    list.setTag(button);
+                    list.setVisibility(View.VISIBLE);
+                    overviewBody.setVisibility(View.GONE);
+                    helpScroll.setVisibility(View.VISIBLE);
+                    split.widths(.28f, .46f, .26f);
+                    for (int i = 0; i < root.getPreferenceCount(); i++)
+                        root.getPreference(i).setVisible(root.getPreference(i) == category);
+                    if (category != null)
+                        for (int k = 0; k < category.getPreferenceCount(); k++) {
+                            Preference p = category.getPreference(k);
+                            if (p instanceof PreferenceGroup)
+                                restoreVisibility((PreferenceGroup) p, visibility);
+                            p.setVisible(Boolean.TRUE.equals(visibility.get(p)) && !(p instanceof PreferenceCategory));
+                        }
+                    choices.removeAllViews();
+                    help.setText(name + "\n\n"
+                    + (name.equals("Advanced")
+                            ? "Compatibility controls and local diagnostics. Change compatibility settings only when needed."
+                            : name.equals("Integrations")
+                            ? "Trakt, IntroDB and OpenSubtitles can be enabled independently. Saved account credentials are kept when disabled."
+                            : "Select a setting to see its description."));
+                    list.scrollToPosition(0);
+                    if (about != null) {
+                        if ("About".equals(name)) {
+                            about.show(button);
+                            if (expanded[0] != button)
+                                about.collapseNavigation();
+                        } else
+                            about.hide();
+                    }
+                    if ("Advanced".equals(name)) {
+                        list.setVisibility(View.GONE);
+                        overviewBody.setVisibility(View.VISIBLE);
+                        helpScroll.setVisibility(View.GONE);
+                        split.widths(.28f, .72f, 0);
+                        overviewBody.removeAllViews();
+                        SharedThreePanel.heading(overviewBody, "Advanced");
+                        overviewBody.addView(SharedThreePanel.text(c,
+                        "Compatibility controls and local diagnostics\n\nThese options support devices and media requiring specific behaviour. Change compatibility settings only when needed. Expand Advanced to select a section.",
+                        17));
+                    }
+                    if ("Integrations".equals(name)) {
+                        list.setVisibility(View.GONE);
+                        overviewBody.setVisibility(View.VISIBLE);
+                        overviewBody.removeAllViews();
+                        SharedThreePanel.heading(overviewBody, "Integrations");
+                        String[] titles = {
+                            "Trakt", "IntroDB", "OpenSubtitles"
+                        },
+                             keys = {
+                                 "supernova_integration_trakt",
+                                 SegmentSkippingPolicy.MASTER,
+                                 "supernova_integration_opensubtitles"
+                             };
+                        String[] explanations = {
+                            "Trakt synchronises supported viewing activity with your connected account. Disabling stops integration without removing credentials.",
+                            "IntroDB supplies available intro, recap, outro and credit boundaries. Disabling preserves your segment policies.",
+                            "OpenSubtitles supplies downloadable subtitles. Disabling preserves your account credentials."
+                        };
+                        for (int n = 0; n < titles.length; n++) {
+                            final int integrationIndex = n;
+                            SwitchCompat toggle = new SwitchCompat(c);
+                            toggle.setShowText(false);
+                            toggle.setText(titles[n]);
+                            toggle.setTextColor(-1);
+                            toggle.setTextSize(17);
+                            toggle.setFocusable(true);
+                            toggle.setChecked(PreferenceManager.getDefaultSharedPreferences(c).getBoolean(keys[n], true));
+                            toggle.setBackground(SharedThreePanel.accentFocus(c));
+                            toggle.setOnFocusChangeListener((v, yes) -> {
+                                if (yes)
+                                    help.setText(explanations[integrationIndex]);
+                            });
+                            toggle.setOnCheckedChangeListener((v, enabled) -> {
+                                PreferenceManager.getDefaultSharedPreferences(c)
+                                .edit()
+                                .putBoolean(keys[integrationIndex], enabled)
+                                .apply();
+                                Preference model = root.findPreference(keys[integrationIndex]);
+                                if (model instanceof TwoStatePreference)
+                                    ((TwoStatePreference) model).setChecked(enabled);
+                                for (TextView child : nested) {
+                                    String tag = String.valueOf(child.getTag());
+                                    if (tag.endsWith(integrationIndex == 0 ? "trakt_category"
+                                            : integrationIndex == 1 ? "preview_introdb"
+                                                                       : "preview_opensubtitles"))
+                                        child.setVisibility(enabled ? View.VISIBLE : View.GONE);
+                                }
+                            });
+                            overviewBody.addView(toggle, new LinearLayout.LayoutParams(-1, dp(fragment, 46)));
+                            SharedThreePanel.divider(overviewBody);
+                        }
+                    }
+                };
+                Runnable toggle = () -> {
+                    TransitionManager.endTransitions(links);
+                    TransitionSet transition =
+                    new TransitionSet()
+                        .setOrdering(TransitionSet.ORDERING_TOGETHER)
+                        .addTransition(new ChangeBounds())
+                        .addTransition(new Fade());
+                    transition.setDuration(220);
+                    transition.addListener(new Transition.TransitionListener() {
+                        public void onTransitionEnd(Transition finished) {
+                            finished.removeListener(this);
+                            View selected = rememberedLeft[0];
+                            if (selected != null && selected.getParent() == links)
+                                revealSidebarChild(selected, () -> rememberedLeft[0] == selected);
+                        }
+                        public void onTransitionStart(Transition started) {
+                        }
+                        public void onTransitionCancel(Transition cancelled) {
+                        }
+                        public void onTransitionPause(Transition paused) {
+                        }
+                        public void onTransitionResume(Transition resumed) {
+                        }
+                    });
+
+                    TransitionManager.beginDelayedTransition(links, transition);
+                    if (expanded[0] == button) {
+                        collapse.run();
+                        button.requestFocus();
+                        return;
+                    }
+                    collapse.run();
+                    expanded[0] = button;
+                    if (about != null && "About".equals(name)) {
+                        about.show(button);
+                        button.requestFocus();
+                        return;
+                    }
+                    int childIndex = links.indexOfChild(button) + 1;
+                    if (category != null)
+                        for (int k = 0; k < category.getPreferenceCount(); k++) {
+                            Preference p = category.getPreference(k);
+                            if (!(p instanceof PreferenceCategory) || !Boolean.TRUE.equals(visibility.get(p)))
+                                continue;
+                            String integration = "trakt_category".equals(p.getKey()) ? "supernova_integration_trakt"
+                                : "preview_introdb".equals(p.getKey())
+                                ? SegmentSkippingPolicy.MASTER
+                                : "preview_opensubtitles".equals(p.getKey()) ? "supernova_integration_opensubtitles"
+                                                                             : null;
+                            if (integration != null
+                                && !PreferenceManager.getDefaultSharedPreferences(c).getBoolean(integration, true))
+                                continue;
+                            TextView child = sidebarButton(c, String.valueOf(p.getTitle()), true);
+                            child.setTag("semantic:settings:section:" + p.getKey());
+                            links.addView(child, childIndex++, new LinearLayout.LayoutParams(-1, dp(fragment, 34)));
+                            nested.add(child);
+                            Runnable select = () -> {
+                                if (backup != null)
+                                    backup.hide();
+                                if (about != null)
+                                    about.hide();
+                                for (int i = 0; i < root.getPreferenceCount(); i++)
+                                    root.getPreference(i).setVisible(root.getPreference(i) == category);
+                                list.setVisibility(View.VISIBLE);
+                                overviewBody.setVisibility(View.GONE);
+                                helpScroll.setVisibility(View.VISIBLE);
+                                split.widths(.28f, .46f, .26f);
+                                rememberedLeft[0] = child;
+                                list.setTag(child);
+                                for (int n = 0; n < category.getPreferenceCount(); n++)
+                                    category.getPreference(n).setVisible(category.getPreference(n) == p);
+                                restoreVisibility((PreferenceGroup) p, visibility);
+                                choices.removeAllViews();
+                                help.setText(String.valueOf(p.getTitle()));
+                                list.scrollToPosition(0);
+                                if ("preview_opensubtitles".equals(p.getKey())) {
+                                    list.setVisibility(View.GONE);
+                                    overviewBody.setVisibility(View.VISIBLE);
+                                    new InlineOpenSubtitles(c, overviewBody, help);
+                                }
+                                if (backup != null && "preview_backup_restore".equals(p.getKey())) {
+                                    backup.show(child);
+                                }
+                            };
+                            child.setOnFocusChangeListener((v, yes) -> {
+                                if (yes) {
+                                    select.run();
+                                    revealSidebarChild(v, () -> rememberedLeft[0] == v);
+                                }
+                            });
+                            child.setOnClickListener(v -> {
+                                select.run();
+                                revealSidebarChild(v, () -> rememberedLeft[0] == v);
+                                if (backup != null && backup.isVisible())
+                                    backup.enter();
+                                else if (overviewBody.getVisibility() == View.VISIBLE)
+                                    focusFirstView(overviewBody);
+                                else
+                                    focusFirst(list);
+                            });
+                            child.setOnKeyListener((v, key, event) -> {
+                                if (event.getAction() != KeyEvent.ACTION_DOWN)
+                                    return false;
+                                if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                    if (backup != null && backup.isVisible())
+                                        backup.enter();
+                                    else if (overviewBody.getVisibility() == View.VISIBLE)
+                                        focusFirstView(overviewBody);
+                                    else
+                                        focusFirst(list);
+                                    return true;
+                                }
+                                if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                    button.requestFocus();
+                                    return true;
+                                }
+                                return false;
+                            });
+                        }
+                    if (nested.isEmpty()) {
+                        expanded[0] = null;
+                        if (overviewBody.getVisibility() == View.VISIBLE)
+                            focusFirstView(overviewBody);
+                        else
+                            focusFirst(list);
+                    } else
+                        button.requestFocus();
+                };
+                button.setOnFocusChangeListener((v, yes) -> {
+                    if (yes) {
+                        if (rememberedLeft[0] != button)
+                            show.run();
+                    }
+                });
+                button.setOnClickListener(v -> toggle.run());
+                button.setOnKeyListener((v, key, event) -> {
+                    if (event.getAction() != KeyEvent.ACTION_DOWN)
+                        return false;
+                    if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        if ("About".equals(name) || "Advanced".equals(name) || "Integrations".equals(name)) {
+                            if (expanded[0] != button)
+                                toggle.run();
+                        } else if (overviewBody.getVisibility() == View.VISIBLE)
+                            focusFirstView(overviewBody);
+                        else
+                            focusFirst(list);
+                        return true;
+                    }
+                    if (key == KeyEvent.KEYCODE_DPAD_LEFT)
+                        return true;
+                    if (key == KeyEvent.KEYCODE_DPAD_DOWN && expanded[0] == button) {
+                        if (about != null && "About".equals(name))
+                            about.enter();
+                        else if (!nested.isEmpty())
+                            nested.get(0).requestFocus();
+                        return true;
+                    }
+                    return false;
+                });
+                if (initial == null || name.equals(requested) || requested == null && streaming && name.equals("Streaming"))
+                    initial = button;
+            }
+            OnBackPressedCallback back = new OnBackPressedCallback(false) {
+                public void handleOnBackPressed() {
+                    if (backup != null && backup.isVisible() && backup.back())
+                        return;
+                    if (about != null && about.handleBack())
+                        return;
+                    if (rememberedLeft[0] != null)
+                        rememberedLeft[0].requestFocus();
+                }
+            };
+            fragment.requireActivity().getOnBackPressedDispatcher().addCallback(fragment.getViewLifecycleOwner(), back);
+            list.setTag(R.id.preview_settings_return, (Runnable) back::handleOnBackPressed);
+            ViewTreeObserver.OnGlobalFocusChangeListener focus = (oldView, newView) -> back.setEnabled(middle.hasFocus() || helpScroll.hasFocus() || about != null && about.hasFocus()
+                || backup != null && backup.hasFocus());
+            split.getViewTreeObserver().addOnGlobalFocusChangeListener(focus);
+            split.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                @Override
+                public void onViewAttachedToWindow(View v) {
+                }
+                @Override
+                public void onViewDetachedFromWindow(View v) {
+                    if (v.getViewTreeObserver().isAlive())
+                        v.getViewTreeObserver().removeOnGlobalFocusChangeListener(focus);
+                }
+            });
+            if (initial != null && !restoringBackup) {
+                TextView first = initial;
+                first.post(() -> {
+                    first.requestFocus();
+                });
+            }
+        }
+
+    private static void revealSidebarChild(View child, BooleanSupplier current) {
+        Runnable reveal = () -> {
+            if (current.getAsBoolean() && child.isAttachedToWindow() && child.getWidth() > 0 && child.getHeight() > 0) {
+                ViewParent parent = child.getParent();
+                while (parent instanceof View && !(parent instanceof ScrollView))
+                    parent = parent.getParent();
+                if (parent instanceof ScrollView) {
+                    ScrollView scroll = (ScrollView) parent;
+                    ViewGroup content = (ViewGroup) scroll.getChildAt(0);
+                    Rect target = new Rect(0, 0, child.getWidth(), child.getHeight());
+                    content.offsetDescendantRectToMyCoords(child, target);
+                    target.offset(content.getLeft(), content.getTop());
+                    int position = scroll.getScrollY(), top = position + scroll.getPaddingTop(),
+                        bottom = position + scroll.getHeight() - scroll.getPaddingBottom();
+                    if (target.top < top)
+                        position = target.top - scroll.getPaddingTop();
+                    else if (target.bottom > bottom)
+                        position = target.bottom - scroll.getHeight() + scroll.getPaddingBottom();
+                    scroll.scrollTo(scroll.getScrollX(), Math.max(0, position));
+                }
+            }
+        };
+        child.post(reveal);
+        child.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (child.getViewTreeObserver().isAlive())
+                    child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                child.post(reveal);
+            }
+        });
+    }
+
+    private static TextView sidebarButton(Context c, String name, boolean child) {
+        TextView button = new TextView(c);
+        button.setText(name);
+        button.setTextSize(16);
+        button.setSingleLine(true);
+        button.setEllipsize(TextUtils.TruncateAt.END);
+        button.setTextColor(Color.WHITE);
+        button.setGravity(Gravity.CENTER_VERTICAL);
+        button.setPadding(PreviewDialog.dp(c, child ? 24 : 10), 0, PreviewDialog.dp(c, 10), 0);
+        PreviewIcon.apply(button, name, 22);
+        button.setFocusable(true);
+        button.setFocusableInTouchMode(true);
+        button.setBackground(SharedThreePanel.accentFocus(c));
+        SharedThreePanel.rowSeparator(button);
+        return button;
+    }
+
+    private static Context activityContext(Context c) {
+        while (c instanceof ContextWrapper && !(c instanceof Activity))
+            c = ((ContextWrapper) c).getBaseContext();
+        return c;
+    }
+
+    private static int dp(PreferenceFragmentCompat f, int v) {
+        return PreviewDialog.dp(f.requireContext(), v);
+    }
 }

@@ -14,10 +14,12 @@
 
 package com.archos.mediacenter.video.leanback.filebrowsing;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.text.TextUtils;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.core.os.BundleCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
@@ -27,8 +29,6 @@ import androidx.loader.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,11 +63,16 @@ import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.filecoreextension.upnp2.ListingEngineFactoryWithUpnp;
 import com.archos.mediacenter.filecoreextension.upnp2.UpnpFile2;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.browser.ShortcutDb;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.NonIndexedVideo;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.loader.VideosInFolderLoader;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.DisplayMode;
+import com.archos.mediacenter.video.leanback.PreviewAccent;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewFolderActions;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsActivity;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
@@ -82,6 +87,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.VideoUtils;
 
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,8 +97,8 @@ import java.util.List;
 /**
  * Created by vapillon on 17/04/15.
  */
-public abstract class ListingFragment extends MyVerticalGridFragment implements ListingEngine.Listener, LoaderManager.LoaderCallbacks<Cursor> {
-
+public abstract class ListingFragment
+    extends MyVerticalGridFragment implements ListingEngine.Listener, LoaderManager.LoaderCallbacks<Cursor> {
     private static final Logger log = LoggerFactory.getLogger(ListingFragment.class);
 
     private static final String PREF_LISTING_DISPLAY_MODE = "PREF_LISTING_DISPLAY_MODE";
@@ -100,18 +106,17 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     private Uri mSelectedItemUri;
 
-    private final ActivityResultLauncher<Intent> infoLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == ListingActivity.RESULT_FILE_DELETED && result.getData() != null) {
-                    Uri deletedFile = result.getData().getData();
-                    ((ListingActivity) requireActivity()).notifyFileDeleted(deletedFile);
-                    if (mSelectedItemUri != null && mSelectedItemUri.equals(deletedFile)) {
-                        mSelectedItemUri = null;
-                    }
+    private final ActivityResultLauncher<Intent> infoLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == ListingActivity.RESULT_FILE_DELETED && result.getData() != null) {
+                Uri deletedFile = result.getData().getData();
+                ((ListingActivity) requireActivity()).notifyFileDeleted(deletedFile);
+                if (mSelectedItemUri != null && mSelectedItemUri.equals(deletedFile)) {
+                    mSelectedItemUri = null;
                 }
-                restoreSelectedItem(mSelectedItemUri);
-            });
+            }
+            restoreSelectedItem(mSelectedItemUri);
+        });
 
     public static final String ARG_URI = "URI";
     public static final String ARG_TITLE = "TITLE";
@@ -133,15 +138,12 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     protected final static String SORT_BY_DATE_DESC = "date_desc";
     protected final static String SORT_BY_SIZE_ASC = "size_asc";
     protected final static String SORT_BY_SIZE_DESC = "size_desc";
-    protected final static List<String> sortOrders = List.of(SORT_BY_NAME_ASC, SORT_BY_NAME_DESC, SORT_BY_DATE_ASC, SORT_BY_DATE_DESC, SORT_BY_SIZE_ASC, SORT_BY_SIZE_DESC);
-    protected final static List<ListingEngine.SortOrder> sortOrdersListingEngine = List.of(
-            ListingEngine.SortOrder.SORT_BY_NAME_ASC,
-            ListingEngine.SortOrder.SORT_BY_NAME_DESC,
-            ListingEngine.SortOrder.SORT_BY_DATE_ASC,
-            ListingEngine.SortOrder.SORT_BY_DATE_DESC,
-            ListingEngine.SortOrder.SORT_BY_SIZE_ASC,
-            ListingEngine.SortOrder.SORT_BY_SIZE_DESC
-    );
+    protected final static List<String> sortOrders = List.of(
+        SORT_BY_NAME_ASC, SORT_BY_NAME_DESC, SORT_BY_DATE_ASC, SORT_BY_DATE_DESC, SORT_BY_SIZE_ASC, SORT_BY_SIZE_DESC);
+    protected final static List<ListingEngine.SortOrder> sortOrdersListingEngine =
+        List.of(ListingEngine.SortOrder.SORT_BY_NAME_ASC, ListingEngine.SortOrder.SORT_BY_NAME_DESC,
+            ListingEngine.SortOrder.SORT_BY_DATE_ASC, ListingEngine.SortOrder.SORT_BY_DATE_DESC,
+            ListingEngine.SortOrder.SORT_BY_SIZE_ASC, ListingEngine.SortOrder.SORT_BY_SIZE_DESC);
     static final public String DEFAULT_SORT = SORT_BY_NAME_ASC;
     private String mSortOrder = DEFAULT_SORT;
     protected static CharSequence[] mSortOrderEntries;
@@ -179,7 +181,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (log.isDebugEnabled()) log.debug("onCreate {}", savedInstanceState);
+        if (log.isDebugEnabled())
+            log.debug("onCreate {}", savedInstanceState);
         super.onCreate(savedInstanceState);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -187,7 +190,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
         mSortOrder = mPrefs.getString(SORT_PARAM_KEY, DEFAULT_SORT);
         mSortOrderItem = sortorder2itemid(mSortOrder);
-        if (log.isDebugEnabled()) log.debug("onCreate: mSortOrder={} mSortOrderItem={}", mSortOrder, mSortOrderItem);
+        if (log.isDebugEnabled())
+            log.debug("onCreate: mSortOrder={} mSortOrderItem={}", mSortOrder, mSortOrderItem);
 
         if (savedInstanceState != null) {
             mSelectedItemUri = BundleCompat.getParcelable(savedInstanceState, STATE_SELECTED_ITEM_URI, Uri.class);
@@ -217,23 +221,25 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (log.isDebugEnabled()) log.debug("onCreateView {} {}", this, savedInstanceState);
+        if (log.isDebugEnabled())
+            log.debug("onCreateView {} {}", this, savedInstanceState);
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        mSortOrderEntries = new CharSequence[]{
-                getResources().getString(R.string.sort_by_name_asc),
-                getResources().getString(R.string.sort_by_name_desc),
-                getResources().getString(R.string.sort_by_date_asc),
-                getResources().getString(R.string.sort_by_date_desc),
-                getResources().getString(R.string.sort_by_size_asc),
-                getResources().getString(R.string.sort_by_size_desc),
+        mSortOrderEntries = new CharSequence[] {
+            getResources().getString(R.string.sort_by_name_asc),
+            getResources().getString(R.string.sort_by_name_desc),
+            getResources().getString(R.string.sort_by_date_asc),
+            getResources().getString(R.string.sort_by_date_desc),
+            getResources().getString(R.string.sort_by_size_asc),
+            getResources().getString(R.string.sort_by_size_desc),
         };
 
         // CAUTION: using a non public viewgroup ID here!
         // May be broken if leanback team changes it!
         FrameLayout browseFrame = (FrameLayout) v.findViewById(R.id.browse_grid_dock);
         if (browseFrame != null) {
-            LayoutInflater.from(container.getContext()).inflate(R.layout.leanback_emptyview_and_progressview, browseFrame, true);
+            LayoutInflater.from(container.getContext())
+                .inflate(R.layout.leanback_emptyview_and_progressview, browseFrame, true);
             mEmptyView = browseFrame.findViewById(R.id.message);
             mEmptyView.setVisibility(View.GONE);
             mProgressView = browseFrame.findViewById(R.id.progress);
@@ -259,40 +265,103 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
             updateGridOrList();
         }
 
-        if(mPrefs.getBoolean("try_new_ui",false)){
-            v.setBackground(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));
-            getTitleView().setBackgroundColor(android.graphics.Color.TRANSPARENT);View titleText=getTitleView().findViewById(androidx.leanback.R.id.title_text);if(titleText instanceof TextView){TextView title=(TextView)titleText;title.setTextSize(19);title.setTextColor(0xffc7d8e4);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);}
-            if(mUri!=null){String path=mUri.getPath();setTitle((mUri.getHost()==null?"Files":mUri.getHost())+(path==null?"":"  ›  "+path.replace("/","  ›  ")));}
-            if(mErrorMessage!=null)mErrorMessage.setTextColor(0xffb4cbe0);if(mErrorDetails!=null)mErrorDetails.setTextColor(0xff9db1c4);
+        if (mPrefs.getBoolean("try_new_ui", false)) {
+            v.setBackground(PreviewAccent.utility(requireContext()));
+            getTitleView().setBackgroundColor(Color.TRANSPARENT);
+            View titleText = getTitleView().findViewById(androidx.leanback.R.id.title_text);
+            if (titleText instanceof TextView) {
+                TextView title = (TextView) titleText;
+                title.setTextSize(19);
+                title.setTextColor(0xffc7d8e4);
+                title.setSingleLine(true);
+                title.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+            }
+            if (mUri != null) {
+                String path = mUri.getPath();
+                setTitle((mUri.getHost() == null ? "Files" : mUri.getHost())
+                    + (path == null ? "" : "  ›  " + path.replace("/", "  ›  ")));
+            }
+            if (mErrorMessage != null)
+                mErrorMessage.setTextColor(0xffb4cbe0);
+            if (mErrorDetails != null)
+                mErrorDetails.setTextColor(0xff9db1c4);
         }
-        if(mPrefs.getBoolean("try_new_ui",false)){
-            previewSurface=new PreviewBrowserSurface(requireActivity(),v,mUri,getTitleView(),this::previewOptions);
-            setOnItemViewSelectedListener((holder,item,rowHolder,row)->{if(previewSurface!=null)previewSurface.focusItem(item,()->{if(getOnItemViewClickedListener()!=null)getOnItemViewClickedListener().onItemClicked(holder,item,rowHolder,row);});});
+        if (mPrefs.getBoolean("try_new_ui", false)) {
+            previewSurface =
+                new PreviewBrowserSurface(requireActivity(), v, mUri, getTitleView(), this::previewOptions);
+            previewSurface.credentials(this::onCredentialRequired, uri -> mUri = uri);
+            setOnItemViewSelectedListener((holder, item, rowHolder, row) -> {
+                if (previewSurface != null)
+                    previewSurface.focusItem(item, () -> {
+                        if (getOnItemViewClickedListener() != null)
+                            getOnItemViewClickedListener().onItemClicked(holder, item, rowHolder, row);
+                    });
+            });
             return previewSurface;
         }
         return v;
     }
 
-    private void previewOptions(){
-        int[] ids={R.id.title_orb,R.id.title_orb2,R.id.title_orb3,R.id.title_orb4,R.id.title_orb5};
-        int[] descriptions={R.id.orb1_description,R.id.orb2_description,R.id.orb3_description,R.id.orb4_description,R.id.orb5_description};
-        java.util.List<Runnable> commands=new java.util.ArrayList<>();java.util.List<String> labels=new java.util.ArrayList<>();
-        for(int i=0;i<ids.length;i++){
-            View command=getTitleView().findViewById(ids[i]);TextView label=getTitleView().findViewById(descriptions[i]);
-            if(command==null||command.getVisibility()!=View.VISIBLE||label==null||label.length()==0)continue;
-            if(mUri!=null&&label.getText().toString().equals(getString(R.string.add_to_indexed_folders))){
-                for(String kind:new String[]{"movie","tv"}){labels.add(kind.equals("movie")?"Add to Movies":"Add to TV Shows");commands.add(()->{mPrefs.edit().putString("preview_source_kind:"+mUri,kind).apply();command.performClick();});}
-            }else{labels.add(label.getText().toString().replace("Index folder","Add to Library").replace("Index Folder","Add to Library"));commands.add(command::performClick);}
+    public boolean browserBack(Runnable leave) {
+        return previewSurface != null && previewSurface.browser().back(leave);
+    }
+
+    public void browserExit(Runnable leave) {
+        if (previewSurface != null)
+            previewSurface.browser().requestExit(leave);
+        else
+            leave.run();
+    }
+
+    private void previewOptions() {
+        int[] ids = {
+            R.id.title_orb, R.id.title_orb2, R.id.title_orb3, R.id.title_orb4, R.id.title_orb5
+        };
+        int[] descriptions = {
+            R.id.orb1_description, R.id.orb2_description, R.id.orb3_description,
+            R.id.orb4_description, R.id.orb5_description
+        };
+        List<Runnable> commands = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        for (int i = 0; i < ids.length; i++) {
+            View command = getTitleView().findViewById(ids[i]);
+            TextView label = getTitleView().findViewById(descriptions[i]);
+            if (command == null || command.getVisibility() != View.VISIBLE || label == null || label.length() == 0)
+                continue;
+            if (mUri != null && label.getText().toString().equals(getString(R.string.add_to_indexed_folders))) {
+                for (String kind : new String[] {
+                    "movie", "tv"
+                }) {
+                    labels.add(kind.equals("movie") ? "Add to Movies" : "Add to TV Shows");
+                    commands.add(() -> {
+                        mPrefs.edit().putString("preview_source_kind:" + mUri, kind).apply();
+                        command.performClick();
+                    });
+                }
+            } else {
+                labels.add(label.getText()
+                        .toString()
+                        .replace("Index folder", "Add to Library")
+                        .replace("Index Folder", "Add to Library"));
+                commands.add(command::performClick);
+            }
         }
-        if(mUri!=null&&com.archos.mediacenter.video.browser.ShortcutDb.STATIC.isShortcut(requireContext(),mUri.toString())<0){
-            labels.add("Add to Saved Locations");commands.add(()->com.archos.mediacenter.video.leanback.PreviewFolderActions.save(requireContext(),mUri,mUri.getLastPathSegment()==null?"Files":mUri.getLastPathSegment()));
+        if (mUri != null
+            && ShortcutDb.STATIC.isShortcut(requireContext(), mUri.toString())
+                < 0) {
+            labels.add("Add to Saved Locations");
+            commands.add(()
+                             -> PreviewFolderActions.save(requireContext(), mUri,
+                                 mUri.getLastPathSegment() == null ? "Files" : mUri.getLastPathSegment()));
         }
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"File Options",labels.toArray(new String[0]),-1,n->commands.get(n).run());
+        PreviewDialog.choose(
+            requireContext(), "File Options", labels.toArray(new String[0]), -1, n -> commands.get(n).run());
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (log.isDebugEnabled()) log.debug("onViewCreated");
+        if (log.isDebugEnabled())
+            log.debug("onViewCreated");
 
         super.onViewCreated(view, savedInstanceState);
 
@@ -317,33 +386,54 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         // Set third orb action for sort
         getTitleView().setOnOrb4Description(getString(R.string.sort_mode));
         getTitleView().setOrb4IconResId(R.drawable.orb_sort);
-        if (log.isDebugEnabled()) log.debug("onViewCreated: mSortOrder={} mSortOrderItem={}", mSortOrder, mSortOrderItem);
+        if (log.isDebugEnabled())
+            log.debug("onViewCreated: mSortOrder={} mSortOrderItem={}", mSortOrder, mSortOrderItem);
 
-        getTitleView().setOnOrb4ClickedListener(view1 -> new AlertDialog.Builder(getActivity())
-                .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, (dialog, which) -> {
-                    if (log.isDebugEnabled()) log.debug("onViewCreated:onClick mSortOrderItem {} -> {}", mSortOrderItem, which);
-                    if (mSortOrderItem != which) {
-                        mSortOrderItem = which;
-                        mSortOrder = itemid2sortorder(mSortOrderItem);
-                        // Save the sort mode
-                        mPrefs.edit().putString(SORT_PARAM_KEY, mSortOrder).apply();
-                        Bundle args = new Bundle();
-                        args.putString("sort", mSortOrder);
-                        initGridOrList(); // reinit all mFilesAdapter too
-                        startListing(mUri);
-                        //LoaderManager.getInstance(ListingFragment.this).restartLoader(0, args, ListingFragment.this);
-                    }
-                    dialog.dismiss();
-                })
-                .create().show());
-        if(mPrefs.getBoolean("try_new_ui",false))getTitleView().setOnOrb4ClickedListener(v->{String[] labels=new String[mSortOrderEntries.length];for(int i=0;i<labels.length;i++)labels[i]=mSortOrderEntries[i].toString();com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),getString(R.string.sort_mode),labels,mSortOrderItem,which->{if(mSortOrderItem!=which){mSortOrderItem=which;mSortOrder=itemid2sortorder(which);mPrefs.edit().putString(SORT_PARAM_KEY,mSortOrder).apply();initGridOrList();startListing(mUri);}});});
+        getTitleView().setOnOrb4ClickedListener(view1
+            -> new AlertDialog.Builder(getActivity())
+                .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem,
+                    (dialog, which) -> {
+                        if (log.isDebugEnabled())
+                            log.debug("onViewCreated:onClick mSortOrderItem {} -> {}", mSortOrderItem, which);
+                        if (mSortOrderItem != which) {
+                            mSortOrderItem = which;
+                            mSortOrder = itemid2sortorder(mSortOrderItem);
+                            // Save the sort mode
+                            mPrefs.edit().putString(SORT_PARAM_KEY, mSortOrder).apply();
+                            Bundle args = new Bundle();
+                            args.putString("sort", mSortOrder);
+                            initGridOrList(); // reinit all mFilesAdapter too
+                            startListing(mUri);
+                            //LoaderManager.getInstance(ListingFragment.this).restartLoader(0, args, ListingFragment.this);
+                        }
+                        dialog.dismiss();
+                    })
+                .create()
+                .show());
+        if (mPrefs.getBoolean("try_new_ui", false))
+            getTitleView().setOnOrb4ClickedListener(v -> {
+                String[] labels = new String[mSortOrderEntries.length];
+                for (int i = 0; i < labels.length; i++)
+                    labels[i] = mSortOrderEntries[i].toString();
+                PreviewDialog.choose(
+                    requireContext(), getString(R.string.sort_mode), labels, mSortOrderItem, which -> {
+                        if (mSortOrderItem != which) {
+                            mSortOrderItem = which;
+                            mSortOrder = itemid2sortorder(which);
+                            mPrefs.edit().putString(SORT_PARAM_KEY, mSortOrder).apply();
+                            initGridOrList();
+                            startListing(mUri);
+                        }
+                    });
+            });
     }
 
     @Override
     public void onDestroyView() {
-        if (log.isDebugEnabled()) log.debug("onDestroyView");
+        if (log.isDebugEnabled())
+            log.debug("onDestroyView");
         mOverlay.destroy();
-        previewSurface=null;
+        previewSurface = null;
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             ThemeManager.getInstance(getActivity()).unregisterThemeChangeListener(mThemeChangeListener);
@@ -353,10 +443,9 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onDestroy() {
-        if (log.isDebugEnabled()) log.debug("onDestroy");
-        mPrefs.edit()
-                .putString(SORT_PARAM_KEY, mSortOrder)
-                .apply();
+        if (log.isDebugEnabled())
+            log.debug("onDestroy");
+        mPrefs.edit().putString(SORT_PARAM_KEY, mSortOrder).apply();
         if (mListingEngine != null) {
             mListingEngine.setListener(null);
             mListingEngine.abort();
@@ -366,7 +455,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onResume() {
-        if (log.isDebugEnabled()) log.debug("onResume");
+        if (log.isDebugEnabled())
+            log.debug("onResume");
         super.onResume();
         mOverlay.resume();
         if (mRefreshOnNextResume) {
@@ -381,7 +471,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onPause() {
-        if (log.isDebugEnabled()) log.debug("onPause");
+        if (log.isDebugEnabled())
+            log.debug("onPause");
         super.onPause();
         mOverlay.pause();
     }
@@ -389,7 +480,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     private void setSecondOrbIcon() {
         final MyTitleView titleView = getTitleView();
 
-        switch(mDisplayMode) {
+        switch (mDisplayMode) {
             case GRID:
                 titleView.setOrb2IconResId(R.drawable.orb_list);
                 titleView.setOnOrb2Description(getString(R.string.switch_to_list));
@@ -399,7 +490,7 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                 titleView.setOnOrb2Description(getString(R.string.switch_to_grid));
                 break;
             default:
-                throw new IllegalArgumentException("Invalid Display Mode! "+mDisplayMode);
+                throw new IllegalArgumentException("Invalid Display Mode! " + mDisplayMode);
         }
     }
 
@@ -440,7 +531,6 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
      * the updateGridViewHolder() method has been added to MyVerticalGridFragment to handle this case...
      */
     private void updateGridOrList() {
-
         // update the file presenter(s)
         mFilesAdapter.setPresenterSelector(buildFilePresenter());
 
@@ -470,21 +560,23 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                 shadowEnabled = true;
                 break;
             default:
-                throw new IllegalArgumentException("Invalid Display Mode! "+mDisplayMode);
+                throw new IllegalArgumentException("Invalid Display Mode! " + mDisplayMode);
         }
 
         final boolean previewList = mPrefs.getBoolean("try_new_ui", false) && mDisplayMode == DisplayMode.LIST;
-        VerticalGridPresenter vgp = new VerticalGridPresenter(previewList ? FocusHighlight.ZOOM_FACTOR_NONE : zoom, focusDimmer) {
-            @Override protected void initializeGridViewHolder(VerticalGridPresenter.ViewHolder holder) {
-                super.initializeGridViewHolder(holder);
-                if (previewList) {
-                    holder.view.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-                    holder.view.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
-                    holder.getGridView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
-                    holder.getGridView().setPadding(0, 0, 0, 0);
+        VerticalGridPresenter vgp =
+            new VerticalGridPresenter(previewList ? FocusHighlight.ZOOM_FACTOR_NONE : zoom, focusDimmer) {
+                @Override
+                protected void initializeGridViewHolder(VerticalGridPresenter.ViewHolder holder) {
+                    super.initializeGridViewHolder(holder);
+                    if (previewList) {
+                        holder.view.setBackgroundColor(Color.TRANSPARENT);
+                        holder.view.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
+                        holder.getGridView().setBackgroundColor(Color.TRANSPARENT);
+                        holder.getGridView().setPadding(0, 0, 0, 0);
+                    }
                 }
-            }
-        };
+            };
         vgp.setNumberOfColumns(numberOfColumns);
         vgp.setShadowEnabled(shadowEnabled && !previewList);
         return vgp;
@@ -492,7 +584,12 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     private ClassPresenterSelector buildFilePresenter() {
         ClassPresenterSelector filePresenterSelector = new ClassPresenterSelector();
-        if(mPrefs.getBoolean("try_new_ui",false)&&mDisplayMode==DisplayMode.LIST){PreviewFilePresenter presenter=new PreviewFilePresenter();filePresenterSelector.addClassPresenter(MetaFile2.class,presenter);filePresenterSelector.addClassPresenter(Video.class,presenter);return filePresenterSelector;}
+        if (mPrefs.getBoolean("try_new_ui", false) && mDisplayMode == DisplayMode.LIST) {
+            PreviewFilePresenter presenter = new PreviewFilePresenter();
+            filePresenterSelector.addClassPresenter(MetaFile2.class, presenter);
+            filePresenterSelector.addClassPresenter(Video.class, presenter);
+            return filePresenterSelector;
+        }
         switch (mDisplayMode) {
             case GRID:
                 filePresenterSelector.addClassPresenter(MetaFile2.class, new PosterImageCardPresenter(getActivity()));
@@ -503,15 +600,16 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                 filePresenterSelector.addClassPresenter(Video.class, new VideoListPresenter(true));
                 break;
             default:
-                throw new IllegalArgumentException("Invalid Display Mode! "+mDisplayMode);
+                throw new IllegalArgumentException("Invalid Display Mode! " + mDisplayMode);
         }
         return filePresenterSelector;
     }
 
     private static DisplayMode readDisplayModePref(SharedPreferences prefs) {
-        if(prefs.getBoolean("try_new_ui",false))return DisplayMode.LIST;
+        if (prefs.getBoolean("try_new_ui", false))
+            return DisplayMode.LIST;
         int displayModeIndex = prefs.getInt(PREF_LISTING_DISPLAY_MODE, -1);
-        if (displayModeIndex<0) {
+        if (displayModeIndex < 0) {
             return DisplayMode.GRID; // default
         } else {
             return DisplayMode.values()[displayModeIndex];
@@ -519,9 +617,15 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     }
 
     protected void startListing(Uri uri) {
-        if (log.isDebugEnabled()) log.debug("startListing {}", uri);
+        if (previewSurface != null) {
+            mUri = uri;
+            previewSurface.open(uri);
+            return;
+        }
+        if (log.isDebugEnabled())
+            log.debug("startListing {}", uri);
         // abort previous engine (in theory not needed)
-        if (mListingEngine!=null) {
+        if (mListingEngine != null) {
             mListingEngine.abort();
         }
         mUri = uri;
@@ -544,24 +648,28 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
      * this can be used when a fragment needs to set specific options
      * @param listingEngine
      */
-    protected void setListingEngineOptions(ListingEngine listingEngine){
-        if(!VideoPreferencesCommon.PreferenceHelper.shouldDisplayAllFiles(getActivity()))
+    protected void setListingEngineOptions(ListingEngine listingEngine) {
+        if (!VideoPreferencesCommon.PreferenceHelper.shouldDisplayAllFiles(getActivity()))
             mListingEngine.setFilter(VideoUtils.getVideoFilterMimeTypes(), null); // display video files only
     }
-    protected int getListingTimeout(){ //different timeout for ftp
+
+    protected int getListingTimeout() {
+        //different timeout for ftp
         return 30000;
     }
+
     /**
      * @return true if the list is empty
      */
     protected boolean isEmpty() {
-        return (mListedFiles==null||mListedFiles.isEmpty());
+        return (mListedFiles == null || mListedFiles.isEmpty());
     }
 
     protected void setupEventListeners() {
         setOnItemViewClickedListener(new OnItemViewClickedListener() {
             @Override
-            public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+            public void onItemClicked(
+                Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 mSelectedItemUri = getItemUri(item);
                 if (item instanceof MetaFile2) {
                     MetaFile2 file = (MetaFile2) item;
@@ -570,7 +678,6 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                     } else {
                         String mimeType = MimeUtils.guessMimeTypeFromExtension(file.getExtension());
                         PlayUtils.openAnyFile(file, getActivity());
-
                     }
                 } else if (item instanceof Video) {
                     openDetailsActivity((Video) item, itemViewHolder);
@@ -588,11 +695,13 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         ListingFragment newFragment = instantiateNewFragment();
         newFragment.setArguments(args);
 
-        getParentFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.fragment_container, newFragment,"fragment_" + getParentFragmentManager().getBackStackEntryCount())
-                .addToBackStack(directory.getUri().toString())
-                .commit();
+        getParentFragmentManager()
+            .beginTransaction()
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .replace(
+                R.id.fragment_container, newFragment, "fragment_" + getParentFragmentManager().getBackStackEntryCount())
+            .addToBackStack(directory.getUri().toString())
+            .commit();
     }
 
     /**
@@ -602,7 +711,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
      * @param indexedVideosMap
      * @return filtered/updated list of files
      */
-    protected List<? extends MetaFile2> updateVideosMapAndFileList(List<? extends MetaFile2> mListedFiles, HashMap<String, Video> indexedVideosMap) {
+    protected List<? extends MetaFile2> updateVideosMapAndFileList(
+        List<? extends MetaFile2> mListedFiles, HashMap<String, Video> indexedVideosMap) {
         // used by smblistingfragmnet
         return mListedFiles;
     }
@@ -613,7 +723,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
      * This method also handle updates from the DB: file list is not updated, but we update the items with (new) data from the DB
      */
     private void updateAdapterIfReady() {
-        if (log.isDebugEnabled()) log.debug("updateAdapterIfReady: mFileListReady={}, mDbQueryReady={}", mFileListReady, mDbQueryReady);
+        if (log.isDebugEnabled())
+            log.debug("updateAdapterIfReady: mFileListReady={}, mDbQueryReady={}", mFileListReady, mDbQueryReady);
         if (mFileListReady && mDbQueryReady) {
             Uri selectedItemUri = mSelectedItemUri;
             VideoCursorMapper cursorMapper = new VideoCursorMapper();
@@ -624,14 +735,15 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
             mCursor.moveToFirst();
             while (!mCursor.isAfterLast()) {
-                Video video = (Video)cursorMapper.publicBind(mCursor);
+                Video video = (Video) cursorMapper.publicBind(mCursor);
                 String key = video.getFilePath();
                 indexedVideosMap.put(key, video);
                 mCursor.moveToNext();
             }
             // Must not close the cursor here, else it fails when recreating the fragment from backstack (i.e. when back from a sub-directory)
 
-            mListedFiles = updateVideosMapAndFileList(mListedFiles, indexedVideosMap); // I'm sorry, but this is specially made for smb to update resume with remotes ones;
+            mListedFiles = updateVideosMapAndFileList(mListedFiles,
+                indexedVideosMap); // I'm sorry, but this is specially made for smb to update resume with remotes ones;
 
             int positionInAdapter = 0;
             for (MetaFile2 file : mListedFiles) {
@@ -641,17 +753,18 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                     existingObjectInAdapter = mFilesAdapter.get(positionInAdapter);
                 }
                 boolean doReplace = areTheseTheSameFile(existingObjectInAdapter, file);
-                if (log.isDebugEnabled()) log.debug("updateAdapterIfReady: processing {}, existingObjectInAdapter={}", file.getName(), doReplace);
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "updateAdapterIfReady: processing {}, existingObjectInAdapter={}", file.getName(), doReplace);
 
-                if (file.isDirectory()){
+                if (file.isDirectory()) {
                     if (!doReplace) {
                         replaceOrAppend(positionInAdapter, file);
                     } else {
                         // a directory can not be "updated", hence nothing to do in the replace case
                     }
                     positionInAdapter++;
-                }
-                else {
+                } else {
                     // not a directory case
                     Object newObject = null;
                     String key = VideoUtils.getMediaLibCompatibleFilepathFromUri(file.getUri());
@@ -659,33 +772,33 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                     if (video != null) {
                         video.setStreamingUri(file.getUri());
                         newObject = video; // Add an indexed video object
-                    }
-                    else {
+                    } else {
                         String mimeType = file.getMimeType();
-                        if (mimeType!=null) {
-                            if (mimeType.startsWith("video/")||mimeType.equals("application/x-bittorrent")) {
-                                Uri thumbnailUri = null;// Get upnp thumbnail if available
+                        if (mimeType != null) {
+                            if (mimeType.startsWith("video/")) {
+                                Uri thumbnailUri = null; // Get upnp thumbnail if available
                                 if (file instanceof UpnpFile2) {
-                                    thumbnailUri = ((UpnpFile2)file).getThumbnailUri();
+                                    thumbnailUri = ((UpnpFile2) file).getThumbnailUri();
                                 }
 
-                                newObject = new NonIndexedVideo(file.getStreamingUri(),file.getUri(), file.getName(), thumbnailUri); // Add a non-indexed video object
-                            }
-                            else  {
-                                newObject = file; // Add a regular MetaFile2 object for now, maybe later we'll create a dedicated torrent object?
+                                newObject = new NonIndexedVideo(file.getStreamingUri(), file.getUri(), file.getName(),
+                                    thumbnailUri); // Add a non-indexed video object
+                            } else {
+                                newObject = file; // Non-video files remain regular browser entries.
                             }
 
-                        }
-                        else {
+                        } else {
                             // not adding file for which we have no mimetype
                         }
                     }
-                    if (newObject!=null) {
+                    if (newObject != null) {
                         if (doReplace) {
-                            if (log.isDebugEnabled()) log.debug("updateAdapterIfReady: replace {}", positionInAdapter);
+                            if (log.isDebugEnabled())
+                                log.debug("updateAdapterIfReady: replace {}", positionInAdapter);
                             mFilesAdapter.replace(positionInAdapter, newObject);
                         } else {
-                            if (log.isDebugEnabled()) log.debug("updateAdapterIfReady: replace or append {}", positionInAdapter);
+                            if (log.isDebugEnabled())
+                                log.debug("updateAdapterIfReady: replace or append {}", positionInAdapter);
                             replaceOrAppend(positionInAdapter, newObject);
                         }
                         positionInAdapter++; // this increment must be done only when something is added or modified in the adapter (not when skipping a non-video file)
@@ -694,7 +807,9 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
             }
             //remove items
             if (mFilesAdapter.size() > positionInAdapter) {
-                if (log.isDebugEnabled()) log.debug("updateAdapterIfReady: mFilesAdapter.size()={}>positionInAdapter={}, remove above", mFilesAdapter.size(), positionInAdapter);
+                if (log.isDebugEnabled())
+                    log.debug("updateAdapterIfReady: mFilesAdapter.size()={}>positionInAdapter={}, remove above",
+                        mFilesAdapter.size(), positionInAdapter);
                 mFilesAdapter.removeItems(positionInAdapter, mFilesAdapter.size() - positionInAdapter);
             }
 
@@ -717,7 +832,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         for (int position = 0; position < mFilesAdapter.size(); position++) {
             if (selectedItemUri.equals(getItemUri(mFilesAdapter.get(position)))) {
                 if (getSelectedPosition() != position) {
-                    if (log.isDebugEnabled()) log.debug("restoreSelectedItem: restoring {} at position {}", selectedItemUri, position);
+                    if (log.isDebugEnabled())
+                        log.debug("restoreSelectedItem: restoring {} at position {}", selectedItemUri, position);
                     setSelectedPosition(position);
                 }
                 // one-shot: consume it so later spurious adapter refreshes (e.g. background
@@ -743,27 +859,25 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     }
 
     private boolean areTheseTheSameFile(Object obj, MetaFile2 file) {
-        if (obj==null) {
+        if (obj == null) {
             return false;
-        }
-        else if (obj instanceof Video) {
-            Video video = (Video)obj; // works for both Video and NonIndexedVideo
+        } else if (obj instanceof Video) {
+            Video video = (Video) obj; // works for both Video and NonIndexedVideo
             String metafilePath = VideoUtils.getMediaLibCompatibleFilepathFromUri(file.getUri());
             return metafilePath.equals(video.getFilePath());
-        }
-        else if (obj instanceof MetaFile2) {
-            MetaFile2 f = (MetaFile2)obj;
+        } else if (obj instanceof MetaFile2) {
+            MetaFile2 f = (MetaFile2) obj;
             return f.getUri().equals(file.getUri());
-        }
-        else {
-            throw new IllegalArgumentException("areTheseTheSameFile: should not have to handle this class! "+obj);
+        } else {
+            throw new IllegalArgumentException("areTheseTheSameFile: should not have to handle this class! " + obj);
             //return false;
         }
     }
 
     @Override
     public void onListingStart() {
-        if (log.isDebugEnabled()) log.debug("onListingStart:");
+        if (log.isDebugEnabled())
+            log.debug("onListingStart:");
         // Delay the loading view to have it not show when the loading is quick
         mProgressView.setAlpha(0);
         mProgressView.setVisibility(View.VISIBLE);
@@ -775,7 +889,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onListingUpdate(List<? extends MetaFile2> files) {
-        if (log.isDebugEnabled()) log.debug("onListingUpdate: mFileListReady->true");
+        if (log.isDebugEnabled())
+            log.debug("onListingUpdate: mFileListReady->true");
         mListedFiles = files;
         mFileListReady = true;
         updateAdapterIfReady();
@@ -783,18 +898,20 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onListingEnd() {
-        if (log.isDebugEnabled()) log.debug("onListingEnd:");
+        if (log.isDebugEnabled())
+            log.debug("onListingEnd:");
         mProgressView.setVisibility(View.INVISIBLE);
-        if (isEmpty() && (mErrorMessage.getVisibility()!=View.VISIBLE)) { // do not show empty view when there is an error displayed
+        if (isEmpty()
+            && (mErrorMessage.getVisibility()
+                != View.VISIBLE)) {
+            // do not show empty view when there is an error displayed
             mEmptyView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             mEmptyView.setVisibility(View.GONE);
         }
     }
 
-    public void onListingFileInfoUpdate(Uri uri, MetaFile2 metaFile2){
-
+    public void onListingFileInfoUpdate(Uri uri, MetaFile2 metaFile2) {
     }
 
     @Override
@@ -810,20 +927,26 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     @Override
     public void onCredentialRequired(Exception e) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_credentials_required");
+        Diagnostics.event("browser_credentials_required");
         Toast.makeText(getActivity(), "TODO: Credential Required", Toast.LENGTH_SHORT).show();
         log.error("TODO: Credential Required", e);
     }
 
     @Override
     public void onListingFatalError(Exception e, ListingEngine.ErrorEnum errorCode) {
-        com.archos.mediacenter.video.diagnostics.Diagnostics.event("browser_listing_failed","code",String.valueOf(errorCode));
-        if(e!=null)com.archos.mediacenter.video.diagnostics.Diagnostics.error("browser_listing_exception",e);
+        Diagnostics.event(
+            "browser_listing_failed", "code", String.valueOf(errorCode));
+        if (e != null)
+            Diagnostics.error("browser_listing_exception", e);
+        if (previewSurface != null) {
+            previewSurface.failure(errorCode);
+            return;
+        }
         mErrorMessage.setText(ListingEngine.getErrorStringResId(errorCode));
         mErrorMessage.setVisibility(View.VISIBLE);
         mActionButton.setVisibility(View.GONE);
-        String exceptionMessage = (e!=null) ? e.getMessage() : null;
-        if (exceptionMessage!=null && !exceptionMessage.isEmpty()) {
+        String exceptionMessage = (e != null) ? e.getMessage() : null;
+        if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
             mErrorDetails.setText(exceptionMessage);
             mErrorDetails.setVisibility(View.VISIBLE);
         }
@@ -834,14 +957,15 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
     // -----------------------------------------------------
 
     @Override
-    public  Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // TODO For SMB we need to implement the BUCKET_ID stuff BrowserBySMB (do we?)
         return new VideosInFolderLoader(getActivity(), VideoUtils.getMediaLibCompatibleFilepathFromUri(mUri));
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor c) {
-        if (log.isDebugEnabled()) log.debug("onLoadFinished: mDbQueryReady->true");
+        if (log.isDebugEnabled())
+            log.debug("onLoadFinished: mDbQueryReady->true");
         mCursor = c;
         mDbQueryReady = true;
         updateAdapterIfReady();
@@ -853,31 +977,38 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     // -----------------------------------------------------
 
+    @SuppressWarnings("unchecked")
     private void openDetailsActivity(Video video, Presenter.ViewHolder itemViewHolder) {
-        if (!isAdded() || getActivity() == null || getActivity().isFinishing()) return;
+        if (!isAdded() || getActivity() == null || getActivity().isFinishing())
+            return;
         Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
         intent.putExtra(VideoDetailsFragment.EXTRA_VIDEO, video);
         intent.putExtra(VideoDetailsFragment.EXTRA_FORCE_VIDEO_SELECTION, true);
         View sourceView = null;
         if (itemViewHolder != null && itemViewHolder.view instanceof ImageCardView) {
             sourceView = ((ImageCardView) itemViewHolder.view).getMainImageView();
-        } else if (itemViewHolder instanceof ListPresenter.ListViewHolder){
-            sourceView = ((ListPresenter.ListViewHolder)itemViewHolder).getImageView();
+        } else if (itemViewHolder instanceof ListPresenter.ListViewHolder) {
+            sourceView = ((ListPresenter.ListViewHolder) itemViewHolder).getImageView();
         }
 
-        ActivityOptionsCompat opts = detailsTransition(getActivity(),sourceView);
+        ActivityOptionsCompat opts = detailsTransition(getActivity(), sourceView);
+        intent.putExtra(VideoDetailsFragment.EXTRA_HAS_SHARED_ELEMENT, sourceView != null && opts != null);
         infoLauncher.launch(intent, opts);
     }
 
-
-    public static ActivityOptionsCompat detailsTransition(android.app.Activity activity,View sourceView) {
-        if(activity==null||activity.isFinishing()||activity.isDestroyed()||sourceView==null||!sourceView.isAttachedToWindow())return null;
-        return ActivityOptionsCompat.makeSceneTransitionAnimation(activity,sourceView,VideoDetailsActivity.SHARED_ELEMENT_NAME);
+    public static ActivityOptionsCompat detailsTransition(Activity activity, View sourceView) {
+        if (activity == null || activity.isFinishing() || activity.isDestroyed() || sourceView == null
+            || !sourceView.isAttachedToWindow())
+            return null;
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(
+            activity, sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME);
     }
 
     public void onFileDelete(Uri file) {
-
-        if (file.toString().endsWith("/") && !mUri.toString().endsWith("/") && file.toString().equals(mUri.toString() + "/") || mUri.equals(file)) { // if current listed uri
+        if (file.toString().endsWith("/") && !mUri.toString().endsWith("/")
+                && file.toString().equals(mUri.toString() + "/")
+            || mUri.equals(file)) {
+            // if current listed uri
             if (isAdded() && getActivity() != null) {
                 new Handler(Looper.getMainLooper()).post(() -> {
                     if (isAdded() && getActivity() != null) {
@@ -885,9 +1016,13 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
                     }
                 });
             }
-        } else { // if parent uri
+        } else {
+            // if parent uri
             Uri parent = FileUtils.getParentUrl(file);
-            if (parent != null && (parent.toString().endsWith("/") && !mUri.toString().endsWith("/") && parent.toString().equals(mUri.toString() + "/") || mUri.equals(parent))) {
+            if (parent != null
+                && (parent.toString().endsWith("/") && !mUri.toString().endsWith("/")
+                        && parent.toString().equals(mUri.toString() + "/")
+                    || mUri.equals(parent))) {
                 // we need to refresh
                 if (isAdded())
                     startListing(mUri);
@@ -902,10 +1037,15 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
         PrivateModeUIHelper.updatePrivateModeIndicator(getView());
 
         bgMngr = BackgroundManager.getInstance(getActivity());
-        if(!bgMngr.isAttached())
+        if (!bgMngr.isAttached())
             bgMngr.attach(getActivity().getWindow());
 
-        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)&&!PrivateMode.isActive()){bgMngr.setDrawable(com.archos.mediacenter.video.leanback.PreviewAccent.utility(requireContext()));return;}
+        if (PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("try_new_ui", false)
+            && !PrivateMode.isActive()) {
+            bgMngr.setDrawable(PreviewAccent.utility(requireContext()));
+            return;
+        }
         if (PrivateMode.isActive()) {
             int privateModeColor = ThemeManager.getInstance(getActivity()).getPrivateModeColor();
             bgMngr.setColor(privateModeColor);
@@ -928,7 +1068,8 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (VideoPreferencesCommon.KEY_APP_THEME.equals(key)) {
-                    if (log.isDebugEnabled()) log.debug("Theme changed, updating background");
+                    if (log.isDebugEnabled())
+                        log.debug("Theme changed, updating background");
                     updateBackground();
                 }
             }
@@ -938,8 +1079,10 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     private static String itemid2sortorder(int itemid) {
         String sortOrder = DEFAULT_SORT;
-        if (itemid >= 0 && itemid < sortOrders.size()) sortOrder = sortOrders.get(itemid);
-        if (log.isDebugEnabled()) log.debug("itemid2sortorder: sortOrder={}", sortOrder);
+        if (itemid >= 0 && itemid < sortOrders.size())
+            sortOrder = sortOrders.get(itemid);
+        if (log.isDebugEnabled())
+            log.debug("itemid2sortorder: sortOrder={}", sortOrder);
         return sortOrder;
     }
 
@@ -954,7 +1097,9 @@ public abstract class ListingFragment extends MyVerticalGridFragment implements 
 
     protected static ListingEngine.SortOrder getSortOrder(String sortOrder) {
         final int index = sortOrders.indexOf(sortOrder);
-        if (index <0) return ListingEngine.SortOrder.SORT_BY_NAME_ASC;
-        else return sortOrdersListingEngine.get(index);
+        if (index < 0)
+            return ListingEngine.SortOrder.SORT_BY_NAME_ASC;
+        else
+            return sortOrdersListingEngine.get(index);
     }
 }

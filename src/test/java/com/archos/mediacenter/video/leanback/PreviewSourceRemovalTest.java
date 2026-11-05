@@ -1,45 +1,119 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.app.Dialog;
 import android.net.Uri;
 import android.view.View;
-import android.widget.LinearLayout;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.leanback.adapter.object.Shortcut;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import static org.junit.Assert.*;
 
+/** Checks unconfirmed source and bookmark removal leave their displayed rows unchanged. */
 @RunWith(RobolectricTestRunner.class)
-@Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
+@Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
 public class PreviewSourceRemovalTest {
-    @Test public void unconfirmedIndexedSourceRemovalDoesNotHideTheRow()throws Exception{check(false);}
-    @Test public void unconfirmedBookmarkRemovalDoesNotHideTheRow()throws Exception{check(true);}
-    private void check(boolean bookmark)throws Exception{
-        var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
-        try{
+    @Before
+    public void isolatePreviewTransport() {
+        PreviewAsyncFixtures.offlineTransport();
+    }
+
+    @After
+    public void drainPreviewWorkers() throws Exception {
+        PreviewAsyncFixtures.drain();
+    }
+
+    @Before
+    public void configuredLibraryFixture() {
+        PreferenceManager
+            .getDefaultSharedPreferences(RuntimeEnvironment.getApplication())
+            .edit()
+            .putBoolean("supernova_onboarding_complete", true)
+            .commit();
+    }
+
+    @Test
+    public void unconfirmedIndexedSourceRemovalDoesNotHideTheRow() throws Exception {
+        check(false);
+    }
+
+    @Test
+    public void unconfirmedBookmarkRemovalDoesNotHideTheRow() throws Exception {
+        check(true);
+    }
+
+    private void check(boolean bookmark) throws Exception {
+        var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
             // This displayed stale row deliberately has no corresponding database
             // record. The real database deletion returns zero, not success.
-            Shortcut source=new Shortcut(987654,"https://example.invalid/absent",null,"Fixture"){
-                public Uri getUri(){return Uri.parse(getFullPath());}
-                public int getImage(){return 0;}
+            Shortcut source = new Shortcut(987654, "https://example.invalid/absent", null, "Fixture") {
+                @Override
+                public Uri getUri() {
+                    return Uri.parse(getFullPath());
+                }
+                @Override
+                public int getImage() {
+                    return 0;
+                }
             };
-            java.util.List<Shortcut> rows=new java.util.ArrayList<>();rows.add(source);
-            PreviewNetworkWorkspace workspace=new PreviewNetworkWorkspace(host.get(),java.util.Collections.emptyList(),
-                bookmark?new java.util.ArrayList<>():rows,bookmark?rows:new java.util.ArrayList<>(),box->{},kind->{});
+            List<Shortcut> rows = new ArrayList<>();
+            rows.add(source);
+            PreviewNetworkWorkspace workspace = new PreviewNetworkWorkspace(host.get(),
+                Collections.emptyList(), bookmark ? new ArrayList<>() : rows,
+                bookmark ? rows : new ArrayList<>(), box -> {
+                }, kind -> {
+                });
             host.get().setContentView(workspace);
-            var show=PreviewNetworkWorkspace.class.getDeclaredMethod("show",String.class);show.setAccessible(true);show.invoke(workspace,bookmark?"Saved Locations":"Network Shares");
-            LinearLayout context=ReflectionHelpers.getField(workspace,"context"),items=ReflectionHelpers.getField(workspace,"items");
-            context.getChildAt(4).performClick();
-            android.app.Dialog confirm=ShadowDialog.getLatestDialog();
-            View label=confirm.getWindow().getDecorView().findViewWithTag("preview-label:1");assertNotNull(label);((View)label.getParent()).performClick();
-            android.app.Dialog error=ShadowDialog.getLatestDialog();assertNotSame(confirm,error);assertTrue(error.isShowing());
-            assertEquals(1,rows.size());assertSame(source,rows.get(0));
-            assertEquals("semantic:network.item."+(bookmark?"saved.":"source.")+source.getId(),items.getChildAt(0).getTag(com.archos.mediacenter.video.R.id.preview_diagnostic_semantic));
-            error.dismiss();
-        }finally{host.pause().stop().destroy();}
+            PreviewPagesTest.layout(workspace);
+            workspace.findViewWithTag("network.card.1").requestFocus();
+            workspace.findViewWithTag("network.card.1").performClick();
+            View sourceRow = workspace.findViewWithTag("semantic:network.item.source." + source.getId());
+            assertNotNull(sourceRow);
+            sourceRow.requestFocus();
+            sourceRow.performClick();
+            var browser = workspace.browser();
+            if (bookmark) {
+                assertFalse(browser.selections().changed());
+                PreviewPagesTest.findText(browser, "Remove Saved Location").performClick();
+                Dialog confirm = ShadowDialog.getLatestDialog();
+                View label = confirm.getWindow().getDecorView().findViewWithTag("preview-label:1");
+                ((View) label.getParent()).performClick();
+                Dialog error = ShadowDialog.getLatestDialog();
+                assertNotSame(confirm, error);
+                assertTrue(error.isShowing());
+                assertFalse(browser.selections().changed());
+                error.dismiss();
+            } else {
+                PreviewPagesTest.findText(browser, "Remove from Library").performClick();
+                assertTrue(browser.selections().changed());
+                PreviewPagesTest.findText(browser, "Save Changes & Scan").performClick();
+                Dialog error = ShadowDialog.getLatestDialog();
+                assertTrue(error.isShowing());
+                assertTrue("An unconfirmed commit remains editable", browser.selections().changed());
+                error.dismiss();
+            }
+            assertEquals(1, rows.size());
+            assertSame(source, rows.get(0));
+            assertEquals(source.getUri(), browser.location());
+            ReflectionHelpers.callInstanceMethod(browser, "networkShares");
+            PreviewPagesTest.layout(workspace);
+            assertNotNull(workspace.findViewWithTag("semantic:network.item.source." + source.getId()));
+            browser.close();
+
+        } finally {
+            host.pause().stop().destroy();
+        }
     }
 }

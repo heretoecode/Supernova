@@ -35,14 +35,11 @@
     </appender>
 
     <!-- Debug first activity -->
-    <logger name="com.archos.mediacenter.video.browser.MainActivity" level="INFO"/>
     <logger name="com.archos.mediacenter.video.browser.MainFragment" level="INFO"/>
     <logger name="com.archos.mediacenter.video.leanback.MainFragment" level="DEBUG"/>
     <logger name="com.archos.mediacenter.video.CustomApplication" level="DEBUG"/>
 
     <logger name="com.archos.mediacenter.video.browser.FileManagerService" level="INFO"/>
-    <logger name="com.archos.mediacenter.video.browser.NewVideosActionProvider" level="INFO"/>
-    <logger name="com.archos.mediacenter.video.browser.TorrentObserverService" level="INFO"/>
 
     <!-- Debug player -->
     <logger name="com.archos.mediacenter.video.player.Player" level="INFO"/>
@@ -70,7 +67,6 @@
     <logger name="com.hierynomus.smbj.share.SmbjPrefetchInputStream" level="INFO"/>
     <logger name="com.archos.filecorelibrary.webdav" level="INFO"/>
 
-    <logger name="com.archos.mediacenter.video.browser.filebrowsing.BrowserByFolder" level="INFO"/>
     <logger name="com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment" level="INFO"/>
 
     <logger name="com.archos.mediacenter.filecoreextension.upnp2" level="INFO"/>
@@ -99,7 +95,6 @@
     <logger name="com.archos.mediacenter.cover.LibraryUtils" level="INFO"/>
 
     <!-- Debug: Did not manage to access the file -->
-    <logger name="com.archos.mediacenter.video.info.VideoInfoActivityFragment" level="INFO"/>
     <logger name="com.archos.mediacenter.video.leanback.details.VideoDetailsFragment" level="DEBUG"/>
     <logger name="com.archos.mediacenter.video.leanback.details.FileDetailsRowPresenter" level="INFO"/>
     <logger name="com.archos.mediacenter.video.leanback.overlay.ScannerAndScraperProgress" level="INFO"/>

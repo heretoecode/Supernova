@@ -1,0 +1,12 @@
+{
+  "result": "FAIL",
+  "source_sha": "8c87d011",
+  "dependency_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "duration": "50s",
+  "log_sha256": "1de814379d28fd394c9a506afae044276745df7f5a22008aacb93a217178503e",
+  "tests": 38,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "reason": "Production model matches-only restore and archive/privacy checks pass. Controller fixture looked for private export in Activity cache, while worker owns Application cache; align fixture with actual model context, as existing picker test does."
+}

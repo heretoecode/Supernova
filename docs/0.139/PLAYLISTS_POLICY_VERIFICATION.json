@@ -1,0 +1,21 @@
+{
+  "source_sha": "ab2066b707b0f98f4195c6d1d6407d5b860a1daa",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 1,
+  "tests": 2,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest"
+  ],
+  "duration": "2m 6s",
+  "log_sha256": "e82dcec0036adec30863c0ece3e05dbdeb803f32dfc1602f1c657e6392246c7e",
+  "coverage": [
+    "Real provider query code with native SQLite returns every member for list owner77 and excludes owner88",
+    "Real TraktService.syncLists with mocked transport only calls getLists; cannot upload, delete or fetch members for local-only definitions",
+    "Local status4 preserves renamed status3 and receiving rows remain unchanged"
+  ],
+  "limits": "Provider fixture supplies actual DB holder/ContentResolver while bypassing unrelated onCreate lifecycle. No real network/account mutation, full provider lifecycle or registered playlist restore acceptance."
+}

@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
+/** Loads films filtered by genre. */
 public class FilmsByGenreLoader extends FilmsByLoader {
 
     private static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE NOCASE";

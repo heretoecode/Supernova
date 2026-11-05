@@ -1,0 +1,58 @@
+name: Supernova 0.146 native host integration
+on:
+  push:
+    branches: [codex/supernova-0.146-upstream-completion-2026-10-28]
+    paths: [.github/workflows/supernova-0146-native-host.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  host:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: nova/Video
+          persist-credentials: false
+      - name: Install compiler and renderer dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang libclang-rt-18-dev pkg-config libass-dev fonts-dejavu-core libavformat-dev libavcodec-dev libavutil-dev
+      - name: Prepare pinned dependency source and reviewed patches
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,xml.etree.ElementTree as ET
+          root=Path('nova').resolve()
+          repositories={'MediaLib':('heretoecode/aos-MediaLib','5758074049bc153ac4967b4ecd21886469270076'),'FileCoreLibrary':('nova-video-player/aos-FileCoreLibrary','c4b760c55102c72d45f68b0d16999fc1f4f013a7'),'native/avos':('nova-video-player/aos-avos','2cf21c486c7bf244c49b78d2220197a6d75396dd')}
+          for name,(repo,sha) in repositories.items():
+              dest=root/name;dest.parent.mkdir(parents=True,exist_ok=True)
+              subprocess.run(['git','clone','--filter=blob:none','--no-checkout','https://github.com/'+repo+'.git',str(dest)],check=True)
+              subprocess.run(['git','-C',str(dest),'checkout','--detach',sha],check=True)
+          PY
+          python3 nova/Video/.github/build/prepare-supernova146-dependencies.py --root nova
+      - name: Native subtitle AddressSanitizer and UBSan
+        env:
+          SANITIZERS: address,undefined
+        run: python3 nova/native/avos/test/host/test_host_native.py -v
+      - name: Native subtitle ThreadSanitizer concurrency
+        env:
+          SANITIZERS: thread
+          CC: clang
+        run: python3 nova/native/avos/test/host/test_host_native.py -v -k race -k registry -k switch -k seek -k close_open -k style_resize -k jni
+      - name: Native arithmetic and sync regression tests
+        run: |
+          cc -Wall -Wextra -Werror -fsanitize=address,undefined -I nova/native/avos/Include nova/native/avos/test/stream_buffer_limits.c -o "$RUNNER_TEMP/stream-buffer-limits"
+          "$RUNNER_TEMP/stream-buffer-limits"
+          python3 -m unittest discover -s nova/native/avos/test -p 'test_*.py' -v
+      - name: Preserve public source preparation receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0146-native-host-evidence
+          path: nova/supernova146-source-preparation.json
+          if-no-files-found: warn

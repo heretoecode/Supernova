@@ -16,8 +16,8 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
 
+/** Loads films filtered by year. */
 public class FilmsByYearLoader extends FilmsByLoader {
 
     private static final String DEFAULT_SORT = "m_release_date DESC, "+COLUMN_SUBSET_NAME+" COLLATE NOCASE ASC";
@@ -34,6 +34,7 @@ public class FilmsByYearLoader extends FilmsByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String categorySort = COLUMN_SUBSET_NAME + " COLLATE NOCASE DESC";
         if (mSortOrder != null && (mSortOrder.startsWith("name") || mSortOrder.startsWith(COLUMN_SUBSET_NAME)) && mSortOrder.contains("ASC")) {

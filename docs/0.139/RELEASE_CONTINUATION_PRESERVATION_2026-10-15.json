@@ -1,0 +1,42 @@
+{
+  "result": "PASS",
+  "verified_at_utc": "2026-10-15T16:49:31.012706+00:00",
+  "initial_head": "f4f0c4538e1ca8ab87e07cec4147bdaf7af4b244",
+  "validated_ci_commit": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "validated_source_is_ancestor_of_initial_head": true,
+  "subsequent_commits": [
+    {
+      "sha": "f4f0c4538e1ca8ab87e07cec4147bdaf7af4b244",
+      "subject": "docs: preserve final Back checks and verified unsigned139 binary"
+    },
+    {
+      "sha": "5216613a6b8b9177ede94e37d0b841e0870aec49",
+      "subject": "docs: distinguish Back route correction from preceding regression evidence"
+    }
+  ],
+  "subsequent_paths": [
+    "docs/0.139/ACCEPTANCE_STATUS.json",
+    "docs/0.139/APPROVED_IMPLEMENTATION_PRESERVATION_2026-10-15.json",
+    "docs/0.139/CONTINUATION.md",
+    "docs/0.139/DESIGN_BLOCKERS.md",
+    "docs/0.139/DRIVE_TARGET_OWNER_APPROVED_RECHECK_2026-10-15.json",
+    "docs/0.139/FINAL_BACK_ROUTE_VERIFICATION_2026-10-15.json",
+    "docs/0.139/FOCUS_RECREATION_VERIFICATION_2026-10-15.json",
+    "docs/0.139/FULL_PRE_BACK_VERIFICATION_2026-10-15.json",
+    "docs/0.139/HEADER_BOUNDARY_VERIFICATION_2026-10-15.json",
+    "docs/0.139/LOCAL_APPROVED_PACKAGING_2026-10-15.json",
+    "docs/0.139/OWNER_APPROVED_UI_VERIFICATION_2026-10-15.json",
+    "docs/0.139/RELEASE_NOTES.md",
+    "docs/0.139/WORKSTREAMS.md",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-1920-1.5.png",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-3840-1.0.png",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-640-1.0.png",
+    "docs/0.139/ui/owner-approved-details/0139-details-selected-content-960-1.0.png"
+  ],
+  "subsequent_non_docs_paths": [],
+  "owner_decisions_sha256": "b2812f94a4cda8ad1a8a1473a1004c78bfadc53570519baf534707f877e32697",
+  "owner_decisions_match_decisions_branch": true,
+  "continuation_scope": "Documentation/evidence only. No application, test, build, workflow, identity, assets, resources, dependency patch or signing code changed. No merge/main/tag/release/0.140.",
+  "html_css_preserved": true,
+  "html_0138_and_older_history_preserved": true
+}

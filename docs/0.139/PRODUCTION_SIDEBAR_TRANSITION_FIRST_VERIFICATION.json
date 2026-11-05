@@ -1,0 +1,17 @@
+{
+  "source_sha": "9c6a846896126fd34853faae86f57bfdbd462549",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "47s",
+  "log_sha256": "fd3e99fc9d94202be1c778cac84591b4803071087c6c8a55ab1756afcb75cdc1",
+  "reason": "Transition-end trace reaches final content608 and scroll50, but fixture asserted before normal pre-draw traversal completed. Follow-up dispatches the actual pre-draw phase before advancing animation time, as existing native UI fixtures do; no geometry is forced or assertion relaxed."
+}

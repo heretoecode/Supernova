@@ -19,6 +19,7 @@ package com.archos.mediacenter.video.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +37,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.utils.oauth.OAuthDialog;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -226,7 +226,7 @@ public class NovaProgressDialog extends AlertDialog {
                     if (mProgressPercentFormat != null) {
                         double percent = (double) progress / (double) max;
                         SpannableString tmp = new SpannableString(mProgressPercentFormat.format(percent));
-                        tmp.setSpan(new StyleSpan(android.graphics.Typeface.BOLD),
+                        tmp.setSpan(new StyleSpan(Typeface.BOLD),
                                 0, tmp.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         mProgressPercent.setText(tmp);
                     } else {

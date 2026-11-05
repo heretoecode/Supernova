@@ -1,0 +1,426 @@
+{
+  "schema": 1,
+  "application_source": "cf1211ceea12a6e1ae82e10cbfb247d33d4ad01f",
+  "prepared_variant_files_matched": [
+    {
+      "path": "src/amazon/assets/logback.xml",
+      "sha256": "0213d2f4f1b8e66de594fd54ad1a55e17f26cd5fed6f5f60b2bf7b5cbe4ab918"
+    },
+    {
+      "path": "src/manageexternalstorage/AndroidManifest.xml",
+      "sha256": "c008e8c516c2bf938f3bf975e975d5987d6b21a266eccd17a06f5371e460d279"
+    },
+    {
+      "path": "src/manageexternalstorage/assets/logback.xml",
+      "sha256": "0213d2f4f1b8e66de594fd54ad1a55e17f26cd5fed6f5f60b2bf7b5cbe4ab918"
+    },
+    {
+      "path": "src/noamazon/AndroidManifest.xml",
+      "sha256": "7ae45959e63664a879ec8cacd7ae81ed5194305f1695bedb8e81c26287bab155"
+    },
+    {
+      "path": "src/noamazon/assets/logback.xml",
+      "sha256": "0213d2f4f1b8e66de594fd54ad1a55e17f26cd5fed6f5f60b2bf7b5cbe4ab918"
+    },
+    {
+      "path": "src/noamazon/play/contact-email.txt",
+      "sha256": "b09cb61bf5d3828b74775836b489460a4101acdaec922c9683fa620cd95cc6e8"
+    },
+    {
+      "path": "src/noamazon/play/contact-website.txt",
+      "sha256": "d41e7a0d10fad3c1d029a42992ca1261d2caa55f67a2f3a86c0b0e8b656ef128"
+    },
+    {
+      "path": "src/noamazon/play/default-language.txt",
+      "sha256": "46ba6aa9d3d54156cb3b8bee34671df456b047b63ed7bdce81f489e741ccbfc0"
+    },
+    {
+      "path": "src/noamazon/play/listings/de-DE/full-description.txt",
+      "sha256": "af4dc5f1d41228552cb5d7ed62749b8e97469a16edeb1b4d3a12ad0f6ca4e656"
+    },
+    {
+      "path": "src/noamazon/play/listings/de-DE/short-description.txt",
+      "sha256": "5becad60902c19c214863d064f5e90ded89716ed4de9373e85ddc195949da261"
+    },
+    {
+      "path": "src/noamazon/play/listings/de-DE/title.txt",
+      "sha256": "77c12a009f3735691d4c6b08dd3d93b98444d6ef8f07451244ece1642ea8eee3"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/full-description.txt",
+      "sha256": "79765c64b399ce0ff75f12ebfcec4ef989059ebd6b5e0639e5351575357dbd23"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/feature-graphic/1.png",
+      "sha256": "10ab08c4f16e7c5216c4924b6996000b7a78443a09e15d239b603c6a6e3c608a"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/icon/1.png",
+      "sha256": "1af12a9638e14fb5a6c0e872f747252e936094ede1361abacd683bd444ad5c80"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/phone-screenshots/1.png",
+      "sha256": "c16710ad47a6b6dd0350325f4800d54839b06dfd607ca09c72ea686add41705d"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/phone-screenshots/2.png",
+      "sha256": "7a40ad7e135ee20020c8f87e88564b09071188a40b06087c12c5b04e11449939"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/phone-screenshots/3.png",
+      "sha256": "5f174c03e23c15dd0da63920394455b1ee4b036f671e48715add1e2132a704d9"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/phone-screenshots/4.png",
+      "sha256": "ed0ec311e74b822b81e06398f3881088423f2b67460af9d3c0aad4558a34df77"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/phone-screenshots/5.png",
+      "sha256": "ec9e94393391e74afa0ced2eec480b276d2a38961a109bf445d3764c71e71052"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tablet-screenshots/1.png",
+      "sha256": "67839980de734e1e2fe4f22ea0b056b4568b2e75a5ffa3d497435f79853b6f60"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tablet-screenshots/2.png",
+      "sha256": "301929625cb92ba40ed6dc40dfa29af6a771d5211c871fbf358e2788f6e8bb31"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tablet-screenshots/3.png",
+      "sha256": "462732e782d405eba669e53907c7e99bf5a49c3b696f35bd4af3085b7b44fdfc"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tablet-screenshots/4.png",
+      "sha256": "bc6dbeeeaea5cecb1699351db61e96b9eea2623dc954e0077de509a762fd1e7e"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-banner/1.png",
+      "sha256": "5a28d3eb6d14c98e9940f3aafa5858e31f1b4c516bf1c75de0bc8ab7be228015"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/1.png",
+      "sha256": "ba4320f972450d8e2c2dbd603feeba9e04e20052175ec8f8b3a4058e5c1fbc1e"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/2.png",
+      "sha256": "1de8d7c6328cbfb220b35da5575e3bbe6b7df5b7021da069df46ff92e82e9bb2"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/3.png",
+      "sha256": "06daad712e538bfc4a217acf3e531fb031b8ce13941ea6cf685baec181f0ade4"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/4.png",
+      "sha256": "8a868f3abf7ef8cfec5850c52cef334b24031590635e49736a6012246a1bc2eb"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/5.png",
+      "sha256": "299363ca088d1b126513f9646e152ca62589a14412968055be55f492885d4bd7"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/6.png",
+      "sha256": "9ed84549a6a78a6aa5e753275159733ba9e89771cfb27a08265ce15d6c153940"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/graphics/tv-screenshots/7.png",
+      "sha256": "d51b4cc1af97d6e0fc91fd7ba644cf421fb1aa197182b1d20c6e939186b5e1f7"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/short-description.txt",
+      "sha256": "ec4e0dc726300209b2502394152e8ede63d4457785a2f3a661c74b4851c52e02"
+    },
+    {
+      "path": "src/noamazon/play/listings/en-US/title.txt",
+      "sha256": "77c12a009f3735691d4c6b08dd3d93b98444d6ef8f07451244ece1642ea8eee3"
+    },
+    {
+      "path": "src/noamazon/play/listings/es-ES/full-description.txt",
+      "sha256": "dd26df94271c577c4a086581cf6101ab4433382bd53ccf7a050d5d0c55a38f17"
+    },
+    {
+      "path": "src/noamazon/play/listings/es-ES/short-description.txt",
+      "sha256": "3f1926d312216c35da1f4af875cc1b6f58d1d6d239970a41e4e248b2aa49dcd5"
+    },
+    {
+      "path": "src/noamazon/play/listings/es-ES/title.txt",
+      "sha256": "77c12a009f3735691d4c6b08dd3d93b98444d6ef8f07451244ece1642ea8eee3"
+    },
+    {
+      "path": "src/noamazon/play/listings/fr-FR/full-description.txt",
+      "sha256": "f7ca61c0388f0f59155759c76f989a716689f5bb02f9a148024279c353a9a690"
+    },
+    {
+      "path": "src/noamazon/play/listings/fr-FR/short-description.txt",
+      "sha256": "5fa6952f83de712e1221774af3a0d2adbf2424d4c1a242ba914cc9c8e443a880"
+    },
+    {
+      "path": "src/noamazon/play/listings/fr-FR/title.txt",
+      "sha256": "77c12a009f3735691d4c6b08dd3d93b98444d6ef8f07451244ece1642ea8eee3"
+    },
+    {
+      "path": "src/noamazon/play/listings/it-IT/full-description.txt",
+      "sha256": "4bd56341e2e8eb94f1eeec7096baf02e61d27b72e823dd497fd3709b41a63e52"
+    },
+    {
+      "path": "src/noamazon/play/listings/it-IT/short-description.txt",
+      "sha256": "b24a22f07e4ffbf2299b8491b7fd5db27a43330b957fa2ebee92463b69676250"
+    },
+    {
+      "path": "src/noamazon/play/listings/it-IT/title.txt",
+      "sha256": "77c12a009f3735691d4c6b08dd3d93b98444d6ef8f07451244ece1642ea8eee3"
+    },
+    {
+      "path": "src/noamazon/play/listings/nl-NL/full-description.txt",
+      "sha256": "894aef2da8569739bddb1a9f8acf59dc88feebfc38e753324fd463198d620657"
+    },
+    {
+      "path": "src/noamazon/play/listings/nl-NL/short-description.txt",
+      "sha256": "9134e55e901c5985f33c8116b6b8acefa4ca3f729da0b0315c10d73c5f1a8468"
+    },
+    {
+      "path": "src/noamazon/play/listings/nl-NL/title.txt",
+      "sha256": "77c12a009f3735691d4c6b08dd3d93b98444d6ef8f07451244ece1642ea8eee3"
+    },
+    {
+      "path": "src/noamazon/play/listings/pl-PL/full-description.txt",
+      "sha256": "3cd32c69efb710ba7564d6e805f2820ab757627c151e7c8c1e3ce0c10a8720b3"
+    },
+    {
+      "path": "src/noamazon/play/listings/pl-PL/short-description.txt",
+      "sha256": "f3e2e3f7c2bf0e4d7639667b6f98e288143d98900019ad89bb66e11700add187"
+    },
+    {
+      "path": "src/noamazon/play/listings/pl-PL/title.txt",
+      "sha256": "5541e26f348b9c40d2b7f3cf332b0957bf6ed3c03c5b68b01c346841a3fbace6"
+    },
+    {
+      "path": "src/noamazon/play/listings/ru-RU/full-description.txt",
+      "sha256": "f13182816c163b2cac57ca9cc97d59f46227ef89b799e129416de8841411639b"
+    },
+    {
+      "path": "src/noamazon/play/listings/ru-RU/short-description.txt",
+      "sha256": "f5ff78231ad7af5a7cb1a0e1e28917f3fca84ce5598695a7ba78bce2788d8b42"
+    },
+    {
+      "path": "src/noamazon/play/listings/ru-RU/title.txt",
+      "sha256": "5541e26f348b9c40d2b7f3cf332b0957bf6ed3c03c5b68b01c346841a3fbace6"
+    },
+    {
+      "path": "src/noamazon/play/listings/tr-TR/full-description.txt",
+      "sha256": "969836048d0cde69beb8c477598beffc0a8d2bc2d9277cf0069fcde4bfefa0a5"
+    },
+    {
+      "path": "src/noamazon/play/listings/tr-TR/short-description.txt",
+      "sha256": "0ed0ad83d60735413905530ab795ac72781d54d5d3be19fa57f60ccd35973780"
+    },
+    {
+      "path": "src/noamazon/play/listings/tr-TR/title.txt",
+      "sha256": "db6167c2918159e7f4b813f351e6e8ce8d7db01440b8806c534c22f185898b2b"
+    },
+    {
+      "path": "src/noamazon/play/listings/zh-CN/full-description.txt",
+      "sha256": "fd9c7be00f498eb0bd0c80595b823923bcca870199b3d8464b8543977eb70ae9"
+    },
+    {
+      "path": "src/noamazon/play/listings/zh-CN/short-description.txt",
+      "sha256": "94bdfd13c38d49328e80d06212de102c6885de4d48575eb7de78cc90a5707978"
+    },
+    {
+      "path": "src/noamazon/play/listings/zh-CN/title.txt",
+      "sha256": "c8d7cf9f489bf81ac3087e58f1a3d7ac313cd6c7a4d9b32cf918dfd1d9eab204"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/cs-CZ/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/cs-CZ/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/cs-CZ/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/cs-CZ/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/de-DE/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/de-DE/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/de-DE/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/de-DE/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/en-US/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/en-US/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/en-US/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/en-US/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/es-ES/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/es-ES/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/es-ES/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/es-ES/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/fr-FR/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/fr-FR/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/fr-FR/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/fr-FR/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/it-IT/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/it-IT/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/it-IT/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/it-IT/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/nl-NL/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/nl-NL/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/nl-NL/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/nl-NL/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pl-PL/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pl-PL/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pl-PL/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pl-PL/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pt-BR/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pt-BR/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pt-BR/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/pt-BR/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/ru-RU/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/ru-RU/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/ru-RU/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/ru-RU/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/tr-TR/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/tr-TR/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/tr-TR/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/tr-TR/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/zh-CN/alpha.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/zh-CN/beta.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/zh-CN/internal.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    },
+    {
+      "path": "src/noamazon/play/release-notes/zh-CN/production.txt",
+      "sha256": "3f2eeeb54d4539fc2a565155f6ea6cd22ca927ce4ed91dcc2e2a96d90426bfec"
+    }
+  ]
+}

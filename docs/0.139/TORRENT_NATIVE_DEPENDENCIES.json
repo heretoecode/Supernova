@@ -1,0 +1,49 @@
+{
+  "apk_sha256": "6f46a40c9698e9219b6e26c2f09277de93462d3b9721a9b0b2bfd64814cd04ee",
+  "source_sha": "b3504c2c4b1725f3070416d14b63e53ae1db3d74",
+  "elfs": 92,
+  "torrent_dependents": [],
+  "torrent_binaries": [
+    {
+      "entry": "lib/arm64-v8a/libtorrentd.so",
+      "sha256": "8dc5276a08aa801668e25fd3bb757cbc10df83f7929e758020ed58132ec4db59",
+      "needed": [
+        "0x0000000000000001 (NEEDED)             Shared library: [libc.so]",
+        "0x0000000000000001 (NEEDED)             Shared library: [libm.so]",
+        "0x0000000000000001 (NEEDED)             Shared library: [libdl.so]"
+      ],
+      "readelf_code": 0
+    },
+    {
+      "entry": "lib/armeabi-v7a/libtorrentd.so",
+      "sha256": "d897668ec92cd50d6ceda0a82b35636c7802b3fcd77226964e1bed76b6cb493b",
+      "needed": [
+        "0x00000001 (NEEDED)                     Shared library: [libc.so]",
+        "0x00000001 (NEEDED)                     Shared library: [libm.so]",
+        "0x00000001 (NEEDED)                     Shared library: [libdl.so]"
+      ],
+      "readelf_code": 0
+    },
+    {
+      "entry": "lib/x86/libtorrentd.so",
+      "sha256": "0361b8bb76394206500a5b4b14950772660de6782886de13ace398ee0efa588e",
+      "needed": [
+        "0x00000001 (NEEDED)                     Shared library: [libc.so]",
+        "0x00000001 (NEEDED)                     Shared library: [libm.so]",
+        "0x00000001 (NEEDED)                     Shared library: [libdl.so]"
+      ],
+      "readelf_code": 0
+    },
+    {
+      "entry": "lib/x86_64/libtorrentd.so",
+      "sha256": "4dd8246df053f419e788fa71db63aecf4995651e138823cf2eebc6170a544faf",
+      "needed": [
+        "0x0000000000000001 (NEEDED)             Shared library: [libc.so]",
+        "0x0000000000000001 (NEEDED)             Shared library: [libm.so]",
+        "0x0000000000000001 (NEEDED)             Shared library: [libdl.so]"
+      ],
+      "readelf_code": 0
+    }
+  ],
+  "result": "PASS for static dependency gate; packaging/upgrade/playback acceptance open"
+}

@@ -1,0 +1,383 @@
+{
+  "checkpoint": "CP-06",
+  "application_checkpoint": "1039278b564a91b0b6dd63b02456c454259372da",
+  "java_command": "testNoamazonReleaseUnitTest lintNoamazonRelease -PfoundationVerify -Puniversal -x :MediaLib:ndkBuild -x :FileCoreLibrary:ndkBuild --no-daemon --max-workers=4",
+  "tests": {
+    "tests": 469,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": 120,
+  "build_result": "BUILD SUCCESSFUL",
+  "elapsed": "11m 3s",
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 1466
+  },
+  "gradle_log_sha256": "3bcf0cedae79be8b685bacd337c157c7bcbcb14c6cc8ac6f9b77b288b5e37f92",
+  "native_build_omitted": true,
+  "apk_built": false,
+  "signing_performed": false,
+  "physical_shield_tests_performed": false,
+  "python_checkpoint11": {
+    "passed": 36,
+    "elapsed_seconds": 4.728
+  },
+  "targeted_checkpoint15": {
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "remote_native_run": {
+    "id": 38028207604,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38028207604",
+    "state_at_checkpoint": "completed",
+    "successful_build_claimed": true,
+    "conclusion": "success",
+    "source_commit": "1039278b564a91b0b6dd63b02456c454259372da",
+    "unsigned_apk_built": true,
+    "signed_apk_built": false,
+    "java_tests": 469,
+    "python_tests": 36,
+    "gradle_elapsed": "15m 25s",
+    "full_native_build": true,
+    "evidence_artifact": {
+      "id": 11661188596,
+      "name": "supernova-0135-unsigned-evidence",
+      "api_digest": "sha256:97ee7b58ceeaa29ab4a7bc818f3fa6eb736742d6ad5f3fed361ac73e8a11fa4e",
+      "bytes": 4440631,
+      "fresh_artifact_digest_verified_locally": false
+    }
+  },
+  "follow_up_python_checkpoint28": {
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 15.042
+  },
+  "follow_up_checkpoint32": {
+    "compiled_application_commit": "3d88a6faacdc18a8db45a272c3433d2dfb405707",
+    "tests": 485,
+    "classes": 125,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "lint": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 1465
+    },
+    "elapsed": "10m 59s",
+    "native_build_omitted": true,
+    "apk_built": false,
+    "gradle_log_sha256": "365b7bf341b9c50d0b02bc23d44169c9c06e542e29fb3aaa0310d24dc4304ac8",
+    "notes": "Final audit guards and top-navigation opener restoration were added after test compilation; this run is not their validation. Lint ran against the working tree including the pending native Java guard."
+  },
+  "focused_checkpoint36": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed": "2m 5s",
+    "source": "ae34c2e plus pending Settings transition",
+    "native_build_omitted": true
+  },
+  "focused_checkpoint37": {
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed": "2m 21s",
+    "source": "ae34c2e plus boxed controls/Settings transition; before Continue Watching change",
+    "native_build_omitted": true,
+    "gradle_log_sha256": "ffdfdf0f999cc38f05070d96e8b3d9379242551393f20aac206275247a6ed785"
+  },
+  "focused_checkpoint39": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed": "1m 56s",
+    "native_build_omitted": true,
+    "source": "final boxed controls and Movies/TV Continue Watching working tree",
+    "gradle_log_sha256": "6c0851f6d8de1af6084f8e1d3bc711c0278dc574dcf19c8c26d5d5c409660766"
+  },
+  "python_checkpoint40": {
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 14.878
+  },
+  "full_local_checkpoint41": {
+    "compiled_application_commit": "4214232a991b9d5d0af2aa7c2d5ae6c8a43125b2",
+    "tests": 488,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 128,
+    "lint": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 1465
+    },
+    "elapsed": "11m 29s",
+    "native_build_omitted": true,
+    "apk_built": false,
+    "gradle_log_sha256": "a224bc2090d1af61d3e1490fc7620ea20cfab061ff53aab09c63a8a613778fcf",
+    "notes": "Complete compiled Java suite before the final TV completion-filter and compact context-scrolling fixes. Lint read the working tree including the TV filter; context scrolling was added after lint analysis. These fixes require targeted/native validation."
+  },
+  "python_checkpoint42": {
+    "source_commit": "1f7ad9bf5bcb7c313a6ae13863e4a1ec012c2c65",
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 18.532
+  },
+  "targeted_checkpoint48": {
+    "tests": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 10,
+    "elapsed": "2m 50s",
+    "native_build_omitted": true,
+    "source": "1f7ad9bf plus final compact browser context/first import working tree",
+    "gradle_log_sha256": "0fd93b44bb171fc1cf0de25991b40093b48743ee1b59739d113996bb0b306781"
+  },
+  "python_checkpoint46": {
+    "tests": 13,
+    "failures": 0,
+    "elapsed_seconds": 0.045,
+    "scope": "QA/conformance tooling after minimum count 490; final count 491 will be validated by complete suite/native workflow"
+  },
+  "python_checkpoint50": {
+    "source_commit": "85f1822c50f49bf8dd3a8bfcb23b9f495058b07b",
+    "tests": 49,
+    "failures": 0,
+    "elapsed_seconds": 11.31
+  },
+  "latest_native_candidate": {
+    "id": 38034702010,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/38034702010",
+    "source_commit": "85f1822c50f49bf8dd3a8bfcb23b9f495058b07b",
+    "state_at_checkpoint": "completed",
+    "conclusion": "success",
+    "successful_build_claimed": true,
+    "full_native_build": true,
+    "ffmpeg_rebuild_and_regression_passed": true,
+    "native_decode_comparisons": 64,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "java_tests": 491,
+    "java_failures": 0,
+    "java_errors": 0,
+    "java_skips": 0,
+    "python_tests": 49,
+    "python_elapsed_seconds": 4.117,
+    "lint_errors": 0,
+    "native_libraries_in_apk": 88,
+    "rebuilt_ffmpeg_libraries_matched": 24,
+    "compiled_native_payload_hashes_matched": true,
+    "runtime_identity_branding_legal_guards_passed": true,
+    "gradle_elapsed": "13m 9s",
+    "job_started_at": "2026-10-10T07:31:39Z",
+    "job_completed_at": "2026-10-10T07:56:15Z",
+    "unsigned_apk_built": true,
+    "signed_apk_built": false,
+    "unsigned_apk_sha256_observed_in_ci": "ebf5726dff2c717fd31b8164394f3b2f7feeeda98a897362c887a0208e3b9d4a",
+    "fresh_apk_binary_verified_locally": false,
+    "log_sha256": "7bce4b2f1991bd1925eabef875afe71d9953eabee76af2389d72ec670fc1cd44",
+    "evidence_artifact": {
+      "id": 11663862336,
+      "name": "supernova-0135-unsigned-evidence",
+      "bytes": 4724606,
+      "api_digest": "sha256:6f64e02f8326480f23ba29ff34e639e1733619c210cacf77bb52651f8d087917",
+      "fresh_artifact_digest_verified_locally": false,
+      "contains_apk": false,
+      "url": "https://github.com/heretoecode/Supernova/actions/runs/38034702010/artifacts/11663862336"
+    }
+  },
+  "final_integrity_checks": {
+    "remote_main": "eb9dfd1d1df86bd6949a3124e92dc72b463b700f",
+    "remote_foundation": "788071ee878d2e7d70e9c78b90b9010edccfd113",
+    "old_signing_workflow_unchanged_from_foundation": true,
+    "old_signing_helper_unchanged_from_foundation": true,
+    "medialib_patch_clean_apply_check": true,
+    "avos_patch_clean_apply_check": true,
+    "adb_devices": [],
+    "physical_shield_tests_performed": false,
+    "signing_environment_allowed_branches": [
+      "codex/foundation-release"
+    ],
+    "environment_policy_read_at": "2026-10-10 (final delivery read)"
+  },
+  "full_local_checkpoint49": {
+    "source_commit": "85f1822c50f49bf8dd3a8bfcb23b9f495058b07b",
+    "tests": 491,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "classes": 128,
+    "lint": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 1465
+    },
+    "elapsed": "11m 54s",
+    "build_result": "BUILD SUCCESSFUL",
+    "native_build_omitted": true,
+    "apk_built": false,
+    "signing_performed": false,
+    "gradle_log_sha256": "c70f739c75658acafdf263dd9e3ec81a4a8ce7d1e6c714d294f4e74aa437de1e"
+  },
+  "signed_qa_checkpoint14": {
+    "schema": 1,
+    "qa_only": true,
+    "final_release_published": false,
+    "branch": "codex/supernova-0.135",
+    "source_commit": "cfc2ca2376fb77f79a85a3a5e45333d38b9689e7",
+    "application_checkpoint": "85f1822c50f49bf8dd3a8bfcb23b9f495058b07b",
+    "run_id": 38043018820,
+    "run_url": "https://github.com/heretoecode/Supernova/actions/runs/38043018820",
+    "conclusion": "success",
+    "job_started_at": "2026-10-10T09:54:10Z",
+    "job_completed_at": "2026-10-10T10:18:56Z",
+    "application_id": "app.supernova.player",
+    "version_name": "0.135",
+    "version_code": 135,
+    "certificate_sha256_verified_in_ci": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+    "verification_location": "GitHub Actions runner",
+    "signature_verified_in_ci": true,
+    "payload_matches_tested_unsigned_verified_in_ci": true,
+    "apk_zip_crc_verified_in_ci": true,
+    "identity_version_branding_native_legal_checks_passed": true,
+    "compiled_native_payload_hashes_matched": true,
+    "native_libraries_in_apk": 88,
+    "rebuilt_ffmpeg_libraries_matched": 24,
+    "native_decode_comparisons": 64,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "java_tests_observed_in_log": 491,
+    "java_failures": 0,
+    "java_errors": 0,
+    "java_skips": 0,
+    "java_counts_evidence": "491 distinct PASSED log cases and passing exact-source conformance recorder",
+    "python_tests": 49,
+    "python_elapsed_seconds": 3.902,
+    "lint_errors": 0,
+    "gradle_elapsed": "13m 2s",
+    "unsigned_apk_ci_sha256": "f3e021c6253110f8e0804c7eb3b2fd48db0b63b62ca5df94181a12cf61bef37e",
+    "signed_apk_sha256": null,
+    "signed_apk_digest_location": "public-qa-evidence.json inside the signed QA artifact; not retrieved locally",
+    "signed_artifact": {
+      "id": 11667311650,
+      "name": "supernova-0135-signed-qa",
+      "size_in_bytes": 97724245,
+      "digest": "sha256:8db243c753051e5ba1860a548ac2c1c1caf474834bf7fa7039b1775fcc797ab1",
+      "expired": false,
+      "expires_at": "2026-10-24T10:18:45Z",
+      "url": "https://github.com/heretoecode/Supernova/actions/runs/38043018820/artifacts/11667311650",
+      "fresh_archive_digest_verified_locally": false
+    },
+    "corresponding_ffmpeg_source_artifact": {
+      "id": 11667721222,
+      "name": "supernova-0135-qa-ffmpeg-source",
+      "size_in_bytes": 11169691,
+      "digest": "sha256:8c0133a01bc2a62d6d14002acb8726dca7b66a7ba63956bd9f398824bd59737c",
+      "expired": false,
+      "expires_at": "2026-11-09T10:18:48Z",
+      "url": "https://github.com/heretoecode/Supernova/actions/runs/38043018820/artifacts/11667721222",
+      "fresh_archive_digest_verified_locally": false
+    },
+    "public_log_sha256": "ee6d267546197d4fc7bfb201a3e26d959726f0d0b9ab803668a70858cfb3cd8c",
+    "branch_policies_observed": [
+      {
+        "name": "codex/foundation-release",
+        "type": "branch"
+      },
+      {
+        "name": "codex/supernova-0.135",
+        "type": "branch"
+      }
+    ],
+    "signing_material_cleanup_step": "success",
+    "new_signing_key_created": false,
+    "baseline_record": "docs/foundation/UI_CORRECTED_SIGNED_APK_VERIFICATION.json",
+    "baseline_package_certificate_version_upgrade_compatible": true,
+    "physical_shield_verified": false,
+    "installed_certificate_read_from_device": false,
+    "signed_upgrade_verified": false,
+    "independent_downloaded_apk_verified_locally": false,
+    "local_download_limitation": "GitHub artifact redirect to productionresultssa3.blob.core.windows.net returned Forbidden. No proxy or access restriction was bypassed. API archive digest is recorded, not freshly verified.",
+    "workflow_step_results": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Checkout the exact QA source",
+        "conclusion": "success"
+      },
+      {
+        "name": "Java for PKCS12 validation and Android build",
+        "conclusion": "success"
+      },
+      {
+        "name": "Prepare existing pinned NOVA dependencies without Preview identity conversion",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify 0.135 provider and historical identity isolation",
+        "conclusion": "success"
+      },
+      {
+        "name": "Rebuild and compare pinned LGPL FFmpeg before replacing dependency binaries",
+        "conclusion": "success"
+      },
+      {
+        "name": "Repeat secret-free Foundation release tests and unsigned binary conformance",
+        "conclusion": "success"
+      },
+      {
+        "name": "Sign the exact tested APK with the existing upgrade certificate",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify the signed QA artifact and tested payload parity",
+        "conclusion": "success"
+      },
+      {
+        "name": "Always remove temporary signing material and secret-scope logs",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload signed QA APK and public evidence only",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload corresponding FFmpeg source and public native evidence",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Java for PKCS12 validation and Android build",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Checkout the exact QA source",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

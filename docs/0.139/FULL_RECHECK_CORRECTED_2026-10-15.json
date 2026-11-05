@@ -1,0 +1,34 @@
+{
+  "result": "FAIL",
+  "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+  "test_classes": 208,
+  "tests": 996,
+  "passed": 995,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "failed_tests": [
+    {
+      "class": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "test": "smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+      "message": "java.lang.AssertionError: AUDIO outside physical horizontal bounds\nAUDIO clipped by ancestor viewport\nDIAGNOSTICS outside physical horizontal bounds\nDIAGNOSTICS clipped by ancestor viewport\nINTEGRATIONS outside physical horizontal bounds\nINTEGRATIONS clipped by ancestor viewport\nLIBRARY outside physical horizontal bounds\nLIBRARY clipped by ancestor viewport\nNETWORK outside physical horizontal bounds\nNETWORK clipped by ancestor viewport\nSTREAMING outside physical horizontal bounds\nSTREAMING clipped by ancestor viewport\nSUBTITLES outside physical horizontal bounds\nSUBTITLES clipped by ancestor viewport\nVIDEO outside physical horizontal bounds\nVIDEO clipped by ancestor viewport\nCUSTOM_PAGES outside physical horizontal bounds\nCUSTOM_PAGES clipped by ancestor viewport\nHIDDEN outside physical horizontal bounds\nHIDDEN clipped by ancestor viewport\nMATCHES outside physical horizontal bounds\nMATCHES clipped by ancestor viewport\nPINNED outside physical horizontal bounds\nPINNED clipped by ancestor viewport\nREVIEW outside physical horizontal bounds\nREVIEW clipped by ancestor viewport\nPLAYLISTS outside physical horizontal bounds\nPLAYLISTS clipped by ancestor viewport\nWATCH_NEXT outside physical horizontal bounds\nWATCH_NEXT clipped by ancestor viewport\nCONTINUE_CHOICES outside physical horizontal bounds\nCONTINUE_CHOICES clipped by ancestor viewport\nPOSITIONS below existing44dp target role\nTITLE_PLAYBACK outside physical horizontal bounds\nTITLE_PLAYBACK clipped by ancestor viewport\nTITLE_PLAYBACK below existing44dp target role\nHISTORY outside physical horizontal bounds\nHISTORY clipped by ancestor viewport\nHISTORY below existing44dp target role\nBOOKMARKS outside physical horizontal bounds\nBOOKMARKS clipped by ancestor viewport\nBOOKMARKS below existing44dp target role\nSOURCES outside physical horizontal bounds\nSOURCES clipped by ancestor viewport\nSOURCES below existing44dp target role\nLOCATIONS outside physical horizontal bounds\nLOCATIONS clipped by ancestor viewport\nLOCATIONS below existing44dp target role\nLOCATIONS incomplete text height"
+    }
+  ],
+  "restoration_wait_fix": "All3 LegacySettingsBackupReviewTest cases PASS within this full unfiltered run, including previously racy posted-click/recreation/confirmation case.",
+  "limits": "One known640 Backup acceptance failure retained. No signed upgrade/Shield or Drive delivery. All hardware/specification dependencies remain separate.",
+  "batch_result": "FAIL",
+  "batch_exit_code": 1,
+  "batch_duration": "20m43s",
+  "tasks": {
+    "total": 133,
+    "executed": 19,
+    "up_to_date": 114
+  },
+  "lint": {
+    "result": "PASS",
+    "errors": 0,
+    "warnings": 1771
+  },
+  "unsigned_assembly": "Completed; binary verification has its separate receipt; not signed/accepted",
+  "log_sha256": "a4c2799ef5f7840bfe4f36955ba20a9573573b494aead8115ccbdefb39e8e66e"
+}

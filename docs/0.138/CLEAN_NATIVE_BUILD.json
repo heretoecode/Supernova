@@ -1,0 +1,375 @@
+{
+  "schema": 1,
+  "native_build": "DEBUG",
+  "libav_config": "full",
+  "wrapper_ndk": "29.0.14206865",
+  "dependency_revisions": {
+    "AVP": "9c5842b74ab180c99441ed23fdd5d508448388a7",
+    "MediaLib": "5758074049bc153ac4967b4ecd21886469270076",
+    "FileCoreLibrary": "c4b760c55102c72d45f68b0d16999fc1f4f013a7",
+    "native/avos": "2cf21c486c7bf244c49b78d2220197a6d75396dd",
+    "native/libyuv": "650963473a2568eb81218f6e2703d3efaad6300e",
+    "native/libnativehelper": "ab46fb536b594b25f93611ad7ef0f27b8fc24edb",
+    "native/torrentd": "49bd6a6aeb783fae0089e04e2e84c50112acb5c3",
+    "native/prebuilt/opus": "27544063be93ee55c6ba58a2ebb32c106eb2e37b",
+    "native/prebuilt/dav1d": "f89559d62f671881431146b94c4364e568a623c8",
+    "native/prebuilt/libmysofa": "adf0d8278382a631d67dc3764d62d6ceece3789b",
+    "native/prebuilt/torrentd": "4a516e32c5e57fa1305540e7b622ba5e39080abe"
+  },
+  "ffmpeg_source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "native_evidence_sha256": "7c40690c6765ff6267d31c1b2849c880122ce45cd08ef954cb4d80d5d2fd7732",
+  "libraries": [
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libaudiocompress.so",
+      "sha256": "17d325a46040c481aeea96f1ccfef54bb6ae174e3a85b49e3e52aea402f0b145"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavcodec.so",
+      "sha256": "4df197170984e31d6881cbeed39533e006c5f1b88b457c941632c314483bf072"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavfilter.so",
+      "sha256": "6b5342ce12461d461efe6895fd06f99ab0bae4c2b95950ef7a76ab9d52bfb65d"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavformat.so",
+      "sha256": "eeb1693f824bc4ca7e87890fe6282c4b9981cbc2e3773fe6f65c92e4d471e4a0"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavos.so",
+      "sha256": "85f9ff870834ec6cf89541ff73201a935e4d60c231529b8e723023059c4a90f4"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavos_android.so",
+      "sha256": "72a450d1c12cb226d60bf43d0c202d34f33005b67731a92f8d7fd33a92481fee"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavosjni.so",
+      "sha256": "b2cd95d069c8f294c8ae99f6a894b47c46ee009b9800efa98ac19060e07352c9"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libavutil.so",
+      "sha256": "43b75d97dd7c478e4e762451f5fe57d6d963009b38e4f480b5fa330ffb438126"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libcputest.so",
+      "sha256": "5664e2448f745861c35cd7328cedceb06cc63924c8cfcb456e9fd657733e8565"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libdav1d.so",
+      "sha256": "5f9b8181370b02ec75ccddb1e4a98fe5f87a2916fc3624116eea0c59fb24f13d"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libdeinterlace.so",
+      "sha256": "feb564a43d4ae5efd2fe1ebaf749f0026b0ca753bcef7ecce352e74dd48889bf"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libmysofa.so",
+      "sha256": "a167a9a126af1eb85c371810ebc944bc65f272213cba912b1195f82c0956200b"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libnvpnativehelper.so",
+      "sha256": "fbf4a535d62f11ee73e946bfd493733a162f901bba96f8bfa9310787878308b8"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libopus.so",
+      "sha256": "197881c8b234b605406a80afee1a0cc5b57a21307b65c028a17fa5f7acac648e"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libsfdec.core.21.so",
+      "sha256": "45bb6cddaff3d925c2b173eced0d65db0fb64162bcfeef487de45df1a0fe2faa"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libsfdec.so",
+      "sha256": "67697e34116e1894e2508336a381c63d018b7e22b48fb2968f69a4796d14e4f2"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libswresample.so",
+      "sha256": "77269204e33367ac0071ae7df873c7057039c43e5587abd68a34acaf46570871"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libswscale.so",
+      "sha256": "094aebc0363d4438977ddb506cb85b14d7bb19e687fb322b8a532b9c0206c69d"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libtorrentd.so",
+      "sha256": "d897668ec92cd50d6ceda0a82b35636c7802b3fcd77226964e1bed76b6cb493b"
+    },
+    {
+      "path": "MediaLib/libs/armeabi-v7a/libyuv.so",
+      "sha256": "020a9d361faf2d20dcc79126a1986b13d83cdb45e6fc8392bae8fd9221443b89"
+    },
+    {
+      "path": "FileCoreLibrary/libs/armeabi-v7a/libfilecoreutils.so",
+      "sha256": "e8c0c72b67e79844c8cb1df5c23d8cbe7df9bef090e4130f439d9a2502bcfd1e"
+    },
+    {
+      "path": "FileCoreLibrary/libs/armeabi-v7a/libnvpnativehelper.so",
+      "sha256": "fbf4a535d62f11ee73e946bfd493733a162f901bba96f8bfa9310787878308b8"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libaudiocompress.so",
+      "sha256": "f408b5c1ba0f7c01363a7fb055e3bf46409183c902548cd8fdfff7e1b21fd1ee"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavcodec.so",
+      "sha256": "05ee2f99d6ea7552ada0de71b45aedd2251e45b1c69099762c6ea6dee0dbe4fa"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavfilter.so",
+      "sha256": "33cad280e66f44659685bb284045c6983748d8db4b7bf94c1460f98661df4dd3"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavformat.so",
+      "sha256": "90a9a3186dc7bc29a8ad1ca8d20a4b974dff898675c822741f6020b3a444df84"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavos.so",
+      "sha256": "eeb9f638b8baad8977a34cc62ef83b9641dd23297d6e21ed38fbd41ed9df166a"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavos_android.so",
+      "sha256": "9b390962ebc70fd0f21634a4fb674315a6694e09003de6cf21b4e56d10000ae7"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavosjni.so",
+      "sha256": "6d558e086ec7ecdb549b19884e174f3805faae41fe7069e0f94099909f4de49b"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libavutil.so",
+      "sha256": "e78d911f159338aff5b3382fdd59ff0ac143b348358841937cc6c86de18f2410"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libcputest.so",
+      "sha256": "4db56d5294754ddac962955991298a0cda394af9c0c5b7285e96842f2f9d2279"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libdav1d.so",
+      "sha256": "770672fea19cf4a27a495e766866be748acde8cd7bc09c44117f61e42054847a"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libdeinterlace.so",
+      "sha256": "1d0b060c3475504ba0a98837ee81b63879abaa41a6bd1e586a4771ea8ac90456"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libmysofa.so",
+      "sha256": "fd5fa560d9898c060bb01c3e0ddf5f2495dc93d395995d46f4d66ec837577265"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libnvpnativehelper.so",
+      "sha256": "acb1348c5ff3e55334a96e83479f18637edad9620de853d24421a69d0be0c718"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libopus.so",
+      "sha256": "561238411635d57abc06cce87d533fc90900da8753329421211ee480b49fb54c"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libsfdec.core.21.so",
+      "sha256": "2be57bc4f98167beb5e2a88a50e2b961acda90650524843d12c860509834a029"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libsfdec.so",
+      "sha256": "ccb6c27564ca303b6ca59a5f492428551328b73205008cbe69ce68965fd4a3e0"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libswresample.so",
+      "sha256": "c52948c6fbf0a6d11e7363c70cd9bedbff2da028942625685667954892df8673"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libswscale.so",
+      "sha256": "b2bc5027e2357da8a7a83f61590cf1198701f5710819ecb694e9ad77cc670caf"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libtorrentd.so",
+      "sha256": "8dc5276a08aa801668e25fd3bb757cbc10df83f7929e758020ed58132ec4db59"
+    },
+    {
+      "path": "MediaLib/libs/arm64-v8a/libyuv.so",
+      "sha256": "1ea668872cceb0848b859ea86267f07bd8b3c30e01fa507bf4dbf936a27a16ff"
+    },
+    {
+      "path": "FileCoreLibrary/libs/arm64-v8a/libfilecoreutils.so",
+      "sha256": "c589506bf41caf3c6fafe1374a2cbf08e7d2d06f64529db1e12b3743b2d2312a"
+    },
+    {
+      "path": "FileCoreLibrary/libs/arm64-v8a/libnvpnativehelper.so",
+      "sha256": "acb1348c5ff3e55334a96e83479f18637edad9620de853d24421a69d0be0c718"
+    },
+    {
+      "path": "MediaLib/libs/x86/libaudiocompress.so",
+      "sha256": "a776e991575842ba6cf8c89ee98ad8ce52a382894b3301d0c04249e4731c0cf8"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavcodec.so",
+      "sha256": "b4577c638e92287ec7e00b67179338db4a0ef43948080d5443e2c7a9c01bfdf4"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavfilter.so",
+      "sha256": "007c29e567fae921605f4e4cf85a166684454a26a4cbb3935f31e0c2abcc6c59"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavformat.so",
+      "sha256": "b3e51955e75307813f9b4f8084e7a731f495d7ca27f0877feced67329eda975c"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavos.so",
+      "sha256": "51f25b0de934738fd484be93481b8c32e8edf06096100ad5ba289fbeaff59e66"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavos_android.so",
+      "sha256": "b00bf9395502a47c28ff6938a7074fa0821e15fa703d15926e05eeda181e75b5"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavosjni.so",
+      "sha256": "006da761f32d34e41cd1ec49e1f9bcaea358f4a5ce93ea75abfdf8c5e1ad48cc"
+    },
+    {
+      "path": "MediaLib/libs/x86/libavutil.so",
+      "sha256": "6a14d02c1ab8646a79ccecb3520ec686da95e242eb09140f4c95d4c736dc6439"
+    },
+    {
+      "path": "MediaLib/libs/x86/libcputest.so",
+      "sha256": "4df759feadaca9eeb0885699380f8079ab15f9003a682b0fb098ff450123ce75"
+    },
+    {
+      "path": "MediaLib/libs/x86/libdav1d.so",
+      "sha256": "d42f1abd597d4bc9f5808ac9685ae9e35e70ef5e361d57c3c86dd74af52a5b26"
+    },
+    {
+      "path": "MediaLib/libs/x86/libdeinterlace.so",
+      "sha256": "1d71ae416d05f87b4f7f93f637045ab433568bd51a37722b3990f6c195fbb422"
+    },
+    {
+      "path": "MediaLib/libs/x86/libmysofa.so",
+      "sha256": "a3684ecf7dcc9afcfe18c67c573570d74f7caa500cff5f4ac68f6ab72849e93d"
+    },
+    {
+      "path": "MediaLib/libs/x86/libnvpnativehelper.so",
+      "sha256": "b685b56b83a72bdf93b191de97fc93b06470caf717b6bc1fcaea509a6dafb163"
+    },
+    {
+      "path": "MediaLib/libs/x86/libopus.so",
+      "sha256": "af6560c8b9e296db3a1be2484fb8f755f8185224a1c27045063fddf0daee5911"
+    },
+    {
+      "path": "MediaLib/libs/x86/libsfdec.core.21.so",
+      "sha256": "2f783441ecbfb35814c80040a0ed68278936e63602971dce9271c9ab36829b9e"
+    },
+    {
+      "path": "MediaLib/libs/x86/libsfdec.so",
+      "sha256": "023577756cbe324a2b4c55755cf1b674156862345086e374c3a3e26cb2c1b239"
+    },
+    {
+      "path": "MediaLib/libs/x86/libswresample.so",
+      "sha256": "3f2419a3476220ae439abb55f23d2a7c5cc2be8897c07d84f32fb53f87f20899"
+    },
+    {
+      "path": "MediaLib/libs/x86/libswscale.so",
+      "sha256": "eb449f21e511a00227b1f54298f9ab88a3c99f76d1cbf3cb924631ce55518a92"
+    },
+    {
+      "path": "MediaLib/libs/x86/libtorrentd.so",
+      "sha256": "0361b8bb76394206500a5b4b14950772660de6782886de13ace398ee0efa588e"
+    },
+    {
+      "path": "MediaLib/libs/x86/libyuv.so",
+      "sha256": "03ee0f708de09354209ae1f01a8a6060475f4e4e84b55bd0569e1c4a1a7737fc"
+    },
+    {
+      "path": "FileCoreLibrary/libs/x86/libfilecoreutils.so",
+      "sha256": "93f9fa891f8ba8a58f35ecd15dbcf02ecfa7ebb8a71a0f0d3c805e93839acca6"
+    },
+    {
+      "path": "FileCoreLibrary/libs/x86/libnvpnativehelper.so",
+      "sha256": "b685b56b83a72bdf93b191de97fc93b06470caf717b6bc1fcaea509a6dafb163"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libaudiocompress.so",
+      "sha256": "534e26646759e01a6c7197fb57e3bc2e8b582cce91a79fc6ea824bdfdb80fc0b"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavcodec.so",
+      "sha256": "9046ee4fd9f4a68b14f0d4c2fbc932eef539f8c23a01287b9427b8b40d8aa31c"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavfilter.so",
+      "sha256": "dc0f9169ca4b7617bae036e54fa289321a01db0a8f6567c92fe9cdb3f2d5a888"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavformat.so",
+      "sha256": "7c120ca29370733a02e65add05d5042afc1dabb7b46bc0ae60d5333c91450955"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavos.so",
+      "sha256": "4eb7bc3f60d5b04e4bfd49ce571cb1f74aaa71e4c5c6ff27373b94f2821ff3d4"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavos_android.so",
+      "sha256": "53381f60d03110f8c1cfc163fe4a87f7d849952edf724c685b5df31b2f09e077"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavosjni.so",
+      "sha256": "6032ed56e22dbc1ac95537181e27256887525e9c3fb02482d235076a559cf624"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libavutil.so",
+      "sha256": "a5e9740de8bb82a1272155f4320b79d8eaaa70fc04f76a1c1c0540e27a242099"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libcputest.so",
+      "sha256": "5dffb9db3b425390e8505742c5c409174a6cc940c238559432c52d7bf72740c6"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libdav1d.so",
+      "sha256": "759a32b0d39c31c61d7fb36196874b9fcb2caf64f265211ea05eed492b61e432"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libdeinterlace.so",
+      "sha256": "2231ff05477e57dee8dec702e67cdd4032948e3361026eb7867dc9c4a2a1a9de"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libmysofa.so",
+      "sha256": "a85b3f04b52b2d8180734eeb585169ad0bbef651d9ec11c2bace61190ebb46c6"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libnvpnativehelper.so",
+      "sha256": "3909265ae004231de35b3d743b02d13813e4d56ae7f7cd9e05478a8ffa02a44e"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libopus.so",
+      "sha256": "4105fbeea2e6b7751d63a71edd2ba3c2a48e3adc5028ae70b06bd0375554a9a8"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libsfdec.core.21.so",
+      "sha256": "62945ebf1f5148d23321b6bcc3a53ab644437f1b51415b1518226d307ae11d25"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libsfdec.so",
+      "sha256": "0f836b228efed0fe66d6e96c62174b55ed9e102a68396c43fb69e6f3e67b5fd8"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libswresample.so",
+      "sha256": "9c01b5dfca86526566f66b28ae76fd954fe0197aeae726a3eae937382598e012"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libswscale.so",
+      "sha256": "0a7b6a742e7c943fc0d6bf944bd99dc53ecd1a9f475b7c7b30dbb6bf09877e08"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libtorrentd.so",
+      "sha256": "4dd8246df053f419e788fa71db63aecf4995651e138823cf2eebc6170a544faf"
+    },
+    {
+      "path": "MediaLib/libs/x86_64/libyuv.so",
+      "sha256": "b765c2b13c13c1aa9fa3c75d856da8ecf4664ecf0382996f7040420054681f98"
+    },
+    {
+      "path": "FileCoreLibrary/libs/x86_64/libfilecoreutils.so",
+      "sha256": "704e08887e41fabbeed9773493e409353d382ab7c6977fde80f09f12abd212a1"
+    },
+    {
+      "path": "FileCoreLibrary/libs/x86_64/libnvpnativehelper.so",
+      "sha256": "3909265ae004231de35b3d743b02d13813e4d56ae7f7cd9e05478a8ffa02a44e"
+    }
+  ]
+}

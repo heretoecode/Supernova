@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.leanback.presenter;
 
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -120,11 +121,12 @@ public class VideoBadgePresenter extends Presenter {
             }
         }
 
+        @SuppressLint("SetTextI18n")
         public void setSource(Uri source){
             if(source.equals(mSelectedUri)){
                 mRootView.setBackgroundColor(mBackgroundColor);
             }
-            else mRootView.setBackground(ContextCompat.getDrawable(mContext,  R.color.lb_basic_card_info_bg_color));
+                else mRootView.setBackground(ContextCompat.getDrawable(mContext,  R.color.lb_basic_card_info_bg_color));
 
             if(FileUtils.isLocal(source)){
                 mSourceTextView.setText("Local");
@@ -151,7 +153,7 @@ public class VideoBadgePresenter extends Presenter {
                 JSONArray array = obj.getJSONArray("audiotracks");
                 for(int i = 0; i<array.length(); i++){
                     String format = array.getJSONObject(i).getString("format");
-                    View v = LayoutInflater.from(mContext).inflate(R.layout.leanback_audio_format_badge_presenter, null);
+                    View v = LayoutInflater.from(mContext).inflate(R.layout.leanback_audio_format_badge_presenter, mAudioFormatContainer, false);
                     TextView tv = (TextView) v.findViewById(R.id.audio_format);
                     tv.setText(format);
                     String channel = array.getJSONObject(i).getString("channels");
@@ -180,7 +182,7 @@ public class VideoBadgePresenter extends Presenter {
         public void setSize(long size) {
             if(size>0)
                 mSizeTv.setText(Formatter.formatFileSize(mContext, size));
-            else mSizeTv.setVisibility(View.GONE);
+                else mSizeTv.setVisibility(View.GONE);
         }
 
     }

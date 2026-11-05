@@ -1,0 +1,270 @@
+{
+  "viewportWidth": 960,
+  "viewportHeight": 540,
+  "panelWidth": 681,
+  "panelHeight": 380,
+  "sidebarWidth": 259,
+  "categories": [
+    {
+      "category": "APPEARANCE",
+      "x": 285,
+      "y": 105,
+      "width": 129,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "AUDIO",
+      "x": 418,
+      "y": 105,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "DIAGNOSTICS",
+      "x": 552,
+      "y": 105,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "INTEGRATIONS",
+      "x": 418,
+      "y": 154,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "LIBRARY",
+      "x": 686,
+      "y": 105,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "NETWORK",
+      "x": 820,
+      "y": 105,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "PLAYBACK",
+      "x": 285,
+      "y": 154,
+      "width": 129,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "STREAMING",
+      "x": 552,
+      "y": 154,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "SUBTITLES",
+      "x": 686,
+      "y": 154,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "VIDEO",
+      "x": 820,
+      "y": 154,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "HOME",
+      "x": 285,
+      "y": 203,
+      "width": 129,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "CUSTOM_PAGES",
+      "x": 418,
+      "y": 203,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "HIDDEN",
+      "x": 552,
+      "y": 203,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "MATCHES",
+      "x": 686,
+      "y": 203,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "PINNED",
+      "x": 820,
+      "y": 203,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "PREFERRED",
+      "x": 285,
+      "y": 252,
+      "width": 129,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "REVIEW",
+      "x": 418,
+      "y": 252,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "PLAYLISTS",
+      "x": 552,
+      "y": 252,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "WATCH_NEXT",
+      "x": 686,
+      "y": 252,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "CONTINUE_CHOICES",
+      "x": 820,
+      "y": 252,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "POSITIONS",
+      "x": 285,
+      "y": 301,
+      "width": 129,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "TITLE_PLAYBACK",
+      "x": 418,
+      "y": 301,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "HISTORY",
+      "x": 552,
+      "y": 301,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    },
+    {
+      "category": "BOOKMARKS",
+      "x": 686,
+      "y": 301,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "SOURCES",
+      "x": 820,
+      "y": 301,
+      "width": 130,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 30,
+      "usableHeight": 42
+    },
+    {
+      "category": "LOCATIONS",
+      "x": 285,
+      "y": 350,
+      "width": 665,
+      "height": 44,
+      "textSizePixels": 13,
+      "textBottom": 15,
+      "usableHeight": 42
+    }
+  ],
+  "violations": []
+}

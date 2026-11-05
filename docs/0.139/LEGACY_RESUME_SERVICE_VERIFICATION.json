@@ -1,0 +1,21 @@
+{
+  "source_sha": "42f9270c8e2d0e77aacf0cc3c8612b365f049a50",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 24,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.player.ExternalResumeIntentTest",
+    "com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest",
+    "com.archos.mediacenter.video.player.PlaybackResumePolicyTest",
+    "com.archos.mediacenter.video.utils.LegacyViewingRestoreTest"
+  ],
+  "log_path": "/workspace/scratch/supernova139-legacy-resume-service-first.log",
+  "log_sha256": "412e2c7bffaac08644742f5cebc59d87a80f4fcbc0e1592bd8ee0cd616ea21a7",
+  "coverage": "Actual PlayerService private resume-candidate hook with native restored positions, zero timestamp, separate bookmark/Trakt/network candidates; external launch/failure checkpoint/resume policy regressions",
+  "limits": "Synthetic service/context with actual native viewing SQLite, not foreground service/device/output acceptance; native build tasks excluded.",
+  "duration": "2m 19s"
+}

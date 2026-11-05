@@ -1,0 +1,21 @@
+{
+  "result": "PASS",
+  "verified_at_utc": "2026-10-16T20:53:19.764860+00:00",
+  "file_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+  "file_name": "Supernova Development.html",
+  "file_url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+  "mime_type": "text/html",
+  "parent_readback": [
+    "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ"
+  ],
+  "published_bytes": 30227,
+  "published_sha256": "cfc427977c65b0320ccc51973566774fb17b3f6d1a4797ab3123b4853ea773c0",
+  "previous_bytes": 24301,
+  "previous_sha256": "4750622d06b9030f625d53a283d8ef494dde65f7cfdca0a8d9da21429d541692",
+  "complete_download_matches_repository_bytes": true,
+  "all_0139_and_older_sections_preserved": true,
+  "same_drive_file_id_retained": true,
+  "duplicate_file_or_folder_created": false,
+  "sharing_permissions_changed_by_agent": false,
+  "apk_source_commit": "866f21f11f27dea4846ddd3cac57d98b281eecbb"
+}

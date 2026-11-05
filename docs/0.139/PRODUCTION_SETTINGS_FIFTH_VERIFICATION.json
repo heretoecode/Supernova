@@ -1,0 +1,17 @@
+{
+  "source_sha": "814b51736397e7492966fc7a25e9c212283144de",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 18,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest"
+  ],
+  "log_sha256": "5b1bea7903b966dcc56983b684b1e729c162e9460adf3660dd95fa4d9d31f46e",
+  "duration": "2m 21s",
+  "reason": "Full production fixture completed preference creation; test searched exact Advanced text while the real expandable sidebar renders Advanced plus chevron. Follow-up addresses the actual semantic sidebar tag. Guarded cleanup/Android23 dual-reader and model checks now pass; full Settings acceptance is still pending."
+}

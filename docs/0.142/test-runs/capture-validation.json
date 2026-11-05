@@ -1,0 +1,24 @@
+{
+  "application_source": "08a896b1bee6a058053617fa7aa36c09773385d2",
+  "capture_harness_source": "51e1ac5983f97330c369858a75944b7a26cd445e",
+  "totals": {
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "captures": 8,
+  "static_brand_and_rail_glyph_assertions": "PASS on every saved frame",
+  "suites": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.Network142RenderTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:04:26.627Z",
+      "hostname": "e74bbe34bd10",
+      "time": "12.304"
+    }
+  ]
+}

@@ -16,8 +16,6 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.AsyncTask;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -188,7 +186,7 @@ public abstract class VideoLoader extends CursorLoader implements CompatAndSDKCu
     });
     protected boolean mIsDetailed;
     private boolean mForceHideVideos;
-    // used by BrowserAllTVShow and BrowserBySeason
+    // Indexed video loader projection.
 
     public static String[] concatTwoStringArrays(String[] s1, String[] s2){
         String[] result = new String[s1.length+s2.length];
@@ -263,6 +261,7 @@ public abstract class VideoLoader extends CursorLoader implements CompatAndSDKCu
         return sb.toString();
     }
 
+    @Override
     public Loader<Cursor> getV4CursorLoader(boolean detailed, boolean hideWatchedVideos){
         mIsDetailed = detailed;
         mForceHideVideos = hideWatchedVideos;

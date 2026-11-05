@@ -18,6 +18,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+/** Provides a separator view for TV playback menus. */
 public class TVMenuSeparator extends FrameLayout{
 
     public TVMenuSeparator(Context context) {

@@ -38,9 +38,11 @@ import com.archos.filecorelibrary.MetaFile2Factory;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects FTP credentials and reports connect or cancel actions. */
 public class FtpServerCredentialsDialog extends DialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(FtpServerCredentialsDialog.class);
@@ -153,11 +155,11 @@ public class FtpServerCredentialsDialog extends DialogFragment {
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if(mOnCancelClickListener!=null)
-                    mOnCancelClickListener.onClick(null);
+                handleCancel();
             }
         })
         .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog,int id) {
                 final int type = typeSp.getSelectedItemPosition();
                 final String address = addressEt.getText().toString();
@@ -165,12 +167,13 @@ public class FtpServerCredentialsDialog extends DialogFragment {
                 //path needs to start by a "/"
                 if(path.isEmpty()||!path.startsWith("/"))
                     path = "/"+path;
-                int port = -1;
-                try{
-                    port = Integer.parseInt(portEt.getText().toString());
-                } catch(NumberFormatException e){
+                Integer parsedPort = parsePort(portEt.getText().toString());
+                if (parsedPort == null) {
+                    // Typed but not a number: stop here instead of silently using the default port.
                     Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                int port = parsedPort;
                 String username = usernameEt.getText().toString();
                 final String password = passwordEt.getText().toString();
 
@@ -193,7 +196,7 @@ public class FtpServerCredentialsDialog extends DialogFragment {
 
                 if (! UriUtils.isValidHost(address)) {
                     Toast.makeText(getActivity(), getString(R.string.invalid_host), Toast.LENGTH_SHORT).show();
-                    log.warn("onClick: invalid host: {}", address);
+                    log.warn("onClick: invalid host");
                     validUri = false;
                 } else if (! UriUtils.isValidPort(port)) {
                     Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
@@ -201,11 +204,12 @@ public class FtpServerCredentialsDialog extends DialogFragment {
                     validUri = false;
                 } else if (! UriUtils.isValidPath(path)) {
                     Toast.makeText(getActivity(), getString(R.string.invalid_path), Toast.LENGTH_SHORT).show();
-                    log.warn("onClick: invalid path: {}", path);
+                    log.warn("onClick: invalid path");
                     validUri = false;
                 }
 
-                if (log.isDebugEnabled()) log.debug("onClick: scheme= {}, username={}, port={}, remote={}, path={}; type={}, validUri={}", scheme, username, port, address, path, type, validUri);
+                // No username, host or path in logs: they identify the user's private servers.
+                if (log.isDebugEnabled()) log.debug("onClick: scheme={}, port={}, type={}, validUri={}", scheme, port, type, validUri);
 
                 if (validUri) {
 
@@ -235,15 +239,45 @@ public class FtpServerCredentialsDialog extends DialogFragment {
             }});
         mDialog = builder.create();
 
-        mDialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(mDialog));
+        mDialog.setOnShowListener(ignored -> PreviewDialog.styleNative(mDialog));
         return mDialog;
 
     }
+    private boolean mCancelHandled = false;
+
+    private void handleCancel() {
+        if (!mCancelHandled) {
+            mCancelHandled = true;
+            if (mOnCancelClickListener != null) {
+                mOnCancelClickListener.onClick(null);
+            }
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        handleCancel();
+    }
+
     public void setOnConnectClickListener(onConnectClickListener onConnectClick) {
         mOnConnectClick = onConnectClick;
     }
+
     public void setOnCancelClickListener(OnClickListener onClickListener) {
         mOnCancelClickListener = onClickListener;
     }
 
+
+    /** Port field: empty means "default port" (-1); anything else must be a whole number, or null (invalid). */
+    public static Integer parsePort(String text) {
+        String value = text == null ? "" : text.trim();
+        if (value.isEmpty())
+            return -1;
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 }

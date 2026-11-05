@@ -18,6 +18,7 @@ import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 
 
+/** Hosts SMB file listings in the TV file browser. */
 public class SmbListingActivity extends ListingActivity {
 
     @Override

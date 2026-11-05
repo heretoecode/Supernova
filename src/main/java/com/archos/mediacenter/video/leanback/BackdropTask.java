@@ -31,6 +31,7 @@ import com.archos.mediacenter.video.browser.adapters.object.Base;
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import com.archos.mediascraper.BaseTags;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
 import com.squareup.picasso.Callback;
 
@@ -129,7 +130,7 @@ public class BackdropTask {
                         return;
                     }
                     if (log.isDebugEnabled()) log.debug("backdrop Picasso decode requested: file={}", finalResult.getPath());
-                    com.squareup.picasso.RequestCreator request = Picasso.get()
+                    RequestCreator request = Picasso.get()
                             .load(finalResult)
                             .resize(mMetrics.widthPixels, mMetrics.heightPixels)
                             .transform(new BackdropDarkeningTransformation())

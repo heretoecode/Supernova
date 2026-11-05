@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,16 +23,21 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.player.PreviewAdjustmentValue;
 import com.archos.mediacenter.video.player.SubtitleDelayPickerAbstract;
 import com.archos.mediacenter.video.player.SubtitleDelayPickerDialog;
+import java.util.Formatter;
+import java.util.Locale;
 
 
+/** Provides a remote-controlled subtitle delay picker for TV playback menus. */
 public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implements TVSlaveView {
 
     /* UI Components */
@@ -58,6 +64,7 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
      */
 
     Handler mHandler = new Handler(Looper.getMainLooper()){
+        @Override
         public void handleMessage(Message msg){
             if(msg.what==INCREASE_STEPS&&mLeftIsDown||mRightIsDown){
                 removeMessages(INCREASE_STEPS);
@@ -91,7 +98,7 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
         slaveView=null;
         final NumberPicker.Formatter twoDigitFormatter = new NumberPicker.Formatter() {
             final StringBuilder mBuilder = new StringBuilder();
-            final java.util.Formatter mFmt = new java.util.Formatter(mBuilder, java.util.Locale.US);
+            final Formatter mFmt = new Formatter(mBuilder, Locale.US);
             final Object[] mArgs = new Object[1];
             public String format(int value) {
                 mArgs[0] = value;
@@ -121,8 +128,8 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
         
     }
     public void setFocus(boolean hasFocus){
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if(hasFocus){
@@ -206,21 +213,8 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
             return true;
         }
                
-        //else, we send it to parent
-        ViewParent p;
-        View v = this;
-        while((p=v.getParent())!=null){
-            if(p instanceof TVCardView)
-                return ((TVCardView)p).onKeyDown(keyCode, event);
-            else if(p instanceof TVCardDialog)
-                return ((TVCardDialog)p).onKeyDown(keyCode, event);
-            else if(p instanceof View)
-                v=(View)p;
-            else 
-                break;
-        }
-        return false;
-        
+        //else, we send it to the enclosing card
+        return TVUtils.dispatchToCardParent(this, keyCode, event);
     }
     @Override
     public boolean   onKeyUp(int keyCode,  KeyEvent event){
@@ -247,8 +241,8 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
     }
    public void updateTextViewDelay(int delay){
        
-       setText(mHourFormat&&com.archos.mediacenter.video.player.PreviewAdjustmentValue.enabled(mContext)
-               ?com.archos.mediacenter.video.player.PreviewAdjustmentValue.delay(delay)
+       setText(mHourFormat&&PreviewAdjustmentValue.enabled(mContext)
+               ?PreviewAdjustmentValue.delay(delay)
                :mHourFormat? SubtitleDelayPickerDialog.getFormattedDelay(mContext, delay).toString():""+(delay/100));
        
    }
@@ -353,10 +347,10 @@ public class SubtitleDelayTVPicker extends SubtitleDelayPickerAbstract implement
         updatePreviousDrawable((getDelay()!=mMin||!hasMin)?R.drawable.arrow_left:-1);
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View createSlaveView() {
-        // TODO Auto-generated method stub
-    
+        // Detached template view created for secondary display/slave mirroring
         setSlaveView((SubtitleDelayTVPicker)LayoutInflater.from(mContext)
                 .inflate(R.layout.subtitle_delay_tv_picker, null));
         return slaveView;

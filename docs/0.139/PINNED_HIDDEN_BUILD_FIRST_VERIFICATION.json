@@ -1,0 +1,8 @@
+{
+  "source_sha": "0f7e45b74d160ea2a1c58cd96ee44797b76e2120",
+  "result": "FAIL",
+  "stage": "compileNoamazonReleaseUnitTestJavaWithJavac",
+  "tests_executed": 0,
+  "failure": "DbHolder fixture used try-with-resources although DbHolder does not implement AutoCloseable",
+  "correction": "Explicit finally close in fixture; fresh verification required"
+}

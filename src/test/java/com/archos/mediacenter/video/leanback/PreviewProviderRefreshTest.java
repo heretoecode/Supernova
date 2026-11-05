@@ -1,13 +1,19 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.app.Application;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+/** Checks provider refresh scope and that background enrichment avoids rebuilding unfiltered pages. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewProviderRefreshTest {
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void refreshOnlyForActiveKindCountryAndTitleScope(){
         assertTrue(PreviewPages.providerCacheAffectsPage("streaming_known_at:movie:42:IE:-1",1,"IE",true));
         assertTrue(PreviewPages.providerCacheAffectsPage("streaming_known_at:tv:42:IE:-1",2,"IE",true));

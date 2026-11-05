@@ -361,11 +361,8 @@
     <string name="exit">Έξοδος</string>
     <!-- torrent -->
     <string name="error">Παρουσιάστηκε ένα σφάλμα</string>
-    <string name="error_loading_torrent">Σφάλμα κατά τη φόρτωση του torrent</string>
-    <string name="error_downloading_not_enough_space">Σφάλμα κατά τη λήψη του torrent : δεν υπάρχει αρκετός χώρος</string>
     <string name="loading_torrent">Φόρτωση torrent…</string>
     <string name="error_no_video_file">Δεν υπάρχουν αρχεία βίντεο</string>
-    <string name="torrent_file_to_play">Επιλέξτε ένα αρχείο για αναπαραγωγή</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Περιήγηση σε μια κοινή χρήση δικτύου</string>
     <string name="add_ssh_server">Περιήγηση σε έναν διακομιστή FTP</string>
@@ -483,7 +480,6 @@
     <string name="rotation_unlocked">Αυτόματη περιστροφή οθόνης ενεργοποιημένη</string>
     <string name="network_reindex">Επανασάρωση περιεχομένου</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Πατήστε το πλήκτρο UP βέλους\nγια να εμφανιστεί το μενού της τηλεόρασης</string>
     <string name="help_overlay_network_indexing_text1">Πατήστε αυτό το στοιχείο μενού για να ενσωματώσετε το περιεχόμενο αυτού του φακέλου και των υποφακέλών του στη βιβλιοθήκη βίντεο.</string>
     <string name="help_overlay_network_indexing_text2">Θα σας επιτρέψει να λάβετε αφίσες και περιγραφές για τις ταινίες και τηλεοπτικές εκπομπές.</string>
     <string name="help_overlay_scraper_text">Πατήστε εδώ για να αναζητήσετε αφίσες και περιγραφές online για τα βίντεό σας. </string>
@@ -582,13 +578,8 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Διαδρομή λήψεων</string>
     <string name="torrent_blocklist">Λίστα αποκλεισμού</string>
-    <string name="blocklist_file_not_found">Το αρχείο δεν βρέθηκε</string>
-    <string name="blocklist_unknown_error">Άγνωστο</string>
-    <string name="blocklist_not_loaded">Δεν φορτώθηκε</string>
-    <string name="torrent_blocklist_url">Url Λίστας αποκλεισμού</string>
     <string name="sdk_not_supported">Το Android 4.3 δεν υποστηρίζεται ακόμα.\nΕργαζόμαστε σκληρά για να το διορθώσουμε και ελπίζουμε να έχουμε μια νέα έκδοση σύντομα!</string>
     <string name="share_path">Διαδρομή</string>
     <string name="category_trakt">Trakt</string>

@@ -4,7 +4,7 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediaprovider.video.LoaderUtils;
+import com.archos.medialib.R;
 import com.archos.mediaprovider.video.VideoStore;
 
 /** Lists scraped TV shows whose existing metadata identifies them as documentaries. */
@@ -27,7 +27,7 @@ public class DocumentaryTvshowsLoader extends AllTvshowsLoader {
         selection.append(" AND ")
                 .append(VideoStore.Video.VideoColumns.SCRAPER_S_GENRES)
                 .append(" LIKE '%")
-                .append(getContext().getString(com.archos.medialib.R.string.tvshow_genre_documentary))
+                .append(getContext().getString(R.string.tvshow_genre_documentary))
                 .append("%') GROUP BY (")
                 .append(VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID);
         return selection.toString();

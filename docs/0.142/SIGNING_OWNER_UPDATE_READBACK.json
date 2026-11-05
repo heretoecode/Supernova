@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-10-24 03:34:13 UTC",
+  "owner_added_branch": {
+    "name": "codex/supernova-0.142-implementation-2026-10-23",
+    "type": "branch"
+  },
+  "previous_rules": 8,
+  "current_rules": 9,
+  "all_previous_rules_preserved": true,
+  "branch_gate_available": true,
+  "signing_secrets_not_exercised": true,
+  "signing_dispatched": false,
+  "policies": [
+    {
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.140-implementation-2026-10-16",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.141-implementation-2026-10-22",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.142-implementation-2026-10-23",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ]
+}

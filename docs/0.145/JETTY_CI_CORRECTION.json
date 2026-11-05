@@ -1,0 +1,54 @@
+{
+  "failed_run": 40758854740,
+  "source_commit": "c80268619249aaf9666d59989e320e36c24fd412",
+  "result": "failure before signing; no APK authorised",
+  "native_rebuild_runtime_step": "success",
+  "failure": "App test compile classpath did not expose MediaLib implementation servlet/client APIs; 10 compiler errors, not failed assertions",
+  "correction_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "correction": "testImplementation javax.servlet:javax.servlet-api:4.0.1 and org.eclipse.jetty:jetty-client:9.2.30.v20200428; exact existing runtime pins, no app runtime dependency change",
+  "focused_rerun": 40762572889,
+  "full_protected_rerun": 40762577939,
+  "tooling_tests": 128,
+  "tooling_result": "passed",
+  "signing_gate_unchanged": true,
+  "signing_attempted_in_failed_run": false,
+  "cleanup": "success",
+  "focused_result": "success",
+  "focused_source_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "focused_artifact_id": 12849182171,
+  "focused_artifact_bytes": 139833,
+  "focused_artifact_sha256": "b543c1284266e6cc5fcab221c9cdc2402d0845c226f567454b343c258cd77998",
+  "artifact_digest_independently_matched": true,
+  "xml_totals": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.archos.mediacenter.filecoreextension.upnp2.Jetty145SecurityTest",
+      "tests": 11
+    },
+    {
+      "name": "com.archos.mediacenter.video.player.PlaybackNetworkRetryTest",
+      "tests": 2
+    },
+    {
+      "name": "com.archos.mediacenter.utils.MediaUtilsSubsDirTest",
+      "tests": 4
+    },
+    {
+      "name": "com.archos.mediacenter.video.player.StorageWriteAccessTest",
+      "tests": 3
+    },
+    {
+      "name": "com.archos.mediacenter.video.player.SubtitlePauseTimingTest",
+      "tests": 3
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 1795
+  }
+}

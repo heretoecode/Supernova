@@ -1,0 +1,66 @@
+{
+  "source_commit": "cb28b1b936891374bc801f0b58b3397926fc3086",
+  "workflow_run_id": 41328625028,
+  "runtime": "Robolectric native graphics, Android API28, 1920x1080 context; cropped actual dialog views",
+  "data": "synthetic fixtures; no live provider or decoder",
+  "emulator_or_shield": false,
+  "visual_parity": "NOT VERIFIED",
+  "renders": {
+    "main": {
+      "path": "subtitles-main-1920x1080.png",
+      "sha256": "d580ed0d13c562cfd14f72b82893f533fe31c356c30cde71c15f1b124b9d42fd",
+      "dimensions": [
+        1097,
+        972
+      ],
+      "approved_reference": "Image B: main panel",
+      "reference_crop_xyxy": [
+        191,
+        35,
+        1258,
+        980
+      ],
+      "comparison": "main-comparison.png"
+    },
+    "track": {
+      "path": "subtitles-track-1920x1080.png",
+      "sha256": "657da7643389175a8628d2b1593d8358b1d2fd2564ec9cd074a65390502c2cc1",
+      "dimensions": [
+        1417,
+        846
+      ],
+      "approved_reference": "Image A: right-hand Track only",
+      "reference_crop_xyxy": [
+        1005,
+        42,
+        1615,
+        407
+      ],
+      "comparison": "track-comparison.png"
+    },
+    "download": {
+      "path": "subtitles-download-1920x1080.png",
+      "sha256": "6f372764d4d7f9096b1fc7369183d1b48f13ddd2555e707cf9ef0135728c2aa5",
+      "dimensions": [
+        1417,
+        972
+      ],
+      "approved_reference": "Image A: right-hand Download only",
+      "reference_crop_xyxy": [
+        1005,
+        432,
+        1615,
+        849
+      ],
+      "comparison": "download-comparison.png"
+    }
+  },
+  "before": {
+    "path": "before-playback-subtitles.png",
+    "source_commit": "3929e769fb69ce172de56ebe40fc07c238546bcc",
+    "workflow_run_id": 41317089694,
+    "sha256": "fef4da3094707c3c7065a094f02e1e064ca37fdff7a592b9909d405a195b9851",
+    "runtime": "Robolectric native graphics, synthetic scene, 960x540; NOT emulator/Shield",
+    "before_popup_captures": "Unavailable; no fabricated substitute"
+  }
+}

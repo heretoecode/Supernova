@@ -1,0 +1,56 @@
+{
+  "checked_at_utc": "2026-10-23T10:33:23.946519+00:00",
+  "environment": "supernova-foundation-signing",
+  "branch_permitted": true,
+  "branch_policies": [
+    {
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.139-implementation-2026-10-13",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.140-implementation-2026-10-16",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.141-implementation-2026-10-22",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "original_certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "final_candidate_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "workflow_definition_commit": "d5a374ee953ebac663089081b120bb995ac4b384",
+  "signing_run": 39939855407,
+  "prior_denied_check": {
+    "checked_at_utc": "2026-10-22T23:45:25.206549+00:00",
+    "action": "Add only the exact0.141 branch to existing protected signing environment",
+    "command_success": false,
+    "message": "Resource not accessible by integration",
+    "name": null,
+    "scope": "No existing policy update/removal; no secrets read or key replacement",
+    "http_status": 403,
+    "final_candidate_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+    "public_unsigned_signing_preconditions": "PASS",
+    "after_environment_revision": "8"
+  },
+  "scope": "Owner added this exact deployment branch; no secret/key/policy mutation by this resumed session"
+}

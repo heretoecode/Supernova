@@ -392,11 +392,8 @@
     <!-- torrent -->
     <string name="error">אירעה שגיאה</string>
     <string name="error_protocol_not_supported">שגיאה: פרוטוקול לא נתמך</string>
-    <string name="error_loading_torrent">שגיאה בעת טעינת הטורנט</string>
-    <string name="error_downloading_not_enough_space">שגיאה בזמן הורדת טורנט: אין מספיק מקום</string>
     <string name="loading_torrent">טוען טורנט…</string>
     <string name="error_no_video_file">אין קבצי וידאו</string>
-    <string name="torrent_file_to_play">בחר קובץ לניגון</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">דפדף בשיתוף רשת</string>
     <string name="add_ssh_server">דפדף בשרת FTP</string>
@@ -527,7 +524,6 @@
     <string name="rotation_unlocked">סיבוב מסך אוטומטי מופעל</string>
     <string name="network_reindex">סרוק מחדש את התוכן</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">לחץ על חץ למעלה\nכדי להציג את תפריט הטלוויזיה</string>
     <string name="help_overlay_network_indexing_text1">לחץ על תפריט זה כדי לשלב את תוכן תיקייה זו ותת-התיקיות שלה לספרית הוידאו.</string>
     <string name="help_overlay_network_indexing_text2">יאפשר לך להשיג פוסטרים ותיאורים לסרטים וסדרות.</string>
     <string name="help_overlay_scraper_text">לחץ על תפריט זה כדי לחפש פוסטרים ותיאורים לוידאו שלך ברשת.</string>
@@ -659,16 +655,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">טורנט</string>
     <string name="torrent_path">נתיב הורדה</string>
     <string name="torrent_blocklist">רשימת חסימה</string>
     <string name="blocklist_empty">הכתובת לא צריכה להיות ריקה</string>
     <string name="blocklist_invalid">רשימת חסימה לא תקינה</string>
-    <string name="blocklist_file_not_found">הקובץ לא נמצא</string>
     <string name="blocklist_success">רענון רשימת חסימה הצליח</string>
-    <string name="blocklist_unknown_error">לא ידוע</string>
-    <string name="blocklist_not_loaded">לא נטען</string>
-    <string name="torrent_blocklist_url">כתובת רשימת חסימה</string>
     <string name="sdk_not_supported">אנדרואיד 4.3 לא נתמך עדיין.\nאנו עובדים ממש קשה כדי לפתור זאת בגרסה הבאה!</string>
     <string name="manually_create_share">הוסף תיקייה מקוטלגת על פי כתובת</string>
     <string name="share_infos_incomplete">יש להזין נתיב</string>

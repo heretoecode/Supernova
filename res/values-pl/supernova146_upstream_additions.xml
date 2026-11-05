@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">Prędkość dźwięku</string>
+  <string name="preferences_audio_speed_mode_summary">Wybierz filtr używany do zmiany prędkości odtwarzania. ⚠️ Eksperymentalne, może powodować zniekształcenie obrazu lub dźwięku</string>
+  <string name="audio_speed_mode_disabled">Wyłączony</string>
+  <string name="audio_speed_mode_audiotrack">Natywny (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">Zrównoważony (FFmpeg atempo)</string>
+  <string name="audio_speed_mode_sonic">Głos &amp; mowa (Sonic)</string>
+  <string name="subtitles_show_full_for_local_audio_title">Pokaż napisy w języku ścieżki dźwiękowej</string>
+  <string name="subtitles_show_full_for_local_audio_summary">Domyślnie wyłączone, co znaczy, że tylko napisy wymuszone będą wyświetlane; włącz, jeśli chcesz pełnych napisów</string>
+  <string name="ui_choice_title">Wygląda na to, że używasz Nova Video Player na telewizorze.\nJeśli tak, zalecamy korzystanie z nowego interfejsu użytkownika TV</string>
+  <string name="ui_choice_tv">Interfejs TV</string>
+  <string name="ui_choice_tablet">Interfejs tabletowy</string>
+  <string name="ui_choice_help">Możesz zmienić wybór w ustawieniach później</string>
+  <string name="workgroup">Grupa robocza</string>
+</resources>

@@ -286,11 +286,8 @@
     <string name="exit">خروج</string>
     <!-- torrent -->
     <string name="error">حدث خطأ</string>
-    <string name="error_loading_torrent">حدث خطأ أثناء تحميل البيانات</string>
-    <string name="error_downloading_not_enough_space">خطأ أثناء تحميل البيانات : لا توجد مساحة كافية</string>
     <string name="loading_torrent">تحميل البيانات</string>
     <string name="error_no_video_file">لا يوجد ملفات فيديو</string>
-    <string name="torrent_file_to_play">إختار ملف للعرض</string>
     <!-- Shortcuts -->
     <string name="add_ssh_server">تصفح مخزن FTP</string>
     <string name="add_ssh_shortcut">إضافة اختصار</string>

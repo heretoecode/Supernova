@@ -1,0 +1,32 @@
+{
+  "source_sha": "4649d86d50ad75789eb7f7d6702f9b551012171b",
+  "classes": 7,
+  "tests": 23,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewProviderFilterTest",
+    "com.archos.mediacenter.video.utils.RestoreJournalTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+    "com.archos.mediacenter.video.utils.BackupStageRevalidationTest",
+    "com.archos.mediacenter.video.utils.BackupCycleTest",
+    "com.archos.mediacenter.video.leanback.Supernova138UiTest"
+  ],
+  "checks": [
+    "Logical import privately copies, bounds, closes and validates before returning review payloads",
+    "Review payload mutation cannot modify validated snapshot; changed/private-closed snapshots rejected",
+    "Invalid/empty/truncated/oversize/cancelled/provider-close-failure streams leave no usable preview or private partial",
+    "Actual legacy1.0 restoration preserves absent viewing-history, shortcuts, associations and artwork",
+    "Existing legacy export/restore, stage revalidation and recovery regressions",
+    "Provider-filter selection/reopen/recreation and first-licence navigation pass with approved visual assertions",
+    "Full-HD Backup target/label geometry"
+  ],
+  "limits": [
+    "Current-version legacy1.0 reader; required historical schema62 fingerprint/fixtures and category-aware legacy restoration remain open",
+    "Legacy full-restore account-disconnect behavior is preserved and requires existing warning; it is separate from logical selected restoration",
+    "No production picker, combined store journal, real provider/device or signing proof",
+    "Drive refresh found no accessible Supernova ZIP or IMG_4925/IMG_4941 evidence"
+  ]
+}

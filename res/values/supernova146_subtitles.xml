@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <integer name="subtitle_default_font_scale_percent">100</integer>
+  <integer name="subtitle_default_bg_opacity">128</integer>
+  <integer name="subtitle_default_outline_width">2</integer>
+  <integer name="subtitle_default_shadow_width">2</integer>
+  <bool name="subtitle_default_bold">false</bool>
+  <color name="subtitle_default_text_color">#FFFFFFFF</color>
+  <color name="subtitle_default_outline_color">#FF000000</color>
+  <color name="subtitle_default_shadow_color">#AA000000</color>
+  <color name="subtitle_default_background_color">#FF000000</color>
+</resources>

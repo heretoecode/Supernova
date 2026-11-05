@@ -20,12 +20,14 @@ import com.archos.mediacenter.video.R;
 
 import java.io.Serializable;
 
+/** Represents a network browsing entry with its URI and artwork. */
 public class NetworkBrowse extends Shortcut implements Serializable {
 
     public NetworkBrowse(String name) {
        super(-1,"","",name);
     }
 
+    @Override
     public Uri getUri() {
         return null;
     }

@@ -1,0 +1,9 @@
+{
+  "source_sha": "9414f0e1d1c8a116dd383d5cc04b628165357244",
+  "result": "FAIL",
+  "stage": "compileNoamazonReleaseUnitTestJavaWithJavac",
+  "tests_executed": 0,
+  "duration": "20s",
+  "log_sha256": "1179d848a272d020012c76648644e828f848cf44113a4480c0c36a1b2ef62af1",
+  "reason": "Fixture referenced ArchosUtils in wrong namespace; existing implementation is com.archos.environment.ArchosUtils. Corrected next stage, no behavioral test pass claimed."
+}

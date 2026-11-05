@@ -20,8 +20,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -31,9 +29,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
-import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.database.CursorMapper;
 import androidx.leanback.widget.ArrayObjectAdapter;
 import androidx.leanback.widget.CursorObjectAdapter;
@@ -51,9 +47,8 @@ import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.loader.MoviesByLoader;
-import com.archos.mediaprovider.ImportState;
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.LoaderUtils;
-import com.archos.mediaprovider.video.NetworkScannerReceiver;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.browser.loader.MoviesLoader;
@@ -68,8 +63,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
-public abstract class VideosByFragment extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
+/** Provides shared category loading, sorting and row presentation for TV video browsers. */
+public abstract class VideosByFragment extends CategoryBrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final Logger log = LoggerFactory.getLogger(VideosByFragment.class);
 
     // attempts to not have refresh of categories/list while scanning but both causes crashes
@@ -96,7 +91,6 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
      */
     private Cursor mCurrentCategoriesCursor;
     private boolean mRowsLoadDeferred;
-    private boolean mBackgroundWorkWasOngoing;
 
     private String mDefaultSort;
 
@@ -119,6 +113,14 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
         return false;
     }
 
+    /**
+     * Translates a category (subset) name before it is shown as a row header. The default keeps
+     * it unchanged; genre fragments override this to render the genre in the current app locale.
+     */
+    protected String getSubsetDisplayName(String subsetName) {
+        return subsetName;
+    }
+
     public VideosByFragment() {
         this(MoviesLoader.DEFAULT_SORT);
     }
@@ -129,7 +131,8 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (log.isDebugEnabled()) log.debug("onViewCreated");
+        if (log.isDebugEnabled())
+            log.debug("onViewCreated");
         super.onViewCreated(view, savedInstanceState);
 
         // Add private mode indicator overlay
@@ -141,7 +144,8 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
         if (searchOrbView != null) {
             searchOrbView.setOrbIcon(ContextCompat.getDrawable(getActivity(), R.drawable.orb_sort));
         } else {
-            throw new IllegalArgumentException("Did not find R.id.title_orb in BrowseFragment! Need to update the orbview hack!");
+            throw new IllegalArgumentException(
+                "Did not find R.id.title_orb in BrowseFragment! Need to update the orbview hack!");
         }
 
         ViewGroup container = (ViewGroup) getView().findViewById(R.id.browse_frame);
@@ -150,18 +154,18 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
             mEmptyView = (TextView) container.findViewById(R.id.empty_view);
             mEmptyView.setText(R.string.you_have_no_movies);
         } else {
-            throw new IllegalArgumentException("Did not find R.id.browse_frame in BrowseFragment! Need to update the emptyview hack!");
+            throw new IllegalArgumentException(
+                "Did not find R.id.browse_frame in BrowseFragment! Need to update the emptyview hack!");
         }
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mSortOrder = mPrefs.getString(getSortOrderParamKey(), mDefaultSort);
-        mSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         Resources r = getResources();
         updateBackground();
 
         setHeadersState(HEADERS_ENABLED);
-        setHeadersTransitionOnBackEnabled(true);
 
         // Apply theme-aware colors
         ThemeManager themeManager = ThemeManager.getInstance(getActivity());
@@ -189,7 +193,8 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
     @Override
     public void onDestroyView() {
-        if (log.isDebugEnabled()) log.debug("onDestroyView");
+        if (log.isDebugEnabled())
+            log.debug("onDestroyView");
         clearRowAdapters();
         mCurrentCategoriesCursor = null;
         mOverlay.destroy();
@@ -204,17 +209,25 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
     @Override
     public void onResume() {
-        if (log.isDebugEnabled()) log.debug("onResume");
+        if (log.isDebugEnabled())
+            log.debug("onResume");
         super.onResume();
-        mBackgroundWorkWasOngoing = isBackgroundWorkOngoing();
+        if (mRowsLoadDeferred && !LoaderUtils.isCategoryRowsDeferralActive()) {
+            LoaderManager.getInstance(this).restartLoader(-1, null, this);
+        }
         mOverlay.resume();
-        boolean newSortIgnoreArticles = com.archos.mediacenter.video.utils.SortUtils.isIgnoreArticlesEnabled(getActivity());
+        boolean newSortIgnoreArticles =
+            SortUtils.isIgnoreArticlesEnabled(getActivity());
         if (newSortIgnoreArticles != mSortIgnoreArticles) {
             mSortIgnoreArticles = newSortIgnoreArticles;
             if (mCurrentCategoriesCursor != null) {
                 boolean deferRowLoaders = shouldDeferRowLoadersDuringBackgroundWork() && isBackgroundWorkOngoing();
-                loadCategoriesRows(mCurrentCategoriesCursor, !deferRowLoaders);
-                mRowsLoadDeferred = deferRowLoaders;
+                if (deferRowLoaders) {
+                    deferCategoriesRows(mCurrentCategoriesCursor);
+                } else {
+                    loadCategoriesRows(mCurrentCategoriesCursor, true);
+                    mRowsLoadDeferred = false;
+                }
             } else {
                 LoaderManager.getInstance(this).restartLoader(-1, null, this);
             }
@@ -223,31 +236,41 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
     @Override
     public void onPause() {
-        if (log.isDebugEnabled()) log.debug("onPause");
+        if (log.isDebugEnabled())
+            log.debug("onPause");
         super.onPause();
         mOverlay.pause();
     }
 
     private void setupEventListeners() {
         setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 mSortOrderItem = sortOrder2Item(mSortOrder);
                 new AlertDialog.Builder(getActivity())
-                        .setSingleChoiceItems(getSortOrderEntries(), mSortOrderItem, new DialogInterface.OnClickListener() {
+                    .setSingleChoiceItems(getSortOrderEntries(), mSortOrderItem,
+                        new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
                                     mSortOrder = item2SortOrder(mSortOrderItem);
                                     // Save the sort mode
                                     mPrefs.edit().putString(getSortOrderParamKey(), mSortOrder).apply();
-                                    boolean deferRowLoaders = shouldDeferRowLoadersDuringBackgroundWork() && isBackgroundWorkOngoing();
-                                    loadCategoriesRows(mCurrentCategoriesCursor, !deferRowLoaders);
-                                    mRowsLoadDeferred = deferRowLoaders;
+                                    boolean deferRowLoaders =
+                                        shouldDeferRowLoadersDuringBackgroundWork() && isBackgroundWorkOngoing();
+                                    if (deferRowLoaders) {
+                                        deferCategoriesRows(mCurrentCategoriesCursor);
+                                    } else {
+                                        loadCategoriesRows(mCurrentCategoriesCursor, true);
+                                        mRowsLoadDeferred = false;
+                                    }
                                 }
                                 dialog.dismiss();
                             }
                         })
-                        .create().show();
+                    .create()
+                    .show();
             }
         });
         setOnItemViewClickedListener(new VideoViewClickedListener(getActivity()));
@@ -255,7 +278,8 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (log.isDebugEnabled()) log.debug("onCreateLoader id=", id);
+        if (log.isDebugEnabled())
+            log.debug("onCreateLoader id=", id);
         if (id == -1) {
             // List of categories with video ids per category
             return getSubsetLoader(getActivity());
@@ -267,41 +291,46 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor c) {
-        if (log.isDebugEnabled()) log.debug("onLoadFinished id=", cursorLoader.getId());
+        if (log.isDebugEnabled())
+            log.debug("onLoadFinished id=", cursorLoader.getId());
         if (getActivity() == null) {
-            if (log.isDebugEnabled()) log.debug("onLoadFinished: activity null exiting");
+            if (log.isDebugEnabled())
+                log.debug("onLoadFinished: activity null exiting");
             return;
         }
-        boolean backgroundWorkOngoing = isBackgroundWorkOngoing();
-        if (mRowsLoadDeferred && mBackgroundWorkWasOngoing && !backgroundWorkOngoing) {
-            if (log.isDebugEnabled()) log.debug("onLoadFinished: background work finished, forcing category reload");
-            mBackgroundWorkWasOngoing = false;
+        boolean backgroundWorkOngoing = LoaderUtils.isCategoryRowsDeferralActive();
+        if (cursorLoader.getId() != -1 && mRowsLoadDeferred && !backgroundWorkOngoing) {
+            if (log.isDebugEnabled())
+                log.debug("onLoadFinished: background work finished, forcing category reload");
             LoaderManager.getInstance(this).restartLoader(-1, null, this);
             return;
         }
-        mBackgroundWorkWasOngoing = backgroundWorkOngoing;
         // List of categories
         if (cursorLoader.getId() == -1) {
             boolean deferRowLoaders = shouldDeferRowLoadersDuringBackgroundWork() && backgroundWorkOngoing;
             if (deferRowLoaders) {
-                showDeferredLoadingState();
-                mCurrentCategoriesCursor = c;
-                mRowsLoadDeferred = true;
+                deferCategoriesRows(c);
                 return;
             }
             mEmptyView.setText(R.string.you_have_no_movies);
             mEmptyView.setVisibility(c.getCount() > 0 ? View.GONE : View.VISIBLE);
             if (mCurrentCategoriesCursor != null) {
-                if (!mRowsLoadDeferred && !isCategoriesListModified(mCurrentCategoriesCursor, c)) {
-                    // no actual modification, no need to rebuild all the rows
-                    mCurrentCategoriesCursor = c; // keep the reference to the new cursor because the old one won't be valid anymore
+                if (!mRowsLoadDeferred && mRowsAdapter.size() == c.getCount()
+                    && CategoryRowsDiff.canKeepRowsAfterRemovals(mCurrentCategoriesCursor, c,
+                        MoviesByLoader.COLUMN_SUBSET_ID, MoviesByLoader.COLUMN_SUBSET_NAME,
+                        MoviesByLoader.COLUMN_LIST_OF_MOVIE_IDS)) {
+                    // Existing subset loaders observe the database change. A removed ID cannot
+                    // require new loader arguments, so keep the rows and their current focus.
+                    mCurrentCategoriesCursor =
+                        c; // keep the reference to the new cursor because the old one won't be valid anymore
                     return;
                 }
             }
             mCurrentCategoriesCursor = c;
             loadCategoriesRows(c, !deferRowLoaders);
             mRowsLoadDeferred = deferRowLoaders;
-            if (STOP_LOADING) cursorLoader.stopLoading();
+            if (STOP_LOADING)
+                cursorLoader.stopLoading();
         }
         // One of the row
         else {
@@ -309,18 +338,19 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
             if (adapter != null) {
                 adapter.changeCursor(c);
                 // do not get any other update because complex views should not be updated while scanning to prevent crash
-                if (STOP_LOADING) cursorLoader.stopLoading();
+                if (STOP_LOADING)
+                    cursorLoader.stopLoading();
             }
         }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        if (log.isDebugEnabled()) log.debug("onLoaderReset");
+        if (log.isDebugEnabled())
+            log.debug("onLoaderReset");
         if (cursorLoader.getId() == -1) {
             mCurrentCategoriesCursor = null;
             mRowsLoadDeferred = false;
-            mBackgroundWorkWasOngoing = false;
             return;
         }
         CursorObjectAdapter adapter = mAdaptersMap.get(cursorLoader.getId());
@@ -339,40 +369,10 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
         mAdaptersMap.clear();
     }
 
-    private boolean isCategoriesListModified(Cursor oldCursor, Cursor newCursor) {
-
-        // Modified for sure if has different length
-        if (oldCursor.getCount() != newCursor.getCount()) {
-            if (log.isDebugEnabled()) log.debug("Difference found in the category list (size changed)");
-            return true;
-        }
-
-        // these two column index are the same but it looks nicer like this :-)
-        final int oldSubsetNameColumn = oldCursor.getColumnIndex(MoviesByLoader.COLUMN_SUBSET_NAME);
-        final int newSubsetNameColumn = newCursor.getColumnIndex(MoviesByLoader.COLUMN_SUBSET_NAME);
-
-        // Check all names
-        oldCursor.moveToFirst();
-        newCursor.moveToFirst();
-        while (!oldCursor.isAfterLast() && !newCursor.isAfterLast()) {
-            final String oldName = oldCursor.getString(oldSubsetNameColumn);
-            final String newName = newCursor.getString(newSubsetNameColumn);
-            if (oldName != null && !oldName.equals(newName)) {
-                // difference found
-                if (log.isDebugEnabled()) log.debug("Difference found in the category list ({} vs {})", oldName, newName);
-                return true;
-            }
-            oldCursor.moveToNext();
-            newCursor.moveToNext();
-        }
-        // no difference found
-        if (log.isDebugEnabled()) log.debug("No difference found in the category list");
-        return false;
-    }
-
     private void loadCategoriesRows(Cursor c, boolean loadSubsetRows) {
         if (c == null) {
-            if (log.isDebugEnabled()) log.debug("loadCategoriesRows: cursor null exiting");
+            if (log.isDebugEnabled())
+                log.debug("loadCategoriesRows: cursor null exiting");
             return;
         }
         int subsetIdColumn = c.getColumnIndex(MoviesByLoader.COLUMN_SUBSET_ID);
@@ -381,7 +381,7 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
 
         mRowsAdapter.clear();
         clearRowAdapters();
-        
+
         // NOTE: A first version was using a CursorObjectAdapter for the rows.
         // The problem was that when any DB update occurred (resume point...) I found no way
         // to not update all the rows. Hence the selection position on the current row was lost.
@@ -393,8 +393,7 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
         ArrayList<ListRow> rows = new ArrayList<>(c.getCount());
         c.moveToFirst();
 
-        while(!c.isAfterLast())
-        {
+        while (!c.isAfterLast()) {
             int subsetId = (int) c.getLong(subsetIdColumn);
             String subsetName = c.getString(subsetNameColumn);
             String listOfMovieIds = c.getString(listOfMovieIdsColumn);
@@ -402,7 +401,7 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
             // Build the row
             CursorObjectAdapter subsetAdapter = new CursorObjectAdapter(mVideoPresenter);
             subsetAdapter.setMapper(mVideoMapper);
-            rows.add(new ListRow(subsetId, new HeaderItem(subsetName), subsetAdapter));
+            rows.add(new ListRow(subsetId, new HeaderItem(getSubsetDisplayName(subsetName)), subsetAdapter));
             mAdaptersMap.append(subsetId, subsetAdapter);
 
             if (loadSubsetRows) {
@@ -414,16 +413,17 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
                 try {
                     LoaderManager.getInstance(this).restartLoader(subsetId, args, this);
                 } catch (Exception e) {
-                    log.warn("caught exception in loadCategoriesRows ",e);
+                    log.warn("caught exception in loadCategoriesRows ", e);
                 }
             }
 
             c.moveToNext();
         }
 
-        mRowsAdapter.addAll(0,rows);
+        mRowsAdapter.addAll(0, rows);
         // unregister observer to not get notifications of content change
-        if (UNREGISTER_OBSERVERS) mRowsAdapter.unregisterAllObservers();
+        if (UNREGISTER_OBSERVERS)
+            mRowsAdapter.unregisterAllObservers();
     }
 
     private void showDeferredLoadingState() {
@@ -433,20 +433,27 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
         mEmptyView.setVisibility(View.VISIBLE);
     }
 
+    private void deferCategoriesRows(Cursor c) {
+        mCurrentCategoriesCursor = c;
+        mRowsLoadDeferred = true;
+        if (mRowsAdapter.size() == 0) {
+            showDeferredLoadingState();
+        }
+    }
+
     private boolean isBackgroundWorkOngoing() {
-        return NetworkScannerReceiver.isScannerWorking()
-                || LoaderUtils.getScrapeInProgress()
-                || ImportState.VIDEO.isInitialImport();
+        return LoaderUtils.isCategoryRowsDeferralActive();
     }
 
     private void updateBackground() {
-        if (log.isDebugEnabled()) log.debug("updateBackground");
+        if (log.isDebugEnabled())
+            log.debug("updateBackground");
 
         // Update private mode indicator visibility
         PrivateModeUIHelper.updatePrivateModeIndicator(getView());
 
         bgMngr = BackgroundManager.getInstance(getActivity());
-        if(!bgMngr.isAttached())
+        if (!bgMngr.isAttached())
             bgMngr.attach(getActivity().getWindow());
 
         if (PrivateMode.isActive()) {
@@ -471,7 +478,8 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if (VideoPreferencesCommon.KEY_APP_THEME.equals(key)) {
-                    if (log.isDebugEnabled()) log.debug("Theme changed, updating background and colors");
+                    if (log.isDebugEnabled())
+                        log.debug("Theme changed, updating background and colors");
                     updateBackground();
                     // Update brand color
                     setBrandColor(themeManager.getLeanbackHeaderColor());
@@ -480,7 +488,7 @@ public abstract class VideosByFragment extends BrowseSupportFragment implements 
         };
         themeManager.registerThemeChangeListener(mThemeChangeListener);
     }
-    
+
     public ArrayObjectAdapter getRowsAdapter() {
         return mRowsAdapter;
     }

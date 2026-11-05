@@ -14,6 +14,8 @@
 
 package com.archos.mediacenter.video.leanback.scrapping;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.View;
 import android.view.MotionEvent;
 
@@ -30,12 +32,13 @@ public abstract class SafeSearchSupportFragment extends SearchSupportFragment {
     private static final Logger log = LoggerFactory.getLogger(SafeSearchSupportFragment.class);
 
     @Override
-    public void onViewCreated(View view, android.os.Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
         // Add a global touch listener to catch NPE from SearchBar InputDevice.getName()
         if (view != null) {
             view.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     try {

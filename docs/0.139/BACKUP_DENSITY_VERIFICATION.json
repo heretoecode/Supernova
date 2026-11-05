@@ -1,0 +1,21 @@
+{
+  "source_sha": "c9f566cbb9f01633455ff50a675634db6b10d5e7",
+  "status": "PASS",
+  "tests": 1,
+  "classes": 1,
+  "viewport_px": [
+    1256,
+    936
+  ],
+  "host_profile": "1920x1080 pixels;960x540dp;xhdpi density2",
+  "checks": [
+    "All26 category labels, no ellipses and minimum44dp/88px targets within the right-area bounds"
+  ],
+  "artifact": {
+    "path": "docs/0.139/ui/backup/0139-backup-right-xhdpi.png",
+    "sha256": "5d177ae1a0343d0ee4a929c20eebe1d60949e1501d4355d4ee1b13155cc0d077"
+  },
+  "limits": [
+    "Right-area fixture only; permanent-sidebar integration, background, large-font/small-viewport profiles and Shield remain open"
+  ]
+}

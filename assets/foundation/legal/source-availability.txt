@@ -1,0 +1,15 @@
+Supernova 0.146 — source availability and library modification
+
+Supernova derives from NOVA Video Player / Archos Video Player Community Edition. The application retains Apache-2.0 terms; each separately licensed component retains its own notices and licence. This catalogue does not replace those terms.
+
+Modified application, sibling source patches, exact source pins and build recipes:
+https://github.com/heretoecode/Supernova/tree/codex/supernova-0.146-upstream-completion-2026-10-28
+See .github/build/prepare-supernova146-dependencies.py, supernova146-dependency-patches.json, native-supernova146.lock.json and build-supernova146-native-stack.py. The lock identifies every native source commit, source archive digest, toolchain and applied patch. The pinned NOVA release-time snapshots are documented separately from the source of its published binaries; mutable manifest refs are not asserted to prove exact binary provenance.
+
+FFmpeg 9.0.2 source commit 946fcce07b6dcd0331c8cc609192aeff5e1924f8 is rebuilt for arm64-v8a, armeabi-v7a, x86 and x86_64 at API23. The configuration disables GPL, version3 and nonfree components; the selected library licence remains LGPL-2.1-or-later. The reviewed Opus detection, audio-tempo media-frontier and libmysofa compatibility patches accompany the recipes. Native TLS certificate and hostname checks stay enabled. OpenSSL4.1 is built from source under Apache-2.0. libass and all linked font/text dependencies have their own full notices in this catalogue.
+
+FFmpeg is dynamically linked. FriBidi, selected font dependencies and OpenSSL are statically linked into the player; AudioCompress and portions of the native player have LGPL terms. Their complete source, applied patches, generated FFmpeg configuration and build instructions are retained with the corresponding-source package. Rebuild the modified native stack and JNI wrappers, then build the application from source with those libraries. This permits modification and relinking; installation of a modified APK on Android requires a developer signing key, or an authorized build with the existing installation certificate. The private installation key is not part of corresponding source. No restriction on reverse engineering for debugging modifications to LGPL libraries is imposed by this application.
+
+Jetty7 source-built modules retain their original9.4.58 Maven coordinates and embed the pinned source commit and reviewed security patch digest. The source patch, full build recipe and exact input digests are in .github/build/jetty-supernova146*. No advisory is hidden by changing a version label. The eighth Jetty utility module is the resolved upstream archive. Full Apache/EPL notices and jUPnP CDDL text are included.
+
+The exact source commit, APK digest, native source package and test limitations for this QA candidate are recorded in docs/0.146. Physical Shield, HDMI/audio routes, real server interoperability, visual subtitle rendering and signed in-place upgrade checks require device evidence; software build success alone does not establish them.

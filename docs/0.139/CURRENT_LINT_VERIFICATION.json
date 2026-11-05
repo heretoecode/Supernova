@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+  "errors": 0,
+  "warnings": 1771,
+  "log_sha256": "dce96025eee178409bb6e8f7074b7440a899920d6704e11a0b89c5b8644223c2",
+  "batch_result": "FAIL \u2014 independent unit acceptance failure; lint task completed successfully",
+  "suppression_added": false
+}

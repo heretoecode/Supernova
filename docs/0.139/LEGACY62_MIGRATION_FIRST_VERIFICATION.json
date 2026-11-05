@@ -1,0 +1,18 @@
+{
+  "result": "FAIL",
+  "source_sha": "f4e0ffb7609ab4e1dd40d745d80dd090fdde56e9",
+  "dependency_sha": "66a1d42a87160069c3620ab4e4fe3859379d2210",
+  "duration": "35s",
+  "log_sha256": "9c6e333384fb70dc3fe63bfd7f7ca84b8e5cd2ca20413a2d2fbc671eea046207",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.LegacySchema62MigrationTest"
+  ],
+  "reason": "PRAGMA journal_mode returns a result row; execSQL rejects it. Positive private migration refused before live replacement. Explicit failed-migration isolation test passed.",
+  "tests": 12,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}

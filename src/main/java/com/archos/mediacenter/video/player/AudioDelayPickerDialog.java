@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -35,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/** Displays an audio delay picker dialog and reports delay changes. */
 public class AudioDelayPickerDialog extends AlertDialog implements OnClickListener,
         AudioDelayPicker.OnAudioDelayChangedListener, AudioDelayPickerDialogInterface {
 
@@ -59,6 +61,7 @@ public class AudioDelayPickerDialog extends AlertDialog implements OnClickListen
         this(context, callBack, delay, false);
     }
 
+    @SuppressLint("InflateParams") // Custom content view for AlertDialog.setView() has no parent container at inflation
     public AudioDelayPickerDialog(Context context, OnAudioDelayChangeListener callBack, int delay, boolean disablePositiveDelay) {
         super(context);
         log.error("AudioDelayPickerDialog: delay={}", delay);
@@ -90,12 +93,14 @@ public class AudioDelayPickerDialog extends AlertDialog implements OnClickListen
         setCancelable(true);
         setCanceledOnTouchOutside(true);
     }
+    @Override
     public void onAttachedToWindow(){
         log.error("onAttachedToWindow");
         super.onAttachedToWindow();
         mSaveSettingCB.setChecked( PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getContext().getResources().getString(R.string.save_delay_setting_pref_key), 0)!=0);
 
     }
+    @Override
     public void handleMessage(Message msg) {
         switch(msg.what) {
             case CHANGE_DELAY:
@@ -133,12 +138,14 @@ public class AudioDelayPickerDialog extends AlertDialog implements OnClickListen
         }
     }
 
+    @Override
     public void onClick(DialogInterface dialog, int which) {
         if (mCallBack != null) {
             mCallBack.onAudioDelayChange(mAudioDelayPicker, clampDelay(mAudioDelayPicker.getDelay()));
         }
     }
 
+    @Override
     public void updateDelay(int delay) {
         mAudioDelayPicker.updateDelay(clampDelay(delay));
     }

@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Reports scrolling changes to a listener in TV playback menus. */
 public class TVScrollView extends ScrollView {
 
     private static final Logger log = LoggerFactory.getLogger(TVScrollView.class);

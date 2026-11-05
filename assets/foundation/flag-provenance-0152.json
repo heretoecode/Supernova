@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "note": "0.152 language flags added beyond the original Twemoji country set (owner-approved 2 Nov 2026). See flag-provenance.json for the 249 country flags.",
+  "flags": [
+    {
+      "resource": "res/drawable-nodpi/region_gb_wls.png",
+      "source": "jdecked/twemoji@b6b55fef1e8636b540a6d016a4729ca8cdf2e60b",
+      "kind": "Twemoji (CC-BY-4.0), unchanged",
+      "upstream": "assets/72x72/1f3f4-e0067-e0062-e0077-e006c-e0073-e007f.png",
+      "sha256": "b06c17badbb710aef7210ca117cd9f64cef5a80cfbc733f1d5397787ce3eb7cf"
+    },
+    {
+      "resource": "res/drawable-nodpi/region_gb_sct.png",
+      "source": "jdecked/twemoji@b6b55fef1e8636b540a6d016a4729ca8cdf2e60b",
+      "kind": "Twemoji (CC-BY-4.0), unchanged",
+      "upstream": "assets/72x72/1f3f4-e0067-e0062-e0073-e0063-e0074-e007f.png",
+      "sha256": "33bb7e98c75635cb1d4949f96f0aebd08813427691747cb31bf43f7370c8fbd3"
+    },
+    {
+      "resource": "res/drawable-nodpi/region_es_ct.png",
+      "source": "lipis/flag-icons@v7.2.3",
+      "kind": "flag-icons (MIT), rendered into the Twemoji frame",
+      "upstream": "flags/4x3/es-ct.svg",
+      "sha256": "086f6f731c58024e6cc98ae84a2fc0ecf281442cbf87090661f43f4463f9477f"
+    },
+    {
+      "resource": "res/drawable-nodpi/region_es_ga.png",
+      "source": "lipis/flag-icons@v7.2.3",
+      "kind": "flag-icons (MIT), rendered into the Twemoji frame",
+      "upstream": "flags/4x3/es-ga.svg",
+      "sha256": "ebe121390191030f91fa38cb6fa545d6e85ede89e2f7cda24608d7b24bc233d3"
+    },
+    {
+      "resource": "res/drawable-nodpi/region_es_pv.png",
+      "source": "lipis/flag-icons@v7.2.3",
+      "kind": "flag-icons (MIT), rendered into the Twemoji frame",
+      "upstream": "flags/4x3/es-pv.svg",
+      "sha256": "7850d880c5e42cde9d9e71e55300ef0b5af4b4eebdc178b2b2e6284946eb248e"
+    },
+    {
+      "resource": "res/drawable-nodpi/region_arab.png",
+      "source": "lipis/flag-icons@v7.2.3",
+      "kind": "flag-icons (MIT), rendered into the Twemoji frame",
+      "upstream": "flags/4x3/arab.svg",
+      "sha256": "9bf0a6f27ec4ba2aff3b85c29757baf03ffc94e6ee15aa18ab69d4a2eecf6e2e"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_eo.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Esperanto",
+      "sha256": "df9e66afaf116a7827f6b6e51b13e386fc47ee755be243734f85bf8f26a4bc75"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_se.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Sami",
+      "sha256": "d156cff1cee46c69b5f450b18b508162fdfb4dacdf45b74c767280189bcc7063"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_tt.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Tatarstan",
+      "sha256": "e8e8a2008bdedd164156587305c4a52596af7f1edc7bfa7de550644bbf7572f8"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_ku.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Kurdistan",
+      "sha256": "9c953775bd93a62d3e366c6925c6f44c2afc97d599cae607d2a8e7d95b148a9b"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_br.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Brittany (Gwenn-ha-Du)",
+      "sha256": "9cf90d07fbb89df4f406f50f8552b6c56333684105e32761137cf34bb53d6ca9"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_ext.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Extremadura",
+      "sha256": "5d3b1e327b92056af45ad77e0a8e3b1a9c6ea0082d6ae2f79b7edf7b9dcfab63"
+    },
+    {
+      "resource": "res/drawable-nodpi/lang_oc.png",
+      "source": "Supernova",
+      "kind": "Drawn by Supernova from the official flag design (simple geometry); see docs/design/approved-mockups/flags",
+      "upstream": "Occitania (cross of Toulouse)",
+      "sha256": "1675dd2af70ebea0a384645f19ce323b3e763fecd86ef904841b46afdc31a9a8"
+    }
+  ]
+}

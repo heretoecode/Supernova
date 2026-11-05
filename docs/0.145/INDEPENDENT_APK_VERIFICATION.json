@@ -1,0 +1,25 @@
+{
+  "source_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "apk_sha256": "1cd4d3c6dcbe9c8c02c3abae26ba4fb37b99d73e0fc68e6a0cf0ca43c2b0c2c8",
+  "apk_bytes": 87940129,
+  "application_id": "app.supernova.player",
+  "version_name": "0.145",
+  "version_code": 145,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "signature_verified": true,
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "zip_crc_verified": true,
+  "native_hashes_independently_matched": 88,
+  "zip_and_elf_16kb_alignment_verified": true,
+  "supported_abis": [
+    "armeabi-v7a",
+    "arm64-v8a",
+    "x86",
+    "x86_64"
+  ],
+  "payload_parity_verified_in_ci": true,
+  "signed_upgrade_verified": false,
+  "physical_shield_verified": false,
+  "rebuilt_ffmpeg_independently_matched": 24
+}

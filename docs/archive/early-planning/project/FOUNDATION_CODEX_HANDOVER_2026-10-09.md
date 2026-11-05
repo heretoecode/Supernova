@@ -1,0 +1,72 @@
+# Codex handover — Foundation Release FIRST
+
+**Status:** user-authorised start of Foundation preparation, 9 October 2026. This document is a handover, **not proof of implementation**.
+
+## Authoritative release order
+1. **Foundation Release now** (app identity, signing, branding, versioning, attribution and smoke tests).
+2. Existing frozen post-4.1.7 Shield **fixes-only** corrective release afterwards, rebased/reapplied carefully to the new app identity.
+3. Approved future feature releases separately.
+
+This supersedes earlier fixes-first sequencing. Single-user Shield deployment; existing UI issues do not block Foundation.
+
+## Branch isolation
+- Work only on dedicated `codex/foundation-release` for this release. Do **not** modify `codex/post-4.1.7-shield-fixes`, reset/revert it, or merge Foundation to main without explicit authorisation.
+- Start from current main; inspect actual branch state and source before edits.
+- Consult `PROJECT_STATUS.md`, `docs/archive/early-planning/project/RELEASE_SEQUENCE_2026-10-09.md`, `docs/archive/early-planning/project/TECHNICAL_EXECUTION_READINESS_2026-10-09.md`, `docs/design/ABOUT_SETTINGS.md` and `assets/branding/`.
+
+## User-approved permanent identity
+- Android `applicationId`: **`app.supernova.player`**.
+- App label: **Supernova**.
+- Java/Kotlin namespace need not be renamed automatically; distinguish namespace from install application ID.
+- Fresh install acceptable; no Preview upgrade path required. Preserve NOVA attribution and licences.
+
+## Signing — do not improvise
+- User has **already created a PKCS#12 `.p12` keystore**, set a password, and securely backed up both; user has access via iPhone.
+- **Never create another signing key** or reuse Preview's debug/personal signing identity for Foundation.
+- Never request the `.p12` or password in chat; never commit secret material or print in logs.
+- Prepare a dedicated, manual `workflow_dispatch` Foundation GitHub Actions build, with distinct protected secret names (e.g. `SUPERNOVA_P12_BASE64`, `SUPERNOVA_STORE_PASSWORD`, `SUPERNOVA_KEY_ALIAS`, `SUPERNOVA_KEY_PASSWORD`). PKCS#12 may use same password for store/key, but verify rather than assume.
+- Decode the base64 secret into a temporary `.p12` on the CI runner with restrictive permissions; configure Gradle `storeType='pkcs12'`; remove temp file after build; mask sensitive values. Verify key entry/alias and certificate fingerprint without leaking secrets; record **public certificate fingerprint** in build evidence only after securely verified. Do not overwrite `NOVA_SIGNING_KEY_BASE64` or Preview's pinned certificate.
+- Before asking user to configure secrets, provide **verified iPhone/iOS-compatible instructions**. GitHub's web UI secret entry is text-based; a `.p12` is binary and cannot be pasted directly. Assess a safe local-on-iPhone base64 conversion path or another secure mechanism. If no safe supported mobile route exists, stop and ask for user preference; do not route secrets through chat, untrusted web converters, repository commits or build artifacts.
+- Do not run signed workflow before secret provisioning; fail closed if missing.
+
+## Technical findings to audit
+- `build.gradle` lines ~99–125 already read `keystore.properties`; line ~160 selects old `org.courville.nova.markpreview` when `markPreview`; ~169–170 legacy version; ~211 `APP_INFO` starts `Nova v`.
+- `AndroidManifest.xml` derives some authorities from `applicationId`, but others are hardcoded (`browser.SearchProviderVideocommunity`, `com.archos.media.videocommunity`, `com.archos.media.scrapercommunity`). Check provider collisions with installed NOVA/Preview, external integrations and intents; do not blindly rewrite shared contracts.
+- `.github/workflows/build-apk.yml` and `build-preview-apk.yml` protect old signing identity; isolate Foundation workflow and artifact naming.
+- Verify final package ID, versionName/versionCode (pre-1.0 scheme previously approved), icon, Android TV banner 320x180, splash, Space Black Blend, double-ring branding from authoritative assets, About sections, credits and licence obligations (actual packaged FFmpeg/native libraries).
+- Audit all old app ID references, content authorities, providers, exported components, shortcuts, backup/export paths, file provider and build variants.
+- Smoke test signed release on Shield: install side-by-side if feasible, launch, navigate, library/network access, playback, resume, About, TV launcher icon/banner. No user-visible feature changes outside Foundation scope.
+
+## Evidence and deliverables
+1. Preflight findings and precise implementation plan, including secrets setup guide for iOS.
+2. Foundation code/asset/workflow changes isolated to this branch.
+3. Build/tests/conformance, signed APK with checksum, public certificate SHA-256 fingerprint, installed app ID/version verification.
+4. Release notes and QA checklist; unresolved blockers clearly identified.
+5. Ask user only for genuinely missing information or secure secret provisioning. User retains the `.p12` and password.
+
+**Do not claim completed, signed or tested until there is actual evidence.**
+
+## Additional approved versioning requirement — 9 October
+Read current `docs/archive/early-planning/project/RELEASE_SEQUENCE_2026-10-09.md`: retrospectively map first-ever Supernova APK to `0.1` and each subsequent actual APK to `0.2`, `0.3`, ... `0.10` etc. Preserve these as literal release-counter strings, not decimals/SemVer. Foundation continues the sequence, not `0.1.0`. Reconstruct history from source/release notes/build artifacts as far as verifiable. Populate the **already approved About → Release Notes UI** with accurate per-version headings and matching factual changes; do not invent missing notes or rewrite original APK binaries. Keep Android internal versionCode distinct. This is included in Foundation implementation scope; do not ask user to redesign About.
+
+## APPROVED FOUNDATION BRANDING ADDITION — animated double-ring indicators (9 October)
+The approved Supernova **double-ring logo is also the animated progress/loading indicator** in BOTH existing surfaces: (1) the **Preparing Playback** screen (including playback preparation/buffering visual where the existing loading indicator appears), and (2) the **Home page information/status pill while a library scan is in progress**. This is **IN SCOPE for Foundation**, not deferred to the fixes-only release. Reuse authoritative approved double-ring assets/design; implement a restrained, smooth, TV-appropriate looping animation, readable against the existing backgrounds. Respect actual loading/scanning lifecycle (show only while active, stop when completed/failed), focus/accessibility, and avoid main-thread work, playback delays, scanning regressions or changes to functional semantics. If multiple indicators exist, locate and document exact surfaces and verify the intended ones; do not silently substitute a generic spinner. Add targeted automated checks where feasible and physical Shield QA checks, and record implementation evidence in the Foundation report. This clarifies branding scope without authorising broader playback HUD/Home redesign.
+
+## IMPLEMENTATION START / APK DELIVERY — authorised 9 October 2026
+
+The user has now explicitly requested Codex to **complete the full Foundation implementation and produce a signed, installable APK at the end**. This is a continuation on `codex/foundation-release`, not a restart. Signing preparation has already been committed; preserve all existing branch commits and safeguards. Read `docs/archive/early-planning/project/FOUNDATION_SIGNING_SETUP.md` including its latest user-reported setup checkpoint: the user configured four environment secrets and the public certificate variable, and reported successful `inspect` and `validate` workflow runs. Workflow registration on `main` was authorised and committed as `fca6417180fc1a680d8aac00d6cc9ea0b5c23985`. **Do not request or expose signing secrets, rotate the key, or change Preview signing.**
+
+### Mandatory execution sequence
+1. Inspect the latest branch, workflow, docs, assets and source. Treat the newest Foundation-first and literal version-counter decisions as authoritative over older conflicting docs. Record preflight status and exact deliverables; proceed autonomously unless genuinely blocked.
+2. Implement permanent `app.supernova.player` identity, safe isolated provider/manifest/sibling contracts, app label, approved icon/banner/splash/Space Black Blend and **both** animated double-ring indicators (Preparing Playback and Home scan-status pill), retaining their lifecycle and existing UX. Use approved assets; do not improvise new branding.
+3. Reconstruct the verifiable history of **actual APK builds** to assign literal sequential `0.N` display version names from the first build (`0.1`), including factual About → Release Notes for each verifiable version. Clearly mark gaps/uncertainty rather than fabricate releases or changelogs. Set a monotonic Android `versionCode` appropriate for the new application ID. Complete approved About sections, credits, open-source licences and packaged native-binary attribution.
+4. Add tests for identity/provider isolation, versioning, About/attribution and animated indicator lifecycle where practical. Run automated tests, build validation, static conformance and review against every Foundation handover item. Do not incorporate the frozen maintenance fixes, custom Library Page, wider Settings/Network & Files redesign or other future features.
+5. Keep `FOUNDATION_RELEASE_READY` unset/false until code, licences and release gates are actually verified. Then record readiness evidence and explicitly request user authorisation **before** setting it true and triggering the secret-bearing `prepare` signing operation. Do not try to work around readiness guards, branch restrictions or signing verification.
+6. After approval, build the signed Foundation APK with the existing protected workflow. Verify the APK's actual package ID, version, SHA-256, signature and certificate pin, and attach/publish the **verified APK** as the named GitHub Actions artifact (and provide a direct link to the workflow run/artifact). Never claim an APK exists without successful workflow evidence. Physical Shield installation/playback testing requires the user's device and must be reported as pending until they confirm it; perform all feasible automated/emulator checks first.
+7. Commit and push source, tests, documentation, release notes, evidence and exact artifact location on `codex/foundation-release`. Do not merge to `main` or touch `codex/post-4.1.7-shield-fixes` without separate approval. Record anything blocked and exact next action.
+
+**Delivery definition:** The task is not finished merely because code compiles or the signing workflow exists. The user expects a real signed APK at the end, subject to the explicit readiness/dispatch approval gate and actual build success. No fabricated tests, device installation, build result or historical release notes.
+
+## Authorised continuation — Foundation UI regressions
+
+After successful signed 0.133 delivery and Shield installation, the user explicitly authorises read-only lineage investigation, targeted restoration of the approved Home hero carousel and artwork-focus containment, validation and corrected signed delivery using the existing identity/workflow. Preserve completed Foundation work and branch isolation. This selectively authorises the two corrective UI behaviours and direct dependencies, not the entire frozen maintenance branch or future features. No obsolete Try New UI toggle. Record other omissions, distinguish source evidence from device acceptance, and do not claim correction delivery until an actual signed APK is verified. Current findings and status: [investigation](../foundation/FOUNDATION_UI_REGRESSION_INVESTIGATION.md), [correction report](../foundation/FOUNDATION_UI_CORRECTION.md).

@@ -22,8 +22,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -31,7 +29,6 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.widget.CursorObjectAdapter;
 import androidx.leanback.widget.FocusHighlight;
@@ -63,6 +60,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Displays an anime collection grid with loading, sorting and selection handling. */
 public class AllAnimeCollectionsGridFragment extends MyVerticalGridFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = AllAnimeCollectionsGridFragment.class.getSimpleName();
@@ -253,6 +251,7 @@ public class AllAnimeCollectionsGridFragment extends MyVerticalGridFragment impl
                 mSortOrderItem = CollectionsSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
@@ -322,9 +321,9 @@ public class AllAnimeCollectionsGridFragment extends MyVerticalGridFragment impl
         if (DBG) Log.d(TAG, "onCreateLoader");
         if (id == ALL_ANIME_COLLECTIONS_LOADER_ID) {
             if (args == null) return new AllAnimeCollectionsLoader(getActivity());
-            else return new AllAnimeCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
+                else return new AllAnimeCollectionsLoader(getActivity(), VideoStore.Video.VideoColumns.NOVA_PINNED + " DESC, " + args.getString("sort"), args.getBoolean("collectionWatched"));
         }
-        else return null;
+            else return null;
     }
 
     @Override

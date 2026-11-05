@@ -1,0 +1,13 @@
+{
+  "result": "FAIL",
+  "source_sha": "bbd0176d",
+  "medialib_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "filecore_sha": "f7f8d90",
+  "duration": "47s",
+  "log_sha256": "eea5504bffa69d1ef35dff1d4e7a47a81f3bf53c88364653b1cc323f5109b043",
+  "tests": 28,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "reason": "Server completed first request successfully, but adapter issues HEAD for redirect discovery before GET. One-request fixture stopped serving before GET. Serve both real requests; no production behavior weakening."
+}

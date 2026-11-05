@@ -29,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.core.widget.TextViewCompat;
 
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.widget.HintView;

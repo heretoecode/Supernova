@@ -1,0 +1,29 @@
+{
+  "B": {
+    "github_path": "docs/design/approved/AA59180F-F8E0-4697-9423-78621273D28B.png",
+    "github_blob": "ce759929ca275766c40b4d9a6e798f85e2cfc273",
+    "sha256": "3a1add4216b4bfdba21f73de81bee5c68dcc3eaeb7cb9a09866b7ec1dddf22d9",
+    "dimensions": [
+      1448,
+      1086
+    ],
+    "role": "main panel"
+  },
+  "A": {
+    "github_path": "docs/design/approved/A31E82C8-CC81-4E6C-AC1D-6AE60370E152.png",
+    "github_blob": "3134e1b14f0f50604040a3bf991456ac329aaa0b",
+    "sha256": "e9591f5fc5428cea2deed17194738a6221bd9ac3637e0a4bab02c0bb0ca48469",
+    "dimensions": [
+      1671,
+      941
+    ],
+    "role": "right-hand independent pop-ups only"
+  },
+  "blueprint": {
+    "github_path": "docs/design/2026-11-01-subtitles-implementation-blueprint.md",
+    "github_blob": "cf065f0c1ccb6f81677a6ae1b3d06ab1d9a65890",
+    "sha256": "4e3793c2e26a9db48ee58d1da4fcfa4bbb4933e1c89b9b585be44626880b2dcb",
+    "version": "v2",
+    "read_in_full": true
+  }
+}

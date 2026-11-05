@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "method": "Byte comparisons plus selected diff review; whole corrective branch is not merged. Focus mask/unit and HERO binding chunks match reference functionality; unrelated maintenance chunks remain omitted.",
+  "files": [
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedCard.java",
+      "reference_commit": "f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "identical": true,
+      "sha256": "f877486e9754486d9cdaf0bda813f17f594ce3ce1658d752232eb13a5b835520"
+    },
+    {
+      "path": "build.gradle",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "e445a63f31fbdfff718865f141c352596759b156b8145b063d2a4a1a57b636a5"
+    },
+    {
+      "path": "AndroidManifest.xml",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "d077ef0d517065017950d609896ffb3e84699bf44fafb4d532f7b788fd20547f"
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "991fc1543d61814c25df7ccf5e2766c6e5a31fd30a32f961da886c069c7d130a"
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewBackdrop.java",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "4cb68209893c08e5248c1752288e89b8e85cb16a30ba391aba00db00eab0e11f"
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackLoading.java",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "06f37be4b1069e7dfb06babab99ac43b99c8af877f26a5da88a0fd008a02f55d"
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "bbdd6e5688ae9abe7a43ec96130f3173ab3acdc4f00a28599fe102468e9b8722"
+    },
+    {
+      "path": "assets/foundation/licences.json",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "59d7ccd5b7e74880edd586a7b348164d5ba1ef96d41583113b4fa31ad196b1bb"
+    },
+    {
+      "path": ".github/signing/foundation_signing.py",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "d70d2ed0a19d04431d98bb9f2b3185be753a0a4aba90078fc85148bcf7598f46"
+    },
+    {
+      "path": ".github/signing/verify_foundation_apk.py",
+      "reference_commit": "11766e59dd143798e0c76b6eb8d4b0f6c9e1dfb8",
+      "identical": true,
+      "sha256": "f286ac9ef09cd06c47943e689b8c7aed9d0aa8d07d3d2795e0c844c91f587c35"
+    }
+  ],
+  "canonical_product_input_files": 1500,
+  "canonical_product_inputs_sha256": "267ce9a39f1df4be0b4bc1f9c0516aaba574e40b4467ad09828d3fff61e2e690",
+  "canonical_input_digest_method": "Sorted unique Git-tracked/new product source, resources, assets and Gradle/manifest inputs: path UTF-8 + NUL + SHA256(file bytes), concatenated and SHA256. Prepared build-copy provider conversion is verified separately.",
+  "test_source_files_compared": 110,
+  "prepared_test_source_mismatches": []
+}

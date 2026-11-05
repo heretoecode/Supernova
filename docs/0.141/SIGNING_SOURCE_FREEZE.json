@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-10-23T10:38:58.521994+00:00",
+  "application_source": "4f0937f1fe8826f50d2c0e844b0837e8a2360a46",
+  "workflow_definition_commit": "d5a374ee953ebac663089081b120bb995ac4b384",
+  "workflow_run_id": 39939855407,
+  "source_checkout_pinned": true,
+  "branch_ancestor_guard": true,
+  "application_tree_objects": {
+    "src": "b5d17d03f44e1d80acf372a67b53c334c5e08f46",
+    "res": "6aa05f5da6bb1431d6200ffcce4e992708da7fbd",
+    "assets": "7a27c5cb2e7b8c2af3c7d4ea1e32e02389d674c4",
+    "build.gradle": "2932250d46390ae2298dd548c434bec870f7a7f6",
+    "AndroidManifest.xml": "8133d2a81087279907a628f4a3973c07ed9a34e6"
+  },
+  "application_inputs_unchanged": true,
+  "change_scope": "Only signing source pin and safeguard assertions; no application changes, branch reset, key change or main merge"
+}

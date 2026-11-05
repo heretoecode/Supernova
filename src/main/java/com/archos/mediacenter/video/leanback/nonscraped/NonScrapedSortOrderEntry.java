@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Maps sorting choices for videos without scraped metadata to their stored values. */
 public class NonScrapedSortOrderEntry {
 
     int mId;

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">Rýchlosť zvuku</string>
+  <string name="preferences_audio_speed_mode_summary">Vyberte filter rýchlosti zvuku, ktorý sa používa na zmenu rýchlosti prehrávania. ⚠ Experimentálna funkcia, môže spôsobiť trhané prehrávanie videa alebo skreslenie zvuku</string>
+  <string name="audio_speed_mode_disabled">Vypnúť</string>
+  <string name="audio_speed_mode_audiotrack">Systémové natívne (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">Vyvážený (FFmpeg v reálnom čase)</string>
+  <string name="audio_speed_mode_sonic">Hlas a reč (Sonic)</string>
+  <string name="subtitles_show_full_for_local_audio_title">Zobraziť titulky pre zvuk v lokálnom jazyku</string>
+  <string name="subtitles_show_full_for_local_audio_summary">Táto funkcia je štandardne vypnutá, takže sa automaticky vyberajú len vynútené titulky, ak zvuk zodpovedá jazyku titulkov; jej zapnutím sa automaticky vyberajú aj úplné titulky</string>
+  <string name="ui_choice_title">Vyzerá to, že používate prehrávač Nova Video Player na televízore.\nAk je to skutočne tak, odporúčame vám používať naše nové používateľské rozhranie pre televízory</string>
+  <string name="ui_choice_tv">Televízne rozhranie</string>
+  <string name="ui_choice_tablet">Tabletové rozhranie</string>
+  <string name="ui_choice_help">Svoj výber môžete neskôr zmeniť v nastaveniach aplikácie</string>
+  <string name="workgroup">Workgroup</string>
+</resources>

@@ -1,0 +1,18 @@
+{
+  "source_sha": "e89c211b1d467dd3b4879a56f06c3d4cafb1f76e",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 3,
+  "tests": 16,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PlaylistStateRecoveryTest",
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest",
+    "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest"
+  ],
+  "duration": "2m 18s",
+  "log_sha256": "0a3bcdcae69f4b7694aa9699c0eb978816a6dffd2f0bd54e537005160792a1a1",
+  "limits": "Native private playlist replacement, source schema and actual sync-policy fixtures only. No combined journal/public codec registration, actual account/network mutation, full provider lifecycle or Shield acceptance."
+}

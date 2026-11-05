@@ -16,8 +16,8 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
 
+/** Loads non-anime TV shows filtered by rating. */
 public class TvshowsNoAnimeByRatingLoader extends TvshowsNoAnimeByLoader {
 
     public static final String DEFAULT_SORT = COLUMN_SUBSET_NAME+" COLLATE LOCALIZED DESC";
@@ -34,6 +34,7 @@ public class TvshowsNoAnimeByRatingLoader extends TvshowsNoAnimeByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         return "SELECT\n" +
                 "    CAST(s_rating as int) AS _id,\n" +

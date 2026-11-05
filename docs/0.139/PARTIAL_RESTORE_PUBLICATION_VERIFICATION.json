@@ -1,0 +1,22 @@
+{
+  "source_sha": "1f5756ee9abb8904dd318c1ee657556d47b88f6e",
+  "dependency_sha": "ea211b6891330a5f0bf862c264e403a52a53453f",
+  "result": "PASS",
+  "duration": "32s",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest",
+    "com.archos.mediacenter.video.utils.RestorePublicationTest"
+  ],
+  "log_sha256": "c906345229bb846cbf653438eb07cdfd48028e0b95c711618ff77d0ce9182ab4",
+  "coverage": [
+    "Full and partially rejected stale native loader queries are cancelled after selected restoration",
+    "Fresh receiving query sees restored pin state",
+    "Existing durable restoration publication checks"
+  ],
+  "limits": "Synthetic native SQLite/loader/observer tests; no Shield or actual OS process death.",
+  "tests": 5,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

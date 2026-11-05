@@ -1,0 +1,31 @@
+{
+  "source_sha": "3eaced033b38d9d68564ebe5dd3a4110e8e990e2",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 56,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest",
+    "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest"
+  ],
+  "duration": "2m 42s",
+  "log_sha256": "e842017c5e0522760bf66c3b82cecf98ebf8c5b3fb1067e1d7d688ca85890748",
+  "coverage": [
+    "24-codec source export and verified archive read/import",
+    "Playlist source-device restoration preserves receiving account rows and collision-free public identities",
+    "Five-store rollback/replay, read-only preview and private aliases",
+    "Pending reconciliation preserves live local/account definitions, rejects malformed input, never creates absent media store and is idempotent",
+    "Actual Trakt sync/provider owner query fixtures",
+    "Settings and operations regressions"
+  ],
+  "limits": "Native SQLite with synthetic provider/transport/UI fixtures and Error boundary injection. No actual Android force-stop, full VideoPreferencesCommon/provider/SAF lifecycle, external account/network mutation, Shield, codecs, native build, signed upgrade or delivery acceptance. Matches and Title playback remain unregistered."
+}

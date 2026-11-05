@@ -1,0 +1,69 @@
+{
+  "marks": [
+    {
+      "slug": "disneyplus",
+      "title": "File:Disney+ logo.svg",
+      "pageid": 114507425,
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:Disney%2B_logo.svg",
+      "original_timestamp": "2025-05-09T23:14:55Z",
+      "original_sha1": "7cbe03a01075d65033a465de975b61c9ce8dd87b",
+      "original_sha256": "ad0ea07cb6627c268dae721d9647019e6e3ce1b51c8f4ba8ec8ddf4618546140",
+      "licence": "Public domain",
+      "artist": "<a href=\"https://en.wikipedia.org/wiki/The_Walt_Disney_Company\" class=\"extiw\" title=\"w:The Walt Disney Company\">Disney Enterprises, Inc.</a>",
+      "copyrighted": "False",
+      "license_url": "",
+      "resource": "res/drawable/provider_disneyplus.xml",
+      "resource_sha256": "ba736d6788e76a0e0dc3738e675d229d49fb124ca2cb7b32b53b9299908336b2"
+    },
+    {
+      "slug": "primevideo",
+      "title": "File:Amazon Prime Video logo.svg",
+      "pageid": 68283224,
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:Amazon_Prime_Video_logo.svg",
+      "original_timestamp": "2018-07-17T02:46:15Z",
+      "original_sha1": "01ebef3cb6d4531dbdbe941d8cedff030e600586",
+      "original_sha256": "8aaa625b2e8a8ba5247e1035e111b73feb312df08c9ff04e2ef59240595f29a2",
+      "licence": "Public domain",
+      "artist": "Amazon",
+      "copyrighted": "False",
+      "license_url": "",
+      "resource": "res/drawable/provider_primevideo.xml",
+      "resource_sha256": "c59ce9c9f1c073dbc7bd36f0f30f543aff0941151663c97ad8a5eddc451048db"
+    },
+    {
+      "slug": "britbox",
+      "title": "File:BritBox 2026.svg",
+      "pageid": 182502507,
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/4/42/BritBox_2026.svg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:BritBox_2026.svg",
+      "original_timestamp": "2026-01-26T21:50:15Z",
+      "original_sha1": "de8c90cd5e393ef42967794adcefb0d6c4b305f1",
+      "original_sha256": "caba672a0798531a7ed4d8a85e2171e44ed0619079c769b1480c38e58b23d7f9",
+      "licence": "Public domain",
+      "artist": "BritBox and Sibling Rivalry Studio",
+      "copyrighted": "False",
+      "license_url": "",
+      "resource": "res/drawable/provider_britbox.xml",
+      "resource_sha256": "1d9e2668a36fd50c12977bb5405421df3c237d795d5dad18d3c109233ed26ea2"
+    },
+    {
+      "slug": "hbomax",
+      "title": "File:HBO Max (2025).svg",
+      "pageid": 165278300,
+      "source_url": "https://upload.wikimedia.org/wikipedia/commons/b/b3/HBO_Max_%282025%29.svg",
+      "description_url": "https://commons.wikimedia.org/wiki/File:HBO_Max_(2025).svg",
+      "original_timestamp": "2025-05-15T03:41:14Z",
+      "original_sha1": "677574ed504dc648eaa27c69f3dbae0d7f5087bc",
+      "original_sha256": "c8728242f74e388ef3a507745875335528a4980123f2c4cae9f08d666fbda63b",
+      "licence": "Public domain",
+      "artist": "<div style=\"display:inline-block;padding:0 3px;background-color:#CCF\">Original:</div> <div style=\"display:inline-block;padding:3px 0;\"><a href=\"https://en.wikipedia.org/wiki/Warner_Bros._Discovery\" class=\"extiw\" title=\"en:Warner Bros. Discovery\">Warner Bros. Discovery</a></div>\u2002<div style=\"display:inline-block;padding:0 3px;background-color:#CCF\">Vector: </div> <div style=\"display:inline-block;\"><a href=\"//commons.wikimedia.org/w/index.php?title=User:LucasJance2006&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:LucasJance2006 (page does not exist)\">LucasJance2006</a> and <a href=\"//commons.wikimedia.org/wiki/User:Lee6597\" title=\"User:Lee6597\">Lee6597</a></div>",
+      "copyrighted": "False",
+      "license_url": "",
+      "resource": "res/drawable/provider_hbomax.xml",
+      "resource_sha256": "d8ba42baa5c987697dfe9476d7580bc13fd0261ca56198ef16828fe3280b8397"
+    }
+  ],
+  "modification": "Render original visible path geometry with white fill; preserve original viewBox/aspect; no icon box or background"
+}

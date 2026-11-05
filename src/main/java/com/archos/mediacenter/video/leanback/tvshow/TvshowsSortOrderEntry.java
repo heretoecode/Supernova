@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/** Maps TV show sorting choices to labels and stored values. */
 public class TvshowsSortOrderEntry {
 
     int mId;

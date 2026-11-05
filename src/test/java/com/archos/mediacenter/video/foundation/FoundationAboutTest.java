@@ -1,0 +1,220 @@
+package com.archos.mediacenter.video.foundation;
+
+import android.app.Application;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Looper;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceFragmentCompat;
+import com.archos.mediacenter.video.BuildConfig;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.RGBLuminanceSource;
+import com.google.zxing.common.HybridBinarizer;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Shadows;
+import org.robolectric.annotation.Config;
+import static org.junit.Assert.*;
+
+/** Checks About navigation, application identity, release notes, QR links and licence focus behavior. */
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 28, qualifiers = "w960dp-h540dp-land-mdpi")
+public class FoundationAboutTest {
+    public static class Prefs extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle saved, String key) {
+            setPreferenceScreen(getPreferenceManager().createPreferenceScreen(requireContext()));
+        }
+    }
+
+    @Test
+    public void fourChildrenExpandInRailAndNormalPanelsRestore() {
+        FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
+        Prefs prefs = new Prefs();
+        activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
+        LinearLayout split = new LinearLayout(activity), rail = new LinearLayout(activity),
+                     middle = new LinearLayout(activity), help = new LinearLayout(activity);
+        split.addView(rail);
+        split.addView(middle);
+        split.addView(help);
+        activity.setContentView(split);
+        TextView about = new TextView(activity);
+        about.setText("About");
+        about.setFocusable(true);
+        rail.addView(about);
+        FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(prefs, split, middle, help, rail);
+        workspace.show(about);
+        assertEquals(5, rail.getChildCount());
+        assertEquals(View.GONE, middle.getVisibility());
+        assertEquals(View.GONE, help.getVisibility());
+        for (int i = 0; i < FoundationAboutWorkspace.SECTIONS.length; i++)
+            assertEquals(
+                FoundationAboutWorkspace.SECTIONS[i], ((TextView) rail.getChildAt(i + 1)).getText().toString());
+        workspace.hide();
+        assertEquals(View.VISIBLE, middle.getVisibility());
+        assertEquals(View.VISIBLE, help.getVisibility());
+        workspace.show(about);
+        assertEquals("Children must not be duplicated", 5, rail.getChildCount());
+    }
+
+    @Test
+    public void appInformationUsesActualVersionAndRequiredLineageWithoutUpdateButton() {
+        FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
+        Prefs prefs = new Prefs();
+        activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
+        LinearLayout split = new LinearLayout(activity), rail = new LinearLayout(activity),
+                     middle = new LinearLayout(activity), help = new LinearLayout(activity);
+        split.addView(rail);
+        split.addView(middle);
+        split.addView(help);
+        activity.setContentView(split);
+        FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(prefs, split, middle, help, rail);
+        TextView about = new TextView(activity);
+        rail.addView(about);
+        workspace.show(about);
+        String text = allText(workspace);
+        assertTrue(text.contains(BuildConfig.VERSION_NAME));
+        assertTrue(text.contains("Based on NOVA Video Player 6.6.4"));
+        assertFalse(text.contains("Check for Updates"));
+        assertFalse(text.contains("Upstream SHA"));
+    }
+
+    @Test
+    public void releaseExpansionPersistsAndCurrentReleaseDoesNotCollapse() throws Exception {
+        FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
+        Prefs prefs = new Prefs();
+        activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
+        LinearLayout split = new LinearLayout(activity), rail = new LinearLayout(activity),
+                     middle = new LinearLayout(activity), help = new LinearLayout(activity);
+        split.addView(rail);
+        split.addView(middle);
+        split.addView(help);
+        activity.setContentView(split);
+        TextView about = new TextView(activity);
+        about.setFocusable(true);
+        rail.addView(about);
+        FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(prefs, split, middle, help, rail);
+        workspace.show(about);
+        rail.getChildAt(1).requestFocus();
+        Field field = FoundationAboutWorkspace.class.getDeclaredField("rows");
+        field.setAccessible(true);
+        List<TextView> rows = (List<TextView>) field.get(workspace);
+        assertTrue(rows.size() > 10);
+        String current = rows.get(0).getText().toString();
+        rows.get(0).performClick();
+        assertEquals(current, rows.get(0).getText().toString());
+        TextView older = rows.get(1), second = rows.get(2);
+        assertTrue(older.getText().toString().startsWith("▸"));
+        older.performClick();
+        second.performClick();
+        assertTrue(older.getText().toString().startsWith("▾"));
+        assertTrue(second.getText().toString().startsWith("▾"));
+        rail.getChildAt(3).requestFocus();
+        rail.getChildAt(1).requestFocus();
+        rows = (List<TextView>) field.get(workspace);
+        assertTrue(rows.get(1).getText().toString().startsWith("▾"));
+        assertTrue(rows.get(2).getText().toString().startsWith("▾"));
+        rows.get(1).requestFocus();
+        assertTrue(workspace.handleBack());
+        assertTrue(rail.getChildAt(1).hasFocus());
+        assertTrue(workspace.handleBack());
+        assertTrue(about.hasFocus());
+    }
+
+    @Test
+    public void officialQrRoundTripsAndRejectsNonPublicUrls() throws Exception {
+        FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
+        Prefs prefs = new Prefs();
+        activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
+        FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(
+            prefs, new LinearLayout(activity), new View(activity), new View(activity), new LinearLayout(activity));
+        Method qr = FoundationAboutWorkspace.class.getDeclaredMethod("qr", String.class);
+        qr.setAccessible(true);
+        String expected = "https://www.themoviedb.org/";
+        Bitmap bitmap = (Bitmap) qr.invoke(workspace, expected);
+        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        BinaryBitmap encoded =
+            new BinaryBitmap(new HybridBinarizer(
+                new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), pixels)));
+        assertEquals(expected, new MultiFormatReader().decode(encoded).getText());
+        assertNull(qr.invoke(workspace, "https://example.com/?token=private"));
+        assertNull(qr.invoke(workspace, "https://user@example.com/"));
+        assertNull(qr.invoke(workspace, "http://example.com/"));
+    }
+
+    @Test
+    public void licenceHighlightLoadsCatalogueAndDefaultNoticeWithoutStealingNavigationFocus() throws Exception {
+        var host = Robolectric.buildActivity(FragmentActivity.class).setup().visible();
+        try {
+            var activity = host.get();
+            LinearLayout split = new LinearLayout(activity), rail = new LinearLayout(activity),
+                         middle = new LinearLayout(activity), help = new LinearLayout(activity);
+            split.addView(rail);
+            split.addView(middle);
+            split.addView(help);
+            activity.setContentView(split);
+            TextView about = new TextView(activity);
+            about.setFocusable(true);
+            rail.addView(about);
+            var workspace = new FoundationAboutWorkspace(activity, split, middle, help, rail);
+            workspace.show(about);
+            workspace.openSection(1);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue("Licence fixture must be attached before opening", workspace.isAttachedToWindow());
+            TextView licence = (TextView) rail.getChildAt(2);
+            Field reader = FoundationAboutWorkspace.class.getDeclaredField("reader");
+            reader.setAccessible(true);
+            assertNotNull(reader.get(workspace));
+            assertFalse(allText(workspace).contains("Press OK"));
+            assertTrue(licence.hasFocus());
+            ExecutorService io = (ExecutorService) reader.get(workspace);
+            io.submit(() -> {
+            }).get(5, TimeUnit.SECONDS);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            io.submit(() -> {
+            }).get(5, TimeUnit.SECONDS);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            assertTrue(allText(workspace), allText(workspace).contains("Components"));
+            assertTrue(licence.hasFocus());
+            assertFalse(allText(workspace).contains("Press OK"));
+            licence.dispatchKeyEvent(
+                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
+            assertFalse(licence.hasFocus());
+            assertTrue(workspace.handleBack());
+            assertTrue(licence.hasFocus());
+            workspace.hide();
+            workspace.show(about);
+            workspace.openSection(1);
+            assertFalse(allText(workspace).contains("Press OK"));
+            assertTrue(licence.hasFocus());
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
+
+    private String allText(View view) {
+        StringBuilder result = new StringBuilder();
+        if (view instanceof TextView)
+            result.append(((TextView) view).getText());
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            for (int i = 0; i < group.getChildCount(); i++)
+                result.append(allText(group.getChildAt(i)));
+        }
+        return result.toString();
+    }
+}

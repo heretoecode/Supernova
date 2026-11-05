@@ -17,7 +17,6 @@ package com.archos.mediacenter.video.utils;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.StrictMode;
 import android.text.format.Formatter;
 
 import androidx.fragment.app.FragmentActivity;
@@ -32,6 +31,7 @@ import com.archos.mediacenter.utils.MediaUtils;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 
+import com.archos.mediaprovider.video.ProviderDiscoveryGate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +39,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Finds available subtitle files and supports subtitle naming, renaming and deletion. */
 public class SubtitlesWizardCommon {
 
     private static final Logger log = LoggerFactory.getLogger(SubtitlesWizardCommon.class);
@@ -266,6 +267,11 @@ public class SubtitlesWizardCommon {
         }
     }
 
+    /** The cached copy of a subtitle: same file name, inside the subtitle cache folder. */
+    static File cacheFile(File subsDir, Uri subtitle) {
+        return new File(subsDir, FileUtils.getName(subtitle));
+    }
+
     @SuppressWarnings("deprecation") // ACTION_MEDIA_SCANNER_SCAN_FILE used as internal IPC (setPackage targets Nova's own receiver only)
     public boolean renameFile(String path, int index) {
         boolean fileRenamed = false;
@@ -275,17 +281,17 @@ public class SubtitlesWizardCommon {
         String newFilePath = buildSubtitlesFilename(oldFilePath);
 
         Uri oldUri = Uri.parse(oldFilePath);
-        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),oldUri))return false;
+        if(ProviderDiscoveryGate.protects(getActivity(),oldUri))return false;
         FileEditor oldFile = FileEditorFactory.getFileEditorForUrl(oldUri, getActivity());
         Uri newUri = Uri.parse(newFilePath);
         String newName = FileUtils.getName(newUri);
         // Rename the file
         try {
-            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),oldUri)||com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),newUri))return false;
+            synchronized(ProviderDiscoveryGate.LOCK){
+                if(ProviderDiscoveryGate.protects(getActivity(),oldUri)||ProviderDiscoveryGate.protects(getActivity(),newUri))return false;
                 fileRenamed = oldFile.rename(newName);
             }
-            if (log.isDebugEnabled()) log.debug("onItemClick : selected file renamed as {}", newFilePath);
+            if (fileRenamed && log.isDebugEnabled()) log.debug("onItemClick : selected file renamed as {}", newFilePath);
         }
         catch (Exception e) {
             if (log.isDebugEnabled()) log.debug("renameFile : can not rename file as {}", newFilePath);
@@ -297,8 +303,10 @@ public class SubtitlesWizardCommon {
         if (!cacheOldFilePath.equals(oldFilePath)) {
             String cacheNewFilePath = cacheDirPath + "/" + FileUtils.getName(newUri);
 
-            File cacheOldFile = new File(cacheOldFilePath);
-            File cacheNewFile = new File(cacheNewFilePath);
+            // The cache paths above are file:// URI strings (compared with the subtitle's own URI);
+            // the File objects must be built from the cache folder itself, not from those strings.
+            File cacheOldFile = cacheFile(MediaUtils.getSubsDir(getActivity()), oldUri);
+            File cacheNewFile = cacheFile(MediaUtils.getSubsDir(getActivity()), newUri);
             if (cacheOldFile.exists()) {
                 try {
                     cacheOldFile.renameTo(cacheNewFile);
@@ -337,16 +345,59 @@ public class SubtitlesWizardCommon {
         return fileRenamed;
     }
 
+    /** Associates a subtitle by renaming it, or by copying it to the app cache when renaming fails. */
+    @SuppressWarnings("deprecation")
+    public boolean associateFile(String path, int index) {
+        Uri oldUri = Uri.parse(path);
+        // Keep Supernova's managed-provider protection on both association paths.
+        if (ProviderDiscoveryGate.protects(getActivity(), oldUri))
+            return false;
+        if (renameFile(path, index))
+            return true;
+        String extension = FileUtils.getExtension(path);
+        String videoName = FileUtils.getFileNameWithoutExtension(mVideoUri);
+        File directory = MediaUtils.getSubsDir(getActivity());
+        if (extension == null || videoName == null || directory == null)
+            return false;
+        File target = new File(directory, videoName + "." + extension);
+        Uri newUri = Uri.fromFile(target);
+        boolean copied;
+        try {
+            synchronized (ProviderDiscoveryGate.LOCK) {
+                if (ProviderDiscoveryGate.protects(getActivity(), oldUri)
+                    || ProviderDiscoveryGate.protects(getActivity(), newUri) || target.exists())
+                    return false;
+                FileEditor editor = FileEditorFactory.getFileEditorForUrl(oldUri, getActivity());
+                copied = editor.copyFileTo(newUri, getActivity());
+            }
+        } catch (Exception failure) {
+            log.debug("associateFile : cache copy failed");
+            return false;
+        }
+        if (!copied)
+            return false;
+        if (FileUtils.isLocal(mVideoUri)) {
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, mVideoUri);
+            intent.setPackage(ArchosUtils.getGlobalContext().getPackageName());
+            sendBroadcast(intent);
+        }
+        mCurrentFiles.add(newUri.toString());
+        mCurrentFilesCount++;
+        mAvailableFiles.remove(index);
+        mAvailableFilesCount--;
+        return true;
+    }
+
     @SuppressWarnings("deprecation") // ACTION_MEDIA_SCANNER_SCAN_FILE used as internal IPC (setPackage targets Nova's own receiver only)
     public boolean deleteFile(String path, int index, boolean current) {
         boolean fileDeleted = false;
         
         Uri uri = Uri.parse(path);
-        if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),uri))return false;
+        if(ProviderDiscoveryGate.protects(getActivity(),uri))return false;
         FileEditor file = FileEditorFactory.getFileEditorForUrl(uri, getActivity());
         try {
-            synchronized(com.archos.mediaprovider.video.ProviderDiscoveryGate.LOCK){
-                if(com.archos.mediaprovider.video.ProviderDiscoveryGate.protects(getActivity(),uri))return false;
+            synchronized(ProviderDiscoveryGate.LOCK){
+                if(ProviderDiscoveryGate.protects(getActivity(),uri))return false;
                 file.delete();
             }
             if (log.isDebugEnabled()) log.debug("deleteFile : file {} deleted", path);
@@ -409,7 +460,7 @@ public class SubtitlesWizardCommon {
             } else {
                 helpMessage = getString(R.string.subtitles_wizard_help).replace("%s", name);
             }
-        } else helpMessage = "No guidance, no video file!";
+            } else helpMessage = "No guidance, no video file!";
 
         return helpMessage;
     }

@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 
 import com.archos.mediacenter.video.R;
 
+/** Hosts the manual video metadata search screen. */
 public class ManualVideoScrappingActivity extends FragmentActivity {
 
     public static final String EXTRA_VIDEO = "VIDEO";

@@ -16,18 +16,17 @@ package com.archos.mediacenter.video.player;
 
 import android.content.Context;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.DisplayMetrics;
-import android.view.WindowManager;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.archos.mediacenter.video.utils.MiscUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
+/** Renders stereoscopic playback with head and video transforms. */
 public class StereoDiveEffect extends VideoEffect {
     private final static String TAG="StereoDiveEffect";
     
@@ -175,6 +174,7 @@ public class StereoDiveEffect extends VideoEffect {
         mLeftEyePos = new float[] { 0.0f, IPD/2.0f, 0.0f };
     }
     
+    @Override
     public int getUIMode() {
         switch (getEffectMode()) {
             case VideoEffect.STEREO_2D_MODE:
@@ -189,19 +189,9 @@ public class StereoDiveEffect extends VideoEffect {
         }
     }
     
-    @SuppressWarnings("deprecation") // getDefaultDisplay: API 30+ uses context.getDisplay()
     private static int getScreenOrientation(Context context) {
-        int rotation;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            rotation = context.getDisplay().getRotation();
-        } else {
-            rotation = getWindowManager(context).getDefaultDisplay().getRotation();
-        }
+        int rotation = MiscUtils.getRotation(context);
         return ((8 - rotation + 1) % 4);
-    }
-
-    private static WindowManager getWindowManager(Context context) {
-        return context instanceof AppCompatActivity ?((AppCompatActivity)context).getWindowManager():(WindowManager)context.getSystemService(context.WINDOW_SERVICE);
     }
 
     private void updateCurrentRotation() {
@@ -307,6 +297,7 @@ public class StereoDiveEffect extends VideoEffect {
         }
     }
 
+    @Override
     public void initGLComponents() {
         mEyeGLProgram = OpenGLUtils.createProgram(EYE_VERTEX_SHADER, EYE_FRAGMENT_SHADER);
         mUIOverlayProgram = OpenGLUtils.createProgram(EYE_VERTEX_SHADER, EYE_FRAGMENT_SHADER);
@@ -362,6 +353,7 @@ public class StereoDiveEffect extends VideoEffect {
         GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
     }
     
+    @Override
     public void deinitGLComponents() {
         if (mVideoTexture != 0) {
             if (FISH_EYE_CORRECTION)
@@ -382,18 +374,22 @@ public class StereoDiveEffect extends VideoEffect {
         if (CHECK_GL_ERRORS) OpenGLUtils.checkGlError("deinitialization of program");
     }
     
+    @Override
     public int getVideoTexture() {
         return mVideoTexture;
     }
     
+    @Override
     public int getUIOverlayTexture() {
         return mUIOverlayTexture;
     }
     
+    @Override
     public void setVideoTransform(float[] mTransform) {
         mVideoTransform = mTransform;
     }
     
+    @Override
     public void setHeadTransform(float[] mTransform) {
         if (mTransform != null && HEAD_TRACKING) {
                mHeadTransform=mTransform.clone();
@@ -410,10 +406,12 @@ public class StereoDiveEffect extends VideoEffect {
         mHeadOriginTransform = null;
     }
     
+    @Override
     public void onPlay() {
         resetHeadPosition();
     }
 
+    @Override
     public void setVideoSize(int videoWidth, int videoHeight, double aspect) {
         mVideoWidth = videoWidth;
         mVideoHeight = videoHeight;
@@ -421,6 +419,7 @@ public class StereoDiveEffect extends VideoEffect {
         generateVideoTextures();
     }
     
+    @Override
     public void setViewPort(int width, int height) {
         mViewWidth = width;
         mViewHeight = height;
@@ -597,6 +596,7 @@ public class StereoDiveEffect extends VideoEffect {
         mColorFilter = CLEAR_COLOR_FILTER;
     }
 
+    @Override
     public void draw() {
         if (getEffectMode() == VideoEffect.NORMAL_2D_MODE) {
             setupPreScene(mEyeGLProgram);
@@ -639,6 +639,7 @@ public class StereoDiveEffect extends VideoEffect {
         }
     }
     
+    @Override
     public void setEffectMode(int mode) {
         super.setEffectMode(mode & VideoEffect.EFFECT_CLASS_MODE);
         generateVideoVertices();

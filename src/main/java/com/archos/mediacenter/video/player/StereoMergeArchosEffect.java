@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
+/** Coordinates stereo display modes with the Archos display-mode broadcast. */
 public class StereoMergeArchosEffect extends VideoEffect
 {
 
@@ -62,6 +63,7 @@ public class StereoMergeArchosEffect extends VideoEffect
         return VideoEffect.EFFECT_STEREO_MERGE_ARCHOS;
     }
     
+    @Override
     public int getUIMode() {
         if(!mPreferences.getBoolean(VideoPreferencesCommon.KEY_ACTIVATE_3D_SWITCH, false)){
             switch (getEffectMode()) {

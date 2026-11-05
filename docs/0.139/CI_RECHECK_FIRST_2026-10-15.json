@@ -1,0 +1,38 @@
+{
+  "result": "FAIL",
+  "run_id": 38725529541,
+  "job_id": 116390460199,
+  "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+  "url": "https://github.com/heretoecode/Supernova/actions/runs/38725529541",
+  "unit_tests": 996,
+  "passed": 994,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "classes": 208,
+  "failed_tests": [
+    "BackupSettingsControllerTest.smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+    "OfficialTitleBindingTest.movieAndTvWithTheSameProviderNumberKeepDistinctCacheEntriesAndArtworkPixels"
+  ],
+  "artwork_failure": "Expected green pixel but was transparent0; previous executor activity polling did not require view readiness/main callback delivery. Investigating/fixing test synchronization, not declaring product artwork regression or fix from source alone.",
+  "lint": {
+    "errors": 0,
+    "warnings": 1771
+  },
+  "native_rebuild_runtime": "PASS; four ABI registries/tempo/64paired decode cases",
+  "unsigned_assembly": "Completed; independent binary receipt separate",
+  "gradle_duration": "24m",
+  "artifact": {
+    "id": 11968869159,
+    "bytes": 92322263,
+    "sha256": "2f22b6b948e421e1ad5013ec6a4121b30a2a67ff6e47e30ab8d98391df8b0d69",
+    "github_digest_matches": true,
+    "zip_crc": true,
+    "entries": 307
+  },
+  "limits": [
+    "OverallCI fails; post-Gradle conformance recording/Python step not reached.",
+    "No signing/Shield/install/upgrade/Drive139 delivery.",
+    "Current local full995PASS/1FAIL is distinct from thisCI994PASS/2FAIL."
+  ]
+}

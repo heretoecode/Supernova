@@ -16,8 +16,6 @@ package com.archos.mediacenter.video.browser;
 
 import android.annotation.SuppressLint;
 
-import com.archos.filecorelibrary.MetaFile2;
-import com.archos.filecorelibrary.FileUtils;
 import com.archos.mediacenter.utils.BitmapUtils;
 import com.archos.mediacenter.utils.ThumbnailEngine;
 import com.archos.mediacenter.utils.ThumbnailRequest;
@@ -31,7 +29,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.util.Log;
@@ -40,6 +37,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+/** Generates video thumbnails and compositions of poster artwork. */
 public class ThumbnailEngineVideo extends ThumbnailEngine {
 	private final static String TAG = "ThumbnailEngineVideo";
 	private final static boolean DBG = false;
@@ -297,7 +295,7 @@ public class ThumbnailEngineVideo extends ThumbnailEngine {
 			if (poster.length() != 0) {
 				if (DBG)
 					Log.d(TAG, "decodeCover before for " + poster + " of length " + poster.length());
-				java.io.File f = new java.io.File(poster);
+				File f = new File(poster);
 				if (DBG) Log.d(TAG, "decodeCover: file exists=" + f.exists() + ", canRead=" + f.canRead() + ", size=" + f.length());
 				Bitmap coverBitmap = BitmapUtils.decodeSampledBitmapFromFile(poster, mThumbnailWidth, mThumbnailHeight);
 				if (DBG) Log.d(TAG, "decodeCover after, bitmap=" + coverBitmap);
@@ -334,6 +332,7 @@ public class ThumbnailEngineVideo extends ThumbnailEngine {
 	    private ImageView mCompositionTwo_left;
 	    private ImageView mCompositionTwo_right;
 
+	    @SuppressLint("InflateParams") // Offscreen view inflation for canvas bitmap rendering; layout params set manually below
 	    public PosterCompositionStuff(LayoutInflater li, int width, int height) {
 	        if (DBG) Log.d(TAG, "PosterCompositionStuff "+width+" "+height);
 

@@ -14,7 +14,9 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
+import android.text.SpannableStringBuilder;
 import static com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes.generateTrackName;
+import com.archos.mediacenter.video.leanback.PreviewLanguageIcon;
 import static com.archos.mediascraper.StringUtils.capitalizeFirstLetter;
 
 import android.content.Context;
@@ -23,7 +25,6 @@ import androidx.leanback.widget.RowHeaderPresenter;
 import androidx.leanback.widget.RowPresenter;
 
 import androidx.core.text.HtmlCompat;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,6 @@ import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.utils.VideoMetadata;
 import com.archos.mediacenter.video.utils.VideoUtils;
-import com.archos.mediascraper.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -136,14 +136,9 @@ public class SubtitlesDetailsRowPresenter extends FullWidthRowPresenter implemen
             }
         });
 
-        // Check if this is a torrent file - they never have metadata but should not show spinner
-        boolean isTorrentFile = false;
         Uri uri = videoObject.getFileUri();
-        if (uri != null && uri.getLastPathSegment() != null) {
-            isTorrentFile = uri.getLastPathSegment().endsWith(".torrent");
-        }
 
-        if (videoMetadata!=null || isTorrentFile) {
+        if (videoMetadata!=null) {
             vh.mDownloadSubsButton.setVisibility(View.VISIBLE);
 
             if (uri != null && (uri.getScheme().equals("file") || uri.getScheme().equals("smb")))
@@ -213,22 +208,24 @@ public class SubtitlesDetailsRowPresenter extends FullWidthRowPresenter implemen
 
     private CharSequence getFormattedSubList(Context c, int number, int offset, List<VideoMetadata.SubtitleTrack> list) {
         final String SEP = "  ";
-        StringBuilder sb = new StringBuilder();
+        SpannableStringBuilder lines=new SpannableStringBuilder();
         boolean isRtl = c.getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
         String dirMarker = isRtl ? "\u200F" : "\u200E";
         for (int i=0 ; i<number ; i++) {
             if (i > 0) {
-                sb.append("<br>");
+                lines.append("\n");
             }
+            StringBuilder sb=new StringBuilder();
             sb.append(dirMarker);
             int index = i + offset;
             VideoMetadata.SubtitleTrack track = list.get(index);
             String format = VideoUtils.getSubtitleFormatLabel(c, track.format);
             sb.append(Integer.toString(index + 1)).append(".").append(SEP)
               .append(generateTrackName(c, track.name, track.language, format, track.disposition, false)).append(SEP);
+            lines.append(PreviewLanguageIcon.inline(c,track.language,HtmlCompat.fromHtml(sb.toString(),HtmlCompat.FROM_HTML_MODE_LEGACY)));
         }
 
-        return HtmlCompat.fromHtml(sb.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY);
+        return lines;
     }
 
     private CharSequence getFormattedExternalSubList(Context c, int number, int offset, List<SubtitleManager.SubtitleFile> list) {

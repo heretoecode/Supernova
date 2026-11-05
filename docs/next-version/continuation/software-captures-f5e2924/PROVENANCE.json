@@ -1,0 +1,105 @@
+{
+  "run_id": 41137713734,
+  "source_commit": "f5e2924cc8f7302032933f8aec8793030b6e1b0f",
+  "artifact_id": 13017656010,
+  "artifact_sha256": "3545098630f8f74b9c7c21c5fd2e0881824a777bc333758d5ac61d7c5d2289b1",
+  "capture_type": "Unmodified Robolectric native-graphics app-view fixtures; not physical Shield",
+  "files": [
+    {
+      "file": "next-hud-1280-1.0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-hud-1280-1.0.png",
+      "sha256": "41688b3515aeafec4f5dfe41d74bf42eb7612e495e4bf0c8235602805f174ac9",
+      "bytes": 48347,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "next-hud-1920-1.5.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-hud-1920-1.5.png",
+      "sha256": "28e089ed1acd07619697edcd16be97588d3e8261b13a5e8b93cf692890af3c96",
+      "bytes": 66984,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-hud-3840-1.0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-hud-3840-1.0.png",
+      "sha256": "ee3e4ccc5ed966c3feeee24b9568efa731e62e1aff78bfded514fe766f8feb86",
+      "bytes": 123378,
+      "width": 3840,
+      "height": 2160
+    },
+    {
+      "file": "next-editor-section-0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-0.png",
+      "sha256": "344c55d12efabf39fb7a903c9d19eadc0b0860ffe75e25cc6303d39a26c6eea5",
+      "bytes": 587943,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-editor-section-1.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-1.png",
+      "sha256": "3052fcb59fc71551b946ff0eea9b9bd87da73fae3d3970746efbf663b7a92eb2",
+      "bytes": 585537,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-editor-section-2.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-2.png",
+      "sha256": "b9755ed33035e2a3df65cffd2747f6e9dd91b0a17b0b948057fea71856dba12f",
+      "bytes": 579225,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "next-editor-section-3.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/next-editor-section-3.png",
+      "sha256": "68f2091fc71ea0729842202effba80979a4af5a7de564d7af75bcac1ccc8bf3a",
+      "bytes": 603882,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "1080p-playback.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/settings-0143/1080p-playback.png",
+      "sha256": "6b2b9abfcf5a811e91870041edb17c772f2a06ad56950e244382d3f87fea33ab",
+      "bytes": 1634896,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "0141-playback-tab-0.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-0.png",
+      "sha256": "a472b676e846a761efaa304969faad3ddffa28a2ef930682e5ffb469d9c888e4",
+      "bytes": 79436,
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "0141-playback-tab-1.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-1.png",
+      "sha256": "fef4da3094707c3c7065a094f02e1e064ca37fdff7a592b9909d405a195b9851",
+      "bytes": 77615,
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "0141-playback-tab-2.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-2.png",
+      "sha256": "17b028a859f35cb28dc031d496893981b577aab5ecd390ec5d57ad971834709e",
+      "bytes": 73675,
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "0141-playback-tab-3.png",
+      "source_archive_path": "Supernova/Supernova/nova/Video/build/reports/preview-ui/0141-playback-tab-3.png",
+      "sha256": "77c30961289496c37030a4fb8d6f11458cfb133b6ccfe5143e6a390a0e1f8503",
+      "bytes": 70613,
+      "width": 960,
+      "height": 540
+    }
+  ]
+}

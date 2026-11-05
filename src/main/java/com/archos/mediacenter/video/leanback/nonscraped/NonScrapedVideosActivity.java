@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.archos.mediacenter.video.leanback.SingleFragmentActivity;
 
+/** Hosts the TV grid of videos without scraped metadata. */
 public class NonScrapedVideosActivity extends SingleFragmentActivity {
     @Override
     public Fragment getFragmentInstance() {

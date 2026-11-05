@@ -2,62 +2,85 @@ package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
 import android.content.*;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.CursorWrapper;
+import android.database.MatrixCursor;
 import android.database.sqlite.*;
 import android.net.Uri;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.ExtStorageManager;
 import com.archos.mediacenter.video.CustomApplication;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.overlay.Clock;
 import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediaprovider.video.VideoStore;
+import com.squareup.picasso.Picasso;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.robolectric.*;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.*;
 import org.robolectric.shadows.ShadowContentResolver;
 import java.time.Duration;
 import java.util.Locale;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.robolectric.util.ReflectionHelpers;
+import org.slf4j.LoggerFactory;
 
 /** Real MainFragment lifecycle, overlay and SQL schema; no device scanner or native playback. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewStartupTest {
+ @org.junit.Before public void configuredLibraryFixture(){PreferenceManager.getDefaultSharedPreferences(org.robolectric.RuntimeEnvironment.getApplication()).edit().putBoolean("supernova_onboarding_complete",true).commit();}
+
     private VideoOpenHelper database;
     private boolean failQuery, failScraperRead;
     private MockedStatic<ExtStorageManager> storage;
     @Before public void setUp() throws Exception {
         Context context=RuntimeEnvironment.getApplication();
         Shadows.shadowOf((Application)context).grantPermissions(context.getPackageName()+".DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION");
-        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"log",org.slf4j.LoggerFactory.getLogger(CustomApplication.class));
-        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",context);
-        org.robolectric.util.ReflectionHelpers.setStaticField(CustomApplication.class,"systemLocale",Locale.UK);
+        ReflectionHelpers.setStaticField(CustomApplication.class,"log",LoggerFactory.getLogger(CustomApplication.class));
+        ReflectionHelpers.setStaticField(CustomApplication.class,"mContext",context);
+        ReflectionHelpers.setStaticField(CustomApplication.class,"systemLocale",Locale.UK);
         storage=mockStatic(ExtStorageManager.class);
         storage.when(ExtStorageManager::getExtStorageManager).thenReturn(mock(ExtStorageManager.class));
-        try { com.squareup.picasso.Picasso.get(); } catch (IllegalStateException e) {
-            com.squareup.picasso.Picasso.setSingletonInstance(new com.squareup.picasso.Picasso.Builder(context).build());
+        try { Picasso.get(); } catch (IllegalStateException e) {
+            Picasso.setSingletonInstance(new Picasso.Builder(context).build());
         }
         database=new VideoOpenHelper(context);
         SQLiteDatabase db=database.getWritableDatabase();
         ContentProvider provider=new ContentProvider(){
+            @Override
             public boolean onCreate(){return true;}
+            @Override
             public Cursor query(Uri uri,String[] projection,String selection,String[] args,String order){
                 SQLiteQueryBuilder builder=new SQLiteQueryBuilder();builder.setTables(VideoOpenHelper.VIDEO_VIEW_NAME);
                 if(failQuery)throw new SQLiteException("Injected unavailable database");
                 Cursor result=builder.query(db,projection,selection,args,null,null,order);
                 if(!failScraperRead)return result;
-                return new android.database.CursorWrapper(result){@Override public int getInt(int column){
+                return new CursorWrapper(result){@Override public int getInt(int column){
                     if(getColumnName(column).equals(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE))throw new IllegalStateException("Injected window read failure");
                     return super.getInt(column);
                 }};
             }
+            @Override
             public String getType(Uri uri){return null;}
+            @Override
             public Uri insert(Uri uri,ContentValues values){throw new UnsupportedOperationException();}
+            @Override
             public int update(Uri uri,ContentValues values,String s,String[] a){throw new UnsupportedOperationException();}
+            @Override
             public int delete(Uri uri,String s,String[] a){throw new UnsupportedOperationException();}
         };
         ShadowContentResolver.registerProviderInternal(VideoStore.Video.Media.EXTERNAL_CONTENT_URI.getAuthority(),provider);
@@ -69,19 +92,19 @@ public class PreviewStartupTest {
     }
     @Test public void previewQueriesRunOnWorkerWithoutLooper() throws Exception {
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
+        ExecutorService worker=Executors.newSingleThreadExecutor();
         try {
             worker.submit(() -> {
                 assertNull(Looper.myLooper());
                 try(Cursor c=loader.loadInBackground()) {
                     assertNotNull(c);assertNotNull(loader.snapshot);
                 }
-            }).get(15,java.util.concurrent.TimeUnit.SECONDS);
+            }).get(15,TimeUnit.SECONDS);
         } finally { worker.shutdownNow(); }
     }
     @Test public void savedPreviewPreferenceSurvivesStartupAndRecreation(){
         PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication()).edit().putBoolean("try_new_ui",true).commit();
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             MainFragment fragment=new MainFragment();
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
@@ -101,17 +124,17 @@ public class PreviewStartupTest {
     }
     @Test public void clockCleanupHandlesUiSwitchBeforeResume() {
         Context context=RuntimeEnvironment.getApplication();
-        android.widget.FrameLayout root=new android.widget.FrameLayout(context);
-        android.widget.TextView text=new android.widget.TextView(context);
+        FrameLayout root=new FrameLayout(context);
+        TextView text=new TextView(context);
         text.setId(com.archos.mediacenter.video.R.id.clock);root.addView(text);
-        com.archos.mediacenter.video.leanback.overlay.Clock clock=new com.archos.mediacenter.video.leanback.overlay.Clock(context,root);
+        Clock clock=new Clock(context,root);
         // An early activity recreation can skip resume, yet still invoke pause.
         clock.pause();clock.resume();clock.pause();clock.pause();clock.destroy();
     }
     @Test public void switchingFromClassicToPreviewCanPauseForRecreation() {
-        android.content.SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
+        SharedPreferences prefs=PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         prefs.edit().putBoolean("try_new_ui",false).commit();
-        org.robolectric.android.controller.ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
+        ActivityController<TopNavigationTest.Host> host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup();
         try {
             MainFragment fragment=new MainFragment();
             host.get().getSupportFragmentManager().beginTransaction().add(android.R.id.content,fragment).commitNow();
@@ -131,8 +154,8 @@ public class PreviewStartupTest {
     @Test public void badScraperReadIsContainedOnAsynchronousWorker()throws Exception{
         insertUnmatched(1);failScraperRead=true;
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
-        java.util.concurrent.ExecutorService worker=java.util.concurrent.Executors.newSingleThreadExecutor();
-        try{worker.submit(()->{try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.snapshot);assertNotNull(loader.loadWarning);assertTrue(loader.snapshot.recent.isEmpty());}}).get(15,java.util.concurrent.TimeUnit.SECONDS);}
+        ExecutorService worker=Executors.newSingleThreadExecutor();
+        try{worker.submit(()->{try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.snapshot);assertNotNull(loader.loadWarning);assertTrue(loader.snapshot.recent.isEmpty());}}).get(15,TimeUnit.SECONDS);}
         finally{worker.shutdownNow();}
     }
     @Test public void binaryScraperTypeIsIsolatedWhileHealthyRecordsRemain(){
@@ -140,7 +163,7 @@ public class PreviewStartupTest {
         ContentValues bad=new ContentValues();bad.put(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE,new byte[]{1,2});
         database.getWritableDatabase().update(VideoOpenHelper.FILES_TABLE_NAME,bad,"_id=?",new String[]{"10"});
         PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
-        try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());assertEquals(11,((com.archos.mediacenter.video.browser.adapters.object.Video)loader.snapshot.recent.get(0).media).getId());}
+        try(Cursor cursor=loader.loadInBackground()){assertNotNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());assertEquals(11,((Video)loader.snapshot.recent.get(0).media).getId());}
     }
     @Test public void failedDatabaseQueryReturnsVisibleErrorWithoutWritingEmptyCache(){
         failQuery=true;PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
@@ -151,13 +174,13 @@ public class PreviewStartupTest {
     @Test public void nullAndBoundaryNumericValuesRemainReadable(){
         insertUnmatched(2);PreviewLibraryLoader loader=new PreviewLibraryLoader(RuntimeEnvironment.getApplication());
         try(Cursor cursor=loader.loadInBackground()){assertNull(loader.loadWarning);assertEquals(1,loader.snapshot.recent.size());}
-        android.database.MatrixCursor raw=new android.database.MatrixCursor(new String[]{"numeric"});
+        MatrixCursor raw=new MatrixCursor(new String[]{"numeric"});
         raw.addRow(new Object[]{null});raw.addRow(new Object[]{Integer.MAX_VALUE});raw.addRow(new Object[]{Integer.MIN_VALUE});
         try(PreviewMappingCursor cursor=new PreviewMappingCursor(raw)){assertTrue(cursor.moveToNext());assertEquals(0,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MAX_VALUE,cursor.getInt(0));assertTrue(cursor.moveToNext());assertEquals(Integer.MIN_VALUE,cursor.getInt(0));}
     }
     private TopNavigation navigation(View root){
         if(root instanceof TopNavigation)return (TopNavigation)root;
-        if(root instanceof android.view.ViewGroup){android.view.ViewGroup group=(android.view.ViewGroup)root;for(int i=0;i<group.getChildCount();i++){TopNavigation found=navigation(group.getChildAt(i));if(found!=null)return found;}}
+        if(root instanceof ViewGroup){ViewGroup group=(ViewGroup)root;for(int i=0;i<group.getChildCount();i++){TopNavigation found=navigation(group.getChildAt(i));if(found!=null)return found;}}
         return null;
     }
     private void draw(MainFragment fragment){

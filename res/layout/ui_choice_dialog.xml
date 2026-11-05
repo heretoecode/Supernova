@@ -37,7 +37,7 @@
                 android:layout_width="@dimen/ui_choice_dialog_image_width"
                 android:adjustViewBounds="true"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ui_choice_leanback"/>
+                app:srcCompat="@drawable/ui_choice_leanback" android:contentDescription="@null"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -64,7 +64,7 @@
                 android:layout_width="@dimen/ui_choice_dialog_image_width"
                 android:adjustViewBounds="true"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ui_choice_tablet"/>
+                app:srcCompat="@drawable/ui_choice_tablet" android:contentDescription="@null"/>
 
             <TextView
                 android:layout_width="match_parent"

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "api": 23,
+  "images": [
+    {
+      "abi": "x86_64",
+      "url": "https://dl.google.com/android/repository/sys-img/android/x86_64-23_r10.zip",
+      "official_repository_sha1": "7cbc291483ca07dc67b71268c5f08a5755f50f51",
+      "sha256": "0689c24bb379c08b7bb5db10feb92b15b71b3be1f6ad2b8ee7a3e9ab346f4739"
+    },
+    {
+      "abi": "arm64-v8a",
+      "url": "https://dl.google.com/android/repository/sys-img/android/arm64-v8a-23_r07.zip",
+      "official_repository_sha1": "ac18f3bd717e02804eee585e029f5dbc1a2616bf",
+      "sha256": "74427db25e4b56a424d4f7d874a253bcd43c0db7be2c7b0b5dbb142e860131a4"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "url": "https://dl.google.com/android/repository/sys-img/android/armeabi-v7a-23_r06.zip",
+      "official_repository_sha1": "7cf2ad756e54a3acfd81064b63cb0cb9dff2798d",
+      "sha256": "93b1bf35cecc3dee3a8ff21982f231e725f4a957681b2023898715adc851a04e"
+    },
+    {
+      "abi": "x86",
+      "url": "https://dl.google.com/android/repository/sys-img/android/x86-23_r10.zip",
+      "official_repository_sha1": "f6c3e3dd7bd951454795aa75c3a145fd05ac25bb",
+      "sha256": "1cc857844bdd9c57b9f2f33581835cc129c1d1439300be86d2d2d4bea9c5cb41"
+    }
+  ]
+}

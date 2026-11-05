@@ -1,0 +1,39 @@
+{
+  "source_sha": "90eb2ee14c466d65e2b2590cd657139e88953f5d",
+  "tests": 33,
+  "classes": 9,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "task": "testNoamazonReleaseUnitTest",
+  "fixtures": "Synthetic public movie/TV records; offline provider transport",
+  "renderer": "Robolectric Android API28 native graphics; mdpi960x540 and640x360; measured ancestor intersection geometry",
+  "images": [
+    {
+      "file": "docs/0.139/ui/customise-home/0139-customise-built-in.png",
+      "sha256": "02cf6d3ad467d07cf90ccbcef1d14dfd2a8463ac8033496ef61d55e78552edef"
+    },
+    {
+      "file": "docs/0.139/ui/customise-home/0139-customise-custom.png",
+      "sha256": "24582e4eab09c909df8d5303344b394fbc293337e3335221f7d1b324cd77135f"
+    },
+    {
+      "file": "docs/0.139/ui/customise-home/0139-customise-two-genres.png",
+      "sha256": "4abb4efcc845aa48736989a0c734f66693d6fc30059bfbd4c396263fec5a401e"
+    },
+    {
+      "file": "docs/0.139/ui/customise-home/0139-customise-genres.png",
+      "sha256": "f94ea43a1b7f9a8890f1bc3b6ac2e0c94f4d07c17ac5dda9e3ec6993aecd890f"
+    },
+    {
+      "file": "docs/0.139/ui/customise-home/0139-customise-small.png",
+      "sha256": "c07eee50abe03a2a516a65d6b7c1b48458f7af14d1c21229249850340bab94aa"
+    }
+  ],
+  "limits": [
+    "Not Shield remote/device evidence",
+    "Blur hardware/compositor unverified",
+    "Genres connector visual still pending",
+    "All43 acceptance remains open"
+  ]
+}

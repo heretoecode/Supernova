@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.NetworkAutoRefresh;
 import com.archos.mediaprovider.video.NetworkScannerUtil;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 
 /** Initialise only previously unconfigured automation. Never replace an explicit Off/schedule. */
 public final class PreviewAutoScanPolicy {
  public static void initialise(Context c){
   SharedPreferences p=PreferenceManager.getDefaultSharedPreferences(c);
-  if(!p.getBoolean("try_new_ui",false))return;
+  if(!p.getBoolean("try_new_ui",false)||!SupernovaLibraryPolicy.configured(c))return;
   SharedPreferences.Editor e=p.edit();
   if(!p.contains("auto_rescan_on_app_restart"))e.putBoolean("auto_rescan_on_app_restart",true);
   // An absent period previously meant no foreground polling and no scheduled job.

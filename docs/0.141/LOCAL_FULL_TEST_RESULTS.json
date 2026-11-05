@@ -1,0 +1,1150 @@
+{
+  "source_commit": "5109dd0c83082528b896a8aaa6d0d50f4a930027",
+  "checked_at_utc": "2026-10-22T22:19:02.333926+00:00",
+  "classes": 226,
+  "tests": 1067,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "build_result": "BUILD SUCCESSFUL",
+  "duration": "21m 8s",
+  "command": "testNoamazonReleaseUnitTest -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild",
+  "focused_filter": false,
+  "native_Gradle_tasks": "Excluded in this local unit run; native component proof and full CI rebuild/payload checks are separate",
+  "log_sha256": "67f2a3f1a2a2c3b435660a4d145fb3d7d787c631c355858d14f3f9a13bbecc18",
+  "source_readback": "LOCAL_SOURCE_READBACK.json; local source copy has expected provider rewrite only",
+  "xml_reports": [
+    {
+      "file": "TEST-com.archos.mediacenter.utils.introdb.IntroDbMovieContractTest.xml",
+      "tests": 4,
+      "sha256": "93dabb9649af11bbdee97da74b8b3a50dcbfc3e7fe3407f6257a77a6cc5f0bf7"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.browser.loader.SeasonsWatchedCountTest.xml",
+      "tests": 2,
+      "sha256": "ffb1a6263dca1ce833db785f1b57135a93c572154bdf4f6d72142f7feebde405"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.ArtworkRequestTest.xml",
+      "tests": 3,
+      "sha256": "64b6d7fcc93f1f53115210f44529a42d497bada71ce5f341d40a916ffa4bf678"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.ArtworkTraceTest.xml",
+      "tests": 3,
+      "sha256": "855a821eb2d97c0d743b7dce60e2ea2c2df9a14f6b8113e303248d47d03530f3"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticArchiveTest.xml",
+      "tests": 9,
+      "sha256": "6a3a6def4a77cc075a5490314b33d92c4a5c8c99719bbe869d4588cfcab64399"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticCaptureReuseTest.xml",
+      "tests": 1,
+      "sha256": "50e0408e8f106b4f7265aec1107d5acfcb7c401babbd2da3a29e046e80d24beb"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorderTest.xml",
+      "tests": 2,
+      "sha256": "75eef1a880e0143ad7f5323520b9375f3b2a3d0d09ff032ae3e4fef5da4a1632"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticReferenceTest.xml",
+      "tests": 3,
+      "sha256": "d27fbe33d7d1e240f4a6ce8145c99cdaa875a6c75219e1c33fc8708d53779f22"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticStorageTest.xml",
+      "tests": 5,
+      "sha256": "249ea86b3438def86778be74cd66879db99f0f9cf4dd0d3e879ac252c5d5f306"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticsRefinementTest.xml",
+      "tests": 3,
+      "sha256": "ace2c0bf472cd85bd345298732f6268f25507ed75f0b0ecc4507d24b4e6a0902"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.DiagnosticsTest.xml",
+      "tests": 18,
+      "sha256": "9a82092ca5857ad0d2da5d4d289f827aae25f808b7d369ac6cb12e2ba7f571d3"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.PlaybackDiagnosticStateTest.xml",
+      "tests": 9,
+      "sha256": "12bc58f8127cb507b81f26692e1bf90f4a55dd545a06802561d8337692eba731"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.diagnostics.TransportReadDiagnosticsTest.xml",
+      "tests": 5,
+      "sha256": "b36ece20e81808871f71d3b95ef197516a8c1ace8eb344ea5d07a1a494641380"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.foundation.BundledNoticePagerTest.xml",
+      "tests": 4,
+      "sha256": "fbcb802efe44a5a53cb513c80ff6b46fdde3af73f0d20abef2f1c0a4a1e1f266"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.foundation.DoubleRingTest.xml",
+      "tests": 2,
+      "sha256": "d3b9b516956a6327df7ff52ace4f8204911d15f1bfcd5f84fbb75875e4a443ea"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.foundation.FoundationAboutActivityTest.xml",
+      "tests": 1,
+      "sha256": "19ca4434137a8c147ce45970368a3079928661ec78272b3e477f0ff93f78f6a6"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.foundation.FoundationAboutTest.xml",
+      "tests": 5,
+      "sha256": "73119fb007c5d2a7ad1dcebaa82bea5c16db6d6ea4687d2334b6bcdc15b7a147"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.foundation.FoundationApplicationIdentityTest.xml",
+      "tests": 5,
+      "sha256": "eb6e2ba80dfc90955079eeb5f74a2f8aea47c2ed9303199e8044652d3826f333"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.foundation.FoundationVersionTest.xml",
+      "tests": 2,
+      "sha256": "ab838c06a842ad626c8b2b50c29760bd35ae3c3998480c05c5d9d0634e691c4a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.CustomLibraryPageTest.xml",
+      "tests": 5,
+      "sha256": "b1236777e6aa59da6c584e6269171554e928908c0e82c7792ceb9b8708d6021b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Details139AcceptanceTest.xml",
+      "tests": 8,
+      "sha256": "699b6e239fc8cc9a7fdb41d8e026dab5ed965128d1059e7db9eb9254ceab6fd8"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest.xml",
+      "tests": 8,
+      "sha256": "69cc8f0c31c4dbbb4ad706835878ddc87c32ed7be316718106531cb88bddd28a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.HeroRotationPolicyTest.xml",
+      "tests": 5,
+      "sha256": "177715a6631ae29411946f7b6f7eb60d6c213e1a56a3bd34414ad17f5065b16f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.HomeGenreLiveTest.xml",
+      "tests": 2,
+      "sha256": "cf641bd6e8ae4667d7af24f30748831bf8f64ebc7623184cef835725f1ba0b36"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.HomeIntentCodecTest.xml",
+      "tests": 4,
+      "sha256": "9e5f13bb5ea3f423ed6efade7bf2a560d2c0f7898b136d3f1fe40c6850bd4896"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.LegacyViewingSnapshotTest.xml",
+      "tests": 8,
+      "sha256": "67d66a5b3e3cb42d4c32733903c977947addd17319fa742731b6629825940769"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.LibraryStatisticsLayoutTest.xml",
+      "tests": 3,
+      "sha256": "3a7dd5df33d472ecfbcc237c975d9d4198317afd8a2bcad0595f8bb3ad72e388"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.LibraryStatisticsTest.xml",
+      "tests": 5,
+      "sha256": "f0898356159a11269a1600113e670ace5e32c839ede8c023764ce3dcb68d470d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.NextQaBrowserFocusTest.xml",
+      "tests": 1,
+      "sha256": "b2131e8dc0e3f840ca9d523098689f6d7b2f34c6dbb744b799e4574379c2b59e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.NextQaReliabilityTest.xml",
+      "tests": 6,
+      "sha256": "a922a9bd2b1691878a937001cbb567c3fce273d046f765279a4532d175071382"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.NextQaUiTest.xml",
+      "tests": 5,
+      "sha256": "31589b9b92dc7ec202d3d9b443f43f02c861d8baf8f0090c64bd0b16729238e4"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.NextQaWizardTest.xml",
+      "tests": 2,
+      "sha256": "e65065b26232a95d9180a2c2d9607eb7b9fa5b093f564293c0235e24b82192db"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.OfficialTitleBindingTest.xml",
+      "tests": 9,
+      "sha256": "9e99f31ef4417aeac61fafcc0cc570a481a50aad614dad845eb7396f3db3e822"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.OfficialTitleNetworkTest.xml",
+      "tests": 1,
+      "sha256": "1c5256a29fe84f4d7b97c5eab158c0443e7c4327e07339a25c71367fd483da0b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PlaybackCompatibilityTest.xml",
+      "tests": 3,
+      "sha256": "f32a37e49232c4cdd0e54f8388ad2f1b186a21eeddb42010c5ee70791ca95130"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest.xml",
+      "tests": 4,
+      "sha256": "9dc3678896c594a2380115995396b6872604ea7f706c222bf603a27c5db0d3f5"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PortableReviewNotesTest.xml",
+      "tests": 6,
+      "sha256": "a89457b8906df12e14e839702e3390d23565755a08fd24e1bda60875364d29e3"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PortableViewingChoicesTest.xml",
+      "tests": 4,
+      "sha256": "f86df2dc92eb571a0608ae592c2c6de0613cb7aa8bd03e158f2ad4e74e68a1cf"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PortableViewingStateTest.xml",
+      "tests": 7,
+      "sha256": "2e68889f18eb08ad141e537d4619285b5b6179f495f00447c46d388daea4a6b4"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview411Test.xml",
+      "tests": 4,
+      "sha256": "28bab47cf845da2d003a21a7ad409e7d7afb554cdfe3ec53692d9c5b6a734925"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview412Test.xml",
+      "tests": 4,
+      "sha256": "a55c8c5e1bad8e298330e2fcbfbfc2d5bcecc4fe6a0f0eebce98e170d9ec7be7"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview413Test.xml",
+      "tests": 2,
+      "sha256": "b188efa05eeb54facbbe97c7d87dbe38b5669f6b861207056e0b03fd3f9841ce"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview414Test.xml",
+      "tests": 3,
+      "sha256": "dd85fa628737cf0b83dbc02111ca5c3be0cb13fd91879151acc93ad03582f2b5"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview415Test.xml",
+      "tests": 10,
+      "sha256": "c173bb0d984c1335a39ff3975ea78c807abce58643282f997e2c0a58b1b4aa49"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview417NavigationTest.xml",
+      "tests": 4,
+      "sha256": "42e7180cfa7a13f8a8892f0e5d24517dde4724f4743c5459c6afabf8feaf9b35"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview41ProgressTest.xml",
+      "tests": 5,
+      "sha256": "9a8617d87062aedd53772136ea4eb69e987c642481e712425b7bbc6f52dbf90a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Preview41RowsTest.xml",
+      "tests": 1,
+      "sha256": "ce930ebf88e03a2385b43a57a244c353cd22636ad58808cd3fa5e19859ff6c7c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewArtworkPickerTest.xml",
+      "tests": 2,
+      "sha256": "7b01d32764179490fe43fb93bb0b9f6d41c8fd2316dd79e670a5fe11fc1ce4e9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewBackdropTest.xml",
+      "tests": 3,
+      "sha256": "78403f10ce24cbf35a1c2a5af51f6710dc63dc1b993b05f7b7c9774ff1efc24c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewDialogStackTest.xml",
+      "tests": 4,
+      "sha256": "74af63e615deb1869467a584383bd2c076ede82ffdf4c776633ed97a875b6a57"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewDiscoveryTest.xml",
+      "tests": 5,
+      "sha256": "2675ff431e780a25d0696b27e3c9f231cea8392cba39c57c39d05fcc756e2b1b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewEnrichmentQueueTest.xml",
+      "tests": 5,
+      "sha256": "ea0ed82e77e59d0aa63d23acb299c60822a80014af55254c2ac591b7baef7a89"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewFeaturedIndicatorsTest.xml",
+      "tests": 2,
+      "sha256": "03182a0cff5287b09f7c9b3a58ad21ec3fda6e507e0b7a2563137af0df69592d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewHomeMaximumTest.xml",
+      "tests": 3,
+      "sha256": "f5bd03e4aa8a80377ee27b04deff75bde730a415a446794891e465738cabe5aa"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewHomeVisualTest.xml",
+      "tests": 2,
+      "sha256": "2543158eac7b6a14f411d9484e5ad12ea2a7269088e8e65695bfc2e5127ef96d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewLanguageIconTest.xml",
+      "tests": 2,
+      "sha256": "39b4d13ba22c67525a493c68c7a5c986057f23122eeb610be03e12b32f6ea5cc"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest.xml",
+      "tests": 2,
+      "sha256": "a7e8d7d99d537a852f6b16c181704c9c0fc0ce73514d7029a3d9a97e15668e15"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewLibraryReturnTest.xml",
+      "tests": 2,
+      "sha256": "cf5f4a98f57e66ce89bad2a4904ec4cc5e2d25f9dc16982acce6215a023babf2"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMatchMembershipTest.xml",
+      "tests": 2,
+      "sha256": "0712d44cf6d3bb94590f4207d30d84a4681ea08f134b51044935b14e191d9eac"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMatchReviewTest.xml",
+      "tests": 1,
+      "sha256": "fae1409f56c84d72d2b6d8d9cbc28d538be2f7538d2dc6014dbca979f8af621c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMatchSearchTest.xml",
+      "tests": 3,
+      "sha256": "21fe1fb867a92b1dc7566ac4e9cdba9939d0012f3254808c3500bd8245c06a26"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMediaClassificationTest.xml",
+      "tests": 4,
+      "sha256": "250861f7e892a42c6448961af6803703c3644ed99e2b40163fef51a0bcdb969f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMediaInfoTest.xml",
+      "tests": 2,
+      "sha256": "4cd040c75b58a63ad9629bd098f29f1f832945db34ba26c5abe503b9291e7bbc"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMetadataCacheTest.xml",
+      "tests": 3,
+      "sha256": "0da661f3c6f43c37a2ad0e2146cfc4249f629db4d298f08a488868dd2460aac9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewMoviePageTest.xml",
+      "tests": 9,
+      "sha256": "b028d3eaa352207561a8cb177346b0314d9cc6b087567759d440961a033048f6"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewNavigationShadeTest.xml",
+      "tests": 4,
+      "sha256": "e29a27879030affe86caa9e964a8b69297f3b62c82b3b83dca4f08ea8db8949c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest.xml",
+      "tests": 5,
+      "sha256": "dfcc2fb0e6eaaaa7180d0822fc7e6ab032af98e28f54417425606c1c3ef4fb08"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewNextTest.xml",
+      "tests": 4,
+      "sha256": "47467e7c287972e14678761be8227530b69b0d012e516db5d46bbc677c920df0"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewOperationDialogTest.xml",
+      "tests": 3,
+      "sha256": "d6f2786f03c0ba5d090aceb6544ebb86f1bd88ced6440d9345ac3cfd7659eb0e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewPagesTest.xml",
+      "tests": 6,
+      "sha256": "eb65b59c839e588a933dbd29260343d211d5f478b45c55641a606a7049f5013a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewProviderBrowserTest.xml",
+      "tests": 1,
+      "sha256": "a0d4923e7b48795d8f3fc8804da322ade6c879df87a3693ffa7306d0078a72d0"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewProviderFilterTest.xml",
+      "tests": 1,
+      "sha256": "75975783c47d5790ba4468119b3c50f7798a726c3c7b1ff1dc0ae66f4bcd60d2"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewProviderRefreshTest.xml",
+      "tests": 2,
+      "sha256": "258904fcecb68e3f62d4a15c483cc57bda987afedc1ed99c00fb81fb8fca1ba9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewRebuildTelemetryTest.xml",
+      "tests": 1,
+      "sha256": "7533b5b86ba7f0bc5f392ccaecc89fc982daa1a64c6a89f95c1e9c3a751d815f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewRemoteLogoTest.xml",
+      "tests": 1,
+      "sha256": "58da15f940325f559f22adc0a0c1b1024737c05c66cd5474b16120d135cdadc7"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewScanLifecycleTest.xml",
+      "tests": 11,
+      "sha256": "727d8ff604e4305dff566809033a9561c31e69b5e3ab7af73c21e2041e9745cb"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewScanProgressTest.xml",
+      "tests": 3,
+      "sha256": "ceeda9cf837d9c7deb9538d2cd08af9ba3bf44963b9f2323460d5ad3943c2e3e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewSearchNativeIndexTest.xml",
+      "tests": 1,
+      "sha256": "6678c1036e138c0c87877bbae5c64623a2ef98f1e5d726fa657895175c09a542"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewSearchPresentationTest.xml",
+      "tests": 3,
+      "sha256": "9d2782a631c42d0e0d5eb193270ab5d216c66fb604c6f64fc0645ec07f714e8d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest.xml",
+      "tests": 2,
+      "sha256": "929c232eccc8d89e831dac0a5aa2807cb2b9e7a7b06e169aefc2cc380a378c43"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewSourceRemovalTest.xml",
+      "tests": 2,
+      "sha256": "fe41703531d6cc363534abdf14831152041d33ea663c4b244bc8ebfe96bb3552"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewStartupTest.xml",
+      "tests": 9,
+      "sha256": "b66f68f4952ec184dff36a81939d9edd61ff1fd1c2bbb6cb130fde858d77c79f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewSubtitleChooserTest.xml",
+      "tests": 6,
+      "sha256": "6af220decd624870622cad73a8115fdba3115964d97925b8be004a31bff732ad"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewSubtitleResultsTest.xml",
+      "tests": 1,
+      "sha256": "752c39f8f2a31c76017cfe6088dde6b59165bab7643d79f01538ddd6b3c6eef1"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewTechnicalEnrichmentTest.xml",
+      "tests": 3,
+      "sha256": "b57333df4c1a0e445951f5bb5fb7ec5dbad31e2018bf989aad83d5bd7d6bcdd3"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewVersionsDialogTest.xml",
+      "tests": 4,
+      "sha256": "27417734f58f61b39fa9058b76074447a620d4ea4841e1c6cac11a9f386ed30a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialogTest.xml",
+      "tests": 2,
+      "sha256": "fec0e97013de42df1f3129dfc4bd68c883ee5af495b2469bb8a571f24216e1c4"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.SetupPolicyTest.xml",
+      "tests": 3,
+      "sha256": "9b56ebae069e7f15c4a3f1c7f224007a0dc8e9b2f96fc8d08580a246cad3d591"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.SharedDirectoryPickerTest.xml",
+      "tests": 1,
+      "sha256": "7be3ecc7362fa02640918a23a7fed5116171fe85b19ab3681bf00b93f1b8893d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova138HomeTest.xml",
+      "tests": 6,
+      "sha256": "043392d533721565d2ab8fe5cccbeaf7ed64f8460ac2636a5642cee950e7e740"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova138UiTest.xml",
+      "tests": 9,
+      "sha256": "6b308e454efb8d523a3bc2d78c95369307be072f7953921e5acd19858f1a622b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova139HomeEditorTest.xml",
+      "tests": 12,
+      "sha256": "2d59c5ab04aa57bb10a3881e15a448fba9cc4316982aa515de50002011817f77"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova139LanguageFlagsTest.xml",
+      "tests": 2,
+      "sha256": "0bbd984485469b59fb9666bb442ceea65c9221fe9b4961b01983adf09dfb4c6b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova139LibraryNavigationTest.xml",
+      "tests": 2,
+      "sha256": "f474a5f1faf14ae07c279e29ec55a75d9569e0ca9446392cea9c539ee591f7a3"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova139SharedCardMetadataTest.xml",
+      "tests": 2,
+      "sha256": "ee096e01c6e88397bb6e8110b1cdff7753a837930da7fb66dce89531b746e6c8"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.Supernova141UiTest.xml",
+      "tests": 8,
+      "sha256": "17411cc15d18e0732f80fc3f869a5e98188bed5e2563e79bd1a75a5737054398"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.SupernovaWorkspaceUiTest.xml",
+      "tests": 8,
+      "sha256": "141f712d01bcbe12b11b6ec6b34910b7f4586ed3b3230b0457265b50ebcf5f4e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.TopNavigationTest.xml",
+      "tests": 7,
+      "sha256": "11bca2eedbbb650b51b371a91dbb835d1039545e8ad9483beb5abd4792b00a21"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.VersionPreferenceTest.xml",
+      "tests": 3,
+      "sha256": "4312c91037f3240245c3a6b84de735b0f7501cf0070bd05e11ee4ebc802838e9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.ViewingHistoryTest.xml",
+      "tests": 8,
+      "sha256": "3192924423fc46851120a1d9aad1584b7fa58ed73a6e171286fa409b777353db"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.DetailsReferenceRenderTest.xml",
+      "tests": 4,
+      "sha256": "2cb949852b99d825a90b0e8588bedd9adf63d4f0b514b664f9383ac72a497de2"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewCompactTitleTest.xml",
+      "tests": 1,
+      "sha256": "1270f7d8942ed7901d95dc3acacb64c21f078aca470954d918a9f90ee08ee6ab"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewDetailsCacheTest.xml",
+      "tests": 2,
+      "sha256": "16589f62dbe11519f99b0e6fce072bd8dfbd74fe1ddc1bc0f3389c738b39d63f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewDetailsFactsTest.xml",
+      "tests": 3,
+      "sha256": "d4e11a8ae2f27517445dc91cbd26e1332d38df8c73d161ed352a52a712b9ab21"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewEpisodeChoiceTest.xml",
+      "tests": 6,
+      "sha256": "a95056a0aa502b82892301135fd7fcf0e06d125e61d9093a4df078ebd6bd4813"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewEpisodeFactsTest.xml",
+      "tests": 1,
+      "sha256": "addb7d1c9d817e9f6d363b629eb1e7bd591763309c76e5eddf50fc049f78df19"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewExtraDurationTest.xml",
+      "tests": 1,
+      "sha256": "e58b6fc936f74e5738f60c4325204394c3166681ac8df192f083a5bee268b741"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewMoreActionsTest.xml",
+      "tests": 3,
+      "sha256": "356cc8df51899f3c16f14d8cbafc1bf35cfd925c068cf09323375627e99c6c9a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewPeopleRailTest.xml",
+      "tests": 3,
+      "sha256": "7684c4b61e3abe472223a3961626fb86148413117d6e6f09f68f413559df4601"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.PreviewSeasonTest.xml",
+      "tests": 2,
+      "sha256": "269c6119110ceb6618c26712b6a315371e179df9895ec8a8fbed803b74fe6f67"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.details.ReceptionSupplementTest.xml",
+      "tests": 2,
+      "sha256": "49936a0df83281ddacdae4004539e095925ea092519547bd14aa4fffd9039bbc"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.filebrowsing.BrowserSelectionTest.xml",
+      "tests": 6,
+      "sha256": "18f7afad7cb30fe5d512c2743489f3ba13c9795469ecff6b20ccb7d31be6d92e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.filebrowsing.ShortcutTransactionTest.xml",
+      "tests": 2,
+      "sha256": "3da571a3c201bb48d2439cc29bbbc83ecc63c668d7cec94502c2cab377db484e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.presenter.FoundationCardContainmentTest.xml",
+      "tests": 2,
+      "sha256": "449d6b1cd35a1cbb51b18632e4a1772b8616c3e7ca853016d866cf6710f1ed59"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.scrapping.PreviewMatchFragmentTest.xml",
+      "tests": 2,
+      "sha256": "367bb96e48eef74a26798abec4a4d7dd81ca863a328b3c883069fa7eedcd0f6f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.search.PreviewSearchTextTest.xml",
+      "tests": 2,
+      "sha256": "91ec6688691caeb85111295b6c00233e8eeb4e0285611aa38f6e5bf8f5ec913b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupDirectOptionsTest.xml",
+      "tests": 1,
+      "sha256": "321e15fa766ec785d80ee15937f37c9b00f285ae829eccd686bac28643859988"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest.xml",
+      "tests": 11,
+      "sha256": "15044c844156ddcb769008db122b759ba10698f007c1d8bd55162df1bb24444d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest.xml",
+      "tests": 12,
+      "sha256": "cecfa1e30925ac7d589d0dbd04fe9ffefab2acb5ad1693bab77be924a9d3cc3e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest.xml",
+      "tests": 1,
+      "sha256": "25a074d18c335335451862f43858e138dc1ed42d901f56c8d89bfe190f000b5a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest.xml",
+      "tests": 5,
+      "sha256": "c5fc537262fe534cd8e24924ea01f5b46c37ee89902d3ce130514e997f530603"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.InlinePreferenceChoicesTest.xml",
+      "tests": 2,
+      "sha256": "fb127287ab3fddf496f3b8a4208829702b42fd00f5ba6dbb6a3d8e49b08c4b69"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest.xml",
+      "tests": 3,
+      "sha256": "dd12ec07b493319f8a3446e84d0c1097bc0468a776acf230f1902a5d362b6d8c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.PreviewBuildInfoTest.xml",
+      "tests": 1,
+      "sha256": "3b16cb764d03ce0be9842333a9ae0d8aceb17e0e9c9edbba3f7ee79e05d65c2a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest.xml",
+      "tests": 5,
+      "sha256": "b213918ca55597e1dc816489539340900e5080316de36054a2fa6981c67fcd29"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest.xml",
+      "tests": 5,
+      "sha256": "5323610c09da826a63d6054714aeb58b4134b559e3f9ad1d27dc1e2c11eb6f3e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.metadata.OmdbSupplementTest.xml",
+      "tests": 6,
+      "sha256": "56d5eaeb2e0389020cdf061a6f5ddb84a0edf4d6196f33cda163fbb8f091f723"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.picasso.FidelityTransformationTest.xml",
+      "tests": 4,
+      "sha256": "cee30ceb794f13b248e55697f4d873dc926177cda3c311cbfb6989bc1ce73864"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.AudioTrackSelectionPolicyTest.xml",
+      "tests": 14,
+      "sha256": "4c07342dde8f4fb6fe3a0376982cb3d6220471e929b49ffaded74b8b7e0863dc"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.ExternalResumeIntentTest.xml",
+      "tests": 4,
+      "sha256": "684ef9a73fc8b3df3a97e15fc1f6d8e4f18c2ceedb8e38f4549147fe8dabccd9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.FailedPlaybackCheckpointTest.xml",
+      "tests": 2,
+      "sha256": "c55aa0df10e8eb6f88f7fff29e68839d41391b62a3834d6d50900e4452573486"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.HeroPlaybackOutputTest.xml",
+      "tests": 2,
+      "sha256": "05391fec4317c9f739a621a2c1774b721c6c37ff8f9f9dd1119932cf0ed701af"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.Playback141RenderTest.xml",
+      "tests": 1,
+      "sha256": "fd630f30b8af9660560d0026ceff4b9bb2d5731391353aa166ddf215e12b543b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PlaybackAgeOverlayTest.xml",
+      "tests": 4,
+      "sha256": "0489ee918aa2cfa6d13322a53ad7a801354322ca86dcaff42673905972324e0e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PlaybackChaptersTest.xml",
+      "tests": 3,
+      "sha256": "e40550174936593ba3f08f8bad5a257c59ac16a57b696cdf82c29b42a1f5a74f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PlaybackResumePolicyTest.xml",
+      "tests": 10,
+      "sha256": "8e07fa821cac19d7fdc426151b84b27c781845f395bd2d79f21356f215a5e051"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PlaybackViewingCoverageTest.xml",
+      "tests": 4,
+      "sha256": "c0b9510b22793fc135e4f57ca6ef8b6f08cc7a4d61ef360e43d32bbde29672fa"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PlayerControllerLaunchTest.xml",
+      "tests": 1,
+      "sha256": "43e972060f1862a9fc17a06ced897f9e0e2a3dccee132fa5cefdaaafc2c30f46"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PreviewAdjustmentValueTest.xml",
+      "tests": 1,
+      "sha256": "320450fca88b641cd65e9bc9e698978d7cdbe9f8077be6d01e4162a108c30799"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PreviewPlaybackLoadingTest.xml",
+      "tests": 2,
+      "sha256": "bf21e95ecadb76fc9339424be77c8136790008fc17c60769977c75d4e24472e9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PreviewPlaybackMenusTest.xml",
+      "tests": 7,
+      "sha256": "0bb16d932cd26d4e77bf4a43ea1bf1137fc7b186856722d087af0e63c5173898"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PreviewSeekPolicyTest.xml",
+      "tests": 6,
+      "sha256": "86da5e8f7f8b411c43d0dcde5ba8341f5224dfa727a5d95c398573e78ad56c52"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PreviewTechnicalInfoTest.xml",
+      "tests": 5,
+      "sha256": "060253365f8e0f9451714ceb934fef9d53f5747f54041e5e25c098f91b345f40"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.PreviewUpNextTest.xml",
+      "tests": 2,
+      "sha256": "58d47f8269c979088958770ee8f755cf5950197328a4e5cc98217e112cf67e44"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.SegmentSkippingPolicyTest.xml",
+      "tests": 3,
+      "sha256": "32037c2ce2525e8b748587ea79824221bedf53ce602ab16fc35aab95487dbcdb"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.SubtitleTrackSelectionPolicyTest.xml",
+      "tests": 21,
+      "sha256": "f29044acfb3948934123e3bdb3d7db0b9955c28c6fecec85f6f1135e055324bd"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.Supernova138PlaybackTest.xml",
+      "tests": 4,
+      "sha256": "5238bd38c12fc5322ee60b3baca087bbb7c27f88c16650685a79f2b27205c0b5"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.player.TrackSelectionTest.xml",
+      "tests": 1,
+      "sha256": "220a30ded5b6b99f2c53605f1c915312d2518bd2f768f0c088338ae9bd4e7d69"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.StreamingPreferencesTest.xml",
+      "tests": 3,
+      "sha256": "eba692070d9ea8112237274805d4b22cdee4d19fa0765ea54d4a8aa92a54a911"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.StreamingProviderFocusTest.xml",
+      "tests": 1,
+      "sha256": "b2975cf46846e95c77b64db9375a12d64155a73c8edde74412298f25e26b138d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.StreamingRepositoryTest.xml",
+      "tests": 15,
+      "sha256": "91d9886001c75574ba1b058accdb4f971709139aabc047b52c4999b6dd1d4825"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.Supernova139ProviderMarksTest.xml",
+      "tests": 2,
+      "sha256": "bd9a5914e6761126de3a5bb5604d59a0f5471e7628c1557883dbe46ad9d5b86c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.ProviderDiscoveryGateTest.xml",
+      "tests": 4,
+      "sha256": "642d7a26dbced23de23766fca9b7d6c9412f4bda9f75dfa11a91d631229ecae1"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioAccountTest.xml",
+      "tests": 3,
+      "sha256": "e49cc8f9fddd1637a1ba050e6d7efdae9796d3fdfd77c5086a0a12e185ccfb79"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioAssociationStoreTest.xml",
+      "tests": 7,
+      "sha256": "ef2d3c66d18cbd13afbdff18e74c9fc882729b78532eaf9d5822097769a6241f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioBrowserBackTest.xml",
+      "tests": 1,
+      "sha256": "77f25a8e4cdaa56ab12328f03dbe18790d021718be937c363817cc24b5d59963"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest.xml",
+      "tests": 5,
+      "sha256": "44199920a6d97b5c2090750e2c1be547a274f7827cf629631be7ea9fb17e93a1"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioFileInfoTest.xml",
+      "tests": 3,
+      "sha256": "c9b511378ec0ff028e6d43df563a3f1b6c2d6bb6ad22988189c2d54f2aafd67c"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioGrantRevokeTest.xml",
+      "tests": 1,
+      "sha256": "7d5230df35d5d8cdcabd2f5f19be272f557fb92c8e9f4a296375627cbba4d1f0"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioOAuthClientTest.xml",
+      "tests": 5,
+      "sha256": "2cb5fe1b02b872cf38ff5f5331622d65ae573af267887e4b6626722ae06dc001"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioReconciliationTest.xml",
+      "tests": 13,
+      "sha256": "f473976fba97740c73080affa971b7c35c3df41876462ca7a7a5b198c76686b9"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioRootLocationTest.xml",
+      "tests": 3,
+      "sha256": "842a41b450a91b66d5628831647caa55dd80e953ce1885eebb5cbc0a60df9216"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioSnapshotReaderTest.xml",
+      "tests": 7,
+      "sha256": "5c64e00579f1cc3f5be84971733d5ac381a945f12689041a482ac8f314dd42a7"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioSyncSchedulerTest.xml",
+      "tests": 3,
+      "sha256": "547aa133198b8ebc0cc28188014d0e35e9cc8b7d6ef185cc7572c34c0beada4b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioSyncTest.xml",
+      "tests": 6,
+      "sha256": "cc60c6281417567ef24897e242fa4c653f00effb6bcc88d79a16a3e4d1e664cd"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.streaming.putio.PutioTokenStoreTest.xml",
+      "tests": 4,
+      "sha256": "2ee2fac62e06636a18ac05f0861674ccda8a70d68cbb42a972b05cb504823bac"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.BackupCycleTest.xml",
+      "tests": 3,
+      "sha256": "9a3e7a7b563ff1272d87f87c34ad5f3fdfed7fd3e2c5c6301b9faee04e758167"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.BackupImportPreparationTest.xml",
+      "tests": 6,
+      "sha256": "1db02be6f72f4d6fa8c8339918fa6b587dc42c8be02c5645cb59f382e4e2a281"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.BackupPrivacyTest.xml",
+      "tests": 6,
+      "sha256": "8f1b1781c8ebb30ce5a658c6fc75380715d3cb07df0bc919f01434dbd18f95be"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.BackupStageRevalidationTest.xml",
+      "tests": 1,
+      "sha256": "64ad1ba11aba25cd4495418bdd0348c1735190ef99658b8cc298a5a239f4c894"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CanonicalMatchProviderTest.xml",
+      "tests": 27,
+      "sha256": "899a049809da54c5b99b0b7a7c27d19235a10966ea17edb6c36dcf42be1723f2"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CombinedCurrentRestoreTest.xml",
+      "tests": 4,
+      "sha256": "63367c92513bf80c4ef2841181d2ebcbcffc68b0972b34bdb7ae2258541acfb4"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CombinedIndexedSourcesTest.xml",
+      "tests": 10,
+      "sha256": "4dc6387cc7c3c45f2b0533dbdef138abadd03e9efe8b2f26a7e030ed679fa249"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CombinedMediaRestoreTest.xml",
+      "tests": 24,
+      "sha256": "906f384fdc2e82b87bcdb27653e45b436c69be5eabebeb6a895147145cc704f2"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest.xml",
+      "tests": 11,
+      "sha256": "3ef83a5fb9940434ffadf6f7618f08796ce727c562b40e63250858ed8662c215"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CombinedPlaylistMediaTest.xml",
+      "tests": 7,
+      "sha256": "5e5d044ae18dfb2227d5a84602d37cd9bf089284418edae060863440a703b356"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.CombinedViewingRestoreTest.xml",
+      "tests": 10,
+      "sha256": "0d6c7b46b9eb061c037d288c5d2704c54488caf92ba1c6b26b18c689a00f7fb0"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.DiagnosticRestorePolicyTest.xml",
+      "tests": 4,
+      "sha256": "617ccdd6955c628f6c234e0736eaec75008ff8c1def07c72604699e3363daeb2"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.DirectEpisodeLookupTest.xml",
+      "tests": 3,
+      "sha256": "57d4b174f26dcb6984369d82ba7bdc9c3cd486266e5be5798220410e78cc1156"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.DirectMovieLookupTest.xml",
+      "tests": 2,
+      "sha256": "865d613603d6eea3b7fa9bda1de9d4076d8ccefee141611e8a2e6a75cb3a4345"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.DynamicRangeMetadataTest.xml",
+      "tests": 3,
+      "sha256": "c38ea3855d50e13e53ab7b9510f7ead65c45d4eebba58a6e4db41b4d853ae39e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.IndexedSourceRecoveryTest.xml",
+      "tests": 10,
+      "sha256": "6d29fcd06ca9a9f6a3afa8dee6c7d73cc8e4bf86bf9e72d167441e34c541d8ed"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.LegacyExportRetirementTest.xml",
+      "tests": 4,
+      "sha256": "5fc9ecd4b8a998deb54bf19e99349c8848c16763bbc33d06f41e6edbce804be8"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.LegacySchema62MigrationTest.xml",
+      "tests": 2,
+      "sha256": "48bdfc059965a32507ca8c8dd915cad0b241e3eda97e4d1dfe93e00e0dd23003"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.LegacyViewingRestoreTest.xml",
+      "tests": 8,
+      "sha256": "50ada7680b8678677d08b46c86400251d3bb5d987ec1d6f7eb961127d37bad40"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.LogicalBackupArchiveTest.xml",
+      "tests": 6,
+      "sha256": "9d0ecbc87d305dbfcbc0d9b2fbdc1022f9b772789c5e71b81305f9bfb32ea662"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.LogicalBackupExporterTest.xml",
+      "tests": 10,
+      "sha256": "ed33e9141e22a68d064c55ab5bd4edf431a9e04684d4c8ad47299740e23a28a4"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.LogicalBackupImportTest.xml",
+      "tests": 5,
+      "sha256": "8ea72969e5390bf8ea0e613a120d7f77b74d4218591346047214581a2ecd0c90"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.MarkChangesTest.xml",
+      "tests": 4,
+      "sha256": "f88669e1491be17c24b3603b8e39e167d781ab6c245499bd8ac31f035e503483"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.MediaMatchDependencyTest.xml",
+      "tests": 3,
+      "sha256": "c7bee872f773166badb0e66e4928b2f22f642ed01e5c269c549cda367857ef4d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.MediaMatchIntentsTest.xml",
+      "tests": 7,
+      "sha256": "04a6e0d399b951f253898a1261c190f4151d8349dd0c85edc9cc526d343ff35f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.MediaMatchInventoryTest.xml",
+      "tests": 6,
+      "sha256": "1037e053222ebee338ca0e20701deee327e8ef8d506784c4d0d87dd6eccf4a06"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.MediaMatchJournalTest.xml",
+      "tests": 7,
+      "sha256": "fba5383e79414175930bf41db42b06cf7837aca6d924c61daae0f46289e257b1"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.MediaMatchReconciliationTest.xml",
+      "tests": 5,
+      "sha256": "84ca7c59b0cacc0481159f776929c7b9db25f720327bf1ee4eca9bfad5f9eb6f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PlaylistStateRecoveryTest.xml",
+      "tests": 7,
+      "sha256": "d3667550dcc9155ad04307356a4fb88bf0a97cfa45e75c0087b5bebc36d20a2a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest.xml",
+      "tests": 2,
+      "sha256": "88b0d5e06861a656a7c8a7faa95eb27557eff839616eeaa545c9dc3eafb4f65d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableBookmarksTest.xml",
+      "tests": 15,
+      "sha256": "e628e1b85f9babef3884ea04ba409fcf6a739af48d9e7d6a861a0e6b81d64c82"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableCustomPageTest.xml",
+      "tests": 2,
+      "sha256": "97e47def2ccf3992f3ae98e2dbde0e8724b99fbde8ebbeb52074f6592a759d3e"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableHiddenItemsTest.xml",
+      "tests": 7,
+      "sha256": "6cc5320ac0bc797f37b4dc2f9daa4052862cae6c08445d4c2319f43157056d75"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableLibrarySourcesTest.xml",
+      "tests": 12,
+      "sha256": "5829f49c69b311cd83ce1a8532e621e419597de847236af57e4951fe6a3eb62f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableMediaMatchesTest.xml",
+      "tests": 8,
+      "sha256": "319631940c1bb24436fb7f08830d50ca6eed6bb4588e6ce5636a40e6dc54ff94"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableMinimumApiTest.xml",
+      "tests": 2,
+      "sha256": "1d8391391de66c0bcb5339eea08982e6ef294f621c4c59d9ee32d8c4d7583f1b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortablePinnedTitlesTest.xml",
+      "tests": 7,
+      "sha256": "1483d09f42862ad2a8bc77cccab9ddc7ce48b2b587dd80077a2cc3efa81ca6d6"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest.xml",
+      "tests": 7,
+      "sha256": "8d49d237d3b164f61086a52a40547526a199a0512afdbec5ecdbfb888045fa7f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableSettingsRegistryTest.xml",
+      "tests": 4,
+      "sha256": "c9518b1664ee523cbc4d8fbde0dbc38ee0879105a4ac9b1069ee3151b1a05d10"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PortableTitlePlaybackTest.xml",
+      "tests": 7,
+      "sha256": "d3f5ed97e9e9d430e06fbee60ac7ac33f684f8571dc07fa60cc99bff27ecd2c4"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest.xml",
+      "tests": 11,
+      "sha256": "fdf3aed3aec46da3fa89df4ecb253f0903fc9dd67d8a34ff9cde2ef2607d333d"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.Preview415BridgeTest.xml",
+      "tests": 1,
+      "sha256": "726271b6c58b5faa5a70a226359577d5c18500f728dd012023d2fcd870d1176f"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.PreviewLibraryRestoreRaceTest.xml",
+      "tests": 2,
+      "sha256": "29eba8e3c2897d7b8018a69081b5490a4da0bcf3701a1721191c43ed76048356"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.RestoreJournalTest.xml",
+      "tests": 3,
+      "sha256": "6ebd7c37bfc89437a9fa3f71158bc0bf00c1813b3e48c60ccb366a56ddf75b2a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.RestorePublicationTest.xml",
+      "tests": 3,
+      "sha256": "3e4044bb08204df4fde979d471382c6d51fc579c267fae9098642d4a8e91d086"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.SortUtilsTest.xml",
+      "tests": 5,
+      "sha256": "fcf6bda45c9945f88e114d54a75c32f882f6ee95a09e0557668fef712fb97f1b"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.SubtitleDiscoveryTest.xml",
+      "tests": 11,
+      "sha256": "a99c793073cea6669d16432552509ecf0024613b5ae38025904bd7483ec8bfe8"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.SubtitleReplacementTest.xml",
+      "tests": 2,
+      "sha256": "82dc1143251ca8b666bd2b95e7bcabec6c747174d0bbc734c868ce3dab60b9c8"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.SubtitleTransferTest.xml",
+      "tests": 4,
+      "sha256": "eb76f5c3d1b6e743a74d6389cac25dc96253fbae55866dfc2d79182df2cf5d93"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest.xml",
+      "tests": 5,
+      "sha256": "cdafeebe6e8b879a625b690d220fa376e5db449981b23fde0bb560d06bb60eb1"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.TitlePlaybackJournalTest.xml",
+      "tests": 9,
+      "sha256": "63e92983c1df211e882301ca21d5cbb7e99484c3894e6b4f4d8163e95a36de39"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest.xml",
+      "tests": 6,
+      "sha256": "c2c6b2bfa9e71d625a7dd2e65d5ee5927217dda1dd4fb093fafe6bedd2c68b8a"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.TitlePlaybackSessionTest.xml",
+      "tests": 8,
+      "sha256": "7c951a4d4181b4a29859925bc85ba79a94a138dd29800d1226371be44e3fe743"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.VerifiedBackupPublicationTest.xml",
+      "tests": 5,
+      "sha256": "aa0fb115d98369ad339d7eea6849b2f8ed95aa14a04c2605d8e71d616c6a88b6"
+    },
+    {
+      "file": "TEST-com.archos.mediacenter.video.utils.VerifiedBackupTest.xml",
+      "tests": 3,
+      "sha256": "3c25f8c4fa7ebbcf172b830dc1a51b4f1fbe3067c0751cbf13cfc77bab6680ca"
+    },
+    {
+      "file": "TEST-com.archos.mediaprovider.video.PreviewMatchStateTest.xml",
+      "tests": 2,
+      "sha256": "0fc6842707d6a7920e114677755fa138ecbe0703ad1c753ed084c8d736281756"
+    },
+    {
+      "file": "TEST-com.archos.mediaprovider.video.PreviewPutioNativeImportTest.xml",
+      "tests": 5,
+      "sha256": "e49dbd17be630643e6762952d9db0be08b257c93df0856295f7a02e96dd475c0"
+    },
+    {
+      "file": "TEST-com.archos.mediaprovider.video.SupernovaLegacyVolumeVisibilityTest.xml",
+      "tests": 1,
+      "sha256": "e78090b7da74131a6451561de0633f2f50872407b2ea5a859b4abae197aff6ca"
+    },
+    {
+      "file": "TEST-com.archos.mediaprovider.video.SupernovaNetworkAvailabilityTest.xml",
+      "tests": 1,
+      "sha256": "2dd76cc22dce5cc029fdc3a53a5bab164443606c2997cf8856caa2a7df0fe9a5"
+    },
+    {
+      "file": "TEST-com.archos.mediaprovider.video.SupernovaRetentionTest.xml",
+      "tests": 4,
+      "sha256": "a78404cf7ad170404fa6d4b43c3c99f0121bf6c6061411a54a5f8fe4b2098460"
+    }
+  ],
+  "physical_Shield": false,
+  "full_unsigned_binary_conformance": "Still in progress in GitHub run39861343693, attempt2"
+}

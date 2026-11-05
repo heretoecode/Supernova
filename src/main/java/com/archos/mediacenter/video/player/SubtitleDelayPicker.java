@@ -15,17 +15,18 @@
 package com.archos.mediacenter.video.player;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.player.SubtitleDelayPickerAbstract.OnDelayChangedListener;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.NumberPicker;
+import java.util.Formatter;
+import java.util.Locale;
 
 
+/** Provides controls for adjusting subtitle delay during playback. */
 public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
 
     /* UI Components */
@@ -77,7 +78,7 @@ public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
 
         final NumberPicker.Formatter twoDigitFormatter = new NumberPicker.Formatter() {
             final StringBuilder mBuilder = new StringBuilder();
-            final java.util.Formatter mFmt = new java.util.Formatter(mBuilder, java.util.Locale.US);
+            final Formatter mFmt = new Formatter(mBuilder, Locale.US);
             final Object[] mArgs = new Object[1];
 
             public String format(int value) {
@@ -155,6 +156,7 @@ public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
         }
     }
 
+    @Override
     public int getDelay() {
         return mSign * (mMinute * 60 * 1000 + mSecond * 1000 + mDeciSecond * 100);
     }
@@ -167,6 +169,7 @@ public class SubtitleDelayPicker extends SubtitleDelayPickerAbstract{
         mDeciSecondPicker.setEnabled(enabled);
     }
 
+    @Override
     public void updateDelay(int delay) {
         mSign = (delay >= 0 ? 1 : -1);
         delay *= mSign;

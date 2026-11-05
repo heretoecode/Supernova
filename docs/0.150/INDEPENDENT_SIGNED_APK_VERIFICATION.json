@@ -1,0 +1,68 @@
+{
+  "source_commit": "8d3c46abd1baa25e912ca9b29a59e617f34beeea",
+  "application_id": "app.supernova.player",
+  "version_name": "0.150",
+  "version_code": 150,
+  "apk_filename": "Supernova_0.150.apk",
+  "apk_sha256": "26f23e7ff0203469f41dc49d24121a71be52227b78edda5a423af24b3848822e",
+  "apk_bytes": 95606623,
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "signature_cryptographically_verified": true,
+  "verified_signature_schemes": [
+    "v1",
+    "v2",
+    "v3"
+  ],
+  "zip_alignment_16k_verified": true,
+  "zip_crc_and_unique_entries_verified": true,
+  "payload_matches_tested_unsigned": true,
+  "unsigned_apk_sha256": "2c153106113ef2ab148ae1da7bb1a33942909d4fd6a2c47069444900ee4aba84",
+  "embedded_source_commit_verified": true,
+  "embedded_history_matches_source": true,
+  "native_hashes_independently_matched": 84,
+  "flag_and_reception_resources_retained": true,
+  "resource_package_verified": true,
+  "debuggable": false,
+  "tooling": {
+    "tests": 157,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "application_tests": {
+    "tests": 1295,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "library_suites": {
+    "MediaLib": {
+      "tests": 200,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_cases": [
+        "com.archos.mediaprovider.video.RealDatabasePruningTest.syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent",
+        "com.archos.mediaprovider.video.RealDatabasePruningTest.realDatabaseUpgradesCleanlyAndPassesIntegrityCheck"
+      ]
+    },
+    "FileCoreLibrary": {
+      "tests": 104,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "skipped_cases": [
+        "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest.compareMinimalPropertiesWithAllprop",
+        "com.archos.filecorelibrary.SpeedTestTransferTest.compareTransferRates"
+      ]
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 1251
+  },
+  "qa_only": true,
+  "physical_shield_verified": false,
+  "signed_installed_upgrade_verified": false,
+  "production_release_created": false
+}

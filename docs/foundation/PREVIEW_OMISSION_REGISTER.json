@@ -1,0 +1,368 @@
+{
+  "schema": 1,
+  "baseline": "7efb4195639205a6526281491af40c0dab1776b7",
+  "reference": "f97f62942f6b4f1a90e2e15258db452384d6b39c",
+  "limitations": "File-level register; selected files contain unrelated maintenance changes which must remain deferred. Exact installed Legacy APK is unknown. Source omission does not prove physical failure.",
+  "files": [
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Explicit suspend/resume ownership for return-focus transactions.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/MainFragment.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Avoid persisting negative cache results for failed remote logo queries.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/OfficialTitleArtwork.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Targeted correction dependency",
+      "behaviour": "Action-container focus geometry (selected); separated Done footer styling (deferred).",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewDialog.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedCard.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Targeted correction dependency",
+      "behaviour": "Exposed equal-size neighbours, fixed title/logo zone, bounded card artwork, single More Info action (selected).",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewFeaturedCard.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewGenres.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "chooseLive applies multi-genre library filters immediately while picker remains open; Home editor retains confirmation.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewGenres.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Identifies rows for inline Move/Hide control workflow.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewHomeRows.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Optional top-boundary containment and clicked-key focus retention during query changes.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewKeyboard.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Corrects language/region icon presentation and fallback.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageIcon.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageRegions.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Additional ISO language-to-region mapping data.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewLanguageRegions.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Corrects manual metadata search and query keyboard layout.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewMatchSearch.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Bounded padded category/items/context panels with explicit semantic identities.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewNetworkWorkspace.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Targeted correction dependency",
+      "behaviour": "Hero/local artwork and Home rail zoom clearance (selected); inline Move/Hide, exact return focus, library centring, filters and utility navigation (deferred).",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewPages.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Bottom-aligned toolbar with removed bottom padding.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/PreviewToolbar.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Navigation text-bottom/utility-inset adjustments; Foundation branding implementation retained.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsData.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Independent concurrent metadata-section publication; completed-section merging prevents partial responses erasing cached extras/related data; progressive season/provider reconciliation.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewDetailsData.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeRow.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Increased vertical focus clearance and 4.15-card viewport sizing.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeRow.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewLandscapeCard.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Two-line title area with stable minimum caption height.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewLandscapeCard.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Three fact panels, cast/crew tier, progressive metadata rendering, stable provider-action rebind, single horizontal extras/related rails and larger episode clearance.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewMoviePage.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTrailer.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Bounded YouTube iframe over blurred Details snapshot, end/Back dismissal and exact opener focus restoration; reference removes external fallback, which this correction does not port.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/details/PreviewTrailer.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/overlay/Overlay.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Navigation clock uses 19sp white text.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/overlay/Overlay.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Targeted correction dependency",
+      "behaviour": "Rounded child clipping/shared enlarged body and focus frame (selected); artwork retry/backoff and stale callback handling (deferred).",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/presenter/PreviewCardPresenter.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualShowScrappingSearchFragment.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Manual TV metadata match-search integration.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualShowScrappingSearchFragment.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingSearchFragment.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Manual movie metadata match-search integration.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualVideoScrappingSearchFragment.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Ranks local results using exact/normalized title matching.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearch.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearchText.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Article/punctuation/compact-whitespace title normalization and relevance ranking.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/search/PreviewSearchText.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewPreferenceDialogs.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Separate provider Done footer, colour provider logos in Settings and audio-language icons.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewPreferenceDialogs.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Padded category/options/context panels and nested section links placed under category in left rail with Back ownership; completed Foundation About is retained.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Technical-modal input/cleanup integration, HUD reveal-key consumption, torrent-status suppression, audio-language tags and session-only audio adjustments.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PlayerActivity.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "HUD reveal consumes full DPAD gesture; paused/debounced scrub preview and explicit commit/cancel; focus/feedback/accent restoration; transport control layout changes.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PlayerController.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PlayerService.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Optional non-persistent audio boost/night-mode setters and subtitle-selection diagnostics.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PlayerService.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackLoading.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Suppresses legacy torrent text updates in preparation surface; Foundation double ring is preserved.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackLoading.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Approved audio/subtitle order/labels and language icons; reference removes some More/picker shortcuts, which this correction does not port.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PreviewPlaybackMenus.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PreviewTechnicalInfo.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Technical-information overlay blocks sibling focus/accessibility, handles modal Back/DPAD, restores HUD/opener and cleans up on lifecycle exit.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PreviewTechnicalInfo.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/player/PreviewTransport.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Four HUD controls with play/pause pinned to physical screen centre independently of labels.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/player/PreviewTransport.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/PreviewProviderIcons.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Keeps full-colour provider marks in Settings while retaining monochrome treatment elsewhere.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/streaming/PreviewProviderIcons.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/StreamingActionPresenter.java",
+      "comparison": "7efb4195..f97f6294 (same product tree as e24af182)",
+      "status": "source-confirmed difference",
+      "disposition": "Deferred maintenance omission; no physical regression reproduced in this investigation",
+      "behaviour": "Uses common action-container surface/focus for provider buttons.",
+      "reference_url": "https://github.com/heretoecode/Supernova/blob/f97f62942f6b4f1a90e2e15258db452384d6b39c/src/main/java/com/archos/mediacenter/video/streaming/StreamingActionPresenter.java",
+      "comparison_url": "https://github.com/heretoecode/Supernova/compare/7efb4195639205a6526281491af40c0dab1776b7...f97f62942f6b4f1a90e2e15258db452384d6b39c",
+      "acceptance_limit": "Source comparison only; no additional Shield failure or physical acceptance established."
+    }
+  ]
+}

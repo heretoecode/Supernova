@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "source_sha": "23f75b38b18f6b34f5ceb94c001260f08bafac09",
+  "checkout_head": "f4f0c4538e1ca8ab87e07cec4147bdaf7af4b244",
+  "command": "python3 -m unittest discover -s tools -p 'test_*.py'",
+  "tests": 81,
+  "failures": 0,
+  "errors": 0,
+  "log_sha256": "209ec549436a87ce7aa68adf3a5a6726bf7cca2e0e19bdab91c6279070f7fa81",
+  "limits": [
+    "Release documentation/evidence-only continuation; no product or test changes."
+  ],
+  "actual_downloaded_conformance_secret_free_signing_gate": "PASS: gate() only, exact source and unsigned bytes; no key preparation, secret access or dispatch."
+}

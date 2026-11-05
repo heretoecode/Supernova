@@ -1,0 +1,20 @@
+{
+  "checked_at_utc": "2026-11-01T17:38:54.178111+00:00",
+  "folder_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "folder_url": "https://drive.google.com/drive/folders/1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+  "read_access_verified": true,
+  "retained_entry_count": 16,
+  "candidate_entries": [
+    {
+      "id": "1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG",
+      "title": "Supernova_0.149.apk"
+    }
+  ],
+  "uploaded": true,
+  "sharing_changed": false,
+  "reason": "Owner updated environment permissions; signing attempt 2 succeeded. The signed APK was independently verified, uploaded once and completely downloaded and verified again.",
+  "entries_after_upload": 17,
+  "complete_raw_download_verified": true,
+  "signed_apk_sha256": "cf589e8b78a28267b76892325d628244afe932a3fc140f6f4443054f78cbaa6c",
+  "url": "https://drive.google.com/file/d/1ETsEfYnMaiJPcjnl1mjXFxgKOO7ilVLG/view?usp=drivesdk"
+}

@@ -1,0 +1,8 @@
+2026-10-15T12:04:00.7243591Z Four ABI registries / tempo state / 64 decode comparisons passed; baseline remains untouched.
+2026-10-15T12:12:59.1381416Z BackupSettingsControllerTest > smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels FAILED
+2026-10-15T12:18:21.3314058Z > Task :testNoamazonReleaseUnitTest FAILED
+2026-10-15T12:18:21.3330754Z 996 tests completed, 1 failed
+2026-10-15T12:20:47.7313665Z > Task :lintNoamazonRelease
+2026-10-15T12:21:15.5317579Z > Task :assembleNoamazonRelease
+2026-10-15T12:21:15.5319259Z Execution failed for task ':testNoamazonReleaseUnitTest'.
+2026-10-15T12:21:15.5323734Z BUILD FAILED in 15m 30s

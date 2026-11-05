@@ -1,0 +1,17 @@
+{
+  "parity_rows": 202,
+  "controls": 92,
+  "state_families": 28,
+  "conditional_findings": 15,
+  "physical_cases": 67,
+  "duplicate_ids": 0,
+  "physical_table_columns": 4,
+  "old_release_html_preserved": true,
+  "old_release_html_sha256": "20bac23331e3b608efaded55121b217d5737632abf452f7bb1735e7840ec2d71",
+  "drive_html_written": true,
+  "editor_physical_cases": 5,
+  "signed_upgrade_cases": 1,
+  "old_release_html_scope": "0f2dfe4d: from the 0.141 development marker through end of document, byte-for-byte",
+  "drive_html_sha256": "0f1862e4626b241c10569a223e0c7cff1ce46bc1cd159b4b82985a028a6a9a89",
+  "drive_html_readback_verified": true
+}

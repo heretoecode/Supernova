@@ -39,6 +39,36 @@ if (hasProperty('bugReport')) {
     }
 }
 
+// Foundation opts in explicitly; no fallback to local/Preview/debug signing.
+def foundationRelease = project.hasProperty("foundationRelease")
+// Verification produces an unsigned release only; it never receives signing secrets.
+def foundationVerify = project.hasProperty("foundationVerify")
+def foundationIdentity = foundationRelease || foundationVerify
+if (foundationRelease && foundationVerify) throw new GradleException("Choose signed release or unsigned verification, never both")
+if (foundationIdentity && gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains("debug") }) {
+    throw new GradleException("Foundation verification and signing use release variants only")
+}
+if (foundationIdentity && (project.hasProperty("markPreview") || project.hasProperty("markSigning") || rootProject.file("keystore.properties").exists())) {
+    throw new GradleException("Foundation cannot use Preview or local signing configuration")
+}
+def foundationSigning = [:]
+if (foundationRelease) {
+    if (project.hasProperty("markPreview") || project.hasProperty("markSigning") || rootProject.file("keystore.properties").exists()) {
+        throw new GradleException("Foundation signing cannot be mixed with Preview or local keystore.properties")
+    }
+    ["SUPERNOVA_SIGNING_STORE_FILE", "SUPERNOVA_STORE_PASSWORD", "SUPERNOVA_KEY_ALIAS", "SUPERNOVA_KEY_PASSWORD"].each { name ->
+        def value = System.getenv(name)
+        if (!value) throw new GradleException("Required Foundation signing environment missing: " + name)
+        foundationSigning[name] = value
+    }
+    if (!file(foundationSigning["SUPERNOVA_SIGNING_STORE_FILE"]).isFile()) {
+        throw new GradleException("Verified Foundation PKCS#12 keystore is unavailable")
+    }
+    if (gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ROOT).contains("debug") }) {
+        throw new GradleException("Foundation signing is release-only; debug signing is not permitted")
+    }
+}
+
 def keystorePropertiesFile = rootProject.file("keystore.properties");
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -49,10 +79,27 @@ if (sentryPropertiesFile.exists()) sentryProperties.load(new FileInputStream(sen
 
 allprojects {
     repositories {
+        // Never resolve vanilla vulnerable Jetty under the reviewed backport identity.
+        exclusiveContent {
+            forRepository { maven { url = uri(rootProject.file("build/supernova146-jetty/maven")) } }
+            filter {
+                ["util", "io", "http", "server", "client", "security", "servlet"].each {
+                    includeModule("org.eclipse.jetty", "jetty-" + it)
+                }
+            }
+        }
         google()
         mavenCentral()
         mavenLocal()
         maven { url = 'https://jitpack.io' }
+    }
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == "org.eclipse.jetty" && ["jetty-util", "jetty-io", "jetty-http", "jetty-server", "jetty-client", "jetty-security", "jetty-servlet"].contains(details.requested.name)) {
+                details.useVersion("9.4.58.v20250814")
+                details.because("Pinned source backport with API23 counters; vanilla Maven bytes are excluded")
+            }
+        }
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile).tap {
@@ -98,6 +145,17 @@ if (shouldApplyPlayPlugin) {
 android {
     namespace = 'com.archos.mediacenter.video'
     signingConfigs {
+        foundation {
+            storeType = 'pkcs12'
+            if (foundationRelease) {
+                storeFile = file(foundationSigning["SUPERNOVA_SIGNING_STORE_FILE"])
+                storePassword = foundationSigning["SUPERNOVA_STORE_PASSWORD"]
+                keyAlias = foundationSigning["SUPERNOVA_KEY_ALIAS"]
+                keyPassword = foundationSigning["SUPERNOVA_KEY_PASSWORD"]
+            }
+            enableV3Signing = true
+            enableV4Signing = true
+        }
         release {
             if (keystorePropertiesFile.exists()) {
                 storeFile = file(keystoreProperties['storeFile'])
@@ -157,8 +215,13 @@ android {
         }
     }
     defaultConfig {
-        applicationId = project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
-        manifestPlaceholders = [novaLaunchTheme: project.hasProperty("markPreview") ? "@style/PreviewLaunch" : "@style/MyLeanbackTheme.Launcher", novaEntryTheme: project.hasProperty("markPreview") ? "@style/PreviewEntry" : "@style/ArchosThemeLauncher", novaIcon: project.hasProperty("markPreview") ? "@drawable/preview_custom_icon" : "@mipmap/ic_launcher", novaBanner: project.hasProperty("markPreview") ? "@drawable/preview_custom_banner" : "@drawable/nova_banner"]
+        if (project.hasProperty("arm64only")) {
+            // Supernova targets the NVIDIA Shield (64-bit ARM): only the arm64-v8a engines are packaged
+            // (owner decision, 3 Nov 2026). Rebuild without -Parm64only for other devices.
+            ndk { abiFilters 'arm64-v8a' }
+        }
+        applicationId = foundationIdentity ? "app.supernova.player" : project.hasProperty("markPreview") ? "org.courville.nova.markpreview" : "org.courville.nova"
+        manifestPlaceholders = [novaLaunchTheme: foundationIdentity ? "@style/FoundationLaunch" : project.hasProperty("markPreview") ? "@style/PreviewLaunch" : "@style/MyLeanbackTheme.Launcher", novaEntryTheme: foundationIdentity ? "@style/FoundationEntry" : project.hasProperty("markPreview") ? "@style/PreviewEntry" : "@style/ArchosThemeLauncher", novaIcon: foundationIdentity ? "@mipmap/foundation_launcher" : project.hasProperty("markPreview") ? "@drawable/preview_custom_icon" : "@mipmap/ic_launcher", novaBanner: foundationIdentity ? "@drawable/foundation_banner" : project.hasProperty("markPreview") ? "@drawable/preview_custom_banner" : "@drawable/nova_banner", novaLabel: foundationIdentity ? "Supernova" : "@string/nova"]
         generatedDensities = []
         minSdkVersion 23
         targetSdkVersion 36
@@ -166,10 +229,11 @@ android {
         // below version tracks the one from F-Droid or universal package when generated with ./gradlew -Puniversal
         // this is overridden when using split apk and normal split apk generation or oneapk amazon generation
         // amazon apk is generated with ./gradlew -Poneapk
-        versionCode = 6040083
-        versionName = project.hasProperty("markPreview") ? '6.4.63-mark.4.1.7-preview' : '6.4.63-mark.3'
+        def foundationVersion = new groovy.json.JsonSlurper().parse(file("assets/foundation/release-history.json"))
+        versionCode = foundationIdentity ? foundationVersion.current.version_code as int : 6040083
+        versionName = foundationIdentity ? foundationVersion.current.version : project.hasProperty("markPreview") ? '6.4.63-mark.4.1.7-preview' : '6.4.63-mark.3'
         def novaVersionName = versionName
-        if (! project.hasProperty("universal")) {
+        if (!foundationIdentity && ! project.hasProperty("universal")) {
             // override versionName and versionCode to get it dependent on the date
             versionName = versionName + "-" + getFormattedDate()
             // 2549909 is 20221124 last Google play release to reset counter
@@ -181,7 +245,10 @@ android {
         println("defaultConfig archivesBaseName : " + archivesNameValue)
         println("defaultConfig versionName : " + versionName)
         println("defaultConfig versionCode : " + versionCode)
-        if (keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
+        if (foundationRelease) signingConfig = signingConfigs.foundation
+        else if (!foundationVerify && keystorePropertiesFile.exists()) signingConfig = signingConfigs.release
+        buildConfigField "boolean", "FOUNDATION", foundationIdentity.toString()
+        buildConfigField "boolean", "DEVELOPMENT_DIAGNOSTICS", project.hasProperty("supernovaQa").toString()
         if (project.hasProperty("sponsor")) {
             buildConfigField "boolean", "ENABLE_SPONSOR", "true"
         } else {
@@ -208,7 +275,7 @@ android {
         buildConfigField "String", "PREVIEW_GIT_SHA", "\"${previewSource}\""
         buildConfigField "String", "PREVIEW_BUILD_UTC", "\"${new Date().format('yyyy-MM-dd HH:mm', TimeZone.getTimeZone('UTC'))}\""
         resValue "string", "VERSION_NAME", versionName
-        resValue "string", "APP_INFO", "Nova v" + versionName + " (" + applicationId + ")"
+        resValue "string", "APP_INFO", (foundationIdentity ? "Supernova " : "Nova v") + versionName + " (" + applicationId + ")"
     }
     bundle {
         language {
@@ -259,7 +326,9 @@ android {
     buildTypes {
         println("buildTypes archivesBaseName : " + archivesNameValue)
         release {
-            if (project.hasProperty('markSigning')) signingConfig signingConfigs.debug
+            if (foundationRelease) signingConfig signingConfigs.foundation
+            else if (foundationVerify) signingConfig = null
+            else if (project.hasProperty('markSigning')) signingConfig signingConfigs.debug
             minifyEnabled = true
             shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-project.txt'
@@ -273,7 +342,8 @@ android {
                          'kotlin/**',
                          'okhttp3/**',
                          'org/**',
-                         "**/libc++_shared.so"
+                         "**/libc++_shared.so",
+                         "**/libtorrentd.so"
                         ]
                          
             pickFirsts += ['lib/x86/libnvpnativehelper.so',
@@ -321,6 +391,12 @@ android {
             includeAndroidResources = true
         }
         unitTests.all {
+            // Native graphics and SQLite loaders keep process state across Robolectric sandboxes.
+            // Isolate classes so rendering and real database tests cannot contaminate each other.
+            forkEvery = 1
+            // Robolectric API37 FileDescriptor bridge on JDK21.
+            jvmArgs "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED"
+            maxParallelForks = 2
             testLogging {
                 events "passed", "skipped", "failed", "standardOut", "standardError"
                 outputs.upToDateWhen {false}
@@ -340,6 +416,14 @@ android {
 }
 
 androidComponents {
+    beforeVariants(selector().all()) { variant ->
+        if (foundationIdentity) {
+            // Even an aggregate task must never create a debug signing key or
+            // another Foundation distribution variant accidentally.
+            variant.enable = variant.buildType == "release" && variant.productFlavors.any { it.second == "noamazon" }
+            if (variant.enable && foundationVerify) variant.enableUnitTest = true
+        }
+    }
     onVariants(selector().all()) { variant ->
         variant.outputs.forEach { output ->
             String currentName = output.outputFileName.get()
@@ -374,25 +458,25 @@ dependencies {
     // Reuse MediaLib's existing TMDb client for progressive person portraits.
     implementation 'com.uwetrottmann.tmdb2:tmdb-java:2.13.0'
     // CustomApplication imports the provider directly; library implementation dependencies are not exposed.
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.85'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.86'
     implementation 'androidx.lifecycle:lifecycle-process:2.11.0'
     // needed for old Android versions when using java 17
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs_nio:2.1.5'
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.4.9'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.tvprovider:tvprovider:1.1.0'
     implementation 'androidx.media:media:1.8.0'
-    implementation 'androidx.core:core:1.19.0'
+    implementation 'androidx.core:core:1.19.1'
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
     implementation 'androidx.legacy:legacy-support-core-ui:1.0.0'
-    implementation 'androidx.fragment:fragment:1.9.0'
+    implementation 'androidx.fragment:fragment:1.9.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.8.0'
     // Uses the installed browser for OAuth without embedding a browser engine.
-    implementation 'androidx.browser:browser:1.9.0'
+    implementation 'androidx.browser:browser:1.10.0'
     implementation 'androidx.preference:preference:1.2.1'
     implementation ('com.github.ksoichiro:android-observablescrollview:1.6.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
@@ -402,17 +486,24 @@ dependencies {
     implementation 'androidx.leanback:leanback:1.2.0'
     implementation 'androidx.leanback:leanback-preference:1.2.0'
     implementation 'androidx.tvprovider:tvprovider:1.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.5.1'
     implementation 'com.github.tony19:logback-android:3.0.0'
-    implementation 'io.sentry:sentry-android:8.53.0'
-    implementation 'io.sentry:sentry:8.53.0'
+    implementation 'io.sentry:sentry-android:8.61.1'
+    implementation 'io.sentry:sentry:8.61.1'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.23.0'
-    testImplementation 'org.robolectric:robolectric:4.16.1'
+    testImplementation 'org.mockito:mockito-core:5.24.0'
+    testImplementation 'org.robolectric:robolectric:4.17'
     testImplementation 'androidx.test:core:1.7.0'
-    testImplementation 'org.slf4j:slf4j-api:2.0.18'
-    testImplementation 'ch.qos.logback:logback-classic:1.6.3'
+    testImplementation 'org.slf4j:slf4j-api:2.0.20'
+    testImplementation 'ch.qos.logback:logback-classic:1.6.6'
+    // MediaLib implementation APIs are not exposed to this module's test compiler.
+    // Match the existing runtime pins for the real-library UPnP security tests.
+    testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
+    testImplementation 'org.eclipse.jetty:jetty-client:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-server:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-servlet:9.4.58.v20250814'
+    testImplementation 'org.eclipse.jetty:jetty-security:9.4.58.v20250814'
 }
 
 configurations { // try to exclude device specific libraries interfering
@@ -433,4 +524,21 @@ configurations.implementation {
 
 configurations.matching { it.name.toLowerCase().contains("unittest") }.configureEach {
     exclude group: 'com.github.tony19', module: 'logback-android'
+}
+
+// Release-specific inventory; invoked only in the secret-free verification path.
+tasks.register("foundationDependencyInventory") {
+    doLast {
+        if (!foundationVerify) throw new GradleException("Dependency inventory requires unsigned Foundation verification")
+        def artifacts = [configurations.noamazonReleaseRuntimeClasspath, configurations.coreLibraryDesugaring].collectMany { configuration -> configuration.incoming.artifactView {
+            componentFilter { it instanceof org.gradle.api.artifacts.component.ModuleComponentIdentifier }
+        }.artifacts.artifacts.collect { artifact ->
+            def component = artifact.id.componentIdentifier
+            [coordinate: "${component.group}:${component.module}:${component.version}",
+             file: artifact.file.absolutePath, type: artifact.file.name.tokenize('.').last(), configuration: configuration.name]
+        } }.sort { it.coordinate }
+        def destination = layout.buildDirectory.file("foundation/runtime-artifacts.json").get().asFile
+        destination.parentFile.mkdirs()
+        destination.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(artifacts))
+    }
 }

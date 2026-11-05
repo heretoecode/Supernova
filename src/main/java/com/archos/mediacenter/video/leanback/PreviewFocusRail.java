@@ -3,34 +3,52 @@ package com.archos.mediacenter.video.leanback;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 
-/** A single travelling boundary for adjacent navigation controls. Cards keep their own focus. */
+/** A single travelling boundary (the shared white row outline) for adjacent navigation controls. Cards keep their own focus. */
 public final class PreviewFocusRail extends LinearLayout {
-    private PreviewFocusGlow boundary;
+    /** The shared white row outline (owner rule 2 Nov 2026: focus is white everywhere). */
+    private Drawable boundary;
     private final RectF current = new RectF();
     private ValueAnimator movement;
     private boolean visible;
+    private boolean underline;
+    private boolean animateMovement = true;
+
+    public void setAnimateFocus(boolean animate) {
+        animateMovement = animate;
+        moveTo(findFocus());
+    }
+
+    public void useUnderline() {
+        underline = true;
+        moveTo(findFocus());
+        invalidate();
+    }
+
     private final ViewTreeObserver.OnGlobalFocusChangeListener focusListener = (oldView, next) -> moveTo(next);
 
     public PreviewFocusRail(Context context) {
         super(context);
-        boundary = new PreviewFocusGlow(context);
+        boundary = SupernovaStyle.rowFocusOutline(context);
         setClipChildren(false);
         setClipToPadding(false);
     }
 
     public void refreshColour() {
-        boundary = new PreviewFocusGlow(getContext());
+        boundary = SupernovaStyle.rowFocusOutline(getContext());
         invalidate();
     }
 
     private void moveTo(View next) {
-        if (movement != null) movement.cancel();
+        if (movement != null)
+            movement.cancel();
         if (next == null || next.getParent() != this) {
             visible = false;
             invalidate();
@@ -40,7 +58,12 @@ public final class PreviewFocusRail extends LinearLayout {
         next.getDrawingRect(bounds);
         offsetDescendantRectToMyCoords(next, bounds);
         RectF destination = new RectF(bounds);
-        if (!visible || current.isEmpty()) {
+        if (underline) {
+            destination.left += next.getPaddingLeft();
+            destination.right -= next.getPaddingRight();
+            destination.top = destination.bottom - 2 * getResources().getDisplayMetrics().density;
+        }
+        if (!animateMovement || !visible || current.isEmpty()) {
             current.set(destination);
             visible = true;
             invalidate();
@@ -50,34 +73,44 @@ public final class PreviewFocusRail extends LinearLayout {
         movement = ValueAnimator.ofFloat(0f, 1f);
         movement.setDuration(160);
         movement.addUpdateListener(animation -> {
-            float progress = (float) animation.getAnimatedValue();
+            float progress = (float)animation.getAnimatedValue();
             current.set(origin.left + (destination.left - origin.left) * progress,
-                    origin.top + (destination.top - origin.top) * progress,
-                    origin.right + (destination.right - origin.right) * progress,
-                    origin.bottom + (destination.bottom - origin.bottom) * progress);
+                        origin.top + (destination.top - origin.top) * progress,
+                        origin.right + (destination.right - origin.right) * progress,
+                        origin.bottom + (destination.bottom - origin.bottom) * progress);
             invalidate();
         });
         movement.start();
     }
 
-    @Override protected void dispatchDraw(Canvas canvas) {
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
         if (visible) {
-            boundary.setBounds(Math.round(current.left), Math.round(current.top),
-                    Math.round(current.right), Math.round(current.bottom));
-            boundary.draw(canvas);
+            boundary.setBounds(Math.round(current.left), Math.round(current.top), Math.round(current.right),
+                               Math.round(current.bottom));
+            if (underline) {
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setColor(PreviewAccent.color(getContext()));
+                canvas.drawRoundRect(current, getResources().getDisplayMetrics().density,
+                                     getResources().getDisplayMetrics().density, paint);
+            } else
+                boundary.draw(canvas);
         }
     }
 
-    @Override protected void onAttachedToWindow() {
+    @Override
+    protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getViewTreeObserver().addOnGlobalFocusChangeListener(focusListener);
         post(() -> moveTo(findFocus()));
     }
 
-    @Override protected void onDetachedFromWindow() {
+    @Override
+    protected void onDetachedFromWindow() {
         getViewTreeObserver().removeOnGlobalFocusChangeListener(focusListener);
-        if (movement != null) movement.cancel();
+        if (movement != null)
+            movement.cancel();
         visible = false;
         super.onDetachedFromWindow();
     }

@@ -1,0 +1,10 @@
+{
+  "result": "FAIL",
+  "source_sha": "8ec0907483250a942a3d7df66cae135d5a45d1a7",
+  "dependency_sha": "a11cf0a4c7137e107a74196500c0e5e02d9aca48",
+  "tests_executed": false,
+  "failed_task": ":MediaLib:compileReleaseJavaWithJavac",
+  "duration": "17s",
+  "log_sha256": "7dc4047e1b180a953b06030057172ff134fcef839099c632660924bc27d95b5f",
+  "reason": "Movie switch case variables remained in the insert method scope and conflicted with episode case locals. Add an explicit movie case block; no behavioral checks executed."
+}

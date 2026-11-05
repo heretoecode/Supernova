@@ -101,6 +101,7 @@ public class SubtitleColorPicker extends LinearLayout  {
         }
         return false;
     }
+    @Override
     public boolean onKeyUp(int keyCode, KeyEvent keyEvent) {
         return true;
     }
@@ -120,6 +121,7 @@ public class SubtitleColorPicker extends LinearLayout  {
         super(context, attrs, defStyleAttr);
         init();
     }
+    @Override
     protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus,direction, previouslyFocusedRect);
         if(gainFocus)
@@ -127,6 +129,10 @@ public class SubtitleColorPicker extends LinearLayout  {
         else
             colorBoxes.get(mCurrentlySelectedColor).setBackgroundColor(ContextCompat.getColor(getContext(), android.R.color.transparent));
 
+    }
+    public void setSelectedColor(int color){
+        mColor=color;int index=colors.indexOf(color);if(index>=0)mCurrentlySelectedColor=index;
+        for(int i=0;i<colorBoxes.size();i++)colorBoxes.get(i).setBackgroundColor(i==mCurrentlySelectedColor&&hasFocus()?ContextCompat.getColor(getContext(),R.color.video_info_next_prev_button_pressed):Color.TRANSPARENT);
     }
     private void init() {
         setFocusable(true);

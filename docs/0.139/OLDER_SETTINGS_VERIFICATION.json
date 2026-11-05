@@ -1,0 +1,23 @@
+{
+  "source_sha": "bdf6f97e6d15a23592d866c8a37745d4100ab665",
+  "result": "PASS",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "log_sha256": "5c1ed7ecbb86caa9ea42000a46dd79e636d7ca1d2611b2e17b39b4fa0ed0ffdc",
+  "coverage": [
+    "Actual historical VideoSettingsFragment Preferences initialization",
+    "Logical category selection, retained review/model/opt-out across recreation and explicit preview/confirmation",
+    "Locations default Off, declined and accepted privacy consent with consistent visible state",
+    "Historical1.0 separate whole-library/authentication disconnect confirmation and cancellation",
+    "Existing modern TV sidebar and model regression checks"
+  ],
+  "limits": "Native SQLite/Robolectric only. Retained model application owns preference and cache checks because Robolectric recreation replaces Application contexts. Not actual SAF provider/OS kill/Shield/native decoder/complete BACKUP43.",
+  "tests": 17,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

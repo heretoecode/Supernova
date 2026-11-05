@@ -1,0 +1,15 @@
+{
+  "source_sha": "f9b6a0113bf205d9ec3fbbc244099b18fa0bad55",
+  "classes": 12,
+  "tests": 42,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "task": "testNoamazonReleaseUnitTest",
+  "limits": [
+    "Synthetic Android/Robolectric, not Shield",
+    "Details content/frame acceptance pending owner content decision",
+    "Library inherited blue focus failed visual review and changed after this SHA; requires re-render",
+    "No decoder/native playback exercised"
+  ]
+}

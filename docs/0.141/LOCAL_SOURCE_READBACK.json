@@ -1,0 +1,18 @@
+{
+  "checked_at_utc": "2026-10-22T22:11:59.468888+00:00",
+  "candidate_source": "5109dd0c83082528b896a8aaa6d0d50f4a930027",
+  "compared_application_source_files": 2191,
+  "byte_identical_files": 2190,
+  "expected_build_preparation_changes": [
+    {
+      "file": "res/xml/searchable_video.xml",
+      "reason": "Existing prepare-foundation.py provider-authority isolation; same transformation as prior releases"
+    }
+  ],
+  "source_tree_objects": {
+    "src": "3b9791134d6c2f032ea13f469e9cf0753bfffea0",
+    "res": "6aa05f5da6bb1431d6200ffcce4e992708da7fbd",
+    "assets": "7a27c5cb2e7b8c2af3c7d4ea1e32e02389d674c4"
+  },
+  "limits": "Local build copy retains its older checkout Git metadata; source files match candidate as verified above. It is not claimed as a final exact-source APK. Fresh GitHub conformance performs detached exact-source checkout and complete native rebuild."
+}

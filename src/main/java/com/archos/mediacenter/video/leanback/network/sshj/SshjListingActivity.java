@@ -19,6 +19,7 @@ import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 
 import com.archos.mediacenter.video.leanback.network.NetworkListingFragment;
 
+/** Hosts SSHJ file listings in the TV file browser. */
 public class SshjListingActivity extends ListingActivity {
 
     @Override

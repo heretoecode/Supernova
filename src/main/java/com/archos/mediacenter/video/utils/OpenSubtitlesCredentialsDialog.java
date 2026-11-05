@@ -34,6 +34,7 @@ import androidx.fragment.app.DialogFragment;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays the OpenSubtitles credentials dialog. */
 public class OpenSubtitlesCredentialsDialog extends DialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSubtitlesCredentialsDialog.class);
@@ -103,7 +105,7 @@ public class OpenSubtitlesCredentialsDialog extends DialogFragment {
                         Toast.makeText(getActivity(), getString(R.string.dialog_subloader_credentials_empty), Toast.LENGTH_SHORT).show();
                 });
         mDialog = builder.create();
-        mDialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(mDialog));
+        mDialog.setOnShowListener(ignored -> PreviewDialog.styleNative(mDialog));
         return mDialog;
     }
 

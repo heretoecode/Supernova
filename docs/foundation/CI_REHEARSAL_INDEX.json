@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "workflow_run": "https://github.com/heretoecode/Supernova/actions/runs/37929976741",
+  "conclusion": "success",
+  "operation": "verify",
+  "source_commit": "64e1a2ebef18941b0f2719d5dbf810c25c01985c",
+  "artifact_id": 11616991855,
+  "artifact_name": "supernova-foundation-unsigned-conformance",
+  "artifact_zip_sha256": "7127a5209dc47af3a55d1fc732f658a4b70d7973598beda5049852df439278b5",
+  "signed_apk_produced": false,
+  "python_tests": 36,
+  "files": [
+    {
+      "path": "CI_UNSIGNED_BUILD_EVIDENCE.json",
+      "sha256": "9bc5bb7057419c1f84408b6021c269dfda723215bde2ad34c53fce825ec48f3b"
+    },
+    {
+      "path": "CI_FFMPEG_BUILD_EVIDENCE.json",
+      "sha256": "b2e4b3c8e5abe185fcbc54be319c3601fa25606bdbb31db84dfbfb6fea3a6fa5"
+    },
+    {
+      "path": "CI_FFMPEG_NATIVE_REGRESSION.json",
+      "sha256": "61c68fd25519265070a5febbf2d8cc88c1c650e0b9b95305ab1ab1926bb44eba"
+    }
+  ]
+}

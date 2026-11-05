@@ -1,0 +1,8 @@
+{
+  "result": "FAIL",
+  "source_sha": "bc0ab689",
+  "tests_executed": 0,
+  "duration": "23s",
+  "log_sha256": "f09a4c49804767c7601bd43943846d86fbfbbd59127659a3e2449eb5afc661c4",
+  "reason": "New diagnostic fixture passed Maps to settings exporter whose established API requires SharedPreferences; correct fixture source stores. No behavioral tests ran; older XML was not reused."
+}

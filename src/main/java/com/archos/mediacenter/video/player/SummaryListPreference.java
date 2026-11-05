@@ -18,6 +18,7 @@ import android.content.Context;
 import androidx.preference.ListPreference;
 import android.util.AttributeSet;
 
+/** Adds selectable summary entries to a list preference. */
 public class SummaryListPreference extends ListPreference {
     private CharSequence[] mSummaryEntries = null;
     public SummaryListPreference(Context context) {

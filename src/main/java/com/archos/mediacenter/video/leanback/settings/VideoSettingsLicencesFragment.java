@@ -17,6 +17,11 @@ package com.archos.mediacenter.video.leanback.settings;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceFragmentCompat;
@@ -24,13 +29,15 @@ import androidx.preference.PreferenceManager;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
 import androidx.leanback.preference.LeanbackSettingsFragmentCompat;
 
+import androidx.recyclerview.widget.RecyclerView;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediacenter.video.utils.WebUtils;
 
+/** Displays software licence preferences and handles licence selection. */
 public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompat {
-
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
     @Override
@@ -54,7 +61,7 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
     }
 
     @Override
-    public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Note: Don't apply window theme for leanback preferences
@@ -68,7 +75,7 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
             }
         };
         PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .registerOnSharedPreferenceChangeListener(mThemeChangeListener);
+            .registerOnSharedPreferenceChangeListener(mThemeChangeListener);
     }
 
     @Override
@@ -76,34 +83,66 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             PreferenceManager.getDefaultSharedPreferences(requireContext())
-                    .unregisterOnSharedPreferenceChangeListener(mThemeChangeListener);
+                .unregisterOnSharedPreferenceChangeListener(mThemeChangeListener);
         }
         super.onDestroyView();
     }
 
     public static class PrefsFragment extends LeanbackPreferenceFragmentCompat {
-        @Override public androidx.recyclerview.widget.RecyclerView onCreateRecyclerView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.grid(requireContext()):super.onCreateRecyclerView(inflater,parent,state);}
-        @Override protected androidx.recyclerview.widget.RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false)?PreviewSettings.adapter(screen):super.onCreateAdapter(screen);}
-        @Override public android.view.View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup container,Bundle state){
-            android.view.View original=super.onCreateView(inflater,container,state);if(!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return original;
-            androidx.recyclerview.widget.RecyclerView list=getListView();if(list.getParent() instanceof android.view.ViewGroup)((android.view.ViewGroup)list.getParent()).removeView(list);
-            android.widget.LinearLayout panel=new android.widget.LinearLayout(requireContext());panel.setOrientation(android.widget.LinearLayout.VERTICAL);int pad=com.archos.mediacenter.video.leanback.PreviewDialog.dp(requireContext(),28);panel.setPadding(pad,pad/2,pad,pad);panel.setBackgroundColor(0xff0b1b29);
-            android.widget.TextView title=new android.widget.TextView(requireContext());title.setText("Licences & acknowledgements");title.setTextColor(0xffc8e2f3);title.setTextSize(20);title.setPadding(0,0,0,pad/2);panel.addView(title);panel.addView(list,new android.widget.LinearLayout.LayoutParams(-1,0,1));return panel;
+        @Override
+        public RecyclerView onCreateRecyclerView(
+            LayoutInflater inflater, ViewGroup parent, Bundle state) {
+            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
+                ? PreviewSettings.grid(requireContext())
+                : super.onCreateRecyclerView(inflater, parent, state);
         }
 
+        @Override
+        protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen screen) {
+            return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false)
+                ? PreviewSettings.adapter(screen)
+                : super.onCreateAdapter(screen);
+        }
+
+        @Override
+        public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle state) {
+            View original = super.onCreateView(inflater, container, state);
+            if (!PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
+                return original;
+            RecyclerView list = getListView();
+            if (list.getParent() instanceof ViewGroup)
+                ((ViewGroup) list.getParent()).removeView(list);
+            LinearLayout panel = new LinearLayout(requireContext());
+            panel.setOrientation(LinearLayout.VERTICAL);
+            int pad = PreviewDialog.dp(requireContext(), 28);
+            panel.setPadding(pad, pad / 2, pad, pad);
+            panel.setBackgroundColor(0xff0b1b29);
+            TextView title = new TextView(requireContext());
+            title.setText("Licences & acknowledgements");
+            title.setTextColor(0xffc8e2f3);
+            title.setTextSize(20);
+            title.setPadding(0, 0, 0, pad / 2);
+            panel.addView(title);
+            panel.addView(list, new LinearLayout.LayoutParams(-1, 0, 1));
+            return panel;
+        }
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-            addPreferencesFromResource(R.xml.preferences_licences);if(PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))PreviewSettings.style(getPreferenceScreen());
+            addPreferencesFromResource(R.xml.preferences_licences);
+            if (PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false))
+                PreviewSettings.style(getPreferenceScreen());
         }
 
         @Override
-        public void onViewCreated(android.view.View view, Bundle savedInstanceState) {
+        public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             // Apply theme background color to the preference list (RecyclerView)
             // This colors only the right-side content area, not the entire window
             if (getListView() != null) {
-                getListView().setBackgroundColor(ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
+                getListView().setBackgroundColor(
+                    ThemeManager.getInstance(requireContext()).getLeanbackBackgroundColor());
             }
             // Note: Header color is now handled by the theme (MyLeanbackTheme.Preferences.Black)
         }
@@ -115,9 +154,9 @@ public class VideoSettingsLicencesFragment extends LeanbackSettingsFragmentCompa
                     WebUtils.openWebLink(getActivity(), uri.toString());
                     return true;
                 }
+            } catch (NullPointerException npe) {
             }
-            catch (NullPointerException npe) {}
-    
+
             return super.onPreferenceTreeClick(preference);
         }
     }

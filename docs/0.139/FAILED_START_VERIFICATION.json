@@ -1,0 +1,13 @@
+{
+  "source_sha": "4d74d42c24a2a014ff3679aaace425be2f59e6ec",
+  "classes": 8,
+  "tests": 38,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "limits": [
+    "Failed-start service checkpoint suppression and model/resume regressions, not diagnosis of owner Dune/Tulsa incident",
+    "Frame/advancing-clock signals need decoder/Shield verification",
+    "Legacy saved unlimited Home rows normalize to the largest approved preset30; new rows remain default15"
+  ]
+}

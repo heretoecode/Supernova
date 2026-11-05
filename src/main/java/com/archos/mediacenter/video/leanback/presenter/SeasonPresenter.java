@@ -40,6 +40,7 @@ import com.archos.mediacenter.video.utils.ThemeManager;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+/** Binds season metadata, artwork and watched state to TV cards. */
 public class SeasonPresenter extends Presenter {
 
     final Drawable mErrorDrawable;
@@ -236,7 +237,7 @@ public class SeasonPresenter extends Presenter {
                 Drawable layer[] = new Drawable[2];
                 layer[0] = posterDrawable;
                 BitmapDrawable icon = (BitmapDrawable) ContextCompat.getDrawable(mContext, R.drawable.watched_icon_corner);
-                icon.setGravity(Gravity.TOP | Gravity.RIGHT);
+                icon.setGravity(Gravity.TOP | Gravity.END);
                 layer[1] = icon;
                 finalDrawable = new LayerDrawable(layer);
             } else {

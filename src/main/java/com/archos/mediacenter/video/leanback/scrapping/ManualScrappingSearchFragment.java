@@ -14,14 +14,16 @@
 
 package com.archos.mediacenter.video.leanback.scrapping;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Looper;
 
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.SearchSupportFragment;
@@ -36,9 +38,11 @@ import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.Row;
 import androidx.leanback.widget.RowPresenter;
 import androidx.leanback.widget.ShadowLessRowPresenter;
-import android.util.Log;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewMatchSearch;
 import com.archos.mediacenter.video.leanback.ShadowLessListRow;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
@@ -47,10 +51,15 @@ import com.archos.mediacenter.video.leanback.presenter.EmptyViewPresenter;
 import com.archos.mediacenter.video.leanback.presenter.ScraperBaseTagsPresenter;
 import com.archos.mediacenter.video.leanback.presenter.ScraperSearchResultPresenter;
 import com.archos.mediascraper.BaseTags;
+import com.archos.mediascraper.EpisodeTags;
+import com.archos.mediascraper.MovieTags;
 import com.archos.mediascraper.ScrapeSearchResult;
+import com.archos.mediascraper.ScrapeStatus;
 import com.archos.mediascraper.Scraper;
 import com.archos.mediascraper.SearchResult;
 
+import com.archos.mediascraper.ShowTags;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +70,8 @@ import java.util.concurrent.Executors;
 /**
  * Created by vapillon on 11/06/15.
  */
-public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFragment implements SearchSupportFragment.SearchResultProvider {
-
+public abstract class ManualScrappingSearchFragment
+    extends SafeSearchSupportFragment implements SearchSupportFragment.SearchResultProvider {
     private static final Logger log = LoggerFactory.getLogger(ManualScrappingSearchFragment.class);
 
     protected static final int SEARCH_RESULT_MAX_ITEMS = 10;
@@ -80,22 +89,55 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
     private NfoTask mNfoTask;
 
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
-    private com.archos.mediacenter.video.leanback.PreviewMatchSearch previewSearch;
-    private String initialQuery="";
-    protected void setInitialQuery(String query){initialQuery=query==null?"":query;setSearchQuery(initialQuery,true);}
-    public boolean focusPreviewSearch(){if(previewSearch==null)return false;previewSearch.focusInput();return true;}
-    @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-        View nativeView=super.onCreateView(inflater,parent,state);
-        if(!androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))return nativeView;
-        android.widget.FrameLayout root=new android.widget.FrameLayout(requireContext());root.addView(nativeView);nativeView.setVisibility(View.GONE);
-        previewSearch=new com.archos.mediacenter.video.leanback.PreviewMatchSearch(requireContext(),initialQuery,this::onQueryTextSubmit,this::previewMatch);
-        configurePreviewSearch(previewSearch);
-        root.addView(previewSearch,new android.widget.FrameLayout.LayoutParams(-1,-1));return root;
-    }
-    protected void configurePreviewSearch(com.archos.mediacenter.video.leanback.PreviewMatchSearch search){}
-    protected void refreshPreviewSearch(){if(previewSearch!=null)previewSearch.refresh();}
-    private void updatePreviewResults(){if(previewSearch==null)return;java.util.List<BaseTags> values=new java.util.ArrayList<>();if(mResultsAdapter!=null)for(int i=0;i<mResultsAdapter.size();i++)if(mResultsAdapter.get(i) instanceof BaseTags)values.add((BaseTags)mResultsAdapter.get(i));previewSearch.setResults(values);}
+    private PreviewMatchSearch previewSearch;
+    private String initialQuery = "";
 
+    protected void setInitialQuery(String query) {
+        initialQuery = query == null ? "" : query;
+        setSearchQuery(initialQuery, true);
+    }
+
+    public boolean focusPreviewSearch() {
+        if (previewSearch == null)
+            return false;
+        previewSearch.focusInput();
+        return true;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state) {
+        View nativeView = super.onCreateView(inflater, parent, state);
+        if (!PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("try_new_ui", false))
+            return nativeView;
+        FrameLayout root = new FrameLayout(requireContext());
+        root.addView(nativeView);
+        nativeView.setVisibility(View.GONE);
+        previewSearch = new PreviewMatchSearch(
+            requireContext(), initialQuery, this::onQueryTextSubmit, this::previewMatch);
+        configurePreviewSearch(previewSearch);
+        root.addView(previewSearch, new FrameLayout.LayoutParams(-1, -1));
+        return root;
+    }
+
+    protected void configurePreviewSearch(PreviewMatchSearch search) {
+    }
+
+    protected void refreshPreviewSearch() {
+        if (previewSearch != null)
+            previewSearch.refresh();
+    }
+
+    private void updatePreviewResults() {
+        if (previewSearch == null)
+            return;
+        List<BaseTags> values = new ArrayList<>();
+        if (mResultsAdapter != null)
+            for (int i = 0; i < mResultsAdapter.size(); i++)
+                if (mResultsAdapter.get(i) instanceof BaseTags)
+                    values.add((BaseTags) mResultsAdapter.get(i));
+        previewSearch.setResults(values);
+    }
 
     /**
      * Do the actual search
@@ -138,28 +180,38 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
         setSearchResultProvider(this);
         setOnItemViewClickedListener(new OnItemViewClickedListener() {
             @Override
-            public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+            public void onItemClicked(
+                Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item instanceof BaseTags) {
-                    if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))
-                        previewMatch((BaseTags)item);
-                    else saveTagsAndFinish((BaseTags) item);
+                    if (PreferenceManager.getDefaultSharedPreferences(requireContext())
+                            .getBoolean("try_new_ui", false))
+                        previewMatch((BaseTags) item);
+                    else
+                        saveTagsAndFinish((BaseTags) item);
                 }
             }
         });
     }
 
-    private void previewMatch(BaseTags tags){
-        boolean episode=tags instanceof com.archos.mediascraper.EpisodeTags;
-        String title="Metadata match";
-        if(tags instanceof com.archos.mediascraper.MovieTags){
-            com.archos.mediascraper.MovieTags movie=(com.archos.mediascraper.MovieTags)tags;
-            title=movie.getTitle()+(movie.getYear()>0?" ("+movie.getYear()+")":"");
-        }else if(tags instanceof com.archos.mediascraper.ShowTags)title=((com.archos.mediascraper.ShowTags)tags).getTitle();
-        else if(episode){com.archos.mediascraper.EpisodeTags item=(com.archos.mediascraper.EpisodeTags)tags;title=item.getShowTitle()+" · S"+item.getSeason()+" E"+item.getEpisode();}
-        String plot=tags.getPlot();
-        com.archos.mediacenter.video.leanback.PreviewDialog.review(requireContext(),"Match Preview",
-                title+"\n\n"+(plot==null||plot.trim().isEmpty()?"Synopsis unavailable":plot),
-                episode?"Use This Episode":"Use This Match",()->{if(isAdded())saveTagsAndFinish(tags);});
+    private void previewMatch(BaseTags tags) {
+        boolean episode = tags instanceof EpisodeTags;
+        String title = "Metadata match";
+        if (tags instanceof MovieTags) {
+            MovieTags movie = (MovieTags) tags;
+            title = movie.getTitle() + (movie.getYear() > 0 ? " (" + movie.getYear() + ")" : "");
+        } else if (tags instanceof ShowTags)
+            title = ((ShowTags) tags).getTitle();
+        else if (episode) {
+            EpisodeTags item = (EpisodeTags) tags;
+            title = item.getShowTitle() + " · S" + item.getSeason() + " E" + item.getEpisode();
+        }
+        String plot = tags.getPlot();
+        PreviewDialog.review(requireContext(), "Match Preview",
+            title + "\n\n" + (plot == null || plot.trim().isEmpty() ? "Synopsis unavailable" : plot),
+            episode ? "Use This Episode" : "Use This Match", () -> {
+                if (isAdded())
+                    saveTagsAndFinish(tags);
+            });
     }
 
     @Override
@@ -173,7 +225,8 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
     }
 
     private void updateBackground() {
-        if (getActivity() == null) return;
+        if (getActivity() == null)
+            return;
         BackgroundManager bgMngr = BackgroundManager.getInstance(getActivity());
         if (!bgMngr.isAttached()) {
             bgMngr.attach(getActivity().getWindow());
@@ -201,7 +254,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
     @Override
     public void onDestroyView() {
-        previewSearch=null;
+        previewSearch = null;
         // Unregister theme change listener
         if (mThemeChangeListener != null) {
             ThemeManager.getInstance(getActivity()).unregisterThemeChangeListener(mThemeChangeListener);
@@ -211,28 +264,39 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
     @Override
     public ObjectAdapter getResultsAdapter() {
-        if (log.isDebugEnabled()) log.debug("getResultsAdapter()");
+        if (log.isDebugEnabled())
+            log.debug("getResultsAdapter()");
         return mRowsAdapter;
     }
+
     @Override
     public boolean onQueryTextChange(String newQuery) {
         return onQueryText(newQuery);
     }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
         return onQueryText(query);
     }
 
     private boolean onQueryText(String text) {
-        if (log.isDebugEnabled()) log.debug("onQueryText() {}", text);
+        if (log.isDebugEnabled())
+            log.debug("onQueryText() {}", text);
         // Clearing/shortening a query must invalidate every older result callback too.
-        if(mSearchTask!=null){mSearchTask.cancel();mSearchTask=null;}
-        if(mDetailsTask!=null){mDetailsTask.cancel();mDetailsTask=null;}
-        if(previewSearch!=null)previewSearch.searching();
+        if (mSearchTask != null) {
+            mSearchTask.cancel();
+            mSearchTask = null;
+        }
+        if (mDetailsTask != null) {
+            mDetailsTask.cancel();
+            mDetailsTask = null;
+        }
+        if (previewSearch != null)
+            previewSearch.searching();
 
         // A single positive digit is a valid TMDB ID; other one-character queries are too broad.
-        boolean tooShort=text.length()<2&&!text.matches("[1-9]");
-        if(tooShort){
+        boolean tooShort = text.length() < 2 && !text.matches("[1-9]");
+        if (tooShort) {
             mSearchResults = null;
             updateRow();
         }
@@ -245,11 +309,15 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
         return true;
     }
 
-    public void onStop(){
+    @Override
+    public void onStop() {
         super.onStop();
-        if (mNfoTask != null) mNfoTask.cancel();
-        if (mSearchTask != null) mSearchTask.cancel();
-        if (mDetailsTask != null) mDetailsTask.cancel();
+        if (mNfoTask != null)
+            mNfoTask.cancel();
+        if (mSearchTask != null)
+            mSearchTask.cancel();
+        if (mDetailsTask != null)
+            mDetailsTask.cancel();
     }
 
     @Override
@@ -261,7 +329,6 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
     protected abstract BaseTags getNfoTags();
 
-
     private final class NfoTask {
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
         private final Handler handler = new Handler(Looper.getMainLooper());
@@ -270,16 +337,19 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
         void execute() {
             executor.execute(() -> {
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     mNfoTags = getNfoTags();
                 } catch (Exception e) {
                     log.error("NfoTask failed", e);
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 handler.post(() -> {
-                    if (isCancelled || isDetached() || !isAdded() || getView() == null) return;
+                    if (isCancelled || isDetached() || !isAdded() || getView() == null)
+                        return;
                     updateRow();
                 });
             });
@@ -291,26 +361,30 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
         }
     }
 
-
-    private void updateRow(){
-        if (mDetailsTask != null) { mDetailsTask.cancel(); mDetailsTask=null; }
-        mResultsAdapter=null;mOffset=0;
-        if ((mSearchResults==null||mSearchResults.isEmpty())&&mNfoTags==null) {
+    private void updateRow() {
+        if (mDetailsTask != null) {
+            mDetailsTask.cancel();
+            mDetailsTask = null;
+        }
+        mResultsAdapter = null;
+        mOffset = 0;
+        if ((mSearchResults == null || mSearchResults.isEmpty()) && mNfoTags == null) {
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new EmptyViewPresenter());
             listRowAdapter.add(new EmptyView(getEmptyText()));
             mRowsAdapter.clear();
             mRowsAdapter.add(new ShadowLessListRow(new HeaderItem(getString(R.string.search_results)), listRowAdapter));
-        }
-        else {
+        } else {
             // Prepare the result list widget
             ClassPresenterSelector classPresenter = new ClassPresenterSelector();
-            classPresenter.addClassPresenter(SearchResult.class, new ScraperSearchResultPresenter()); // for initial search result
-            classPresenter.addClassPresenter(BaseTags.class, new ScraperBaseTagsPresenter()); // for detailed result info
+            classPresenter.addClassPresenter(
+                SearchResult.class, new ScraperSearchResultPresenter()); // for initial search result
+            classPresenter.addClassPresenter(
+                BaseTags.class, new ScraperBaseTagsPresenter()); // for detailed result info
 
             mResultsAdapter = new ArrayObjectAdapter(classPresenter);
-            if(mNfoTags!=null) {
+            if (mNfoTags != null) {
                 mResultsAdapter.add(0, mNfoTags);
-                mOffset=1;
+                mOffset = 1;
             }
             // Do not add all the show search results to check if season poster exists
             /*
@@ -321,7 +395,7 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
 
             mRowsAdapter.clear();
             mRowsAdapter.add(listRow);
-            if(mSearchResults!=null) {
+            if (mSearchResults != null) {
                 // Launch the details task to get posters, etc.
                 SearchResult[] array = mSearchResults.toArray(new SearchResult[mSearchResults.size()]);
                 mDetailsTask = new ScraperDetailsFetchTask();
@@ -345,21 +419,27 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
             executor.execute(() -> {
                 ScrapeSearchResult result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     result = performSearch(text);
                 } catch (Exception e) {
                     log.error("ScraperSearchTask failed", e);
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final ScrapeSearchResult finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled || mSearchTask != this || isDetached() || !isAdded()) return;
+                    if (isCancelled || mSearchTask != this || isDetached() || !isAdded())
+                        return;
                     mSearchResults = (finalResult != null) ? finalResult.results : null;
                     updateRow();
-                    if(previewSearch!=null&&(finalResult==null||(!finalResult.isOkay()
-                            && finalResult.status!=com.archos.mediascraper.ScrapeStatus.NOT_FOUND)))previewSearch.unavailable();
+                    if (previewSearch != null
+                        && (finalResult == null
+                            || (!finalResult.isOkay()
+                                && finalResult.status != ScrapeStatus.NOT_FOUND)))
+                        previewSearch.unavailable();
                 });
             });
         }
@@ -396,10 +476,12 @@ public abstract class ManualScrappingSearchFragment extends SafeSearchSupportFra
                 try {
                     int n = startOffset;
                     for (SearchResult result : searchResults) {
-                        if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                        if (isCancelled || Thread.currentThread().isInterrupted())
+                            return;
                         final SearchResultDetails details = new SearchResultDetails(n, getTagFromSearchResult(result));
                         handler.post(() -> {
-                            if (isCancelled || mDetailsTask != self || mResultsAdapter != targetAdapter || !isAdded()) return;
+                            if (isCancelled || mDetailsTask != self || mResultsAdapter != targetAdapter || !isAdded())
+                                return;
                             // remove items without a poster
                             /*
                             if(details.mPosition<mResultsAdapter.size())

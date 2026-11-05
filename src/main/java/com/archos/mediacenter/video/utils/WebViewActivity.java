@@ -14,12 +14,11 @@
 
 package com.archos.mediacenter.video.utils;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -27,7 +26,6 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.archos.mediacenter.video.R;
@@ -35,6 +33,7 @@ import com.archos.mediacenter.video.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays web content and handles navigation and WebView lifecycle events. */
 public class WebViewActivity extends AppCompatActivity {
 
     private static final Logger log = LoggerFactory.getLogger(WebViewActivity.class);
@@ -82,6 +81,7 @@ public class WebViewActivity extends AppCompatActivity {
         mWebView.loadUrl(mUri.toString());
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private static void initWebView(WebView webview, Uri uri) {
         webview.setFocusable(true);
         webview.setInitialScale(0); // imdb does not look good in fullscreen with anything but this

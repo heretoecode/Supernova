@@ -1,0 +1,14 @@
+{
+  "source_sha": "5e21784aa47353f5adf2265c97c10c20387111a3",
+  "result": "FAIL",
+  "classes": 1,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest"
+  ],
+  "duration": "30s",
+  "log_sha256": "9849323f30f1afe81954431d5ee23262e9e1efc13980950eef2c0cc159e47d14",
+  "tests": 3,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0
+}

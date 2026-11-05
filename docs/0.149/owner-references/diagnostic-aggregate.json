@@ -1,0 +1,175 @@
+{
+  "archive_sha256": "b20fd7dc35d958370092de3adba036ad64e88becbecce392f9382bfd1eceae41",
+  "scope": "Retained events only; partial coverage; warning/event counts are not unique bugs or crash counts",
+  "decoded_lines": 18557,
+  "malformed_lines": 1,
+  "duplicate_copies": 2557,
+  "conflicting_identities": 0,
+  "distinct_events": 16000,
+  "events": {
+    "PREVIOUS_SESSION_UNCLEAN_EXIT": 101,
+    "android_process_exit": 1,
+    "app_session_begin": 47,
+    "app_session_end": 46,
+    "artwork_bind": 435,
+    "artwork_cancelled": 25,
+    "artwork_operation_begin": 936,
+    "artwork_ready": 872,
+    "artwork_request": 936,
+    "audio_metadata": 3,
+    "buffering": 10,
+    "checkpoint_attempt": 59,
+    "checkpoint_submitted": 55,
+    "details_artwork_ready": 4,
+    "details_core_cache_ready": 1,
+    "details_enrichment": 3,
+    "details_first_paint": 1,
+    "details_information_ready": 11,
+    "error_checkpoint_attempt": 1,
+    "flight_snapshot": 14,
+    "focus": 400,
+    "focus_anomaly_suspected": 864,
+    "focus_entry": 8,
+    "focus_navigation": 388,
+    "focus_restoration": 11,
+    "heartbeat": 219,
+    "hero_window_prepared": 82,
+    "home_page_render": 155,
+    "incident_burst_summary": 613,
+    "incident_capture": 212,
+    "incident_repeated": 78,
+    "indexed_library_counts": 36,
+    "lifecycle": 241,
+    "metadata_http_body": 209,
+    "metadata_http_response": 209,
+    "metadata_network_failed": 671,
+    "metadata_network_outcome": 209,
+    "metadata_network_started": 210,
+    "metadata_package_failed": 672,
+    "metadata_package_stage": 533,
+    "metadata_semantic_failed": 12,
+    "metadata_semantic_validated": 209,
+    "operation_begin": 1123,
+    "operation_end": 2016,
+    "performance_trend": 34,
+    "playback_activity_finish": 4,
+    "playback_attempt": 714,
+    "playback_begin": 46,
+    "playback_end": 37,
+    "playback_exit_requested": 4,
+    "playback_selection": 1,
+    "player_error": 1,
+    "player_output_established": 1,
+    "player_prepared": 2,
+    "player_state": 49,
+    "provider_metadata_lookup": 246,
+    "provider_request_complete": 18,
+    "provider_transport_complete": 18,
+    "putio_sync_complete": 1,
+    "putio_sync_started": 1,
+    "scan_batch_complete": 8,
+    "scan_batch_failed": 8,
+    "scan_complete": 211,
+    "scan_failed": 166,
+    "scan_indexing": 267,
+    "scan_metadata_failed": 3,
+    "scan_metadata_queued": 12,
+    "scan_operation_terminal": 8,
+    "scan_partial": 3,
+    "scan_queued": 18,
+    "scan_reconciled": 11,
+    "scan_requested": 4,
+    "scan_started": 404,
+    "scanner_state": 127,
+    "seek": 37,
+    "seek_callback_unattributed": 77,
+    "seek_complete": 19,
+    "session_backgrounded": 46,
+    "session_clean_shutdown": 2,
+    "startup": 131,
+    "subtitle_metadata": 4,
+    "subtitle_selection": 4,
+    "transport_read": 126,
+    "ui_rebuild": 185,
+    "uncaught_exception": 1
+  },
+  "startup_versions": {
+    "0.146": 22,
+    "0.147": 44,
+    "0.148": 50,
+    "0.149": 15
+  },
+  "event_versions": {
+    "focus_anomaly_suspected": {
+      "0.146": 27,
+      "0.147": 458,
+      "0.148": 330,
+      "0.149": 48,
+      "unretained": 1
+    },
+    "scan_failed": {
+      "0.146": 8,
+      "0.147": 66,
+      "0.148": 70,
+      "0.149": 20,
+      "unretained": 2
+    },
+    "scan_batch_failed": {
+      "0.147": 2,
+      "0.148": 4,
+      "0.149": 2
+    },
+    "metadata_network_failed": {
+      "unretained": 671
+    },
+    "metadata_package_failed": {
+      "unretained": 672
+    },
+    "metadata_semantic_failed": {
+      "0.148": 10,
+      "0.149": 2
+    },
+    "player_error": {
+      "0.147": 1
+    },
+    "uncaught_exception": {
+      "0.148": 1
+    }
+  },
+  "focus_kinds": {
+    "focused_control_clipped": 2,
+    "navigation_overlap": 743,
+    "offscreen_focus": 80,
+    "repeated_unhandled_navigation": 12,
+    "restoration_fallback": 27
+  },
+  "overlap_target_classes": {
+    "FocusRecycler": 1,
+    "PreviewPages": 742
+  },
+  "restoration_outcomes": {
+    "False": 1,
+    "True": 26
+  },
+  "unclean_warnings_naming_process_with_later_events": 35,
+  "network_exception_types": {
+    "SocketTimeoutException": 5,
+    "UnknownHostException": 666
+  },
+  "package_failure_categories": {
+    "SocketTimeoutException": 5,
+    "UnknownHostException": 667
+  },
+  "os_exit_reasons": {
+    "10": 1
+  },
+  "uncaught_exception_classes": {
+    "java.lang.IllegalArgumentException": 1
+  },
+  "distinct_playback_attempt_ids": 238,
+  "playback_operation_records": {
+    "OPEN": 240,
+    "SEEK": 474
+  },
+  "raw_event_payloads_exported": false
+}

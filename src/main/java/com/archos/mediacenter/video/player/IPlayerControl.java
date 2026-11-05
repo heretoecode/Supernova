@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+/** Defines playback controls, seeking and audio and subtitle track selection. */
 public interface IPlayerControl {
     void    start(int state);
     void    pause(int state);

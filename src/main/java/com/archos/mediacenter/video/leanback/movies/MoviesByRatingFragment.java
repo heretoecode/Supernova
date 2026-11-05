@@ -32,6 +32,7 @@ import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
 import com.archos.mediaprovider.video.VideoStore;
 
 
+/** Displays movies grouped by rating with sorting controls. */
 public class MoviesByRatingFragment extends VideosByFragment {
 
     private static final String SORT_PARAM_KEY = MoviesByRatingFragment.class.getName() + "_SORT";
@@ -44,7 +45,7 @@ public class MoviesByRatingFragment extends VideosByFragment {
         sortOrderIndexer.put(0, new MoviesSortOrderEntry(R.string.sort_by_rating_asc,      SortOrder.SCRAPER_M_RATING.getDesc()));
         sortOrderIndexer.put(1, new MoviesSortOrderEntry(R.string.sort_by_name_asc,        "name COLLATE LOCALIZED ASC"));
         sortOrderIndexer.put(2, new MoviesSortOrderEntry(R.string.sort_by_date_added_desc, VideoStore.MediaColumns.DATE_ADDED + " DESC"));
-        sortOrderIndexer.put(3, new MoviesSortOrderEntry(R.string.sort_by_year_desc,       VideoStore.Video.VideoColumns.SCRAPER_M_YEAR + " DESC"));
+        sortOrderIndexer.put(3, new MoviesSortOrderEntry(R.string.sort_by_year_desc,       VideoStore.Video.VideoColumns.SCRAPER_M_YEAR + " DESC, " + VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE + " DESC, name COLLATE NOCASE ASC"));
         sortOrderIndexer.put(4, new MoviesSortOrderEntry(R.string.sort_by_duration_asc,    SortOrder.DURATION.getAsc()));
     }
 
@@ -66,7 +67,7 @@ public class MoviesByRatingFragment extends VideosByFragment {
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie)
             return new FilmsByRatingLoader(context);
-        else return new MoviesByRatingLoader(context);
+            else return new MoviesByRatingLoader(context);
     }
 
     @Override

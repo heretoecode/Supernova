@@ -1,0 +1,16 @@
+{
+  "source_sha": "67c1a0b788f2a9ad67897f30f8bc5d77c1a60235",
+  "result": "FAIL",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "log_sha256": "e98876c5ebc736fea1ee40a912b921dc08bc61082eae04f28d10c5c7a77bbc5f",
+  "limits": "Actual historical Preferences fragment and dialog in Robolectric; no provider hardware/force-stop/Shield",
+  "tests": 17,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0
+}

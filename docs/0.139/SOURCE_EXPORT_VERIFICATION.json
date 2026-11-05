@@ -1,0 +1,18 @@
+{
+  "source_sha": "85b2a6f79a6563d588e4b73ab549c9ee0d58337e",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 30,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest"
+  ],
+  "duration": "2m 11s",
+  "log_sha256": "806a3c25cc973236a9f41ce1501bdfd0be7ad2aead62592d986d28e5935063a3",
+  "limits": "Read-only real SQLite inventory and22 registered category source-to-archive checks; production Settings/SAF integration and physical Shield acceptance not covered."
+}

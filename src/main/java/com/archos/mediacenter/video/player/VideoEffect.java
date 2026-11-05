@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+/** Defines video effect modes, rendering hooks and playback interface modes. */
 public class VideoEffect {
 
     public static final int EFFECT_CLASS_MODE = 0x0000FFFF;
@@ -79,7 +80,7 @@ public class VideoEffect {
     
     public int getEffectMode() {
         if (isInForcedMode()) return getForcedMode();
-        else return mMode;
+            else return mMode;
     }
     
     public static int getDefaultMode() {

@@ -1,0 +1,16 @@
+{
+  "environment": "supernova-foundation-signing",
+  "requested_action": "Authorize only the exact0.146 branch in the existing selected branch policy",
+  "method": "POST",
+  "endpoint": "/repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies",
+  "body": {
+    "name": "codex/supernova-0.146-upstream-completion-2026-10-28",
+    "type": "branch"
+  },
+  "applied": true,
+  "reason": "Owner authorized the exact 0.146 branch; live policy verified and protected signing completed successfully. The assistant did not change environment protections.",
+  "status": "resolved_by_owner",
+  "applied_by_assistant": false,
+  "observed_policy_id": 64803247,
+  "remaining_owner_action": null
+}

@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.R;
 
 import java.io.Serializable;
 
+/** Represents a collection's metadata, artwork, movie counts and watched state. */
 public class Collection extends Base implements Serializable {
 
     private static final String TAG = "Collection";
@@ -111,6 +112,7 @@ public class Collection extends Base implements Serializable {
         return mCollId;
     }
 
+    @Override
     public Uri getPosterUri() {
         if(mPosterUri!=null)
             return Uri.parse(mPosterUri);

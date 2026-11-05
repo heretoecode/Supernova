@@ -1,0 +1,26 @@
+{
+  "source_sha": "3a9ccda45e7d0ed58c3f89417b458faada781c39",
+  "classes": 3,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.VerifiedBackupPublicationTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "checks": [
+    "Private archive validated before destination open",
+    "Provider stream closed before exact readable SHA256/length comparison",
+    "Corrupted/truncated/trailing/unreadable/failed-close destinations rejected",
+    "Cancellation before open and during copy preserves private archive",
+    "Owned incomplete documents removed; pre-existing documents preserved with cleanup-pending outcome",
+    "Altered private archive rejected before write; archive and preference journal regressions"
+  ],
+  "limits": [
+    "Synthetic stream provider, not real Android DocumentsProvider/cloud capability tests",
+    "No production picker/progress/notification/retry/retention integration",
+    "No claim of universal provider atomicity or remote durability beyond readable exact copy"
+  ]
+}

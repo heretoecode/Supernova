@@ -39,6 +39,7 @@ import com.archos.mediacenter.video.R;
 
 import java.util.ArrayList;
 
+/** Displays track and settings entries and reports the user's selection. */
 public class TrackInfoController implements OnMenuItemClickListener, OnItemClickListener {
     private MenuItem mMenuItem = null;
     private ListPopupWindow mPopup = null;
@@ -87,6 +88,7 @@ public class TrackInfoController implements OnMenuItemClickListener, OnItemClick
             this.summary = summary;
             this.isExternal = isExternal;
         }
+        @Override
         public String toString() {
             return this.name.toString();
         }
@@ -165,6 +167,7 @@ public class TrackInfoController implements OnMenuItemClickListener, OnItemClick
             mInflater = inflater;
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = null;
             TrackItem item = mTrackItemList.get(position);
@@ -249,14 +252,17 @@ public class TrackInfoController implements OnMenuItemClickListener, OnItemClick
             return super.isEnabled(position);
         }
 
+        @Override
         public int getCount() {
             return mTrackItemList.size();
         }
 
+        @Override
         public Object getItem(int position) {
             return mTrackItemList.get(position);
         }
 
+        @Override
         public long getItemId(int position) {
             return 0;
         }
@@ -286,6 +292,7 @@ public class TrackInfoController implements OnMenuItemClickListener, OnItemClick
         mTrackInfoListener = listener;
     }
 
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (mTrackInfoAdapter != null && mPopup != null) {
             // little hack: put the popup below the action bar

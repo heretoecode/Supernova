@@ -1,0 +1,71 @@
+{
+  "artifact_sha256": "a0836e6bb454e2d50a5017f29dc568b17c35facb90f66348ce34a687ec5d7cf1",
+  "artifact_bytes": 122883656,
+  "independent_archive_digest_and_crc": "pass",
+  "junit_xml_files": 312,
+  "modules": {
+    "FileCoreLibrary": {
+      "passed": 102,
+      "total": 104,
+      "skipped": 2
+    },
+    "MediaLib": {
+      "passed": 198,
+      "total": 200,
+      "skipped": 2
+    },
+    "Video": {
+      "passed": 1258,
+      "total": 1258
+    }
+  },
+  "retained_skipped_cases": [
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.RealDatabasePruningTest",
+      "name": "syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent"
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.RealDatabasePruningTest",
+      "name": "realDatabaseUpgradesCleanlyAndPassesIntegrityCheck"
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.SpeedTestTransferTest",
+      "name": "compareTransferRates"
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest",
+      "name": "compareMinimalPropertiesWithAllprop"
+    }
+  ],
+  "lint_severities": {
+    "Warning": 1496
+  },
+  "physical_shield": "NOT RUN",
+  "run_id": 41137713737,
+  "run_attempt": 2,
+  "source_commit": "f5e2924cc8f7302032933f8aec8793030b6e1b0f",
+  "conclusion": "success",
+  "artifact_id": 13018929794,
+  "completed_at": "2026-10-30T23:02:45Z",
+  "started_at": "2026-10-30T22:30:35Z",
+  "tooling_tests_passed": 134,
+  "java_files_parsed": 1103,
+  "java_syntax_errors": 0,
+  "tests_total": 1562,
+  "passed": 1558,
+  "skipped": 4,
+  "failures": 0,
+  "errors": 0,
+  "independent_packaged_native_hashes_verified": 84,
+  "independent_runtime_archive_and_pom_hash_records_verified": 139,
+  "distinct_runtime_archive_paths": 136,
+  "independent_runtime_sbom_match": true,
+  "native_build_evidence_digest_matches_receipt": true,
+  "all_packaged_native_files_have_independent_input_provenance": true,
+  "android23_evidence": "Existing 28-case proof reused for unchanged production transport/native inputs; not rerun on hardware in this task.",
+  "attempt_1": "HTTP 429 while downloading a pinned Jetty build input; stopped before application compilation. Exact source and hashes retried without bypass."
+}

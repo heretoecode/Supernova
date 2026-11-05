@@ -1,0 +1,27 @@
+{
+  "result": "PASS",
+  "source_sha": "6b22dbbf2039661adb81e3f1b9422e95d705da3a",
+  "tests": 1007,
+  "classes": 209,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "lint": {
+    "errors": 0,
+    "warnings": 1771
+  },
+  "gradle_result": "BUILD SUCCESSFUL",
+  "duration": "21m19s",
+  "log_sha256": "718d29d7f37832c9a62f2c704bd7dbf68c0738742a96ab88713eb23f49a4927e",
+  "unsigned_apk": {
+    "filename": "app.supernova.player-139-0.139-universal-release-unsigned.apk",
+    "bytes": 87675917,
+    "sha256": "9077d29886e22ed6063bcf52bfdd292c6945e46599a2c4773f25096acc54f3ed"
+  },
+  "preserved_directory": "/workspace/supernova-evidence/0.139/owner-approved-2026-10-15/full-6b22dbbf",
+  "scope_limits": [
+    "Preceding source only; final23f75b38 removes the extra Back reset and requires its own focused/current full CI proof.",
+    "Full test/lint/assembly PASS is not all43 or signed/device acceptance.",
+    "Local native inputs reuse the pinned signed138 baseline; final CI rebuilds them independently."
+  ]
+}

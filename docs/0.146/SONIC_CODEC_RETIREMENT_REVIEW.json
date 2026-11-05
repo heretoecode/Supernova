@@ -1,0 +1,34 @@
+{
+  "scope": "Experimental Sonic compressed-audio codec, distinct from the supported Sonic PCM time-stretch backend",
+  "upstream_removal": "ca1d253621d4643b7b9ba13ded6dfc68c329fda5",
+  "upstream_deprecation": "d89fbfd4df6fd64f604a8373224aa396149a3784",
+  "technical_reason": "FFmpeg9 upstream removed the research codec after deprecation. Investigated a decoder-only backport from baseline8.0.1 (single24826-byte source file, golomb/rangecoder dependencies), so removal is not claimed technically impossible. Actual0.145 DSOs reject a valid Sonic sample without experimental strictness, and the AVOS decoder path does not set FF_COMPLIANCE_EXPERIMENTAL. No previously working ordinary playback path is demonstrated for this registry entry. Do not reintroduce an unsupported experimental decoder merely to match registry names. If research Sonic files are required, a separately reviewed/opt-in decoder port with malformed-input fuzzing is the remediation.",
+  "sample_sha256": "fc1124477ac9f07353ecd1d8ff6e2fab96c84b52fd790c806cd999b48bbb228e",
+  "baseline_source": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "baseline145_returncode": 4,
+      "baseline145_output": "",
+      "baseline145_stderr": "WARNING: linker: /sonic-baseline/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /sonic-baseline/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n[sonic @ 0x5505e19380] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x5505e19380] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x5505e19380] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x5505e19700] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "baseline145_returncode": 4,
+      "baseline145_output": "",
+      "baseline145_stderr": "WARNING: linker: /sonic-baseline/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /sonic-baseline/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n[sonic @ 0x3ce51300] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x3ce51300] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x3ce51300] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x3ce51600] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n"
+    },
+    {
+      "abi": "x86",
+      "baseline145_returncode": 4,
+      "baseline145_output": "",
+      "baseline145_stderr": "WARNING: linker: /sonic-baseline/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /sonic-baseline/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n[sonic @ 0x3c54a300] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x3c54a300] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x3c54a300] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x3c54a600] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n"
+    },
+    {
+      "abi": "x86_64",
+      "baseline145_returncode": 4,
+      "baseline145_output": "",
+      "baseline145_stderr": "WARNING: linker: /sonic-baseline/native-probe: unused DT entry: type 0x1d arg 0x44c\nWARNING: linker: /sonic-baseline/native-probe: unsupported flags DT_FLAGS_1=0x8000001\n[sonic @ 0x7f30f3411380] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x7f30f3411380] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x7f30f3411380] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n[sonic @ 0x7f30f3411700] The decoder 'sonic' is experimental but experimental codecs are not enabled, add '-strict -2' if you want to use it.\n"
+    }
+  ]
+}

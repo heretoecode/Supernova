@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">Audiogeschwindigkeit</string>
+  <string name="preferences_audio_speed_mode_summary">Wählen Sie den Audio-Geschwindigkeitsfilter zur Änderung der Wiedergabegeschwindigkeit aus. ⚠ Experimentell, kann zu ruckelndem Video oder Audioverzerrungen führen</string>
+  <string name="audio_speed_mode_disabled">Aus</string>
+  <string name="audio_speed_mode_audiotrack">System-nativ (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">Ausgewogen (FFmpeg atempo)</string>
+  <string name="audio_speed_mode_sonic">Stimme &amp; Sprache (Sonic)</string>
+  <string name="preferences_enable_spatialization_title">Räumliche Ausgestaltung der Plattform</string>
+  <string name="preferences_enable_spatialization_summary">Verwenden Sie den Spatializer der Plattform, um Mehrkanal-Audio wiederzugeben, anstatt es auf Stereo herunterzumischen (erfordert ein kompatibles Gerät und eine entsprechende Audioausgabe). Diese Einstellung lässt sich auch über das Audio-Menü des Players umschalten.</string>
+  <string name="subtitles_show_full_for_local_audio_title">Untertitel für lokale Sprachaudio anzeigen</string>
+  <string name="subtitles_show_full_for_local_audio_summary">Standardmäßig deaktiviert, sodass nur erzwungene Untertitel automatisch ausgewählt werden, wenn die Audiosprache der Untertitelsprache entspricht; aktivieren Sie diese Option, um auch vollständige Untertitel automatisch auszuwählen</string>
+  <string name="trakt_signin_summary_logged_sync">Angemeldet · %1$s</string>
+  <string name="s_descriptions">Beschreibungen</string>
+  <string name="s_forced">Erzwungen</string>
+  <string name="ui_choice_title">Es scheint, als würden Sie Nova Video Player auf einem Fernseher verwenden. Falls dies tatsächlich der Fall ist, empfehlen wir die Verwendung unserer neuen TV-Benutzeroberfläche</string>
+  <string name="ui_choice_tv">TV-Benutzeroberfläche</string>
+  <string name="ui_choice_tablet">Tablet-Benutzeroberfläche</string>
+  <string name="ui_choice_help">Sie können Ihre Auswahl später in den Anwendungseinstellungen ändern</string>
+  <string name="workgroup">Arbeitsgruppe</string>
+</resources>

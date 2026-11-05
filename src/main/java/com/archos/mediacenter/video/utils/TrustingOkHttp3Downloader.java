@@ -20,8 +20,6 @@ import android.content.Context;
 
 import com.squareup.picasso.Downloader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +42,7 @@ import okhttp3.Request;
 
 // okhttp3 downloader that trusts letsencrypt certificates added manually
 // because on android 7.1 and below platform certificates are not up to date
+/** Downloads images using OkHttp with system and bundled certificate authorities. */
 public class TrustingOkHttp3Downloader implements Downloader {
     private final Context context;
 

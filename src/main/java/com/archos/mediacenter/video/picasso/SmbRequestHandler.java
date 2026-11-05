@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.archos.filecorelibrary.jcifs.JcifsFileEditor;
+import com.archos.mediacenter.utils.BitmapUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
@@ -68,7 +69,7 @@ public class SmbRequestHandler extends RequestHandler {
             try {
                 inputStream.close();
             } catch (IOException ignored) {}
-            options.inSampleSize = com.archos.mediacenter.utils.BitmapUtils.calculateInSampleSize(options, request.targetWidth, request.targetHeight);
+            options.inSampleSize = BitmapUtils.calculateInSampleSize(options, request.targetWidth, request.targetHeight);
             options.inJustDecodeBounds = false;
             try {
                 inputStream = editor.getInputStream();

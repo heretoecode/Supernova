@@ -1,0 +1,38 @@
+{
+  "scope": "Actual security-patched four-ABI FFmpeg9 DSOs on Android23bionic; full decode+cleanup with10000 MP4PSSH boxes; no Shield/device benchmark claim",
+  "native_artifact_run": 40843685431,
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "pssh_records": 10000,
+      "returncode": 0,
+      "elapsed_seconds": 0.3288002859999324,
+      "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48000\t8b8abfdf\n",
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "armeabi-v7a",
+      "pssh_records": 10000,
+      "returncode": 0,
+      "elapsed_seconds": 0.3094606159993418,
+      "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48000\tc0069a94\n",
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86",
+      "pssh_records": 10000,
+      "returncode": 0,
+      "elapsed_seconds": 0.3308198650001941,
+      "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48000\td398999c\n",
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    },
+    {
+      "abi": "x86_64",
+      "pssh_records": 10000,
+      "returncode": 0,
+      "elapsed_seconds": 0.06571128399991721,
+      "output": "decoded\t0\th264\t12\t0\t61e7ff11\ndecoded\t1\taac\t47\t48000\t447993e5\n",
+      "stderr": "WARNING: linker: /test/hls-probe: unused DT entry: type 0x1d arg 0x469\nWARNING: linker: /test/hls-probe: unsupported flags DT_FLAGS_1=0x8000001\n"
+    }
+  ]
+}

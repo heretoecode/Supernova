@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import com.archos.mediacenter.video.R;
 
 
+/** Provides controls for adjusting audio delay during playback. */
 public class AudioDelayPicker extends AudioDelayPickerAbstract {
 
     private final long initialRepeatDelay = 350;
@@ -42,6 +44,7 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
         this(context, attrs, 0);
     }
 
+    @SuppressLint("ClickableViewAccessibility") // Repeat click handling returns false to preserve standard Button click processing
     public AudioDelayPicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
@@ -68,7 +71,7 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
                 if (action == MotionEvent.ACTION_DOWN) {
                     removeCallbacks(repeatMinusClickRunnable);
                     postDelayed(repeatMinusClickRunnable, initialRepeatDelay);
-                } else if (action == MotionEvent.ACTION_UP) {
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     removeCallbacks(repeatMinusClickRunnable);
                 }
                 return false;
@@ -93,7 +96,7 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
                 if (action == MotionEvent.ACTION_DOWN) {
                     removeCallbacks(repeatPlusClickRunnable);
                     postDelayed(repeatPlusClickRunnable, initialRepeatDelay);
-                } else if (action == MotionEvent.ACTION_UP) {
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     removeCallbacks(repeatPlusClickRunnable);
                 }
                 return false;
@@ -103,6 +106,13 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
         if (!isEnabled()) {
             setEnabled(false);
         }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        removeCallbacks(repeatMinusClickRunnable);
+        removeCallbacks(repeatPlusClickRunnable);
+        super.onDetachedFromWindow();
     }
 
     @Override

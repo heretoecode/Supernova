@@ -17,12 +17,12 @@ package com.archos.mediacenter.video.browser.adapters.mappers;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import com.archos.mediacenter.video.browser.loader.CollectionLoader;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Maps collection cursor columns into collection objects. */
 public class CollectionCursorMapper implements CompatibleCursorMapper {
 
     private static final String TAG = "CollectionCursorMapper";
@@ -43,6 +43,7 @@ public class CollectionCursorMapper implements CompatibleCursorMapper {
     public CollectionCursorMapper() {
     }
 
+    @Override
     public void bindColumns(Cursor cursor) {
         mIdColumn = cursor.getColumnIndexOrThrow(BaseColumns._ID);
         mNameColumn = cursor.getColumnIndexOrThrow(CollectionLoader.COLUMN_NAME);
@@ -57,6 +58,7 @@ public class CollectionCursorMapper implements CompatibleCursorMapper {
         mPinnedColumn = cursor.getColumnIndex(VideoStore.Video.VideoColumns.NOVA_PINNED);
     }
 
+    @Override
     public Object bind(Cursor cursor) {
         return new Collection(
                 cursor.getLong(mIdColumn),

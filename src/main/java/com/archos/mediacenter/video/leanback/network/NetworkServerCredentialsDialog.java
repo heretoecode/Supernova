@@ -23,6 +23,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -39,22 +40,23 @@ import com.archos.filecorelibrary.MetaFile2Factory;
 import com.archos.mediacenter.filecoreextension.UriUtils;
 import com.archos.mediacenter.video.R;
 
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Collects network server credentials and reports connect or cancel actions. */
 public class NetworkServerCredentialsDialog extends DialogFragment {
-
     // Note: this is both used in the leanback and the mobile interface in network shortcuts
 
     private static final Logger log = LoggerFactory.getLogger(NetworkServerCredentialsDialog.class);
 
     private AlertDialog mDialog;
     private SharedPreferences mPreferences;
-    private String mUsername="";
-    private String mPassword="";
-    private int mPort=-1;
-    private int mType=-1;
-    private String mRemote="";
+    private String mUsername = "";
+    private String mPassword = "";
+    private int mPort = -1;
+    private int mType = -1;
+    private String mRemote = "";
     private onConnectClickListener mOnConnectClick;
     final private static String NET_LATEST_TYPE = "NET_LATEST_TYPE";
     final private static String NET_LATEST_ADDRESS = "NET_LATEST_ADDRESS";
@@ -88,13 +90,17 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
     }
 
     public interface onConnectClickListener {
-        public void onConnectClick(String username, String path, String password, int port, int type, String remote, String domain);
+        public void onConnectClick(
+            String username, String path, String password, int port, int type, String remote, String domain);
     }
-    public NetworkServerCredentialsDialog(){ }
+
+    public NetworkServerCredentialsDialog() {
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Bundle args  = getArguments();
-        if(args != null){
+        Bundle args = getArguments();
+        if (args != null) {
             mUsername = args.getString(USERNAME, "");
             mPassword = args.getString(PASSWORD, "");
             mPort = args.getInt(PORT, -1);
@@ -105,7 +111,7 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
         }
         mPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         // Get latest values from preference
-        if(mUsername.isEmpty()&&mPassword.isEmpty()&&mPort==-1&&mType==-1&&mRemote.isEmpty()){
+        if (mUsername.isEmpty() && mPassword.isEmpty() && mPort == -1 && mType == -1 && mRemote.isEmpty()) {
             mRemote = mPreferences.getString(NET_LATEST_ADDRESS, "");
             mUsername = mPreferences.getString(NET_LATEST_USERNAME, "");
             mType = mPreferences.getInt(NET_LATEST_TYPE, 0);
@@ -113,37 +119,52 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
             mPath = mPreferences.getString(NET_LATEST_PATH, "");
             mDomain = mPreferences.getString(NET_LATEST_DOMAIN, "");
         }
-        if(mPassword.isEmpty()&&!mRemote.isEmpty()){
+        if (mPassword.isEmpty() && !mRemote.isEmpty()) {
             NetworkCredentialsDatabase database = NetworkCredentialsDatabase.getInstance();
             String uriToBuild = buildCredentialUri(UriUtils.getTypeUri(mType), mRemote, mPort, mPath);
-            if (log.isDebugEnabled()) log.debug("onCreateDialog: uriToBuild={}", uriToBuild);
+            if (log.isDebugEnabled())
+                log.debug("onCreateDialog: uriToBuild={}", uriToBuild);
 
             Credential cred = database.getCredential(uriToBuild);
-            if(cred!=null){
-                mPassword= cred.getPassword();
+            if (cred != null) {
+                mPassword = cred.getPassword();
                 mDomain = cred.getDomain();
             }
         }
         final View v = getActivity().getLayoutInflater().inflate(R.layout.network_credential_layout, null);
-        final Spinner typeSp = (Spinner)v.findViewById(R.id.ssh_spinner);
-        final boolean preview=mPreferences.getBoolean("try_new_ui",false);
+        final Spinner typeSp = (Spinner) v.findViewById(R.id.ssh_spinner);
+        final boolean preview = mPreferences.getBoolean("try_new_ui", false);
         // Keep an existing implementation choice behind its canonical protocol label.
-        final int[] protocolTypes=preview?new int[]{mType==5?5:4,7,6,mType==3?3:1,0,2}:new int[]{0,1,2,3,4,5,6,7};
-        if(preview){android.widget.ArrayAdapter<String> adapter=new android.widget.ArrayAdapter<>(requireContext(),android.R.layout.simple_spinner_item,new String[]{"SMB","WebDAV (HTTPS)","WebDAV (HTTP)","SFTP","FTP","FTP (TLS)"});adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);typeSp.setAdapter(adapter);}
-        addressEt = (EditText)v.findViewById(R.id.remote);
-        portEt = (EditText)v.findViewById(R.id.port);
-        final EditText usernameEt = (EditText)v.findViewById(R.id.username);
-        final EditText passwordEt = (EditText)v.findViewById(R.id.password);
-        final EditText pathEt = (EditText)v.findViewById(R.id.path);
-        final EditText domainEt = (EditText)v.findViewById(R.id.domain);
-        final CheckBox savePassword = (CheckBox)v.findViewById(R.id.save_password);
-        final CheckBox showPassword = (CheckBox)v.findViewById(R.id.show_password_checkbox);
+        final int[] protocolTypes = preview ? new int[] {
+            mType == 5 ? 5 : 4, 7, 6, mType == 3 ? 3 : 1, 0, 2
+        }
+                                            : new int[] {
+                                                0, 1, 2, 3, 4, 5, 6, 7
+                                            };
+        if (preview) {
+            ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item,
+                    new String[] {
+                        "SMB", "WebDAV (HTTPS)", "WebDAV (HTTP)", "SFTP", "FTP", "FTP (TLS)"
+                    });
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            typeSp.setAdapter(adapter);
+        }
+        addressEt = (EditText) v.findViewById(R.id.remote);
+        portEt = (EditText) v.findViewById(R.id.port);
+        final EditText usernameEt = (EditText) v.findViewById(R.id.username);
+        final EditText passwordEt = (EditText) v.findViewById(R.id.password);
+        final EditText pathEt = (EditText) v.findViewById(R.id.path);
+        final EditText domainEt = (EditText) v.findViewById(R.id.domain);
+        final CheckBox savePassword = (CheckBox) v.findViewById(R.id.save_password);
+        final CheckBox showPassword = (CheckBox) v.findViewById(R.id.show_password_checkbox);
         v.findViewById(R.id.domain).setVisibility(View.GONE);
 
         typeSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (UriUtils.requiresDomain(protocolTypes[position])) v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
+                if (UriUtils.requiresDomain(protocolTypes[position]))
+                    v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
                 else {
                     ((EditText) v.findViewById(R.id.domain)).setText("");
                     v.findViewById(R.id.domain).setVisibility(View.GONE);
@@ -153,154 +174,192 @@ public class NetworkServerCredentialsDialog extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parentView) {
                 if (UriUtils.requiresDomain(mType))
                     v.findViewById(R.id.domain).setVisibility(View.VISIBLE);
-                else v.findViewById(R.id.domain).setVisibility(View.GONE);
+                else
+                    v.findViewById(R.id.domain).setVisibility(View.GONE);
             }
         });
 
         showPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(!b)
+                if (!b)
                     passwordEt.setTransformationMethod(PasswordTransformationMethod.getInstance());
                 else
                     passwordEt.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
             }
         });
         int type = mType;
-        int selection=0;for(int i=0;i<protocolTypes.length;i++)if(protocolTypes[i]==type)selection=i;typeSp.setSelection(selection);
+        int selection = 0;
+        for (int i = 0; i < protocolTypes.length; i++)
+            if (protocolTypes[i] == type)
+                selection = i;
+        typeSp.setSelection(selection);
         addressEt.setText(mRemote);
         pathEt.setText(mPath);
-        int portInt =  mPort;
-        String portString = (portInt!=-1) ? Integer.toString(portInt) : "";
+        int portInt = mPort;
+        String portString = (portInt != -1) ? Integer.toString(portInt) : "";
         portEt.setText(portString);
-        if (log.isDebugEnabled()) log.debug("onCreateDialog: username={}, domain={}, port={}, remote={}, path={}; type={}", mUsername, mDomain, mPort, mRemote, mPath, mType);
+        if (log.isDebugEnabled())
+            log.debug("onCreateDialog: username={}, domain={}, port={}, remote={}, path={}; type={}", mUsername,
+                mDomain, mPort, mRemote, mPath, mType);
         usernameEt.setText(mUsername);
         passwordEt.setText(mPassword);
-        if (UriUtils.requiresDomain(type)) domainEt.setText(mDomain);
+        if (UriUtils.requiresDomain(type))
+            domainEt.setText(mDomain);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-        .setTitle(preview?"Add Network Source":getString(R.string.browse_ftp_server))
-        .setView(v)
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(mOnCancelClickListener!=null)
-                    mOnCancelClickListener.onClick(null);
-            }
-        })
-        .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int id) {
-
-                String username = usernameEt.getText().toString().trim();
-                final String password = passwordEt.getText().toString();
-                String domain = domainEt.getText().toString().trim();
-
-                final int type = protocolTypes[typeSp.getSelectedItemPosition()];
-                final String address = addressEt.getText().toString().trim();
-                String path = pathEt.getText().toString().trim();
-
-                if (domain.isEmpty() && UriUtils.requiresDomain(type)) {
-                    int ci = username.indexOf('@');
-                    if (ci > 0) {
-                        domain = username.substring(ci + 1).trim();
-                        username = username.substring(0, ci).trim();
-                    } else {
-                        ci = username.indexOf('\\');
-                        if (ci > 0) {
-                            domain = username.substring(0, ci).trim();
-                            username = username.substring(ci + 1).trim();
+        AlertDialog.Builder builder =
+            new AlertDialog.Builder(getActivity())
+                .setTitle(preview ? "Add Network Source" : getString(R.string.browse_ftp_server))
+                .setView(v)
+                .setNegativeButton(android.R.string.cancel,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            handleCancel();
                         }
+                    })
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String username = usernameEt.getText().toString().trim();
+                        final String password = passwordEt.getText().toString();
+                        String domain = domainEt.getText().toString().trim();
+
+                        final int type = protocolTypes[typeSp.getSelectedItemPosition()];
+                        final String address = addressEt.getText().toString().trim();
+                        String path = pathEt.getText().toString().trim();
+
+                        if (domain.isEmpty() && UriUtils.requiresDomain(type)) {
+                            int ci = username.indexOf('@');
+                            if (ci > 0) {
+                                domain = username.substring(ci + 1).trim();
+                                username = username.substring(0, ci).trim();
+                            } else {
+                                ci = username.indexOf('\\');
+                                if (ci > 0) {
+                                    domain = username.substring(0, ci).trim();
+                                    username = username.substring(ci + 1).trim();
+                                }
+                            }
+                        }
+
+                        int port = -1;
+                        if (!portEt.getText().toString().isEmpty()) {
+                            try {
+                                port = Integer.parseInt(portEt.getText().toString());
+                                if (port < 1 || port > 65535)
+                                    throw new NumberFormatException();
+                            } catch (NumberFormatException e) {
+                                Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT)
+                                    .show();
+                                portEt.requestFocus();
+                                return;
+                            }
+                        }
+
+                        String scheme = "";
+                        scheme = UriUtils.getTypeUri(type);
+
+                        // webdav(s) empty user means anonymous
+                        if (username.equals("") && UriUtils.emptyCredentialMeansAnonymous(scheme))
+                            username = "anonymous";
+
+                        boolean validUri = true;
+
+                        // username can be empty with samba guest shares (UriUtils.requiresDomain(type))
+                        if (username.equals("") && !UriUtils.requiresDomain(type)) {
+                            if (log.isDebugEnabled())
+                                log.debug("onClick: invalid credential, username empty and not smb protocol");
+                            validUri = false;
+                        }
+                        // path needs to start by a "/"
+                        if (path.isEmpty() || !path.startsWith("/"))
+                            path = "/" + path;
+
+                        if (!UriUtils.isValidHost(address)) {
+                            Toast.makeText(getActivity(), getString(R.string.invalid_host), Toast.LENGTH_SHORT).show();
+                            log.warn("onClick: invalid host: {}", address);
+                            validUri = false;
+                        } else if (!UriUtils.isValidPort(port)) {
+                            Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
+                            portEt.requestFocus();
+                            log.warn("onClick: invalid port: {}", port);
+                            return;
+                        } else if (!UriUtils.isValidPath(path)) {
+                            Toast.makeText(getActivity(), getString(R.string.invalid_path), Toast.LENGTH_SHORT).show();
+                            log.warn("onClick: invalid path: {}", path);
+                            validUri = false;
+                        }
+
+                        if (log.isDebugEnabled())
+                            log.debug(
+                                "onClick: scheme={}, username={}, domain={}, port={}, remote={}, path={}; type={}, validUri={}",
+                                scheme, username, domain, port, address, path, type, validUri);
+
+                        if (validUri) {
+                            if (port == -1) {
+                                port = MetaFile2Factory.defaultPortForProtocol(scheme);
+                            }
+
+                            // Store new values to preferences
+                            mPreferences.edit()
+                                .putInt(NET_LATEST_TYPE, type)
+                                .putString(NET_LATEST_ADDRESS, address)
+                                .putInt(NET_LATEST_PORT, port)
+                                .putString(NET_LATEST_USERNAME, username)
+                                .putString(NET_LATEST_DOMAIN, domain)
+                                .putString(NET_LATEST_PATH, path)
+                                .apply();
+
+                            String uriToBuild = buildCredentialUri(scheme, address, port, path);
+                            if (log.isDebugEnabled())
+                                log.debug(
+                                    "onCreateDialog: username={}, domain={}, port={}, remote={}, path={}; type={}",
+                                    mUsername, mDomain, mPort, mRemote, mPath, mType);
+                            Credential cred = new Credential(username, password, uriToBuild, domain, true);
+                            if (savePassword.isChecked())
+                                NetworkCredentialsDatabase.getInstance().saveCredential(cred);
+                            else
+                                NetworkCredentialsDatabase.getInstance().addCredential(cred);
+                            if (mOnConnectClick != null) {
+                                mOnConnectClick.onConnectClick(
+                                    cred.getUsername(), path, password, port, type, address, cred.getDomain());
+                            }
+                        } else
+                            Toast
+                                .makeText(
+                                    getActivity(), getString(R.string.ssh_remote_address_error), Toast.LENGTH_SHORT)
+                                .show();
                     }
-                }
-
-                int port = -1;
-                if (! portEt.getText().toString().isEmpty()) {
-                    try {
-                        port = Integer.parseInt(portEt.getText().toString());
-                        if (port < 1 || port > 65535) throw new NumberFormatException();
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
-                        portEt.requestFocus();
-                        return;
-                    }
-                }
-
-                String scheme = "";
-                scheme = UriUtils.getTypeUri(type);
-
-                // webdav(s) empty user means anonymous
-                if (username.equals("") && UriUtils.emptyCredentialMeansAnonymous(scheme))
-                    username = "anonymous";
-
-                boolean validUri = true;
-
-                // username can be empty with samba guest shares (UriUtils.requiresDomain(type))
-                if (username.equals("") && ! UriUtils.requiresDomain(type)) {
-                    if (log.isDebugEnabled()) log.debug("onClick: invalid credential, username empty and not smb protocol");
-                    validUri = false;
-                }
-                // path needs to start by a "/"
-                if(path.isEmpty()||!path.startsWith("/"))
-                    path = "/"+path;
-
-                if (! UriUtils.isValidHost(address)) {
-                    Toast.makeText(getActivity(), getString(R.string.invalid_host), Toast.LENGTH_SHORT).show();
-                    log.warn("onClick: invalid host: {}", address);
-                    validUri = false;
-                } else if (! UriUtils.isValidPort(port)) {
-                    Toast.makeText(getActivity(), getString(R.string.invalid_port), Toast.LENGTH_SHORT).show();
-                    portEt.requestFocus();
-                    log.warn("onClick: invalid port: {}", port);
-                    return;
-                } else if (! UriUtils.isValidPath(path)) {
-                    Toast.makeText(getActivity(), getString(R.string.invalid_path), Toast.LENGTH_SHORT).show();
-                    log.warn("onClick: invalid path: {}", path);
-                    validUri = false;
-                }
-
-                if (log.isDebugEnabled()) log.debug("onClick: scheme={}, username={}, domain={}, port={}, remote={}, path={}; type={}, validUri={}", scheme, username, domain, port, address, path, type, validUri);
-
-                if(validUri){
-
-                    if (port == -1) {
-                        port = MetaFile2Factory.defaultPortForProtocol(scheme);
-                    }
-
-                    // Store new values to preferences
-                    mPreferences.edit()
-                            .putInt(NET_LATEST_TYPE, type)
-                            .putString(NET_LATEST_ADDRESS, address)
-                            .putInt(NET_LATEST_PORT, port)
-                            .putString(NET_LATEST_USERNAME, username)
-                            .putString(NET_LATEST_DOMAIN, domain)
-                            .putString(NET_LATEST_PATH, path)
-                            .apply();
-
-                    String uriToBuild = buildCredentialUri(scheme, address, port, path);
-                    if (log.isDebugEnabled()) log.debug("onCreateDialog: username={}, domain={}, port={}, remote={}, path={}; type={}", mUsername, mDomain, mPort, mRemote, mPath, mType);
-                    Credential cred = new Credential(username, password, uriToBuild, domain, true);
-                    if(savePassword.isChecked())
-                        NetworkCredentialsDatabase.getInstance().saveCredential(cred);
-                    else
-                        NetworkCredentialsDatabase.getInstance().addCredential(cred);
-                    if(mOnConnectClick!=null){
-                        mOnConnectClick.onConnectClick(cred.getUsername(), path, password, port, type, address, cred.getDomain());
-                    }
-                }
-                else
-                    Toast.makeText(getActivity(), getString(R.string.ssh_remote_address_error), Toast.LENGTH_SHORT).show();
-            }});
+                });
         mDialog = builder.create();
-        mDialog.setOnShowListener(ignored -> com.archos.mediacenter.video.leanback.PreviewDialog.styleNative(mDialog));
+        mDialog.setOnShowListener(ignored -> PreviewDialog.styleNative(mDialog));
 
         return mDialog;
-
     }
+
+    private boolean mCancelHandled = false;
+
+    private void handleCancel() {
+        if (!mCancelHandled) {
+            mCancelHandled = true;
+            if (mOnCancelClickListener != null) {
+                mOnCancelClickListener.onClick(null);
+            }
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        handleCancel();
+    }
+
     public void setOnConnectClickListener(onConnectClickListener onConnectClick) {
         mOnConnectClick = onConnectClick;
     }
+
     public void setOnCancelClickListener(OnClickListener onClickListener) {
         mOnCancelClickListener = onClickListener;
     }
-
 }

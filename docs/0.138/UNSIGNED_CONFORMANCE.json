@@ -1,0 +1,415 @@
+{
+  "application_id": "app.supernova.player",
+  "version_name": "0.138",
+  "version_code": 138,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 92,
+  "apk_sha256": "e32ed83ce2bfd1c51492921e56541b79c444a27924589cb409df5be28ee95904",
+  "unsigned_signature_rejected": true,
+  "runtime_artifact_hashes_matched": 138,
+  "rebuilt_ffmpeg_libraries_matched": 24,
+  "unit_tests": 564,
+  "unit_failures": 0,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "required_0138_test_classes": [
+    "BundledNoticePagerTest",
+    "PreviewSeasonTest",
+    "SubtitleDiscoveryTest",
+    "Supernova138HomeTest",
+    "Supernova138PlaybackTest",
+    "Supernova138UiTest"
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 1500
+  },
+  "source_commit": "9f9b46fbe1bc61972d98ef21681ff3c368c349f9",
+  "signed": false,
+  "apk_bytes": 103341454,
+  "build_result": "BUILD SUCCESSFUL",
+  "native_hashes_matched": 92,
+  "native_libraries": [
+    {
+      "path": "lib/arm64-v8a/libaudiocompress.so",
+      "sha256": "7b4fba5d47f102d763a6d50ab314cc6ba1ae76b3d5a44bf69922ea5575fb5880"
+    },
+    {
+      "path": "lib/arm64-v8a/libavcodec.so",
+      "sha256": "05ee2f99d6ea7552ada0de71b45aedd2251e45b1c69099762c6ea6dee0dbe4fa"
+    },
+    {
+      "path": "lib/arm64-v8a/libavfilter.so",
+      "sha256": "33cad280e66f44659685bb284045c6983748d8db4b7bf94c1460f98661df4dd3"
+    },
+    {
+      "path": "lib/arm64-v8a/libavformat.so",
+      "sha256": "90a9a3186dc7bc29a8ad1ca8d20a4b974dff898675c822741f6020b3a444df84"
+    },
+    {
+      "path": "lib/arm64-v8a/libavos.so",
+      "sha256": "956c25effb8a83a4a711be6c2571e13be8fc65090327a199137e98d59dc76859"
+    },
+    {
+      "path": "lib/arm64-v8a/libavos_android.so",
+      "sha256": "341e0e6336dbc679bad9740297ed722bdef15cdeddd1c938d57a4f0c6cf3ee39"
+    },
+    {
+      "path": "lib/arm64-v8a/libavosjni.so",
+      "sha256": "5cd8d2c6894c105c05fc710afee299f6d7d193b759d03544c9d50802ae98ecd7"
+    },
+    {
+      "path": "lib/arm64-v8a/libavutil.so",
+      "sha256": "e78d911f159338aff5b3382fdd59ff0ac143b348358841937cc6c86de18f2410"
+    },
+    {
+      "path": "lib/arm64-v8a/libcputest.so",
+      "sha256": "e6b1b241f590a89ae39ae9b4af9ea6152ad76f03c0dc237e465eac3daf8ec7df"
+    },
+    {
+      "path": "lib/arm64-v8a/libdav1d.so",
+      "sha256": "770672fea19cf4a27a495e766866be748acde8cd7bc09c44117f61e42054847a"
+    },
+    {
+      "path": "lib/arm64-v8a/libdeinterlace.so",
+      "sha256": "3edba5175eeb6029b8bdee3c50c4aff0ab2b399dcbd0712961c3f3f58fc56ba9"
+    },
+    {
+      "path": "lib/arm64-v8a/libfilecoreutils.so",
+      "sha256": "60ef76b5157df2bc15a71a4b6a559a6f72cbc52ec0d45b33c6c4e1b9cf4461ee"
+    },
+    {
+      "path": "lib/arm64-v8a/libmysofa.so",
+      "sha256": "fd5fa560d9898c060bb01c3e0ddf5f2495dc93d395995d46f4d66ec837577265"
+    },
+    {
+      "path": "lib/arm64-v8a/libnvpnativehelper.so",
+      "sha256": "75427dce57cb084767368e1dbe1c50395d85f9f919e75d4d0c920a676c981bd1"
+    },
+    {
+      "path": "lib/arm64-v8a/libopus.so",
+      "sha256": "561238411635d57abc06cce87d533fc90900da8753329421211ee480b49fb54c"
+    },
+    {
+      "path": "lib/arm64-v8a/libsentry-android.so",
+      "sha256": "8a8d4ac356f4927c41390166db93b9990a02a900497e85a445027dd405500ec5"
+    },
+    {
+      "path": "lib/arm64-v8a/libsentry.so",
+      "sha256": "18f256ec29f7a3813209657900c934524f96fb6f3b46ab8d2c7241c4ba02bd62"
+    },
+    {
+      "path": "lib/arm64-v8a/libsfdec.core.21.so",
+      "sha256": "78469256ee87b7108bb54b1a0bb97ac709beb103e84c2c129936113d9eebbb28"
+    },
+    {
+      "path": "lib/arm64-v8a/libsfdec.so",
+      "sha256": "4deb49e4fcc20b65720bf16d8edda1c6b96407fcbfb73f3f7eaf09d58811216a"
+    },
+    {
+      "path": "lib/arm64-v8a/libswresample.so",
+      "sha256": "c52948c6fbf0a6d11e7363c70cd9bedbff2da028942625685667954892df8673"
+    },
+    {
+      "path": "lib/arm64-v8a/libswscale.so",
+      "sha256": "b2bc5027e2357da8a7a83f61590cf1198701f5710819ecb694e9ad77cc670caf"
+    },
+    {
+      "path": "lib/arm64-v8a/libtorrentd.so",
+      "sha256": "8dc5276a08aa801668e25fd3bb757cbc10df83f7929e758020ed58132ec4db59"
+    },
+    {
+      "path": "lib/arm64-v8a/libyuv.so",
+      "sha256": "66090a02f1ca1b9db2cbc3654a1d24b4a9e2f226e90aa4f79dff7843d605c84f"
+    },
+    {
+      "path": "lib/armeabi-v7a/libaudiocompress.so",
+      "sha256": "8a7654a4ccc04748bd8ea71e701360cd57698dfd53efca9857ba333e9390f989"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavcodec.so",
+      "sha256": "4df197170984e31d6881cbeed39533e006c5f1b88b457c941632c314483bf072"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavfilter.so",
+      "sha256": "6b5342ce12461d461efe6895fd06f99ab0bae4c2b95950ef7a76ab9d52bfb65d"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavformat.so",
+      "sha256": "eeb1693f824bc4ca7e87890fe6282c4b9981cbc2e3773fe6f65c92e4d471e4a0"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavos.so",
+      "sha256": "312271537883203630bdc741d726f1d1546521031f4f701086541f626b71cfdc"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavos_android.so",
+      "sha256": "bb5bd5fb0fa5ad64b1f738a045fc879c1fa8be27f8471cedfb4b0491fe62f0c2"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavosjni.so",
+      "sha256": "d33d81f3c5c9b2a5ac6d4932d38297b2022472ca44def4b78acc6f6a9101e255"
+    },
+    {
+      "path": "lib/armeabi-v7a/libavutil.so",
+      "sha256": "43b75d97dd7c478e4e762451f5fe57d6d963009b38e4f480b5fa330ffb438126"
+    },
+    {
+      "path": "lib/armeabi-v7a/libcputest.so",
+      "sha256": "b8ecdeb8efc20654169b93d1d20e6c1dd79dd0e234518c6acce954f76b707cb3"
+    },
+    {
+      "path": "lib/armeabi-v7a/libdav1d.so",
+      "sha256": "5f9b8181370b02ec75ccddb1e4a98fe5f87a2916fc3624116eea0c59fb24f13d"
+    },
+    {
+      "path": "lib/armeabi-v7a/libdeinterlace.so",
+      "sha256": "0f33ba48a3d816f961a1ef11c8bebefc6802b27508a3c5da09dfc0e01fa90063"
+    },
+    {
+      "path": "lib/armeabi-v7a/libfilecoreutils.so",
+      "sha256": "84e8c05e9fe6c66094f7ea90f1f50508ba5d64a0a1af2d7d07dd8086ebe87c22"
+    },
+    {
+      "path": "lib/armeabi-v7a/libmysofa.so",
+      "sha256": "a167a9a126af1eb85c371810ebc944bc65f272213cba912b1195f82c0956200b"
+    },
+    {
+      "path": "lib/armeabi-v7a/libnvpnativehelper.so",
+      "sha256": "d55f2c3faf361ee9e813a109dec8abc0a7cc32fb1f80a1a954beaa78efbb357b"
+    },
+    {
+      "path": "lib/armeabi-v7a/libopus.so",
+      "sha256": "197881c8b234b605406a80afee1a0cc5b57a21307b65c028a17fa5f7acac648e"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsentry-android.so",
+      "sha256": "638b2b41675d86072797410be550f023b88b82d42a3d5fb181ea08ec8153a767"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsentry.so",
+      "sha256": "3711f04c9bec2ee0ed48939e3066916a7c4b4214057c8fd28991893f1374d72f"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsfdec.core.21.so",
+      "sha256": "1f49e33ae72772cf839c86d2e423297bcfd02bfd5add57697d0af1fb0fac4d74"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsfdec.so",
+      "sha256": "c40366b28c7937bfab24942194aeb3dab3d28d97c9cee994bc9ac620c7eb853a"
+    },
+    {
+      "path": "lib/armeabi-v7a/libswresample.so",
+      "sha256": "77269204e33367ac0071ae7df873c7057039c43e5587abd68a34acaf46570871"
+    },
+    {
+      "path": "lib/armeabi-v7a/libswscale.so",
+      "sha256": "094aebc0363d4438977ddb506cb85b14d7bb19e687fb322b8a532b9c0206c69d"
+    },
+    {
+      "path": "lib/armeabi-v7a/libtorrentd.so",
+      "sha256": "d897668ec92cd50d6ceda0a82b35636c7802b3fcd77226964e1bed76b6cb493b"
+    },
+    {
+      "path": "lib/armeabi-v7a/libyuv.so",
+      "sha256": "89f744e654b73346f56b4f3a52e00aaec13249d6ea9899b6c73c6efda9026d6e"
+    },
+    {
+      "path": "lib/x86/libaudiocompress.so",
+      "sha256": "8d69ebdc8fffe36e3ee4622f7e2fb98eec796768462bb897ffad665936cae1b5"
+    },
+    {
+      "path": "lib/x86/libavcodec.so",
+      "sha256": "b4577c638e92287ec7e00b67179338db4a0ef43948080d5443e2c7a9c01bfdf4"
+    },
+    {
+      "path": "lib/x86/libavfilter.so",
+      "sha256": "007c29e567fae921605f4e4cf85a166684454a26a4cbb3935f31e0c2abcc6c59"
+    },
+    {
+      "path": "lib/x86/libavformat.so",
+      "sha256": "b3e51955e75307813f9b4f8084e7a731f495d7ca27f0877feced67329eda975c"
+    },
+    {
+      "path": "lib/x86/libavos.so",
+      "sha256": "5b846565801513c4616e5244fcd42af86b625a8fba7853ab0d25ef18fe4554c8"
+    },
+    {
+      "path": "lib/x86/libavos_android.so",
+      "sha256": "c5e3fe73a425de951bbf835f0902a91e2fad4fb4f482051eda93e1cb0aa65065"
+    },
+    {
+      "path": "lib/x86/libavosjni.so",
+      "sha256": "bae0d8e45ad68ba71099d825ba0f0cb899c35bdcb7ca929b14e9fcce12fe74f0"
+    },
+    {
+      "path": "lib/x86/libavutil.so",
+      "sha256": "6a14d02c1ab8646a79ccecb3520ec686da95e242eb09140f4c95d4c736dc6439"
+    },
+    {
+      "path": "lib/x86/libcputest.so",
+      "sha256": "c27aec192a0afa9107893fe3d42d71311ebbe6f09301d4b6683ead8d21d37e96"
+    },
+    {
+      "path": "lib/x86/libdav1d.so",
+      "sha256": "d42f1abd597d4bc9f5808ac9685ae9e35e70ef5e361d57c3c86dd74af52a5b26"
+    },
+    {
+      "path": "lib/x86/libdeinterlace.so",
+      "sha256": "466be1b91ed34e8656b720a109c0b89e4bc02c20f86c349489c9dbf6b6177676"
+    },
+    {
+      "path": "lib/x86/libfilecoreutils.so",
+      "sha256": "70738a532a319575442236f757619b9a3b496a21ebce537e5fa1f15e68e097e6"
+    },
+    {
+      "path": "lib/x86/libmysofa.so",
+      "sha256": "a3684ecf7dcc9afcfe18c67c573570d74f7caa500cff5f4ac68f6ab72849e93d"
+    },
+    {
+      "path": "lib/x86/libnvpnativehelper.so",
+      "sha256": "e3aa1e413d471c955e844e80740539179a55c351f682f396cb7936b14eee82f5"
+    },
+    {
+      "path": "lib/x86/libopus.so",
+      "sha256": "af6560c8b9e296db3a1be2484fb8f755f8185224a1c27045063fddf0daee5911"
+    },
+    {
+      "path": "lib/x86/libsentry-android.so",
+      "sha256": "86ecc7f8288ae5111a6ffc5dd957d7c90917bf97a3aa05075e17e8a2f68a3766"
+    },
+    {
+      "path": "lib/x86/libsentry.so",
+      "sha256": "bb2f73d6b6af62de258a6d45686da7c14309f73df20ba276f0dd2da80d97b6d2"
+    },
+    {
+      "path": "lib/x86/libsfdec.core.21.so",
+      "sha256": "22623083b4fceaf663d8a937ecb11b1b265317c5e976f12baa1d714e2edfa80f"
+    },
+    {
+      "path": "lib/x86/libsfdec.so",
+      "sha256": "e61fc562da771bd2b5e2b130bd6a3c409fd0e5ed6fae32c33334d9de44d1fe6b"
+    },
+    {
+      "path": "lib/x86/libswresample.so",
+      "sha256": "3f2419a3476220ae439abb55f23d2a7c5cc2be8897c07d84f32fb53f87f20899"
+    },
+    {
+      "path": "lib/x86/libswscale.so",
+      "sha256": "eb449f21e511a00227b1f54298f9ab88a3c99f76d1cbf3cb924631ce55518a92"
+    },
+    {
+      "path": "lib/x86/libtorrentd.so",
+      "sha256": "0361b8bb76394206500a5b4b14950772660de6782886de13ace398ee0efa588e"
+    },
+    {
+      "path": "lib/x86/libyuv.so",
+      "sha256": "2c8b8f5a99f79289655e6770f852946c40dba16d70da56f74482699a18c0f3c8"
+    },
+    {
+      "path": "lib/x86_64/libaudiocompress.so",
+      "sha256": "2852b548f27aa1eb66239b2afb4c076e600de0fb7bbe7edbdccb23a24a57ca8a"
+    },
+    {
+      "path": "lib/x86_64/libavcodec.so",
+      "sha256": "9046ee4fd9f4a68b14f0d4c2fbc932eef539f8c23a01287b9427b8b40d8aa31c"
+    },
+    {
+      "path": "lib/x86_64/libavfilter.so",
+      "sha256": "dc0f9169ca4b7617bae036e54fa289321a01db0a8f6567c92fe9cdb3f2d5a888"
+    },
+    {
+      "path": "lib/x86_64/libavformat.so",
+      "sha256": "7c120ca29370733a02e65add05d5042afc1dabb7b46bc0ae60d5333c91450955"
+    },
+    {
+      "path": "lib/x86_64/libavos.so",
+      "sha256": "a8c0a0d38b5ece6e1783baa2acee1a638443cd2e6a010e31a2a201f527a9df33"
+    },
+    {
+      "path": "lib/x86_64/libavos_android.so",
+      "sha256": "d9eb8ee7c7a2218a92e0cb9d54a0b7647a7c24c31464a5420f7e2e2e8c72190e"
+    },
+    {
+      "path": "lib/x86_64/libavosjni.so",
+      "sha256": "f74cfb98838c3cc35d109ad40ba0cc3056f3a8ba743950ac14978735bb0efd8b"
+    },
+    {
+      "path": "lib/x86_64/libavutil.so",
+      "sha256": "a5e9740de8bb82a1272155f4320b79d8eaaa70fc04f76a1c1c0540e27a242099"
+    },
+    {
+      "path": "lib/x86_64/libcputest.so",
+      "sha256": "f4dc06ad46416d218ad8008b9b1c9ea5dc1a8494ccce0bcf21c486e935ebeab9"
+    },
+    {
+      "path": "lib/x86_64/libdav1d.so",
+      "sha256": "759a32b0d39c31c61d7fb36196874b9fcb2caf64f265211ea05eed492b61e432"
+    },
+    {
+      "path": "lib/x86_64/libdeinterlace.so",
+      "sha256": "8e8242e6260d3999feec1bcb7e6a66d0335715884d88e524786ad342c2991d95"
+    },
+    {
+      "path": "lib/x86_64/libfilecoreutils.so",
+      "sha256": "730c1b67e2275c3b6ff653ad8a1614700d86f2b58e51c5c82abe11f54d2cd5bf"
+    },
+    {
+      "path": "lib/x86_64/libmysofa.so",
+      "sha256": "a85b3f04b52b2d8180734eeb585169ad0bbef651d9ec11c2bace61190ebb46c6"
+    },
+    {
+      "path": "lib/x86_64/libnvpnativehelper.so",
+      "sha256": "eede2f1015eb52052d8cf46b232b79603b1d43d010cfa8ef7ae8ce912994d47d"
+    },
+    {
+      "path": "lib/x86_64/libopus.so",
+      "sha256": "4105fbeea2e6b7751d63a71edd2ba3c2a48e3adc5028ae70b06bd0375554a9a8"
+    },
+    {
+      "path": "lib/x86_64/libsentry-android.so",
+      "sha256": "ceed438dd0a0d3db1154ddb4d789b889b806b02f416f07f6e0ec910ef51df58b"
+    },
+    {
+      "path": "lib/x86_64/libsentry.so",
+      "sha256": "5abcf31bc27b17981a3ca961de4fda4c5eaed9379463f8ae34731ce1d5aeb6ea"
+    },
+    {
+      "path": "lib/x86_64/libsfdec.core.21.so",
+      "sha256": "f8c611be1b8d21570d4591602846f00a4d556de3a490471a734824ef667261fd"
+    },
+    {
+      "path": "lib/x86_64/libsfdec.so",
+      "sha256": "c5e3a5fb6044ca5fba2eb41765d75fa5bbf9d4134a676448ca153f8ee8071b70"
+    },
+    {
+      "path": "lib/x86_64/libswresample.so",
+      "sha256": "9c01b5dfca86526566f66b28ae76fd954fe0197aeae726a3eae937382598e012"
+    },
+    {
+      "path": "lib/x86_64/libswscale.so",
+      "sha256": "0a7b6a742e7c943fc0d6bf944bd99dc53ecd1a9f475b7c7b30dbb6bf09877e08"
+    },
+    {
+      "path": "lib/x86_64/libtorrentd.so",
+      "sha256": "4dd8246df053f419e788fa71db63aecf4995651e138823cf2eebc6170a544faf"
+    },
+    {
+      "path": "lib/x86_64/libyuv.so",
+      "sha256": "9ef6ada1787ec8cd7cba97ac6f3d4ac1a832e597ca2915a586e473f6fd92e4b9"
+    }
+  ],
+  "offline_licence_entries": 57,
+  "branding_resource_checks": true,
+  "ffmpeg_source_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+  "native_build_evidence_sha256": "7c40690c6765ff6267d31c1b2849c880122ce45cd08ef954cb4d80d5d2fd7732",
+  "apk_zip_crc_verified": true
+}

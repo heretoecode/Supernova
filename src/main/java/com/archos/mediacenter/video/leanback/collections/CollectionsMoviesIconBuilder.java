@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.leanback.collections;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -27,7 +28,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediaprovider.video.ScraperStore;
 import com.archos.mediaprovider.video.VideoStore;
 
 import java.util.ArrayList;
@@ -117,6 +117,7 @@ public class CollectionsMoviesIconBuilder {
         return list;
     }
 
+    @SuppressLint("InflateParams") // Offscreen view inflation for canvas bitmap rendering
     private Bitmap composeBitmap(List<String> posters) {
 
         View compositionView  = LayoutInflater.from(mContext).inflate(R.layout.all_collections_icon, null);

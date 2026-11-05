@@ -1,0 +1,17 @@
+{
+  "source_sha": "acd2b3c1e0f51046a71bc0cbb5714480665b42cf",
+  "result": "PASS",
+  "classes": 3,
+  "tests": 20,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.utils.VerifiedBackupPublicationTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest"
+  ],
+  "duration": "2m 8s",
+  "log_sha256": "d8edf17764af3582936a5bfb9ca157f4c914dbbe0cb9b4a56e2a473e2e4b9bcd",
+  "limits": "Native operation model and synthetic provider streams. Connected Settings, real SAF provider and physical lifecycle acceptance not yet covered."
+}

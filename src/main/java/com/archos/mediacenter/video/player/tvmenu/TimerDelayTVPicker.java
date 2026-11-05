@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,14 +23,16 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.player.TimerPickerAbstract;
 
 
+/** Provides a remote-controlled timer delay picker for TV playback menus. */
 public class TimerDelayTVPicker extends TimerPickerAbstract implements TVSlaveView {
 
     private TimerDelayTVPicker slaveView;
@@ -81,8 +84,8 @@ public class TimerDelayTVPicker extends TimerPickerAbstract implements TVSlaveVi
     }
 
     public void setFocus(boolean hasFocus) {
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
-            setBackground(com.archos.mediacenter.video.leanback.PreviewDialog.focus(getContext()));
+        if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("try_new_ui", false)) {
+            setBackground(PreviewDialog.focus(getContext()));
             return;
         }
         if (hasFocus) {
@@ -166,21 +169,8 @@ public class TimerDelayTVPicker extends TimerPickerAbstract implements TVSlaveVi
             return true;
         }
 
-        // else, we send it to parent
-        ViewParent p;
-        View v = this;
-        while ((p = v.getParent()) != null) {
-            if (p instanceof TVCardView) {
-                return ((TVCardView) p).onKeyDown(keyCode, event);
-            } else if (p instanceof TVCardDialog) {
-                return ((TVCardDialog) p).onKeyDown(keyCode, event);
-            } else if (p instanceof View) {
-                v = (View) p;
-            } else {
-                break;
-            }
-        }
-        return false;
+        // else, we send it to the enclosing card
+        return TVUtils.dispatchToCardParent(this, keyCode, event);
     }
 
     @Override
@@ -292,9 +282,10 @@ public class TimerDelayTVPicker extends TimerPickerAbstract implements TVSlaveVi
         updatePreviousDrawable((getDelay() != mMin || !hasMin) ? R.drawable.arrow_left : -1);
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View createSlaveView() {
-        // TODO Auto-generated method stub
+        // Detached template view created for secondary display/slave mirroring
         setSlaveView((TimerDelayTVPicker) LayoutInflater.from(mContext)
                 .inflate(R.layout.audio_delay_tv_picker, null));
         return slaveView;

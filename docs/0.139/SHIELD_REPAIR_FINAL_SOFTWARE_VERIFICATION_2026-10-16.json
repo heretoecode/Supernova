@@ -1,0 +1,335 @@
+{
+  "result": "PASS_TARGETED_SOFTWARE_ONLY",
+  "base_head": "df4c9569c143e5b699a4cd6cc64db8760f1ea309",
+  "original_signed_apk_source": "4e4d2710435ddd9058923a3d9fbd6a2fc27e0464",
+  "original_signed_apk_sha256": "bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827",
+  "original_apk_runtime_crash": "Post-prepare cold HUD update calls stringForTime before formatter initialization. API28/x86 software Android TV, owned local H.264/AAC media. Sanitized stack retained. Exact owner Shield cause not independently verified.",
+  "upstream_video_source": "0651a3e0b60ada996a9774ab527d7c1ef34b7503",
+  "upstream_comparison": "PermissionChecker identical. Upstream early updateClock does not format duration; Supernova Preview HUD does, exposing the inherited late initialization order.",
+  "baseline_regressions": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+      "tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "a8db22d4dd1eee8c782b06b775b9cd02ddeb84adf6a62b4642abc00bc1d86358",
+      "cases": [
+        {
+          "name": "backupLandingKeepsThreePanelsAndTwoVerticalActions",
+          "result": "FAIL",
+          "failure": "java.lang.AssertionError: Backup landing panel 1 expected:<0> but was:<8>"
+        },
+        {
+          "name": "upwardEntryIntoDiagnosticsRestoresItsRootAndHidesAboutWorkspace",
+          "result": "FAIL",
+          "failure": "java.lang.AssertionError: The Advanced ancestor must be visible on reverse entry"
+        },
+        {
+          "name": "diagnosticLoggingLevelAndExportAreReachableByRootKeyDispatch",
+          "result": "FAIL",
+          "failure": "java.lang.AssertionError: Diagnostic Level must retain its established preference key"
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.player.PlayerControllerLaunchTest",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "b5f589f7b2e44710d321037cf405c9723775b29ebeb450409e95ae0eee015ac3",
+      "cases": [
+        {
+          "name": "preparedDurationCanRenderDuringFirstControllerInitializationAndRecreation",
+          "result": "FAIL",
+          "failure": "java.lang.NullPointerException: Cannot invoke \"java.lang.StringBuilder.setLength(int)\" because \"this.mFormatBuilder\" is null"
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "b554d408a9a5d0841a6ca7161cb6fd14f109642cf8040e3725d95ba481fcf662",
+      "cases": [
+        {
+          "name": "leftFromRestoreReviewClosesArchiveBeforeNextExport",
+          "result": "FAIL",
+          "failure": "java.lang.AssertionError: Select the present categories to replace. Missing categories remain unchanged. expected:<IDLE> but was:<REVIEW>"
+        }
+      ]
+    }
+  ],
+  "fixed_suites": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.NextQaReliabilityTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "cef2f76e64646a2d6b7c2262fbb9a81941b31c9d44d3dc1ce7d8d5276a4c6f8d",
+      "cases": [
+        {
+          "name": "historyBroadcastFollowsCommittedEpisodeProgress",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "excludedFullPageCannotStarveLaterDriveRows",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "everyRealSettingsCategoryAndDiagnosticsRemainReachable",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "responsiveTokensRespectLogicalViewportAndBoundDialogs",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "keyboardDoneEditsFieldAndCancelDoesNotCommitPage",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "allFilesUsesOneFilterForBothFilesAndHiddenDirectories",
+          "result": "PASS",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "cfee8398fc27e8c32cebf27929a8ebfc0bed157c72a03e0378a88eff3d6e8bf5",
+      "cases": [
+        {
+          "name": "smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "connectedRestoreRequiresPreviewAndExplicitConfirmationBeforeWriting",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "exportLaunchesAndroidPickerOnlyAfterPrivateVerification",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "normalTvWorkspaceKeepsEveryCategoryWithinPhysicalBoundsWithCompleteLabels",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "connectedFlatInformationBackRestoresOpenerThenPermanentSidebar",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "ultraHdPhysicalBounds",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "realSettingsRailKeepsItsWidthAndAllCategoriesOccupyOnlyRightWorkspace",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "leftFromRestoreReviewClosesArchiveBeforeNextExport",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "defaultSelectionIncludesMatchesAndLaunchesPickerWithEverySelectedCodec",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "hdPhysicalBounds",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "fullHdPhysicalBounds",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "receivingCategorySelectionIsTemporaryAndDisablesEveryAbsentDomain",
+          "result": "PASS",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "54b8ae8dda86a48a74de853d412225dd04bb18bef0083247c0e22b932d96f696",
+      "cases": [
+        {
+          "name": "locationAndHistoryWarningsDefaultToCancelAndCommitOnlyExplicitPositiveChoice",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "bookmarkDependencyConfirmationKeepsLocationsOffAndHeldOkCannotRepeatToggle",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "allTwentySixCategoriesFitWithoutScrollingAndFinalDividerHasIndependentBottomPadding",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "checkboxStatePersistsAndDirectionRoutesRemainBounded",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "informationalPagesReplaceRightAreaAndBackRestoresExactOpener",
+          "result": "PASS",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "2b2cb9447bba0466a4567dd43f5623c504c46f3af03b02ca525ffb9c07982602",
+      "cases": [
+        {
+          "name": "compactRecreationKeepsRestoreSelectionAndPrivacy",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "recreationKeepsPrivateReviewAndTemporaryCategoryOptOutUntilExplicitConfirmation",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "compactRecreationKeepsFlatDetailsAndSidebar",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "recreatedSettingsKeepsFlatDetailsAndMeasuredPermanentSidebar",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "actualPreferencesFragmentBuildsFullSidebarAndAllBackupCategoriesAndFlatPages",
+          "result": "PASS",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.settings.SettingsShieldNavigationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "ec89191e415ea8660dcb483eca352fe42fba4a11b314b4304b88a1208e13e0db",
+      "cases": [
+        {
+          "name": "backupLandingKeepsThreePanelsAndTwoVerticalActions",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "diagnosticLevelDefaultsToCurrentDetailedBehaviorAndRespondsToChanges",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "compactBackupKeepsAllThreePanelsWithinThePhysicalViewport",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "upwardEntryIntoDiagnosticsRestoresItsRootAndHidesAboutWorkspace",
+          "result": "PASS",
+          "failure": null
+        },
+        {
+          "name": "diagnosticLoggingLevelAndExportAreReachableByRootKeyDispatch",
+          "result": "PASS",
+          "failure": null
+        }
+      ]
+    },
+    {
+      "name": "com.archos.mediacenter.video.player.PlayerControllerLaunchTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xml_sha256": "45e8e8b8971e99c6264937f4619ca96f1c6bacc33f81bbdf86ebbeda0e53f796",
+      "cases": [
+        {
+          "name": "preparedDurationCanRenderDuringFirstControllerInitializationAndRecreation",
+          "result": "PASS",
+          "failure": null
+        }
+      ]
+    }
+  ],
+  "targeted_tests": 34,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "python_guards": {
+    "tests": 81,
+    "failures": 0
+  },
+  "production_files_sha256": {
+    "src/main/java/com/archos/mediacenter/video/player/PlayerController.java": "dceec60289d4a0352e2629f4cdf61eef4168293f6ef0caf9b61b5b5fd6b9a3a4",
+    "src/main/java/com/archos/mediacenter/video/leanback/settings/PreviewSettings.java": "5310447b992e852b468ac4bf9ca9e924739c6144b55c45137fbaeefd95548df0",
+    "src/main/java/com/archos/mediacenter/video/leanback/settings/BackupSettingsController.java": "669d35d5c35338e6a94ef2f3fa70ed8876aaf19ca00d79ec1ac449221f143d24",
+    "src/main/java/com/archos/mediacenter/video/diagnostics/Diagnostics.java": "24bb5739f6c219a20344f3fc09104fbec072740251bd75387699c283bb11b29a"
+  },
+  "limits": [
+    "Local Java/native graphics tests reused the original signed candidate native inputs; not a fresh native build proof.",
+    "Full exact-source conformance, protected signing and corrected APK runtime are pending.",
+    "Physical Shield retest, hardware output/format matrix, signed upgrade and remaining workstream acceptance are not passed."
+  ],
+  "signing_policy_readback": {
+    "allowed_branch": "codex/supernova-0.139-implementation-2026-10-13",
+    "policy_id": 63180517,
+    "existing_policy_count": 6,
+    "changed_environment_or_secrets": false
+  },
+  "pr": {
+    "number": 17,
+    "draft": true,
+    "merged": false
+  },
+  "additional_correction": "Left from restore review uses the existing Back/close operation path, closes the private archive asynchronously, preserves receiving preferences/source ZIP and lets a subsequent Export start a fresh export selection.",
+  "superseded_dispatch": {
+    "signing_run": 38897967011,
+    "unsigned_run": 38897948111,
+    "conclusion": "cancelled",
+    "reason": "Superseded before signing by the confirmed restore-review exit correction; original completed delivery preserved."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "source_sha": "6ce3eeb03c9c97f6a9bf4c60a5af098209fea278",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 4,
+  "tests": 21,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.PortableMediaMatchesTest"
+  ],
+  "duration": "41s",
+  "log_sha256": "36b1d7a2dd69d6139e0c073cc694868d0b5cec481b72b882e1218b13790681c1",
+  "coverage": [
+    "Pure guarded receiving correction/explicit clearing intent with no native pointer/pin/facts mutation",
+    "Export retains pending bound correction over stale native identification and respects later receiving choice",
+    "Unbound references remain pending without creating native store/origin; corrupted private records fail before preparation",
+    "Source/receiving ownership and native dependency regressions"
+  ],
+  "limits": "Staged unregistered match-intent layer only. No canonical metadata/native application/private redo/reconciliation/manual UI hooks or production26th codec integration. Whole43 and release/native/device gates remain incomplete."
+}

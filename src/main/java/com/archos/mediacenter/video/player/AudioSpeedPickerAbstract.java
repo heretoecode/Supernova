@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 
+/** Defines shared audio speed values, limits and formatting for playback pickers. */
 public abstract class AudioSpeedPickerAbstract extends FrameLayout {
 
     private float mSpeed = 1.0f;

@@ -24,13 +24,15 @@ import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.leanback.widget.BaseCardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.leanback.widget.ImageCardView;
 import androidx.leanback.widget.OnItemViewClickedListener;
 import androidx.leanback.widget.Presenter;
 import androidx.leanback.widget.Row;
 import androidx.leanback.widget.RowPresenter;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
@@ -42,11 +44,13 @@ import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsTransitionBackdropCache;
 import com.archos.mediacenter.video.leanback.details.VideoDetailsTransitionPosterCache;
 import com.archos.mediacenter.video.leanback.presenter.ListPresenter;
+import com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowActivity;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowMoreDetailsActivity;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowFragment;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowMoreDetailsFragment;
 
+import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +100,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         showVideoDetails(activity, video, itemViewHolder, true, forceSelection, true, listId, null);
     }
 
+    @SuppressWarnings("unchecked")
     public static void showVideoDetails(Activity activity, Video video, Presenter.ViewHolder itemViewHolder, boolean animate, boolean forceSelection, boolean shouldLoadBackdrop, long listId, ActivityResultLauncher<Intent> launcher) {
         Intent intent = new Intent(activity, VideoDetailsActivity.class);
         intent.putExtra(VideoDetailsFragment.EXTRA_VIDEO, video);
@@ -113,22 +118,35 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         } else if (itemViewHolder instanceof ListPresenter.ListViewHolder){
             sourceView = ((ListPresenter.ListViewHolder)itemViewHolder).getImageView();
         }
-        if (itemViewHolder.view instanceof com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card) {
-            sourceView = ((com.archos.mediacenter.video.leanback.presenter.PreviewCardPresenter.Card)itemViewHolder.view).image;
+        if (itemViewHolder.view instanceof PreviewCardPresenter.Card) {
+            sourceView = ((PreviewCardPresenter.Card)itemViewHolder.view).image;
         }
+        boolean isPortraitPoster = false;
         if (sourceView instanceof ImageView) {
             Drawable drawable = ((ImageView) sourceView).getDrawable();
-            VideoDetailsTransitionPosterCache.put(launchUptimeMs, drawable);
+            if (drawable != null && drawable.getIntrinsicWidth() > 0 && drawable.getIntrinsicHeight() >= drawable.getIntrinsicWidth()) {
+                isPortraitPoster = true;
+                VideoDetailsTransitionPosterCache.put(launchUptimeMs, drawable);
+            }
         }
+        intent.putExtra(VideoDetailsFragment.EXTRA_HAS_SHARED_ELEMENT, isPortraitPoster);
         if (activity instanceof TvshowActivity || activity instanceof TvshowMoreDetailsActivity) {
             ImageView backdropView = activity.findViewById(R.id.details_backdrop);
-            java.io.File backdropFile = null;
-            if (activity instanceof androidx.fragment.app.FragmentActivity) {
-                androidx.fragment.app.Fragment fragment = ((androidx.fragment.app.FragmentActivity) activity).getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
+            File backdropFile = null;
+            if (activity instanceof FragmentActivity) {
+                Fragment fragment = ((FragmentActivity) activity).getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
                 if (fragment instanceof TvshowFragment) {
                     backdropFile = ((TvshowFragment) fragment).getBackdropController().getCurrentlyDisplayedFile();
+                    int color = ((TvshowFragment) fragment).getColor();
+                    if (color != 0) {
+                        intent.putExtra(VideoDetailsFragment.EXTRA_DETAILS_COLOR, color);
+                    }
                 } else if (fragment instanceof TvshowMoreDetailsFragment) {
                     backdropFile = ((TvshowMoreDetailsFragment) fragment).getBackdropController().getCurrentlyDisplayedFile();
+                    int color = ((TvshowMoreDetailsFragment) fragment).getColor();
+                    if (color != 0) {
+                        intent.putExtra(VideoDetailsFragment.EXTRA_DETAILS_COLOR, color);
+                    }
                 }
             }
             if (backdropView != null && backdropView.getDrawable() != null) {
@@ -137,14 +155,21 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         }
         // Cinematic Preview has no native poster transition target. Never start an
         // unmatched shared-element transition (including the return transition).
-        boolean cinematic = androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false);
+        boolean cinematic = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false);
         if (animate && sourceView != null && !cinematic) {
             traceVideoDetailsLaunch(launchUptimeMs, "source-transition-options-start");
-            ActivityOptionsCompat opts = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    activity, sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME);
+            ActivityOptionsCompat opts;
+            if (isPortraitPoster) {
+                opts = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        activity, sourceView, VideoDetailsActivity.SHARED_ELEMENT_NAME);
+            } else {
+                opts = ActivityOptionsCompat.makeSceneTransitionAnimation(activity);
+            }
             Bundle optionsBundle = opts.toBundle();
             traceVideoDetailsLaunch(launchUptimeMs, "source-transition-options-ready");
-            traceNextSourceFrame(sourceView, launchUptimeMs);
+            if (isPortraitPoster) {
+                traceNextSourceFrame(sourceView, launchUptimeMs);
+            }
             if (launcher != null) {
                 traceVideoDetailsLaunch(launchUptimeMs, "source-before-launcher-launch");
                 launcher.launch(intent, opts);
@@ -167,7 +192,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         intent.putExtra(TvshowFragment.EXTRA_TVSHOW, tvshow);
         View sourceView = null;
         Bundle bundle = null;
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false) && itemViewHolder.view instanceof ImageCardView) {
+        if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false) && itemViewHolder.view instanceof ImageCardView) {
             sourceView = ((ImageCardView) itemViewHolder.view).getMainImageView();
             bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity,
@@ -185,7 +210,7 @@ public class VideoViewClickedListener implements OnItemViewClickedListener {
         intent.putExtra(CollectionFragment.EXTRA_COLLECTION, collection);
         View sourceView = null;
         Bundle bundle = null;
-        if (!androidx.preference.PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false) && itemViewHolder.view instanceof ImageCardView) {
+        if (!PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("try_new_ui", false) && itemViewHolder.view instanceof ImageCardView) {
             sourceView = ((ImageCardView) itemViewHolder.view).getMainImageView();
             bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     activity,

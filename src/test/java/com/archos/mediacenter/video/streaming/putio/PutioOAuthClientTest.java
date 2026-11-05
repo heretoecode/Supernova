@@ -1,27 +1,35 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.app.Application;
+import android.os.SystemClock;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
-@RunWith(RobolectricTestRunner.class) @Config(application=android.app.Application.class,sdk=28)
+/** Checks put.io device linking validates configuration, QR payloads and authorization responses. */
+@RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioOAuthClientTest {
     @Test public void oauthDiagnosticsIncludeSemanticFailureButNeverPayloadOrLinkCode()throws Exception{
-        android.app.Application app=org.robolectric.RuntimeEnvironment.getApplication();
-        com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,true);
+        Application app=RuntimeEnvironment.getApplication();
+        Diagnostics.setEnabled(app,true);
         try{
             PutioOAuthClient client=new PutioOAuthClient("1","https://put.io/test-only/{code}");
             okhttp3.OkHttpClient fake=new okhttp3.OkHttpClient.Builder().addInterceptor(chain->new okhttp3.Response.Builder()
                     .request(chain.request()).protocol(okhttp3.Protocol.HTTP_1_1).code(200).message("OK")
                     .body(okhttp3.ResponseBody.create(okhttp3.MediaType.parse("application/json"),"{status:OK,private_data:'fixture-private-payload'}")).build()).build();
-            org.robolectric.util.ReflectionHelpers.setField(client,"http",fake);
-            try{client.poll(new PutioOAuthClient.Code("fixture-private-code","unused"));fail();}catch(java.io.IOException expected){}
-            Object recorder=org.robolectric.util.ReflectionHelpers.getStaticField(com.archos.mediacenter.video.diagnostics.Diagnostics.class,"FLIGHT");
-            java.lang.reflect.Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
-            String evidence=(String)snapshot.invoke(recorder,android.os.SystemClock.elapsedRealtime());
+            ReflectionHelpers.setField(client,"http",fake);
+            try{client.poll(new PutioOAuthClient.Code("fixture-private-code","unused"));fail();}catch(IOException expected){}
+            Object recorder=ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");
+            Method snapshot=recorder.getClass().getDeclaredMethod("snapshot",long.class);snapshot.setAccessible(true);
+            String evidence=(String)snapshot.invoke(recorder,SystemClock.elapsedRealtime());
             assertFalse(evidence.contains("fixture-private-payload"));assertFalse(evidence.contains("fixture-private-code"));
             String operation=null;
             for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
@@ -29,7 +37,11 @@ public class PutioOAuthClientTest {
             assertNotNull(operation);int ends=0;
             for(String line:evidence.split("\n")){if(line.isEmpty())continue;JSONObject row=new JSONObject(line);if(operation.equals(row.optString("operation_id"))&&"operation_end".equals(row.optString("event")))ends++;}
             assertEquals(1,ends);
-        }finally{com.archos.mediacenter.video.diagnostics.Diagnostics.setEnabled(app,false);}
+        }finally{Diagnostics.setEnabled(app,false);}
+    }
+    @Test public void registeredPublicClientUsesProviderVerifiedTvLinkRoute()throws Exception{
+        assertTrue(PutioOAuthClient.configured("9874","https://app.put.io/link?code={code}"));
+        assertEquals("https://app.put.io/link?code=A%26B",PutioOAuthClient.parseCode(new JSONObject("{status:OK,code:'A&B'}"),"https://app.put.io/link?code={code}").link);
     }
     @Test public void emptyOrUnsafeProductionConfigurationCannotStartLinking(){
         assertFalse(PutioOAuthClient.configured("",""));
@@ -45,7 +57,7 @@ public class PutioOAuthClientTest {
         assertNull(PutioOAuthClient.parseToken(new JSONObject("{status:OK,oauth_token:null}")));
         assertEquals("test-only-credential",PutioOAuthClient.parseToken(new JSONObject("{status:OK,oauth_token:'test-only-credential'}")));
         for(String data:new String[]{"{status:OK}","{status:OK,oauth_token:123}","{status:ERROR,error_message:'private-response'}"}){
-            try{PutioOAuthClient.parseToken(new JSONObject(data));fail();}catch(java.io.IOException expected){assertFalse(expected.getMessage().contains("private-response"));}
+            try{PutioOAuthClient.parseToken(new JSONObject(data));fail();}catch(IOException expected){assertFalse(expected.getMessage().contains("private-response"));}
         }
     }
 }

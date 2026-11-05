@@ -1,0 +1,578 @@
+diff --git a/src/com/archos/mediascraper/NfoExportProgress.java b/src/com/archos/mediascraper/NfoExportProgress.java
+new file mode 100644
+index 0000000..90a680c
+--- /dev/null
++++ b/src/com/archos/mediascraper/NfoExportProgress.java
+@@ -0,0 +1,111 @@
++package com.archos.mediascraper;
++
++import java.util.concurrent.CopyOnWriteArrayList;
++import java.util.concurrent.Executor;
++import java.util.concurrent.atomic.AtomicBoolean;
++import java.util.concurrent.atomic.AtomicLong;
++import java.util.function.Consumer;
++
++/** Reports completed export tasks, not rows merely dispatched to NfoWriter's queue. */
++public final class NfoExportProgress
++{
++    public static final class Snapshot
++    {
++        public final long jobId;
++        public final int done;
++        public final int total;
++        public final String currentTitle;
++        public final boolean finished;
++
++        Snapshot(long jobId, int done, int total, String currentTitle, boolean finished)
++        {
++            this.jobId = jobId;
++            this.done = done;
++            this.total = total;
++            this.currentTitle = currentTitle;
++            this.finished = finished;
++        }
++    }
++
++    public static final class Tracker
++    {
++        private final long jobId;
++        private final int total;
++        private int done;
++
++        private Tracker(int total)
++        {
++            this.total = Math.max(0, total);
++            jobId = IDS.incrementAndGet();
++            publish(new Snapshot(jobId, 0, this.total, "", this.total == 0));
++        }
++
++        public synchronized void completed(String title)
++        {
++            if (done >= total)
++                return;
++            done++;
++            publish(new Snapshot(jobId, done, total, title == null ? "" : title, done == total));
++        }
++
++        public synchronized void finish()
++        {
++            if (current.jobId == jobId)
++            {
++                publish(new Snapshot(jobId, done, total, current.currentTitle, true));
++            }
++        }
++    }
++
++    private static final AtomicLong IDS = new AtomicLong();
++    private static final CopyOnWriteArrayList<Consumer<Snapshot>> LISTENERS = new CopyOnWriteArrayList<>();
++    private static volatile Snapshot current = new Snapshot(0, 0, 0, "", true);
++
++    public static Tracker begin(int total)
++    {
++        return new Tracker(total);
++    }
++
++    public static Snapshot current()
++    {
++        return current;
++    }
++
++    public static AutoCloseable listen(Executor executor, Consumer<Snapshot> listener)
++    {
++        AtomicBoolean active = new AtomicBoolean(true);
++        Consumer<Snapshot> dispatch = snapshot -> executor.execute(() -> {
++            if (active.get())
++                listener.accept(snapshot);
++        });
++        LISTENERS.add(dispatch);
++        dispatch.accept(current);
++        return () ->
++        {
++            active.set(false);
++            LISTENERS.remove(dispatch);
++        };
++    }
++
++    private static synchronized void publish(Snapshot snapshot)
++    {
++        if (snapshot.jobId < current.jobId)
++            return;
++        current = snapshot;
++        for (Consumer<Snapshot> listener : LISTENERS)
++        {
++            try
++            {
++                listener.accept(snapshot);
++            }
++            catch (RuntimeException ignored)
++            {
++                // A detached/rejected UI executor must never abort an export.
++            }
++        }
++    }
++
++    private NfoExportProgress()
++    {
++    }
++}
+diff --git a/src/com/archos/mediascraper/NfoExportService.java b/src/com/archos/mediascraper/NfoExportService.java
+index a4ba372..2be786d 100644
+--- a/src/com/archos/mediascraper/NfoExportService.java
++++ b/src/com/archos/mediascraper/NfoExportService.java
+@@ -12,7 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-
+ package com.archos.mediascraper;
+ 
+ import android.app.NotificationChannel;
+@@ -49,7 +48,8 @@ import org.slf4j.LoggerFactory;
+ import java.io.IOException;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+-public class NfoExportService extends Service implements DefaultLifecycleObserver {
++public class NfoExportService extends Service implements DefaultLifecycleObserver
++{
+     private static final Logger log = LoggerFactory.getLogger(NfoExportService.class);
+     private static final String TAG = "NfoExportService";
+ 
+@@ -58,8 +58,7 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+ 
+     private static final String EXPORT_ALL_KEY = "all://";
+     private static final Intent VOID_INTENT = new Intent("void");
+-    private static final ConcurrentHashMap<String, String> sScheduledTasks =
+-            new ConcurrentHashMap<String, String>();
++    private static final ConcurrentHashMap<String, String> sScheduledTasks = new ConcurrentHashMap<String, String>();
+ 
+     private static final int NOTIFICATION_ID = 8;
+     private NotificationManager nm;
+@@ -73,14 +72,16 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+     private volatile Looper mServiceLooper;
+     private volatile ServiceHandler mServiceHandler;
+ 
+-    private final class ServiceHandler extends Handler {
+-        public ServiceHandler(Looper looper) {
++    private final class ServiceHandler extends Handler
++    {
++        public ServiceHandler(Looper looper)
++        {
+             super(looper);
+         }
+ 
+-        @Override
+-        public void handleMessage(Message msg) {
+-            onHandleIntent((Intent) msg.obj);
++        @Override public void handleMessage(Message msg)
++        {
++            onHandleIntent((Intent)msg.obj);
+             stopSelf(msg.arg1);
+         }
+     }
+@@ -89,8 +90,10 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+      * simple guard against multiple tasks of the same directory
+      * @return true if this uri or an export all task is not scheduled already
+      **/
+-    private static boolean addDirTask(Uri data) {
+-        if (data != null) {
++    private static boolean addDirTask(Uri data)
++    {
++        if (data != null)
++        {
+             // skip task if we are already exporting everything
+             if (sScheduledTasks.containsKey(EXPORT_ALL_KEY))
+                 return false;
+@@ -102,8 +105,10 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         return false;
+     }
+ 
+-    private static void removeDirTask(Uri data) {
+-        if (data != null) {
++    private static void removeDirTask(Uri data)
++    {
++        if (data != null)
++        {
+             sScheduledTasks.remove(data.toString());
+         }
+     }
+@@ -112,34 +117,43 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+      * simple guard against multiple "export all" tasks
+      * @return true if no such task is already scheduled
+      **/
+-    private static boolean addAllTask() {
++    private static boolean addAllTask()
++    {
+         return sScheduledTasks.putIfAbsent(EXPORT_ALL_KEY, "") == null;
+     }
+-    private static void removeAllTask() {
++    private static void removeAllTask()
++    {
+         sScheduledTasks.remove(EXPORT_ALL_KEY);
+     }
+ 
+-    public static void exportDirectory(Context context, Uri directory) {
++    public static void exportDirectory(Context context, Uri directory)
++    {
+         Intent serviceIntent = new Intent(context, NfoExportService.class);
+         serviceIntent.setAction(INTENT_EXPORT_FILE);
+         serviceIntent.setData(directory);
+-        if (isForeground) context.startService(serviceIntent);
++        if (isForeground)
++            context.startService(serviceIntent);
+     }
+-    public static void exportAll(Context context) {
++    public static void exportAll(Context context)
++    {
+         Intent serviceIntent = new Intent(context, NfoExportService.class);
+         serviceIntent.setAction(INTENT_EXPORT_ALL);
+-        if (isForeground) context.startService(serviceIntent);
++        if (isForeground)
++            context.startService(serviceIntent);
+     }
+ 
+-    public NfoExportService() {
++    public NfoExportService()
++    {
+         super();
+-        if (log.isDebugEnabled()) log.debug("NfoExportService");
++        if (log.isDebugEnabled())
++            log.debug("NfoExportService");
+     }
+ 
+-    @Override
+-    public void onCreate() {
++    @Override public void onCreate()
++    {
+         super.onCreate();
+-        if (log.isDebugEnabled()) log.debug("onCreate");
++        if (log.isDebugEnabled())
++            log.debug("onCreate");
+ 
+         HandlerThread thread = new HandlerThread("NfoExportService", Process.THREAD_PRIORITY_BACKGROUND);
+         thread.start();
+@@ -147,33 +161,40 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         mServiceHandler = new ServiceHandler(mServiceLooper);
+ 
+         // need to do that early to avoid ANR on Android 26+
+-        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+-            NotificationChannel nc = new NotificationChannel(notifChannelId, notifChannelName,
+-                    NotificationManager.IMPORTANCE_LOW);
++        nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
++        {
++            NotificationChannel nc =
++                new NotificationChannel(notifChannelId, notifChannelName, NotificationManager.IMPORTANCE_LOW);
+             nc.setDescription(notifChannelDescr);
+             if (nm != null)
+                 nm.createNotificationChannel(nc);
+         }
+         nb = new NotificationCompat.Builder(this, notifChannelId)
+-                .setSmallIcon(android.R.drawable.stat_notify_sync)
+-                .setContentTitle(getString(R.string.nfo_export_exporting))
+-                .setContentText("")
+-                .setPriority(NotificationCompat.PRIORITY_LOW)
+-                .setTicker(null).setOnlyAlertOnce(true).setOngoing(true).setAutoCancel(true);
++                 .setSmallIcon(android.R.drawable.stat_notify_sync)
++                 .setContentTitle(getString(R.string.nfo_export_exporting))
++                 .setContentText("")
++                 .setPriority(NotificationCompat.PRIORITY_LOW)
++                 .setTicker(null)
++                 .setOnlyAlertOnce(true)
++                 .setOngoing(true)
++                 .setAutoCancel(true);
+         // Register as a lifecycle observer
+         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+     }
+ 
+-    @Override
+-    public int onStartCommand(Intent intent, int flags, int startId) {
++    @Override public int onStartCommand(Intent intent, int flags, int startId)
++    {
+         String action = intent != null ? intent.getAction() : null;
+         Uri data = intent != null ? intent.getData() : null;
+         boolean processIntent = false;
+-        if (INTENT_EXPORT_FILE.equals(action)) {
++        if (INTENT_EXPORT_FILE.equals(action))
++        {
+             if (addDirTask(data))
+                 processIntent = true;
+-        } else if (INTENT_EXPORT_ALL.equals(action)) {
++        }
++        else if (INTENT_EXPORT_ALL.equals(action))
++        {
+             if (addAllTask())
+                 processIntent = true;
+         }
+@@ -185,24 +206,30 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         return START_REDELIVER_INTENT;
+     }
+ 
+-    @Override
+-    public IBinder onBind(Intent intent) {
++    @Override public IBinder onBind(Intent intent)
++    {
+         return null;
+     }
+ 
+-    protected void onHandleIntent(Intent intent) {
++    protected void onHandleIntent(Intent intent)
++    {
+         String action = intent != null ? intent.getAction() : null;
+         Uri data = intent != null ? intent.getData() : null;
+ 
+-        if (INTENT_EXPORT_FILE.equals(action)) {
++        if (INTENT_EXPORT_FILE.equals(action))
++        {
+             exportFile(data);
+-        } else if (INTENT_EXPORT_ALL.equals(action)) {
++        }
++        else if (INTENT_EXPORT_ALL.equals(action))
++        {
+             exportAll();
+         }
+     }
+ 
+-    private void exportAll() {
+-        if (log.isDebugEnabled()) log.debug("exportAll");
++    private void exportAll()
++    {
++        if (log.isDebugEnabled())
++            log.debug("exportAll");
+         nb.setContentText(getString(R.string.nfo_export_exporting_all));
+         nm.notify(NOTIFICATION_ID, nb.build());
+         handleCursor(getAllCursor());
+@@ -211,18 +238,24 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         removeAllTask();
+     }
+ 
+-    private void exportFile(Uri data) {
+-        if (log.isDebugEnabled()) log.debug("exportFile: {}", data.getPath());
++    private void exportFile(Uri data)
++    {
++        if (log.isDebugEnabled())
++            log.debug("exportFile: {}", data.getPath());
+         MetaFile2 file = null;
+-        try {
++        try
++        {
+             file = MetaFile2Factory.getMetaFileForUrl(data);
+-        } catch (Exception e) {
+-            if(e instanceof NetworkOnMainThreadException)
++        }
++        catch (Exception e)
++        {
++            if (e instanceof NetworkOnMainThreadException)
+                 throw new NetworkOnMainThreadException();
+             else
+                 e.printStackTrace();
+         }
+-        if (file != null && file.isDirectory()) {
++        if (file != null && file.isDirectory())
++        {
+             nb.setContentText(data.toString());
+             nm.notify(NOTIFICATION_ID, nb.build());
+             handleCursor(getInDirectoryCursor(data));
+@@ -232,82 +265,92 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         removeDirTask(data);
+     }
+ 
+-    private void handleCursor(Cursor cursor) {
+-        if (cursor != null) {
++    private void handleCursor(Cursor cursor)
++    {
++        if (cursor == null)
++            return;
++        NfoExportProgress.Tracker progress = NfoExportProgress.begin(cursor.getCount());
++        try (Cursor rows = cursor)
++        {
+             NfoWriter.ExportContext exportContext = new NfoWriter.ExportContext();
+-            while (cursor.moveToNext() && isForeground) {
+-                long id = cursor.getLong(0);
+-                int type = cursor.getInt(1);
+-                BaseTags tags = null;
+-                switch (type) {
+-                    case BaseTags.MOVIE:
+-                        tags = TagsFactory.buildMovieTags(this, id);
+-                        break;
+-                    case BaseTags.TV_SHOW:
+-                        tags = TagsFactory.buildEpisodeTags(this, id);
+-                        break;
+-                    default:
+-                        log.warn("can't export file of type: {}", type);
+-                        break;
++            while (rows.moveToNext() && isForeground)
++            {
++                long id = rows.getLong(0);
++                int type = rows.getInt(1);
++                BaseTags tags = type == BaseTags.MOVIE     ? TagsFactory.buildMovieTags(this, id)
++                                : type == BaseTags.TV_SHOW ? TagsFactory.buildEpisodeTags(this, id)
++                                                           : null;
++                if (tags == null)
++                {
++                    progress.completed("");
++                    continue;
++                }
++                String title = tags.getTitle();
++                try
++                {
++                    NfoWriter.export(tags.getFile(), tags, exportContext, () -> progress.completed(title));
+                 }
+-                if (tags != null) {
+-                    try {
+-                        NfoWriter.export(tags.getFile(), tags, exportContext);
+-                    } catch (IOException e) {
+-                        // can't export, folder not writable?
+-                    }
++                catch (IOException failure)
++                {
++                    log.warn("NFO export could not be queued", failure);
++                    progress.completed(title);
+                 }
+             }
+-            cursor.close();
++        }
++        finally
++        {
++            NfoWriter.awaitPendingExports();
++            progress.finish();
+         }
+     }
+ 
+     private static final Uri URI = VideoStore.Video.Media.EXTERNAL_CONTENT_URI;
+     private static final String[] PROJECTION = {
+-            VideoColumns.ARCHOS_MEDIA_SCRAPER_ID,   // 0
+-            VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, // 1
++        VideoColumns.ARCHOS_MEDIA_SCRAPER_ID,   // 0
++        VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, // 1
+     };
+     private static final String SELECTION_ALL =
+-            VideoColumns.ARCHOS_MEDIA_SCRAPER_ID + " > 0 AND " +
+-            VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE + " > 0";
+-    private static final String SELECTION_FOLDER =
+-            VideoColumns.ARCHOS_MEDIA_SCRAPER_ID + " > 0 AND " +
+-            VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE + " > 0 AND " +
+-            MediaColumns.DATA + " LIKE ?||'/%'";
++        VideoColumns.ARCHOS_MEDIA_SCRAPER_ID + " > 0 AND " + VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE + " > 0";
++    private static final String SELECTION_FOLDER = VideoColumns.ARCHOS_MEDIA_SCRAPER_ID + " > 0 AND " +
++                                                   VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE + " > 0 AND " +
++                                                   MediaColumns.DATA + " LIKE ?||'/%'";
+     private static final String ORDER = MediaColumns.DATA;
+ 
+-    private Cursor getAllCursor() {
++    private Cursor getAllCursor()
++    {
+         ContentResolver cr = getContentResolver();
+         return cr.query(URI, PROJECTION, SELECTION_ALL, null, ORDER);
+     }
+ 
+-    private Cursor getInDirectoryCursor(Uri folder) {
++    private Cursor getInDirectoryCursor(Uri folder)
++    {
+         String path = folder.toString();
+         if (path.endsWith("/"))
+             path = path.substring(0, path.length() - 1);
+         ContentResolver cr = getContentResolver();
+-        String[] selectionArgs = {
+-            path
+-        };
++        String[] selectionArgs = {path};
+         return cr.query(URI, PROJECTION, SELECTION_FOLDER, selectionArgs, ORDER);
+     }
+ 
+-    @Override
+-    public void onStop(LifecycleOwner owner) {
++    @Override public void onStop(LifecycleOwner owner)
++    {
+         // App in background
+-        if (log.isDebugEnabled()) log.debug("onStop: LifecycleOwner app in background, stopSelf");
++        if (log.isDebugEnabled())
++            log.debug("onStop: LifecycleOwner app in background, stopSelf");
+         cleanup();
+         stopSelf();
+     }
+ 
+-    @Override
+-    public void onStart(LifecycleOwner owner) {
++    @Override public void onStart(LifecycleOwner owner)
++    {
+         // App in foreground
+-        if (log.isDebugEnabled()) log.debug("onStart: LifecycleOwner app in foreground");
++        if (log.isDebugEnabled())
++            log.debug("onStart: LifecycleOwner app in foreground");
+         isForeground = true;
+     }
+ 
+-    private void cleanup() {
++    private void cleanup()
++    {
+         isForeground = false;
+         // Clear the scheduled tasks
+         sScheduledTasks.clear();
+@@ -315,11 +358,13 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         nm.cancel(NOTIFICATION_ID);
+     }
+ 
+-    @Override
+-    public void onDestroy() {
+-        if (log.isDebugEnabled()) log.debug("onDestroy()");
++    @Override public void onDestroy()
++    {
++        if (log.isDebugEnabled())
++            log.debug("onDestroy()");
+         ProcessLifecycleOwner.get().getLifecycle().removeObserver(this);
+-        if (mServiceLooper != null) {
++        if (mServiceLooper != null)
++        {
+             mServiceLooper.quit();
+         }
+         cleanup();
+diff --git a/test/java/com/archos/mediascraper/NfoExportProgressTest.java b/test/java/com/archos/mediascraper/NfoExportProgressTest.java
+new file mode 100644
+index 0000000..1b7e3fd
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/NfoExportProgressTest.java
+@@ -0,0 +1,43 @@
++package com.archos.mediascraper;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++
++import java.util.ArrayList;
++import java.util.List;
++import org.junit.Test;
++
++public class NfoExportProgressTest
++{
++    @Test public void reportsCompletedTasksAndCannotBeOverwrittenByAnOlderJob() throws Exception
++    {
++        List<NfoExportProgress.Snapshot> events = new ArrayList<>();
++        try (AutoCloseable listener = NfoExportProgress.listen(Runnable::run, events::add))
++        {
++            NfoExportProgress.Tracker first = NfoExportProgress.begin(2);
++            assertEquals(0, NfoExportProgress.current().done);
++            first.completed("Film one");
++            assertEquals(1, NfoExportProgress.current().done);
++            assertEquals("Film one", NfoExportProgress.current().currentTitle);
++            assertFalse(NfoExportProgress.current().finished);
++            first.completed("Film two");
++            assertTrue(NfoExportProgress.current().finished);
++            NfoExportProgress.begin(3);
++            first.finish();
++            assertEquals(3, NfoExportProgress.current().total);
++            assertEquals(0, NfoExportProgress.current().done);
++        }
++    }
++
++    @Test public void unsubscribingFencesAlreadyQueuedCallbacks() throws Exception
++    {
++        List<Runnable> queued = new ArrayList<>();
++        List<NfoExportProgress.Snapshot> events = new ArrayList<>();
++        AutoCloseable listener = NfoExportProgress.listen(queued::add, events::add);
++        NfoExportProgress.begin(1).completed("Example");
++        listener.close();
++        queued.forEach(Runnable::run);
++        assertTrue(events.isEmpty());
++    }
++}

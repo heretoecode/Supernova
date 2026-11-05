@@ -14,11 +14,8 @@
 
 package com.archos.mediacenter.video.browser;
 
-import com.archos.filecorelibrary.SmbItemData;
-import com.archos.filecorelibrary.samba.SambaConfiguration;
-import com.archos.mediacenter.utils.UpnpItemData;
-import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 
+/** Stores a file item's name, path, directory flag and additional information for browsing. */
 public class ItemData implements Comparable<ItemData> {
 
     // Add here all the available item types (each item type can have its own layout)

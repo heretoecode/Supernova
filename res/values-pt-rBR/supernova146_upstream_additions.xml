@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">Velocidade de áudio</string>
+  <string name="preferences_audio_speed_mode_summary">Selecione o filtro de velocidade de áudio usado para alterar a velocidade de reprodução. ⚠ Experimental, pode resultar em vídeo travando ou distorção de áudio.</string>
+  <string name="audio_speed_mode_disabled">Desativado</string>
+  <string name="audio_speed_mode_audiotrack">Nativo do sistema (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">Equilibrado (FFmpeg atempo)</string>
+  <string name="audio_speed_mode_sonic">Voz e fala (Sonic)</string>
+  <string name="subtitles_show_full_for_local_audio_title">Mostrar legendas para áudio de idioma local</string>
+  <string name="subtitles_show_full_for_local_audio_summary">Desligado por padrão, então apenas a seleção automática de legendas forçadas quando o áudio corresponder ao idioma da legenda; habilite também para selecionar automaticamente legendas completas</string>
+  <string name="ui_choice_title">Parece que você está usando o Nova Video Player em uma TV.\nSe esse for o caso, recomendamos usar nossa nova interface para TV</string>
+  <string name="ui_choice_tv">Interface para TV</string>
+  <string name="ui_choice_tablet">Interface para tablet</string>
+  <string name="ui_choice_help">Você pode alterar sua escolha mais tarde nas configurações do aplicativo</string>
+  <string name="workgroup">Grupo de trabalho</string>
+</resources>

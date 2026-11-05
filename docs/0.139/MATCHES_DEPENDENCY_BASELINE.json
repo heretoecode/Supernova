@@ -1,0 +1,18 @@
+{
+  "apply_after": "Established0.138 MediaLib patches/Foundation preparation, then medialib-supernova139-playlists.patch",
+  "base_commit": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "isolated_dependency_commit": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "patch": ".github/build/medialib-supernova139-matches.patch",
+  "patch_sha256": "9d0c9e30758f0b409d76b47361026a1f917611ee31b8b3d1d905aed346075c6c",
+  "files": [
+    "src/com/archos/mediascraper/MovieTags.java",
+    "src/com/archos/mediaprovider/video/ScraperProvider.java",
+    "src/com/archos/mediaprovider/video/ScraperStore.java",
+    "src/com/archos/mediascraper/EpisodeTags.java",
+    "src/com/archos/mediascraper/OwnedCanonicalBatch.java",
+    "src/com/archos/mediascraper/MatchRestoreOperations.java",
+    "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+    "src/com/archos/mediascraper/ShowTags.java"
+  ],
+  "scope": "Java/provider and schema63 view-only migration for guarded canonical restore/clear. Normal native tables/cleanup triggers preserved. Production schema9 canonical integration and codec26; exact acceptance stages in MATCHES_CODEC_COMBINED_VERIFICATION.json."
+}

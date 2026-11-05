@@ -1,0 +1,17 @@
+{
+  "source_sha": "b4e8873c4a24a65097585e0343dcfb14b85baf10",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "FAIL",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+    "com.archos.mediacenter.video.leanback.HeroRotationPolicyTest"
+  ],
+  "duration": "1m8s",
+  "log_sha256": "ae20f772c8f5ca52c55ccc84bcfee0692b375aa5de32046bc409291c5cc9971a",
+  "finding": "Actual root input cadence passed. Lifecycle fixture stepped29999ms from after window-focus handling rather than the recorded clock deadline; initial handling already consumes frame time.",
+  "tests": 13,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0
+}

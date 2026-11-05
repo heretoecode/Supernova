@@ -14,24 +14,28 @@
 
 package com.archos.mediacenter.video.player.tvmenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.player.tvmenu.TVCardView.onFocusOutListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
+/** Creates TV playback menu cards and manages their navigation and animations. */
 public class TVMenuAdapter {
     private String[] mDataset;
     private Context mActivity;
@@ -53,6 +57,10 @@ public class TVMenuAdapter {
         this.mActivity = mActivity;
         this.mWindow = window;
         this.mView = frameLayout;
+        this.mView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        if (this.mView.getParent() instanceof View) {
+            ((View) this.mView.getParent()).setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+        }
         this.mViewSlave=null;
         this.pos=0;
         this.biggest=0;
@@ -66,7 +74,8 @@ public class TVMenuAdapter {
             ((TVCardView)cards.get(0).findViewById(R.id.card_view)).requestFocus();
     }
 
-    public java.util.List<TVCardView> previewCards(){java.util.List<TVCardView> result=new java.util.ArrayList<>();for(View root:cards){TVCardView card=root.findViewById(R.id.card_view);if(card!=null&&card.getVisibility()==View.VISIBLE)result.add(card);}return result;}
+    public List<TVCardView> previewCards(){List<TVCardView> result=new ArrayList<>();for(View root:cards){TVCardView card=root.findViewById(R.id.card_view);if(card!=null&&card.getVisibility()==View.VISIBLE)result.add(card);}return result;}
+    @SuppressLint("InflateParams") // Root TVMenu layout is inflated detached and attached to player controller
     public TVMenu createTVMenu(){
         TVMenu tvm = (TVMenu)LayoutInflater.from(mActivity)
                 .inflate(R.layout.menu_layout, null);
@@ -107,8 +116,8 @@ public class TVMenuAdapter {
 
     public View createView(Drawable on, Drawable off, String text){
         View v = (View)LayoutInflater.from(mActivity)
-                .inflate(androidx.preference.PreferenceManager.getDefaultSharedPreferences(mActivity).getBoolean("try_new_ui", false) ? R.layout.card_layout_experimental : R.layout.card_layout, null);
-        if (androidx.preference.PreferenceManager.getDefaultSharedPreferences(mActivity).getBoolean("try_new_ui", false)) {
+                .inflate(PreferenceManager.getDefaultSharedPreferences(mActivity).getBoolean("try_new_ui", false) ? R.layout.card_layout_experimental : R.layout.card_layout, null);
+        if (PreferenceManager.getDefaultSharedPreferences(mActivity).getBoolean("try_new_ui", false)) {
             v.findViewById(R.id.card_view).setBackgroundResource(R.drawable.mark_hud_focus);
         }
         ((TVCardView)v.findViewById(R.id.card_view)).setText(text);v.findViewById(R.id.card_view).setTag(text);
@@ -185,7 +194,7 @@ public class TVMenuAdapter {
         currentOffset+=mcv.getOriginalWidth()+mGapBetweenCards;
         //grow mView
         int newWidth;
-        android.view.ViewGroup.LayoutParams lp = mView.getLayoutParams();
+        ViewGroup.LayoutParams lp = mView.getLayoutParams();
         newWidth = lp.width+mcv.getOriginalWidth();
 
         if(mcv.getOriginalWidth()>biggest)
@@ -307,6 +316,7 @@ public class TVMenuAdapter {
     public void initializeSlaveView(FrameLayout v){
 
         mViewSlave=v;
+        mViewSlave.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         //iterate over views to create slave views, add them to new slave view
         for(View view : cards){
             if(view.findViewById(R.id.card_view)!=null ){
@@ -320,8 +330,8 @@ public class TVMenuAdapter {
             }
 
         }
-        android.view.ViewGroup.LayoutParams lp = mView.getLayoutParams();
-        android.view.ViewGroup.LayoutParams lp2 = mViewSlave.getLayoutParams();
+        ViewGroup.LayoutParams lp = mView.getLayoutParams();
+        ViewGroup.LayoutParams lp2 = mViewSlave.getLayoutParams();
         lp2.width = lp.width;
 
 

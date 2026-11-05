@@ -1,0 +1,99 @@
+name: Lint report (Android checker findings)
+# Runs Android lint on the current source and publishes a readable inventory of every finding
+# (by issue type, severity and file) to the 'reports/lint' branch, so the findings can be read without
+# downloading build artifacts. No secrets, no APK, no signing. Triggered by changing
+# .github/diagnostics/lint-request.json.
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/diagnostics/lint-request.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: lint-report
+  cancel-in-progress: true
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout candidate source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: nova/Video
+          fetch-depth: 1
+      - name: Java21
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Download pinned source-built native artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: supernova-0146-native-*
+          path: native-artifacts
+          run-id: 40843685431
+          github-token: ${{ github.token }}
+      - name: Prepare dependency source
+        run: |
+          set -euo pipefail
+          python3 nova/Video/.github/build/prepare-supernova146-workspace.py --root nova
+          python3 nova/Video/.github/build/package-supernova146-native.py --root nova --artifacts native-artifacts --workspace "$RUNNER_TEMP/native146-packaging" > /dev/null
+          python3 nova/Video/.github/build/build-supernova146-jetty.py --workspace nova/Video/build/supernova146-jetty
+      - name: Run Android lint
+        run: |
+          set +e -uo pipefail
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-37.0' 'build-tools;36.0.0' > /dev/null
+          cd nova/Video
+          chmod +x gradlew
+          ./gradlew lintNoamazonRelease -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --max-workers=4 \
+            -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild > "$RUNNER_TEMP/gradle.log" 2>&1
+          echo "gradle exit=$?" | tee "$RUNNER_TEMP/lint-exit"
+          grep -E "BUILD|Lint found|errors|warnings" "$RUNNER_TEMP/gradle.log" | tail -20 | tee -a "$RUNNER_TEMP/lint-exit"
+      - name: Summarise findings
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/lint"; mkdir -p "$out"
+          python3 - "$out" <<'PY'
+          import collections, json, sys, xml.etree.ElementTree as ET
+          from pathlib import Path
+          out = Path(sys.argv[1]); root = Path('nova/Video').resolve()
+          report = root / 'build/reports/lint-results-noamazonRelease.xml'
+          issues = []
+          for issue in ET.parse(report).getroot().findall('issue'):
+              loc = issue.find('location')
+              path = loc.get('file', '') if loc is not None else ''
+              try:
+                  path = str(Path(path).resolve().relative_to(root))
+              except ValueError:
+                  pass
+              issues.append(dict(id=issue.get('id'), severity=issue.get('severity'), category=issue.get('category'),
+                                 priority=int(issue.get('priority') or 0), summary=issue.get('summary'),
+                                 message=issue.get('message'), file=path,
+                                 line=int(loc.get('line')) if loc is not None and loc.get('line') else None))
+          (out / 'lint-findings.json').write_text(json.dumps(issues, indent=1) + '\n')
+          by = collections.Counter((i['category'], i['id'], i['severity'], i['summary']) for i in issues)
+          lines = ['# Android lint inventory', '', f'{len(issues)} findings.', '',
+                   '| Count | Category | Issue | Severity | What it means |', '|---:|---|---|---|---|']
+          for (cat, iid, sev, summary), n in sorted(by.items(), key=lambda x: (-x[1], x[0])):
+              lines.append(f'| {n} | {cat} | `{iid}` | {sev} | {summary} |')
+          per_file = collections.Counter(i['file'] for i in issues)
+          lines += ['', '## Files with the most findings', '', '| Count | File |', '|---:|---|']
+          lines += [f'| {n} | `{f}` |' for f, n in per_file.most_common(40)]
+          (out / 'LINT_INVENTORY.md').write_text('\n'.join(lines) + '\n')
+          print('\n'.join(lines[:60]))
+          PY
+          cp "$RUNNER_TEMP/lint-exit" "$out/LINT_EXIT.txt"
+          cp nova/Video/build/reports/lint-results-noamazonRelease.html "$out/" 2>/dev/null || true
+      - name: Publish to reports/lint
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/lint"
+          printf 'source=%s\nlinted=%s\n' "$SOURCE_SHA" "$(date -u +%FT%TZ)" > SOURCE.txt
+          git init -q; git checkout -q -b reports/lint
+          git config user.name "lint-report"; git config user.email "actions@users.noreply.github.com"
+          git add -A; git commit -q -m "Lint report for $SOURCE_SHA"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" reports/lint

@@ -1,0 +1,50 @@
+{
+  "result": "BLOCKED",
+  "observed_utc": "2026-10-15",
+  "request_method": "POST",
+  "endpoint": "/repos/heretoecode/Supernova/environments/supernova-foundation-signing/deployment-branch-policies",
+  "request": {
+    "name": "codex/supernova-0.139-implementation-2026-10-13",
+    "type": "branch"
+  },
+  "authorization": "Owner current instruction to investigate and resolve139 release signing restrictions, retaining established signing method/identity.",
+  "http_status": 403,
+  "message": "Resource not accessible by integration",
+  "before_after_identical": true,
+  "policies_before_and_after": [
+    {
+      "id": 62439781,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjQzOTc4MQ==",
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "id": 62580297,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjU4MDI5Nw==",
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "id": 62672957,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjY3Mjk1Nw==",
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "id": 62775528,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2Mjc3NTUyOA==",
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "id": 62634362,
+      "node_id": "MDE2OkdhdGVCcmFuY2hQb2xpY3k2MjYzNDM2Mg==",
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "response_sha256": "73e8512e79bd1ba906f7edcd8a341e77f0f42e90a2bd80cec822e9d1f112dbd1",
+  "key_access_attempted": false,
+  "signing_dispatched": false,
+  "next_step": "Repository/environment administrator applies this exact reviewed branch-policy request or supplies another explicitly authorized signing route. Current integration cannot perform it. Do not borrow an older allowed ref or replace keys."
+}

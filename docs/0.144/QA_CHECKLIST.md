@@ -1,0 +1,23 @@
+# 0.144 requirement status checklist
+
+Status vocabulary: **implemented** describes source; **automated-tested** describes executed software checks; **visually Shield-verified** requires physical captures and is never inferred from Robolectric. The final full-suite/signature/native result is recorded separately in the release receipt.
+
+| Work item | Implementation / available automated evidence | Software visual evidence | Physical / unresolved gate |
+|---|---|---|---|
+| WebDAV absent deletion | Implemented; automated-tested HTTP 204/404/401/403/405/423/500/503, repeat 404 and app absence/sidecar decision. | Not a visual gate. | Real WebDAV, outage/reconnect and multiple title versions pending. |
+| Safe reconciliation | Implemented; automated-tested complete versus failed listing, missing/present files, excluded subtree and neighbouring path boundary; null/stopped/depth-limited traversal. | Not a visual gate. | Real provider/storage lifecycle pending. |
+| Scan Library | Implemented through existing pipeline and coalescer; network workspace/scan lifecycle tests executed. | Overview native fixture render executed. | Actual remote progress and source failures pending. |
+| Library focus/background | Implemented; automated-tested displayed-order custom first item, empty filtering, retained item/scroll and strict page/failure artwork isolation. | Existing native library captures/tests retained. | Fast real page switching, artwork/network timing and Shield focus pending. |
+| Global Settings rows/switches | Implemented via shared component; automated-tested persistence/dependencies, 165-entry mapping and round thumb under stretched bounds. | Corrected round On/Off captures inspected. | Hardware rendering and full account/provider flows pending. |
+| Settings entry/grid/copy | Implemented; automated-tested equal gutters, navigation/restoration and purpose-specific copy; full-screen transition source correction. | 720p/1080p/4K/150% fixtures inspected. | Physical transition/flicker/overscan acceptance pending. |
+| Locale flags | Existing correct explicit-region PNG resolver retained; language-only values remain neutral; automated locale/asset coverage retained. | Explicit en-GB PNG visibly rendered in actual Android fixture. | No Shield flag capture yet. |
+| Concept A4 playback settings | Text-backed structure implemented and automated-tested: tab names/order, columns, inline formats, native actions, Night Mode and Right→Up focus. | Audio/Video/Subtitles/More fixture captures inspected. | **BLOCKED reference acceptance**: original A4 Audio/Video images inaccessible; exact inline-adjustment/proportion conformance not complete. |
+| Preparing Playback | Official neutral fallback and stale URI invalidation implemented; existing loading tests retained. | No original-recording comparison claimed. | Original textured-art symptom not reproduced; physical playback pending. |
+| HUD / Play-Pause / seek | Responsive group inset, circular transport treatment and clamped pointer implemented; helper/player regressions retained. | No new physical HUD acceptance claimed. | Subtitles, seeking, safe-area and AV-chain acceptance pending. |
+| Age-rating start overlay | Existing regional/established-output implementation retained; automated timing/unknown/output tests executed. | Source style audited. | Real regional metadata/timing/fade and playback captures pending. |
+| Details ratings/reviews/hero | Implemented; automated-tested no review entry, metadata stability and native reference layouts. | Retained six-region composition and hero fixture inspected. | Original hero photographs inaccessible; real title logos/movie/TV/large text on Shield pending. |
+| Additional diagnostic defects | Source-confirmed scan, stale-art, focus and missing-source defects corrected with regression tests. | Not applicable. | **BLOCKED original audit**: original October 27 diagnostic ZIP inaccessible; report-only events not re-analysed. |
+
+All physical rows remain **NOT visually Shield-verified**. See [SHIELD_QA.md](SHIELD_QA.md) for the execution checklist and [VISUAL_REVIEW.md](VISUAL_REVIEW.md) for software-only observations. Earlier audit defects F01/F02 and the complete audited preference mapping remain covered by the preserved 0.143 implementation/regressions.
+
+Final automated release gate: **passed** on source `4e6f1f8f` in run 40735286063 (1,135 tests, zero failures/errors/skips, release lint zero errors, protected signature/native/payload checks). Independent APK verification and complete Drive readback also passed. This does not close any physical or missing-reference row above.

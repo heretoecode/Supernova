@@ -20,8 +20,10 @@ public final class PreviewSubtitleResults {
             PreviewDialog.review(context,"Subtitle Download",details,"Download",()->{
                 if(accepted[0])return;accepted[0]=true;parent[0].dismiss();download.accept(selected);
             });
-        });return parent[0];
+        });for(int i=0;i<snapshot.size();i++)PreviewLanguageIcon.bind(parent[0],i,PreviewLanguageIcon.providerCode(snapshot.get(i).getLanguage()));return parent[0];
     }
+    /** Only the explicitly authorised playback settings route uses Image A2. */
+    public static Dialog showPlayback(Context context,List<OpenSubtitlesSearchResult> results,Consumer<OpenSubtitlesSearchResult> download){return SubtitleResultsPanel.show(context,results,download);}
     private static String language(OpenSubtitlesSearchResult item){return safe(item.getLanguage(),"Unknown language");}
     private static String safe(String value,String fallback){return value==null||value.trim().isEmpty()?fallback:value;}
     private PreviewSubtitleResults(){}

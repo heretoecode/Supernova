@@ -1,0 +1,158 @@
+diff --git a/src/main/java/com/archos/mediacenter/video/player/Player.java b/src/main/java/com/archos/mediacenter/video/player/Player.java
+index e3ea4710fbf55beb0160d3982b41084c9e28a116..2f37a80d92f9bb606cabb8e35b81266030e1f510 100644
+--- a/src/main/java/com/archos/mediacenter/video/player/Player.java
++++ b/src/main/java/com/archos/mediacenter/video/player/Player.java
+@@ -1686,25 +1686,6 @@ public class Player implements IPlayerControl,
+                 mWindow.setColorMode(ActivityInfo.COLOR_MODE_HDR);
+                 if (log.isDebugEnabled()) log.debug("CONFIG setColorMode COLOR_MODE_HDR requested");
+             }
+-            // Explicitly set the SurfaceView layer dataspace so SurfaceFlinger engages its HDR
+-            // tone-mapping pipeline from the start. On some devices (e.g. Google TV Streamer),
+-            // the surface starts as SDR (dataspace 259 set by MediaCodec at configure time) and
+-            // the HWC2 does not dynamically switch to HDR composition when the dataspace later
+-            // changes via the producer. Setting it here (consumer side) ensures correct setup.
+-            if (mSurfaceController != null) {
+-                VideoMetadata.VideoTrack videoTrack = mVideoMetadata != null ? mVideoMetadata.getVideoTrack() : null;
+-                int colorTrc = videoTrack != null ? videoTrack.colorTrc : 0;
+-                int dataSpace = 0; // default: reset to unknown
+-                if (colorTrc == 16) {       // AVCOL_TRC_SMPTE2084 (PQ/HDR10)
+-                    dataSpace = 0x10C00000; // HAL_DATASPACE_BT2020_PQ
+-                } else if (colorTrc == 18) { // AVCOL_TRC_ARIB_STD_B67 (HLG)
+-                    dataSpace = 0x12060000; // HAL_DATASPACE_BT2020_HLG
+-                }
+-                if (log.isDebugEnabled()) log.debug("CONFIG setSurfaceDataSpace: colorTrc={} dataSpace=0x{}", colorTrc, Integer.toHexString(dataSpace));
+-                mSurfaceController.setSurfaceDataSpace(dataSpace);
+-            } else {
+-                if (log.isDebugEnabled()) log.debug("CONFIG setSurfaceDataSpace: skipped, mSurfaceController is null");
+-            }
+         } else {
+             displaySupportsDoVi(false);
+             displaySupportsHdr10(false);
+diff --git a/src/main/java/com/archos/mediacenter/video/player/SurfaceController.java b/src/main/java/com/archos/mediacenter/video/player/SurfaceController.java
+index 3c70ac9ad456e548362730dc0e82632974fbf53d..d9fa6141b21bc61bcb747b973747d032593c4f61 100644
+--- a/src/main/java/com/archos/mediacenter/video/player/SurfaceController.java
++++ b/src/main/java/com/archos/mediacenter/video/player/SurfaceController.java
+@@ -18,8 +18,6 @@ import com.archos.mediacenter.video.R;
+
+ import com.archos.medialib.IMediaPlayer;
+
+-import android.os.Build;
+-import android.view.SurfaceControl;
+ import android.view.SurfaceHolder;
+ import android.view.SurfaceView;
+ import android.view.TextureView;
+@@ -720,32 +718,4 @@ public class SurfaceController {
+      * mView and mSubtitleView always share the same left margin and width.
+      */
+     public int getVideoBoxTop() { return mVideoBoxTop; }
+-
+-    /**
+-     * Sets the dataspace on the SurfaceView's SurfaceControl layer so SurfaceFlinger can set up
+-     * its HDR composition pipeline from the start, before MediaCodec produces any frames.
+-     * Without this, the surface starts as SDR (dataspace 259) and some HWC2 implementations
+-     * (e.g. Google TV Streamer) don't dynamically switch to HDR tone-mapping when the dataspace
+-     * changes later via the producer (MediaCodec).
+-     * @param dataSpace HAL dataspace constant (e.g. 0x10C00000 for BT2020_PQ, 0 to reset)
+-     */
+-    public void setSurfaceDataSpace(int dataSpace) {
+-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+-            if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: skipped, API {} < 33", Build.VERSION.SDK_INT);
+-            return;
+-        }
+-        if (mSurfaceView == null) {
+-            if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: skipped, mSurfaceView is null");
+-            return;
+-        }
+-        SurfaceControl sc = mSurfaceView.getSurfaceControl();
+-        if (sc == null || !sc.isValid()) {
+-            if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: skipped, SurfaceControl null or invalid");
+-            return;
+-        }
+-        new SurfaceControl.Transaction()
+-                .setDataSpace(sc, dataSpace)
+-                .apply();
+-        if (log.isDebugEnabled()) log.debug("setSurfaceDataSpace: applied dataSpace=0x{}", Integer.toHexString(dataSpace));
+-    }
+ }
+diff --git a/src/test/java/com/archos/mediacenter/video/player/PlayerHdrProducerContractTest.java b/src/test/java/com/archos/mediacenter/video/player/PlayerHdrProducerContractTest.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f6334353fe474c1064a65c9588f0b38f6e9c2101
+--- /dev/null
++++ b/src/test/java/com/archos/mediacenter/video/player/PlayerHdrProducerContractTest.java
+@@ -0,0 +1,76 @@
++package com.archos.mediacenter.video.player;
++
++import android.app.Application;
++import android.content.pm.ActivityInfo;
++import android.view.Display;
++import android.view.View;
++import android.view.Window;
++
++import com.archos.mediacenter.video.utils.CodecDiscovery;
++
++import org.junit.After;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++import org.robolectric.util.ReflectionHelpers;
++
++import static org.mockito.Mockito.CALLS_REAL_METHODS;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.verifyNoInteractions;
++import static org.mockito.Mockito.verifyNoMoreInteractions;
++import static org.mockito.Mockito.when;
++
++/** 5c721514: HDR composition remains the producer's job, with no layer transaction. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, manifest = Config.NONE, sdk = 33)
++public class PlayerHdrProducerContractTest {
++    @After
++    public void resetCapabilities() {
++        CodecDiscovery.resetHdrCapabilities();
++    }
++
++    @Test
++    public void hdrWindowRequestDoesNotMutateTheSurfaceController() {
++        Window window = mock(Window.class);
++        View decor = mock(View.class);
++        Display display = mock(Display.class);
++        SurfaceController surface = mock(SurfaceController.class);
++        when(window.getDecorView()).thenReturn(decor);
++        when(decor.getDisplay()).thenReturn(display);
++
++        updateCapabilities(window, surface);
++
++        verify(window).setColorMode(ActivityInfo.COLOR_MODE_HDR);
++        verify(display).getHdrCapabilities();
++        verifyNoInteractions(surface);
++    }
++
++    @Test
++    @Config(sdk = 23)
++    public void api23DoesNotRequestNewerColorModeOrTouchTheSurface() {
++        Window window = mock(Window.class);
++        SurfaceController surface = mock(SurfaceController.class);
++
++        updateCapabilities(window, surface);
++
++        verify(window).getDecorView();
++        verifyNoMoreInteractions(window);
++        verifyNoInteractions(surface);
++    }
++
++    @Test
++    public void missingWindowDoesNotTouchTheSurface() {
++        SurfaceController surface = mock(SurfaceController.class);
++        updateCapabilities(null, surface);
++        verifyNoInteractions(surface);
++    }
++
++    private void updateCapabilities(Window window, SurfaceController surface) {
++        Player player = mock(Player.class, CALLS_REAL_METHODS);
++        ReflectionHelpers.setField(player, "mWindow", window);
++        ReflectionHelpers.setField(player, "mSurfaceController", surface);
++        ReflectionHelpers.callInstanceMethod(player, "setHdrCapabilities");
++    }
++}

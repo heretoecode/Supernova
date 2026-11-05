@@ -1,0 +1,32 @@
+{
+  "source_sha": "962a8034468f154a45133d895877b67ac89a9b34",
+  "result": "PASS",
+  "classes": 6,
+  "tests": 41,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 21s",
+  "log_sha256": "aa2e7b8b289256fe818bb9cc3119e0b0a0eb4517ae98eb1e1afddfb722a40348",
+  "checks": [
+    "Native hidden replacement changes only Archos_hiddenByUser; paths, bookmark offsets and metadata preserved; pending preferences not published by primitive",
+    "Pre-cancel, post-write cancel and injected checkpoint failure roll back all hidden flags",
+    "Stale file path, media relationship, hidden value or inventory rejects preview before writes",
+    "Stale physical matching input rejected during read-only preparation",
+    "Pin, encoded/fragment privacy, preferred/review, archive and preference-journal regressions"
+  ],
+  "limits": [
+    "SQLite primitive only: no combined media/history/preferences journal or startup recovery hook",
+    "Pin/Hidden Items categories not registered in archive or production Settings/export/restore",
+    "Preparation/cancellation throughput and real concurrent scanner/process-kill tests pending",
+    "No real provider, Shield or signed-upgrade acceptance"
+  ]
+}

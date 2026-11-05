@@ -1,0 +1,12 @@
+{
+  "source_sha": "209b084f27df5ccd5276622c5ab2c0a59336a2ae",
+  "classes": 4,
+  "tests": 16,
+  "failures": 0,
+  "result": "FAIL for intended viewport conformance",
+  "reason": "Native capture was960x540: window focus layout remeasured standalone root to the full activity. The intended628x468 right-region fixture was not constrained by LayoutParams. Added explicit installed dimensions and assertions; no claim that this first capture proves right-region fit.",
+  "limits": [
+    "Standalone workspace not connected to production Settings/backup paths",
+    "Actual library backdrop/blur and sidebar integration not validated"
+  ]
+}

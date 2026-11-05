@@ -19,6 +19,7 @@ import android.database.Cursor;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Retrieves online metadata identifiers for a video. */
 public class OnlineIdUtils {
 
     private static final String[] onlineIdProjection = {

@@ -22,6 +22,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper;
 import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 
+/** Adapts season cursor entries into video objects and cover artwork. */
 public class SeasonsAdapter extends PresenterAdapterByCursor  implements AdapterByVideoObjectsInterface{
     private final SeasonCursorMapper mVideoCursorMapper;
     public SeasonsAdapter(Context context, Cursor c) {
@@ -37,10 +38,12 @@ public class SeasonsAdapter extends PresenterAdapterByCursor  implements Adapter
         return null;
     }
 
+    @Override
     public String getCover() {
         int coverColumn = getCursor().getColumnIndex(VideoLoader.COLUMN_COVER_PATH);
         return coverColumn >= 0 ? getCursor().getString(coverColumn) : null;
     }
+    @Override
     public Object getItem(int position){
         getCursor().moveToPosition(position);
         return mVideoCursorMapper.bind(getCursor());

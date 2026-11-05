@@ -25,6 +25,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 
+/** Adapts show cursor entries into video objects and thumbnail requests. */
 public class AdapterByShow extends PresenterAdapterByCursor implements AdapterByVideoObjectsInterface {
 
     private final VideoCursorMapper mVideoCursorMapper;
@@ -53,6 +54,7 @@ public class AdapterByShow extends PresenterAdapterByCursor implements AdapterBy
         return mVideoCursorMapper.publicBind(c);
     }
 
+    @Override
     public boolean isEnabled(int position) {
         return true;
     }

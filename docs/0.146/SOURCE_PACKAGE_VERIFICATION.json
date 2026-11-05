@@ -1,0 +1,314 @@
+{
+  "source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "file": "Supernova_0.146_Corresponding_Source.tar.xz",
+  "sha256": "6579930f7f5699c8b9699e3f8fea6dc71c1103d8cff0a4380acf6f1ecd0b089b",
+  "bytes": 507860792,
+  "instructions_sha256": "fe0cb67a57b867b87a9cc5fa0f2401f9d22d21fdb980300d1dba3bc6ba61b1e7",
+  "native_configuration_and_evidence_files": [
+    {
+      "file": "native-build/arm64-v8a/configuration/config.h",
+      "sha256": "b1c305c50193659403497c7ca237f1f34c8addb9926b1a2728e5ccb821f1a16b",
+      "bytes": 26438
+    },
+    {
+      "file": "native-build/arm64-v8a/configuration/config.mak",
+      "sha256": "6c7ca81af9d75cf493ed67a020ec76abc02d290cc259d1c80250b3506cf2ba61",
+      "bytes": 93649
+    },
+    {
+      "file": "native-build/arm64-v8a/configuration/config_components.h",
+      "sha256": "2611863cd0dfc4daa1996091f46465de7dd19dcd142f3e4987f64da80622ce2e",
+      "bytes": 75690
+    },
+    {
+      "file": "native-build/arm64-v8a/evidence/codec-dependencies/evidence.json",
+      "sha256": "7b038a77f428bbbff76728d546543113fe338c35e9f45b45576bcccbe1a4d454",
+      "bytes": 9524
+    },
+    {
+      "file": "native-build/arm64-v8a/evidence/ffmpeg/evidence.json",
+      "sha256": "3939b28038fdb7a58d767f3dc8ff4ebc7277fc0a24319d0d3e7d82bb972203cb",
+      "bytes": 4709
+    },
+    {
+      "file": "native-build/arm64-v8a/evidence/openssl/evidence.json",
+      "sha256": "50e358067af8c90f8d2b8e066cd0aa702e2b814e0d53667b4681c64b89636eda",
+      "bytes": 740
+    },
+    {
+      "file": "native-build/arm64-v8a/evidence/subtitles/evidence.json",
+      "sha256": "0fe2a185e46bc9ecd6843a8a59e67451a57e97c3d38e701d85ac5f6074bed658",
+      "bytes": 2961
+    },
+    {
+      "file": "native-build/arm64-v8a/native-stack.json",
+      "sha256": "05e066f2983f68ad2f741434c2eccc62228ce99df373afe5a0238580ff68a4c3",
+      "bytes": 124461
+    },
+    {
+      "file": "native-build/armeabi-v7a/configuration/config.h",
+      "sha256": "ebf73011b9b4eaa810046d9083398cc6d5cfe4d370b7fa377720f61793bb041d",
+      "bytes": 26639
+    },
+    {
+      "file": "native-build/armeabi-v7a/configuration/config.mak",
+      "sha256": "cd6527a1ceb0f4b8dd8356712317ac457850912b43bfcbc3bd1bcfd7af9e49cd",
+      "bytes": 94342
+    },
+    {
+      "file": "native-build/armeabi-v7a/configuration/config_components.h",
+      "sha256": "2611863cd0dfc4daa1996091f46465de7dd19dcd142f3e4987f64da80622ce2e",
+      "bytes": 75690
+    },
+    {
+      "file": "native-build/armeabi-v7a/evidence/codec-dependencies/evidence.json",
+      "sha256": "a84aae899a5194b69e78ac7fc5e8c874170c2ee9b370d8c575c7289155feb148",
+      "bytes": 8287
+    },
+    {
+      "file": "native-build/armeabi-v7a/evidence/ffmpeg/evidence.json",
+      "sha256": "fa881fbe8a11061bbd218a8ecfb94bbe72d7c9afb49f9a4c74ab5b72f8620be0",
+      "bytes": 4946
+    },
+    {
+      "file": "native-build/armeabi-v7a/evidence/openssl/evidence.json",
+      "sha256": "79b8f4493b2c64385dd79b3e966aa2b79b3364ee1bc27f3208c9ee787525987c",
+      "bytes": 741
+    },
+    {
+      "file": "native-build/armeabi-v7a/evidence/subtitles/evidence.json",
+      "sha256": "a65dffa55e43dbb14805ac6c8555f259ff9a9623c52a7453f0831894b69e5a17",
+      "bytes": 3000
+    },
+    {
+      "file": "native-build/armeabi-v7a/native-stack.json",
+      "sha256": "51525062e11c3d5b7f39ba536ba9cc9c45d107c05389dd8c0d30b69a0025a9a8",
+      "bytes": 125193
+    },
+    {
+      "file": "native-build/x86/configuration/config.h",
+      "sha256": "30ae81f9a5ba075964ab50fc5892a731f95b084ac3461f88939569ff10f8487b",
+      "bytes": 26353
+    },
+    {
+      "file": "native-build/x86/configuration/config.mak",
+      "sha256": "c4626f5409ec7b139b632a4df6c02004a0aab522310338cb6b3c691f4b6fb631",
+      "bytes": 93555
+    },
+    {
+      "file": "native-build/x86/configuration/config_components.h",
+      "sha256": "2611863cd0dfc4daa1996091f46465de7dd19dcd142f3e4987f64da80622ce2e",
+      "bytes": 75690
+    },
+    {
+      "file": "native-build/x86/evidence/codec-dependencies/evidence.json",
+      "sha256": "a6929b7290fcdf0a98992a5cef7695de4eb4a67fb8a8d27b89cf050251acffa2",
+      "bytes": 8191
+    },
+    {
+      "file": "native-build/x86/evidence/ffmpeg/evidence.json",
+      "sha256": "31c363db6c7cdd611680ee1fd90afe8f04b9f29c0a1ab69128721a08cdad132a",
+      "bytes": 4673
+    },
+    {
+      "file": "native-build/x86/evidence/openssl/evidence.json",
+      "sha256": "1ea296a50eceb2f87094f681e7a8a032e0b171aff666d0154deefc15b93f7d3c",
+      "bytes": 725
+    },
+    {
+      "file": "native-build/x86/evidence/subtitles/evidence.json",
+      "sha256": "6db584ed195cf83f00b90a482ce3840832f0b14c67ae8b88227c42e4a3b898df",
+      "bytes": 2840
+    },
+    {
+      "file": "native-build/x86/native-stack.json",
+      "sha256": "b82df4b0a264b39de4e7eb452c7396fc06f79349974a7e6d3301a052f0fa96ce",
+      "bytes": 122253
+    },
+    {
+      "file": "native-build/x86_64/configuration/config.h",
+      "sha256": "d8d554513c281e79938e6802b53e8360ac5f752053a62fa984d59e8b6ab9f690",
+      "bytes": 26373
+    },
+    {
+      "file": "native-build/x86_64/configuration/config.mak",
+      "sha256": "fadafeb7f133a8726f2635d9e7258e9f0d3e16b0e4262e082494572fb4509a2c",
+      "bytes": 93556
+    },
+    {
+      "file": "native-build/x86_64/configuration/config_components.h",
+      "sha256": "2611863cd0dfc4daa1996091f46465de7dd19dcd142f3e4987f64da80622ce2e",
+      "bytes": 75690
+    },
+    {
+      "file": "native-build/x86_64/evidence/codec-dependencies/evidence.json",
+      "sha256": "4921cf00069acbcc68d45dd1c7f8c6b89bed207a9fcf5cd90a9baeefefa151b8",
+      "bytes": 9375
+    },
+    {
+      "file": "native-build/x86_64/evidence/ffmpeg/evidence.json",
+      "sha256": "0b53febeb3b809371a0a3f0fdeddf1cac2bb6962a40e0ea79887b35c21c0db6a",
+      "bytes": 4683
+    },
+    {
+      "file": "native-build/x86_64/evidence/openssl/evidence.json",
+      "sha256": "01c20486b366980779dddce72d7d5e44df73460328f22e63ede55993bfcfcb8c",
+      "bytes": 735
+    },
+    {
+      "file": "native-build/x86_64/evidence/subtitles/evidence.json",
+      "sha256": "162bd7bfc1fc0e1a830a051530820f1643f6920d7af421a1cd6b8475990375df",
+      "bytes": 2901
+    },
+    {
+      "file": "native-build/x86_64/native-stack.json",
+      "sha256": "c6f5fec58a4bf5a56eab88fe669bed001276fda42b502e1332bda4cfaa4efc5f",
+      "bytes": 123359
+    }
+  ],
+  "scope": "Independent complete container SHA256, all28 manifest-listed source entries (26 embedded archives plus two provenance/rebuild documents),32 native configuration/evidence files and corrected root rebuild instructions",
+  "verified_source_entries": [
+    {
+      "file": "modules/application.tar",
+      "sha256": "a60af165017f7b5a9b43af1ba378f2437ffd337ef357c751b5b2a96b26bbe46e",
+      "bytes": 186142720
+    },
+    {
+      "file": "modules/MediaLib.tar",
+      "sha256": "ae67bbb9093541b193eb648a62afdf7f3d4a2716e8c5e0612b279c2c71c1661e",
+      "bytes": 5314560
+    },
+    {
+      "file": "modules/FileCoreLibrary.tar",
+      "sha256": "455b84166942b0f7f5c293713299bca21e6a873e1fcb9040aea3d41d853d3b5f",
+      "bytes": 2058240
+    },
+    {
+      "file": "modules/native-avos.tar",
+      "sha256": "593c14ba7494fee85c1fceafc0aeb0f77c8044216212167926c49d9b8a54e174",
+      "bytes": 9431040
+    },
+    {
+      "file": "modules/native-audiocompress.tar",
+      "sha256": "7a2b4b8b1211f048d7950041224566f9ddba80392f82fe18b9642c6b74692702",
+      "bytes": 71680
+    },
+    {
+      "file": "modules/native-libnativehelper.tar",
+      "sha256": "ff62ab4af5987dee0b1ecc80895bf771118150090e70355247927741729efe6c",
+      "bytes": 204800
+    },
+    {
+      "file": "native-inputs/ffmpeg.tar.gz",
+      "sha256": "0aa2b1de2a5698b20a23e93d539a9a8e82ca0117496c5bdf05d198805f42bb3b",
+      "bytes": 17333895
+    },
+    {
+      "file": "native-inputs/openssl.tar.gz",
+      "sha256": "3eb00d3dbf2b3393dcf1cb82127a3d19ed911cec4e8315fe2ca20f3038b5ddde",
+      "bytes": 55924595
+    },
+    {
+      "file": "native-inputs/libass.tar.gz",
+      "sha256": "3546ecc8748c62e100a9dd18e52ea2d17d7facedf89cfcad97000ad60b1bce2b",
+      "bytes": 351823
+    },
+    {
+      "file": "native-inputs/zlib.tar.gz",
+      "sha256": "b9258cf6254e7f7c37f1cd61dba943a1c5ea3cff5718c789834dac359094f5f7",
+      "bytes": 1567269
+    },
+    {
+      "file": "native-inputs/libpng.tar.gz",
+      "sha256": "ef1bccad2b2a58eb3c09e06ffe3b72b8604abda8b5011e4c4bb5391989040f26",
+      "bytes": 1601579
+    },
+    {
+      "file": "native-inputs/libxml2.tar.gz",
+      "sha256": "3fa264c6117569780ea0f6447d98c77f29b285cfd665ced2ec7da4f51183607f",
+      "bytes": 2974505
+    },
+    {
+      "file": "native-inputs/freetype.tar.gz",
+      "sha256": "11cd478953fc1d382f20a233b8e2aed6c31b47cbf0568c4bdb3334bcc1550698",
+      "bytes": 2517889
+    },
+    {
+      "file": "native-inputs/fribidi.tar.gz",
+      "sha256": "f309091695b3b0f2fd5f9caa7941d906ab08df9ab8f9931bf5ee674bc00b489b",
+      "bytes": 2161272
+    },
+    {
+      "file": "native-inputs/harfbuzz.tar.gz",
+      "sha256": "f4d39fc3216d82d01ba2a18ba03a05b69f60510585b764784224a5f51f372a38",
+      "bytes": 39011620
+    },
+    {
+      "file": "native-inputs/libunibreak.tar.gz",
+      "sha256": "4d0714d29207bfcaabe2a9376f83330bfb477673ecfb53994e47bd6d07738581",
+      "bytes": 348048
+    },
+    {
+      "file": "native-inputs/fontconfig.tar",
+      "sha256": "3ac1094bcd432933928a65fcec464d84453864b974eddb7082d80e71f8559575",
+      "bytes": 3747840
+    },
+    {
+      "file": "native-inputs/opus.tar.gz",
+      "sha256": "7c3e148376522b2ec9df636e54137d6f76ae0c585c3b01ed86b58019c34ff1fc",
+      "bytes": 4959883
+    },
+    {
+      "file": "native-inputs/dav1d.tar.gz",
+      "sha256": "9edb11a2108b375cc58370354e705feebc93430bb780130363815c1e1ac0c250",
+      "bytes": 1751896
+    },
+    {
+      "file": "native-inputs/libmysofa.tar.gz",
+      "sha256": "cf047bd684d28dca23d7d5b662c538b24392c620719f15d642594fc1405e24f6",
+      "bytes": 208427782
+    },
+    {
+      "file": "native-inputs/dlg.tar.gz",
+      "sha256": "263a4a3777d9839e34cd41db988310659e0c00eab37beb7aedd30511a460133b",
+      "bytes": 837072
+    },
+    {
+      "file": "jetty/jetty-source.tar.gz",
+      "sha256": "017b61d774963a32930b441ae16df84cdb7d3095ed4780ba84fd5a8491e23758",
+      "bytes": 19355213
+    },
+    {
+      "file": "runtime-copyleft-sources/PROVENANCE.json",
+      "sha256": "ec9d089d9df57b506032a01933b2ec7fb7c9f8f256459e2b180f24b4167df957",
+      "bytes": 1737
+    },
+    {
+      "file": "runtime-copyleft-sources/REBUILD_FOUNDATION.md",
+      "sha256": "fe0cb67a57b867b87a9cc5fa0f2401f9d22d21fdb980300d1dba3bc6ba61b1e7",
+      "bytes": 2473
+    },
+    {
+      "file": "runtime-copyleft-sources/desugar-jdk-libs-source.tar.gz",
+      "sha256": "4cd2faa88ecb2450522fd4f0dcd11d6df878d7197b2276fb35532c50267f7a64",
+      "bytes": 18251068
+    },
+    {
+      "file": "runtime-copyleft-sources/javax.servlet-api-4.0.1-sources.jar",
+      "sha256": "a2826761ae88535afb0a3a049eacc846494e22627a1dcf14de37b956ca8748d6",
+      "bytes": 203006
+    },
+    {
+      "file": "runtime-copyleft-sources/jcifs-ng-source.tar.gz",
+      "sha256": "c2d307d965450d75575ff7438227058001002c84d06b4a0a18c795a8516db5bd",
+      "bytes": 419031
+    },
+    {
+      "file": "runtime-copyleft-sources/jupnp-source.tar.gz",
+      "sha256": "2a431bc989b1678a15fb02b96ee3f0b561b26fdd2aeb5081192a8422e1ec4604",
+      "bytes": 1981721
+    }
+  ],
+  "embedded_archive_count": 26,
+  "supporting_source_document_count": 2
+}

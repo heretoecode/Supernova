@@ -1,0 +1,23 @@
+{
+  "run_id": 40846176706,
+  "source_commit": "9f836021532d6e4291e23f6436ce72a0c99e48ef",
+  "runtime_input_run": 40845026473,
+  "artifact_id": 12884483781,
+  "artifact_sha256": "57e9b7af30e98232fc8b4588ed4301962055d75904be3fc0b6a8b97827e531bf",
+  "api": 23,
+  "abi": "x86_64",
+  "statistics": {
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_classes": [
+    "com.archos.mediacenter.filecoreextension.upnp2.Jetty145SecurityTest",
+    "com.archos.mediacenter.filecoreextension.upnp2.Jetty146BackportTest",
+    "com.archos.mediacenter.filecoreextension.upnp2.NativeTrustRootsAndroid23Test"
+  ],
+  "scope": "Actual Android23 framework on CI AVDEmulator, same source-built Jetty/jUPnP transport classes and NativeTrustRoots; no real Shield/provider QA claim",
+  "jetty_lock_sha256": "4cdc5a1b53a8ecebfaed26060b6b11e10ede5b78f7899fd7971b14e9b75a32a2",
+  "medialib_patch_sha256": "6dddea39b77c5102cccb1db4165fbd017ff4edbd014fa9c125550178f154c27a"
+}

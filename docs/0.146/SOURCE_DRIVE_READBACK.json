@@ -1,0 +1,52 @@
+{
+  "checked_at": "2026-10-29T14:11:33.254672+00:00",
+  "source_commit": "938885ac2a84a5efecb1674b3e9f1032a56740ed",
+  "bytes": 507860792,
+  "sha256": "6579930f7f5699c8b9699e3f8fea6dc71c1103d8cff0a4380acf6f1ecd0b089b",
+  "full_ordered_drive_readback_verified": true,
+  "parts": [
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-01",
+      "id": "1HdA4m02robMdZ5V30NFVa8hB7GPPXrhK",
+      "bytes": 100663296,
+      "sha256": "026ad18412a8fe17bf46c4f87b3ac485ee0e4f9201f641c829c2fa5a48f819aa",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-02",
+      "id": "1YP30dFJ21L9AnjaRp2yqp5aUqPAHq4eg",
+      "bytes": 100663296,
+      "sha256": "56f0ca12e8812b5566999106d80dbe07581ef66be5aa4bda6fa6cb0858c09e5d",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-03",
+      "id": "1mMq4b9ZNRdbMZKXlqIIhuZLue_N2v2ah",
+      "bytes": 100663296,
+      "sha256": "c93e106393b4e165c2254284f7720e766e19dfb6fe5f8ab722b83ce482470560",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-04",
+      "id": "1Hqz2fjh5nZi9EjWU2r7lmBi8Pyts7_Ef",
+      "bytes": 100663296,
+      "sha256": "be8ff21c412105394159cfb07df46a26edbcd3f610c1498db2319a6f69a2be78",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-05",
+      "id": "1pIsMfahNf8qY25nRIa-xqFEk0agMcAXr",
+      "bytes": 100663296,
+      "sha256": "51b37170f7027a51442b30d6b6cabf65c8339a1299fd7b6efbc85e7f33c8ac3e",
+      "complete_readback_verified": true
+    },
+    {
+      "file": "Supernova_0.146_Corresponding_Source.tar.xz.part-06",
+      "id": "1IAv2BRpdVMOZZFcx5wwlgkxbyu_fauN7",
+      "bytes": 4544312,
+      "sha256": "58a58fa593735d31a5c40fafd023bff0885959034a12c82f2d08de4e23e584fd",
+      "complete_readback_verified": true
+    }
+  ],
+  "scope": "Every byte streamed independently from the uploaded Drive files, hashed per part and in ordered concatenation; no trust in upload metadata alone."
+}

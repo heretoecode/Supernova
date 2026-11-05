@@ -52,9 +52,6 @@ public class PresenterUtils {
         else if (VideoUtils.getSubtitleExtensions().contains(extension)) {
             return R.drawable.filetype_new_subtitles;
         }
-        else if (extension.equals("torrent")) {
-            return R.drawable.filetype_new_torrent;
-        }
         else if (mimeType.startsWith("image/")) {
             return R.drawable.filetype_new_image;
         }
@@ -79,7 +76,7 @@ public class PresenterUtils {
         ArrayList<Drawable> layer = new ArrayList<>();
         layer.add(posterDrawable);
         BitmapDrawable icon = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.watched_icon_corner);
-        icon.setGravity(Gravity.TOP | Gravity.RIGHT);
+        icon.setGravity(Gravity.TOP | Gravity.END);
         layer.add(icon);
         return drawableToBitmap(new LayerDrawable(layer.toArray(new Drawable[layer.size()])));
     }

@@ -17,14 +17,11 @@ package com.archos.mediacenter.video.leanback.tvshow;
 import android.content.Context;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import androidx.leanback.widget.Action;
-import androidx.leanback.widget.ObjectAdapter;
 import androidx.leanback.widget.SparseArrayObjectAdapter;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.adapters.object.Collection;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 
-import java.util.ArrayList;
 
 /**
  * Created by vapillon on 20/05/15.

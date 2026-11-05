@@ -401,11 +401,8 @@
     <!-- torrent -->
     <string name="error">Виникла помилка</string>
     <string name="error_protocol_not_supported">Помилка: протокол не підтримується</string>
-    <string name="error_loading_torrent">Помилка під час завантаження торенту</string>
-    <string name="error_downloading_not_enough_space">Помилка під час завантаження торенту: недостатньо місця</string>
     <string name="loading_torrent">Завантаження торента…</string>
     <string name="error_no_video_file">Немає відеофайлів</string>
-    <string name="torrent_file_to_play">Виберіть файл для відтворення</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Перегляд мережевого ресурсу</string>
     <string name="add_ssh_server">Перегляд FTP-сервера</string>
@@ -563,7 +560,6 @@
     <string name="rotation_unlocked">Автоповорот екрана увімкнено</string>
     <string name="network_reindex">Пересканувати вміст</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Натисніть кнопку ВГОРУ\nдля відображення меню</string>
     <string name="help_overlay_network_indexing_text1">Натисніть цю кнопку, щоб додати вміст цієї теки та всі вкладені підтеки в бібліотеку.</string>
     <string name="help_overlay_network_indexing_text2">Це дозволить вам отримати постери та описи для фільмів та серіалів.</string>
     <string name="help_overlay_scraper_text">Натисніть на цей пункт для онлайн пошуку постерів та опису відео. </string>
@@ -715,16 +711,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Торент</string>
     <string name="torrent_path">Шлях завантаження</string>
     <string name="torrent_blocklist">Чорний список</string>
     <string name="blocklist_empty">URL не повинен бути порожнім</string>
     <string name="blocklist_invalid">Неправильний чорний список</string>
-    <string name="blocklist_file_not_found">Файл не знайдено</string>
     <string name="blocklist_success">Чорний список успішно оновлено</string>
-    <string name="blocklist_unknown_error">Невідомо</string>
-    <string name="blocklist_not_loaded">Не завантажено</string>
-    <string name="torrent_blocklist_url">URL чорного списку</string>
     <string name="sdk_not_supported">Android 4.3 поки що не підтримується.\nМи робимо все можливе і сподіваємося скоро випустити нову версію!</string>
     <string name="manually_create_share">Додати індексовану теку за URI</string>
     <string name="share_infos_incomplete">Необхідно заповнити шлях</string>
@@ -853,7 +844,7 @@
     <string name="media_library_export_in_progress">Експортування медіатеки, облікових даних і ярликів</string>
     <string name="media_library_import_in_progress">Імпортування медіатеки, облікових даних і ярликів</string>
     <string name="media_library_export_success">Медіатеку, облікові дані та ярлики успішно експортовано до: \n %s</string>
-    <string name="media_library_import_success">Медіатеку, облікові дані та ярлики успішно імпортовано. Перезапуск застосунку...</string>
+    <string name="media_library_import_success">Медіатеку, облікові дані та ярлики успішно імпортовано. Перезапуск застосунку&#8230;</string>
     <string name="media_library_import_error">Помилка під час імпорту медіатеки</string>
     <string name="media_library_export_error">Помилка під час експорту медіатеки</string>
     <string name="media_library_export_dir_not_found">Каталог для експорту не знайдено</string>

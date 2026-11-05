@@ -16,14 +16,12 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.Browser;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Supplies the video projection used by the search view's query loader. */
 public class SearchViewVideoLoader extends SearchVideoLoader {
 
     // primary text, = scraper title with fallback to plain filename based title

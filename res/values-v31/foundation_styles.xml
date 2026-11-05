@@ -1,0 +1,15 @@
+<resources>
+    <style name="FoundationLaunch" parent="MyLeanbackTheme.Launcher">
+        <item name="android:windowBackground">@drawable/foundation_splash</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <!-- Android 12's colour-only first phase: approved 4K top-centre pixel. -->
+        <item name="android:windowSplashScreenBackground">#000206</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/foundation_adaptive_foreground</item>
+    </style>
+    <style name="FoundationEntry" parent="ArchosThemeLauncher">
+        <item name="android:windowBackground">@drawable/foundation_splash</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowSplashScreenBackground">#000206</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/foundation_adaptive_foreground</item>
+    </style>
+</resources>

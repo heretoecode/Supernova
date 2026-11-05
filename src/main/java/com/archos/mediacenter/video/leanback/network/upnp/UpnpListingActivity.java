@@ -17,6 +17,7 @@ package com.archos.mediacenter.video.leanback.network.upnp;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingFragment;
 
+/** Hosts UPnP file listings in the TV file browser. */
 public class UpnpListingActivity extends ListingActivity {
 
     @Override

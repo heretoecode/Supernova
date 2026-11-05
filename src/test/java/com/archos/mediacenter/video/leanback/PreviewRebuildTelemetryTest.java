@@ -1,18 +1,28 @@
 package com.archos.mediacenter.video.leanback;
 
 import android.app.Application;
+import android.os.SystemClock;
 import com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorder;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.search.PreviewSearch;
+import java.util.HashSet;
+import java.util.Set;
+import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.util.ReflectionHelpers;
 
+/** Checks telemetry distinguishes creation of library and search adapters from rebinding. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=28,qualifiers="w960dp-h540dp-land-mdpi")
 public class PreviewRebuildTelemetryTest {
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void newLibraryAndSearchAdaptersReportCreationSeparatelyFromRebind()throws Exception{
         var host=Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         Diagnostics.setEnabled(host.get(),true);
@@ -22,11 +32,11 @@ public class PreviewRebuildTelemetryTest {
                 host.get().setContentView(pages);pages.setSnapshot(new PreviewLibraryLoader.Snapshot());pages.setTab(1);
                 host.get().setContentView(new PreviewSearch(host.get(),0,null));
             }
-            DiagnosticFlightRecorder recorder=org.robolectric.util.ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");
-            java.util.Set<Integer> libraries=new java.util.HashSet<>(),searches=new java.util.HashSet<>();
+            DiagnosticFlightRecorder recorder=ReflectionHelpers.getStaticField(Diagnostics.class,"FLIGHT");
+            Set<Integer> libraries=new HashSet<>(),searches=new HashSet<>();
             boolean rebind=false;
-            for(String line:recorder.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n")){
-                if(line.isEmpty())continue;org.json.JSONObject row=new org.json.JSONObject(line);
+            for(String line:recorder.snapshot(SystemClock.elapsedRealtime()).split("\n")){
+                if(line.isEmpty())continue;JSONObject row=new JSONObject(line);
                 if(!"ui_rebuild".equals(row.optString("event")))continue;
                 if("adapter_created".equals(row.optString("reason"))){
                     assertTrue(row.getBoolean("adapter_recreated"));assertEquals(1,row.getInt("rebuild_count"));

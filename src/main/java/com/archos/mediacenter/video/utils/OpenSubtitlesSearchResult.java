@@ -14,7 +14,11 @@
 
 package com.archos.mediacenter.video.utils;
 
+/** Stores subtitle search result metadata, language and file identifiers. */
 public class OpenSubtitlesSearchResult {
+    private Boolean hearingImpaired;
+    public Boolean getHearingImpaired(){return hearingImpaired;}
+    public void setHearingImpaired(Boolean value){hearingImpaired=value;}
     private String id;
     private String fileId;
     private String fileName;

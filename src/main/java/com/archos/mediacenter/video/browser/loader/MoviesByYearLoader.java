@@ -16,7 +16,6 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
 
 /**
  * Created by vapillon on 10/04/15.
@@ -37,6 +36,7 @@ public class MoviesByYearLoader extends MoviesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String categorySort = COLUMN_SUBSET_NAME + " COLLATE NOCASE DESC";
         if (mSortOrder != null && (mSortOrder.startsWith("name") || mSortOrder.startsWith(COLUMN_SUBSET_NAME)) && mSortOrder.contains("ASC")) {

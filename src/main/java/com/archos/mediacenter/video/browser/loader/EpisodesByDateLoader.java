@@ -16,9 +16,8 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
-import com.archos.mediacenter.video.R;
-import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads episodes filtered by date. */
 public class EpisodesByDateLoader extends MoviesByLoader {
 
 
@@ -46,6 +45,7 @@ public class EpisodesByDateLoader extends MoviesByLoader {
         setSelection(getSelection(context));
     }
 
+    @Override
     public String getSelection(Context context) {
         String formatter = "e_aired";
         switch (mDateView) {

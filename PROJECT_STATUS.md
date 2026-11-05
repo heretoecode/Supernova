@@ -1,76 +1,49 @@
-# Supernova — Project Status
+# Supernova — project status
 
-> **START HERE.** This file is the authoritative entry point for the current Supernova project state. Historical documents may describe earlier states; where they conflict with this file or the linked current records, the current records take precedence.
+Updated 5 November 2026. Keep this page short and current: update it at the end of every session.
 
-## Current accepted baseline
+## Released
 
-- Product: Supernova, a custom Android TV / NVIDIA Shield video player derived from NOVA Video Player.
-- Accepted development baseline: **Preview 4.1.7 Final**.
-- Authoritative application/test source commit: `7efb4195639205a6526281491af40c0dab1776b7`.
-- Development lineage: `codex/preview-4.1.7`.
-- Final APK: `Supernova-4.1.7-FINAL-7efb4195.apk`.
-- APK SHA-256: `4070ee3d259b3cf57bb10a26fbc789363cf812e8b81fe7f3101522634705681a`.
-- Application ID: `org.courville.nova.markpreview`.
-- Version: `6.4.63-mark.4.1.7-preview` / versionCode `6040083`.
-- Physical target: NVIDIA Shield Android TV.
+**0.155** — signed 4 November 2026 (run 41922310251 of `supernova-0155-qa.yml`, from a green conformance run on
+`claude/supernova-github-access-yfhe89`). Installed on the owner's Shield and confirmed working. Highlights: NOVA
+6.6.4 engine, the new native stack, Settings and Network & Files groundwork, IntroDB skipping.
 
-The word "Final" here means the accepted 4.1.7 development APK. It does not mean all physical Shield QA is complete. The cleaned 4.1.7 lineage was promoted to `main` on 6 October 2026; `main` is now the authoritative repository branch.
+## Next: 0.156 (in progress)
 
-## Authoritative 4.1.7 records
+All 45 items are approved: [`docs/0.156/RELEASE_LIST.md`](docs/0.156/RELEASE_LIST.md) (see its Progress section)
+and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 November 2026.
 
-Read `docs/README.md` for the documentation map. Read these when implementation detail or evidence is needed:
+### In progress
 
-- `docs/preview-4.1.7/IMPLEMENTATION_REPORT.md` — frozen source, artifact, hashes and validation evidence.
-- `docs/preview-4.1.7/RELEASE_NOTES.md` — 4.1.7 delivered changes and limits.
-- `docs/preview-4.1.7/REQUIREMENTS.md` — 115-entry requirements register.
-- `docs/preview-4.1.7/CONFORMANCE_REVIEW.md` — conformance evidence and historical checkpoints.
-- `docs/preview-4.1.7/IMPLEMENTATION_LOG.md` — detailed development history.
-- `docs/qa/4.1.7-final-shield-qa.md` — post-delivery physical Shield findings and the frozen fixes-only scope.
+- **Claude** (screens, on `claude/supernova-github-access-yfhe89`): done so far — Local Storage focus/header/status
+  tags/watched pill, Settings single-panel shell and new sections, Edit Page, top bar fade, Details card, Skip
+  button, shared choice list, hero readability and logo, Home row Hide/Move, Seek previews switch, Playback Settings
+  icon and swatch fixes, Download Subtitles in the panel. Next: Customise Home, Search, Network & Files pages,
+  Settings System/About pages, player controls and the Chapters · Episodes strip.
+- **Codex** (engine and data): finished Parts A–D and B17a of
+  [`docs/codex/BRIEF_0156_CODE.md`](docs/codex/BRIEF_0156_CODE.md) on `codex/0155-code-2026-11-04` (a5e4d5f97);
+  merged into the working branch on 5 Nov 2026 (11ed71d44). Build and Shield checks pending. Claude now wires the
+  screens to Codex's APIs (`docs/codex/findings/0156-ui-hooks.md`).
+- **GitHub:** cleaned up on 5 Nov 2026: this page, `CLAUDE.md`, `AGENTS.md`, the archive, and Issues #31–#102.
 
-## Current work
+### Known problems being fixed in 0.156
 
-The next implementation task is a **strict fixes/corrections pass based on the 4.1.7 Final Shield QA**. It is not a new feature release.
+- Put.io: after pausing for a few minutes, resuming can glitch the picture and put audio out of sync, or fail
+  (Codex Part B 17a; until then, seeking back re-syncs).
+- One library source fails every scan with no reason recorded; the network scan can get stuck (Codex Part A).
+- Backup "could not be prepared" (Codex Part A).
+- Diagnostics recorder crash in `trimStorage` (Codex Part A).
 
-The fixes are defined in `docs/qa/4.1.7-final-shield-qa.md`. Do not silently broaden that scope.
+## Waiting for the owner
 
-The version number for this fixes release is **NEEDS DECISION**.
+- **Bring `main` up to date** — `main` still holds the pre-0.140 code; it needs a pull request from the working
+  branch that the owner approves.
+- Parked for later: the Details page redesign and library statistics colouring
+  ([`docs/REVISIT_LATER.md`](docs/REVISIT_LATER.md)).
 
-## Explicit non-goals for the immediate fixes pass
+## History
 
-- Do not begin the package/application-ID transition.
-- Do not create or replace the signing identity.
-- Do not begin the fresh-install identity phase.
-- Do not begin Smart Collections, Library Health, Profiles, custom library pages or other parked/future features.
-- Do not merge into `main` merely as part of implementing the fixes.
-- Do not treat historical/interim 4.1.7 artifacts as the Final baseline.
-- Do not invent production put.io OAuth credentials.
-
-## Project status vocabulary
-
-Use these labels in project records:
-
-- **APPROVED** — explicitly accepted direction/requirement.
-- **PARKED** — deliberately deferred; not current scope.
-- **REJECTED** — considered and explicitly not wanted.
-- **SUPERSEDED** — once valid, replaced by a later decision/state.
-- **NEEDS DECISION** — unresolved and must not be guessed.
-
-## Workflow
-
-### Start of a work session
-
-1. Read this file.
-2. Read the current QA/work-scope record and any linked authoritative specification needed for the task.
-3. Inspect the live repository/branch state before changing code.
-4. Report the current baseline, active scope, constraints and next task.
-5. Do not infer current state from an older handover when a newer authoritative record exists.
-
-### End of a work session
-
-Update GitHub with durable project knowledge from the session. Record decisions, bugs, QA results, approved requirements, parked/rejected ideas, implementation state and next actions in the appropriate current records. Do **not** paste chat transcripts into the repository and do not convert casual discussion into an approved requirement.
-
-The repository is intended to be sufficient for a new developer or AI with no ChatGPT conversation history to resume the project safely.
-
-## Repository authority
-
-The cleaned Preview 4.1.7 lineage was promoted to `main` on 6 October 2026 by PR #5. `main` is now the authoritative repository branch. The accepted 4.1.7 Final APK remains tied to the frozen application/test source commit `7efb4195639205a6526281491af40c0dab1776b7`; later `main` commits may contain documentation or repository-maintenance changes and must not be mistaken for that APK source.
+- Every version's records: `docs/0.135/` … `docs/0.155/` (these also feed the app's What's new page).
+- The older status page (0.140–0.142 and the Preview 4.1.7 baseline):
+  [`docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md`](docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md).
+- Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).

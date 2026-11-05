@@ -1,6 +1,8 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.app.Application;
+import android.os.SystemClock;
+import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.diagnostics.DiagnosticFlightRecorder;
 import org.json.JSONObject;
@@ -13,6 +15,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+/** Checks put.io sync scheduling respects disabled integration, cancellation and operation correlation. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PutioSyncSchedulerTest {
     private Application app;
@@ -23,6 +26,10 @@ public class PutioSyncSchedulerTest {
     }
     @After public void teardown(){Thread.interrupted();Diagnostics.setEnabled(app,false);}
 
+    @Test public void disabledIntegrationMakesNoAccountRequest()throws Exception{
+        PreferenceManager.getDefaultSharedPreferences(app).edit().putBoolean("supernova_putio_enabled",false).commit();
+        PutioReadClient client=mock(PutioReadClient.class);PutioSyncScheduler.sync(app,"manual",client);verifyNoInteractions(client);
+    }
     @Test public void transportInheritsSyncAndScopeDoesNotLeak()throws Exception{
         PutioReadClient client=mock(PutioReadClient.class);
         when(client.account()).thenAnswer(call->{Diagnostics.operation("fixture_transport");return new PutioReadClient.Account(42,"fixture","active",0,1);});
@@ -48,10 +55,10 @@ public class PutioSyncSchedulerTest {
         when(client.account()).thenThrow(new IllegalStateException("private fixture detail"));
         PutioSyncScheduler.sync(app,"scheduled",client);
         List<JSONObject> rows=rows();assertTerminal(rows,kind(rows,"putio_sync").getString("operation_id"),"putio_sync_incomplete");
-        assertFalse(flight.snapshot(android.os.SystemClock.elapsedRealtime()).contains("private fixture detail"));
+        assertFalse(flight.snapshot(SystemClock.elapsedRealtime()).contains("private fixture detail"));
     }
     private List<JSONObject> rows()throws Exception{
-        List<JSONObject> rows=new ArrayList<>();for(String line:flight.snapshot(android.os.SystemClock.elapsedRealtime()).split("\n"))if(!line.isEmpty())rows.add(new JSONObject(line));return rows;
+        List<JSONObject> rows=new ArrayList<>();for(String line:flight.snapshot(SystemClock.elapsedRealtime()).split("\n"))if(!line.isEmpty())rows.add(new JSONObject(line));return rows;
     }
     private JSONObject kind(List<JSONObject> rows,String kind){return rows.stream().filter(r->"operation_begin".equals(r.optString("event"))&&kind.equals(r.optString("kind"))).findFirst().orElseThrow(AssertionError::new);}
     private void assertTerminal(List<JSONObject> rows,String operation,String expected){

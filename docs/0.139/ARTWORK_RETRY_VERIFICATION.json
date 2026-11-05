@@ -1,0 +1,25 @@
+{
+  "source_sha": "68fff580c279ce7a4f034ebf84462e1e87fe213e",
+  "result": "PASS",
+  "classes": 5,
+  "class_names": [
+    "com.archos.mediacenter.video.diagnostics.ArtworkRequestTest",
+    "com.archos.mediacenter.video.leanback.PreviewArtworkPickerTest",
+    "com.archos.mediacenter.video.leanback.Preview412Test",
+    "com.archos.mediacenter.video.leanback.PreviewRemoteLogoTest",
+    "com.archos.mediacenter.video.leanback.OfficialTitleBindingTest"
+  ],
+  "duration": "51s",
+  "log_sha256": "53e6b1e31b6d46a5f65d11c758eec913753460874399d79c02b561c5df6f638f",
+  "coverage": [
+    "Same-provider same-view retry after completed cache-only miss with verified new logo pixels",
+    "Image download failure leaves no false negative cache and same view retries successfully",
+    "Verified absent logo fresh/expired negative cache; cache-only playback never starts network",
+    "Existing provider/locale/kind/crop and request/privacy regressions"
+  ],
+  "limits": "Synthetic intercepted HTTP and native bitmap checks. No actual provider availability, device compositor or full H03/Shield acceptance.",
+  "tests": 19,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

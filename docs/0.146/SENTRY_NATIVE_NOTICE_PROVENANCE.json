@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "source": "sentry-native0.17.4 resolved AAR; upstream source submodule pins",
+  "notice_files": [
+    {
+      "repository": "getsentry/sentry-native",
+      "commit": "740313523edd50e3a0cfe2f8f931e893ed7423a5",
+      "path": "LICENSE",
+      "sha256": "5ef07a3d95f1f779c1597c0fbaecbb7ba242128ff0587ed1e3214c7ac6154523"
+    },
+    {
+      "repository": "getsentry/sentry-native",
+      "commit": "740313523edd50e3a0cfe2f8f931e893ed7423a5",
+      "path": "tests/fixtures/os_releases/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "repository": "getsentry/sentry-native",
+      "commit": "740313523edd50e3a0cfe2f8f931e893ed7423a5",
+      "path": "vendor/libunwind/COPYING",
+      "sha256": "6a0dbbdaec2b3136b7bf045586f4212bdf74e7af688bf9dfe9154607cf5ec156"
+    },
+    {
+      "repository": "getsentry/libunwindstack-ndk",
+      "commit": "284202fb1e42dbeba6598e26ced2e1ec404eecd1",
+      "path": "LICENSE",
+      "sha256": "0f464b9afeb93660d9769a7a4641597fa62511bff3c6e0ea71b518126c973cae"
+    },
+    {
+      "repository": "getsentry/breakpad",
+      "commit": "25b6b727af49fa383161e7dba4a82ab0661b69b8",
+      "path": "LICENSE",
+      "sha256": "69b3d80c19a460e09716910d54d1ada5d800716e2b73751bebac44352590f646"
+    },
+    {
+      "repository": "getsentry/breakpad",
+      "commit": "25b6b727af49fa383161e7dba4a82ab0661b69b8",
+      "path": "src/third_party/curl/COPYING",
+      "sha256": "4d03f91b94e0db3bdc9ddaf0060dd41cc94a2096094fbc1417713a2f059658c7"
+    },
+    {
+      "repository": "getsentry/breakpad",
+      "commit": "25b6b727af49fa383161e7dba4a82ab0661b69b8",
+      "path": "src/third_party/libdisasm/LICENSE",
+      "sha256": "d8eaba95b8d03c5912da9b5823de2c920e84a993133039a22fc8100f9edb33a1"
+    },
+    {
+      "repository": "getsentry/chromium-linux-syscall-support",
+      "commit": "ed31caa60f20a4f6569883b2d752ef7522de51e0",
+      "path": "LICENSE",
+      "sha256": "63cc54f1d849448b225e71026acd6393390b09418cfad899b9dd453177f35c49"
+    },
+    {
+      "repository": "getsentry/crashpad",
+      "commit": "493151b224a6536bcedc3467d042863a063addc4",
+      "path": "LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "repository": "getsentry/crashpad",
+      "commit": "493151b224a6536bcedc3467d042863a063addc4",
+      "path": "libunwind/LICENSE.TXT",
+      "sha256": "b5efebcaca80879234098e52d1725e6d9eb8fb96a19fce625d39184b705f7b6d"
+    },
+    {
+      "repository": "getsentry/crashpad",
+      "commit": "493151b224a6536bcedc3467d042863a063addc4",
+      "path": "third_party/cpp-httplib/cpp-httplib/LICENSE",
+      "sha256": "4b45cbe16d7b71b89ae6127e26e0d90a029198ca5e958ad8e3d0b8bbed364d8b"
+    },
+    {
+      "repository": "getsentry/crashpad",
+      "commit": "493151b224a6536bcedc3467d042863a063addc4",
+      "path": "third_party/getopt/LICENSE",
+      "sha256": "f40ee07401827b6ac9cf0aee1aaffb00e42a3f2c729f9c83f96a3daafef5d944"
+    },
+    {
+      "repository": "getsentry/crashpad",
+      "commit": "493151b224a6536bcedc3467d042863a063addc4",
+      "path": "third_party/mpack/LICENSE",
+      "sha256": "260ffd3e123c24170cffccdc509ffd9339e71479735c080a3bf7db2da0b9331d"
+    },
+    {
+      "repository": "getsentry/chromium-linux-syscall-support",
+      "commit": "ed31caa60f20a4f6569883b2d752ef7522de51e0",
+      "path": "linux_syscall_support.h",
+      "sha256": "6de367817ca407568ee10247e5b5553b36a0ec36edade1274d11d44577cc37a2",
+      "scope": "embedded header licence"
+    }
+  ],
+  "asset_sha256": "51c0209b522f665a089d8248e24b6848918d7a1ee21a4824de28e7ac80f3beb4"
+}

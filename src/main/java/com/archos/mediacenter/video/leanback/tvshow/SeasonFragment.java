@@ -21,8 +21,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,8 +31,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.ContextCompat;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseSupportFragment;
 import androidx.leanback.widget.ArrayObjectAdapter;
@@ -48,6 +44,7 @@ import androidx.leanback.widget.RowPresenter;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
+import androidx.preference.PreferenceManager;
 import com.archos.filecorelibrary.FileUtilsQ;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.browser.Delete;
@@ -55,6 +52,7 @@ import com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Season;
 import com.archos.mediacenter.video.browser.loader.SeasonsLoader;
 import com.archos.mediacenter.video.leanback.CompatibleCursorMapperConverter;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.adapter.PlaceholderCursorObjectAdapter;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
@@ -70,15 +68,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by vapillon on 16/06/15.
  */
-public class SeasonFragment extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor>, Delete.DeleteListener {
-
+public class SeasonFragment
+    extends BrowseSupportFragment implements LoaderManager.LoaderCallbacks<Cursor>, Delete.DeleteListener {
     private static final Logger log = LoggerFactory.getLogger(SeasonFragment.class);
 
     public static final String EXTRA_ACTION_ID = "ACTION_ID";
@@ -109,11 +106,13 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
     private int deleteOperation = Delete.OP_SINGLE_FILE;
     private long deleteFileSize = 0L;
 
-    private final ActivityResultLauncher<IntentSenderRequest> deleteLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartIntentSenderForResult(),
-            result -> { // result can be RESULT_OK, RESULT_CANCELED
+    private final ActivityResultLauncher<IntentSenderRequest> deleteLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(),
+            result -> {
+                // result can be RESULT_OK, RESULT_CANCELED
                 Context context = getActivity();
-                if (log.isDebugEnabled()) log.debug("ActivityResultLauncher deleteLauncher: result {}", result.toString());
+                if (log.isDebugEnabled())
+                    log.debug("ActivityResultLauncher deleteLauncher: result {}", result.toString());
                 if (delete == null && getActivity() != null) {
                     delete = new Delete(SeasonFragment.this, getActivity());
                 }
@@ -152,64 +151,63 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
         setHeadersTransitionOnBackEnabled(false);
 
         loadRows();
-        
+
         mOnItemViewClickedListener = new OnItemViewClickedListener() {
             @Override
-            public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+            public void onItemClicked(
+                Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item == null) {
-                    if (mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED || mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED) {
+                    if (mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED
+                        || mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED) {
                         boolean allEpisodesWatched = true;
-    
+
                         for (int i = 1; i < mSeasonsAdapter.size(); i++) {
-                            Season season = (Season)mSeasonsAdapter.get(i);
-        
+                            Season season = (Season) mSeasonsAdapter.get(i);
+
                             if (!season.allEpisodesWatched()) {
                                 allEpisodesWatched = false;
-    
+
                                 break;
                             }
                         }
-    
+
                         if (allEpisodesWatched) {
                             for (int i = 1; i < mSeasonsAdapter.size(); i++) {
-                                Season season = (Season)mSeasonsAdapter.get(i);
-            
+                                Season season = (Season) mSeasonsAdapter.get(i);
+
                                 DbUtils.markAsNotRead(getActivity(), season);
                             }
-                        }
-                        else {
+                        } else {
                             for (int i = 1; i < mSeasonsAdapter.size(); i++) {
-                                Season season = (Season)mSeasonsAdapter.get(i);
-            
+                                Season season = (Season) mSeasonsAdapter.get(i);
+
                                 DbUtils.markAsRead(getActivity(), season);
                             }
                         }
-    
+
                         getActivity().setResult(Activity.RESULT_OK);
-                    }
-                    else if (mActionId == TvshowActionAdapter.ACTION_UNINDEX) {
+                    } else if (mActionId == TvshowActionAdapter.ACTION_UNINDEX) {
                         for (int i = 1; i < mSeasonsAdapter.size(); i++) {
-                            Season season = (Season)mSeasonsAdapter.get(i);
-        
+                            Season season = (Season) mSeasonsAdapter.get(i);
+
                             DbUtils.markAsHiddenByUser(getActivity(), season);
                         }
-                    }
-                    else if (mActionId == TvshowActionAdapter.ACTION_DELETE) {
-                        SeasonPresenter.VideoViewHolder vh = (SeasonPresenter.VideoViewHolder)itemViewHolder;
+                    } else if (mActionId == TvshowActionAdapter.ACTION_DELETE) {
+                        SeasonPresenter.VideoViewHolder vh = (SeasonPresenter.VideoViewHolder) itemViewHolder;
 
-                        Runnable executeDelete=()->{
+                        Runnable executeDelete = () -> {
                             ArrayList<Uri> uris = new ArrayList<Uri>();
-    
+
                             for (int i = 1; i < mSeasonsAdapter.size(); i++) {
-                                Season season = (Season)mSeasonsAdapter.get(i);
-            
-                                for(String filePath : DbUtils.getFilePaths(getActivity(), season)) {
+                                Season season = (Season) mSeasonsAdapter.get(i);
+
+                                for (String filePath : DbUtils.getFilePaths(getActivity(), season)) {
                                     Uri uri = VideoUtils.getFileUriFromMediaLibPath(filePath);
-                                    
+
                                     uris.add(uri);
                                 }
                             }
-    
+
                             delete = new Delete(SeasonFragment.this, getActivity());
                             deleteUrisList = uris;
                             if (uris.size() == 1) {
@@ -220,37 +218,43 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
                                 delete.startMultipleDeleteProcess(uris);
                             }
                         };
-                        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(requireContext(),"Delete episodes?","This permanently deletes the selected episode files from their storage. This cannot be undone.",executeDelete);
-                        else if(!vh.getConfirmDelete())vh.enableConfirmDelete();else executeDelete.run();
+                        if (PreferenceManager.getDefaultSharedPreferences(requireContext())
+                                .getBoolean("try_new_ui", false))
+                            PreviewDialog.confirmDelete(requireContext(),
+                                "Delete episodes?",
+                                "This permanently deletes the selected episode files from their storage. This cannot be undone.",
+                                executeDelete);
+                        else if (!vh.getConfirmDelete())
+                            vh.enableConfirmDelete();
+                        else
+                            executeDelete.run();
                     }
 
                     return;
                 }
 
-                Season season = (Season)item;
-                
-                if (mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED || mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED) {
+                Season season = (Season) item;
+
+                if (mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED
+                    || mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED) {
                     if (season.allEpisodesWatched()) {
                         DbUtils.markAsNotRead(getActivity(), season);
-                    }
-                    else {
+                    } else {
                         DbUtils.markAsRead(getActivity(), season);
                     }
 
                     getActivity().setResult(Activity.RESULT_OK);
-                }
-                else if (mActionId == TvshowActionAdapter.ACTION_UNINDEX) {
+                } else if (mActionId == TvshowActionAdapter.ACTION_UNINDEX) {
                     DbUtils.markAsHiddenByUser(getActivity(), season);
-                }
-                else if (mActionId == TvshowActionAdapter.ACTION_DELETE) {
-                    SeasonPresenter.VideoViewHolder vh = (SeasonPresenter.VideoViewHolder)itemViewHolder;
+                } else if (mActionId == TvshowActionAdapter.ACTION_DELETE) {
+                    SeasonPresenter.VideoViewHolder vh = (SeasonPresenter.VideoViewHolder) itemViewHolder;
 
-                    Runnable executeDelete=()->{
+                    Runnable executeDelete = () -> {
                         ArrayList<Uri> uris = new ArrayList<Uri>();
 
-                        for(String filePath : DbUtils.getFilePaths(getActivity(), season)) {
+                        for (String filePath : DbUtils.getFilePaths(getActivity(), season)) {
                             Uri uri = VideoUtils.getFileUriFromMediaLibPath(filePath);
-                            
+
                             uris.add(uri);
                         }
 
@@ -264,8 +268,16 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
                             delete.startMultipleDeleteProcess(uris);
                         }
                     };
-                        if(androidx.preference.PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false))com.archos.mediacenter.video.leanback.PreviewDialog.confirmDelete(requireContext(),"Delete episodes?","This permanently deletes the selected episode files from their storage. This cannot be undone.",executeDelete);
-                        else if(!vh.getConfirmDelete())vh.enableConfirmDelete();else executeDelete.run();
+                    if (PreferenceManager.getDefaultSharedPreferences(requireContext())
+                            .getBoolean("try_new_ui", false))
+                        PreviewDialog.confirmDelete(requireContext(),
+                            "Delete episodes?",
+                            "This permanently deletes the selected episode files from their storage. This cannot be undone.",
+                            executeDelete);
+                    else if (!vh.getConfirmDelete())
+                        vh.enableConfirmDelete();
+                    else
+                        executeDelete.run();
                 }
             }
         };
@@ -290,7 +302,9 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
             if (delete != null && delete.getCurrentVideoFileToDeleteSize() > 0) {
                 deleteFileSize = delete.getCurrentVideoFileToDeleteSize();
             }
-            outState.putParcelableArrayList(SAVED_DELETE_URIS, (deleteUrisList instanceof ArrayList) ? (ArrayList<Uri>) deleteUrisList : new ArrayList<>(deleteUrisList));
+            outState.putParcelableArrayList(SAVED_DELETE_URIS,
+                (deleteUrisList instanceof ArrayList) ? (ArrayList<Uri>) deleteUrisList
+                                                      : new ArrayList<>(deleteUrisList));
             outState.putInt(SAVED_DELETE_OPERATION, deleteOperation);
             outState.putLong(SAVED_DELETE_FILE_SIZE, deleteFileSize);
         }
@@ -377,7 +391,8 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
         mSeasonsAdapter = new PlaceholderCursorObjectAdapter(mSeasonPresenter);
         mSeasonsAdapter.setMapper(new CompatibleCursorMapperConverter(new SeasonCursorMapper()));
         String desc = "";
-        if (mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED || mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED)
+        if (mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED
+            || mActionId == TvshowActionAdapter.ACTION_MARK_SHOW_AS_NOT_WATCHED)
             desc = getString(R.string.how_to_mark_season_watched);
         else if (mActionId == TvshowActionAdapter.ACTION_UNINDEX)
             desc = getString(R.string.how_to_unindex_season);
@@ -403,15 +418,16 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
 
         int episodeTotalCount = 0;
         int episodeWatchedCount = 0;
-    
+
         for (int i = 1; i < mSeasonsAdapter.size(); i++) {
-            Season season = (Season)mSeasonsAdapter.get(i);
+            Season season = (Season) mSeasonsAdapter.get(i);
 
             episodeTotalCount += season.getEpisodeTotalCount();
             episodeWatchedCount += season.getEpisodeWatchedCount();
         }
 
-        Season allSeasons = new Season(mTvshowId, mTvshowName, mTvshowPosterUri, -1, episodeTotalCount, episodeWatchedCount);
+        Season allSeasons =
+            new Season(mTvshowId, mTvshowName, mTvshowPosterUri, -1, episodeTotalCount, episodeWatchedCount);
 
         mSeasonPresenter.setAllSeasons(allSeasons);
         mSeasonsAdapter.onCursorChanged();
@@ -423,31 +439,31 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
             mSeasonsAdapter.changeCursor(null);
         }
     }
-    
+
     @Override
-    public void onVideoFileRemoved(final Uri videoFile,boolean askForFolderRemoval, final Uri folder) {
+    public void onVideoFileRemoved(final Uri videoFile, boolean askForFolderRemoval, final Uri folder) {
         Activity activity = getActivity();
-        if (activity != null) Toast.makeText(activity, R.string.delete_done, Toast.LENGTH_SHORT).show();
+        if (activity != null)
+            Toast.makeText(activity, R.string.delete_done, Toast.LENGTH_SHORT).show();
         if (askForFolderRemoval) {
             if (activity != null) {
                 AlertDialog.Builder b = new AlertDialog.Builder(activity).setTitle("");
                 b.setIcon(R.drawable.filetype_new_folder);
                 b.setMessage(R.string.confirm_delete_parent_folder);
                 b.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialogInterface, int i) {
+                         sendDeleteResult(videoFile);
+                     }
+                 }).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        sendDeleteResult(videoFile);
+                        delete = new Delete(SeasonFragment.this, activity);
+                        deleteOperation = Delete.OP_FOLDER;
+                        deleteUrisList = Collections.singletonList(folder);
+                        delete.deleteFolder(folder);
                     }
-                })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                delete = new Delete(SeasonFragment.this, activity);
-                                deleteOperation = Delete.OP_FOLDER;
-                                deleteUrisList = Collections.singletonList(folder);
-                                delete.deleteFolder(folder);
-                            }
-                        });
+                });
                 b.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
@@ -461,23 +477,26 @@ public class SeasonFragment extends BrowseSupportFragment implements LoaderManag
         }
     }
 
-    private void sendDeleteResult(Uri file){
+    private void sendDeleteResult(Uri file) {
         Intent intent = new Intent();
         intent.setData(file);
         Activity activity = getActivity();
-        if (activity != null) activity.setResult(ListingActivity.RESULT_FILE_DELETED, intent);
+        if (activity != null)
+            activity.setResult(ListingActivity.RESULT_FILE_DELETED, intent);
     }
 
     @Override
     public void onDeleteVideoFailed(Uri videoFile) {
         Activity activity = getActivity();
-        if (activity != null) Toast.makeText(activity,R.string.delete_error, Toast.LENGTH_SHORT).show();
+        if (activity != null)
+            Toast.makeText(activity, R.string.delete_error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onFolderRemoved(Uri folder) {
         Activity activity = getActivity();
-        if (activity != null) Toast.makeText(activity, R.string.delete_done, Toast.LENGTH_SHORT).show();
+        if (activity != null)
+            Toast.makeText(activity, R.string.delete_done, Toast.LENGTH_SHORT).show();
         sendDeleteResult(folder);
     }
 

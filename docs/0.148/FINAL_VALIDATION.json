@@ -1,0 +1,64 @@
+{
+  "artifact_sha256": "27f6cf6c433139137e07b86c8491a16547265ca357fe65fb0fe12164d5805cbb",
+  "artifact_bytes": 122630848,
+  "independent_archive_digest_and_crc": "pass",
+  "junit_xml_files": 312,
+  "modules": {
+    "FileCoreLibrary": {
+      "passed": 102,
+      "total": 104,
+      "skipped": 2
+    },
+    "MediaLib": {
+      "passed": 198,
+      "total": 200,
+      "skipped": 2
+    },
+    "Video": {
+      "passed": 1258,
+      "total": 1258
+    }
+  },
+  "retained_skipped_cases": [
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.RealDatabasePruningTest",
+      "name": "syntheticUsbBacklogIsPrunedAndLeavesDatabaseConsistent"
+    },
+    {
+      "module": "MediaLib",
+      "class": "com.archos.mediaprovider.video.RealDatabasePruningTest",
+      "name": "realDatabaseUpgradesCleanlyAndPassesIntegrityCheck"
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.SpeedTestTransferTest",
+      "name": "compareTransferRates"
+    },
+    {
+      "module": "FileCoreLibrary",
+      "class": "com.archos.filecorelibrary.webdav.WebdavPropfindBenchmarkTest",
+      "name": "compareMinimalPropertiesWithAllprop"
+    }
+  ],
+  "lint_severities": {
+    "Warning": 1496
+  },
+  "physical_shield": "NOT RUN",
+  "run_id": 41185088587,
+  "run_attempt": 1,
+  "source_commit": "30d4961e4e5b0e412ec35fe8d27cd6197cea8b26",
+  "conclusion": "success",
+  "artifact_id": 13037176238,
+  "completed_at": "2026-10-31T08:59:16Z",
+  "tooling_tests_passed": 140,
+  "passed": 1558,
+  "tests_total": 1562,
+  "skipped": 4,
+  "failures": 0,
+  "errors": 0,
+  "independent_packaged_native_hashes_verified": 84,
+  "independent_runtime_archive_and_pom_hash_records_verified": 139,
+  "distinct_runtime_archive_paths": 136,
+  "android23_evidence": "Existing 28-case transport/trust proof reused for unchanged native/transport inputs; no physical rerun."
+}

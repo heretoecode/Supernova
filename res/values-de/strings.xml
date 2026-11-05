@@ -412,11 +412,8 @@
     <!-- torrent -->
     <string name="error">Es ist ein Fehler aufgetreten</string>
     <string name="error_protocol_not_supported">Fehler: Protokoll nicht unterstützt</string>
-    <string name="error_loading_torrent">Fehler beim Laden eines Torrents</string>
-    <string name="error_downloading_not_enough_space">Fehler beim Herunterladen eines Torrents: Nicht genügend Platz</string>
     <string name="loading_torrent">Laden des Torrents …</string>
     <string name="error_no_video_file">Keine Videodateien</string>
-    <string name="torrent_file_to_play">Wählen Sie eine Datei zum Abspielen</string>
     <!-- Shortcuts -->
     <string name="browse_net_server">Eine Netzwerkfreigabe durchsuchen</string>
     <string name="add_ssh_server">Einen FTP-Server durchsuchen</string>
@@ -579,7 +576,6 @@
     <string name="rotation_unlocked">Automatische Bildschirmrotation aktiviert</string>
     <string name="network_reindex">Inhalt erneut scannen</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Drücken Sie die Pfeil-nach-Oben-Taste\nzur Anzeige des TV-Menüs</string>
     <string name="help_overlay_network_indexing_text1">Mit diesem Knopf können Sie den Inhalt des aktuellen Ordners und seiner Unterordner zur Bibliothek hinzufügen.</string>
     <string name="help_overlay_network_indexing_text2">Dies ermöglicht Ihnen, Poster und Beschreibungen für die Filme und Serien abzurufen.</string>
     <string name="help_overlay_scraper_text">Drücken Sie diesen Menüpunkt, um online nach Postern und Beschreibungen für Ihre Videos zu suchen. </string>
@@ -615,7 +611,7 @@
     <string name="network_nfo_parse_summary">Kodi ‚.nfo‘ Dateien während des (erneuten) Scanning lesen, um Medieninformationen und Poster zu sammeln.</string>
     <string name="ask_to_mail_media_DB">Möchten Sie Ihre Videodatenbank an das Nova-Entwicklungsteam mailen, um ihnen bei der Überprüfung eines Bugs zu helfen?\n\nDie Videodateien werden (natürlich) nicht versendet, aber die vollständige Liste der Dateinamen.</string>
     <string name="no_email_installed">Keine E-Mail-Applikation gefunden</string>
-    <string name="zipping_library_before_mailing">Zippen einer Kopie der Bibliothek vor dem Versenden ...</string>
+    <string name="zipping_library_before_mailing">Zippen einer Kopie der Bibliothek vor dem Versenden &#8230;</string>
     <string name="zipped_library_mail_subject">Nova Video Database-Dump</string>
     <string name="zipped_library_mail_text">Bitte beschreiben Sie das Problem, das bei Ihnen auftritt\n\n</string>
     <string name="sort_mode">Sortiermodus</string>
@@ -737,16 +733,11 @@
     <string name="codepage_extra_1256">(CP1256)</string>
     <string name="codepage_extra_1257">(CP1257)</string>
     <string name="codepage_extra_1258">(CP1258)</string>
-    <string name="torrent_category">Torrent</string>
     <string name="torrent_path">Downloadpfad</string>
     <string name="torrent_blocklist">Blockliste</string>
     <string name="blocklist_empty">URL sollte nicht leer sein</string>
     <string name="blocklist_invalid">Blockliste ungültig</string>
-    <string name="blocklist_file_not_found">Datei nicht gefunden</string>
     <string name="blocklist_success">Aktualisieren der Blockliste erfolgreich</string>
-    <string name="blocklist_unknown_error">Unbekannt</string>
-    <string name="blocklist_not_loaded">Nicht geladen</string>
-    <string name="torrent_blocklist_url">Blocklisten-URL</string>
     <string name="sdk_not_supported">Android 4.3 wird noch nicht unterstützt.\nWir arbeiten hart daran, dies zu beheben und hoffen, bald eine neue Version zu haben!</string>
     <string name="manually_create_share">Indexierter Ordner nach URI hinzufügen</string>
     <string name="share_infos_incomplete">Sie müssen den Pfad ausfüllen</string>
@@ -888,7 +879,7 @@
     <string name="media_library_export_in_progress">Exportiere Medienbibliothek + Zugangsdaten + Verknüpfungen</string>
     <string name="media_library_import_in_progress">Importiere Medienbibliothek + Zugangsdaten + Verknüpfungen</string>
     <string name="media_library_export_success">Medienbibliothek, Zugangsdaten und Verknüpfungen erfolgreich exportiert in:\n%s</string>
-    <string name="media_library_import_success">Medienbibliothek, Zugangsdaten und Verknüpfungen erfolgreich importiert. App wird neu gestartet...</string>
+    <string name="media_library_import_success">Medienbibliothek, Zugangsdaten und Verknüpfungen erfolgreich importiert. App wird neu gestartet&#8230;</string>
     <string name="media_library_import_error">Fehler beim Importieren der Medienbibliothek</string>
     <string name="media_library_export_error">Fehler beim Exportieren der Medienbibliothek</string>
     <string name="media_library_export_dir_not_found">Exportverzeichnis nicht gefunden</string>

@@ -1,0 +1,866 @@
+{
+  "tracker": 31,
+  "milestone": {
+    "title": "0.156",
+    "number": 1
+  },
+  "issues": [
+    {
+      "key": "0156-1",
+      "title": "0.156 #1: Library source that fails on every scan (reason not recorded) + the stuck network scan.",
+      "body": "Library source that fails on every scan (reason not recorded) + the stuck network scan (0.154 #16).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 1\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #16\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 32,
+      "parent": 31
+    },
+    {
+      "key": "0156-2",
+      "title": "0.156 #2: Local import check gives up after 1½–3 min on resume.",
+      "body": "Local import check gives up after 1½–3 min on resume.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 2\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 33,
+      "parent": 31
+    },
+    {
+      "key": "0156-3",
+      "title": "0.156 #3: Backup \"could not be prepared\".",
+      "body": "Backup \"could not be prepared\" (Codex analysing; fix by Claude).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 3\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 34,
+      "parent": 31
+    },
+    {
+      "key": "0156-4",
+      "title": "0.156 #4: Diagnostics recorder crash (trimStorage sort).",
+      "body": "Diagnostics recorder crash (`trimStorage` sort).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 4\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 35,
+      "parent": 31
+    },
+    {
+      "key": "0156-5",
+      "title": "0.156 #5: Unguarded focus-search calls that can crash (Settings, file browser, side panels).",
+      "body": "Unguarded focus-search calls that can crash (Settings, file browser, side panels).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 5\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 36,
+      "parent": 31
+    },
+    {
+      "key": "0156-6",
+      "title": "0.156 #6: Local Storage: Home grabs focus while a folder loads.",
+      "body": "Local Storage: Home grabs focus while a folder loads (OWNER #30).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 6\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #30\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 37,
+      "parent": 31
+    },
+    {
+      "key": "0156-7",
+      "title": "0.156 #7: Local Storage: header jumps on All files ↔ Videos only.",
+      "body": "Local Storage: header jumps on All files ↔ Videos only (#31).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 7\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #31\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 38,
+      "parent": 31
+    },
+    {
+      "key": "0156-8",
+      "title": "0.156 #8: Local Storage library rows missing details.",
+      "body": "Local Storage library rows missing details (#12).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 8\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #12\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 39,
+      "parent": 31
+    },
+    {
+      "key": "0156-9",
+      "title": "0.156 #9: Save Changes tick vanishes on focus— fixed at the root for every button.",
+      "body": "Save Changes tick vanishes on focus (#37) — fixed at the root for every button.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 9\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #37\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 40,
+      "parent": 31
+    },
+    {
+      "key": "0156-10",
+      "title": "0.156 #10: Playback Settings: Audio/Playback tab icons invisible on focus",
+      "body": "Playback Settings: Audio/Playback tab icons invisible on focus (#3); colour swatch ring clipped (#7).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 10\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #3, #7\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 41,
+      "parent": 31
+    },
+    {
+      "key": "0156-11",
+      "title": "0.156 #11: Details: flat blue card before artwork arrives.",
+      "body": "Details: flat blue card before artwork arrives (#9).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 11\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #9\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 42,
+      "parent": 31
+    },
+    {
+      "key": "0156-12",
+      "title": "0.156 #12: Auto-next can play a hidden file.",
+      "body": "Auto-next can play a hidden file (#10, Codex DP-09).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 12\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #10\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 43,
+      "parent": 31
+    },
+    {
+      "key": "0156-13",
+      "title": "0.156 #13: Settings rows: values/switches one row out of step and said twice (every page, #16).",
+      "body": "Settings rows: values/switches one row out of step and said twice (every page, #16).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 13\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #16\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 44,
+      "parent": 31
+    },
+    {
+      "key": "0156-14",
+      "title": "0.156 #14: Credits say NOVA 6.6.2 (should be 6.6.4).",
+      "body": "Credits say NOVA 6.6.2 (should be 6.6.4).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 14\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 45,
+      "parent": 31
+    },
+    {
+      "key": "0156-15",
+      "title": "0.156 #15: Picture in picture: subtitles off in PiP",
+      "body": "Picture in picture: subtitles off in PiP; OK/reopen returns to full screen; PiP buttons (#36).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 15\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #36\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 46,
+      "parent": 31
+    },
+    {
+      "key": "0156-16",
+      "title": "0.156 #16: OMDb ratings not saved",
+      "body": "OMDb ratings not saved — keep a week per title (#34).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 16\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #34\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 47,
+      "parent": 31
+    },
+    {
+      "key": "0156-17",
+      "title": "0.156 #17: Remove NOVA's blue \"Press UP for the TV menu\" first-play box.",
+      "body": "Remove NOVA's blue \"Press UP for the TV menu\" first-play box (#38).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 17\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #38\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 48,
+      "parent": 31
+    },
+    {
+      "key": "0156-18",
+      "title": "0.156 #18: Home rows / top bar: blur and lingering colour on Documentaries.",
+      "body": "Home rows / top bar: blur and lingering colour on Documentaries (#21).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 18\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #21\n",
+      "labels": [
+        "bug",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 49,
+      "parent": 31
+    },
+    {
+      "key": "0156-18a",
+      "title": "0.156 #18a: Put.io playback: picture glitch and audio out of sync (or playback failing) after…",
+      "body": "Put.io playback: picture glitch and audio out of sync (or playback failing) after resuming from a pause of a few minutes — reconnect and re-sync (diagnostics review 2, 5 Nov; Codex Part B 17a, Claude verifies on the Shield).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 18a\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "bug",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 50,
+      "parent": 31
+    },
+    {
+      "key": "0156-19",
+      "title": "0.156 #19: HUD buttons, time bubble and seek bar.",
+      "body": "HUD buttons, time bubble and seek bar (#8).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 19\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #8\n",
+      "labels": [
+        "player",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 51,
+      "parent": 31
+    },
+    {
+      "key": "0156-20",
+      "title": "0.156 #20: Remote scheme: bar Left/Right seek, OK play/pause, Up to the buttons, Down to Chapters…",
+      "body": "Remote scheme: bar Left/Right seek, OK play/pause, Up to the buttons, Down to Chapters · Episodes (#38).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 20\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #38\n",
+      "labels": [
+        "player",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 52,
+      "parent": 31
+    },
+    {
+      "key": "0156-21",
+      "title": "0.156 #21: Chapters and Episodes rows below the bar, Home-style cards, raised controls",
+      "body": "Chapters and Episodes rows below the bar, Home-style cards, raised controls; chapters + IntroDB parts merged, thin lines on one continuous bar; a picture for every part (#33).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 21\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #33\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "player",
+        "design",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 53,
+      "parent": 31
+    },
+    {
+      "key": "0156-22",
+      "title": "0.156 #22: Our own first-play tip.",
+      "body": "Our own first-play tip (#38).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 22\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #38\n",
+      "labels": [
+        "player",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 54,
+      "parent": 31
+    },
+    {
+      "key": "0156-23",
+      "title": "0.156 #23: Skip Intro button bottom right, draining button, 10 s.",
+      "body": "Skip Intro button bottom right, draining button, 10 s (#17).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 23\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #17\n",
+      "labels": [
+        "player",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 55,
+      "parent": 31
+    },
+    {
+      "key": "0156-24",
+      "title": "0.156 #24: Subtitle Vertical Position step control with live sample line",
+      "body": "Subtitle Vertical Position step control with live sample line; appearance preview rule (#35).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 24\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #35\n",
+      "labels": [
+        "player",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 56,
+      "parent": 31
+    },
+    {
+      "key": "0156-25",
+      "title": "0.156 #25: Live subtitle preview in Playback Settings",
+      "body": "Live subtitle preview in Playback Settings (#4); Download Subtitles without the centre pop-up (#5).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 25\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #4, #5\n",
+      "labels": [
+        "player",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 57,
+      "parent": 31
+    },
+    {
+      "key": "0156-26",
+      "title": "0.156 #26: Seek thumbnails",
+      "body": "Seek thumbnails — experimental, measured in Diagnostics (#39; Codex engine, Claude UI).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 26\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #39\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "player",
+        "design",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 58,
+      "parent": 31
+    },
+    {
+      "key": "0156-27",
+      "title": "0.156 #27: Hero text readability and title logo placement.",
+      "body": "Hero text readability and title logo placement (#1, #2).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 27\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #1, #2\n",
+      "labels": [
+        "home-details-search",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 59,
+      "parent": 31
+    },
+    {
+      "key": "0156-28",
+      "title": "0.156 #28: Home row controls beside the row.",
+      "body": "Home row controls beside the row (#14).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 28\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #14\n",
+      "labels": [
+        "home-details-search",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 60,
+      "parent": 31
+    },
+    {
+      "key": "0156-29",
+      "title": "0.156 #29: Customise Home side panel + genre icons v2.",
+      "body": "Customise Home side panel + genre icons v2 (#22).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 29\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #22\n",
+      "labels": [
+        "home-details-search",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 61,
+      "parent": 31
+    },
+    {
+      "key": "0156-30",
+      "title": "0.156 #30: Top bar charcoal fade rebuilt.",
+      "body": "Top bar charcoal fade rebuilt (#21).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 30\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #21\n",
+      "labels": [
+        "home-details-search",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 62,
+      "parent": 31
+    },
+    {
+      "key": "0156-31",
+      "title": "0.156 #31: Search: QWERTY keyboard, symbols page, results layout, relevance, Clear recent",
+      "body": "Search: QWERTY keyboard, symbols page, results layout, relevance, Clear recent; \"What you can search\" (#18, #20) — heading approved.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 31\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #18, #20\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "home-details-search",
+        "design",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 63,
+      "parent": 31
+    },
+    {
+      "key": "0156-32",
+      "title": "0.156 #32: Edit Page: no scrolling, year range, separators, Delete Page at the bottom.",
+      "body": "Edit Page: no scrolling, year range, separators, Delete Page at the bottom (#37).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 32\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #37\n",
+      "labels": [
+        "home-details-search",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 64,
+      "parent": 31
+    },
+    {
+      "key": "0156-33",
+      "title": "0.156 #33: Local Storage: status on every row, single watched pill, grid artwork and long-press menu.",
+      "body": "Local Storage: status on every row, single watched pill, grid artwork and long-press menu (#11, #13).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 33\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #11, #13\n",
+      "labels": [
+        "network-files",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 65,
+      "parent": 31
+    },
+    {
+      "key": "0156-34",
+      "title": "0.156 #34: Network Shares, Add Connection, Saved Connections merged, Library Health tile.",
+      "body": "Network Shares, Add Connection, Saved Connections merged, Library Health tile (0.154 #14–16).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 34\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #14\n",
+      "labels": [
+        "network-files",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 66,
+      "parent": 31
+    },
+    {
+      "key": "0156-35",
+      "title": "0.156 #35: Landing tiles, Scan now with live status, Library Scanning, Library Health in plain words.",
+      "body": "Landing tiles, Scan now with live status, Library Scanning, Library Health in plain words (0.154 #17).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 35\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #17\n",
+      "labels": [
+        "network-files",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 67,
+      "parent": 31
+    },
+    {
+      "key": "0156-36",
+      "title": "0.156 #36: Playback (incl. Skipping), Audio & Subtitles (fonts in Supernova's browser), Library &…",
+      "body": "Playback (incl. Skipping), Audio & Subtitles (fonts in Supernova's browser), Library & Home (.nfo export, Refresh details moved to Library Health), Where to Watch (renamed), Appearance (Accent removed, screensaver), Accounts & Services (renamed), System (Backup three choices + private items, Diagnostics full detail, Advanced), About (credits for every service, full version history, licences with search and QR codes, Device) (#23–#29, #32).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 36\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #23, #29, #32\n",
+      "labels": [
+        "settings",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 68,
+      "parent": 31
+    },
+    {
+      "key": "0156-37",
+      "title": "0.156 #37: IntroDB tidy-up.",
+      "body": "IntroDB tidy-up (#15).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 37\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #15\n",
+      "labels": [
+        "settings",
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 69,
+      "parent": 31
+    },
+    {
+      "key": "0156-38",
+      "title": "0.156 #38: One shared choice list replacing every translucent pop-up.",
+      "body": "One shared choice list replacing every translucent pop-up.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 38\n",
+      "labels": [
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 70,
+      "parent": 31
+    },
+    {
+      "key": "0156-39",
+      "title": "0.156 #39: Sleep timer back and \"Still watching?\".",
+      "body": "Sleep timer back · ✅ \"Still watching?\".\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 39\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "design",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 71,
+      "parent": 31
+    },
+    {
+      "key": "0156-40",
+      "title": "0.156 #40: Fix match from Details.",
+      "body": "Fix match from Details.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 40\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "design",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 72,
+      "parent": 31
+    },
+    {
+      "key": "0156-41",
+      "title": "0.156 #41: Library Health badge on the Network & Files tile.",
+      "body": "Library Health badge on the Network & Files tile.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 41\n",
+      "labels": [
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 73,
+      "parent": 31
+    },
+    {
+      "key": "0156-42",
+      "title": "0.156 #42: Remember audio/subtitle choices per series.",
+      "body": "Remember audio/subtitle choices per series.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 42\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "design",
+        "codex",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 74,
+      "parent": 31
+    },
+    {
+      "key": "0156-43",
+      "title": "0.156 #43: Consistent empty states and focus memory everywhere.",
+      "body": "Consistent empty states · ✅ focus memory everywhere.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 43\n",
+      "labels": [
+        "design",
+        "claude"
+      ],
+      "milestone": "0.156",
+      "number": 75,
+      "parent": 31
+    },
+    {
+      "key": "0156-44",
+      "title": "0.156 #44: Always full detail",
+      "body": "Always full detail; reasons for every failure; real Android exit reasons; bigger log; playback, network and UI measurements; settings changes; clearer summary with top-20 errors.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 44\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "diagnostics",
+        "engine",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 76,
+      "parent": 31
+    },
+    {
+      "key": "0156-45",
+      "title": "0.156 #45: DP-01…DP-07, TV-only stages and the rest of BRIEF_0155_NEXT.md as it is reviewed and…",
+      "body": "DP-01…DP-07, TV-only stages and the rest of `BRIEF_0155_NEXT.md` as it is reviewed and re-tested.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 45\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "labels": [
+        "engine",
+        "codex"
+      ],
+      "milestone": "0.156",
+      "number": 77,
+      "parent": 31
+    },
+    {
+      "key": "parked-FD-004",
+      "title": "FD-004: Shield Home / Android TV launcher channels (rows on the Shield home screen)",
+      "body": "Parked; which rows, consent and on/off controls undecided.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-004)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 78,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-011",
+      "title": "FD-011: Profiles (separate history, Continue Watching, settings per person)",
+      "body": "Parked.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-011)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 79,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-013",
+      "title": "FD-013: Discovery / Coming Soon page",
+      "body": "Parked; Home must not become advertising.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-013)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 80,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-016",
+      "title": "FD-016: Person pages (cast and crew filmographies)",
+      "body": "Parked.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-016)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 81,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-017",
+      "title": "FD-017: More than one custom Library Page",
+      "body": "Parked; check the current limit when revisiting.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-017)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 82,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-018",
+      "title": "FD-018: Anime-specific metadata and seasons",
+      "body": "Concept only.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-018)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 83,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-020",
+      "title": "FD-020: Subtitle presets (saved appearance sets)",
+      "body": "Concept only.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-020)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 84,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-021",
+      "title": "FD-021: Playback intelligence (smarter version/track choices)",
+      "body": "Concept only; per-series audio/subtitle memory is in 0.156 (in principle).\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-021)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 85,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-022",
+      "title": "FD-022: Expanded ratings",
+      "body": "Partly built (OMDb with the owner's key) — see the OMDb entry above.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-022)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 86,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-023",
+      "title": "FD-023: Trakt community reviews and social features",
+      "body": "Concept only.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-023)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 87,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-024",
+      "title": "FD-024: AI features (matching, recommendations, natural-language search)",
+      "body": "Concept only; cost and privacy concerns.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-024)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 88,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-025",
+      "title": "FD-025: Personalisation (layouts, themes)",
+      "body": "Concept only; note Accent & Colour was removed in the Settings review.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-025)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 89,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-026",
+      "title": "FD-026: Other integrations (more metadata/media services)",
+      "body": "Concept only; avoid duplicating current providers.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-026)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 90,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-027",
+      "title": "FD-027: Downloads (copy WebDAV files to the Shield)",
+      "body": "Parked.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-027)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 91,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-028",
+      "title": "FD-028: Detailed content warnings at playback start",
+      "body": "Parked; no reliable source found (TMDB descriptors empty).\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-028)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 92,
+      "parent": null
+    },
+    {
+      "key": "parked-FD-032",
+      "title": "FD-032: Fully automatic Google Drive release publishing",
+      "body": "Parked; today the signed APK is a GitHub artifact because Drive secrets aren't set.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n- Old register: `docs/Future Development/` (FD-032)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 93,
+      "parent": null
+    },
+    {
+      "key": "parked-smart-collections",
+      "title": "Smart Collections",
+      "body": "Needs a decision.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n",
+      "labels": [
+        "decision-needed"
+      ],
+      "milestone": null,
+      "number": 94,
+      "parent": null,
+      "state": "closed"
+    },
+    {
+      "key": "parked-put-io-improvements-account-li",
+      "title": "Put.io improvements (account, linking, file workflow)",
+      "body": "Needs product discussion.\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n",
+      "labels": [
+        "decision-needed"
+      ],
+      "milestone": null,
+      "number": 95,
+      "parent": null,
+      "state": "closed"
+    },
+    {
+      "key": "parked-less-manual-github-work-at-the",
+      "title": "Less manual GitHub work at the end of Codex sessions",
+      "body": "Parked by the owner (workflow/permission automation).\n\n### Details\n- `docs/REVISIT_LATER.md` (parked ideas table)\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 96,
+      "parent": null
+    },
+    {
+      "key": "parked-omdb-key",
+      "title": "Ratings without a personal OMDb key",
+      "body": "Owner decision: no OMDb key built into the app for now. Options: a key built in from a GitHub secret, MDBList, or keyless scores only. Revisit when Supernova is shared or the daily limit is reached.\n\n### Details\n- `docs/REVISIT_LATER.md`\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 97,
+      "parent": null
+    },
+    {
+      "key": "parked-diagnostics-privacy",
+      "title": "Diagnostics privacy before sharing Supernova",
+      "body": "Diagnostics record everything in full detail because the owner is the only user. Cut back or make opt-in before Supernova is ever shared.\n\n### Details\n- `docs/REVISIT_LATER.md`\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 98,
+      "parent": null
+    },
+    {
+      "key": "parked-details-redesign",
+      "title": "Details page and its tabs redesign",
+      "body": "Parked by the owner on 5 Nov 2026, to revisit soon.\n\n### Details\n- `docs/REVISIT_LATER.md`\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 99,
+      "parent": null
+    },
+    {
+      "key": "parked-library-stats",
+      "title": "Library statistics colouring on library pages",
+      "body": "Should it stay blue? Possibly the design too. Discuss with the Details page. Parked 5 Nov 2026.\n\n### Details\n- `docs/REVISIT_LATER.md`\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 100,
+      "parent": null
+    },
+    {
+      "key": "parked-search-discovery",
+      "title": "Discovery in Search",
+      "body": "Owner: \"maybe in the future but not for now\". Search stays library-only in 0.156 (owner notes #20).\n\n### Details\n- `docs/REVISIT_LATER.md`\n",
+      "labels": [
+        "parked"
+      ],
+      "milestone": null,
+      "number": 101,
+      "parent": null
+    },
+    {
+      "key": "decision-streaming-launch",
+      "title": "Should Where to Watch open the service's app?",
+      "body": "Launching a service is \"paused for this testing edition\" (`streaming/StreamingRepository.java:32`). Decide whether Where to Watch should open the service.\n\n### Details\n- `docs/REVISIT_LATER.md`\n",
+      "labels": [
+        "decision-needed"
+      ],
+      "milestone": null,
+      "number": 102,
+      "parent": null,
+      "state": "closed"
+    }
+  ]
+}

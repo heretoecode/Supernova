@@ -1,0 +1,36 @@
+name: Preserve the pinned 0.146 native engine (immutable branch)
+
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/workflows/supernova-0156-native-archive.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supernova-0146-native-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: github.repository == 'heretoecode/Supernova'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Offline archive tests
+        run: python3 .github/build/test-native-archive-supernova156.py
+      - name: Verify every pinned artifact, then preserve and freshly fetch the orphan archive branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python3 .github/build/native-archive-supernova156.py
+          --destination "$RUNNER_TEMP/native-archive-supernova156"
+          --publish

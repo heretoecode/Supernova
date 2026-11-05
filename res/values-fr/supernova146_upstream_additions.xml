@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="preferences_audio_speed_mode_title">Vitesse audio</string>
+  <string name="preferences_audio_speed_mode_summary">Choisir le filtre de vitesse audio utilisé pour modifier la vitesse de lecture. ⚠ Expérimental: peut entraîner une vidéo hachée ou une distorsion audio</string>
+  <string name="audio_speed_mode_disabled">Désactivé</string>
+  <string name="audio_speed_mode_audiotrack">Système natif (AudioTrack)</string>
+  <string name="audio_speed_mode_atempo">Équilibré (FFmpeg atempo)</string>
+  <string name="audio_speed_mode_sonic">Voix &amp; parole (Sonic)</string>
+  <string name="subtitles_show_full_for_local_audio_title">Afficher les sous-titres pour l\'audio de langue locale</string>
+  <string name="subtitles_show_full_for_local_audio_summary">Désactivé par défaut: seuls les sous-titres forcés sont sélectionnés automatiquement lorsque la piste audio correspond à la langue de vos sous-titres; activez cette option pour sélectionner aussi automatiquement les sous-titres complet</string>
+  <string name="version_open_store_summary">Sélectionnez pour ouvrir le magasin</string>
+  <string name="ui_choice_title">Il semble que vous utilisiez Nova Video Player sur un téléviseur.\nSi c\'est bien le cas, nous vous recommandons d\'utiliser notre nouvelle interface TV</string>
+  <string name="ui_choice_tv">Interface TV</string>
+  <string name="ui_choice_tablet">Interface tablette</string>
+  <string name="ui_choice_help">Vous pouvez ultérieurement modifier votre choix dans les paramètres de l\'application</string>
+  <string name="workgroup">Workgroup</string>
+</resources>

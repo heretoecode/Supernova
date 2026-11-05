@@ -22,7 +22,7 @@
             android:layout_marginBottom="@dimen/auto_scraper_thumbnail_margin_bottom"
             android:layout_marginLeft="@dimen/auto_scraper_thumbnail_margin_left"
             android:layout_marginTop="@dimen/auto_scraper_thumbnail_margin_top"
-            android:scaleType="center" />
+            android:scaleType="center"  android:contentDescription="@null"/>
 
         <ProgressBar
             android:id="@+id/initial_spinbar"

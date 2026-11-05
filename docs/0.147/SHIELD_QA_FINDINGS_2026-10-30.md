@@ -1,0 +1,18 @@
+# 0.147 physical Shield QA findings — 30 October 2026
+
+Status: USER-REPORTED FAILURES, NOT FIXED OR RETESTED. Applies to signed 0.147 QA APK, frozen source f4abf7cb880243ba00481f82beee19d20bc72e33, draft PR #27. Do not merge main or claim physical signoff.
+
+## Evidence
+User supplied IMG_5060.mp4 (16.43-second TV recording) showing transitions between Home, Movies, TV Shows and a third custom library page named Documentaries. Visual review supports pages rendering media tiles and a top navigation/page-state discrepancy; exact internal focus state and root cause cannot be inferred from video alone. Original video is in conversation upload, NOT verified as uploaded to GitHub. User explicitly reports third-page library statistics absent and TV Shows content with Documentaries tab focused after switching back. User separately reports age-rating overlay never appears during media playback; playback itself is NOT shown in this navigation video.
+
+## Defects — mandatory next QA correction
+1. **Custom third library page statistics absent.** Documentaries loads content but does not display the library statistics shown on Movies and TV Shows. Investigate stats data source, custom-page binding, view state, async refresh and loading/error conditions. Display correct source-specific stats when available; never fabricate.
+2. **Top navigation focus/selection desynchronises from displayed library.** After Documentaries -> TV Shows, content changes to TV Shows but tab focus/highlight moves to or remains on Documentaries. Reproduce Home -> Movies -> TV Shows -> Documentaries -> TV Shows and rapid/back/forth transitions. Audit focused tab vs selected page vs committed navigation state, async callbacks and stale view restoration. Fix for every built-in/custom page, including empty/missing art and scan updates. D-pad focus must remain visible and accurately reflect the active target. Do not conflate focus and selected state if user moves focus without activating.
+3. **Playback age certification not visible in real use.** The 0.147 age-overlay automated tests passed, but user reports no rating at any stage of playback. Inspect real playback lifecycle, renderer visibility/z-order, metadata availability, configured Country/Region, movie/TV certification mapping, start/resume timing and 10-second deadline. Preserve approved white thin-outlined text, slim red accent, upper-left placement, no panel, 10 seconds then fade. Do not invent ratings or use wrong-region fallback. Instrument non-sensitive diagnostics to distinguish absent regional metadata from hidden overlay or missed playback event. Test with a title having verified configured-region rating; missing metadata must still show nothing. Do not claim fixed solely from unit tests.
+
+## Constraints / acceptance
+- These are failures discovered during **physical** 0.147 QA, superseding any blanket 'all physical cases pending' status for these observed behaviours. Other untested cases remain pending.
+- First inspect current source and existing 0.147 docs and tests. Add targeted regression tests and UI focus/state assertions. Test real Shield when available; otherwise explicitly mark physical retest pending.
+- Keep PR #27 draft and 0.146/0.147 delivered APKs immutable. Fixes should be isolated on a controlled follow-up development branch/commit with clear versioning and signing strategy, not silently replace the delivered binary.
+- Preserve existing top navigation, approved library page design, scan safety, user data, credentials and release/signing protections. No main merge/public release without approval.
+- Obtain user's confirmation after a new signed QA APK is installed and the exact navigation sequence and rated playback have been retested.

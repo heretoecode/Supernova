@@ -23,7 +23,7 @@ public final class ArtworkRequest {
         });
     }
     public static void cancel(ImageView view){
-        ArtworkTrace old=ACTIVE.remove(view);if(old!=null)old.cancelled();Picasso.get().cancelRequest(view);
+        ArtworkTrace old=ACTIVE.remove(view);if(old!=null){old.cancelled();Picasso.get().cancelRequest(view);}
     }
     static String source(Uri uri){
         String scheme=uri==null?null:uri.getScheme();

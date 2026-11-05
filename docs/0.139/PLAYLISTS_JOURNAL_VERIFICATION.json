@@ -1,0 +1,23 @@
+{
+  "source_sha": "29cfda5a1e34ed2505c206d7222a72b45593d187",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 8,
+  "tests": 76,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistJournalTest",
+    "com.archos.mediacenter.video.utils.CombinedPlaylistMediaTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.PlaylistStateRecoveryTest",
+    "com.archos.mediacenter.video.utils.PlaylistSyncPolicyTest",
+    "com.archos.mediacenter.video.utils.PortableSavedPlaylistsTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest"
+  ],
+  "duration": "2m 45s",
+  "log_sha256": "b1456157ddbe1c7a3fc8a6107246024daa4641a004b8ffffe827fd956ee10cb4",
+  "limits": "Five-store combined recovery, stable private references and prior participant regressions. Error injection is not actual force-stop. Pending reconciliation and public playlist export registration follow this exact tested source."
+}

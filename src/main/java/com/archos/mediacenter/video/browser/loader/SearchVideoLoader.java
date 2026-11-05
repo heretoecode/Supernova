@@ -16,8 +16,10 @@ package com.archos.mediacenter.video.browser.loader;
 
 import android.content.Context;
 
+import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads videos matching a search query. */
 public class SearchVideoLoader extends VideoLoader {
 
     // search based on scraper title and file title
@@ -45,7 +47,7 @@ public class SearchVideoLoader extends VideoLoader {
 
     @Override
     public String getSortOrder() {
-        return com.archos.mediacenter.video.utils.SortUtils.resolveSortOrder(getContext(), com.archos.mediacenter.video.utils.SortUtils.SortScope.VIDEO_VIEW, mSortOrder);
+        return SortUtils.resolveSortOrder(getContext(), SortUtils.SortScope.VIDEO_VIEW, mSortOrder);
     }
 
     @Override

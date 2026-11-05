@@ -1,0 +1,29 @@
+{
+  "source_drive_id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+  "readback_sha256": "c8ed82559f7adf9fa2b1e1d5f7711fbf86d7e442972aefcc72cab620b8ffaa34",
+  "historical_articles_preserved": 15,
+  "historical_article_sha256": [
+    "376a6b2f020cdb124b3e6b97b0678861869244bc369515b552b0bb45ce1f75a5",
+    "de945d48682a45b78f0f5e8b46c96ba520c40a1c207de348a5680481dcc94e90",
+    "47dc6921bdffbde3fe831415e442e5c5e0c878ab9436e56eb0ea558909d3c7ad",
+    "dae23c802c8edc4ab3e86026d97cd3f0f5c879040773e88015eb2f670c98db7d",
+    "9b73445dc689198a6d3c33f80f56a383b71f0c48776c0e6f9696bc31b31c9205",
+    "482ade50a3320cc137d827242a9b6678c957a050fd3be4fc6d51d4b642b60a31",
+    "85be65e301529fc9a9983d4468f6ae7bf0fb91ac5f52dc62e34d4bf30c900162",
+    "8428359a9bf73f71f59f95234228c36da1fb2b98b1042035c328852335d42d34",
+    "80044ba2835dcad4172a1d1b6d6790fee32c8c43d45548c956daa4f154070962",
+    "744c0589b4584a614961e5b47174d24b3139e5898ecdc3740b18f056cc7a7a7c",
+    "52d47e5f60b27338f66585b9f2c7f2ea38607aab23b29de9dd8ad902467519ca",
+    "69b98c259e57576aef8fec681056a124ef0e896c36fd9d2a196b9c5ef1d503d6",
+    "adeb9af4e578b3ea193e60ce20ae625c346dfd07dd105da946732492d7a86f42",
+    "aa28f7dacd4cd6ec99b1bcf51c9b116ff55f121cebb2d000d5822b88e2013e16",
+    "69c12b124db1e6153418842dd1329ed1e00c0b21a6922704529b20fc4c1350df"
+  ],
+  "published_update": true,
+  "reason": "Signed 0.147 QA delivery verified and published to existing Drive HTML; all 15 historical articles unchanged, physical acceptance pending",
+  "uploaded_sha256": "080e60bb679df651e46033848fce6156912901a5fe8728abf29ca40fd19d20e2",
+  "uploaded_bytes": 52183,
+  "complete_uploaded_raw_readback_verified": true,
+  "prior_software_only_uploaded_sha256": "2038ecf3e5ff2c981fc304fd3353957a0795d5a7eefbaa7a110ddc0536f23ca3",
+  "latest_delivered_signed_qa": "0.147"
+}

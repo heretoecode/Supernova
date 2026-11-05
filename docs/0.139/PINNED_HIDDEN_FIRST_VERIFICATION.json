@@ -1,0 +1,21 @@
+{
+  "source_sha": "cd9f5a428cfc904e60b5cf9a57d88292775395cb",
+  "result": "FAIL",
+  "classes": 4,
+  "tests": 17,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.utils.PortableHiddenItemsTest",
+    "com.archos.mediacenter.video.utils.PortablePinnedTitlesTest"
+  ],
+  "failure_messages": [
+    "android.database.sqlite.SQLiteConstraintException: NOT NULL constraint failed: MOVIE.video_id (code 1299 SQLITE_CONSTRAINT_NOTNULL)"
+  ],
+  "limits": [
+    "Native pin fixture omitted required video_id; corrected fixture must be rerun. Hidden Items and existing review/preferred tests passed in this failed stage, not a complete stage PASS."
+  ]
+}

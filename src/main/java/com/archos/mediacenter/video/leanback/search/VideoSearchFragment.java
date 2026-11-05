@@ -15,7 +15,6 @@
 package com.archos.mediacenter.video.leanback.search;
 
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -57,6 +56,7 @@ import androidx.leanback.widget.ShadowLessRowPresenter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays video search results and responds to query changes. */
 public class VideoSearchFragment extends SafeSearchSupportFragment implements SearchSupportFragment.SearchResultProvider {
 
     static final String TAG = "VideoSearchFragment";
@@ -118,6 +118,9 @@ public class VideoSearchFragment extends SafeSearchSupportFragment implements Se
         updateBackground();
         // Setup theme change listener
         setupThemeListener();
+        if (savedInstanceState == null && getArguments() != null) {
+            setSearchQuery(getArguments().getString(android.app.SearchManager.QUERY, ""), true);
+        }
     }
 
     private void updateBackground() {

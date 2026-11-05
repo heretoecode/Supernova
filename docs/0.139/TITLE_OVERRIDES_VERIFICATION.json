@@ -1,0 +1,26 @@
+{
+  "source_sha": "fc7da1e0b328aaf12c5ddf9cdbc7e4d88dba5c73",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "PASS",
+  "classes": 3,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest"
+  ],
+  "duration": "2m 23s",
+  "log_sha256": "831b868617cc47bbba2ed946a12ff9218eb47a399511f10457cd4b570abd5c19",
+  "coverage": [
+    "Read-only override preparation; actual VideoDbInfo neutral defaults preserve played/resume/bookmark values",
+    "Guarded URI/row ownership; moved/reused IDs cannot receive stale choice",
+    "None remaps after receiving metadata enumeration; missing/unsupported metadata stays pending",
+    "Explicit empty clears exported choices/orphan overrides independently of credentials",
+    "Orphan intent survives public export without private guards or locations",
+    "Native/public Put.io title associations are excluded without modifying receiving rows"
+  ],
+  "limits": "Unregistered primitive stage. Combined journal/player/manual supersession integration follows this exact source. Metadata is synthetic; no actual decoder/output, full provider lifecycle, Shield, signing or delivery acceptance."
+}

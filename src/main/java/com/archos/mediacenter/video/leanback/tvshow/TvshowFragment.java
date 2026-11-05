@@ -16,6 +16,10 @@ package com.archos.mediacenter.video.leanback.tvshow;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.loader.app.LoaderManager;
@@ -29,6 +33,20 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper;
+import com.archos.mediacenter.video.browser.adapters.object.Season;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.leanback.MainActivityLeanback;
+import com.archos.mediacenter.video.leanback.PreviewArtworkPicker;
+import com.archos.mediacenter.video.leanback.PreviewDialog;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
+import com.archos.mediacenter.video.leanback.PreviewSeriesJourney;
+import com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialog;
+import com.archos.mediacenter.video.leanback.TopNavigation;
+import com.archos.mediacenter.video.leanback.details.PreviewMoviePage;
+import com.archos.mediacenter.video.leanback.details.PreviewTvTrailers;
+import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
+import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.streaming.StreamingActions;
 import android.os.Handler;
 import android.os.Looper;
@@ -63,6 +81,7 @@ import android.widget.Toast;
 import androidx.loader.content.CursorLoader;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.LibrarySortPreferences;
 import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.DbUtils;
@@ -89,92 +108,221 @@ import com.archos.mediacenter.video.tvshow.TvshowSortOrderEntries;
 import com.archos.mediacenter.video.utils.PlayUtils;
 import com.archos.environment.NetworkState;
 import com.archos.mediaprovider.video.VideoStore;
+import com.archos.mediascraper.BaseTags;
+import com.archos.mediascraper.ScraperImage;
+import com.archos.mediascraper.ScraperTrailer;
 import com.archos.mediascraper.ShowTags;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/** Displays TV show details, loads their contents and handles item actions. */
 public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private com.archos.mediacenter.video.leanback.details.PreviewMoviePage preview;
-    private com.archos.mediacenter.video.leanback.TopNavigation previewNavigation;
+    private PreviewMoviePage preview;
+    private TopNavigation previewNavigation;
     private OnActionClickedListener previewAction;
     private ExecutorService previewArtworkWorker;
     private boolean previewArtworkLoading;
     private boolean previewWatchedBusy;
-    private boolean isPreview(){return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui",false);}
-    @Override public View onCreateView(android.view.LayoutInflater inflater,android.view.ViewGroup parent,Bundle state){
-        View nativeView=super.onCreateView(inflater,parent,state);if(!isPreview()||mTvshow==null)return nativeView;
-        android.widget.FrameLayout container=new android.widget.FrameLayout(requireContext());container.addView(nativeView);nativeView.setVisibility(View.GONE);
-        mDetailsOverviewRow=new DetailsOverviewRow(mTvshow);mDetailsOverviewRow.setActionsAdapter(new TvshowActionAdapter(requireContext(),mTvshow));
-        preview=new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(requireActivity(),()->mDetailsOverviewRow.getActionsAdapter(),a->previewAction.onActionClicked(a),this::showPreviewArtworkMenu,uri->{if(previewNavigation!=null)previewNavigation.setArtwork(uri);});
-        preview.bindShow(mTvshow,this::playEpisode);container.addView(preview);
-        previewNavigation=new com.archos.mediacenter.video.leanback.TopNavigation(requireContext(),container,tab->{
-            if(tab==4)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity.class));
-            else if(tab==5)startActivity(new Intent(requireContext(),com.archos.mediacenter.video.leanback.search.VideoSearchActivity.class));
-            else {Intent home=new Intent(requireContext(),com.archos.mediacenter.video.leanback.MainActivityLeanback.class);home.putExtra("preview_tab",tab);home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);startActivity(home);requireActivity().finish();}
-        },()->preview.atTop());previewNavigation.selectTab(2);preview.post(preview::focusPrimary);return previewNavigation;
+
+    private boolean isPreview() {
+        return PreferenceManager.getDefaultSharedPreferences(requireContext()).getBoolean("try_new_ui", false);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle state) {
+        View nativeView = super.onCreateView(inflater, parent, state);
+        if (!isPreview() || mTvshow == null)
+            return nativeView;
+        FrameLayout container = new FrameLayout(requireContext());
+        container.addView(nativeView);
+        nativeView.setVisibility(View.GONE);
+        mDetailsOverviewRow = new DetailsOverviewRow(mTvshow);
+        mDetailsOverviewRow.setActionsAdapter(new TvshowActionAdapter(requireContext(), mTvshow));
+        preview = new PreviewMoviePage(requireActivity(),
+            ()
+                -> mDetailsOverviewRow.getActionsAdapter(),
+            a -> previewAction.onActionClicked(a), this::showPreviewArtworkMenu, uri -> {
+                if (previewNavigation != null)
+                    previewNavigation.setArtwork(uri);
+            });
+        preview.bindShow(mTvshow, this::playEpisode);
+        container.addView(preview);
+        previewNavigation =
+            new TopNavigation(requireContext(), container, tab -> {
+                if (tab == 4)
+                    startActivity(new Intent(
+                        requireContext(), VideoSettingsActivity.class));
+                else if (tab == 5)
+                    startActivity(new Intent(
+                        requireContext(), VideoSearchActivity.class));
+                else {
+                    Intent home =
+                        new Intent(requireContext(), MainActivityLeanback.class);
+                    home.putExtra("preview_tab", tab);
+                    home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(home);
+                    requireActivity().finish();
+                }
+            }, () -> preview.atTop());
+        previewNavigation.selectTab(2);
+        preview.post(preview::focusPrimary);
+        return previewNavigation;
     }
 
     private static final boolean DBG = false;
-    private void showPreviewWatchedScope(){
-        if(previewWatchedBusy||mTvshow==null)return;previewWatchedBusy=true;
-        Tvshow target=mTvshow;com.archos.mediacenter.video.leanback.details.PreviewMoviePage page=preview;
-        android.content.Context app=requireContext().getApplicationContext();Handler main=new Handler(Looper.getMainLooper());
-        artworkWorker().execute(()->{
-            java.util.List<com.archos.mediacenter.video.browser.adapters.object.Season> seasons=new java.util.ArrayList<>();
-            try(Cursor cursor=new SeasonsLoader(app,target.getTvshowId()).loadInBackground()){
-                if(cursor!=null){com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper mapper=new com.archos.mediacenter.video.browser.adapters.mappers.SeasonCursorMapper();mapper.bindColumns(cursor);while(cursor.moveToNext())seasons.add((com.archos.mediacenter.video.browser.adapters.object.Season)mapper.bind(cursor));}
-            }catch(Exception failed){seasons.clear();com.archos.mediacenter.video.diagnostics.Diagnostics.error("watched_scope_unavailable",failed);}
-            main.post(()->{
-                previewWatchedBusy=false;if(!isAdded()||preview!=page||mTvshow==null||mTvshow.getTvshowId()!=target.getTvshowId())return;
-                if(seasons.isEmpty()){com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Watched state","No indexed seasons are available.");return;}
-                com.archos.mediacenter.video.leanback.PreviewWatchedScopeDialog.show(requireContext(),seasons,(selected,watched)->{
-                    previewWatchedBusy=true;artworkWorker().execute(()->{
-                        boolean applied=true;
-                        try{for(com.archos.mediacenter.video.browser.adapters.object.Season season:selected){if(Thread.currentThread().isInterrupted()){applied=false;break;}if(watched)DbUtils.markAsRead(app,season);else DbUtils.markAsNotRead(app,season);}}
-                        catch(Exception failed){applied=false;com.archos.mediacenter.video.diagnostics.Diagnostics.error("watched_scope_update_failed",failed);}
-                        final boolean success=applied;main.post(()->{
-                            previewWatchedBusy=false;if(!isAdded()||preview!=page||mTvshow==null||mTvshow.getTvshowId()!=target.getTvshowId())return;
-                            onMarkWatchedResult();LoaderManager.getInstance(TvshowFragment.this).restartLoader(SEASONS_LOADER_ID,null,TvshowFragment.this);
-                            if(!success)com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Watched state","Some episodes could not be updated. Current library state has been refreshed.");
+
+    private void showPreviewWatchedScope() {
+        if (previewWatchedBusy || mTvshow == null)
+            return;
+        previewWatchedBusy = true;
+        Tvshow target = mTvshow;
+        PreviewMoviePage page = preview;
+        Context app = requireContext().getApplicationContext();
+        Handler main = new Handler(Looper.getMainLooper());
+        artworkWorker().execute(() -> {
+            List<Season> seasons =
+                new ArrayList<>();
+            try (Cursor cursor = new SeasonsLoader(app, target.getTvshowId()).loadInBackground()) {
+                if (cursor != null) {
+                    SeasonCursorMapper mapper =
+                        new SeasonCursorMapper();
+                    mapper.bindColumns(cursor);
+                    while (cursor.moveToNext())
+                        seasons.add((Season) mapper.bind(cursor));
+                }
+            } catch (Exception failed) {
+                seasons.clear();
+                Diagnostics.error("watched_scope_unavailable", failed);
+            }
+            main.post(() -> {
+                previewWatchedBusy = false;
+                if (!isAdded() || preview != page || mTvshow == null || mTvshow.getTvshowId() != target.getTvshowId())
+                    return;
+                if (seasons.isEmpty()) {
+                    PreviewDialog.read(
+                        requireContext(), "Watched state", "No indexed seasons are available.");
+                    return;
+                }
+                PreviewWatchedScopeDialog.show(
+                    requireContext(), seasons, (selected, watched) -> {
+                        previewWatchedBusy = true;
+                        artworkWorker().execute(() -> {
+                            boolean applied = true;
+                            try {
+                                for (Season season : selected) {
+                                    if (Thread.currentThread().isInterrupted()) {
+                                        applied = false;
+                                        break;
+                                    }
+                                    if (watched)
+                                        DbUtils.markAsRead(app, season);
+                                    else
+                                        DbUtils.markAsNotRead(app, season);
+                                }
+                            } catch (Exception failed) {
+                                applied = false;
+                                Diagnostics.error(
+                                    "watched_scope_update_failed", failed);
+                            }
+                            final boolean success = applied;
+                            main.post(() -> {
+                                previewWatchedBusy = false;
+                                if (!isAdded() || preview != page || mTvshow == null
+                                    || mTvshow.getTvshowId() != target.getTvshowId())
+                                    return;
+                                onMarkWatchedResult();
+                                LoaderManager.getInstance(TvshowFragment.this)
+                                    .restartLoader(SEASONS_LOADER_ID, null, TvshowFragment.this);
+                                if (!success)
+                                    PreviewDialog.read(requireContext(),
+                                        "Watched state",
+                                        "Some episodes could not be updated. Current library state has been refreshed.");
+                            });
                         });
                     });
-                });
             });
         });
     }
-    private ExecutorService artworkWorker(){if(previewArtworkWorker==null||previewArtworkWorker.isShutdown())previewArtworkWorker=Executors.newSingleThreadExecutor();return previewArtworkWorker;}
-    private void showPreviewArtworkMenu(){
-        com.archos.mediacenter.video.leanback.PreviewDialog.choose(requireContext(),"Artwork",new String[]{"Posters","Backdrops"},-1,n->showPreviewArtwork(n==0));
+
+    private ExecutorService artworkWorker() {
+        if (previewArtworkWorker == null || previewArtworkWorker.isShutdown())
+            previewArtworkWorker = Executors.newSingleThreadExecutor();
+        return previewArtworkWorker;
     }
-    private void showPreviewArtwork(boolean posters){
-        if(previewArtworkLoading||mTvshow==null)return;previewArtworkLoading=true;
-        Tvshow target=mTvshow;com.archos.mediacenter.video.leanback.details.PreviewMoviePage page=preview;
-        android.content.Context app=requireContext().getApplicationContext();Handler main=new Handler(Looper.getMainLooper());
-        artworkWorker().execute(()->{
-            java.util.List<com.archos.mediascraper.ScraperImage> found=java.util.Collections.emptyList();com.archos.mediascraper.ScraperImage current=null;
-            try{com.archos.mediascraper.BaseTags tags=target.getFullScraperTags(app);if(tags!=null){found=posters?tags.getAllPostersInDb(app):tags.getAllBackdropsInDb(app);current=posters?tags.getDefaultPoster():tags.getDefaultBackdrop();}}
-            catch(Exception failed){com.archos.mediacenter.video.diagnostics.Diagnostics.error("artwork_choices_unavailable",failed);}
-            final java.util.List<com.archos.mediascraper.ScraperImage> images=found;final com.archos.mediascraper.ScraperImage selected=current;
-            main.post(()->{
-                previewArtworkLoading=false;if(!isAdded()||preview!=page||mTvshow==null||mTvshow.getTvshowId()!=target.getTvshowId())return;
-                if(images==null||images.isEmpty()){com.archos.mediacenter.video.leanback.PreviewDialog.read(requireContext(),"Artwork","No artwork available");return;}
-                com.archos.mediacenter.video.leanback.PreviewArtworkPicker.show(requireContext(),posters?"Posters":"Backdrops",images,selected,posters,(image,done)->artworkWorker().execute(()->{
-                    boolean saved=false;
-                    try{if(!Thread.currentThread().isInterrupted()&&image.download(app)&&!Thread.currentThread().isInterrupted())saved=posters?image.setAsDefault(app,-1):image.setAsDefault(app);}
-                    catch(Exception failed){com.archos.mediacenter.video.diagnostics.Diagnostics.error("artwork_save_failed",failed);}
-                    final boolean success=saved;main.post(()->{
-                        if(!isAdded()||preview!=page||mTvshow==null||mTvshow.getTvshowId()!=target.getTvshowId())return;
-                        if(success){if(!posters&&image.getLargeFileF()!=null&&image.getLargeFileF().isFile())previewNavigation.setArtwork(android.net.Uri.fromFile(image.getLargeFileF()));onMoreDetailsResult();}
-                        done.accept(success);
-                    });
-                }));
+
+    private void showPreviewArtworkMenu() {
+        PreviewDialog.choose(
+            requireContext(), "Artwork", new String[] {
+                "Posters", "Backdrops"
+            }, -1, n -> showPreviewArtwork(n == 0));
+    }
+
+    private void showPreviewArtwork(boolean posters) {
+        if (previewArtworkLoading || mTvshow == null)
+            return;
+        previewArtworkLoading = true;
+        Tvshow target = mTvshow;
+        PreviewMoviePage page = preview;
+        Context app = requireContext().getApplicationContext();
+        Handler main = new Handler(Looper.getMainLooper());
+        artworkWorker().execute(() -> {
+            List<ScraperImage> found = Collections.emptyList();
+            ScraperImage current = null;
+            try {
+                BaseTags tags = target.getFullScraperTags(app);
+                if (tags != null) {
+                    found = posters ? tags.getAllPostersInDb(app) : tags.getAllBackdropsInDb(app);
+                    current = posters ? tags.getDefaultPoster() : tags.getDefaultBackdrop();
+                }
+            } catch (Exception failed) {
+                Diagnostics.error("artwork_choices_unavailable", failed);
+            }
+            final List<ScraperImage> images = found;
+            final ScraperImage selected = current;
+            main.post(() -> {
+                previewArtworkLoading = false;
+                if (!isAdded() || preview != page || mTvshow == null || mTvshow.getTvshowId() != target.getTvshowId())
+                    return;
+                if (images == null || images.isEmpty()) {
+                    PreviewDialog.read(
+                        requireContext(), "Artwork", "No artwork available");
+                    return;
+                }
+                PreviewArtworkPicker.show(requireContext(),
+                    posters ? "Posters" : "Backdrops", images, selected, posters,
+                    (image, done) -> artworkWorker().execute(() -> {
+                        boolean saved = false;
+                        try {
+                            if (!Thread.currentThread().isInterrupted() && image.download(app)
+                                && !Thread.currentThread().isInterrupted())
+                                saved = posters ? image.setAsDefault(app, -1) : image.setAsDefault(app);
+                        } catch (Exception failed) {
+                            Diagnostics.error("artwork_save_failed", failed);
+                        }
+                        final boolean success = saved;
+                        main.post(() -> {
+                            if (!isAdded() || preview != page || mTvshow == null
+                                || mTvshow.getTvshowId() != target.getTvshowId())
+                                return;
+                            if (success) {
+                                if (!posters && image.getLargeFileF() != null && image.getLargeFileF().isFile())
+                                    previewNavigation.setArtwork(Uri.fromFile(image.getLargeFileF()));
+                                onMoreDetailsResult();
+                            }
+                            done.accept(success);
+                        });
+                    }));
             });
         });
     }
+
     private static final String TAG = "TvshowFragment";
 
     public static final String EXTRA_TVSHOW = "TVSHOW";
@@ -188,21 +336,29 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     public static final int REQUEST_CODE_VIDEO = 8576;
     public static final int REQUEST_CODE_MARK_WATCHED = 8577;
 
-    private final ActivityResultLauncher<Intent> moreDetailsLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> { if (result.getResultCode() == Activity.RESULT_OK) onMoreDetailsResult(); });
+    private final ActivityResultLauncher<Intent> moreDetailsLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK)
+                onMoreDetailsResult();
+        });
 
-    private final ActivityResultLauncher<Intent> markWatchedLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> { if (result.getResultCode() == Activity.RESULT_OK) onMarkWatchedResult(); });
+    private final ActivityResultLauncher<Intent> markWatchedLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK)
+                onMarkWatchedResult();
+        });
 
-    private final ActivityResultLauncher<Intent> changeTvshowLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> { if (result.getResultCode() == Activity.RESULT_OK) onChangeTvshowResult(result.getData()); });
+    private final ActivityResultLauncher<Intent> changeTvshowLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK)
+                onChangeTvshowResult(result.getData());
+        });
 
-    private final ActivityResultLauncher<Intent> videoLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> { if (result.getResultCode() == Activity.RESULT_OK) onVideoResult(); });
+    private final ActivityResultLauncher<Intent> videoLauncher =
+        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == Activity.RESULT_OK)
+                onVideoResult();
+        });
 
     private static final int INDEX_DETAILS = 0;
     private static final int INDEX_FIRST_SEASON = 1;
@@ -219,6 +375,7 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     public DetailsBackdropController getBackdropController() {
         return mBackdropController;
     }
+
     private FullScraperTagsTask mFullScraperTagsTask;
     private DetailRowBuilderTask mDetailRowBuilderTask;
     private RefreshTvshowBitmapTask mRefreshTvshowBitmapTask;
@@ -230,22 +387,22 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     private int mColor;
     private static int dominantColor = 0;
     private Handler mHandler;
-    private int oldPos = 0;
-    private int oldSelectedSubPosition = 0;
     private boolean mHasDetailRow;
 
     private void setmTvshow(long id) {
-        if (DBG) Log.d(TAG, "setTvshow: for id=" + id);
+        if (DBG)
+            Log.d(TAG, "setTvshow: for id=" + id);
         if (id != -1) {
             // TvshowLoader is a CursorLoader
             TvshowLoader tvshowLoader = new TvshowLoader(getActivity(), id);
             Cursor cursor = tvshowLoader.loadInBackground();
-            if(cursor != null && cursor.getCount()>0) {
+            if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 TvshowCursorMapper tvshowCursorMapper = new TvshowCursorMapper();
                 tvshowCursorMapper.bindColumns(cursor);
                 mTvshow = (Tvshow) tvshowCursorMapper.bind(cursor);
-                if (DBG) Log.d(TAG, "setTvshow: poster is " + mTvshow.getPosterUri());
+                if (DBG)
+                    Log.d(TAG, "setTvshow: poster is " + mTvshow.getPosterUri());
                 cursor.close();
             }
         } else {
@@ -256,14 +413,15 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
     @SuppressWarnings("deprecation") // getSerializableExtra: API 33+ branch uses typed form; else branch suppressed
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (DBG) Log.d(TAG, "onCreate");
+        if (DBG)
+            Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         // minSdk is 23 (> 21), so Window.getEnterTransition()/Transition.addListener() -
         // both public android.transition APIs - are always available; no need for
         // androidx.leanback's restricted TransitionHelper/TransitionListener wrappers.
         Transition transition = getActivity().getWindow().getEnterTransition();
-        if(transition!=null) {
+        if (transition != null) {
             transition.addListener(new Transition.TransitionListener() {
                 @Override
                 public void onTransitionStart(Transition transition) {
@@ -293,12 +451,13 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
         Intent intent = getActivity().getIntent();
         mTvshow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                ? intent.getSerializableExtra(EXTRA_TVSHOW, Tvshow.class)
-                : (Tvshow) intent.getSerializableExtra(EXTRA_TVSHOW);
+            ? intent.getSerializableExtra(EXTRA_TVSHOW, Tvshow.class)
+            : (Tvshow) intent.getSerializableExtra(EXTRA_TVSHOW);
 
         if (mTvshow == null) {
             long tvShowId = intent.getLongExtra(EXTRA_TV_SHOW_ID, -1);
-            if (DBG) Log.d(TAG, "onCreate: tvShowId=" + tvShowId);
+            if (DBG)
+                Log.d(TAG, "onCreate: tvShowId=" + tvShowId);
             setmTvshow(tvShowId);
         }
 
@@ -308,43 +467,52 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         mOverviewRowPresenter = new ArchosDetailsOverviewRowPresenter(mDescriptionPresenter);
         //be aware of a hack to avoid fullscreen overview : cf onSetRowStatus
         FullWidthDetailsOverviewSharedElementHelper helper = new FullWidthDetailsOverviewSharedElementHelper();
-        if(!isPreview()){helper.setSharedElementEnterTransition(getActivity(), SHARED_ELEMENT_NAME, 1000);mOverviewRowPresenter.setListener(helper);}else{getActivity().getWindow().setSharedElementEnterTransition(null);getActivity().getWindow().setSharedElementReturnTransition(null);}
+        if (!isPreview()) {
+            helper.setSharedElementEnterTransition(getActivity(), SHARED_ELEMENT_NAME, 1000);
+            mOverviewRowPresenter.setListener(helper);
+        } else {
+            getActivity().getWindow().setSharedElementEnterTransition(null);
+            getActivity().getWindow().setSharedElementReturnTransition(null);
+        }
         mOverviewRowPresenter.setBackgroundColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor());
-        mOverviewRowPresenter.setActionsBackgroundColor(getDarkerColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()));
-        mOverviewRowPresenter.setOnActionClickedListener(previewAction=new OnActionClickedListener() {
+        mOverviewRowPresenter.setActionsBackgroundColor(
+            getDarkerColor(ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()));
+        mOverviewRowPresenter.setOnActionClickedListener(previewAction = new OnActionClickedListener() {
             @Override
             public void onActionClicked(Action action) {
-                if (StreamingActions.onClick(action)) return;
+                if (StreamingActions.onClick(action))
+                    return;
                 if (action.getId() == TvshowActionAdapter.ACTION_PLAY) {
                     playEpisode();
-                }
-                else if (action.getId() == TvshowActionAdapter.ACTION_MORE_DETAILS) {
+                } else if (action.getId() == TvshowActionAdapter.ACTION_MORE_DETAILS) {
                     Intent intent = new Intent(getActivity(), TvshowMoreDetailsActivity.class);
                     intent.putExtra(TvshowMoreDetailsFragment.EXTRA_TVSHOW_ID, mTvshow.getTvshowId());
                     intent.putExtra(TvshowMoreDetailsFragment.EXTRA_TVSHOW_WATCHED, mTvshow.isWatched());
-                    moreDetailsLauncher.launch(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            getActivity(),
+                    moreDetailsLauncher.launch(intent,
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                             getView().findViewById(R.id.details_overview_image),
                             TvshowMoreDetailsFragment.SHARED_ELEMENT_NAME));
-                }
-                else if (action.getId() == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED) {
-                    if(preview!=null){showPreviewWatchedScope();return;}
+                } else if (action.getId() == TvshowActionAdapter.ACTION_MARK_SHOW_AS_WATCHED) {
+                    if (preview != null) {
+                        showPreviewWatchedScope();
+                        return;
+                    }
                     Intent intent = new Intent(getActivity(), SeasonActivity.class);
                     intent.putExtra(SeasonFragment.EXTRA_ACTION_ID, action.getId());
                     intent.putExtra(SeasonFragment.EXTRA_TVSHOW_ID, mTvshow.getTvshowId());
                     intent.putExtra(SeasonFragment.EXTRA_TVSHOW_NAME, mTvshow.getName());
-                    intent.putExtra(SeasonFragment.EXTRA_TVSHOW_POSTER, mTvshow.getPosterUri() != null ? mTvshow.getPosterUri().toString() : null);
+                    intent.putExtra(SeasonFragment.EXTRA_TVSHOW_POSTER,
+                        mTvshow.getPosterUri() != null ? mTvshow.getPosterUri().toString() : null);
                     markWatchedLauncher.launch(intent);
-                }
-                else if (action.getId() == TvshowActionAdapter.ACTION_UNINDEX) {
+                } else if (action.getId() == TvshowActionAdapter.ACTION_UNINDEX) {
                     Intent intent = new Intent(getActivity(), SeasonActivity.class);
                     intent.putExtra(SeasonFragment.EXTRA_ACTION_ID, action.getId());
                     intent.putExtra(SeasonFragment.EXTRA_TVSHOW_ID, mTvshow.getTvshowId());
                     intent.putExtra(SeasonFragment.EXTRA_TVSHOW_NAME, mTvshow.getName());
-                    intent.putExtra(SeasonFragment.EXTRA_TVSHOW_POSTER, mTvshow.getPosterUri() != null ? mTvshow.getPosterUri().toString() : null);
+                    intent.putExtra(SeasonFragment.EXTRA_TVSHOW_POSTER,
+                        mTvshow.getPosterUri() != null ? mTvshow.getPosterUri().toString() : null);
                     startActivity(intent);
-                }
-                else if (action.getId() == TvshowActionAdapter.ACTION_CHANGE_INFO) {
+                } else if (action.getId() == TvshowActionAdapter.ACTION_CHANGE_INFO) {
                     if (!NetworkState.isNetworkConnected(getActivity())) {
                         Toast.makeText(getActivity(), R.string.scrap_no_network, Toast.LENGTH_SHORT).show();
                     } else {
@@ -353,13 +521,13 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                         intent.putExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_ID, mTvshow.getTvshowId());
                         changeTvshowLauncher.launch(intent);
                     }
-                }
-                else if (action.getId() == TvshowActionAdapter.ACTION_DELETE) {
+                } else if (action.getId() == TvshowActionAdapter.ACTION_DELETE) {
                     Intent intent = new Intent(getActivity(), SeasonActivity.class);
                     intent.putExtra(SeasonFragment.EXTRA_ACTION_ID, action.getId());
                     intent.putExtra(SeasonFragment.EXTRA_TVSHOW_ID, mTvshow.getTvshowId());
                     intent.putExtra(SeasonFragment.EXTRA_TVSHOW_NAME, mTvshow.getName());
-                    intent.putExtra(SeasonFragment.EXTRA_TVSHOW_POSTER, mTvshow.getPosterUri() != null ? mTvshow.getPosterUri().toString() : null);
+                    intent.putExtra(SeasonFragment.EXTRA_TVSHOW_POSTER,
+                        mTvshow.getPosterUri() != null ? mTvshow.getPosterUri().toString() : null);
                     startActivity(intent);
                 }
             }
@@ -372,45 +540,81 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         mRowsAdapter = new ArrayObjectAdapter(ps);
         mHasDetailRow = false;
 
-        mBackdropController = new DetailsBackdropController(getActivity(), R.id.details_backdrop,
-                VideoInfoCommonClass.getDarkerColor(mColor));
+        mBackdropController = new DetailsBackdropController(
+            getActivity(), R.id.details_backdrop, VideoInfoCommonClass.getDarkerColor(mColor));
         mBackdropController.attach();
 
         setOnItemViewClickedListener(new OnItemViewClickedListener() {
             @Override
-            public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
+            public void onItemClicked(
+                Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
                 if (item instanceof Video) {
                     //animate only if episode picture isn't displayed
-                    boolean animate =!((item instanceof Episode)&&((Episode)item).getPictureUri()!=null);
-                    VideoViewClickedListener.showVideoDetails(getActivity(), (Video) item, itemViewHolder, animate, false, false, -1, videoLauncher);
+                    boolean animate = !((item instanceof Episode) && ((Episode) item).getPictureUri() != null);
+                    VideoViewClickedListener.showVideoDetails(
+                        getActivity(), (Video) item, itemViewHolder, animate, false, false, -1, videoLauncher);
                 }
             }
         });
     }
 
-    private java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> journeyEntries(java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries){if(mTvshow.getShowTags()!=null)for(com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry entry:entries)entry.onlineId=mTvshow.getShowTags().getOnlineId();return entries;}
+    private List<PreviewLibraryLoader.Entry> journeyEntries(
+        List<PreviewLibraryLoader.Entry> entries) {
+        if (mTvshow.getShowTags() != null)
+            for (PreviewLibraryLoader.Entry entry : entries)
+                entry.onlineId = mTvshow.getShowTags().getOnlineId();
+        return entries;
+    }
+
     private void playEpisode() {
-        if(preview!=null&&mSeasonAdapters!=null){java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries=new java.util.ArrayList<>();for(int i=0;i<mSeasonAdapters.size();i++){CursorObjectAdapter a=mSeasonAdapters.valueAt(i);for(int j=0;j<a.size();j++)entries.add(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry((Video)a.get(j),0,mTvshow.getTvshowId(),""));}
-            com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry next=com.archos.mediacenter.video.leanback.PreviewSeriesJourney.select(getActivity(),journeyEntries(entries)).episode;if(next==null&&!entries.isEmpty())next=entries.get(0);if(next!=null&&mTvshow.getShowTags()!=null&&mTvshow.getShowTags().getDefaultBackdrop()!=null){java.io.File backdrop=mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();if(backdrop!=null&&backdrop.exists())((Video)next.media).setPreviewBackdrop(android.net.Uri.fromFile(backdrop).toString());}if(next!=null)PlayUtils.startVideo(getActivity(),(Video)next.media,PlayerActivity.RESUME_FROM_LAST_POS,false,-1,null,-1);return;
+        if (preview != null && mSeasonAdapters != null) {
+            List<PreviewLibraryLoader.Entry> entries =
+                new ArrayList<>();
+            for (int i = 0; i < mSeasonAdapters.size(); i++) {
+                CursorObjectAdapter a = mSeasonAdapters.valueAt(i);
+                for (int j = 0; j < a.size(); j++)
+                    entries.add(new PreviewLibraryLoader.Entry(
+                        (Video) a.get(j), 0, mTvshow.getTvshowId(), ""));
+            }
+            PreviewLibraryLoader.Entry next =
+                PreviewSeriesJourney
+                    .select(getActivity(), journeyEntries(entries))
+                    .episode;
+            if (next == null && !entries.isEmpty())
+                next = entries.get(0);
+            if (next != null && mTvshow.getShowTags() != null && mTvshow.getShowTags().getDefaultBackdrop() != null) {
+                File backdrop = mTvshow.getShowTags().getDefaultBackdrop().getLargeFileF();
+                if (backdrop != null && backdrop.exists())
+                    ((Video) next.media).setPreviewBackdrop(Uri.fromFile(backdrop).toString());
+            }
+            if (next != null)
+                PlayUtils.startVideo(
+                    getActivity(), (Video) next.media, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+            return;
         }
         if (mSeasonAdapters != null) {
             Episode resumeEpisode = null;
             Episode firstEpisode = null;
             int i = 0;
 
-            while(i < mSeasonAdapters.size() && (resumeEpisode == null || resumeEpisode != null && resumeEpisode.getSeasonNumber() == 0)) {
+            while (i < mSeasonAdapters.size()
+                && (resumeEpisode == null || resumeEpisode != null && resumeEpisode.getSeasonNumber() == 0)) {
                 CursorObjectAdapter seasonAdapter = mSeasonAdapters.valueAt(i);
                 int j = 0;
 
-                while (j < seasonAdapter.size() && (resumeEpisode == null || resumeEpisode != null && resumeEpisode.getSeasonNumber() == 0)) {
-                    Episode episode = (Episode)seasonAdapter.get(j);
+                while (j < seasonAdapter.size()
+                    && (resumeEpisode == null || resumeEpisode != null && resumeEpisode.getSeasonNumber() == 0)) {
+                    Episode episode = (Episode) seasonAdapter.get(j);
 
                     if (episode.getResumeMs() != PlayerActivity.LAST_POSITION_END
-                            && (resumeEpisode == null || resumeEpisode != null && episode.getEpisodeDate() < resumeEpisode.getEpisodeDate())) {
+                        && (resumeEpisode == null
+                            || resumeEpisode != null && episode.getEpisodeDate() < resumeEpisode.getEpisodeDate())) {
                         resumeEpisode = episode;
                     }
 
-                    if (firstEpisode == null || (firstEpisode != null && firstEpisode.getSeasonNumber() == 0 && episode.getEpisodeDate() < firstEpisode.getEpisodeDate()))
+                    if (firstEpisode == null
+                        || (firstEpisode != null && firstEpisode.getSeasonNumber() == 0
+                            && episode.getEpisodeDate() < firstEpisode.getEpisodeDate()))
                         firstEpisode = episode;
 
                     j++;
@@ -420,20 +624,27 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             }
 
             if (resumeEpisode != null)
-                PlayUtils.startVideo(getActivity(), (Video)resumeEpisode, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+                PlayUtils.startVideo(
+                    getActivity(), (Video) resumeEpisode, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
             else if (firstEpisode != null)
-                PlayUtils.startVideo(getActivity(), (Video)firstEpisode, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
+                PlayUtils.startVideo(
+                    getActivity(), (Video) firstEpisode, PlayerActivity.RESUME_FROM_LAST_POS, false, -1, null, -1);
         }
     }
 
-    private void updatePreviewPlaybackTarget(){
-        if(preview==null||mSeasonAdapters==null||mTvshow==null)return;
-        java.util.List<com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry> entries=new java.util.ArrayList<>();
-        for(int i=0;i<mSeasonAdapters.size();i++){
-            CursorObjectAdapter adapter=mSeasonAdapters.valueAt(i);
-            for(int j=0;j<adapter.size();j++)entries.add(new com.archos.mediacenter.video.leanback.PreviewLibraryLoader.Entry((Video)adapter.get(j),0,mTvshow.getTvshowId(),""));
+    private void updatePreviewPlaybackTarget() {
+        if (preview == null || mSeasonAdapters == null || mTvshow == null)
+            return;
+        List<PreviewLibraryLoader.Entry> entries =
+            new ArrayList<>();
+        for (int i = 0; i < mSeasonAdapters.size(); i++) {
+            CursorObjectAdapter adapter = mSeasonAdapters.valueAt(i);
+            for (int j = 0; j < adapter.size(); j++)
+                entries.add(new PreviewLibraryLoader.Entry(
+                    (Video) adapter.get(j), 0, mTvshow.getTvshowId(), ""));
         }
-        preview.setSeriesPlaybackTarget(com.archos.mediacenter.video.leanback.PreviewSeriesJourney.select(requireContext(),journeyEntries(entries)));
+        preview.setSeriesPlaybackTarget(PreviewSeriesJourney.select(
+            requireContext(), journeyEntries(entries)));
     }
 
     private int getDarkerColor(int color) {
@@ -443,87 +654,78 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         return Color.HSVToColor(hsv);
     }
 
-    //hack to avoid fullscreen overview
-    @Override
-    protected void onSetRowStatus(RowPresenter presenter, RowPresenter.ViewHolder viewHolder, int
-            adapterPosition, int selectedPosition, int selectedSubPosition) {
-        super.onSetRowStatus(presenter, viewHolder, adapterPosition, selectedPosition, selectedSubPosition);
-        if(selectedPosition == 0 && selectedSubPosition != 0) {
-            if (oldPos == 0 && oldSelectedSubPosition == 0) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(1);
-                    }
-                });
-            } else if (oldPos == 1) {
-                setSelectedPosition(1);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setSelectedPosition(0);
-                    }
-                });
-            }
-        }
-        oldPos = selectedPosition;
-        oldSelectedSubPosition = selectedSubPosition;
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (DBG) Log.d(TAG, "onViewCreated");
+        if (DBG)
+            Log.d(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         mOverlay = new Overlay(this);
-        if(preview!=null)LoaderManager.getInstance(this).initLoader(SEASONS_LOADER_ID,null,this);
+        if (preview != null)
+            LoaderManager.getInstance(this).initLoader(SEASONS_LOADER_ID, null, this);
     }
 
     @Override
     public void onDestroyView() {
-        if(previewArtworkWorker!=null){previewArtworkWorker.shutdownNow();previewArtworkWorker=null;}previewArtworkLoading=false;previewWatchedBusy=false;preview=null;
-        if (mDetailsOverviewRow != null) StreamingActions.cancel(mDetailsOverviewRow.getActionsAdapter());
-        if (DBG) Log.d(TAG, "onDestroyView");
+        if (previewArtworkWorker != null) {
+            previewArtworkWorker.shutdownNow();
+            previewArtworkWorker = null;
+        }
+        previewArtworkLoading = false;
+        previewWatchedBusy = false;
+        preview = null;
+        if (mDetailsOverviewRow != null)
+            StreamingActions.cancel(mDetailsOverviewRow.getActionsAdapter());
+        if (DBG)
+            Log.d(TAG, "onDestroyView");
         clearSeasonAdapters();
-        preview=null;previewNavigation=null;
+        preview = null;
+        previewNavigation = null;
         mOverlay.destroy();
         super.onDestroyView();
     }
 
     @Override
     public void onStop() {
-        if (DBG) Log.d(TAG, "onStop");
+        if (DBG)
+            Log.d(TAG, "onStop");
         mBackdropController.onStop(mTvshow != null, mTvshow == null ? null : mTvshow.getShowTags());
-        if (mFullScraperTagsTask!=null) {
+        if (mFullScraperTagsTask != null) {
             mFullScraperTagsTask.cancel();
         }
-        if (mDetailRowBuilderTask!=null) {
+        if (mDetailRowBuilderTask != null) {
             mDetailRowBuilderTask.cancel();
         }
-        if (mRefreshTvshowBitmapTask != null) mRefreshTvshowBitmapTask.cancel();
+        if (mRefreshTvshowBitmapTask != null)
+            mRefreshTvshowBitmapTask.cancel();
         super.onStop();
     }
 
     @Override
     public void onResume() {
-        if (DBG) Log.d(TAG, "onResume");
+        if (DBG)
+            Log.d(TAG, "onResume");
         super.onResume();
-        if (mDetailsOverviewRow != null) StreamingActions.refresh(mDetailsOverviewRow.getActionsAdapter());
+        if (mDetailsOverviewRow != null)
+            StreamingActions.refresh(mDetailsOverviewRow.getActionsAdapter());
         mOverlay.resume();
         mBackdropController.restoreIfNeeded();
         // Start loading the detailed info about the show if needed
-        if (mTvshow.getShowTags()==null) {
-            if (DBG) Log.d(TAG, "onResume: mTvshow.getShowTags()==null -> FullScraperTagsTask");
+        if (mTvshow.getShowTags() == null) {
+            if (DBG)
+                Log.d(TAG, "onResume: mTvshow.getShowTags()==null -> FullScraperTagsTask");
             if (mFullScraperTagsTask != null) {
                 mFullScraperTagsTask.cancel();
             }
             mFullScraperTagsTask = new FullScraperTagsTask();
             mFullScraperTagsTask.execute(mTvshow);
-        } else mBackdropController.loadIfIdle(mTvshow.getShowTags());
+        } else
+            mBackdropController.loadIfIdle(mTvshow.getShowTags());
     }
 
     @Override
     public void onPause() {
-        if (DBG) Log.d(TAG, "onPause");
+        if (DBG)
+            Log.d(TAG, "onPause");
         super.onPause();
         mOverlay.pause();
     }
@@ -539,7 +741,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             Tvshow tvshow = (Tvshow) tvshowCursorMapper.bind(cursor);
             tvshow.setShowTags(mTvshow.getShowTags());
             mTvshow = tvshow;
-            if (mRefreshTvshowBitmapTask != null) mRefreshTvshowBitmapTask.cancel();
+            if (mRefreshTvshowBitmapTask != null)
+                mRefreshTvshowBitmapTask.cancel();
             mRefreshTvshowBitmapTask = new RefreshTvshowBitmapTask();
             mRefreshTvshowBitmapTask.execute(mTvshow);
             refreshActivity();
@@ -577,7 +780,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
         Log.d(TAG, "onChangeTvshowResult: got RESULT_OK from ManualShowScrappingActivity");
         String newName = data.getStringExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_NAME);
         Long newId = data.getLongExtra(ManualShowScrappingActivity.EXTRA_TVSHOW_ID, -1);
-        if (DBG) Log.d(TAG, "onChangeTvshowResult: newName=" + newName + ", newId=" + newId);
+        if (DBG)
+            Log.d(TAG, "onChangeTvshowResult: newName=" + newName + ", newId=" + newId);
         setmTvshow(newId);
         // Clear all the loader managers because they need to be recreated with the new ID
         LoaderManager.getInstance(this).destroyLoader(SEASONS_LOADER_ID);
@@ -610,7 +814,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             @Override
             public void run() {
                 Activity activity = getActivity();
-                if (activity != null) activity.finish(); // better safe than sorry
+                if (activity != null)
+                    activity.finish(); // better safe than sorry
             }
         }, 200);
     }
@@ -625,29 +830,63 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             executor.execute(() -> {
                 Tvshow result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
                     mTvshow.setShowTags((ShowTags) tvshow.getFullScraperTags(getActivity()));
-                    if (DBG) Log.d(TAG, "FullScraperTagsTask:doInBackground:" + (mTvshow != null ? mTvshow.getName() + " " + mTvshow.getPosterUri() : "null"));
+                    if (DBG)
+                        Log.d(TAG,
+                            "FullScraperTagsTask:doInBackground:"
+                                + (mTvshow != null ? mTvshow.getName() + " " + mTvshow.getPosterUri() : "null"));
                     result = mTvshow;
                 } catch (Exception e) {
                     Log.e(TAG, "FullScraperTagsTask failed", e);
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Tvshow finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     if (finalResult == null || finalResult.getShowTags() == null) {
                         Log.e(TAG, "FullScraperTagsTask failed to get ShowTags for " + mTvshow);
                         return;
                     }
-                    if (DBG) Log.d(TAG, "FullScraperTagsTask:onPostExecute:" + finalResult.getName() + " " + finalResult.getPosterUri() + ", rebuild and restart loader");
-                    if(preview!=null){
-                        preview.bindShow(finalResult,TvshowFragment.this::playEpisode);
+                    if (DBG)
+                        Log.d(TAG,
+                            "FullScraperTagsTask:onPostExecute:" + finalResult.getName() + " "
+                                + finalResult.getPosterUri() + ", rebuild and restart loader");
+                    if (preview != null) {
+                        preview.bindShow(finalResult, TvshowFragment.this::playEpisode);
                         // Tags are already local; trailer/artwork database reads stay on the worker.
-                        com.archos.mediascraper.ShowTags showTags=finalResult.getShowTags();
-                        android.content.Context app=requireContext().getApplicationContext();ExecutorService metadata=Executors.newSingleThreadExecutor();metadata.execute(()->{try{java.util.List<com.archos.mediascraper.ScraperTrailer> trailers=showTags.getAllTrailersInDb(app);java.util.List<com.archos.mediascraper.ScraperImage> backdrops=showTags.getAllBackdropsInDb(app);handler.post(()->{if(preview!=null&&isAdded())preview.setTags(showTags,trailers,backdrops);});if(trailers.isEmpty()){java.util.List<com.archos.mediascraper.ScraperTrailer> tvTrailers=com.archos.mediacenter.video.leanback.details.PreviewTvTrailers.load(app,showTags);if(!tvTrailers.isEmpty())handler.post(()->{if(preview!=null&&isAdded())preview.setTags(showTags,tvTrailers,backdrops);});}}finally{metadata.shutdown();}});
+                        ShowTags showTags = finalResult.getShowTags();
+                        Context app = requireContext().getApplicationContext();
+                        ExecutorService metadata = Executors.newSingleThreadExecutor();
+                        metadata.execute(() -> {
+                            try {
+                                List<ScraperTrailer> trailers =
+                                    showTags.getAllTrailersInDb(app);
+                                List<ScraperImage> backdrops =
+                                    showTags.getAllBackdropsInDb(app);
+                                handler.post(() -> {
+                                    if (preview != null && isAdded())
+                                        preview.setTags(showTags, trailers, backdrops);
+                                });
+                                if (trailers.isEmpty()) {
+                                    List<ScraperTrailer> tvTrailers =
+                                        PreviewTvTrailers.load(
+                                            app, showTags);
+                                    if (!tvTrailers.isEmpty())
+                                        handler.post(() -> {
+                                            if (preview != null && isAdded())
+                                                preview.setTags(showTags, tvTrailers, backdrops);
+                                        });
+                                }
+                            } finally {
+                                metadata.shutdown();
+                            }
+                        });
                     }
                     // Load the details view
                     if (mDetailRowBuilderTask != null) {
@@ -659,7 +898,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                     mBackdropController.loadIfIdle(finalResult.getShowTags());
 
                     // Start loading the list of seasons
-                    LoaderManager.getInstance(TvshowFragment.this).restartLoader(SEASONS_LOADER_ID, null, TvshowFragment.this);
+                    LoaderManager.getInstance(TvshowFragment.this)
+                        .restartLoader(SEASONS_LOADER_ID, null, TvshowFragment.this);
                 });
             });
         }
@@ -674,7 +914,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
-        if (DBG) Log.d(TAG, "onCreateLoader id=" + id);
+        if (DBG)
+            Log.d(TAG, "onCreateLoader id=" + id);
         if (id == SEASONS_LOADER_ID) {
             return new SeasonsLoader(getActivity(), mTvshow.getTvshowId());
         } else {
@@ -685,9 +926,11 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if (DBG) Log.d(TAG, "onLoadFinished");
-        if (getActivity() == null) return;
-        if (cursorLoader.getId()==SEASONS_LOADER_ID) {
+        if (DBG)
+            Log.d(TAG, "onLoadFinished");
+        if (getActivity() == null)
+            return;
+        if (cursorLoader.getId() == SEASONS_LOADER_ID) {
             final int seasonNumberColumn = cursor.getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_E_SEASON);
 
             SparseArray<CursorObjectAdapter> seasonAdapters = new SparseArray<CursorObjectAdapter>();
@@ -702,24 +945,26 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
                 if (mSeasonAdapters != null && mSeasonAdapters.get(seasonNumber) != null) {
                     seasonAdapter = mSeasonAdapters.get(seasonNumber);
-                }
-                else {
-                    seasonAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(getActivity(), PosterImageCardPresenter.EpisodeDisplayMode.FOR_SEASON_LIST));
+                } else {
+                    seasonAdapter = new CursorObjectAdapter(new PosterImageCardPresenter(
+                        getActivity(), PosterImageCardPresenter.EpisodeDisplayMode.FOR_SEASON_LIST));
                     seasonAdapter.setMapper(new CompatibleCursorMapperConverter(new VideoCursorMapper()));
                 }
 
                 seasonAdapters.put(seasonNumber, seasonAdapter);
 
                 ListRow row = new ListRow(seasonNumber,
-                        new HeaderItem(seasonNumber, seasonNumber != 0 ? getString(R.string.episode_season) + " " + seasonNumber : getString(R.string.episode_specials)),
-                        seasonAdapter);
-                
+                    new HeaderItem(seasonNumber,
+                        seasonNumber != 0 ? getString(R.string.episode_season) + " " + seasonNumber
+                                          : getString(R.string.episode_specials)),
+                    seasonAdapter);
+
                 if (mHasDetailRow && i == INDEX_DETAILS)
                     i++;
 
                 if (i >= mRowsAdapter.size())
                     mRowsAdapter.add(row);
-                else if (row.getId() != ((ListRow)mRowsAdapter.get(i)).getId())
+                else if (row.getId() != ((ListRow) mRowsAdapter.get(i)).getId())
                     mRowsAdapter.replace(i, row);
 
                 i++;
@@ -736,22 +981,25 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
             if (mSeasonAdapters.size() == 0) {
                 slightlyDelayedFinish();
-            }
-            else {
+            } else {
                 for (int k = 0; k < mSeasonAdapters.size(); k++)
                     LoaderManager.getInstance(this).restartLoader(mSeasonAdapters.keyAt(k), null, this);
-            }  
-        }
-        else {
+            }
+        } else {
             // We got the list of episode for one season, load it
             if (mSeasonAdapters != null) {
                 CursorObjectAdapter seasonAdapter = mSeasonAdapters.get(cursorLoader.getId());
 
-                if (seasonAdapter != null){
+                if (seasonAdapter != null) {
                     seasonAdapter.changeCursor(cursor);
-                    if(preview!=null){java.util.List<Episode> episodes=new java.util.ArrayList<>();for(int i=0;i<seasonAdapter.size();i++)episodes.add((Episode)seasonAdapter.get(i));preview.setSeason(cursorLoader.getId(),episodes);updatePreviewPlaybackTarget();}
-                }
-                else
+                    if (preview != null) {
+                        List<Episode> episodes = new ArrayList<>();
+                        for (int i = 0; i < seasonAdapter.size(); i++)
+                            episodes.add((Episode) seasonAdapter.get(i));
+                        preview.setSeason(cursorLoader.getId(), episodes);
+                        updatePreviewPlaybackTarget();
+                    }
+                } else
                     LoaderManager.getInstance(this).destroyLoader(cursorLoader.getId());
             }
         }
@@ -782,8 +1030,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             executor.execute(() -> {
                 Pair<Tvshow, Bitmap> result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    if (DBG) Log.d(TAG, "DetailRowBuilderTask: tvshow posterUri " + tvshow.getPosterUri());
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
+                    if (DBG)
+                        Log.d(TAG, "DetailRowBuilderTask: tvshow posterUri " + tvshow.getPosterUri());
                     Bitmap bitmap = generateTvshowBitmap(tvshow.getPosterUri(), tvshow.isWatched());
                     result = new Pair<>(tvshow, bitmap);
                 } catch (Exception e) {
@@ -791,22 +1041,25 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Pair<Tvshow, Bitmap> finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
-                    if (finalResult == null) return;
+                    if (isCancelled)
+                        return;
+                    if (finalResult == null)
+                        return;
                     Tvshow t = finalResult.first;
                     Bitmap bitmap = finalResult.second;
 
-                    if (DBG) Log.d(TAG, "DetailRowBuilderTask:onPostExecute: tvshow " + t.getName());
+                    if (DBG)
+                        Log.d(TAG, "DetailRowBuilderTask:onPostExecute: tvshow " + t.getName());
 
                     // Buttons
                     if (mDetailsOverviewRow == null) {
                         mDetailsOverviewRow = new DetailsOverviewRow(t);
                         mDetailsOverviewRow.setActionsAdapter(new TvshowActionAdapter(getActivity(), t));
-                    }
-                    else {
+                    } else {
                         mDetailsOverviewRow.setItem(t);
                     }
 
@@ -815,9 +1068,9 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                         mOverviewRowPresenter.updateActionsBackgroundColor(getDarkerColor(mColor));
                         mDetailsOverviewRow.setImageBitmap(getActivity(), bitmap);
                         mDetailsOverviewRow.setImageScaleUpAllowed(true);
-                    }
-                    else {
-                        mDetailsOverviewRow.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
+                    } else {
+                        mDetailsOverviewRow.setImageDrawable(
+                            ContextCompat.getDrawable(getActivity(), R.drawable.filetype_new_video));
                         mDetailsOverviewRow.setImageScaleUpAllowed(false);
                     }
 
@@ -852,11 +1105,11 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                 break;
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
             case KeyEvent.KEYCODE_MEDIA_NEXT:
-                direction = Gravity.RIGHT;
+                direction = Gravity.END;
                 break;
             case KeyEvent.KEYCODE_MEDIA_REWIND:
             case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                direction = Gravity.LEFT;
+                direction = Gravity.START;
                 break;
         }
 
@@ -864,32 +1117,34 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             CursorLoader loader = null;
             if (mTvshow != null) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String sortOrder = prefs.getString(AllTvshowsGridFragment.SORT_PARAM_KEY, TvshowSortOrderEntries.DEFAULT_SORT);
-                boolean showWatched = prefs.getBoolean(AllTvshowsGridFragment.SHOW_WATCHED_KEY, true);
-                loader = new AllTvshowsLoader(getActivity(), sortOrder, showWatched, VideoLoader.GRIDVIDEO_THROTTLE, VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
+                String sortOrder =
+                    prefs.getString(LibrarySortPreferences.TVSHOWS_SORT_KEY, TvshowSortOrderEntries.DEFAULT_SORT);
+                boolean showWatched = prefs.getBoolean(LibrarySortPreferences.TVSHOWS_SHOW_WATCHED_KEY, LibrarySortPreferences.SHOW_WATCHED_DEFAULT);
+                loader = new AllTvshowsLoader(getActivity(), sortOrder, showWatched, VideoLoader.GRIDVIDEO_THROTTLE,
+                    VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             }
             if (loader != null) {
                 // Using a CursorLoader but outside of the LoaderManager : need to make sure the Looper is ready
-                if (Looper.myLooper()==null) Looper.prepare();
+                if (Looper.myLooper() == null)
+                    Looper.prepare();
                 Cursor c = loader.loadInBackground();
                 Tvshow tvshow = null;
                 for (int i = 0; i < c.getCount(); i++) {
                     c.moveToPosition(i);
-                    Tvshow t = (Tvshow)new CompatibleCursorMapperConverter(new TvshowCursorMapper()).convert(c);
+                    Tvshow t = (Tvshow) new CompatibleCursorMapperConverter(new TvshowCursorMapper()).convert(c);
                     if (t.getTvshowId() == mTvshow.getTvshowId()) {
-                        if (direction == Gravity.LEFT) {
+                        if (direction == Gravity.START) {
                             if (i - 1 >= 0)
                                 c.moveToPosition(i - 1);
                             else
                                 c.moveToPosition(c.getCount() - 1);
-                        }
-                        else if (direction == Gravity.RIGHT) {
+                        } else if (direction == Gravity.END) {
                             if (i + 1 <= c.getCount() - 1)
                                 c.moveToPosition(i + 1);
                             else
                                 c.moveToPosition(0);
                         }
-                        Tvshow nt = (Tvshow)new CompatibleCursorMapperConverter(new TvshowCursorMapper()).convert(c);
+                        Tvshow nt = (Tvshow) new CompatibleCursorMapperConverter(new TvshowCursorMapper()).convert(c);
                         if (nt.getTvshowId() != t.getTvshowId())
                             tvshow = nt;
                         break;
@@ -897,10 +1152,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                 }
                 c.close();
                 if (tvshow != null) {
-                    if (direction == Gravity.LEFT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.RIGHT));
-                    else if (direction == Gravity.RIGHT)
-                        getActivity().getWindow().setExitTransition(new Slide(Gravity.LEFT));
+                    if (direction == Gravity.START)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.END));
+                    else if (direction == Gravity.END)
+                        getActivity().getWindow().setExitTransition(new Slide(Gravity.START));
                     final Intent intent = new Intent(getActivity(), TvshowActivity.class);
                     intent.putExtra(TvshowFragment.EXTRA_TVSHOW, tvshow);
                     intent.putExtra(TvshowActivity.SLIDE_TRANSITION_EXTRA, true);
@@ -911,8 +1166,9 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
                     startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
                     // Delay the finish the "old" activity, else it breaks the animation
                     mHandler.postDelayed(new Runnable() {
+                        @Override
                         public void run() {
-                            if (getActivity()!=null) // better safe than sorry
+                            if (getActivity() != null) // better safe than sorry
                                 getActivity().finish();
                         }
                     }, 1000);
@@ -923,39 +1179,49 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
 
     private void refreshActivity() {
         if (mTvshow != null) {
-            if (DBG) Log.d(TAG, "refreshActivity: collection is not empty " + mTvshow.getName());
-            ((TvshowActionAdapter)mDetailsOverviewRow.getActionsAdapter()).update(mTvshow);
+            if (DBG)
+                Log.d(TAG, "refreshActivity: collection is not empty " + mTvshow.getName());
+            ((TvshowActionAdapter) mDetailsOverviewRow.getActionsAdapter()).update(mTvshow);
             mDetailsOverviewRow.setItem(mTvshow);
         } else {
-            if (DBG) Log.d(TAG, "refreshActivity: collection is null exit!");
+            if (DBG)
+                Log.d(TAG, "refreshActivity: collection is null exit!");
             getActivity().finish();
         }
     }
 
     private Bitmap generateTvshowBitmap(Uri posterUri, boolean isWatched) {
-        if (DBG) Log.d(TAG, "generateTvshowBitmap: posterUri=" + posterUri);
+        if (DBG)
+            Log.d(TAG, "generateTvshowBitmap: posterUri=" + posterUri);
         Bitmap bitmap = null;
         try {
             if (posterUri != null) {
                 bitmap = Picasso.get()
-                        .load(posterUri)
-                        .noFade() // no fade since we are using activity transition anyway
-                        .resize(getResources().getDimensionPixelSize(R.dimen.poster_width), getResources().getDimensionPixelSize(R.dimen.poster_height))
-                        .centerCrop()
-                        .get();
-                if (DBG) Log.d(TAG, "------ "+bitmap.getWidth()+"x"+bitmap.getHeight()+" ---- "+posterUri);
+                             .load(posterUri)
+                             .noFade() // no fade since we are using activity transition anyway
+                             .resize(getResources().getDimensionPixelSize(R.dimen.poster_width),
+                                 getResources().getDimensionPixelSize(R.dimen.poster_height))
+                             .centerCrop()
+                             .get();
+                if (DBG)
+                    Log.d(TAG, "------ " + bitmap.getWidth() + "x" + bitmap.getHeight() + " ---- " + posterUri);
             }
         } catch (IOException e) {
             Log.d(TAG, "generateTvshowBitmap Picasso load exception", e);
-        } catch (NullPointerException e) { // getDefaultPoster() may return null (seen once at least)
+        } catch (NullPointerException e) {
+            // getDefaultPoster() may return null (seen once at least)
             Log.d(TAG, "generateTvshowBitmap doInBackground exception", e);
         } finally {
-            if (bitmap!=null) {
+            if (bitmap != null) {
                 Palette palette = Palette.from(bitmap).generate();
                 if (palette.getDarkVibrantSwatch() != null)
-                    mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : palette.getDarkVibrantSwatch().getRgb();
+                    mColor = ThemeManager.getInstance(getActivity()).isSlateTheme()
+                        ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()
+                        : palette.getDarkVibrantSwatch().getRgb();
                 else if (palette.getDarkMutedSwatch() != null)
-                    mColor = ThemeManager.getInstance(getActivity()).isSlateTheme() ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor() : palette.getDarkMutedSwatch().getRgb();
+                    mColor = ThemeManager.getInstance(getActivity()).isSlateTheme()
+                        ? ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor()
+                        : palette.getDarkMutedSwatch().getRgb();
                 else
                     mColor = ThemeManager.getInstance(getActivity()).getDetailsPrimaryColor();
                 dominantColor = mColor;
@@ -975,18 +1241,22 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             executor.execute(() -> {
                 Bitmap result = null;
                 try {
-                    if (isCancelled || Thread.currentThread().isInterrupted()) return;
-                    if (DBG) Log.d(TAG, "RefreshTvshowBitmapTask.doInBackground tvshow " + tvshow.getName());
+                    if (isCancelled || Thread.currentThread().isInterrupted())
+                        return;
+                    if (DBG)
+                        Log.d(TAG, "RefreshTvshowBitmapTask.doInBackground tvshow " + tvshow.getName());
                     result = generateTvshowBitmap(tvshow.getPosterUri(), tvshow.isWatched());
                 } catch (Exception e) {
                     Log.e(TAG, "RefreshTvshowBitmapTask failed", e);
                 } finally {
                     executor.shutdown();
                 }
-                if (isCancelled) return;
+                if (isCancelled)
+                    return;
                 final Bitmap finalResult = result;
                 handler.post(() -> {
-                    if (isCancelled) return;
+                    if (isCancelled)
+                        return;
                     if (finalResult != null) {
                         mOverviewRowPresenter.updateBackgroundColor(mColor);
                         mOverviewRowPresenter.updateActionsBackgroundColor(getDarkerColor(mColor));
@@ -1005,6 +1275,10 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             isCancelled = true;
             executor.shutdownNow();
         }
+    }
+
+    public int getColor() {
+        return mColor != 0 ? mColor : dominantColor;
     }
 
     public static int getDominantColor() {

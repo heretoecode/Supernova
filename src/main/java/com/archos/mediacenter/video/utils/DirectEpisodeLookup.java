@@ -1,11 +1,14 @@
 package com.archos.mediacenter.video.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.*;
 import com.archos.mediascraper.xml.ShowScraper4;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
+import java.io.InterruptedIOException;
 import org.json.*;
 import java.util.*;
 import java.util.regex.*;
@@ -15,7 +18,7 @@ import java.io.IOException;
 public final class DirectEpisodeLookup {
     /** Resolve from the physical media record after series correction, not a stale Episode object. */
     public static EpisodeTags current(Context context,long mediaId)throws IOException{
-        try(android.database.Cursor cursor=context.getContentResolver().query(com.archos.mediaprovider.video.VideoStore.Video.Media.EXTERNAL_CONTENT_URI,TagsFactory.VIDEO_COLUMNS,"_id=?",new String[]{String.valueOf(mediaId)},null)){
+        try(Cursor cursor=context.getContentResolver().query(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,TagsFactory.VIDEO_COLUMNS,"_id=?",new String[]{String.valueOf(mediaId)},null)){
             if(cursor!=null){List<BaseTags> tags=TagsFactory.buildTagsFromVideoCursor(cursor);if(tags!=null&&tags.size()==1&&tags.get(0) instanceof EpisodeTags)return (EpisodeTags)tags.get(0);}
         }
         throw new IOException("Current episode metadata is unavailable.");
@@ -33,7 +36,7 @@ public final class DirectEpisodeLookup {
         JSONArray seasons=show.optJSONArray("seasons");List<SearchResult> results=new ArrayList<>();
         if(seasons==null)throw new IOException("Season metadata is unavailable.");
         for(int i=0;i<seasons.length()&&results.size()<limit;i++){
-            if(Thread.currentThread().isInterrupted())throw new java.io.InterruptedIOException();
+            if(Thread.currentThread().isInterrupted())throw new InterruptedIOException();
             JSONObject season=seasons.optJSONObject(i);int number=season==null?-1:season.optInt("season_number",-1);
             if(number<0||number>9999||coordinate!=null&&coordinate[0]!=number)continue;
             JSONObject data=StreamingRepository.metadata(context,"tv",parent.getOnlineId(),"season/"+number);

@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.browser;
 
+import com.archos.mediacenter.utils.BitmapUtils;
 import java.util.Locale;
 
 import android.app.Notification;
@@ -23,7 +24,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Context;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Updates video recommendations and their notification artwork. */
 public class UpdateRecommendationsService extends Service implements DefaultLifecycleObserver {
 	private static final String TAG = "UpdateRecommendationsService";
 	public static class Columns {
@@ -188,7 +189,7 @@ public class UpdateRecommendationsService extends Service implements DefaultLife
 							.setContext(getApplicationContext())
 							.setSmallIcon(R.mipmap.nova);
 					final String scraperCover = c.getString(c.getColumnIndexOrThrow(Columns.COVER_PATH));
-					Bitmap bitmap = com.archos.mediacenter.utils.BitmapUtils.decodeSampledBitmapFromFile(scraperCover, 500, 750);
+					Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromFile(scraperCover, 500, 750);
 					if (bitmap == null&&c.getLong(mIDColumns) >= 0) {
 						BitmapFactory.Options options = new BitmapFactory.Options();
 						options.inSampleSize = 2;

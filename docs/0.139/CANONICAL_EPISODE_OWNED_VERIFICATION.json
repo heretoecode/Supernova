@@ -1,0 +1,23 @@
+{
+  "source_sha": "2623995bbbae38f90998b51e4a921e0f7ae6ad37",
+  "dependency_sha": "ea211b6891330a5f0bf862c264e403a52a53453f",
+  "result": "PASS",
+  "duration": "32s",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest"
+  ],
+  "log_sha256": "6e9cbbbdcb9c6b2f5e248f646cb0bbcd846ec71ecc428670ff5629b7a6a66585",
+  "coverage": [
+    "Same-parent canonical episode replacement retains episode owner, parent SHOW pin and receiving Collection membership under both recursive-trigger modes",
+    "Normalized guest graph replaced and original graph restored on rollback; foreign_key_check empty",
+    "Wrong parent/pin/provider and missing provider transaction refused; watch/bookmark/duration unchanged",
+    "Existing movie ownership and destructive pointer dependency tests"
+  ],
+  "limits": "Staged same-parent API only. Canonical preparation, native originals/redo, cross-kind/different-parent policy and production codec26 remain unfinished.",
+  "tests": 10,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

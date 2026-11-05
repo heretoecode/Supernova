@@ -1,37 +1,48 @@
 package com.archos.mediacenter.video.leanback;
 
+import android.app.Activity;
 import android.app.Application;
+import android.app.Dialog;
 import android.content.*;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import androidx.preference.PreferenceManager;
 import java.util.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.*;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
+import org.robolectric.shadows.ShadowDialog;
 
+/** Checks row membership creation and preservation of membership after correcting a series match. */
 @RunWith(RobolectricTestRunner.class) @Config(application=Application.class,sdk=28)
 public class PreviewMatchMembershipTest {
+ @Before public void isolatePreviewTransport(){PreviewAsyncFixtures.offlineTransport();}
+ @After public void drainPreviewWorkers() throws Exception { PreviewAsyncFixtures.drain(); }
     @Test public void createRowAddsTitleAndReturnsToSelectedMembershipWithoutClosingParent(){
-        android.app.Activity host=Robolectric.buildActivity(android.app.Activity.class).setup().get();
+        Activity host=Robolectric.buildActivity(Activity.class).setup().get();
         PreferenceManager.getDefaultSharedPreferences(host).edit().clear().commit();
         PreviewLibraryLoader.Entry entry=new PreviewPagesTest().episode(1,0,false,0,0);
-        PreviewHomeRows.add(host,entry,()->{});android.app.Dialog original=org.robolectric.shadows.ShadowDialog.getLatestDialog();
-        android.view.View root=original.getWindow().getDecorView();
-        android.view.View watch=root.findViewWithTag("preview-check:0");assertEquals(android.view.View.VISIBLE,watch.getVisibility());
-        assertTrue(((android.view.View)watch.getParent()).getContentDescription().toString().endsWith("not selected"));
-        ((android.view.View)PreviewPagesTest.findText(root,"Create New Row").getParent()).performClick();
-        android.app.Dialog keyboard=org.robolectric.shadows.ShadowDialog.getLatestDialog();android.widget.EditText input=findInput(keyboard.getWindow().getDecorView());assertNotNull(input);input.setText("My favourites");
-        PreviewPagesTest.findText(keyboard.getWindow().getDecorView(),"Select").performClick();
-        android.app.Dialog returned=org.robolectric.shadows.ShadowDialog.getLatestDialog();assertNotSame(original,returned);assertTrue(returned.isShowing());assertFalse(keyboard.isShowing());
-        android.view.View added=(android.view.View)PreviewPagesTest.findText(returned.getWindow().getDecorView(),"My favourites").getParent();
+        PreviewHomeRows.add(host,entry,()->{});Dialog original=ShadowDialog.getLatestDialog();
+        View root=original.getWindow().getDecorView();
+        View watch=root.findViewWithTag("preview-check:0");assertEquals(View.VISIBLE,watch.getVisibility());
+        assertTrue(((View)watch.getParent()).getContentDescription().toString().endsWith("not selected"));
+        ((View)PreviewPagesTest.findText(root,"Create New Row").getParent()).performClick();
+        Dialog keyboard=ShadowDialog.getLatestDialog();EditText input=findInput(keyboard.getWindow().getDecorView());assertNotNull(input);input.setText("My favourites");
+        PreviewPagesTest.findText(keyboard.getWindow().getDecorView(),"Done").performClick();
+        Dialog returned=ShadowDialog.getLatestDialog();assertNotSame(original,returned);assertTrue(returned.isShowing());assertFalse(keyboard.isShowing());
+        View added=(View)PreviewPagesTest.findText(returned.getWindow().getDecorView(),"My favourites").getParent();
         assertTrue(added.getContentDescription().toString().endsWith(", selected"));assertTrue(added.hasFocus());
         PreviewHomeRows model=new PreviewHomeRows(host);assertTrue(model.rows.stream().anyMatch(row->row.name.equals("My favourites")&&row.members.contains(entry.key())));
         added.performClick();assertTrue(returned.isShowing());assertTrue(added.getContentDescription().toString().endsWith(", not selected"));returned.dismiss();
     }
-    private static android.widget.EditText findInput(android.view.View view){
-        if(view instanceof android.widget.EditText)return (android.widget.EditText)view;
-        if(view instanceof android.view.ViewGroup)for(int i=0;i<((android.view.ViewGroup)view).getChildCount();i++){android.widget.EditText found=findInput(((android.view.ViewGroup)view).getChildAt(i));if(found!=null)return found;}
+    private static EditText findInput(View view){
+        if(view instanceof EditText)return (EditText)view;
+        if(view instanceof ViewGroup)for(int i=0;i<((ViewGroup)view).getChildCount();i++){EditText found=findInput(((ViewGroup)view).getChildAt(i));if(found!=null)return found;}
         return null;
     }
     @Test public void correctedSeriesKeepsRowOrderVisibilityMembershipAndDismissal(){

@@ -1,0 +1,35 @@
+{
+  "environment": "supernova-foundation-signing",
+  "observed_utc": "2026-10-15",
+  "requested_branch": "codex/supernova-0.139-implementation-2026-10-13",
+  "result": "BLOCKED",
+  "permitted_branch_policies": [
+    {
+      "name": "codex/foundation-release",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.135",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.137-qa-2026-10-11",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-0.138-qa-2026-10-12",
+      "type": "branch"
+    },
+    {
+      "name": "codex/supernova-next-refinement-2026-10-10",
+      "type": "branch"
+    }
+  ],
+  "reason": "15October live policies exclude139. Owner-authorized exact-branch addition was attempted and GitHub refused it:403 Resource not accessible by integration. Readback confirms all existing policies unchanged. Prepared139 same-environment/certificate/manual-only variant closes obsolete138 engineering pins; no key access/dispatch. Current software suite has unresolved failure. No absence of Actions secrets is inferred.",
+  "next_step": "Resolve design/automated gates; administrator authorizes exactly139 branch or supplies approved alternate route. Dispatch same-source signedQA workflow, verify package/version/cert/payload, deliver with readback; then perform physical signed upgrade/Shield acceptance.",
+  "prepared_workflow": ".github/workflows/supernova-0139-qa.yml",
+  "prepared_source": "8e917bd3a8d3f965fbf5f07843d2de1523111096",
+  "environment_policy_unchanged": true,
+  "policy_write_attempt_http_status": 403,
+  "policy_write_attempt_receipt": "SIGNING_POLICY_ATTEMPT_2026-10-15.json"
+}

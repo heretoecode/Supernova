@@ -1,0 +1,77 @@
+--- a/src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java
++++ b/src/com/archos/filecorelibrary/samba/NetworkCredentialsDatabase.java
+@@ -97,7 +97,7 @@
+         private void setCredentials(String username, String domain) {
+             String u = username != null ? username.trim() : "";
+             String d = domain != null ? domain.trim() : "";
+-            if (d.isEmpty() && !u.isEmpty()) {
++            if (d.isEmpty() && !u.isEmpty() && isSmb(mUriString)) {
+                 int ci = u.indexOf('@');
+                 if (ci > 0) {
+                     d = u.substring(ci + 1).trim();
+@@ -112,6 +112,10 @@
+             }
+             mUsername = u;
+             mDomain = d;
++        }
++        private static boolean isSmb(String location) {
++            String scheme=android.net.Uri.parse(location).getScheme();
++            return "smb".equalsIgnoreCase(scheme)||"smbj".equalsIgnoreCase(scheme);
+         }
+         public boolean isTemporary(){
+             return mIsTemporary;
+@@ -263,36 +267,25 @@
+         mCredentials.remove(uriString);
+     }
+ 
++    private static String hostIdentity(String location) {
++        android.net.Uri uri=android.net.Uri.parse(location);
++        String host=uri.getHost(), authority=uri.getEncodedAuthority();
++        if(host==null||authority==null)return location;
++        int at=authority.toLowerCase(java.util.Locale.ROOT).lastIndexOf(host.toLowerCase(java.util.Locale.ROOT));
++        if(at<0)return location;
++        return uri.buildUpon().encodedAuthority(authority.substring(0,at)+host.toLowerCase(java.util.Locale.ROOT)+authority.substring(at+host.length())).build().toString();
++    }
+     public Credential getCredential(String uriString){
+-        if(mCredentials.containsKey(uriString)) {
+-            return mCredentials.get(uriString);
+-        }
+-        if(uriString.endsWith("/")&&uriString.length()>1&&mCredentials.containsKey(uriString.substring(0, uriString.length()-1))){
+-            return mCredentials.get(uriString.substring(0, uriString.length()-1));
+-        }
+-        /*
+-            now we check if a parent has credentials, we will keep the longest one
+-         */
+-        Credential ret = null;
+-        for(String parent : mCredentials.keySet()){
+-            if(uriString.startsWith(parent)){ // this is potentially the right one
+-                if(parent.endsWith("/")&&(ret==null||ret.getUriString().length()<parent.length())) { // this one is appropriate
+-                    ret = mCredentials.get(parent);
+-                }
+-                else{
+-                    //we have to check if the character after the string "parent" is a / or nothing
+-                    // to avoid these cases :
+-                    // credential for /this/is/a/path
+-                    // uriString : /this/is/a/pathbutdifferent
+-                    if(uriString.charAt(parent.length())=='/'&&(ret==null||ret.getUriString().length()<parent.length())) {
+-                        ret = mCredentials.get(parent);
+-                    }
+-                }
+-            }
+-        }
+-        if (ret != null) if (log.isDebugEnabled()) log.debug("getCredential: found credential user {} for {} while searching for {}", ret.getUsername(), ret.getUriString(), uriString);
+-        else if (log.isTraceEnabled()) log.trace("getCredential: no credential found");
+-        return ret;
++        // Compare DNS host case without rewriting records or changing path/protocol identity.
++        String target=hostIdentity(uriString);
++        Credential result=null;int longest=-1;
++        for(java.util.Map.Entry<String,Credential> entry:mCredentials.entrySet()){
++            String parent=hostIdentity(entry.getKey());
++            if(parent.endsWith("/")&&parent.length()>1)parent=parent.substring(0,parent.length()-1);
++            boolean matches=target.equals(parent)||target.startsWith(parent+"/");
++            if(matches&&parent.length()>longest){result=entry.getValue();longest=parent.length();}
++        }
++        return result;
+     }
+ 
+     private static String encrypt(String password){

@@ -1,0 +1,10 @@
+<resources>
+    <style name="FoundationLaunch" parent="MyLeanbackTheme.Launcher">
+        <item name="android:windowBackground">@drawable/foundation_splash</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+    <style name="FoundationEntry" parent="ArchosThemeLauncher">
+        <item name="android:windowBackground">@drawable/foundation_splash</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+</resources>

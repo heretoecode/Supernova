@@ -3,17 +3,20 @@ package com.archos.mediacenter.video.utils;
 import android.content.Context;
 import android.util.AtomicFile;
 import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.io.*;
+import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantLock;
 import org.json.*;
 
 /** Durable rollback intent, written before any live database/pref replacement. */
 public final class RestoreJournal {
-    private static final java.util.concurrent.locks.ReentrantLock PROCESS_LOCK=new java.util.concurrent.locks.ReentrantLock();
+    private static final ReentrantLock PROCESS_LOCK=new ReentrantLock();
     static final class Guard implements AutoCloseable {
-        private final RandomAccessFile handle;private final java.nio.channels.FileLock lock;
-        private Guard(RandomAccessFile handle,java.nio.channels.FileLock lock){this.handle=handle;this.lock=lock;}
+        private final RandomAccessFile handle;private final FileLock lock;
+        private Guard(RandomAccessFile handle,FileLock lock){this.handle=handle;this.lock=lock;}
         @Override public void close()throws IOException{try{lock.release();}finally{try{handle.close();}finally{PROCESS_LOCK.unlock();}}}
     }
     static Guard acquire(Context c)throws IOException{
@@ -55,6 +58,9 @@ public final class RestoreJournal {
         }
         for(int i=0;i<files.length();i++){JSONObject entry=files.getJSONObject(i);erase(new File(entry.getString("fresh")));erase(new File(entry.getString("old")));}
         journal.delete();
+        // Configuration is durable. Refresh the running recorder without changing saved logs.
+        try{Diagnostics.reloadPolicy(c);}
+        catch(RuntimeException unavailable){Diagnostics.error("restore_diagnostics_policy_failed",unavailable);}
     }
     private static void erase(File file)throws IOException{
         if(file.isDirectory()){File[] children=file.listFiles();if(children==null)throw new IOException("Cannot inspect restore recovery files");for(File child:children)erase(child);}

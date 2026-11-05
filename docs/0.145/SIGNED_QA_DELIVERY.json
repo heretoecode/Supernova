@@ -1,0 +1,122 @@
+{
+  "source_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+  "apk_sha256": "1cd4d3c6dcbe9c8c02c3abae26ba4fb37b99d73e0fc68e6a0cf0ca43c2b0c2c8",
+  "apk_bytes": 87940129,
+  "application_id": "app.supernova.player",
+  "version_name": "0.145",
+  "version_code": 145,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "signature_verified": true,
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "zip_crc_verified": true,
+  "native_hashes_independently_matched": 88,
+  "zip_and_elf_16kb_alignment_verified": true,
+  "supported_abis": [
+    "armeabi-v7a",
+    "arm64-v8a",
+    "x86",
+    "x86_64"
+  ],
+  "payload_parity_verified_in_ci": true,
+  "signed_upgrade_verified": false,
+  "physical_shield_verified": false,
+  "branch": "codex/supernova-0.145-maintenance-2026-10-28",
+  "pull_request": "https://github.com/heretoecode/Supernova/pull/25",
+  "source_frozen": true,
+  "qa_only": true,
+  "final_release_accepted": false,
+  "full_maintenance_complete": false,
+  "main_merged": false,
+  "public_release_published": false,
+  "checked_at": "2026-10-28T20:58:24.291319+00:00",
+  "drive": {
+    "file_id": "10HmVAOilIRsT8iRcyLyOktz_vgS7uCeM",
+    "url": "https://drive.google.com/file/d/10HmVAOilIRsT8iRcyLyOktz_vgS7uCeM/view?usp=drivesdk",
+    "parent_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+    "bytes": 87940129,
+    "sha256": "1cd4d3c6dcbe9c8c02c3abae26ba4fb37b99d73e0fc68e6a0cf0ca43c2b0c2c8",
+    "full_readback_verified": true,
+    "checked_at": "2026-10-28T20:58:08.209064+00:00"
+  },
+  "signing_run": {
+    "id": 40762577939,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/40762577939",
+    "result": "success",
+    "environment": "supernova-foundation-signing",
+    "temporary_signing_material_cleanup": "success"
+  },
+  "automated": {
+    "android_tests": 1158,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "tooling_tests": 128,
+    "jetty_integration_tests": 11,
+    "lint_errors": 0,
+    "lint_warnings": 1795,
+    "runtime_hashes_matched": 138,
+    "rebuilt_ffmpeg_libraries_matched": 24,
+    "packaged_native_hashes_independently_matched": 88
+  },
+  "artifacts": [
+    {
+      "id": 12850462705,
+      "name": "supernova-0145-qa-ffmpeg-source",
+      "bytes": 11174420,
+      "sha256": "1235d73f974cf045621f34540c19b3c22ace19b2e47da5ad4a666cf51a8bbe70",
+      "digest_independently_matched": true
+    },
+    {
+      "id": 12849678765,
+      "name": "supernova-0145-signed-qa",
+      "bytes": 83461832,
+      "sha256": "af6d0e9e038daaa763696ef73dab5f4ae2d7949fe7b0d6691bf6138c1a7f8be5",
+      "digest_independently_matched": true
+    }
+  ],
+  "native_source": {
+    "archive": "Supernova_0.145_FFmpeg_Source.tar.xz",
+    "bytes": 11160992,
+    "sha256": "e8eac3cc7f334a90026041039681e8fab22d64901e40877229377fee81997372",
+    "source_bundle_integrity_verified": true,
+    "source_and_build_recipes_and_lgpl_license_present": true,
+    "frozen_build_recipes_and_locked_patch_hashes_matched": true,
+    "patched_ffmpeg_source_hashes_matched": true,
+    "native_decode_comparisons": 64,
+    "all_comparisons_passed": true,
+    "source_commit": "d6e106ffa27fce88cbfb4ebbfe305954c7e73f60",
+    "ffmpeg_commit": "894da5ca7d742e4429ffb2af534fcda0103ef593",
+    "drive": {
+      "file_id": "1jsId2rJ10jyZ3bvuArKfB4QCHSGrx_o3",
+      "url": "https://drive.google.com/file/d/1jsId2rJ10jyZ3bvuArKfB4QCHSGrx_o3/view?usp=drivesdk",
+      "parent_id": "1c3G--zRc7aAt_SF6KQVniyD8xv6usMmZ",
+      "bytes": 11160992,
+      "sha256": "e8eac3cc7f334a90026041039681e8fab22d64901e40877229377fee81997372",
+      "full_readback_verified": true,
+      "checked_at": "2026-10-28T20:58:08.220377+00:00"
+    }
+  },
+  "unresolved": [
+    "Physical Nvidia Shield, real provider/storage/account/AV-chain, subtitle/HUD/focus and signed installation/upgrade/rollback acceptance remain pending.",
+    "Original Concept A4/hero reference images and October 27 diagnostic ZIP were not found in fresh connected-source searches; exact reference comparison and original-report-only re-analysis are unverified.",
+    "Nine Jetty dependency-version advisories remain scan-affected. UPnP boundary mitigations and individual prerequisite reviews are documented; supported API-23-compatible transport migration/backports and real-provider regression remain deferred.",
+    "Native libass/subtitle-engine, FFmpeg 9 and OpenSSL 4.1 migration and individual unported upstream deltas remain deferred for coordinated ABI, source, security, licensing and device compatibility review.",
+    "No measured physical startup, playback-performance or retained-memory profiling campaign was possible; no hardware performance/leak clearance is claimed."
+  ],
+  "html_release_notes": {
+    "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+    "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+    "readback_verified": true,
+    "bytes": 44453,
+    "sha256": "285586bfa6cc5d69c1927a784133f4113e9a115493550d71ddb2252281f033f2",
+    "previous_articles_preserved": 13,
+    "article_count": 14,
+    "modified_time": "2026-10-28T20:58:34.333Z",
+    "checked_at": "2026-10-28T20:58:57.120185+00:00"
+  },
+  "previous_apk_files_preserved": 11,
+  "apk_folder_files_after_delivery": 12,
+  "new_apk_file_id": "10HmVAOilIRsT8iRcyLyOktz_vgS7uCeM",
+  "rebuilt_ffmpeg_independently_matched": 24
+}

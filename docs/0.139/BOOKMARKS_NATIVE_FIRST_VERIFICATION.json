@@ -1,0 +1,28 @@
+{
+  "source_sha": "b2938bcb7b7cede84a0057c364748cc05a292bac",
+  "result": "FAIL",
+  "classes": 8,
+  "tests": 86,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableBookmarksTest",
+    "com.archos.mediacenter.video.utils.CombinedMediaRestoreTest",
+    "com.archos.mediacenter.video.utils.CombinedViewingRestoreTest",
+    "com.archos.mediacenter.video.utils.PreferenceRestoreTransactionTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupExporterTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupArchiveTest",
+    "com.archos.mediacenter.video.utils.LogicalBackupImportTest",
+    "com.archos.mediacenter.video.utils.PortableLibrarySourcesTest"
+  ],
+  "failures_detail": [
+    {
+      "test": "exportOmitsLocatorsDefaultNamesFriendlyPathsAndPutioButRetainsCustomLabel",
+      "message": "java.io.IOException: Selected configuration failed logical backup validation; no backup was created"
+    }
+  ],
+  "duration": "2m 32s",
+  "log_sha256": "f56346beded5755f5b7b98d3f82380d209873eedd232262494468927e0b90e81",
+  "correction": "Bookmarks-only export needs opaque origin without a media snapshot. Null-check catalog when preallocating origin; native retest required."
+}

@@ -205,6 +205,7 @@ public class MyVerticalGridFragment extends MyBrandedFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if ("preview-browser".equals(view.getTag())) return;
         ViewGroup gridDock = (ViewGroup) view.findViewById(R.id.browse_grid_dock);
         mGridViewHolder = mGridPresenter.onCreateViewHolder(gridDock);
         gridDock.addView(mGridViewHolder.view);
@@ -238,7 +239,7 @@ public class MyVerticalGridFragment extends MyBrandedFragment {
     public void onStart() {
         super.onStart();
         setupFocusSearchListener();
-        mGridViewHolder.getGridView().requestFocus();
+        if (mGridViewHolder != null) mGridViewHolder.getGridView().requestFocus();
     }
 
     @Override

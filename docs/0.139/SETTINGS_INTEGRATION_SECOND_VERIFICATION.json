@@ -1,0 +1,25 @@
+{
+  "source_sha": "d3f21d12aa56b7946c8c3a9180ae3e55bd168f69",
+  "result": "FAIL",
+  "classes": 5,
+  "tests": 24,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupWorkspaceDensityTest",
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest"
+  ],
+  "failures_detail": [
+    {
+      "test": "connectedFlatInformationBackRestoresOpenerThenPermanentSidebar",
+      "message": "java.lang.AssertionError"
+    }
+  ],
+  "duration": "2m 23s",
+  "log_sha256": "bb3e171d97f20135fda3b0467d51302260c3df4de7cf9006d36f789e9dac3a61",
+  "correction": "Protect focus in the right container while replacing focused content, then restore the opener/control. Add genuinely focused connected restore sequence. Fresh verification required."
+}

@@ -1,0 +1,31 @@
+{
+  "checked_at_utc": "2026-10-22T22:32:20.795372+00:00",
+  "classification": "LOCAL PACKAGING PROBE ONLY, NOT A DISTRIBUTABLE CANDIDATE",
+  "application_source": "5109dd0c83082528b896a8aaa6d0d50f4a930027",
+  "command": "assembleNoamazonRelease -PfoundationVerify -PsupernovaQa -Puniversal --no-daemon --max-workers=4 -x :FileCoreLibrary:ndkBuild -x :MediaLib:ndkBuild",
+  "result": "BUILD SUCCESSFUL",
+  "duration": "6m48s",
+  "r8_and_resource_shrinking": true,
+  "package": "app.supernova.player",
+  "version_name": "0.141",
+  "version_code": 141,
+  "min_sdk": 23,
+  "target_sdk": 36,
+  "bytes": 34336075,
+  "sha256": "ce0bcdfff34547f9517c40d98c05e6c832d4dee823059cbca36222846c9650ae",
+  "zip_crc_verified": true,
+  "zip_alignment_16k_verified": true,
+  "unsigned_signature_rejected": true,
+  "bundled_notice_texts_byte_matched": 60,
+  "source_region_resources": 249,
+  "packaged_region_resources": 249,
+  "all_source_region_resources_retained": true,
+  "native_libraries_in_probe": 16,
+  "required_complete_native_payload": 88,
+  "limits": [
+    "Native wrapper rebuild and full rebuilt FFmpeg installation were excluded; this probe lacks the complete88-library release payload.",
+    "Build copy retains older checkout Git metadata, see LOCAL_SOURCE_READBACK.json.",
+    "No original-certificate signature, device installation, playback or signed upgrade claimed.",
+    "Do not upload or deliver this local probe as the release candidate. Exact-source native/APK CI remains required."
+  ]
+}

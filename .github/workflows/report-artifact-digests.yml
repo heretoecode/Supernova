@@ -1,0 +1,35 @@
+name: Report artifact file digests
+# Diagnostic helper: downloads one artifact of an earlier run and prints the SHA-256 and size of
+# every file in it, plus small JSON evidence files verbatim. Used to record a delivered build's
+# evidence in release history. No build, no secrets.
+on:
+  push:
+    branches: [claude/supernova-github-access-yfhe89]
+    paths: [.github/diagnostics/digests-request.json]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Resolve request
+        id: req
+        run: |
+          python3 -c "import json;r=json.load(open('.github/diagnostics/digests-request.json'));print('run='+str(r['run_id']));print('name='+r['artifact'])" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: ${{ steps.req.outputs.name }}
+          path: artifact
+          run-id: ${{ steps.req.outputs.run }}
+          github-token: ${{ github.token }}
+      - name: Print digests and evidence
+        run: |
+          cd artifact
+          find . -type f -print0 | sort -z | xargs -0 sha256sum
+          find . -type f -printf '%s %p\n' | sort -k2
+          for f in $(find . -name '*.json' -size -64k); do echo "== $f"; cat "$f"; echo; done

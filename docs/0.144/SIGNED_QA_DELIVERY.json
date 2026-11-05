@@ -1,0 +1,98 @@
+{
+  "application_id": "app.supernova.player",
+  "certificate_sha256": "79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e",
+  "apk_sha256": "a841b6bcb49296b8968a40eef1b305178bfadb5f26aff759e5ee6aef5552ea61",
+  "version_name": "0.144",
+  "version_code": 144,
+  "provider_authorities": [
+    "app.supernova.player.browser",
+    "app.supernova.player.provider",
+    "app.supernova.player.media;app.supernova.player.scraper",
+    "app.supernova.player.leanback.search.VideoSearchProvider",
+    "app.supernova.player.androidx-startup",
+    "app.supernova.player.com.squareup.picasso",
+    "app.supernova.player.SentryNdkPreloadProvider"
+  ],
+  "native_library_count": 88,
+  "rebuilt_ffmpeg_independently_matched": 24,
+  "zip_crc_verified": true,
+  "apk_bytes": 87940129,
+  "alignment_verified": true,
+  "min_sdk": "23",
+  "target_sdk": "36",
+  "native_hashes_independently_matched": 88,
+  "supported_abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "source_commit": "4e6f1f8f5691c34cd429c17421f92b6290ce3539",
+  "signature_verified": true,
+  "signed_upgrade_verified": false,
+  "physical_shield_verified": false,
+  "branch": "codex/supernova-0.144-implementation-2026-10-28",
+  "pull_request": "https://github.com/heretoecode/Supernova/pull/24",
+  "source_frozen": true,
+  "qa_only": true,
+  "final_release_accepted": false,
+  "main_merged": false,
+  "public_release_published": false,
+  "checked_at": "2026-10-28T18:05:40.792767+00:00",
+  "payload_matches_tested_unsigned_verified_in_ci": true,
+  "drive": {
+    "file_id": "1bDjcD3Fkl-X3FBxaQ7meVv8VLv6UpwZl",
+    "url": "https://drive.google.com/file/d/1bDjcD3Fkl-X3FBxaQ7meVv8VLv6UpwZl/view?usp=drivesdk",
+    "parent_id": "1mfHrFgLdJJSJYtTPys1N4Y-_KuE_84mM",
+    "bytes": 87940129,
+    "full_readback_verified": true,
+    "sha256": "a841b6bcb49296b8968a40eef1b305178bfadb5f26aff759e5ee6aef5552ea61"
+  },
+  "signing_run": {
+    "id": 40735286063,
+    "url": "https://github.com/heretoecode/Supernova/actions/runs/40735286063",
+    "result": "success",
+    "environment": "supernova-foundation-signing"
+  },
+  "automated": {
+    "android_tests": 1135,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "tooling_tests": 120,
+    "lint_errors": 0,
+    "lint_warnings": 1796,
+    "runtime_hashes_matched": 138,
+    "rebuilt_ffmpeg_libraries_matched": 24,
+    "packaged_native_hashes_independently_matched": 88
+  },
+  "artifacts": [
+    {
+      "id": 12839331629,
+      "name": "supernova-0144-signed-qa",
+      "sha256": "7ff39b738111fd94d4505791e4395ecb549dab8a61df6184088b4860c28d9a44",
+      "bytes": 83457817
+    },
+    {
+      "id": 12839027146,
+      "name": "supernova-0144-qa-ffmpeg-source",
+      "sha256": "098e2454f325eefd35797d6a7f66308123aab6ee7b276943270d7a674ceed9cb",
+      "bytes": 11174418
+    }
+  ],
+  "unresolved": [
+    "Original Concept A4 Audio/Video images inaccessible; exact reference/inline-adjustment acceptance blocked.",
+    "Original October 27 diagnostic ZIP inaccessible; report-only events not re-analysed.",
+    "Physical Shield, real source/account/AV chain and signed upgrade QA pending."
+  ],
+  "html_release_notes": {
+    "id": "17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW",
+    "url": "https://drive.google.com/file/d/17P05N7Q8c0TQdeZIEjUKYoQ-4xZIz-DW/view",
+    "readback_verified": true,
+    "previous_articles_preserved": 12,
+    "bytes": 41328,
+    "sha256": "a87cbf77fc7cc8df5fa86f1e74b8bf5dcc4511b4f3267452b78e0c4ad7f9ac45"
+  },
+  "previous_apk_files_preserved": 10,
+  "apk_folder_files_after_delivery": 11
+}

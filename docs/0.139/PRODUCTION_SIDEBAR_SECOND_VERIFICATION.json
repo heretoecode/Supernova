@@ -1,0 +1,17 @@
+{
+  "source_sha": "7f8e399c7f0891e37cb20d0df2a9be7c91f063ac",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 11,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PreviewSettingsEntryTest",
+    "com.archos.mediacenter.video.leanback.settings.BackupSettingsControllerTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "duration": "47s",
+  "log_sha256": "0f6bf4e97c578cf2cfcf2a0c530de2e07e8adddcd9cf3504feaffa1534247296",
+  "reason": "Full rectangle request still leaves the opener clipped14/34. ScrollView padding20 is excluded from visible drawing but not the scroll target calculation. Next source includes actual scroll padding and ignores stale selected-child callbacks."
+}

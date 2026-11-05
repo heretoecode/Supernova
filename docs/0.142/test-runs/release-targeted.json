@@ -1,0 +1,152 @@
+{
+  "source": "08a896b1bee6a058053617fa7aa36c09773385d2",
+  "scope": "Focused final-candidate Android regression; full exact-source CI remains separate",
+  "totals": {
+    "tests": 51,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.archos.mediacenter.video.leanback.Editor142RenderTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:59:09.013Z",
+      "hostname": "e74bbe34bd10",
+      "time": "19.376"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.Network142CredentialsTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:59:32.988Z",
+      "hostname": "e74bbe34bd10",
+      "time": "5.935"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.Network142RenderTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:59:31.176Z",
+      "hostname": "e74bbe34bd10",
+      "time": "19.537"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.Network142Test",
+      "tests": "15",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:59:40.309Z",
+      "hostname": "e74bbe34bd10",
+      "time": "39.603"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.Network142WebdavTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:59:53.581Z",
+      "hostname": "e74bbe34bd10",
+      "time": "8.022"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.NextQaWizardTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:00:22.093Z",
+      "hostname": "e74bbe34bd10",
+      "time": "16.627"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.PreviewNetworkSemanticsTest",
+      "tests": "5",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:00:04Z",
+      "hostname": "e74bbe34bd10",
+      "time": "26.075"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.PreviewPagesTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:58:50.927Z",
+      "hostname": "e74bbe34bd10",
+      "time": "23.241"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.PreviewSourceRemovalTest",
+      "tests": "2",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:58:50.816Z",
+      "hostname": "e74bbe34bd10",
+      "time": "15.988"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.SharedDirectoryPickerTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:00:41.202Z",
+      "hostname": "e74bbe34bd10",
+      "time": "10.789"
+    },
+    {
+      "name": "com.archos.mediacenter.video.streaming.putio.Network142PutioTest",
+      "tests": "3",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:00:32.926Z",
+      "hostname": "e74bbe34bd10",
+      "time": "20.505"
+    },
+    {
+      "name": "com.archos.mediacenter.video.streaming.putio.PutioBrowserBackTest",
+      "tests": "1",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T20:59:16.692Z",
+      "hostname": "e74bbe34bd10",
+      "time": "14.304"
+    },
+    {
+      "name": "com.archos.mediacenter.video.streaming.putio.PutioConnectionFocusTest",
+      "tests": "6",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:00:54.387Z",
+      "hostname": "e74bbe34bd10",
+      "time": "16.989"
+    },
+    {
+      "name": "com.archos.mediacenter.video.streaming.putio.PutioSyncSchedulerTest",
+      "tests": "4",
+      "skipped": "0",
+      "failures": "0",
+      "errors": "0",
+      "timestamp": "2026-10-23T21:00:55.400Z",
+      "hostname": "e74bbe34bd10",
+      "time": "12.826"
+    }
+  ]
+}

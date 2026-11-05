@@ -1,0 +1,18 @@
+{
+  "source_sha": "154bbabd7e73d8bcff86b99d6236919e1fa407ca",
+  "medialib_source_sha": "8424b8af3f54f498d8e1c1cac322487e15b9ab54",
+  "result": "FAIL",
+  "classes": 3,
+  "tests": 17,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.PortableTitlePlaybackTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackCompatibilityTest",
+    "com.archos.mediacenter.video.utils.TitlePlaybackOverridesTest"
+  ],
+  "duration": "2m 20s",
+  "log_sha256": "8f410b774192f597877bb1b1c0d89237fc522ca3da7a7098b4b0331dbe452364",
+  "finding": "One fixture constructed a real AudioTrack while another Mockito stub was unfinished. Fix constructs the track before thenReturn. Other16 checks passed; no production player/journal or decoder acceptance implied."
+}

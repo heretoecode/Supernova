@@ -14,7 +14,14 @@
 
 package com.archos.mediacenter.video.utils;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.preference.PreferenceManager;
+import com.archos.mediacenter.video.leanback.adapter.object.Box;
+import com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.archos.filecorelibrary.ExtStorageManager;
@@ -60,7 +67,9 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import java.util.Set;
 
+/** Displays a folder picker and manages the selected folder. */
 public class FolderPicker extends FragmentActivity {
 
     private static final String TAG = "FolderPicker";
@@ -93,10 +102,28 @@ public class FolderPicker extends FragmentActivity {
      * This extra is a String (the full path).
      */
     public static final String EXTRA_SELECTED_FOLDER = "EXTRA_SELECTED_FOLDER";
+    private UniversalFileBrowser sharedBrowser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean shared=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui",false);
+        if(shared)setTheme(R.style.MyLeanbackTheme);
         super.onCreate(savedInstanceState);
+        if(shared){
+            sharedBrowser=new UniversalFileBrowser(this);
+            sharedBrowser.directoryPicker(uri->{setResult(RESULT_OK,new Intent().putExtra(EXTRA_SELECTED_FOLDER,uri.getPath()));finish();});
+            List<Box> volumes=new ArrayList<>();
+            ExtStorageManager storage=ExtStorageManager.getExtStorageManager();
+            Set<String> paths=new LinkedHashSet<>();paths.addAll(storage.getExtSdcards());paths.addAll(storage.getExtUsbStorages());paths.addAll(storage.getExtOtherStorages());
+            for(String path:paths)volumes.add(new Box(Box.ID.OTHER,new File(path).getName(),0,path));
+            sharedBrowser.locations(volumes,Collections.emptyList(),Collections.emptyList(),ignored->{});setContentView(sharedBrowser);
+            String restored=savedInstanceState==null?null:savedInstanceState.getString("shared_directory");String selected=getIntent().getStringExtra(EXTRA_CURRENT_SELECTION);
+            String path=restored!=null?Uri.parse(restored).getPath():selected==null?null:Uri.parse(selected).getPath();
+            File start=path==null||path.isEmpty()?Environment.getExternalStorageDirectory():restored!=null?new File(path):new File(path).getParentFile();
+            sharedBrowser.open(Uri.fromFile(start==null?Environment.getExternalStorageDirectory():start));
+            getOnBackPressedDispatcher().addCallback(this,new OnBackPressedCallback(true){public void handleOnBackPressed(){sharedBrowser.back(()->{setResult(RESULT_CANCELED);finish();});}});
+            return;
+        }
 
         if (savedInstanceState == null) {
             FolderPickerDialogFragment df = new FolderPickerDialogFragment();
@@ -116,6 +143,8 @@ public class FolderPicker extends FragmentActivity {
             df.show(getSupportFragmentManager(), FolderPickerDialogFragment.FRAGMENT_TAG);
         }
     }
+    @Override protected void onSaveInstanceState(Bundle state){if(sharedBrowser!=null&&sharedBrowser.location()!=null)state.putString("shared_directory",sharedBrowser.location().toString());super.onSaveInstanceState(state);}
+    @Override protected void onDestroy(){if(sharedBrowser!=null)sharedBrowser.close();super.onDestroy();}
 
     static private boolean isOneOfTheRootStorageItems(Uri uri) {
         ExtStorageManager storageManager = ExtStorageManager.getExtStorageManager();
@@ -159,7 +188,6 @@ public class FolderPicker extends FragmentActivity {
         public static final String FRAGMENT_TAG = "FolderPickerDialogFragment";
 
         private ListingEngine mListingEngine = null;
-        private LayoutInflater mLayoutInflater = null;
 
         private class Item {
             public Object mHolder;
@@ -231,10 +259,6 @@ public class FolderPicker extends FragmentActivity {
                     mSelectedFolder = DEFAULT_STARTING_POINT;
                 }
             }
-
-            if (mLayoutInflater == null) {
-                mLayoutInflater = LayoutInflater.from(getActivity().getApplicationContext());
-            }
         }
 
         @Override
@@ -276,7 +300,7 @@ public class FolderPicker extends FragmentActivity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Let's inflate the custom view first
-            View customView = mLayoutInflater.inflate(R.layout.folder_picker_dialog, null);
+            View customView = requireActivity().getLayoutInflater().inflate(R.layout.folder_picker_dialog, null);
             mListView = (ListView)customView.findViewById(R.id.listview);
             mListView.setOnItemClickListener(this);
             mListView.setEmptyView(customView.findViewById(R.id.emptyview));
@@ -304,11 +328,13 @@ public class FolderPicker extends FragmentActivity {
                 builder.setTitle(R.string.choose_a_folder);
             }
             builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialog, int id) {
                     getActivity().setResult(RESULT_OK, new Intent().putExtra(EXTRA_SELECTED_FOLDER, mSelectedFolder.getPath()));
                 }
             });
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialog, int id) {
                     // User cancelled the dialog
                     getActivity().setResult(RESULT_CANCELED);
@@ -472,6 +498,7 @@ public class FolderPicker extends FragmentActivity {
          * Update (un)mount sdcard/usb host/samba/upnp.
          */
         private final BroadcastReceiver mExternalStorageReceiver = new BroadcastReceiver() {
+            @Override
             public void onReceive(Context context, Intent intent) {
                 final String path = intent.getDataString().substring(7);
                 if(DBG) Log.d(TAG, "mExternalStorageReceiver " + intent.getDataString());
@@ -511,7 +538,7 @@ public class FolderPicker extends FragmentActivity {
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v;
                 if (convertView == null) {
-                    v = mLayoutInflater.inflate(R.layout.folder_picker_item, null);
+                    v = LayoutInflater.from(getContext()).inflate(R.layout.folder_picker_item, null);
                 } else {
                     v = convertView;
                 }

@@ -1,0 +1,49 @@
+{
+  "result": "FAIL",
+  "run_id": 38633930923,
+  "job_id": 116092190241,
+  "source_sha": "5177cb3aa6fb3b7f94bb6fb134df348e9fffb7a0",
+  "url": "https://github.com/heretoecode/Supernova/actions/runs/38633930923",
+  "completed_at": "2026-10-14T21:16:56Z",
+  "unit_tests": 995,
+  "unit_passed": 994,
+  "unit_failures": 1,
+  "unit_errors": 0,
+  "unit_skips": 0,
+  "test_classes": 208,
+  "failed_test": "BackupSettingsControllerTest.smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels",
+  "failure": "AUDIO right edge outside physical screen",
+  "lint": {
+    "result": "PASS",
+    "errors": 0,
+    "warnings": 1771
+  },
+  "gradle_duration": "22m34s",
+  "native_rebuild_runtime_step": "PASS: four ABI registries, dynamic tempo, 64 paired software decode cases",
+  "wrapper_build": "PASS: packaged84 library hashes match wrapper manifest; four torrent executables deliberately excluded",
+  "packaging_receipt": "CI_CURRENT_PACKAGING_VERIFICATION.json",
+  "artifact": {
+    "id": 11928104817,
+    "bytes": 92187640,
+    "sha256": "a41c48edeff3ebefc789719e8919335674921f10666abbb0fbc6b5b8062374ff",
+    "github_digest_matched": true,
+    "zip_crc": true,
+    "files": 306,
+    "retention_days": 14
+  },
+  "logs": "CI_CURRENT_JOB_SUMMARY.log is a filtered excerpt; full job logs remain linked from run. Initial sync reported transient download errors but dependency preparation succeeded. Direct gh log redirects returned Forbidden; connector successfully retrieved full decoded logs.",
+  "limits": [
+    "Gradle --continue completed lint and unsigned R8 assembly despite test failure; overall run FAIL.",
+    "Post-Gradle runtime/binary/conformance recorder commands were not reached due set-e. Actual downloaded APK was independently checked afterward; no PASS conformance receipt fabricated.",
+    "Native userspace is not Android framework/Shield hardware playback.",
+    "No signing environment, key, signed upgrade or Drive upload used."
+  ],
+  "committed_evidence_sha256": {
+    "CI_CURRENT_NATIVE_BUILD.json": "b2e4b3c8e5abe185fcbc54be319c3601fa25606bdbb31db84dfbfb6fea3a6fa5",
+    "CI_CURRENT_NATIVE_WRAPPERS.json": "25f096d51b23024827edadc64c4f82b38ca905e743066e5f82faeff48b7e1ba9",
+    "CI_CURRENT_NATIVE_RUNTIME.json": "a63667023928197d7f1378615dc4376cfb7640be5f2c090b0cbe48836769779f",
+    "CI_CURRENT_JOB_SUMMARY.log": "d4ecd384716df338a1e65fbac4bcbbd2b827ea75d70d8537bb3ea59db7a66d34",
+    "CI_CURRENT_PACKAGING_VERIFICATION.json": "fe5f5a7c30cff2d0655564c609ab2c168d44260768a230777bf03589d9b84453",
+    "reproduction/verify_ci_artifact.py": "df6a0cd34b16583e03ae708daa39c24c27d60af1958561d2ce3554c002895b0f"
+  }
+}

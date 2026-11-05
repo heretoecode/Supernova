@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
@@ -34,6 +33,7 @@ import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.leanback.search.VideoSearchActivity;
 import com.archos.mediacenter.video.utils.TraktSigninDialogPreference;
 
+/** Provides shared lifecycle and key handling for TV activities. */
 public abstract class LeanbackActivity extends FragmentActivity {
 
     private BroadcastReceiver mTraktRelogBroadcastReceiver;
@@ -72,11 +72,13 @@ public abstract class LeanbackActivity extends FragmentActivity {
         };
     }
 
+    @Override
     public void onResume(){
         super.onResume();
         ContextCompat.registerReceiver(this, mTraktRelogBroadcastReceiver, new IntentFilter(Trakt.TRAKT_ISSUE_REFRESH_TOKEN), ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
+    @Override
     public void onPause(){
         super.onPause();
         unregisterReceiver(mTraktRelogBroadcastReceiver);

@@ -1,0 +1,22 @@
+Controlled API28/x86 Android TV reproduction with owned local H.264/AAC media. Original signed139 APK source4e4d2710435ddd9058923a3d9fbd6a2fc27e0464; SHA256bc8d45eea2fe17c49048b48e97eaf5da228c021647675968d725237314344827. This is emulator evidence, not a current Shield log.
+
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: FATAL EXCEPTION: main
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: Process: app.supernova.player, PID: 4492
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: java.lang.NullPointerException: Attempt to invoke virtual method 'void java.lang.StringBuilder.setLength(int)' on a null object reference
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerController.stringForTime(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:14)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerController.updateClock(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:111)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerController.initControllerView(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:552)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerController.attachWindow(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:186)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerController.start(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:15)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerActivity.postVideoInfoAndPrepared(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:111)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerActivity.H0(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:1)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerActivity$PlayerListener.onPrepared(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:47)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.PlayerService.onPrepared(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:111)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.archos.mediacenter.video.player.Player$1.run(r8-map-id-acfe290c95936331568358869ce4f04569a99a80de16e16d1298ed1cb5b1eda7:30)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:873)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:99)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:193)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:6669)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:493)
+10-16 11:56:21.874  4492  4492 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:858)

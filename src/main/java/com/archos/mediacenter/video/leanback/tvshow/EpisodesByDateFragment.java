@@ -39,6 +39,7 @@ import com.archos.mediaprovider.video.VideoStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Displays episodes grouped by date with loading and sorting controls. */
 public class EpisodesByDateFragment extends VideosByFragment {
 
     private static final Logger log = LoggerFactory.getLogger(EpisodesByDateFragment.class);
@@ -67,11 +68,13 @@ public class EpisodesByDateFragment extends VideosByFragment {
         SearchOrbView searchOrbView = (SearchOrbView) view.findViewById(R.id.title_orb);
         searchOrbView.setOrbIcon(ContextCompat.getDrawable(getActivity(), R.drawable.orb_list));
         setOnSearchClickedListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 String[] names = { getString(R.string.date_view_week), getString(R.string.date_view_month), getString(R.string.date_view_year) };
 
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(names, mDateView, new DialogInterface.OnClickListener() {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mDateView != which) {
                                     mDateView = which;
@@ -102,7 +105,7 @@ public class EpisodesByDateFragment extends VideosByFragment {
     @Override
     protected Loader<Cursor> getSubsetLoader(Context context) {
         if (mSeparateAnimeFromShowMovie) return new EpisodesNoAnimeByDateLoader(context, EpisodesNoAnimeByDateLoader.DateView.values()[mDateView]);
-        else return new EpisodesByDateLoader(context, EpisodesByDateLoader.DateView.values()[mDateView]);
+            else return new EpisodesByDateLoader(context, EpisodesByDateLoader.DateView.values()[mDateView]);
     }
 
     @Override

@@ -1,0 +1,24 @@
+{
+  "result": "PASS",
+  "source_sha": "e51a7d12bf8d0ceb36a3c9d4ad255711fb9722b1",
+  "dependency_sha": "66a1d42a87160069c3620ab4e4fe3859379d2210",
+  "duration": "35s",
+  "log_sha256": "8abd82674dafef53429efd794266be3f0296036b98374bc94982c2dd75479a55",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.BackupImportPreparationTest",
+    "com.archos.mediacenter.video.utils.LegacyExportRetirementTest",
+    "com.archos.mediacenter.video.utils.LegacySchema62MigrationTest"
+  ],
+  "coverage": [
+    "Synthetic format1/schema62 archive migrates private replacement to63 before swap",
+    "Original archive unchanged; metadata/pin/Collection/watch values preserved",
+    "Invalid schema migration refuses before live replacement or receiving credential disconnect",
+    "Existing bounded import and legacy retirement cases"
+  ],
+  "limits": "Synthetic format1/schema62, not owner historical incident archive or physical signed upgrade. Legacy credential disconnect is intentionally separate from logical2.0 preservation.",
+  "tests": 12,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

@@ -15,8 +15,8 @@
 package com.archos.mediacenter.video.player;
 
 import android.content.Context;
-import android.util.Log;
 
+/** Selects stereo video effect and interface modes for playback. */
 public class StereoMergeEffect extends VideoEffect
 {
 
@@ -30,6 +30,7 @@ public class StereoMergeEffect extends VideoEffect
         return VideoEffect.EFFECT_STEREO_MERGE;
     }
     
+    @Override
     public int getUIMode() {
         switch (getEffectMode()) {
             case VideoEffect.STEREO_2D_MODE:

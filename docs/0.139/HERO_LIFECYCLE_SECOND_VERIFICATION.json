@@ -1,0 +1,17 @@
+{
+  "source_sha": "777906eb17134a4e24abd3fd31dd739ee29e67ef",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "FAIL",
+  "classes": 2,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.FoundationHomeRegressionTest",
+    "com.archos.mediacenter.video.leanback.HeroRotationPolicyTest"
+  ],
+  "duration": "1m12s",
+  "log_sha256": "fe717696df2d09c4621b7a954513c28babd0904d03f43b5bcc1a21c6ee30cc01",
+  "finding": "attached/shown true, motion true, clock active, but windowFocus=false. Direct view callbacks did not change window state; production correctly suppresses auto rotation. Use existing ActivityController.windowFocusChanged fixture pattern.",
+  "tests": 13,
+  "failures": 2,
+  "errors": 0,
+  "skipped": 0
+}

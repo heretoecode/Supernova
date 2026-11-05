@@ -1,0 +1,28 @@
+{
+  "source_sha": "468f2d6393317ff6d2665fc132bdab930ac2f51c",
+  "classes": 5,
+  "tests": 25,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.PortablePreferredVersionsTest",
+    "com.archos.mediacenter.video.leanback.PortableReviewNotesTest",
+    "com.archos.mediacenter.video.leanback.ViewingHistoryTest",
+    "com.archos.mediacenter.video.utils.BackupPrivacyTest",
+    "com.archos.mediacenter.video.leanback.PreviewLibraryCompositionTest"
+  ],
+  "checks": [
+    "Preferred-version binding requires validated matching; default preparation preserves pending intent",
+    "Actual manual-version consumer selects restored indexed version; unrelated auth/resume remains untouched",
+    "New manual choice supersedes its pending parent while preserving other pending parents",
+    "Credential/query-bearing physical references stay opaque and do not bind after secret removal",
+    "Different path/provider/ambiguous rows remain pending; unknown state survives re-export",
+    "Present-empty and malformed/conflicting/URI-injected payload checks; Library/history/privacy regressions"
+  ],
+  "limits": [
+    "Preference/named-store codec primitives at this SHA; not production Backup integration",
+    "Physical location fingerprints are not authentication or media-content proofs",
+    "Unfiltered source inventory, combined stores/database recovery, automatic pending reconciliation and provider/device tests remain open"
+  ]
+}

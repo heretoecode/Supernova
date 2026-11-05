@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "source_sha": "196ffa53ed1bff3cc2323ce3d1d56102eeba512e",
+  "dependency_sha": "81739d3ca2d8cdddb57a34d8134eb1b92a7984e6",
+  "duration": "53s",
+  "log_sha256": "0a129fa542a5dce9940fec2327ff43eeecaaa0b044875a9cfdb9267b430af4be",
+  "classes": 4,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchIntentsTest",
+    "com.archos.mediacenter.video.utils.MediaMatchInventoryTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "coverage": [
+    "Fresh parent SHOW, normalized parent actors/genres and multiple episode graphs under the same native transaction",
+    "Multiple episodes share one planned parent and reserve distinct child IDs",
+    "Private multi-batch redo reproduces exact parent/child state and FK integrity",
+    "Moving an old episode to a new parent preserves old SHOW pin/Collection",
+    "Existing canonical/schema9/intents/inventory regressions"
+  ],
+  "limits": "Queued reconciliation/manual selection tracking, codec26 and current full acceptance remain open. No Shield/codec/signing proof.",
+  "tests": 47,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

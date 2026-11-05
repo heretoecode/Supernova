@@ -1,0 +1,24 @@
+{
+  "source_sha": "0752870e0fc0210c5909760fdd659a5963c488a3",
+  "dependency_sha": "d4ac9648dac3117050bc3ae7f965b864bfa01a43",
+  "result": "PASS",
+  "classes": 3,
+  "class_names": [
+    "com.archos.mediacenter.video.utils.MediaMatchDependencyTest",
+    "com.archos.mediacenter.video.utils.CanonicalMatchProviderTest",
+    "com.archos.mediacenter.video.utils.MediaMatchJournalTest"
+  ],
+  "duration": "40s",
+  "log_sha256": "ac2257d6daa299764bebcba99c815f90de673be889dfda0935cebf1243b2f0ce",
+  "coverage": [
+    "Canonical receiving movie identity and pin retained with refreshed title/plot/actor/genre graph",
+    "Native FK cleanup remains enabled; both recursive-trigger modes preserve Collection membership and other movie ownership",
+    "Guarded batch refuses changed pin and foreign owner before replacement",
+    "Outer native rollback and prior staged match-intent journal regressions"
+  ],
+  "limits": "Restoration-only movie API staged in MediaLib; not yet used by production logical restore. In-process transport delegates real ScraperProvider/native SQLite; full VideoProvider notifications/VOB, episode/cross-kind, metadata acquisition/native redo and registry26 remain open.",
+  "tests": 8,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0
+}

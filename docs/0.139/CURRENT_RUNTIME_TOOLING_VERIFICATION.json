@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "source_sha": "aea3bf91daeaf6efddb7dc648670663e80a09462",
+  "runtime_inventory_sha256": "8c09b6f68b5f7962c1e27e0b1b05313a99d1cb36d6acf03c2402bf2a3c78844a",
+  "reviewed_runtime_hashes_matched": 138,
+  "python_tests": 72,
+  "python_failures": 0,
+  "python_log_sha256": "9b5e6f19cc7137a8b16b2ca585cf8c30005fc4c6af3e33fff0e4c1e6f2cf8602",
+  "python_tool_source": "c4e91141bf1cb6116ac46d3e70ffc6bd0eaf8a8b",
+  "limits": "Java full/lint/packaging still running; Python suite covers established tooling and identity/signing protections, not final signed139 readiness."
+}

@@ -16,6 +16,7 @@ package com.archos.mediacenter.video.utils;
 
 import java.util.Locale;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -39,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+/** Provides video and subtitle file, format, language and library timestamp utilities. */
 public class VideoUtils {
     private final static String TAG = "VideoUtils";
     private final static boolean DBG = false;
@@ -60,10 +62,10 @@ public class VideoUtils {
 
     public static final String ALLOWED_VIEW_MODES_EXTRA = "allowed_view_modes";
 
-    private static final String[] VIDEO_MIME_TYPES_ARRAY = {"video/", "application/x-bittorrent"};
+    private static final String[] VIDEO_MIME_TYPES_ARRAY = {"video/"};
 
     // keep in sync with com.archos.mediaprovider.ArchosMediaFile
-    private static final String[] SUBTITLES_ARRAY = { "srt", "smi", "ssa", "ass", "srr", "idx", "sub", "mpl", "txt", "vtt"};
+    private static final String[] SUBTITLES_ARRAY = { "srt", "smi", "ssa", "ass", "srr", "idx", "sub", "mpl", "txt", "vtt", "sup"};
     private static final List<String> SUBTITLES_ARRAYLIST = Arrays.asList(SUBTITLES_ARRAY);
 
     // Preferences
@@ -184,6 +186,7 @@ public class VideoUtils {
         return "";
     }
 
+    @SuppressLint("DiscouragedApi")
     static public CharSequence getLanguageString(Context context, CharSequence name) {
         final Resources resources = context.getResources();
         CharSequence lang;

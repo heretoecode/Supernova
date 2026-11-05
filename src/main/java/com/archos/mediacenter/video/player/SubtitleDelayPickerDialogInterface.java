@@ -14,12 +14,11 @@
 
 package com.archos.mediacenter.video.player;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 
+/** Defines subtitle delay dialog callbacks, updates and item selection handling. */
 public interface SubtitleDelayPickerDialogInterface {
 
 

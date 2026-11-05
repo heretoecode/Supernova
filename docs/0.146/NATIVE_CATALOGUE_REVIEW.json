@@ -1,0 +1,86 @@
+{
+  "normalization": "Compare codec name and decoder/encoder flags; numeric AVCodecID changes across FFmpeg major versions are not removals. Other registry entries compare type/name.",
+  "native_artifact_run": 40843685431,
+  "results": [
+    {
+      "abi": "arm64-v8a",
+      "baseline_entries": 1373,
+      "candidate_entries": 1374,
+      "removed": [
+        "codec\tsonic\t1\t0",
+        "codec\tv308\t1\t0",
+        "codec\tv408\t1\t0",
+        "codec\tv410\t1\t0",
+        "input-protocol\thls"
+      ],
+      "added": [
+        "codec\twebp_anim\t1\t0",
+        "demuxer\thxvs",
+        "demuxer\tjpegxs_pipe",
+        "demuxer\twebp_anim",
+        "filter\tpremultiply_dynamic",
+        "input-protocol\tshared"
+      ]
+    },
+    {
+      "abi": "armeabi-v7a",
+      "baseline_entries": 1373,
+      "candidate_entries": 1374,
+      "removed": [
+        "codec\tsonic\t1\t0",
+        "codec\tv308\t1\t0",
+        "codec\tv408\t1\t0",
+        "codec\tv410\t1\t0",
+        "input-protocol\thls"
+      ],
+      "added": [
+        "codec\twebp_anim\t1\t0",
+        "demuxer\thxvs",
+        "demuxer\tjpegxs_pipe",
+        "demuxer\twebp_anim",
+        "filter\tpremultiply_dynamic",
+        "input-protocol\tshared"
+      ]
+    },
+    {
+      "abi": "x86",
+      "baseline_entries": 1373,
+      "candidate_entries": 1374,
+      "removed": [
+        "codec\tsonic\t1\t0",
+        "codec\tv308\t1\t0",
+        "codec\tv408\t1\t0",
+        "codec\tv410\t1\t0",
+        "input-protocol\thls"
+      ],
+      "added": [
+        "codec\twebp_anim\t1\t0",
+        "demuxer\thxvs",
+        "demuxer\tjpegxs_pipe",
+        "demuxer\twebp_anim",
+        "filter\tpremultiply_dynamic",
+        "input-protocol\tshared"
+      ]
+    },
+    {
+      "abi": "x86_64",
+      "baseline_entries": 1373,
+      "candidate_entries": 1374,
+      "removed": [
+        "codec\tsonic\t1\t0",
+        "codec\tv308\t1\t0",
+        "codec\tv408\t1\t0",
+        "codec\tv410\t1\t0",
+        "input-protocol\thls"
+      ],
+      "added": [
+        "codec\twebp_anim\t1\t0",
+        "demuxer\thxvs",
+        "demuxer\tjpegxs_pipe",
+        "demuxer\twebp_anim",
+        "filter\tpremultiply_dynamic",
+        "input-protocol\tshared"
+      ]
+    }
+  ]
+}

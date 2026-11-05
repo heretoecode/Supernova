@@ -1,0 +1,37 @@
+# Hands off while Claude builds 0.155 (owner, 2026-11-04). Never edit these, nor .github/, tools/, build.gradle,
+# settings.gradle, gradle.properties, or anything outside the job you are given.
+# Paths are under src/main/java/com/archos/mediacenter/video/ unless shown.
+leanback/filebrowsing/
+leanback/PreviewLibraryScan.java
+leanback/PreviewScanProgress.java
+leanback/PreviewNetworkScanning.java
+leanback/PreviewNetworkWorkspace.java
+leanback/LibraryHealthPanel.java
+leanback/LibraryHealth.java
+leanback/LibraryHealthActivity.java
+leanback/PreviewIcon.java
+leanback/LandingTile.java
+leanback/SupernovaStyle.java
+leanback/settings/SettingsWorkspace.java
+streaming/putio/
+assets/foundation/
+docs/0.154/
+docs/0.155/
+docs/design/
+design/
+
+# ---- 0.156 (owner, 2026-11-05) — replaces the list above while BRIEF_0156_CODE.md runs ----
+# Claude is coding the screens in parallel. Codex never edits these (Claude's), except where a brief item says so:
+#   all of res/ (layouts, drawables, values, strings) except removing the NOVA help overlay (item 15)
+#   leanback/settings/            (except a FocusFinder call routed through the guard, item 4)
+#   leanback/details/             (except PreviewDetailsData.java for OMDb storage, item 7)
+#   leanback/filebrowsing/        (except LocalStorageView/UniversalFileBrowser library lookup + guard, items 4, 6)
+#   leanback/search/PreviewSearch.java  (only the query/matching part, item 17)
+#   leanback/PreviewIcon.java, LandingTile.java, SupernovaStyle.java, SidePanelKit.java (guard only, item 4),
+#   leanback/CustomiseHome*.java, EditPagePanel.java, PreviewHomeRows.java
+#   player/PlayerController.java  (only items 15 and 16), player/PreviewPlaybackMenus.java, PlaybackSubtitlePanel.java
+#   assets/foundation/, docs/0.154/, docs/0.155/, docs/0.156/, docs/design/, design/, .github/, tools/, Gradle files
+# Codex may now edit (non-UI): scan code incl. PreviewLibraryScan/PreviewScanProgress/PreviewNetworkScanning logic,
+#   LibraryHealth.java (counts only), utils/backup/, diagnostics/, metadata/, streaming/ (not putio/ UI),
+#   player/ engine classes (SubtitleManager, PlayerService, PlayerActivity logic, chapters/IntroDB, new classes),
+#   aos-MediaLib sources via new .github/build/medialib-supernova156-*.patch files (never edit the fork directly).

@@ -1,0 +1,9 @@
+2026-10-15T11:24:30.1682115Z Four ABI registries / tempo state / 64 decode comparisons passed; baseline remains untouched.
+2026-10-15T11:30:10.2762578Z OfficialTitleBindingTest > movieAndTvWithTheSameProviderNumberKeepDistinctCacheEntriesAndArtworkPixels FAILED
+2026-10-15T11:36:41.8693142Z BackupSettingsControllerTest > smallTvWorkspaceKeepsEveryCategoryWithinItsOwnPanelWithCompleteLabels FAILED
+2026-10-15T11:44:59.8676521Z 996 tests completed, 2 failed
+2026-10-15T11:45:00.8721404Z > Task :testNoamazonReleaseUnitTest FAILED
+2026-10-15T11:49:22.8721887Z > Task :lintNoamazonRelease
+2026-10-15T11:50:10.8669338Z > Task :assembleNoamazonRelease
+2026-10-15T11:50:10.8696842Z Execution failed for task ':testNoamazonReleaseUnitTest'.
+2026-10-15T11:50:10.8701672Z BUILD FAILED in 24m

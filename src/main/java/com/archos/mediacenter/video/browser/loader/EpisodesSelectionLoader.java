@@ -18,6 +18,7 @@ import android.content.Context;
 
 import com.archos.mediaprovider.video.VideoStore;
 
+/** Loads selected episodes with their sort and selection rules. */
 public class EpisodesSelectionLoader extends VideosSelectionLoader {
 
 

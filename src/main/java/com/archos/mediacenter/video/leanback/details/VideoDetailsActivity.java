@@ -14,22 +14,25 @@
 
 package com.archos.mediacenter.video.leanback.details;
 
-import android.os.Build;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.transition.Slide;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.TorrentObserverService;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Hosts the video Details page and handles playback navigation. */
 public class VideoDetailsActivity extends LeanbackActivity {
 
     private static final Logger log = LoggerFactory.getLogger(VideoDetailsActivity.class);
@@ -57,16 +60,16 @@ public class VideoDetailsActivity extends LeanbackActivity {
         getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
 
         // Always set the exit transition because the "Next Episode" transition may be needed (we don't know yet)
-        getWindow().setExitTransition(new Slide(Gravity.LEFT));
+        getWindow().setExitTransition(new Slide(Gravity.START));
 
         // Set the enter animation only when asked (i.e. it is a "Next Episode" transition)
         if (getIntent().getBooleanExtra(SLIDE_TRANSITION_EXTRA, false)) {
-            int direction = getIntent().getIntExtra(SLIDE_DIRECTION_EXTRA, Gravity.RIGHT);
+            int direction = getIntent().getIntExtra(SLIDE_DIRECTION_EXTRA, Gravity.END);
             getWindow().setEnterTransition(new Slide(direction));
         }
 
         setContentView(R.layout.androidtv_details_activity);
-        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override public void handleOnBackPressed() {
                 Fragment fragment=getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
                 if(fragment instanceof VideoDetailsFragment&&((VideoDetailsFragment)fragment).closePreviewNativeDetails())return;
@@ -75,20 +78,20 @@ public class VideoDetailsActivity extends LeanbackActivity {
             }
         });
 
-        android.widget.ImageView backdropView = findViewById(R.id.details_backdrop);
+        ImageView backdropView = findViewById(R.id.details_backdrop);
         if (backdropView != null) {
             long launchUptimeMs = getIntent().getLongExtra(VideoDetailsFragment.EXTRA_DETAILS_LAUNCH_UPTIME_MS, -1);
             if (launchUptimeMs != -1) {
                 VideoDetailsTransitionBackdropCache.Entry entry = VideoDetailsTransitionBackdropCache.takeEntry(launchUptimeMs);
                 if (entry != null) {
-                    android.graphics.Bitmap transitionBackdrop = entry.getBitmap();
+                    Bitmap transitionBackdrop = entry.getBitmap();
                     if (transitionBackdrop != null && !transitionBackdrop.isRecycled()) {
                         backdropView.setImageBitmap(transitionBackdrop);
-                        backdropView.setVisibility(android.view.View.VISIBLE);
+                        backdropView.setVisibility(View.VISIBLE);
                         backdropView.setAlpha(1.0f);
                     }
                     if (entry.file != null) {
-                        androidx.fragment.app.Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
+                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_browse_fragment);
                         if (fragment instanceof VideoDetailsFragment) {
                             ((VideoDetailsFragment) fragment).setCurrentlyDisplayedBackdropFile(entry.file);
                         }
@@ -98,17 +101,17 @@ public class VideoDetailsActivity extends LeanbackActivity {
         }
     }
 
+    @Override
     public void onPause(){
         traceDetails("activity-onPause");
         super.onPause();
-        if(getIntent().getBooleanExtra(VideoDetailsFragment.EXTRA_LAUNCHED_FROM_PLAYER, false))
-            TorrentObserverService.paused(this);
+
     }
+    @Override
     public void onResume(){
         super.onResume();
         traceDetails("activity-onResume");
-        if(getIntent().getBooleanExtra(VideoDetailsFragment.EXTRA_LAUNCHED_FROM_PLAYER, false))
-            TorrentObserverService.resumed(this);
+
     }
 
     @Override

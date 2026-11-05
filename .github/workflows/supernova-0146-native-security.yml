@@ -1,0 +1,32 @@
+name: Supernova 0.146 native security regression controls
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/supernova-0.146-upstream-completion-2026-10-28]
+    paths: [.github/workflows/supernova-0146-native-security.yml]
+permissions:
+  contents: read
+jobs:
+  security:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact regression sources
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install sanitizer compilers
+        run: sudo apt-get update && sudo apt-get install -y clang libclang-rt-dev cmake build-essential
+      - name: Reproduce original failures and verify source backports
+        run: python3 .github/build/test-supernova146-native-security.py --workspace "$RUNNER_TEMP/security146"
+      - name: Preserve complete sanitizer and negative-control evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: supernova-0146-native-security-regressions
+          path: |
+            ${{ runner.temp }}/security146/security-regressions.json
+            ${{ runner.temp }}/security146/original/*.log
+            ${{ runner.temp }}/security146/patched/*.log
+          if-no-files-found: warn

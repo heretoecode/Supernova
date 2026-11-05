@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "source_sha": "b2a17cbe5559579f58347b6ad78c45674df85e79",
+  "class_names": [
+    "com.archos.mediacenter.video.leanback.settings.BackupOperationModelTest",
+    "com.archos.mediacenter.video.leanback.settings.LegacySettingsBackupReviewTest",
+    "com.archos.mediacenter.video.leanback.settings.ProductionBackupSettingsTest"
+  ],
+  "tests": 17,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "duration": "45s",
+  "log_sha256": "a06129d5347a07b14656d238277c23cfb61918cbe7541c66910e39a67b024d72",
+  "scope": "Actual older Settings dialog/recreation/confirmation/privacy and production Settings lifecycle plus operation model tests. Corrected await waits for posted click, expected phase, worker completion and public state. No product restoration or layout change.",
+  "limits": "Focused synthetic framework/native SQLite tests; not whole996 acceptance or hardware/force-stop/signed upgrade."
+}
