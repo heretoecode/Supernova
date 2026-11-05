@@ -46,6 +46,7 @@ import com.archos.mediacenter.video.leanback.overlay.Clock;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -1864,6 +1865,69 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         return lines;
     }
 
+    static final String SEEK_PICTURE_TAG = "player.seek_picture";
+    static final int SEEK_PICTURE_WIDTH_DP = 160;
+    static final int SEEK_PICTURE_HEIGHT_DP = 90;
+    private SeekThumbnails seekPictureSource;
+    private AutoCloseable seekPictureListener;
+
+    /**
+     * Seek previews (0.156 #26, experimental): while seeking, the nearest picture the engine has made sits above the
+     * time bubble; until one exists, just the time shows. Memory-only on this thread (engine rule).
+     */
+    private void placeSeekPicture(TextView bubble, float centre, long position, float density) {
+        if (!(bubble.getParent() instanceof ViewGroup))
+            return;
+        ViewGroup parent = (ViewGroup)bubble.getParent();
+        ImageView picture = parent.findViewWithTag(SEEK_PICTURE_TAG);
+        PlayerService service = PlayerService.sPlayerService;
+        SeekThumbnails engine = service == null ? null : service.seekThumbnails();
+        listenForSeekPictures(engine);
+        boolean seeking = mNextSeek >= 0 || mPreviewKeySeeking;
+        android.graphics.Bitmap frame = seeking && engine != null ? engine.nearest(position) : null;
+        if (frame == null) {
+            if (picture != null)
+                picture.setVisibility(View.GONE);
+            return;
+        }
+        int width = Math.round(SEEK_PICTURE_WIDTH_DP * density);
+        int height = Math.round(SEEK_PICTURE_HEIGHT_DP * density);
+        if (picture == null) {
+            picture = new ImageView(mContext);
+            picture.setTag(SEEK_PICTURE_TAG);
+            picture.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            picture.setFocusable(false);
+            android.graphics.drawable.GradientDrawable edge = new android.graphics.drawable.GradientDrawable();
+            edge.setColor(Color.BLACK);
+            edge.setCornerRadius(8 * density);
+            edge.setStroke(Math.max(1, Math.round(density)), SupernovaStyle.GLASS_EDGE);
+            picture.setBackground(edge);
+            picture.setClipToOutline(true);
+            parent.addView(picture, new FrameLayout.LayoutParams(width, height, Gravity.TOP | Gravity.START));
+        }
+        picture.setImageBitmap(frame);
+        picture.setVisibility(View.VISIBLE);
+        float left = PreviewHudTiming.pillLeft(centre - width / 2f, mProgress.getWidth(), width);
+        picture.setTranslationX(left);
+        picture.setTranslationY(bubble.getTranslationY() - height - 6 * density);
+    }
+
+    private void listenForSeekPictures(SeekThumbnails engine) {
+        if (engine == seekPictureSource)
+            return;
+        if (seekPictureListener != null) {
+            try {
+                seekPictureListener.close();
+            } catch (Exception ignored) {
+                // The old engine has already gone.
+            }
+        }
+        seekPictureListener = null;
+        seekPictureSource = engine;
+        if (engine != null)
+            seekPictureListener = engine.addListener(ready -> updatePreviewScrubber());
+    }
+
     private void updatePreviewScrubber() {
         if (!experimentalUi() || mControllerViewLeft == null || mProgress == null)
             return;
@@ -1918,6 +1982,7 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         // Raised clearly above the dot (approved 0.156 HUD), so the time never sits on it.
         bubble.setTranslationY(mProgress.getY() + mProgress.getHeight() / 2f - bubble.getMeasuredHeight() -
                                SCRUB_BUBBLE_GAP_DP * density);
+        placeSeekPicture(bubble, x + bubble.getMeasuredWidth() / 2f, position, density);
         if (mControlBar.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams safe = (ViewGroup.MarginLayoutParams)mControlBar.getLayoutParams();
             int inset = Math.max(Math.round(24 * density), Math.round(mControllerViewLeft.getHeight() * .04f));
