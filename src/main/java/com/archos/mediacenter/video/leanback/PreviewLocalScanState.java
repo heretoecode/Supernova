@@ -11,30 +11,35 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 /** Native importer evidence, independent of which Preview page is attached. */
-final class PreviewLocalScanState {
+final class PreviewLocalScanState
+{
     private static String summary = "";
     private static final Map<String, State> active = new LinkedHashMap<>();
     private static final LinkedHashSet<String> ended = new LinkedHashSet<>();
 
-    private static final class State {
+    private static final class State
+    {
         final String operation = Diagnostics.operation("local_import");
         final long started = SystemClock.elapsedRealtime();
         long lastProgress = started;
     }
 
-    static synchronized void accept(Context context, Intent intent) {
+    static synchronized void accept(Context context, Intent intent)
+    {
         String id = intent.getStringExtra("batch_id"), phase = intent.getStringExtra("phase"),
                mode = intent.getStringExtra("mode");
-        if (id == null || !id.matches("[A-Za-z0-9-]{1,100}") || !Arrays.asList("full", "incremental").contains(mode)
-            || !Arrays
-                .asList("requested", "queued", "started", "indexing", "reconciled", "metadata_queued",
-                    "metadata_failed", "metadata_skipped", "complete", "partial", "failed", "cancelled")
-                .contains(phase)
-            || ended.contains(id))
+        if (id == null || !id.matches("[A-Za-z0-9-]{1,100}") || !Arrays.asList("full", "incremental").contains(mode) ||
+            !Arrays
+                 .asList("requested", "queued", "started", "indexing", "reconciled", "metadata_queued",
+                         "metadata_failed", "metadata_skipped", "complete", "partial", "failed", "cancelled")
+                 .contains(phase) ||
+            ended.contains(id))
             return;
         State state = active.get(id);
-        if (state == null) {
-            if (active.size() >= 32) {
+        if (state == null)
+        {
+            if (active.size() >= 32)
+            {
                 String oldest = active.keySet().iterator().next();
                 State stale = active.remove(oldest);
                 Diagnostics.event("scan_trace_evicted", "operation_id", stale.operation, "batch_id", oldest);
@@ -52,12 +57,17 @@ final class PreviewLocalScanState {
         if (!Arrays.asList("startup", "resume", "content_change", "android_scan").contains(trigger))
             trigger = "native_import";
         Diagnostics.event("scan_" + phase, "operation_id", state.operation, "batch_id", id, "domain", "local_import",
-            "trigger", trigger, "mode", mode, "count_kind", "technical_rows_checked", "checked", checked, "new", added,
-            "updated", updated, "counts_known", known, "elapsed_ms", elapsed);
-        summary = "Local library · " + phase.replace('_', ' ') + "\n" + checked + " media rows checked"
-            + (known ? " · " + added + " new · " + updated + " updated" : " · new/updated counts unavailable") + " · "
-            + elapsed / 1000 + " seconds";
-        if (Arrays.asList("complete", "partial", "failed", "cancelled").contains(phase)) {
+                          "trigger", trigger, "mode", mode, "source_kind", "local", "stage",
+                          intent.getStringExtra("failure_stage"), "failure_class",
+                          intent.getStringExtra("failure_class"), "failure_message",
+                          intent.getStringExtra("failure_message"), "failure_trace",
+                          intent.getStringExtra("failure_trace"), "count_kind", "technical_rows_checked", "checked",
+                          checked, "new", added, "updated", updated, "counts_known", known, "elapsed_ms", elapsed);
+        summary = "Local library · " + phase.replace('_', ' ') + "\n" + checked + " media rows checked" +
+                  (known ? " · " + added + " new · " + updated + " updated" : " · new/updated counts unavailable") +
+                  " · " + elapsed / 1000 + " seconds";
+        if (Arrays.asList("complete", "partial", "failed", "cancelled").contains(phase))
+        {
             LibraryScanRecord.record(context, "local", phase);
             PreferenceManager.getDefaultSharedPreferences(context)
                 .edit()
@@ -71,8 +81,10 @@ final class PreviewLocalScanState {
         }
     }
 
-    static synchronized String status(Context context) {
-        if (!active.isEmpty()) {
+    static synchronized String status(Context context)
+    {
+        if (!active.isEmpty())
+        {
             long latest = 0;
             for (State state : active.values())
                 latest = Math.max(latest, state.lastProgress);
@@ -80,11 +92,12 @@ final class PreviewLocalScanState {
             if (idle >= 30)
                 return summary + "\nWaiting For Native Importer · Last Progress " + idle + " Seconds Ago";
         }
-        return summary.isEmpty() ? PreferenceManager.getDefaultSharedPreferences(context).getString(
-                                       "preview_local_scan_result", "")
-                                 : summary;
+        return summary.isEmpty()
+            ? PreferenceManager.getDefaultSharedPreferences(context).getString("preview_local_scan_result", "")
+            : summary;
     }
 
-    private PreviewLocalScanState() {
+    private PreviewLocalScanState()
+    {
     }
 }

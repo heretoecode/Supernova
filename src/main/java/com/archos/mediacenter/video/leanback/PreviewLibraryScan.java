@@ -1,23 +1,39 @@
 package com.archos.mediacenter.video.leanback;
 
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.*;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler;
-import com.archos.mediaprovider.video.*;
+import com.archos.mediaprovider.video.LoaderUtils;
+import com.archos.mediaprovider.video.NetworkAutoRefresh;
+import com.archos.mediaprovider.video.NetworkScannerReceiver;
+import com.archos.mediaprovider.video.NetworkScannerServiceVideo;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediaprovider.ImportState;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediascraper.AutoScrapeService;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /** One manual/foreground scheduler entry, with lifecycle independent of any particular page. */
-public final class PreviewLibraryScan {
+public final class PreviewLibraryScan
+{
     private static long requestedAt;
     private static boolean installed;
     private static boolean selectionScanPending;
@@ -29,32 +45,37 @@ public final class PreviewLibraryScan {
     private static final PreviewScanProgress progress = new PreviewScanProgress();
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
-    public static synchronized void install(Context context) {
+    public static synchronized void install(Context context)
+    {
         if (installed)
             return;
         installed = true;
         Context app = context.getApplicationContext();
+        com.archos.mediascraper.ScanMetadataHandoff.install(app);
         BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context c, Intent intent) {
-                if ((c.getPackageName() + ".LOCAL_IMPORT_LIFECYCLE").equals(intent.getAction())) {
+            @Override public void onReceive(Context c, Intent intent)
+            {
+                if ((c.getPackageName() + ".LOCAL_IMPORT_LIFECYCLE").equals(intent.getAction()))
+                {
                     PreviewLocalScanState.accept(c, intent);
                     return;
                 }
                 String next = intent.getStringExtra("phase"), batch = intent.getStringExtra("batch_id"),
                        source = intent.getStringExtra("source_id");
                 if (!Arrays
-                        .asList("queued", "started", "reconciled", "partial", "complete", "failed", "coalesced",
-                            "not_started", "metadata_queued", "metadata_skipped", "metadata_failed", "batch_complete",
-                            "batch_failed")
-                        .contains(next)
-                    || batch == null || !batch.matches("[A-Za-z0-9-]{1,100}") || source == null
-                    || !source.matches("[a-f0-9]{24}"))
+                         .asList("queued", "started", "reconciled", "partial", "complete", "failed", "coalesced",
+                                 "not_started", "metadata_queued", "metadata_skipped", "metadata_failed",
+                                 "batch_complete", "batch_failed")
+                         .contains(next) ||
+                    batch == null || !batch.matches("[A-Za-z0-9-]{1,100}") || source == null ||
+                    !source.matches("[a-f0-9]{24}"))
                     return;
-                synchronized (PreviewLibraryScan.class) {
+                synchronized (PreviewLibraryScan.class)
+                {
                     boolean fresh = progress.accept(batch, source, next, intent.getIntExtra("checked", 0),
-                        intent.getIntExtra("added", 0), intent.getIntExtra("updated", 0));
-                    if (fresh) {
+                                                    intent.getIntExtra("added", 0), intent.getIntExtra("updated", 0));
+                    if (fresh)
+                    {
                         sourcesTotal = -1;
                         metadataOutcome = "unknown";
                     }
@@ -63,8 +84,9 @@ public final class PreviewLibraryScan {
                         sourcesTotal = total;
                     if (next.startsWith("metadata_"))
                         metadataOutcome = next;
-                    if (operation.isEmpty() || fresh && !phase.equals("queued")
-                        || operationEnded && (next.equals("queued") || next.equals("started"))) {
+                    if (operation.isEmpty() || fresh && !phase.equals("queued") ||
+                        operationEnded && (next.equals("queued") || next.equals("started")))
+                    {
                         finishOperation("superseded");
                         operation = Diagnostics.operation("library_scan");
                         operationEnded = false;
@@ -81,24 +103,31 @@ public final class PreviewLibraryScan {
                     added = progress.total(1);
                     updated = progress.total(2);
                     completed = progress.total(3);
-                    Diagnostics.event("scan_" + next, "operation_id", operation, "batch_id", batch, "trigger", trigger,
-                        "source_id", source, "checked", checked, "new", added, "updated", updated, "sources_completed",
-                        completed, "sources_total", sourcesTotal, "source_count_known", sourcesTotal >= 0,
-                        "sources_failed", progress.total(4), "metadata_outcome", metadataOutcome, "elapsed_ms",
-                        SystemClock.elapsedRealtime() - requestedAt);
+                    Diagnostics.event(
+                        "scan_" + next, "operation_id", operation, "batch_id", batch, "trigger", trigger, "source_id",
+                        source, "source_kind", intent.getStringExtra("source_kind"), "stage",
+                        intent.getStringExtra("failure_stage"), "failure_class", intent.getStringExtra("failure_class"),
+                        "failure_message", intent.getStringExtra("failure_message"), "failure_trace",
+                        intent.getStringExtra("failure_trace"), "checked", checked, "new", added, "updated", updated,
+                        "sources_completed", completed, "sources_total", sourcesTotal, "source_count_known",
+                        sourcesTotal >= 0, "sources_failed", progress.total(4), "metadata_outcome", metadataOutcome,
+                        "elapsed_ms", SystemClock.elapsedRealtime() - requestedAt);
                     if (next.equals("complete") || next.equals("failed") || next.startsWith("batch_"))
                         PreferenceManager.getDefaultSharedPreferences(c)
                             .edit()
-                            .putString("preview_scan_result",
+                            .putString(
+                                "preview_scan_result",
                                 (progress.total(4) > 0 || next.equals("batch_failed") ? "Partial / failed sources"
-                                                                                      : phase)
-                                    + " · " + checked + " checked · " + added + " new · " + updated + " updated"
-                                    + (metadataOutcome.equals("metadata_failed") ? " · Metadata could not be queued"
-                                                                                 : ""))
+                                                                                      : phase) +
+                                    " · " + checked + " checked · " + added + " new · " + updated + " updated" +
+                                    (metadataOutcome.equals("metadata_failed") ? " · Metadata could not be queued"
+                                                                               : ""))
                             .putLong("preview_scan_result_time", System.currentTimeMillis())
                             .apply();
-                    if (next.startsWith("batch_")) {
-                        LibraryScanRecord.record(c, "network",
+                    if (next.startsWith("batch_"))
+                    {
+                        LibraryScanRecord.record(
+                            c, "network",
                             progress.total(4) > 0 || metadataOutcome.equals("metadata_failed") ? "partial" : next);
                         finishOperation(next);
                     }
@@ -113,7 +142,8 @@ public final class PreviewLibraryScan {
             app.registerReceiver(receiver, filter);
     }
 
-    public static synchronized void request(Context context) {
+    public static synchronized void request(Context context)
+    {
         install(context);
         Context app = context.getApplicationContext();
         if (active())
@@ -121,8 +151,9 @@ public final class PreviewLibraryScan {
         if (!SupernovaLibraryPolicy.configured(app))
             return;
         LinkedHashSet<String> roots = new LinkedHashSet<>();
-        for (String root : PreferenceManager.getDefaultSharedPreferences(app).getStringSet(
-                 "supernova_library_roots", Collections.emptySet())) {
+        for (String root : PreferenceManager.getDefaultSharedPreferences(app).getStringSet("supernova_library_roots",
+                                                                                           Collections.emptySet()))
+        {
             Uri uri = Uri.parse(root);
             if ("file".equals(uri.getScheme()) && uri.getPath() != null)
                 roots.add(uri.getPath());
@@ -131,21 +162,24 @@ public final class PreviewLibraryScan {
         requestNetwork(app);
     }
 
-    public static synchronized void requestNetwork(Context context) {
+    public static synchronized void requestNetwork(Context context)
+    {
         requestNetwork(context, "manual");
     }
 
-    public static synchronized void requestNetwork(Context context, String requestedTrigger) {
+    public static synchronized void requestNetwork(Context context, String requestedTrigger)
+    {
         install(context);
         if (!SupernovaLibraryPolicy.configured(context))
             return;
         String origin = Arrays.asList("manual", "startup", "resume", "scheduled").contains(requestedTrigger)
-            ? requestedTrigger
-            : "unknown";
+                            ? requestedTrigger
+                            : "unknown";
         PutioSyncScheduler.request(context, origin);
         // Do not confuse metadata/import activity with an active network traversal.
         boolean busy = active();
-        if (busy) {
+        if (busy)
+        {
             Diagnostics.event("scan_request_coalesced", "operation_id", operation, "trigger", origin);
             return;
         }
@@ -160,28 +194,31 @@ public final class PreviewLibraryScan {
         sourceLocation = sourceId = "";
         sourcesTotal = -1;
         metadataOutcome = "unknown";
-        Diagnostics.event(
-            "scan_requested", "operation_id", operation, "trigger", trigger, "scheduler", "indexed_sources");
+        Diagnostics.event("scan_requested", "operation_id", operation, "trigger", trigger, "scheduler",
+                          "indexed_sources");
         NetworkAutoRefresh.forceRescan(context.getApplicationContext());
         Diagnostics.event("scan_queued", "operation_id", operation, "trigger", trigger, "phase", "scheduler_request",
-            "source_count_known", false);
+                          "source_count_known", false);
         final String request = operation;
         MAIN.postDelayed(() -> {
-            synchronized (PreviewLibraryScan.class) {
-                if (request.equals(operation) && phase.equals("queued")) {
+            synchronized (PreviewLibraryScan.class)
+            {
+                if (request.equals(operation) && phase.equals("queued"))
+                {
                     phase = "not_started";
                     Diagnostics.event("scan_not_started", "operation_id", operation, "scheduler_error",
-                        NetworkAutoRefresh.getLastError(context));
+                                      NetworkAutoRefresh.getLastError(context));
                     finishOperation("not_started");
                 }
             }
         }, 15000);
     }
 
-    public static synchronized void requestAfterChanges(Context c) {
+    public static synchronized void requestAfterChanges(Context c)
+    {
         Context app = c.getApplicationContext();
-        if (!NetworkScannerServiceVideo.isScannerAlive()
-            && AutoScrapeService.getNetworkScanCount() == 0) {
+        if (!NetworkScannerServiceVideo.isScannerAlive() && AutoScrapeService.getNetworkScanCount() == 0)
+        {
             request(app);
             return;
         }
@@ -189,13 +226,14 @@ public final class PreviewLibraryScan {
             return;
         selectionScanPending = true;
         MAIN.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (PreviewLibraryScan.class) {
+            @Override public void run()
+            {
+                synchronized (PreviewLibraryScan.class)
+                {
                     if (!selectionScanPending)
                         return;
-                    if (NetworkScannerServiceVideo.isScannerAlive()
-                        || AutoScrapeService.getNetworkScanCount() > 0) {
+                    if (NetworkScannerServiceVideo.isScannerAlive() || AutoScrapeService.getNetworkScanCount() > 0)
+                    {
                         MAIN.postDelayed(this, 500);
                         return;
                     }
@@ -206,11 +244,13 @@ public final class PreviewLibraryScan {
         }, 500);
     }
 
-    public static synchronized void cancelPendingSelectionScan() {
+    public static synchronized void cancelPendingSelectionScan()
+    {
         selectionScanPending = false;
     }
 
-    private static void finishOperation(String reason) {
+    private static void finishOperation(String reason)
+    {
         if (operationEnded || operation.isEmpty())
             return;
         operationEnded = true;
@@ -218,51 +258,54 @@ public final class PreviewLibraryScan {
         Diagnostics.finishOperation(operation, "library_scan", requestedAt);
     }
 
-    public static synchronized boolean active() {
-        return !operationEnded && phase.equals("queued") || NetworkScannerServiceVideo.isScannerAlive()
-            || AutoScrapeService.getNetworkScanCount() > 0;
+    public static synchronized boolean active()
+    {
+        return !operationEnded && phase.equals("queued") || NetworkScannerServiceVideo.isScannerAlive() ||
+            AutoScrapeService.getNetworkScanCount() > 0;
     }
 
-    public static boolean building() {
-        return ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport()
-            || NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress();
+    public static boolean building()
+    {
+        return ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport() ||
+            NetworkScannerReceiver.isScannerWorking() || LoaderUtils.getScrapeInProgress();
     }
 
-    public static String libraryStatus(Context c) {
+    public static String libraryStatus(Context c)
+    {
         String nativeState = PreviewLocalScanState.status(c);
-        String live = formatLibraryStatus(status(c),
-            ImportState.VIDEO.isInitialImport()
-                || ImportState.VIDEO.isRegularImport(),
-            ImportState.VIDEO.getNumberOfFilesRemainingToImport(),
-            LoaderUtils.getScrapeInProgress(),
+        String live = formatLibraryStatus(
+            status(c), ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport(),
+            ImportState.VIDEO.getNumberOfFilesRemainingToImport(), LoaderUtils.getScrapeInProgress(),
             AutoScrapeService.getNumberOfFilesRemainingToProcess());
         return nativeState.isEmpty() ? live : nativeState + "\n" + live;
     }
 
-    static String formatLibraryStatus(
-        String network, boolean importing, long importRemaining, boolean identifying, long metadataRemaining) {
+    static String formatLibraryStatus(String network, boolean importing, long importRemaining, boolean identifying,
+                                      long metadataRemaining)
+    {
         List<String> stages = new ArrayList<>();
         if (importing)
-            stages.add("Importing local library"
-                + (importRemaining >= 0 ? " · " + importRemaining + " remaining" : " · progress unavailable"));
+            stages.add("Importing local library" +
+                       (importRemaining >= 0 ? " · " + importRemaining + " remaining" : " · progress unavailable"));
         if (identifying)
-            stages.add("Identifying library titles"
-                + (metadataRemaining >= 0 ? " · " + metadataRemaining + " remaining" : " · progress unavailable"));
+            stages.add("Identifying library titles" +
+                       (metadataRemaining >= 0 ? " · " + metadataRemaining + " remaining" : " · progress unavailable"));
         if (network != null && !network.isEmpty())
             stages.add(network);
         return TextUtils.join("\n", stages);
     }
 
-    public static synchronized String status(Context c) {
+    public static synchronized String status(Context c)
+    {
         if (NetworkScannerServiceVideo.isScannerAlive() || sourcesTotal >= 0 && completed < sourcesTotal)
-            return "Scanning indexed sources · " + phase + (sourceLocation.isEmpty() ? "" : "\n" + sourceLocation)
-                + "\n"
-                + (phase.equals("started")
-                        ? progress.liveChecked(sourceId, NetworkScannerServiceVideo.getFilesFoundCount())
-                        : checked)
-                + " checked · " + added + " new · " + updated + " updated\n" + completed
-                + (sourcesTotal >= 0 ? " / " + sourcesTotal : "") + " sources completed · "
-                + Math.max(0, (SystemClock.elapsedRealtime() - requestedAt) / 1000) + " seconds";
+            return "Scanning indexed sources · " + phase + (sourceLocation.isEmpty() ? "" : "\n" + sourceLocation) +
+                "\n" +
+                (phase.equals("started")
+                     ? progress.liveChecked(sourceId, NetworkScannerServiceVideo.getFilesFoundCount())
+                     : checked) +
+                " checked · " + added + " new · " + updated + " updated\n" + completed +
+                (sourcesTotal >= 0 ? " / " + sourcesTotal : "") + " sources completed · " +
+                Math.max(0, (SystemClock.elapsedRealtime() - requestedAt) / 1000) + " seconds";
         if (phase.equals("queued"))
             return "Scan requested · waiting for the scanner";
         if (phase.equals("not_started"))
@@ -272,29 +315,30 @@ public final class PreviewLibraryScan {
         return result.isEmpty() ? PreviewNetworkScanning.lastResult(c) : result;
     }
 
-    public static synchronized String overview(Context c) {
-        long last =
-            PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time", 0);
-        String ago = last == 0 ? "Not yet completed"
-                               : DateUtils
-                                     .getRelativeTimeSpanString(last, System.currentTimeMillis(),
-                                         DateUtils.MINUTE_IN_MILLIS)
-                                     .toString();
+    public static synchronized String overview(Context c)
+    {
+        long last = PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time", 0);
+        String ago =
+            last == 0
+                ? "Not yet completed"
+                : DateUtils.getRelativeTimeSpanString(last, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+                      .toString();
         boolean busy = NetworkScannerServiceVideo.isScannerAlive();
-        return "Scan Overview\n\nStatus: "
-            + (busy ? "Scanning"
-                    : phase.equals("queued") ? "Requested"
-                    : phase.equals("failed") || phase.equals("batch_failed") ? "Source problems"
-                                                                             : "Idle")
-            + "\nCurrent source: " + (sourceLocation.isEmpty() ? "—" : sourceLocation) + "\nFiles checked: "
-            + (busy && phase.equals("started")
-                    ? progress.liveChecked(sourceId, NetworkScannerServiceVideo.getFilesFoundCount())
-                    : checked)
-            + "\nNew files: " + added + "\nUpdated files: " + updated + "\nSources completed: " + completed
-            + (sourcesTotal >= 0 ? " / " + sourcesTotal : "") + "\nSource problems: " + progress.total(4)
-            + "\nLast completed: " + ago + "\n\n" + libraryStatus(c);
+        return "Scan Overview\n\nStatus: " +
+            (busy                                                     ? "Scanning"
+             : phase.equals("queued")                                 ? "Requested"
+             : phase.equals("failed") || phase.equals("batch_failed") ? "Source problems"
+                                                                      : "Idle") +
+            "\nCurrent source: " + (sourceLocation.isEmpty() ? "—" : sourceLocation) + "\nFiles checked: " +
+            (busy && phase.equals("started")
+                 ? progress.liveChecked(sourceId, NetworkScannerServiceVideo.getFilesFoundCount())
+                 : checked) +
+            "\nNew files: " + added + "\nUpdated files: " + updated + "\nSources completed: " + completed +
+            (sourcesTotal >= 0 ? " / " + sourcesTotal : "") + "\nSource problems: " + progress.total(4) +
+            "\nLast completed: " + ago + "\n\n" + libraryStatus(c);
     }
 
-    private PreviewLibraryScan() {
+    private PreviewLibraryScan()
+    {
     }
 }
