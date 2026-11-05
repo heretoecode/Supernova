@@ -318,15 +318,15 @@ public final class PreviewSettings {
         categories.get("Advanced").addPreference(diagnostics);
         // Approved 0.156 (owner notes 0.155 #29): logging always records in full detail, so there is no level
         // choice; Clear diagnostic data removes every saved log and report.
-        Preference clear = new Preference(fragment.requireContext());
-        clear.setKey(DIAGNOSTIC_CLEAR);
-        clear.setTitle("Clear diagnostic data");
-        clear.setSummary("Delete every saved log and report on this device.");
-        clear.setOnPreferenceClickListener(p -> {
+        Preference clearDiagnostics = new Preference(fragment.requireContext());
+        clearDiagnostics.setKey(DIAGNOSTIC_CLEAR);
+        clearDiagnostics.setTitle("Clear diagnostic data");
+        clearDiagnostics.setSummary("Delete every saved log and report on this device.");
+        clearDiagnostics.setOnPreferenceClickListener(p -> {
             confirmClearDiagnostics(fragment);
             return true;
         });
-        categories.get("Advanced").addPreference(clear);
+        categories.get("Advanced").addPreference(clearDiagnostics);
         for (String label : new String[] {
             "Issues Digest", "Report a Problem", "Show Latest Reference"
         }) {
