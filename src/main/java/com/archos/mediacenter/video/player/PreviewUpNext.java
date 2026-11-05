@@ -9,7 +9,6 @@ import android.widget.*;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.leanback.*;
 import com.archos.mediacenter.utils.introdb.IntroSegments;
-import com.archos.mediacenter.video.leanback.SharedThreePanel;
 import com.archos.mediacenter.video.leanback.SupernovaStyle;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -131,32 +130,153 @@ final class PreviewUpNext {
         root.addView(panel, params);
     }
 
+    static final long SKIP_SHOWN_MS = 10_000;
+    private PlayerService.SegmentPrompt skipPart;
+    private long skipShownAt;
+    private boolean skipDismissed, skipWithControls, skipWaitForControls;
+    private android.animation.ValueAnimator skipDrain;
+
+    /**
+     * Owner-approved Skip button (notes #17, mock-up skip-button/05): white, bottom right, selected when it appears
+     * so one OK skips; the white drains to light grey over 10 seconds, then it fades; opening the controls brings
+     * it back (selected, above them) until the part ends.
+     */
     private void segmentPill(PlayerService service) {
-        PlayerService.SegmentPrompt prompt = service == null ? null : service.segmentPrompt();
-        if (prompt == null) {
+        PlayerService.SegmentPrompt live = service == null ? null : service.segmentPrompt();
+        long now = SystemClock.elapsedRealtime();
+        if (live != null && (skipPart == null || live.target != skipPart.target)) {
+            skipPart = live;
+            skipShownAt = now;
+            skipDismissed = false;
+        }
+        Player player = Player.sPlayer;
+        boolean partRunning = skipPart != null && service != null && player != null &&
+            service.segmentSkippingEnabled() && player.getCurrentPosition() < skipPart.target;
+        if (!partRunning) {
+            skipPart = null;
             removeSkip();
             return;
         }
-        if (skipPill != null && skipExpires == prompt.expires)
+        long left = SKIP_SHOWN_MS - (now - skipShownAt);
+        boolean fresh = left > 0 && !skipDismissed;
+        boolean controls = PlayerController.isControlBarShowing();
+        if (!controls)
+            skipWaitForControls = false;
+        if (skipWaitForControls || !fresh && !controls) {
+            removeSkip();
             return;
+        }
+        if (skipPill == null)
+            showSkip(service, fresh ? left : 0);
+        if (skipWithControls != controls)
+            placeSkip(controls);
+    }
+
+    private void showSkip(PlayerService service, long left) {
         removeSkip();
-        skipExpires = prompt.expires;
-        skipPill = SharedThreePanel.action(
-            activity, "Skip " + PlayerService.introLabels(activity).get(prompt.type), () -> {
-                service.skipPrompt();
-                removeSkip();
-            });
+        PlayerService.SegmentPrompt part = skipPart;
+        skipPill = new TextView(activity);
         skipPill.setTag("playback.segment.skip");
-        SupernovaStyle.applyButton(
-            skipPill, SupernovaStyle.Surface.STANDARD);
-        skipPill.setElevation(dp(4));
+        skipPill.setText("Skip " + PlayerService.introLabels(activity).get(part.type));
+        skipPill.setTextColor(SupernovaStyle.FOCUS_TEXT);
+        skipPill.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, dp(22));
+        skipPill.setTypeface(SupernovaStyle.LABEL);
+        skipPill.setIncludeFontPadding(false);
+        skipPill.setGravity(Gravity.CENTER);
+        skipPill.setSingleLine(true);
+        skipPill.setPadding(dp(20), 0, dp(26), 0);
+        PreviewIcon icon = new PreviewIcon("next");
+        icon.setColorFilter(new android.graphics.PorterDuffColorFilter(SupernovaStyle.FOCUS_TEXT,
+                                                                       android.graphics.PorterDuff.Mode.SRC_IN));
+        icon.setBounds(0, 0, dp(23), dp(23));
+        skipPill.setCompoundDrawables(icon, null, null, null);
+        skipPill.setCompoundDrawablePadding(dp(10));
+        SkipDrain drain = new SkipDrain(dp(17));
+        drain.fraction = left > 0 ? (float)left / SKIP_SHOWN_MS : 1f;
+        skipPill.setBackground(drain);
+        skipPill.setElevation(dp(5));
+        skipPill.setFocusable(true);
+        skipPill.setFocusableInTouchMode(true);
+        skipPill.setOnClickListener(v -> skip(part));
+        if (left > 0) {
+            skipDrain = android.animation.ValueAnimator.ofFloat(drain.fraction, 0f);
+            skipDrain.setDuration(left);
+            skipDrain.setInterpolator(new android.view.animation.LinearInterpolator());
+            skipDrain.addUpdateListener(a -> {
+                drain.fraction = (float)a.getAnimatedValue();
+                drain.invalidateSelf();
+            });
+            skipDrain.start();
+        }
         FrameLayout root = activity.findViewById(android.R.id.content);
-        FrameLayout.LayoutParams frame = new FrameLayout.LayoutParams(-2, dp(50), Gravity.END | Gravity.BOTTOM);
-        frame.setMargins(dp(24), dp(20), dp(26), dp(196));
-        root.addView(skipPill, frame);
+        skipWithControls = !PlayerController.isControlBarShowing();
+        root.addView(skipPill, new FrameLayout.LayoutParams(-2, dp(60), Gravity.END | Gravity.BOTTOM));
+        placeSkip(PlayerController.isControlBarShowing());
+        skipOrigin = activity.getCurrentFocus();
+        skipPill.requestFocus();
+    }
+
+    private void placeSkip(boolean controls) {
+        skipWithControls = controls;
+        if (skipPill == null)
+            return;
+        FrameLayout.LayoutParams frame = (FrameLayout.LayoutParams)skipPill.getLayoutParams();
+        frame.setMargins(dp(24), dp(20), dp(48), controls ? dp(135) : dp(55));
+        skipPill.setLayoutParams(frame);
+    }
+
+    private void skip(PlayerService.SegmentPrompt part) {
+        Player player = Player.sPlayer;
+        if (part != null && player != null && PlayerService.isSafeAutoSkipTarget(part.target, player.getDuration()))
+            player.seekTo((int)part.target);
+        skipPart = null;
+        removeSkip();
+    }
+
+    /** White that drains away to light grey as the time runs out (owner's choice, option B). */
+    static final class SkipDrain extends android.graphics.drawable.Drawable {
+        private final android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        private final float radius;
+        float fraction = 1f;
+
+        SkipDrain(float radius) {
+            this.radius = radius;
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas canvas) {
+            android.graphics.Rect b = getBounds();
+            android.graphics.RectF box = new android.graphics.RectF(b);
+            paint.setColor(0xFFAEB4BF);
+            canvas.drawRoundRect(box, radius, radius, paint);
+            int saved = canvas.save();
+            canvas.clipRect(b.left, b.top, b.left + b.width() * Math.max(0f, Math.min(1f, fraction)), b.bottom);
+            paint.setColor(SupernovaStyle.FOCUS_FILL);
+            canvas.drawRoundRect(box, radius, radius, paint);
+            canvas.restoreToCount(saved);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(android.graphics.ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     }
 
     private void removeSkip() {
+        if (skipDrain != null) {
+            skipDrain.cancel();
+            skipDrain = null;
+        }
         if (skipPill != null) {
             boolean restore = skipPill.hasFocus();
             if (skipPill.getParent() instanceof ViewGroup)
@@ -194,14 +314,21 @@ final class PreviewUpNext {
                     consumeKeyUp = key;
                     return true;
                 }
-                if (key == KeyEvent.KEYCODE_DPAD_DOWN || key == KeyEvent.KEYCODE_DPAD_LEFT ||
-                    key == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                    if (skipOrigin != null)
+                if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    // Down goes to the controls (opening them if hidden); the button stays.
+                    if (skipOrigin != null && skipOrigin.isShown())
                         skipOrigin.requestFocus();
+                    else
+                        showHud.run();
                     consumeKeyUp = key;
                     return true;
                 }
-                if (key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_DPAD_UP) {
+                if (key == KeyEvent.KEYCODE_BACK || key == KeyEvent.KEYCODE_DPAD_UP ||
+                    key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                    // Dismiss: the part plays; it comes back only with the controls.
+                    skipDismissed = true;
+                    skipWaitForControls = PlayerController.isControlBarShowing();
+                    removeSkip();
                     consumeKeyUp = key;
                     return true;
                 }
