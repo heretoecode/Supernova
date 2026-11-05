@@ -6,6 +6,11 @@ import static org.junit.Assert.assertFalse;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupExporter;
+import java.util.EnumSet;
 import com.archos.mediacenter.video.utils.backup.BackupCategory;
 import com.archos.mediacenter.video.utils.backup.LogicalBackupArchive;
 import com.archos.mediacenter.video.utils.backup.LogicalBackupImport;
@@ -25,6 +30,7 @@ import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30)
+@org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
 public class LargeLogicalBackupTest
 {
     @Test public void sixtyOneThousandMatchesSurviveClosedVerificationPublicationAndRestorePreview() throws Exception
@@ -64,5 +70,67 @@ public class LargeLogicalBackupTest
             directory.delete();
         }
         assertFalse(directory.exists());
+    }
+    @Test public void actualExporterRetainsEveryMatchAndPreviousBackupForOwnersDefaultSelection() throws Exception
+    {
+        Context context = RuntimeEnvironment.getApplication();
+        context.deleteDatabase("media.db");
+        try (VideoOpenHelper helper = new VideoOpenHelper(context))
+        {
+            SQLiteDatabase db = helper.getWritableDatabase();
+            db.beginTransaction();
+            try (SQLiteStatement file = db.compileStatement(
+                     "INSERT INTO files"
+                     + "(_id,remote_id,media_type,Archos_hiddenByUser,_data,bookmark,title,"
+                     + "ArchosMediaScraper_type,ArchosMediaScraper_id) VALUES(?,?,3,0,?,0,'fixture',11,?)");
+                 SQLiteStatement movie = db.compileStatement(
+                     "INSERT INTO MOVIE"
+                     + "(_id,video_id,m_online_id,Nova_pinned,name_movie) VALUES(?,?,?,0,'fixture')"))
+            {
+                for (int i = 1; i <= 61050; i++)
+                {
+                    file.bindLong(1, i);
+                    file.bindLong(2, i);
+                    file.bindString(3, i % 2 == 0 ? "/storage/USB/" + i + ".mkv"
+                                                  : "webdavs://media.example/films/" + i + ".mkv");
+                    file.bindLong(4, i);
+                    file.executeInsert();
+                    movie.bindLong(1, i);
+                    movie.bindLong(2, i);
+                    movie.bindLong(3, i);
+                    movie.executeInsert();
+                }
+                db.setTransactionSuccessful();
+            }
+            finally
+            {
+                db.endTransaction();
+            }
+        }
+        EnumSet<BackupCategory> selected = EnumSet.noneOf(BackupCategory.class);
+        for (BackupCategory category : BackupCategory.values())
+        {
+            if (category.defaultIncluded)
+            {
+                selected.add(category);
+            }
+        }
+        File previous = new File(context.getCacheDir(), "previous-backup.zip");
+        byte[] original = {12, 34, 56};
+        Files.write(previous.toPath(), original);
+        File archive = LogicalBackupExporter.preparePrivate(context, selected, () -> false);
+        try
+        {
+            VerifiedBackupPublication.prepare(archive, () -> false);
+            Map<BackupCategory, JSONObject> restored = LogicalBackupArchive.readCategories(archive, () -> false);
+            assertEquals(selected, restored.keySet());
+            assertEquals(61050, restored.get(BackupCategory.MATCHES).getJSONArray("rows").length());
+            org.junit.Assert.assertArrayEquals(original, Files.readAllBytes(previous.toPath()));
+        }
+        finally
+        {
+            archive.delete();
+            previous.delete();
+        }
     }
 }
