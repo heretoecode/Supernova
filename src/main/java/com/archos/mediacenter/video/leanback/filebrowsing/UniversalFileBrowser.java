@@ -187,21 +187,22 @@ public final class UniversalFileBrowser extends LinearLayout {
         grid.setOrientation(VERTICAL);
         grid.setTag("network.landing");
         grid.setPadding(gridDp(12), gridDp(8), gridDp(12), gridDp(8));
-        // Same tiles as the Settings landing page (owner, 3 Nov 2026): no page title, 3 × 2, charcoal.
+        // Approved 0.156 landing (mock-ups network-files-v2/01-04 and 08): Saved Connections is merged into Network
+        // Shares, Advanced is dropped, Library Health gets a tile with a count, and Scan now shows live status.
         String[] labels = {
-            "Local Storage", "Network Shares", "Add Connection", "Saved Connections",
-            "Library Scanning", "Advanced"
+            "Local Storage", "Network Shares", "Add Connection", "Library Health",
+            "Library Scanning", "Scan now"
         };
         String[] copy = {
             "Browse this device's storage and any USB drives.",
-            "Open saved shares, devices on your network and Put.io.",
-            "Connect to a share using SMB, WebDAV, SFTP or FTP.",
-            "Edit connections and choose which ones feed your library.",
-            "Scan for new videos and set up automatic checks.",
-            "Library Health, file browsing and compatibility options."
+            "Browse and manage Put.io and any other shares.",
+            "Connect to a computer, NAS or server.",
+            healthLine(getContext()),
+            scheduleLine(getContext()),
+            scanLine(getContext())
         };
         String[] icons = {
-            "local", "network", "plus", "settings.nodes", "scan", "settings"
+            "local", "network", "plus", "health", "settings", "scan"
         };
         landingCards.clear();
         for (int r = 0; r < 2; r++) {
@@ -225,7 +226,10 @@ public final class UniversalFileBrowser extends LinearLayout {
                     if (yes)
                         landingSelection = index;
                 });
-                card.setOnClickListener(v -> openLandingCard(index));
+                if (index == 5)
+                    card.setOnClickListener(v -> scanNow());
+                else
+                    card.setOnClickListener(v -> openLandingCard(index));
                 card.setOnKeyListener((v, key, event) -> {
                     if (event.getAction() != KeyEvent.ACTION_DOWN)
                         return false;
@@ -254,6 +258,79 @@ public final class UniversalFileBrowser extends LinearLayout {
         landingScroll.addView(grid, new ScrollView.LayoutParams(-1, -1));
         networkLayout.landing(landingScroll);
         landingCards.get(landingSelection).requestFocus();
+        refreshLanding.run();
+    }
+
+    /** Keeps Library Health's count and Scan now's status live while the landing is on screen. */
+    private final Runnable refreshLanding = new Runnable() {
+        @Override
+        public void run() {
+            removeCallbacks(this);
+            if (landingCards.size() < 6 || !landingCards.get(5).isAttachedToWindow())
+                return;
+            LinearLayout health = (LinearLayout)landingCards.get(3);
+            LandingTile.describe(health, healthLine(getContext()));
+            LandingTile.badge(health, LibraryHealth.needsAttentionCount(getContext()));
+            LandingTile.describe((LinearLayout)landingCards.get(4), scheduleLine(getContext()));
+            LinearLayout scan = (LinearLayout)landingCards.get(5);
+            boolean busy = PreviewLibraryScan.active() || PreviewLibraryScan.building();
+            LandingTile.rename(scan, busy ? "Scanning…" : "Scan now");
+            LandingTile.describe(scan, scanLine(getContext()));
+            // Not under Robolectric: a self-renewing callback would keep a paused test looper busy forever.
+            if (!"robolectric".equals(android.os.Build.FINGERPRINT))
+                postDelayed(this, 1000);
+        }
+    };
+
+    private void scanNow() {
+        landingSelection = 5;
+        // One button for USB drives, library folders and Put.io (the old Scan Now and Scan Library together).
+        if (!PreviewLibraryScan.active())
+            PreviewLibraryScan.request(getContext());
+        refreshLanding.run();
+    }
+
+    static String healthLine(Context c) {
+        LibraryAttentionCount count = LibraryHealth.attention(c);
+        if (count.count == 0)
+            return "Everything in your library looks fine.";
+        List<String> parts = new ArrayList<>();
+        if (count.titles > 0)
+            parts.add(count.titles + (count.titles == 1 ? " file needs a look" : " files need a look"));
+        if (count.sources > 0)
+            parts.add(count.sources + (count.sources == 1 ? " source can't be reached" : " sources can't be reached"));
+        return TextUtils.join(" · ", parts) + ".";
+    }
+
+    static String scheduleLine(Context c) {
+        int period = NetworkAutoRefresh.getRescanPeriod(c);
+        boolean onOpen = PreferenceManager.getDefaultSharedPreferences(c)
+                             .getBoolean("auto_rescan_on_app_restart", false);
+        if (period <= 0)
+            return onOpen ? "When Supernova opens." : "Automatic scans are off.";
+        return "Every " + every(period) + (onOpen ? " and when Supernova opens." : ".");
+    }
+
+    static String every(int periodMs) {
+        int minutes = Math.max(1, periodMs / 60000);
+        if (minutes < 60)
+            return minutes + " minutes";
+        int hours = minutes / 60;
+        return hours == 1 ? "hour" : hours + " hours";
+    }
+
+    static String scanLine(Context c) {
+        if (PreviewLibraryScan.active() || PreviewLibraryScan.building())
+            return "Looking for new and changed videos…";
+        long last = PreferenceManager.getDefaultSharedPreferences(c).getLong("preview_scan_result_time", 0);
+        String when = last == 0 ? "No scan yet"
+                                : "Last scan " + android.text.format.DateUtils.getRelativeTimeSpanString(
+                                      last, System.currentTimeMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS);
+        PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
+        int videos = snapshot == null ? 0 : snapshot.movies.size() + snapshot.episodes.size();
+        return videos > 0 ? when + "\n" + String.format(java.util.Locale.getDefault(), "%,d", videos) +
+                                " videos in your library"
+                          : when;
     }
 
     private static int cIndex(int index) {
@@ -293,32 +370,15 @@ public final class UniversalFileBrowser extends LinearLayout {
                 beginConnection();
                 break;
             case 3:
-                networkShares();
-                centreAction("Put.io · Account and Library Associations", this::putio);
+                healthHome();
                 break;
             case 4:
                 scanControls();
                 break;
             default:
-                command(
-                    "Advanced Options", "Review library health or open existing connection preferences.", "", () -> {
-                    });
-                centreHeading("Advanced Options");
-                centreAction("Library Health", this::healthHome);
-                centreAction("All Files", this::allLocations);
-                centreAction("Connection Preferences",
-                    ()
-                        -> getContext().startActivity(new Intent(
-                            getContext(), VideoSettingsActivity.class)
-                                .putExtra("supernova_settings_category", 5)
-                                .putExtra("supernova_settings_section", "Network connections")));
-                centreAction("Network Compatibility",
-                    ()
-                        -> getContext().startActivity(new Intent(
-                            getContext(), VideoSettingsActivity.class)
-                                .putExtra("supernova_settings_category", 6)
-                                .putExtra("supernova_settings_section", "Network compatibility")));
-                break;
+                // Scan now is a tile with live status, not a page.
+                scanNow();
+                return;
         }
         focusCentre();
     }

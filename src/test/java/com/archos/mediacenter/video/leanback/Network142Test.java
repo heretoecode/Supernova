@@ -126,8 +126,8 @@ public class Network142Test {
     @Test
     public void sixCardsHaveApprovedOrderAndExplicitActivation() throws Exception {
         String[] expected = {
-            "Local Storage", "Network Shares", "Add Connection", "Saved Connections",
-            "Library Scanning", "Advanced"
+            "Local Storage", "Network Shares", "Add Connection", "Library Health",
+            "Library Scanning", "Scan now"
         };
         for (int n = 0; n < 6; n++) {
             View card = browser.findViewWithTag("network.card." + n);
@@ -151,10 +151,21 @@ public class Network142Test {
 
     @Test
     public void landingBackRestoresSelectedCard() {
-        browser.findViewWithTag("network.card.5").performClick();
+        browser.findViewWithTag("network.card.4").performClick();
         layout();
         browser.back(() -> fail("Must return to landing"));
         layout();
+        assertTrue(browser.findViewWithTag("network.card.4").hasFocus());
+    }
+
+    /** Approved 0.156: Scan now stays on the landing and shows live status instead of opening a page. */
+    @Test
+    public void scanNowStaysOnTheLandingWithLiveStatus() {
+        View scan = browser.findViewWithTag("network.card.5");
+        scan.requestFocus();
+        scan.performClick();
+        layout();
+        assertNotNull(browser.findViewWithTag("network.landing"));
         assertTrue(browser.findViewWithTag("network.card.5").hasFocus());
     }
 
