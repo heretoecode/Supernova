@@ -1,3 +1,5 @@
+> **PARKED by the owner (5 Nov 2026).** Do not start until the owner reactivates it.
+
 # Codex brief — make GitHub the single, current home of Supernova (owner approved 2026-11-05)
 
 Rules: `BRIEF_0155_MORE.md` rules 1–5 and `docs/codex/HANDS_OFF.txt` (read it first). Branch

@@ -23,6 +23,13 @@ Items already built or scheduled are left out (see the bottom of this file).
 - Diagnostics record everything in full detail because the owner is the only user. Cut back (or make opt-in) before
   Supernova is ever shared. Notes: `docs/0.155/OWNER_NOTES.md` item 29, `docs/codex/BRIEF_0156_THUMBS_DIAGNOSTICS.md`.
 
+## Parked by the owner, 5 Nov 2026 (to revisit soon)
+- **Details page and its tabs** — redesign; owner wants to revisit in the near future.
+- **Library statistics on each library page** — mainly the colouring (should it stay blue?), possibly the design;
+  discuss together with the Details page.
+- **GitHub cleanup** — CLAUDE.md, AGENTS.md, README, PROJECT_STATUS, archive, Issues content: brief ready
+  (`docs/codex/BRIEF_GITHUB_CLEANUP.md`), not started. Issues are now switched on.
+
 ## From this session (4 Nov 2026)
 - **Discovery in Search** — owner: "maybe in the future but not for now". Search stays library-only in 0.156
   (`docs/0.155/OWNER_NOTES.md` item 20).
