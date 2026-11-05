@@ -1,0 +1,67 @@
+[
+  {
+    "name": "bug",
+    "color": "d73a4a",
+    "description": "Something is broken"
+  },
+  {
+    "name": "design",
+    "color": "a371f7",
+    "description": "Approved look or behaviour on screen"
+  },
+  {
+    "name": "player",
+    "color": "1f6feb",
+    "description": "Playback screen and controls"
+  },
+  {
+    "name": "home-details-search",
+    "color": "0e8a16",
+    "description": "Home, Details and Search pages"
+  },
+  {
+    "name": "network-files",
+    "color": "006b75",
+    "description": "Network & Files, Local Storage, scanning"
+  },
+  {
+    "name": "settings",
+    "color": "5319e7",
+    "description": "Settings pages"
+  },
+  {
+    "name": "diagnostics",
+    "color": "fbca04",
+    "description": "Diagnostics recording and reports"
+  },
+  {
+    "name": "engine",
+    "color": "0052cc",
+    "description": "Non-visual code: player engine, data, scanning"
+  },
+  {
+    "name": "docs",
+    "color": "0075ca",
+    "description": "Documentation"
+  },
+  {
+    "name": "parked",
+    "color": "c5def5",
+    "description": "Idea kept for later; not scheduled"
+  },
+  {
+    "name": "decision-needed",
+    "color": "e99695",
+    "description": "Waiting for a decision from the owner"
+  },
+  {
+    "name": "codex",
+    "color": "bfd4f2",
+    "description": "Codex does the non-visual part"
+  },
+  {
+    "name": "claude",
+    "color": "d4c5f9",
+    "description": "Claude does the screens / integration"
+  }
+]

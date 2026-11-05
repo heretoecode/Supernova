@@ -1,4 +1,4 @@
-> **PARKED by the owner (5 Nov 2026).** Do not start until the owner reactivates it.
+> **DONE by Claude (5 Nov 2026)** at the owner's request. Nothing is left for Codex. See `docs/codex/reports/2026-11-05-github-cleanup.md`.
 
 # Codex brief — make GitHub the single, current home of Supernova (owner approved 2026-11-05)
 
