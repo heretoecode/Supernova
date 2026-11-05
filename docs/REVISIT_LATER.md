@@ -73,6 +73,9 @@ Items already built or scheduled are left out (see the bottom of this file).
   `03` Home, `04` Settings › Playback, `05` Movies library, `06` Movies with the approved stats row, `07` Network &
   Files landing, all on the
   charcoal with no panel.
+  Real renders (5 Nov, background swapped only, panels kept): Home and Movies on Space Black and on charcoal, by
+  `preview-renders.yml` with `"variants": ["normal", "charcoal"]`. Owner: Movies, TV Shows and custom pages share
+  one design, so only one library page needs designing.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
