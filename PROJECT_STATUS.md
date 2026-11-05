@@ -20,12 +20,9 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   position and live sample, sleep timer, Still watching?, seek pictures, per-series choices), Search and the shared
   keyboard, the Network & Files landing. Next: Network Shares and Add Connection, Library Health page, Settings
   stage 3, Customise Home, Fix match, empty states, Local Storage grid.
-- **Codex** (engine and data): Parts A–D, B17a and the first test repairs are included in Claude’s `be1291e11`.
-  The added failures from conformance `42046189841` are repaired at `8d9a91e0e` on
-  `codex/0155-code-2026-11-04`: fixture setup plus the backup raw-path ownership guard.
-  Ten isolated component tests pass; full service/resource/large-export conformance remains Claude’s.
-  See [`follow-up report`](docs/codex/reports/2026-11-05-0156-test-fixes-followup.md). No new patch registration or
-  UI wiring is needed; Shield checks remain pending.
+- **Codex** (engine and data): merged Claude’s `0e6943603`; screen-data brief item 1 is ready at `6dac8747d`.
+  Items 2–7 continue on `codex/0155-code-2026-11-04`. Twenty component regressions pass; full conformance remains
+  Claude’s. Register the new scan patch; APIs/report are in `docs/codex/`. Earlier parts and test repairs are merged.
 - **GitHub:** cleaned up on 5 Nov 2026: this page, `CLAUDE.md`, `AGENTS.md`, the archive, and Issues #31–#102.
 
 ### Known problems being fixed in 0.156

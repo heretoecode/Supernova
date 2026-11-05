@@ -1,3 +1,12 @@
+# 0.156 screen data — item 1 ready (5 Nov 2026)
+
+Item 1 ready at `6dac8747d` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of
+Claude’s `0e6943603`. Items 2–7 continue. Register **new** `medialib-supernova156-screen-scan.patch` after the
+current registered dependency operations and before the CI fixtures. See
+[`screen-data report`](reports/2026-11-05-0156-screen-data.md) and `findings/0156-ui-hooks.md`.
+Twenty isolated component regressions pass; full worker/transport/Android conformance remains Claude’s.
+GitHub cleanup is finished. No screens, resources, workflow dispatch or fork pushes.
+
 # 0.156 added conformance failures ready — 2026-11-05
 
 Added test fixes ready at `8d9a91e0e` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of

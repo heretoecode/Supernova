@@ -159,3 +159,18 @@ proxy read errors and native-reported I/O failures invoke the recovery engine.
 Apply `medialib-supernova156-network-recovery.patch` after the four A/C/D patches.
 Recovery preserves session/track/seek intent and emits stream_reconnect boundaries;
 see `findings/network-stream-recovery.md` for gate behavior and native visibility limits.
+
+## Screen data item 1 — stop and progress
+
+Code `6dac8747d`. Register `medialib-supernova156-screen-scan.patch` after the current MediaLib operations,
+before `next-medialib-test-fixtures.patch`. `PreviewLibraryScan.install(context)` installs the process observer.
+`PreviewLibraryScan.progress()` / `LibraryScanController.progress()` returns immutable `ScanProgress` with
+sourceLabel, checked, total (-1 while unknown), running, stopping, failure and failureReason(). It performs no
+I/O. `PreviewLibraryScan.stop()` cancels queued work and the active network/local/metadata workers off main;
+running remains true until active workers unwind and send their terminal events. Requests during stopping are
+held out. A subsequent request starts with a fresh cancellation generation. Put.io API sync wiring follows in item 4.
+
+Friendly names are copied from shortcut/storage metadata on a worker. A source-list model can optionally call
+`LibraryScanController.sourceName(indexedRootUri, friendlyName)`; progress immediately uses the cached name.
+No raw exception message or credential is included in failureReason. Stop does not interrupt a database applyBatch;
+the existing atomic provider transaction finishes or rolls back before the worker releases its ownership.

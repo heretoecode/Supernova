@@ -8,7 +8,7 @@
     {
       "key": "0156-1",
       "title": "0.156 #1: Library source that fails on every scan (reason not recorded) + the stuck network scan.",
-      "body": "Library source that fails on every scan (reason not recorded) + the stuck network scan (0.154 #16).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 1\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #16\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Test repair hand-back — 5 Nov 2026\nScanner fixtures now attach a real Service Context, verify PROPFIND, and apply response-only throttling before testing cancellation and batch release.\nReady at `b91dd25c5`; report: `docs/codex/reports/2026-11-05-0156-test-fixes.md`. Fifty isolated regressions pass; full conformance remains pending Claude’s patch registration/run.\n",
+      "body": "Library source that fails on every scan (reason not recorded) + the stuck network scan (0.154 #16).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 1\n- Owner notes: `docs/0.155/OWNER_NOTES.md` or, where the text says 0.154, `docs/0.154/OWNER_NOTES.md` — item(s) #16\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Test repair hand-back — 5 Nov 2026\nScanner fixtures now attach a real Service Context, verify PROPFIND, and apply response-only throttling before testing cancellation and batch release.\nReady at `b91dd25c5`; report: `docs/codex/reports/2026-11-05-0156-test-fixes.md`. Fifty isolated regressions pass; full conformance remains pending Claude’s patch registration/run.\n\n### Screen data item 1 — 5 Nov 2026\nStop/progress ready at `6dac8747d`; 20 isolated component tests pass. Register the new scan patch; full worker conformance pending. See `docs/codex/reports/2026-11-05-0156-screen-data.md`.\n",
       "labels": [
         "bug",
         "codex"
@@ -20,7 +20,7 @@
     {
       "key": "0156-2",
       "title": "0.156 #2: Local import check gives up after 1½–3 min on resume.",
-      "body": "Local import check gives up after 1½–3 min on resume.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 2\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Test repair hand-back — 5 Nov 2026\nImmediate metadata admission tests now supply foreground lifecycle and persistent preferences; the background handoff regression checks automatic forced draining exactly once.\nReady at `b91dd25c5`; report: `docs/codex/reports/2026-11-05-0156-test-fixes.md`. Fifty isolated regressions pass; full conformance remains pending Claude’s patch registration/run.\n",
+      "body": "Local import check gives up after 1½–3 min on resume.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 2\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Test repair hand-back — 5 Nov 2026\nImmediate metadata admission tests now supply foreground lifecycle and persistent preferences; the background handoff regression checks automatic forced draining exactly once.\nReady at `b91dd25c5`; report: `docs/codex/reports/2026-11-05-0156-test-fixes.md`. Fifty isolated regressions pass; full conformance remains pending Claude’s patch registration/run.\n\n### Screen data item 1 — 5 Nov 2026\nStop/progress ready at `6dac8747d`; 20 isolated component tests pass. Register the new scan patch; full worker conformance pending. See `docs/codex/reports/2026-11-05-0156-screen-data.md`.\n",
       "labels": [
         "bug",
         "codex"
