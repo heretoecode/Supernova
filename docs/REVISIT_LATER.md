@@ -82,7 +82,9 @@ Items already built or scheduled are left out (see the bottom of this file).
 - **Network & Files as one page with tabs** (owner idea, 5 Nov; not tied to any version, separate from 0.156/0.157):
   no landing tiles and no panels. Tabs under the top bar: Local Storage · Network Shares (Add connection button) ·
   Library (Scan now, scanning, recent scans, Library Health). Opens on the last tab used; first visit Local
-  Storage. Folders open below the tabs with a breadcrumb. Mock-ups `docs/design/proposals/network-files-tabs/01`–`04`.
+  Storage. Folders open below the tabs with a breadcrumb, keeping Grid/List, Sort, Videos only/All files and the
+  inline actions; no "Recently added" (owner). Network Shares holds saved connections (Open, Edit, Test, Remove)
+  and Add connection, which opens in the same tab. Mock-ups `docs/design/proposals/network-files-tabs/01`–`07`.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
