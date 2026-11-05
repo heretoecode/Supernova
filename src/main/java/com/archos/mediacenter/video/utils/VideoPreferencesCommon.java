@@ -1162,10 +1162,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
         mScraperCategory = (PreferenceCategory)findPreference(KEY_SCRAPER_CATEGORY);
         mExportManualPreference = findPreference(getString(R.string.nfo_export_manual_prefkey));
         mExportManualPreference.setOnPreferenceClickListener(preference -> {
-            Intent intent =
-                new Intent(AutoScrapeService.EXPORT_EVERYTHING, null, getActivity(), AutoScrapeService.class);
-            getContext().startService(intent);
-            Toast.makeText(getActivity(), R.string.nfo_export_in_progress, Toast.LENGTH_SHORT).show();
+            confirmNfoExport();
             return true;
         });
 
@@ -2389,5 +2386,68 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             else
                 return false;
         }
+    }
+
+    /**
+     * Export .nfo files (approved 0.156, owner notes 0.155 #25): count first and confirm, then write, then say how
+     * it went ("1,806 written · 3 skipped (read-only)").
+     */
+    private void confirmNfoExport() {
+        android.content.Context app = mPreferencesFragment.requireContext().getApplicationContext();
+        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+        new Thread(() -> {
+            com.archos.mediascraper.NfoExportJob.Plan plan;
+            try {
+                plan = com.archos.mediascraper.NfoExportJob.preflight(app);
+            } catch (Exception unavailable) {
+                plan = null;
+            }
+            com.archos.mediascraper.NfoExportJob.Plan counted = plan;
+            main.post(() -> askNfoExport(counted));
+        }, "nfo-preflight").start();
+    }
+
+    private void askNfoExport(com.archos.mediascraper.NfoExportJob.Plan plan) {
+        if (!mPreferencesFragment.isAdded())
+            return;
+        String count = plan == null ? "every video in your library"
+                                    : String.format(java.util.Locale.getDefault(), "%,d videos", plan.total);
+        String question = "Write details files next to " + count + "? Read-only shares such as Put.io are skipped.";
+        com.archos.mediacenter.video.leanback.PreviewDialog.choose(mPreferencesFragment.requireContext(), question, new String[] {
+            "Write details files", "Cancel"
+        }, 1, choice -> {
+            if (choice != 0)
+                return;
+            Intent intent =
+                new Intent(AutoScrapeService.EXPORT_EVERYTHING, null, getActivity(), AutoScrapeService.class);
+            mPreferencesFragment.requireContext().startService(intent);
+            Toast.makeText(getActivity(), R.string.nfo_export_in_progress, Toast.LENGTH_SHORT).show();
+            watchNfoExport(mPreferencesFragment.requireContext().getApplicationContext());
+        });
+    }
+
+    private static AutoCloseable nfoWatch;
+
+    private static void watchNfoExport(android.content.Context app) {
+        if (nfoWatch != null)
+            return;
+        android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+        nfoWatch = com.archos.mediascraper.NfoExportProgress.listen(main::post, snapshot -> {
+            if (snapshot == null || !snapshot.finished)
+                return;
+            String result = snapshot.cancelled ? "Export stopped · " : "";
+            result += String.format(java.util.Locale.getDefault(), "%,d written", snapshot.written);
+            if (snapshot.skippedReadOnly > 0)
+                result += " · " + snapshot.skippedReadOnly + " skipped (read-only)";
+            if (snapshot.failed > 0)
+                result += " · " + snapshot.failed + " couldn't be written";
+            Toast.makeText(app, result, Toast.LENGTH_LONG).show();
+            try {
+                nfoWatch.close();
+            } catch (Exception ignored) {
+                // Already closed.
+            }
+            nfoWatch = null;
+        });
     }
 }
