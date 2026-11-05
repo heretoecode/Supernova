@@ -138,7 +138,9 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
   - Title · year on one line.
 - **Details: not yet.** Key information and Technical information get far too much prominence.
 
-**Status:** hero-with-description mock-ups `hero-01`–`hero-04` sent 5 Nov 2026; Details tab to be reworked. Planned for 0.157 (0.156 is not held up). Related parked
+**Status:** Details tab round 7 (`details-tabs/v7-01`, no About):
+- Reception leads; then Cast and Crew portraits.
+- Key and Technical information as quieter two-column lists at the foot. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
@@ -151,3 +153,7 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Keep the tagline as one italic line above the description (owner to decide).
   - Optional, as on Disney+: once a series is in progress, show the next episode's synopsis next to "Resume Sx Ey".
 - **Status:** mock-ups `details-tabs/hero-01`–`hero-04` sent 5 Nov 2026 (fits; long one with …; More menu; full text panel).
+- **Approved in principle by the owner (5 Nov 2026):**
+  - The description goes in the hero card; More › "Full description" shows the full text.
+  - It is removed from the Details tab.
+  - The hero still needs design polish when built.
