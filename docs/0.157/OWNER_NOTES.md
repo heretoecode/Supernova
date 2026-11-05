@@ -513,3 +513,4 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - Proposed replacement (mock-ups `docs/design/proposals/seek-loading/01`–`02`, awaiting the owner):
   - A: a small white ring beside the time in the bubble, "Chapter 2 · loading".
   - B: the seek dot itself becomes a spinning white ring until the picture is ready.
+- **APPROVED for 0.157 (owner, 5 Nov 2026): A** — the white ring beside the time, "Chapter 2 · loading".
