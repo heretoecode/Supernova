@@ -231,6 +231,12 @@
     },
     {
       "kind": "patch",
+      "module": "MediaLib",
+      "path": ".github/build/medialib-supernova156-screen-scan-compile-fix.patch",
+      "sha256": "42cbba535496a205ef92bbb04c0d86bdf7db544eaa42ddab51a588337ef1c674"
+    },
+    {
+      "kind": "patch",
       "module": "FileCoreLibrary",
       "path": ".github/build/filecore-supernova156-screen-connections.patch",
       "sha256": "59f4830cac8e56c562ea01755c77b0c54db9754aa2940d37cc2d8e7e0e3ca2b9"

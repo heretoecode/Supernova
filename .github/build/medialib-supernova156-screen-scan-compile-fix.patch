@@ -1,0 +1,19 @@
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -860,7 +860,6 @@ public class VideoStoreImportImpl
+                              remaining);
+                 }
+                 ImportState.VIDEO.setNumberOfFilesRemainingToDelete(remaining);
+-                PreviewLocalImportTrace.source(path);
+                 if (context instanceof VideoStoreImportService)
+                 {
+                     String path =
+@@ -2177,7 +2176,6 @@ public class VideoStoreImportImpl
+                 purged += deleted;
+                 remaining -= deleted;
+                 ImportState.VIDEO.setNumberOfFilesRemainingToDelete(remaining);
+-                PreviewLocalImportTrace.source(path);
+                 if (context instanceof VideoStoreImportService)
+                 {
+                     ((VideoStoreImportService)context).updateDeleteNotification(remaining, storagePath);
