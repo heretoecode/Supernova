@@ -1888,6 +1888,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override
     public void onDestroy() {
+        if (playbackLimits != null)
+        {
+            playbackLimits.close();
+            playbackLimits = null;
+        }
         Diagnostics.endPlayback(mPlaybackSession.completed ? "completed"
                 : mPlaybackSession.failed ? "player_error"
                                           : "service_destroyed");
@@ -2293,7 +2298,41 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      */
     @Override
     public void onCompletion() {
+        PlaybackLimits limits = playbackLimits();
+        if (!limits.episodeCompleted()) return;
+        if (mNextUri != null && mPlayMode == PLAYMODE_BINGE && !limits.allowAutoAdvance()) return;
         advancePlayback(true);
+    }
+
+    private PlaybackLimits playbackLimits;
+
+    /** Timer choices and card events; default timer off, Still watching enabled after three transitions. */
+    public PlaybackLimits playbackLimits()
+    {
+        if (playbackLimits == null)
+        {
+            Handler main = new Handler(Looper.getMainLooper());
+            playbackLimits = new PlaybackLimits(android.os.SystemClock::elapsedRealtime, (delay, task) -> {
+                main.postDelayed(task, delay);
+                return () -> main.removeCallbacks(task);
+            }, event -> {
+                Diagnostics.event("playback_limit", "kind", event.name());
+                if (event == PlaybackLimits.Event.STOP)
+                {
+                    mNextUri = null;
+                    mNextVideoId = -1;
+                    stopAndSaveVideoState();
+                }
+                else if (event == PlaybackLimits.Event.CONTINUE)
+                {
+                    onCompletion();
+                }
+            });
+        }
+        android.content.SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        playbackLimits.configureStillWatching(settings.getBoolean(PlaybackLimits.KEY_STILL_WATCHING, true),
+            settings.getInt(PlaybackLimits.KEY_EPISODES, PlaybackLimits.DEFAULT_EPISODES));
+        return playbackLimits;
     }
 
     private boolean advancing;
