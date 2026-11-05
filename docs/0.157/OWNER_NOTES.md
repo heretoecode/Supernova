@@ -411,4 +411,13 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - A: no edge at rest, on any card (the hero loses its outline).
   - B: a faint edge (about 28% white) on every card, hero included.
   - C: a white outline (85%) on every card.
-- **Status:** waiting for the owner.
+- **APPROVED (owner, 5 Nov 2026): B, a faint edge, as a global rule for every artwork card.**
+  - At rest: 1.5 px, about 28% white.
+  - Focused: the card grows, with a solid white 4 px ring.
+  - Applies to:
+    - All posters on Movies, TV Shows and custom library pages.
+    - The Home and Details hero cards.
+    - Every Home row.
+    - The Details tabs: Seasons & Episodes, Extras, More Like This.
+    - The player's Chapters and Episodes strip.
+  - Cast and crew portraits (not focusable) get the faint edge only.
