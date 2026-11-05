@@ -91,7 +91,7 @@ final class SettingsLayout {
              "Backup & restore", new String[] {},
              "Diagnostics", new String[] {"export_diagnostic_report", "supernova_diagnostic_logging",
                                           "supernova_diagnostic_level"},
-             "Advanced", new String[] {"force_software_decoding", "dec_choice", "parser_sync_mode",
+             "Advanced", new String[] {"seek_thumbnails_enabled", "force_software_decoding", "dec_choice", "parser_sync_mode",
                                        "stream_max_iframe_size", "audio_interface_choice", "audio_decoder_choice",
                                        "force_passthrough", "audio_speed_audiotrack", "enable_dynamic_audio_delay",
                                        "disable_downmix", "enable_downmix_androidtv", "supernova_pcm_speed_engine",
@@ -165,6 +165,8 @@ final class SettingsLayout {
              "Deletes watched history Supernova sent. Your library is not affected.");
         copy("export_diagnostic_report", "Save a diagnostic report",
              "A ZIP of everything Supernova has recorded, for finding and fixing problems. Never includes passwords.");
+        copy("seek_thumbnails_enabled", "Seek previews (experimental)",
+             "Shows a small picture above the seek bar while you skip through a video.");
         copy("supernova_diagnostic_logging", "Diagnostic logging", "Records everything the app does in full detail.");
     }
 
