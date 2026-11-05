@@ -12,8 +12,12 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Callable;
-import okhttp3.*;
-import org.json.*;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** Exact-ID supplementary ratings only. Production access is deliberately denied pending entitlement. */
 public final class OmdbSupplement

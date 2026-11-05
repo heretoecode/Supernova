@@ -1,21 +1,42 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
-import android.content.*;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import com.archos.mediacenter.video.leanback.ViewingHistory;
-import com.archos.mediacenter.video.utils.backup.*;
+import com.archos.mediacenter.video.utils.backup.BackupCategory;
+import com.archos.mediacenter.video.utils.backup.BookmarkStoreRecovery;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupArchive;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupImport;
+import com.archos.mediacenter.video.utils.backup.MediaStateRecovery;
+import com.archos.mediacenter.video.utils.backup.PortableBookmarks;
+import com.archos.mediacenter.video.utils.backup.PortableHiddenItems;
+import com.archos.mediacenter.video.utils.backup.PortableLocations;
+import com.archos.mediacenter.video.utils.backup.PortablePinnedTitles;
+import com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction;
 import com.archos.mediaprovider.video.VideoOpenHelper;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.json.*;
-import org.junit.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.*;
-import static org.junit.Assert.*;
+import org.robolectric.annotation.Config;
+import org.robolectric.annotation.SQLiteMode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /** Checks coordinated media restore handles crashes, cancellation and durable recovery across all stores. */
 @RunWith(RobolectricTestRunner.class)

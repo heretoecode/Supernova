@@ -1,7 +1,7 @@
 package com.archos.mediacenter.video.player;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /** Checks accelerated seeking resets correctly and remains within playback bounds. */
 public class PreviewSeekPolicyTest

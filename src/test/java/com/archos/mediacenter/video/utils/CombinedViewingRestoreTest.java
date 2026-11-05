@@ -1,25 +1,45 @@
 package com.archos.mediacenter.video.utils;
 
 import android.app.Application;
-import android.content.*;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
-import com.archos.mediacenter.video.leanback.*;
-import com.archos.mediacenter.video.utils.backup.*;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
+import com.archos.mediacenter.video.utils.backup.BackupCategory;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupArchive;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupImport;
+import com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences;
+import com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.json.*;
-import org.junit.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.*;
-import org.robolectric.annotation.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+import org.robolectric.annotation.SQLiteMode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /** Checks coordinated viewing restore rolls back incomplete changes and replays durable completion. */
 @RunWith(RobolectricTestRunner.class)

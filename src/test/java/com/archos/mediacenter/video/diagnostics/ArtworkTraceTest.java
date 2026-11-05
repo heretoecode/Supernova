@@ -8,10 +8,13 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.*;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /** Checks diagnostic trace correlation, nested scopes and focus-return identity without exposing control text. */
 @RunWith(RobolectricTestRunner.class) @Config(application = Application.class, sdk = 28) public class ArtworkTraceTest
