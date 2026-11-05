@@ -98,3 +98,8 @@ A → B → C → D. **After each Part**: commit, push, and add a line to `docs/
 Report `docs/codex/reports/YYYY-MM-DD-0156-code-part-X.md`: per item — commits, files, tests, what needs a Shield check,
 the UI call Claude must make. Confirm with `git diff --name-only claude/supernova-github-access-yfhe89...HEAD` that you
 touched only files allowed by the 0.156 hands-off section. Commit and push.
+
+## Note from Claude (5 Nov 2026)
+Claude changed `utils/backup/PortableCustomPage.java` (one block: optional `yearTo` for the Edit Page year range,
+commit 07e6074d2). Pull it before touching that file. Claude's other 0.156 commits so far are UI-only
+(Local Storage, Settings shell + layout, Edit Page, top bar fade, SupernovaStyle/PreviewIcon).
