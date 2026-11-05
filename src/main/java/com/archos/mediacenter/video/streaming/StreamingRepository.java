@@ -223,24 +223,34 @@ public final class StreamingRepository
         long started = SystemClock.elapsedRealtime();
         try (Diagnostics.OperationScope ignored = Diagnostics.operationScope(operation))
         {
-            String body = get(url.build().toString(), 2 * 1024 * 1024, operation);
-            try
-            {
-                JSONObject value = new JSONObject(body);
-                validateMetadataResponse(path, value);
-                Diagnostics.event("metadata_semantic_validated", "operation_id", operation);
-                return value;
-            }
-            catch (JSONException | IOException invalid)
-            {
-                Diagnostics.event("metadata_semantic_failed", "operation_id", operation, "failure_category",
-                                  invalid instanceof JSONException ? "invalid_json" : "invalid_payload");
-                throw new IOException("Invalid metadata response", invalid);
-            }
+            long[] responseFacts = new long[] {0, 0};
+            String body = get(url.build().toString(), 2 * 1024 * 1024, operation, HTTP, responseFacts);
+            return parseMetadata(path, body, responseFacts[0], responseFacts[1], operation);
         }
         finally
         {
             Diagnostics.finishOperation(operation, "metadata_request", started);
+        }
+    }
+
+    static JSONObject parseMetadata(String path, String body, long status, long bytes, String operation)
+        throws IOException
+    {
+        try
+        {
+            JSONObject value = new JSONObject(body);
+            validateMetadataResponse(path, value);
+            Diagnostics.event("metadata_semantic_validated", "operation_id", operation, "endpoint_category",
+                              endpointCategory(path), "http_status", status, "body_bytes", bytes);
+            return value;
+        }
+        catch (JSONException | IOException invalid)
+        {
+            Diagnostics.error("metadata_semantic_failed", invalid, "operation_id", operation, "endpoint_category",
+                              endpointCategory(path), "http_status", status, "body_bytes", bytes, "first_parse_error",
+                              invalid.getMessage(), "suspicious_small_body", bytes <= 24, "failure_category",
+                              invalid instanceof JSONException ? "invalid_json" : "invalid_payload");
+            throw new IOException("Invalid metadata response", invalid);
         }
     }
 
@@ -334,6 +344,19 @@ public final class StreamingRepository
 
     static String get(String url, int limit, String parentOperation, OkHttpClient client) throws IOException
     {
+        return get(url, limit, parentOperation, client, new long[] {0, 0});
+    }
+
+    static String endpointCategory(String path)
+    {
+        String clean =
+            path == null ? "unknown" : path.replaceFirst("^/(?:[0-9]+/)?", "").replaceAll("tt[0-9]+|[0-9]+", "id");
+        return clean.matches("[A-Za-z_/-]{1,160}") ? clean : "other";
+    }
+
+    private static String get(String url, int limit, String parentOperation, OkHttpClient client, long[] facts)
+        throws IOException
+    {
         if (Thread.currentThread().isInterrupted())
             throw new IOException("Cancelled");
         long started = SystemClock.elapsedRealtime();
@@ -355,6 +378,7 @@ public final class StreamingRepository
                      .execute())
         {
             status = response.code();
+            facts[0] = status;
             Diagnostics.event("metadata_http_response", "operation_id", operation, "status", response.code(),
                               "protocol", String.valueOf(response.protocol()));
             if (!response.isSuccessful() || response.body() == null)
@@ -374,6 +398,7 @@ public final class StreamingRepository
                     outcome = "cancelled";
                     throw new IOException("Cancelled");
                 }
+                facts[1] += count;
                 if (buffer.size() + count > limit)
                 {
                     outcome = "response_too_large";
@@ -384,22 +409,25 @@ public final class StreamingRepository
             byte[] data = buffer.toByteArray();
             if (data.length > limit)
                 throw new IOException("Response too large");
-            Diagnostics.event("metadata_http_body", "operation_id", operation, "bytes", data.length);
+            Diagnostics.event("metadata_http_body", "operation_id", operation, "bytes", data.length,
+                              "suspicious_small_body", data.length <= 24);
             outcome = "transport_complete";
             return new String(data, StandardCharsets.UTF_8);
         }
         catch (IOException error)
         {
-            Diagnostics.event("metadata_network_failed", "operation_id", operation, "type",
-                              error.getClass().getSimpleName());
+            Diagnostics.error("metadata_network_failed", error, "operation_id", operation, "service", service,
+                              "endpoint_category", endpointCategory(Uri.parse(url).getPath()), "status", status,
+                              "body_bytes", facts[1]);
             throw error;
         }
         finally
         {
             Diagnostics.event("metadata_network_outcome", "operation_id", operation, "parent_operation_id",
-                              parentOperation, "service", service, "operation_type", kind, "status", status, "outcome",
-                              outcome, "retry_number", 0, "duration_ms", SystemClock.elapsedRealtime() - started,
-                              "connectivity", Diagnostics.connectivity());
+                              parentOperation, "service", service, "operation_type", kind, "endpoint_category",
+                              endpointCategory(Uri.parse(url).getPath()), "body_bytes", facts[1], "status", status,
+                              "outcome", outcome, "retry_number", 0, "duration_ms",
+                              SystemClock.elapsedRealtime() - started, "connectivity", Diagnostics.connectivity());
             Diagnostics.finishOperation(operation, "metadata_network", started);
         }
     }

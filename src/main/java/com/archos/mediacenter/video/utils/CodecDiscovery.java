@@ -381,10 +381,12 @@ public class CodecDiscovery
     {
         final String name;
         final int rank;
-        VideoCandidate(String name, int rank)
+        final boolean software;
+        VideoCandidate(String name, int rank, boolean software)
         {
             this.name = name;
             this.rank = rank;
+            this.software = software;
         }
     }
 
@@ -446,22 +448,30 @@ public class CodecDiscovery
                     }
                     int rank = VideoCodecSelection.rank(dovi, force, advertised, match, sizeSupport);
                     if (rank >= 0)
-                        candidates.add(new VideoCandidate(info.getName(), rank));
+                        candidates.add(new VideoCandidate(info.getName(), rank, isSwCodec(info)));
                 }
                 catch (RuntimeException e)
                 {
                     log.warn("Cannot inspect video codec {}", info.getName(), e);
+                    com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+                        "playback_codec_inspection_failed", e, "decoder_name", info.getName(), "mime", mimeType);
                 }
             }
         }
         catch (RuntimeException e)
         {
             log.warn("Cannot enumerate video codecs", e);
+            com.archos.mediacenter.video.diagnostics.Diagnostics.error("playback_codec_enumeration_failed", e);
             return null;
         }
         candidates.sort(Comparator.comparingInt(candidate -> candidate.rank));
         if (index >= candidates.size())
+        {
+            com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                "playback_decoder_fallback", "reason", "hardware_candidates_exhausted", "candidate_index", index,
+                "candidate_count", candidates.size(), "mime", mimeType, "initialization_confirmed", false);
             return null;
+        }
         VideoCandidate chosen = candidates.get(index);
         if (force && chosen.rank >= 3 && log.isDebugEnabled())
         {
@@ -470,6 +480,10 @@ public class CodecDiscovery
         }
         log.debug("Video decoder candidate {}: {} profile={} size={}x{} rate={} rank={}", index, chosen.name, profile,
                   width, height, frameRate, chosen.rank);
+        com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+            index > 0 ? "playback_decoder_retry" : "playback_decoder_candidate",
+            com.archos.mediacenter.video.diagnostics.DiagnosticCodecEvent.candidate(
+                chosen.name, mimeType, profile, width, height, frameRate, index, chosen.rank, chosen.software));
         return chosen.name;
     }
 

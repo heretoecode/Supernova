@@ -1388,6 +1388,8 @@ public class PlayerActivity extends AppCompatActivity
     @Override public void onPictureInPictureModeChanged(boolean isInPict)
     {
         super.onPictureInPictureModeChanged(isInPict);
+        if (PlayerService.sPlayerService != null)
+            PlayerService.sPlayerService.seekThumbnailVisibility(hasWindowFocus(), isInPict);
         if (isInPict)
             mWasInPictureInPicture = true;
         if (mPlayer != null)
@@ -1429,6 +1431,9 @@ public class PlayerActivity extends AppCompatActivity
     @Override protected void onResume()
     {
         super.onResume();
+        if (PlayerService.sPlayerService != null)
+            PlayerService.sPlayerService.seekThumbnailVisibility(true, Build.VERSION.SDK_INT >= 24 &&
+                                                                           isInPictureInPictureMode());
         Diagnostics.uiState("playback", "player", "video", "none", "none", mVideoId);
         if (log.isDebugEnabled())
             log.debug("onResume");
@@ -1505,6 +1510,9 @@ public class PlayerActivity extends AppCompatActivity
         if (isFinishing() && !mLaunchFloatingPlayer && mPlayer != null)
             mPlayer.beginPlaybackExit();
         super.onPause();
+        if (PlayerService.sPlayerService != null)
+            PlayerService.sPlayerService.seekThumbnailVisibility(false, Build.VERSION.SDK_INT >= 24 &&
+                                                                            isInPictureInPictureMode());
         if (log.isDebugEnabled())
             log.debug("onPause");
 
@@ -2028,7 +2036,12 @@ public class PlayerActivity extends AppCompatActivity
                     mPlayerController.showControlBar();
             }))
             return true;
-        return super.dispatchKeyEvent(event);
+        boolean handled = super.dispatchKeyEvent(event);
+        if (!handled && event.getAction() == KeyEvent.ACTION_DOWN)
+            Diagnostics.event("ui_unhandled_key", "screen", "PlayerActivity", "focus",
+                              getCurrentFocus() == null ? "none" : getCurrentFocus().getClass().getSimpleName(),
+                              "key_code", event.getKeyCode(), "repeat", event.getRepeatCount());
+        return handled;
     }
 
     @Override public boolean onKeyUp(int keyCode, KeyEvent event)

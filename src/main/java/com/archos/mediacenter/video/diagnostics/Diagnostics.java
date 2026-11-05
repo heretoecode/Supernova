@@ -5,8 +5,9 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.app.ApplicationExitInfo;
 import android.app.Instrumentation;
-import android.app.ApplicationExitInfo;
 import android.content.Context;
+import android.content.ComponentCallbacks2;
+import android.content.res.Configuration;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -45,13 +46,11 @@ import java.util.function.Consumer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
@@ -106,12 +105,12 @@ public final class Diagnostics
     private static boolean heartbeatInstalled;
     public static final String KEY = "supernova_diagnostic_logging";
     static final int LIMIT = 256 * 1024, ROTATIONS = 4;
-    static final int STORAGE_LIMIT = 8 * 1024 * 1024;
+    static final int STORAGE_LIMIT = 32 * 1024 * 1024;
     private static final AtomicLong RETENTION_PRUNED_BYTES = new AtomicLong();
     private static final Object LOCK = new Object();
     private static final Object EXPORT_LOCK = new Object();
     private static final ThreadPoolExecutor WORK =
-        new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(256),
+        new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(8192),
                                r
                                -> {
                                    Thread t = new Thread(r, "SupernovaDiagnostics");
@@ -121,10 +120,11 @@ public final class Diagnostics
                                (task, executor) -> {
                                    DROPPED.incrementAndGet();
                                    ROUTINE_REJECTED.incrementAndGet();
+                                   countRejected(task);
                                });
     // Routine focus/artwork traffic cannot occupy the important-event queue.
     private static final ThreadPoolExecutor IMPORTANT =
-        new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(512),
+        new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(2048),
                                r
                                -> {
                                    Thread t = new Thread(r, "SupernovaImportantDiagnostics");
@@ -134,7 +134,39 @@ public final class Diagnostics
                                (task, executor) -> {
                                    DROPPED.incrementAndGet();
                                    IMPORTANT_REJECTED.incrementAndGet();
+                                   countRejected(task);
                                });
+    private static final java.util.concurrent.ConcurrentHashMap<String, AtomicLong> DROPPED_TYPES =
+        new java.util.concurrent.ConcurrentHashMap<>();
+
+    private static final class NamedTask implements Runnable
+    {
+        private final String event;
+        private final Runnable action;
+        NamedTask(String event, Runnable action)
+        {
+            this.event = event;
+            this.action = action;
+        }
+        @Override public void run()
+        {
+            action.run();
+        }
+    }
+
+    private static void countRejected(Runnable task)
+    {
+        String name = task instanceof NamedTask ? ((NamedTask)task).event : "recorder_internal";
+        DROPPED_TYPES.computeIfAbsent(name, ignored -> new AtomicLong()).incrementAndGet();
+    }
+
+    private static String droppedTypes()
+    {
+        Map<String, Long> counts = new TreeMap<>();
+        DROPPED_TYPES.forEach((name, count) -> counts.put(name, count.get()));
+        return new JSONObject(counts).toString();
+    }
+
     private static volatile Context context;
     private static volatile boolean enabled;
     private static volatile String playback = "";
@@ -320,6 +352,8 @@ public final class Diagnostics
 
     private static volatile String lastOperation = "startup";
     private static SharedPreferences sessionState;
+    private static final Map<Activity, Long> SCREEN_OPENED = new WeakHashMap<>();
+    private static final Map<Activity, DiagnosticFrameSampler> FRAME_SAMPLERS = new WeakHashMap<>();
     private static final Map<Activity, ViewTreeObserver.OnGlobalFocusChangeListener> FOCUS = new WeakHashMap<>();
 
     static SharedPreferences processSessionState(Context c, String processName)
@@ -367,7 +401,7 @@ public final class Diagnostics
         {
             String previousProcess = sessionState.getString("process", "");
             if (!previousProcess.isEmpty() && !sessionState.getBoolean("clean", true))
-                event("PREVIOUS_SESSION_UNCLEAN_EXIT", "previous_process", previousProcess, "previous_pid",
+                event("previous_session_without_clean_marker", "previous_process", previousProcess, "previous_pid",
                       sessionState.getInt("pid", 0), "previous_operation",
                       sessionState.getString("last_operation", "unknown"), "previous_screen",
                       sessionState.getString("last_screen", "unknown"), "previous_focus",
@@ -403,6 +437,21 @@ public final class Diagnostics
                 }
             }
         });
+        app.registerComponentCallbacks(new ComponentCallbacks2() {
+            @Override public void onTrimMemory(int level)
+            {
+                event("memory_trim", "level", level, "heap_bytes",
+                      Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory(), "native_heap_bytes",
+                      Debug.getNativeHeapAllocatedSize());
+            }
+            @Override public void onLowMemory()
+            {
+                event("memory_low");
+            }
+            @Override public void onConfigurationChanged(Configuration configuration)
+            {
+            }
+        });
         app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             private void life(Activity a, String state)
             {
@@ -410,6 +459,7 @@ public final class Diagnostics
             }
             public void onActivityCreated(Activity a, Bundle b)
             {
+                SCREEN_OPENED.put(a, SystemClock.elapsedRealtime());
                 life(a, "created");
             }
             public void onActivityStarted(Activity a)
@@ -426,6 +476,15 @@ public final class Diagnostics
                 mainAck = SystemClock.elapsedRealtime();
                 resumeUi(a);
                 life(a, "resumed");
+                Long opened = SCREEN_OPENED.remove(a);
+                event("screen_open", "screen", a.getClass().getSimpleName(), "open_ms",
+                      opened == null ? -1 : SystemClock.elapsedRealtime() - opened, "measurement",
+                      "created_to_resumed");
+                DiagnosticFrameSampler previousSampler = FRAME_SAMPLERS.remove(a);
+                if (previousSampler != null)
+                    previousSampler.close();
+                if (enabled)
+                    FRAME_SAMPLERS.put(a, new DiagnosticFrameSampler(a.getClass().getSimpleName()));
                 if (enabled && sessionState != null)
                     sessionState.edit().putBoolean("clean", false).apply();
                 ViewTreeObserver.OnGlobalFocusChangeListener listener = (old, next) ->
@@ -449,6 +508,9 @@ public final class Diagnostics
             }
             public void onActivityPaused(Activity a)
             {
+                DiagnosticFrameSampler sampler = FRAME_SAMPLERS.remove(a);
+                if (sampler != null)
+                    sampler.close();
                 life(a, "paused");
                 pauseUi(a);
                 ViewTreeObserver.OnGlobalFocusChangeListener l = FOCUS.remove(a);
@@ -660,6 +722,14 @@ public final class Diagnostics
             enabled = value;
         }
         installTransportReads();
+        new Handler(Looper.getMainLooper()).post(() -> {
+            for (DiagnosticFrameSampler sampler : FRAME_SAMPLERS.values())
+                sampler.close();
+            FRAME_SAMPLERS.clear();
+            if (enabled)
+                for (Activity activity : FOCUS.keySet())
+                    FRAME_SAMPLERS.put(activity, new DiagnosticFrameSampler(activity.getClass().getSimpleName()));
+        });
         mainAck = SystemClock.elapsedRealtime();
         if (!value)
         {
@@ -705,6 +775,12 @@ public final class Diagnostics
             }
             FLIGHT.clear();
             COVERAGE.clear();
+            DROPPED_TYPES.clear();
+            DROPPED.set(0);
+            WRITE_ERRORS.set(0);
+            ROUTINE_REJECTED.set(0);
+            IMPORTANT_REJECTED.set(0);
+            RETENTION_PRUNED_BYTES.set(0);
             incidentCounts.clear();
             activeIncident = null;
             incidentId = "";
@@ -774,11 +850,10 @@ public final class Diagnostics
             if (!enabled)
                 return null;
             final String session = playback, id = PROCESS + ":read:" + SEQUENCE.incrementAndGet();
-            return (boundary, bytes, calls, nanos, elapsed)
-                       -> event("transport_read", "schema", 1, "stream_id", id, "playback_session", session, "source",
-                                protocol.name(), "boundary", boundary.name(), "bytes", bytes, "read_calls", calls,
-                                "read_duration_ns", nanos, "stream_elapsed_ns", elapsed, "measurement_quality",
-                                MeasurementQuality.PROXY.name(), "coverage", "JAVA_STREAM_READS_ONLY");
+            DiagnosticTransportMetrics metrics =
+                new DiagnosticTransportMetrics(id, session, protocol.name(), Diagnostics::event);
+            return (boundary, bytes, calls, nanos,
+                    elapsed) -> metrics.boundary(boundary.name(), bytes, calls, nanos, elapsed);
         } : null);
     }
 
@@ -908,7 +983,7 @@ public final class Diagnostics
             final long generation = storageGeneration;
             final String postTarget = !anomaly && now < captureUntil ? captureIncident : null;
             if (important(event) || anomaly)
-                IMPORTANT.execute(() -> {
+                IMPORTANT.execute(new NamedTask(event, () -> {
                     synchronized (Diagnostics.class)
                     {
                         if (!enabled || generation != storageGeneration)
@@ -917,8 +992,8 @@ public final class Diagnostics
                         if (anomaly)
                             freeze(event, failureState, failureFlight);
                     }
-                });
-            WORK.execute(() -> {
+                }));
+            WORK.execute(new NamedTask(event, () -> {
                 synchronized (LOCK)
                 {
                     if (!enabled || generation != storageGeneration)
@@ -927,7 +1002,7 @@ public final class Diagnostics
                     if (postTarget != null)
                         appendPostFlight(postTarget, line);
                 }
-            });
+            }));
         }
         catch (RuntimeException ignored)
         {
@@ -989,11 +1064,9 @@ public final class Diagnostics
     {
         if (LEVEL.equals(key))
             prefs.getString(LEVEL, "qa");
-        if (key != null && Arrays
-                               .asList(LEVEL, "try_new_ui", "remember_library_views", "hide_watched",
-                                       "sort_ignore_articles", "preview_accent41", "streaming_enabled")
-                               .contains(key))
-            event("configuration_changed", "setting", key);
+        if (key != null && !key.startsWith("supernova_diagnostic_session"))
+            event("configuration_changed", "setting", key, "value",
+                  DiagnosticRedactor.settingValue(key, prefs.getAll().get(key)));
     };
     private static final ThreadLocal<String> OPERATION_PARENT = new ThreadLocal<>();
 
@@ -1100,6 +1173,18 @@ public final class Diagnostics
         return out.toString();
     }
 
+    static String exitEventName(int reason)
+    {
+        if (reason == ApplicationExitInfo.REASON_CRASH || reason == ApplicationExitInfo.REASON_CRASH_NATIVE ||
+            reason == ApplicationExitInfo.REASON_ANR)
+            return "previous_session_unclean_exit";
+        if (reason == ApplicationExitInfo.REASON_LOW_MEMORY)
+            return "android_process_exit_low_memory";
+        if (reason == ApplicationExitInfo.REASON_USER_REQUESTED || reason == ApplicationExitInfo.REASON_USER_STOPPED)
+            return "android_process_exit_user_stop";
+        return "android_process_exit";
+    }
+
     private static void previousExitEvidence()
     {
         if (!enabled || Build.VERSION.SDK_INT < 30)
@@ -1114,9 +1199,10 @@ public final class Diagnostics
                 if (info.getTimestamp() <= since)
                     continue;
                 latest = Math.max(latest, info.getTimestamp());
-                event("android_process_exit", "reason", info.getReason(), "status", info.getStatus(), "importance",
-                      info.getImportance(), "pss_kb", info.getPss(), "rss_kb", info.getRss(), "exit_utc_ms",
-                      info.getTimestamp(), "exit_pid", info.getPid(), "evidence", "android_os");
+                event(exitEventName(info.getReason()), "reason", info.getReason(), "status", info.getStatus(),
+                      "importance", info.getImportance(), "pss_kb", info.getPss(), "rss_kb", info.getRss(),
+                      "exit_utc_ms", info.getTimestamp(), "exit_pid", info.getPid(), "evidence", "android_os",
+                      "description", info.getDescription(), "process_name", info.getProcessName());
                 // OS ANR/native trace streams may contain file paths and account data. Export bounded method frames only.
                 if (info.getReason() == ApplicationExitInfo.REASON_ANR)
                     try (java.io.InputStream input = info.getTraceInputStream())
@@ -1396,42 +1482,28 @@ public final class Diagnostics
         PreviewDialog.read(c, title, confirmation, qr);
     }
 
-    public static void error(String event, Throwable error)
+    public static void error(String event, Throwable error, Object... fields)
     {
-        event(event, "trace", trace(error));
+        Object[] all = java.util.Arrays.copyOf(fields, fields.length + 8);
+        all[fields.length] = "failure_class";
+        all[fields.length + 1] = error == null ? "not_supplied" : error.getClass().getName();
+        all[fields.length + 2] = "message";
+        all[fields.length + 3] = error == null ? event : error.getMessage();
+        all[fields.length + 4] = "trace";
+        all[fields.length + 5] = trace(error);
+        all[fields.length + 6] = "trace_origin";
+        all[fields.length + 7] = "caught_exception";
+        event(event, all);
     }
 
-    /** Stack locations are useful; exception messages may contain secrets and are NEVER retained. */
     static String trace(Throwable error)
     {
-        StringBuilder out = new StringBuilder();
-        Set<Throwable> seen = Collections.newSetFromMap(new IdentityHashMap<>());
-        for (int causes = 0; error != null && causes < 4 && seen.add(error); causes++, error = error.getCause())
-        {
-            out.append(error.getClass().getName()).append('\n');
-            StackTraceElement[] frames = error.getStackTrace();
-            for (int i = 0; i < Math.min(frames.length, 20); i++)
-                out.append(frames[i].getClassName())
-                    .append('.')
-                    .append(frames[i].getMethodName())
-                    .append(':')
-                    .append(frames[i].getLineNumber())
-                    .append('\n');
-        }
-        return out.toString();
+        return DiagnosticRedactor.trace(error);
     }
 
     static String safe(String value)
     {
-        if (value == null)
-            return "";
-        // Remove complete locations, not merely their user-info/query components.
-        String clean = value.replaceAll("(?i)[a-z][a-z0-9+.-]*://[^\\s]+", "[location]")
-                           .replaceAll("(?:^|\\s)/[^\\s]+", " [path]")
-                           .replaceAll("(?i)(bearer\\s+|(?:password|passwd|token|secret|api[_-]?key|authorization|"
-                                           + "cookie)\\s*[:=]\\s*)[^\\s,;]+",
-                                       "[redacted]");
-        return clean.length() > 4096 ? clean.substring(0, 4096) : clean;
+        return DiagnosticRedactor.clean(value);
     }
 
     private static String record(String event, Object... fields)
@@ -1473,8 +1545,22 @@ public final class Diagnostics
                 json.put(key,
                          value instanceof Number || value instanceof Boolean ? value : safe(String.valueOf(value)));
             }
+            if ("ERROR".equals(json.optString("severity")) || "FATAL".equals(json.optString("severity")))
+            {
+                if (!json.has("message"))
+                    json.put("message", safe(event));
+                if (!json.has("failure_class"))
+                    json.put("failure_class", "not_supplied");
+                if (!json.has("trace"))
+                {
+                    json.put("trace", trace(new IllegalStateException("Failure reported at " + event)));
+                    json.put("trace_origin", "reporting_call_site");
+                }
+            }
+            if ("heartbeat".equals(event))
+                json.put("dropped_by_event_type", droppedTypes());
             String line = json.toString() + "\n";
-            if (line.getBytes(StandardCharsets.UTF_8).length > 32768)
+            if (line.getBytes(StandardCharsets.UTF_8).length > 1024 * 1024)
             {
                 DROPPED.incrementAndGet();
                 return "";
@@ -1669,10 +1755,11 @@ public final class Diagnostics
                 entry(zip, "README.txt",
                       ("Supernova opt-in diagnostic report\nStructured UTC and monotonic timestamps; process and "
                        + "playback session IDs.\nLogging defaults to " + (defaultEnabled() ? "on" : "off") +
-                       (". Disabling stops new events, not export of existing bounded logs.\nException messages, "
-                        + "credentials, raw media paths, headers and preference dumps are excluded.\nRoutine streams "
+                       (". Disabling stops new events, not export of existing bounded logs.\nException messages and "
+                        + "stack traces are retained after credential/location redaction. "
+                        + "Secret setting values and credentials are excluded.\nRoutine streams "
                         + "are size-bounded. Important events use a separate queue and up to seven-day, daily "
-                        + "size-bounded retention; all recorder-owned files share an 8 MiB cap. Oldest files may be "
+                        + "size-bounded retention; all recorder-owned files share a 32 MiB cap. Oldest files may be "
                         + "removed sooner. Copies are deduplicated by process/sequence in the summaries.\nNo native "
                         + "decoder A/V clock precision or physical Shield playback success is implied.\n"))
                           .getBytes(StandardCharsets.UTF_8));
@@ -1749,7 +1836,8 @@ public final class Diagnostics
         ArrayDeque<String> timeline = new ArrayDeque<>();
         Map<String, Long> retainedDrops = new HashMap<>();
         long first = Long.MAX_VALUE, last = 0;
-        for (JSONObject record : DiagnosticArchive.records(snapshot))
+        List<JSONObject> retainedRecords = DiagnosticArchive.records(snapshot);
+        for (JSONObject record : retainedRecords)
         {
             long time = record.optLong("utc_ms");
             if (time > 0)
@@ -1780,7 +1868,7 @@ public final class Diagnostics
             "Retained evidence interval (UTC ms): " + (first == Long.MAX_VALUE ? 0 : first) + " to " + last +
             " (not a complete session duration)\nLaunches retained: " + counts.getOrDefault("startup", 0) +
             "; clean shutdowns: " + counts.getOrDefault("session_clean_shutdown", 0) +
-            "; suspected unclean exits: " + counts.getOrDefault("PREVIOUS_SESSION_UNCLEAN_EXIT", 0) +
+            "; OS-confirmed crash/ANR/native exits: " + counts.getOrDefault("previous_session_unclean_exit", 0) +
             "\nManual reports: " + counts.getOrDefault("manual_problem_marker", 0) +
             "; incident captures: " + counts.getOrDefault("incident_capture", 0) +
             "\nDropped events (sum of retained per-process maxima): " + droppedTotal + "\n";
@@ -1799,7 +1887,11 @@ public final class Diagnostics
             "\nBuild: " + BuildConfig.VERSION_NAME + "\nSource: " + BuildConfig.PREVIEW_GIT_SHA +
             "\nPlayback sessions retained: " + sessions.size() + "\nEvent counts: " + counts +
             "\nRecent significant events (UTC milliseconds):\n" + TextUtils.join("\n", timeline) +
-            "\nUnclean exit means no clean marker; it does not prove a crash. Native A/V offset is not exposed.\n";
+            ("\nUnclean exits require OS crash/ANR/native-crash evidence. Missing clean markers are recorded "
+             + "separately. ") +
+            "Native A/V drift and decoder dropped-frame counters are unavailable in the current Java bridge.\n"
+            + "Dropped by event type in this process: " + droppedTypes() + "\n" +
+            DiagnosticExpandedSummary.build(retainedRecords);
     }
 
     private static void entry(ZipOutputStream zip, String name, byte[] bytes) throws IOException

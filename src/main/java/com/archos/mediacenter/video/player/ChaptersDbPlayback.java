@@ -2,8 +2,11 @@ package com.archos.mediacenter.video.player;
 
 import android.content.Context;
 import org.json.JSONObject;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 
@@ -42,6 +45,7 @@ final class ChaptersDbPlayback implements AutoCloseable
             if (work != null)
                 work.cancel(true);
             work = io.submit(() -> {
+                long started = android.os.SystemClock.elapsedRealtime();
                 try
                 {
                     String imdb = knownImdb;
@@ -66,13 +70,14 @@ final class ChaptersDbPlayback implements AutoCloseable
                         result = loaded;
                     }
                     Diagnostics.event("chaptersdb_result", "status", loaded.status.name(), "sets",
-                                      loaded.candidates.size());
+                                      loaded.candidates.size(), "hit", !loaded.candidates.isEmpty(), "duration_ms",
+                                      android.os.SystemClock.elapsedRealtime() - started);
                 }
                 catch (Exception unavailable)
                 {
                     if (!Thread.currentThread().isInterrupted())
-                        Diagnostics.event("chaptersdb_unavailable", "failure_category",
-                                          unavailable.getClass().getSimpleName());
+                        Diagnostics.error("chaptersdb_lookup_failed", unavailable, "duration_ms",
+                                          android.os.SystemClock.elapsedRealtime() - started);
                 }
             });
         }

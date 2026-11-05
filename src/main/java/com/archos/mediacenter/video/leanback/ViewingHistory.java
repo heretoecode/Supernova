@@ -16,7 +16,8 @@ import android.text.TextUtils;
 import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
-import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.BackupPrivacy;
@@ -32,10 +33,19 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,9 +96,9 @@ public final class ViewingHistory
 
         @Override public void onCreate(SQLiteDatabase db)
         {
-            db.execSQL("CREATE TABLE history(identity TEXT PRIMARY KEY, completed INTEGER NOT NULL, started INTEGER " +
-                       "NOT NULL, position INTEGER NOT NULL, duration INTEGER NOT NULL, played INTEGER NOT NULL, " +
-                       "completed_at INTEGER NOT NULL)");
+            db.execSQL("CREATE TABLE history(identity TEXT PRIMARY KEY, completed INTEGER NOT NULL, started INTEGER "
+                       + "NOT NULL, position INTEGER NOT NULL, duration INTEGER NOT NULL, played INTEGER NOT NULL, "
+                       + "completed_at INTEGER NOT NULL)");
         }
 
         @Override public void onUpgrade(SQLiteDatabase db, int old, int next)
@@ -266,8 +276,8 @@ public final class ViewingHistory
                 restoreCancelled(cancel);
                 database.beginTransaction();
                 try (SQLiteStatement insert = database.compileStatement(
-                         "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) " +
-                         "VALUES(?,?,?,?,?,?,?)"))
+                         "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) "
+                         + "VALUES(?,?,?,?,?,?,?)"))
                 {
                     database.delete("history", null, null);
                     for (Map.Entry<String, Record> entry : prepared.entrySet())
@@ -361,8 +371,8 @@ public final class ViewingHistory
                 SQLiteDatabase database = helper.getWritableDatabase();
                 database.beginTransaction();
                 try (SQLiteStatement insert = database.compileStatement(
-                         "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) " +
-                         "VALUES(?,?,?,?,?,?,?)"))
+                         "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) "
+                         + "VALUES(?,?,?,?,?,?,?)"))
                 {
                     database.delete("history", null, null);
                     for (var entry : prepared.entrySet())
@@ -460,10 +470,12 @@ public final class ViewingHistory
     /** Existing explicit watched/unwatched commands update the same identity, including bulk scopes. */
     public static void manualChange(Context c, String where, String[] arguments, boolean complete)
     {
-        if (PrivateMode.isActive())
+        boolean privateMode = PrivateMode.isActive();
+        if (privateMode && !complete)
             return;
         Context app = c.getApplicationContext();
         WRITER.execute(() -> {
+            Set<Uri> watchedUris = new HashSet<>();
             try (Cursor rows =
                      app.getContentResolver().query(VideoDbInfo.URI, VideoDbInfo.COLUMNS, where, arguments, null))
             {
@@ -472,6 +484,10 @@ public final class ViewingHistory
                 while (rows.moveToNext())
                 {
                     VideoDbInfo info = VideoDbInfo.fromCursor(rows, false);
+                    if (complete && info.uri != null)
+                        watchedUris.add(info.uri);
+                    if (privateMode)
+                        continue;
                     String key = identity(info.isShow, info.isShow ? info.scraperShowId : info.scraperMovieId,
                                           info.scraperSeasonNr, info.scraperEpisodeNr,
                                           info.uri == null ? null : info.uri.toString());
@@ -501,11 +517,16 @@ public final class ViewingHistory
                         }
                     }
                 }
-                notifyChanged(app);
+                if (!privateMode)
+                    notifyChanged(app);
             }
             catch (RuntimeException failure)
             {
                 Diagnostics.error("manual_history_write_failed", failure);
+            }
+            finally
+            {
+                com.archos.mediacenter.video.player.SeekThumbnails.markWatched(app, watchedUris);
             }
         });
     }
@@ -570,8 +591,8 @@ public final class ViewingHistory
                     try (Store helper = new Store(app))
                     {
                         helper.getWritableDatabase().execSQL(
-                            "UPDATE history SET completed=0, started=0, played=0, completed_at=0, position=CASE WHEN " +
-                            "position<0 THEN 0 ELSE position END");
+                            "UPDATE history SET completed=0, started=0, played=0, completed_at=0, position=CASE WHEN "
+                            + "position<0 THEN 0 ELSE position END");
                         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(app);
                         SharedPreferences.Editor edit = p.edit()
                                                             .putBoolean("supernova_history_migrated", true)
@@ -628,8 +649,8 @@ public final class ViewingHistory
                 boolean history = p.getBoolean("supernova_backup_history", true),
                         resume = p.getBoolean("supernova_backup_resume", true);
                 if (!history)
-                    copy.execSQL("UPDATE history SET completed=0,started=0,played=0,completed_at=0,position=CASE " +
-                                 "WHEN position<0 THEN 0 ELSE position END");
+                    copy.execSQL("UPDATE history SET completed=0,started=0,played=0,completed_at=0,position=CASE "
+                                 + "WHEN position<0 THEN 0 ELSE position END");
                 if (!resume)
                     copy.execSQL("UPDATE history SET position=0");
                 if (!history)

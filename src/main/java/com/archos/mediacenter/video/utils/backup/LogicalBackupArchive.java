@@ -240,6 +240,15 @@ public final class LogicalBackupArchive
     public static void writeCategories(File destination, Map<BackupCategory, JSONObject> payloads,
                                        BooleanSupplier cancel) throws IOException
     {
+        BackupDiagnostics.run("export", "write", () -> {
+            writeCategoriesInternal(destination, payloads, cancel);
+            return null;
+        });
+    }
+
+    private static void writeCategoriesInternal(File destination, Map<BackupCategory, JSONObject> payloads,
+                                                BooleanSupplier cancel) throws IOException
+    {
         cancelled(cancel);
         if (destination.exists())
             throw new IOException("Backup destination already exists");
@@ -262,6 +271,7 @@ public final class LogicalBackupArchive
                     cancelled(cancel);
                     if (payloads.get(category) == null)
                         throw new JSONException("Missing selected category");
+                    BackupDiagnostics.payload("write", category, payloads.get(category));
                     JSONObject payload = new JSONObject(payloads.get(category).toString());
                     validate(category, payload);
                     byte[] content = bytes(payload.toString());
@@ -303,12 +313,17 @@ public final class LogicalBackupArchive
                 for (Map.Entry<BackupCategory, byte[]> item : data.entrySet())
                 {
                     cancelled(cancel);
+                    BackupDiagnostics.stage("write", item.getKey(),
+                                            com.archos.mediacenter.video.diagnostics.DiagnosticBackupState.rows(
+                                                payloads.get(item.getKey())),
+                                            item.getValue().length);
                     entry(zip, "categories/" + item.getKey().name() + ".json", item.getValue());
                 }
                 zip.finish();
                 zip.flush();
                 file.getFD().sync();
             }
+            BackupDiagnostics.stage("verify", null, 0, temporary.length());
             readCategories(temporary, cancel);
             cancelled(cancel);
             if (destination.exists() || !temporary.renameTo(destination))

@@ -161,8 +161,8 @@ public final class OmdbSupplement
     {
         String key = value == null ? "" : value.trim();
         return key.isEmpty() || validKey(key) ? null
-                                              : "That doesn't look like an OMDb key. It's the short code of letters " +
-                                                "and numbers in the omdbapi.com activation email.";
+                                              : "That doesn't look like an OMDb key. It's the short code of letters "
+                                                    + "and numbers in the omdbapi.com activation email.";
     }
 
     private final Access access;
@@ -328,10 +328,15 @@ public final class OmdbSupplement
 
         public JSONObject get(HttpUrl url) throws Exception
         {
+            long started = android.os.SystemClock.elapsedRealtime();
+            int status = 0;
+            long bodyBytes = -1;
+            String outcome = "failure";
             try (
                 Response response =
                     http.newCall(new Request.Builder().url(url).header("Accept", "application/json").build()).execute())
             {
+                status = response.code();
                 if (!response.isSuccessful() || response.body() == null || response.body().contentLength() > 65536)
                     throw new IOException("Supplement unavailable");
                 try (InputStream in = response.body().byteStream();
@@ -345,8 +350,26 @@ public final class OmdbSupplement
                             throw new IOException("Supplement too large");
                         out.write(buffer, 0, length);
                     }
-                    return new JSONObject(out.toString("UTF-8"));
+                    bodyBytes = out.size();
+                    JSONObject result = new JSONObject(out.toString("UTF-8"));
+                    outcome = "success";
+                    return result;
                 }
+            }
+            catch (Exception failure)
+            {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+                    "metadata_request_failed", failure, "service", "omdb", "endpoint_category", "ratings", "status",
+                    status, "body_bytes", bodyBytes);
+                throw failure;
+            }
+            finally
+            {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    "metadata_request_result",
+                    com.archos.mediacenter.video.diagnostics.DiagnosticHttpEvent.result(
+                        "omdb", "ratings", status, bodyBytes, android.os.SystemClock.elapsedRealtime() - started,
+                        "network", outcome));
             }
         }
     }

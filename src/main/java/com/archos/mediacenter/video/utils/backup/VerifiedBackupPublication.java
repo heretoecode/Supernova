@@ -102,6 +102,12 @@ public final class VerifiedBackupPublication
     }
     public static Prepared prepare(File privateArchive, BooleanSupplier cancel) throws IOException
     {
+        return BackupDiagnostics.run("export", "verify", () -> prepareInternal(privateArchive, cancel));
+    }
+
+    private static Prepared prepareInternal(File privateArchive, BooleanSupplier cancel) throws IOException
+    {
+        BackupDiagnostics.stage("verify", null, 0, privateArchive.length());
         cancelled(cancel);
         if (!privateArchive.isFile() || privateArchive.length() <= 0 ||
             privateArchive.length() > LogicalBackupArchive.MAX_COMPRESSED)
@@ -117,6 +123,23 @@ public final class VerifiedBackupPublication
     /** No atomic-rename promise: a provider may expose an incomplete document while this is running. */
     public static long publish(Prepared prepared, Destination destination, BooleanSupplier cancel) throws Failure
     {
+        try
+        {
+            return BackupDiagnostics.run("export", "verify", () -> publishInternal(prepared, destination, cancel));
+        }
+        catch (Failure failure)
+        {
+            throw failure;
+        }
+        catch (IOException impossible)
+        {
+            throw new Failure(impossible, Cleanup.NOT_NEEDED, 0);
+        }
+    }
+
+    private static long publishInternal(Prepared prepared, Destination destination, BooleanSupplier cancel)
+        throws Failure
+    {
         boolean opened = false;
         long written = 0;
         try
@@ -130,6 +153,7 @@ public final class VerifiedBackupPublication
                     throw new IOException("Private archive changed after preparation");
             }
             cancelled(cancel);
+            BackupDiagnostics.stage("copy", null, 0, 0);
             opened = true;
             try (OutputStream output = destination.openWrite();
                  InputStream input = new FileInputStream(prepared.archive))
@@ -145,6 +169,7 @@ public final class VerifiedBackupPublication
                         throw new IOException("Private archive changed during publication");
                     output.write(buffer, 0, n);
                     written += n;
+                    BackupDiagnostics.stage("copy", null, 0, written);
                 }
                 if (written != prepared.bytes)
                     throw new IOException("Private archive changed during publication");
@@ -152,6 +177,7 @@ public final class VerifiedBackupPublication
                 output.flush();
             }
             cancelled(cancel);
+            BackupDiagnostics.stage("verify", null, 0, written);
             try (InputStream input = destination.openRead())
             {
                 if (input == null || !MessageDigest.isEqual(prepared.digest, hash(input, prepared.bytes, cancel)))

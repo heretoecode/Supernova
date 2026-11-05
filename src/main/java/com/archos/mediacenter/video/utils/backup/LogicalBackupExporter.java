@@ -2,12 +2,28 @@ package com.archos.mediacenter.video.utils.backup;
 
 import android.content.Context;
 import androidx.preference.PreferenceManager;
-import com.archos.mediacenter.video.leanback.*;
+import com.archos.mediacenter.video.leanback.HomeIntentCodec;
+import com.archos.mediacenter.video.leanback.LegacyViewingSnapshot;
+import com.archos.mediacenter.video.leanback.PortablePreferredVersions;
+import com.archos.mediacenter.video.leanback.PortableReviewNotes;
+import com.archos.mediacenter.video.leanback.PortableViewingChoices;
+import com.archos.mediacenter.video.leanback.PortableViewingState;
+import com.archos.mediacenter.video.leanback.ViewingHistory;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.UUID;
 import java.util.function.BooleanSupplier;
-import org.json.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Real source-to-archive export. No legacy DB snapshot writer or content/account payload is reachable. */
 public final class LogicalBackupExporter
@@ -103,6 +119,7 @@ public final class LogicalBackupExporter
             for (BackupCategory category : categories)
             {
                 LogicalBackupCatalog.cancelled(cancel);
+                BackupDiagnostics.payload("collect", category, null);
                 JSONObject payload;
                 if (category.settings() != null)
                     payload = PortableSettingsRegistry.export(preferences, category.settings());
@@ -158,6 +175,7 @@ public final class LogicalBackupExporter
                     default:
                         throw new IOException("Selected category has no source exporter");
                     }
+                BackupDiagnostics.payload("collect", category, payload);
                 payloads.put(category, payload);
             }
             if (!before.equals(preferences.getAll()) || !healthBefore.equals(health.getAll()))
@@ -180,6 +198,12 @@ public final class LogicalBackupExporter
     }
 
     public static File preparePrivate(Context context, Set<BackupCategory> selected, BooleanSupplier cancel)
+        throws IOException
+    {
+        return BackupDiagnostics.run("export", "collect", () -> preparePrivateInternal(context, selected, cancel));
+    }
+
+    private static File preparePrivateInternal(Context context, Set<BackupCategory> selected, BooleanSupplier cancel)
         throws IOException
     {
         Map<BackupCategory, JSONObject> payloads = collect(context, selected, cancel);

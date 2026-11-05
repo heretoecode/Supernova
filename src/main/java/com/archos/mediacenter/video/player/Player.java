@@ -946,6 +946,8 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
     private boolean outputEstablished;
     private void playbackOutput()
     {
+        if (playbackDiagnostics != null && mMediaPlayer != null)
+            playbackDiagnostics.frame(mMediaPlayer, getType());
         if (mCurrentState != STATE_PLAYING || mMediaPlayer == null || outputEstablished)
             return;
         outputEstablished = true;
@@ -1880,6 +1882,15 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             if (mp == mMediaPlayer)
                 playbackOutput();
             return true;
+        case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+        case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
+            if (PlayerService.sPlayerService != null)
+                PlayerService.sPlayerService.seekThumbnailBuffering(what == IMediaPlayer.MEDIA_INFO_BUFFERING_START);
+            return true;
+        case IMediaPlayer.MEDIA_INFO_VIDEO_TRACK_LAGGING:
+            Diagnostics.event("playback_late_frame_notice", "backend_extra", extra, "dropped_frame_count_available",
+                              false, "av_drift_available", false);
+            return true;
         case IMediaPlayer.MEDIA_INFO_METADATA_UPDATE:
             if (mIsBusy)
             {
@@ -1930,8 +1941,9 @@ public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, 
             return true;
         if (playbackDiagnostics != null)
             playbackDiagnostics.failed(mp);
-        // Error messages can contain network credentials; record numeric backend codes only.
-        Diagnostics.event("player_error", "code", errorCode, "qualifier", errorQualCode, "state", mCurrentState);
+        // Diagnostic strings pass through credential and location redaction.
+        Diagnostics.event("player_error", "code", errorCode, "qualifier", errorQualCode, "state", mCurrentState,
+                          "message", msg);
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
         // The service's error callback runs after stopPlayback destroys native position.
         // Capture the live point first; the existing service error handler persists it.

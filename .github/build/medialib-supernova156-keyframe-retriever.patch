@@ -1,0 +1,408 @@
+diff --git a/src/com/archos/medialib/AndroidMediaMetadataRetriever.java b/src/com/archos/medialib/AndroidMediaMetadataRetriever.java
+index 39268f2..4d17b14 100644
+--- a/src/com/archos/medialib/AndroidMediaMetadataRetriever.java
++++ b/src/com/archos/medialib/AndroidMediaMetadataRetriever.java
+@@ -18,103 +18,170 @@ import android.content.Context;
+ import android.graphics.Bitmap;
+ import android.media.MediaMetadataRetriever;
+ import android.net.Uri;
+-
++import android.os.Build;
+ import java.io.FileDescriptor;
+ import java.io.IOException;
+ import java.util.Map;
+ 
+-/**
+- * Proxy class between android MediaMetadataRetriever class and
+- * IMediaMetadataRetriever interface
+- */
+-public class AndroidMediaMetadataRetriever implements IMediaMetadataRetriever {
+-
++/** Platform sync-frame extraction through the existing per-retriever FileCore/UPnP stream proxy. */
++public class AndroidMediaMetadataRetriever implements IMediaMetadataRetriever
++{
+     private final MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
+-    private Proxy mFileProxy = null;
++    private final Object sourceLock = new Object();
++    private final Object proxyLock = new Object();
++    private Proxy mFileProxy;
++    private boolean released;
++
++    private void ensureOpen()
++    {
++        synchronized (proxyLock)
++        {
++            if (released)
++                throw new IllegalStateException("Retriever released");
++        }
++    }
+ 
+-    public MediaMetadata getMediaMetadata() {
++    private void replaceProxy(Proxy replacement)
++    {
++        Proxy previous;
++        boolean closed;
++        synchronized (proxyLock)
++        {
++            closed = released;
++            previous = mFileProxy;
++            if (!closed)
++                mFileProxy = replacement;
++        }
++        if (closed)
++        {
++            if (replacement != null)
++                replacement.stop();
++            throw new IllegalStateException("Retriever released while opening source");
++        }
++        if (previous != null && previous != replacement)
++            previous.stop();
++    }
++
++    public MediaMetadata getMediaMetadata()
++    {
+         return null;
+     }
+ 
+-    public int getType() {
++    public int getType()
++    {
+         return IMediaMetadataRetriever.TYPE_ANDROID;
+     }
+ 
+-    @Override
+-    public void setDataSource(Context context, Uri uri) throws IllegalArgumentException,
+-            SecurityException {
+-        String scheme = uri.getScheme();
+-        if (Proxy.needToStream(scheme)) {
+-            mFileProxy = Proxy.setDataSource(uri, this, null);
+-            return;
++    public void setDataSource(Context context, Uri uri)
++    {
++        synchronized (sourceLock)
++        {
++            ensureOpen();
++            if (Proxy.needToStream(uri.getScheme()))
++                replaceProxy(Proxy.setDataSource(uri, this, null));
++            else
++            {
++                mRetriever.setDataSource(context, uri);
++                replaceProxy(null);
++            }
+         }
+-        mRetriever.setDataSource(context, uri);
+     }
+ 
+-    @Override
+-    public void setDataSource(String path) throws IllegalArgumentException {
+-        if (Proxy.needToStream(Uri.parse(path).getScheme())) {
+-            mFileProxy = Proxy.setDataSource(Uri.parse(path), this, null);
+-            return;
+-        }
+-        mRetriever.setDataSource(path);
++    public void setDataSource(String path)
++    {
++        setDataSource(path, null);
+     }
+ 
+-    @Override
+     public void setDataSource(String uri, Map<String, String> headers)
+-            throws IllegalArgumentException {
+-        if (Proxy.needToStream(Uri.parse(uri).getScheme())) {
+-            mFileProxy = Proxy.setDataSource(Uri.parse(uri), this, headers);
+-            return;
++    {
++        synchronized (sourceLock)
++        {
++            ensureOpen();
++            if (Proxy.needToStream(Uri.parse(uri).getScheme()))
++                replaceProxy(Proxy.setDataSource(Uri.parse(uri), this, headers));
++            else
++            {
++                mRetriever.setDataSource(uri, headers);
++                replaceProxy(null);
++            }
+         }
+-        mRetriever.setDataSource(uri, headers);
+     }
+ 
+-    @Override
+-    public void setDataSource(FileDescriptor fd, long offset, long length)
+-            throws IllegalArgumentException {
+-        mRetriever.setDataSource(fd, offset, length);
++    public void setDataSource(FileDescriptor descriptor, long offset, long length)
++    {
++        synchronized (sourceLock)
++        {
++            ensureOpen();
++            mRetriever.setDataSource(descriptor, offset, length);
++            replaceProxy(null);
++        }
+     }
+ 
+-    @Override
+-    public void setDataSource(FileDescriptor fd) throws IllegalArgumentException {
+-        mRetriever.setDataSource(fd);
++    public void setDataSource(FileDescriptor descriptor)
++    {
++        synchronized (sourceLock)
++        {
++            ensureOpen();
++            mRetriever.setDataSource(descriptor);
++            replaceProxy(null);
++        }
+     }
+ 
+-    @Override
+-    public String extractMetadata(int keyCode) {
+-        return mRetriever.extractMetadata(keyCode);
++    public String extractMetadata(int key)
++    {
++        ensureOpen();
++        return mRetriever.extractMetadata(key);
+     }
+ 
+-    @Override
+-    public Bitmap getFrameAtTime(long timeUs, int option) {
++    public Bitmap getFrameAtTime(long timeUs, int option)
++    {
++        ensureOpen();
+         return mRetriever.getFrameAtTime(timeUs, option);
+     }
+ 
+-    @Override
+-    public Bitmap getFrameAtTime(long timeUs) {
+-        return mRetriever.getFrameAtTime(timeUs);
++    public Bitmap getScaledSyncFrame(long timeUs, int width, int height)
++    {
++        ensureOpen();
++        if (Build.VERSION.SDK_INT < 27)
++            return getFrameAtTime(timeUs, OPTION_CLOSEST_SYNC);
++        return mRetriever.getScaledFrameAtTime(timeUs, OPTION_CLOSEST_SYNC, width, height);
+     }
+ 
+-    @Override
+-    public Bitmap getFrameAtTime() {
+-        return mRetriever.getFrameAtTime();
++    public Bitmap getFrameAtTime(long timeUs)
++    {
++        return getFrameAtTime(timeUs, OPTION_CLOSEST_SYNC);
+     }
+ 
+-    @Override
+-    public byte[] getEmbeddedPicture() {
++    public Bitmap getFrameAtTime()
++    {
++        return getFrameAtTime(-1, OPTION_CLOSEST_SYNC);
++    }
++
++    public byte[] getEmbeddedPicture()
++    {
++        ensureOpen();
+         return mRetriever.getEmbeddedPicture();
+     }
+ 
+-    @Override
+-    public void release() throws IOException {
+-        try {
++    public void release() throws IOException
++    {
++        Proxy proxy;
++        synchronized (proxyLock)
++        {
++            if (released)
++                return;
++            released = true;
++            proxy = mFileProxy;
++            mFileProxy = null;
++        }
++        try
++        {
++            if (proxy != null)
++                proxy.stop();
++        }
++        finally
++        {
+             mRetriever.release();
+-        } finally {
+-            if (mFileProxy != null) {
+-                mFileProxy.stop();
+-                mFileProxy = null;
+-            }
+         }
+     }
+ }
+diff --git a/src/com/archos/medialib/UpnpProxy.java b/src/com/archos/medialib/UpnpProxy.java
+index d739e0c..7ac1019 100644
+--- a/src/com/archos/medialib/UpnpProxy.java
++++ b/src/com/archos/medialib/UpnpProxy.java
+@@ -25,37 +25,44 @@ import java.util.Map;
+ /*
+     retrieve http uri from upnp uri
+  */
+-public class UpnpProxy extends Proxy{
++public class UpnpProxy extends Proxy
++{
+     private StreamOverHttp mStream;
+     private Uri mNewUri;
+ 
+-    protected UpnpProxy(Uri uri) {
++    protected UpnpProxy(Uri uri)
++    {
+         super(uri);
+     }
+-    public static boolean needToStream(String scheme){
++    public static boolean needToStream(String scheme)
++    {
+         return "upnp".equalsIgnoreCase(scheme);
+     }
+-    protected Uri start() {
++    protected Uri start()
++    {
+         final Object lock = new Object();
+         new Thread() {
+-            public void run() {
++            public void run()
++            {
+                 Looper.prepare();
+-                StreamUriFinder StreamUriFinder = new StreamUriFinder(mUri,null, Looper.myLooper());
++                StreamUriFinder StreamUriFinder = new StreamUriFinder(mUri, null, Looper.myLooper());
+ 
+                 StreamUriFinder.setListener(new StreamUriFinder.Listener() {
+-                    @Override
+-                    public void onUriFound(Uri uri) {
++                    @Override public void onUriFound(Uri uri)
++                    {
+                         mNewUri = uri;
+ 
+-                        synchronized (lock){
++                        synchronized (lock)
++                        {
+                             lock.notify();
+                         }
+                     }
+ 
+-                    @Override
+-                    public void onError() {
++                    @Override public void onError()
++                    {
+ 
+-                        synchronized (lock){
++                        synchronized (lock)
++                        {
+                             lock.notify();
+                         }
+                     }
+@@ -64,40 +71,58 @@ public class UpnpProxy extends Proxy{
+                 Looper.loop();
+             }
+         }.start();
+-        synchronized (lock){
+-            try {
+-                if(mNewUri==null)
++        synchronized (lock)
++        {
++            try
++            {
++                if (mNewUri == null)
+                     lock.wait();
+-            } catch (InterruptedException e) {
++            }
++            catch (InterruptedException e)
++            {
+                 e.printStackTrace();
+             }
+         }
+         return mNewUri;
+     }
+ 
+-    public void stop() {
+-
++    public void stop()
++    {
+     }
+ 
+-    public static UpnpProxy setDataSource(Uri uri, IMediaPlayer mp, Map<String, String> headers) throws IOException {
++    public static UpnpProxy setDataSource(Uri uri, IMediaPlayer mp, Map<String, String> headers) throws IOException
++    {
+         UpnpProxy upnpProxy = new UpnpProxy(uri);
+         Uri newUri = upnpProxy.start();
+-        if (newUri != null) {
++        if (newUri != null)
++        {
+             mp.setDataSource2(newUri.toString(), headers);
+             return upnpProxy;
+-        } else {
++        }
++        else
++        {
+             throw new IOException();
+         }
+     }
+ 
+-    public static UpnpProxy setDataSource(Uri uri, IMediaMetadataRetriever mr, Map<String, String> headers) throws IllegalArgumentException {
+-        UpnpProxy upnpProxy = new UpnpProxy(uri);
+-        Uri newUri = upnpProxy.start();
+-        if (newUri != null) {
+-            mr.setDataSource(newUri.toString(), headers);
+-            return upnpProxy;
+-        } else {
+-            throw new IllegalArgumentException();
++    public static UpnpProxy setDataSource(Uri uri, IMediaMetadataRetriever mr, Map<String, String> headers)
++        throws IllegalArgumentException
++    {
++        UpnpProxy proxy = new UpnpProxy(uri);
++        boolean installed = false;
++        try
++        {
++            Uri local = proxy.start();
++            if (local == null)
++                throw new IllegalArgumentException("Unable to open UPnP proxy");
++            mr.setDataSource(local.toString(), headers);
++            installed = true;
++            return proxy;
++        }
++        finally
++        {
++            if (!installed)
++                proxy.stop();
+         }
+     }
+ }
+diff --git a/test/java/com/archos/medialib/AndroidRetrieverOwnershipTest.java b/test/java/com/archos/medialib/AndroidRetrieverOwnershipTest.java
+new file mode 100644
+index 0000000..b4157f0
+--- /dev/null
++++ b/test/java/com/archos/medialib/AndroidRetrieverOwnershipTest.java
+@@ -0,0 +1,31 @@
++package com.archos.medialib;
++
++import static org.junit.Assert.assertThrows;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.verify;
++
++import android.app.Application;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++import org.robolectric.util.ReflectionHelpers;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class AndroidRetrieverOwnershipTest
++{
++    @Test public void lateProxyAfterCancellationIsClosedAndNeverInstalled() throws Exception
++    {
++        AndroidMediaMetadataRetriever retriever = new AndroidMediaMetadataRetriever();
++        Proxy late = mock(Proxy.class);
++        retriever.release();
++        assertThrows(RuntimeException.class,
++                     ()
++                         -> ReflectionHelpers.callInstanceMethod(
++                             retriever, "replaceProxy", ReflectionHelpers.ClassParameter.from(Proxy.class, late)));
++        verify(late).stop();
++        assertThrows(IllegalStateException.class, () -> retriever.setDataSource("file:///later.mkv"));
++        retriever.release();
++    }
++}

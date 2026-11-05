@@ -5,13 +5,31 @@ import android.util.AtomicFile;
 import com.archos.mediacenter.video.streaming.StreamingRepository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.json.*;
-import java.io.*;
-import okhttp3.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import java.util.concurrent.TimeUnit;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /** Published ChaptersDB v1 GET contract. ID matching and bounds are necessary, not edition proof. */
 public final class ChaptersDbClient
@@ -266,7 +284,17 @@ public final class ChaptersDbClient
             long now = System.currentTimeMillis();
             if (stale != null && now - stale.optLong("at") >= 0 &&
                 now - stale.optLong("at") < (stale.optInt("status") == 404 ? 60 * 60 * 1000 : DAY))
+            {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    "metadata_request_result",
+                    com.archos.mediacenter.video.diagnostics.DiagnosticHttpEvent.result(
+                        "chaptersdb", route.split("/")[0], stale.optInt("status"), -1, 0, "fresh", "cache_hit"));
                 return stale.getJSONObject("data");
+            }
+            long started = android.os.SystemClock.elapsedRealtime();
+            int responseStatus = 0;
+            long bodyBytes = -1;
+            String outcome = "failure";
             try
             {
                 synchronized (HttpSource.class)
@@ -291,6 +319,7 @@ public final class ChaptersDbClient
                 try (Response response = http.newCall(request).execute())
                 {
                     status = response.code();
+                    responseStatus = status;
                     if (status == 429)
                     {
                         long seconds = 900;
@@ -315,12 +344,15 @@ public final class ChaptersDbClient
                         if (status != 200 || body == null || body.contentType() == null ||
                             !body.contentType().toString().toLowerCase(Locale.ROOT).contains("application/json"))
                             throw new IOException("Chapter provider response unavailable");
-                        data = new JSONObject(read(body.byteStream()));
+                        String content = read(body.byteStream());
+                        bodyBytes = content.getBytes(StandardCharsets.UTF_8).length;
+                        data = new JSONObject(content);
                     }
                 }
                 JSONObject envelope =
                     new JSONObject().put("at", System.currentTimeMillis()).put("status", status).put("data", data);
                 write(target, envelope);
+                outcome = status == 404 ? "not_found" : "success";
                 return data;
             }
             catch (InterruptedException cancelled)
@@ -330,11 +362,25 @@ public final class ChaptersDbClient
             }
             catch (Exception unavailable)
             {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error(
+                    "metadata_request_failed", unavailable, "service", "chaptersdb", "endpoint_category",
+                    route.split("/")[0], "status", responseStatus, "body_bytes", bodyBytes);
                 if (Thread.currentThread().isInterrupted())
                     throw new InterruptedIOException();
                 if (stale != null && now - stale.optLong("at") >= 0 && now - stale.optLong("at") < 7 * DAY)
+                {
+                    outcome = "stale_fallback";
                     return stale.getJSONObject("data");
+                }
                 throw unavailable;
+            }
+            finally
+            {
+                com.archos.mediacenter.video.diagnostics.Diagnostics.event(
+                    "metadata_request_result",
+                    com.archos.mediacenter.video.diagnostics.DiagnosticHttpEvent.result(
+                        "chaptersdb", route.split("/")[0], responseStatus, bodyBytes,
+                        android.os.SystemClock.elapsedRealtime() - started, "network", outcome));
             }
         }
 

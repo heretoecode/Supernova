@@ -553,6 +553,8 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
             catch (Exception e)
             {
                 log.error("Failed to draw 3D subtitles to Canvas", e);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error("subtitle_render_error", e, "stage",
+                                                                           "canvas_3d");
             }
         }
     }

@@ -321,6 +321,89 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     public static final String KEY_STREAMING_URI = "streaming_uri";
     private Uri mUri;
     private Uri mStreamingUri;
+    private volatile SeekThumbnails seekThumbnails;
+    private boolean thumbnailForeground = true, thumbnailPip, thumbnailBuffering, thumbnailSeeking;
+    private long bufferingStarted;
+
+    /** UI obtains this source for scrub/part pictures; it owns no decoder or disk work. */
+    public SeekThumbnails seekThumbnails()
+    {
+        return seekThumbnails;
+    }
+
+    private void startSeekThumbnails()
+    {
+        if (seekThumbnails != null || mUri == null || mPlayer == null || mPlayer.getDuration() <= 0)
+            return;
+        try
+        {
+            VideoMetadata metadata = mPlayer.getVideoMetadata();
+            VideoMetadata.VideoTrack track = metadata == null ? null : metadata.getVideoTrack();
+            SeekThumbnails.Source source = new SeekThumbnails.Source(
+                mUri, mStreamingUri, mPlayer.getDuration(), metadata == null ? 0 : metadata.getFileSize(),
+                metadata == null ? "unknown" : metadata.getVideoWidth() + "x" + metadata.getVideoHeight(),
+                track == null ? "unknown" : track.format);
+            seekThumbnails = new SeekThumbnails(this, source, () -> mPlayer == null ? 0 : mPlayer.getCurrentPosition());
+            updateThumbnailState();
+        }
+        catch (Exception failure)
+        {
+            Diagnostics.error("thumb_start_failed", failure, "stage", "source_prepare", "media_key", "unknown",
+                              "source_kind", Diagnostics.sourceType(mUri), "file_size_class", "unknown", "resolution",
+                              "unknown", "codec", "unknown");
+        }
+    }
+
+    public void seekThumbnailVisibility(boolean foreground, boolean pip)
+    {
+        thumbnailForeground = foreground;
+        thumbnailPip = pip;
+        updateThumbnailState();
+    }
+
+    public void thumbnailMarkedWatched(Uri uri)
+    {
+        if (mUri != null && uri != null && SeekThumbnails.ownerIdentity(mUri).equals(SeekThumbnails.ownerIdentity(uri)))
+            closeSeekThumbnails(true);
+    }
+
+    public void seekThumbnailBuffering(boolean buffering)
+    {
+        if (buffering && !thumbnailBuffering)
+        {
+            bufferingStarted = android.os.SystemClock.elapsedRealtime();
+            Diagnostics.event("playback_buffering_start");
+        }
+        else if (!buffering && thumbnailBuffering)
+            Diagnostics.event("playback_buffering_end", "duration_ms",
+                              android.os.SystemClock.elapsedRealtime() - bufferingStarted, "throughput_quality",
+                              "see_correlated_transport_read_events");
+        thumbnailBuffering = buffering;
+        updateThumbnailState();
+    }
+
+    private void updateThumbnailState()
+    {
+        if (seekThumbnails != null)
+            seekThumbnails.state(thumbnailBuffering, thumbnailSeeking, thumbnailForeground, thumbnailPip,
+                                 mPlayerState == PlayerState.PLAYING);
+    }
+
+    private void closeSeekThumbnails(boolean watched)
+    {
+        SeekThumbnails old = seekThumbnails;
+        seekThumbnails = null;
+        if (old != null)
+        {
+            if (watched)
+                old.watched();
+            else
+                old.close();
+        }
+        thumbnailSeeking = false;
+        thumbnailBuffering = false;
+    }
+
     private boolean mDatabaseInfoHasBeenRetrieved;
     private boolean mPlayOnResume;
     private long mVideoId;
@@ -682,6 +765,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // handoffs (Activity <-> floating player).
         intent.removeExtra(ExternalResumeIntent.EXTERNAL_PLAYER_LAUNCH);
 
+        closeSeekThumbnails(mPlaybackSession.completed);
         mUri = intent.getData();
         if (!Objects.equals(mPlaybackSession.uri, mUri))
             Diagnostics.beginPlayback(mUri);
@@ -1542,6 +1626,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     public void stopAndSaveVideoState()
     {
+        closeSeekThumbnails(mPlaybackSession.completed);
         ++mSourceRequestGeneration;
         if (log.isDebugEnabled())
             log.debug("stopAndSaveVideoState");
@@ -1954,6 +2039,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (prompt != null && Player.sPlayer != null &&
             isSafeAutoSkipTarget(prompt.target, Player.sPlayer.getDuration()))
         {
+            Diagnostics.event("introdb_skip_used", "mode", "prompt", "segment", prompt.type.name(), "target_ms",
+                              prompt.target);
             Player.sPlayer.seekTo((int)prompt.target);
             mSegmentPrompt = null;
         }
@@ -2116,6 +2203,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public void onDestroy()
     {
+        closeSeekThumbnails(mPlaybackSession.completed);
         if (playbackLimits != null)
         {
             playbackLimits.close();
@@ -2226,6 +2314,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 mHandler.postDelayed(mAutoSaveTask, AUTO_SAVE_INTERVAL);
             }
             fetchIntroDbIfNeeded();
+            startSeekThumbnails();
             mHandler.removeCallbacks(mAutoSkipTask);
             mHandler.postDelayed(mAutoSkipTask, AUTO_SKIP_INTERVAL);
         }
@@ -2287,7 +2376,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         new Thread("IntroDbFetch") {
             @Override public void run()
             {
+                long started = android.os.SystemClock.elapsedRealtime();
                 IntroSegments segments = IntroDbManager.fetch(query);
+                int count = 0;
+                if (segments != null)
+                    for (IntroSegments.Type type : IntroSegments.Type.values())
+                        count += segments.get(type).size();
+                Diagnostics.event("introdb_lookup", "hit", count > 0, "segments", count, "duration_ms",
+                                  android.os.SystemClock.elapsedRealtime() - started);
                 if (uri.equals(mIntroDbFetchedUri))
                 {
                     mIntroSegments = segments;
@@ -2444,6 +2540,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
         if (log.isDebugEnabled())
             log.debug("executeSkip: skipping {} to {}", skip.type, targetMs);
+        Diagnostics.event("introdb_skip_used", "mode", "auto", "segment", skip.type.name(), "target_ms", targetMs);
         Player.sPlayer.seekTo((int)targetMs);
         showAutoSkipToast(skip.type);
     }
@@ -2457,6 +2554,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
         if (Player.sPlayer == null || !isSafeAutoSkipTarget(targetMs, Player.sPlayer.getDuration()))
             return;
+        Diagnostics.event("introdb_skip_used", "mode", "manual", "segment", type.name(), "target_ms", targetMs);
         Player.sPlayer.seekTo((int)targetMs);
         showAutoSkipToast(type);
     }
@@ -2481,6 +2579,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 if (SegmentSkippingPolicy.auto(mode, type, mPlayMode == PLAYMODE_BINGE && mArrivedViaBingeTransition))
                 {
                     mLastAutoSkippedEndMs = segment.endMs;
+                    Diagnostics.event("introdb_skip_used", "mode", "auto", "segment", type.name(), "target_ms",
+                                      segment.endMs);
                     Player.sPlayer.seekTo(segment.endMs.intValue());
                     showAutoSkipToast(type);
                     return;
@@ -2555,6 +2655,19 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (log.isDebugEnabled())
             log.debug("onPrepared()");
         mPlayerState = PlayerState.PREPARED;
+        startSeekThumbnails();
+        VideoMetadata.VideoTrack decoder = diagnosticMetadata == null ? null : diagnosticMetadata.getVideoTrack();
+        Diagnostics.event(
+            "playback_decoder", "decoder_type", decoder == null ? -1 : decoder.decoder, "decoder_name_available", false,
+            "implementation",
+            decoder == null || decoder.decoder == 0 ? "unknown"
+            : decoder.decoder == 1                  ? "software"
+                                                    : "hardware_api",
+            "video_format", decoder == null ? "unknown" : decoder.format, "codec_profile",
+            decoder == null ? -1 : decoder.profile, "color_transfer", decoder == null ? -1 : decoder.colorTrc,
+            "dolby_vision_profile", decoder == null ? -1 : decoder.dolbyVisionProfile, "dolby_vision_compatibility",
+            decoder == null ? -1 : decoder.dolbyVisionCompatibility, "hdr10_plus", decoder != null && decoder.hdr10Plus,
+            "dropped_frame_count_available", false, "late_frame_count_available", false, "av_drift_available", false);
         if (!PrivateMode.isActive())
         {
             updateNowPlayingState();
@@ -2571,6 +2684,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
      */
     @Override public void onCompletion()
     {
+        closeSeekThumbnails(true);
         PlaybackLimits limits = playbackLimits();
         if (!limits.episodeCompleted())
             return;
@@ -2758,6 +2872,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public void onSeekStart(int pos)
     {
+        thumbnailSeeking = true;
+        updateThumbnailState();
         // Native error teardown can clear the source before onError arrives.
         mPlaybackSession.lastKnownPositionMs = Math.max(pos, 0);
         sampleJourneyTime();
@@ -2783,6 +2899,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public void onAllSeekComplete()
     {
+        thumbnailSeeking = false;
+        updateThumbnailState();
         Diagnostics.event("seek_complete", "checkpoint_ms", mPlaybackSession.lastKnownPositionMs, "audio_delay",
                           mAudioDelay, "speed", mAudioSpeed);
         log.info("Playback seek completed position={} audioDelay={} speed={} state={}",
@@ -2847,6 +2965,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (log.isDebugEnabled())
             log.debug("onPlay");
         mPlayerState = PlayerState.PLAYING;
+        updateThumbnailState();
         mPlaybackSession.hasPlayed = true;
         mPlaybackSession.failed = false;
         if (mVideoInfo != null && !PrivateMode.isActive())
@@ -2898,6 +3017,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             log.debug("onPause");
         sampleJourneyTime();
         mPlayerState = PlayerState.PAUSED;
+        updateThumbnailState();
         if (mPlayer != null && mPlayer.isPauseRequested())
             mPlayOnResume = false;
         // pauseTrakt() must run before saveVideoStateIfReady() so that it sets
@@ -2943,6 +3063,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public void onAudioMetadataUpdated(VideoMetadata vMetadata, int newAudioTrack)
     {
+        VideoMetadata.AudioTrack diagnosticAudio =
+            vMetadata == null || newAudioTrack < 0 ? null : vMetadata.getAudioTrack(newAudioTrack);
+        Diagnostics.event("audio_output", "format", diagnosticAudio == null ? "unknown" : diagnosticAudio.format,
+                          "sample_rate", diagnosticAudio == null ? 0 : diagnosticAudio.sampleRate, "channels",
+                          diagnosticAudio == null ? "unknown" : diagnosticAudio.channels, "passthrough_mode",
+                          mPreferences.getString("force_audio_passthrough_multiple", "0"), "output_format_quality",
+                          "selected_track_and_configured_mode", "sink_format_available", false);
         Diagnostics.event("audio_metadata", "selected", newAudioTrack, "tracks",
                           vMetadata == null ? 0 : vMetadata.getAudioTrackNb());
         applyRestoredTitle(vMetadata);
@@ -3172,6 +3299,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int newSubtitleTrack)
     {
+        VideoMetadata.SubtitleTrack diagnosticSubtitle =
+            vMetadata == null ? null : vMetadata.getSubtitleTrack(newSubtitleTrack);
+        Diagnostics.event("subtitle_track_type", "kind", diagnosticSubtitle == null ? -1 : diagnosticSubtitle.kind,
+                          "format", diagnosticSubtitle == null ? -1 : diagnosticSubtitle.format, "external",
+                          diagnosticSubtitle != null && diagnosticSubtitle.isExternal, "selected", newSubtitleTrack);
         Diagnostics.event("subtitle_metadata", "selected", newSubtitleTrack, "tracks",
                           vMetadata == null ? 0 : vMetadata.getSubtitleTrackNb());
         applyRestoredTitle(vMetadata);

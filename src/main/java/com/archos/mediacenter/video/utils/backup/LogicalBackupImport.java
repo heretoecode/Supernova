@@ -136,6 +136,12 @@ public final class LogicalBackupImport
     /** Takes ownership of the input stream, including on cancellation and validation failure. */
     public static Prepared prepare(Context context, InputStream source, BooleanSupplier cancel) throws IOException
     {
+        return BackupDiagnostics.run("import", "copy", () -> prepareInternal(context, source, cancel));
+    }
+
+    private static Prepared prepareInternal(Context context, InputStream source, BooleanSupplier cancel)
+        throws IOException
+    {
         if (source == null)
             throw new IOException("Document provider did not open the backup");
         File temporary = null, verified = null;
@@ -158,6 +164,7 @@ public final class LogicalBackupImport
                     if (size > MAX_COMPRESSED)
                         throw new IOException("Backup archive exceeds supported size");
                     output.write(buffer, 0, n);
+                    BackupDiagnostics.stage("copy", null, 0, size);
                 }
                 if (size == 0)
                     throw new IOException("Backup archive is empty");
@@ -172,6 +179,7 @@ public final class LogicalBackupImport
         }
         try
         {
+            BackupDiagnostics.stage("verify", null, 0, temporary.length());
             Map<BackupCategory, JSONObject> categories = LogicalBackupArchive.readCategories(temporary, cancel);
             byte[] hash = digest(temporary, cancel);
             cancelled(cancel);

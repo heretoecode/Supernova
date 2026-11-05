@@ -23,12 +23,32 @@ import com.archos.mediaprovider.video.VideoOpenHelper;
 import com.archos.mediascraper.BaseTags;
 import com.archos.mediascraper.MatchRestoreOperations;
 import com.archos.mediascraper.OwnedCanonicalBatch;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Private combined recovery for preferences and identity-based viewing state. No external service writes. */
 public final class PreferenceRestoreTransaction
@@ -933,6 +953,14 @@ public final class PreferenceRestoreTransaction
     /** One synchronous preference commit. An interrupted, uncompleted transaction recovers to its originals. */
     public void apply(Plan plan, BooleanSupplier cancel, Observer observer) throws IOException
     {
+        BackupDiagnostics.run("restore", "verify", () -> {
+            applyObserved(plan, cancel, observer);
+            return null;
+        });
+    }
+
+    private void applyObserved(Plan plan, BooleanSupplier cancel, Observer observer) throws IOException
+    {
         if (!Thread.holdsLock(ViewingHistory.LOCK))
             ViewingHistory.awaitWrites();
         synchronized (ViewingHistory.LOCK)
@@ -1096,6 +1124,8 @@ public final class PreferenceRestoreTransaction
                         throw new IOException("Canonical redo preparation failed", invalid);
                     }
                 }
+                BackupDiagnostics.stage("write", null, 0,
+                                        record.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
                 save(record);
                 observer.reached(Checkpoint.JOURNAL_DURABLE);
                 cancelled(cancel);
@@ -1121,12 +1151,14 @@ public final class PreferenceRestoreTransaction
                     }
                 if (!plan.keys.isEmpty())
                 {
+                    BackupDiagnostics.stage("write", null, plan.keys.size(), -1);
                     replace(prefs, plan.keys, plan.after);
                     observer.reached(Checkpoint.DEFAULT_DURABLE);
                     cancelled(cancel);
                 }
                 if (!plan.healthKeys.isEmpty())
                 {
+                    BackupDiagnostics.stage("write", BackupCategory.REVIEW, plan.healthKeys.size(), -1);
                     replace(health, plan.healthKeys, plan.healthAfter);
                     observer.reached(Checkpoint.HEALTH_DURABLE);
                     cancelled(cancel);
@@ -1135,6 +1167,7 @@ public final class PreferenceRestoreTransaction
                 {
                     try
                     {
+                        BackupDiagnostics.payload("write", BackupCategory.HISTORY, new JSONObject(plan.viewingAfter));
                         ViewingHistory.replaceRecovery(destination, new JSONObject(plan.viewingAfter), cancel);
                     }
                     catch (JSONException invalid)
@@ -1149,7 +1182,10 @@ public final class PreferenceRestoreTransaction
                     try
                     {
                         if (plan.canonicalBatches.isEmpty())
+                        {
+                            BackupDiagnostics.payload("write", null, new JSONObject(plan.mediaAfter));
                             media.write(new JSONObject(plan.mediaAfter), cancel);
+                        }
                     }
                     catch (JSONException invalid)
                     {
@@ -1162,6 +1198,8 @@ public final class PreferenceRestoreTransaction
                 {
                     try
                     {
+                        BackupDiagnostics.payload("write", BackupCategory.BOOKMARKS,
+                                                  new JSONObject(plan.bookmarksAfter));
                         bookmarks.write(new JSONObject(plan.bookmarksAfter), cancel);
                     }
                     catch (JSONException invalid)
@@ -1175,6 +1213,7 @@ public final class PreferenceRestoreTransaction
                 {
                     try
                     {
+                        BackupDiagnostics.payload("write", BackupCategory.SOURCES, new JSONObject(plan.sourcesAfter));
                         sources.write(new JSONObject(plan.sourcesAfter), cancel);
                     }
                     catch (JSONException invalid)

@@ -1,11 +1,19 @@
 package com.archos.mediacenter.video.diagnostics;
 
-import static com.archos.mediacenter.video.diagnostics.Diagnostics.*;
+import static com.archos.mediacenter.video.diagnostics.Diagnostics.event;
+import static com.archos.mediacenter.video.diagnostics.Diagnostics.playbackAttempt;
+import static com.archos.mediacenter.video.diagnostics.Diagnostics.playbackBoundary;
+import static com.archos.mediacenter.video.diagnostics.Diagnostics.unpairedSeekCallback;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackAttempt;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackOutcome;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackOperation;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.PlaybackBoundary;
+import com.archos.mediacenter.video.diagnostics.Diagnostics.MeasurementQuality;
 
 /** Bounded correlation state only; the existing Diagnostics recorder owns every write and retention. */
 public final class PlaybackDiagnosticState
 {
-    private PlaybackAttempt open, seek;
+    private PlaybackAttempt open, seek, frameSeek;
     private Object backend;
     private boolean overlapping, seekCallback;
     public synchronized PlaybackAttempt opening()
@@ -76,6 +84,7 @@ public final class PlaybackDiagnosticState
             playbackBoundary(seek, PlaybackBoundary.TERMINAL, PlaybackOutcome.SUPERSEDED, MeasurementQuality.UNKNOWN,
                              -1, backend);
         }
+        frameSeek = null;
         seek = playbackAttempt(PlaybackOperation.SEEK, open, target);
         seekCallback = false;
     }
@@ -87,16 +96,31 @@ public final class PlaybackDiagnosticState
             playbackBoundary(seek, PlaybackBoundary.TERMINAL,
                              overlapping || !seekCallback ? PlaybackOutcome.UNATTRIBUTED : PlaybackOutcome.COMPLETED,
                              MeasurementQuality.CALLBACK, -1, type);
+        if (!overlapping && seekCallback)
+            frameSeek = seek;
         seek = null;
         overlapping = false;
         seekCallback = false;
     }
+    /** First UI texture/render callback after a paired seek callback; a proxy, not a native presentation clock. */
+    public synchronized void frame(Object backend, int type)
+    {
+        if (backend != this.backend || frameSeek == null)
+            return;
+        event("seek_first_frame", "attempt_id", frameSeek.id, "playback_session", frameSeek.playbackSession,
+              "duration_ms", Math.max(0, android.os.SystemClock.elapsedRealtime() - frameSeek.started), "target_ms",
+              frameSeek.target, "backend", type, "measurement_quality", "PROXY", "measurement",
+              "render_callback_after_paired_seek_callback");
+        frameSeek = null;
+    }
+
     public synchronized void close(PlaybackOutcome outcome)
     {
         playbackBoundary(seek, PlaybackBoundary.TERMINAL, outcome, MeasurementQuality.UNKNOWN, -1, -1);
         playbackBoundary(open, PlaybackBoundary.TERMINAL, outcome, MeasurementQuality.UNKNOWN, -1, -1);
         open = null;
         seek = null;
+        frameSeek = null;
         backend = null;
         overlapping = false;
         seekCallback = false;
