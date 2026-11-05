@@ -213,6 +213,7 @@ public class SupernovaStyleTest {
         TextView save = new TextView(host.get());
         save.setText("Save Changes");
         save.setFocusable(true);
+        save.setFocusableInTouchMode(true);
         SupernovaStyle.applyButton(save, SupernovaStyle.Surface.PANEL);
         PreviewIcon.apply(save, "check", 18);
         root.addView(save);

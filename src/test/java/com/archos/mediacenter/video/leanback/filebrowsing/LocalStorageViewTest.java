@@ -282,7 +282,7 @@ public class LocalStorageViewTest {
         View focused = view.findFocus();
         assertNotNull(focused);
         assertTrue("focus ends on a real row, not the holder: " + focused.getTag(),
-                   String.valueOf(focused.getTag()).contains("Film "));
+                   Uri.decode(String.valueOf(focused.getTag())).contains("Film "));
         assertFalse("the holder gives focus back and is not focusable afterwards",
                     view.findViewWithTag("local.focus_holder").isFocusable());
     }
