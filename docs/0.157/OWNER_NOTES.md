@@ -334,4 +334,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - "Report Incorrect Match" becomes **Fix Match** (the approved panel).
   - "Subtitles and Artwork" splits into **Subtitles** and **Artwork**.
   - **Full Description** joins Files & Media (from the hero decision).
-- **Status:** mock-ups sent; waiting for the owner.
+- **Owner (5 Nov 2026): approved.** Also:
+  - **Focused row = filled white "button" look** (white fill, black text and icon), as in the mock-ups, instead of
+    the current white outline box. Applies to the More menu and every list of this kind.
+  - Prefers the **mock-up's panel colour** to today's look.
+    - The mock-up uses `#16181C` at 100% (solid), the same as `SupernovaStyle.solidPanel` (the shared choice list
+      in 0.156), with no outline.
+    - The current Details More menu uses glass `#16181C` at 97% with a light edge, over the brighter artwork.
+    - Decision pending: use the solid panel for every pop-up and side panel.
