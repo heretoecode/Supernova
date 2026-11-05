@@ -1,0 +1,183 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+index 5569c42..46f5c0a 100644
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -94,8 +94,9 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+         {
+             //reset alarm on boot
+             int startingTime =
+-                PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_STARTING_TIME_PREF, -1);
+-            int periode = PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_PERIOD, -1);
++                PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_STARTING_TIME_PREF, 0);
++            int periode = PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_PERIOD,
++                                                                                        ScanSchedulePolicy.HOUR_MS);
+             if (startingTime != -1 && periode > 0)
+             {
+                 NetworkScannerUtil.scheduleNewRescan(context, startingTime, periode, false);
+@@ -149,7 +150,7 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+         /*
+             do not scan if auto scan and already scan lately (for example on restart of device) or if already scanning
+          */
+-        if (((pref.getInt(AUTO_RESCAN_PERIOD, 0) <= 0) &&
++        if (((pref.getInt(AUTO_RESCAN_PERIOD, ScanSchedulePolicy.HOUR_MS) <= 0) &&
+              !intent.getAction().equals(ACTION_FORCE_RESCAN_INDEXED_FOLDERS)) ||
+             com.archos.mediaprovider.video.NetworkScannerServiceVideo.isScannerAlive()
+             // A batch may be counted but not yet "alive" during the initial delayed-broadcast
+@@ -161,7 +162,7 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+             String S = sdf.format(dt);
+             if (log.isDebugEnabled())
+                 log.debug("onReceive: skipping rescan : {} period = {} is scanning ? {}", S,
+-                          pref.getInt(AUTO_RESCAN_PERIOD, 0),
++                          pref.getInt(AUTO_RESCAN_PERIOD, ScanSchedulePolicy.HOUR_MS),
+                           String.valueOf(com.archos.mediaprovider.video.NetworkScannerReceiver.isScannerWorking()));
+             return;
+         }
+@@ -278,9 +279,6 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+                         }
+                     }
+ 
+-                    if (scanCount > 0)
+-                        pref.edit().putLong(AUTO_RESCAN_LAST_SCAN, System.currentTimeMillis()).apply();
+-
+                     // Do not start AutoScrapeService here: the scans were only just queued and
+                     // have not run yet. Starting now scrapes against the not-yet-updated database
+                     // and runs in parallel with scanning, which also defeats the full-disk
+@@ -399,7 +397,8 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+     }
+     public static boolean autoRescanAtStart(Context context)
+     {
+-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(AUTO_RESCAN_ON_APP_RESTART, false);
++        return ScanSchedulePolicy.dueOnOpen(PreferenceManager.getDefaultSharedPreferences(context),
++                                            System.currentTimeMillis());
+     }
+     public static void setAutoRescanAtStart(Context context, boolean autoRescanAtStart)
+     {
+@@ -411,7 +410,8 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+ 
+     public static int getRescanPeriod(Context context)
+     {
+-        return PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_PERIOD, 0);
++        return PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_PERIOD,
++                                                                             ScanSchedulePolicy.HOUR_MS);
+     }
+ 
+     @Override public void onStart(@NonNull LifecycleOwner owner)
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index f6e4f65..e5a154f 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -931,6 +931,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             com.archos.mediascraper.AutoScrapeService.handleNetworkScanCompletionWithResult(context, completion);
+         if (completion.completedBatch)
+         {
++            if (!completion.batchHadError && completion.batchHadSuccess)
++                ScanSchedulePolicy.completed(context);
+             if (completion.batchHadError || !completion.batchHadSuccess)
+             {
+                 ScanFailure.record("batch_completion", new java.io.IOException("One or more sources failed"));
+diff --git a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
+index e9ed281..459bace 100644
+--- a/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
++++ b/src/com/archos/mediaprovider/video/PreviewLocalImportTrace.java
+@@ -150,6 +150,8 @@ public final class PreviewLocalImportTrace
+             return;
+         try
+         {
++            if (returned && !interrupted && !t.partial)
++                ScanSchedulePolicy.completed(t.context);
+             t.emit(interrupted ? "cancelled" : !returned ? "failed" : t.partial ? "partial" : "complete");
+         }
+         finally
+diff --git a/src/com/archos/mediaprovider/video/ScanSchedulePolicy.java b/src/com/archos/mediaprovider/video/ScanSchedulePolicy.java
+new file mode 100644
+index 0000000..aa4e97d
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/ScanSchedulePolicy.java
+@@ -0,0 +1,32 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.SharedPreferences;
++import androidx.preference.PreferenceManager;
++
++/** Successful completion time is distinct from the old request/service-stop timestamp. */
++public final class ScanSchedulePolicy
++{
++    public static final int HOUR_MS = 60 * 60 * 1000;
++    public static final String LAST_COMPLETED = "supernova_last_completed_scan_utc";
++
++    public static boolean dueOnOpen(SharedPreferences preferences, long now)
++    {
++        if (!preferences.getBoolean("auto_rescan_on_app_restart", false))
++            return false;
++        long completed = preferences.getLong(LAST_COMPLETED, 0);
++        return completed <= 0 || now > completed && now - completed > HOUR_MS;
++    }
++
++    public static void completed(Context context)
++    {
++        PreferenceManager.getDefaultSharedPreferences(context)
++            .edit()
++            .putLong(LAST_COMPLETED, System.currentTimeMillis())
++            .apply();
++    }
++
++    private ScanSchedulePolicy()
++    {
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/ScanSchedulePolicyTest.java b/test/java/com/archos/mediaprovider/video/ScanSchedulePolicyTest.java
+new file mode 100644
+index 0000000..b742fb4
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/ScanSchedulePolicyTest.java
+@@ -0,0 +1,49 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.assertEquals;
++
++import android.app.Application;
++import android.content.SharedPreferences;
++import androidx.preference.PreferenceManager;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class ScanSchedulePolicyTest
++{
++    @Test public void restartGateHonoursExplicitOffAndStrictlyMoreThanAnHour()
++    {
++        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
++        long completed = 10000000;
++        assertFalse(ScanSchedulePolicy.dueOnOpen(prefs, completed));
++        prefs.edit().putBoolean("auto_rescan_on_app_restart", true).commit();
++        assertTrue(ScanSchedulePolicy.dueOnOpen(prefs, completed));
++        prefs.edit().putLong(ScanSchedulePolicy.LAST_COMPLETED, completed).commit();
++        assertFalse(ScanSchedulePolicy.dueOnOpen(prefs, completed - 1));
++        assertFalse(ScanSchedulePolicy.dueOnOpen(prefs, completed + ScanSchedulePolicy.HOUR_MS));
++        assertTrue(ScanSchedulePolicy.dueOnOpen(prefs, completed + ScanSchedulePolicy.HOUR_MS + 1));
++        prefs.edit().putBoolean("auto_rescan_on_app_restart", false).commit();
++        assertFalse(ScanSchedulePolicy.dueOnOpen(prefs, completed + 2L * ScanSchedulePolicy.HOUR_MS));
++    }
++
++    @Test public void failedAndCancelledImportsDoNotAdvanceTheCompletedScanTime()
++    {
++        Application app = RuntimeEnvironment.getApplication();
++        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
++        prefs.edit().putLong(ScanSchedulePolicy.LAST_COMPLETED, 123).commit();
++        PreviewLocalImportTrace.begin(app, true);
++        PreviewLocalImportTrace.finish(false, false);
++        PreviewLocalImportTrace.begin(app, true);
++        PreviewLocalImportTrace.finish(true, true);
++        assertEquals(123, prefs.getLong(ScanSchedulePolicy.LAST_COMPLETED, 0));
++        PreviewLocalImportTrace.begin(app, true);
++        PreviewLocalImportTrace.finish(true, false);
++        assertTrue(prefs.getLong(ScanSchedulePolicy.LAST_COMPLETED, 0) > 123);
++    }
++}
