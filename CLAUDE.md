@@ -55,7 +55,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 | --- | --- |
 | Working branch (all current work, builds and signing) | `claude/supernova-github-access-yfhe89` |
 | Codex's branch | `codex/0155-code-2026-11-04` |
-| `main` | Old (pre-0.140). Not updated yet; bringing it up to date needs a PR the owner approves. |
+| `main` | The GitHub front page. Same as the working branch since 5 Nov 2026; brought forward after each signed release. Old main kept as `archive/main-2026-11-05`. |
 | Native engine archive | `native-archive-0146` |
 | `heretoecode/aos-MediaLib` | Fork used by **every** build. Keep. |
 | `heretoecode/aos-AVP` | Not used. Archived by the owner on 5 Nov 2026 (read-only). |

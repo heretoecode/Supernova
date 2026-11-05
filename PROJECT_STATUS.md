@@ -36,8 +36,6 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 
 ## Waiting for the owner
 
-- **Bring `main` up to date** — `main` still holds the pre-0.140 code; it needs a pull request from the working
-  branch that the owner approves.
 - Parked for later: the Details page redesign and library statistics colouring
   ([`docs/REVISIT_LATER.md`](docs/REVISIT_LATER.md)).
 
