@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import android.net.Uri;
+import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.video.utils.VideoMetadata;
@@ -42,18 +43,19 @@ import java.util.List;
 import java.util.Locale;
 
 /** Checks audio and subtitle track selection against the CSV selection cases. */
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = 33)
-public class TrackSelectionTest {
+@RunWith(RobolectricTestRunner.class) @Config(sdk = 33) public class TrackSelectionTest
+{
 
     private Locale mOriginalLocale;
     private PlayerService mService;
     private Player mMockPlayer;
 
-    @Before
-    public void setUp() throws Exception {
+    @Before public void setUp() throws Exception
+    {
         mOriginalLocale = Locale.getDefault();
         mService = Robolectric.buildService(PlayerService.class).get();
+        // Match onCreate()'s preference setup while keeping the selection fixture isolated.
+        setPrivateField(mService, "mPreferences", PreferenceManager.getDefaultSharedPreferences(mService));
         mMockPlayer = Mockito.mock(Player.class);
         Mockito.when(mMockPlayer.setAudioTrack(Mockito.anyInt())).thenReturn(true);
         Mockito.when(mMockPlayer.setSubtitleTrack(Mockito.anyInt())).thenReturn(true);
@@ -61,28 +63,32 @@ public class TrackSelectionTest {
         setPrivateField(mService, "mUri", Uri.parse("file:///dummy.mkv"));
     }
 
-    @After
-    public void tearDown() {
+    @After public void tearDown()
+    {
         Locale.setDefault(mOriginalLocale);
     }
 
-    @Test
-    public void testCsvTrackSelectionSuite() throws Exception {
+    @Test public void testCsvTrackSelectionSuite() throws Exception
+    {
         InputStream is = getClass().getClassLoader().getResourceAsStream("track_selection_tests.csv");
         assertNotNull("Could not find track_selection_tests.csv in test resources", is);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         String line;
         int lineNum = 0;
-        while ((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null)
+        {
             lineNum++;
             line = line.trim();
-            if (line.isEmpty() || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#"))
+            {
                 continue;
             }
 
             String[] parts = parseCsvLine(line);
-            if (parts.length < 9) {
-                throw new AssertionError("Malformed CSV row at line " + lineNum + " (expected at least 9 fields, got " + parts.length + "): " + line);
+            if (parts.length < 9)
+            {
+                throw new AssertionError("Malformed CSV row at line " + lineNum + " (expected at least 9 fields, got " +
+                                         parts.length + "): " + line);
             }
 
             String testName = parts[0];
@@ -97,27 +103,30 @@ public class TrackSelectionTest {
             int expectedAudio;
             int expectedSubtitle;
 
-            if (parts.length >= 11) {
+            if (parts.length >= 11)
+            {
                 preferOriginalAudio = Boolean.parseBoolean(parts[7]);
                 originalAudioLang = parts[8];
                 expectedAudio = Integer.parseInt(parts[9]);
                 expectedSubtitle = Integer.parseInt(parts[10]);
-            } else {
+            }
+            else
+            {
                 expectedAudio = Integer.parseInt(parts[7]);
                 expectedSubtitle = Integer.parseInt(parts[8]);
             }
 
-            runSelectionTest(testName, audioTracksStr, subtitleTracksStr, uiLocaleStr,
-                    favAudioLang, favSubLang, hideSubtitles, preferOriginalAudio, originalAudioLang,
-                    expectedAudio, expectedSubtitle);
+            runSelectionTest(testName, audioTracksStr, subtitleTracksStr, uiLocaleStr, favAudioLang, favSubLang,
+                             hideSubtitles, preferOriginalAudio, originalAudioLang, expectedAudio, expectedSubtitle);
         }
         reader.close();
     }
 
-    private void runSelectionTest(String testName, String audioTracksStr, String subtitleTracksStr,
-                                  String uiLocaleStr, String favAudioLang, String favSubLang,
-                                  boolean hideSubtitles, boolean preferOriginalAudio,
-                                  String originalAudioLang, int expectedAudio, int expectedSubtitle) throws Exception {
+    private void runSelectionTest(String testName, String audioTracksStr, String subtitleTracksStr, String uiLocaleStr,
+                                  String favAudioLang, String favSubLang, boolean hideSubtitles,
+                                  boolean preferOriginalAudio, String originalAudioLang, int expectedAudio,
+                                  int expectedSubtitle) throws Exception
+    {
         Locale.setDefault(Locale.forLanguageTag(uiLocaleStr));
 
         VideoMetadata vMetadata = createVideoMetadata(audioTracksStr, subtitleTracksStr);
@@ -127,7 +136,8 @@ public class TrackSelectionTest {
         videoInfo.audioTrack = -1;
         videoInfo.subtitleTrack = -1;
         videoInfo.subtitleLanguage = null;
-        if (originalAudioLang != null && !originalAudioLang.isEmpty()) {
+        if (originalAudioLang != null && !originalAudioLang.isEmpty())
+        {
             videoInfo.scraperOriginalLanguage = originalAudioLang;
         }
 
@@ -158,13 +168,16 @@ public class TrackSelectionTest {
         String actualSubStr = formatSubtitleTrackInfo(vMetadata, normalizedActualSubtitle);
         String expectedSubStr = formatSubtitleTrackInfo(vMetadata, expectedSubtitle);
 
-        System.out.println("TEST [" + testName + "] Result -> Audio: " + actualAudioStr + " (expected: " + expectedAudioStr + "), Subtitle: " + actualSubStr + " (expected: " + expectedSubStr + ")");
+        System.out.println("TEST [" + testName + "] Result -> Audio: " + actualAudioStr + " (expected: " +
+                           expectedAudioStr + "), Subtitle: " + actualSubStr + " (expected: " + expectedSubStr + ")");
         assertEquals(testName + " [Audio Track Selection]", expectedAudio, actualAudio);
         assertEquals(testName + " [Subtitle Track Selection]", expectedSubtitle, normalizedActualSubtitle);
     }
 
-    private String formatAudioTrackInfo(VideoMetadata vMetadata, int index) {
-        if (index < 0 || index >= vMetadata.getAudioTrackNb()) {
+    private String formatAudioTrackInfo(VideoMetadata vMetadata, int index)
+    {
+        if (index < 0 || index >= vMetadata.getAudioTrackNb())
+        {
             return "none (" + index + ")";
         }
         VideoMetadata.AudioTrack track = vMetadata.getAudioTrack(index);
@@ -172,8 +185,10 @@ public class TrackSelectionTest {
         return index + " [int, " + lang + "]";
     }
 
-    private String formatSubtitleTrackInfo(VideoMetadata vMetadata, int index) {
-        if (index < 0 || index >= vMetadata.getSubtitleTrackNb()) {
+    private String formatSubtitleTrackInfo(VideoMetadata vMetadata, int index)
+    {
+        if (index < 0 || index >= vMetadata.getSubtitleTrackNb())
+        {
             return "none (-1)";
         }
         VideoMetadata.SubtitleTrack track = vMetadata.getSubtitleTrack(index);
@@ -182,14 +197,17 @@ public class TrackSelectionTest {
         return index + " [" + type + ", " + lang + "]";
     }
 
-    private VideoMetadata createVideoMetadata(String audioTracksStr, String subtitleTracksStr) throws Exception {
+    private VideoMetadata createVideoMetadata(String audioTracksStr, String subtitleTracksStr) throws Exception
+    {
         VideoMetadata metadata = new VideoMetadata("/dummy.mkv");
 
         // Parse Audio Tracks
-        if (audioTracksStr != null && !audioTracksStr.trim().isEmpty()) {
+        if (audioTracksStr != null && !audioTracksStr.trim().isEmpty())
+        {
             String[] audioEntries = audioTracksStr.split("\\|");
             List<VideoMetadata.AudioTrack> audioList = new ArrayList<>();
-            for (String entry : audioEntries) {
+            for (String entry : audioEntries)
+            {
                 String[] f = entry.split(";", -1);
                 String name = f.length > 0 ? f[0] : "";
                 String lang = f.length > 1 ? f[1] : "und";
@@ -205,10 +223,12 @@ public class TrackSelectionTest {
         }
 
         // Parse Subtitle Tracks
-        if (subtitleTracksStr != null && !subtitleTracksStr.trim().isEmpty()) {
+        if (subtitleTracksStr != null && !subtitleTracksStr.trim().isEmpty())
+        {
             String[] subEntries = subtitleTracksStr.split("\\|");
             List<VideoMetadata.SubtitleTrack> subList = new ArrayList<>();
-            for (String entry : subEntries) {
+            for (String entry : subEntries)
+            {
                 String[] f = entry.split(";", -1);
                 String name = f.length > 0 ? f[0] : "";
                 String lang = f.length > 1 ? f[1] : "und";
@@ -227,9 +247,10 @@ public class TrackSelectionTest {
         return metadata;
     }
 
-    private VideoMetadata.AudioTrack instantiateAudioTrack(String name, String format, String lang,
-                                                          int disposition, boolean supported) throws Exception {
-        VideoMetadata.AudioTrack track = (VideoMetadata.AudioTrack) allocateInstance(VideoMetadata.AudioTrack.class);
+    private VideoMetadata.AudioTrack instantiateAudioTrack(String name, String format, String lang, int disposition,
+                                                           boolean supported) throws Exception
+    {
+        VideoMetadata.AudioTrack track = (VideoMetadata.AudioTrack)allocateInstance(VideoMetadata.AudioTrack.class);
         setFinalField(track, "name", name);
         setFinalField(track, "format", format);
         setFinalField(track, "language", lang);
@@ -242,9 +263,11 @@ public class TrackSelectionTest {
         return track;
     }
 
-    private VideoMetadata.SubtitleTrack instantiateSubtitleTrack(String name, String path, boolean isGfx,
-                                                                int format, String lang, int disposition) throws Exception {
-        VideoMetadata.SubtitleTrack track = (VideoMetadata.SubtitleTrack) allocateInstance(VideoMetadata.SubtitleTrack.class);
+    private VideoMetadata.SubtitleTrack instantiateSubtitleTrack(String name, String path, boolean isGfx, int format,
+                                                                 String lang, int disposition) throws Exception
+    {
+        VideoMetadata.SubtitleTrack track =
+            (VideoMetadata.SubtitleTrack)allocateInstance(VideoMetadata.SubtitleTrack.class);
         setFinalField(track, "name", name);
         setFinalField(track, "path", path);
         setFinalField(track, "isExternal", (path != null && !path.isEmpty()));
@@ -257,49 +280,67 @@ public class TrackSelectionTest {
         return track;
     }
 
-    private Object allocateInstance(Class<?> clazz) throws Exception {
-        try {
+    private Object allocateInstance(Class<?> clazz) throws Exception
+    {
+        try
+        {
             Field unsafeField = Class.forName("sun.misc.Unsafe").getDeclaredField("theUnsafe");
             unsafeField.setAccessible(true);
             Object unsafe = unsafeField.get(null);
             Method allocateInstanceMethod = unsafe.getClass().getMethod("allocateInstance", Class.class);
             return allocateInstanceMethod.invoke(unsafe, clazz);
-        } catch (Exception e) {
-            for (Constructor<?> c : clazz.getDeclaredConstructors()) {
+        }
+        catch (Exception e)
+        {
+            for (Constructor<?> c : clazz.getDeclaredConstructors())
+            {
                 c.setAccessible(true);
                 Object[] args = new Object[c.getParameterTypes().length];
-                try {
+                try
+                {
                     return c.newInstance(args);
-                } catch (Exception ignored) {}
+                }
+                catch (Exception ignored)
+                {
+                }
             }
             throw new RuntimeException("Could not allocate instance of " + clazz, e);
         }
     }
 
-    private void setPrivateField(Object target, String fieldName, Object value) throws Exception {
+    private void setPrivateField(Object target, String fieldName, Object value) throws Exception
+    {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
     }
 
-    private void setFinalField(Object target, String fieldName, Object value) throws Exception {
+    private void setFinalField(Object target, String fieldName, Object value) throws Exception
+    {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
     }
 
-    private String[] parseCsvLine(String line) {
+    private String[] parseCsvLine(String line)
+    {
         List<String> parts = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         boolean inQuotes = false;
-        for (int i = 0; i < line.length(); i++) {
+        for (int i = 0; i < line.length(); i++)
+        {
             char c = line.charAt(i);
-            if (c == '\"') {
+            if (c == '\"')
+            {
                 inQuotes = !inQuotes;
-            } else if (c == ',' && !inQuotes) {
+            }
+            else if (c == ',' && !inQuotes)
+            {
                 parts.add(sb.toString().trim());
                 sb.setLength(0);
-            } else {
+            }
+            else
+            {
                 sb.append(c);
             }
         }

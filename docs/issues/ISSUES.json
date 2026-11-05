@@ -32,7 +32,7 @@
     {
       "key": "0156-3",
       "title": "0.156 #3: Backup \"could not be prepared\".",
-      "body": "Backup \"could not be prepared\" (Codex analysing; fix by Claude).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 3\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "body": "Backup \"could not be prepared\" (Codex analysing; fix by Claude).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 3\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Added conformance repairs — 5 Nov 2026\nFixed the inventory guard comparing raw database paths with playback URIs. Two regressions preserve exact stored-location ownership, including equal playback URIs after a stored-path change. The 61,050-owner export fixture now checks every unique expected identity and still preserves the previous backup bytes.\nReady at `8d9a91e0e`; report: `docs/codex/reports/2026-11-05-0156-test-fixes-followup.md`. Ten isolated component tests pass; full conformance remains Claude’s.\n",
       "labels": [
         "bug",
         "codex"
@@ -201,7 +201,7 @@
     {
       "key": "0156-17",
       "title": "0.156 #17: Remove NOVA's blue \"Press UP for the TV menu\" first-play box.",
-      "body": "Remove NOVA's blue \"Press UP for the TV menu\" first-play box (#38).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 17\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #38\n",
+      "body": "Remove NOVA's blue \"Press UP for the TV menu\" first-play box (#38).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 17\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #38\n\n### Added conformance repairs — 5 Nov 2026\nThe legacy help-removal test now inflates both unchanged layouts with the manifest player theme, explicitly fresh preferences and a dimension-resolution assertion. No player UI or resource changed.\nReady at `8d9a91e0e`; report: `docs/codex/reports/2026-11-05-0156-test-fixes-followup.md`. Ten isolated component tests pass; full conformance remains Claude’s.\n",
       "labels": [
         "bug",
         "claude"
@@ -329,7 +329,7 @@
     {
       "key": "0156-26",
       "title": "0.156 #26: Seek thumbnails",
-      "body": "Seek thumbnails — experimental, measured in Diagnostics (#39; Codex engine, Claude UI).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 26\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #39\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "body": "Seek thumbnails — experimental, measured in Diagnostics (#39; Codex engine, Claude UI).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 26\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #39\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Added conformance repairs — 5 Nov 2026\nThe three thumbnail disk cache tests now use Robolectric for actual Android JSON. All three pass locally with their original byte, eviction and owner-cleanup assertions; restart also parses and validates the index.\nReady at `8d9a91e0e`; report: `docs/codex/reports/2026-11-05-0156-test-fixes-followup.md`. Ten isolated component tests pass; full conformance remains Claude’s.\n",
       "labels": [
         "player",
         "design",
@@ -562,7 +562,7 @@
     {
       "key": "0156-44",
       "title": "0.156 #44: Always full detail",
-      "body": "Always full detail; reasons for every failure; real Android exit reasons; bigger log; playback, network and UI measurements; settings changes; clearer summary with top-20 errors.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 44\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n",
+      "body": "Always full detail; reasons for every failure; real Android exit reasons; bigger log; playback, network and UI measurements; settings changes; clearer summary with top-20 errors.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 44\n- Codex brief: `docs/codex/BRIEF_0156_CODE.md`\n\n### Added conformance repairs — 5 Nov 2026\nThe fourteen audio-policy tests and CSV selection suite now initialise the same real default preferences that PlayerService.onCreate supplies before callbacks. Audio diagnostics and all selection expectations remain unchanged.\nReady at `8d9a91e0e`; report: `docs/codex/reports/2026-11-05-0156-test-fixes-followup.md`. Ten isolated component tests pass; full conformance remains Claude’s.\n",
       "labels": [
         "diagnostics",
         "engine",

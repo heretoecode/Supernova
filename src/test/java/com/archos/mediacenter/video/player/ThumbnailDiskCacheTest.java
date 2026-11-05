@@ -3,11 +3,19 @@ package com.archos.mediacenter.video.player;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
+import android.app.Application;
 import java.io.File;
 import java.nio.file.Files;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+import org.json.JSONObject;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 30)
 public class ThumbnailDiskCacheTest
 {
     private byte[] jpeg(int bytes)
@@ -25,6 +33,10 @@ public class ThumbnailDiskCacheTest
         cache.put(10000, jpeg(100));
         cache.put(30000, jpeg(100));
         ThumbnailDiskCache restored = new ThumbnailDiskCache(root, "same-file", 100000);
+        File indexFile = new File(restored.exact(10000).getParentFile(), "index.json");
+        JSONObject index = new JSONObject(Files.readString(indexFile.toPath()));
+        assertEquals(1, index.getInt("schema"));
+        assertEquals(2, index.getJSONArray("frames").length());
         assertNotNull(restored.nearest(20000, 10000));
         assertNull(restored.nearest(20000, 9999));
         restored.watched();
