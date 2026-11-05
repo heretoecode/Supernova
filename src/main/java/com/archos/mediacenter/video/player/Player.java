@@ -1123,29 +1123,22 @@ public class Player implements IPlayerControl,
             mMediaPlayer.checkSubtitles(); // note that player checks also cache directory with avos
     }
 
-    private final java.util.Set<String> subtitleSuppressors = new java.util.HashSet<>();
+    private final SubtitlePresentationGate subtitlePresentation = new SubtitlePresentationGate();
 
     /** Presentation gates never alter the chosen track or its persisted resume context. */
     public synchronized void setSubtitlePresentationSuppressed(String owner, boolean suppressed)
     {
-        if (suppressed)
-        {
-            subtitleSuppressors.add(owner);
-        }
-        else
-        {
-            subtitleSuppressors.remove(owner);
-        }
+        subtitlePresentation.set(owner, suppressed);
         if (isInPlaybackState() && mVideoMetadata != null)
         {
-            mMediaPlayer.setSubtitleTrack(subtitleSuppressors.isEmpty() ? mResumeCtx.mSubtitleTrack
-                : mVideoMetadata.getSubtitleTrackNb());
+            mMediaPlayer.setSubtitleTrack(subtitlePresentation.track(mResumeCtx.mSubtitleTrack,
+                mVideoMetadata.getSubtitleTrackNb()));
         }
     }
 
     private int presentedSubtitleTrack(int selected)
     {
-        return subtitleSuppressors.isEmpty() || mVideoMetadata == null ? selected : mVideoMetadata.getSubtitleTrackNb();
+        return mVideoMetadata == null ? selected : subtitlePresentation.track(selected, mVideoMetadata.getSubtitleTrackNb());
     }
 
     @Override

@@ -576,6 +576,7 @@ public class PlayerActivity extends AppCompatActivity
         }
     };
     private boolean mWasInPictureInPicture;
+    private PipPlaybackActions pipActions;
 
     public boolean isPluggedOnTv() {
         return (TVUtils.isTV(this) || mHdmiPlugged);
@@ -1276,7 +1277,36 @@ public class PlayerActivity extends AppCompatActivity
         super.onPictureInPictureModeChanged(isInPict);
         if (isInPict)
             mWasInPictureInPicture = true;
+        if (mPlayer != null)
+        {
+            mPlayer.setSubtitlePresentationSuppressed("pip", isInPict);
+        }
+        if (Build.VERSION.SDK_INT >= 26 && isInPict)
+        {
+            setPictureInPictureParams(new PictureInPictureParams.Builder()
+                .setActions(pipActions().actions(mPlayer != null && mPlayer.isPlaying())).build());
+        }
         adjustSkipButtonForPiP(isInPict);
+    }
+
+    private PipPlaybackActions pipActions()
+    {
+        if (pipActions == null)
+        {
+            pipActions = new PipPlaybackActions(this, () -> {
+                if (mPlayer != null)
+                {
+                    if (mPlayer.isPlaying()) mPlayer.pause(PlayerController.STATE_NORMAL);
+                    else mPlayer.start(PlayerController.STATE_NORMAL);
+                    if (Build.VERSION.SDK_INT >= 26)
+                    {
+                        setPictureInPictureParams(new PictureInPictureParams.Builder()
+                            .setActions(pipActions.actions(mPlayer.isPlaying())).build());
+                    }
+                }
+            });
+        }
+        return pipActions;
     }
 
     @Override
@@ -1473,6 +1503,11 @@ public class PlayerActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        if (pipActions != null)
+        {
+            pipActions.close();
+            pipActions = null;
+        }
         if (previewChapterSource != null) {
             previewChapterSource.close();
             previewChapterSource = null;
@@ -1761,6 +1796,11 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (intent.getBooleanExtra(PipPlaybackActions.RETURN, false))
+        {
+            mWasInPictureInPicture = false;
+            return;
+        }
         if (log.isDebugEnabled())
             log.debug("onNewIntent: {}", intent);
         ensureLaunchGeneration(intent);
@@ -1784,6 +1824,12 @@ public class PlayerActivity extends AppCompatActivity
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode()
+            && (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER || event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+        {
+            if (event.getAction() == KeyEvent.ACTION_UP) pipActions().fullScreen();
+            return true;
+        }
         if (previewUpNext != null && previewUpNext.handleKey(event, () -> {
                 if (mPlayerController != null)
                     mPlayerController.showControlBar();
@@ -3122,7 +3168,8 @@ public class PlayerActivity extends AppCompatActivity
                     // TODO Auto-generated method stub
                     if (v == vPicInPic) {
                         if (Build.VERSION.SDK_INT >= 26) {
-                            PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
+                            PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder()
+                                .setActions(pipActions().actions(mPlayer != null && mPlayer.isPlaying()));
                             if (mPlayer != null && mPlayer.getVideoWidth() > 0 && mPlayer.getVideoHeight() > 0) {
                                 double ratio = (double)mPlayer.getVideoWidth() / mPlayer.getVideoHeight();
                                 if (ratio >= 1.0 / 2.39 && ratio <= 2.39)
