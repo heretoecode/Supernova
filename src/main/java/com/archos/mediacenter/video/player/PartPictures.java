@@ -49,8 +49,8 @@ public final class PartPictures implements AutoCloseable
                         return;
                     }
                     picture.bitmap = bitmap;
+                    ready.accept(picture);
                 }
-                ready.accept(picture);
             });
         }
     }

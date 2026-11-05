@@ -11,10 +11,10 @@ public class SubtitlePresentationGateTest
         SubtitlePresentationGate gate = new SubtitlePresentationGate();
         gate.set("pip", true);
         gate.set("appearance", true);
-        assertEquals(7, gate.track(2, 7));
+        assertEquals(-1, gate.track(2, -1));
         gate.set("appearance", false);
-        assertEquals(7, gate.track(3, 7));
+        assertEquals(-1, gate.track(3, -1));
         gate.set("pip", false);
-        assertEquals(3, gate.track(3, 7));
+        assertEquals(3, gate.track(3, -1));
     }
 }

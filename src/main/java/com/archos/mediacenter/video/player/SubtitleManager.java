@@ -338,6 +338,7 @@ public class SubtitleManager
     Surface mUiSurface;
     private static boolean mFullScreenWithCutout = true;
 
+    private String mFontFamily = "sans-serif";
     private int mColor;
     private int mBgOpacity;
 
@@ -642,8 +643,19 @@ public class SubtitleManager
      * AFTER calling {@link #setFontsFolder(String)} with the folder containing it, so libass
      * has already registered the file and can resolve the name.
      */
+    public String getFontFamily()
+    {
+        return mFontFamily;
+    }
+
+    public int getVerticalOffsetPixels()
+    {
+        return mSubtitleEvadedVPos;
+    }
+
     public void setFontFamily(String familyName)
     {
+        mFontFamily = familyName == null || familyName.isEmpty() ? "sans-serif" : familyName;
         if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
         {
             Player.sPlayer.getSubtitleEngine().setFontFamily(familyName);
@@ -857,11 +869,12 @@ public class SubtitleManager
             mIsNavBarOnBottom = MiscUtils.isNavigationBarOnBottom(mRootView, mContext);
             mIsGestureAreaShowing = MiscUtils.isGestureAreaDisplayed(mContext);
             if (log.isDebugEnabled())
-                log.debug("attachWindow, setOnSystemUiVisibilityChangeListener: mNavigationBarShowing={}, " +
-                          "mSystemBarShowing={}, mActionBarShowing={}, mControlBarShowing={}, mIsNavBarOnBottom={}, " +
-                          "mIsGestureAreaShowing={}",
-                          mNavigationBarShowing, mSystemBarShowing, mActionBarShowing,
-                          PlayerController.isControlBarShowing(), mIsNavBarOnBottom, mIsGestureAreaShowing);
+                log.debug(
+                    "attachWindow, setOnSystemUiVisibilityChangeListener: mNavigationBarShowing={}, "
+                        + "mSystemBarShowing={}, mActionBarShowing={}, mControlBarShowing={}, mIsNavBarOnBottom={}, "
+                        + "mIsGestureAreaShowing={}",
+                    mNavigationBarShowing, mSystemBarShowing, mActionBarShowing, PlayerController.isControlBarShowing(),
+                    mIsNavBarOnBottom, mIsGestureAreaShowing);
             adjustView();
         });
 
