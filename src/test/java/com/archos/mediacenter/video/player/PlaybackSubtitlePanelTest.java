@@ -70,6 +70,21 @@ public class PlaybackSubtitlePanelTest {
             downloads++;
         }
 
+        boolean appearance;
+        int samples;
+
+        @Override
+        public void appearancePreview(boolean shown) {
+            appearance = shown;
+        }
+
+        @Override
+        public android.graphics.Bitmap appearanceSample(String text, int width, int height) {
+            samples++;
+            return appearance ? android.graphics.Bitmap.createBitmap(4, 4, android.graphics.Bitmap.Config.ARGB_8888)
+                              : null;
+        }
+
         @Override
         public List<PlaybackSubtitlePanel.Track> tracks() {
             List<PlaybackSubtitlePanel.Track> out = new ArrayList<>();
@@ -292,6 +307,23 @@ public class PlaybackSubtitlePanelTest {
         assertTrue(tagged("playback.tab:1").hasFocus());
     }
 
+    /** Owner's preview rule (#35): the appearance rows swap the real subtitles for one sample line. */
+    @Test
+    public void appearanceRowsShowTheSampleAndDelayBringsRealSubtitlesBack() {
+        assertTrue(row("size").requestFocus());
+        assertTrue(model.appearance);
+        assertTrue(panel.appearanceShown());
+        assertTrue(row("position").requestFocus());
+        assertTrue(model.appearance);
+        assertTrue(row("delay").requestFocus());
+        assertFalse(model.appearance);
+        assertFalse(panel.appearanceShown());
+        assertTrue(row("colour").requestFocus());
+        assertTrue(model.appearance);
+        panel.close();
+        assertFalse(model.appearance);
+    }
+
     @Test
     public void everyInlineControlUsesRealValues() {
         row("enabled").performClick();
@@ -304,7 +336,14 @@ public class PlaybackSubtitlePanelTest {
         key(row("colour"), KeyEvent.KEYCODE_DPAD_RIGHT);
         assertEquals(PlaybackSubtitlePanel.COLOURS[2], model.get("colour"));
         key(row("position"), KeyEvent.KEYCODE_DPAD_RIGHT);
-        assertEquals(128, model.get("position"));
+        assertEquals(5, model.get("position"));
+        key(row("position"), KeyEvent.KEYCODE_DPAD_RIGHT);
+        assertEquals(10, model.get("position"));
+        key(row("position"), KeyEvent.KEYCODE_DPAD_LEFT);
+        assertEquals(5, model.get("position"));
+        assertEquals("Bottom", PlaybackSubtitlePanel.positionLabel(0));
+        assertEquals("Raised 30%", PlaybackSubtitlePanel.positionLabel(30));
+        assertEquals("Top", PlaybackSubtitlePanel.positionLabel(90));
         row("outline").performClick();
         assertEquals(0, model.get("outline"));
         row("background").performClick();

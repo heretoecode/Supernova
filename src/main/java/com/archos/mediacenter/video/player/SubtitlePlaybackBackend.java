@@ -139,6 +139,19 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     }
 
     @Override
+    public void appearancePreview(boolean shown) {
+        SubtitleManager m = manager();
+        if (m != null)
+            m.setAppearancePreview(shown);
+    }
+
+    @Override
+    public android.graphics.Bitmap appearanceSample(String text, int width, int height) {
+        SubtitleManager m = manager();
+        return m == null ? null : m.appearanceSample(text, width, height);
+    }
+
+    @Override
     public boolean available() {
         return manager() != null;
     }
@@ -173,8 +186,8 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
             prefs.putInt(PlayerActivity.KEY_SUBTITLE_COLOR, value);
             break;
         case "position":
+            // The manager saves the new percentage key itself; the old pixel key is left alone (engine hook note).
             m.setVerticalPosition(value);
-            prefs.putInt(PlayerActivity.KEY_SUBTITLE_VPOS, value);
             break;
         case "outline":
             m.setOutlineState(value != 0);

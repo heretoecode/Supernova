@@ -123,6 +123,99 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         default Runnable pictureInPicture() {
             return null;
         }
+
+        /** Hides the real subtitles while the appearance sample is shown (0.156 #25). */
+        default void appearancePreview(boolean shown) {
+        }
+
+        /** A full-screen sample line drawn with the current settings, or null when not available. */
+        default Bitmap appearanceSample(String text, int width, int height) {
+            return null;
+        }
+    }
+
+    static final String SAMPLE_TEXT = "This is how your subtitles will look.";
+    static final String SAMPLE_TAG = "playback.subtitles.sample";
+    private static final java.util.Set<String> APPEARANCE_ROWS = new java.util.HashSet<>(java.util.Arrays.asList(
+        "subtitles.row.size", "subtitles.row.colour", "subtitles.row.position", "subtitles.row.outline",
+        "subtitles.row.background", "subtitles.row.opacity"));
+    private boolean appearanceShown;
+    private ImageView sample;
+    private final ViewTreeObserver.OnGlobalFocusChangeListener appearanceFocus =
+        (before, now) -> showAppearance(inAppearance(now));
+
+    /**
+     * Owner's preview rule (0.155 notes #35): while focus is anywhere in Subtitle appearance, the real subtitles
+     * are hidden and one sample line is drawn with the current settings instead; leaving the section brings them
+     * back. Subtitle Delay is not part of it.
+     */
+    boolean inAppearance(View focused) {
+        for (View v = focused; v != null && v != this; v = v.getParent() instanceof View ? (View)v.getParent() : null)
+            if (v.getTag() instanceof String && APPEARANCE_ROWS.contains(v.getTag()))
+                return true;
+        return false;
+    }
+
+    boolean appearanceShown() {
+        return appearanceShown;
+    }
+
+    private void showAppearance(boolean shown) {
+        if (closed)
+            shown = false;
+        if (shown == appearanceShown) {
+            if (shown)
+                drawSample();
+            return;
+        }
+        appearanceShown = shown;
+        backend.appearancePreview(shown);
+        if (shown) {
+            drawSample();
+            return;
+        }
+        if (sample != null && sample.getParent() instanceof ViewGroup)
+            ((ViewGroup)sample.getParent()).removeView(sample);
+        sample = null;
+    }
+
+    private void drawSample() {
+        ViewGroup content = owner.findViewById(android.R.id.content);
+        if (content == null || content.getWidth() <= 0 || content.getHeight() <= 0)
+            return;
+        Bitmap bitmap = backend.appearanceSample(SAMPLE_TEXT, content.getWidth(), content.getHeight());
+        if (bitmap == null)
+            return;
+        if (sample == null) {
+            sample = new ImageView(owner);
+            sample.setTag(SAMPLE_TAG);
+            sample.setFocusable(false);
+            sample.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
+            content.addView(sample, 0, new FrameLayout.LayoutParams(-1, -1));
+            // Keep the sample under the panel but over the picture.
+            View panelRoot = this;
+            while (panelRoot.getParent() instanceof View && panelRoot.getParent() != content)
+                panelRoot = (View)panelRoot.getParent();
+            if (panelRoot.getParent() == content) {
+                content.removeView(sample);
+                content.addView(sample, Math.max(0, content.indexOfChild(panelRoot)),
+                                new FrameLayout.LayoutParams(-1, -1));
+            }
+        }
+        sample.setImageBitmap(bitmap);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getViewTreeObserver().addOnGlobalFocusChangeListener(appearanceFocus);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        getViewTreeObserver().removeOnGlobalFocusChangeListener(appearanceFocus);
+        showAppearance(false);
+        super.onDetachedFromWindow();
     }
 
     private final Activity owner;
@@ -519,8 +612,15 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         section("SUBTITLE APPEARANCE", false);
         choices("size", "size", "Text Size", new String[] {"Small", "Medium", "Large"}, new int[] {25, 50, 75});
         swatches();
-        choices("position", "position", "Vertical Position", new String[] {"Bottom", "Middle", "Top"},
-                new int[] {0, 128, 255});
+        // Approved 0.156 #24: one step control; Right raises by 5% of the screen, Left lowers; moves live.
+        LinearLayout position = row("subtitles.row.position", "position", "Vertical Position");
+        TextView height = stepper(position, 110, direction -> backend.set(
+            "position", SubtitleVerticalPosition.step(backend.get("position") + direction * POSITION_STEP)));
+        bindings.add(() -> {
+            String label = positionLabel(backend.get("position"));
+            height.setText(label);
+            position.setContentDescription("Vertical Position, " + label);
+        });
         toggle("outline", "outline", "Outline");
         toggle("background", "background", "Background");
 
@@ -782,6 +882,19 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         backend.set(key, values[target]);
     }
 
+    static final int POSITION_STEP = 5;
+    static final int POSITION_TOP = 90;
+
+    /** "Bottom", "Raised 5%" … "Raised 85%", "Top". */
+    static String positionLabel(int percent) {
+        int step = SubtitleVerticalPosition.step(percent);
+        if (step <= 0)
+            return "Bottom";
+        if (step >= POSITION_TOP)
+            return "Top";
+        return "Raised " + step + "%";
+    }
+
     private static String labelFor(int value, int[] values, String[] labels) {
         for (int i = 0; i < values.length; i++)
             if (values[i] == value)
@@ -1006,9 +1119,12 @@ final class PlaybackSubtitlePanel extends LinearLayout {
         }
         for (Runnable binding : bindings)
             binding.run();
+        if (appearanceShown)
+            drawSample();
     }
 
     void close() {
+        showAppearance(false);
         closed = true;
         bindings.clear();
     }
