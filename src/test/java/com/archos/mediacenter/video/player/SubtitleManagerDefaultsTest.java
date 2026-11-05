@@ -119,7 +119,9 @@ public class SubtitleManagerDefaultsTest
 
     @Test public void styleKeysCoverEveryStylePreference()
     {
-        assertEquals(14, SubtitleManager.STYLE_KEYS.size());
+        assertEquals(16, SubtitleManager.STYLE_KEYS.size());
+        assertTrue(SubtitleManager.STYLE_KEYS.contains(SubtitleVerticalPosition.KEY_PERCENT));
+        assertTrue(SubtitleManager.STYLE_KEYS.contains(SubtitleVerticalPosition.KEY_LEGACY));
         for (String key :
              new String[] {SubtitleManager.KEY_VPOS, SubtitleManager.KEY_COLOR, SubtitleManager.KEY_BG_OPACITY,
                            SubtitleManager.KEY_BG_MODE, SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.KEY_BOLD,
