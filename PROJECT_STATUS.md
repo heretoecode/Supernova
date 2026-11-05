@@ -20,8 +20,8 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   position and live sample, sleep timer, Still watching?, seek pictures, per-series choices), Search and the shared
   keyboard, the Network & Files landing. Next: Network Shares and Add Connection, Library Health page, Settings
   stage 3, Customise Home, Fix match, empty states, Local Storage grid.
-- **Codex** (engine and data): screen-data items 1–6 ready through `a45276960`, after merging Claude `0e6943603`.
-  Ten inventory/search/SQLite regressions pass (57 component regressions across items 1–6). Item 7 continues.
+- **Codex** (engine and data): screen-data items 1–7 ready through `3b8b3daff`, after merging Claude `0e6943603`.
+  All seven screen-data items are ready. 74 component regressions pass; register the six new dependency patches before full conformance.
   Branch `codex/0155-code-2026-11-04`; APIs/report in `docs/codex/`. Full conformance remains Claude’s.
 - **GitHub:** cleaned up on 5 Nov 2026: this page, `CLAUDE.md`, `AGENTS.md`, the archive, and Issues #31–#102.
 

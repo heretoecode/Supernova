@@ -1,3 +1,8 @@
+# 0.156 screen data — item 7 ready (5 Nov 2026)
+
+Item 7 ready at `3b8b3daff` on `codex/0155-code-2026-11-04`. All seven screen-data items are ready. 74 component regressions pass; register the six new dependency patches before full conformance.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
 # 0.156 screen data — item 6 ready (5 Nov 2026)
 
 Item 6 ready at `a45276960` on `codex/0155-code-2026-11-04`. Ten inventory/search/SQLite regressions pass (57 component regressions across items 1–6). Item 7 continues.
