@@ -143,4 +143,16 @@ public class LibraryScanControllerTest
         assertEquals(7, LibraryScanController.recentScans().get(0).added);
         assertEquals(2, LibraryScanController.recentScans().get(0).removed);
     }
+    @Test public void providerSyncUsesTheSameProgressHistoryAndPlainFailureProjection() throws Exception
+    {
+        Uri source = Uri.parse("webdavs://webdav.put.io/Films");
+        LibraryScanController.sourceName(source, "Put.io › Films");
+        LibraryScanController.sourceEvent("provider", source, "started", 0, -1, 0, 0, 0, null);
+        assertTrue(LibraryScanController.progress().running);
+        assertEquals("Put.io › Films", LibraryScanController.progress().sourceLabel);
+        LibraryScanController.sourceEvent("provider", source, "failed", 0, -1, -1, -1, -1, "UNAUTHORISED");
+        assertEquals(ScanProgress.Failure.SIGN_IN, LibraryScanController.progress().failure);
+        LibraryScanController.IO.submit(() -> {}).get(5, TimeUnit.SECONDS);
+        assertEquals("Source sign-in failed", LibraryScanController.recentScans().get(0).failureReason());
+    }
 }

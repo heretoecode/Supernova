@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediaprovider.video.LibraryScanControl;
+import com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler;
 import java.util.Locale;
 import java.util.List;
 import java.io.File;
@@ -177,7 +178,7 @@ public final class LibraryScanController
             return ScanProgress.Failure.CANCELLED;
         if (evidence.contains("certificate") || evidence.contains("ssl"))
             return ScanProgress.Failure.CERTIFICATE;
-        if (evidence.contains("authentication"))
+        if (evidence.contains("authentication") || evidence.contains("unauthorised"))
             return ScanProgress.Failure.SIGN_IN;
         if (evidence.contains("security") || evidence.contains("accessdenied"))
             return ScanProgress.Failure.PERMISSION;
@@ -207,6 +208,30 @@ public final class LibraryScanController
         return new ScanProgress(value.batchId, value.sourceId, value.sourceLabel, value.checked, value.total,
                                 value.added, value.removed, value.updated, value.startedUtcMs, value.durationMs, true,
                                 true, value.failure);
+    }
+
+    /** Provider worker adapter; bounded safe reason codes only, never exception messages. */
+    public static void sourceEvent(String batch, Uri source, String phase, long checked, long total, long added,
+                                   long removed, long updated, String reason)
+    {
+        try
+        {
+            accept(new Intent()
+                       .putExtra("batch_id", batch)
+                       .putExtra("source_id", ScanSourceLabels.id(source.toString()))
+                       .putExtra("source_kind", "putio")
+                       .putExtra("phase", phase)
+                       .putExtra("checked", checked)
+                       .putExtra("total", total)
+                       .putExtra("added", added)
+                       .putExtra("removed", removed)
+                       .putExtra("updated", updated)
+                       .putExtra("failure_class", reason));
+        }
+        catch (java.security.GeneralSecurityException invalid)
+        {
+            throw new IllegalArgumentException("Invalid source identity", invalid);
+        }
     }
 
     /** Record the scheduler acknowledgement window without claiming a source or a known file total. */
@@ -266,6 +291,7 @@ public final class LibraryScanController
         CONTROL.execute(() -> {
             try
             {
+                PutioSyncScheduler.stop();
                 LibraryScanControl.stop(context);
             }
             catch (RuntimeException failure)

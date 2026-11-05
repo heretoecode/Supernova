@@ -95,7 +95,7 @@ final class ScanSourceLabels
         return clean.length() > 160 ? clean.substring(0, 160) : clean;
     }
 
-    static String id(String uri) throws Exception
+    static String id(String uri) throws java.security.NoSuchAlgorithmException
     {
         byte[] digest = MessageDigest.getInstance("SHA-256").digest(uri.getBytes(StandardCharsets.UTF_8));
         StringBuilder id = new StringBuilder();

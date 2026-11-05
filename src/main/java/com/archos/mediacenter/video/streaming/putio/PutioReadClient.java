@@ -2,34 +2,68 @@ package com.archos.mediacenter.video.streaming.putio;
 
 import android.os.SystemClock;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
-import okhttp3.*;
-import org.json.*;
-import java.io.*;
-import java.util.*;
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-/** Narrow public API adapter: reads plus explicit Supernova-grant revocation. Original-quality playback continues through WebDAV. */
-public final class PutioReadClient {
+/** Narrow public API adapter; original-quality playback continues through WebDAV. */
+public final class PutioReadClient implements AutoCloseable
+{
+    private volatile boolean cancelled;
+    private final Set<Call> calls = new HashSet<>();
+
+    public synchronized void cancel()
+    {
+        cancelled = true;
+        for (Call call : calls)
+            call.cancel();
+    }
+    @Override public void close()
+    {
+        cancel();
+        http.connectionPool().evictAll();
+    }
     private static final String ROOT = "https://api.put.io/v2/";
     private final String token;
     private final OkHttpClient http;
 
-    public static final class Unavailable extends IOException {
+    public static final class Unavailable extends IOException
+    {
         public final PutioReconciliation.Failure reason;
         public final int status;
 
-        Unavailable(PutioReconciliation.Failure reason, int status) {
+        Unavailable(PutioReconciliation.Failure reason, int status)
+        {
             super("put.io request unavailable (" + reason + ", " + status + ")");
             this.reason = reason;
             this.status = status;
         }
     }
 
-    public static final class Item {
+    public static final class Item
+    {
         public final long id, parentId, size;
         public final String name, type;
 
-        Item(long id, long parentId, long size, String name, String type) {
+        Item(long id, long parentId, long size, String name, String type)
+        {
             this.id = id;
             this.parentId = parentId;
             this.size = size;
@@ -37,31 +71,35 @@ public final class PutioReadClient {
             this.type = type;
         }
 
-        public boolean folder() {
+        public boolean folder()
+        {
             return "FOLDER".equals(type);
         }
 
-        public boolean video() {
-            return "VIDEO".equals(type)
-                || "FILE".equals(type)
-                && name.toLowerCase(Locale.ROOT)
-                       .matches(".*\\.(mkv|mp4|m4v|avi|mov|ts|m2ts|mpeg|mpg|webm|wmv|vob|iso)$");
+        public boolean video()
+        {
+            return "VIDEO".equals(type) ||
+                "FILE".equals(type) && name.toLowerCase(Locale.ROOT)
+                                             .matches(".*\\.(mkv|mp4|m4v|avi|mov|ts|m2ts|mpeg|mpg|webm|wmv|vob|iso)$");
         }
     }
 
-    public static final class Page {
+    public static final class Page
+    {
         public final List<Item> items;
         public final String cursor;
         public final long total;
 
-        Page(List<Item> items, String cursor, long total) {
+        Page(List<Item> items, String cursor, long total)
+        {
             this.items = Collections.unmodifiableList(items);
             this.cursor = cursor;
             this.total = total;
         }
     }
 
-    public PutioReadClient(String token) {
+    public PutioReadClient(String token)
+    {
         if (token == null || !token.matches("[!-~]{1,4096}"))
             throw new IllegalArgumentException("Missing valid put.io authorisation");
         this.token = token;
@@ -74,11 +112,13 @@ public final class PutioReadClient {
                    .build();
     }
 
-    public static final class Account {
+    public static final class Account
+    {
         public final long id, usedBytes, totalBytes;
         public final String username, status;
 
-        Account(long id, String username, String status, long used, long total) {
+        Account(long id, String username, String status, long used, long total)
+        {
             this.id = id;
             this.username = username;
             this.status = status;
@@ -87,43 +127,50 @@ public final class PutioReadClient {
         }
     }
 
-    public Account account() throws Unavailable {
+    public Account account() throws Unavailable
+    {
         return request(
             new Request.Builder().url(ROOT + "account/info").header("Authorization", "Token " + token).build(),
             "account_info", PutioReadClient::parseAccount);
     }
 
-    static Account parseAccount(JSONObject response) throws Unavailable {
-        try {
+    static Account parseAccount(JSONObject response) throws Unavailable
+    {
+        try
+        {
             if (!"OK".equals(response.getString("status")))
                 throw new JSONException("Invalid envelope");
             JSONObject info = response.getJSONObject("info"), disk = info.getJSONObject("disk");
             long id = info.getLong("user_id"), used = disk.getLong("used"), total = disk.getLong("size");
             String name = info.getString("username"), status = info.getString("account_status");
-            if (id <= 0 || used < 0 || total < 0 || name.isEmpty() || name.length() > 256
-                || !Arrays.asList("active", "inactive", "stranger").contains(status))
+            if (id <= 0 || used < 0 || total < 0 || name.isEmpty() || name.length() > 256 ||
+                !Arrays.asList("active", "inactive", "stranger").contains(status))
                 throw new JSONException("Invalid account");
             return new Account(id, name, status, used, total);
-        } catch (JSONException invalid) {
+        }
+        catch (JSONException invalid)
+        {
             throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
         }
     }
 
     /** Explicit user action: revoke this registered app grant at the provider. */
-    public void revokeSupernovaGrant() throws Unavailable {
+    public void revokeSupernovaGrant() throws Unavailable
+    {
         request(new Request.Builder()
                     .url(ROOT + "oauth/grants/9874/delete")
                     .header("Authorization", "Token " + token)
                     .post(new FormBody.Builder().build())
                     .build(),
-            "revoke_grant", response -> {
-                if (!"OK".equals(response.optString("status")))
-                    throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
-                return Boolean.TRUE;
-            });
+                "revoke_grant", response -> {
+                    if (!"OK".equals(response.optString("status")))
+                        throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
+                    return Boolean.TRUE;
+                });
     }
 
-    public Page list(long parentId, String cursor) throws Unavailable {
+    public Page list(long parentId, String cursor) throws Unavailable
+    {
         if (parentId < 0)
             throw new IllegalArgumentException("Only selected account folders are supported");
         HttpUrl url = HttpUrl.parse(ROOT + (cursor == null ? "files/list" : "files/list/continue"))
@@ -133,16 +180,17 @@ public final class PutioReadClient {
         Request.Builder request = new Request.Builder().header("Authorization", "Token " + token);
         if (cursor == null)
             request.url(url.newBuilder()
-                    .addQueryParameter("parent_id", String.valueOf(parentId))
-                    .addQueryParameter("total", "1")
-                    .build());
+                            .addQueryParameter("parent_id", String.valueOf(parentId))
+                            .addQueryParameter("total", "1")
+                            .build());
         else
             request.url(url).post(new FormBody.Builder().add("cursor", cursor).build());
-        return request(
-            request.build(), cursor == null ? "folder_list" : "folder_continue", response -> parse(response, parentId));
+        return request(request.build(), cursor == null ? "folder_list" : "folder_continue",
+                       response -> parse(response, parentId));
     }
 
-    public Page search(String query, String cursor) throws Unavailable {
+    public Page search(String query, String cursor) throws Unavailable
+    {
         if (query == null || query.trim().isEmpty() || query.length() > 256)
             throw new IllegalArgumentException("Enter a search query");
         HttpUrl.Builder url = HttpUrl.parse(ROOT + (cursor == null ? "files/search" : "files/search/continue"))
@@ -156,33 +204,39 @@ public final class PutioReadClient {
         return request(request.build(), cursor == null ? "search" : "search_continue", PutioReadClient::parseSearch);
     }
 
-    static Page parseSearch(JSONObject response) throws Unavailable {
+    static Page parseSearch(JSONObject response) throws Unavailable
+    {
         Page page = parse(response, -1);
         if (page.total < 0)
             throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
         return page;
     }
 
-    public static final class FileInfo {
+    public static final class FileInfo
+    {
         public final Item item;
         public final String description;
 
-        FileInfo(Item item, String description) {
+        FileInfo(Item item, String description)
+        {
             this.item = item;
             this.description = description;
         }
     }
 
-    public FileInfo file(long id) throws Unavailable {
+    public FileInfo file(long id) throws Unavailable
+    {
         if (id <= 0)
             throw new IllegalArgumentException("Missing file identity");
         HttpUrl url = HttpUrl.parse(ROOT + "files/" + id).newBuilder().addQueryParameter("media_info", "1").build();
         return request(new Request.Builder().url(url).header("Authorization", "Token " + token).build(), "file_info",
-            response -> parseFile(response, id));
+                       response -> parseFile(response, id));
     }
 
-    static FileInfo parseFile(JSONObject response, long expectedId) throws Unavailable {
-        try {
+    static FileInfo parseFile(JSONObject response, long expectedId) throws Unavailable
+    {
+        try
+        {
             if (!"OK".equals(response.getString("status")))
                 throw new JSONException("Invalid envelope");
             JSONObject value = response.getJSONObject("file");
@@ -194,18 +248,22 @@ public final class PutioReadClient {
             appendText(text, "Created", value, "created_at");
             appendText(text, "Updated", value, "updated_at");
             JSONObject media = value.optJSONObject("media_info");
-            if (media != null) {
+            if (media != null)
+            {
                 JSONObject format = media.optJSONObject("format");
-                if (format != null) {
+                if (format != null)
+                {
                     appendText(text, "Container", format, "name");
                     appendNumber(text, "Duration (seconds)", format, "duration");
                     appendNumber(text, "Bit rate (bits/s)", format, "bit_rate");
                 }
                 JSONArray streams = media.optJSONArray("streams");
-                if (streams != null) {
+                if (streams != null)
+                {
                     if (streams.length() > 256)
                         throw new JSONException("Too many streams");
-                    for (int i = 0; i < streams.length(); i++) {
+                    for (int i = 0; i < streams.length(); i++)
+                    {
                         JSONObject stream = streams.getJSONObject(i);
                         text.append("\nStream ").append(i + 1).append('\n');
                         appendText(text, "Type", stream, "codec_type");
@@ -218,106 +276,143 @@ public final class PutioReadClient {
                 }
             }
             return new FileInfo(item, text.toString().trim());
-        } catch (JSONException invalid) {
+        }
+        catch (JSONException invalid)
+        {
             throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
         }
     }
 
-    private static void appendText(StringBuilder text, String label, JSONObject value, String key)
-        throws JSONException {
+    private static void appendText(StringBuilder text, String label, JSONObject value, String key) throws JSONException
+    {
         if (!value.has(key) || value.isNull(key))
             return;
         Object raw = value.get(key);
-        if (!(raw instanceof String) || ((String) raw).length() > 256 || ((String) raw).matches(".*[\\p{Cntrl}].*"))
+        if (!(raw instanceof String) || ((String)raw).length() > 256 || ((String)raw).matches(".*[\\p{Cntrl}].*"))
             throw new JSONException("Invalid display field");
-        if (!((String) raw).isEmpty())
+        if (!((String)raw).isEmpty())
             text.append(label).append(": ").append(raw).append('\n');
     }
 
     private static void appendNumber(StringBuilder text, String label, JSONObject value, String key)
-        throws JSONException {
+        throws JSONException
+    {
         if (!value.has(key) || value.isNull(key))
             return;
         Object raw = value.get(key);
-        if (!(raw instanceof Number) || !Double.isFinite(((Number) raw).doubleValue())
-            || ((Number) raw).doubleValue() < 0)
+        if (!(raw instanceof Number) || !Double.isFinite(((Number)raw).doubleValue()) ||
+            ((Number)raw).doubleValue() < 0)
             throw new JSONException("Invalid media value");
         text.append(label).append(": ").append(raw).append('\n');
     }
 
-    private interface Parser<T> {
+    private interface Parser<T>
+    {
         T parse(JSONObject response) throws Unavailable;
     }
 
-    private <T> T request(Request request, String kind, Parser<T> parser) throws Unavailable {
+    private <T> T request(Request request, String kind, Parser<T> parser) throws Unavailable
+    {
         String operation = Diagnostics.operation("putio_" + kind);
         long started = SystemClock.elapsedRealtime();
         int status = 0;
         String outcome = "cancelled";
-        try {
-            if (Thread.currentThread().isInterrupted())
+        try
+        {
+            if (cancelled || Thread.currentThread().isInterrupted())
                 throw new Unavailable(PutioReconciliation.Failure.CANCELLED, 0);
-            try (Response response = http.newCall(request).execute()) {
+            Call call;
+            synchronized (this)
+            {
+                if (cancelled)
+                    throw new Unavailable(PutioReconciliation.Failure.CANCELLED, 0);
+                call = http.newCall(request);
+                calls.add(call);
+            }
+            try (Response response = call.execute())
+            {
                 status = response.code();
                 if (!response.isSuccessful())
                     throw new Unavailable(response.code() == 401 || response.code() == 403
-                            ? PutioReconciliation.Failure.UNAUTHORISED
-                            : response.code() == 429 ? PutioReconciliation.Failure.RATE_LIMITED
-                                                     : PutioReconciliation.Failure.OFFLINE,
-                        response.code());
+                                              ? PutioReconciliation.Failure.UNAUTHORISED
+                                          : response.code() == 429 ? PutioReconciliation.Failure.RATE_LIMITED
+                                                                   : PutioReconciliation.Failure.OFFLINE,
+                                          response.code());
                 if (response.body() == null)
                     throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, response.code());
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 InputStream input = response.body().byteStream();
                 byte[] buffer = new byte[8192];
                 int count;
-                while ((count = input.read(buffer)) != -1) {
-                    if (Thread.currentThread().isInterrupted())
+                while ((count = input.read(buffer)) != -1)
+                {
+                    if (cancelled || Thread.currentThread().isInterrupted())
                         throw new Unavailable(PutioReconciliation.Failure.CANCELLED, 0);
                     if (bytes.size() + count > 8 * 1024 * 1024)
                         throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
                     bytes.write(buffer, 0, count);
                 }
                 JSONObject body = new JSONObject(bytes.toString("UTF-8"));
-                Diagnostics.event("provider_transport_complete",
-                    "operation_id", operation, "provider", "putio", "operation_type", kind, "status", status);
+                Diagnostics.event("provider_transport_complete", "operation_id", operation, "provider", "putio",
+                                  "operation_type", kind, "status", status);
                 T result = parser.parse(body);
+                if (cancelled || Thread.currentThread().isInterrupted())
+                    throw new Unavailable(PutioReconciliation.Failure.CANCELLED, 0);
                 outcome = "validated_complete";
                 return result;
-            } catch (Unavailable safe) {
+            }
+            catch (Unavailable safe)
+            {
                 outcome = safe.reason.name();
                 throw safe;
-            } catch (JSONException invalid) {
+            }
+            catch (JSONException invalid)
+            {
                 outcome = "INVALID_PAGE";
                 throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
-            } catch (IOException network) {
-                outcome = Thread.currentThread().isInterrupted() ? "CANCELLED" : "OFFLINE";
-                throw new Unavailable(Thread.currentThread().isInterrupted() ? PutioReconciliation.Failure.CANCELLED
-                                                                             : PutioReconciliation.Failure.OFFLINE,
-                    0);
             }
-        } finally {
-            Diagnostics.event(
-                "validated_complete".equals(outcome) ? "provider_request_complete" : "provider_request_failed",
-                "operation_id", operation, "provider", "putio", "operation_type", kind, "status", status, "outcome",
-                outcome, "duration_ms", SystemClock.elapsedRealtime() - started, "retry_number", 0,
-                "connectivity", Diagnostics.connectivity());
+            catch (IOException network)
+            {
+                outcome = cancelled || Thread.currentThread().isInterrupted() ? "CANCELLED" : "OFFLINE";
+                throw new Unavailable(cancelled || Thread.currentThread().isInterrupted()
+                                          ? PutioReconciliation.Failure.CANCELLED
+                                          : PutioReconciliation.Failure.OFFLINE,
+                                      0);
+            }
+            finally
+            {
+                synchronized (this)
+                {
+                    calls.remove(call);
+                }
+            }
+        }
+        finally
+        {
+            Diagnostics.event("validated_complete".equals(outcome) ? "provider_request_complete"
+                                                                     : "provider_request_failed",
+                              "operation_id", operation, "provider", "putio", "operation_type", kind, "status", status,
+                              "outcome", outcome, "duration_ms", SystemClock.elapsedRealtime() - started,
+                              "retry_number", 0, "connectivity", Diagnostics.connectivity());
             Diagnostics.finishOperation(operation, "putio_" + kind, started);
         }
         // Never propagate request, response body, cursor or authorisation into diagnostics.
     }
 
-    static Page parse(JSONObject response, long parentId) throws Unavailable {
-        try {
+    static Page parse(JSONObject response, long parentId) throws Unavailable
+    {
+        try
+        {
             if (!"OK".equals(response.getString("status")) || !response.has("cursor"))
                 throw new JSONException("Incomplete envelope");
             Object rawCursor = response.get("cursor");
-            if (rawCursor != JSONObject.NULL && (!(rawCursor instanceof String) || ((String) rawCursor).isEmpty()))
+            if (rawCursor != JSONObject.NULL && (!(rawCursor instanceof String) || ((String)rawCursor).isEmpty()))
                 throw new JSONException("Invalid continuation");
             JSONArray values = response.getJSONArray("files");
             List<Item> items = new ArrayList<>();
             Set<Long> seen = new HashSet<>();
-            for (int n = 0; n < values.length(); n++) {
+            for (int n = 0; n < values.length(); n++)
+            {
                 Item item = parseItem(values.getJSONObject(n), parentId);
                 if (!seen.add(item.id))
                     throw new JSONException("Duplicate file identity");
@@ -326,18 +421,21 @@ public final class PutioReadClient {
             long total = response.has("total") ? response.getLong("total") : -1;
             if (total < -1 || total >= 0 && total < items.size())
                 throw new JSONException("Invalid count");
-            return new Page(items, rawCursor == JSONObject.NULL ? null : (String) rawCursor, total);
-        } catch (JSONException invalid) {
+            return new Page(items, rawCursor == JSONObject.NULL ? null : (String)rawCursor, total);
+        }
+        catch (JSONException invalid)
+        {
             throw new Unavailable(PutioReconciliation.Failure.INVALID_PAGE, 0);
         }
     }
 
-    private static Item parseItem(JSONObject value, long parentId) throws JSONException {
+    private static Item parseItem(JSONObject value, long parentId) throws JSONException
+    {
         long id = value.getLong("id"), parent = value.getLong("parent_id"), size = value.getLong("size");
         String name = value.getString("name"), type = value.getString("file_type");
-        if (id <= 0 || parent < 0 || parentId >= 0 && parent != parentId || size < 0 || name.isEmpty()
-            || name.contains("/") || name.contains("\\") || name.indexOf('\0') >= 0 || name.equals(".")
-            || name.equals(".."))
+        if (id <= 0 || parent < 0 || parentId >= 0 && parent != parentId || size < 0 || name.isEmpty() ||
+            name.contains("/") || name.contains("\\") || name.indexOf('\0') >= 0 || name.equals(".") ||
+            name.equals(".."))
             throw new JSONException("Invalid file identity");
         return new Item(id, parent, size, name, type);
     }
