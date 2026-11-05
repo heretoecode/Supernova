@@ -76,6 +76,9 @@ Items already built or scheduled are left out (see the bottom of this file).
   Real renders (5 Nov, background swapped only, panels kept): Home and Movies on Space Black and on charcoal, by
   `preview-renders.yml` with `"variants": ["normal", "charcoal"]`. Owner: Movies, TV Shows and custom pages share
   one design, so only one library page needs designing.
+  Network & Files shade options (real renders, 5 Nov): owner prefers option 2 (page #16181C, tiles #22252B) and
+  option 3 (page #0E1013, tiles #1C1F24), and asked for stronger outlines on unfocused tiles: rendered at 2 px
+  28% and 2 px 40% white. Waiting for the owner's pick.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
