@@ -307,6 +307,39 @@ public class LocalStorageViewTest {
         assertEquals("header height once the new listing is in", before, header.getHeight());
     }
 
+    /** Owner-approved (notes #11, option A): every row is tagged; "Not added" when outside the library. */
+    @Test
+    public void everyRowShowsItsLibraryStatus() throws Exception {
+        File movies = new File(drive, "Movies");
+        assertTrue(movies.mkdirs());
+        Uri folder = seed(movies, "Film.mkv", "Extras");
+        view.open(folder);
+        settle();
+        View film = view.findViewWithTag(Uri.fromFile(new File(movies, "Film.mkv")).toString());
+        TextView tag = film.findViewWithTag("local.row.status");
+        assertEquals(View.VISIBLE, tag.getVisibility());
+        assertEquals("Not added", tag.getText().toString());
+        assertEquals("no watched pill for a file outside the library", View.GONE,
+                     film.findViewWithTag("local.row.watched").getVisibility());
+    }
+
+    @Test
+    public void watchedPillFillsWithProgressAndIsSolidWhenWatched() {
+        android.graphics.Bitmap image = android.graphics.Bitmap.createBitmap(100, 20,
+                                                                             android.graphics.Bitmap.Config.ARGB_8888);
+        LocalStorageView.WatchPill progress = new LocalStorageView.WatchPill(0, .4f, false);
+        progress.setBounds(0, 0, 100, 20);
+        progress.draw(new android.graphics.Canvas(image));
+        assertEquals("watched part is blue", 0xFF3A7BD5, image.getPixel(20, 10));
+        assertEquals("the rest is dark", 0xFF1A2A44, image.getPixel(80, 10));
+        image.eraseColor(0);
+        LocalStorageView.WatchPill done = new LocalStorageView.WatchPill(0, 1f, true);
+        done.setBounds(0, 0, 100, 20);
+        done.draw(new android.graphics.Canvas(image));
+        assertEquals(0xFFF4F6FB, image.getPixel(50, 10));
+        image.recycle();
+    }
+
     private void layoutOnce() {
         View root = view.getRootView();
         root.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),

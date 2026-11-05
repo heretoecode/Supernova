@@ -6,6 +6,12 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.graphics.RectF;
+import android.graphics.PixelFormat;
+import android.graphics.Paint;
+import android.graphics.ColorFilter;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -951,10 +957,10 @@ public final class LocalStorageView extends LinearLayout {
         }
     }
 
-    /** Two-line list row: icon · name / facts · (buttons while focused) · watched tick. */
+    /** Two-line list row: icon · name + library tag / facts · (buttons while focused) · watched pill. */
     private final class Row extends LinearLayout {
-        final ImageView icon = new ImageView(getContext()), tick = new ImageView(getContext());
-        final TextView line1, line2;
+        final ImageView icon = new ImageView(getContext());
+        final TextView line1, line2, tag, watched;
         final View pending;
         final LinearLayout buttons;
         Object item;
@@ -977,7 +983,13 @@ public final class LocalStorageView extends LinearLayout {
             line1.setTypeface(SupernovaStyle.LABEL);
             line1.setSingleLine(true);
             line1.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-            two.addView(line1, new LayoutParams(-1, -2));
+            tag = text("", 9, SupernovaStyle.TEXT_SECONDARY);
+            tag.setTag("local.row.status");
+            tag.setTypeface(SupernovaStyle.LABEL);
+            tag.setSingleLine(true);
+            tag.setPadding(dp(5), dp(1.5f), dp(5), dp(1.5f));
+            tag.setCompoundDrawablePadding(dp(3));
+            two.addView(new TitleLine(c, line1, tag), new LayoutParams(-1, -2));
             FrameLayout second = new FrameLayout(c);
             line2 = text("", 10.5f, SupernovaStyle.TEXT_SECONDARY);
             line2.setSingleLine(true);
@@ -995,11 +1007,16 @@ public final class LocalStorageView extends LinearLayout {
             buttons = new LinearLayout(c);
             buttons.setVisibility(GONE);
             addView(buttons, new LayoutParams(-2, -2));
-            tick.setImageDrawable(new PreviewIcon("check"));
-            tick.setColorFilter(0xFF5AD18A);
-            LayoutParams tickSize = new LayoutParams(dp(13), dp(13));
-            tickSize.leftMargin = dp(8);
-            addView(tick, tickSize);
+            watched = text("", 10, SupernovaStyle.TEXT);
+            watched.setTag("local.row.watched");
+            watched.setTypeface(SupernovaStyle.LABEL);
+            watched.setSingleLine(true);
+            watched.setGravity(Gravity.CENTER);
+            watched.setPadding(dp(8), 0, dp(8), 0);
+            watched.setMinWidth(dp(70));
+            LayoutParams watchedSize = new LayoutParams(-2, dp(21));
+            watchedSize.leftMargin = dp(8);
+            addView(watched, watchedSize);
             setOnClickListener(v -> primary(item));
             setOnKeyListener((v, key, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN)
@@ -1050,7 +1067,8 @@ public final class LocalStorageView extends LinearLayout {
             buttons.setVisibility(at == activePosition ? VISIBLE : GONE);
             setActivated(false);
             boolean excluded = false;
-            tick.setVisibility(GONE);
+            watched.setVisibility(GONE);
+            tag.setVisibility(GONE);
             if (value instanceof Box) {
                 Box drive = (Box)value;
                 icon.setImageDrawable(new PreviewIcon("local"));
@@ -1063,6 +1081,7 @@ public final class LocalStorageView extends LinearLayout {
                 line1.setText(file.isDirectory() ? file.getName() : withoutExtension(file.getName()));
                 String library = libraryState(file.getUri());
                 excluded = library.equals("excluded");
+                bindStatus(tag, library);
                 if (file.isDirectory()) {
                     line2.setText(selection.roots.contains(BrowserSelection.canonical(file.getUri()))
                                       ? "Folder · Library folder"
@@ -1075,7 +1094,7 @@ public final class LocalStorageView extends LinearLayout {
                         line1.setText(rowTitle(video));
                     line2.setText(describe(file, video, excluded));
                     showSecond(indexedReady, fade);
-                    tick.setVisibility(video != null && video.isWatched() ? VISIBLE : GONE);
+                    bindWatched(watched, video, indexedReady && !excluded && library.equals("included"));
                 }
             }
             setAlpha(excluded ? .55f : 1f);
@@ -1090,6 +1109,139 @@ public final class LocalStorageView extends LinearLayout {
                 line2.animate().alpha(1f).setDuration(180).start();
             } else
                 line2.setAlpha(1f);
+        }
+    }
+
+    /** Owner-approved (notes #11, option A): every row says whether it is in the library. */
+    private void bindStatus(TextView tag, String library) {
+        String label = library.equals("included") ? "In library" : library.equals("excluded") ? "Excluded" : "Not added";
+        int fill = library.equals("included") ? 0x215AD18A : library.equals("excluded") ? 0x14FFFFFF : 0x0FFFFFFF;
+        int colour = library.equals("included") ? 0xFF9FE3BB
+            : library.equals("excluded") ? 0xFFC9D3E6 : 0xFFAAB3C4;
+        tag.setText(label);
+        tag.setTextColor(colour);
+        tag.setBackground(SupernovaStyle.rounded(getContext(), fill, 5.5f));
+        GradientDrawable mark = new GradientDrawable();
+        mark.setShape(GradientDrawable.OVAL);
+        if (library.equals("included"))
+            mark.setColor(0xFF5AD18A);
+        else
+            mark.setStroke(Math.max(1, dp(1)), colour);
+        mark.setSize(dp(5), dp(5));
+        tag.setCompoundDrawablesWithIntrinsicBounds(mark, null, null, null);
+        tag.setVisibility(VISIBLE);
+    }
+
+    /**
+     * Owner-approved single pill (notes #11, mock-up local-storage/29): fills with blue as you watch ("40% watched"),
+     * solid white "✓ Watched" when finished, a faint outline "Unwatched" when not started.
+     */
+    private void bindWatched(TextView pill, Video video, boolean show) {
+        if (!show || video == null) {
+            pill.setVisibility(GONE);
+            return;
+        }
+        int duration = video.getDurationMs(), resume = video.getResumeMs();
+        if (video.isWatched()) {
+            pill.setText("✓ Watched");
+            pill.setTextColor(SupernovaStyle.FOCUS_TEXT);
+            pill.setBackground(new WatchPill(dp(10.5f), 1f, true));
+        } else if (resume > 0 && duration > 0) {
+            int percent = Math.max(1, Math.min(99, Math.round(100f * resume / duration)));
+            pill.setText(percent + "% watched");
+            pill.setTextColor(SupernovaStyle.TEXT);
+            pill.setBackground(new WatchPill(dp(10.5f), percent / 100f, false));
+        } else {
+            pill.setText("Unwatched");
+            pill.setTextColor(0xFFAAB3C4);
+            pill.setBackground(new WatchPill(dp(10.5f), 0f, false));
+        }
+        pill.setVisibility(VISIBLE);
+    }
+
+    /** The watched pill's background: outline, blue fill for progress, solid white when watched. */
+    static final class WatchPill extends Drawable {
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final float radius, fraction;
+        private final boolean done;
+
+        WatchPill(float radius, float fraction, boolean done) {
+            this.radius = radius;
+            this.fraction = fraction;
+            this.done = done;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            RectF box = new RectF(getBounds());
+            if (done) {
+                paint.setStyle(Paint.Style.FILL);
+                paint.setColor(SupernovaStyle.FOCUS_FILL);
+                canvas.drawRoundRect(box, radius, radius, paint);
+                return;
+            }
+            if (fraction > 0) {
+                paint.setStyle(Paint.Style.FILL);
+                paint.setColor(0xFF1A2A44);
+                canvas.drawRoundRect(box, radius, radius, paint);
+                int saved = canvas.save();
+                canvas.clipRect(box.left, box.top, box.left + box.width() * fraction, box.bottom);
+                paint.setColor(0xFF3A7BD5);
+                canvas.drawRoundRect(box, radius, radius, paint);
+                canvas.restoreToCount(saved);
+            }
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(Math.max(1f, radius / 8f));
+            paint.setColor(fraction > 0 ? 0xFF3A7BD5 : 0x40FFFFFF);
+            RectF edge = new RectF(box);
+            edge.inset(paint.getStrokeWidth() / 2, paint.getStrokeWidth() / 2);
+            canvas.drawRoundRect(edge, radius, radius, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+    }
+
+    /** Title then its tag; the title shortens (middle ellipsis) so the tag always stays visible beside it. */
+    static final class TitleLine extends LinearLayout {
+        private final TextView title, tag;
+
+        TitleLine(Context c, TextView title, TextView tag) {
+            super(c);
+            this.title = title;
+            this.tag = tag;
+            setGravity(Gravity.CENTER_VERTICAL);
+            addView(title, new LayoutParams(-2, -2));
+            LayoutParams tagSize = new LayoutParams(-2, -2);
+            tagSize.leftMargin = Math.round(7 * c.getResources().getDisplayMetrics().density);
+            addView(tag, tagSize);
+        }
+
+        @Override
+        protected void onMeasure(int widthSpec, int heightSpec) {
+            int available = MeasureSpec.getSize(widthSpec);
+            int tagWidth = 0;
+            if (tag.getVisibility() != GONE) {
+                tag.measure(MeasureSpec.makeMeasureSpec(available, MeasureSpec.AT_MOST),
+                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                tagWidth = tag.getMeasuredWidth() + ((LayoutParams)tag.getLayoutParams()).leftMargin;
+            }
+            int max = Math.max(0, available - tagWidth);
+            if (MeasureSpec.getMode(widthSpec) != MeasureSpec.UNSPECIFIED && title.getMaxWidth() != max)
+                title.setMaxWidth(max);
+            super.onMeasure(widthSpec, heightSpec);
         }
     }
 
@@ -1357,12 +1509,7 @@ public final class LocalStorageView extends LinearLayout {
         }
         if (file.length() > 0)
             parts.add(size(file.length()));
-        if (excluded)
-            parts.add("Excluded");
-        else if (video != null && video.isWatched())
-            parts.add("Watched");
-        else if (video != null && video.getResumeMs() > 0)
-            parts.add(resumeText(video.getResumeMs(), video.getDurationMs()));
+        // Library state and watched progress are shown by the tag and the pill (notes #11), not repeated here.
         if (parts.isEmpty())
             parts.add(video == null ? "Video · not in your library" : "Video");
         return TextUtils.join(" · ", parts);
