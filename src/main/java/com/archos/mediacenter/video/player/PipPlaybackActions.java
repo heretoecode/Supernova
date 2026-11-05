@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.UUID;
 
 /** Android PiP control transport. Activity owns layout and the platform owns the PiP menu. */
+// Picture in picture (and RemoteAction) exists from Android 8; the only caller runs inside PiP code.
+@androidx.annotation.RequiresApi(Build.VERSION_CODES.O)
 final class PipPlaybackActions implements AutoCloseable
 {
     static final String RETURN = "supernova_pip_return";

@@ -1405,6 +1405,7 @@ public class PlayerActivity extends AppCompatActivity
         adjustSkipButtonForPiP(isInPict);
     }
 
+    @androidx.annotation.RequiresApi(Build.VERSION_CODES.O)
     private PipPlaybackActions pipActions()
     {
         if (pipActions == null)
@@ -2024,7 +2025,7 @@ public class PlayerActivity extends AppCompatActivity
 
     @Override public boolean dispatchKeyEvent(KeyEvent event)
     {
-        if (Build.VERSION.SDK_INT >= 24 && isInPictureInPictureMode() &&
+        if (Build.VERSION.SDK_INT >= 26 && isInPictureInPictureMode() &&
             (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER || event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
         {
             if (event.getAction() == KeyEvent.ACTION_UP)
