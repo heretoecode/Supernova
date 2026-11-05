@@ -548,10 +548,13 @@ public final class LocalStorageView extends LinearLayout {
             return;
         wantFocus = true;
         focusHolder.setFocusable(true);
-        focusHolder.requestFocus();
+        if (!focusHolder.requestFocus())
+            focusHolder.setFocusable(false);
     }
 
     private void focusAfterRender() {
+        if (!focusHolder.hasFocus())
+            focusHolder.setFocusable(false);
         if (!wantFocus || closed)
             return;
         if (notice.getVisibility() == VISIBLE) {
