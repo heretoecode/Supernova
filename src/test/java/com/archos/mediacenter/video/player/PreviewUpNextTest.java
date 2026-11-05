@@ -19,7 +19,7 @@ import org.robolectric.util.ReflectionHelpers;
 @Config(application = Application.class, sdk = 28)
 public class PreviewUpNextTest {
     @Test
-    public void backFromSkipPillRestoresOriginAndConsumesRelease() {
+    public void dismissingSkipPillRestoresOriginAndConsumesRelease() {
         ActivityController<Activity> host = Robolectric.buildActivity(Activity.class).setup();
         PreviewUpNext prompt = new PreviewUpNext(host.get());
         try {
@@ -35,16 +35,14 @@ public class PreviewUpNextTest {
             ReflectionHelpers.setField(prompt, "skipPill", pill);
             ReflectionHelpers.setField(prompt, "skipOrigin", origin);
             assertTrue(pill.requestFocus());
+            // Approved 0.156 Skip button (owner, option B): Up, Back, Left or Right dismiss it; the part plays and
+            // focus returns to where it came from. Each press and its release are consumed.
             assertTrue(prompt.handleKey(
                     new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP), () -> {}));
-            assertTrue(pill.hasFocus());
+            assertTrue(origin.hasFocus());
+            assertNull(pill.getParent());
             assertTrue(prompt.handleKey(
                     new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_UP), () -> {}));
-            assertTrue(prompt.handleKey(
-                    new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK), () -> {}));
-            assertTrue(origin.hasFocus());
-            assertTrue(prompt.handleKey(
-                    new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK), () -> {}));
             assertTrue(origin.hasFocus());
         } finally {
             prompt.stop();

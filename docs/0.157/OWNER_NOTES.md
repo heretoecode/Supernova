@@ -467,3 +467,23 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - Biggest candidate: everything behind the old `try_new_ui` / classic-UI switch (about 95 references).
 - Keep engine, playback and network code close to NOVA upstream, so future NOVA fixes can still be brought in.
 - Prompt for Codex given to the owner on 5 Nov 2026.
+
+## 11. Home hero change — smooth and seamless (owner, 5 Nov 2026)
+- Owner: "The effect of changing hero card on the home page. Can you make that like really smooth and seamless
+  feeling?"
+- Today (`PreviewPages.changeFeatured` › `renderFeatured`): the whole card is rebuilt, then nudged 36 dp sideways
+  and slid back (220 ms). The new artwork loads after the card appears, so it can flash the empty card colour, and
+  the title, text and buttons jump with it.
+- Proposal (to mock up as a short video before coding):
+  - The card frame, edge and buttons stay still; only what is inside changes.
+  - New artwork already loaded before the change starts (the next and previous heroes kept warm), so there is never
+    an empty frame. If it is not ready in time, the change waits for it instead of flashing.
+  - The old picture crossfades into the new one (about 450 ms, gentle ease), with a slight drift in the direction of
+    travel and a very slow zoom while it rests.
+  - The logo or title, description and details fade out quickly and fade in just after the picture (about 150 ms
+    later), so the text never sits over the wrong film.
+  - Focus stays on the same button throughout; the dots glide to the new position.
+  - Remote presses during a change finish the current one at once and start the next (no queue of lag).
+  - Automatic changes pause while the owner is on the hero and never happen while a row below is focused.
+  - Follows the system "remove animations" setting (instant swap, still no flash).
+- Pairs with the 0.157 hero size change (1776×820) and the dots.

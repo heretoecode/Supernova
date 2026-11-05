@@ -1654,7 +1654,7 @@ public class PlayerActivity extends AppCompatActivity
 
     @Override protected void onDestroy()
     {
-        if (pipActions != null)
+        if (pipActions != null && Build.VERSION.SDK_INT >= 26)
         {
             pipActions.close();
             pipActions = null;
