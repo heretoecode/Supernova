@@ -319,3 +319,19 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - More Like This sources and ranking.
   - Service deep links.
   - Check the "WingNut Films" studio data.
+
+## 4. Details More menu (owner photos, 5 Nov 2026: a film not yet started; Dark Matter in progress)
+- **Restart Movie is offered on a film never started.** That's wrong. Cause: `PreviewMoviePage.more()` adds Restart
+  whenever there is a file, without checking the resume point. Fix: show Restart only when there is a resume
+  position, i.e. the Play button reads "Resume…". The whole Playback group then disappears for an unstarted title.
+- The owner confirms the panel is **charcoal** on the TV; the blue is the camera.
+- **Icons need work.** Mark Watched, Report Incorrect Match and Artwork all fall back to the same "remove" circle;
+  Remove From Library is an odd shelf glyph.
+- Proposal (`docs/design/proposals/more-menu/01`, `02`):
+  - A proper line icon for every entry: restart arrow, ticked circle (Mark Watched / Unwatched), list-plus (Add to
+    Row), magnifier-tick (Fix Match), boxed minus (Remove From Library), page (Full Description), subtitle box,
+    picture (Artwork), bin (Delete), info (Change Info of All Episodes).
+  - "Report Incorrect Match" becomes **Fix Match** (the approved panel).
+  - "Subtitles and Artwork" splits into **Subtitles** and **Artwork**.
+  - **Full Description** joins Files & Media (from the hero decision).
+- **Status:** mock-ups sent; waiting for the owner.
