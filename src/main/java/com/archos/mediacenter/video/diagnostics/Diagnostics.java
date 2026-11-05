@@ -846,6 +846,12 @@ public final class Diagnostics
 
     private static void installTransportReads()
     {
+        com.archos.medialib.MetadataRequestDiagnostics.install(enabled ? (event, failure, fields) -> {
+            if (failure == null)
+                Diagnostics.event(event, fields);
+            else
+                Diagnostics.error(event, failure, fields);
+        } : null);
         TransportReadObserver.install(enabled ? protocol -> {
             if (!enabled)
                 return null;
