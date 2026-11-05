@@ -80,3 +80,16 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 ## Also decided 5 Nov 2026
 - Seek previews (experimental) switch in Settings › System › Advanced, on by default.
 - Old IntroDB settings page: covered by Accounts & Services and Playback › Skipping.
+
+## Progress (Claude, updated 5 Nov 2026 07:40 UTC)
+Built and fully tested (conformance run 41984891190 green, 07e6074d2):
+- #6 Local Storage focus kept in page · #7 header no longer jumps · #9 icons follow focus at the source
+  (Save Changes tick) · #14 NOVA 6.6.4 in Credits/About/licences · crammed-code smoke alarm (tools/test_code_layout.py)
+- #36 Settings stage 1–2: single-panel pattern (tabs in the header, values level with titles, inline choices with
+  Left/Right) and the new section layout / plain-English rows (SettingsLayout.java)
+- #32 Edit Page: no scrolling, header and Delete lines, year range (backups carry the range)
+- #18/#30 top bar: charcoal fade driven by the real scroll (blue blur removed)
+Committed, build running: #11 Details no flat card · #23 Skip button (option B).
+Next (Claude): Local Storage status tags/grid/menu (#33), Customise Home (#29), Search UI (#31), Network & Files
+pages (#34–35), Settings stage 3 (System/About pages, Where to Watch, Appearance), player controls + strip (#19–22,
+needs Codex Part B).
