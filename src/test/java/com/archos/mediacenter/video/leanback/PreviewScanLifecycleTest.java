@@ -27,29 +27,29 @@ import static org.mockito.Mockito.*;
 /** Checks scan lifecycle telemetry uses actual progress, batch totals and terminal outcomes. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
-public class PreviewScanLifecycleTest {
-    @Test
-    public void libraryControlIncludesLocalProgressButNetworkControlStaysNetworkOnly() {
+public class PreviewScanLifecycleTest
+{
+    @Test public void libraryControlIncludesLocalProgressButNetworkControlStaysNetworkOnly()
+    {
         Context context = RuntimeEnvironment.getApplication();
-        PreviewLocalScanState.accept(context,
-            new Intent()
-                .putExtra("batch_id", UUID.randomUUID().toString())
-                .putExtra("mode", "full")
-                .putExtra("phase", "complete")
-                .putExtra("checked", 23L));
+        PreviewLocalScanState.accept(context, new Intent()
+                                                  .putExtra("batch_id", UUID.randomUUID().toString())
+                                                  .putExtra("mode", "full")
+                                                  .putExtra("phase", "complete")
+                                                  .putExtra("checked", 23L));
         assertTrue(PreviewNetworkWorkspace.scanStatus(context, true).contains("23 media rows checked"));
         assertFalse(PreviewNetworkWorkspace.scanStatus(context, false).contains("23 media rows checked"));
     }
 
-    @Before
-    public void registerReceiverForThisTestApplication() {
+    @Before public void registerReceiverForThisTestApplication()
+    {
         // Robolectric replaces the Application/registered receivers between tests;
         // the production process-wide installation guard otherwise retains the old registration.
         ReflectionHelpers.setStaticField(PreviewLibraryScan.class, "installed", false);
     }
 
-    @Test
-    public void nativeLocalTraceReportsMeasuredCountsAndPartialOutcome() {
+    @Test public void nativeLocalTraceReportsMeasuredCountsAndPartialOutcome()
+    {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
         PreviewLocalImportTrace.begin(context, true);
@@ -67,8 +67,8 @@ public class PreviewScanLifecycleTest {
         assertEquals(result, PreviewLocalScanState.status(context));
     }
 
-    @Test
-    public void queuedLocalImportReportsStartAndCancellation() {
+    @Test public void queuedLocalImportReportsStartAndCancellation()
+    {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
         Handler handler = new Handler(Looper.getMainLooper());
@@ -89,8 +89,8 @@ public class PreviewScanLifecycleTest {
         assertTrue(PreviewLocalScanState.status(context).contains("cancelled"));
     }
 
-    @Test
-    public void localQueueBoundariesShareBatchAndObservedTrigger() {
+    @Test public void localQueueBoundariesShareBatchAndObservedTrigger()
+    {
         Context context = mock(Context.class);
         when(context.getPackageName()).thenReturn("test");
         Handler handler = new Handler(Looper.getMainLooper());
@@ -104,18 +104,17 @@ public class PreviewScanLifecycleTest {
         verify(context, times(4)).sendBroadcast(sent.capture());
         List<Intent> rows = sent.getAllValues();
         String batch = rows.get(0).getStringExtra("batch_id");
-        String[] phases = {
-            "requested", "queued", "started", "complete"
-        };
-        for (int n = 0; n < 4; n++) {
+        String[] phases = {"requested", "queued", "started", "complete"};
+        for (int n = 0; n < 4; n++)
+        {
             assertEquals(batch, rows.get(n).getStringExtra("batch_id"));
             assertEquals(phases[n], rows.get(n).getStringExtra("phase"));
             assertEquals("resume", rows.get(n).getStringExtra("trigger"));
         }
     }
 
-    @Test
-    public void localMetadataQueueReportsActualServiceAcceptance() {
+    @Test public void localMetadataQueueReportsActualServiceAcceptance()
+    {
         Context context = mock(Context.class);
         when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
         when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
@@ -127,8 +126,8 @@ public class PreviewScanLifecycleTest {
         assertFalse(AutoScrapeService.requestService(context));
     }
 
-    @Test
-    public void interruptedLocalImportCannotReportCompletionOrInventCounts() {
+    @Test public void interruptedLocalImportCannotReportCompletionOrInventCounts()
+    {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
         PreviewLocalImportTrace.begin(context, false);
@@ -140,8 +139,8 @@ public class PreviewScanLifecycleTest {
         assertTrue(result.contains("counts unavailable"));
     }
 
-    @Test
-    public void localTelemetryBroadcastFailureDoesNotBreakImport() {
+    @Test public void localTelemetryBroadcastFailureDoesNotBreakImport()
+    {
         Context context = mock(Context.class);
         when(context.getPackageName()).thenReturn("test");
         doThrow(new IllegalStateException("receiver unavailable")).when(context).sendBroadcast(any(Intent.class));
@@ -150,8 +149,8 @@ public class PreviewScanLifecycleTest {
         PreviewLocalImportTrace.finish(true, false);
     }
 
-    @Test
-    public void libraryProgressKeepsConcurrentPhasesAndHonestRemainingCounts() {
+    @Test public void libraryProgressKeepsConcurrentPhasesAndHonestRemainingCounts()
+    {
         String value = PreviewLibraryScan.formatLibraryStatus("Scanning indexed sources · 5 checked", true, 7, true, 3);
         assertTrue(value.contains("Importing local library · 7 remaining"));
         assertTrue(value.contains("Identifying library titles · 3 remaining"));
@@ -159,25 +158,26 @@ public class PreviewScanLifecycleTest {
         assertFalse(value.contains("7 checked"));
         assertFalse(value.contains("%"));
         assertEquals("Importing local library · progress unavailable",
-            PreviewLibraryScan.formatLibraryStatus("", true, -1, false, 0));
+                     PreviewLibraryScan.formatLibraryStatus("", true, -1, false, 0));
         assertEquals("Last result", PreviewLibraryScan.formatLibraryStatus("Last result", false, 0, false, 0));
     }
 
-    private void event(Context context, String source, String phase, int checked) {
+    private void event(Context context, String source, String phase, int checked)
+    {
         context.sendBroadcast(new Intent(context.getPackageName() + ".SCAN_LIFECYCLE")
-                .setPackage(context.getPackageName())
-                .putExtra("batch_id", "42")
-                .putExtra("source_id", source)
-                .putExtra("phase", phase)
-                .putExtra("sources_total", 2)
-                .putExtra("checked", checked)
-                .putExtra("added", checked / 2)
-                .putExtra("updated", 0));
+                                  .setPackage(context.getPackageName())
+                                  .putExtra("batch_id", "42")
+                                  .putExtra("source_id", source)
+                                  .putExtra("phase", phase)
+                                  .putExtra("sources_total", 2)
+                                  .putExtra("checked", checked)
+                                  .putExtra("added", checked / 2)
+                                  .putExtra("updated", 0));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
     }
 
-    @Test
-    public void queuedSourcesAndMetadataEventsPreserveMeasuredBatchTotals() {
+    @Test public void queuedSourcesAndMetadataEventsPreserveMeasuredBatchTotals()
+    {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
         String first = "aaaaaaaaaaaaaaaaaaaaaaaa", second = "bbbbbbbbbbbbbbbbbbbbbbbb";
@@ -189,36 +189,36 @@ public class PreviewScanLifecycleTest {
         event(context, second, "complete", 4);
         event(context, second, "metadata_queued", 4);
         event(context, second, "batch_complete", 4);
-        assertEquals(2, (int) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "sourcesTotal"));
-        assertEquals(2L, (long) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "completed"));
-        assertEquals(14L, (long) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "checked"));
+        assertEquals(2, (int)ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "sourcesTotal"));
+        assertEquals(2L, (long)ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "completed"));
+        assertEquals(14L, (long)ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "checked"));
         assertEquals("metadata_queued", ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "metadataOutcome"));
         assertTrue(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("preview_scan_result", "")
-                .contains("14 checked"));
+                       .getString("preview_scan_result", "")
+                       .contains("14 checked"));
     }
 
-    @Test
-    public void batchTerminalClosesOperationOnceNotAtIndividualSourceCompletion() throws Exception {
+    @Test public void batchTerminalClosesOperationOnceNotAtIndividualSourceCompletion() throws Exception
+    {
         Context context = RuntimeEnvironment.getApplication();
         PreviewLibraryScan.install(context);
         Diagnostics.setEnabled(context, true);
-        try {
+        try
+        {
             String source = "aaaaaaaaaaaaaaaaaaaaaaaa";
             event(context, source, "queued", 0);
             String operation = ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operation");
             event(context, source, "complete", 10);
-            assertFalse((boolean) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operationEnded"));
+            assertFalse((boolean)ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operationEnded"));
             event(context, source, "batch_complete", 10);
             event(context, source, "batch_complete", 10);
-            assertTrue((boolean) ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operationEnded"));
-            Object recorder =
-                ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
+            assertTrue((boolean)ReflectionHelpers.getStaticField(PreviewLibraryScan.class, "operationEnded"));
+            Object recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
             Method snapshot = recorder.getClass().getDeclaredMethod("snapshot", long.class);
             snapshot.setAccessible(true);
             int ends = 0;
-            for (String line :
-                ((String) snapshot.invoke(recorder, SystemClock.elapsedRealtime())).split("\n")) {
+            for (String line : ((String)snapshot.invoke(recorder, SystemClock.elapsedRealtime())).split("\n"))
+            {
                 if (line.isEmpty())
                     continue;
                 JSONObject row = new JSONObject(line);
@@ -226,13 +226,15 @@ public class PreviewScanLifecycleTest {
                     ends++;
             }
             assertEquals(1, ends);
-        } finally {
+        }
+        finally
+        {
             Diagnostics.setEnabled(context, false);
         }
     }
 
-    @Test
-    public void metadataQueueDistinguishesAcceptedNullAndRestrictedStarts() {
+    @Test public void metadataQueueDistinguishesAcceptedNullAndRestrictedStarts()
+    {
         Context context = mock(Context.class);
         when(context.getApplicationContext()).thenReturn(RuntimeEnvironment.getApplication());
         when(context.getContentResolver()).thenReturn(RuntimeEnvironment.getApplication().getContentResolver());
@@ -252,8 +254,9 @@ public class PreviewScanLifecycleTest {
         assertFalse(enqueue(context));
     }
 
-    private boolean enqueue(Context context) {
+    private boolean enqueue(Context context)
+    {
         return ReflectionHelpers.callStaticMethod(AutoScrapeService.class, "requestServiceAfterNetworkScan",
-            ReflectionHelpers.ClassParameter.from(Context.class, context));
+                                                  ReflectionHelpers.ClassParameter.from(Context.class, context));
     }
 }

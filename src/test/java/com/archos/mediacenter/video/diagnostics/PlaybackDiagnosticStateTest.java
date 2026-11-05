@@ -23,13 +23,14 @@ import static org.mockito.Mockito.*;
 /** Checks playback diagnostic attempts, output and seek evidence without inventing successful playback. */
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 28)
-public class PlaybackDiagnosticStateTest {
+public class PlaybackDiagnosticStateTest
+{
     private Application app;
     private PlaybackDiagnosticState state;
     private Object backend;
 
-    @Before
-    public void setup() {
+    @Before public void setup()
+    {
         app = RuntimeEnvironment.getApplication();
         Diagnostics.setEnabled(app, false);
         Diagnostics.setEnabled(app, true);
@@ -38,14 +39,15 @@ public class PlaybackDiagnosticStateTest {
         backend = new Object();
     }
 
-    @After
-    public void teardown() {
+    @After public void teardown()
+    {
         state.close(PlaybackOutcome.CANCELLED);
         Diagnostics.endPlayback("test");
         Diagnostics.setEnabled(app, false);
     }
 
-    private List<JSONObject> rows() throws Exception {
+    private List<JSONObject> rows() throws Exception
+    {
         DiagnosticFlightRecorder recorder = ReflectionHelpers.getStaticField(Diagnostics.class, "FLIGHT");
         List<JSONObject> rows = new ArrayList<>();
         for (String line : recorder.snapshot(SystemClock.elapsedRealtime()).split("\n"))
@@ -54,7 +56,8 @@ public class PlaybackDiagnosticStateTest {
         return rows;
     }
 
-    private List<JSONObject> attempts() throws Exception {
+    private List<JSONObject> attempts() throws Exception
+    {
         List<JSONObject> result = new ArrayList<>();
         for (JSONObject row : rows())
             if (row.getString("event").equals("playback_attempt"))
@@ -62,15 +65,16 @@ public class PlaybackDiagnosticStateTest {
         return result;
     }
 
-    private PlaybackAttempt open() {
+    private PlaybackAttempt open()
+    {
         PlaybackAttempt open = state.opening();
         state.bind(backend, open, 0);
         state.submitted(open, 0);
         return open;
     }
 
-    @Test
-    public void preparedIsNotOutputAndFirstOutputCompletesOnlyOnceWithCallbackQuality() throws Exception {
+    @Test public void preparedIsNotOutputAndFirstOutputCompletesOnlyOnceWithCallbackQuality() throws Exception
+    {
         PlaybackAttempt open = open();
         state.prepared(backend, 0);
         assertEquals(4, attempts().size());
@@ -88,8 +92,8 @@ public class PlaybackDiagnosticStateTest {
         assertEquals(6, attempts().size());
     }
 
-    @Test
-    public void supersededOpenCannotBindOrFinishItsReplacementAndOldBackendCallbacksAreIgnored() throws Exception {
+    @Test public void supersededOpenCannotBindOrFinishItsReplacementAndOldBackendCallbacksAreIgnored() throws Exception
+    {
         PlaybackAttempt old = open(), replacement = state.opening();
         Object next = new Object();
         state.bind(next, replacement, 1);
@@ -107,8 +111,8 @@ public class PlaybackDiagnosticStateTest {
         assertEquals(replacement.id, attempts().get(attempts().size() - 1).getString("attempt_id"));
     }
 
-    @Test
-    public void sequentialSeekHasASeparateTargetAndParentButNoInventedPresentationClock() throws Exception {
+    @Test public void sequentialSeekHasASeparateTargetAndParentButNoInventedPresentationClock() throws Exception
+    {
         PlaybackAttempt open = open();
         state.seeking(7000, 0);
         state.seekCallback(backend, 0);
@@ -128,8 +132,8 @@ public class PlaybackDiagnosticStateTest {
         assertNotEquals(seek.getString("attempt_id"), attempts().get(attempts().size() - 1).getString("attempt_id"));
     }
 
-    @Test
-    public void overlappingSeeksAreSupersededOrUnattributedRatherThanFalselyPaired() throws Exception {
+    @Test public void overlappingSeeksAreSupersededOrUnattributedRatherThanFalselyPaired() throws Exception
+    {
         open();
         state.seeking(1000, 0);
         state.seeking(5000, 0);
@@ -155,8 +159,8 @@ public class PlaybackDiagnosticStateTest {
         assertEquals("COMPLETED", attempts().get(attempts().size() - 1).getString("outcome"));
     }
 
-    @Test
-    public void aggregateWithoutPairedCallbackAndCancellationDoNotInventSuccessfulSeeks() throws Exception {
+    @Test public void aggregateWithoutPairedCallbackAndCancellationDoNotInventSuccessfulSeeks() throws Exception
+    {
         open();
         state.seeking(2000, 0);
         state.allSeeksComplete(backend, 0);
@@ -168,8 +172,8 @@ public class PlaybackDiagnosticStateTest {
         assertFalse(attempts().stream().anyMatch(x -> x.optString("outcome").equals("COMPLETED")));
     }
 
-    @Test
-    public void laterPlaybackSessionDoesNotRewriteCapturedAttemptSession() throws Exception {
+    @Test public void laterPlaybackSessionDoesNotRewriteCapturedAttemptSession() throws Exception
+    {
         PlaybackAttempt open = open();
         Diagnostics.endPlayback("changed");
         Diagnostics.beginPlayback(Uri.parse("file:///new"));
@@ -179,8 +183,8 @@ public class PlaybackDiagnosticStateTest {
         assertNotEquals(row.getString("session"), row.getString("playback_session"));
     }
 
-    @Test
-    public void actualPlayerSeekAndOutputCallbacksFeedTheExistingRecorder() throws Exception {
+    @Test public void actualPlayerSeekAndOutputCallbacksFeedTheExistingRecorder() throws Exception
+    {
         Player player = mock(Player.class, CALLS_REAL_METHODS);
         IMediaPlayer nativeBackend = mock(IMediaPlayer.class);
         Player.Listener listener = mock(Player.Listener.class);
@@ -203,16 +207,18 @@ public class PlaybackDiagnosticStateTest {
         assertTrue(attempts().stream().anyMatch(x -> x.optString("boundary").equals("FIRST_OUTPUT")));
     }
 
-    private void flush() throws Exception {
-        for (String executor : List.of("IMPORTANT", "WORK")) {
+    private void flush() throws Exception
+    {
+        for (String executor : List.of("IMPORTANT", "WORK"))
+        {
             ThreadPoolExecutor work = ReflectionHelpers.getStaticField(Diagnostics.class, executor);
-            work.submit(() -> {
-            }).get(10, TimeUnit.SECONDS);
+            work.submit(() -> {}).get(10, TimeUnit.SECONDS);
         }
     }
 
     @Test
-    public void productionDiagnosticZipContainsTypedEvidenceAndNoSourceOrExceptionMessageCanaries() throws Exception {
+    public void productionDiagnosticZipContainsTypedEvidenceAndNoSourceOrExceptionMessageCanaries() throws Exception
+    {
         open();
         state.prepared(backend, 0);
         state.output(backend, 0);
@@ -221,7 +227,8 @@ public class PlaybackDiagnosticStateTest {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         Diagnostics.export(app, bytes);
         Map<String, String> entries = new HashMap<>();
-        try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+        try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(bytes.toByteArray())))
+        {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null)
                 entries.put(entry.getName(), new String(zip.readAllBytes(), StandardCharsets.UTF_8));
@@ -237,8 +244,8 @@ public class PlaybackDiagnosticStateTest {
         assertTrue(Diagnostics.important("playback_attempt"));
     }
 
-    @Test
-    public void disabledLoggingProducesNoAttemptRecords() {
+    @Test public void disabledLoggingProducesNoAttemptRecords()
+    {
         Diagnostics.setEnabled(app, false);
         open();
         state.prepared(backend, 0);
