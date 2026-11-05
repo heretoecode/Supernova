@@ -1165,6 +1165,7 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     private PreviewUpNext previewUpNext;
+    private PlayerFirstPlayTip firstPlayTip;
 
     @Override protected void onStart()
     {
@@ -1172,6 +1173,9 @@ public class PlayerActivity extends AppCompatActivity
         if (isTVMode && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
             previewUpNext == null)
             previewUpNext = new PreviewUpNext(this);
+        if (isTVMode && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
+            firstPlayTip == null)
+            firstPlayTip = new PlayerFirstPlayTip(this);
         if (log.isDebugEnabled())
             log.debug("onStart()");
         mStopped = false;
@@ -1578,6 +1582,11 @@ public class PlayerActivity extends AppCompatActivity
         {
             previewUpNext.stop();
             previewUpNext = null;
+        }
+        if (firstPlayTip != null)
+        {
+            firstPlayTip.stop();
+            firstPlayTip = null;
         }
         super.onStop();
         if (log.isDebugEnabled())
@@ -2032,6 +2041,8 @@ public class PlayerActivity extends AppCompatActivity
                 pipActions().fullScreen();
             return true;
         }
+        if (firstPlayTip != null)
+            firstPlayTip.handleKey(event);
         if (previewUpNext != null && previewUpNext.handleKey(event, () -> {
                 if (mPlayerController != null)
                     mPlayerController.showControlBar();

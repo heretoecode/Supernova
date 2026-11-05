@@ -288,26 +288,36 @@ public class NextHudTest {
     }
 
     @Test
-    public void actualControllerVerticalEventsReturnToSeekWithoutCyclingButtons() {
+    public void actualControllerFollowsTheApprovedRemoteScheme() {
         layout();
         ReflectionHelpers.setField(controller, "mControlBarShowing", true);
         ReflectionHelpers.setField(controller, "mLastTouchEventTime", -1L);
         ReflectionHelpers.setField(controller, "mHandler", mock(Handler.class));
-        View seek = root.findViewById(R.id.seek_progress), settings = root.findViewById(R.id.preview_more),
-             pause = root.findViewById(R.id.pause);
+        View seek = root.findViewById(R.id.seek_progress);
+        View settings = root.findViewById(R.id.preview_more);
+        View pause = root.findViewById(R.id.pause);
+        int[] stripOpened = {
+            0
+        };
+        controller.setStripOpener(() -> stripOpened[0]++);
         seek.requestFocus();
         controller.onKey(KeyEvent.KEYCODE_DPAD_UP,
                          new KeyEvent(100, 100, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP, 0));
-        assertTrue("Seek Up reaches Settings in the actual controller", settings.hasFocus());
-        controller.onKey(KeyEvent.KEYCODE_DPAD_DOWN,
-                         new KeyEvent(101, 101, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, 0));
-        assertTrue("Settings Down returns to seek", seek.hasFocus());
+        assertTrue("Up from the bar lands on Settings", settings.hasFocus());
+        controller.onKey(KeyEvent.KEYCODE_DPAD_UP,
+                         new KeyEvent(101, 101, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP, 0));
+        assertTrue("Up from the buttons goes nowhere", settings.hasFocus());
         controller.onKey(KeyEvent.KEYCODE_DPAD_DOWN,
                          new KeyEvent(102, 102, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, 0));
-        assertTrue("Seek Down reaches Play/Pause", pause.hasFocus());
-        controller.onKey(KeyEvent.KEYCODE_DPAD_UP,
-                         new KeyEvent(103, 103, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP, 0));
-        assertTrue("Play/Pause Up returns to seek", seek.hasFocus());
+        assertTrue("Down from Settings returns to the bar", seek.hasFocus());
+        controller.onKey(KeyEvent.KEYCODE_DPAD_DOWN,
+                         new KeyEvent(103, 103, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, 0));
+        assertTrue("Down from the bar keeps the bar focused", seek.hasFocus());
+        assertEquals("Down from the bar opens Chapters and Episodes", 1, stripOpened[0]);
+        pause.requestFocus();
+        controller.onKey(KeyEvent.KEYCODE_DPAD_DOWN,
+                         new KeyEvent(104, 104, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, 0));
+        assertTrue("Down from Play/Pause returns to the bar", seek.hasFocus());
     }
 
     @Test
@@ -339,9 +349,11 @@ public class NextHudTest {
     @Test
     public void graphKeepsSeekingSeparateFromButtonReachability() {
         assertEquals(R.id.preview_more, root.findViewById(R.id.seek_progress).getNextFocusUpId());
-        assertEquals(R.id.pause, root.findViewById(R.id.seek_progress).getNextFocusDownId());
-        assertEquals(R.id.seek_progress, root.findViewById(R.id.pause).getNextFocusUpId());
+        assertEquals(R.id.seek_progress, root.findViewById(R.id.seek_progress).getNextFocusDownId());
+        assertEquals(R.id.pause, root.findViewById(R.id.pause).getNextFocusUpId());
         assertEquals(R.id.seek_progress, root.findViewById(R.id.preview_more).getNextFocusDownId());
+        assertEquals(R.id.preview_more, root.findViewById(R.id.pause).getNextFocusRightId());
+        assertEquals(R.id.pause, root.findViewById(R.id.preview_more).getNextFocusLeftId());
         assertEquals(R.id.preview_more, root.findViewById(R.id.preview_more).getNextFocusRightId());
     }
 }

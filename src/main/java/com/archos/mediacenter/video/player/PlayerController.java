@@ -1613,6 +1613,19 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     }
 
     private final BarPlayPauseKeys barPlayPauseKeys = new BarPlayPauseKeys();
+    private Runnable stripOpener;
+
+    /** The Chapters · Episodes strip registers here; without it, Down from the bar does nothing. */
+    void setStripOpener(Runnable opener)
+    {
+        stripOpener = opener;
+    }
+
+    private void openStripBelowBar()
+    {
+        if (stripOpener != null)
+            stripOpener.run();
+    }
 
     /** Claude's remote scheme calls this while the timeline bar has focus. */
     public boolean handleBarPlayPause(KeyEvent event)
@@ -1764,16 +1777,16 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             }
         }
         mProgress.setNextFocusUpId(R.id.preview_more);
-        mProgress.setNextFocusDownId(R.id.pause);
-        mPauseButton.setNextFocusUpId(R.id.seek_progress);
-        mPauseButton.setNextFocusDownId(R.id.pause);
+        mProgress.setNextFocusDownId(R.id.seek_progress);
+        mPauseButton.setNextFocusUpId(R.id.pause);
+        mPauseButton.setNextFocusDownId(R.id.seek_progress);
         mPauseButton.setNextFocusLeftId(R.id.pause);
-        mPauseButton.setNextFocusRightId(R.id.seek_progress);
+        mPauseButton.setNextFocusRightId(R.id.preview_more);
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusLeftId(R.id.preview_subtitles);
         mControllerViewLeft.findViewById(R.id.preview_subtitles).setNextFocusRightId(R.id.preview_audio);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusLeftId(R.id.preview_subtitles);
         mControllerViewLeft.findViewById(R.id.preview_audio).setNextFocusRightId(R.id.preview_more);
-        mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.preview_more);
+        mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusLeftId(R.id.pause);
         mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusRightId(R.id.preview_more);
         mControllerViewLeft.findViewById(R.id.preview_more).setNextFocusUpId(R.id.preview_more);
         for (int id : new int[] {R.id.preview_subtitles, R.id.preview_audio, R.id.preview_more})
@@ -2753,18 +2766,22 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN)) {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
                 View focused = mControlBar.findFocus();
+                // Approved 0.156 remote scheme (owner notes #38): Up from the bar goes to the buttons (Settings);
+                // Down from the buttons returns to the bar; Down from the bar opens Chapters and Episodes when
+                // the video has any, and otherwise does nothing.
                 if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                     if (focused == mProgress)
                         mControllerViewLeft.findViewById(R.id.preview_more).requestFocus();
-                    else if (focused == mPauseButton)
-                        mProgress.requestFocus();
+                } else if (focused != mProgress) {
+                    mProgress.requestFocus();
                 } else {
-                    if (focused == mProgress)
-                        mPauseButton.requestFocus();
-                    else
-                        mProgress.requestFocus();
+                    openStripBelowBar();
                 }
             }
+            return true;
+        }
+        if (experimentalUi() && !isTVMenuDisplayed && mControlBarShowing && mProgress != null &&
+            mProgress.hasFocus() && handleBarPlayPause(event)) {
             return true;
         }
         if (experimentalUi() && !isTVMenuDisplayed && mControlBarShowing && mControlBar.hasFocus() &&
