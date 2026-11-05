@@ -1,3 +1,11 @@
+# 0.156 Part C incremental hand-back — 2026-11-05
+
+Part C ready at `841c47328`, after Part B `ebd46f688`, on `codex/0155-code-2026-11-04`.
+Read `reports/2026-11-05-0156-code-part-C.md` and Part C in `findings/0156-ui-hooks.md`.
+Seven host JUnit tests pass; Android tests remain Claude's. Apply the new
+`medialib-supernova156-nfo-progress.patch` after Part A's MediaLib patch.
+Codex continues with Part D thumbnails/diagnostics. GitHub cleanup remains parked.
+
 # 0.156 Part B incremental hand-back — 2026-11-05
 
 Part B ready at `87c0fb23d`, after Part A `2d46bf90a`, on `codex/0155-code-2026-11-04`.

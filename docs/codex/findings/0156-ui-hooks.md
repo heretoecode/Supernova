@@ -85,3 +85,48 @@ failure. Do not describe the historical source-specific cause as confirmed.
   No other part of Claude's remote scheme was changed.
 - NOVA overlay show code, includes, layout and its translated menu-tip strings are gone.
   Old animation/drawable assets are left to their owner; GitHub cleanup remains parked.
+
+## Part C
+
+- Search's query/matching path now calls `PreviewSearchText.rankFields`; original
+  titles stay in the existing metadata index, people/studios form the second tier,
+  filenames the final tier. `ranked(query, documents)` exposes immutable ranked data
+  for other callers. Matching is at word starts, including surname-only queries.
+- Fix match: construct `FixMatchRepository(context)` and run `search(query, scope,
+  currentKind, currentTmdbId)` on `StreamingRepository.IO` (scope movie/tv/all).
+  Candidates contain ID, title, year, kind, poster URL and currentMatch. Numeric IDs
+  use scope; explicit `tmdb:movie:123`, `tmdb:tv:123` and IMDb tt… IDs are accepted.
+  On the same worker, `apply(videoId, candidate, season, episode, cancelled)` prepares
+  canonical provider details/artwork, asserts file ownership and atomically saves
+  native metadata, retaining file watched/bookmark/hidden state. TV requires the
+  known season/episode rather than guessing. Refresh the Details data after success;
+  the repository invalidates the library cache/notifies the media URI. Use callback
+  generation/cancellation checks when closing the panel. No panel was implemented.
+- Library tile: `LibraryHealth.attention(context)` returns one immutable count/reason
+  snapshot. Or use `needsAttentionCount` and `needsAttentionReason`. Inventory work
+  runs on a worker; the first call may return zero until computed. Re-read on the
+  existing library/pref refresh; no per-frame database traversal. Deleted/excluded
+  media markers do not inflate the actionable count, and media reasons deduplicate.
+- Backup: `BackupSelection.categories(Preset.EVERYTHING / SETTINGS_ONLY / CUSTOM,
+  customSet)`. Everything includes all supported categories except the three with
+  `BackupCategory.isPrivate()`: sources, bookmarks, filenames/locations. They remain
+  off by default. `privacyReveal()` supplies each category's existing disclosure text.
+  Screens retain selection review and wording ownership.
+- Diagnostics always records full detail; LEVEL is still read but harmless.
+  `Diagnostics.clearAll(context)` removes recorder-owned files and pending old
+  event generations without changing the logging switch. It throws IOException if
+  deletion fails; call on a worker. Old queued evidence cannot repopulate a cleared log.
+- Seek switch key: `SeekThumbnailPreferences.KEY` = `seek_thumbnails_enabled`, true
+  by default. Part D reads it for scheduled and explicit frame requests.
+- Provider list: `StreamingRepository.providers(context, country)` is persisted for
+  a week; `providersLastUpdated(context, country)` is the last successful refresh.
+  `installProviderRefresh(context)` subscribes to country changes and checks due
+  refreshes daily. It is automatically installed by providers/selectedCatalogue;
+  Claude may also call it from the existing service initialization for earlier startup.
+  Country changes force refresh without erasing the last-success date or stale list.
+- NFO: apply `medialib-supernova156-nfo-progress.patch` after Part A's scan patch.
+  `NfoExportProgress.listen(mainExecutor, snapshotConsumer)` returns AutoCloseable;
+  close on screen exit. Snapshots have jobId/done/total/currentTitle/finished.
+  `current()` supports immediate restoration. Done counts export attempts whose writer
+  task finished (or rows that could not be exported), not a guarantee every file was
+  writable. Cancellation can finish with done < total. No new export screen/wording.
