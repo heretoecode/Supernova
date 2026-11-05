@@ -45,6 +45,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.
   - Every artwork card (posters, hero, Home rows, Details tabs, player strip) has a faint 28% white edge; the focused
     one grows with a solid white ring. No blue caption bars.
+  - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
   - Missing information says "Unknown"; rows are never removed.
 
 ## Who does what

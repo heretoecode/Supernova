@@ -421,3 +421,19 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
     - The Details tabs: Seasons & Episodes, Extras, More Like This.
     - The player's Chapters and Episodes strip.
   - Cast and crew portraits (not focusable) get the faint edge only.
+
+## 9. One size for every row card and both heroes (owner, 5 Nov 2026)
+- Today's sizes (TV units, 960 wide):
+  - Home rows 172×105.
+  - Details Extras / More Like This / Seasons & Episodes about 220×124.
+  - Player strip about 150×85.
+  - The Details hero is bigger than the Home hero (which leaves room for side peeks).
+- **Global rule (owner, 5 Nov 2026):** one row card everywhere a row of artwork appears.
+  - Home rows, the Details tabs and the player strip.
+  - 16:9, 400×225 px at 1080p (200×112 TV units); focused 440×248 with the white ring; 24 px gap.
+  - A sliver of the next card shows at the edge.
+  - Library posters keep their own portrait size, identical on all library pages.
+- Heroes: Home and Details the same size and position. Home's carousel cue options:
+  - A: dots on the card.
+  - B: slim side peeks.
+- Mock-ups `docs/design/proposals/one-size/01`–`04`. **Status:** hero cue to choose.
