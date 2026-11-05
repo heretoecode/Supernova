@@ -232,8 +232,8 @@
     {
       "kind": "patch",
       "module": "MediaLib",
-      "path": ".github/build/medialib-supernova156-screen-scan-compile-fix.patch",
-      "sha256": "42cbba535496a205ef92bbb04c0d86bdf7db544eaa42ddab51a588337ef1c674"
+      "path": ".github/build/medialib-supernova156-local-trace-paths.patch",
+      "sha256": "58725aa6f2d679e775b93b97e0c18c1cbeabdb1393fee57ee7c91c6319ce187a"
     },
     {
       "kind": "patch",
