@@ -8,6 +8,13 @@ workflow dispatch; Java 17, full imports, a JUnit/Robolectric test for every cha
 **`docs/codex/HANDS_OFF.txt` has a new 0.156 section — read it first.** Claude is coding the screens at the same time
 on `claude/supernova-github-access-yfhe89`, so stay strictly inside the files this brief and the 0.156 section allow.
 
+**Code layout (owner, standing rule):** write normal, readable Java — one statement per line, braces on their own
+lines as in the surrounding file, lines ≤ 120 characters (string text may wrap with `+`), no chains of statements
+packed onto one line, no one-line methods with bodies. Every file you touch must meet this when you finish, including
+lines you didn't write. Claude rejects a Part that doesn't. Also reformat (layout only, separate commits) the files
+in `docs/codex/REFORMAT_QUEUE.txt` that fall inside your 0.156 area (`utils/backup/`, `diagnostics/`, `metadata/`,
+`streaming/` engine, player engine classes, and their tests); leave the rest for Claude.
+
 **No UI:** no layouts, drawables, colours, sizes, wording on screen or Settings rows. Every part below ends in a small,
 documented Java API (plus preference keys with defaults) that Claude's screens call. Where a task needs a screen
 change to be visible, describe the call Claude must make in `findings/0156-ui-hooks.md` (file, method, what to call).
