@@ -443,10 +443,17 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - Mock-ups `docs/design/proposals/hero-tabs/01`–`04`:
   - Both heroes at 2.4:1 (1776×740 at 1080p); 2:1 would push the tabs and rows off screen.
   - Details tabs with no tab focused (open tab white with a white underline) and with a tab focused (filled white).
+- **Owner (5 Nov 2026):**
+  - The Continue Watching row / Details tabs must stay slightly visible below the hero ("what's that down there?");
+    the hero may be a little bigger.
+  - **Tab focus as in `hero-tabs/04` (filled white) approved.**
+- Round 2 (`hero-tabs/v2-01`–`v2-04`):
+  - Heroes 1776×820 (about 2.17:1), with the row and tabs peeking at the bottom.
+  - The open tab is shown as a chip (as chosen options), matching the global chip rule; focused, it is filled
+    white.
 - Open questions:
-  - Hero shape: 2.4:1 as mocked?
-  - Details tabs: the open tab's highlight white instead of blue, to match the white title underlines and the
-    no-blue rule?
+  - Hero size as round 2?
+  - The open tab: chip (round 2) or white underline (round 1)?
 
 ## 10. Legacy NOVA clean-out (owner, 5 Nov 2026)
 - Owner: unused legacy NOVA code (like the first-play blue help box) shouldn't be in the app; can Codex find and
