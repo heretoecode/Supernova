@@ -139,6 +139,58 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
     }
 
     @Override
+    public boolean limitsAvailable() {
+        return PlayerService.sPlayerService != null;
+    }
+
+    private PlaybackLimits limits() {
+        PlayerService service = PlayerService.sPlayerService;
+        return service == null ? null : service.playbackLimits();
+    }
+
+    @Override
+    public int sleepChoice() {
+        PlaybackLimits limits = limits();
+        return limits == null ? 0 : limits.timer().ordinal();
+    }
+
+    @Override
+    public void setSleepChoice(int choice) {
+        PlaybackLimits limits = limits();
+        PlaybackLimits.Timer[] all = PlaybackLimits.Timer.values();
+        if (limits != null)
+            limits.setTimer(all[Math.max(0, Math.min(all.length - 1, choice))]);
+    }
+
+    @Override
+    public long sleepEndsAt() {
+        PlaybackLimits limits = limits();
+        long remaining = limits == null ? 0 : limits.remainingMs();
+        return remaining > 0 ? System.currentTimeMillis() + remaining : 0;
+    }
+
+    @Override
+    public int stillWatchingAfter() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(owner);
+        if (!prefs.getBoolean(PlaybackLimits.KEY_STILL_WATCHING, true))
+            return 0;
+        return prefs.getInt(PlaybackLimits.KEY_EPISODES, PlaybackLimits.DEFAULT_EPISODES);
+    }
+
+    @Override
+    public void setStillWatchingAfter(int episodes) {
+        boolean enabled = episodes > 0;
+        SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(owner).edit();
+        prefs.putBoolean(PlaybackLimits.KEY_STILL_WATCHING, enabled);
+        if (enabled)
+            prefs.putInt(PlaybackLimits.KEY_EPISODES, episodes);
+        prefs.apply();
+        PlaybackLimits limits = limits();
+        if (limits != null)
+            limits.configureStillWatching(enabled, enabled ? episodes : PlaybackLimits.DEFAULT_EPISODES);
+    }
+
+    @Override
     public void appearancePreview(boolean shown) {
         SubtitleManager m = manager();
         if (m != null)

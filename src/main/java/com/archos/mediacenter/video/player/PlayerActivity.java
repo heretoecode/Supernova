@@ -1166,6 +1166,7 @@ public class PlayerActivity extends AppCompatActivity
 
     private PreviewUpNext previewUpNext;
     private PlayerFirstPlayTip firstPlayTip;
+    private PlayerStillWatching stillWatching;
 
     @Override protected void onStart()
     {
@@ -1176,6 +1177,9 @@ public class PlayerActivity extends AppCompatActivity
         if (isTVMode && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
             firstPlayTip == null)
             firstPlayTip = new PlayerFirstPlayTip(this);
+        if (isTVMode && PreferenceManager.getDefaultSharedPreferences(this).getBoolean("try_new_ui", false) &&
+            stillWatching == null)
+            stillWatching = new PlayerStillWatching(this, PlayerStillWatching.fromPlayer(this));
         if (log.isDebugEnabled())
             log.debug("onStart()");
         mStopped = false;
@@ -1587,6 +1591,11 @@ public class PlayerActivity extends AppCompatActivity
         {
             firstPlayTip.stop();
             firstPlayTip = null;
+        }
+        if (stillWatching != null)
+        {
+            stillWatching.stop();
+            stillWatching = null;
         }
         super.onStop();
         if (log.isDebugEnabled())
@@ -2041,6 +2050,8 @@ public class PlayerActivity extends AppCompatActivity
                 pipActions().fullScreen();
             return true;
         }
+        if (stillWatching != null && stillWatching.handleKey(event))
+            return true;
         if (firstPlayTip != null)
             firstPlayTip.handleKey(event);
         if (previewUpNext != null && previewUpNext.handleKey(event, () -> {

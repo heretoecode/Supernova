@@ -332,6 +332,17 @@ public final class SubtitlePanelStyle {
                 c.drawPath(m, p);
                 break;
             }
+            case "help": {
+                // A question mark in a circle ("Still watching?", 0.156 #39).
+                c.drawCircle(12, 12, 9.5f, p);
+                Path q = new Path();
+                q.moveTo(9.2f, 9.5f);
+                q.cubicTo(9.2f, 6.5f, 14.8f, 6.5f, 14.8f, 9.5f);
+                q.cubicTo(14.8f, 11.5f, 12, 11.8f, 12, 14);
+                c.drawPath(q, p);
+                c.drawPoint(12, 17.2f, p);
+                break;
+            }
             case "surround":
                 c.drawCircle(12, 12, 2.5f, p);
                 c.drawArc(5, 5, 19, 19, 135, 90, false, p);

@@ -124,6 +124,32 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return null;
         }
 
+        /** Sleep timer and "Still watching?" (0.156 #39) are offered only while a playback service is running. */
+        default boolean limitsAvailable() {
+            return false;
+        }
+
+        /** Sleep timer choice 0..4 (Off, 30, 60, 90, End of episode). */
+        default int sleepChoice() {
+            return 0;
+        }
+
+        default void setSleepChoice(int choice) {
+        }
+
+        /** Wall-clock end of a running minutes timer, or 0. */
+        default long sleepEndsAt() {
+            return 0;
+        }
+
+        /** "Still watching?" after this many auto-played episodes; 0 is Off. */
+        default int stillWatchingAfter() {
+            return 0;
+        }
+
+        default void setStillWatchingAfter(int episodes) {
+        }
+
         /** Hides the real subtitles while the appearance sample is shown (0.156 #25). */
         default void appearancePreview(boolean shown) {
         }
@@ -727,8 +753,78 @@ final class PlaybackSubtitlePanel extends LinearLayout {
                 row.setContentDescription("Playback Speed, " + label);
             });
         }
+        if (backend.limitsAvailable())
+            sleepAndStillWatching();
         choiceStepper("playmode", "repeat", "Play Mode");
         option("skip", "skip", "Skip Intros & Credits");
+    }
+
+    static final String[] SLEEP_LABELS = {"Off", "30", "60", "90", "End of episode"};
+    static final int[] STILL_WATCHING_CHOICES = {0, 2, 3, 5};
+
+    /** Approved mock-up {@code suggestions/02}: five inline choices and a stepper for the episode count. */
+    private void sleepAndStillWatching() {
+        LinearLayout sleep = row("playback.row.sleep", "moon", "Sleep timer");
+        LinearLayout box = new LinearLayout(owner);
+        box.setGravity(Gravity.CENTER_VERTICAL);
+        sleep.addView(box);
+        TextView[] texts = new TextView[SLEEP_LABELS.length];
+        for (int i = 0; i < SLEEP_LABELS.length; i++) {
+            if (i > 0) {
+                TextView bar = text("|", 20, BAR, false);
+                bar.setPadding(s(9), 0, s(9), 0);
+                box.addView(bar);
+            }
+            texts[i] = text(SLEEP_LABELS[i], 20, Color.WHITE, false);
+            box.addView(texts[i]);
+        }
+        TextView note = text("", 16, META, false);
+        note.setTag("playback.row.sleep.note");
+        note.setPadding(s(58), 0, s(16), s(8));
+        body.addView(note);
+        bindings.add(() -> {
+            int choice = backend.sleepChoice();
+            for (int i = 0; i < texts.length; i++)
+                texts[i].setTextColor(choice == i ? VALUE : Color.WHITE);
+            String line = sleepNote(choice, backend.sleepEndsAt());
+            note.setText(line);
+            note.setVisibility(line.isEmpty() ? GONE : VISIBLE);
+            sleep.setContentDescription("Sleep timer, " + SLEEP_LABELS[choice]);
+        });
+        sleep.setOnClickListener(v -> {
+            backend.setSleepChoice((backend.sleepChoice() + 1) % SLEEP_LABELS.length);
+            refresh();
+        });
+        sleep.setOnKeyListener((v, keyCode, event) -> rowKeys(sleep, keyCode, event, direction -> {
+            int next = Math.max(0, Math.min(SLEEP_LABELS.length - 1, backend.sleepChoice() + direction));
+            backend.setSleepChoice(next);
+        }));
+
+        LinearLayout still = row("playback.row.still", "help", "Still watching?");
+        TextView after = stepper(still, 150, direction -> {
+            int n = 0;
+            for (int i = 0; i < STILL_WATCHING_CHOICES.length; i++)
+                if (STILL_WATCHING_CHOICES[i] == backend.stillWatchingAfter())
+                    n = i;
+            int next = Math.max(0, Math.min(STILL_WATCHING_CHOICES.length - 1, n + direction));
+            backend.setStillWatchingAfter(STILL_WATCHING_CHOICES[next]);
+        });
+        bindings.add(() -> {
+            int episodes = backend.stillWatchingAfter();
+            String label = episodes <= 0 ? "Off" : "After " + episodes + " episodes";
+            after.setText(label);
+            still.setContentDescription("Still watching, " + label);
+        });
+    }
+
+    /** The line under the Sleep timer: when playback will stop. */
+    static String sleepNote(int choice, long endsAt) {
+        if (choice == 4)
+            return "Stops at the end of this episode";
+        if (choice <= 0 || endsAt <= 0)
+            return "";
+        java.text.DateFormat format = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT);
+        return "Stops at " + format.format(new java.util.Date(endsAt));
     }
 
     static String formatSpeed(float speed) {
