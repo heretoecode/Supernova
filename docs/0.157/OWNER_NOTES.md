@@ -437,3 +437,15 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - A: dots on the card.
   - B: slim side peeks.
 - Mock-ups `docs/design/proposals/one-size/01`–`04`. **Status:** hero cue to choose.
+
+## 10. Legacy NOVA clean-out (owner, 5 Nov 2026)
+- Owner: unused legacy NOVA code (like the first-play blue help box) shouldn't be in the app; can Codex find and
+  remove it?
+- Plan:
+  - Codex writes a **report first** (`docs/codex/findings/legacy-cleanup-candidates.md`): SAFE / UNSURE / KEEP,
+    with evidence and size, grouped into small batches.
+  - The owner and Claude approve.
+  - Removal in small batches, each with a full build and tests, plus a Shield check for screens.
+- Biggest candidate: everything behind the old `try_new_ui` / classic-UI switch (about 95 references).
+- Keep engine, playback and network code close to NOVA upstream, so future NOVA fixes can still be brought in.
+- Prompt for Codex given to the owner on 5 Nov 2026.
