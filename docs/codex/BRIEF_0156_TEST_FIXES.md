@@ -26,7 +26,7 @@ it pass.
 - PreviewScanLifecycleTest > localMetadataQueueReportsActualServiceAcceptance — java.lang.AssertionError at PreviewScanLifecycleTest.java:125
 - PreviewScanLifecycleTest > metadataQueueDistinguishesAcceptedNullAndRestrictedStarts — java.lang.AssertionError at PreviewScanLifecycleTest.java:250
 
-**Added after conformance run 42046189841 (on `9c4c6a3d1`, 5 Nov 2026).** The hang is fixed and the run completes
+**Added after conformance run 42046189841 (on `079847b95`, 5 Nov 2026).** The hang is fixed and the run completes
 (36 min). These new failures are also in your areas:
 
 - AudioTrackSelectionPolicyTest (all 14 tests) and TrackSelectionTest > testCsvTrackSelectionSuite — NPE at
