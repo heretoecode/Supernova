@@ -81,7 +81,7 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 - Seek previews (experimental) switch in Settings › System › Advanced, on by default.
 - Old IntroDB settings page: covered by Accounts & Services and Playback › Skipping.
 
-## Progress (Claude, updated 5 Nov 2026 16:00 UTC)
+## Progress (Claude, updated 5 Nov 2026 16:10 UTC)
 Built and fully tested (conformance run 41984891190 green, 07e6074d2):
 - #6 Local Storage focus kept in page · #7 header no longer jumps · #9 icons follow focus at the source
   (Save Changes tick) · #14 NOVA 6.6.4 in Credits/About/licences · crammed-code smoke alarm (tools/test_code_layout.py)
@@ -97,6 +97,11 @@ Committed 5 Nov afternoon, waiting for the next build (player):
 - #21 Chapters · Episodes strip (merged chapters + IntroDB parts, cards with pictures, lit stretch of the bar)
 - #24 subtitle Vertical Position step control · #25 live appearance sample · #39 Sleep timer and Still watching?
 - #26 seek preview pictures above the time bubble · #42 per-series audio/subtitle switch
-Next (Claude): Search UI (#31), Network & Files pages (#34–35, #41 badge), Settings stage 3 (System/About, Where to
-Watch, Appearance, Audio & Subtitles incl. Vertical Position), Customise Home (#29), Fix match (#40), empty states and
-focus memory (#43), Local Storage grid and menu (#33). Codex: the failing tests in `docs/codex/BRIEF_0156_TEST_FIXES.md`.
+- #31 Search rebuilt (one panel, QWERTY + symbols keyboard app-wide, recent searches, What you can search, filters,
+  grouped results, bold typed letters, watched pill, voice)
+- #35/#41 Network & Files landing (Library Health tile with count badge, live Scan now tile, Advanced dropped) and
+  Library Scanning wording without duplicate scan buttons
+Still to do (Claude): Network Shares page and Add Connection (#34), Library Scanning/Health full pages (#35),
+Settings stage 3 (System/About, Where to Watch, Appearance, Audio & Subtitles incl. Vertical Position), Customise Home
+(#29), Fix match (#40), empty states and focus memory (#43), Local Storage grid and menu (#33).
+Codex: the failing tests in `docs/codex/BRIEF_0156_TEST_FIXES.md`.

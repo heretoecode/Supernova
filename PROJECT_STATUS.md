@@ -1,6 +1,6 @@
 # Supernova — project status
 
-Updated 5 November 2026. Keep this page short and current: update it at the end of every session.
+Updated 5 November 2026 (afternoon). Keep this page short and current: update it at the end of every session.
 
 ## Released
 
@@ -15,11 +15,11 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 
 ### In progress
 
-- **Claude** (screens, on `claude/supernova-github-access-yfhe89`): done so far — Local Storage focus/header/status
-  tags/watched pill, Settings single-panel shell and new sections, Edit Page, top bar fade, Details card, Skip
-  button, shared choice list, hero readability and logo, Home row Hide/Move, Seek previews switch, Playback Settings
-  icon and swatch fixes, Download Subtitles in the panel. Next: Customise Home, Search, Network & Files pages,
-  Settings System/About pages, player controls and the Chapters · Episodes strip.
+- **Claude** (screens, on `claude/supernova-github-access-yfhe89`): see the release list's Progress section. Done
+  on 5 Nov: the whole player list (remote scheme, first-play tip, HUD look, Chapters · Episodes strip, subtitle
+  position and live sample, sleep timer, Still watching?, seek pictures, per-series choices), Search and the shared
+  keyboard, the Network & Files landing. Next: Network Shares and Add Connection, Library Health page, Settings
+  stage 3, Customise Home, Fix match, empty states, Local Storage grid.
 - **Codex** (engine and data): finished Parts A–D and B17a of
   [`docs/codex/BRIEF_0156_CODE.md`](docs/codex/BRIEF_0156_CODE.md) on `codex/0155-code-2026-11-04` (a5e4d5f97);
   merged into the working branch on 5 Nov 2026 (11ed71d44). Build and Shield checks pending. Claude now wires the
