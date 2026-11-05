@@ -523,6 +523,10 @@ public class UpdateNextTask
                                 if (repeatFolder)
                                 {
                                     nextUri = filteredList.get(next % total).getUri();
+                                    if (hidden.contains(canonical(nextUri)))
+                                    {
+                                        return null;
+                                    }
                                     if (log.isDebugEnabled())
                                         log.debug("updateNextVideo({}) - next via filesystem:{}", repeatFolder,
                                                   nextUri);

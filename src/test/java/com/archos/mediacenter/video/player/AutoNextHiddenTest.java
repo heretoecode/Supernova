@@ -26,7 +26,7 @@ import org.robolectric.annotation.Config;
     {
         try (SQLiteDatabase db = SQLiteDatabase.create(null))
         {
-            db.execSQL("CREATE TABLE videos (_id INTEGER, _data TEXT, bucket_id INTEGER, Archos_hideFile INTEGER)");
+            db.execSQL("CREATE TABLE videos (_id INTEGER, _data TEXT, bucket_id INTEGER, Archos_hiddenByUser INTEGER)");
             db.execSQL("INSERT INTO videos VALUES (1,'file:///a.mkv',7,0),(2,'file:///b.mkv',7,1),"
                        + "(3,'file:///c.mkv',7,0)");
             ContentResolver resolver = mock(ContentResolver.class);
@@ -41,18 +41,18 @@ import org.robolectric.annotation.Config;
                 next.moveToFirst();
                 assertEquals(3, next.getInt(0));
             }
-            db.execSQL("UPDATE videos SET Archos_hideFile=1 WHERE _id=1");
+            db.execSQL("UPDATE videos SET Archos_hiddenByUser=1 WHERE _id=1");
             try (Cursor first = UpdateNextTask.getFirstInBucket(resolver, 7))
             {
                 first.moveToFirst();
                 assertEquals(3, first.getInt(0));
             }
-            db.execSQL("UPDATE videos SET Archos_hideFile=1 WHERE _id=3");
+            db.execSQL("UPDATE videos SET Archos_hiddenByUser=1 WHERE _id=3");
             try (Cursor empty = UpdateNextTask.getFirstInBucket(resolver, 7))
             {
                 assertFalse(empty.moveToFirst());
             }
-            db.execSQL("UPDATE videos SET Archos_hideFile=0 WHERE _id=3");
+            db.execSQL("UPDATE videos SET Archos_hiddenByUser=0 WHERE _id=3");
             UpdateNextTask task =
                 new UpdateNextTask(resolver, null, Uri.parse("file:///a.mkv"),
                                    new ArrayList<>(List.of("file:///a.mkv", "file:///b.mkv", "file:///c.mkv")), 0, -1);
