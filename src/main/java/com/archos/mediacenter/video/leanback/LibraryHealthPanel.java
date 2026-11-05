@@ -16,9 +16,18 @@ import com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActiv
 
 /** Library Health uses its host browser's centre and Information panels; no second shell. */
 public final class LibraryHealthPanel {
+    /** Plain names (approved 0.156, network-files-v2/06). Index order is unchanged: 0..4 as before. */
     public static final String[] NAMES = {
-        "Unmatched Media", "Incorrect Matches", "Missing Metadata or Artwork", "Unavailable Files", "Source Problems"
+        "Not matched", "Possibly wrong match", "Missing artwork or details", "Missing files", "Sources offline"
     };
+    /** What each check looks for, shown under its name. */
+    public static final String[] LINES = {
+        "Videos Supernova could not identify", "Matches you reported as wrong",
+        "Matched, but without a poster or description", "Videos in your library whose file has gone",
+        "Drives or shares that could not be reached"
+    };
+    /** The overview order in the approved mock-up: missing files first. */
+    public static final int[] ORDER = {3, 0, 1, 2, 4};
     private final Context context;
     private final LinearLayout centre, right;
     private final Snapshot snapshot;
@@ -105,6 +114,37 @@ public final class LibraryHealthPanel {
         }
         if (count == 0)
             empty();
+    }
+
+    /** How many items a check finds, using exactly the rules of its list. */
+    public int count(int category) {
+        SharedPreferences health = context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0);
+        if (category == 4) {
+            int sources = 0;
+            for (String key : health.getAll().keySet())
+                if (key.startsWith("offline:") || key.startsWith("problem:"))
+                    sources++;
+            return sources;
+        }
+        boolean importing = ImportState.VIDEO.isInitialImport()
+            || ImportState.VIDEO.isRegularImport()
+            || LoaderUtils.getScrapeInProgress();
+        int count = 0;
+        for (Entry entry : snapshot.technical) {
+            if (!(entry.media instanceof Video))
+                continue;
+            Video video = (Video) entry.media;
+            boolean matched = video instanceof Movie || video instanceof Episode;
+            String plot = video.getDescriptionBody();
+            boolean include = category == 0 ? !importing && !matched
+                : category == 1 ? health.getBoolean("incorrect:" + video.getId(), false)
+                : category == 2
+                ? !importing && matched && (video.getPosterUri() == null || plot == null || plot.trim().isEmpty())
+                : LibraryHealth.state(context, video) != LibraryHealth.State.AVAILABLE;
+            if (include)
+                count++;
+        }
+        return count;
     }
 
     private void empty() {

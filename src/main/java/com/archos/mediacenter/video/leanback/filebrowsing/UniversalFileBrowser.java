@@ -757,17 +757,21 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     private void healthHome() {
-        detailParent = () -> openLandingCard(5);
+        detailParent = null; // Library Health is a landing tile of its own now (0.156).
         sectionChild = false;
         health(-1);
-        for (int n = 0; n < LibraryHealthPanel.NAMES.length; n++) {
-            final int category = n;
-            centreAction(LibraryHealthPanel.NAMES[n], () -> {
+        // Approved 0.156 (network-files-v2/06): each check with its count or a tick; only problems open a list.
+        for (int category : LibraryHealthPanel.ORDER) {
+            int found = healthPanel == null ? 0 : healthPanel.count(category);
+            String label = LibraryHealthPanel.NAMES[category] + (found > 0 ? "  ·  " + found : "  ✓") + "\n"
+                + LibraryHealthPanel.LINES[category];
+            centreAction(label, () -> {
+                if (found == 0)
+                    return;
                 health(category);
                 focusCentre();
             });
         }
-        centreAction("Scan Library", () -> PreviewLibraryScan.request(getContext()));
     }
 
     private void sourceRow(Shortcut source) {
