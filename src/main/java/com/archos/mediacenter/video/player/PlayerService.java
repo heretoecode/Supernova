@@ -2378,8 +2378,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             PreviewLibraryLoader.memoryCache();
         if (snapshot == null)
             return null;
-        return PreviewVariants.adjacentEpisode(
-            snapshot.episodes, mVideoInfo.id, direction);
+        return PlaybackEpisodes.adjacent(snapshot.episodes, mVideoInfo.id, direction);
+    }
+
+    public List<PlaybackEpisodes.Item> previewSeasonEpisodes()
+    {
+        PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
+        return snapshot == null || mVideoInfo == null ? java.util.Collections.emptyList()
+            : PlaybackEpisodes.season(this, snapshot.episodes, mVideoInfo.id);
     }
 
     public void previewNavigateEpisode(int direction) {
