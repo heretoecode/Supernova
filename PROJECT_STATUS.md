@@ -20,10 +20,11 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   button, shared choice list, hero readability and logo, Home row Hide/Move, Seek previews switch, Playback Settings
   icon and swatch fixes, Download Subtitles in the panel. Next: Customise Home, Search, Network & Files pages,
   Settings System/About pages, player controls and the Chapters · Episodes strip.
-- **Codex** (engine and data): finished Parts A–D and B17a of
-  [`docs/codex/BRIEF_0156_CODE.md`](docs/codex/BRIEF_0156_CODE.md) on `codex/0155-code-2026-11-04` (a5e4d5f97);
-  merged into the working branch on 5 Nov 2026 (11ed71d44). Build and Shield checks pending. Claude now wires the
-  screens to Codex's APIs (`docs/codex/findings/0156-ui-hooks.md`).
+- **Codex** (engine and data): Parts A–D and B17a are merged (`11ed71d44`). The ten-test repair brief is ready at
+  `b91dd25c5` on `codex/0155-code-2026-11-04`, after merging Claude’s `60ad9ef1a` integration fixes.
+  Fifty isolated regressions pass; Claude must register the two new dependency test patches and run full conformance.
+  See [`test-fix report`](docs/codex/reports/2026-11-05-0156-test-fixes.md); Shield checks remain pending.
+  Screen APIs remain documented in `docs/codex/findings/0156-ui-hooks.md`.
 - **GitHub:** cleaned up on 5 Nov 2026: this page, `CLAUDE.md`, `AGENTS.md`, the archive, and Issues #31–#102.
 
 ### Known problems being fixed in 0.156

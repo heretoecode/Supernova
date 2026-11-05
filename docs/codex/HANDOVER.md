@@ -1,3 +1,13 @@
+# 0.156 test fixes ready — 2026-11-05
+
+Test fixes ready at `b91dd25c5` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of
+Claude’s `60ad9ef1a`. All ten failures are classified and repaired; see
+[`reports/2026-11-05-0156-test-fixes.md`](reports/2026-11-05-0156-test-fixes.md).
+Fifty isolated regressions pass, plus Java 17/layout/ordered patch checks. Full conformance remains Claude’s.
+Register the **two new** `filecore-supernova156-test-fixes.patch` and `medialib-supernova156-test-fixes.patch`
+operations after the existing dependency stack; exact entries and SHA-256 values are in the report.
+No public API/UI changes. GitHub cleanup is finished; older parked references below are historical.
+
 # 0.156 late Part B17a ready — 2026-11-05
 
 B17a ready at `afb3a755d`, after D hand-back `edc5a4281`, on
