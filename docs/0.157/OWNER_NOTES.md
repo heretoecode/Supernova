@@ -116,7 +116,21 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 **Status:** round 5 mock-ups sent:
 - `v5-01`: clickable season headings.
 - `v5-02`: Details as one roomy scrolling page with portraits.
-- `v5-03` / `v5-04`: icons with no background, centred (as today) or bottom right by the title. Planned for 0.157 (0.156 is not held up). Related parked
+- `v5-03` / `v5-04`: icons with no background, centred (as today) or bottom right by the title.
+
+**Owner's comments on round 5 (5 Nov 2026)**
+- The focused season heading stuck out to the left: headings must line up with everything else.
+- Key information and Technical information should be **vertical** rather than horizontal grids.
+- More Like This:
+  - **Icons centred** (liked).
+  - **No play icon on library items** (Home has none; clicking obviously plays).
+  - Service logos stay centred.
+  - Drop "On Netflix" etc.; **title and year on one line.**
+- Description in the hero (section 2): the owner asked whether text would appear twice. Claude proposed:
+  - Hero only, up to about five lines; the Details tab never repeats it.
+  - A rare longer one opens in full from the hero's More menu ("Full description").
+
+**Status:** round 6 mock-ups `details-tabs/v6-01`–`v6-03` sent 5 Nov 2026. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
