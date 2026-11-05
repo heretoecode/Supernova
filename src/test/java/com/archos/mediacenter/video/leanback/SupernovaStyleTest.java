@@ -173,7 +173,7 @@ public class SupernovaStyleTest {
     @Test
     public void groupedMenuRender() throws Exception {
         String[] labels = {"— Playback", "Restart Movie",          "— Library",           "Mark as Watched",
-                           "Add to Row", "Report Incorrect Match", "Remove From Library", "— Files & Media",
+                           "Add to Row", "Fix match",              "Remove From Library", "— Files & Media",
                            "Delete",     "Subtitles and Artwork"};
         Dialog dialog = PreviewDialog.choose(host.get(), "Actions", labels, 1, i -> {});
         Shadows.shadowOf(Looper.getMainLooper()).idle();

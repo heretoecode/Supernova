@@ -2467,7 +2467,7 @@ public final class PreviewMoviePage extends ScrollView {
         List<String> labels = new ArrayList<>();
         List<Runnable> commands = new ArrayList<>();
         Map<Integer, String> logos = new HashMap<>();
-        // Approved grouping (2 Nov 2026): Playback — Restart · Library — Mark Watched, Add to Row, Report Incorrect Match, Remove From Library · Files & Media.
+        // Approved grouping (2 Nov 2026): Playback — Restart · Library — Mark Watched, Add to Row, Fix match, Remove From Library · Files & Media.
         String restartLabel = null;
         Runnable restart = null, report = null;
         if (movie != null && getContext() instanceof Activity) {
@@ -2478,16 +2478,13 @@ public final class PreviewMoviePage extends ScrollView {
                                PlayerActivity.RESUME_NO, false, -1, null, -1));
         }
 
-        if (movie != null && movie.hasScraperData()) {
-            report = (() -> {
-                getContext()
-                    .getSharedPreferences(SupernovaLibraryPolicy.HEALTH, 0)
-                    .edit()
-                    .putBoolean("incorrect:" + movie.getId(), true)
-                    .apply();
-                getContext().startActivity(new android.content.Intent(
-                    getContext(), LibraryHealthActivity.class));
-            });
+        if (movie != null) {
+            // Approved 0.156 #40: Fix match searches TMDB with the title filled in and picks the right one, without
+            // a detour through Library Health. Details refresh when it returns.
+            report = (() -> getContext().startActivity(new android.content.Intent(
+                getContext(), com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.class)
+                    .putExtra(com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity.EXTRA_VIDEO,
+                              movie)));
         }
         String[] groups = {"Playback", "Library", "Streaming Services", "Files & Media"};
         for (int group = 0; group < groups.length; group++) {
@@ -2524,7 +2521,7 @@ public final class PreviewMoviePage extends ScrollView {
                     commands.add(() -> PreviewHomeRows.add(getContext(), rowEntry(), () -> {}));
                 }
                 if (report != null) {
-                    labels.add("Report Incorrect Match");
+                    labels.add("Fix match");
                     commands.add(report);
                 }
             }
