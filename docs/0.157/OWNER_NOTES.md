@@ -399,4 +399,16 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - Toolbar in the button style; Edit Library white.
   - Poster captions as plain white title + grey line, no blue bar.
   - `01`: straight on Space Black (as Details). `02`: in a 90% charcoal strip.
+- **APPROVED (owner, 5 Nov 2026): `01`, straight on Space Black.**
+
+## 8. Library items and one edge rule for every artwork card (owner photos, 5 Nov 2026)
+- The owner also wants **library items off the blue look**: today a blue caption bar under each poster. Change to
+  the new scheme (white title + grey line, no bar), as `library-stats/01`.
+- Consistency question: the Home hero and Details cards have a white outline; Home row cards and library posters
+  only get one when focused (and grow). Should they all match, perhaps with a permanent white outline?
+- Options (`docs/design/proposals/card-edges/01`–`03`); in all three the focused card grows and gets a solid white
+  ring:
+  - A: no edge at rest, on any card (the hero loses its outline).
+  - B: a faint edge (about 28% white) on every card, hero included.
+  - C: a white outline (85%) on every card.
 - **Status:** waiting for the owner.
