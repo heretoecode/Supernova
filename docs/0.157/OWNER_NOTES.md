@@ -249,3 +249,17 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - The description goes in the hero card; More › "Full description" shows the full text.
   - It is removed from the Details tab.
   - The hero still needs design polish when built.
+
+## 3. Remaining Details mock-ups and the tab order (5 Nov 2026)
+- The owner asked for every outstanding mock-up and to discuss the tab order for series and films.
+- Claude's proposed order:
+  - **Series:** Seasons & Episodes → Details → Extras → More Like This. Opens on Seasons & Episodes.
+  - **Films:** Details → Extras → More Like This. Opens on Details.
+  - An empty tab disappears and the rest close up.
+- Mock-ups `details-tabs/set2-01`–`05`:
+  - `set2-01`: Extras on Space Black.
+  - `set2-02`: the polished hero (Resume S1 E1 with progress; Play no longer looks disabled).
+  - `set2-03`: a film's Details tab.
+  - `set2-04`: a season's own page.
+  - `set2-05`: a title with no file, where **Where to watch** replaces Technical information.
+- **Status:** waiting for the owner.
