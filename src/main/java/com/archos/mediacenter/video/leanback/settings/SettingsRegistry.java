@@ -14,16 +14,8 @@ final class SettingsRegistry {
                                         "Streaming & Providers", "Appearance",        "Connections & Integrations",
                                         "System & Maintenance",  "About Supernova"};
     /** What the user sees (approved 2 Nov 2026: every title on one line). CATEGORIES stay as the internal keys of the settings maps. */
-    static final String[] LABELS = {"Playback & Video", "Audio & Subtitles", "Library & Home", "Streaming",
-                                    "Appearance",       "Connections",       "System",         "About Supernova"};
-    static final String[] DESCRIPTIONS = {"Control how content plays, resumes and looks on screen.",
-                                          "Configure audio, subtitles and related playback options.",
-                                          "Manage your libraries, metadata and Home screen displays.",
-                                          "Choose your streaming providers and how availability is shown.",
-                                          "Customise the look and feel of Supernova.",
-                                          "Manage external connections, accounts and integrations.",
-                                          "Diagnostics, backup and other system options.",
-                                          "Version information, credits and legal details."};
+    static final String[] LABELS = SettingsLayout.LABELS;
+    static final String[] DESCRIPTIONS = SettingsLayout.DESCRIPTIONS;
     static final String[] ICONS = {"play", "audio", "film", "cloud", "tv", "settings.nodes", "settings.gear", "info"};
 
     static final class Entry {
@@ -98,6 +90,8 @@ final class SettingsRegistry {
         if (category == 7)
             return Arrays.asList("App information", "Release Notes", "Open-source Licences",
                                  "Credits & Acknowledgements", "Technical Information");
+        if (SettingsLayout.has(category))
+            return SettingsLayout.sections(category);
         LinkedHashSet<String> values = new LinkedHashSet<>();
         if (category == 5)
             values.addAll(Arrays.asList("Service integrations", "OpenSubtitles", "Trakt"));
@@ -111,6 +105,15 @@ final class SettingsRegistry {
 
     List<Entry> in(int category, String section) {
         List<Entry> values = new ArrayList<>();
+        if (SettingsLayout.has(category)) {
+            for (String key : SettingsLayout.keys(category, section))
+                for (Entry e : entries)
+                    if (e.key.equals(key) && !e.nested()) {
+                        values.add(e);
+                        break;
+                    }
+            return values;
+        }
         for (Entry e : entries)
             if (e.category.equals(CATEGORIES[category]) && e.section.equals(section) && !e.excluded() && !e.nested())
                 values.add(e);

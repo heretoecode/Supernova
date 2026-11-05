@@ -472,11 +472,11 @@ public class SettingsWorkspaceTest {
     @Test
     public void integrationDisableAndReenableRetainsPolicyAndReconcilesChildren() {
         String master = SegmentSkippingPolicy.MASTER;
-        workspace.open(5, "IntroDB");
+        workspace.open(0, "Skipping");
         layout();
         String child = "introdb_mode_intro";
         SettingsRegistry registry = new SettingsRegistry(host.get());
-        for (SettingsRegistry.Entry e : registry.in(5, "IntroDB"))
+        for (SettingsRegistry.Entry e : registry.in(0, "Skipping"))
             if (!e.integration()) {
                 child = e.key;
                 break;
@@ -489,14 +489,14 @@ public class SettingsWorkspaceTest {
         layout();
         tagged("settings.preference." + master).performClick();
         layout();
-        workspace.open(5, "IntroDB");
+        workspace.open(0, "Skipping");
         layout();
         assertNull(root.findViewWithTag("settings.preference." + child));
         workspace.open(5, "Service integrations");
         layout();
         tagged("settings.preference." + master).performClick();
         layout();
-        workspace.open(5, "IntroDB");
+        workspace.open(0, "Skipping");
         layout();
         assertNotNull(root.findViewWithTag("settings.preference." + child));
         assertEquals(value, ((ListPreference)fragment.findPreference(child)).getValue());
@@ -504,7 +504,7 @@ public class SettingsWorkspaceTest {
 
     @Test
     public void advancedUnlockReparentsNativePreferencesWithoutResettingSavedValues() {
-        workspace.open(6, "Video compatibility");
+        workspace.open(6, "Advanced");
         layout();
         View original = tagged("settings.preference.force_software_decoding");
         original.requestFocus();
@@ -652,8 +652,10 @@ public class SettingsWorkspaceTest {
         assertEquals(horizontal, vertical);
         workspace.open(1, "Audio output & tracks");
         layout();
-        assertEquals("Configure audio output, playback compatibility and preferred audio tracks.",
-                     (String)ReflectionHelpers.callInstanceMethod(workspace, "sectionDescription"));
+        assertEquals("tab says what it holds, in plain words", "Audio",
+                     ((TextView)tagged("settings.section.Audio output & tracks")).getText().toString());
+        View preferred = tagged("settings.preference.favAudioLang");
+        assertTrue(containsText(preferred, "Preferred audio language"));
     }
 
     @Test

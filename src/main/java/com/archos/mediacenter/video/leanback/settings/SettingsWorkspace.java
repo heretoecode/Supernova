@@ -141,7 +141,8 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         View focused = findFocus();
         if (category < 0)
             return cards.indexOf(focused) >= 0 && cards.indexOf(focused) < 4;
-        if (!railButtons.isEmpty() && focused == railButtons.get(0))
+        // Up from any tab reaches the top bar (tabs are the top row of every Settings page).
+        if (railButtons.contains(focused))
             return true;
         return false;
     }
@@ -329,7 +330,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         right.setOrientation(VERTICAL);
         panel.addView(right, new LayoutParams(-1, 0, 1));
         for (String name : names) {
-            TextView tab = text(name, 12);
+            TextView tab = text(SettingsLayout.label(name), 12);
             tab.setTag("settings.section." + name);
             PreviewIcon.apply(tab, subsectionIcon(name), Math.round(14 * scale()));
             tab.setFocusable(true);
@@ -448,22 +449,32 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
 
 
     private String subsectionIcon(String name) {
-        String lower = name.toLowerCase(Locale.ROOT);
-        return lower.contains("video") || lower.contains("display")                         ? "tv"
-        : lower.contains("audio")                                                           ? "audio"
-        : lower.contains("sub")                                                             ? "subtitles"
-        : lower.contains("network")                                                         ? "network"
-        : lower.contains("playback")                                                        ? "play"
-        : lower.contains("resume") || lower.contains("history")                             ? "history"
-        : lower.contains("home")                                                            ? "home"
-        : lower.contains("backup")                                                          ? "folder"
-        : lower.contains("integration") || Arrays.asList("Trakt", "IntroDB").contains(name) ? "settings.nodes"
-                                                                                            : "info";
+        switch (name) {
+            case "Playback": return "play";
+            case "Resume & Progress": return "resume";
+            case "Skipping": return "next";
+            case "Video & Display": return "tv";
+            case "Audio output & tracks": return "audio";
+            case "Subtitles": return "sub";
+            case "Library": return "library";
+            case "Library & metadata": return "details";
+            case "Home": return "home";
+            case "Watch history": return "history";
+            case "Streaming services": return "streaming";
+            case "Interface & theme": return "appearance";
+            case "Service integrations": return "integrations";
+            case "Trakt": return "trakt";
+            case "OpenSubtitles": return "sub";
+            case "Backup & restore": return "save";
+            case "Diagnostics": return "health";
+            case "Advanced": return "advanced";
+            default: return "info";
+        }
     }
 
     private boolean integrationDisabled() {
         return section.equals("Trakt") && !prefs.getBoolean("supernova_integration_trakt", true) ||
-            section.equals("IntroDB") &&
+            (section.equals("IntroDB") || section.equals("Skipping")) &&
                 !prefs.getBoolean(SegmentSkippingPolicy.MASTER, true);
     }
 
@@ -696,8 +707,9 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
         }
 
         void refresh() {
-            title.setText(preference.getTitle());
-            CharSequence summary = preference.getSummary();
+            String[] copy = SettingsLayout.copy(entry.key);
+            title.setText(copy != null ? copy[0] : preference.getTitle());
+            CharSequence summary = copy != null ? copy[1] : preference.getSummary();
             String help = summary == null ? "" : summary.toString();
             if (!preference.isEnabled())
                 help += (help.isEmpty() ? "" : "\n") + "Unavailable for the current device or account configuration.";
