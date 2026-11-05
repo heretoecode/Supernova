@@ -61,6 +61,19 @@ const libstats = `${nav('Movies')}
 <div class="grid2">${Array.from({ length: 16 }, (_, i) => `<div class="poster"><div class="pa2" style="background:linear-gradient(160deg,${art[i % 8][0]},${art[i % 8][1]})${i === 0 ? ';box-shadow:0 0 0 4px #fff' : ''}"></div>
 <div class="pt">${['Arrival', 'Blade Runner 2049', 'Conclave', 'Dune', 'Ex Machina', 'Flow', 'Gravity', 'Heat'][i % 8]}</div>
 <div class="py">${2016 + i} · ${100 + i * 7} min</div></div>`).join('')}</div></div>`;
+
+const ticon = d => `<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const tiles = [
+  ['<path d="M4 15l2-9h12l2 9"/><rect x="3" y="15" width="18" height="5" rx="1.5"/>', 'Local Storage', "Browse this device's storage and any USB drives.", ''],
+  ['<rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.1M8 17.5h.1"/>', 'Network Shares', 'Browse and manage Put.io and any other shares.', ''],
+  ['<path d="M12 4v16M4 12h16"/>', 'Add Connection', 'Connect to a computer, NAS or server.', ''],
+  ['<path d="M3 12h4l2-5 4 10 2-5h6"/>', 'Library Health', '3 files need a look.', '3'],
+  ['<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>', 'Library Scanning', 'Every hour and when Supernova opens.', ''],
+  ['<path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/>', 'Scan now', 'Last scan 12 minutes ago<br>1,808 videos in your library', '']];
+const network = `${nav('Network')}
+<div class="page3"><div class="crumb">Network &amp; Files</div><div class="st">Your files and sources</div>
+<div class="tiles">${tiles.map(([d, t, l, b], i) => `<div class="tile2 ${i === 0 ? 'focus' : ''}">${b ? `<span class="badge">${b}</span>` : ''}
+<div class="th">${ticon(d)}<span>${t}</span></div><div class="tl">${l}</div></div>`).join('')}</div></div>`;
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8;z-index:3}
@@ -87,6 +100,12 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}
 .facts{display:flex;gap:12px;margin-top:12px;font-size:24px;color:#dfe5f1}.facts span{background:rgba(255,255,255,.08);border-radius:14px;padding:6px 14px}
 .grid{margin-top:36px;display:grid;grid-template-columns:repeat(8,1fr);gap:28px 26px}
+.page3{position:absolute;left:96px;right:96px;top:132px;bottom:56px;display:flex;flex-direction:column}
+.tiles{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:28px;margin-top:34px}
+.tile2{position:relative;border-radius:28px;background:rgba(255,255,255,.045);padding:0 40px;display:flex;flex-direction:column;justify-content:center;color:#fff}
+.tile2.focus{background:#F4F6FB;color:#0B0D12}.tile2.focus .tl{color:#3A4256}
+.th{display:flex;align-items:center;gap:18px;font-size:40px;font-weight:500}.tl{font-size:26px;color:#C9D3E6;margin-top:16px;line-height:1.35}
+.badge{position:absolute;right:28px;top:26px;width:46px;height:46px;border-radius:50%;background:#F2B544;color:#111;font-size:24px;font-weight:500;display:flex;align-items:center;justify-content:center}
 .page2{position:absolute;left:72px;right:72px;top:126px;bottom:30px}
 .stats{display:grid;grid-template-columns:repeat(8,1fr)}.stat{padding:0 18px;border-left:2px solid rgba(255,255,255,.16)}.stat:first-child{border-left:0;padding-left:0}
 .sv{font-size:44px;font-weight:500;margin-top:8px}.sl{font-size:21px;color:#C9D3E6;margin-top:2px;white-space:nowrap}
@@ -98,7 +117,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [f, body] of [['03-home.png', home], ['04-settings-playback.png', settings], ['05-movies-library.png', library], ['06-movies-with-stats.png', libstats]]) {
+  for (const [f, body] of [['03-home.png', home], ['04-settings-playback.png', settings], ['05-movies-library.png', library], ['06-movies-with-stats.png', libstats], ['07-network-and-files.png', network]]) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
     await tab.screenshot({ path: path.join(__dirname, f) });
