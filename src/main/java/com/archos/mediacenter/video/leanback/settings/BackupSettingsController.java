@@ -177,11 +177,11 @@ public final class BackupSettingsController {
         landing.setTag("settings.backup.landing");
         landing.setVisibility(View.GONE);
         exportChoices = BackupWorkspace.exportChoices(fragment.requireContext());
-        exportAction = landingAction("Export Backup", "backup.action.export",
+        exportAction = landingAction("Back up now", "backup.action.export",
             ()
                 -> create(exportChoices.selection()),
             "Choose the configuration categories to export, then save a verified ZIP using Android Files. Media, artwork and credentials are excluded. Filenames and locations are Off by default. Backups are unencrypted.");
-        restoreAction = landingAction("Restore Backup", "backup.action.restore", this::chooseRestore,
+        restoreAction = landingAction("Restore from a backup", "backup.action.restore", this::chooseRestore,
             "Choose a backup ZIP using Android Files. Review the available categories and confirm replacement before any settings change. Unselected categories remain unchanged. Reconnect sources, accounts and Android permissions separately.");
         for (BackupCategory category : BackupCategory.ordered()) {
             TextView option = exportChoices.directOption(category, focused -> {
@@ -196,9 +196,9 @@ public final class BackupSettingsController {
             landingControls.add(option);
             SharedThreePanel.divider(landing);
         }
-        landingAction("See full details", "backup.details",
+        landingAction("What's in a backup", "backup.details",
             () -> showInformation(false), "Read the backup contents, exclusions, privacy and replacement policy.");
-        landingAction("Restore instructions", "backup.instructions",
+        landingAction("How restore works", "backup.instructions",
             () -> showInformation(true), "Read the existing instructions before selecting an archive for restore.");
         landingScroll = new ScrollView(fragment.requireContext());
         landingScroll.setFillViewport(true);
