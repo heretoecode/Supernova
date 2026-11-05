@@ -64,6 +64,12 @@ What everything is for: `docs/0.156/RELEASE_LIST.md` (item numbers below) and `d
 16. **Play/pause on OK from the bar**: the key-handling part only, behind a method Claude calls (Claude owns the rest of
     the remote scheme).
 
+17a. **Network stream after a pause (owner bug, top priority in Part B):** see the "Second report" in
+    `docs/0.155/DIAGNOSTICS_2026-11-04.md`. After a pause > 60 s on a network source, reopen and seek to the current
+    position before playing; on a mid-play read failure, reconnect and seek to the last shown frame so audio and video
+    restart together; never continue a broken byte stream; cap read-ahead while paused; event `stream_reconnect`.
+    Test with a fake server that drops idle connections.
+
 ## Part C — data for Claude's screens
 17. **Search matching** (#31): in `PreviewSearchText` (and the query in `PreviewSearch` only where the matching lives):
     original titles, cast/crew/studios by full name or surname, words in any order, start-of-word matches, ignore

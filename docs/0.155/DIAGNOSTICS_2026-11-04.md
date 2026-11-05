@@ -37,3 +37,26 @@
 
 ## Fine
 Artwork 853 requests, 0 failures; TMDb requests healthy; playback sessions start and seek without errors.
+
+# Second report — 5 Nov 2026 00:40 UTC (0.155)
+
+## The glitch and audio drift the owner saw (Dark Matter, Put.io)
+- 00:36:06 playback started (resume at 21:04), 00:36:28 paused, **00:39:42 resumed after 3 min 14 s**.
+- **00:39:50 the Put.io (WebDAV) read failed** — the connection opened before the pause had been idle 223 s and the
+  server dropped it. Supernova reconnected at 00:39:53 and carried on without re-syncing → a few broken frames, then
+  audio out of step. No seek or buffering event was recorded around it.
+- **Same pattern at 23:03 on 4 Nov, worse:** paused ~4 min, resumed, the read failed 1.5 s later (stream idle 235 s), and
+  15 s later playback died (`player_error` 1001/1000); the app was then closed (Android exit reason 10, user request).
+- A third failed read (idle 129 s) earlier in the evening.
+- **Fix (0.156, Codex Part B):** for network sources, after a pause longer than ~60 s reopen the stream and seek to the
+  current position before playing; on any mid-play read failure, reconnect and seek to the last shown frame so audio and
+  video restart together; record `stream_reconnect` (idle time, cause, recovery ms, result). Workaround until then: a
+  short seek back re-syncs.
+
+## Other findings
+- One source (`4ae5c08c…`) still fails nearly every scan in 0.155 (18 times); the other (`c1ea09cd…`) failed twice too.
+- While paused the stream keeps reading ahead (67 MB in 3 min) and native memory grows ~3.5 MB/min — expected
+  read-ahead, but cap it.
+- Diagnostics: one write error (23:03), 14 events dropped per process; fast play/pause toggling while seeking at 00:29
+  logged as `seek_callback_unattributed`.
+- 76 off-screen focus warnings on the library grid (same as before).
