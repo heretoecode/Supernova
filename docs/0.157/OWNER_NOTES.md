@@ -279,5 +279,43 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
     - A: a line above the buttons.
     - B: a line inside the button.
     - C: the time in the label.
-- **Status:** waiting for the resume choice; `set2-01` (Extras), `set2-03` (film, adding Cast and Crew) and `set2-04`
-  (season page) still to confirm.
+- **Resume: option C** (owner, 5 Nov 2026): the label carries it — "Resume S1 E1 · 16 min left"; no progress line.
+- **Confirmed (owner, 5 Nov 2026):**
+  - `set2-01` Extras, with every video kind as its own row, Trailers first.
+  - `set2-02` hero, with resume option C.
+  - `set2-03` film Details, plus Cast and Crew rows.
+  - `set2-04` season page.
+
+**THE DETAILS REDESIGN IS FULLY APPROVED (5 Nov 2026), for 0.157.** Summary for building:
+- **Hero card:** as today, plus the description (up to five lines) and the soft text patch. More › Full
+  description. "Play" / "Resume Sx Ey · N min left".
+- **Logo:** glides and shrinks smoothly to the compact top-left logo when going down into the tabs.
+- **Tabs:** plain words on one line; the open tab's stretch of the line in Supernova blue; the focused tab a white
+  box. Order: series Seasons & Episodes → Details → Extras → More Like This (opens on Seasons & Episodes); films
+  Details → Extras → More Like This (opens on Details). Empty tabs hide.
+- **Seasons & Episodes** (`v6-01`):
+  - One Home-style row per season, title inside the picture, no synopsis.
+  - Season headings line up with the cards; focus fills their box white; OK opens the season page (`set2-04`).
+- **Details** (`v15-b`):
+  - On Space Black. Reception (IMDb, Rotten Tomatoes, Metacritic, TMDB, Awards), Key information and Technical
+    information as three vertical columns.
+  - Then Cast and Crew rows, 8 portraits each, no counts.
+  - White titles with a short white underline; separators 24% / 32% white.
+  - "Unknown" instead of removing a row.
+  - Nothing focusable: Down/Up scroll.
+- **Extras** (`set2-01`): Home row cards, one row per video kind, Trailers first.
+- **More Like This** (`v6-03`):
+  - Rows "In your library" and "On your services", from TMDB recommendations + TMDB similar + Trakt related.
+  - Ranked by agreement, no fixed count, no genre padding.
+  - Centred colour service logos with no background; title · year on one line; no play icon on library items.
+  - A service title opens that service's app (deep link where possible).
+- **Background rule (app-wide):** Space Black behind every full page; content straight on it; charcoal glass only
+  for side panels and pop-ups.
+- **Engine and data for Codex:**
+  - The new technical fields (resolution, bit depth, HDR, frame rate, bitrate, audio languages).
+  - Awards.
+  - Series runtime from the episodes.
+  - Crew order with the creator first.
+  - More Like This sources and ranking.
+  - Service deep links.
+  - Check the "WingNut Films" studio data.
