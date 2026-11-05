@@ -35,7 +35,6 @@ import com.archos.mediacenter.filecoreextension.upnp2.ListingEngineFactoryWithUp
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
-import com.archos.mediacenter.video.browser.loader.VideosInFolderLoader;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
 import com.archos.mediacenter.video.leanback.PreviewFolderActions;
@@ -414,13 +413,13 @@ public final class LocalStorageView extends LinearLayout {
     private void lookUp(Uri target, int token) {
         Map<String, Video> found = new HashMap<>();
         try (Cursor cursor =
-                 new VideosInFolderLoader(getContext().getApplicationContext(), target.toString()).loadInBackground()) {
+                 new LibraryFileLookup(getContext().getApplicationContext(), target).loadInBackground()) {
             if (cursor != null) {
                 VideoCursorMapper mapper = new VideoCursorMapper();
                 mapper.publicBindColumns(cursor);
                 while (cursor.moveToNext()) {
                     Video video = (Video)mapper.publicBind(cursor);
-                    found.put(video.getFileUri().toString(), video);
+                    found.put(LibraryFileLookup.keyForDatabasePath(video.getFilePath()), video);
                 }
             }
         } catch (RuntimeException failure) {
@@ -751,7 +750,7 @@ public final class LocalStorageView extends LinearLayout {
                 else {
                     videos++;
                     bytes += Math.max(0, file.length());
-                    Video video = indexed.get(file.getUri().toString());
+                    Video video = indexed.get(LibraryFileLookup.key(file.getUri()));
                     if (video != null && video.isWatched())
                         watched++;
                     else if (video != null && video.getResumeMs() > 0)
@@ -1022,7 +1021,7 @@ public final class LocalStorageView extends LinearLayout {
                                       : excluded ? "Folder · Excluded" : "Folder");
                     showSecond(true, false);
                 } else {
-                    Video video = indexed.get(file.getUri().toString());
+                    Video video = indexed.get(LibraryFileLookup.key(file.getUri()));
                     // Matched title first (owner, 3 Nov 2026); the file name only until a match is found.
                     if (video != null && video.hasScraperData())
                         line1.setText(rowTitle(video));
@@ -1090,7 +1089,7 @@ public final class LocalStorageView extends LinearLayout {
             MetaFile2 file = (MetaFile2)value;
             art.setImageDrawable(new PreviewIcon(file.isDirectory() ? "folder" : "video-file"));
             art.setColorFilter(SupernovaStyle.TEXT);
-            Video video = indexed.get(file.getUri().toString());
+            Video video = indexed.get(LibraryFileLookup.key(file.getUri()));
             String label = file.isDirectory() ? file.getName() : withoutExtension(file.getName());
             if (video != null && video.hasScraperData())
                 label = matchedTitle(video);
@@ -1123,7 +1122,7 @@ public final class LocalStorageView extends LinearLayout {
         if (file.isDirectory()) {
             result.add(new Action("folder", "Open", () -> navigateTo(uri)));
         } else {
-            Video video = indexed.get(uri.toString());
+            Video video = indexed.get(LibraryFileLookup.key(uri));
             boolean resume = video != null && video.getResumeMs() > 0 && !video.isWatched();
             result.add(new Action(resume ? "resume" : "play", resume ? "Resume" : "Play", () -> play(file, true)));
             if (resume)
@@ -1177,7 +1176,7 @@ public final class LocalStorageView extends LinearLayout {
     }
 
     private void play(MetaFile2 file, boolean resume) {
-        Video video = indexed.get(file.getUri().toString());
+        Video video = indexed.get(LibraryFileLookup.key(file.getUri()));
         Activity activity = activity();
         if (video != null)
             PlayUtils.startVideo(getContext(), video,
