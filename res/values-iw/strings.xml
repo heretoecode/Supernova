@@ -524,7 +524,6 @@
     <string name="rotation_unlocked">סיבוב מסך אוטומטי מופעל</string>
     <string name="network_reindex">סרוק מחדש את התוכן</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">לחץ על חץ למעלה\nכדי להציג את תפריט הטלוויזיה</string>
     <string name="help_overlay_network_indexing_text1">לחץ על תפריט זה כדי לשלב את תוכן תיקייה זו ותת-התיקיות שלה לספרית הוידאו.</string>
     <string name="help_overlay_network_indexing_text2">יאפשר לך להשיג פוסטרים ותיאורים לסרטים וסדרות.</string>
     <string name="help_overlay_scraper_text">לחץ על תפריט זה כדי לחפש פוסטרים ותיאורים לוידאו שלך ברשת.</string>

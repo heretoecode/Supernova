@@ -649,7 +649,6 @@
     <string name="network_reindex">Re-scan content</string>
 
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Press the UP arrow key\nto display the TV menu</string>
 
     <string name="help_overlay_network_indexing_text1">Press this menu item to integrate the content of this folder and its subfolders to the Video Library.</string>
     <string name="help_overlay_network_indexing_text2">It will allow you to get posters and descriptions for the movies and TV shows.</string>

@@ -576,7 +576,6 @@
     <string name="rotation_unlocked">Automatische Bildschirmrotation aktiviert</string>
     <string name="network_reindex">Inhalt erneut scannen</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Drücken Sie die Pfeil-nach-Oben-Taste\nzur Anzeige des TV-Menüs</string>
     <string name="help_overlay_network_indexing_text1">Mit diesem Knopf können Sie den Inhalt des aktuellen Ordners und seiner Unterordner zur Bibliothek hinzufügen.</string>
     <string name="help_overlay_network_indexing_text2">Dies ermöglicht Ihnen, Poster und Beschreibungen für die Filme und Serien abzurufen.</string>
     <string name="help_overlay_scraper_text">Drücken Sie diesen Menüpunkt, um online nach Postern und Beschreibungen für Ihre Videos zu suchen. </string>

@@ -561,7 +561,6 @@
     <string name="rotation_unlocked">Automatikus képernyőforgatás engedélyezve</string>
     <string name="network_reindex">Tartalom újrakeresése</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Nyomja meg a felfelé nyilat\na TV menü megjelenítéséhez</string>
     <string name="help_overlay_network_indexing_text1">Nyomja meg ezt a menüelemet, a jelenlegi mappa és ennek almappáinak a Videó Könyvtárhoz való hozzáadáshoz.</string>
     <string name="help_overlay_network_indexing_text2">Ez lehetővé teszi a poszterek és leírások lekérését a filmekhez és a sorozatokhoz.</string>
     <string name="help_overlay_scraper_text">Nyomja meg ezt a menüelemet poszterek és leírások kereséséhez a videóihoz. </string>

@@ -5,12 +5,6 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_weight="1"  android:layoutDirection="ltr">
-
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/control_bar"
-        layout="@layout/player_help_overlay" />
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

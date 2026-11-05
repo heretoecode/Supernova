@@ -556,7 +556,6 @@
     <string name="rotation_unlocked">Otomatik ekran döndürme etkin</string>
     <string name="network_reindex">İçeriği yeniden tara</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">TV menüsünü görüntülemek için YUKARI ok tuşuna\nbasın</string>
     <string name="help_overlay_network_indexing_text1">Bu klasörün ve alt klasörlerinin içeriğini Video Kütüphanesine entegre etmek için bu menü öğesine tıklayın.</string>
     <string name="help_overlay_network_indexing_text2">Filmler ve TV şovları için posterler ve açıklamalar almanızı sağlayacaktır.</string>
     <string name="help_overlay_scraper_text">Videolarınız için çevrimiçi poster ve açıklama aramak için bu menü öğesine basın. </string>

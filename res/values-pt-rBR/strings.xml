@@ -578,7 +578,6 @@
     <string name="rotation_unlocked">Rotação automática da tela ativada</string>
     <string name="network_reindex">Verificar novamente o conteúdo</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Pressione a tecla de seta para Cima\npara exibir o menu da TV</string>
     <string name="help_overlay_network_indexing_text1">Pressione este item de menu para integrar o conteúdo desta pasta e das subpastas à biblioteca de vídeos.</string>
     <string name="help_overlay_network_indexing_text2">Isso permitirá obter pôsteres e descrições para os filmes e séries.</string>
     <string name="help_overlay_scraper_text">Selecione este item do menu para buscar pôsteres e descrições online para seus vídeos. </string>

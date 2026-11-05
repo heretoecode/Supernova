@@ -521,7 +521,6 @@
     <string name="rotation_unlocked">Đã bật xoay màn hình tự động</string>
     <string name="network_reindex">Quét lại nội dung</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Nhấn phím mũi tên LÊN\nđể hiển thị thực đơn TV</string>
     <string name="help_overlay_network_indexing_text1">Nhấn mục thực đơn này để tích hợp nội dung của thư mục này và các thư mục con của nó vào Thư viện băng hình.</string>
     <string name="help_overlay_network_indexing_text2">Nó sẽ cho phép bạn nhận áp phích và mô tả cho các bộ phim và chương trình TV.</string>
     <string name="help_overlay_scraper_text">Nhấn mục menu này để tìm kiếm áp phích và mô tả trực tuyến cho băng hình của bạn. </string>

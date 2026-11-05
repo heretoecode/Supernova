@@ -522,7 +522,6 @@
     <string name="rotation_unlocked">自動螢幕旋轉已啟用</string>
     <string name="network_reindex">重新掃描內容</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">按「上」箭頭鍵\n顯示電視選單</string>
     <string name="help_overlay_network_indexing_text1">按此選單項目將該資料夾和子資料夾的內容給合至影片媒體庫。</string>
     <string name="help_overlay_network_indexing_text2">這將使您取得電影和電視劇的海報及說明。</string>
     <string name="help_overlay_scraper_text">按此選單項目將於網路上搜尋影片的海報和說明。 </string>

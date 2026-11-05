@@ -483,7 +483,6 @@ Copertina (rotolo di copertina)</string>
     <string name="rotation_unlocked">Rotazione automatica dello schermo attivata</string>
     <string name="network_reindex">Analizza nuovamente il contenuto</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Premi il tasto SU\nto mostrare il menù della TV</string>
     <string name="help_overlay_network_indexing_text1">Seleziona questa voce del menù per integrare il contenuto di questa cartella e le sue sottocartelle alla Libreria Video</string>
     <string name="help_overlay_network_indexing_text2">Ti permetterà di ottenere poster e descrizioni per i film e le serie TV</string>
     <string name="help_overlay_scraper_text">Seleziona questa voce del menù per cercare online poster e descrizioni per i tuoi video </string>
