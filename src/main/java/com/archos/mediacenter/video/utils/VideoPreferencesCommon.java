@@ -68,20 +68,17 @@ import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.UiChoiceDialog;
+import com.archos.mediacenter.video.UiModePolicy;
 import com.archos.mediacenter.video.browser.loader.MoviesLoader;
 import com.archos.mediacenter.video.browser.subtitlesmanager.ISO639codes;
 import com.archos.mediacenter.video.foundation.FoundationAboutEntry;
 import com.archos.mediacenter.video.leanback.LeanbackActivity;
 import com.archos.mediacenter.video.leanback.MainFragment;
-import com.archos.mediacenter.video.leanback.animes.AllAnimesGridFragment;
 import com.archos.mediacenter.video.leanback.animes.AnimesSortOrderEntry;
-import com.archos.mediacenter.video.leanback.movies.AllMoviesGridFragment;
 import com.archos.mediacenter.video.leanback.movies.MoviesSortOrderEntry;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsLicencesActivity;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsMoreLeanbackActivity;
-import com.archos.mediacenter.video.leanback.tvshow.AllTvshowsGridFragment;
 import com.archos.mediacenter.video.leanback.tvshow.TvshowsSortOrderEntry;
 import com.archos.mediacenter.video.streaming.StreamingPreferences;
 import com.archos.mediacenter.video.tvshow.AnimeShowSortOrderEntries;
@@ -117,6 +114,9 @@ import org.slf4j.LoggerFactory;
 
 /** Coordinates shared video preference behavior, account actions and settings changes. */
 public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener {
+    public static final String ALLOW_3RD_PARTY_PLAYER = "allow_3rd_party_player";
+    public static final boolean ALLOW_3RD_PARTY_PLAYER_DEFAULT = false;
+
 
     private static final Logger log = LoggerFactory.getLogger(VideoPreferencesCommon.class);
 
@@ -1006,10 +1006,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             return false;
         });
         findPreference(KEY_LICENCES).setOnPreferenceClickListener(preference -> {
-            if (!UiChoiceDialog.applicationIsInLeanbackMode(getActivity()))
-                startActivity(new Intent(getActivity(), VideoPreferencesLicencesActivity.class));
-            else
-                startActivity(new Intent(getActivity(), VideoSettingsLicencesActivity.class));
+            startActivity(new Intent(getActivity(), VideoSettingsLicencesActivity.class));
             return false;
         });
 
@@ -1668,7 +1665,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 // Hide it when in Leanback mode (user is already in TV mode)
                 Preference uimodeLeanbackPref = findPreference("uimode_leanback");
                 if (uimodeLeanbackPref != null) {
-                    if (UiChoiceDialog.applicationIsInLeanbackMode(getActivity())) {
+                    if (UiModePolicy.applicationIsInLeanbackMode(getActivity())) {
                         // In TV mode: hide the selector, user can use "Always Start in TV Interface" instead
                         userInterfaceCategory.removePreference(uimodeLeanbackPref);
                     } else {
@@ -1677,7 +1674,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                             public boolean onPreferenceChange(Preference preference, Object newValue) {
                                 // Sync with always_leanback_on_tv_key and uimode on Android TV devices
                                 String uiMode = (String)newValue;
-                                boolean isLeanbackMode = UiChoiceDialog.UI_CHOICE_LEANBACK_TV_VALUE.equals(uiMode);
+                                boolean isLeanbackMode = UiModePolicy.UI_CHOICE_LEANBACK_TV_VALUE.equals(uiMode);
                                 String uimodeValue = isLeanbackMode ? "2" : "1";
                                 getPreferenceManager()
                                     .getSharedPreferences()
@@ -1715,7 +1712,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                         public boolean onPreferenceChange(Preference preference, Object newValue) {
                             // Sync with uimode preference (phones/tablets don't use always_leanback_on_tv_key)
                             String uiMode = (String)newValue;
-                            boolean isLeanbackMode = UiChoiceDialog.UI_CHOICE_LEANBACK_TV_VALUE.equals(uiMode);
+                            boolean isLeanbackMode = UiModePolicy.UI_CHOICE_LEANBACK_TV_VALUE.equals(uiMode);
                             String uimodeValue = isLeanbackMode ? "2" : "1";
                             getPreferenceManager()
                                 .getSharedPreferences()
@@ -1738,8 +1735,8 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                     });
                     // Do not show the zoom preference if user is not in TV more UI
                     String currentUiMode = getPreferenceManager().getSharedPreferences().getString(
-                        UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, "-");
-                    if (!currentUiMode.equals(UiChoiceDialog.UI_CHOICE_LEANBACK_TV_VALUE)) {
+                        UiModePolicy.UI_CHOICE_LEANBACK_KEY, "-");
+                    if (!currentUiMode.equals(UiModePolicy.UI_CHOICE_LEANBACK_TV_VALUE)) {
                         userInterfaceCategory.removePreference(uiZoomPref);
                     }
                 }
@@ -1762,7 +1759,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
             (PreferenceCategory)findPreference("category_leanback_user_interface");
 
         if (leanbackUserInterfaceCategory != null) {
-            if (!UiChoiceDialog.applicationIsInLeanbackMode(getActivity())) {
+            if (!UiModePolicy.applicationIsInLeanbackMode(getActivity())) {
                 getPreferenceScreen().removePreference(leanbackUserInterfaceCategory);
             } else {
                 // Hide "Always Start in TV Interface" on non-TV devices (it's only relevant on Android TV)
@@ -1778,13 +1775,13 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                             public boolean onPreferenceChange(Preference preference, Object newValue) {
                                 boolean enabled = (Boolean)newValue;
                                 // Sync with uimode_leanback and uimode preferences
-                                String modeValue = enabled ? UiChoiceDialog.UI_CHOICE_LEANBACK_TV_VALUE
-                                                           : UiChoiceDialog.UI_CHOICE_LEANBACK_TABLET_VALUE;
+                                String modeValue = enabled ? UiModePolicy.UI_CHOICE_LEANBACK_TV_VALUE
+                                                           : UiModePolicy.UI_CHOICE_LEANBACK_TABLET_VALUE;
                                 String uimodeValue = enabled ? "2" : "1";
                                 getPreferenceManager()
                                     .getSharedPreferences()
                                     .edit()
-                                    .putString(UiChoiceDialog.UI_CHOICE_LEANBACK_KEY, modeValue)
+                                    .putString(UiModePolicy.UI_CHOICE_LEANBACK_KEY, modeValue)
                                     .putString("uimode", uimodeValue)
                                     .apply();
                                 // Don't restart - let change take effect on next app launch
@@ -1810,9 +1807,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 ListPreference movieSortOrderPref = (ListPreference)findPreference(KEY_MOVIE_SORT_ORDER);
 
                 movieSortOrderPref.setEntries(
-                    MoviesSortOrderEntry.getSortOrderEntries(getActivity(), AllMoviesGridFragment.sortOrderIndexer));
+                    MoviesSortOrderEntry.getSortOrderEntries(getActivity(), LibrarySortPreferences.MOVIES_SORT_ORDERS));
                 movieSortOrderPref.setEntryValues(MoviesSortOrderEntry.getSortOrderEntryValues(
-                    getActivity(), AllMoviesGridFragment.sortOrderIndexer));
+                    getActivity(), LibrarySortPreferences.MOVIES_SORT_ORDERS));
 
                 if (movieSortOrderPref.getValue() == null)
                     movieSortOrderPref.setValue(MoviesLoader.DEFAULT_SORT);
@@ -1820,9 +1817,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 ListPreference tvshowSortOrderPref = (ListPreference)findPreference(KEY_TV_SHOW_SORT_ORDER);
 
                 tvshowSortOrderPref.setEntries(
-                    TvshowsSortOrderEntry.getSortOrderEntries(getActivity(), AllTvshowsGridFragment.sortOrderIndexer));
+                    TvshowsSortOrderEntry.getSortOrderEntries(getActivity(), LibrarySortPreferences.TVSHOWS_SORT_ORDERS));
                 tvshowSortOrderPref.setEntryValues(TvshowsSortOrderEntry.getSortOrderEntryValues(
-                    getActivity(), AllTvshowsGridFragment.sortOrderIndexer));
+                    getActivity(), LibrarySortPreferences.TVSHOWS_SORT_ORDERS));
 
                 if (tvshowSortOrderPref.getValue() == null)
                     tvshowSortOrderPref.setValue(TvshowSortOrderEntries.DEFAULT_SORT);
@@ -1833,9 +1830,9 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                 // since it gets removed from the leanback category earlier
                 if (animesSortOrderPref != null) {
                     animesSortOrderPref.setEntries(AnimesSortOrderEntry.getSortOrderEntries(
-                        getActivity(), AllAnimesGridFragment.sortOrderIndexer));
+                        getActivity(), LibrarySortPreferences.ANIMES_SORT_ORDERS));
                     animesSortOrderPref.setEntryValues(AnimesSortOrderEntry.getSortOrderEntryValues(
-                        getActivity(), AllAnimesGridFragment.sortOrderIndexer));
+                        getActivity(), LibrarySortPreferences.ANIMES_SORT_ORDERS));
 
                     if (animesSortOrderPref.getValue() == null)
                         animesSortOrderPref.setValue(AnimeShowSortOrderEntries.DEFAULT_SORT);
@@ -1852,7 +1849,7 @@ public class VideoPreferencesCommon implements OnSharedPreferenceChangeListener 
                     mMoreLeanbackPrefsClickLastTime = currentTime;
 
                     if (mMoreLeanbackPrefsClickCount > 4) {
-                        if (UiChoiceDialog.applicationIsInLeanbackMode(getActivity()))
+                        if (UiModePolicy.applicationIsInLeanbackMode(getActivity()))
                             startActivity(new Intent(getActivity(), VideoSettingsMoreLeanbackActivity.class));
                         mMoreLeanbackPrefsClickCount = 0; // reset
                     }

@@ -1,10 +1,10 @@
 # Engine 0.156 update plan — 2026-11-04
 
-Read-only preparation under BRIEF_0155_PREP Part 2, implementing the scope of BRIEF_0154 Part 3. Supernova base `160b429f014c86833ae89451f88c58e6acd1e913`. No builds, tests, patch application, workflow changes, artifact upload or app edits performed. `git apply --check` below is a read-only applicability probe, not a build/test.
+ENGINE item 1 refresh on `codex/0155-code-2026-11-04` at `7f2c5eeeaa386cd87b8b5494237be4c94fd7c528`, using the brief/mapping fetched at `0b016980c448e20cd9420d405070814d54d04c01`. The original PREP analysis used Supernova `160b429f014c86833ae89451f88c58e6acd1e913`; historical applicability results below retain that provenance. This refresh changes documentation only. No UI, resource, Settings, app, existing workflow or existing build file is changed.
 
 ## Frozen upstream range
 
-`nova-video-player/aos-avos`: `95a9e6b36a07dc996a37adc485d0ef460f1818f2` exclusive through `2540c4f4fd9f04d462d0929f45849fad93e77d00` inclusive, fetched 2026-11-04. There are **48 graph commits (43 non-merge + 5 merge)**, rather than the brief’s 46: the final two are `af12935` and `2540c4f`. Preserve the full upstream history instead of applying merge commits as duplicate patches. The per-commit evidence is `git show <SHA>` in that repository; overlap below is an exact changed-path intersection, not a claim that every overlapping hunk conflicts.
+`nova-video-player/aos-avos`: `95a9e6b36a07dc996a37adc485d0ef460f1818f2` exclusive through **`5cf3ae9c1f70189d4180a62722150fa76b405a0f`** inclusive, fetched 2026-11-04, the owner's NOVA 6.6.4 target. There are **51 graph commits (45 non-merge + 6 merge)**. The original 48-row range through `2540c4f` is retained, followed by the two ASS geometry commits and their merge. Preserve the full upstream history instead of applying merge commits as duplicate patches. The per-commit evidence is `git show <SHA>` in that repository; overlap below is an exact changed-path intersection, not a claim that every overlapping hunk conflicts.
 
 ## Every upstream commit
 
@@ -58,8 +58,62 @@ Read-only preparation under BRIEF_0155_PREP Part 2, implementing the scope of BR
 | `3492b980c295` | Retry eligible hardware decoders and respect playback display HDR support | preview414: `Source/codec_sfdec2.c`, `Source/stream_parser_ffmpeg.c`<br>supernova135: `Source/stream_parser_ffmpeg.c`<br>supernova141-chapters: `Source/stream_parser_ffmpeg.c`<br>supernova146-upstream: `Source/codec_sfdec2.c`, `Source/stream_parser_ffmpeg.c` | High: decoder retry, fallback, display/JNI contract; merge parser/video hunks with metadata and chapter extensions | Yes as coherent HDR/retry series; device matrix required |
 | `af12935c7105` | Fix duration and resume for MPEG-TS files | preview414: `Source/stream_parser_ffmpeg.c`<br>supernova135: `Source/stream_parser_ffmpeg.c`<br>supernova141-chapters: `Source/stream_parser_ffmpeg.c`<br>supernova146-upstream: `Source/stream_parser_ffmpeg.c` | High: parser/resume timing overlaps chapter/metadata patches | Yes; test TS duration/resume and multitrack clocks |
 | `2540c4f4fd9f` | Fix video timestamps for files with multiple video tracks | preview414: `Source/stream_parser_ffmpeg.c`<br>supernova135: `Source/stream_parser_ffmpeg.c`<br>supernova141-chapters: `Source/stream_parser_ffmpeg.c`<br>supernova146-upstream: `Source/stream_parser_ffmpeg.c` | High: parser/resume timing overlaps chapter/metadata patches | Yes; test TS duration/resume and multitrack clocks |
+| `f84855bf9f06` | Keep ASS/SSA dialogue visible and positioned events on the video when the box overflows vertically | supernova146-upstream: `Source/sub_format_ssa.c`; geometry header and real-libass host test now upstream | Medium: requires matching Java visible-canvas/video-box geometry; native alone does not clip the current Java subtitle view | Yes in frozen native tip; coordinate Java `8bbfb666` with Claude, no layout edits here |
+| `eb5250d5a77e` | Generalize overflow to either axis; accept centered covering boxes up to 8x the canvas, reject transient/stale boxes | Same native geometry path; `Include/ssa_geometry.h:74–113` at new tip | Medium: negative margins and layout height must retain ordinary dialogue containment and positioned-event alignment | Yes in frozen native tip; portrait Java half is not needed for the landscape Shield release |
+| `5cf3ae9c1f70` | Merge PR #19, ASS/SSA overflow fixes | Merge node; see previous two rows | Preserve both constituent changes without duplicate replay | Yes as frozen source history |
 
-## Patch applicability at the frozen new tip
+## Historical patch applicability at `2540c4f` (refresh in ENGINE item 2)
+
+ENGINE item 2 has now regenerated the stack at `5cf3ae9`; the historical probes
+below explain the original investigation, not the delivered application order.
+
+### Delivered native draft at `5cf3ae9`
+
+Prepared the old `2cf21c4` checkout with all five existing avos operations after
+verifying their recorded hashes. Comparing that complete effective tree with
+upstream `95a9e6b3` isolates **19 residual paths**, rather than blindly carrying
+the 98,712-line snapshot import. The new tip already includes the host linker's
+`-lm` fix, leaving **18 changed paths** in the delivered five-patch sequence:
+
+| Order / new `.github/build/` file | Carry-forward and boundaries |
+|---|---|
+| `avos-supernova156-01-metadata.patch` | Six files: MP/MR key numbers and track strides, independent source Dolby Vision profile and HDR10+ presence. Source profile is assigned only after upstream's DOVI record-length validation, alongside the original bitstream profile; new static-HDR extraction, decoder mapping and fallback remain intact. HDR10+ requires non-null positive-size side data. |
+| `avos-supernova156-02-chapters.patch` | Eight files: existing bounded embedded-chapter count/title/origin parcel, both audio/video call sites and matching signature. Regenerated after metadata; no parser timebase/duration rollback. |
+| `avos-supernova156-03-hls.patch` | Actual existing `hls+` compatibility helper plus current `ffmpeg_open_input` integration; changes the backend URL pointer/demuxer, preserving caller/source URI and existing fd/cancellation paths. |
+| `avos-supernova156-04-native-linkage.patch` | Explicit shared FFmpeg/media runtime modules, system-library filtering and `APP_ALLOW_MISSING_DEPS=false`. Upstream API 23 and OMX removal retained. Existing libass/font stack remains **static archives**; old prose calling that stack shared was incorrect (`build-supernova146-subtitles.py:37–64`, upstream `jni/libass_prebuilt.mk`). |
+| `avos-supernova156-05-test-harness.patch` | Retains two Supernova host harness compile fixes for atempo and pause/resume; no assertion, test or production timing policy removed/weakened. Does not restore the three obsolete modeled subtitle tests superseded upstream by real-stack tests. |
+
+`native-supernova156.lock.draft.json` records exact upstream commit/tree,
+measured SHA-256 values and application order, measured resulting tree
+`50b756e3f96db29d9f0914be268fd066ef7c5b21`, the old lock's actual hash and
+unchanged third-party source/NDK pins. It also records the disposition of all
+five retired avos operations. No release number or source/archive hash was
+invented; the working label remains 0156 and the avos source is Git-pinned.
+
+Reproduce offline with a local upstream checkout containing the frozen blobs:
+
+```sh
+python3 .github/build/verify-native-supernova156-draft.py --avos /path/to/aos-avos --run-host-tests
+```
+
+The verifier clones locally into a disposable directory, checks every patch
+hash and sequential `git apply --check`, applies with index checks and verifies
+the complete result tree. Its C probe checks actual public metadata/chapter ABI
+keys and the actual HLS helper; it also runs the retained upstream buffer-limit
+boundary test. Thirteen selected upstream host tests passed (HDR mapping/static
+metadata, decoder candidate cleanup/bounds, DV AVC/recovery, invalid surface,
+pause/resume and atempo). These are host/source-unit results, not Android JNI or
+playback acceptance. An initial probe compile needed `<sys/types.h>` for the
+public header's `ssize_t`; the corrected probe passed without weakening warnings.
+
+No rework is deferred within these five native residual patches. Production
+integration and release acceptance remain outstanding: replace the old avos
+pin and five operations together, preserve the unchanged third-party stack,
+rebuild all four wrapper ABIs, run actual chapter/metadata parcel probes and
+API-23/ELF/alignment checks, full libass/ASS geometry and sanitizer tests, plus
+the engine's app/JNI and Shield matrix. Host FFmpeg/libass development packages
+are unavailable here, so no full geometry/timebase suite or real media fixture
+acceptance is claimed. Existing pins, locks, workflows and receipts are untouched.
 
 Whole-patch forward `git apply --check` results: preview414 FAIL; supernova135 FAIL; supernova141-chapters PASS; supernova145-buffer-limits FAIL; supernova146-upstream FAIL. Each was checked independently against clean upstream HEAD, not as a proposed sequential stack. No file was patched. Additional per-file forward/reverse probes distinguish surviving additions from already-present or superseded content. Reverse success means textual inclusion; neither direction means manual semantic review, not automatic loss of the feature.
 
@@ -73,28 +127,72 @@ Whole-patch forward `git apply --check` results: preview414 FAIL; supernova135 F
 
 The 31 changed sections of the last patch are: Include/jni_sub_engine.h; Include/sub_style.h; Makefile; Source/codec_OMX.c; Source/codec_ffsub.c; Source/codec_sfdec.c; Source/codec_sfdec2.c; Source/jni_sub_engine.c; Source/stream_parser_ffmpeg.c; Source/stream_sink_video_android3.c; Source/stream_sink_video_sim2.c; Source/stream_video.c; Source/sub_format_ssa.c; Source/sub_style.c; Source/subtitle_formats.c; Source/subtitle_idx.c; avos_config_android.mk; doc/TEST.md; doc/simulator.md; external/android/libavos_android/android_buffer.c; external/android/libsfdec/sfdec_ndkmediacodec.cpp; jni/Android.mk; jni/Application.mk; ndkbuild.mk; test/host/fake_backend.c; test/host/fake_backend.h; test/host/host_test_util.h; test/host/test_host_native.py; test/test_atempo_missing_state.py; test/test_pause_resume_policy.py; test/test_slew_offset.py. New upstream supersedes many of these contexts, including outright removal of OMX files. These are a semantic-review checklist, not 31 hunks that should all be re-added. A clean apply check does not prove correct linking or runtime behavior.
 
-## Three aos-Video companion commits and MediaLib
+## NOVA 6.6.4 Java / MediaLib companion inventory
 
-Frozen aos-Video default tip: `a4f61636` (6.6.4). The three relevant companion commits are `5c7215144f72312b086eb314f514c7605d8e6c5f`, `9ec1bdc26a4ec7086b7bc2b89722a46ef6858d48`, and `2f5ac29a157203d2f12d52769ccbfd0bfb68577b`. Chronologically the SurfaceView correction precedes `9ec1bdc2`; “starting with” in the brief should not cause it to be omitted.
+Compared each named commit's actual diff, not just release notes. Reference aos-Video
+tip `95f233f9a547b406f38f485446b669a4cf8de588`; MediaLib
+`e5886e04c857a7c535b840cd57955970671b08a1`. Paths in the app rows below are
+relative to `src/main/java/com/archos/mediacenter/video/`. MediaLib evidence uses
+the existing prepared `5758074` checkout plus the reviewed dependency patches;
+the prior scan draft is irrelevant to these methods.
 
-| Commit | Landing in current Supernova and required behavior |
-| --- | --- |
-| `5c721514` SurfaceView HDR dataspace removal | `player/Player.java:setHdrCapabilities` (:1689 onward) still contains the override; `player/SurfaceController.java:setSurfaceDataSpace` implements it. Remove the SurfaceControl transaction and unused helper/imports as a coordinated later change; retain window COLOR_MODE_HDR request and native MediaCodec color signalling. The old PQ constant 0x10C00000 is wrong, and SurfaceView's control is not owned for arbitrary dataspace mutation. No new native method is needed for the deletion, but native `f6c0208` provides the producer color/HDR static metadata path it relies on. |
-| `9ec1bdc2` ranking and live display capabilities | `utils/CodecDiscovery.java:getCodecForProfile` (:270) is still the older selection method. Add `getVideoCodecForFormat(String,int,int,int,double,int)`, helper `VideoCodecSelection.rank`, and fresh `getPlaybackHdrCapabilities()` through a stored Display. In `player/Player.java:openVideo`, after setting DoVi mode and before creating/preparing the player, set the current playback window display. Refresh across window/display changes; don't use only post-prepare `setHdrCapabilities`. JNI in new avos `Source/android_codecs.c:105–109` looks up signatures `(Ljava/lang/String;IIIDI)Ljava/lang/String;` and `()I`. Missing optional methods preserve old fallback; shipping Java without the new native candidate loop cannot deliver full retry behavior. Preserve API 24 HDR, API 27 profile-selection and API 29 alias guards, -1 unknown capability, vendor order within rank, secure/tunneled exclusions and maximum 16 candidates. Preserve Supernova force/software policy and diagnostics. Port the four ranking tests. |
-| `2f5ac29a` startup diagnostics | Merge into Supernova `player/Player.java:openVideo` and `onPrepared` around existing `mOpenGeneration`, off-main source setup, main-thread prepare and stale-generation checks. DEBUG-gated monotonic timings at player creation, datasource setup, prepareAsync and callback; no engine ABI dependency. Integrate with existing Diagnostics operation IDs and redact credentials/URI secrets instead of copying raw upstream URI logs. Keep service ownership/current-player checks. |
+| Upstream change | Status and evidence on this Codex branch | Touches / disposition for engine release |
+|---|---|---|
+| aos-Video `9ec1bdc26a4ec7086b7bc2b89722a46ef6858d48` | **Needed.** `utils/CodecDiscovery.java:270` still returns the first matching profile; no ranked-format query or playback Display exists. `player/Player.java:697` sets DoVi mode, but supplies no live display to native. | Non-UI decoder/HDR plumbing in ENGINE item 3. Exact native callback signatures are `(Ljava/lang/String;IIIDI)Ljava/lang/String;` and `()I`. Preserve API 24/27/29 guards, unknown mask -1, stable vendor order, maximum 16 candidates, secure/tunneled/encoder/software exclusions, Force policy and generation fences. Carry four upstream ranking tests plus display/query guards. A helper can live inside the existing class, or in an unapplied draft patch; do not add an unauthorized production file. |
+| aos-Video `5c7215144f72312b086eb314f514c7605d8e6c5f` | **Needed.** `player/Player.java:1688–1704` still computes the SurfaceView dataspace override; `player/SurfaceController.java:732` still applies the transaction. | Internal HDR producer/consumer contract. Draft deletion with tests; keep `COLOR_MODE_HDR`, display capability collection and new native HDR static metadata signalling. Do not change surface geometry, controls or screen structure. |
+| aos-Video `8bbfb66608707eb383a266e044ad187cb6724081` | **Needed, Claude's UI-side integration.** `player/SurfaceController.java:666–685` sizes the subtitle view to `dch`; no visible-height clip or negative overflow box is emitted. | Changes subtitle view layout/visible positioning. Describe only here. Native `f84855b` requires this geometry to fix Fit width end to end. Claude must coordinate the change and real ASS/dialogue/positioned-event/PGS/3D tests; no layout edits in this run. |
+| aos-Video `95f233f9a547b406f38f485446b669a4cf8de588` | **Not applicable to the landscape Shield release's portrait case.** Current `SurfaceController.java:703` sends x=0; upstream adds clipped width/negative x and replays it. | No portrait Java changes here. Generalized native `eb5250d` remains in the frozen tip and safely handles both axes. If a supported TV display/zoom combination actually overflows horizontally, Claude should evaluate that common geometry separately; don't assume a phone-only layout patch is required on Shield. |
+| aos-Video `d0be0f1161fb9521ce9f6da44522f4b7e2e6fc9c` | **Already present.** `player/PlayerService.java:1235` selects the live retry position, `:1247` resets first-track/play-on-resume/preparing state and reopens, `:2423` records the requested seek before error teardown; `player/PlayerActivity.java:5355–5367` captures before stop/start and calls retry. `src/test/.../player/PlaybackNetworkRetryTest.java:28,51` covers failed seeks and reopen after pause. | No duplicate app change. Keep Supernova's session ownership, subtitle latch and current generation handling. Existing tests must run with the new engine. This corrects the mapping's preliminary code-search uncertainty. |
+| aos-Video `e1642b6b5c7e5006498f9c66ce6735457d04da25` | **Already present, with extra safeguards.** `utils/SubtitlesWizardCommon.java:350–390` first renames, then copies to `MediaUtils.getSubsDir`, updates association bookkeeping and scans the video; `leanback/wizard/SubtitlesWizardFragment.java:120` uses it. Provider protection and `target.exists()` prevent overwriting a cache association. | No duplicate port or wizard edit. Existing `SubtitleCacheRenameTest` tests cache-path construction, not full association-failure coverage; add focused tests only in later authorized test work. |
+| aos-Video `73df6e4d714eed203237d045b20bac41f4799764` | **Needed, plumbing subset only.** `player/SubtitleEngine.java:504–505` has width setters but no padding JNI call; `player/SubtitleManager.java:238` restores style without a padding key; `:438` still describes shadow as box padding. | Draft wrapper, independent key/state, load/reset and engine propagation with today's default/migration. Pair with native `461685e0faea` in the new engine. No Settings control, preview geometry or resource edits. See migration constraints below. |
+| aos-Video `b777104f52b57356b091087602c493f85cd7566a` | **Not applicable to plumbing-only scope.** Its sole diff changes `SubtitleSettingsModel`'s UI minimum from 0 to 1. That production model is absent on this TV-only branch. | No control or range UI port. Native accepts zero; preserve a legacy saved zero if necessary to reproduce today's box appearance. Claude owns any future visible range decision. |
+| aos-Video `73327baad6c70b02a5116efdf34e495900c5e57d` | **Not applicable under no-design rule.** Its sole diff changes resource outline/shadow defaults 2→0; Supernova `res/values/supernova146_subtitles.xml:5–6` intentionally still supplies 2/2. `SubtitleManager.java:213–214` loads them. | Leave resource and saved/default appearance unchanged. New native defaults from `9236467` do not authorize silently changing the Java defaults that override them. Report visual choice to Claude/owner. |
+| MediaLib `cf75fdcd85822d1f58d90ec35d72f9a59e4a6672` | **Already present.** Existing `.github/build/medialib-supernova145-subtitle-cache.patch:18–46` supplies the writable external→internal app cache fallback, including mkdir/race/security checks. Prepared `MediaUtils.java:201–229` confirms it after the reviewed patch sequence. Logs are already more private than upstream. | No MediaLib pin advance or duplicate patch. Downloads/discovery share the fallback path. Upstream `MediaUtilsSubsDirTest` is not included in the current patch; running/porting those tests remains a validation opportunity. |
+| MediaLib `e5886e04c857a7c535b840cd57955970671b08a1` | **Needed later, not an engine dependency.** Prepared `IntroDbApiHelper.java:168–182` still rejects only nonpositive end bounds; zero-start open-ended credits remain accepted. | Follow mapping section B: separate library/scan release. Actual helper is named `isUsableSegment`, not the old plan's guessed `isValidOrgSegment`. Keep valid open-ended credits, positive-ended intro at zero and invalid-range tests. No skip-default or PreviewUpNext/UI change in this engine work. |
 
-MediaLib `e5886e04c857a7c535b840cd57955970671b08a1` is **not an engine change**. It was fetched from upstream `v6.6` (not master, where it was absent). It fixes TheIntroDB zero-start credits/preview in `src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java:parseMedia/parseSegments`, adding type-aware `isValidOrgSegment`: intro/recap require a positive end, credits/preview a positive start and may be open ended. Drop negative/reversed/empty bounds. Land in a new reviewed MediaLib dependency delta after the existing `.github/build/medialib-supernova146-upstream.patch` IntroDB changes, which still retain the old parsing semantics. Keep the current MediaLib pin if taking just this fix; don't advance all of MediaLib by accident. `player/PreviewUpNext.java` consumes these segments for skip/credits UI, so do not compensate in the UI by hiding all valid open-ended credits. No new avos API is required. Port upstream `IntroDbApiHelperTest` cases, including zero/null no-segment markers, valid open-ended credits, intro starting at zero with a positive end, and invalid ranges.
+The prior plan's optional `2f5ac29a` startup diagnostics is not required by ENGINE
+item 3; avoid unrelated instrumentation and raw URI logging (DP-08 was fixed
+in `46c8cc64e`). Ready internal draft ports are `5c721514`, `9ec1bdc2`, and
+the non-UI subset of `73df6e4d`. Already-present changes need verification,
+not duplicate commits. The native/Java clipping mismatch is a release integration
+gate for Claude, not a reason to edit layout code here.
+
+ENGINE item 3 draft progress: new
+`video-supernova156-01-hdr-producer-5c721514.patch` carries the internal
+SurfaceView dataspace deletion and three Robolectric regressions (retain HDR
+window request, API-23 guard, absent window; no surface-controller mutation).
+It passed a clean apply check, exact resulting-tree comparison and Java syntax
+parsing. Android tests are written but unrun; apply in the new engine checkout,
+not as a layout change or an unrelated production workflow edit.
+
+`video-supernova156-02-codecs-9ec1bdc2.patch` follows app draft 01. It ports
+the ranked decoder helper/callbacks and pre-open Display capture while retaining
+Supernova audio/spatializer imports and DP-08 logs. Four upstream ranking JUnit
+tests compiled as Java 17 using ECJ and passed on JRE21. Seven new Robolectric
+tests cover live HDR masks/unknowns/vendor exceptions, API guards, candidate
+bounds, secure/tunneled/software/alias/encoder exclusion and stable vendor order;
+these are written but not run. Sequential apply, exact tree comparison and all
+five changed/new Java syntax checks passed. No Gradle or production app edit.
+
+`video-supernova156-03-padding-73df6e4d.patch` completes the non-UI app subset:
+JNI wrapper/export signature, independent preference key/state, style reset and
+restore, and engine replay. Eight new Robolectric tests are supplied, unrun.
+All three changed/new Java files parsed; ordered clean apply and complete app
+draft tree comparison passed. The app manifest `video-supernova156.lock.draft.json`
+records the three measured patch hashes/order, native requirement and fixture
+tree. Four ranking JUnit tests passed; the 18 Android tests across the three app
+drafts require Claude's Gradle run after applying the drafts.
 
 ## Box padding end to end
 
 Native `461685e0faeaeb0ba51cde42a141fa62f5447119` adds `SUB_USER_STYLE.padding` (default 2) in Include/sub_style.h; `sub_style_set_padding` in Source/sub_style.c locks, updates the integer value and style serial. `Source/sub_format_ssa.c:sync_styles` maps it to libass Outline for mode 1 (per-line box) and Shadow for mode 2 (unified box). Outline/shadow widths remain real glyph outline/shadow settings. `Source/jni_sub_engine.c:nativeSetPadding` resolves engine, updates style, and calls sub_engine_force_wake; matching exported declaration is in Include/jni_sub_engine.h. New native wrappers must ship atomically with Java's call.
 
-Port the relevant parts of aos-Video `73df6e4d` and its minimum correction `b777104f`, not the entire old settings UI:
+Port only the non-UI parts of aos-Video `73df6e4d`. `b777104f` changes a Settings
+range and is excluded from this engine plumbing draft:
 
 1. `player/SubtitleEngine.java` alongside setOutlineWidth/setShadowWidth (:504–505): nativeSetPadding declaration and null-handle-guarded setPadding calling redraw3DIfNeeded. Keep the existing native wake plus 3D paused redraw path; do not confuse View.setPadding with subtitle box padding.
-2. `player/SubtitleManager.java`: `KEY_PADDING = pref_play_subtitle_padding_key`, float storage/getter/setter, Defaults/res integer 2, include in preference set/reset, `loadPreferences` (:238–257), and propagation when an engine is recreated. Keep this independent of outline/shadow and account for older saved boxed backgrounds: preserve prior intended box spacing by a one-time mode-aware migration or explicitly reviewed default, not by continuing to alias widths. Correct the stale “shadow hijacked” comment (:438).
-3. `SubtitleSettingsModel.java` and `SubtitlePreviewView.java`: independent padding value, persistence, reset, and matching preview geometry. Upstream final UI range is **1–50**, step 1 (`b777104f`), although the native setter accepts 0. Choose/validate the same bounded UI range for Supernova; don't silently use the earlier 0-minimum setting.
-4. Current TV surface is `PlaybackSubtitlePanel.java:buildSubtitles` (:519–539): existing rows Size, Colour, Position, Outline, Background, Opacity, Delay. Add a **Box Padding** stepper immediately after Background and before Opacity, using the same get/set backend plumbing as existing style values in `PlayerActivity` and the panel's refresh bindings. Show/enable it when a boxed background is selected; retain remote Left/Right consumption and a stable focus target if background changes. Keep the seven existing rows' order relative to each other. The panel is hands-off in this run: this is a future coordinated change only.
+2. `player/SubtitleManager.java`: `KEY_PADDING = pref_play_subtitle_padding_key`, float storage/getter/setter, Java fallback 2 without resource edits, inclusion in style reset/restore (:238), and propagation when an engine is recreated. The delivered draft uses **key absence as the compatibility default**: line boxes inherit effective outline width, block boxes inherit shadow width, floating uses 2. This was confirmed against the actual old native `sync_styles` at :574–596. Compatibility follows later width/mode edits too, preserving both old modes and zero. An explicitly stored padding value becomes independent of widths; removing the key restores compatibility. Restore never writes preferences. This replaces the earlier one-time migration idea, which could preserve one active mode but change the other on the next toggle. Callers persist the new key like other float style keys; no new caller/control is added. Invalid non-finite/negative/out-of-native-int-range explicit input falls back to 2. The stale “shadow hijacked” comment is corrected.
+3. Do not add or modify a Settings control, preview, panel row, label or default resource. Claude/owner decide those separately. Test default/load/reset/migration and engine recreation without asserting a new screen appearance. Do not call the new JNI export on the old packaged engine; deliver as an unapplied draft if atomic engine/application installation is not yet available.
 
 Validation for the later implementation: preference default/load/reset/migration and model bounds; no outline/shadow changes on padding edits; preview/native parity for floating/per-line/unified backgrounds, SRT/ASS/PGS behavior; paused 2D and SBS/top-bottom 3D redraw; engine recreation; setting before/after a track exists; real JNI export/load smoke test and API-23 no missing-symbol failure. Do not call nativeSetPadding on the old packaged engine.
 
@@ -102,7 +200,7 @@ Validation for the later implementation: preference default/load/reset/migration
 
 The brief's `95a9e6b3` is the effective upstream snapshot, while actual workspace checkout is older `2cf21c486c7bf244c49b78d2220197a6d75396dd` plus the ordered patch stack. Update this consistently: `.github/build/nova-ci.xml`, `prepare-supernova146-workspace.py` pin, and inline pin in `supernova-0146-native-host.yml`; retire/rewrite duplicate avos operations and hashes in `supernova146-dependency-patches.json`. Update MediaLib fix operation/hash too. Keep exact pins and clean-tree preconditions in prepare-supernova146-dependencies.py; record the effective tree and each residual patch hash. Freeze the new avos target above, don't fetch a moving branch in CI.
 
-`native-supernova146.lock.json` locks FFmpeg 9.0.2, libass 0.17.5, font stack, other source archives, NDK r30-beta1, recipes and four rebuild ABIs. Avos is selected elsewhere; changing only that JSON would not update it. An avos-only bump need not rebuild or version-bump every third-party library, but it does require rebuilt wrappers against the pinned native stack. Preserve Supernova HLS compatibility, metadata/chapter ABI, font-stack shared linkage, API 23, actual ABI/page-alignment checks and native notice/source provenance. New avos removes OMX/private-header targets: remove stale make recipe references without raising the app's API minimum. Supernova 0.154 packages only arm64-v8a (`verify-supernova154-native-apk.py`), while the historical native stack has four ABIs; explicitly preserve that distinction unless the owner changes packaging scope.
+`native-supernova146.lock.json` locks FFmpeg 9.0.2, libass 0.17.5, font stack, other source archives, NDK r30-beta1, recipes and four rebuild ABIs. Avos is selected elsewhere; changing only that JSON would not update it. An avos-only bump need not rebuild or version-bump every third-party library, but it does require rebuilt wrappers against the pinned native stack. Preserve Supernova HLS compatibility, metadata/chapter ABI, static libass/font-stack archives and shared media-library linkage, API 23, actual ABI/page-alignment checks and native notice/source provenance. New avos removes OMX/private-header targets: remove stale make recipe references without raising the app's API minimum. Supernova 0.154 packages only arm64-v8a (`verify-supernova154-native-apk.py`), while the historical native stack has four ABIs; explicitly preserve that distinction unless the owner changes packaging scope.
 
 `supernova-0154-conformance.yml:31–42` downloads native-stack run **40843685431** and `package-supernova146-native.py:10–47` checks archive SHA256, lock SHA, sources/recipes, installed-file hashes, then builds avos/nativehelper/FileCore wrappers and packages them. Thus the expiring download is principally the pinned third-party native stack; avos wrappers are also rebuilt during packaging. Version a new 0.156 recipe/receipt rather than rewriting the historical 0.146 evidence. Replace the new candidate workflow's artifact source and expected archive hashes together; update package naming, receipt source SHA, avos patch hash and lock hash, and the conformance/signing validators that hardcode run 40843685431 (`record-supernova-0154-conformance.py:43` and corresponding QA validator). Old evidence must not be relabelled as a new build.
 

@@ -132,6 +132,7 @@ final class PreviewDetailsData {
     static Result cachedCore(Context c, String kind, long id) {
         Result result = new Result();
         result.details = cachedSection(c, kind, id, "");
+        result.supplementary = OmdbSupplement.cached(c, kind, id);
         result.credits = cachedSection(c, kind, id, "credits");
         result.classification = cachedSection(c, kind, id, "tv".equals(kind) ? "content_ratings" : "release_dates");
         result.alternatives = cachedSection(c, kind, id, "alternative_titles");
@@ -233,14 +234,8 @@ final class PreviewDetailsData {
         } catch (Exception unavailable) {
             Diagnostics.event("credits_metadata_unavailable");
         }
-        OmdbSupplement omdb = OmdbSupplement.production(c);
-        if (omdb.enabled())
-            try {
-                JSONObject ids = source.load("external_ids");
-                result.supplementary = omdb.load(ids.optString("imdb_id"), "tv".equals(kind) ? "series" : "movie");
-            } catch (Exception unavailable) {
-                /* Supplementary data must never fail the primary metadata package. */
-            }
+        result.supplementary = OmdbSupplement.production(c).loadCached(c, kind, id,
+            () -> source.load("external_ids").optString("imdb_id"));
         try {
             result.classification = source.load("tv".equals(kind) ? "content_ratings" : "release_dates");
         } catch (Exception unavailable) {

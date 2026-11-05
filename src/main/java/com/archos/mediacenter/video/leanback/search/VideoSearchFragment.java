@@ -118,6 +118,9 @@ public class VideoSearchFragment extends SafeSearchSupportFragment implements Se
         updateBackground();
         // Setup theme change listener
         setupThemeListener();
+        if (savedInstanceState == null && getArguments() != null) {
+            setSearchQuery(getArguments().getString(android.app.SearchManager.QUERY, ""), true);
+        }
     }
 
     private void updateBackground() {

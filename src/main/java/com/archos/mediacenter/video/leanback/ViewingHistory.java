@@ -16,7 +16,8 @@ import android.text.TextUtils;
 import android.widget.Toast;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
-import com.archos.mediacenter.video.browser.adapters.object.*;
+import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.BackupPrivacy;
@@ -32,16 +33,26 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /** Durable identity history, independent of file rows, cache eviction and source availability. */
-public final class ViewingHistory {
+public final class ViewingHistory
+{
     public static final String DATABASE = "supernova-viewing-history.db", TRACK = "supernova_track_viewing_history",
                                RESUME = "supernova_save_resume";
     private static final ExecutorService WRITER = Executors.newSingleThreadExecutor(r -> {
@@ -52,53 +63,64 @@ public final class ViewingHistory {
     public static final Object LOCK = new Object();
 
     /** Called by backup/restore workers, never the main thread. */
-    public static void awaitWrites() throws IOException {
-        try {
-            WRITER.submit(() -> {
-            }).get(15, TimeUnit.SECONDS);
-        } catch (Exception failure) {
+    public static void awaitWrites() throws IOException
+    {
+        try
+        {
+            WRITER.submit(() -> {}).get(15, TimeUnit.SECONDS);
+        }
+        catch (Exception failure)
+        {
             if (failure instanceof InterruptedException)
                 Thread.currentThread().interrupt();
             throw new IOException("Viewing history is busy; retry the operation", failure);
         }
     }
 
-    public static boolean tracking(Context c) {
+    public static boolean tracking(Context c)
+    {
         return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(TRACK, true);
     }
 
-    public static boolean resumeEnabled(Context c) {
+    public static boolean resumeEnabled(Context c)
+    {
         return PreferenceManager.getDefaultSharedPreferences(c).getBoolean(RESUME, true);
     }
 
-    private static final class Store extends SQLiteOpenHelper {
-        Store(Context c) {
+    private static final class Store extends SQLiteOpenHelper
+    {
+        Store(Context c)
+        {
             super(c, DATABASE, null, 1);
         }
 
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(
-                "CREATE TABLE history(identity TEXT PRIMARY KEY, completed INTEGER NOT NULL, started INTEGER NOT NULL, position INTEGER NOT NULL, duration INTEGER NOT NULL, played INTEGER NOT NULL, completed_at INTEGER NOT NULL)");
+        @Override public void onCreate(SQLiteDatabase db)
+        {
+            db.execSQL("CREATE TABLE history(identity TEXT PRIMARY KEY, completed INTEGER NOT NULL, started INTEGER "
+                       + "NOT NULL, position INTEGER NOT NULL, duration INTEGER NOT NULL, played INTEGER NOT NULL, "
+                       + "completed_at INTEGER NOT NULL)");
         }
 
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int old, int next) {
+        @Override public void onUpgrade(SQLiteDatabase db, int old, int next)
+        {
             throw new IllegalStateException("Unsupported history schema");
         }
     }
 
-    public static String identity(boolean episode, String provider, int season, int number, String path) {
+    public static String identity(boolean episode, String provider, int season, int number, String path)
+    {
         if (provider != null && provider.matches("[1-9][0-9]*"))
             return episode && season >= 0 && number > 0 ? "tmdb:tv:" + provider + ":" + season + ":" + number
-                : episode ? null
+            : episode                                   ? null
                                                         : "tmdb:movie:" + provider;
         // No weak title/year guesses. Unmatched files retain a private exact-location fingerprint.
         if (path == null || path.isEmpty())
             return null;
-        try {
+        try
+        {
             Uri uri = Uri.parse(path);
-            if (uri.getScheme() == null) {
+            if (uri.getScheme() == null)
+            {
                 if (!path.startsWith("/"))
                     return null;
                 uri = Uri.fromFile(new File(path));
@@ -110,43 +132,50 @@ public final class ViewingHistory {
             if (uri.getHost() != null)
                 safe.encodedAuthority(uri.getHost() + (uri.getPort() > 0 ? ":" + uri.getPort() : ""));
             // Preserve media-selecting query pairs; stripping every query would merge different items.
-            if (query != null) {
+            if (query != null)
+            {
                 java.util.List<String> pairs = new ArrayList<>();
-                for (String pair : query.split("&", -1)) {
+                for (String pair : query.split("&", -1))
+                {
                     String name = Uri.decode(pair.split("=", 2)[0]);
-                    if (!BackupPrivacy.secretKey(name)
-                        && !name.matches("(?i)(auth|sig|signature|.*signature.*)"))
+                    if (!BackupPrivacy.secretKey(name) && !name.matches("(?i)(auth|sig|signature|.*signature.*)"))
                         pairs.add(pair);
                 }
                 if (!pairs.isEmpty())
                     safe.encodedQuery(TextUtils.join("&", pairs));
             }
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(
-                safe.build().toString().getBytes(StandardCharsets.UTF_8));
+            byte[] digest =
+                MessageDigest.getInstance("SHA-256").digest(safe.build().toString().getBytes(StandardCharsets.UTF_8));
             StringBuilder key = new StringBuilder("file:");
             for (byte b : digest)
                 key.append(String.format(Locale.ROOT, "%02x", b & 255));
             return key.toString();
-        } catch (Exception unavailable) {
+        }
+        catch (Exception unavailable)
+        {
             return null;
         }
     }
 
-    public static String identity(PreviewLibraryLoader.Entry e) {
+    public static String identity(PreviewLibraryLoader.Entry e)
+    {
         if (!(e.media instanceof Video))
             return null;
-        Video v = (Video) e.media;
-        Episode ep = v instanceof Episode ? (Episode) v : null;
+        Video v = (Video)e.media;
+        Episode ep = v instanceof Episode ? (Episode)v : null;
         return identity(ep != null, e.onlineId > 0 ? String.valueOf(e.onlineId) : null,
-            ep == null ? -1 : ep.getSeasonNumber(), ep == null ? -1 : ep.getEpisodeNumber(), v.getFilePath());
+                        ep == null ? -1 : ep.getSeasonNumber(), ep == null ? -1 : ep.getEpisodeNumber(),
+                        v.getFilePath());
     }
 
-    public static final class Record implements Serializable {
+    public static final class Record implements Serializable
+    {
         public final boolean completed, started;
         public final int position, duration;
         public final long played, completedAt;
 
-        Record(boolean c, boolean s, int p, int d, long t, long completion) {
+        Record(boolean c, boolean s, int p, int d, long t, long completion)
+        {
             completed = c;
             started = s;
             position = p;
@@ -156,70 +185,70 @@ public final class ViewingHistory {
         }
     }
 
-    public static Map<String, Record> read(Context c) {
-        synchronized (LOCK) {
+    public static Map<String, Record> read(Context c)
+    {
+        synchronized (LOCK)
+        {
             Map<String, Record> records = new HashMap<>();
             try (Store helper = new Store(c);
-                Cursor rows = helper.getReadableDatabase().query("history", null, null, null, null, null, null)) {
+                 Cursor rows = helper.getReadableDatabase().query("history", null, null, null, null, null, null))
+            {
                 while (rows.moveToNext())
-                    records.put(rows.getString(0),
-                        new Record(rows.getInt(1) != 0, rows.getInt(2) != 0, rows.getInt(3), rows.getInt(4),
-                            rows.getLong(5), rows.getLong(6)));
+                    records.put(rows.getString(0), new Record(rows.getInt(1) != 0, rows.getInt(2) != 0, rows.getInt(3),
+                                                              rows.getInt(4), rows.getLong(5), rows.getLong(6)));
             }
             return records;
         }
     }
 
     /** Explicit restored positions bypass the native played-time gate without fabricating a timestamp. */
-    public static boolean applyRestoredPosition(Context context, VideoDbInfo info) throws IOException {
-        if (info == null
-            || !PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                "supernova_positions_replaced_v2", false))
+    public static boolean applyRestoredPosition(Context context, VideoDbInfo info) throws IOException
+    {
+        if (info == null || !PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                                "supernova_positions_replaced_v2", false))
             return false;
         info.resume = 0;
         if (!resumeEnabled(context))
             return true;
         String key = identity(info.isShow, info.isShow ? info.scraperShowId : info.scraperMovieId, info.scraperSeasonNr,
-            info.scraperEpisodeNr, info.uri == null ? null : info.uri.toString());
-        if (key == null
-            || key.startsWith("file:")
-                && PortablePhysicalReferences.fingerprint(
-                       info.uri == null ? null : info.uri.toString())
-                    == null)
+                              info.scraperEpisodeNr, info.uri == null ? null : info.uri.toString());
+        if (key == null || key.startsWith("file:") && PortablePhysicalReferences.fingerprint(
+                                                          info.uri == null ? null : info.uri.toString()) == null)
             return true;
         File file = context.getDatabasePath(DATABASE);
         if (!file.exists())
             return true;
         try (SQLiteDatabase database = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY);
-            Cursor rows = database.query(
-                "history", new String[] {
-                    "position"
-                }, "identity=?", new String[] {
-                    key
-                }, null, null, null)) {
+             Cursor rows = database.query("history", new String[] {"position"}, "identity=?", new String[] {key}, null,
+                                          null, null))
+        {
             if (database.getVersion() != 1)
                 throw new IOException("Restored position store is incompatible");
-            if (rows.moveToFirst()) {
-                if (rows.getType(0) != Cursor.FIELD_TYPE_INTEGER || rows.getLong(0) < -2
-                    || rows.getLong(0) > Integer.MAX_VALUE)
+            if (rows.moveToFirst())
+            {
+                if (rows.getType(0) != Cursor.FIELD_TYPE_INTEGER || rows.getLong(0) < -2 ||
+                    rows.getLong(0) > Integer.MAX_VALUE)
                     throw new IOException("Restored position is invalid");
                 info.resume = Math.max(0, rows.getInt(0));
             }
             return true;
-        } catch (RuntimeException invalid) {
+        }
+        catch (RuntimeException invalid)
+        {
             throw new IOException("Restored position could not be read safely", invalid);
         }
     }
 
-    private static void restoreCancelled(BooleanSupplier cancel)
-        throws InterruptedIOException {
+    private static void restoreCancelled(BooleanSupplier cancel) throws InterruptedIOException
+    {
         if (cancel.getAsBoolean() || Thread.currentThread().isInterrupted())
             throw new InterruptedIOException("Viewing-state restore cancelled");
     }
 
     /** Staged database primitive only: no legacy media flags, preference journal or external sync changes. */
-    static void replacePortable(Context context, JSONObject history, JSONObject positions,
-        BooleanSupplier cancel) throws IOException, JSONException {
+    static void replacePortable(Context context, JSONObject history, JSONObject positions, BooleanSupplier cancel)
+        throws IOException, JSONException
+    {
         if (history == null && positions == null)
             throw new JSONException("No viewing category selected");
         if (history != null)
@@ -230,24 +259,29 @@ public final class ViewingHistory {
         if (!Thread.holdsLock(LOCK))
             awaitWrites();
         restoreCancelled(cancel);
-        synchronized (LOCK) {
-            try (Store helper = new Store(context)) {
+        synchronized (LOCK)
+        {
+            try (Store helper = new Store(context))
+            {
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Map<String, Record> existing = new LinkedHashMap<>();
-                try (Cursor rows = database.query("history", null, null, null, null, null, null)) {
+                try (Cursor rows = database.query("history", null, null, null, null, null, null))
+                {
                     while (rows.moveToNext())
                         existing.put(rows.getString(0),
-                            new Record(rows.getInt(1) != 0, rows.getInt(2) != 0, rows.getInt(3), rows.getInt(4),
-                                rows.getLong(5), rows.getLong(6)));
+                                     new Record(rows.getInt(1) != 0, rows.getInt(2) != 0, rows.getInt(3),
+                                                rows.getInt(4), rows.getLong(5), rows.getLong(6)));
                 }
                 Map<String, Record> prepared = PortableViewingState.prepare(existing, history, positions);
                 restoreCancelled(cancel);
                 database.beginTransaction();
-                try (
-                    SQLiteStatement insert = database.compileStatement(
-                        "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) VALUES(?,?,?,?,?,?,?)")) {
+                try (SQLiteStatement insert = database.compileStatement(
+                         "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) "
+                         + "VALUES(?,?,?,?,?,?,?)"))
+                {
                     database.delete("history", null, null);
-                    for (Map.Entry<String, Record> entry : prepared.entrySet()) {
+                    for (Map.Entry<String, Record> entry : prepared.entrySet())
+                    {
                         restoreCancelled(cancel);
                         Record value = entry.getValue();
                         insert.clearBindings();
@@ -262,46 +296,56 @@ public final class ViewingHistory {
                     }
                     restoreCancelled(cancel);
                     database.setTransactionSuccessful();
-                } finally {
+                }
+                finally
+                {
                     database.endTransaction();
                 }
-            } catch (SQLiteException failure) {
-                throw new IOException(
-                    "Viewing-state transaction failed; restoration must not be reported as complete", failure);
+            }
+            catch (SQLiteException failure)
+            {
+                throw new IOException("Viewing-state transaction failed; restoration must not be reported as complete",
+                                      failure);
             }
         }
     }
 
     /** Strict app-private image capture. Absent stores are read as empty without creating a database. */
-    public static JSONObject captureRecovery(Context context)
-        throws IOException, JSONException {
-        synchronized (LOCK) {
+    public static JSONObject captureRecovery(Context context) throws IOException, JSONException
+    {
+        synchronized (LOCK)
+        {
             Map<String, Record> records = new LinkedHashMap<>();
-            if (context.getDatabasePath(DATABASE).exists()) {
+            if (context.getDatabasePath(DATABASE).exists())
+            {
                 validate(context.getDatabasePath(DATABASE));
-                try (Store helper = new Store(context); Cursor rows = helper.getReadableDatabase().query("history",
-                                                            new String[] {
-                                                                "identity", "completed", "started",
-                                                                "position", "duration", "played", "completed_at"
-                                                            },
-                                                            null, null, null, null, "identity ASC")) {
-                    while (rows.moveToNext()) {
+                try (Store helper = new Store(context);
+                     Cursor rows = helper.getReadableDatabase().query("history",
+                                                                      new String[] {"identity", "completed", "started",
+                                                                                    "position", "duration", "played",
+                                                                                    "completed_at"},
+                                                                      null, null, null, null, "identity ASC"))
+                {
+                    while (rows.moveToNext())
+                    {
                         if (rows.getType(0) != Cursor.FIELD_TYPE_STRING)
                             throw new IOException("Invalid viewing recovery identity");
                         for (int column = 1; column < 7; column++)
                             if (rows.getType(column) != Cursor.FIELD_TYPE_INTEGER)
                                 throw new IOException("Invalid viewing recovery integer");
-                        if (rows.getLong(1) < 0 || rows.getLong(1) > 1 || rows.getLong(2) < 0 || rows.getLong(2) > 1
-                            || rows.getLong(3) < -2 || rows.getLong(3) > Integer.MAX_VALUE || rows.getLong(4) < 0
-                            || rows.getLong(4) > Integer.MAX_VALUE)
+                        if (rows.getLong(1) < 0 || rows.getLong(1) > 1 || rows.getLong(2) < 0 || rows.getLong(2) > 1 ||
+                            rows.getLong(3) < -2 || rows.getLong(3) > Integer.MAX_VALUE || rows.getLong(4) < 0 ||
+                            rows.getLong(4) > Integer.MAX_VALUE)
                             throw new IOException("Invalid viewing recovery range");
                         if (records.size() >= 100000)
                             throw new IOException("Viewing recovery exceeds supported limits");
                         records.put(rows.getString(0),
-                            new Record(rows.getInt(1) == 1, rows.getInt(2) == 1, rows.getInt(3), rows.getInt(4),
-                                rows.getLong(5), rows.getLong(6)));
+                                    new Record(rows.getInt(1) == 1, rows.getInt(2) == 1, rows.getInt(3), rows.getInt(4),
+                                               rows.getLong(5), rows.getLong(6)));
                     }
-                } catch (RuntimeException failure) {
+                }
+                catch (RuntimeException failure)
+                {
                     throw new IOException("Viewing recovery inventory unavailable", failure);
                 }
             }
@@ -310,24 +354,29 @@ public final class ViewingHistory {
     }
 
     /** Combined restore callers hold LOCK and coordinate a durable journal before invoking this primitive. */
-    public static void replaceRecovery(Context context, JSONObject snapshot,
-        BooleanSupplier cancel) throws IOException, JSONException {
+    public static void replaceRecovery(Context context, JSONObject snapshot, BooleanSupplier cancel)
+        throws IOException, JSONException
+    {
         Map<String, Record> prepared = PortableViewingState.validateRecoverySnapshot(snapshot);
         restoreCancelled(cancel);
         if (!Thread.holdsLock(LOCK))
             awaitWrites();
         restoreCancelled(cancel);
-        synchronized (LOCK) {
-            try (Store helper = new Store(context)) {
+        synchronized (LOCK)
+        {
+            try (Store helper = new Store(context))
+            {
                 if (context.getDatabasePath(DATABASE).exists())
                     validate(context.getDatabasePath(DATABASE));
                 SQLiteDatabase database = helper.getWritableDatabase();
                 database.beginTransaction();
-                try (
-                    SQLiteStatement insert = database.compileStatement(
-                        "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) VALUES(?,?,?,?,?,?,?)")) {
+                try (SQLiteStatement insert = database.compileStatement(
+                         "INSERT INTO history(identity,completed,started,position,duration,played,completed_at) "
+                         + "VALUES(?,?,?,?,?,?,?)"))
+                {
                     database.delete("history", null, null);
-                    for (var entry : prepared.entrySet()) {
+                    for (var entry : prepared.entrySet())
+                    {
                         restoreCancelled(cancel);
                         Record value = entry.getValue();
                         insert.clearBindings();
@@ -342,39 +391,43 @@ public final class ViewingHistory {
                     }
                     restoreCancelled(cancel);
                     database.setTransactionSuccessful();
-                } finally {
+                }
+                finally
+                {
                     database.endTransaction();
                 }
-            } catch (SQLiteException failure) {
+            }
+            catch (SQLiteException failure)
+            {
                 throw new IOException("Viewing recovery replacement failed", failure);
             }
         }
     }
 
     private static void write(Context c, String key, boolean complete, boolean started, int position, int duration,
-        long played, boolean track, boolean resume) {
+                              long played, boolean track, boolean resume)
+    {
         if (key == null || (!track && !resume))
             return;
-        synchronized (LOCK) {
-            try (Store helper = new Store(c)) {
+        synchronized (LOCK)
+        {
+            try (Store helper = new Store(c))
+            {
                 SQLiteDatabase db = helper.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put("identity", key);
                 Record previous = null;
-                try (Cursor row = db.query("history", null, "identity=?", new String[] {
-                    key
-                }, null, null, null)) {
+                try (Cursor row = db.query("history", null, "identity=?", new String[] {key}, null, null, null))
+                {
                     if (row.moveToFirst())
                         previous = new Record(row.getInt(1) != 0, row.getInt(2) != 0, row.getInt(3), row.getInt(4),
-                            row.getLong(5), row.getLong(6));
+                                              row.getLong(5), row.getLong(6));
                 }
-                values.put("completed_at",
-                    previous != null && previous.completedAt > 0 ? previous.completedAt
-                        : track && complete ? played
-                                                                 : 0);
-                values.put("completed",
-                    track ? (complete || previous != null && previous.completed)
-                          : previous != null && previous.completed);
+                values.put("completed_at", previous != null && previous.completedAt > 0 ? previous.completedAt
+                                           : track && complete                          ? played
+                                                                                        : 0);
+                values.put("completed", track ? (complete || previous != null && previous.completed)
+                                              : previous != null && previous.completed);
                 values.put("started", track ? started : previous != null && previous.started);
                 values.put("position", resume ? position : previous == null ? 0 : previous.position);
                 values.put("duration", Math.max(0, duration));
@@ -384,50 +437,66 @@ public final class ViewingHistory {
         }
     }
 
-    public static void record(Context c, VideoDbInfo info, boolean complete) {
+    public static void record(Context c, VideoDbInfo info, boolean complete)
+    {
         if (PrivateMode.isActive())
             return;
         Context app = c.getApplicationContext();
         String key = identity(info.isShow, info.isShow ? info.scraperShowId : info.scraperMovieId, info.scraperSeasonNr,
-            info.scraperEpisodeNr, info.uri == null ? null : info.uri.toString());
+                              info.scraperEpisodeNr, info.uri == null ? null : info.uri.toString());
         int position = !tracking(c) && complete ? 0 : info.resume, duration = info.duration;
         long played = Math.max(0, info.lastTimePlayed);
         boolean track = tracking(c), resume = resumeEnabled(c);
         WRITER.execute(() -> {
-            try {
+            try
+            {
                 write(app, key, complete, true, position, duration, played, track, resume);
                 notifyChanged(app);
-            } catch (RuntimeException failure) {
+            }
+            catch (RuntimeException failure)
+            {
                 Diagnostics.error("history_write_failed", failure);
             }
         });
     }
 
     /** Publish only after the durable writer commits, closing the player-return race. */
-    private static void notifyChanged(Context app) {
+    private static void notifyChanged(Context app)
+    {
         PreviewLibraryLoader.invalidateHistoryCache(app);
-        app.sendBroadcast(new Intent(app.getPackageName() + ".VIEWING_STATE_CHANGED")
-                .setPackage(app.getPackageName()));
+        app.sendBroadcast(new Intent(app.getPackageName() + ".VIEWING_STATE_CHANGED").setPackage(app.getPackageName()));
     }
 
     /** Existing explicit watched/unwatched commands update the same identity, including bulk scopes. */
-    public static void manualChange(Context c, String where, String[] arguments, boolean complete) {
-        if (PrivateMode.isActive())
+    public static void manualChange(Context c, String where, String[] arguments, boolean complete)
+    {
+        boolean privateMode = PrivateMode.isActive();
+        if (privateMode && !complete)
             return;
         Context app = c.getApplicationContext();
         WRITER.execute(() -> {
+            Set<Uri> watchedUris = new HashSet<>();
             try (Cursor rows =
-                     app.getContentResolver().query(VideoDbInfo.URI, VideoDbInfo.COLUMNS, where, arguments, null)) {
+                     app.getContentResolver().query(VideoDbInfo.URI, VideoDbInfo.COLUMNS, where, arguments, null))
+            {
                 if (rows == null)
                     return;
-                while (rows.moveToNext()) {
+                while (rows.moveToNext())
+                {
                     VideoDbInfo info = VideoDbInfo.fromCursor(rows, false);
+                    if (complete && info.uri != null)
+                        watchedUris.add(info.uri);
+                    if (privateMode)
+                        continue;
                     String key = identity(info.isShow, info.isShow ? info.scraperShowId : info.scraperMovieId,
-                        info.scraperSeasonNr, info.scraperEpisodeNr, info.uri == null ? null : info.uri.toString());
+                                          info.scraperSeasonNr, info.scraperEpisodeNr,
+                                          info.uri == null ? null : info.uri.toString());
                     if (key == null)
                         continue;
-                    synchronized (LOCK) {
-                        try (Store helper = new Store(app)) {
+                    synchronized (LOCK)
+                    {
+                        try (Store helper = new Store(app))
+                        {
                             ContentValues record = new ContentValues();
                             record.put("identity", key)
                             ;
@@ -443,20 +512,28 @@ public final class ViewingHistory {
                             ;
                             record.put("completed_at", complete ? System.currentTimeMillis() / 1000L : 0)
                             ;
-                            helper.getWritableDatabase().insertWithOnConflict(
-                                "history", null, record, SQLiteDatabase.CONFLICT_REPLACE);
+                            helper.getWritableDatabase().insertWithOnConflict("history", null, record,
+                                                                              SQLiteDatabase.CONFLICT_REPLACE);
                         }
                     }
                 }
-                notifyChanged(app);
-            } catch (RuntimeException failure) {
+                if (!privateMode)
+                    notifyChanged(app);
+            }
+            catch (RuntimeException failure)
+            {
                 Diagnostics.error("manual_history_write_failed", failure);
+            }
+            finally
+            {
+                com.archos.mediacenter.video.player.SeekThumbnails.markWatched(app, watchedUris);
             }
         });
     }
 
     /** Existing history migrates once per identity; turning tracking off never erases it. Worker only. */
-    public static Map<String, Record> reconcile(Context c, List<PreviewLibraryLoader.Entry> entries) {
+    public static Map<String, Record> reconcile(Context c, List<PreviewLibraryLoader.Entry> entries)
+    {
         Map<String, Record> records = read(c);
         if (PrivateMode.isActive())
             return records;
@@ -464,23 +541,29 @@ public final class ViewingHistory {
         boolean migrate = !prefs.getBoolean("supernova_history_migrated", false);
         boolean cleared = prefs.getBoolean("supernova_history_cleared", false);
         boolean positionsReplaced = prefs.getBoolean("supernova_positions_replaced_v2", false);
-        for (PreviewLibraryLoader.Entry e : entries) {
-            Video v = (Video) e.media;
+        for (PreviewLibraryLoader.Entry e : entries)
+        {
+            Video v = (Video)e.media;
             String key = identity(e);
             Record previous = records.get(key);
-            if (migrate && tracking(c) && previous == null
-                && (v.getLastPlayed() > 0 || PreviewSeriesJourney.completed(v)))
+            if (migrate && tracking(c) && previous == null &&
+                (v.getLastPlayed() > 0 || PreviewSeriesJourney.completed(v)))
                 write(c, key, PreviewSeriesJourney.completed(v), true, positionsReplaced ? 0 : v.getResumeMs(),
-                    positionsReplaced ? 0 : v.getDurationMs(), v.getLastPlayed(), true, true);
-            else if (previous != null) {
+                      positionsReplaced ? 0 : v.getDurationMs(), v.getLastPlayed(), true, true);
+            else if (previous != null)
+            {
                 v.applyIdentityHistory(previous.completed, previous.played, resumeEnabled(c) ? previous.position : 0);
                 e.playedAt = previous.played;
-            } else if (cleared) {
+            }
+            else if (cleared)
+            {
                 // Clear also applies to legacy/offline identities not yet migrated. Positive resume is independent.
                 int position = positionsReplaced ? 0 : Math.max(0, v.getResumeMs());
                 v.applyIdentityHistory(false, 0, resumeEnabled(c) ? position : 0);
                 e.playedAt = 0;
-            } else if (positionsReplaced) {
+            }
+            else if (positionsReplaced)
+            {
                 v.applyIdentityHistory(v.isWatched(), v.getLastPlayed(), 0);
             }
         }
@@ -488,10 +571,12 @@ public final class ViewingHistory {
         return read(c);
     }
 
-    public static void clear(Context c, Runnable done) {
+    public static void clear(Context c, Runnable done)
+    {
         Context app = c.getApplicationContext();
         WRITER.execute(() -> {
-            try {
+            try
+            {
                 // Update the existing local watched view too, without clearing positive resume or syncing remote accounts.
                 Uri media = VideoStore.Video.Media.EXTERNAL_CONTENT_URI;
                 ContentValues state = new ContentValues();
@@ -500,17 +585,18 @@ public final class ViewingHistory {
                 app.getContentResolver().update(media, state, null, null);
                 ContentValues ended = new ContentValues();
                 ended.put(VideoStore.Video.VideoColumns.BOOKMARK, 0);
-                app.getContentResolver().update(
-                    media, ended, VideoStore.Video.VideoColumns.BOOKMARK + "<0", null);
-                synchronized (LOCK) {
-                    try (Store helper = new Store(app)) {
+                app.getContentResolver().update(media, ended, VideoStore.Video.VideoColumns.BOOKMARK + "<0", null);
+                synchronized (LOCK)
+                {
+                    try (Store helper = new Store(app))
+                    {
                         helper.getWritableDatabase().execSQL(
-                            "UPDATE history SET completed=0, started=0, played=0, completed_at=0, position=CASE WHEN position<0 THEN 0 ELSE position END");
+                            "UPDATE history SET completed=0, started=0, played=0, completed_at=0, position=CASE WHEN "
+                            + "position<0 THEN 0 ELSE position END");
                         SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(app);
-                        SharedPreferences.Editor edit =
-                            p.edit()
-                                .putBoolean("supernova_history_migrated", true)
-                                .putBoolean("supernova_history_cleared", true);
+                        SharedPreferences.Editor edit = p.edit()
+                                                            .putBoolean("supernova_history_migrated", true)
+                                                            .putBoolean("supernova_history_cleared", true);
                         for (String key : p.getAll().keySet())
                             if (key.startsWith("preview_journey41:"))
                                 edit.remove(key);
@@ -520,29 +606,36 @@ public final class ViewingHistory {
                 }
                 notifyChanged(app);
                 new Handler(Looper.getMainLooper()).post(done);
-            } catch (RuntimeException failure) {
+            }
+            catch (RuntimeException failure)
+            {
                 Diagnostics.error("history_clear_failed", failure);
                 new Handler(Looper.getMainLooper())
                     .post(()
                               -> Toast
-                                  .makeText(app, "History could not be cleared. Please retry or export diagnostics.",
-                                      Toast.LENGTH_LONG)
-                                  .show());
+                                     .makeText(app, "History could not be cleared. Please retry or export diagnostics.",
+                                               Toast.LENGTH_LONG)
+                                     .show());
             }
         });
     }
 
-    public static void export(Context c, File destination) throws IOException {
+    public static void export(Context c, File destination) throws IOException
+    {
         awaitWrites();
-        synchronized (LOCK) {
-            try (Store helper = new Store(c)) {
+        synchronized (LOCK)
+        {
+            try (Store helper = new Store(c))
+            {
                 SQLiteDatabase db = helper.getWritableDatabase();
-                try (Cursor checkpoint = db.rawQuery("PRAGMA wal_checkpoint(FULL)", null)) {
+                try (Cursor checkpoint = db.rawQuery("PRAGMA wal_checkpoint(FULL)", null))
+                {
                     if (!checkpoint.moveToFirst() || checkpoint.getInt(0) != 0)
                         throw new IOException("Viewing history is busy");
                 }
                 try (InputStream in = new FileInputStream(c.getDatabasePath(DATABASE));
-                    OutputStream out = new FileOutputStream(destination)) {
+                     OutputStream out = new FileOutputStream(destination))
+                {
                     byte[] bytes = new byte[65536];
                     int n;
                     while ((n = in.read(bytes)) != -1)
@@ -550,13 +643,14 @@ public final class ViewingHistory {
                 }
             }
             try (SQLiteDatabase copy =
-                     SQLiteDatabase.openDatabase(destination.getPath(), null, SQLiteDatabase.OPEN_READWRITE)) {
+                     SQLiteDatabase.openDatabase(destination.getPath(), null, SQLiteDatabase.OPEN_READWRITE))
+            {
                 SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(c);
                 boolean history = p.getBoolean("supernova_backup_history", true),
                         resume = p.getBoolean("supernova_backup_resume", true);
                 if (!history)
-                    copy.execSQL(
-                        "UPDATE history SET completed=0,started=0,played=0,completed_at=0,position=CASE WHEN position<0 THEN 0 ELSE position END");
+                    copy.execSQL("UPDATE history SET completed=0,started=0,played=0,completed_at=0,position=CASE "
+                                 + "WHEN position<0 THEN 0 ELSE position END");
                 if (!resume)
                     copy.execSQL("UPDATE history SET position=0");
                 if (!history)
@@ -566,26 +660,33 @@ public final class ViewingHistory {
         }
     }
 
-    public static void validate(File file) throws IOException {
+    public static void validate(File file) throws IOException
+    {
         try (SQLiteDatabase db = SQLiteDatabase.openDatabase(file.getPath(), null, SQLiteDatabase.OPEN_READONLY);
-            Cursor check = db.rawQuery("PRAGMA quick_check", null)) {
+             Cursor check = db.rawQuery("PRAGMA quick_check", null))
+        {
             if (db.getVersion() != 1 || !check.moveToFirst() || !"ok".equals(check.getString(0)))
                 throw new IOException("Unsupported or damaged viewing history");
             try (Cursor tables =
-                     db.rawQuery("SELECT name,type FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'", null)) {
+                     db.rawQuery("SELECT name,type FROM sqlite_master WHERE name NOT LIKE 'sqlite_%'", null))
+            {
                 while (tables.moveToNext())
-                    if (!tables.getString(1).equals("table")
-                        || !Set.of("history", "android_metadata").contains(tables.getString(0)))
+                    if (!tables.getString(1).equals("table") ||
+                        !Set.of("history", "android_metadata").contains(tables.getString(0)))
                         throw new IOException("Unexpected history database objects");
             }
-            try (Cursor metadata = db.rawQuery(
-                     "SELECT name FROM sqlite_master WHERE type='table' AND name='android_metadata'", null)) {
-                if (metadata.moveToFirst()) {
-                    try (Cursor schema = db.rawQuery("PRAGMA table_info(android_metadata)", null)) {
+            try (Cursor metadata =
+                     db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='android_metadata'", null))
+            {
+                if (metadata.moveToFirst())
+                {
+                    try (Cursor schema = db.rawQuery("PRAGMA table_info(android_metadata)", null))
+                    {
                         if (schema.getCount() != 1 || !schema.moveToFirst() || !"locale".equals(schema.getString(1)))
                             throw new IOException("Unexpected history metadata");
                     }
-                    try (Cursor locale = db.rawQuery("SELECT locale FROM android_metadata", null)) {
+                    try (Cursor locale = db.rawQuery("SELECT locale FROM android_metadata", null))
+                    {
                         while (locale.moveToNext())
                             if (locale.isNull(0) || !locale.getString(0).matches("[A-Za-z0-9_-]{1,40}"))
                                 throw new IOException("Invalid history locale");
@@ -593,13 +694,15 @@ public final class ViewingHistory {
                 }
             }
             Set<String> columns = new HashSet<>();
-            try (Cursor schema = db.rawQuery("PRAGMA table_info(history)", null)) {
-                while (schema.moveToNext()) {
+            try (Cursor schema = db.rawQuery("PRAGMA table_info(history)", null))
+            {
+                while (schema.moveToNext())
+                {
                     String column = schema.getString(1);
                     boolean identity = column.equals("identity");
-                    if (!(identity ? "TEXT" : "INTEGER").equalsIgnoreCase(schema.getString(2))
-                        || schema.getInt(5) != (identity ? 1 : 0) || !identity && schema.getInt(3) != 1
-                        || !schema.isNull(4))
+                    if (!(identity ? "TEXT" : "INTEGER").equalsIgnoreCase(schema.getString(2)) ||
+                        schema.getInt(5) != (identity ? 1 : 0) || !identity && schema.getInt(3) != 1 ||
+                        !schema.isNull(4))
                         throw new IOException("Unexpected history column contract");
                     columns.add(column);
                 }
@@ -608,21 +711,25 @@ public final class ViewingHistory {
                     Set.of("identity", "completed", "started", "position", "duration", "played", "completed_at")))
                 throw new IOException("Unexpected history fields");
             try (Cursor rows = db.rawQuery(
-                     "SELECT identity,completed,started,position,duration,played,completed_at FROM history", null)) {
+                     "SELECT identity,completed,started,position,duration,played,completed_at FROM history", null))
+            {
                 while (rows.moveToNext())
-                    if (rows.isNull(0)
-                        || !rows.getString(0).matches(
-                            "tmdb:(movie:[1-9][0-9]*|tv:[1-9][0-9]*:[0-9]+:[1-9][0-9]*)|file:[0-9a-f]{64}")
-                        || rows.getInt(1) < 0 || rows.getInt(1) > 1 || rows.getInt(2) < 0 || rows.getInt(2) > 1
-                        || rows.getLong(3) < -2 || rows.getLong(3) > Integer.MAX_VALUE || rows.getLong(4) < 0
-                        || rows.getLong(4) > Integer.MAX_VALUE || rows.getLong(5) < 0 || rows.getLong(6) < 0)
+                    if (rows.isNull(0) ||
+                        !rows.getString(0).matches(
+                            "tmdb:(movie:[1-9][0-9]*|tv:[1-9][0-9]*:[0-9]+:[1-9][0-9]*)|file:[0-9a-f]{64}") ||
+                        rows.getInt(1) < 0 || rows.getInt(1) > 1 || rows.getInt(2) < 0 || rows.getInt(2) > 1 ||
+                        rows.getLong(3) < -2 || rows.getLong(3) > Integer.MAX_VALUE || rows.getLong(4) < 0 ||
+                        rows.getLong(4) > Integer.MAX_VALUE || rows.getLong(5) < 0 || rows.getLong(6) < 0)
                         throw new IOException("Invalid viewing history");
             }
-        } catch (RuntimeException failure) {
+        }
+        catch (RuntimeException failure)
+        {
             throw new IOException("Invalid viewing history database", failure);
         }
     }
 
-    private ViewingHistory() {
+    private ViewingHistory()
+    {
     }
 }

@@ -24,8 +24,7 @@ public class SupernovaStyleConformanceTest {
     /** Java files allowed to mention focus states, with the reason. */
     static final Map<String, String> JAVA_EXCEPTIONS =
         Map.of("leanback/SupernovaStyle.java", "the shared style itself", "leanback/PreviewContentFocus.java",
-               "delegates to SupernovaStyle.rowFocusOutline", "browser/BrowserCategory.java",
-               "original NOVA phone browser; not part of the TV interface");
+               "delegates to SupernovaStyle.rowFocusOutline");
 
     /** XML selectors with focus states, with the reason. */
     static final Map<String, String> XML_EXCEPTIONS = Map.of(

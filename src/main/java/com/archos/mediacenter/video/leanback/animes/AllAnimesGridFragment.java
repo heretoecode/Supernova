@@ -22,7 +22,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -41,6 +40,7 @@ import androidx.preference.PreferenceManager;
 
 import com.archos.customizedleanback.app.MyVerticalGridFragment;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.LibrarySortPreferences;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
@@ -58,7 +58,6 @@ import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.DbUtils;
 import com.archos.mediacenter.video.utils.PrivateModeUIHelper;
 import com.archos.mediacenter.video.utils.PlayUtils;
-import com.archos.mediacenter.video.utils.SortOrder;
 import com.archos.mediacenter.video.utils.SortUtils;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.VideoPreferencesCommon;
@@ -71,10 +70,6 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
     private static final String TAG = "AllAnimesGridFragment";
 
     private static final String PREF_ALL_ANIMES_DISPLAY_MODE = "PREF_ALL_ANIMES_DISPLAY_MODE";
-
-    public static final String SORT_PARAM_KEY = AllAnimesGridFragment.class.getName() + "_SORT";
-
-    public static final String SHOW_WATCHED_KEY = AllAnimesGridFragment.class.getName() + "_SHOW_WATCHED";
 
     private CursorObjectAdapter mAnimesAdapter;
     private DisplayMode mDisplayMode;
@@ -92,14 +87,6 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
 
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
-    public static SparseArray<AnimesSortOrderEntry> sortOrderIndexer = new SparseArray<AnimesSortOrderEntry>();
-    static {
-        sortOrderIndexer.put(0, new AnimesSortOrderEntry(R.string.sort_by_name_asc,        "name COLLATE LOCALIZED ASC"));
-        sortOrderIndexer.put(1, new AnimesSortOrderEntry(R.string.sort_by_date_added_desc, VideoStore.MediaColumns.DATE_ADDED + " DESC"));
-        sortOrderIndexer.put(2, new AnimesSortOrderEntry(R.string.sort_by_year_desc,       VideoStore.Video.VideoColumns.SCRAPER_M_YEAR + " DESC, " + VideoStore.Video.VideoColumns.SCRAPER_M_RELEASE_DATE + " DESC, name COLLATE NOCASE ASC"));
-        sortOrderIndexer.put(3, new AnimesSortOrderEntry(R.string.sort_by_duration_asc,    SortOrder.DURATION.getAsc()));
-        sortOrderIndexer.put(4, new AnimesSortOrderEntry(R.string.sort_by_rating_asc,      SortOrder.SCRAPER_M_RATING.getDesc()));
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,10 +101,10 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
         } else {
             mDisplayMode = DisplayMode.values()[displayModeIndex];
         }
-        mSortOrder = mPrefs.getString(SORT_PARAM_KEY, AnimesLoader.DEFAULT_SORT);
-        mSortOrderEntries = AnimesSortOrderEntry.getSortOrderEntries(getActivity(), sortOrderIndexer);
+        mSortOrder = mPrefs.getString(LibrarySortPreferences.ANIMES_SORT_KEY, LibrarySortPreferences.ANIMES_DEFAULT_SORT);
+        mSortOrderEntries = AnimesSortOrderEntry.getSortOrderEntries(getActivity(), LibrarySortPreferences.ANIMES_SORT_ORDERS);
 
-        mShowWatched = mPrefs.getBoolean(SHOW_WATCHED_KEY, true);
+        mShowWatched = mPrefs.getBoolean(LibrarySortPreferences.ANIMES_SHOW_WATCHED_KEY, LibrarySortPreferences.SHOW_WATCHED_DEFAULT);
         mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         updateBackground();
@@ -251,16 +238,16 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
         getTitleView().setOnOrb3ClickedListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSortOrderItem = AnimesSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
+                mSortOrderItem = AnimesSortOrderEntry.sortOrder2Item(mSortOrder, LibrarySortPreferences.ANIMES_SORT_ORDERS);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
-                                    mSortOrder = AnimesSortOrderEntry.item2SortOrder(mSortOrderItem, sortOrderIndexer);
+                                    mSortOrder = AnimesSortOrderEntry.item2SortOrder(mSortOrderItem, LibrarySortPreferences.ANIMES_SORT_ORDERS);
                                     // Save the sort mode
-                                    mPrefs.edit().putString(SORT_PARAM_KEY, mSortOrder).apply();
+                                    mPrefs.edit().putString(LibrarySortPreferences.ANIMES_SORT_KEY, mSortOrder).apply();
                                     Bundle args = new Bundle();
                                     args.putString("sort", mSortOrder);
                                     args.putBoolean("showWatched", mShowWatched);
@@ -279,7 +266,7 @@ public class AllAnimesGridFragment extends MyVerticalGridFragment implements Loa
             public void onClick(View view) {
                 mShowWatched = !mShowWatched;
                 // Save the new setting
-                mPrefs.edit().putBoolean(SHOW_WATCHED_KEY, mShowWatched).apply();
+                mPrefs.edit().putBoolean(LibrarySortPreferences.ANIMES_SHOW_WATCHED_KEY, mShowWatched).apply();
 
                 if (mShowWatched)
                     getTitleView().setOrb4IconResId(R.drawable.orb_hide);

@@ -40,7 +40,7 @@
         android:required="false" />
     <uses-feature
         android:name="android.software.leanback"
-        android:required="false" />
+        android:required="true" />
 
     <uses-permission android:name="android.permission.USB_PERMISSION" />
 
@@ -126,6 +126,9 @@
             android:exported="false"
             android:theme="@style/FoundationEntry" />
         <meta-data
+            android:name="android.app.default_searchable"
+            android:value="com.archos.mediacenter.video.leanback.search.VideoSearchActivity" />
+        <meta-data
             android:name="to.dualscreen"
             android:value="true" />
 
@@ -145,19 +148,6 @@
             android:taskAffinity="archos.task.video"
             android:theme="${novaEntryTheme}" />
 
-        <activity
-            android:name=".browser.MainActivity"
-            android:configChanges="keyboard|keyboardHidden"
-            android:launchMode="singleTask"
-            android:taskAffinity="archos.task.video"
-            android:theme="@style/ArchosThemeLauncher"
-            android:windowSoftInputMode="adjustPan">
-            <!-- Points to searchable meta data. -->
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value="com.archos.mediacenter.video.browser.QueryBrowserActivityVideo" />
-
-        </activity>
 
         <!-- BrowserActivityVideo used to be the entry point. We keep this alias so that old shortcuts are still working -->
         <activity-alias
@@ -169,19 +159,16 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
         </activity-alias>
 
         <activity-alias
             android:name=".browser.MainActivityStereo"
-            android:targetActivity=".browser.MainActivity">
+            android:targetActivity=".EntryActivity">
 
             <!-- Points to searchable meta data. -->
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value="com.archos.mediacenter.video.browser.QueryBrowserActivityVideo" />
+                android:value="com.archos.mediacenter.video.leanback.search.VideoSearchActivity" />
             <meta-data
                 android:name="stereo_mode"
                 android:value="true" />
@@ -1058,46 +1045,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".autoscraper.AutoScraperActivity"
-            android:configChanges="orientation|screenLayout|screenSize"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/scraper_notification_title"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.DialogMinWidth">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".utils.SubtitlesWizardActivity"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/get_subtitles_on_drive"
-            android:launchMode="singleTask"
-            android:theme="@style/ArchosThemeBlueTransparent">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".utils.credentialsmanager.CredentialsManagerPreferenceActivity"
             android:excludeFromRecents="true"
             android:label="@string/samba_settings_title"
             android:launchMode="singleTask"
             android:theme="@style/ArchosThemeBlue" />
-        <activity
-            android:name=".utils.VideoPreferencesActivity"
-            android:configChanges="orientation|screenLayout"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/preferences"
-            android:launchMode="singleTop"
-            android:theme="@style/ArchosThemeLauncher">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".utils.TraktDeviceAuthActivity"
             android:label="@string/connect_trakt"
@@ -1121,18 +1073,6 @@
                 <data
                     android:scheme="nova.trakt"
                     android:host="auth" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".utils.VideoPreferencesLicencesActivity"
-            android:configChanges="orientation|screenLayout"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/preferences_video_licenses"
-            android:launchMode="singleTop"
-            android:theme="@style/ArchosThemeBlue">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
@@ -1346,15 +1286,6 @@
 
         <activity android:name="com.archos.filecorelibrary.samba.SambaPreferenceActivity" />
 
-        <activity
-            android:name=".info.VideoInfoActivity"
-            android:theme="@style/Theme.TransparentCompat" />
-        <activity
-            android:name=".info.VideoInfoScraperActivity"
-            android:theme="@style/ArchosThemeBlue" />
-        <activity
-            android:name=".info.VideoInfoPosterBackdropActivity"
-            android:theme="@style/ArchosThemeBlue" />
         <activity
             android:name=".utils.FolderPicker"
             android:exported="true"

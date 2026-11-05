@@ -20,7 +20,6 @@ import android.database.Cursor;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
-import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.BrowserMoviesBy;
 import com.archos.mediaprovider.video.ListTables;
 import com.archos.mediaprovider.video.LoaderUtils;
 import com.archos.mediaprovider.video.VideoStore;
@@ -63,7 +62,7 @@ public class VideosByListLoader extends CursorLoader implements CompatAndSDKCurs
     public String getSelection(Context context) {
         String cmd =  "Select \n" +
                 "   l._id as _id,\n" +
-                "   count(v._id) as "+ BrowserMoviesBy.COLUMN_NUMBER_OF_MOVIES+", \n"+
+                "   count(v._id) as "+ COLUMN_NUMBER_OF_MOVIES+", \n"+
                 "   group_concat( v.po_large_file) AS "+COLUMN_LIST_OF_POSTER_FILES+", \n"+
                 "   group_concat(v._id) AS "+ COLUMN_LIST_OF_VIDEO_IDS +", -- movie id list\n" +
                 "   group_concat(v."+VideoStore.Video.VideoColumns.SCRAPER_M_ONLINE_ID+" || ':' || v._id) AS "+ COLUMN_MAP_MOVIE_ID +",\n" +

@@ -15,11 +15,9 @@
 package com.archos.mediacenter.video;
 
 import android.app.Dialog;
-import android.util.Log;
 import androidx.fragment.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.preference.PreferenceManager;
@@ -33,9 +31,9 @@ import android.view.Window;
  */
 public class UiChoiceDialog extends DialogFragment implements View.OnClickListener {
 
-    static final public String UI_CHOICE_LEANBACK_KEY = "uimode_leanback";
-    static final public String UI_CHOICE_LEANBACK_TABLET_VALUE = "tablet";
-    static final public String UI_CHOICE_LEANBACK_TV_VALUE = "tv";
+    static final public String UI_CHOICE_LEANBACK_KEY = UiModePolicy.UI_CHOICE_LEANBACK_KEY;
+    static final public String UI_CHOICE_LEANBACK_TABLET_VALUE = UiModePolicy.UI_CHOICE_LEANBACK_TABLET_VALUE;
+    static final public String UI_CHOICE_LEANBACK_TV_VALUE = UiModePolicy.UI_CHOICE_LEANBACK_TV_VALUE;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,6 +70,7 @@ public class UiChoiceDialog extends DialogFragment implements View.OnClickListen
                     .putString(UI_CHOICE_LEANBACK_KEY, UI_CHOICE_LEANBACK_TABLET_VALUE) // string definitions in preference_video.xml and in @array/ui_mode_leanback_entryvalues
                     .apply();
         }
+        UiModePolicy.updateUiModePreferences(getActivity(), true);
         dismiss();
 
         // Quit the current activity and relaunch the entry acivity
@@ -82,41 +81,9 @@ public class UiChoiceDialog extends DialogFragment implements View.OnClickListen
         startActivity(i);
     }
 
-    /**
-     * Utility method to know if the user is using leanback UI or not.
-     * Can be if running on a pure leanback device OR on a device using the leanback UI (Android4.4 tv box for example).
-     * A bit weird to be a static method in this dialog class, but I did not want to create a new class just for that (for now?)
-     * CAUTION: this method does not return false if the user opened the Tablet activity from the "legacy UI" button in the main leanback fragment
-     * @param context
-     * @return true if the application is in leanback mode
-     */
+    /** Compatibility facade until the phone dialog's removal stage. */
     public static boolean applicationIsInLeanbackMode(Context context) {
-        //Save preferences object because we use it more than once.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        boolean hasLeanbackFeature = context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK);
-
-        // Initialize preferences on first run for Android TV
-        if (hasLeanbackFeature && !preferences.contains("always_leanback_on_tv_key")) {
-            Log.d("UiChoiceDialog", "First run on Android TV - initializing always_leanback_on_tv_key=true");
-            preferences.edit()
-                .putBoolean("always_leanback_on_tv_key", true)
-                .apply();
-        }
-
-        // On Android TV: check always_leanback_on_tv_key preference (default true)
-        // On Phone/Tablet: check uimode_leanback preference to allow manual TV interface selection
-        if (hasLeanbackFeature) {
-            boolean alwaysLeanbackOnTv = preferences.getBoolean("always_leanback_on_tv_key", true);
-            Log.d("UiChoiceDialog", "Android TV: always_leanback_on_tv_key=" + alwaysLeanbackOnTv);
-            return alwaysLeanbackOnTv;
-        } else {
-            // On phones/tablets, check if user manually selected TV interface
-            String uiMode = preferences.getString(UI_CHOICE_LEANBACK_KEY, UI_CHOICE_LEANBACK_TABLET_VALUE);
-            boolean isLeanbackMode = UI_CHOICE_LEANBACK_TV_VALUE.equals(uiMode);
-            Log.d("UiChoiceDialog", "Phone/Tablet: uimode_leanback=" + uiMode + " (returning " + isLeanbackMode + ")");
-            return isLeanbackMode;
-        }
+        return UiModePolicy.applicationIsInLeanbackMode(context);
     }
 
     /**
@@ -124,13 +91,7 @@ public class UiChoiceDialog extends DialogFragment implements View.OnClickListen
      * Should be called after launching MainActivity or MainActivityLeanback
      */
     public static void updateUiModePreferences(Context context, boolean isLeanback) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String modeValue = isLeanback ? UI_CHOICE_LEANBACK_TV_VALUE : UI_CHOICE_LEANBACK_TABLET_VALUE;
-        Log.d("UiChoiceDialog", "Updating UI mode preferences to: " + modeValue);
-        preferences.edit()
-            .putString(UI_CHOICE_LEANBACK_KEY, modeValue)
-            .putString("uimode", isLeanback ? "2" : "1")
-            .apply();
+        UiModePolicy.updateUiModePreferences(context, isLeanback);
     }
 
     /**
@@ -138,10 +99,6 @@ public class UiChoiceDialog extends DialogFragment implements View.OnClickListen
      * Avoids multiple apply() calls when batching SharedPreferences updates
      */
     public static void updateUiModePreferencesInEditor(Context context, SharedPreferences.Editor editor) {
-        boolean isLeanback = applicationIsInLeanbackMode(context);
-        String modeValue = isLeanback ? UI_CHOICE_LEANBACK_TV_VALUE : UI_CHOICE_LEANBACK_TABLET_VALUE;
-        Log.d("UiChoiceDialog", "Updating UI mode preferences in editor to: " + modeValue);
-        editor.putString(UI_CHOICE_LEANBACK_KEY, modeValue);
-        editor.putString("uimode", isLeanback ? "2" : "1");
+        UiModePolicy.updateUiModePreferencesInEditor(context, editor);
     }
 }

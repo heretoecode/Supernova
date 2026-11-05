@@ -81,6 +81,7 @@ import android.widget.Toast;
 import androidx.loader.content.CursorLoader;
 
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.LibrarySortPreferences;
 import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.utils.ThemeManager;
 import com.archos.mediacenter.video.utils.DbUtils;
@@ -1117,8 +1118,8 @@ public class TvshowFragment extends DetailsFragmentWithLessTopOffset implements 
             if (mTvshow != null) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 String sortOrder =
-                    prefs.getString(AllTvshowsGridFragment.SORT_PARAM_KEY, TvshowSortOrderEntries.DEFAULT_SORT);
-                boolean showWatched = prefs.getBoolean(AllTvshowsGridFragment.SHOW_WATCHED_KEY, true);
+                    prefs.getString(LibrarySortPreferences.TVSHOWS_SORT_KEY, TvshowSortOrderEntries.DEFAULT_SORT);
+                boolean showWatched = prefs.getBoolean(LibrarySortPreferences.TVSHOWS_SHOW_WATCHED_KEY, LibrarySortPreferences.SHOW_WATCHED_DEFAULT);
                 loader = new AllTvshowsLoader(getActivity(), sortOrder, showWatched, VideoLoader.GRIDVIDEO_THROTTLE,
                     VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             }

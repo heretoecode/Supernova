@@ -330,6 +330,9 @@ public class PlayUtils implements IndexHelper.Listener {
                 log.debug("onResumeReady: nova player");
             intent.putExtra(PlayerService.VIDEO, video);
             intent.setClass(context, PlayerActivity.class);
+            intent.putExtra(com.archos.mediacenter.video.player.PlayerLaunchContract.STEREO_MODE,
+                    com.archos.mediacenter.video.player.PlayerLaunchContract.stereoForced(context,
+                            ((Activity) context).getIntent()));
             if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                     "try_new_ui", false))
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -520,6 +523,6 @@ public class PlayUtils implements IndexHelper.Listener {
 
     static private boolean allow3rdPartyPlayer(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-            VideoPreferencesActivity.ALLOW_3RD_PARTY_PLAYER, VideoPreferencesActivity.ALLOW_3RD_PARTY_PLAYER_DEFAULT);
+            VideoPreferencesCommon.ALLOW_3RD_PARTY_PLAYER, VideoPreferencesCommon.ALLOW_3RD_PARTY_PLAYER_DEFAULT);
     }
 }

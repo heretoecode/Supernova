@@ -564,7 +564,6 @@
     <string name="rotation_unlocked">Автоповорот экрана включен</string>
     <string name="network_reindex">Пересканировать содержимое</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Нажмите кнопку ВВЕРХ\nдля отображения меню</string>
     <string name="help_overlay_network_indexing_text1">Нажмите эту кнопку, чтобы добавить содержимое этой папки и всех вложенных подпапок в библиотеку.</string>
     <string name="help_overlay_network_indexing_text2">Это позволит вам получить постеры и описания для фильмов и сериалов.</string>
     <string name="help_overlay_scraper_text">Нажмите на этот пункт для онлайн-поиска постеров и описания видео. </string>

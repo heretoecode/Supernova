@@ -29,7 +29,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Build;
@@ -135,7 +134,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private static final int MSG_SEEK_RESUME = 4;
     private static final int MSG_SWITCH_VIDEO_FORMAT = 5;
     private static final int MSG_HIDE_SYSTEM_BAR = 6;
-    private static final int MSG_OVERLAY_FADE_OUT = 7;
     private static final int MSG_SWITCH_FULLSCREEN_WITH_CUTOUT = 8;
 
     // introducing states to inform listeners/player that it is in some specific state
@@ -166,7 +164,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     protected static final int FLAG_SIDE_ALL_EXCEPT_UNLOCK_INSTRUCTIONS =
         FLAG_SIDE_CONTROL_BAR | FLAG_SIDE_SYSTEM_BAR | FLAG_SIDE_ACTION_BAR | FLAG_SIDE_VOLUME_BAR;
     private static final int FLAG_SIDE_ALL = FLAG_SIDE_ALL_EXCEPT_UNLOCK_INSTRUCTIONS | FLAG_SIDE_UNLOCK_INSTRUCTIONS;
-    private static final String PLAYER_HELP_OVERLAY_KEY = "play_help_overlay";
 
     /** Owner 2 Nov 2026: Play/Pause and Settings are rounded rectangles (corner 12), matching buttons elsewhere. */
     static final float HUD_BUTTON_RADIUS_DP = 12f;
@@ -882,22 +879,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         switchMode(TVUtils.isTV(mContext));
         setUIMode(UIMode);
 
-        //help overlay
-        if (mContext instanceof PlayerActivity) {
-            if (((PlayerActivity)mContext).isPluggedOnTv()) {
-                mPreferences = mContext.getSharedPreferences(MediaUtils.SHARED_PREFERENCES_NAME, mContext.MODE_PRIVATE);
-                if (!mPreferences.getBoolean(PLAYER_HELP_OVERLAY_KEY, false)) {
-                    showHelpOverlay(mControllerViewLeft);
-                    if (mControllerViewRight != null && UIMode != VideoEffect.NORMAL_2D_MODE) {
-                        showHelpOverlay(mControllerViewRight);
-                    }
-                    Editor ed = mPreferences.edit();
-                    ed.putBoolean(PLAYER_HELP_OVERLAY_KEY, true);
-                    ed.apply();
-                    sendOverlayFadeOut(6000);
-                }
-            }
-        }
         showControlBar(mControlBarShowing);
     }
 
@@ -963,19 +944,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
 
     public static boolean isActionBarShowing() {
         return mActionBarShowing;
-    }
-
-    private void showHelpOverlay(View controllerView) {
-        View overlay = controllerView.findViewById(R.id.help_overlay);
-        if (overlay != null) {
-            overlay.setAlpha(0);
-            overlay.setVisibility(View.VISIBLE);
-            overlay.animate().alpha(1);
-            ImageView icon = (ImageView)overlay.findViewById(R.id.up_arrow_image);
-            if (icon.getBackground() instanceof AnimationDrawable) {
-                ((AnimationDrawable)icon.getBackground()).start();
-            }
-        }
     }
 
     private void detachWindow() {
@@ -1221,11 +1189,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_FADE_OUT), timeout);
     }
 
-    private void sendOverlayFadeOut(int timeout) {
-        mHandler.removeMessages(MSG_FADE_OUT);
-        mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_OVERLAY_FADE_OUT), timeout);
-    }
-
     private void cancelFadeOut() {
         mHandler.removeMessages(MSG_FADE_OUT);
     }
@@ -1452,55 +1415,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
                 mNavigationBarShowing = false;
                 manualVisibilityChange = true;
                 break;
-            case MSG_OVERLAY_FADE_OUT:
-                if (log.isDebugEnabled())
-                    log.debug("Handle: MSG_OVERLAY_FADE_OUT");
-                final View overlay1 = mControllerViewLeft.findViewById(R.id.help_overlay);
-                if (overlay1 != null) {
-                    overlay1.animate().alpha(0).setListener(new AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                        }
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-                        }
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            if (overlay1 != null) {
-                                overlay1.setVisibility(View.GONE);
-                            }
-                        }
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-                        }
-                    });
-                    if (log.isDebugEnabled())
-                        log.debug("hidding 1");
-                }
-                if (mControllerViewRight != null) {
-                    final View overlay2 = mControllerViewRight.findViewById(R.id.help_overlay);
-                    if (overlay2 != null) {
-                        overlay2.animate().alpha(0).setListener(new AnimatorListener() {
-                            @Override
-                            public void onAnimationStart(Animator animation) {
-                            }
-                            @Override
-                            public void onAnimationRepeat(Animator animation) {
-                            }
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                if (overlay2 != null) {
-                                    overlay2.setVisibility(View.GONE);
-                                }
-                            }
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                            }
-                        });
-                        if (log.isDebugEnabled())
-                            log.debug("hidding 2");
-                    }
-                }
             }
         }
     };
@@ -1696,6 +1610,14 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         if (mFormatButton != null &&
             mSurfaceController.getCurrentVideoFormat() == SurfaceController.VideoFormat.STRETCH_XY)
             mFormatButton.setImageResource(mBarXYIconResource);
+    }
+
+    private final BarPlayPauseKeys barPlayPauseKeys = new BarPlayPauseKeys();
+
+    /** Claude's remote scheme calls this while the timeline bar has focus. */
+    public boolean handleBarPlayPause(KeyEvent event)
+    {
+        return barPlayPauseKeys.handle(event, this::doPauseResume);
     }
 
     private void doPauseResume() {
@@ -2430,14 +2352,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
             log.debug("onSingleTapConfirmed");
         if (isTVMenuDisplayed)
             mLastTouchEventTime = event.getEventTime();
-        if (mControllerViewLeft != null) {
-            View overlay = mControllerViewLeft.findViewById(R.id.help_overlay);
-            if (event.getAction() == KeyEvent.ACTION_DOWN && overlay != null &&
-                overlay.getVisibility() == View.VISIBLE) {
-                sendOverlayFadeOut(0);
-                return true;
-            }
-        }
 
         if (mControllerView == null) {
             return false;
@@ -2882,13 +2796,6 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
         }
 
         if (mControllerViewLeft != null) {
-            View overlay = mControllerViewLeft.findViewById(R.id.help_overlay);
-
-            if (event.getAction() == KeyEvent.ACTION_DOWN && overlay != null &&
-                overlay.getVisibility() == View.VISIBLE) {
-                sendOverlayFadeOut(0);
-                return true;
-            }
 
             if (keyCode == KeyEvent.KEYCODE_DPAD_UP ||
                 (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_MENU)) {

@@ -31,12 +31,6 @@
 
     <include
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/control_bar"
-        layout="@layout/player_help_overlay" />
-
-    <include
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/unlock_instructions"
         layout="@layout/unlock_instructions" />

@@ -20,7 +20,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -39,6 +38,7 @@ import androidx.preference.PreferenceManager;
 
 import com.archos.customizedleanback.app.MyVerticalGridFragment;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.LibrarySortPreferences;
 import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Tvshow;
 import com.archos.mediacenter.video.browser.loader.AllTvshowsLoader;
@@ -67,10 +67,6 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
 
     private static final String PREF_ALL_TVSHOWS_DISPLAY_MODE = "PREF_ALL_TVSHOWS_DISPLAY_MODE";
 
-    public static final String SORT_PARAM_KEY = AllTvshowsGridFragment.class.getName() + "_SORT";
-
-    public static final String SHOW_WATCHED_KEY = AllTvshowsGridFragment.class.getName() + "_SHOW_WATCHED";
-
     private CursorObjectAdapter mTvshowsAdapter;
     private DisplayMode mDisplayMode;
     private SharedPreferences mPrefs;
@@ -86,15 +82,6 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
 
     private SharedPreferences.OnSharedPreferenceChangeListener mThemeChangeListener;
 
-    public static SparseArray<TvshowsSortOrderEntry> sortOrderIndexer = new SparseArray<TvshowsSortOrderEntry>();
-    static {
-        sortOrderIndexer.put(0, new TvshowsSortOrderEntry(R.string.sort_by_name_asc,        VideoStore.Video.VideoColumns.SCRAPER_TITLE + " COLLATE LOCALIZED ASC"));
-        sortOrderIndexer.put(1, new TvshowsSortOrderEntry(R.string.sort_by_date_added_desc, "max(" + VideoStore.Video.VideoColumns.DATE_ADDED + ") DESC"));
-        sortOrderIndexer.put(2, new TvshowsSortOrderEntry(R.string.sort_by_date_played_desc, "max(" + VideoStore.Video.VideoColumns.ARCHOS_LAST_TIME_PLAYED + ") DESC"));
-        sortOrderIndexer.put(3, new TvshowsSortOrderEntry(R.string.sort_by_date_premiered_desc,       VideoStore.Video.VideoColumns.SCRAPER_S_PREMIERED + " DESC"));
-        sortOrderIndexer.put(4, new TvshowsSortOrderEntry(R.string.sort_by_date_aired_desc, "max(" + VideoStore.Video.VideoColumns.SCRAPER_E_AIRED + ") DESC"));
-        sortOrderIndexer.put(5, new TvshowsSortOrderEntry(R.string.sort_by_rating_asc,      "IFNULL(" + VideoStore.Video.VideoColumns.SCRAPER_S_RATING + ", 0) DESC"));
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,10 +94,10 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
         } else {
             mDisplayMode = DisplayMode.values()[displayModeIndex];
         }
-        mSortOrder = mPrefs.getString(SORT_PARAM_KEY, TvshowSortOrderEntries.DEFAULT_SORT);
-        mSortOrderEntries = TvshowsSortOrderEntry.getSortOrderEntries(getActivity(), sortOrderIndexer);
+        mSortOrder = mPrefs.getString(LibrarySortPreferences.TVSHOWS_SORT_KEY, LibrarySortPreferences.TVSHOWS_DEFAULT_SORT);
+        mSortOrderEntries = TvshowsSortOrderEntry.getSortOrderEntries(getActivity(), LibrarySortPreferences.TVSHOWS_SORT_ORDERS);
         mSeparateAnimeFromShowMovie = mPrefs.getBoolean(VideoPreferencesCommon.KEY_SEPARATE_ANIME_MOVIE_SHOW, VideoPreferencesCommon.SEPARATE_ANIME_MOVIE_SHOW_DEFAULT);
-        mShowWatched = mPrefs.getBoolean(SHOW_WATCHED_KEY, true);
+        mShowWatched = mPrefs.getBoolean(LibrarySortPreferences.TVSHOWS_SHOW_WATCHED_KEY, LibrarySortPreferences.SHOW_WATCHED_DEFAULT);
         mSortIgnoreArticles = SortUtils.isIgnoreArticlesEnabled(getActivity());
 
         updateBackground();
@@ -245,16 +232,16 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
         getTitleView().setOnOrb3ClickedListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSortOrderItem = TvshowsSortOrderEntry.sortOrder2Item(mSortOrder, sortOrderIndexer);
+                mSortOrderItem = TvshowsSortOrderEntry.sortOrder2Item(mSortOrder, LibrarySortPreferences.TVSHOWS_SORT_ORDERS);
                 new AlertDialog.Builder(getActivity())
                         .setSingleChoiceItems(mSortOrderEntries, mSortOrderItem, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (mSortOrderItem != which) {
                                     mSortOrderItem = which;
-                                    mSortOrder = TvshowsSortOrderEntry.item2SortOrder(mSortOrderItem, sortOrderIndexer);
+                                    mSortOrder = TvshowsSortOrderEntry.item2SortOrder(mSortOrderItem, LibrarySortPreferences.TVSHOWS_SORT_ORDERS);
                                     // Save the sort mode
-                                    mPrefs.edit().putString(SORT_PARAM_KEY, mSortOrder).apply();
+                                    mPrefs.edit().putString(LibrarySortPreferences.TVSHOWS_SORT_KEY, mSortOrder).apply();
                                     Bundle args = new Bundle();
                                     args.putString("sort", mSortOrder);
                                     args.putBoolean("showWatched", mShowWatched);
@@ -273,7 +260,7 @@ public class AllTvshowsGridFragment extends MyVerticalGridFragment implements Lo
             public void onClick(View view) {
                 mShowWatched = !mShowWatched;
                 // Save the new setting
-                mPrefs.edit().putBoolean(SHOW_WATCHED_KEY, mShowWatched).apply();
+                mPrefs.edit().putBoolean(LibrarySortPreferences.TVSHOWS_SHOW_WATCHED_KEY, mShowWatched).apply();
 
                 if (mShowWatched)
                     getTitleView().setOrb4IconResId(R.drawable.orb_hide);

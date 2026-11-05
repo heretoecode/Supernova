@@ -505,7 +505,6 @@
     <string name="rotation_unlocked">Automatický rotace obrazovky zapnuta</string>
     <string name="network_reindex">Znovu naskenovat obsah</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Zmáčkněte tlačítko \"Nahoru\"\npro zobrazení menu TV</string>
     <string name="help_overlay_network_indexing_text1">Vyberte tuto položku menu pro zahrnutí obsahu této složky a jejích podsložek to knihovny videí.</string>
     <string name="help_overlay_network_indexing_text2">Tato funkce vám umožní získat plakáty a popisy k filmům a seriálům.</string>
     <string name="help_overlay_scraper_text">Zvolte tuto položku menu pro online vyhledání plakátů a informací k vašim videím. </string>

@@ -586,7 +586,6 @@
     <string name="rotation_unlocked">Automatyczna rotacja ekranu włączona</string>
     <string name="network_reindex">Ponowne skanowanie zawartości</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Naciśnij strzałkę w górę,\naby wyświetlić menu</string>
     <string name="help_overlay_network_indexing_text1">Wybierz, aby zintegrować zawartość tego folderu i jego podfolderów z biblioteką wideo.</string>
     <string name="help_overlay_network_indexing_text2">Pozwala na pobieranie plakatów i opisów dla filmów i seriali.</string>
     <string name="help_overlay_scraper_text">Wybierz, aby wyszukać plakaty i opisy online dla filmów. </string>

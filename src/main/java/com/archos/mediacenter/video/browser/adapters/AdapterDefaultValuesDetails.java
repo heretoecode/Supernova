@@ -55,9 +55,6 @@ public enum AdapterDefaultValuesDetails implements AdapterDefaultValues {
         int layoutId;
 
         switch (itemType) {
-            case ItemViewType.ITEM_VIEW_TYPE_HEADER_SHOW:
-                layoutId = R.layout.browser_item_header_show;
-                break;
             case ItemViewType.ITEM_VIEW_TYPE_SHOW:
                 layoutId = R.layout.browser_item_details_show;
                 break;

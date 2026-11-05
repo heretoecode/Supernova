@@ -62,9 +62,7 @@ import com.archos.filecorelibrary.ExtStorageManager;
 import com.archos.filecorelibrary.ExtStorageReceiver;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.CustomApplication;
-import com.archos.mediacenter.video.DensityTweak;
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.browser.MainActivity;
 import com.archos.mediacenter.video.browser.adapters.mappers.AnimesNShowsMapper;
 import com.archos.mediacenter.video.browser.adapters.mappers.TvshowCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
@@ -1284,8 +1282,6 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
         mPreferencesRowAdapter.add(new Icon(Icon.ID.PRIVATE_MODE, getString(R.string.private_mode_is_on),
             getString(R.string.private_mode_is_off), R.drawable.ic_incognito, R.drawable.ic_incognito_off,
             PrivateMode.isActive()));
-        mPreferencesRowAdapter.add(
-            new Icon(Icon.ID.LEGACY_UI, getString(R.string.leanback_legacy_ui), R.drawable.ic_tablet_cellphone));
         mPreferencesRowAdapter.add(new Icon(Icon.ID.HELP_FAQ, getString(R.string.help_faq), R.drawable.ic_help_circle));
 
         if (BuildConfig.ENABLE_SPONSOR)
@@ -2628,10 +2624,6 @@ public class MainFragment extends ExperimentalBrowseFragment implements LoaderMa
                         PrivateMode.toggle(vActivity);
                         updatePrivateMode(icon);
                         updateBackground();
-                        break;
-                    case LEGACY_UI:
-                        new DensityTweak(vActivity).temporaryRestoreDefaultDensity();
-                        vActivity.startActivity(new Intent(vActivity, MainActivity.class));
                         break;
                     case HELP_FAQ:
                         WebUtils.openWebLink(vActivity, getString(R.string.faq_url));

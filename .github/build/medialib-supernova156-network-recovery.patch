@@ -1,0 +1,1567 @@
+diff --git a/src/com/archos/filecorelibrary/RecoverablePlaybackStream.java b/src/com/archos/filecorelibrary/RecoverablePlaybackStream.java
+new file mode 100644
+index 0000000..76f64ba
+--- /dev/null
++++ b/src/com/archos/filecorelibrary/RecoverablePlaybackStream.java
+@@ -0,0 +1,94 @@
++package com.archos.filecorelibrary;
++
++import android.net.Uri;
++import com.archos.medialib.PlaybackReadGuard;
++import java.io.IOException;
++import java.io.InputStream;
++
++/** MediaLib extension using FileCore's existing package editor seam; no FileCore source/build change. */
++public final class RecoverablePlaybackStream extends StreamOverHttp
++{
++    private final Uri primary;
++    private final PlaybackReadGuard guard;
++
++    public RecoverablePlaybackStream(MetaFile2 file, String mime, PlaybackReadGuard guard) throws IOException
++    {
++        super(file, mime, ReadMode.PLAYBACK);
++        primary = file.getUri();
++        this.guard = guard;
++    }
++
++    public RecoverablePlaybackStream(Uri uri, String mime, PlaybackReadGuard guard) throws IOException
++    {
++        super(uri, mime, ReadMode.PLAYBACK);
++        primary = uri;
++        this.guard = guard;
++    }
++
++    @Override FileEditor getFileEditor(Uri uri)
++    {
++        FileEditor delegate = super.getFileEditor(uri);
++        // Subtitle/poster failures cannot trigger playback recovery.
++        return FileUtils.encodeUri(primary).equals(FileUtils.encodeUri(uri)) ? new GuardedEditor(uri, delegate, guard)
++                                                                             : delegate;
++    }
++
++    @Override int upstreamBufferSize(FileEditor editor, boolean primaryMedia)
++    {
++        // Preserve FileCore's normal per-backend throughput policy outside the pause budget.
++        return super.upstreamBufferSize(editor instanceof GuardedEditor ? ((GuardedEditor)editor).delegate : editor,
++                                        primaryMedia);
++    }
++
++    private static final class GuardedEditor extends FileEditor
++    {
++        private final FileEditor delegate;
++        private final PlaybackReadGuard guard;
++        GuardedEditor(Uri uri, FileEditor delegate, PlaybackReadGuard guard)
++        {
++            super(uri);
++            this.delegate = delegate;
++            this.guard = guard;
++        }
++        @Override public boolean exists()
++        {
++            return delegate.exists();
++        }
++        @Override public long length() throws Exception
++        {
++            return delegate.length();
++        }
++        @Override public InputStream getInputStream() throws Exception
++        {
++            return open(0, ReadOptions.DEFAULT, false);
++        }
++        @Override public InputStream getInputStream(long from) throws Exception
++        {
++            return open(from, ReadOptions.DEFAULT, true);
++        }
++        @Override public InputStream getInputStream(ReadOptions options) throws Exception
++        {
++            return open(0, options, false);
++        }
++        @Override public InputStream getInputStream(long from, ReadOptions options) throws Exception
++        {
++            return open(from, options, true);
++        }
++        private InputStream open(long from, ReadOptions options, boolean range) throws Exception
++        {
++            guard.check();
++            try
++            {
++                InputStream input = range ? delegate.getInputStream(from, options) : delegate.getInputStream(options);
++                return guard.wrap(input, options.maxBytes);
++            }
++            catch (IOException failure)
++            {
++                // FileCore deliberately retries non-seekable providers from zero for this sentinel.
++                if (!"Illegal seek".equals(failure.getMessage()))
++                    guard.failed(failure);
++                throw failure;
++            }
++        }
++    }
++}
+diff --git a/src/com/archos/medialib/AvosMediaPlayer.java b/src/com/archos/medialib/AvosMediaPlayer.java
+index f8bc5ed..72f7ac5 100644
+--- a/src/com/archos/medialib/AvosMediaPlayer.java
++++ b/src/com/archos/medialib/AvosMediaPlayer.java
+@@ -14,7 +14,6 @@
+ 
+ package com.archos.medialib;
+ 
+-
+ import android.content.ContentResolver;
+ import android.content.Context;
+ import android.content.res.AssetFileDescriptor;
+@@ -35,12 +34,13 @@ import java.io.IOException;
+ import java.lang.ref.WeakReference;
+ import java.util.Map;
+ 
+-public class AvosMediaPlayer implements IMediaPlayer {
++public class AvosMediaPlayer implements IMediaPlayer
++{
+ 
+     private static final Logger log = LoggerFactory.getLogger(AvosMediaPlayer.class);
+ 
+-    private long mMediaPlayerHandle = 0;     // Read-only, reserved for JNI
+-    private long mNativeWindowHandle = 0;    // Read-only, reserved for JNI
++    private long mMediaPlayerHandle = 0;  // Read-only, reserved for JNI
++    private long mNativeWindowHandle = 0; // Read-only, reserved for JNI
+ 
+     private IMediaPlayer.OnPreparedListener mOnPreparedListener = null;
+     private IMediaPlayer.OnCompletionListener mOnCompletionListener = null;
+@@ -60,157 +60,210 @@ public class AvosMediaPlayer implements IMediaPlayer {
+     private final Object mLifecycleLock = new Object();
+     private boolean mReleased;
+ 
+-    private void ensureOpen() {
+-        if (mReleased) throw new IllegalStateException("player released");
++    private void ensureOpen()
++    {
++        if (mReleased)
++            throw new IllegalStateException("player released");
+     }
+ 
+-    private void installProxy(SmbProxy proxy) {
++    private void installProxy(SmbProxy proxy)
++    {
+         SmbProxy previous;
+-        synchronized (mLifecycleLock) {
+-            if (mReleased) {
++        synchronized (mLifecycleLock)
++        {
++            if (mReleased)
++            {
+                 proxy.stop();
+                 throw new IllegalStateException("player released");
+             }
+             previous = mSmbProxy;
+             mSmbProxy = proxy;
+         }
+-        if (previous != null && previous != proxy) previous.stop();
++        if (previous != null && previous != proxy)
++            previous.stop();
+     }
+ 
+     private native void create(Object weakReference);
+ 
+-    public AvosMediaPlayer() {
++    public AvosMediaPlayer()
++    {
+         log.info("AvosMediaPlayer: Initializing AvosMediaPlayer");
+         Looper looper;
+-        if ((looper = Looper.myLooper()) != null) {
++        if ((looper = Looper.myLooper()) != null)
++        {
+             mEventHandler = new EventHandler(this, looper);
+-        } else if ((looper = Looper.getMainLooper()) != null) {
++        }
++        else if ((looper = Looper.getMainLooper()) != null)
++        {
+             mEventHandler = new EventHandler(this, looper);
+-        } else {
++        }
++        else
++        {
+             mEventHandler = null;
+         }
+         create(new WeakReference<AvosMediaPlayer>(this));
+     }
+ 
+-    protected void finalize() throws Throwable {
++    protected void finalize() throws Throwable
++    {
+         release();
+     }
+ 
+-    public int getType() {
++    public int getType()
++    {
+         return IMediaPlayer.TYPE_AVOS;
+     }
+ 
+     public native void setDataSource(String path, String[] keys, String[] values)
+-            throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
++        throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
+ 
+     private native void setDataSourceFD(FileDescriptor fd, long offset, long length)
+-            throws IOException, IllegalArgumentException, IllegalStateException;
+-    
++        throws IOException, IllegalArgumentException, IllegalStateException;
++
+     public void setDataSource(FileDescriptor fd, long offset, long length)
+-            throws IOException, IllegalArgumentException, IllegalStateException {
++        throws IOException, IllegalArgumentException, IllegalStateException
++    {
+         SmbProxy previous;
+-        synchronized (mLifecycleLock) {
++        synchronized (mLifecycleLock)
++        {
+             ensureOpen();
+             setDataSourceFD(fd, offset, length);
+             previous = mSmbProxy;
+             mSmbProxy = null;
+         }
+-        if (previous != null) previous.stop();
++        if (previous != null)
++            previous.stop();
+     }
+ 
+-    public void setDataSource(Context context, Uri uri, Map<String, String> headers) throws IOException,
+-            IllegalArgumentException, SecurityException, IllegalStateException {
++    public void setDataSource(Context context, Uri uri, Map<String, String> headers)
++        throws IOException, IllegalArgumentException, SecurityException, IllegalStateException
++    {
+ 
+         String scheme = uri.getScheme();
+-        if (ContentResolver.SCHEME_CONTENT.equals(scheme) && tryContentDescriptor(context, uri)) {
++        if (ContentResolver.SCHEME_CONTENT.equals(scheme) && tryContentDescriptor(context, uri))
++        {
+             return;
+         }
+-        if (SmbProxy.needToStream(scheme)){
++        if (SmbProxy.needToStream(scheme))
++        {
+             installProxy(SmbProxy.setDataSource(uri, this, headers));
+             return;
+         }
+ 
+-        if(scheme == null || scheme.equals("file")) {
++        if (scheme == null || scheme.equals("file"))
++        {
+             String uriString = uri.getPath();
+             if (uri.getQuery() != null)
+-                uriString += "?"+uri.getQuery();
++                uriString += "?" + uri.getQuery();
+             setDataSource2(uriString, headers);
+             return;
+         }
+ 
+         AssetFileDescriptor fd = null;
+-        try {
++        try
++        {
+             ContentResolver resolver = context.getContentResolver();
+             fd = resolver.openAssetFileDescriptor(uri, "r");
+-            if (fd == null) {
++            if (fd == null)
++            {
+                 return;
+             }
+             // Note: using getDeclaredLength so that our behavior is the same
+             // as previous versions when the content provider is returning
+             // a full file.
+-            if (fd.getDeclaredLength() < 0) {
++            if (fd.getDeclaredLength() < 0)
++            {
+                 setDataSource(fd.getFileDescriptor());
+-            } else {
++            }
++            else
++            {
+                 setDataSource(fd.getFileDescriptor(), fd.getStartOffset(), fd.getDeclaredLength());
+             }
+             return;
+-        } catch (SecurityException ex) {
+-        } catch (IOException ex) {
+-        } finally {
+-            if (fd != null) {
++        }
++        catch (SecurityException ex)
++        {
++        }
++        catch (IOException ex)
++        {
++        }
++        finally
++        {
++            if (fd != null)
++            {
+                 fd.close();
+             }
+         }
+ 
+-        if (log.isDebugEnabled()) log.debug("Couldn't open file on client side, trying server side");
++        if (log.isDebugEnabled())
++            log.debug("Couldn't open file on client side, trying server side");
+         setDataSource2(uri.toString(), headers);
+     }
+ 
+-    public void setDataSource(Context context, Uri uri) throws IOException,
+-            IllegalArgumentException, SecurityException, IllegalStateException {
++    public void setDataSource(Context context, Uri uri)
++        throws IOException, IllegalArgumentException, SecurityException, IllegalStateException
++    {
+         setDataSource(context, uri, null);
+     }
+ 
+-    private boolean tryContentDescriptor(Context context, Uri uri) {
++    private boolean tryContentDescriptor(Context context, Uri uri)
++    {
+         AssetFileDescriptor asset = null;
+-        try {
++        try
++        {
+             asset = ContentFileDescriptor.open(context.getContentResolver(), uri);
+-            if (asset == null) return false;
++            if (asset == null)
++                return false;
+             // Native code duplicates the descriptor and keeps offsets relative to this slice.
+-            setDataSource(asset.getFileDescriptor(), asset.getStartOffset(),
+-                    Math.max(0, asset.getDeclaredLength()));
++            setDataSource(asset.getFileDescriptor(), asset.getStartOffset(), Math.max(0, asset.getDeclaredLength()));
+             return true;
+-        } catch (IOException | SecurityException | IllegalArgumentException e) {
++        }
++        catch (IOException | SecurityException | IllegalArgumentException e)
++        {
+             log.debug("Provider descriptor unavailable; using HTTP relay", e);
+             return false;
+-        } finally {
+-            if (asset != null) {
+-                try { asset.close(); }
+-                catch (IOException e) { log.debug("Unable to close provider descriptor", e); }
++        }
++        finally
++        {
++            if (asset != null)
++            {
++                try
++                {
++                    asset.close();
++                }
++                catch (IOException e)
++                {
++                    log.debug("Unable to close provider descriptor", e);
++                }
+             }
+         }
+     }
+ 
+-    public void setDataSource(String path) throws IOException, IllegalArgumentException,
+-            SecurityException, IllegalStateException {
+-         setDataSource2(path, null);
++    public void setDataSource(String path)
++        throws IOException, IllegalArgumentException, SecurityException, IllegalStateException
++    {
++        setDataSource2(path, null);
+     }
+ 
+-    public void setDataSource2(String path, Map<String, String> headers) throws IOException,
+-            IllegalArgumentException, SecurityException, IllegalStateException {
+-        if (SmbProxy.needToStream(Uri.parse(path).getScheme())){
+-            mSmbProxy = SmbProxy.setDataSource(Uri.parse(path), this, headers);
++    public void setDataSource2(String path, Map<String, String> headers)
++        throws IOException, IllegalArgumentException, SecurityException, IllegalStateException
++    {
++        if (SmbProxy.needToStream(Uri.parse(path).getScheme()))
++        {
++            installProxy(SmbProxy.setDataSource(Uri.parse(path), this, headers));
+             return;
+         }
+         String[] keys = null;
+         String[] values = null;
+ 
+-        if (headers != null) {
++        if (headers != null)
++        {
+             keys = new String[headers.size()];
+             values = new String[headers.size()];
+ 
+             int i = 0;
+-            for (Map.Entry<String, String> entry: headers.entrySet()) {
++            for (Map.Entry<String, String> entry : headers.entrySet())
++            {
+                 keys[i] = entry.getKey();
+                 values[i] = entry.getValue();
+                 ++i;
+@@ -220,22 +273,29 @@ public class AvosMediaPlayer implements IMediaPlayer {
+         setDataSource(path, keys, values);
+     }
+ 
+-    public void setDataSource(FileDescriptor fd) throws IOException, IllegalArgumentException,
+-            IllegalStateException {
+-        setDataSource(fd, 0, 0);  
++    public void setDataSource(FileDescriptor fd) throws IOException, IllegalArgumentException, IllegalStateException
++    {
++        setDataSource(fd, 0, 0);
+     }
+ 
+-    private void updateSurfaceScreenOn() {
+-        if (mSurfaceHolder != null) {
++    private void updateSurfaceScreenOn()
++    {
++        if (mSurfaceHolder != null)
++        {
+             mSurfaceHolder.setKeepScreenOn(mScreenOnWhilePlaying && mStayAwake);
+         }
+     }
+ 
+-    private void stayAwake(boolean awake) {
+-        if (mWakeLock != null) {
+-            if (awake && !mWakeLock.isHeld()) {
++    private void stayAwake(boolean awake)
++    {
++        if (mWakeLock != null)
++        {
++            if (awake && !mWakeLock.isHeld())
++            {
+                 mWakeLock.acquire();
+-            } else if (!awake && mWakeLock.isHeld()) {
++            }
++            else if (!awake && mWakeLock.isHeld())
++            {
+                 mWakeLock.release();
+             }
+         }
+@@ -245,13 +305,18 @@ public class AvosMediaPlayer implements IMediaPlayer {
+ 
+     private native void setVideoSurface(Surface surface);
+ 
+-    public void setDisplay(SurfaceHolder sh) {
+-        synchronized (mLifecycleLock) {
++    public void setDisplay(SurfaceHolder sh)
++    {
++        synchronized (mLifecycleLock)
++        {
+             ensureOpen();
+             Surface surface;
+-            if (sh != null) {
++            if (sh != null)
++            {
+                 surface = sh.getSurface();
+-            } else {
++            }
++            else
++            {
+                 surface = null;
+             }
+             setVideoSurface(surface);
+@@ -260,10 +325,13 @@ public class AvosMediaPlayer implements IMediaPlayer {
+         }
+     }
+ 
+-    public void setSurface(Surface surface) {
+-        synchronized (mLifecycleLock) {
++    public void setSurface(Surface surface)
++    {
++        synchronized (mLifecycleLock)
++        {
+             ensureOpen();
+-            if (mScreenOnWhilePlaying && surface != null) {
++            if (mScreenOnWhilePlaying && surface != null)
++            {
+                 log.warn("setScreenOnWhilePlaying(true) is ineffective for Surface");
+             }
+             setVideoSurface(surface);
+@@ -271,8 +339,10 @@ public class AvosMediaPlayer implements IMediaPlayer {
+         }
+     }
+ 
+-    public void reset() {
+-        synchronized (mLifecycleLock) {
++    public void reset()
++    {
++        synchronized (mLifecycleLock)
++        {
+             ensureOpen();
+             stayAwake(false);
+             nativeReset();
+@@ -283,10 +353,13 @@ public class AvosMediaPlayer implements IMediaPlayer {
+ 
+     private native void nativeReset();
+ 
+-    public void setWakeMode(Context context, int mode) {
++    public void setWakeMode(Context context, int mode)
++    {
+         boolean washeld = false;
+-        if (mWakeLock != null) {
+-            if (mWakeLock.isHeld()) {
++        if (mWakeLock != null)
++        {
++            if (mWakeLock.isHeld())
++            {
+                 washeld = true;
+                 mWakeLock.release();
+             }
+@@ -294,20 +367,23 @@ public class AvosMediaPlayer implements IMediaPlayer {
+         }
+ 
+         PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+-        mWakeLock = pm.newWakeLock(mode|PowerManager.ON_AFTER_RELEASE, MediaPlayer.class.getName());
++        mWakeLock = pm.newWakeLock(mode | PowerManager.ON_AFTER_RELEASE, MediaPlayer.class.getName());
+         mWakeLock.setReferenceCounted(false);
+-        if (washeld) {
++        if (washeld)
++        {
+             mWakeLock.acquire();
+         }
+     }
+ 
+-    public void setScreenOnWhilePlaying(boolean screenOn) {
++    public void setScreenOnWhilePlaying(boolean screenOn)
++    {
+         mScreenOnWhilePlaying = screenOn;
+     }
+ 
+     private native final byte[] getMetadata();
+ 
+-    public MediaMetadata getMediaMetadata(boolean update_only, boolean apply_filter) {
++    public MediaMetadata getMediaMetadata(boolean update_only, boolean apply_filter)
++    {
+         AvosMediaMetadata data = new AvosMediaMetadata();
+ 
+         byte[] bytes = getMetadata();
+@@ -320,56 +396,68 @@ public class AvosMediaPlayer implements IMediaPlayer {
+         return data;
+     }
+ 
+-    public void setAudioStreamType(int streamtype) {
++    public void setAudioStreamType(int streamtype)
++    {
+         // TODO Auto-generated method stub
+-        
+     }
+ 
+-    public void setVolume(float leftVolume, float rightVolume) {
++    public void setVolume(float leftVolume, float rightVolume)
++    {
+         // TODO Auto-generated method stub
+-        
+     }
+ 
+-    public void setOnPreparedListener(IMediaPlayer.OnPreparedListener listener) {
++    public void setOnPreparedListener(IMediaPlayer.OnPreparedListener listener)
++    {
+         mOnPreparedListener = listener;
+     }
+ 
+-    public void setOnCompletionListener(IMediaPlayer.OnCompletionListener listener) {
++    public void setOnCompletionListener(IMediaPlayer.OnCompletionListener listener)
++    {
+         mOnCompletionListener = listener;
+     }
+ 
+-    public void setOnInfoListener(IMediaPlayer.OnInfoListener listener) {
++    public void setOnInfoListener(IMediaPlayer.OnInfoListener listener)
++    {
+         mOnInfoListener = listener;
+     }
+ 
+-    public void setOnErrorListener(IMediaPlayer.OnErrorListener listener) {
++    public void setOnErrorListener(IMediaPlayer.OnErrorListener listener)
++    {
+         mOnErrorListener = listener;
+     }
+ 
+-    public void setOnBufferingUpdateListener(IMediaPlayer.OnBufferingUpdateListener listener) {
++    public void setOnBufferingUpdateListener(IMediaPlayer.OnBufferingUpdateListener listener)
++    {
+         mOnBufferingUpdateListener = listener;
+     }
+ 
+-    public void setOnRelativePositionUpdateListener(IMediaPlayer.OnRelativePositionUpdateListener listener) {
++    public void setOnRelativePositionUpdateListener(IMediaPlayer.OnRelativePositionUpdateListener listener)
++    {
+         mOnRelativePositionUpdateListener = listener;
+     }
+ 
+-    public void setOnSeekCompleteListener(IMediaPlayer.OnSeekCompleteListener listener) {
++    public void setOnSeekCompleteListener(IMediaPlayer.OnSeekCompleteListener listener)
++    {
+         mOnSeekCompleteListener = listener;
+     }
+ 
+-    public void setOnVideoSizeChangedListener(IMediaPlayer.OnVideoSizeChangedListener listener) {
++    public void setOnVideoSizeChangedListener(IMediaPlayer.OnVideoSizeChangedListener listener)
++    {
+         mOnVideoSizeChangedListener = listener;
+     }
+ 
+-    public void setOnNextTrackListener(IMediaPlayer.OnNextTrackListener listener) {
++    public void setOnNextTrackListener(IMediaPlayer.OnNextTrackListener listener)
++    {
+         mOnNextTrackListener = listener;
+     }
+ 
+     private native void nativeRelease();
+-    public void release() {
+-        synchronized (mLifecycleLock) {
+-            if (mReleased) return;
++    public void release()
++    {
++        synchronized (mLifecycleLock)
++        {
++            if (mReleased)
++                return;
+             mReleased = true;
+             stayAwake(false);
+             updateSurfaceScreenOn();
+@@ -384,11 +472,16 @@ public class AvosMediaPlayer implements IMediaPlayer {
+             mOnNextTrackListener = null;
+             SmbProxy proxy = mSmbProxy;
+             mSmbProxy = null;
+-            try {
+-                if (proxy != null) proxy.stop();
+-            } finally {
++            try
++            {
++                if (proxy != null)
++                    proxy.stop();
++            }
++            finally
++            {
+                 nativeRelease();
+-                if (mEventHandler != null) mEventHandler.removeCallbacksAndMessages(null);
++                if (mEventHandler != null)
++                    mEventHandler.removeCallbacksAndMessages(null);
+             }
+         }
+     }
+@@ -396,38 +489,44 @@ public class AvosMediaPlayer implements IMediaPlayer {
+     public native void prepareAsync() throws IllegalStateException;
+ 
+     public native void prepare() throws IOException, IllegalStateException;
+-    
++
+     private native void nativeStart() throws IllegalStateException;
+-    public void start() throws IllegalStateException {
++    public void start() throws IllegalStateException
++    {
+         stayAwake(true);
+         // WARNING: nativeStart() can block waiting on native synchronization primitives
+         // This method must NOT be called from the main/UI thread or it will cause ANR
+         // Callers are responsible for ensuring this runs on a worker thread
+-        if (Looper.getMainLooper() == Looper.myLooper()) {
++        if (Looper.getMainLooper() == Looper.myLooper())
++        {
+             log.warn("start() called from main thread - this may cause ANR. Move to background thread.");
+         }
+         nativeStart();
+     }
+ 
+     private native void nativeStop() throws IllegalStateException;
+-    public void stop() throws IllegalStateException {
++    public void stop() throws IllegalStateException
++    {
+         stayAwake(false);
+         // WARNING: nativeStop() can block waiting on native synchronization primitives
+         // This method must NOT be called from the main/UI thread or it will cause ANR
+         // Callers are responsible for ensuring this runs on a worker thread
+-        if (Looper.getMainLooper() == Looper.myLooper()) {
++        if (Looper.getMainLooper() == Looper.myLooper())
++        {
+             log.warn("stop() called from main thread - this may cause ANR. Move to background thread.");
+         }
+         nativeStop();
+     }
+ 
+     private native void nativePause() throws IllegalStateException;
+-    public void pause() throws IllegalStateException {
++    public void pause() throws IllegalStateException
++    {
+         stayAwake(false);
+         // WARNING: nativePause() can block waiting on native synchronization primitives
+         // This method must NOT be called from the main/UI thread or it will cause ANR
+         // Callers are responsible for ensuring this runs on a worker thread
+-        if (Looper.getMainLooper() == Looper.myLooper()) {
++        if (Looper.getMainLooper() == Looper.myLooper())
++        {
+             log.warn("pause() called from main thread - this may cause ANR. Move to background thread.");
+         }
+         nativePause();
+@@ -443,7 +542,8 @@ public class AvosMediaPlayer implements IMediaPlayer {
+ 
+     public native void seekTo(int pos);
+ 
+-    public boolean setStartTime(int pos) {
++    public boolean setStartTime(int pos)
++    {
+         nativeSetStartTime(pos);
+         return true;
+     }
+@@ -458,9 +558,9 @@ public class AvosMediaPlayer implements IMediaPlayer {
+ 
+     public native int getAudioSessionId();
+ 
+-    @Override
+-    public int doesCurrentFileExists() {
+-        return mSmbProxy!=null?mSmbProxy.doesCurrentFileExists():-1;
++    @Override public int doesCurrentFileExists()
++    {
++        return mSmbProxy != null ? mSmbProxy.doesCurrentFileExists() : -1;
+     }
+ 
+     public native void checkSubtitles();
+@@ -490,15 +590,16 @@ public class AvosMediaPlayer implements IMediaPlayer {
+      * code is safe from the object disappearing from underneath it.  (This is
+      * the cookie passed to native_setup().)
+      */
+-    private static void postEventFromNative(Object mediaplayer_ref,
+-                                            int what, int arg1, int arg2, Object obj)
++    private static void postEventFromNative(Object mediaplayer_ref, int what, int arg1, int arg2, Object obj)
+     {
+         AvosMediaPlayer mp = (AvosMediaPlayer)((WeakReference)mediaplayer_ref).get();
+-        if (mp == null) {
++        if (mp == null)
++        {
+             return;
+         }
+ 
+-        if (mp.mEventHandler != null) {
++        if (mp.mEventHandler != null)
++        {
+             Message m = mp.mEventHandler.obtainMessage(what, arg1, arg2, obj);
+             mp.mEventHandler.sendMessage(m);
+         }
+@@ -523,64 +624,77 @@ public class AvosMediaPlayer implements IMediaPlayer {
+     {
+         private AvosMediaPlayer mMediaPlayer;
+ 
+-        public EventHandler(AvosMediaPlayer mp, Looper looper) {
++        public EventHandler(AvosMediaPlayer mp, Looper looper)
++        {
+             super(looper);
+             mMediaPlayer = mp;
+         }
+ 
+-        @Override
+-        public void handleMessage(Message msg) {
+-            if (mMediaPlayerHandle == 0) {
++        @Override public void handleMessage(Message msg)
++        {
++            if (mMediaPlayerHandle == 0)
++            {
+                 log.warn("mediaplayer went away with unhandled events");
+                 return;
+             }
+-            switch(msg.what) {
++            switch (msg.what)
++            {
+             case MEDIA_PREPARED:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_PREPARED");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_PREPARED");
+                 if (mOnPreparedListener != null)
+                     mOnPreparedListener.onPrepared(mMediaPlayer);
+                 return;
+ 
+             case MEDIA_PLAYBACK_COMPLETE:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_PLAYBACK_COMPLETE");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_PLAYBACK_COMPLETE");
+                 if (mOnCompletionListener != null)
+                     mOnCompletionListener.onCompletion(mMediaPlayer);
+                 stayAwake(false);
+                 return;
+             case MEDIA_NEXT_TRACK:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_NEXT_TRACK");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_NEXT_TRACK");
+                 if (mOnNextTrackListener != null)
+                     mOnNextTrackListener.onNextTrack(mMediaPlayer);
+                 return;
+             case MEDIA_BUFFERING_UPDATE:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_BUFFERING_UPDATE");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_BUFFERING_UPDATE");
+                 if (mOnBufferingUpdateListener != null)
+                     mOnBufferingUpdateListener.onBufferingUpdate(mMediaPlayer, msg.arg1);
+                 return;
+ 
+             case MEDIA_RELATIVE_POSITION_UPDATE:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_RELATIVE_POSITION_UPDATE");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_RELATIVE_POSITION_UPDATE");
+                 if (mOnRelativePositionUpdateListener != null)
+                     mOnRelativePositionUpdateListener.onRelativePositionUpdate(mMediaPlayer, msg.arg1);
+                 return;
+             case MEDIA_SEEK_COMPLETE:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_SEEK_COMPLETE");
+-                if (mOnSeekCompleteListener != null) {
+-                  mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
+-                  if (msg.arg1 == 0)
+-                      mOnSeekCompleteListener.onAllSeekComplete(mMediaPlayer);
+-              }
+-              return;
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_SEEK_COMPLETE");
++                if (mOnSeekCompleteListener != null)
++                {
++                    mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
++                    if (msg.arg1 == 0)
++                        mOnSeekCompleteListener.onAllSeekComplete(mMediaPlayer);
++                }
++                return;
+ 
+             case MEDIA_SET_VIDEO_SIZE:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_SET_VIDEO_SIZE");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_SET_VIDEO_SIZE");
+                 if (mOnVideoSizeChangedListener != null)
+-                  mOnVideoSizeChangedListener.onVideoSizeChanged(mMediaPlayer, msg.arg1, msg.arg2);
+-              return;
++                    mOnVideoSizeChangedListener.onVideoSizeChanged(mMediaPlayer, msg.arg1, msg.arg2);
++                return;
+ 
+             case MEDIA_SET_VIDEO_ASPECT:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_SET_VIDEO_ASPECT");
+-                if (mOnVideoSizeChangedListener != null) {
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_SET_VIDEO_ASPECT");
++                if (mOnVideoSizeChangedListener != null)
++                {
+                     double aspect = videoAspectFromRatio(msg.arg1, msg.arg2);
+                     if (msg.arg1 <= 0 || msg.arg2 <= 0)
+                         log.warn("Invalid video sample aspect ratio {}/{}, using 1:1", msg.arg1, msg.arg2);
+@@ -593,31 +707,42 @@ public class AvosMediaPlayer implements IMediaPlayer {
+                 // opencore/pvmi/pvmf/include/pvmf_return_codes.h
+                 log.error("Error ({},{})", msg.arg1, msg.arg2);
+                 boolean error_was_handled = false;
+-                if (mOnErrorListener != null) {
+-                    error_was_handled = mOnErrorListener.onError(mMediaPlayer, msg.arg1, msg.arg2,
+-                            msg.obj != null && msg.obj instanceof String ? (String)msg.obj : null);
++                if (mOnErrorListener != null)
++                {
++                    error_was_handled =
++                        mOnErrorListener.onError(mMediaPlayer, msg.arg1, msg.arg2,
++                                                 msg.obj != null && msg.obj instanceof String ? (String)msg.obj : null);
+                 }
+-                if (mOnCompletionListener != null && ! error_was_handled) {
++                if (mOnCompletionListener != null && !error_was_handled)
++                {
+                     mOnCompletionListener.onCompletion(mMediaPlayer);
+                 }
+                 stayAwake(false);
+                 return;
+ 
+             case MEDIA_INFO:
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_INFO");
+-                if (msg.arg1 != MEDIA_INFO_VIDEO_TRACK_LAGGING) {
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_INFO");
++                if (msg.arg1 != MEDIA_INFO_VIDEO_TRACK_LAGGING)
++                {
+                     log.info("handleMessage: MEDIA_INFO (" + msg.arg1 + "," + msg.arg2 + ")");
+                 }
+-                if (mOnInfoListener != null) {
+-                    if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_INFO call onInfo");
++                if (mOnInfoListener != null)
++                {
++                    if (log.isDebugEnabled())
++                        log.debug("handleMessage: MEDIA_INFO call onInfo");
+                     mOnInfoListener.onInfo(mMediaPlayer, msg.arg1, msg.arg2);
+-                } else {
+-                    if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_INFO, no onInfoListener, not calling onInfo");
++                }
++                else
++                {
++                    if (log.isDebugEnabled())
++                        log.debug("handleMessage: MEDIA_INFO, no onInfoListener, not calling onInfo");
+                 }
+                 // No real default action so far.
+                 return;
+             case MEDIA_NOP: // interface test message - ignore
+-                if (log.isDebugEnabled()) log.debug("handleMessage: MEDIA_NOP");
++                if (log.isDebugEnabled())
++                    log.debug("handleMessage: MEDIA_NOP");
+                 break;
+ 
+             default:
+@@ -627,10 +752,11 @@ public class AvosMediaPlayer implements IMediaPlayer {
+         }
+     }
+ 
+-    static double videoAspectFromRatio(int numerator, int denominator) {
++    static double videoAspectFromRatio(int numerator, int denominator)
++    {
+         if (numerator <= 0 || denominator <= 0)
+             return 1.0;
+-        double aspect = (double) numerator / (double) denominator;
++        double aspect = (double)numerator / (double)denominator;
+         return Double.isFinite(aspect) && aspect > 0.0 ? aspect : 1.0;
+     }
+ }
+diff --git a/src/com/archos/medialib/PlaybackReadEvents.java b/src/com/archos/medialib/PlaybackReadEvents.java
+new file mode 100644
+index 0000000..f394c79
+--- /dev/null
++++ b/src/com/archos/medialib/PlaybackReadEvents.java
+@@ -0,0 +1,55 @@
++package com.archos.medialib;
++
++import java.io.IOException;
++import java.util.Map;
++import java.util.WeakHashMap;
++
++/** Recovery is independent of diagnostic logging. Owner identity fences metadata and obsolete backend reads. */
++public final class PlaybackReadEvents
++{
++    public interface Listener
++    {
++        void failed(Object owner, IOException cause);
++    }
++    private static volatile Listener listener;
++    private static final Map<Object, PlaybackReadGuard> GUARDS = new WeakHashMap<>();
++    private static final Map<Object, Boolean> PAUSED = new WeakHashMap<>();
++
++    public static void install(Listener value)
++    {
++        listener = value;
++    }
++    public static synchronized void register(Object owner, PlaybackReadGuard guard)
++    {
++        GUARDS.put(owner, guard);
++        guard.paused(Boolean.TRUE.equals(PAUSED.get(owner)));
++    }
++    public static synchronized void unregister(Object owner, PlaybackReadGuard guard)
++    {
++        if (GUARDS.get(owner) == guard)
++        {
++            GUARDS.remove(owner);
++            PAUSED.remove(owner);
++        }
++    }
++    public static synchronized boolean paused(Object owner, boolean paused)
++    {
++        if (owner == null)
++            return false;
++        PAUSED.put(owner, paused);
++        PlaybackReadGuard guard = GUARDS.get(owner);
++        if (guard == null)
++            return false;
++        guard.paused(paused);
++        return true;
++    }
++    public static void failed(Object owner, IOException cause)
++    {
++        Listener sink = listener;
++        if (sink != null)
++            sink.failed(owner, cause);
++    }
++    private PlaybackReadEvents()
++    {
++    }
++}
+diff --git a/src/com/archos/medialib/PlaybackReadGuard.java b/src/com/archos/medialib/PlaybackReadGuard.java
+new file mode 100644
+index 0000000..4c06876
+--- /dev/null
++++ b/src/com/archos/medialib/PlaybackReadGuard.java
+@@ -0,0 +1,189 @@
++package com.archos.medialib;
++
++import java.io.EOFException;
++import java.io.FilterInputStream;
++import java.io.IOException;
++import java.io.InputStream;
++import java.io.InterruptedIOException;
++import java.util.function.Consumer;
++
++/** One playback byte-stream generation. A failed generation can never be resumed or reopened. */
++public final class PlaybackReadGuard implements AutoCloseable
++{
++    public static final long PAUSED_READ_BUDGET = 64 * 1024;
++    private final Consumer<IOException> failure;
++    private boolean paused, closed, failed;
++    private long remaining = PAUSED_READ_BUDGET;
++    private long epoch;
++
++    public PlaybackReadGuard(Consumer<IOException> failure)
++    {
++        this.failure = failure;
++    }
++
++    public synchronized void paused(boolean value)
++    {
++        if (value && !paused)
++        {
++            remaining = PAUSED_READ_BUDGET;
++            epoch++;
++        }
++        paused = value;
++        notifyAll();
++    }
++
++    public synchronized void check() throws IOException
++    {
++        if (closed || failed)
++            throw new IOException("Playback stream generation abandoned");
++    }
++
++    public void failed(IOException cause)
++    {
++        synchronized (this)
++        {
++            if (closed || failed || Thread.currentThread().isInterrupted())
++                return;
++            failed = true;
++            notifyAll();
++        }
++        try
++        {
++            failure.accept(cause);
++        }
++        catch (RuntimeException ignored)
++        { /* The old generation remains poisoned even if notification fails. */
++        }
++    }
++
++    public InputStream wrap(InputStream input, long expected) throws IOException
++    {
++        try
++        {
++            check();
++        }
++        catch (IOException abandoned)
++        {
++            try
++            {
++                input.close();
++            }
++            catch (IOException closeFailure)
++            {
++                abandoned.addSuppressed(closeFailure);
++            }
++            throw abandoned;
++        }
++        return new FilterInputStream(input) {
++            private volatile boolean inputClosed;
++            private long left = expected;
++            @Override public int read() throws IOException
++            {
++                byte[] one = new byte[1];
++                return read(one, 0, 1) < 0 ? -1 : one[0] & 255;
++            }
++            @Override public int read(byte[] bytes, int offset, int length) throws IOException
++            {
++                java.util.Objects.checkFromIndexSize(offset, length, bytes.length);
++                if (length == 0)
++                    return 0;
++                long reservedEpoch;
++                boolean reserved;
++                synchronized (PlaybackReadGuard.this)
++                {
++                    while (paused && remaining == 0 && !closed && !failed && !inputClosed)
++                    {
++                        try
++                        {
++                            PlaybackReadGuard.this.wait();
++                        }
++                        catch (InterruptedException cancelled)
++                        {
++                            Thread.currentThread().interrupt();
++                            throw new InterruptedIOException("Paused playback read cancelled");
++                        }
++                    }
++                    check();
++                    if (inputClosed)
++                        throw new IOException("Playback read closed");
++                    reserved = paused;
++                    reservedEpoch = epoch;
++                    if (reserved)
++                    {
++                        length = (int)Math.min(length, remaining);
++                        remaining -= length;
++                    }
++                }
++                int count = -1;
++                try
++                {
++                    count = in.read(bytes, offset, length);
++                    check();
++                    if (inputClosed)
++                        throw new IOException("Playback read closed");
++                    if (count < 0 && left > 0)
++                        throw new EOFException("Playback source ended before promised bytes");
++                    if (count > 0 && left >= 0)
++                        left -= count;
++                    return count;
++                }
++                catch (IOException cause)
++                {
++                    if (!inputClosed)
++                        failed(cause);
++                    throw cause;
++                }
++                finally
++                {
++                    synchronized (PlaybackReadGuard.this)
++                    {
++                        if (reserved && paused && epoch == reservedEpoch)
++                        {
++                            remaining += length - Math.max(0, count);
++                            PlaybackReadGuard.this.notifyAll();
++                        }
++                    }
++                }
++            }
++            @Override public long skip(long count) throws IOException
++            {
++                byte[] discard = new byte[(int)Math.min(8192, Math.max(0, count))];
++                long skipped = 0;
++                while (skipped < count)
++                {
++                    int n = read(discard, 0, (int)Math.min(discard.length, count - skipped));
++                    if (n < 0)
++                        break;
++                    skipped += n;
++                }
++                return skipped;
++            }
++            @Override public void close() throws IOException
++            {
++                inputClosed = true;
++                synchronized (PlaybackReadGuard.this)
++                {
++                    PlaybackReadGuard.this.notifyAll();
++                }
++                in.close();
++            }
++            @Override public boolean markSupported()
++            {
++                return false;
++            }
++            @Override public void mark(int limit)
++            {
++            }
++            @Override public void reset() throws IOException
++            {
++                throw new IOException("Playback mark/reset unsupported");
++            }
++        };
++    }
++
++    @Override public synchronized void close()
++    {
++        closed = true;
++        notifyAll();
++    }
++}
+diff --git a/src/com/archos/medialib/SmbProxy.java b/src/com/archos/medialib/SmbProxy.java
+index 9331c3a..a319c07 100644
+--- a/src/com/archos/medialib/SmbProxy.java
++++ b/src/com/archos/medialib/SmbProxy.java
+@@ -30,92 +30,139 @@ import org.slf4j.LoggerFactory;
+ import java.io.IOException;
+ import java.util.Map;
+ 
+-public class SmbProxy extends Proxy{
++public class SmbProxy extends Proxy
++{
+ 
+     private static final Logger log = LoggerFactory.getLogger(SmbProxy.class);
+     private StreamOverHttp mStream;
+     private final StreamOverHttp.ReadMode mReadMode;
++    private PlaybackReadGuard mReadGuard;
++    private Object mPlaybackOwner;
+ 
+-    protected SmbProxy(Uri uri) {
++    protected SmbProxy(Uri uri)
++    {
+         this(uri, StreamOverHttp.ReadMode.DEFAULT);
+     }
+ 
+-    private SmbProxy(Uri uri, StreamOverHttp.ReadMode readMode) {
++    private SmbProxy(Uri uri, StreamOverHttp.ReadMode readMode)
++    {
+         super(uri);
+         mReadMode = readMode;
+     }
+-    public static boolean needToStream(String scheme){
+-            return "smb".equalsIgnoreCase(scheme) ||
+-                    "ftp".equalsIgnoreCase(scheme) ||
+-                    "ftps".equalsIgnoreCase(scheme) ||
+-                    "sftp".equalsIgnoreCase(scheme) ||
+-                    "sshj".equalsIgnoreCase(scheme) ||
+-                    "webdav".equalsIgnoreCase(scheme) ||
+-                    "webdavs".equalsIgnoreCase(scheme) ||
+-                    "smbj".equalsIgnoreCase(scheme) ||
+-                    UriUtils.isContentUri(Uri.parse(scheme+"://test"));
++    public static boolean needToStream(String scheme)
++    {
++        return "smb".equalsIgnoreCase(scheme) || "ftp".equalsIgnoreCase(scheme) || "ftps".equalsIgnoreCase(scheme) ||
++            "sftp".equalsIgnoreCase(scheme) || "sshj".equalsIgnoreCase(scheme) || "webdav".equalsIgnoreCase(scheme) ||
++            "webdavs".equalsIgnoreCase(scheme) || "smbj".equalsIgnoreCase(scheme) ||
++            UriUtils.isContentUri(Uri.parse(scheme + "://test"));
+     }
+-    protected Uri start() {
+-        stop();
++    protected Uri start()
++    {
++        if (mStream != null)
++        {
++            mStream.close();
++            mStream = null;
++        }
+         Uri encodedUri = encodeUri(mUri);
+         String mimeType = MimeUtils.guessMimeTypeFromExtension(encodedUri.getLastPathSegment());
+         MetaFile2 file = null;
+-        try {
+-            try {
++        try
++        {
++            try
++            {
+                 file = MetaFile2Factory.getMetaFileForUrl(mUri);
+-            } catch (Exception e) {
++            }
++            catch (Exception e)
++            {
+                 // this is not really an error
+-                if (log.isTraceEnabled()) log.trace("start: error getting metafile for url {}", mUri, e);
++                if (log.isTraceEnabled())
++                    log.trace("start: error getting metafile for url {}", mUri, e);
++            }
++            if (file != null)
++            {
++                mStream = mReadGuard == null
++                              ? new StreamOverHttp(file, mimeType, mReadMode)
++                              : new com.archos.filecorelibrary.RecoverablePlaybackStream(file, mimeType, mReadGuard);
+             }
+-            if(file != null) {
+-                mStream = new StreamOverHttp(file, mimeType, mReadMode);
+-            } else {
++            else
++            {
+                 // sftp at least requires encodedUri
+-                mStream = new StreamOverHttp(encodedUri, mimeType, mReadMode);
++                mStream =
++                    mReadGuard == null
++                        ? new StreamOverHttp(encodedUri, mimeType, mReadMode)
++                        : new com.archos.filecorelibrary.RecoverablePlaybackStream(encodedUri, mimeType, mReadGuard);
+             }
+-        } catch (IOException e) {
++        }
++        catch (IOException e)
++        {
+             return null;
+         }
+-        return mStream.getUri(file != null ? file.getName():encodedUri.getLastPathSegment());
++        return mStream.getUri(file != null ? file.getName() : encodedUri.getLastPathSegment());
+     }
+-    
+-    public void stop() {
+-        if (mStream != null) {
++
++    public void stop()
++    {
++        if (mReadGuard != null)
++        {
++            mReadGuard.close();
++            PlaybackReadEvents.unregister(mPlaybackOwner, mReadGuard);
++        }
++        if (mStream != null)
++        {
+             mStream.close();
+             mStream = null;
+-        } 
++        }
+     }
+-    
+-    public static SmbProxy setDataSource(Uri uri, IMediaPlayer mp, Map<String, String> headers) throws IOException {
++
++    public static SmbProxy setDataSource(Uri uri, IMediaPlayer mp, Map<String, String> headers) throws IOException
++    {
+         SmbProxy proxy = new SmbProxy(uri, StreamOverHttp.ReadMode.PLAYBACK);
++        proxy.mPlaybackOwner = mp;
++        proxy.mReadGuard = new PlaybackReadGuard(failure -> PlaybackReadEvents.failed(mp, failure));
++        PlaybackReadEvents.register(mp, proxy.mReadGuard);
+         boolean installed = false;
+-        try {
++        try
++        {
+             Uri local = proxy.start();
+-            if (local == null) throw new IOException("Unable to open proxy");
+-            if (headers != null) mp.setDataSource2(local.toString(), headers);
+-            else mp.setDataSource(local.toString());
++            if (local == null)
++                throw new IOException("Unable to open proxy");
++            if (headers != null)
++                mp.setDataSource2(local.toString(), headers);
++            else
++                mp.setDataSource(local.toString());
+             installed = true;
+             return proxy;
+-        } finally {
+-            if (!installed) proxy.stop();
++        }
++        finally
++        {
++            if (!installed)
++                proxy.stop();
+         }
+     }
+ 
+-    public static SmbProxy setDataSource(Uri uri, IMediaMetadataRetriever mr, Map<String, String> headers) throws IllegalArgumentException {
++    public static SmbProxy setDataSource(Uri uri, IMediaMetadataRetriever mr, Map<String, String> headers)
++        throws IllegalArgumentException
++    {
+         SmbProxy proxy = new SmbProxy(uri);
+         boolean installed = false;
+-        try {
++        try
++        {
+             Uri local = proxy.start();
+-            if (local == null) throw new IllegalArgumentException("Unable to open proxy");
++            if (local == null)
++                throw new IllegalArgumentException("Unable to open proxy");
+             mr.setDataSource(local.toString(), headers);
+             installed = true;
+             return proxy;
+-        } finally {
+-            if (!installed) proxy.stop();
++        }
++        finally
++        {
++            if (!installed)
++                proxy.stop();
+         }
+     }
+ 
+-    public int doesCurrentFileExists() {
++    public int doesCurrentFileExists()
++    {
+         return mStream.doesCurrentFileExists();
+     }
+ }
+diff --git a/test/java/com/archos/filecorelibrary/RecoverablePlaybackStreamTest.java b/test/java/com/archos/filecorelibrary/RecoverablePlaybackStreamTest.java
+new file mode 100644
+index 0000000..ce1d9b1
+--- /dev/null
++++ b/test/java/com/archos/filecorelibrary/RecoverablePlaybackStreamTest.java
+@@ -0,0 +1,90 @@
++package com.archos.filecorelibrary;
++
++import static org.junit.Assert.assertSame;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertThrows;
++import static org.mockito.Mockito.any;
++import static org.mockito.Mockito.eq;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockStatic;
++import static org.mockito.Mockito.times;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.when;
++
++import android.app.Application;
++import android.net.Uri;
++import com.archos.medialib.PlaybackReadGuard;
++import com.archos.filecorelibrary.jcifs.JcifsFileEditor;
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.mockito.MockedStatic;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class RecoverablePlaybackStreamTest
++{
++    @Test public void primaryReadFailurePoisonsFurtherOpensWhileSidecarsRemainOutsidePlaybackGuard() throws Exception
++    {
++        Uri uri = Uri.parse("smb://host/video.mkv"), subtitle = Uri.parse("smb://host/video.srt");
++        FileEditor primary = mock(FileEditor.class), sidecar = mock(FileEditor.class);
++        InputStream broken = new InputStream() {
++            @Override public int read() throws IOException
++            {
++                throw new IOException("Idle connection dropped");
++            }
++        };
++        when(primary.getInputStream(eq(0L), any(ReadOptions.class))).thenReturn(broken);
++        AtomicInteger failures = new AtomicInteger();
++        try (MockedStatic<FileEditorFactory> factory = mockStatic(FileEditorFactory.class);
++             PlaybackReadGuard guard = new PlaybackReadGuard(failure -> failures.incrementAndGet()))
++        {
++            factory.when(() -> FileEditorFactory.getFileEditorForUrl(eq(uri), any())).thenReturn(primary);
++            factory.when(() -> FileEditorFactory.getFileEditorForUrl(eq(subtitle), any())).thenReturn(sidecar);
++            RecoverablePlaybackStream stream = new RecoverablePlaybackStream(uri, "video/x-matroska", guard);
++            try
++            {
++                assertSame(sidecar, stream.getFileEditor(subtitle));
++                FileEditor wrapped = stream.getFileEditor(uri);
++                InputStream input =
++                    wrapped.getInputStream(0, new ReadOptions(ReadOptions.Purpose.PLAYBACK, 100, false));
++                assertThrows(IOException.class, input::read);
++                assertThrows(IOException.class, () -> wrapped.getInputStream(0, ReadOptions.DEFAULT));
++                verify(primary, times(1)).getInputStream(eq(0L), any(ReadOptions.class));
++                assertEquals(1, failures.get());
++                input.close();
++            }
++            finally
++            {
++                stream.close();
++            }
++        }
++    }
++
++    @Test public void wrappingDoesNotChangeJcifsNormalPlaybackRefillPolicy() throws Exception
++    {
++        Uri uri = Uri.parse("smb://host/video.mkv");
++        JcifsFileEditor primary = mock(JcifsFileEditor.class);
++        try (MockedStatic<FileEditorFactory> factory = mockStatic(FileEditorFactory.class);
++             PlaybackReadGuard guard = new PlaybackReadGuard(failure -> {}))
++        {
++            factory.when(() -> FileEditorFactory.getFileEditorForUrl(eq(uri), any())).thenReturn(primary);
++            RecoverablePlaybackStream stream = new RecoverablePlaybackStream(uri, "video/x-matroska", guard);
++            StreamOverHttp base = new StreamOverHttp(uri, "video/x-matroska", StreamOverHttp.ReadMode.PLAYBACK);
++            try
++            {
++                assertEquals(base.upstreamBufferSize(primary, true),
++                             stream.upstreamBufferSize(stream.getFileEditor(uri), true));
++            }
++            finally
++            {
++                stream.close();
++                base.close();
++            }
++        }
++    }
++}
+diff --git a/test/java/com/archos/medialib/PlaybackReadGuardTest.java b/test/java/com/archos/medialib/PlaybackReadGuardTest.java
+new file mode 100644
+index 0000000..4db0be7
+--- /dev/null
++++ b/test/java/com/archos/medialib/PlaybackReadGuardTest.java
+@@ -0,0 +1,121 @@
++package com.archos.medialib;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
++import java.io.ByteArrayInputStream;
++import java.io.EOFException;
++import java.io.IOException;
++import java.io.InputStream;
++import java.net.ServerSocket;
++import java.net.Socket;
++import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.TimeoutException;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.Test;
++
++public class PlaybackReadGuardTest
++{
++    @Test(timeout = 5000)
++    public void fakeServerDropsIdleConnectionOldBytesArePoisonedAndFreshGenerationSucceeds() throws Exception
++    {
++        AtomicInteger failures = new AtomicInteger();
++        CountDownLatch paused = new CountDownLatch(1);
++        try (ServerSocket server = new ServerSocket(0))
++        {
++            server.setSoTimeout(3000);
++            CompletableFuture<Void> serving = CompletableFuture.runAsync(() -> {
++                try
++                {
++                    try (Socket first = server.accept())
++                    {
++                        first.getOutputStream().write(new byte[] {1, 2, 3, 4});
++                        first.getOutputStream().flush();
++                        if (!paused.await(2, TimeUnit.SECONDS))
++                            throw new IOException("Pause not reached");
++                        // An idle server drops a response whose Content-Length promised eight bytes.
++                    }
++                    try (Socket second = server.accept())
++                    {
++                        second.getOutputStream().write(new byte[] {5, 6, 7, 8, 9, 10, 11, 12});
++                    }
++                }
++                catch (Exception failure)
++                {
++                    throw new RuntimeException(failure);
++                }
++            });
++            try (PlaybackReadGuard old = new PlaybackReadGuard(failure -> failures.incrementAndGet());
++                 Socket first = new Socket("127.0.0.1", server.getLocalPort()))
++            {
++                InputStream input = old.wrap(first.getInputStream(), 8);
++                assertEquals(4, input.readNBytes(4).length);
++                old.paused(true);
++                paused.countDown();
++                old.paused(false);
++                assertThrows(EOFException.class, input::read);
++                assertThrows(IOException.class, input::read);
++                assertEquals(1, failures.get());
++            }
++            try (PlaybackReadGuard fresh = new PlaybackReadGuard(failure -> failures.incrementAndGet());
++                 Socket second = new Socket("127.0.0.1", server.getLocalPort()))
++            {
++                InputStream input = fresh.wrap(second.getInputStream(), 8);
++                assertEquals(8, input.readNBytes(8).length);
++                assertEquals(-1, input.read());
++            }
++            serving.get(2, TimeUnit.SECONDS);
++            assertEquals(1, failures.get());
++        }
++    }
++
++    @Test(timeout = 5000) public void pauseBudgetIsSharedAndLateGuardRegistrationHonorsPause() throws Exception
++    {
++        Object owner = new Object();
++        assertFalse(PlaybackReadEvents.paused(owner, true));
++        PlaybackReadGuard guard = new PlaybackReadGuard(failure -> { throw new AssertionError(failure); });
++        PlaybackReadEvents.register(owner, guard);
++        try
++        {
++            InputStream input = guard.wrap(new ByteArrayInputStream(new byte[70000]), 70000);
++            assertEquals(65536, input.readNBytes(65536).length);
++            CompletableFuture<Integer> blocked = CompletableFuture.supplyAsync(() -> {
++                try
++                {
++                    return input.read();
++                }
++                catch (IOException failure)
++                {
++                    throw new RuntimeException(failure);
++                }
++            });
++            assertThrows(TimeoutException.class, () -> blocked.get(50, TimeUnit.MILLISECONDS));
++            assertTrue(PlaybackReadEvents.paused(owner, false));
++            assertEquals(Integer.valueOf(0), blocked.get(2, TimeUnit.SECONDS));
++        }
++        finally
++        {
++            guard.close();
++            PlaybackReadEvents.unregister(owner, guard);
++        }
++    }
++
++    @Test public void intentionalCloseDoesNotReportReadFailureAndLateInputsAreClosed() throws Exception
++    {
++        AtomicInteger failures = new AtomicInteger(), closes = new AtomicInteger();
++        PlaybackReadGuard guard = new PlaybackReadGuard(failure -> failures.incrementAndGet());
++        guard.close();
++        InputStream late = new ByteArrayInputStream(new byte[4]) {
++            @Override public void close()
++            {
++                closes.incrementAndGet();
++            }
++        };
++        assertThrows(IOException.class, () -> guard.wrap(late, 4));
++        assertEquals(1, closes.get());
++        assertEquals(0, failures.get());
++    }
++}

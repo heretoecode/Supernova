@@ -579,7 +579,6 @@ Experimental: puede no funcionar en todas las configuraciones.</string>
     <string name="rotation_unlocked">Rotación automática de pantalla activada</string>
     <string name="network_reindex">Reexplorar contenido</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Presiona la tecla ARRIBA\npara mostrar el menú de TV</string>
     <string name="help_overlay_network_indexing_text1">Presiona esta opción de menú para incorporar el contenido de esta carpeta y sus subcarpetas a la biblioteca de vídeo.</string>
     <string name="help_overlay_network_indexing_text2">Le permitirá obtener carteles y descripciones de películas y series de TV.</string>
     <string name="help_overlay_scraper_text">Pulse esta opción de menú para buscar carátulas y descripciones en línea para sus vídeos. </string>

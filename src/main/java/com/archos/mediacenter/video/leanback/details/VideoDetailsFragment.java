@@ -101,6 +101,7 @@ import com.archos.mediacenter.utils.videodb.VideoDbInfo;
 import com.archos.mediacenter.utils.videodb.XmlDb;
 import com.archos.mediacenter.video.CustomApplication;
 import com.archos.mediacenter.video.R;
+import com.archos.mediacenter.video.utils.LibrarySortPreferences;
 import com.archos.mediacenter.video.browser.BootupRecommandationService;
 import com.archos.mediacenter.video.browser.BrowserByIndexedVideos.lists.ListDialog;
 import com.archos.mediacenter.video.browser.Delete;
@@ -119,14 +120,13 @@ import com.archos.mediacenter.video.browser.loader.VideoLoader;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.info.MultipleVideoLoader;
 import com.archos.mediacenter.video.info.SortByFavoriteSources;
-import com.archos.mediacenter.video.info.VideoInfoActivity;
+import com.archos.mediacenter.video.info.VideoInfoContract;
 import com.archos.mediacenter.video.info.VideoInfoCommonClass;
 import com.archos.mediacenter.video.leanback.CompatibleCursorMapperConverter;
 import com.archos.mediacenter.video.leanback.DetailsBackdropController;
 import com.archos.mediacenter.video.leanback.adapter.object.WebPageLink;
 import com.archos.mediacenter.video.leanback.channels.ChannelManager;
 import com.archos.mediacenter.video.leanback.filebrowsing.ListingActivity;
-import com.archos.mediacenter.video.leanback.movies.AllMoviesGridFragment;
 import com.archos.mediacenter.video.leanback.overlay.Overlay;
 import com.archos.mediacenter.video.leanback.presenter.PresenterUtils;
 import com.archos.mediacenter.video.leanback.presenter.ScraperImageBackdropPresenter;
@@ -192,9 +192,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
     public static final String EXTRA_LIST_ID = "list_id";
     public static final String EXTRA_FORCE_VIDEO_SELECTION = "force_video_selection";
     /** The id of the video in the MediaDB (long) */
-    public static final String EXTRA_VIDEO_ID = VideoInfoActivity.EXTRA_VIDEO_ID;
+    public static final String EXTRA_VIDEO_ID = VideoInfoContract.EXTRA_VIDEO_ID;
 
-    public static final String EXTRA_LAUNCHED_FROM_PLAYER = VideoInfoActivity.EXTRA_LAUNCHED_FROM_PLAYER;
+    public static final String EXTRA_LAUNCHED_FROM_PLAYER = VideoInfoContract.EXTRA_LAUNCHED_FROM_PLAYER;
 
     public static final String EXTRA_SHOULD_LOAD_BACKDROP = "should_load_backdrop";
     public static final String EXTRA_DETAILS_LAUNCH_UPTIME_MS = "details_launch_uptime_ms";
@@ -642,10 +642,10 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
 
         mLaunchedFromPlayer = intent.getBooleanExtra(EXTRA_LAUNCHED_FROM_PLAYER, false);
         mShouldLoadBackdrop = intent.getBooleanExtra(EXTRA_SHOULD_LOAD_BACKDROP, true);
-        mPlayerType = intent.getIntExtra(VideoInfoActivity.EXTRA_PLAYER_TYPE, -1);
+        mPlayerType = intent.getIntExtra(VideoInfoContract.EXTRA_PLAYER_TYPE, -1);
         mVideoMetadataFromPlayer = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-            ? intent.getSerializableExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA, VideoMetadata.class)
-            : (VideoMetadata) intent.getSerializableExtra(VideoInfoActivity.EXTRA_USE_VIDEO_METADATA);
+            ? intent.getSerializableExtra(VideoInfoContract.EXTRA_USE_VIDEO_METADATA, VideoMetadata.class)
+            : (VideoMetadata) intent.getSerializableExtra(VideoInfoContract.EXTRA_USE_VIDEO_METADATA);
 
         mBackdropController = new DetailsBackdropController(
             getActivity(), R.id.details_backdrop, VideoInfoCommonClass.getDarkerColor(mColor));
@@ -2950,8 +2950,8 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset
             CursorLoader loader = null;
             if (mVideo instanceof Movie) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String sortOrder = prefs.getString(AllMoviesGridFragment.SORT_PARAM_KEY, MoviesLoader.DEFAULT_SORT);
-                boolean showWatched = prefs.getBoolean(AllMoviesGridFragment.SHOW_WATCHED_KEY, true);
+                String sortOrder = prefs.getString(LibrarySortPreferences.MOVIES_SORT_KEY, MoviesLoader.DEFAULT_SORT);
+                boolean showWatched = prefs.getBoolean(LibrarySortPreferences.MOVIES_SHOW_WATCHED_KEY, LibrarySortPreferences.SHOW_WATCHED_DEFAULT);
                 loader = new MoviesLoader(getActivity(), sortOrder, showWatched, true, VideoLoader.GRIDVIDEO_THROTTLE,
                     VideoLoader.GRIDVIDEO_THROTTLE_DELAY);
             } else if (mVideo instanceof Episode) {

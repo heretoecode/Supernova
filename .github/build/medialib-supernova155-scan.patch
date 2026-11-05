@@ -1,0 +1,1033 @@
+diff --git a/build.gradle b/build.gradle
+index 050f2eb..cb86d79 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -214,2 +214,3 @@ dependencies {
+     testImplementation 'junit:junit:4.13.2'
++    testImplementation 'com.squareup.okhttp3:mockwebserver:5.5.1'
+     testImplementation 'org.mockito:mockito-core:5.24.0'
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+index 9084346..c0111f4 100644
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -182,37 +182,29 @@ public class NetworkAutoRefresh extends BroadcastReceiver implements DefaultLife
+                 // and this request was rejected, so nothing must be scheduled.
+-                final long scanBatchId = AutoScrapeService.startNetworkScanBatch(eligible.size());
+-                if (scanBatchId == AutoScrapeService.STANDALONE_SCAN_BATCH_ID) {
+-                    if (log.isDebugEnabled()) log.debug("onReceive: a scan batch is already active, skipping this refresh");
+-                } else {
++                final Context appContext = context.getApplicationContext();
++                Handler handler = new Handler(Looper.getMainLooper());
++                final java.util.List<NetworkScanLedger.Member> members = NetworkScanLedger.register(appContext, eligible);
++                if (!members.isEmpty()) {
+                     int scanCount = 0;
+-                    Handler handler = new Handler(Looper.getMainLooper());
+-                    for (Uri uri : eligible) {
+-                        if (log.isDebugEnabled()) log.debug("onReceive: scanning {}", uri);
+-                        final Uri scanUri = uri;
++                    for (NetworkScanLedger.Member member : members) {
+                         final long delayMs = 100L + (scanCount * 2000L);
+-                        // Use global application context in the lambda: it fires after pendingResult.finish()
+-                        // so the receiver's context may already be invalidated.
+-                        final Context appContext = ArchosUtils.getGlobalContext();
+-                        boolean scheduled = handler.postDelayed(() -> {
+-                            Intent refreshIntent = new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, scanUri);
+-                            refreshIntent.putExtra(NetworkScannerServiceVideo.RECORD_ON_FAIL_PREFERENCE, AUTO_RESCAN_ERROR);
+-                            refreshIntent.putExtra(NetworkScannerServiceVideo.RECORD_END_OF_SCAN_PREFERENCE, AUTO_RESCAN_LAST_SCAN);
+-                            refreshIntent.putExtra(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, scanBatchId);
+-                            refreshIntent.setPackage(appContext.getPackageName());
+-                            appContext.sendBroadcast(refreshIntent);
+-                        }, delayMs);
+-                        if (!scheduled) {
+-                            NetworkScannerServiceVideo.previewScanEvent(appContext,scanUri,"failed",Long.toString(scanBatchId),eligible.size(),0,0,0);
+-                            // The looper is exiting and this scan will never run: release its slot
+-                            // so the batch can still reach zero, and route the completion through
+-                            // shared handling so that if this released slot owns the final
+-                            // completion (earlier scans already succeeded) post-scan scraping still
+-                            // starts instead of being silently dropped.
+-                            log.warn("onReceive: failed to schedule scan for {}, releasing its batch slot", scanUri);
+-                            NetworkScannerServiceVideo.previewFinish(appContext,scanUri,Long.toString(scanBatchId),AutoScrapeService.completeNetworkScan(scanBatchId, false, false),0,0,0);
+-                            continue;
++                        try {
++                            boolean scheduled = handler.postDelayed(() -> {
++                                if (!NetworkScanLedger.pending(member)) return;
++                                Intent refreshIntent = new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, member.uri);
++                                refreshIntent.putExtra(NetworkScannerServiceVideo.RECORD_ON_FAIL_PREFERENCE, AUTO_RESCAN_ERROR);
++                                refreshIntent.putExtra(NetworkScannerServiceVideo.RECORD_END_OF_SCAN_PREFERENCE, AUTO_RESCAN_LAST_SCAN);
++                                refreshIntent.putExtra(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, member.batch);
++                                refreshIntent.putExtra(NetworkScanLedger.EXTRA_MEMBER, member.id);
++                                refreshIntent.setPackage(appContext.getPackageName());
++                                try {
++                                    appContext.sendBroadcast(refreshIntent);
++                                } catch (RuntimeException failure) {
++                                    NetworkScanLedger.reject(member);
++                                }
++                            }, delayMs);
++                            if (!scheduled) NetworkScanLedger.reject(member);
++                            else scanCount++;
++                        } catch (RuntimeException failure) {
++                            NetworkScanLedger.reject(member);
+                         }
+-                        scanCount++;
+-                        NetworkScannerServiceVideo.previewScanEvent(appContext,scanUri,"queued",Long.toString(scanBatchId),eligible.size(),0,0,0);
+-                        if (log.isDebugEnabled()) log.debug("onReceive: queued scan for {} with delay {}ms", uri, delayMs);
+                     }
+diff --git a/src/com/archos/mediaprovider/video/NetworkScanLedger.java b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+new file mode 100644
+index 0000000..18c1c60
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/NetworkScanLedger.java
+@@ -0,0 +1,172 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.Intent;
++import android.net.Uri;
++import com.archos.filecorelibrary.webdav.ScanIoScope;
++import com.archos.mediascraper.AutoScrapeService;
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++import java.util.concurrent.Executors;
++import java.util.concurrent.ScheduledExecutorService;
++import java.util.concurrent.ScheduledFuture;
++import java.util.concurrent.TimeUnit;
++
++/** Exact ownership for counted scheduler work; all transitions use the same monitor. */
++final class NetworkScanLedger {
++    static final String EXTRA_MEMBER = "scan_member_extra";
++    static final long START_ACK_MS = 15_000L;
++    static final long SOURCE_MS = 300_000L;
++    static ScheduledExecutorService clock = Executors.newSingleThreadScheduledExecutor(r -> {
++        Thread thread = new Thread(r, "ScanStartDeadline");
++        thread.setDaemon(true);
++        return thread;
++    });
++    private static final Map<String, Member> MEMBERS = new HashMap<>();
++
++    static final class Member {
++        final Context context;
++        final Uri uri;
++        final long batch;
++        final String id;
++        final int total;
++        Object service;
++        boolean accepted;
++        boolean running;
++        boolean terminal;
++        ScanIoScope io;
++        ScheduledFuture<?> acknowledgement;
++        ScheduledFuture<?> sourceDeadline;
++
++        Member(Context context, Uri uri, long batch, int total) {
++            this.context = context.getApplicationContext();
++            this.uri = uri;
++            this.batch = batch;
++            this.id = batch + ":" + java.util.UUID.randomUUID();
++            this.total = total;
++        }
++    }
++
++    static synchronized List<Member> register(Context context, List<Uri> roots) {
++        long batch = AutoScrapeService.startNetworkScanBatch(roots.size());
++        List<Member> result = new ArrayList<>();
++        if (batch == AutoScrapeService.STANDALONE_SCAN_BATCH_ID) return result;
++        for (int i = 0; i < roots.size(); i++) {
++            Member member = new Member(context, roots.get(i), batch, roots.size());
++            MEMBERS.put(member.id, member);
++            result.add(member);
++        }
++        for (int i = 0; i < result.size(); i++) queued(result.get(i), 100L + i * 2000L);
++        return result;
++    }
++
++    static synchronized Member from(Intent intent) {
++        if (intent == null) return null;
++        Member member = MEMBERS.get(intent.getStringExtra(EXTRA_MEMBER));
++        return member != null && member.batch == intent.getLongExtra(
++                NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, 0L)
++                && member.uri.equals(intent.getData()) ? member : null;
++    }
++
++    static synchronized boolean ownsBatch(long batch) {
++        for (Member member : MEMBERS.values()) if (member.batch == batch) return true;
++        return false;
++    }
++
++    static synchronized void queued(Member member, long dispatchDelay) {
++        if (member.terminal) return;
++        NetworkScannerServiceVideo.previewScanEvent(member.context, member.uri, "queued",
++                Long.toString(member.batch), member.total, 0, 0, 0);
++        try {
++            member.acknowledgement = clock.schedule(() -> expireStart(member),
++                    dispatchDelay + START_ACK_MS, TimeUnit.MILLISECONDS);
++        } catch (RuntimeException failure) {
++            finish(member, true, false);
++        }
++    }
++
++    static synchronized void expireStart(Member member) {
++        if (pending(member) && !member.accepted) reject(member);
++    }
++
++    static synchronized boolean pending(Member member) {
++        return member != null && !member.terminal;
++    }
++
++    static synchronized boolean accept(Member member, Object service) {
++        if (!pending(member) || member.accepted) return false;
++        member.accepted = true;
++        member.service = service;
++        if (member.acknowledgement != null) member.acknowledgement.cancel(false);
++        try {
++            // Includes time waiting for the serial executor, so accepted queued work is bounded too.
++            member.sourceDeadline = clock.schedule(() -> reject(member), SOURCE_MS, TimeUnit.MILLISECONDS);
++        } catch (RuntimeException failure) {
++            reject(member);
++            return false;
++        }
++        return true;
++    }
++
++    /** Called by the executor, not by the receiver/handler that merely queued it. */
++    static synchronized boolean begin(Member member, ScanIoScope io) {
++        if (!pending(member) || member.running) return false;
++        member.running = true;
++        member.io = io;
++        if (member.acknowledgement != null) member.acknowledgement.cancel(false);
++        return true;
++    }
++
++    static synchronized void reject(Intent intent) {
++        reject(from(intent));
++    }
++
++    static synchronized void reject(Member member) {
++        if (!pending(member)) return;
++        if (member.running) {
++            // Keep the batch busy until the worker's finally, including any in-flight DB call.
++            member.io.cancel();
++        } else {
++            finish(member, true, false);
++        }
++    }
++
++    static synchronized void cancelOwner(Object service) {
++        for (Member member : new ArrayList<>(MEMBERS.values())) {
++            if (member.service == service) reject(member);
++        }
++    }
++
++    static synchronized void finish(Member member, boolean failed, boolean success) {
++        finish(member, failed, success, 0, 0, 0);
++    }
++
++    static synchronized void finish(Member member, boolean failed, boolean success,
++            int checked, int added, int updated) {
++        if (!pending(member)) return;
++        member.terminal = true;
++        if (member.acknowledgement != null) member.acknowledgement.cancel(false);
++        if (member.sourceDeadline != null) member.sourceDeadline.cancel(false);
++        MEMBERS.remove(member.id);
++        boolean cancelled = member.io != null && member.io.isCancelled();
++        failed |= cancelled;
++        success &= !failed;
++        String phase = !member.running ? "not_started" : success ? "complete" : "failed";
++        AutoScrapeService.NetworkScanCompletion completion = AutoScrapeService.completeNetworkScan(
++                member.batch, failed, success);
++        NetworkScannerServiceVideo.previewScanEvent(member.context, member.uri, phase,
++                Long.toString(member.batch), -1, checked, added, updated);
++        try {
++            NetworkScannerServiceVideo.previewFinish(member.context, member.uri,
++                    Long.toString(member.batch), completion, checked, added, updated);
++        } catch (RuntimeException failure) {
++            // Accounting is committed. Failure to enqueue metadata must not strand other members.
++            org.slf4j.LoggerFactory.getLogger(NetworkScanLedger.class)
++                    .warn("Could not deliver scan completion", failure);
++        }
++    }
++
++    private NetworkScanLedger() {}
++}
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+index 01241f2..b2dedab 100644
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -16,2 +16,5 @@ package com.archos.mediaprovider.video;
+
++import com.archos.filecorelibrary.webdav.ScanIoScope;
++import java.util.concurrent.TimeUnit;
++
+ import android.annotation.SuppressLint;
+@@ -118,3 +121,4 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     private Blacklist mBlacklist;
+-    private static boolean sIsScannerAlive;
++    private static volatile boolean sIsScannerAlive;
++    private volatile boolean mClosing;
+     private String mRecordOnFailPreference;
+@@ -154,2 +158,6 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         if (log.isDebugEnabled()) log.debug("startIfHandles");
++        if (broadcast.hasExtra(NetworkScanLedger.EXTRA_MEMBER)
++                && !NetworkScanLedger.pending(NetworkScanLedger.from(broadcast))) return true;
++        if (!broadcast.hasExtra(NetworkScanLedger.EXTRA_MEMBER) && NetworkScanLedger.ownsBatch(
++                broadcast.getLongExtra(EXTRA_SCAN_BATCH_ID, 0L))) return true;
+         String action = broadcast.getAction();
+@@ -173,2 +181,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             serviceIntent.putExtra(EXTRA_SCAN_BATCH_ID, batchId);
++            copyStringExtraIfPresent(broadcast, serviceIntent, NetworkScanLedger.EXTRA_MEMBER);
+             int pendingScans = com.archos.mediascraper.AutoScrapeService.getNetworkScanCount();
+@@ -176,5 +185,10 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 if (log.isDebugEnabled()) log.debug("startIfHandles: starting service (isForeground={}, pendingScans={})", isForeground, pendingScans);
+-                context.startService(serviceIntent);
++                try {
++                    if (context.startService(serviceIntent) == null) NetworkScanLedger.reject(broadcast);
++                } catch (RuntimeException failure) {
++                    NetworkScanLedger.reject(broadcast);
++                }
+             } else {
+                 if (log.isDebugEnabled()) log.debug("startIfHandles: app in background and no pending scans, ignoring");
++                NetworkScanLedger.reject(broadcast);
+             }
+@@ -182,2 +196,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         }
++        NetworkScanLedger.reject(broadcast);
+         if (log.isDebugEnabled()) log.debug("startIfHandles is false: do nothing");
+@@ -292,6 +307,8 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         if (log.isDebugEnabled()) log.debug("onDestroy");
+-        cleanup();
+-        // Additional cleanup if necessary
+-        mScanExecutor.shutdownNow();
+-        super.onDestroy();
++        try {
++            cleanup();
++        } finally {
++            mScanExecutor.shutdownNow();
++            super.onDestroy();
++        }
+     }
+@@ -300,3 +317,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     public int onStartCommand(Intent intent, int flags, int startId) {
+-        if(!SupernovaLibraryPolicy.configured(this)){stopForeground(true);stopSelf(startId);return START_NOT_STICKY;}
++        if(mClosing || !SupernovaLibraryPolicy.configured(this)){NetworkScanLedger.reject(intent);stopForeground(true);stopSelf(startId);return START_NOT_STICKY;}
+         // intents delivered here
+@@ -323,3 +340,11 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             Uri data = intent.getData();
++            if (data == null) { NetworkScanLedger.reject(intent); return START_NOT_STICKY; }
+             String key = data.toString();
++            NetworkScanLedger.Member member = NetworkScanLedger.from(intent);
++            if (!intent.hasExtra(NetworkScanLedger.EXTRA_MEMBER) && NetworkScanLedger.ownsBatch(
++                    intent.getLongExtra(EXTRA_SCAN_BATCH_ID, 0L))) return START_NOT_STICKY;
++            if (intent.hasExtra(NetworkScanLedger.EXTRA_MEMBER) && !NetworkScanLedger.accept(member, this)) {
++                if (mScanRequests.isEmpty()) stopSelf(startId);
++                return START_NOT_STICKY;
++            }
+             long batchId = intent.getLongExtra(EXTRA_SCAN_BATCH_ID,
+@@ -327,9 +352,20 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             if (mScanRequests.putIfAbsent(key, mDummy) == null) {
+-                Message m = mHandler.obtainMessage(MESSAGE_DO_SCAN, startId, flags, data);
+-                Bundle scanData = new Bundle();
+-                scanData.putLong(EXTRA_SCAN_BATCH_ID, batchId);
+-                m.setData(scanData);
+-                mHandler.sendMessage(m);
++                try {
++                    Message m = mHandler.obtainMessage(MESSAGE_DO_SCAN, startId, flags, data);
++                    Bundle scanData = new Bundle();
++                    scanData.putLong(EXTRA_SCAN_BATCH_ID, batchId);
++                    scanData.putString(NetworkScanLedger.EXTRA_MEMBER, intent.getStringExtra(NetworkScanLedger.EXTRA_MEMBER));
++                    m.setData(scanData);
++                    if (!mHandler.sendMessage(m)) {
++                        mScanRequests.remove(key);
++                        NetworkScanLedger.reject(member);
++                        if (mScanRequests.isEmpty()) stopSelf(startId);
++                    }
++                } catch (RuntimeException failure) {
++                    mScanRequests.remove(key);
++                    NetworkScanLedger.reject(member);
++                    if (mScanRequests.isEmpty()) stopSelf(startId);
++                }
+             } else {
+-                mFollowUpScans.add(key);
++                if (member == null) mFollowUpScans.add(key);
+                 // This URI is already queued, so this request will not run its own doScan().
+@@ -339,7 +375,11 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 if (log.isDebugEnabled()) log.debug("skip scanning {}, already in queue", key);
+-                com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
+-                        com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, false, false);
+-                String batch=previewBatch(batchId);
+-                previewScanEvent(this,data,"coalesced",batch,-1,0,0,0);
+-                previewFinish(this,data,batch,completion,0,0,0);
++                if (member != null) {
++                    NetworkScanLedger.reject(member);
++                } else {
++                    com.archos.mediascraper.AutoScrapeService.NetworkScanCompletion completion =
++                            com.archos.mediascraper.AutoScrapeService.completeNetworkScan(batchId, false, false);
++                    String batch=previewBatch(batchId);
++                    previewScanEvent(this,data,"coalesced",batch,-1,0,0,0);
++                    previewFinish(this,data,batch,completion,0,0,0);
++                }
+             }
+@@ -401,21 +441,61 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                         com.archos.mediascraper.AutoScrapeService.STANDALONE_SCAN_BATCH_ID);
++                Intent memberIntent = new Intent().setData(uri)
++                        .putExtra(EXTRA_SCAN_BATCH_ID, scanBatchId)
++                        .putExtra(NetworkScanLedger.EXTRA_MEMBER, msg.getData().getString(NetworkScanLedger.EXTRA_MEMBER));
++                final NetworkScanLedger.Member member = NetworkScanLedger.from(memberIntent);
++                final boolean tracked = msg.getData().getString(NetworkScanLedger.EXTRA_MEMBER) != null;
++                if (mClosing || (tracked && member == null)) {
++                    mScanRequests.remove(key);
++                    NetworkScanLedger.reject(member);
++                    if (mScanRequests.isEmpty()) stopSelf(msg.arg1);
++                    break;
++                }
+                 if (isForeground || pendingScans > 0) {
+-                    if (log.isDebugEnabled()) log.debug("handleMessage: processing scan (isForeground={}, pendingScans={})", isForeground, pendingScans);
+-                    mScanExecutor.execute(() -> {
+-                        mScanThread=Thread.currentThread();
+-                        try {
+-                            doScan(uri,scanBatchId);
+-                            // A burst schedules at most one follow-up, never overlapping the active scan.
+-                            if(mFollowUpScans.remove(key)&&!Thread.currentThread().isInterrupted())
+-                                doScan(uri,com.archos.mediascraper.AutoScrapeService.STANDALONE_SCAN_BATCH_ID);
+-                        } finally {
+-                            mFollowUpScans.remove(key);mScanRequests.remove(key);mScanThread=null;
+-                            if(isHandlerThreadAlive())mHandler.post(()->mHandler.obtainMessage(MESSAGE_KILL,msg.arg1,msg.arg2).sendToTarget());
+-                        }
+-                    });
++                    try {
++                        mScanExecutor.execute(() -> {
++                            mScanThread = Thread.currentThread();
++                            boolean followUp = false;
++                            try (ScanIoScope io =
++                                    new ScanIoScope(NetworkScanLedger.SOURCE_MS,
++                                            TimeUnit.MILLISECONDS)) {
++                                if (mClosing) { NetworkScanLedger.reject(member); return; }
++                                if (member != null && !NetworkScanLedger.begin(member, io)) return;
++                                try {
++                                    doScan(uri, scanBatchId, member);
++                                } finally {
++                                    if (member != null) NetworkScanLedger.finish(member, true, false);
++                                }
++                                // Standalone follow-ups get their own source deadline in the next task.
++                                followUp = mFollowUpScans.remove(key) && !io.isCancelled() && !mClosing;
++                            } catch (java.util.concurrent.CancellationException cancelled) {
++                                NetworkScanLedger.finish(member, true, false);
++                            } finally {
++                                NetworkScanLedger.finish(member, true, false);
++                                mFollowUpScans.remove(key);
++                                mScanRequests.remove(key);
++                                mScanThread = null;
++                                // Do not leak an interrupt into the next member of the serial executor.
++                                Thread.interrupted();
++                                if (followUp && isHandlerThreadAlive()) {
++                                    Intent next = new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, uri);
++                                    mHandler.post(() -> onStartCommand(next, 0, msg.arg1));
++                                } else if (isHandlerThreadAlive()) mHandler.post(() ->
++                                        mHandler.obtainMessage(MESSAGE_KILL, msg.arg1, msg.arg2).sendToTarget());
++                            }
++                        });
++                    } catch (RuntimeException failure) {
++                        mScanRequests.remove(key);
++                        mFollowUpScans.remove(key);
++                        NetworkScanLedger.reject(member);
++                        if (mScanRequests.isEmpty()) stopSelf(msg.arg1);
++                    }
+                 } else {
+-                    mScanRequests.remove(key);mFollowUpScans.remove(key);
+-                    String batch=previewBatch(scanBatchId);
+-                    previewScanEvent(this,uri,"not_started",batch,-1,0,0,0);
+-                    previewFinish(this,uri,batch,com.archos.mediascraper.AutoScrapeService.completeNetworkScan(scanBatchId,false,false),0,0,0);
++                    mScanRequests.remove(key);
++                    mFollowUpScans.remove(key);
++                    if (member != null) NetworkScanLedger.reject(member);
++                    else {
++                        String batch=previewBatch(scanBatchId);
++                        previewScanEvent(this,uri,"not_started",batch,-1,0,0,0);
++                        previewFinish(this,uri,batch,com.archos.mediascraper.AutoScrapeService.completeNetworkScan(scanBatchId,false,false),0,0,0);
++                    }
+                 }
+@@ -670,2 +750,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     void doScan(Uri what, long batchId) {
++        if (NetworkScanLedger.ownsBatch(batchId)) return;
++        doScan(what, batchId, null);
++    }
++
++    private void doScan(Uri what, long batchId, NetworkScanLedger.Member member) {
+         if (log.isDebugEnabled()) log.debug("doScan {} (batch {})", what, batchId);
+@@ -680,3 +765,5 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             synchronized (ProviderDiscoveryGate.LOCK) {
++                ScanIoScope.checkpoint();
+                 ScanResult result = performScan(what);
++                ScanIoScope.checkpoint();
+                 scanResolved = result.resolved;
+@@ -691,2 +778,6 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             try {
++                if (member != null) {
++                    NetworkScanLedger.finish(member, scanHadDbError || !scanResolved, scanResolved,
++                            sFilesFoundCount, previewAdded, previewUpdated);
++                } else {
+                 previewScanEvent(what, scanResolved && !scanHadDbError ? "complete" : "failed");
+@@ -699,2 +790,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 previewFinish(this,what,previewBatchId,completion,sFilesFoundCount,previewAdded,previewUpdated);
++                }
+             } finally {
+@@ -734,2 +826,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+     ScanResult performScan(Uri what) {
++        ScanIoScope.checkpoint();
+         if (ProviderDiscoveryGate.excludes(this, what)) return new ScanResult(false, false);
+@@ -746,2 +839,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         }
++        ScanIoScope.checkpoint();
+         if (f != null) {
+@@ -852,2 +946,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+
++                ScanIoScope.checkpoint();
+                 int newSubs = handleSubtitles(cr);
+@@ -1056,2 +1151,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public boolean onFilesList(List<MetaFile2> files){
++            ScanIoScope.checkpoint();
+             // directories with a .nomedia file are not scanned
+@@ -1066,2 +1162,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public boolean onDirectory(MetaFile2 directory) {
++            ScanIoScope.checkpoint();
+             if(directory!=null&&SupernovaLibraryPolicy.excluded(mService,directory.getUri()))return false;
+@@ -1094,2 +1191,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public void onFile(MetaFile2 file) {
++            ScanIoScope.checkpoint();
+             if(file!=null&&SupernovaLibraryPolicy.excluded(mService,file.getUri()))return;
+@@ -1174,2 +1272,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public void onStop(MetaFile2 root) {
++            ScanIoScope.checkpoint();
+             if (log.isDebugEnabled()) log.debug("onStop");
+@@ -1343,2 +1442,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public void addUpdate(FileScanInfo update, long fileId) {
++            ScanIoScope.checkpoint();
+             Builder builder = ContentProviderOperation.newUpdate(VideoStoreInternal.FILES_SCANNED);
+@@ -1356,2 +1456,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public int executeDelete(DeleteString deletes) {
++            ScanIoScope.checkpoint();
+             int deleteCount = deletes.getCount();
+@@ -1364,2 +1465,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+                 if (log.isDebugEnabled()) log.debug("delete {} stale files", deleteCount);
++                ScanIoScope.checkpoint();
+                 int deleted = VideoStoreImportImpl.deleteIdsInOneTransaction(mCr,
+@@ -1373,2 +1475,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public void addInsert(FileScanInfo insert, long serverId) {
++            ScanIoScope.checkpoint();
+             if (log.isDebugEnabled()) log.debug("addInsert: adding in VideoStore and calling executor {} for serverId={}", insert._data, serverId);
+@@ -1380,2 +1483,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         public void executePending() {
++            ScanIoScope.checkpoint();
+             if (log.isDebugEnabled()) log.debug("executePending: process updates");
+@@ -1383,2 +1487,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             if (log.isDebugEnabled()) log.debug("executePending: process inserts");
++            ScanIoScope.checkpoint();
+             mInsertExecutor.execute();
+@@ -1515,2 +1620,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+             values = inserts.toArray(values);
++            ScanIoScope.checkpoint();
+             return cr.bulkInsert(SUBS_URI, values);
+@@ -1595,2 +1701,3 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         long id = 0;
++        ScanIoScope.checkpoint();
+         Uri result = cr.insert(uri, cv);
+@@ -1792,2 +1899,7 @@ public class NetworkScannerServiceVideo extends Service implements Handler.Callb
+         if (log.isDebugEnabled()) log.debug("cleanup");
++        mClosing = true;
++        NetworkScanLedger.cancelOwner(this);
++        mScanExecutor.shutdownNow();
++        mScanRequests.clear();
++        mFollowUpScans.clear();
+         isForeground = false;
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportReceiver.java b/src/com/archos/mediaprovider/video/VideoStoreImportReceiver.java
+index 5da87cd..6564d94 100644
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportReceiver.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportReceiver.java
+@@ -58,2 +58,3 @@ public class VideoStoreImportReceiver extends BroadcastReceiver {
+                 if (DBG) Log.d(TAG, "onReceive: throttled - same URI too soon: " + currentUri);
++                NetworkScanLedger.reject(intent);
+                 return;
+@@ -69,2 +70,3 @@ public class VideoStoreImportReceiver extends BroadcastReceiver {
+             if (DBG) Log.d(TAG, "onReceive: app is in background, do not start services");
++            NetworkScanLedger.reject(intent);
+             return;
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java b/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java
+new file mode 100644
+index 0000000..821f1e9
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/NetworkScanLedgerTest.java
+@@ -0,0 +1,337 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++import android.app.Application;
++import android.content.ComponentName;
++import android.content.Context;
++import android.content.ContextWrapper;
++import android.content.Intent;
++import android.net.Uri;
++import android.os.Bundle;
++import android.os.Handler;
++import android.os.Looper;
++import android.os.Message;
++import androidx.lifecycle.Lifecycle;
++import androidx.lifecycle.LifecycleRegistry;
++import androidx.lifecycle.ProcessLifecycleOwner;
++import androidx.preference.PreferenceManager;
++import com.archos.filecorelibrary.webdav.ScanIoScope;
++import com.archos.mediaprovider.ArchosMediaIntent;
++import com.archos.mediascraper.AutoScrapeService;
++import java.lang.reflect.Field;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.ScheduledExecutorService;
++import java.util.concurrent.ScheduledFuture;
++import java.util.concurrent.TimeUnit;
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.Robolectric;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.Shadows;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 28)
++public class NetworkScanLedgerTest {
++    private Context context;
++    private ScheduledExecutorService savedClock;
++    private ScheduledExecutorService clock;
++    private final List<Runnable> deadlines = new ArrayList<>();
++    private final List<NetworkScanLedger.Member> members = new ArrayList<>();
++
++    @Before public void setUp() throws Exception {
++        context = RuntimeEnvironment.getApplication();
++        PreferenceManager.getDefaultSharedPreferences(context).edit()
++                .putBoolean("supernova_onboarding_complete", true).putBoolean("enable_auto_scrape", false).commit();
++        AutoScrapeService.resetNetworkScanCount();
++        savedClock = NetworkScanLedger.clock;
++        clock = mock(ScheduledExecutorService.class);
++        when(clock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS))).thenAnswer(invocation -> {
++            deadlines.add(invocation.getArgument(0));
++            return mock(ScheduledFuture.class);
++        });
++        NetworkScanLedger.clock = clock;
++        field(VideoStoreImportReceiver.class, "sLastExecutionTime").setLong(null, 0L);
++        field(VideoStoreImportReceiver.class, "sLastUri").set(null, null);
++    }
++
++    @After public void tearDown() {
++        for (NetworkScanLedger.Member member : members) NetworkScanLedger.reject(member);
++        NetworkScanLedger.clock = savedClock;
++        Thread.interrupted();
++        AutoScrapeService.resetNetworkScanCount();
++    }
++
++    private List<NetworkScanLedger.Member> batch(String... roots) {
++        List<Uri> uris = new ArrayList<>();
++        for (String root : roots) uris.add(Uri.parse(root));
++        List<NetworkScanLedger.Member> result = NetworkScanLedger.register(context, uris);
++        members.addAll(result);
++        return result;
++    }
++
++    private Intent intent(NetworkScanLedger.Member member) {
++        return new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, member.uri)
++                .putExtra(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, member.batch)
++                .putExtra(NetworkScanLedger.EXTRA_MEMBER, member.id);
++    }
++
++    @Test public void stoppedBetweenQueuedAndDeliveryReleasesBothAndAllowsRetry() {
++        LifecycleRegistry lifecycle = (LifecycleRegistry) ProcessLifecycleOwner.get().getLifecycle();
++        lifecycle.setCurrentState(Lifecycle.State.STARTED);
++        List<NetworkScanLedger.Member> pair = batch("webdav://server/TV", "webdav://server/Movies");
++        lifecycle.setCurrentState(Lifecycle.State.CREATED);
++        VideoStoreImportReceiver receiver = new VideoStoreImportReceiver();
++        for (NetworkScanLedger.Member member : pair) receiver.onReceive(context, intent(member));
++        lifecycle.setCurrentState(Lifecycle.State.STARTED);
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertEquals(2, phaseCount("not_started"));
++        assertEquals(1, phaseCount("batch_failed"));
++        assertFalse(NetworkScannerServiceVideo.isScannerAlive());
++        assertEquals(1, batch("webdav://server/TV").size());
++    }
++
++    @Test public void throttleRejectsNewMemberButCannotFinishOneTwice() throws Exception {
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        field(VideoStoreImportReceiver.class, "sLastExecutionTime").setLong(null, System.currentTimeMillis());
++        field(VideoStoreImportReceiver.class, "sLastUri").set(null, member.uri.toString());
++        VideoStoreImportReceiver receiver = new VideoStoreImportReceiver();
++        receiver.onReceive(context, intent(member));
++        receiver.onReceive(context, intent(member));
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertEquals(1, phaseCount("not_started"));
++        assertEquals(1, phaseCount("batch_failed"));
++    }
++
++    @Test public void serviceStartThrowAndNullAndUnsupportedUriTerminate() {
++        for (boolean throwsFailure : new boolean[] {true, false}) {
++            NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++            Context rejecting = new ContextWrapper(context) {
++                @Override public ComponentName startService(Intent service) {
++                    if (throwsFailure) throw new IllegalStateException("background restriction");
++                    return null;
++                }
++            };
++            assertTrue(NetworkScannerServiceVideo.startIfHandles(rejecting, intent(member)));
++            assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        }
++        NetworkScanLedger.Member unsupported = batch("not-supported://server/TV").get(0);
++        assertFalse(NetworkScannerServiceVideo.startIfHandles(context, intent(unsupported)));
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++    }
++
++    @Test public void lostBroadcastExpiresAndLateDeliveryCannotStartAServiceOrAffectRetry() {
++        NetworkScanLedger.Member old = batch("webdav://server/TV").get(0);
++        deadlines.get(0).run();
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        NetworkScanLedger.Member next = batch("webdav://server/TV").get(0);
++        Context noStart = new ContextWrapper(context) {
++            @Override public ComponentName startService(Intent service) {
++                fail("Expired delivery must not start a service"); return null;
++            }
++        };
++        NetworkScannerServiceVideo.startIfHandles(noStart, intent(old));
++        NetworkScanLedger.finish(old, false, true);
++        assertEquals(1, AutoScrapeService.getNetworkScanCount());
++        assertTrue(NetworkScanLedger.pending(next));
++    }
++
++    @Test public void rejectedMessageReleasesMemberAndRequestMapEntry() throws Exception {
++        NetworkScannerServiceVideo service = Robolectric.buildService(NetworkScannerServiceVideo.class).get();
++        // Handler.sendMessage is final; use a real looper whose queue is quitting instead.
++        android.os.HandlerThread thread = new android.os.HandlerThread("rejected-scan-message");
++        thread.start();
++        Handler handler = new Handler(thread.getLooper());
++        thread.quit();
++        thread.join(2000L);
++        field(NetworkScannerServiceVideo.class, "mHandler").set(service, handler);
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        service.onStartCommand(intent(member), 0, 1);
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertTrue(requests(service).isEmpty());
++    }
++
++    @Test public void executorRejectionReleasesMemberAndRequestMapEntry() throws Exception {
++        NetworkScannerServiceVideo service = Robolectric.buildService(NetworkScannerServiceVideo.class).get();
++        field(NetworkScannerServiceVideo.class, "mHandler").set(service, new Handler(Looper.getMainLooper()));
++        ExecutorService executor = (ExecutorService) field(NetworkScannerServiceVideo.class, "mScanExecutor").get(service);
++        executor.shutdownNow();
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        service.onStartCommand(intent(member), 0, 1);
++        Message message = Message.obtain();
++        message.what = field(NetworkScannerServiceVideo.class, "MESSAGE_DO_SCAN").getInt(null);
++        message.obj = member.uri;
++        Bundle extras = new Bundle();
++        extras.putLong(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, member.batch);
++        extras.putString(NetworkScanLedger.EXTRA_MEMBER, member.id);
++        message.setData(extras);
++        service.handleMessage(message);
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertTrue(requests(service).isEmpty());
++    }
++
++    @Test public void ownerTeardownReleasesQueuedButKeepsCancelledWorkerUntilUnwind() {
++        List<NetworkScanLedger.Member> pair = batch("webdav://server/TV", "webdav://server/Movies");
++        Object service = new Object();
++        assertTrue(NetworkScanLedger.accept(pair.get(0), service));
++        assertTrue(NetworkScanLedger.accept(pair.get(1), service));
++        try (ScanIoScope io = new ScanIoScope(1, TimeUnit.MINUTES)) {
++            assertTrue(NetworkScanLedger.begin(pair.get(0), io));
++            NetworkScanLedger.cancelOwner(service);
++            assertTrue(io.isCancelled());
++            assertEquals(1, AutoScrapeService.getNetworkScanCount());
++            assertTrue(batch("webdav://server/retry").isEmpty());
++            assertFalse(NetworkScanLedger.begin(pair.get(1), io));
++            try { ScanIoScope.checkpoint(); fail("Old worker must be fenced"); }
++            catch (java.util.concurrent.CancellationException expected) { /* no late write */ }
++            NetworkScanLedger.finish(pair.get(0), false, true);
++        }
++        Thread.interrupted();
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertEquals(1, phaseCount("batch_failed"));
++        assertEquals(0, phaseCount("metadata_queued"));
++    }
++
++    @Test public void acknowledgementAndSourceDeadlinesHaveSeparateOwnership() {
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        assertTrue(NetworkScanLedger.accept(member, this));
++        deadlines.get(0).run(); // already acknowledged: stale timer cannot cancel it
++        assertEquals(1, AutoScrapeService.getNetworkScanCount());
++        deadlines.get(1).run(); // accepted but never run by executor
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertEquals(1, phaseCount("not_started"));
++    }
++
++    @Test public void runningDeadlineCancelsWithoutFalseSuccessOrDoubleCompletion() {
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        assertTrue(NetworkScanLedger.accept(member, this));
++        try (ScanIoScope io = new ScanIoScope(1, TimeUnit.MINUTES)) {
++            assertTrue(NetworkScanLedger.begin(member, io));
++            deadlines.get(1).run();
++            assertTrue(io.isCancelled());
++            assertEquals(1, AutoScrapeService.getNetworkScanCount());
++            NetworkScanLedger.finish(member, false, true);
++            NetworkScanLedger.finish(member, false, true);
++        }
++        Thread.interrupted();
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertEquals(1, phaseCount("failed"));
++        assertEquals(1, phaseCount("batch_failed"));
++        assertEquals(0, phaseCount("batch_complete"));
++    }
++
++    @Test public void duplicateIntentCannotClaimMemberTwice() {
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        assertTrue(NetworkScanLedger.accept(member, this));
++        assertFalse(NetworkScanLedger.accept(member, new Object()));
++        assertEquals(1, AutoScrapeService.getNetworkScanCount());
++        NetworkScanLedger.finish(member, true, false);
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++    }
++
++    @Test public void cancelledWorkerWaitingForProviderGateCannotPerformLateScan() throws Exception {
++        java.util.concurrent.atomic.AtomicInteger writes = new java.util.concurrent.atomic.AtomicInteger();
++        NetworkScannerServiceVideo service = new NetworkScannerServiceVideo() {
++            @Override ScanResult performScan(Uri uri) {
++                writes.incrementAndGet();
++                return new ScanResult(true, false);
++            }
++        };
++        field(NetworkScannerServiceVideo.class, "mHandler").set(service, new Handler(Looper.getMainLooper()));
++        ExecutorService executor = (ExecutorService) field(NetworkScannerServiceVideo.class, "mScanExecutor").get(service);
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        NetworkScanLedger.accept(member, service);
++        Message message = Message.obtain();
++        message.what = field(NetworkScannerServiceVideo.class, "MESSAGE_DO_SCAN").getInt(null);
++        message.obj = member.uri;
++        Bundle extras = new Bundle();
++        extras.putLong(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, member.batch);
++        extras.putString(NetworkScanLedger.EXTRA_MEMBER, member.id);
++        message.setData(extras);
++        try {
++            synchronized (ProviderDiscoveryGate.LOCK) {
++                service.handleMessage(message);
++                long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(3);
++                boolean running = false;
++                while (System.nanoTime() < until) {
++                    synchronized (NetworkScanLedger.class) { running = member.running; }
++                    if (running) break;
++                    Thread.sleep(1L);
++                }
++                assertTrue("Worker must have reached the provider gate", running);
++                NetworkScanLedger.reject(member);
++                assertEquals(1, AutoScrapeService.getNetworkScanCount());
++                assertEquals(0, writes.get());
++            }
++            executor.shutdown();
++            assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS));
++            assertEquals(0, writes.get());
++            assertEquals(0, AutoScrapeService.getNetworkScanCount());
++            assertEquals(1, phaseCount("batch_failed"));
++        } finally { executor.shutdownNow(); }
++    }
++
++    @Test public void duplicateUriHasDistinctMembersAndRejectsOnlyNewSlot() throws Exception {
++        NetworkScannerServiceVideo service = Robolectric.buildService(NetworkScannerServiceVideo.class).get();
++        List<NetworkScanLedger.Member> pair = batch("webdav://server/TV", "webdav://server/TV");
++        requests(service).put(pair.get(0).uri.toString(), new Object());
++        service.onStartCommand(intent(pair.get(1)), 0, 1);
++        assertEquals(1, AutoScrapeService.getNetworkScanCount());
++        assertTrue(NetworkScanLedger.pending(pair.get(0)));
++        assertFalse(NetworkScanLedger.pending(pair.get(1)));
++        NetworkScanLedger.reject(pair.get(0));
++        assertEquals(1, phaseCount("batch_failed"));
++    }
++
++    @Test public void timerRejectionCompensatesEveryRegisteredSlot() {
++        when(clock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS)))
++                .thenThrow(new java.util.concurrent.RejectedExecutionException());
++        batch("webdav://server/TV", "webdav://server/Movies");
++        assertEquals(0, AutoScrapeService.getNetworkScanCount());
++        assertEquals(2, phaseCount("not_started"));
++        assertEquals(1, phaseCount("batch_failed"));
++    }
++
++    @Test public void bareBatchIdCannotConsumeLedgerMember() {
++        NetworkScanLedger.Member member = batch("webdav://server/TV").get(0);
++        Intent forged = new Intent(ArchosMediaIntent.ACTION_VIDEO_SCANNER_SCAN_FILE, member.uri)
++                .putExtra(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, member.batch);
++        Context noStart = new ContextWrapper(context) {
++            @Override public ComponentName startService(Intent service) { fail("Missing member identity"); return null; }
++        };
++        NetworkScannerServiceVideo.startIfHandles(noStart, forged);
++        assertEquals(1, AutoScrapeService.getNetworkScanCount());
++    }
++
++    private long phaseCount(String phase) {
++        return Shadows.shadowOf((Application) context).getBroadcastIntents().stream()
++                .filter(i -> (context.getPackageName() + ".SCAN_LIFECYCLE").equals(i.getAction()))
++                .filter(i -> phase.equals(i.getStringExtra("phase"))).count();
++    }
++
++    private static Field field(Class<?> type, String name) throws Exception {
++        Field field = type.getDeclaredField(name);
++        field.setAccessible(true);
++        return field;
++    }
++
++    @SuppressWarnings("unchecked")
++    private static ConcurrentHashMap<String, Object> requests(NetworkScannerServiceVideo service) throws Exception {
++        return (ConcurrentHashMap<String, Object>) field(NetworkScannerServiceVideo.class, "mScanRequests").get(service);
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java b/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
+new file mode 100644
+index 0000000..b978881
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/NetworkScanTransportTest.java
+@@ -0,0 +1,131 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertNotNull;
++import static org.junit.Assert.assertTrue;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyLong;
++import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
++import android.app.Application;
++import android.content.Context;
++import android.net.Uri;
++import android.os.Bundle;
++import android.os.Handler;
++import android.os.Looper;
++import android.os.Message;
++import com.archos.environment.ArchosUtils;
++import com.archos.filecorelibrary.webdav.WebdavFile2;
++import com.archos.filecorelibrary.webdav.WebdavRawLister;
++import com.archos.filecorelibrary.webdav.WebdavUtils;
++import com.archos.mediascraper.AutoScrapeService;
++import java.lang.reflect.Field;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.ScheduledExecutorService;
++import java.util.concurrent.ScheduledFuture;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicInteger;
++import okhttp3.mockwebserver.MockResponse;
++import okhttp3.mockwebserver.MockWebServer;
++import okhttp3.mockwebserver.SocketPolicy;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++
++/** End-to-end ledger cancellation -> raw DAV call -> scanner finally, with real sockets. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 28)
++public class NetworkScanTransportTest {
++    @Test public void silentRawListingReleasesBatchOnlyAfterCancellationUnwinds() throws Exception {
++        exercise(new MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE), true);
++    }
++
++    @Test public void tricklingRawListingCannotOutliveSourceDeadline() throws Exception {
++        exercise(new MockResponse().setResponseCode(207).setBody("<" + "x".repeat(16_384))
++                .throttleBody(1, 20, TimeUnit.MILLISECONDS), true);
++    }
++
++    @Test public void disconnectTerminatesWithoutSuccessHandoff() throws Exception {
++        exercise(new MockResponse().setResponseCode(207).setBody("<" + "x".repeat(16_384))
++                .setSocketPolicy(SocketPolicy.DISCONNECT_DURING_RESPONSE_BODY), false);
++    }
++
++    private void exercise(MockResponse response, boolean expire) throws Exception {
++        Context context = RuntimeEnvironment.getApplication();
++        ArchosUtils.setGlobalContext(context);
++        WebdavUtils.getInstance(context);
++        AutoScrapeService.resetNetworkScanCount();
++        ScheduledExecutorService savedClock = NetworkScanLedger.clock;
++        ScheduledExecutorService clock = mock(ScheduledExecutorService.class);
++        List<Runnable> deadlines = new ArrayList<>();
++        when(clock.schedule(any(Runnable.class), anyLong(), eq(TimeUnit.MILLISECONDS))).thenAnswer(call -> {
++            deadlines.add(call.getArgument(0)); return mock(ScheduledFuture.class);
++        });
++        NetworkScanLedger.clock = clock;
++        AtomicInteger writesAfterListing = new AtomicInteger();
++        NetworkScannerServiceVideo service = new NetworkScannerServiceVideo() {
++            @Override ScanResult performScan(Uri uri) {
++                try {
++                    new WebdavRawLister(uri).getFileList();
++                    com.archos.filecorelibrary.webdav.ScanIoScope.checkpoint();
++                    writesAfterListing.incrementAndGet();
++                    return new ScanResult(true, false);
++                } catch (Exception failure) { return new ScanResult(false, false); }
++            }
++        };
++        ExecutorService worker = (ExecutorService) field("mScanExecutor").get(service);
++        NetworkScanLedger.Member member = null;
++        try (MockWebServer server = new MockWebServer()) {
++            server.enqueue(new MockResponse().setHeader("DAV", "1").setResponseCode(200));
++            server.start();
++            Uri uri = Uri.parse(server.url("/TV").toString()).buildUpon().scheme("webdav").build();
++            WebdavUtils.peekInstance().getSardine(uri);
++            WebdavFile2.uriToHttp(uri); // warm credential lookup/redirect probe before timed traversal
++            assertNotNull(server.takeRequest(1, TimeUnit.SECONDS));
++            server.enqueue(response);
++            member = NetworkScanLedger.register(context, List.of(uri)).get(0);
++            assertTrue(NetworkScanLedger.accept(member, service));
++            field("mHandler").set(service, new Handler(Looper.getMainLooper()));
++            Message message = Message.obtain();
++            message.what = field("MESSAGE_DO_SCAN").getInt(null);
++            message.obj = uri;
++            Bundle data = new Bundle();
++            data.putLong(NetworkScannerServiceVideo.EXTRA_SCAN_BATCH_ID, member.batch);
++            data.putString(NetworkScanLedger.EXTRA_MEMBER, member.id);
++            message.setData(data);
++            service.handleMessage(message);
++            assertNotNull(server.takeRequest(3, TimeUnit.SECONDS));
++            if (expire) {
++                assertEquals(1, AutoScrapeService.getNetworkScanCount());
++                deadlines.get(1).run(); // real production source-deadline callback, no wall-clock wait
++            }
++            worker.shutdown();
++            assertTrue("Call cancellation must unblock the scan executor", worker.awaitTermination(5, TimeUnit.SECONDS));
++            assertEquals(0, AutoScrapeService.getNetworkScanCount());
++            assertEquals(0, writesAfterListing.get());
++            assertFalse(NetworkScanLedger.pending(member));
++            long successes = org.robolectric.Shadows.shadowOf((Application) context).getBroadcastIntents().stream()
++                    .filter(i -> "batch_complete".equals(i.getStringExtra("phase"))
++                            || "metadata_queued".equals(i.getStringExtra("phase"))).count();
++            assertEquals(0, successes);
++        } finally {
++            worker.shutdownNow();
++            if (member != null) NetworkScanLedger.reject(member);
++            NetworkScanLedger.clock = savedClock;
++            AutoScrapeService.resetNetworkScanCount();
++        }
++    }
++
++    private static Field field(String name) throws Exception {
++        Field field = NetworkScannerServiceVideo.class.getDeclaredField(name);
++        field.setAccessible(true);
++        return field;
++    }
++}

@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "status": "DRAFT: only patch files are delivered; not applied to the production application",
+  "fixture_app_base_commit": "e5cb41247",
+  "fixture_result_tree": "683702e672c5379e93848aa9c611e12894f1cedd",
+  "required_native_commit": "5cf3ae9c1f70189d4180a62722150fa76b405a0f",
+  "required_native_draft_lock": ".github/build/native-supernova156.lock.draft.json",
+  "required_native_draft_lock_sha256": "9dc1c4650aad4a862c65f9eb9b75cd04e94af086a72b6a77559a96a3b6b3d582",
+  "patches": [
+    {
+      "order": 1,
+      "path": ".github/build/video-supernova156-01-hdr-producer-5c721514.patch",
+      "sha256": "98ae6c08bb974a2c3f2d39ca3d927e24adef5c87a798c4f418008425b4ad8220",
+      "upstream_commit": "5c7215144f72312b086eb314f514c7605d8e6c5f"
+    },
+    {
+      "order": 2,
+      "path": ".github/build/video-supernova156-02-codecs-9ec1bdc2.patch",
+      "sha256": "f9ea4c1e443ce6530b8edf3964e9c08d82cc1a4046dbbe62beab481bf7f9d224",
+      "upstream_commit": "9ec1bdc26a4ec7086b7bc2b89722a46ef6858d48"
+    },
+    {
+      "order": 3,
+      "path": ".github/build/video-supernova156-03-padding-73df6e4d.patch",
+      "sha256": "8f037d4edb6458fb3f5ff6f10a4568520923212fceb4a95fd3178e183b0bd847",
+      "upstream_commit": "73df6e4d714eed203237d045b20bac41f4799764"
+    }
+  ],
+  "tests": {
+    "standalone_junit_passed": 4,
+    "robolectric_written_not_run": 18,
+    "gradle_run": false
+  },
+  "integration": "Apply 01,02,03 in order on the reviewed application. The fixture tree identifies this exact Codex test baseline; it is not an instruction to reset or replace newer Claude code. Ship new native exports and Java together. No UI/layout/control/resource changes or production workflow wiring in these drafts.",
+  "already_present": [
+    "d0be0f11 network retry",
+    "e1642b6b subtitle association",
+    "MediaLib cf75fdcd subtitle cache fallback"
+  ],
+  "excluded": [
+    "8bbfb666 visible canvas layout: Claude",
+    "95f233f9 portrait/horizontal visible canvas layout: Claude if applicable",
+    "b777104f Settings range",
+    "73327baa visual defaults",
+    "MediaLib e5886e04 later library/scan release"
+  ]
+}

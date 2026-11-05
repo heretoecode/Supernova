@@ -459,7 +459,6 @@
     <string name="rotation_unlocked">Automatinis ekrano pasukimas įjungtas</string>
     <string name="network_reindex">Nuskaityti turinį dar kartą</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">TV meniu rodymui\npaspauskite mygtuką į viršų</string>
     <string name="help_overlay_network_indexing_text1">Paspausdami šį meniu punktą įkelsite turinį iš šio aplanko į savo mediateką.</string>
     <string name="help_overlay_network_indexing_text2">Tai leis jums ieškoti viršelių ir aprašymų filmams bei serialams.</string>
     <string name="help_overlay_scraper_text">Paspauskite šį menių punktą viršelių ir aprašymų paieškai tinkle. </string>

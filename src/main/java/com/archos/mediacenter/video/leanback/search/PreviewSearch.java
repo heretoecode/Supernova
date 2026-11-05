@@ -348,7 +348,8 @@ public final class PreviewSearch extends LinearLayout {
                         String path =
                             cursor.getString(cursor.getColumnIndexOrThrow(VideoStore.Video.VideoColumns.DATA));
                         Video video = (Video)mapper.bind(cursor);
-                        List<String> searchable = new ArrayList<>(Arrays.asList(name, episode, path));
+                        List<String> titles = new ArrayList<>(Arrays.asList(name, episode));
+                        List<String> searchable = new ArrayList<>();
                         for (String column : extra)
                             if (!column.endsWith("genres") &&
                                 !column.equals(VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID))
@@ -359,8 +360,9 @@ public final class PreviewSearch extends LinearLayout {
                                 ? showNames.get(longCell(cursor, VideoStore.Video.VideoColumns.SCRAPER_SHOW_ID))
                                 : null;
                         if (local != null)
-                            Collections.addAll(searchable, local);
-                        int rank = PreviewSearchText.rank(value, searchable.toArray(new String[0]));
+                            Collections.addAll(titles, local);
+                        int rank = PreviewSearchText.rankFields(value, titles, searchable,
+                            path == null ? "" : Uri.parse(path).getLastPathSegment());
                         if (rank == 0)
                             continue;
                         String genres = cursor.getString(cursor.getColumnIndexOrThrow(
@@ -398,7 +400,11 @@ public final class PreviewSearch extends LinearLayout {
                             String[] local = showNames.get(show.getTvshowId());
                             if (local != null)
                                 Collections.addAll(names, local);
-                            int rank = PreviewSearchText.rank(value, names.toArray(new String[0]));
+                            List<String> titles = new ArrayList<>();
+                            titles.add(show.getName());
+                            if (local != null) Collections.addAll(titles, local);
+                            int rank = PreviewSearchText.rankFields(value, titles,
+                                Arrays.asList(show.getActors(), show.getStudio()), "");
                             for (Result result : found)
                                 if (result.showId == show.getTvshowId())
                                     rank = Math.max(rank, result.rank);

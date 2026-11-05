@@ -31,7 +31,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.archos.mediacenter.video.R;
-import com.archos.mediacenter.video.UiChoiceDialog;
+import com.archos.mediacenter.video.UiModePolicy;
 import java.lang.reflect.Method;
 
 /**
@@ -219,7 +219,7 @@ public class ThemeManager {
      * Check if running in phone/tablet mode (not leanback/TV)
      */
     public boolean isPhoneMode(Context context) {
-        return !UiChoiceDialog.applicationIsInLeanbackMode(context);
+        return !UiModePolicy.applicationIsInLeanbackMode(context);
     }
 
     /**
@@ -349,7 +349,7 @@ public class ThemeManager {
         if (window == null) return;
 
         // Check if this is a leanback activity (TV mode)
-        boolean isLeanback = UiChoiceDialog.applicationIsInLeanbackMode(activity);
+        boolean isLeanback = UiModePolicy.applicationIsInLeanbackMode(activity);
         
         if (!isLeanback) {
             // Phone mode: Set window background gradient

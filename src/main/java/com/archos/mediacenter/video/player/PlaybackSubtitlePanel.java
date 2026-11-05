@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.player;
 
+import com.archos.mediacenter.video.diagnostics.FocusSearchGuard;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.*;
@@ -365,7 +366,7 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             return true;
         }
         if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View next = FocusFinder.getInstance().findNextFocus(
+            View next = FocusSearchGuard.findNextFocus(
                 body, row, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
             if (next == null || next == row) {
                 if (key == KeyEvent.KEYCODE_DPAD_UP)
@@ -646,6 +647,11 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             value.setImageDrawable(StandardSwitchDrawable.snapshot(owner, on));
             row.setContentDescription(label + ", " + (on ? "On" : "Off"));
         });
+        row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> {
+            boolean on = direction > 0;
+            if ((backend.get(key) != 0) != on)
+                backend.set(key, on ? 1 : 0);
+        }));
         row.setOnClickListener(v -> {
             backend.set(key, backend.get(key) == 0 ? 1 : 0);
             refresh();
@@ -665,6 +671,11 @@ final class PlaybackSubtitlePanel extends LinearLayout {
             row.setContentDescription(label + ", " + (checked ? "On" : "Off"));
             dim(row, on != null && backend.optionEnabled(key));
         });
+        row.setOnKeyListener((v, keyCode, event) -> rowKeys(row, keyCode, event, direction -> {
+            Boolean on = backend.option(key);
+            if (on != null && backend.optionEnabled(key) && on != (direction > 0))
+                backend.toggleOption(key);
+        }));
         row.setOnClickListener(v -> {
             if (row.isEnabled()) {
                 backend.toggleOption(key);

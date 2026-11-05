@@ -1,0 +1,412 @@
+diff --git a/src/main/java/com/archos/mediacenter/video/player/Player.java b/src/main/java/com/archos/mediacenter/video/player/Player.java
+index 2f37a80d92f9bb606cabb8e35b81266030e1f510..a4890945583a3b05dda9fca251bf3656eeb95b9d 100644
+--- a/src/main/java/com/archos/mediacenter/video/player/Player.java
++++ b/src/main/java/com/archos/mediacenter/video/player/Player.java
+@@ -695,6 +695,8 @@ public class Player implements IPlayerControl,
+             doViMode = isDoViDisabled ? CodecDiscovery.DOVI_MODE_OFF : CodecDiscovery.DOVI_MODE_AUTO;
+         }
+         CodecDiscovery.setDoViMode(doViMode);
++        View playbackView = mWindow != null ? mWindow.getDecorView() : null;
++        CodecDiscovery.setPlaybackDisplay(playbackView != null ? playbackView.getDisplay() : null);
+
+         // we shouldn't clear the target state, because somebody might have
+         // called start() previously
+diff --git a/src/main/java/com/archos/mediacenter/video/utils/CodecDiscovery.java b/src/main/java/com/archos/mediacenter/video/utils/CodecDiscovery.java
+index aae02ed16255341e617b1b08d6645a18856f0974..a6e957681675700f28e60c8ce34ae087e3cc7606 100644
+--- a/src/main/java/com/archos/mediacenter/video/utils/CodecDiscovery.java
++++ b/src/main/java/com/archos/mediacenter/video/utils/CodecDiscovery.java
+@@ -22,12 +22,16 @@ import android.media.MediaCodecInfo;
+ import android.media.MediaCodecList;
+ import android.media.Spatializer;
+ import android.os.Build;
++import android.view.Display;
+
+ import androidx.annotation.RequiresApi;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+
++import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Comparator;
++import java.util.List;
+ import java.util.Locale;
+
+ import com.archos.mediacenter.video.CustomApplication;
+@@ -267,41 +271,102 @@ public class CodecDiscovery {
+ 		return false;
+ 	}
+
+-	private static String getCodecForProfile(String mimeType, int profile) {
+-		if (log.isDebugEnabled()) log.debug("getCodecForProfile: mimeType={} profile={}", mimeType, profile);
+-		if (Build.VERSION.SDK_INT < 27) return null;
+-		MediaCodecList codecList = new MediaCodecList(MediaCodecList.ALL_CODECS);
+-		MediaCodecInfo[] codecInfos = codecList.getCodecInfos();
+-		String firstSupportedCodec = null;
+-		for (MediaCodecInfo codecInfo : codecInfos) {
+-			// Ignore encoders
+-			if (codecInfo.isEncoder()) {
+-				continue;
+-			}
+-
+-			if (isCodecInfoSupported(codecInfo, mimeType, false)) {
+-				if (firstSupportedCodec == null) {
+-					firstSupportedCodec = codecInfo.getName();
+-				}
+-				MediaCodecInfo.CodecCapabilities capabilities = codecInfo.getCapabilitiesForType(mimeType);
+-				if (capabilities != null) {
+-					if (capabilities.profileLevels != null) {
+-						for (MediaCodecInfo.CodecProfileLevel level : capabilities.profileLevels) {
+-							if (log.isDebugEnabled()) log.debug("getCodecForProfile: profile={}, level={}", level.profile, level.level);
+-							if (level.profile == profile) {
+-								return codecInfo.getName();
+-							}
+-						}
+-					}
+-				}
+-			}
+-		}
+-		if (doViMode == DOVI_MODE_FORCE && "video/dolby-vision".equalsIgnoreCase(mimeType) && firstSupportedCodec != null) {
+-			if (log.isDebugEnabled()) log.debug("getCodecForProfile: forcing first Dolby Vision codec {}", firstSupportedCodec);
+-			return firstSupportedCodec;
+-		}
+-		return null;
+-	}
++    // Set by the playback window before prepare; read capabilities afresh on
++    // each native query rather than using the UI's post-prepare summary.
++    private static volatile Display playbackDisplay;
++
++    public static void setPlaybackDisplay(Display display) {
++        playbackDisplay = display;
++    }
++
++    private static int getPlaybackHdrCapabilities() {
++        Display display = playbackDisplay;
++        if (Build.VERSION.SDK_INT < 24 || display == null || !display.isValid()) return -1;
++        try {
++            Display.HdrCapabilities caps = display.getHdrCapabilities();
++            if (caps == null) return -1;
++            int mask = 0;
++            for (int type : caps.getSupportedHdrTypes()) {
++                if (type == Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION) mask |= 8;
++                if (type == Display.HdrCapabilities.HDR_TYPE_HDR10) mask |= 1;
++                if (type == Display.HdrCapabilities.HDR_TYPE_HLG) mask |= 2;
++                if (type == Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS) mask |= 4;
++            }
++            return mask;
++        } catch (RuntimeException e) {
++            log.warn("Cannot query playback display HDR capabilities", e);
++            return -1;
++        }
++    }
++
++    private static String getCodecForProfile(String mimeType, int profile) {
++        return getVideoCodecForFormat(mimeType, profile, 0, 0, 0, 0);
++    }
++
++    private static final class VideoCandidate {
++        final String name;
++        final int rank;
++        VideoCandidate(String name, int rank) { this.name = name; this.rank = rank; }
++    }
++
++    // Native code requests successive candidates only after initialization fails.
++    // Keep vendor enumeration order within each rank; do not blacklist names.
++    private static String getVideoCodecForFormat(String mimeType, int profile,
++            int width, int height, double frameRate, int index) {
++        if (log.isDebugEnabled()) log.debug("getVideoCodecForFormat: mimeType={} profile={} candidate={}", mimeType, profile, index);
++        if (Build.VERSION.SDK_INT < 27 || index < 0 || index >= 16) return null;
++        boolean dovi = "video/dolby-vision".equalsIgnoreCase(mimeType);
++        boolean force = dovi && doViMode == DOVI_MODE_FORCE;
++        List<VideoCandidate> candidates = new ArrayList<>();
++        try {
++            for (MediaCodecInfo info : new MediaCodecList(MediaCodecList.ALL_CODECS).getCodecInfos()) {
++                try {
++                    if (!isCodecInfoSupported(info, mimeType, false)) continue;
++                    if (Build.VERSION.SDK_INT >= 29 && info.isAlias()) continue;
++                    MediaCodecInfo.CodecCapabilities caps = info.getCapabilitiesForType(mimeType);
++                    if (caps.isFeatureRequired(MediaCodecInfo.CodecCapabilities.FEATURE_SecurePlayback)
++                            || caps.isFeatureRequired(MediaCodecInfo.CodecCapabilities.FEATURE_TunneledPlayback)) continue;
++                    boolean advertised = caps.profileLevels != null && caps.profileLevels.length > 0;
++                    boolean match = profile == 0;
++                    if (advertised) {
++                        for (MediaCodecInfo.CodecProfileLevel level : caps.profileLevels) {
++                            if (log.isDebugEnabled()) log.debug("getVideoCodecForFormat: codec={} profile={} level={}", info.getName(), level.profile, level.level);
++                            if (level.profile == profile) match = true;
++                        }
++                    }
++                    int sizeSupport = 0; // unknown
++                    MediaCodecInfo.VideoCapabilities video = caps.getVideoCapabilities();
++                    if (video != null && width > 0 && height > 0) {
++                        try {
++                            // Android recommends flooring fractional frame rates for this query.
++                            boolean fits = frameRate >= 1 && Double.isFinite(frameRate)
++                                    ? video.areSizeAndRateSupported(width, height, Math.floor(frameRate))
++                                    : video.isSizeSupported(width, height);
++                            sizeSupport = fits ? 1 : -1;
++                        } catch (IllegalArgumentException e) {
++                            log.debug("Incomplete video capabilities for {}", info.getName());
++                        }
++                    }
++                    int rank = VideoCodecSelection.rank(dovi, force, advertised, match, sizeSupport);
++                    if (rank >= 0) candidates.add(new VideoCandidate(info.getName(), rank));
++                } catch (RuntimeException e) {
++                    log.warn("Cannot inspect video codec {}", info.getName(), e);
++                }
++            }
++        } catch (RuntimeException e) {
++            log.warn("Cannot enumerate video codecs", e);
++            return null;
++        }
++        candidates.sort(Comparator.comparingInt(candidate -> candidate.rank));
++        if (index >= candidates.size()) return null;
++        VideoCandidate chosen = candidates.get(index);
++        if (force && chosen.rank >= 3 && log.isDebugEnabled()) {
++            log.debug("getVideoCodecForFormat: forcing Dolby Vision codec {} without an advertised profile match", chosen.name);
++        }
++        log.debug("Video decoder candidate {}: {} profile={} size={}x{} rate={} rank={}",
++                index, chosen.name, profile, width, height, frameRate, chosen.rank);
++        return chosen.name;
++    }
+
+ 	public static boolean isSwCodec(MediaCodecInfo codecInfo) {
+ 		if (Build.VERSION.SDK_INT >= 29) {
+diff --git a/src/main/java/com/archos/mediacenter/video/utils/VideoCodecSelection.java b/src/main/java/com/archos/mediacenter/video/utils/VideoCodecSelection.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..e45aab8b1721ff8bd696f671c8c20ee44acbe845
+--- /dev/null
++++ b/src/main/java/com/archos/mediacenter/video/utils/VideoCodecSelection.java
+@@ -0,0 +1,32 @@
++// Copyright 2026 Courville Software
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.archos.mediacenter.video.utils;
++
++/** Capability ranking for clear, non-tunneled hardware video candidates. */
++final class VideoCodecSelection {
++    private VideoCodecSelection() {}
++
++    static int rank(boolean dovi, boolean force, boolean advertised,
++            boolean profileMatches, int sizeSupport) {
++        // Auto DV must retain profile-specific selection. Unknown base profiles
++        // can be attempted, but never prefer a known incompatible bit depth.
++        if (!profileMatches && !force && (dovi || advertised)) return -1;
++        int profileRank = profileMatches ? 0 : 3;
++        // Reported size/rate limits are imperfect on some TV firmware. Rank
++        // those candidates last instead of removing previously working devices.
++        int sizeRank = sizeSupport > 0 ? 0 : sizeSupport == 0 ? 1 : 2;
++        return profileRank + sizeRank;
++    }
++}
+diff --git a/src/test/java/com/archos/mediacenter/video/utils/PlaybackHdrCapabilitiesTest.java b/src/test/java/com/archos/mediacenter/video/utils/PlaybackHdrCapabilitiesTest.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b153d3fe45155a2e8dcecfb4217cbc70e4403497
+--- /dev/null
++++ b/src/test/java/com/archos/mediacenter/video/utils/PlaybackHdrCapabilitiesTest.java
+@@ -0,0 +1,150 @@
++package com.archos.mediacenter.video.utils;
++
++import android.app.Application;
++import android.media.MediaCodecInfo;
++import android.media.MediaCodecList;
++import android.view.Display;
++
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.mockito.MockedConstruction;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++import org.robolectric.util.ReflectionHelpers;
++import org.robolectric.util.ReflectionHelpers.ClassParameter;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertNull;
++import static org.junit.Assert.assertTrue;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockConstruction;
++import static org.mockito.Mockito.verifyNoInteractions;
++import static org.mockito.Mockito.when;
++
++/** 9ec1bdc2: real JNI callback contracts, live display queries and candidate filtering. */
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, manifest = Config.NONE, sdk = 33)
++public class PlaybackHdrCapabilitiesTest {
++    private int previousMode;
++
++    @Before
++    public void rememberMode() {
++        previousMode = CodecDiscovery.getDoViMode();
++        CodecDiscovery.setDoViMode(CodecDiscovery.DOVI_MODE_AUTO);
++    }
++
++    @After
++    public void clearDisplay() {
++        CodecDiscovery.setPlaybackDisplay(null);
++        CodecDiscovery.setDoViMode(previousMode);
++    }
++
++    @Test
++    public void absentInvalidAndUnknownDisplayReturnUnknownRatherThanSdr() {
++        CodecDiscovery.setPlaybackDisplay(null);
++        assertEquals(-1, hdr());
++        Display display = mock(Display.class);
++        CodecDiscovery.setPlaybackDisplay(display);
++        assertEquals(-1, hdr());
++        when(display.isValid()).thenReturn(true);
++        assertEquals(-1, hdr()); // no capabilities object
++    }
++
++    @Test
++    public void capabilitiesAreReadAgainForEachNativeQuery() {
++        Display display = mock(Display.class);
++        Display.HdrCapabilities caps = mock(Display.HdrCapabilities.class);
++        when(display.isValid()).thenReturn(true);
++        when(display.getHdrCapabilities()).thenReturn(caps);
++        when(caps.getSupportedHdrTypes()).thenReturn(new int[0], new int[] {
++                Display.HdrCapabilities.HDR_TYPE_HDR10, Display.HdrCapabilities.HDR_TYPE_HLG,
++                Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS, Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION});
++        CodecDiscovery.setPlaybackDisplay(display);
++        assertEquals(0, hdr());
++        assertEquals(15, hdr());
++    }
++
++    @Test
++    public void vendorCapabilityExceptionIsUnknown() {
++        Display display = mock(Display.class);
++        when(display.isValid()).thenReturn(true);
++        when(display.getHdrCapabilities()).thenThrow(new IllegalStateException("display detached"));
++        CodecDiscovery.setPlaybackDisplay(display);
++        assertEquals(-1, hdr());
++    }
++
++    @Test
++    @Config(sdk = 23)
++    public void api23NeverQueriesHdrDisplayApis() {
++        Display display = mock(Display.class);
++        CodecDiscovery.setPlaybackDisplay(display);
++        assertEquals(-1, hdr());
++        verifyNoInteractions(display);
++    }
++
++    @Test
++    @Config(sdk = 26)
++    public void oldApiRetainsTheNativeFallbackWithoutEnumerating() {
++        try (MockedConstruction<MediaCodecList> lists = mockConstruction(MediaCodecList.class)) {
++            assertNull(candidate(0));
++            assertTrue(lists.constructed().isEmpty());
++        }
++    }
++
++    @Test
++    public void nativeCandidateBoundsDoNotEnumerate() {
++        try (MockedConstruction<MediaCodecList> lists = mockConstruction(MediaCodecList.class)) {
++            assertNull(candidate(-1));
++            assertNull(candidate(16));
++            assertTrue(lists.constructed().isEmpty());
++        }
++    }
++
++    @Test
++    public void excludesEncoderSoftwareAliasSecureAndTunneledAndKeepsVendorOrder() {
++        MediaCodecInfo encoder = codec("encoder");
++        when(encoder.isEncoder()).thenReturn(true);
++        MediaCodecInfo software = codec("software");
++        when(software.isSoftwareOnly()).thenReturn(true);
++        MediaCodecInfo alias = codec("alias");
++        when(alias.isAlias()).thenReturn(true);
++        MediaCodecInfo secure = codec("secure");
++        when(secure.getCapabilitiesForType("video/avc").isFeatureRequired(
++                MediaCodecInfo.CodecCapabilities.FEATURE_SecurePlayback)).thenReturn(true);
++        MediaCodecInfo tunneled = codec("tunneled");
++        when(tunneled.getCapabilitiesForType("video/avc").isFeatureRequired(
++                MediaCodecInfo.CodecCapabilities.FEATURE_TunneledPlayback)).thenReturn(true);
++        MediaCodecInfo[] infos = {encoder, software, alias, secure, tunneled, codec("vendor-b"), codec("vendor-a")};
++        try (MockedConstruction<MediaCodecList> lists = mockConstruction(MediaCodecList.class,
++                (list, context) -> when(list.getCodecInfos()).thenReturn(infos))) {
++            assertEquals("vendor-b", candidate(0));
++            assertEquals("vendor-a", candidate(1));
++            assertNull(candidate(2));
++        }
++    }
++
++    private MediaCodecInfo codec(String name) {
++        MediaCodecInfo info = mock(MediaCodecInfo.class);
++        MediaCodecInfo.CodecCapabilities caps = mock(MediaCodecInfo.CodecCapabilities.class);
++        MediaCodecInfo.CodecProfileLevel profile = new MediaCodecInfo.CodecProfileLevel();
++        profile.profile = 1;
++        caps.profileLevels = new MediaCodecInfo.CodecProfileLevel[] {profile};
++        when(info.getName()).thenReturn(name);
++        when(info.getSupportedTypes()).thenReturn(new String[] {"video/avc"});
++        when(info.getCapabilitiesForType("video/avc")).thenReturn(caps);
++        return info;
++    }
++
++    private int hdr() {
++        return ReflectionHelpers.callStaticMethod(CodecDiscovery.class, "getPlaybackHdrCapabilities");
++    }
++
++    private String candidate(int index) {
++        return ReflectionHelpers.callStaticMethod(CodecDiscovery.class, "getVideoCodecForFormat",
++                ClassParameter.from(String.class, "video/avc"), ClassParameter.from(int.class, 1),
++                ClassParameter.from(int.class, 1920), ClassParameter.from(int.class, 1080),
++                ClassParameter.from(double.class, 23.976), ClassParameter.from(int.class, index));
++    }
++}
+diff --git a/src/test/java/com/archos/mediacenter/video/utils/VideoCodecSelectionTest.java b/src/test/java/com/archos/mediacenter/video/utils/VideoCodecSelectionTest.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..d65708c88e71e6cb6973b0a2650efcd2fc4eea01
+--- /dev/null
++++ b/src/test/java/com/archos/mediacenter/video/utils/VideoCodecSelectionTest.java
+@@ -0,0 +1,40 @@
++// Copyright 2026 Courville Software
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.archos.mediacenter.video.utils;
++
++import org.junit.Test;
++import static org.junit.Assert.*;
++
++public class VideoCodecSelectionTest {
++    @Test public void autoDvRequiresTheAdvertisedProfile() {
++        assertEquals(-1, VideoCodecSelection.rank(true, false, false, false, 1));
++        assertEquals(-1, VideoCodecSelection.rank(true, false, true, false, 1));
++        assertTrue(VideoCodecSelection.rank(true, false, true, true, 1) >= 0);
++    }
++    @Test public void forceKeepsMatchedProfilesAheadOfUnmatchedCodecs() {
++        assertTrue(VideoCodecSelection.rank(true, true, true, true, -1)
++                < VideoCodecSelection.rank(true, true, true, false, 1));
++    }
++    @Test public void preferSupportedSizesWithoutBlacklistingVendorQuirks() {
++        int fits = VideoCodecSelection.rank(false, false, true, true, 1);
++        int unknown = VideoCodecSelection.rank(false, false, true, true, 0);
++        int exceeds = VideoCodecSelection.rank(false, false, true, true, -1);
++        assertTrue(fits < unknown && unknown < exceeds && exceeds >= 0);
++    }
++    @Test public void baseCodecMustNotAdvertiseOnlyTheWrongBitDepth() {
++        assertEquals(-1, VideoCodecSelection.rank(false, false, true, false, 1));
++        assertTrue(VideoCodecSelection.rank(false, false, false, false, 1) >= 0);
++    }
++}

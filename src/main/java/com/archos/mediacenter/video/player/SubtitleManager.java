@@ -47,25 +47,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Manages subtitle track types, style defaults and effective style overrides. */
-public class SubtitleManager {
+public class SubtitleManager
+{
 
     private static final Logger log = LoggerFactory.getLogger(SubtitleManager.class);
 
-    private Context             mContext;
-    private final Defaults      mDefaults;
-    private ViewGroup           mPlayerView;
-    private View                mRootView;
-    private View                mGlSubtitleView;      // native subtitle canvas, resolved lazily
-    private final View.OnLayoutChangeListener mCanvasLayoutListener =
-            (v, l, t, r, b, ol, ot, or_, ob) -> { if (t != ot || b != ob) applyNativeVerticalOffset(); };
-    private View                mSubtitleLayout = null;
-    private SubtitleSpacerView  mSubtitleSpacer = null;
-    private LayoutParams        mSubtitleSpacerParams = null;
-    private Drawable            mSubtitlePosHintDrawable;
-    private int                 mScreenWidth;
-    private int                 mScreenHeight;
-    private int                 mSubtitleVPos = 10;
-    private int                 mSubtitleEvadedVPos;
+    private Context mContext;
+    private final Defaults mDefaults;
+    private ViewGroup mPlayerView;
+    private View mRootView;
+    private View mGlSubtitleView; // native subtitle canvas, resolved lazily
+    private final View.OnLayoutChangeListener mCanvasLayoutListener = (v, l, t, r, b, ol, ot, or_, ob) ->
+    {
+        if (t != ot || b != ob)
+            applyNativeVerticalOffset();
+    };
+    private View mSubtitleLayout = null;
+    private SubtitleSpacerView mSubtitleSpacer = null;
+    private LayoutParams mSubtitleSpacerParams = null;
+    private Drawable mSubtitlePosHintDrawable;
+    private int mScreenWidth;
+    private int mScreenHeight;
+    private int mSubtitleVPos = SubtitleVerticalPosition.DEFAULT_PERCENT;
+    private boolean mAppearancePreview;
+    private int mSubtitleEvadedVPos;
     private boolean mGLEngineActive = false;
     // ------------------------------------------------------------------------------------
     // Subtitle kind: the ONE place Java gives meaning to a track's kind.
@@ -77,36 +82,45 @@ public class SubtitleManager {
     // may infer a kind from a format label, a file extension or a gfx flag.
     // The KIND_* values must match SUB_KIND in sub_kind.h.
     // ------------------------------------------------------------------------------------
-    public static final int KIND_NONE        = 0; // no track selected
-    public static final int KIND_SSA         = 1; // ASS/SSA: authored styles, PlayRes tied to the video frame
-    public static final int KIND_PLAIN_TEXT  = 2; // SRT/VTT/...: free-form text
-    public static final int KIND_GRAPHIC     = 3; // PGS / DVD / VobSub: baked-in position and size
+    public static final int KIND_NONE = 0;        // no track selected
+    public static final int KIND_SSA = 1;         // ASS/SSA: authored styles, PlayRes tied to the video frame
+    public static final int KIND_PLAIN_TEXT = 2;  // SRT/VTT/...: free-form text
+    public static final int KIND_GRAPHIC = 3;     // PGS / DVD / VobSub: baked-in position and size
     public static final int KIND_UNSUPPORTED = 4; // recognised, but nothing renders it
 
     private int mKind = KIND_NONE;
 
     /** Fail safe: a value native did not send, or one from a newer native, is UNSUPPORTED. */
-    public static int kindFromNative(int nativeKind) {
+    public static int kindFromNative(int nativeKind)
+    {
         return (nativeKind >= KIND_SSA && nativeKind <= KIND_UNSUPPORTED) ? nativeKind : KIND_UNSUPPORTED;
     }
 
     /** Tells the manager which track is active; null means no track (the "None" entry). */
-    public void setActiveTrack(@Nullable VideoMetadata.SubtitleTrack track) {
+    public void setActiveTrack(@Nullable VideoMetadata.SubtitleTrack track)
+    {
         setSubtitleKind(kindOf(track));
     }
 
-    public void setSubtitleKind(int kind) {
-        if (mKind == kind) return;
+    public void setSubtitleKind(int kind)
+    {
+        if (mKind == kind)
+            return;
         boolean wasGraphic = isGraphic();
         mKind = kind;
-        if (log.isDebugEnabled()) log.debug("setSubtitleKind: {}", kind);
-        if (wasGraphic != isGraphic()) {
+        if (log.isDebugEnabled())
+            log.debug("setSubtitleKind: {}", kind);
+        if (wasGraphic != isGraphic())
+        {
             // Margins, insets and control-bar avoidance differ between bitmap and text tracks.
             adjustView();
         }
     }
 
-    public int getSubtitleKind() { return mKind; }
+    public int getSubtitleKind()
+    {
+        return mKind;
+    }
 
     // ---- Kind rules -------------------------------------------------------------------
     // Static and pure: a function of the kind value only. Any caller can answer them straight
@@ -114,79 +128,119 @@ public class SubtitleManager {
     // The instance methods further down answer the same questions for the ACTIVE track.
 
     /** Kind of a track as native reported it; NONE for null (the "None" entry). */
-    public static int kindOf(@Nullable VideoMetadata.SubtitleTrack track) {
+    public static int kindOf(@Nullable VideoMetadata.SubtitleTrack track)
+    {
         return track == null ? KIND_NONE : kindFromNative(track.kind);
     }
 
     /** Bitmap track (PGS, VobSub, DVD): own position/size, never margin-shifted or restyled. */
-    public static boolean isGraphic(int kind) { return kind == KIND_GRAPHIC; }
+    public static boolean isGraphic(int kind)
+    {
+        return kind == KIND_GRAPHIC;
+    }
 
-    public static boolean isPlainText(int kind) { return kind == KIND_PLAIN_TEXT; }
+    public static boolean isPlainText(int kind)
+    {
+        return kind == KIND_PLAIN_TEXT;
+    }
 
-    public static boolean isStyled(int kind) { return kind == KIND_SSA; }
+    public static boolean isStyled(int kind)
+    {
+        return kind == KIND_SSA;
+    }
 
     /** The user's text-style settings (size, colour, position, ...) can affect this kind. */
-    public static boolean supportsUserStyle(int kind) { return kind == KIND_SSA || kind == KIND_PLAIN_TEXT; }
+    public static boolean supportsUserStyle(int kind)
+    {
+        return kind == KIND_SSA || kind == KIND_PLAIN_TEXT;
+    }
 
     /** Only styled subtitles have a style-mode choice (file's style / custom / scale only). */
-    public static boolean canChooseOverrideMode(int kind) { return kind == KIND_SSA; }
+    public static boolean canChooseOverrideMode(int kind)
+    {
+        return kind == KIND_SSA;
+    }
 
     /**
      * The override mode actually in force. Native forces Custom for plain text whatever is
      * stored (sync_styles(): force_all = is_plain_text || mode == CUSTOM), so the stored mode
      * (the user's choice for styled files) must be left alone and only filtered here.
      */
-    public static int effectiveOverrideMode(int kind, int storedMode) {
+    public static int effectiveOverrideMode(int kind, int storedMode)
+    {
         return kind == KIND_PLAIN_TEXT ? OVERRIDE_CUSTOM : storedMode;
     }
 
     // Same answers for the active track.
-    public boolean isGraphic() { return isGraphic(mKind); }
-    public boolean isPlainText() { return isPlainText(mKind); }
-    public boolean isStyled() { return isStyled(mKind); }
-    public boolean supportsUserStyle() { return supportsUserStyle(mKind); }
-    public boolean canChooseOverrideMode() { return canChooseOverrideMode(mKind); }
+    public boolean isGraphic()
+    {
+        return isGraphic(mKind);
+    }
+    public boolean isPlainText()
+    {
+        return isPlainText(mKind);
+    }
+    public boolean isStyled()
+    {
+        return isStyled(mKind);
+    }
+    public boolean supportsUserStyle()
+    {
+        return supportsUserStyle(mKind);
+    }
+    public boolean canChooseOverrideMode()
+    {
+        return canChooseOverrideMode(mKind);
+    }
 
     /** getOverrideMode() filtered through the active kind: what the engine really applies. */
-    public int getEffectiveOverrideMode() { return effectiveOverrideMode(mKind, mOverrideMode); }
+    public int getEffectiveOverrideMode()
+    {
+        return effectiveOverrideMode(mKind, mOverrideMode);
+    }
 
     /** SurfaceController.SUBTITLE_CATEGORY_* for the active track. */
-    public int getLayoutCategory() {
-        switch (mKind) {
-            case KIND_SSA:  return SurfaceController.SUBTITLE_CATEGORY_ASS;
-            case KIND_GRAPHIC: return SurfaceController.SUBTITLE_CATEGORY_GFX;
-            default:           return SurfaceController.SUBTITLE_CATEGORY_PLAIN_TEXT;
+    public int getLayoutCategory()
+    {
+        switch (mKind)
+        {
+        case KIND_SSA:
+            return SurfaceController.SUBTITLE_CATEGORY_ASS;
+        case KIND_GRAPHIC:
+            return SurfaceController.SUBTITLE_CATEGORY_GFX;
+        default:
+            return SurfaceController.SUBTITLE_CATEGORY_PLAIN_TEXT;
         }
     }
 
     // ---- Persisted style preferences ---------------------------------------------------
     // The one list of preference keys for the user's subtitle style. The strings are what is
     // stored on users' devices: never change them. PlayerActivity.KEY_SUBTITLE_* alias these.
-    public static final String KEY_VPOS             = "pref_play_subtitle_vpos_key";
-    public static final String KEY_COLOR            = "pref_play_subtitle_color_key";
-    public static final String KEY_BG_OPACITY       = "subtitle_bg_opacity";
-    public static final String KEY_BG_MODE          = "pref_play_subtitle_bg_mode_key";
-    public static final String KEY_OVERRIDE_MODE    = "pref_play_subtitle_override_mode_key";
-    public static final String KEY_BOLD             = "pref_play_subtitle_bold_key";
-    public static final String KEY_OUTLINE_COLOR    = "pref_play_subtitle_outline_color_key";
-    public static final String KEY_SHADOW_COLOR     = "pref_play_subtitle_shadow_color_key";
+    public static final String KEY_VPOS = "pref_play_subtitle_vpos_key";
+    public static final String KEY_COLOR = "pref_play_subtitle_color_key";
+    public static final String KEY_BG_OPACITY = "subtitle_bg_opacity";
+    public static final String KEY_BG_MODE = "pref_play_subtitle_bg_mode_key";
+    public static final String KEY_OVERRIDE_MODE = "pref_play_subtitle_override_mode_key";
+    public static final String KEY_BOLD = "pref_play_subtitle_bold_key";
+    public static final String KEY_OUTLINE_COLOR = "pref_play_subtitle_outline_color_key";
+    public static final String KEY_SHADOW_COLOR = "pref_play_subtitle_shadow_color_key";
     public static final String KEY_BACKGROUND_COLOR = "pref_play_subtitle_background_color_key";
-    public static final String KEY_OUTLINE_WIDTH    = "pref_play_subtitle_outline_width_key";
-    public static final String KEY_SHADOW_WIDTH     = "pref_play_subtitle_shadow_width_key";
-    public static final String KEY_PADDING          = "pref_play_subtitle_padding_key";
+    public static final String KEY_OUTLINE_WIDTH = "pref_play_subtitle_outline_width_key";
+    public static final String KEY_SHADOW_WIDTH = "pref_play_subtitle_shadow_width_key";
+    public static final String KEY_PADDING = "pref_play_subtitle_padding_key";
     private static final float DEFAULT_PADDING = 2f;
-    public static final String KEY_FONT_SIZE_PT     = "pref_play_subtitle_font_size_pt_key";
-    public static final String KEY_FONT_SCALE       = "pref_play_subtitle_font_scale_key";
+    public static final String KEY_FONT_SIZE_PT = "pref_play_subtitle_font_size_pt_key";
+    public static final String KEY_FONT_SCALE = "pref_play_subtitle_font_scale_key";
 
     /**
      * Every preference that makes up the user's style. To reset to the defaults, remove these
      * from the preferences and call restoreStyle() (then apply the vertical position the same
      * way startup does): every key is gone, so everything falls back to its default.
      */
-    public static final List<String> STYLE_KEYS = Collections.unmodifiableList(
-            Arrays.asList(KEY_VPOS, KEY_COLOR, KEY_BG_OPACITY, KEY_BG_MODE, KEY_OVERRIDE_MODE,
-                    KEY_BOLD, KEY_OUTLINE_COLOR, KEY_SHADOW_COLOR, KEY_BACKGROUND_COLOR,
-                    KEY_OUTLINE_WIDTH, KEY_SHADOW_WIDTH, KEY_PADDING, KEY_FONT_SIZE_PT, KEY_FONT_SCALE));
+    public static final List<String> STYLE_KEYS = Collections.unmodifiableList(Arrays.asList(
+        KEY_VPOS, SubtitleVerticalPosition.KEY_PERCENT, SubtitleVerticalPosition.KEY_LEGACY, KEY_COLOR, KEY_BG_OPACITY,
+        KEY_BG_MODE, KEY_OVERRIDE_MODE, KEY_BOLD, KEY_OUTLINE_COLOR, KEY_SHADOW_COLOR, KEY_BACKGROUND_COLOR,
+        KEY_OUTLINE_WIDTH, KEY_SHADOW_WIDTH, KEY_PADDING, KEY_FONT_SIZE_PT, KEY_FONT_SCALE));
 
     /**
      * The style a user gets until they change something. Values come from res/values/config.xml
@@ -194,19 +248,21 @@ public class SubtitleManager {
      * only place they are read; the two modes are code constants so they cannot drift from the
      * OVERRIDE_* / BG_MODE_* values the native engine understands.
      */
-    public static final class Defaults {
+    public static final class Defaults
+    {
         public final int vpos, color, bgOpacity, fontSizePt, overrideMode, bgMode;
         public final int outlineColor, shadowColor, backgroundColor;
         public final float fontScale, outlineWidth, shadowWidth, padding;
         public final boolean bold;
 
-        public Defaults(Context context) {
+        public Defaults(Context context)
+        {
             final Resources res = context.getResources();
             vpos = res.getInteger(R.integer.player_pref_subtitle_vpos_default);
             color = ContextCompat.getColor(context, R.color.subtitle_default_text_color);
             bgOpacity = res.getInteger(R.integer.subtitle_default_bg_opacity);
             fontSizePt = legacySizeToNativePt(res.getInteger(R.integer.player_pref_subtitle_size_default),
-                    context.getResources().getDisplayMetrics(), 0);
+                                              context.getResources().getDisplayMetrics(), 0);
             fontScale = res.getInteger(R.integer.subtitle_default_font_scale_percent) / 100f;
             bold = res.getBoolean(R.bool.subtitle_default_bold);
             outlineColor = ContextCompat.getColor(context, R.color.subtitle_default_outline_color);
@@ -220,13 +276,17 @@ public class SubtitleManager {
         }
     }
 
-    public Defaults getDefaults() { return mDefaults; }
+    public Defaults getDefaults()
+    {
+        return mDefaults;
+    }
 
     /**
      * Short side, in pixels, of the surface the subtitles are laid out on. The settings preview
      * scales its text from it the way the renderer does (pt x short side / 720).
      */
-    public int getScreenShortSide() {
+    public int getScreenShortSide()
+    {
         return Math.min(mScreenWidth, mScreenHeight);
     }
 
@@ -237,17 +297,25 @@ public class SubtitleManager {
      * aware (and scaled in multi-window); read it with KEY_VPOS and getDefaults().vpos.
      * The order is the one the engine has always been fed.
      */
-    public void restoreStyle(SharedPreferences prefs) {
+    public void restoreStyle(SharedPreferences prefs)
+    {
         final Defaults d = mDefaults;
         setColor(prefs.getInt(KEY_COLOR, d.color));
         setOverrideMode(prefs.getInt(KEY_OVERRIDE_MODE, d.overrideMode));
-        setBgMode(prefs.getInt(KEY_BG_MODE, prefs.getBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, false) ? BG_MODE_BOXED_LINE : d.bgMode));
-        if (prefs.contains(KEY_FONT_SIZE_PT) && !prefs.contains(PlayerActivity.KEY_SUBTITLE_SIZE)) {
-            mLegacySize = nativePtToLegacySize(prefs.getInt(KEY_FONT_SIZE_PT, d.fontSizePt), mContext.getResources().getDisplayMetrics(), getScreenShortSide());
+        setBgMode(prefs.getInt(KEY_BG_MODE, prefs.getBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, false)
+                                                ? BG_MODE_BOXED_LINE
+                                                : d.bgMode));
+        if (prefs.contains(KEY_FONT_SIZE_PT) && !prefs.contains(PlayerActivity.KEY_SUBTITLE_SIZE))
+        {
+            mLegacySize = nativePtToLegacySize(prefs.getInt(KEY_FONT_SIZE_PT, d.fontSizePt),
+                                               mContext.getResources().getDisplayMetrics(), getScreenShortSide());
             mUseLegacySize = false;
             setFontSizePt(prefs.getInt(KEY_FONT_SIZE_PT, d.fontSizePt));
-        } else {
-            setSize(prefs.getInt(PlayerActivity.KEY_SUBTITLE_SIZE, mContext.getResources().getInteger(R.integer.player_pref_subtitle_size_default)));
+        }
+        else
+        {
+            setSize(prefs.getInt(PlayerActivity.KEY_SUBTITLE_SIZE,
+                                 mContext.getResources().getInteger(R.integer.player_pref_subtitle_size_default)));
         }
         setFontScale(prefs.getFloat(KEY_FONT_SCALE, d.fontScale));
         setBold(prefs.getBoolean(KEY_BOLD, d.bold));
@@ -256,18 +324,21 @@ public class SubtitleManager {
         setBackgroundColor(prefs.getInt(KEY_BACKGROUND_COLOR, d.backgroundColor));
         // after the background colour: setBackgroundColor() re-sends the opacity
         setBackgroundOpacity(prefs.getInt(KEY_BG_OPACITY, d.bgOpacity));
-        setOutlineWidth(prefs.getFloat(KEY_OUTLINE_WIDTH, prefs.getBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, false) ? d.outlineWidth : 0f));
+        setOutlineWidth(prefs.getFloat(
+            KEY_OUTLINE_WIDTH, prefs.getBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, false) ? d.outlineWidth : 0f));
         setShadowWidth(prefs.getFloat(KEY_SHADOW_WIDTH, d.shadowWidth));
         // Missing key is the legacy compatibility default; never rewrite old backups.
         mPadding = prefs.contains(KEY_PADDING) ? checkedPadding(prefs.getFloat(KEY_PADDING, DEFAULT_PADDING)) : null;
         applyPadding();
     }
 
-    private boolean mNavigationBarShowing, mSystemBarShowing, mActionBarShowing, mIsNavBarOnBottom, mIsGestureAreaShowing;
+    private boolean mNavigationBarShowing, mSystemBarShowing, mActionBarShowing, mIsNavBarOnBottom,
+        mIsGestureAreaShowing;
 
-    Surface                     mUiSurface;
+    Surface mUiSurface;
     private static boolean mFullScreenWithCutout = true;
 
+    private String mFontFamily = "sans-serif";
     private int mColor;
     private int mBgOpacity;
 
@@ -284,60 +355,77 @@ public class SubtitleManager {
     // null preserves legacy box spacing in both modes until a padding value is explicitly saved.
     private Float mPadding;
 
-    public static final int BG_MODE_FLOATING    = 0;
-    public static final int BG_MODE_BOXED_LINE  = 1;
+    public static final int BG_MODE_FLOATING = 0;
+    public static final int BG_MODE_BOXED_LINE = 1;
     public static final int BG_MODE_BOXED_BLOCK = 2;
 
-    public static final int OVERRIDE_EMBEDDED   = 0;
-    public static final int OVERRIDE_CUSTOM     = 1;
+    public static final int OVERRIDE_EMBEDDED = 0;
+    public static final int OVERRIDE_CUSTOM = 1;
     public static final int OVERRIDE_SCALE_ONLY = 2;
 
-    public int getColor() {
+    public int getColor()
+    {
         return mColor;
     }
 
-    public void setColor(int color){
-        if (log.isDebugEnabled()) log.debug("setColor: {}", color);
+    public void setColor(int color)
+    {
+        if (log.isDebugEnabled())
+            log.debug("setColor: {}", color);
         mColor = color;
 
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setTextColor(color);
         }
     }
 
-    public int getBackgroundOpacity() {
+    public int getBackgroundOpacity()
+    {
         return mBgOpacity;
     }
 
-    public void setBackgroundOpacity(int opacity) {
+    public void setBackgroundOpacity(int opacity)
+    {
         mBgOpacity = opacity;
 
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             // Java passes 0-255, our C-engine expects a 0.0 - 1.0 float!
             Player.sPlayer.getSubtitleEngine().setBackgroundOpacity(opacity / 255.0f);
         }
     }
 
-    public int getBgMode() { return mBgMode; }
+    public int getBgMode()
+    {
+        return mBgMode;
+    }
 
     /**
      * Switches between Floating (0) / Boxed Line (1) / Boxed Block (2).
      */
-    public void setBgMode(int mode) {
+    public void setBgMode(int mode)
+    {
         mBgMode = mode;
 
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setBackgroundMode(mode);
         }
         applyPadding();
     }
 
-    public int getOverrideMode() { return mOverrideMode; }
+    public int getOverrideMode()
+    {
+        return mOverrideMode;
+    }
 
     /** 0 = Embedded track styles, 1 = Force custom user styles, 2 = Scale only. */
-    public void setOverrideMode(int mode) {
+    public void setOverrideMode(int mode)
+    {
         mOverrideMode = mode;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setOverrideMode(mode);
         }
     }
@@ -346,47 +434,78 @@ public class SubtitleManager {
     // in a 720-line reference canvas; conversion uses the actual canvas/density.
     private int mLegacySize;
     private boolean mUseLegacySize = true;
-    public static float calcTextSize(int size) {
+    public static float calcTextSize(int size)
+    {
         return 16f + 48f * Math.max(0, Math.min(100, size)) / 100f;
     }
-    private static int referenceShortSide(DisplayMetrics metrics, int canvasShortSide) {
+    private static int referenceShortSide(DisplayMetrics metrics, int canvasShortSide)
+    {
         return Math.max(1, canvasShortSide > 0 ? canvasShortSide : Math.min(metrics.widthPixels, metrics.heightPixels));
     }
-    static int legacySizeToNativePt(int size, DisplayMetrics metrics, int canvasShortSide) {
+    static int legacySizeToNativePt(int size, DisplayMetrics metrics, int canvasShortSide)
+    {
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, calcTextSize(size), metrics);
         return Math.max(1, Math.round(px * 720f / referenceShortSide(metrics, canvasShortSide)));
     }
-    static int nativePtToLegacySize(int pt, DisplayMetrics metrics, int canvasShortSide) {
+    static int nativePtToLegacySize(int pt, DisplayMetrics metrics, int canvasShortSide)
+    {
         float oneSp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 1f, metrics);
         float sp = pt * referenceShortSide(metrics, canvasShortSide) / (720f * Math.max(0.01f, oneSp));
         return Math.max(0, Math.min(100, Math.round((sp - 16f) * 100f / 48f)));
     }
-    public int getSize() { return mLegacySize; }
-    public void setSize(int size) {
+    public int getSize()
+    {
+        return mLegacySize;
+    }
+    public void setSize(int size)
+    {
         mLegacySize = Math.max(0, Math.min(100, size));
         mUseLegacySize = true;
-        setFontSizePt(legacySizeToNativePt(mLegacySize, mContext.getResources().getDisplayMetrics(), getScreenShortSide()));
+        setFontSizePt(
+            legacySizeToNativePt(mLegacySize, mContext.getResources().getDisplayMetrics(), getScreenShortSide()));
     }
-    public boolean getOutlineState() { return mOutlineWidth > 0; }
-    public void setOutlineState(boolean outline) { setOutlineWidth(outline ? mDefaults.outlineWidth : 0f); }
-    public boolean getBackgroundState() { return mBgMode != BG_MODE_FLOATING; }
-    public void setBackgroundState(boolean background) { setBgMode(background ? BG_MODE_BOXED_LINE : BG_MODE_FLOATING); }
+    public boolean getOutlineState()
+    {
+        return mOutlineWidth > 0;
+    }
+    public void setOutlineState(boolean outline)
+    {
+        setOutlineWidth(outline ? mDefaults.outlineWidth : 0f);
+    }
+    public boolean getBackgroundState()
+    {
+        return mBgMode != BG_MODE_FLOATING;
+    }
+    public void setBackgroundState(boolean background)
+    {
+        setBgMode(background ? BG_MODE_BOXED_LINE : BG_MODE_FLOATING);
+    }
 
-    public int getFontSizePt() { return mFontSizePt; }
+    public int getFontSizePt()
+    {
+        return mFontSizePt;
+    }
 
     /** Absolute point size, replaces the old 0..100 abstract scale for the new dialog. */
-    public void setFontSizePt(int pt) {
+    public void setFontSizePt(int pt)
+    {
         mFontSizePt = pt;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
-            Player.sPlayer.getSubtitleEngine().setFontSize((float) pt);
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
+            Player.sPlayer.getSubtitleEngine().setFontSize((float)pt);
         }
     }
 
-    public boolean getBold() { return mBold; }
+    public boolean getBold()
+    {
+        return mBold;
+    }
 
-    public void setBold(boolean bold) {
+    public void setBold(boolean bold)
+    {
         mBold = bold;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setBold(bold);
         }
     }
@@ -395,87 +514,126 @@ public class SubtitleManager {
      * Multiplier applied on top of the embedded track's own font size — only meaningful
      * in OVERRIDE_SCALE_ONLY mode.
      */
-    public float getFontScale() { return mFontScale; }
+    public float getFontScale()
+    {
+        return mFontScale;
+    }
 
-    public void setFontScale(float scale) {
+    public void setFontScale(float scale)
+    {
         mFontScale = scale;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setFontScale(scale);
         }
     }
 
-    public int getOutlineColor() { return mOutlineColor; }
+    public int getOutlineColor()
+    {
+        return mOutlineColor;
+    }
 
-    public void setOutlineColor(int color) {
+    public void setOutlineColor(int color)
+    {
         mOutlineColor = color;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setOutlineColor(color);
         }
     }
 
-    public int getShadowColor() { return mShadowColor; }
+    public int getShadowColor()
+    {
+        return mShadowColor;
+    }
 
-    public void setShadowColor(int color) {
+    public void setShadowColor(int color)
+    {
         mShadowColor = color;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setShadowColor(color);
         }
     }
 
-    public int getBackgroundColor() { return mBackgroundColor; }
+    public int getBackgroundColor()
+    {
+        return mBackgroundColor;
+    }
 
-    public void setBackgroundColor(int color) {
+    public void setBackgroundColor(int color)
+    {
         mBackgroundColor = color;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setBackgroundColor(color);
             Player.sPlayer.getSubtitleEngine().setBackgroundOpacity(mBgOpacity / 255.0f);
         }
     }
 
-    public float getOutlineWidth() { return mOutlineWidth; }
+    public float getOutlineWidth()
+    {
+        return mOutlineWidth;
+    }
 
     /** In Boxed Block mode (bg_mode 2) this is the outline drawn inside the box. */
-    public void setOutlineWidth(float px) {
+    public void setOutlineWidth(float px)
+    {
         mOutlineWidth = px;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setOutlineWidth(px);
         }
-        if (mPadding == null) applyPadding();
+        if (mPadding == null)
+            applyPadding();
     }
 
     /** Independent when explicitly saved; otherwise reproduce the old native box contract. */
-    public float getPadding() {
-        if (mPadding != null) return mPadding;
-        return checkedPadding(mBgMode == BG_MODE_BOXED_LINE ? mOutlineWidth
-                : mBgMode == BG_MODE_BOXED_BLOCK ? mShadowWidth : DEFAULT_PADDING);
+    public float getPadding()
+    {
+        if (mPadding != null)
+            return mPadding;
+        return checkedPadding(mBgMode == BG_MODE_BOXED_LINE    ? mOutlineWidth
+                              : mBgMode == BG_MODE_BOXED_BLOCK ? mShadowWidth
+                                                               : DEFAULT_PADDING);
     }
 
     /** Callers persist KEY_PADDING just as they persist the other float style values. */
-    public void setPadding(float px) {
+    public void setPadding(float px)
+    {
         mPadding = checkedPadding(px);
         applyPadding();
     }
 
-    private static float checkedPadding(float px) {
+    private static float checkedPadding(float px)
+    {
         // The JNI setter casts to int. Preserve legacy zero; no new Settings range here.
         return Float.isFinite(px) && px >= 0f && px < 0x1p31f ? px : DEFAULT_PADDING;
     }
 
-    private void applyPadding() {
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+    private void applyPadding()
+    {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setPadding(getPadding());
         }
     }
 
-    public float getShadowWidth() { return mShadowWidth; }
+    public float getShadowWidth()
+    {
+        return mShadowWidth;
+    }
 
     /** Glyph shadow width; also supplies the compatibility default for legacy boxed-block styles. */
-    public void setShadowWidth(float px) {
+    public void setShadowWidth(float px)
+    {
         mShadowWidth = px;
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setShadowWidth(px);
         }
-        if (mPadding == null) applyPadding();
+        if (mPadding == null)
+            applyPadding();
     }
 
     /**
@@ -485,8 +643,21 @@ public class SubtitleManager {
      * AFTER calling {@link #setFontsFolder(String)} with the folder containing it, so libass
      * has already registered the file and can resolve the name.
      */
-    public void setFontFamily(String familyName) {
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+    public String getFontFamily()
+    {
+        return mFontFamily;
+    }
+
+    public int getVerticalOffsetPixels()
+    {
+        return mSubtitleEvadedVPos;
+    }
+
+    public void setFontFamily(String familyName)
+    {
+        mFontFamily = familyName == null || familyName.isEmpty() ? "sans-serif" : familyName;
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setFontFamily(familyName);
         }
     }
@@ -500,11 +671,14 @@ public class SubtitleManager {
      * reopening the track (e.g. toggling the track off/on) makes it take effect immediately.
      * Pass null to disable and fall back to fontconfig-only resolution.
      */
-    public void setFontsFolder(String dirPath) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit()
-                .putString(VideoPreferencesCommon.KEY_SUBTITLE_FONTS_FOLDER, dirPath)
-                .apply();
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+    public void setFontsFolder(String dirPath)
+    {
+        PreferenceManager.getDefaultSharedPreferences(mContext)
+            .edit()
+            .putString(VideoPreferencesCommon.KEY_SUBTITLE_FONTS_FOLDER, dirPath)
+            .apply();
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setFontsFolder(dirPath);
         }
     }
@@ -516,66 +690,83 @@ public class SubtitleManager {
      * {@link #setFontsFolder(String)}. Persisted across sessions; pass null to fall back to
      * the generic "sans-serif" fontconfig alias.
      */
-    public void setDefaultFontName(String familyName) {
-        PreferenceManager.getDefaultSharedPreferences(mContext).edit()
-                .putString(VideoPreferencesCommon.KEY_SUBTITLE_DEFAULT_FONT, familyName)
-                .apply();
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+    public void setDefaultFontName(String familyName)
+    {
+        PreferenceManager.getDefaultSharedPreferences(mContext)
+            .edit()
+            .putString(VideoPreferencesCommon.KEY_SUBTITLE_DEFAULT_FONT, familyName)
+            .apply();
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setDefaultFontName(familyName);
         }
     }
 
-    public void setUIMode(int uiMode) {
+    public void setUIMode(int uiMode)
+    {
         // Determine whether the native GL engine is now the active subtitle renderer.
         // In SBS or TB mode, SubtitleEngine's EGL thread owns gl_subtitle_view exclusively.
         // In 2D mode, the Java canvas path (SubtitleTextView.lockCanvas) is active instead.
         // These two paths must never run simultaneously
-        boolean glEngineIsActive = ((uiMode & VideoEffect.SBS_MODE) != 0)
-                                || ((uiMode & VideoEffect.TB_MODE) != 0);
+        boolean glEngineIsActive = ((uiMode & VideoEffect.SBS_MODE) != 0) || ((uiMode & VideoEffect.TB_MODE) != 0);
         setGLEngineActive(glEngineIsActive);
 
         // Pass the 3D mode to the GPU compositor
-        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null) {
+        if (Player.sPlayer != null && Player.sPlayer.getSubtitleEngine() != null)
+        {
             Player.sPlayer.getSubtitleEngine().setUIMode(uiMode);
         }
     }
 
-    public SubtitleManager(Context context, ViewGroup playerView, WindowManager window, boolean forbidWindow) {
+    public SubtitleManager(Context context, ViewGroup playerView, WindowManager window, boolean forbidWindow)
+    {
         mContext = context;
         mDefaults = new Defaults(context);
         mPlayerView = playerView;
         mSubtitlePosHintDrawable = ContextCompat.getDrawable(context, R.drawable.subtitle_baseline);
     }
 
-    public void setScreenSize(int displayWidth, int displayHeight) {
-        if (log.isDebugEnabled()) log.debug("setScreenSize: {}x{} isGraphic()={}, mSubtitleLayout={}", displayWidth, displayHeight, isGraphic(), (mSubtitleLayout == null ? "null" : "not null"));
+    public void setScreenSize(int displayWidth, int displayHeight)
+    {
+        if (log.isDebugEnabled())
+            log.debug("setScreenSize: {}x{} isGraphic()={}, mSubtitleLayout={}", displayWidth, displayHeight,
+                      isGraphic(), (mSubtitleLayout == null ? "null" : "not null"));
         mScreenWidth = displayWidth;
         mScreenHeight = displayHeight;
-        if (mSubtitleLayout != null) {
+        if (mSubtitleLayout != null)
+        {
             // reset layout params to get full screen text subs since before it could have been gfx subs with different layout
             ViewGroup.LayoutParams lp = mSubtitleLayout.getLayoutParams();
             lp.width = mScreenWidth;
             lp.height = mScreenHeight;
             mPlayerView.updateViewLayout(mSubtitleLayout, lp);
         }
-        if (mUseLegacySize) setSize(mLegacySize);
-            else setFontSizePt(mFontSizePt);
+        if (mUseLegacySize)
+            setSize(mLegacySize);
+        else
+            setFontSizePt(mFontSizePt);
         updateSubtitleLayout();
     }
 
-
-    public void updateSubtitleLayout() {
-        if (log.isDebugEnabled()) log.debug("updateSubtitleLayout");
+    public void updateSubtitleLayout()
+    {
+        if (log.isDebugEnabled())
+            log.debug("updateSubtitleLayout");
         // surface change redisplay sub to adjust surface size
         adjustView();
     }
 
-    public void setGLEngineActive(boolean active) {
-        if (log.isDebugEnabled()) log.debug("setGLEngineActive: {}", active);
+    public void setGLEngineActive(boolean active)
+    {
+        if (log.isDebugEnabled())
+            log.debug("setGLEngineActive: {}", active);
         mGLEngineActive = active;
-        if (active) {
+        if (active)
+        {
             postClearFrameToUISurface();
-        } else {
+        }
+        else
+        {
             // Re-connect the Java path with whatever surface was last set.
             setUIExternalSurface(mUiSurface);
         }
@@ -583,32 +774,45 @@ public class SubtitleManager {
 
     // Posts a single fully-transparent frame to mUiSurface so that
     // VideoEffectRenderer's mUISurfaceTexture always has a valid buffer.
-    private void postClearFrameToUISurface() {
-        if (mUiSurface == null) {
-            if (log.isDebugEnabled()) log.debug("postClearFrameToUISurface: mUiSurface is null, skipping");
+    private void postClearFrameToUISurface()
+    {
+        if (mUiSurface == null)
+        {
+            if (log.isDebugEnabled())
+                log.debug("postClearFrameToUISurface: mUiSurface is null, skipping");
             return;
         }
-        try {
+        try
+        {
             Canvas c = mUiSurface.lockCanvas(null);
-            if (c != null) {
+            if (c != null)
+            {
                 c.drawColor(0x00000000); // fully transparent clear
                 mUiSurface.unlockCanvasAndPost(c);
-                if (log.isDebugEnabled()) log.debug("postClearFrameToUISurface: posted transparent frame to keep mUISurfaceTexture queue valid");
+                if (log.isDebugEnabled())
+                    log.debug(
+                        "postClearFrameToUISurface: posted transparent frame to keep mUISurfaceTexture queue valid");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             // Surface may be in an invalid state during init; log and continue.
             log.warn("postClearFrameToUISurface: failed to post clear frame", e);
         }
     }
 
-    public void setUIExternalSurface(Surface uiSurface) {
-        if (log.isDebugEnabled()) log.debug("setUIExternalSurface {}", uiSurface);
+    public void setUIExternalSurface(Surface uiSurface)
+    {
+        if (log.isDebugEnabled())
+            log.debug("setUIExternalSurface {}", uiSurface);
         mUiSurface = uiSurface;
-        if (mGLEngineActive) {
+        if (mGLEngineActive)
+        {
             // GL engine owns gl_subtitle_view. Do NOT forward this surface to the Java
             // canvas path — it would be pointing at gl_surface_view (the VIDEO surface)
             // and lockCanvas() calls would black out video frames on every subtitle update.
-            if (log.isDebugEnabled()) log.debug("setUIExternalSurface: GL engine active, skipping Java canvas path");
+            if (log.isDebugEnabled())
+                log.debug("setUIExternalSurface: GL engine active, skipping Java canvas path");
             // But we DO need a single transparent frame in mUISurfaceTexture's queue so
             // VideoEffectRenderer.draw()'s unconditional updateTexImage() doesn't corrupt
             // GL state. Post it now that we have the real surface reference.
@@ -619,18 +823,23 @@ public class SubtitleManager {
 
     // setOnSystemUiVisibilityChangeListener is the only reliable way to track transient bar visibility;
     // no WindowInsetsControllerCompat equivalent exists for this use case.
-    @SuppressWarnings("deprecation")
-    private void attachWindow() {
+    @SuppressWarnings("deprecation") private void attachWindow()
+    {
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if (mPreferences != null) mFullScreenWithCutout = mPreferences.getBoolean("enable_cutout_mode_short_edges", true);
-        if (mSubtitleLayout != null) return;
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (mPreferences != null)
+            mFullScreenWithCutout = mPreferences.getBoolean("enable_cutout_mode_short_edges", true);
+        if (mSubtitleLayout != null)
+            return;
+        LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mSubtitleLayout = inflater.inflate(R.layout.subtitle_layout, mPlayerView, false);
-        if (mSubtitleLayout == null) return;
-        mSubtitleSpacer = (SubtitleSpacerView) mSubtitleLayout.findViewById(R.id.subtitle_spacer);
-        if (mSubtitleSpacer == null) return;
+        if (mSubtitleLayout == null)
+            return;
+        mSubtitleSpacer = (SubtitleSpacerView)mSubtitleLayout.findViewById(R.id.subtitle_spacer);
+        if (mSubtitleSpacer == null)
+            return;
         mSubtitleSpacerParams = mSubtitleSpacer.getLayoutParams();
-        if (log.isDebugEnabled()) log.debug("attachWindow: mSubtitleSpacerParams.height={}", mSubtitleSpacerParams.height);
+        if (log.isDebugEnabled())
+            log.debug("attachWindow: mSubtitleSpacerParams.height={}", mSubtitleSpacerParams.height);
         mSubtitleSpacerParams.height = mSubtitleEvadedVPos;
         setUIExternalSurface(mUiSurface);
 
@@ -641,7 +850,8 @@ public class SubtitleManager {
 
         // insets observer is needed for rotation
         mSubtitleLayout.setOnApplyWindowInsetsListener((v, insets) -> {
-            if (log.isDebugEnabled()) log.debug("attachWindow, onApplyWindowInsetsListener, isGraphic()={}", isGraphic());
+            if (log.isDebugEnabled())
+                log.debug("attachWindow, onApplyWindowInsetsListener, isGraphic()={}", isGraphic());
             adjustView();
             return insets;
         });
@@ -658,65 +868,82 @@ public class SubtitleManager {
             mActionBarShowing = PlayerController.isActionBarShowing();
             mIsNavBarOnBottom = MiscUtils.isNavigationBarOnBottom(mRootView, mContext);
             mIsGestureAreaShowing = MiscUtils.isGestureAreaDisplayed(mContext);
-            if (log.isDebugEnabled()) log.debug("attachWindow, setOnSystemUiVisibilityChangeListener: mNavigationBarShowing={}, mSystemBarShowing={}, mActionBarShowing={}, mControlBarShowing={}, mIsNavBarOnBottom={}, mIsGestureAreaShowing={}",
-                    mNavigationBarShowing, mSystemBarShowing, mActionBarShowing, PlayerController.isControlBarShowing(), mIsNavBarOnBottom, mIsGestureAreaShowing);
+            if (log.isDebugEnabled())
+                log.debug(
+                    "attachWindow, setOnSystemUiVisibilityChangeListener: mNavigationBarShowing={}, "
+                        + "mSystemBarShowing={}, mActionBarShowing={}, mControlBarShowing={}, mIsNavBarOnBottom={}, "
+                        + "mIsGestureAreaShowing={}",
+                    mNavigationBarShowing, mSystemBarShowing, mActionBarShowing, PlayerController.isControlBarShowing(),
+                    mIsNavBarOnBottom, mIsGestureAreaShowing);
             adjustView();
         });
-
 
         mPlayerView.addView(mSubtitleLayout, mScreenWidth, mScreenHeight);
     }
 
-    private void adjustView() {
+    private void adjustView()
+    {
         // Callers (setScreenSize(), the control-bar callback, ...) can fire before start()
         // has attached the layout, or after stop() detached it. There is nothing to pad then,
         // but the native renderer still needs the offset, so keep that part unconditional.
-        if (mSubtitleLayout == null || mRootView == null) {
+        if (mSubtitleLayout == null || mRootView == null)
+        {
             applyNativeVerticalOffset();
             return;
         }
         // strategy is videoView avoids cutout if not in fullscreen
         // adjust subtitle text height (bottom/top) to avoid system bars and playerController bar only if text subtitle but not left/right
-        boolean avoidCutout = ! mFullScreenWithCutout;
+        boolean avoidCutout = !mFullScreenWithCutout;
         boolean isFloatingPlayer = Player.sPlayer != null && Player.sPlayer.isFloatingPlayer();
         // Player.sPlayer.getSurfaceControllerWidth(), Player.sPlayer.getSurfaceControllerHeight() is for the videoView but virtualScreen is larger
         // do not apply globalShift if in floating player mode
-        if (log.isDebugEnabled()) log.debug("adjustView: isGraphic()={}", isGraphic());
+        if (log.isDebugEnabled())
+            log.debug("adjustView: isGraphic()={}", isGraphic());
         mActionBarShowing = PlayerController.isActionBarShowing();
-        MiscUtils.adjustViewLayoutForInsets(mContext, mRootView, mSubtitleLayout, "mSubtitleLayout",
-                mNavigationBarShowing, mSystemBarShowing, mActionBarShowing, PlayerController.isControlBarShowing(), mIsNavBarOnBottom, mIsGestureAreaShowing,
-                (! isGraphic() && PlayerController.isControlBarShowing() ? PlayerController.getControlBarCurrentHeight() : 0), (isGraphic() ? 0 :mSubtitleEvadedVPos),
-                false, ! isGraphic(), false, ! isGraphic(),
-                avoidCutout, avoidCutout, avoidCutout, avoidCutout, ! isGraphic(), isGraphic() && ! isFloatingPlayer);
+        MiscUtils.adjustViewLayoutForInsets(
+            mContext, mRootView, mSubtitleLayout, "mSubtitleLayout", mNavigationBarShowing, mSystemBarShowing,
+            mActionBarShowing, PlayerController.isControlBarShowing(), mIsNavBarOnBottom, mIsGestureAreaShowing,
+            (!isGraphic() && PlayerController.isControlBarShowing() ? PlayerController.getControlBarCurrentHeight()
+                                                                    : 0),
+            (isGraphic() ? 0 : mSubtitleEvadedVPos), false, !isGraphic(), false, !isGraphic(), avoidCutout, avoidCutout,
+            avoidCutout, avoidCutout, !isGraphic(), isGraphic() && !isFloatingPlayer);
         // The inset pass above still positions mSubtitleLayout (and with it the position-hint
         // spacer), but text subtitles are drawn natively (libass on gl_subtitle_view), so it no
         // longer moves them. The obstruction is computed separately and fed to the renderer.
         applyNativeVerticalOffset();
     }
 
-    public void onControlBarVisibilityChanged() {
+    public void onControlBarVisibilityChanged()
+    {
         adjustView();
     }
 
-    private void detachWindow() {
+    private void detachWindow()
+    {
         if (mSubtitleLayout == null)
             return;
-        if (log.isDebugEnabled()) log.debug("detachWindow");
+        if (log.isDebugEnabled())
+            log.debug("detachWindow");
         mPlayerView.removeView(mSubtitleLayout);
         mSubtitleLayout = null;
     }
 
-    public void start() {
-        if (log.isDebugEnabled()) log.debug("start");
+    public void start()
+    {
+        if (log.isDebugEnabled())
+            log.debug("start");
         attachWindow();
     }
 
-    public void stop() {
-        if (log.isDebugEnabled()) log.debug("stop");
+    public void stop()
+    {
+        if (log.isDebugEnabled())
+            log.debug("stop");
         detachWindow();
     }
 
-    public int getVerticalPosition() {
+    public int getVerticalPosition()
+    {
         return mSubtitleVPos;
     }
 
@@ -724,13 +951,18 @@ public class SubtitleManager {
      * Animates the Alpha
      * @param fadeIn true to fade in, false to fade out
      */
-    public void fadeSubtitlePositionHint (boolean fadeIn) {
-        if (log.isDebugEnabled()) log.debug("fadeSubtitlePositionHint: {}", fadeIn);
+    public void fadeSubtitlePositionHint(boolean fadeIn)
+    {
+        if (log.isDebugEnabled())
+            log.debug("fadeSubtitlePositionHint: {}", fadeIn);
         if (mSubtitleSpacer == null)
             return;
-        if (fadeIn) {
+        if (fadeIn)
+        {
             mSubtitleSpacer.animate().alpha(1).setDuration(100);
-        } else {
+        }
+        else
+        {
             mSubtitleSpacer.animate().alpha(0).setDuration(500);
         }
     }
@@ -740,32 +972,62 @@ public class SubtitleManager {
      * otherwise the Alpha of the Drawable stays at 0
      * @param show
      */
-    public void setShowSubtitlePositionHint (boolean show) {
-        if (log.isDebugEnabled()) log.debug("setShowSubtitlePositionHint: {}", show);
+    public void setShowSubtitlePositionHint(boolean show)
+    {
+        if (log.isDebugEnabled())
+            log.debug("setShowSubtitlePositionHint: {}", show);
         if (mSubtitleSpacer == null)
             return;
         mSubtitleSpacer.setAlpha(0);
-        if (show) {
+        if (show)
+        {
             mSubtitleSpacer.setBackground(mSubtitlePosHintDrawable);
-        } else {
+        }
+        else
+        {
             mSubtitleSpacer.setBackground(null);
         }
     }
 
-    /**
-     * Sets Subtitle Vertical Position by sizing an invisible view<br>
-     * Space below Subtitle is max 1/3 of mScreenHeight.
-     * @param pos 0..255.
-     */
-    public void setVerticalPosition(int pos) {
-        mSubtitleVPos = pos; // the user's value; this is what gets persisted
-        mSubtitleEvadedVPos = (mScreenHeight * pos / 765) + 1;
-        applyNativeVerticalOffset();
+    /** New positions are percentages of screen height, 0..90 in five-percent steps. */
+    public void setVerticalPosition(int percent)
+    {
+        mSubtitleVPos = SubtitleVerticalPosition.step(percent);
+        SubtitleVerticalPosition.save(PreferenceManager.getDefaultSharedPreferences(mContext), mSubtitleVPos);
+        applyVerticalPixels(SubtitleVerticalPosition.pixels(mScreenHeight, mSubtitleVPos));
+    }
 
-        if (mSubtitleSpacer != null && mSubtitleSpacerParams != null) {
-            mSubtitleSpacerParams.height = mSubtitleEvadedVPos;
+    /** Old values keep the exact old pixel position, including the one-pixel inset, until explicitly changed. */
+    public void restoreVerticalPosition(SharedPreferences prefs)
+    {
+        mSubtitleVPos = SubtitleVerticalPosition.percent(prefs, KEY_VPOS);
+        applyVerticalPixels(SubtitleVerticalPosition.restoredPixels(prefs, KEY_VPOS, mScreenHeight));
+    }
+
+    private void applyVerticalPixels(int pixels)
+    {
+        mSubtitleEvadedVPos = pixels;
+        applyNativeVerticalOffset();
+        if (mSubtitleSpacer != null && mSubtitleSpacerParams != null)
+        {
+            mSubtitleSpacerParams.height = pixels;
             mSubtitleSpacer.setLayoutParams(mSubtitleSpacerParams);
         }
+    }
+
+    /** Claude shows the returned sample bitmap while this gate suppresses the selected real track. */
+    public void setAppearancePreview(boolean shown)
+    {
+        mAppearancePreview = shown;
+        if (Player.sPlayer != null)
+        {
+            Player.sPlayer.setSubtitlePresentationSuppressed("appearance", shown);
+        }
+    }
+
+    public android.graphics.Bitmap appearanceSample(String text, int width, int height)
+    {
+        return mAppearancePreview ? SubtitleAppearanceSample.render(this, text, width, height) : null;
     }
 
     /**
@@ -775,13 +1037,16 @@ public class SubtitleManager {
      * over the whole parent when subtitles may use the bars. Measuring against the view itself
      * is therefore right in every mode and follows any future change to that sizing.
      */
-    private View getSubtitleCanvas() {
-        if (mGlSubtitleView == null && mPlayerView != null) {
+    private View getSubtitleCanvas()
+    {
+        if (mGlSubtitleView == null && mPlayerView != null)
+        {
             mGlSubtitleView = mPlayerView.findViewById(R.id.gl_subtitle_view);
             // The canvas moves/resizes without SubtitleManager being told (aspect-ratio or
             // use-margins change in SurfaceController.updateSurface()), and that changes how
             // much of the controls overlap it, so re-evaluate whenever it is laid out.
-            if (mGlSubtitleView != null) mGlSubtitleView.addOnLayoutChangeListener(mCanvasLayoutListener);
+            if (mGlSubtitleView != null)
+                mGlSubtitleView.addOnLayoutChangeListener(mCanvasLayoutListener);
         }
         return mGlSubtitleView;
     }
@@ -791,25 +1056,30 @@ public class SubtitleManager {
      * bottom of the given canvas. Mirrors the inputs MiscUtils.adjustViewLayoutForInsets() used
      * for text subtitles before rendering moved native, so users get the familiar behaviour.
      */
-    private int computeSystemBottomOverlap(View canvas) {
+    private int computeSystemBottomOverlap(View canvas)
+    {
         int inset = 0;
         WindowInsets insets = mPlayerView.getRootWindowInsets();
-        if (insets == null) return 0;
+        if (insets == null)
+            return 0;
         WindowInsetsCompat compat = WindowInsetsCompat.toWindowInsetsCompat(insets, mPlayerView);
-        if (! mFullScreenWithCutout) {
+        if (!mFullScreenWithCutout)
+        {
             DisplayCutoutCompat cutout = compat.getDisplayCutout();
-            if (cutout != null) inset = cutout.getSafeInsetBottom();
+            if (cutout != null)
+                inset = cutout.getSafeInsetBottom();
         }
         boolean gestureArea = mIsGestureAreaShowing && PlayerController.isControlBarShowing();
         boolean navBar = mIsNavBarOnBottom && mNavigationBarShowing;
-        if (gestureArea || navBar) {
+        if (gestureArea || navBar)
+        {
             int systemBarBottom = compat.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
-            int effective = gestureArea
-                    ? Math.max(systemBarBottom, MiscUtils.getGestureAreaHeight(mContext))
-                    : Math.max(systemBarBottom, MiscUtils.getNavigationBarHeight(mContext));
+            int effective = gestureArea ? Math.max(systemBarBottom, MiscUtils.getGestureAreaHeight(mContext))
+                                        : Math.max(systemBarBottom, MiscUtils.getNavigationBarHeight(mContext));
             inset = Math.max(inset, effective);
         }
-        if (inset <= 0) return 0;
+        if (inset <= 0)
+            return 0;
         int[] rootLoc = new int[2];
         int[] canvasLoc = new int[2];
         mPlayerView.getLocationOnScreen(rootLoc);
@@ -829,12 +1099,14 @@ public class SubtitleManager {
      * or gesture area is showing (so it is 0 on TV) and is read before the bar is laid out on
      * the first show.
      */
-    private int computeBottomObstruction() {
-        if (isGraphic() || mPlayerView == null) return 0;
+    private int computeBottomObstruction()
+    {
+        if (isGraphic() || mPlayerView == null)
+            return 0;
         View canvas = getSubtitleCanvas();
-        if (canvas == null || ! canvas.isLaidOut() || canvas.getHeight() <= 0) return 0;
-        return Math.max(PlayerController.getControlBarClearanceAbove(canvas),
-                        computeSystemBottomOverlap(canvas));
+        if (canvas == null || !canvas.isLaidOut() || canvas.getHeight() <= 0)
+            return 0;
+        return Math.max(PlayerController.getControlBarClearanceAbove(canvas), computeSystemBottomOverlap(canvas));
     }
 
     /**
@@ -851,14 +1123,15 @@ public class SubtitleManager {
      * be called from every layout/visibility/inset path for the cost of one JNI call. The
      * setter also wakes the render thread, so it takes effect while playback is paused.
      */
-    private void applyNativeVerticalOffset() {
-        if (Player.sPlayer == null || Player.sPlayer.getSubtitleEngine() == null) return;
+    private void applyNativeVerticalOffset()
+    {
+        if (Player.sPlayer == null || Player.sPlayer.getSubtitleEngine() == null)
+            return;
         int obstruction = computeBottomObstruction();
         int offset = Math.max(mSubtitleEvadedVPos, obstruction);
         if (log.isDebugEnabled())
-            log.debug("applyNativeVerticalOffset: evaded={} obstruction={} -> {}",
-                    mSubtitleEvadedVPos, obstruction, offset);
+            log.debug("applyNativeVerticalOffset: evaded={} obstruction={} -> {}", mSubtitleEvadedVPos, obstruction,
+                      offset);
         Player.sPlayer.getSubtitleEngine().setVerticalOffset(offset);
     }
-
 }

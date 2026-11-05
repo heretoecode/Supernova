@@ -31,19 +31,21 @@ import org.robolectric.annotation.Config;
 /** Checks subtitle style defaults, saved overrides, resets and stable preference keys. */
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 33, application = Application.class)
-public class SubtitleManagerDefaultsTest {
+public class SubtitleManagerDefaultsTest
+{
     private SubtitleManager mManager;
     private SharedPreferences mPrefs;
 
-    @Before
-    public void setUp() {
+    @Before public void setUp()
+    {
         Context ctx = RuntimeEnvironment.getApplication();
         mManager = new SubtitleManager(ctx, new FrameLayout(ctx), null, false);
         mPrefs = ctx.getSharedPreferences("subtitle_defaults_test", Context.MODE_PRIVATE);
         mPrefs.edit().clear().commit();
     }
 
-    private void assertStyleIsDefaults() {
+    private void assertStyleIsDefaults()
+    {
         SubtitleManager.Defaults d = mManager.getDefaults();
         assertEquals(d.color, mManager.getColor());
         assertEquals(d.overrideMode, mManager.getOverrideMode());
@@ -59,25 +61,25 @@ public class SubtitleManagerDefaultsTest {
         assertEquals(d.shadowWidth, mManager.getShadowWidth(), 0.001f);
     }
 
-    @Test
-    public void restoreWithNothingSavedAppliesTheDefaults() {
+    @Test public void restoreWithNothingSavedAppliesTheDefaults()
+    {
         mManager.setFontSizePt(99); // something else first, so the restore really has to write
         mManager.setBold(true);
         mManager.restoreStyle(mPrefs);
         assertStyleIsDefaults();
     }
 
-    @Test
-    public void savedValuesWinOverDefaults() {
+    @Test public void savedValuesWinOverDefaults()
+    {
         mPrefs.edit()
-                .putInt(SubtitleManager.KEY_FONT_SIZE_PT, 80)
-                .putFloat(SubtitleManager.KEY_FONT_SCALE, 1.5f)
-                .putBoolean(SubtitleManager.KEY_BOLD, true)
-                .putInt(SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.OVERRIDE_SCALE_ONLY)
-                .putInt(SubtitleManager.KEY_BG_MODE, SubtitleManager.BG_MODE_BOXED_BLOCK)
-                .putInt(SubtitleManager.KEY_SHADOW_COLOR, 0x80112233)
-                .putFloat(SubtitleManager.KEY_OUTLINE_WIDTH, 4f)
-                .commit();
+            .putInt(SubtitleManager.KEY_FONT_SIZE_PT, 80)
+            .putFloat(SubtitleManager.KEY_FONT_SCALE, 1.5f)
+            .putBoolean(SubtitleManager.KEY_BOLD, true)
+            .putInt(SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.OVERRIDE_SCALE_ONLY)
+            .putInt(SubtitleManager.KEY_BG_MODE, SubtitleManager.BG_MODE_BOXED_BLOCK)
+            .putInt(SubtitleManager.KEY_SHADOW_COLOR, 0x80112233)
+            .putFloat(SubtitleManager.KEY_OUTLINE_WIDTH, 4f)
+            .commit();
         mManager.restoreStyle(mPrefs);
         assertEquals(80, mManager.getFontSizePt());
         assertEquals(1.5f, mManager.getFontScale(), 0.001f);
@@ -90,47 +92,50 @@ public class SubtitleManagerDefaultsTest {
         assertEquals(mManager.getDefaults().outlineColor, mManager.getOutlineColor());
     }
 
-    @Test
-    public void forgettingTheSavedStyleThenRestoringIsAReset() {
+    @Test public void forgettingTheSavedStyleThenRestoringIsAReset()
+    {
         mPrefs.edit()
-                .putInt(SubtitleManager.KEY_FONT_SIZE_PT, 99)
-                .putFloat(SubtitleManager.KEY_FONT_SCALE, 2f)
-                .putBoolean(SubtitleManager.KEY_BOLD, true)
-                .putInt(SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.OVERRIDE_EMBEDDED)
-                .putInt(SubtitleManager.KEY_BG_MODE, SubtitleManager.BG_MODE_BOXED_LINE)
-                .putInt(SubtitleManager.KEY_SHADOW_COLOR, 0xFF00FF00)
-                .putInt(SubtitleManager.KEY_VPOS, 200)
-                .commit();
+            .putInt(SubtitleManager.KEY_FONT_SIZE_PT, 99)
+            .putFloat(SubtitleManager.KEY_FONT_SCALE, 2f)
+            .putBoolean(SubtitleManager.KEY_BOLD, true)
+            .putInt(SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.OVERRIDE_EMBEDDED)
+            .putInt(SubtitleManager.KEY_BG_MODE, SubtitleManager.BG_MODE_BOXED_LINE)
+            .putInt(SubtitleManager.KEY_SHADOW_COLOR, 0xFF00FF00)
+            .putInt(SubtitleManager.KEY_VPOS, 200)
+            .commit();
         mManager.restoreStyle(mPrefs);
         assertEquals(99, mManager.getFontSizePt()); // really customised first
 
         SharedPreferences.Editor e = mPrefs.edit();
-        for (String key : SubtitleManager.STYLE_KEYS) e.remove(key);
+        for (String key : SubtitleManager.STYLE_KEYS)
+            e.remove(key);
         e.commit();
         mManager.restoreStyle(mPrefs);
 
         assertStyleIsDefaults();
-        assertEquals(mManager.getDefaults().vpos,
-                mPrefs.getInt(SubtitleManager.KEY_VPOS, mManager.getDefaults().vpos));
+        assertEquals(mManager.getDefaults().vpos, mPrefs.getInt(SubtitleManager.KEY_VPOS, mManager.getDefaults().vpos));
         assertEquals(0, mPrefs.getAll().size()); // and it is durable: nothing saved is left
     }
 
-    @Test
-    public void styleKeysCoverEveryStylePreference() {
-        assertEquals(14, SubtitleManager.STYLE_KEYS.size());
-        for (String key : new String[] {SubtitleManager.KEY_VPOS, SubtitleManager.KEY_COLOR,
-                SubtitleManager.KEY_BG_OPACITY, SubtitleManager.KEY_BG_MODE,
-                SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.KEY_BOLD,
-                SubtitleManager.KEY_OUTLINE_COLOR, SubtitleManager.KEY_SHADOW_COLOR,
-                SubtitleManager.KEY_BACKGROUND_COLOR, SubtitleManager.KEY_OUTLINE_WIDTH,
-                SubtitleManager.KEY_SHADOW_WIDTH, SubtitleManager.KEY_FONT_SIZE_PT,
-                SubtitleManager.KEY_FONT_SCALE, SubtitleManager.KEY_PADDING}) {
+    @Test public void styleKeysCoverEveryStylePreference()
+    {
+        assertEquals(16, SubtitleManager.STYLE_KEYS.size());
+        assertTrue(SubtitleManager.STYLE_KEYS.contains(SubtitleVerticalPosition.KEY_PERCENT));
+        assertTrue(SubtitleManager.STYLE_KEYS.contains(SubtitleVerticalPosition.KEY_LEGACY));
+        for (String key :
+             new String[] {SubtitleManager.KEY_VPOS, SubtitleManager.KEY_COLOR, SubtitleManager.KEY_BG_OPACITY,
+                           SubtitleManager.KEY_BG_MODE, SubtitleManager.KEY_OVERRIDE_MODE, SubtitleManager.KEY_BOLD,
+                           SubtitleManager.KEY_OUTLINE_COLOR, SubtitleManager.KEY_SHADOW_COLOR,
+                           SubtitleManager.KEY_BACKGROUND_COLOR, SubtitleManager.KEY_OUTLINE_WIDTH,
+                           SubtitleManager.KEY_SHADOW_WIDTH, SubtitleManager.KEY_FONT_SIZE_PT,
+                           SubtitleManager.KEY_FONT_SCALE, SubtitleManager.KEY_PADDING})
+        {
             assertTrue(key, SubtitleManager.STYLE_KEYS.contains(key));
         }
     }
 
-    @Test
-    public void preferenceKeysNeverChangeAndPlayerActivityAliasesThem() {
+    @Test public void preferenceKeysNeverChangeAndPlayerActivityAliasesThem()
+    {
         // These strings are what is stored on users' devices.
         assertEquals("pref_play_subtitle_vpos_key", SubtitleManager.KEY_VPOS);
         assertEquals("pref_play_subtitle_color_key", SubtitleManager.KEY_COLOR);

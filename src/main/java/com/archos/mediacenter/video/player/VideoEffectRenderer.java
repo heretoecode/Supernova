@@ -280,7 +280,7 @@ public class VideoEffectRenderer extends TextureSurfaceRenderer implements Surfa
                     eng.draw3DSubtitles(mUISurface, mViewWidth, mViewHeight);
                 }
             }
-            mSourceFrameAvailable.put(mTrue);
+            mSourceFrameAvailable.offer(mTrue);
         } catch (Exception e) {
             Log.e(TAG, "FrameAvailable missed", e);
         }

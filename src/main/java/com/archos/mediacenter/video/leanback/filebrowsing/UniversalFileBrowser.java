@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback.filebrowsing;
 
+import com.archos.mediacenter.video.diagnostics.FocusSearchGuard;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,7 +19,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.text.format.Formatter;
-import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.Gravity;
 import android.view.View;
@@ -2702,7 +2702,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View next = FocusFinder.getInstance().findNextFocus(
+                View next = FocusSearchGuard.findNextFocus(
                     items, focused, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
                 if (next != null && next != focused)
                     next.requestFocus();
@@ -2750,7 +2750,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View next = FocusFinder.getInstance().findNextFocus(
+                View next = FocusSearchGuard.findNextFocus(
                     networkLayout.workspace, focused, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
                 if (next != null && next != focused) {
                     next.requestFocus();
@@ -2778,7 +2778,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                         return true;
                     }
                 }
-                View next = FocusFinder.getInstance().findNextFocus(
+                View next = FocusSearchGuard.findNextFocus(
                     centre, focused, key == KeyEvent.KEYCODE_DPAD_UP ? FOCUS_UP : FOCUS_DOWN);
                 if (next != null && next != focused)
                     next.requestFocus();
@@ -2798,7 +2798,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                     : suppliedDock instanceof ViewGroup ? (ViewGroup) suppliedDock
                     : fileList.hasFocus() ? fileList
                                                           : centre;
-                View next = FocusFinder.getInstance().findNextFocus(
+                View next = FocusSearchGuard.findNextFocus(
                     horizontal, focused, key == KeyEvent.KEYCODE_DPAD_LEFT ? FOCUS_LEFT : FOCUS_RIGHT);
                 if (next != null && next != focused) {
                     int[] a = new int[2], b = new int[2];

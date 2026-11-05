@@ -71,7 +71,7 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
                 if (action == MotionEvent.ACTION_DOWN) {
                     removeCallbacks(repeatMinusClickRunnable);
                     postDelayed(repeatMinusClickRunnable, initialRepeatDelay);
-                } else if (action == MotionEvent.ACTION_UP) {
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     removeCallbacks(repeatMinusClickRunnable);
                 }
                 return false;
@@ -96,7 +96,7 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
                 if (action == MotionEvent.ACTION_DOWN) {
                     removeCallbacks(repeatPlusClickRunnable);
                     postDelayed(repeatPlusClickRunnable, initialRepeatDelay);
-                } else if (action == MotionEvent.ACTION_UP) {
+                } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     removeCallbacks(repeatPlusClickRunnable);
                 }
                 return false;
@@ -106,6 +106,13 @@ public class AudioDelayPicker extends AudioDelayPickerAbstract {
         if (!isEnabled()) {
             setEnabled(false);
         }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        removeCallbacks(repeatMinusClickRunnable);
+        removeCallbacks(repeatPlusClickRunnable);
+        super.onDetachedFromWindow();
     }
 
     @Override

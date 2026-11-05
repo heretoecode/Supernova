@@ -186,7 +186,7 @@ public abstract class VideoLoader extends CursorLoader implements CompatAndSDKCu
     });
     protected boolean mIsDetailed;
     private boolean mForceHideVideos;
-    // used by BrowserAllTVShow and BrowserBySeason
+    // Indexed video loader projection.
 
     public static String[] concatTwoStringArrays(String[] s1, String[] s2){
         String[] result = new String[s1.length+s2.length];

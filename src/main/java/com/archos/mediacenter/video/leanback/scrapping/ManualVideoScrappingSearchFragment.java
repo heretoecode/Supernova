@@ -322,7 +322,7 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
                 }
 
                 // saving will trigger database change notification and reloading in
-                // VideoInfoActivity
+                // Legacy phone metadata host
                 try {
                     MediaMatchManualChanges.mark(
                         getActivity(), mVideo.getId());

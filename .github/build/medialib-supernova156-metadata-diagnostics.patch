@@ -1,0 +1,688 @@
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java b/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java
+index 4665e7d..ee02504 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbApiHelper.java
+@@ -38,7 +38,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
+ // TheIntroDB api helper, see https://theintrodb.org/docs (openapi v4).
+ // GET-only (no api key required for /media). Modeled on OpenSubtitlesApiHelper,
+ // with the OkHttp disk-cache + trace logging trick from MyTmdb for easier debug.
+-public class IntroDbApiHelper {
++public class IntroDbApiHelper
++{
+ 
+     private static final Logger log = LoggerFactory.getLogger(IntroDbApiHelper.class);
+ 
+@@ -60,15 +61,19 @@ public class IntroDbApiHelper {
+     private static OkHttpClient httpClient;
+     private static String baseUrl;
+ 
+-    private IntroDbApiHelper(Cache cache) {
++    private IntroDbApiHelper(Cache cache)
++    {
+         OkHttpClient.Builder builder = new OkHttpClient.Builder();
+         // MyTmdb trick: shared disk cache + cache-control rewrite (skips caching 404/401),
+         // plus an optional cache-hit logger when tracing.
+-        if (cache != null) {
++        if (cache != null)
++        {
+             builder.cache(cache).addNetworkInterceptor(new ScraperCache.CacheInterceptor());
+-            if (log.isTraceEnabled()) builder.addInterceptor(new ScraperCache.isCacheResponding());
++            if (log.isTraceEnabled())
++                builder.addInterceptor(new ScraperCache.isCacheResponding());
+         }
+-        if (log.isTraceEnabled()) {
++        if (log.isTraceEnabled())
++        {
+             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+             builder.addNetworkInterceptor(logging);
+@@ -80,84 +85,124 @@ public class IntroDbApiHelper {
+     }
+ 
+     // Initialize with a context to enable the shared OkHttp disk cache (recommended).
+-    public static void init(Context context) {
+-        synchronized (IntroDbApiHelper.class) {
++    public static void init(Context context)
++    {
++        synchronized (IntroDbApiHelper.class)
++        {
+             sInstance = new IntroDbApiHelper(ScraperCache.getCache(context.getApplicationContext()));
+         }
+     }
+ 
+     // Falls back to a no-cache client if init(Context) was never called.
+-    public static IntroDbApiHelper getInstance() {
+-        if (sInstance == null) {
+-            synchronized (IntroDbApiHelper.class) {
+-                if (sInstance == null) sInstance = new IntroDbApiHelper(null);
++    public static IntroDbApiHelper getInstance()
++    {
++        if (sInstance == null)
++        {
++            synchronized (IntroDbApiHelper.class)
++            {
++                if (sInstance == null)
++                    sInstance = new IntroDbApiHelper(null);
+             }
+         }
+         return sInstance;
+     }
+ 
+-    public static int getLastQueryResult() { return LAST_QUERY_RESULT; }
+-    public static String getLastQueryMessage() { return LAST_QUERY_MESSAGE; }
++    public static int getLastQueryResult()
++    {
++        return LAST_QUERY_RESULT;
++    }
++    public static String getLastQueryMessage()
++    {
++        return LAST_QUERY_MESSAGE;
++    }
+ 
+     // Query GET /media. Returns null on error or when no usable data was returned.
+     // v4 uses ids in priority order tvdb_id -> tmdb_id -> imdb_id; season/episode
+     // are read in the numbering of the id that resolves. We only set tmdb_id (and
+     // imdb_id for shows), so TMDB-derived season/episode keep TMDB numbering.
+-    public static IntroDbResult getMedia(IntroDbQueryParams params) throws IOException {
++    public static IntroDbResult getMedia(IntroDbQueryParams params) throws IOException
++    {
+         getInstance();
+-        if (params == null || !params.hasIdentifier()) {
++        if (params == null || !params.hasIdentifier())
++        {
+             log.warn("getMedia: no identifier provided");
+             LAST_QUERY_RESULT = RESULT_CODE_BAD_REQUEST;
+             return null;
+         }
+-        if (log.isDebugEnabled()) log.debug("getMedia: {}", params);
++        if (log.isDebugEnabled())
++            log.debug("getMedia: {}", params);
+ 
+         HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl + "media").newBuilder();
+-        if (params.getTmdbId() != null) urlBuilder.addQueryParameter("tmdb_id", String.valueOf(params.getTmdbId()));
+-        if (params.getTvdbId() != null) urlBuilder.addQueryParameter("tvdb_id", String.valueOf(params.getTvdbId()));
+-        if (params.getImdbId() != null) urlBuilder.addQueryParameter("imdb_id", params.getImdbId());
+-        if (params.isShow()) {
+-            if (params.getSeason() != null) urlBuilder.addQueryParameter("season", String.valueOf(params.getSeason()));
+-            if (params.getEpisode() != null) urlBuilder.addQueryParameter("episode", String.valueOf(params.getEpisode()));
++        if (params.getTmdbId() != null)
++            urlBuilder.addQueryParameter("tmdb_id", String.valueOf(params.getTmdbId()));
++        if (params.getTvdbId() != null)
++            urlBuilder.addQueryParameter("tvdb_id", String.valueOf(params.getTvdbId()));
++        if (params.getImdbId() != null)
++            urlBuilder.addQueryParameter("imdb_id", params.getImdbId());
++        if (params.isShow())
++        {
++            if (params.getSeason() != null)
++                urlBuilder.addQueryParameter("season", String.valueOf(params.getSeason()));
++            if (params.getEpisode() != null)
++                urlBuilder.addQueryParameter("episode", String.valueOf(params.getEpisode()));
+         }
+         if (params.getDurationMs() != null && params.getDurationMs() > 0)
+             urlBuilder.addQueryParameter("duration_ms", String.valueOf(params.getDurationMs()));
+         String url = urlBuilder.build().toString();
+ 
+-        Request request = new Request.Builder()
+-                .url(url)
+-                .get()
+-                .addHeader(USER_AGENT, USER_AGENT_VALUE)
+-                .build();
+-
+-        try (Response response = httpClient.newCall(request).execute()) {
+-            parseResponse(response);
+-            if (!response.isSuccessful()) {
+-                if (LAST_QUERY_RESULT == RESULT_CODE_NOT_FOUND)
+-                    log.debug("getMedia: no data for {} (404)", params);
+-                else
+-                    log.warn("getMedia: not successful, code={}, message={}", LAST_QUERY_RESULT, LAST_QUERY_MESSAGE);
+-                return null;
++        Request request = new Request.Builder().url(url).get().addHeader(USER_AGENT, USER_AGENT_VALUE).build();
++
++        try (com.archos.medialib.MetadataRequestDiagnostics trace =
++                 com.archos.medialib.MetadataRequestDiagnostics.open("introdb_org", "media"))
++        {
++            try (Response response = httpClient.newCall(request).execute())
++            {
++                trace.response(response.code());
++                parseResponse(response);
++                if (!response.isSuccessful())
++                {
++                    if (LAST_QUERY_RESULT == RESULT_CODE_NOT_FOUND)
++                        log.debug("getMedia: no data for {} (404)", params);
++                    else
++                        log.warn("getMedia: not successful, code={}, message={}", LAST_QUERY_RESULT,
++                                 LAST_QUERY_MESSAGE);
++                    return null;
++                }
++                String responseBody = response.body().string();
++                trace.body(responseBody.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
++                try
++                {
++                    JSONObject json = new JSONObject(responseBody);
++                    IntroDbResult result = parseMedia(json);
++                    if (log.isDebugEnabled())
++                        log.debug("getMedia: parsed {}", result);
++                    return result;
++                }
++                catch (JSONException e)
++                {
++                    trace.failed(e, "parse");
++                    log.error("getMedia: caught JSONException", e);
++                }
+             }
+-            String responseBody = response.body().string();
+-            try {
+-                JSONObject json = new JSONObject(responseBody);
+-                IntroDbResult result = parseMedia(json);
+-                if (log.isDebugEnabled()) log.debug("getMedia: parsed {}", result);
+-                return result;
+-            } catch (JSONException e) {
+-                log.error("getMedia: caught JSONException", e);
++            catch (IOException | RuntimeException failure)
++            {
++                trace.failed(failure, "transport_or_decode");
++                throw failure;
+             }
+         }
+         return null;
+     }
+ 
+-    private static IntroDbResult parseMedia(JSONObject json) {
++    private static IntroDbResult parseMedia(JSONObject json)
++    {
+         IntroDbResult result = new IntroDbResult();
+         result.setType(json.optString("type", null));
+-        if (json.has("tvdb_id") && !json.isNull("tvdb_id")) result.setTvdbId(json.optInt("tvdb_id"));
+-        if (json.has("season") && !json.isNull("season")) result.setSeason(json.optInt("season"));
+-        if (json.has("episode") && !json.isNull("episode")) result.setEpisode(json.optInt("episode"));
++        if (json.has("tvdb_id") && !json.isNull("tvdb_id"))
++            result.setTvdbId(json.optInt("tvdb_id"));
++        if (json.has("season") && !json.isNull("season"))
++            result.setSeason(json.optInt("season"));
++        if (json.has("episode") && !json.isNull("episode"))
++            result.setEpisode(json.optInt("episode"));
+         parseSegments(json, "intro", result.getIntro());
+         parseSegments(json, "recap", result.getRecap());
+         parseSegments(json, "credits", result.getCredits());
+@@ -165,42 +210,55 @@ public class IntroDbApiHelper {
+         return result;
+     }
+ 
+-    private static void parseSegments(JSONObject root, String key, List<IntroDbResult.Segment> out) {
+-        if (!root.has(key) || root.isNull(key)) return;
++    private static void parseSegments(JSONObject root, String key, List<IntroDbResult.Segment> out)
++    {
++        if (!root.has(key) || root.isNull(key))
++            return;
+         JSONArray array = root.optJSONArray(key);
+-        if (array == null) return;
+-        for (int i = 0; i < array.length(); i++) {
++        if (array == null)
++            return;
++        for (int i = 0; i < array.length(); i++)
++        {
+             JSONObject segment = array.optJSONObject(i);
+-            if (segment == null) continue;
++            if (segment == null)
++                continue;
+             Long startMs = optNullableLong(segment, "start_ms");
+             Long endMs = optNullableLong(segment, "end_ms");
+             // v4 uses end_ms == 0 as the "no segment" marker: not a skip.
+-            if (endMs != null && endMs <= 0) continue;
++            if (endMs != null && endMs <= 0)
++                continue;
+             out.add(new IntroDbResult.Segment(startMs, endMs));
+         }
+     }
+ 
+-    private static Long optNullableLong(JSONObject object, String key) {
+-        if (object == null || !object.has(key) || object.isNull(key)) return null;
++    private static Long optNullableLong(JSONObject object, String key)
++    {
++        if (object == null || !object.has(key) || object.isNull(key))
++            return null;
+         return object.optLong(key);
+     }
+ 
+-    private static int parseResponse(Response response) {
+-        if (response == null) {
++    private static int parseResponse(Response response)
++    {
++        if (response == null)
++        {
+             log.warn("parseResponse: response is null");
+             LAST_QUERY_RESULT = RESULT_CODE_SERVER_ISSUE;
+             return LAST_QUERY_RESULT;
+         }
+         int status = response.code();
+         LAST_QUERY_MESSAGE = response.message();
+-        if (status != 200) log.warn("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
+-        else if (log.isTraceEnabled()) log.trace("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
+-        switch (status) {
+-            case 200 -> LAST_QUERY_RESULT = RESULT_CODE_OK;
+-            case 400 -> LAST_QUERY_RESULT = RESULT_CODE_BAD_REQUEST;
+-            case 404 -> LAST_QUERY_RESULT = RESULT_CODE_NOT_FOUND;
+-            case 429 -> LAST_QUERY_RESULT = RESULT_CODE_TOO_MANY_REQUESTS;
+-            default -> LAST_QUERY_RESULT = (status >= 500 && status <= 599) ? RESULT_CODE_SERVER_ISSUE : status;
++        if (status != 200)
++            log.warn("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
++        else if (log.isTraceEnabled())
++            log.trace("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
++        switch (status)
++        {
++        case 200 -> LAST_QUERY_RESULT = RESULT_CODE_OK;
++        case 400 -> LAST_QUERY_RESULT = RESULT_CODE_BAD_REQUEST;
++        case 404 -> LAST_QUERY_RESULT = RESULT_CODE_NOT_FOUND;
++        case 429 -> LAST_QUERY_RESULT = RESULT_CODE_TOO_MANY_REQUESTS;
++        default -> LAST_QUERY_RESULT = (status >= 500 && status <= 599) ? RESULT_CODE_SERVER_ISSUE : status;
+         }
+         return LAST_QUERY_RESULT;
+     }
+diff --git a/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java b/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java
+index 6a546e5..608beac 100644
+--- a/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java
++++ b/src/com/archos/mediacenter/utils/introdb/IntroDbAppApiHelper.java
+@@ -37,7 +37,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
+ // GET-only (no api key required for /segments). Sibling of IntroDbApiHelper
+ // (theintrodb.org); same MyTmdb debug trick (shared disk cache + trace logging).
+ // TV reads use IMDb + season + episode; movies use IMDb + is_movie=true.
+-public class IntroDbAppApiHelper {
++public class IntroDbAppApiHelper
++{
+ 
+     private static final Logger log = LoggerFactory.getLogger(IntroDbAppApiHelper.class);
+ 
+@@ -59,13 +60,17 @@ public class IntroDbAppApiHelper {
+     private static OkHttpClient httpClient;
+     private static String baseUrl;
+ 
+-    private IntroDbAppApiHelper(Cache cache) {
++    private IntroDbAppApiHelper(Cache cache)
++    {
+         OkHttpClient.Builder builder = new OkHttpClient.Builder();
+-        if (cache != null) {
++        if (cache != null)
++        {
+             builder.cache(cache).addNetworkInterceptor(new ScraperCache.CacheInterceptor());
+-            if (log.isTraceEnabled()) builder.addInterceptor(new ScraperCache.isCacheResponding());
++            if (log.isTraceEnabled())
++                builder.addInterceptor(new ScraperCache.isCacheResponding());
+         }
+-        if (log.isTraceEnabled()) {
++        if (log.isTraceEnabled())
++        {
+             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+             builder.addNetworkInterceptor(logging);
+@@ -76,76 +81,111 @@ public class IntroDbAppApiHelper {
+         baseUrl = API_BASE_URL;
+     }
+ 
+-    public static void init(Context context) {
+-        synchronized (IntroDbAppApiHelper.class) {
++    public static void init(Context context)
++    {
++        synchronized (IntroDbAppApiHelper.class)
++        {
+             sInstance = new IntroDbAppApiHelper(ScraperCache.getCache(context.getApplicationContext()));
+         }
+     }
+ 
+-    public static IntroDbAppApiHelper getInstance() {
+-        if (sInstance == null) {
+-            synchronized (IntroDbAppApiHelper.class) {
+-                if (sInstance == null) sInstance = new IntroDbAppApiHelper(null);
++    public static IntroDbAppApiHelper getInstance()
++    {
++        if (sInstance == null)
++        {
++            synchronized (IntroDbAppApiHelper.class)
++            {
++                if (sInstance == null)
++                    sInstance = new IntroDbAppApiHelper(null);
+             }
+         }
+         return sInstance;
+     }
+ 
+-    public static int getLastQueryResult() { return LAST_QUERY_RESULT; }
+-    public static String getLastQueryMessage() { return LAST_QUERY_MESSAGE; }
++    public static int getLastQueryResult()
++    {
++        return LAST_QUERY_RESULT;
++    }
++    public static String getLastQueryMessage()
++    {
++        return LAST_QUERY_MESSAGE;
++    }
+ 
+     // Query GET /segments. Returns null on error or when no usable data was returned.
+-    public static IntroDbAppResult getSegments(IntroDbAppQueryParams params) throws IOException {
++    public static IntroDbAppResult getSegments(IntroDbAppQueryParams params) throws IOException
++    {
+         getInstance();
+-        if (params == null || !params.isValid()) {
++        if (params == null || !params.isValid())
++        {
+             log.warn("getSegments: invalid params {}", params);
+             LAST_QUERY_RESULT = RESULT_CODE_BAD_REQUEST;
+             return null;
+         }
+-        if (log.isDebugEnabled()) log.debug("getSegments: {}", params);
++        if (log.isDebugEnabled())
++            log.debug("getSegments: {}", params);
+ 
+         HttpUrl.Builder urlBuilder = HttpUrl.parse(baseUrl + "segments").newBuilder();
+         urlBuilder.addQueryParameter("imdb_id", params.getImdbId());
+-        if (params.isMovie()) urlBuilder.addQueryParameter("is_movie", "true");
+-        else {
++        if (params.isMovie())
++            urlBuilder.addQueryParameter("is_movie", "true");
++        else
++        {
+             urlBuilder.addQueryParameter("season", String.valueOf(params.getSeason()));
+             urlBuilder.addQueryParameter("episode", String.valueOf(params.getEpisode()));
+         }
+         String url = urlBuilder.build().toString();
+ 
+-        Request request = new Request.Builder()
+-                .url(url)
+-                .get()
+-                .addHeader(USER_AGENT, USER_AGENT_VALUE)
+-                .build();
+-
+-        try (Response response = httpClient.newCall(request).execute()) {
+-            parseResponse(response);
+-            if (!response.isSuccessful()) {
+-                if (LAST_QUERY_RESULT == RESULT_CODE_NOT_FOUND)
+-                    log.debug("getSegments: no data for {} (404)", params);
+-                else
+-                    log.warn("getSegments: not successful, code={}, message={}", LAST_QUERY_RESULT, LAST_QUERY_MESSAGE);
+-                return null;
++        Request request = new Request.Builder().url(url).get().addHeader(USER_AGENT, USER_AGENT_VALUE).build();
++
++        try (com.archos.medialib.MetadataRequestDiagnostics trace =
++                 com.archos.medialib.MetadataRequestDiagnostics.open("introdb_app", "segments"))
++        {
++            try (Response response = httpClient.newCall(request).execute())
++            {
++                trace.response(response.code());
++                parseResponse(response);
++                if (!response.isSuccessful())
++                {
++                    if (LAST_QUERY_RESULT == RESULT_CODE_NOT_FOUND)
++                        log.debug("getSegments: no data for {} (404)", params);
++                    else
++                        log.warn("getSegments: not successful, code={}, message={}", LAST_QUERY_RESULT,
++                                 LAST_QUERY_MESSAGE);
++                    return null;
++                }
++                String responseBody = response.body().string();
++                trace.body(responseBody.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
++                try
++                {
++                    JSONObject json = new JSONObject(responseBody);
++                    IntroDbAppResult result = parseSegments(json);
++                    if (log.isDebugEnabled())
++                        log.debug("getSegments: parsed {}", result);
++                    return result;
++                }
++                catch (JSONException e)
++                {
++                    trace.failed(e, "parse");
++                    log.error("getSegments: caught JSONException", e);
++                }
+             }
+-            String responseBody = response.body().string();
+-            try {
+-                JSONObject json = new JSONObject(responseBody);
+-                IntroDbAppResult result = parseSegments(json);
+-                if (log.isDebugEnabled()) log.debug("getSegments: parsed {}", result);
+-                return result;
+-            } catch (JSONException e) {
+-                log.error("getSegments: caught JSONException", e);
++            catch (IOException | RuntimeException failure)
++            {
++                trace.failed(failure, "transport_or_decode");
++                throw failure;
+             }
+         }
+         return null;
+     }
+ 
+-    static IntroDbAppResult parseSegments(JSONObject json) {
++    static IntroDbAppResult parseSegments(JSONObject json)
++    {
+         IntroDbAppResult result = new IntroDbAppResult();
+         result.setImdbId(json.optString("imdb_id", null));
+-        if (json.has("season") && !json.isNull("season")) result.setSeason(json.optInt("season"));
+-        if (json.has("episode") && !json.isNull("episode")) result.setEpisode(json.optInt("episode"));
++        if (json.has("season") && !json.isNull("season"))
++            result.setSeason(json.optInt("season"));
++        if (json.has("episode") && !json.isNull("episode"))
++            result.setEpisode(json.optInt("episode"));
+         result.setIntro(parseSegment(json.optJSONObject("intro")));
+         result.setRecap(parseSegment(json.optJSONObject("recap")));
+         result.setOutro(parseSegment(json.optJSONObject("outro")));
+@@ -153,35 +193,40 @@ public class IntroDbAppApiHelper {
+         return result;
+     }
+ 
+-    private static IntroDbAppResult.Segment parseSegment(JSONObject segment) {
+-        if (segment == null) return null;
++    private static IntroDbAppResult.Segment parseSegment(JSONObject segment)
++    {
++        if (segment == null)
++            return null;
+         // start_ms / end_ms are always provided alongside the _sec variants
+         long startMs = segment.optLong("start_ms", -1);
+         long endMs = segment.optLong("end_ms", -1);
+-        if (startMs < 0 || endMs < 0 || endMs <= startMs) return null;
+-        return new IntroDbAppResult.Segment(
+-                startMs,
+-                endMs,
+-                segment.optDouble("confidence", 0),
+-                segment.optInt("submission_count", 0));
++        if (startMs < 0 || endMs < 0 || endMs <= startMs)
++            return null;
++        return new IntroDbAppResult.Segment(startMs, endMs, segment.optDouble("confidence", 0),
++                                            segment.optInt("submission_count", 0));
+     }
+ 
+-    private static int parseResponse(Response response) {
+-        if (response == null) {
++    private static int parseResponse(Response response)
++    {
++        if (response == null)
++        {
+             log.warn("parseResponse: response is null");
+             LAST_QUERY_RESULT = RESULT_CODE_SERVER_ISSUE;
+             return LAST_QUERY_RESULT;
+         }
+         int status = response.code();
+         LAST_QUERY_MESSAGE = response.message();
+-        if (status != 200) log.warn("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
+-        else if (log.isTraceEnabled()) log.trace("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
+-        switch (status) {
+-            case 200 -> LAST_QUERY_RESULT = RESULT_CODE_OK;
+-            case 400 -> LAST_QUERY_RESULT = RESULT_CODE_BAD_REQUEST;
+-            case 404 -> LAST_QUERY_RESULT = RESULT_CODE_NOT_FOUND;
+-            case 429 -> LAST_QUERY_RESULT = RESULT_CODE_TOO_MANY_REQUESTS;
+-            default -> LAST_QUERY_RESULT = (status >= 500 && status <= 599) ? RESULT_CODE_SERVER_ISSUE : status;
++        if (status != 200)
++            log.warn("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
++        else if (log.isTraceEnabled())
++            log.trace("parseResponse: status={}, message={}", status, LAST_QUERY_MESSAGE);
++        switch (status)
++        {
++        case 200 -> LAST_QUERY_RESULT = RESULT_CODE_OK;
++        case 400 -> LAST_QUERY_RESULT = RESULT_CODE_BAD_REQUEST;
++        case 404 -> LAST_QUERY_RESULT = RESULT_CODE_NOT_FOUND;
++        case 429 -> LAST_QUERY_RESULT = RESULT_CODE_TOO_MANY_REQUESTS;
++        default -> LAST_QUERY_RESULT = (status >= 500 && status <= 599) ? RESULT_CODE_SERVER_ISSUE : status;
+         }
+         return LAST_QUERY_RESULT;
+     }
+diff --git a/src/com/archos/medialib/MetadataRequestDiagnostics.java b/src/com/archos/medialib/MetadataRequestDiagnostics.java
+new file mode 100644
+index 0000000..4d2b839
+--- /dev/null
++++ b/src/com/archos/medialib/MetadataRequestDiagnostics.java
+@@ -0,0 +1,99 @@
++package com.archos.medialib;
++
++import java.util.UUID;
++import java.util.function.LongSupplier;
++
++/** Optional app-owned evidence sink; no URL, credentials or response text crosses this contract. */
++public final class MetadataRequestDiagnostics implements AutoCloseable
++{
++    public interface Sink
++    {
++        void accept(String event, Throwable failure, Object[] fields);
++    }
++    private static volatile Sink sink;
++    private final Sink owner;
++    private final String service, endpoint, operation = UUID.randomUUID().toString();
++    private final LongSupplier clock;
++    private final long started;
++    private int status;
++    private long bytes = -1;
++    private String outcome = "transport_incomplete";
++    private boolean closed;
++
++    public static void install(Sink value)
++    {
++        sink = value;
++    }
++
++    public static MetadataRequestDiagnostics open(String service, String endpoint)
++    {
++        return new MetadataRequestDiagnostics(service, endpoint, () -> System.nanoTime() / 1_000_000, sink);
++    }
++
++    MetadataRequestDiagnostics(String service, String endpoint, LongSupplier clock, Sink owner)
++    {
++        this.service = service;
++        this.endpoint = endpoint;
++        this.clock = clock;
++        this.owner = owner;
++        started = clock.getAsLong();
++    }
++
++    public void response(int status)
++    {
++        this.status = status;
++        outcome = status >= 200 && status < 300 ? "success" : "http_error";
++    }
++
++    public void body(long bytes)
++    {
++        this.bytes = bytes;
++    }
++
++    public void failed(Throwable failure, String stage)
++    {
++        outcome = stage;
++        emit("metadata_request_failed", failure);
++    }
++
++    private void emit(String event, Throwable failure)
++    {
++        if (owner == null)
++            return;
++        try
++        {
++            owner.accept(event, failure,
++                         new Object[] {"operation_id",
++                                       operation,
++                                       "service",
++                                       service,
++                                       "endpoint_category",
++                                       endpoint,
++                                       "status",
++                                       status,
++                                       "body_bytes",
++                                       bytes,
++                                       "body_bytes_known",
++                                       bytes >= 0,
++                                       "body_byte_quality",
++                                       "decoded_utf8_length",
++                                       "duration_ms",
++                                       Math.max(0, clock.getAsLong() - started),
++                                       "outcome",
++                                       outcome,
++                                       "suspicious_small_body",
++                                       bytes >= 0 && bytes <= 24});
++        }
++        catch (RuntimeException ignored)
++        { /* Observability never changes a provider result. */
++        }
++    }
++
++    @Override public void close()
++    {
++        if (closed)
++            return;
++        closed = true;
++        emit("metadata_request_result", null);
++    }
++}
+diff --git a/test/java/com/archos/medialib/MetadataRequestDiagnosticsTest.java b/test/java/com/archos/medialib/MetadataRequestDiagnosticsTest.java
+new file mode 100644
+index 0000000..2e2cf21
+--- /dev/null
++++ b/test/java/com/archos/medialib/MetadataRequestDiagnosticsTest.java
+@@ -0,0 +1,52 @@
++package com.archos.medialib;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertSame;
++import java.io.IOException;
++import java.util.ArrayList;
++import java.util.LinkedHashMap;
++import java.util.List;
++import java.util.Map;
++import org.junit.Test;
++
++public class MetadataRequestDiagnosticsTest
++{
++    @Test public void resultAndFailureKeepRequestIdentityAndExactStageWithoutGlobalLastQueryState()
++    {
++        long[] now = {10};
++        List<Map<String, Object>> rows = new ArrayList<>();
++        List<Throwable> failures = new ArrayList<>();
++        MetadataRequestDiagnostics request =
++            new MetadataRequestDiagnostics("introdb_org", "media", () -> now[0], (event, failure, fields) -> {
++                Map<String, Object> row = new LinkedHashMap<>();
++                for (int i = 0; i < fields.length; i += 2)
++                    row.put((String)fields[i], fields[i + 1]);
++                rows.add(row);
++                failures.add(failure);
++            });
++        request.response(200);
++        request.body(24);
++        IOException failure = new IOException("Malformed response");
++        now[0] = 50;
++        request.failed(failure, "parse");
++        request.close();
++        request.close();
++        assertEquals(2, rows.size());
++        assertSame(failure, failures.get(0));
++        assertEquals(rows.get(0).get("operation_id"), rows.get(1).get("operation_id"));
++        assertEquals("parse", rows.get(1).get("outcome"));
++        assertEquals(40L, rows.get(1).get("duration_ms"));
++        assertEquals(true, rows.get(1).get("suspicious_small_body"));
++    }
++
++    @Test public void throwingObserverCannotChangeAProviderOutcome()
++    {
++        MetadataRequestDiagnostics request =
++            new MetadataRequestDiagnostics("introdb_app", "segments", () -> 0, (event, failure, fields) -> {
++                throw new IllegalStateException("Sink unavailable");
++            });
++        request.response(404);
++        request.failed(new IOException("Unavailable"), "transport");
++        request.close();
++    }
++}

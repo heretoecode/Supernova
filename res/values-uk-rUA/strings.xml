@@ -560,7 +560,6 @@
     <string name="rotation_unlocked">Автоповорот екрана увімкнено</string>
     <string name="network_reindex">Пересканувати вміст</string>
     <!-- Help overlay -->
-    <string name="help_overlay_menu">Натисніть кнопку ВГОРУ\nдля відображення меню</string>
     <string name="help_overlay_network_indexing_text1">Натисніть цю кнопку, щоб додати вміст цієї теки та всі вкладені підтеки в бібліотеку.</string>
     <string name="help_overlay_network_indexing_text2">Це дозволить вам отримати постери та описи для фільмів та серіалів.</string>
     <string name="help_overlay_scraper_text">Натисніть на цей пункт для онлайн пошуку постерів та опису відео. </string>

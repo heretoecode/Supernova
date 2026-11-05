@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Renders subtitles and coordinates their surface, styling and 3D layout. */
-public class SubtitleEngine implements TextureView.SurfaceTextureListener, SurfaceController.VideoBoxListener {
+public class SubtitleEngine implements TextureView.SurfaceTextureListener, SurfaceController.VideoBoxListener
+{
 
     private static final Logger log = LoggerFactory.getLogger(SubtitleEngine.class);
 
@@ -109,7 +110,8 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     private final Handler mPullHandler = new Handler(Looper.getMainLooper());
     private final AtomicBoolean mPullQueued = new AtomicBoolean(false);
     private final Runnable mPullRunnable = new Runnable() {
-        @Override public void run() {
+        @Override public void run()
+        {
             // Clear BEFORE pulling: an announce that lands during the pull queues a new one, and
             // the pull reads native's newest state anyway -- worst case one redundant UNCHANGED.
             mPullQueued.set(false);
@@ -122,12 +124,13 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     private final long[] mFillGeneration = new long[1];
 
     // nativeFillBitmap() results. MUST match SUB_FILL_RESULT in sub_engine.h.
-    private static final int FILL_ERROR     = -1; // nothing decided -- record nothing, retry next time
-    private static final int FILL_UNCHANGED = 0;  // what was last posted is still right -- do nothing
-    private static final int FILL_CLEAR     = 1;  // nothing to show -- clear the Surface (bitmap untouched)
-    private static final int FILL_FRAME     = 2;  // mSoftBitmap holds the frame -- draw it
+    private static final int FILL_ERROR = -1;    // nothing decided -- record nothing, retry next time
+    private static final int FILL_UNCHANGED = 0; // what was last posted is still right -- do nothing
+    private static final int FILL_CLEAR = 1;     // nothing to show -- clear the Surface (bitmap untouched)
+    private static final int FILL_FRAME = 2;     // mSoftBitmap holds the frame -- draw it
 
-    public SubtitleEngine() {
+    public SubtitleEngine()
+    {
         // Initialize the native C engine and store its memory pointer
         mNativeEngineHandle = nativeCreate();
     }
@@ -147,15 +150,19 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * mReleased, checked first thing inside that same lock on the draw side, stops any call
      * that was queued up behind us -- or arrives after -- from proceeding at all.
      */
-    public void release() {
-        synchronized (m3DDrawLock) {
+    public void release()
+    {
+        synchronized (m3DDrawLock)
+        {
             mReleased = true;
             mPullHandler.removeCallbacks(mPullRunnable);
-            if (mNativeEngineHandle != 0) {
+            if (mNativeEngineHandle != 0)
+            {
                 nativeDestroy(mNativeEngineHandle);
                 mNativeEngineHandle = 0;
             }
-            if (mSoftBitmap != null) {
+            if (mSoftBitmap != null)
+            {
                 mSoftBitmap.recycle();
                 mSoftBitmap = null;
             }
@@ -164,26 +171,28 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
 
     // --- TextureView.SurfaceTextureListener Implementation ---
 
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+    @Override public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height)
+    {
         log.debug("SubtitleEngine: onSurfaceTextureAvailable {}x{}", width, height);
         mCurrentSurface = new Surface(surfaceTexture);
         mLast2DWidth = width;
         mLast2DHeight = height;
 
         // Only attach hardware EGL if we are NOT in 3D mode
-        if (mNativeEngineHandle != 0 && !is3DMode()) {
+        if (mNativeEngineHandle != 0 && !is3DMode())
+        {
             nativeSurfaceCreated(mNativeEngineHandle, mCurrentSurface);
             resendVideoBox(); // attach just invalidated the native box -- restore it
             nativeSurfaceChanged(mNativeEngineHandle, width, height);
         }
     }
 
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+    @Override public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height)
+    {
         mLast2DWidth = width;
         mLast2DHeight = height;
-        if (mNativeEngineHandle != 0 && !is3DMode()) {
+        if (mNativeEngineHandle != 0 && !is3DMode())
+        {
             nativeSurfaceChanged(mNativeEngineHandle, width, height);
         }
     }
@@ -193,10 +202,14 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * unconditionally (e.g. from onResume()): it's a no-op if nothing is attached yet, and
      * simply re-applies the same size if nothing changed. See callers for why this exists.
      */
-    public void resyncSurfaceSize() {
-        if (mNativeEngineHandle == 0 || is3DMode()) return;
-        if (mCurrentSurface == null || !mCurrentSurface.isValid()) return;
-        if (mLast2DWidth <= 0 || mLast2DHeight <= 0) return;
+    public void resyncSurfaceSize()
+    {
+        if (mNativeEngineHandle == 0 || is3DMode())
+            return;
+        if (mCurrentSurface == null || !mCurrentSurface.isValid())
+            return;
+        if (mLast2DWidth <= 0 || mLast2DHeight <= 0)
+            return;
         resendVideoBox(); // re-push the whole known geometry, not just the size
         nativeSurfaceChanged(mNativeEngineHandle, mLast2DWidth, mLast2DHeight);
     }
@@ -208,14 +221,20 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * pillarbox, zoom/crop, stretch). x/y/w/h are in canvas pixels, relative to the
      * canvas's own top-left.
      */
-    public void setVideoBox(int x, int y, int w, int h) {
-        synchronized (mBoxLock) {
-            mBoxX = x; mBoxY = y; mBoxW = w; mBoxH = h;
+    public void setVideoBox(int x, int y, int w, int h)
+    {
+        synchronized (mBoxLock)
+        {
+            mBoxX = x;
+            mBoxY = y;
+            mBoxW = w;
+            mBoxH = h;
             mHasVideoBox = true;
             sendVideoBoxLocked();
         }
         // Outside mBoxLock: redraw3DIfNeeded() can take m3DDrawLock, and the two must never nest.
-        if (mNativeEngineHandle != 0) redraw3DIfNeeded();
+        if (mNativeEngineHandle != 0)
+            redraw3DIfNeeded();
     }
 
     /**
@@ -240,11 +259,16 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * the next video frame after the view changes (never, while paused), so a numeric box
      * would disagree with the canvas for that whole gap. Zero tracks the canvas by definition.
      */
-    private void sendVideoBoxLocked() {
-        if (!mHasVideoBox || mNativeEngineHandle == 0) return;
-        if (is3DMode()) {
+    private void sendVideoBoxLocked()
+    {
+        if (!mHasVideoBox || mNativeEngineHandle == 0)
+            return;
+        if (is3DMode())
+        {
             nativeSetVideoBox(mNativeEngineHandle, 0, 0, 0, 0);
-        } else {
+        }
+        else
+        {
             nativeSetVideoBox(mNativeEngineHandle, mBoxX, mBoxY, mBoxW, mBoxH);
         }
     }
@@ -255,40 +279,43 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * else would restore it. No-op if SurfaceController hasn't reported a box yet (native is
      * already at its zero fallback in that case).
      */
-    private void resendVideoBox() {
-        synchronized (mBoxLock) {
+    private void resendVideoBox()
+    {
+        synchronized (mBoxLock)
+        {
             sendVideoBoxLocked();
         }
     }
 
     // SurfaceController.VideoBoxListener -- see setSubtitleTextureCallback()'s sibling
     // registration of `this` in Player.java for the TextureView.SurfaceTextureListener side.
-    @Override
-    public void onVideoBoxChanged(int x, int y, int w, int h) {
+    @Override public void onVideoBoxChanged(int x, int y, int w, int h)
+    {
         setVideoBox(x, y, w, h);
     }
 
-
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+    @Override public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture)
+    {
         log.debug("SubtitleEngine: onSurfaceTextureDestroyed");
-        if (mNativeEngineHandle != 0 && !is3DMode()) {
+        if (mNativeEngineHandle != 0 && !is3DMode())
+        {
             nativeSurfaceDestroyed(mNativeEngineHandle);
         }
-        if (mCurrentSurface != null) {
+        if (mCurrentSurface != null)
+        {
             mCurrentSurface.release();
             mCurrentSurface = null;
         }
         return true;
     }
 
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+    @Override public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture)
+    {
         // Ignored. The native OpenGL thread owns the render loop in 2D mode.
     }
 
-    public boolean is3DMode() {
+    public boolean is3DMode()
+    {
         return (mUiMode & VideoEffect.SBS_MODE) != 0 || (mUiMode & VideoEffect.TB_MODE) != 0;
     }
 
@@ -296,28 +323,36 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     // 3D UI MODE & HYBRID RENDERER
     // ====================================================================
 
-    public void setUIMode(int uiMode) {
+    public void setUIMode(int uiMode)
+    {
         boolean was3D = is3DMode();
         mUiMode = uiMode;
         boolean isNow3D = is3DMode();
 
         int mappedMode = 0;
-        if ((uiMode & VideoEffect.SBS_MODE) != 0) mappedMode = 1;
-        else if ((uiMode & VideoEffect.TB_MODE) != 0) mappedMode = 2;
+        if ((uiMode & VideoEffect.SBS_MODE) != 0)
+            mappedMode = 1;
+        else if ((uiMode & VideoEffect.TB_MODE) != 0)
+            mappedMode = 2;
 
-        if (mNativeEngineHandle != 0) {
+        if (mNativeEngineHandle != 0)
+        {
             nativeSetUIMode(mNativeEngineHandle, mappedMode);
 
-            if (isNow3D && !was3D) {
+            if (isNow3D && !was3D)
+            {
                 // Shut down 2D hardware EGL
                 nativeSurfaceDestroyed(mNativeEngineHandle);
                 // detach zeroed AND dirtied the native box; the 3D path still needs one, so
                 // replay it (translated to the 3D overlay's origin by sendVideoBoxLocked())
                 // before the next poll_frame() -- the two coalesce into one apply.
                 resendVideoBox();
-            } else if (!isNow3D && was3D) {
+            }
+            else if (!isNow3D && was3D)
+            {
                 // Restore 2D hardware EGL and 2D dimensions
-                if (mCurrentSurface != null) {
+                if (mCurrentSurface != null)
+                {
                     nativeSurfaceCreated(mNativeEngineHandle, mCurrentSurface);
                 }
                 // Unconditional (not just when a surface exists): the box's coordinate space
@@ -335,7 +370,8 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * clock. Uses the cheap passive pull (nativeFillBitmap) -- called 30-60x/sec during
      * playback, the render thread has already been ticking on its own independent of us.
      */
-     public void draw3DSubtitles(Surface uiSurface, int viewWidth, int viewHeight) {
+    public void draw3DSubtitles(Surface uiSurface, int viewWidth, int viewHeight)
+    {
         draw3DSubtitlesInternal(uiSurface, viewWidth, viewHeight, /*forceSync=*/false);
     }
 
@@ -347,8 +383,10 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * draw3DSubtitles() call as usual. Safe to call from initGLComponents() before playback
      * starts.
      */
-    public void primeThreeDSurface(Surface uiSurface, int viewWidth, int viewHeight) {
-        if (uiSurface == null || !uiSurface.isValid() || viewWidth <= 0 || viewHeight <= 0) return;
+    public void primeThreeDSurface(Surface uiSurface, int viewWidth, int viewHeight)
+    {
+        if (uiSurface == null || !uiSurface.isValid() || viewWidth <= 0 || viewHeight <= 0)
+            return;
         mLast3DSurface = uiSurface;
         mLast3DWidth = viewWidth;
         mLast3DHeight = viewHeight;
@@ -379,50 +417,68 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * would otherwise strip or rename it. (If it ever is, native logs a warning and the push is
      * simply disabled -- the 3D path falls back to pulling on video frames and style changes.)
      */
-    @Keep
-    private void onNativeSubtitleContentChanged() {
-        if (mReleased) return;
-        if (mPullQueued.compareAndSet(false, true)) {
+    @Keep private void onNativeSubtitleContentChanged()
+    {
+        if (mReleased)
+            return;
+        if (mPullQueued.compareAndSet(false, true))
+        {
             mPullHandler.post(mPullRunnable);
         }
     }
 
     // Main-thread side of the push: an ordinary passive pull against the last registered 3D
     // Surface -- exactly what onFrameAvailable() does per video frame, minus the video frame.
-    private void pull3DSubtitles() {
+    private void pull3DSubtitles()
+    {
         Surface surface = mLast3DSurface;
-        if (!is3DMode() || surface == null) return;
+        if (mReleased || !is3DMode() || surface == null)
+            return;
         draw3DSubtitlesInternal(surface, mLast3DWidth, mLast3DHeight, /*forceSync=*/false);
-    }
-
-    private void redraw3DIfNeeded() {
-        if (!is3DMode() || mLast3DSurface == null) return;
-        draw3DSubtitlesInternal(mLast3DSurface, mLast3DWidth, mLast3DHeight, /*forceSync=*/true);
-        if (Player.sPlayer != null && Player.sPlayer.getEffectRenderer() != null) {
+        if (!mReleased && Player.sPlayer != null && Player.sPlayer.getEffectRenderer() != null)
+        {
             Player.sPlayer.getEffectRenderer().wakeDrawLoop();
         }
     }
 
-    private void draw3DSubtitlesInternal(Surface uiSurface, int viewWidth, int viewHeight, boolean forceSync) {
-        if (mNativeEngineHandle == 0 || uiSurface == null || !uiSurface.isValid()) return;
-        if (viewWidth <= 0 || viewHeight <= 0) return;
+    private void redraw3DIfNeeded()
+    {
+        if (!is3DMode() || mLast3DSurface == null)
+            return;
+        draw3DSubtitlesInternal(mLast3DSurface, mLast3DWidth, mLast3DHeight, /*forceSync=*/true);
+        if (Player.sPlayer != null && Player.sPlayer.getEffectRenderer() != null)
+        {
+            Player.sPlayer.getEffectRenderer().wakeDrawLoop();
+        }
+    }
+
+    private void draw3DSubtitlesInternal(Surface uiSurface, int viewWidth, int viewHeight, boolean forceSync)
+    {
+        if (mNativeEngineHandle == 0 || uiSurface == null || !uiSurface.isValid())
+            return;
+        if (viewWidth <= 0 || viewHeight <= 0)
+            return;
 
         mLast3DSurface = uiSurface;
         mLast3DWidth = viewWidth;
         mLast3DHeight = viewHeight;
 
-        synchronized (m3DDrawLock) {
+        synchronized (m3DDrawLock)
+        {
             // Must be re-checked here, under the lock: release() takes this same lock before
             // destroying mNativeEngineHandle and recycling mSoftBitmap, so if release() won
             // the race to acquire it first, mReleased is now true and neither of those is
             // safe to touch any more. The mNativeEngineHandle==0 check above is not enough
             // on its own -- it happens before this lock is acquired, so a release() that
             // starts (and finishes) in between would slip past it undetected.
-            if (mReleased) return;
+            if (mReleased)
+                return;
 
             // Give Libass the FULL physical screen size. No 3D halving!
-            if (mSoftBitmap == null || mSoftBitmap.getWidth() != viewWidth || mSoftBitmap.getHeight() != viewHeight) {
-                if (mSoftBitmap != null) mSoftBitmap.recycle();
+            if (mSoftBitmap == null || mSoftBitmap.getWidth() != viewWidth || mSoftBitmap.getHeight() != viewHeight)
+            {
+                if (mSoftBitmap != null)
+                    mSoftBitmap.recycle();
                 mSoftBitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);
                 nativeSurfaceChanged(mNativeEngineHandle, viewWidth, viewHeight);
                 // The new bitmap is blank, so nothing valid has been posted from it yet.
@@ -435,7 +491,8 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
 
             // A different Surface holds none of our content, whatever generation we last
             // posted to the previous one.
-            if (uiSurface != mLastPostedSurface) {
+            if (uiSurface != mLastPostedSurface)
+            {
                 mLastPostedGeneration = -1;
             }
 
@@ -448,27 +505,35 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
             // wake hasn't been picked up yet), and never answers UNCHANGED because the pixels
             // legitimately differ (new font/color/size) even if the frame's identity doesn't.
             // forceSync=false is the per-video-frame path: no waiting, UNCHANGED is the norm.
-            int result = nativeFillBitmap(mNativeEngineHandle, mSoftBitmap,
-                                          mLastPostedGeneration, forceSync, mFillGeneration);
-            if (result == FILL_UNCHANGED) return;
-            if (result != FILL_CLEAR && result != FILL_FRAME) {
+            int result =
+                nativeFillBitmap(mNativeEngineHandle, mSoftBitmap, mLastPostedGeneration, forceSync, mFillGeneration);
+            if (result == FILL_UNCHANGED)
+                return;
+            if (result != FILL_CLEAR && result != FILL_FRAME)
+            {
                 // FILL_ERROR (or an unknown code): no decision was made, so record nothing --
                 // in particular do NOT paint an empty overlay, which would look like "clear".
                 log.warn("nativeFillBitmap failed ({}); keeping previous overlay", result);
                 return;
             }
 
-            try {
+            try
+            {
                 Canvas c = uiSurface.lockCanvas(null);
-                if (c != null) {
+                if (c != null)
+                {
                     c.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                    if (result == FILL_FRAME) {
+                    if (result == FILL_FRAME)
+                    {
                         // Draw the full 1920x1080 image ONCE. The 3D Shader duplicates it!
                         int cw = c.getWidth(), ch = c.getHeight();
-                        if (cw == mSoftBitmap.getWidth() && ch == mSoftBitmap.getHeight()) {
+                        if (cw == mSoftBitmap.getWidth() && ch == mSoftBitmap.getHeight())
+                        {
                             c.drawBitmap(mSoftBitmap, 0, 0, null);
-                        } else {
+                        }
+                        else
+                        {
                             // The overlay buffer hasn't caught up with the view size yet (a
                             // resize applies to the next dequeued buffer, so one frame can
                             // still be the old size). Drawing 1:1 would clip or leave the
@@ -484,8 +549,12 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
                     mLastPostedGeneration = mFillGeneration[0];
                     mLastPostedSurface = uiSurface;
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 log.error("Failed to draw 3D subtitles to Canvas", e);
+                com.archos.mediacenter.video.diagnostics.Diagnostics.error("subtitle_render_error", e, "stage",
+                                                                           "canvas_3d");
             }
         }
     }
@@ -495,21 +564,126 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     // frame (see redraw3DIfNeeded()'s doc comment). It's a no-op in 2D mode or while playing,
     // so this costs nothing outside the specific paused+3D case it's fixing.
     private native void nativeSetVideoBox(long handle, int x, int y, int w, int h);
-    public void setFontSize(float pt) { if (mNativeEngineHandle != 0) { nativeSetFontSize(mNativeEngineHandle, pt); redraw3DIfNeeded(); } }
-    public void setFontScale(float scale) { if (mNativeEngineHandle != 0) { nativeSetFontScale(mNativeEngineHandle, scale); redraw3DIfNeeded(); } }
-    public void setFontFamily(String familyName) { if (mNativeEngineHandle != 0) { nativeSetFontFamily(mNativeEngineHandle, familyName); redraw3DIfNeeded(); } }
-    public void setBold(boolean bold) { if (mNativeEngineHandle != 0) { nativeSetBold(mNativeEngineHandle, bold); redraw3DIfNeeded(); } }
-    public void setTextColor(int color) { if (mNativeEngineHandle != 0) { nativeSetTextColor(mNativeEngineHandle, color); redraw3DIfNeeded(); } }
-    public void setOutlineColor(int color) { if (mNativeEngineHandle != 0) { nativeSetOutlineColor(mNativeEngineHandle, color); redraw3DIfNeeded(); } }
-    public void setOutlineWidth(float px) { if (mNativeEngineHandle != 0) { nativeSetOutlineWidth(mNativeEngineHandle, px); redraw3DIfNeeded(); } }
-    public void setShadowWidth(float px) { if (mNativeEngineHandle != 0) { nativeSetShadowWidth(mNativeEngineHandle, px); redraw3DIfNeeded(); } }
-    public void setPadding(float px) { if (mNativeEngineHandle != 0) { nativeSetPadding(mNativeEngineHandle, px); redraw3DIfNeeded(); } }
-    public void setShadowColor(int color) { if (mNativeEngineHandle != 0) { nativeSetShadowColor(mNativeEngineHandle, color); redraw3DIfNeeded(); } }
-    public void setBackgroundMode(int mode) { if (mNativeEngineHandle != 0) { nativeSetBackgroundMode(mNativeEngineHandle, mode); redraw3DIfNeeded(); } }
-    public void setBackgroundColor(int color) { if (mNativeEngineHandle != 0) { nativeSetBackgroundColor(mNativeEngineHandle, color); redraw3DIfNeeded(); } }
-    public void setBackgroundOpacity(float opacity) { if (mNativeEngineHandle != 0) { nativeSetBackgroundOpacity(mNativeEngineHandle, opacity); redraw3DIfNeeded(); } }
-    public void setVerticalOffset(float pixels) { if (mNativeEngineHandle != 0) { nativeSetVerticalOffset(mNativeEngineHandle, pixels); redraw3DIfNeeded(); } }
-    public void setOverrideMode(int mode) { if (mNativeEngineHandle != 0) { nativeSetOverrideMode(mNativeEngineHandle, mode); redraw3DIfNeeded(); } }
+    public void setFontSize(float pt)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetFontSize(mNativeEngineHandle, pt);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setFontScale(float scale)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetFontScale(mNativeEngineHandle, scale);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setFontFamily(String familyName)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetFontFamily(mNativeEngineHandle, familyName);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setBold(boolean bold)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetBold(mNativeEngineHandle, bold);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setTextColor(int color)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetTextColor(mNativeEngineHandle, color);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setOutlineColor(int color)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetOutlineColor(mNativeEngineHandle, color);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setOutlineWidth(float px)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetOutlineWidth(mNativeEngineHandle, px);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setShadowWidth(float px)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetShadowWidth(mNativeEngineHandle, px);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setPadding(float px)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetPadding(mNativeEngineHandle, px);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setShadowColor(int color)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetShadowColor(mNativeEngineHandle, color);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setBackgroundMode(int mode)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetBackgroundMode(mNativeEngineHandle, mode);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setBackgroundColor(int color)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetBackgroundColor(mNativeEngineHandle, color);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setBackgroundOpacity(float opacity)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetBackgroundOpacity(mNativeEngineHandle, opacity);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setVerticalOffset(float pixels)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetVerticalOffset(mNativeEngineHandle, pixels);
+            redraw3DIfNeeded();
+        }
+    }
+    public void setOverrideMode(int mode)
+    {
+        if (mNativeEngineHandle != 0)
+        {
+            nativeSetOverrideMode(mNativeEngineHandle, mode);
+            redraw3DIfNeeded();
+        }
+    }
 
     /**
      * Points the native engine at a custom fonts folder (MX Player / mpv-android style
@@ -520,8 +694,10 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * playback, or force a re-open (e.g. seek/track switch) for it to take effect immediately.
      * Pass null or empty to clear/disable.
      */
-    public void setFontsFolder(String dirPath) {
-        if (mNativeEngineHandle != 0) nativeSetFontsFolder(mNativeEngineHandle, dirPath);
+    public void setFontsFolder(String dirPath)
+    {
+        if (mNativeEngineHandle != 0)
+            nativeSetFontsFolder(mNativeEngineHandle, dirPath);
     }
 
     /**
@@ -531,8 +707,10 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
      * folder was last set via {@link #setFontsFolder(String)} (typically one of the files
      * in that folder), or null/empty to fall back to the generic "sans-serif" fontconfig alias.
      */
-    public void setDefaultFontName(String familyName) {
-        if (mNativeEngineHandle != 0) nativeSetDefaultFontName(mNativeEngineHandle, familyName);
+    public void setDefaultFontName(String familyName)
+    {
+        if (mNativeEngineHandle != 0)
+            nativeSetDefaultFontName(mNativeEngineHandle, familyName);
     }
 
     // ====================================================================
@@ -546,14 +724,13 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     private native void nativeSurfaceChanged(long handle, int width, int height);
     private native void nativeSurfaceDestroyed(long handle);
 
-
     // 3D Bridge Hook -- the single pull for the CPU-blend path. Returns FILL_* and reports,
     // in outGeneration[0], the generation of exactly what that result describes. lastGeneration
     // is what the caller last posted (-1 = nothing valid). sync=true is the forced,
     // wait-for-render variant used only by redraw3DIfNeeded()'s style-change path. See
     // jni_sub_engine.c for the full contract.
-    private native int nativeFillBitmap(long handle, Bitmap bitmap, long lastGeneration,
-                                        boolean sync, long[] outGeneration);
+    private native int nativeFillBitmap(long handle, Bitmap bitmap, long lastGeneration, boolean sync,
+                                        long[] outGeneration);
     private native void nativeSetUIMode(long handle, int mode);
 
     /* ── Typography & Master Control ── */
@@ -563,7 +740,7 @@ public class SubtitleEngine implements TextureView.SurfaceTextureListener, Surfa
     private native void nativeSetBold(long handle, boolean bold);
     private native void nativeSetTextColor(long handle, int color);
 
-     /* ── Borders, Shadows, and Backgrounds ── */
+    /* ── Borders, Shadows, and Backgrounds ── */
     private native void nativeSetOutlineColor(long handle, int color);
     private native void nativeSetOutlineWidth(long handle, float px);
     private native void nativeSetShadowWidth(long handle, float px);

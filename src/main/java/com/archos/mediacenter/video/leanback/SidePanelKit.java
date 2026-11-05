@@ -1,5 +1,6 @@
 package com.archos.mediacenter.video.leanback;
 
+import com.archos.mediacenter.video.diagnostics.FocusSearchGuard;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.*;
@@ -158,7 +159,7 @@ public final class SidePanelKit {
                 return true;
             }
             if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View next = FocusFinder.getInstance().findNextFocus(
+                View next = FocusSearchGuard.findNextFocus(
                     body, row, key == KeyEvent.KEYCODE_DPAD_UP ? View.FOCUS_UP : View.FOCUS_DOWN);
                 if (next == null || next == row) {
                     Object top = row.getTag(R.id.preview_row_top);
