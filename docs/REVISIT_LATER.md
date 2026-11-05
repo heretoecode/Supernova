@@ -73,3 +73,10 @@ Items already built or scheduled are left out (see the bottom of this file).
   `03` Home, `04` Settings › Playback, `05` Movies library, `06` Movies with the approved stats row, `07` Network &
   Files landing, all on the
   charcoal with no panel.
+
+## Parked (owner, 5 Nov 2026) — no version
+- **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
+  library backdrops with a slow drift and cross-fade, title and clock in the corners; Appearance gets Supernova
+  screensaver (with Open Android settings), Shows (Films · TV shows · Both), Change picture every (10 · 20 · 30 s) and
+  Show the title and clock. Taken out of 0.156 by the owner; not scheduled for 0.157 either. The rest of Appearance
+  (interface language) stays in 0.156.

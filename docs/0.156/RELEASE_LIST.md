@@ -53,7 +53,7 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 
 ## Settings (all eight sections, single-panel pattern)
 36. ✅ Playback (incl. Skipping), Audio & Subtitles (fonts in Supernova's browser), Library & Home (.nfo export,
-    Refresh details moved to Library Health), Where to Watch (renamed), Appearance (Accent removed, screensaver),
+    Refresh details moved to Library Health), Where to Watch (renamed), Appearance (Accent removed; the screensaver is parked, owner 5 Nov 2026),
     Accounts & Services (renamed), System (Backup three choices + private items, Diagnostics full detail, Advanced),
     About (credits for every service, full version history, licences with search and QR codes, Device) (#23–#29, #32).
 37. ✅ IntroDB tidy-up (#15).
