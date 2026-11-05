@@ -107,6 +107,17 @@ public final class SupernovaStyle {
             new int[] {FOCUS_TEXT, FOCUS_TEXT, 0x66FFFFFF, TEXT});
     }
 
+    /**
+     * True when the view already uses the button text colours (white at rest, black on the white focus box), i.e.
+     * it was styled as a button and any icon added later must follow focus too.
+     */
+    public static boolean usesButtonContent(TextView view) {
+        ColorStateList colours = view.getTextColors();
+        return colours != null && colours.isStateful() &&
+            colours.getColorForState(new int[] {android.R.attr.state_focused}, 0) == FOCUS_TEXT &&
+            colours.getDefaultColor() == TEXT;
+    }
+
     /** Destructive action text (e.g. Delete): soft red at rest, deep red on the white focus box. */
     public static ColorStateList destructiveContent() {
         return new ColorStateList(new int[][] {{android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},

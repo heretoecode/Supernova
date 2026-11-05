@@ -26,11 +26,11 @@ public class FoundationAboutActivityTest {
             return;
         }
         String before = text(controller.get().findViewById(android.R.id.content));
-        assertTrue(before.contains("Based on Nova Video Player 6.6.2"));
+        assertTrue(before.contains("Based on NOVA Video Player 6.6.4"));
         assertFalse(before.contains("SUPERNOVA Preview"));
         controller.recreate();
         String after = text(controller.get().findViewById(android.R.id.content));
-        assertTrue(after.contains("Based on Nova Video Player 6.6.2"));
+        assertTrue(after.contains("Based on NOVA Video Player 6.6.4"));
         controller.pause().stop().destroy();
     }
 

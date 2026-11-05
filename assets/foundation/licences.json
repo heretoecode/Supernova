@@ -347,7 +347,7 @@
     },
     {
       "name": "NOVA / Archos and local modules",
-      "version": "NOVA6.6.2 release-time source integration; Supernova0.146 patches",
+      "version": "NOVA 6.6.2 release-time source integration and NOVA 6.6.4 playback changes; Supernova patches",
       "licence": "Apache-2.0",
       "role": "Upstream application, database/file modules and native player; original copyright and modified sources remain available in the public repository",
       "url": "https://github.com/nova-video-player/aos-Video",
@@ -363,7 +363,7 @@
     },
     {
       "name": "VideoLAN deinterlace / NEON routines",
-      "version": "native AVOS6.6.2 source integration",
+      "version": "native AVOS from NOVA 6.6.4 (5cf3ae9) with Supernova patches",
       "licence": "LGPL-2.1-or-later AND MIT",
       "role": "Native deinterlacing and NEON pixel routines",
       "url": "https://github.com/nova-video-player/aos-avos",

@@ -206,4 +206,26 @@ public class SupernovaStyleTest {
         }
         dialog.dismiss();
     }
+
+    /** Owner report 4 Nov 2026 (notes #37): an icon added after styling (Edit Page's Save Changes tick) vanished on focus. */
+    @Test
+    public void iconAddedAfterButtonStylingStillTurnsDarkOnFocus() {
+        TextView save = new TextView(host.get());
+        save.setText("Save Changes");
+        save.setFocusable(true);
+        SupernovaStyle.applyButton(save, SupernovaStyle.Surface.PANEL);
+        PreviewIcon.apply(save, "check", 18);
+        root.addView(save);
+        android.graphics.drawable.Drawable icon = save.getCompoundDrawables()[0];
+        assertTrue("the tick follows focus", icon instanceof SupernovaStyle.StateIcon);
+        assertTrue(save.requestFocus());
+        icon.setState(save.getDrawableState());
+        assertEquals("dark on the white focus box", SupernovaStyle.FOCUS_TEXT,
+                     ((SupernovaStyle.StateIcon)icon).colour());
+
+        TextView plain = new TextView(host.get());
+        plain.setTextColor(Color.WHITE);
+        PreviewIcon.apply(plain, "check", 18);
+        assertTrue("plain labels keep their own icon colour", plain.getCompoundDrawables()[0] instanceof PreviewIcon);
+    }
 }

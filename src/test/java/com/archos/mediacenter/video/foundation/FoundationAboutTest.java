@@ -87,7 +87,7 @@ public class FoundationAboutTest {
         workspace.show(about);
         String text = allText(workspace);
         assertTrue(text.contains(BuildConfig.VERSION_NAME));
-        assertTrue(text.contains("Based on Nova Video Player 6.6.2"));
+        assertTrue(text.contains("Based on NOVA Video Player 6.6.4"));
         assertFalse(text.contains("Check for Updates"));
         assertFalse(text.contains("Upstream SHA"));
     }

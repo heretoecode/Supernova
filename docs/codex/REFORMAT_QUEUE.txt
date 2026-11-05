@@ -1,6 +1,7 @@
-# Reformatting queue — reopened 2026-11-05 (Claude). The 2026-11-03 pass measured only line length; these
-# files still pack 3+ statements onto one line at least 5 times. Layout only: no behaviour change.
-# Format: <crammed lines> · <longest line> · <path>
+# Reformatting queue — reopened 2026-11-05 (Claude). The 2026-11-03 pass measured only line length; these files
+# still pack 3+ statements onto one line. Layout only: no behaviour change. tools/test_code_layout.py allows each
+# file at most its count below (it may only go down) and every file not listed must have none.
+# Format: <crammed lines> crammed lines · longest <n> · <path>
  35 crammed lines · longest 282 · src/test/java/com/archos/mediacenter/video/utils/CombinedMediaRestoreTest.java
  28 crammed lines · longest 299 · src/test/java/com/archos/mediacenter/video/utils/CombinedViewingRestoreTest.java
  15 crammed lines · longest 137 · src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/NetworkFilesLayout.java
@@ -46,3 +47,97 @@
   5 crammed lines · longest 158 · src/main/java/com/archos/mediacenter/video/diagnostics/ArtworkTrace.java
   5 crammed lines · longest 154 · src/test/java/com/archos/mediacenter/video/leanback/PreviewScanProgressTest.java
   5 crammed lines · longest 141 · src/test/java/com/archos/mediacenter/video/foundation/DoubleRingTest.java
+  4 crammed lines · longest 295 · src/test/java/com/archos/mediacenter/video/leanback/details/DetailsEnrichmentDeliveryTest.java
+  4 crammed lines · longest 292 · src/test/java/com/archos/mediacenter/video/player/PlaybackViewingCoverageTest.java
+  4 crammed lines · longest 246 · src/test/java/com/archos/mediacenter/video/streaming/putio/PutioAccountTest.java
+  4 crammed lines · longest 242 · src/test/java/com/archos/mediacenter/video/leanback/Preview413Test.java
+  4 crammed lines · longest 242 · src/main/java/com/archos/mediacenter/video/leanback/details/PreviewEpisodeChoice.java
+  4 crammed lines · longest 228 · src/main/java/com/archos/mediacenter/video/utils/SubtitleReplacement.java
+  4 crammed lines · longest 226 · src/main/java/com/archos/mediacenter/video/leanback/PreviewFrost.java
+  4 crammed lines · longest 222 · src/test/java/com/archos/mediacenter/video/streaming/putio/PutioSyncSchedulerTest.java
+  4 crammed lines · longest 211 · src/main/java/com/archos/mediacenter/video/leanback/PreviewMetadataCache.java
+  4 crammed lines · longest 178 · src/main/java/com/archos/mediacenter/video/streaming/putio/PutioReconciliation.java
+  3 crammed lines · longest 262 · src/main/java/com/archos/mediacenter/video/leanback/search/VideoSearchActivity.java
+  3 crammed lines · longest 254 · src/test/java/com/archos/mediacenter/video/leanback/Preview414Test.java
+  3 crammed lines · longest 238 · src/main/java/com/archos/mediacenter/video/leanback/LibraryStatistics.java
+  3 crammed lines · longest 230 · src/main/java/com/archos/mediacenter/video/utils/backup/MediaMatchManualChanges.java
+  3 crammed lines · longest 224 · src/main/java/com/archos/mediacenter/video/utils/FolderPicker.java
+  3 crammed lines · longest 224 · src/main/java/com/archos/mediacenter/video/browser/Delete.java
+  3 crammed lines · longest 199 · src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchive.java
+  3 crammed lines · longest 193 · src/main/java/com/archos/mediacenter/video/utils/DirectEpisodeLookup.java
+  3 crammed lines · longest 173 · src/test/java/com/archos/mediacenter/video/leanback/PreviewMetadataCacheTest.java
+  3 crammed lines · longest 160 · src/test/java/com/archos/mediacenter/video/leanback/PreviewOperationDialogTest.java
+  3 crammed lines · longest 156 · src/main/java/com/archos/mediacenter/video/utils/backup/HiddenItemReplacement.java
+  3 crammed lines · longest 142 · src/main/java/com/archos/mediacenter/video/leanback/PreviewMappingCursor.java
+  3 crammed lines · longest 123 · src/test/java/com/archos/mediacenter/video/leanback/PreviewRebuildTelemetryTest.java
+  2 crammed lines · longest 293 · src/main/java/com/archos/mediacenter/video/utils/backup/BackupCategory.java
+  2 crammed lines · longest 283 · src/main/java/com/archos/mediacenter/video/utils/MiscUtils.java
+  2 crammed lines · longest 263 · src/main/java/com/archos/mediacenter/video/utils/backup/PortablePhysicalReferences.java
+  2 crammed lines · longest 261 · src/main/java/com/archos/mediacenter/video/utils/VerifiedBackup.java
+  2 crammed lines · longest 257 · src/test/java/com/archos/mediacenter/video/streaming/putio/PutioOAuthClientTest.java
+  2 crammed lines · longest 238 · src/main/java/com/archos/mediacenter/video/diagnostics/DiagnosticExportActivity.java
+  2 crammed lines · longest 235 · src/test/java/com/archos/mediacenter/utils/introdb/IntroDbMovieContractTest.java
+  2 crammed lines · longest 233 · src/main/java/com/archos/mediacenter/video/utils/backup/CanonicalMatchExecutor.java
+  2 crammed lines · longest 231 · src/main/java/com/archos/mediacenter/video/leanback/PreviewFocusUnderline.java
+  2 crammed lines · longest 221 · src/main/java/com/archos/mediacenter/video/leanback/details/PreviewExtraDuration.java
+  2 crammed lines · longest 218 · src/test/java/com/archos/mediacenter/video/utils/DirectEpisodeLookupTest.java
+  2 crammed lines · longest 214 · src/main/java/com/archos/mediacenter/video/leanback/PreviewDiscovery.java
+  2 crammed lines · longest 208 · src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticArchiveTest.java
+  2 crammed lines · longest 205 · src/main/java/com/archos/mediacenter/video/utils/DirectShowLookup.java
+  2 crammed lines · longest 204 · src/main/java/com/archos/mediacenter/video/player/PlaybackChapters.java
+  2 crammed lines · longest 203 · src/test/java/com/archos/mediacenter/video/leanback/PreviewRemoteLogoTest.java
+  2 crammed lines · longest 200 · src/main/java/com/archos/mediacenter/video/leanback/details/VideoActionAdapter.java
+  2 crammed lines · longest 200 · src/main/java/com/archos/mediacenter/video/leanback/PreviewSubtitleResults.java
+  2 crammed lines · longest 199 · src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticReferenceTest.java
+  2 crammed lines · longest 195 · src/test/java/com/archos/mediacenter/video/streaming/putio/PutioRootLocationTest.java
+  2 crammed lines · longest 191 · src/test/java/com/archos/mediacenter/video/player/PlayerControllerLaunchTest.java
+  2 crammed lines · longest 185 · src/main/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserActivity.java
+  2 crammed lines · longest 176 · src/main/java/com/archos/mediacenter/video/leanback/scrapping/ManualShowScrappingSearchFragment.java
+  2 crammed lines · longest 162 · src/main/java/com/archos/mediacenter/video/utils/DirectMovieLookup.java
+  2 crammed lines · longest 158 · src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSyncScheduler.java
+  2 crammed lines · longest 155 · src/main/java/com/archos/mediacenter/video/diagnostics/PlaybackDiagnosticState.java
+  2 crammed lines · longest 154 · src/test/java/com/archos/mediacenter/video/leanback/PreviewMatchReviewTest.java
+  2 crammed lines · longest 152 · src/main/java/com/archos/mediacenter/video/leanback/HeroRotationPolicy.java
+  2 crammed lines · longest 142 · src/main/java/com/archos/mediacenter/video/utils/backup/PortableHiddenItems.java
+  1 crammed lines · longest 290 · src/test/java/com/archos/mediacenter/video/utils/BackupStageRevalidationTest.java
+  1 crammed lines · longest 288 · src/main/java/com/archos/mediacenter/video/player/PreviewTaglines.java
+  1 crammed lines · longest 277 · src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesApiHelper.java
+  1 crammed lines · longest 277 · src/main/java/com/archos/mediacenter/video/player/PreviewTrackLabel.java
+  1 crammed lines · longest 239 · src/main/java/com/archos/mediacenter/video/player/tvmenu/TVMenuAdapter.java
+  1 crammed lines · longest 238 · src/test/java/com/archos/mediacenter/video/leanback/OfficialTitleNetworkTest.java
+  1 crammed lines · longest 235 · src/main/java/com/archos/mediacenter/video/browser/adapters/object/Video.java
+  1 crammed lines · longest 227 · src/main/java/com/archos/mediacenter/video/leanback/PreviewWatchedScopeDialog.java
+  1 crammed lines · longest 226 · src/main/java/com/archos/mediacenter/video/utils/backup/MediaMatchReconciler.java
+  1 crammed lines · longest 225 · src/main/java/com/archos/mediacenter/video/utils/backup/PortableTitleReferences.java
+  1 crammed lines · longest 223 · src/main/java/com/archos/mediacenter/video/leanback/PreviewReleaseOrder.java
+  1 crammed lines · longest 220 · src/main/java/com/archos/mediacenter/video/player/SubtitleColorPicker.java
+  1 crammed lines · longest 219 · src/main/java/com/archos/mediacenter/video/player/SegmentSkippingPolicy.java
+  1 crammed lines · longest 219 · src/main/java/com/archos/mediacenter/video/leanback/PreviewMenuPlacement.java
+  1 crammed lines · longest 210 · src/test/java/com/archos/mediacenter/video/leanback/scrapping/PreviewMatchFragmentTest.java
+  1 crammed lines · longest 206 · src/test/java/com/archos/mediacenter/video/leanback/details/PreviewMoreActionsTest.java
+  1 crammed lines · longest 204 · src/main/java/com/archos/mediacenter/video/leanback/overlay/Overlay.java
+  1 crammed lines · longest 202 · src/main/java/com/archos/mediacenter/video/info/VideoInfoScraperSearchFragment.java
+  1 crammed lines · longest 196 · src/test/java/com/archos/mediacenter/video/browser/loader/SeasonsWatchedCountTest.java
+  1 crammed lines · longest 184 · src/test/java/com/archos/mediacenter/video/leanback/PreviewVersionsDialogTest.java
+  1 crammed lines · longest 183 · src/main/java/com/archos/mediacenter/video/leanback/collections/CollectionFragment.java
+  1 crammed lines · longest 180 · src/test/java/com/archos/mediacenter/video/leanback/PreviewBackdropTest.java
+  1 crammed lines · longest 178 · src/main/java/com/archos/mediacenter/video/player/SeekTooltipDrawable.java
+  1 crammed lines · longest 178 · src/main/java/com/archos/mediacenter/video/info/VideoInfoShowScraperFragment.java
+  1 crammed lines · longest 177 · src/main/java/com/archos/mediacenter/video/player/tvmenu/TVCardDialog.java
+  1 crammed lines · longest 176 · src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/PreviewBrowserSurface.java
+  1 crammed lines · longest 167 · src/main/java/com/archos/mediacenter/video/player/SubtitleEngine.java
+  1 crammed lines · longest 163 · src/test/java/com/archos/mediacenter/video/streaming/putio/PutioBrowserBackTest.java
+  1 crammed lines · longest 158 · src/main/java/com/archos/mediacenter/video/leanback/PreviewScanProgress.java
+  1 crammed lines · longest 156 · src/test/java/com/archos/mediacenter/video/utils/MarkChangesTest.java
+  1 crammed lines · longest 150 · src/main/java/com/archos/mediacenter/video/diagnostics/ArtworkRequest.java
+  1 crammed lines · longest 145 · src/test/java/com/archos/mediacenter/video/leanback/PreviewHomeMaximumTest.java
+  1 crammed lines · longest 140 · src/main/java/com/archos/mediacenter/video/leanback/filebrowsing/BrowserSelection.java
+  1 crammed lines · longest 140 · src/main/java/com/archos/mediacenter/video/leanback/DetailsBackdropController.java
+  1 crammed lines · longest 134 · src/test/java/com/archos/mediacenter/video/utils/DynamicRangeMetadataTest.java
+  1 crammed lines · longest 132 · src/main/java/com/archos/mediacenter/video/leanback/details/PreviewPeopleRail.java
+  1 crammed lines · longest 119 · src/test/java/com/archos/mediacenter/video/leanback/PreviewFeaturedIndicatorsTest.java
+  1 crammed lines · longest 109 · src/main/java/com/archos/mediacenter/video/leanback/PreviewFocusGlow.java
+  1 crammed lines · longest 106 · src/main/java/com/archos/mediacenter/video/leanback/presenter/CustomImageCardview.java
+  1 crammed lines · longest 103 · src/test/java/com/archos/mediacenter/video/player/PlaybackNetworkRetryTest.java
+  1 crammed lines · longest  96 · src/test/java/com/archos/mediacenter/video/diagnostics/DiagnosticFlightRecorderTest.java
+  1 crammed lines · longest  94 · src/main/java/com/archos/mediacenter/video/player/PreviewSeekPolicy.java

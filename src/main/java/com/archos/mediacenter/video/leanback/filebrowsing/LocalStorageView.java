@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StatFs;
@@ -100,6 +101,8 @@ public final class LocalStorageView extends LinearLayout {
     private final RecyclerView list;
     private final GridLayoutManager layout;
     private final LinearLayout placeholders, notice;
+    /** Invisible, unhighlighted place for focus while the list is swapped, so it never escapes to the top bar. */
+    private final View focusHolder;
     private final Rows adapter = new Rows();
 
     private final List<Box> volumes = new ArrayList<>();
@@ -110,6 +113,8 @@ public final class LocalStorageView extends LinearLayout {
     private Map<String, Video> indexed = Collections.emptyMap();
     private boolean indexedReady, listed, failed, wantFocus, closed;
     private Uri current;
+    /** The folder whose listed counts the pills show (null while they show a drive count or a status). */
+    private Uri pillsFor;
     private ListingEngine engine;
     private int generation, activePosition = -1;
     private long started;
@@ -154,6 +159,12 @@ public final class LocalStorageView extends LinearLayout {
         column.addView(title, new LayoutParams(-1, -2));
         pills = new LinearLayout(c);
         pills.setTag("local.pills");
+        // The pills row never gets shorter than it has been, so the header and its line never jump while the
+        // pills are rebuilt (e.g. switching All files / Videos only).
+        pills.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> {
+            if (b - t > v.getMinimumHeight())
+                v.setMinimumHeight(b - t);
+        });
         column.addView(pills, new LayoutParams(-1, -2));
         LayoutParams columnSize = new LayoutParams(0, -2, 1);
         columnSize.leftMargin = dp(12);
@@ -200,6 +211,16 @@ public final class LocalStorageView extends LinearLayout {
         notice.setGravity(Gravity.CENTER);
         notice.setVisibility(GONE);
         area.addView(notice, new FrameLayout.LayoutParams(-1, -1));
+        focusHolder = new View(c);
+        focusHolder.setTag("local.focus_holder");
+        focusHolder.setFocusable(false);
+        if (Build.VERSION.SDK_INT >= 26)
+            focusHolder.setDefaultFocusHighlightEnabled(false);
+        focusHolder.setOnFocusChangeListener((v, has) -> {
+            if (!has)
+                v.setFocusable(false);
+        });
+        area.addView(focusHolder, new FrameLayout.LayoutParams(dp(1), dp(1)));
         addView(area, new LayoutParams(-1, 0, 1));
 
         refreshTools();
@@ -325,6 +346,8 @@ public final class LocalStorageView extends LinearLayout {
         indexed = cachedIndex != null ? cachedIndex : Collections.emptyMap();
         indexedReady = cachedIndex != null;
         listed = cached != null;
+        if (cached == null)
+            parkFocus();
         items.clear();
         if (cached != null)
             items.addAll(cached);
@@ -487,6 +510,8 @@ public final class LocalStorageView extends LinearLayout {
     // ---- rendering ----------------------------------------------------------------------------------------------
 
     private void render() {
+        if (placeholders.hasFocus() || notice.hasFocus())
+            parkFocus();
         notice.setVisibility(GONE);
         placeholders.setVisibility(GONE);
         list.setVisibility(VISIBLE);
@@ -510,6 +535,20 @@ public final class LocalStorageView extends LinearLayout {
                    new Runnable[0]);
         if (wantFocus && (listed || current == null))
             list.post(this::focusAfterRender);
+    }
+
+    /**
+     * Keeps focus inside the page while rows, placeholder rows or the notice are swapped: without this, the moment
+     * between one set of focusable views going and the next arriving let Android hand focus to the top bar (Home).
+     * Focus moves on to the right row as soon as one exists ({@link #focusAfterRender}, {@link #showPlaceholders}).
+     */
+    private void parkFocus() {
+        View focused = findFocus();
+        if (focused == null || focused == focusHolder || !isInside(focused, area))
+            return;
+        wantFocus = true;
+        focusHolder.setFocusable(true);
+        focusHolder.requestFocus();
     }
 
     private void focusAfterRender() {
@@ -727,7 +766,12 @@ public final class LocalStorageView extends LinearLayout {
     }
 
     private void bindPills() {
+        // Reloading the same folder (filter or sort change): keep the old counts until the new ones are ready,
+        // then swap them in one step, so the pills never blink out.
+        if (!listed && !failed && current != null && current.equals(pillsFor) && pills.getChildCount() > 0)
+            return;
         pills.removeAllViews();
+        pillsFor = listed ? current : null;
         if (current == null) {
             pill(volumes.size() == 1 ? "1 drive" : volumes.size() + " drives", 0);
             return;

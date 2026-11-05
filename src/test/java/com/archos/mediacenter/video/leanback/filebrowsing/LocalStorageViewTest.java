@@ -257,4 +257,60 @@ public class LocalStorageViewTest {
         assertTrue(LocalStorageView.isSystemFolder(".thumbnails"));
         assertFalse(LocalStorageView.isSystemFolder("Movies"));
     }
+
+    /** Owner video 4 Nov 2026 (notes #30): Home in the top bar lit up while a new folder loaded. */
+    @Test
+    public void focusStaysInThePageWhileANewFolderLoads() throws Exception {
+        File movies = new File(drive, "Movies");
+        assertTrue(movies.mkdirs());
+        for (int i = 0; i < 4; i++)
+            assertTrue(new File(movies, "Film " + i + ".mkv").createNewFile());
+        View usb = view.findViewWithTag("storage:" + Uri.fromFile(drive));
+        assertTrue(usb.requestFocus());
+        settle();
+        view.open(Uri.fromFile(movies)); // not seeded: listed for the first time, so the list is swapped
+        for (int step = 0; step < 40; step++) {
+            View focused = view.getRootView().findFocus();
+            assertNotNull("something keeps focus at step " + step, focused);
+            assertTrue("focus never leaves Local Storage (step " + step + ", on " + focused.getTag() + ")",
+                       view.hasFocus());
+            layoutOnce();
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(25));
+            PreviewAsyncFixtures.drain();
+        }
+        settle();
+        View focused = view.findFocus();
+        assertNotNull(focused);
+        assertTrue("focus ends on a real row, not the holder: " + focused.getTag(),
+                   String.valueOf(focused.getTag()).contains("Film "));
+        assertFalse("the holder gives focus back and is not focusable afterwards",
+                    view.findViewWithTag("local.focus_holder").isFocusable());
+    }
+
+    /** Owner video 4 Nov 2026 (notes #31): the header jumped up when switching All files / Videos only. */
+    @Test
+    public void headerKeepsItsHeightWhenSwitchingAllFilesAndVideosOnly() throws Exception {
+        File movies = new File(drive, "Movies");
+        assertTrue(movies.mkdirs());
+        Uri folder = seed(movies, "Film.mkv", "Other.mkv", "Extras");
+        view.open(folder);
+        settle();
+        View header = view.findViewWithTag("local.header");
+        int before = header.getHeight();
+        List<String> pillsBefore = pills(view);
+        assertTrue(before > 0);
+        view.findViewWithTag("local.filter").performClick();
+        layoutOnce(); // the very next frame, before the new listing arrives
+        assertEquals("header height right after the switch", before, header.getHeight());
+        assertEquals("old counts stay until the new ones are ready", pillsBefore, pills(view));
+        settle();
+        assertEquals("header height once the new listing is in", before, header.getHeight());
+    }
+
+    private void layoutOnce() {
+        View root = view.getRootView();
+        root.measure(View.MeasureSpec.makeMeasureSpec(1920, View.MeasureSpec.EXACTLY),
+                     View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY));
+        root.layout(0, 0, 1920, 1080);
+    }
 }

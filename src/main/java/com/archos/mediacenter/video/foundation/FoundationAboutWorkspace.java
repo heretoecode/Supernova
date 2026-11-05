@@ -466,7 +466,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
         wordmark.setGravity(Gravity.CENTER);
         detailsBody.addView(wordmark, new LayoutParams(-1, -2));
         TextView info =
-            text("Version " + BuildConfig.VERSION_NAME + "\n\nBased on Nova Video Player 6.6.2\n\nApplication: "
+            text("Version " + BuildConfig.VERSION_NAME + "\n\nBased on NOVA Video Player 6.6.4\n\nApplication: "
                     + BuildConfig.APPLICATION_ID + "\nBuilt (UTC): " + BuildConfig.PREVIEW_BUILD_UTC,
                 16);
         info.setPadding(0, dp(20), 0, 0);
@@ -646,7 +646,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                     "Version: " + BuildConfig.VERSION_NAME + "\nVersion code: " + BuildConfig.VERSION_CODE
                         + "\nApplication ID: " + BuildConfig.APPLICATION_ID + "\nBuild type: " + BuildConfig.BUILD_TYPE
                         + "\nSource: " + BuildConfig.PREVIEW_GIT_SHA + "\nBuilt (UTC): " + BuildConfig.PREVIEW_BUILD_UTC
-                        + "\nUpstream: Nova Video Player 6.6.2",
+                        + "\nUpstream: NOVA Video Player 6.6.4",
                     null, null),
             null);
         row("Device & Android TV",

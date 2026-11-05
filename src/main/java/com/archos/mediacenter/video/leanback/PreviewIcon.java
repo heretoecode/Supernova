@@ -399,5 +399,9 @@ public final class PreviewIcon extends Drawable {
         icon.setBounds(0, 0, d, d);
         view.setCompoundDrawables(icon, null, null, null);
         view.setCompoundDrawablePadding(Math.round(9 * view.getResources().getDisplayMetrics().density));
+        // An icon added after the view was styled as a button must still turn dark on the white focus box
+        // (owner report: Edit Page's Save Changes tick vanished on focus).
+        if (SupernovaStyle.usesButtonContent(view))
+            SupernovaStyle.tintIcons(view);
     }
 }
