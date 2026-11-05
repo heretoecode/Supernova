@@ -465,7 +465,7 @@ public class SettingsWorkspaceTest {
         dialog.getWindow().getDecorView().findViewWithTag("settings.choice.0").performClick();
         layout();
         assertFalse(dialog.isShowing());
-        assertEquals("normal", level.getValue());
+        assertEquals(level.getEntryValues()[0].toString(), level.getValue());
         assertTrue(opener.hasFocus());
     }
 

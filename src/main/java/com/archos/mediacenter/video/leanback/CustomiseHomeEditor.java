@@ -150,7 +150,8 @@ final class CustomiseHomeEditor {
         bodies.get(0).requestFocus();
     }
 
-    static final int PANEL_WIDTH_DP = 380;
+    // Wide enough for a row's settings (name, the three-way Shows choice, sort and direction on one line).
+    static final int PANEL_WIDTH_DP = 560;
 
     private void showEditor() {
         listPage.setVisibility(View.GONE);

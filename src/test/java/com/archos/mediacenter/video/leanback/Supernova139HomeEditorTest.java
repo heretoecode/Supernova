@@ -155,6 +155,9 @@ public class Supernova139HomeEditorTest {
             assertEquals(8, model.rows.size());
             assertEquals("Named row", model.rows.get(7).name);
             assertEquals(15, model.rows.get(7).maximum);
+            // Approved side panel: Back from a saved row's settings returns to the list, Back again closes.
+            key(dialog, KeyEvent.KEYCODE_BACK);
+            assertTrue(dialog.isShowing());
             key(dialog, KeyEvent.KEYCODE_BACK);
             assertFalse(dialog.isShowing());
         } finally {

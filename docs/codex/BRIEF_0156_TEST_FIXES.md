@@ -44,3 +44,14 @@ Claude fixed its own two (the Skip test, a lint error in `PlayerActivity`) and r
 test (the level was dropped as approved).
 
 Hand back as before: a line in `docs/codex/HANDOVER.md` and a report in `docs/codex/reports/`.
+
+**Third section — after conformance run 42095803889 (5 Nov 2026, includes your follow-up `8d9a91e0e`).** Only
+eleven restore tests remain in your areas, all new since the `MediaMatchInventory` raw-path change, all
+`java.io.IOException` (likely the restore journal now rejecting fixtures whose `getFilePath()` differs from their
+captured `_data`):
+- `MediaMatchJournalTest` (7): coordinatedCanonicalDurableDecision…, coordinatedCanonicalPreDecisionDeaths…,
+  coordinatedEmptyMatches…, durableIntentDecision…, earlyStartupCanonicalRecovery…, everyPreDecisionDeath…,
+  laterNativeIdentificationInvalidatesPreview… (line 129).
+- `CombinedCurrentRestoreTest` (4): canonicalCombinedRestoreRollsBack… (line 140), canonicalDecisionAndEvery…,
+  currentCombinedIntentAndSixStore…, decisionAndThreeAcknowledgements….
+Same rules: code or test, no weakening.
