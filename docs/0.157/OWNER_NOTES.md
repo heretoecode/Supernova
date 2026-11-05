@@ -200,7 +200,14 @@ thickness. Becomes the rule for separators on Space Black.
 information, Cast, Crew) clearly titles, e.g. with an underline.
 
 **Status:** round 14 (`details-tabs/v14-01`): titles bigger and white, each with a 2 px underline (60% white)
-across its area, firmer than the row separators. Planned for 0.157 (0.156 is not held up). Related parked
+across its area, firmer than the row separators.
+
+**Owner on round 14 (5 Nov 2026):** the full-width line looks very weird, especially on Cast and Crew. Underline
+only the title text?
+
+**Status:** round 15: titles underlined under the text only, two versions:
+- `v15-a`: Supernova blue, the same as the open tab.
+- `v15-b`: white. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
