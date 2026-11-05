@@ -70,12 +70,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by alexandre on 27/08/15.
  */
-public class FloatingPlayerService extends Service implements PlayerService.PlayerFrontend {
+public class FloatingPlayerService extends Service implements PlayerService.PlayerFrontend
+{
 
     private static final Logger log = LoggerFactory.getLogger(FloatingPlayerService.class);
 
-    private static final int MIN_WIDTH = 200; //in dip
-    private static final int STARTING_WIDTH = 300; //in dip
+    private static final int MIN_WIDTH = 200;       //in dip
+    private static final int STARTING_WIDTH = 300;  //in dip
     private static final int STARTING_HEIGHT = 200; //in dip
     private static final float MOVE_THRESHOLD = 100;
     private static final int MSG_PROGRESS_VISIBLE = 1;
@@ -83,8 +84,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
     private WindowManager mWindowManager;
     private View mFloatingPlayerRootView;
-    @SuppressLint("StaticFieldLeak")
-    public static FloatingPlayerService sFloatingPlayerService;
+    @SuppressLint("StaticFieldLeak") public static FloatingPlayerService sFloatingPlayerService;
     private boolean contains;
     private SurfaceController mSurfaceController;
     private SubtitleManager mSubtitleManager;
@@ -102,16 +102,15 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private RepeatingImageButton mVolumeUpButton;
 
     private ServiceConnection mPlayerServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
+        @Override public void onServiceConnected(ComponentName name, IBinder service)
+        {
         }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
+        @Override public void onServiceDisconnected(ComponentName name)
+        {
         }
     };
     private ImageView mHideButton;
-
 
     private int mFloatingPlayerSize = STARTING_WIDTH;
     private BroadcastReceiver mReceiver;
@@ -133,16 +132,17 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private long mSkipProgressTargetMs = -1;
     private static final long SKIP_PROGRESS_TICK_MS = 200;
     private final Runnable mSkipProgressTicker = new Runnable() {
-        @Override
-        public void run() {
-            if (!mIsSkipPromptShowing || mSkipProgress == null || mSkipButton == null) return;
+        @Override public void run()
+        {
+            if (!mIsSkipPromptShowing || mSkipProgress == null || mSkipButton == null)
+                return;
             updateSkipProgress();
             mSkipButton.postDelayed(this, SKIP_PROGRESS_TICK_MS);
         }
     };
 
-    @Override
-    public void onCreate() {
+    @Override public void onCreate()
+    {
         super.onCreate();
         sFloatingPlayerService = this;
         mAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -156,48 +156,55 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         filter.addAction(PlayerService.PAUSE_INTENT);
         filter.addAction(PlayerService.EXIT_INTENT);
         filter.addAction(PlayerService.FULLSCREEN_INTENT);
-        mReceiver = new BroadcastReceiver(){
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if("DISPLAY_FLOATING_PLAYER".equals(intent.getAction())) {
-                    if (mParamsF.width == 1) {
+        mReceiver = new BroadcastReceiver() {
+            @Override public void onReceive(Context context, Intent intent)
+            {
+                if ("DISPLAY_FLOATING_PLAYER".equals(intent.getAction()))
+                {
+                    if (mParamsF.width == 1)
+                    {
                         mParamsF.width = mLastWidth;
                         mParamsF.height = mLastHeight;
                     }
-                    mParamsF.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+                    mParamsF.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                                     WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
                     mFloatingPlayerRootView.setAlpha(1);
                     mSubtitleManager.setScreenSize(mParamsF.width, mParamsF.height);
                     mWindowManager.updateViewLayout(mFloatingPlayerRootView, mParamsF);
 
                     //PlayerService.sPlayerService.startStatusbarNotification(false);
-
                 }
-                else if(PlayerService.PLAY_INTENT.equals(intent.getAction())){
+                else if (PlayerService.PLAY_INTENT.equals(intent.getAction()))
+                {
                     Player.sPlayer.start(PlayerController.STATE_NORMAL);
                 }
-                else if(PlayerService.PAUSE_INTENT.equals(intent.getAction())){
+                else if (PlayerService.PAUSE_INTENT.equals(intent.getAction()))
+                {
                     Player.sPlayer.pause(PlayerController.STATE_NORMAL);
                 }
-                else if(PlayerService.EXIT_INTENT.equals(intent.getAction())){
+                else if (PlayerService.EXIT_INTENT.equals(intent.getAction()))
+                {
                     removeFloatingView(false);
                 }
-                else if(PlayerService.FULLSCREEN_INTENT.equals(intent.getAction())){
+                else if (PlayerService.FULLSCREEN_INTENT.equals(intent.getAction()))
+                {
                     startPlayerActivity();
                 }
             }
-        }        ;
+        };
         ContextCompat.registerReceiver(this, mReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
-    @Override
-    public int onStartCommand(Intent intent,int flags, int startID){
-        if(intent != null && !"DISPLAY_FLOATING_PLAYER".equals(intent.getAction())) {
+    @Override public int onStartCommand(Intent intent, int flags, int startID)
+    {
+        if (intent != null && !"DISPLAY_FLOATING_PLAYER".equals(intent.getAction()))
+        {
             mStartIntent = intent;
             addFloatingView();
         }
-        return super.onStartCommand(intent,flags, startID);
+        return super.onStartCommand(intent, flags, startID);
     }
-    @Override
-    public void onDestroy(){
+    @Override public void onDestroy()
+    {
         super.onDestroy();
         hideSkipPrompt();
         mSkipButtonContainer = null;
@@ -209,53 +216,58 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     }
 
     private View.OnClickListener mVolumeUpListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        @Override public void onClick(View v)
+        {
             changeVolumeBy(1);
         }
     };
     private View.OnClickListener mVolumeDownListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        @Override public void onClick(View v)
+        {
             changeVolumeBy(-1);
         }
     };
 
-    private RepeatingImageButton.RepeatListener mVolumeUpRepeatListener =
-            new RepeatingImageButton.RepeatListener() {
-                public void onRepeat(View v, long howlong, int repcnt) {
-                    changeVolumeBy(1);
-                }
-            };
+    private RepeatingImageButton.RepeatListener mVolumeUpRepeatListener = new RepeatingImageButton.RepeatListener() {
+        public void onRepeat(View v, long howlong, int repcnt)
+        {
+            changeVolumeBy(1);
+        }
+    };
 
-    private RepeatingImageButton.RepeatListener mVolumeDownRepeatListener =
-            new RepeatingImageButton.RepeatListener() {
-                public void onRepeat(View v, long howlong, int repcnt) {
-                    changeVolumeBy(-1);
-                }
-            };
+    private RepeatingImageButton.RepeatListener mVolumeDownRepeatListener = new RepeatingImageButton.RepeatListener() {
+        public void onRepeat(View v, long howlong, int repcnt)
+        {
+            changeVolumeBy(-1);
+        }
+    };
 
-    private void changeVolumeBy(int amount) {
+    private void changeVolumeBy(int amount)
+    {
         if (mVolumeLevel == null)
             return;
         mVolumeLevel.incrementProgressBy(amount);
         setMusicVolume(mVolumeLevel.getProgress());
     }
 
-    @SuppressLint({"InflateParams", "RtlHardcoded"}) // Floating view attached to WindowManager; Gravity.LEFT required for absolute screen coordinates
-    @SuppressWarnings("deprecation") // TYPE_PHONE deprecated API 26; already in SDK_INT < O branch; TYPE_APPLICATION_OVERLAY used on O+
+    @SuppressLint({"InflateParams", "RtlHardcoded"})
+    // Floating view attached to WindowManager; Gravity.LEFT required for absolute screen coordinates
+    @SuppressWarnings("deprecation")
+    // TYPE_PHONE deprecated API 26; already in SDK_INT < O branch; TYPE_APPLICATION_OVERLAY used on O+
     @Nullable
-    public void addFloatingView() {
+    public void addFloatingView()
+    {
         //PlayerService.sPlayerService.startStatusbarNotification(false);
 
-        if(!contains) {
+        if (!contains)
+        {
 
             LayoutInflater li = LayoutInflater.from(this);
             mFloatingPlayerRootView = li.inflate(R.layout.floating_player, null);
             mFloatingPlayerRootView.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
             mPlayerController = mFloatingPlayerRootView.findViewById(R.id.player_controller);
-            mPausePlayButton = (ImageView) mPlayerController.findViewById(R.id.play_button);
-            mFullscreenButton = (ImageView) mPlayerController.findViewById(R.id.fullscreen_button);
+            mPausePlayButton = (ImageView)mPlayerController.findViewById(R.id.play_button);
+            mFullscreenButton = (ImageView)mPlayerController.findViewById(R.id.fullscreen_button);
 
             //TODO: get discrete mode back when fixed
             //Android givees error messages about it, and you have to stop the app or restart phone to kill it.
@@ -272,7 +284,9 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
 
                 }
             }); */
-            /* mHideButton = (ImageView) mPlayerController.findViewById(R.id.hide_button); */ mPlayerController.findViewById(R.id.hide_button).setVisibility(View.GONE);
+            /* mHideButton = (ImageView) mPlayerController.findViewById(R.id.hide_button); */ mPlayerController
+                .findViewById(R.id.hide_button)
+                .setVisibility(View.GONE);
             /* mHideButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -290,57 +304,60 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             mProgress.setMax(1000);
             mProgress.setOnSeekBarChangeListener(mProgressListener);
             mPlayerController.findViewById(R.id.exit_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+                @Override public void onClick(View view)
+                {
                     removeFloatingView(false);
                     stopSelf();
                 }
             });
             mFullscreenButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                   if (log.isDebugEnabled()) log.debug("Fullscreen button clicked");
-                   startPlayerActivity();
+                @Override public void onClick(View view)
+                {
+                    if (log.isDebugEnabled())
+                        log.debug("Fullscreen button clicked");
+                    startPlayerActivity();
                 }
             });
 
-
-
             mProgressView = mFloatingPlayerRootView.findViewById(R.id.progress_indicator);
             mSurfaceController = new SurfaceController(mFloatingPlayerRootView);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                mParamsF = new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.TYPE_PHONE,
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                        PixelFormat.TRANSPARENT);
-            } else {
-                mParamsF = new WindowManager.LayoutParams(
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.WRAP_CONTENT,
-                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                        PixelFormat.TRANSPARENT);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            {
+                mParamsF = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+                                                          WindowManager.LayoutParams.WRAP_CONTENT,
+                                                          WindowManager.LayoutParams.TYPE_PHONE,
+                                                          WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                                                              WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                                                          PixelFormat.TRANSPARENT);
+            }
+            else
+            {
+                mParamsF = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+                                                          WindowManager.LayoutParams.WRAP_CONTENT,
+                                                          WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                                                          WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                                                              WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                                                          PixelFormat.TRANSPARENT);
             }
             mParamsF.gravity = Gravity.TOP | Gravity.LEFT;
             mParamsF.x = 0;
             mParamsF.y = 100;
             mFloatingPlayerRootView.findViewById(R.id.volume_bar).setVisibility(View.VISIBLE);
-            mVolumeLevel = (SeekBar) mFloatingPlayerRootView.findViewById(R.id.volume_level);
+            mVolumeLevel = (SeekBar)mFloatingPlayerRootView.findViewById(R.id.volume_level);
             mVolumeLevel.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
             mVolumeLevel.setOnSeekBarChangeListener(mVolumeLevelListener);
-            mVolumeUpButton = (RepeatingImageButton) mFloatingPlayerRootView.findViewById(R.id.volume_up);
+            mVolumeUpButton = (RepeatingImageButton)mFloatingPlayerRootView.findViewById(R.id.volume_up);
             mVolumeUpButton.setOnClickListener(mVolumeUpListener);
             mVolumeUpButton.setRepeatListener(mVolumeUpRepeatListener, 100);
-            mVolumeDownButton = (RepeatingImageButton) mFloatingPlayerRootView.findViewById(R.id.volume_down);
+            mVolumeDownButton = (RepeatingImageButton)mFloatingPlayerRootView.findViewById(R.id.volume_down);
             mVolumeDownButton.setOnClickListener(mVolumeDownListener);
             mVolumeDownButton.setRepeatListener(mVolumeDownRepeatListener, 100);
-            mFloatingPlayerRootView.findViewById(R.id.surface_view).setAlpha((float) 0.5);
+            mFloatingPlayerRootView.findViewById(R.id.surface_view).setAlpha((float)0.5);
             mWindowManager.addView(mFloatingPlayerRootView, mParamsF);
             contains = true;
             initSkipButton();
-            try {
+            try
+            {
 
                 mFloatingPlayerRootView.setOnTouchListener(new View.OnTouchListener() {
                     public int DRAG = 0;
@@ -356,7 +373,8 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                     private float initialTouchY;
 
                     //*******************Determine the space between the first two fingers
-                    private float spacing(MotionEvent event) {
+                    private float spacing(MotionEvent event)
+                    {
                         if (event.getPointerCount() < 2)
                             return -1;
                         float x = event.getX(0) - event.getX(1);
@@ -364,173 +382,210 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
                         return spacing(x, y);
                     }
 
-                    private float spacing(float x, float y) {
+                    private float spacing(float x, float y)
+                    {
 
-                        return (float) Math.sqrt(x * x + y * y);
+                        return (float)Math.sqrt(x * x + y * y);
                     }
 
                     @Override
                     @SuppressLint("ClickableViewAccessibility")
                     @SuppressWarnings("deprecation") // getSize/getRealSize: API 30+ uses getCurrentWindowMetrics
-                    public boolean onTouch(View v, MotionEvent event) {
+                    public boolean onTouch(View v, MotionEvent event)
+                    {
 
                         // Dump touch event to log
                         // Handle touch events here...
-                        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                            case MotionEvent.ACTION_DOWN:
-                                initialX = mParamsF.x;
-                                initialY = mParamsF.y;
-                                initialTouchX = event.getRawX();
-                                initialTouchY = event.getRawY();
-                                initialWidth = mParamsF.width;
-                                initialHeight = mParamsF.height;
+                        switch (event.getAction() & MotionEvent.ACTION_MASK)
+                        {
+                        case MotionEvent.ACTION_DOWN:
+                            initialX = mParamsF.x;
+                            initialY = mParamsF.y;
+                            initialTouchX = event.getRawX();
+                            initialTouchY = event.getRawY();
+                            initialWidth = mParamsF.width;
+                            initialHeight = mParamsF.height;
 
-                                mode = SINGLE;
-                                break;
-                            case MotionEvent.ACTION_POINTER_DOWN:
-                                oldDist = spacing(event);
-                                if (oldDist > 10f) {
-                                    mode = ZOOM;
-                                }
-                                break;
-                            case MotionEvent.ACTION_UP:
-                            case MotionEvent.ACTION_POINTER_UP:
-                                if (mode == SINGLE) {
-                                    if (PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PLAYING
-                                            || PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PAUSED) {
+                            mode = SINGLE;
+                            break;
+                        case MotionEvent.ACTION_POINTER_DOWN:
+                            oldDist = spacing(event);
+                            if (oldDist > 10f)
+                            {
+                                mode = ZOOM;
+                            }
+                            break;
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_POINTER_UP:
+                            if (mode == SINGLE)
+                            {
+                                if (PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PLAYING ||
+                                    PlayerService.sPlayerService.mPlayerState == PlayerService.PlayerState.PAUSED)
+                                {
+                                    updatePlayPauseButton();
+
+                                    if (mPlayerController.getVisibility() == View.VISIBLE)
+                                    {
+                                        if (Player.sPlayer.isPlaying())
+                                            Player.sPlayer.pause(PlayerController.STATE_NORMAL);
+                                        else
+                                            Player.sPlayer.start(PlayerController.STATE_NORMAL);
                                         updatePlayPauseButton();
-
-                                        if (mPlayerController.getVisibility() == View.VISIBLE) {
-                                            if (Player.sPlayer.isPlaying())
-                                                Player.sPlayer.pause(PlayerController.STATE_NORMAL);
-                                            else
-                                                Player.sPlayer.start(PlayerController.STATE_NORMAL);
-                                            updatePlayPauseButton();
-                                        }
-                                        mPlayerController.setVisibility(View.VISIBLE);
-                                        mHandler.removeMessages(MSG_HIDE_CONTROLLER);
-                                        mHandler.sendEmptyMessageDelayed(MSG_HIDE_CONTROLLER, 3000);
-                                        setProgress();
-                                        updateVolumeBar();
                                     }
+                                    mPlayerController.setVisibility(View.VISIBLE);
+                                    mHandler.removeMessages(MSG_HIDE_CONTROLLER);
+                                    mHandler.sendEmptyMessageDelayed(MSG_HIDE_CONTROLLER, 3000);
+                                    setProgress();
+                                    updateVolumeBar();
                                 }
-                                //reinit when pointer up
-                                initialX = mParamsF.x;
-                                initialY = mParamsF.y;
-                                initialTouchX = event.getRawX();
-                                initialTouchY = event.getRawY();
-                                initialWidth = mParamsF.width;
-                                initialHeight = mParamsF.height;
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                if (event.getPointerCount() == 1 && spacing((event.getRawX() - initialTouchX), (event.getRawY() - initialTouchY)) > MOVE_THRESHOLD) {
-                                    mode = DRAG;
+                            }
+                            //reinit when pointer up
+                            initialX = mParamsF.x;
+                            initialY = mParamsF.y;
+                            initialTouchX = event.getRawX();
+                            initialTouchY = event.getRawY();
+                            initialWidth = mParamsF.width;
+                            initialHeight = mParamsF.height;
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if (event.getPointerCount() == 1 &&
+                                spacing((event.getRawX() - initialTouchX), (event.getRawY() - initialTouchY)) >
+                                    MOVE_THRESHOLD)
+                            {
+                                mode = DRAG;
+                            }
+                            if (mode == DRAG)
+                            {
+                                Point size = new Point();
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                                {
+                                    Rect b = mWindowManager.getCurrentWindowMetrics().getBounds();
+                                    size.set(b.width(), b.height());
                                 }
-                                if (mode == DRAG) {
-                                    Point size = new Point();
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                else
+                                {
+                                    mWindowManager.getDefaultDisplay().getSize(size);
+                                }
+                                int x = initialX + (int)(event.getRawX() - initialTouchX);
+                                int y = initialY + (int)(event.getRawY() - initialTouchY);
+                                if (x + mParamsF.width <= size.x && x >= 0)
+                                    mParamsF.x = x;
+                                else if (x + mParamsF.width > size.x)
+                                {
+
+                                    mParamsF.x = size.x - mParamsF.width;
+                                    initialTouchX =
+                                        -size.x + initialX + event.getRawX() +
+                                        mParamsF
+                                            .width; //so that moving finger left or right will immediately move the window
+                                }
+                                else
+                                {
+                                    mParamsF.x = 0;
+                                    initialTouchX =
+                                        initialX +
+                                        event
+                                            .getRawX(); //so that moving finger left or right will immediately move the window
+                                }
+
+                                if (y + mParamsF.height <= size.y && y >= 0)
+                                    mParamsF.y = y;
+                                else if (y + mParamsF.height > size.y)
+                                {
+                                    mParamsF.y = size.y - mParamsF.height;
+                                    initialTouchY =
+                                        -size.y + initialY + event.getRawY() +
+                                        mParamsF
+                                            .height; //so that moving finger left or right will immediately move the window
+                                }
+                                else
+                                {
+                                    mParamsF.y = 0;
+                                    initialTouchY =
+                                        initialY +
+                                        event
+                                            .getRawY(); //so that moving finger left or right will immediately move the window
+                                }
+                                mWindowManager.updateViewLayout(v, mParamsF);
+                            }
+                            else if (mode == ZOOM)
+                            {
+                                mPlayerController.setVisibility(View.GONE);
+                                float newDist = spacing(event);
+                                if (newDist > 10f)
+                                {
+                                    //Get display width, we cant go over.
+                                    Point point = new Point();
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                                    {
                                         Rect b = mWindowManager.getCurrentWindowMetrics().getBounds();
-                                        size.set(b.width(), b.height());
-                                    } else {
-                                        mWindowManager.getDefaultDisplay().getSize(size);
+                                        point.set(b.width(), b.height());
                                     }
-                                    int x = initialX + (int) (event.getRawX() - initialTouchX);
-                                    int y = initialY + (int) (event.getRawY() - initialTouchY);
-                                    if (x + mParamsF.width <= size.x && x >= 0)
-                                        mParamsF.x = x;
-                                    else if (x + mParamsF.width > size.x) {
-
-                                        mParamsF.x = size.x - mParamsF.width;
-                                        initialTouchX = -size.x + initialX + event.getRawX() + mParamsF.width; //so that moving finger left or right will immediately move the window
-                                    } else {
-                                        mParamsF.x = 0;
-                                        initialTouchX = initialX + event.getRawX(); //so that moving finger left or right will immediately move the window
+                                    else
+                                    {
+                                        mWindowManager.getDefaultDisplay().getRealSize(point);
                                     }
 
-                                    if (y + mParamsF.height <= size.y && y >= 0)
-                                        mParamsF.y = y;
-                                    else if (y + mParamsF.height > size.y) {
-                                        mParamsF.y = size.y - mParamsF.height;
-                                        initialTouchY = -size.y + initialY + event.getRawY() + mParamsF.height; //so that moving finger left or right will immediately move the window
-                                    } else {
-                                        mParamsF.y = 0;
-                                        initialTouchY = initialY + event.getRawY(); //so that moving finger left or right will immediately move the window
-                                    }
+                                    //We start at our minimum size.
+                                    int width = (int)(initialWidth + (newDist - oldDist));
+                                    int maxWidth = point.x;
+                                    if (width < mFloatingPlayerSize)
+                                        width = mFloatingPlayerSize;
+                                    else if (width > maxWidth)
+                                        width = maxWidth;
+
+                                    //Update width.
+                                    mParamsF.width = width;
+                                    mParamsF.height = getHeight(width);
+                                    mSubtitleManager.setScreenSize(mParamsF.width, mParamsF.height);
                                     mWindowManager.updateViewLayout(v, mParamsF);
-
-                                } else if (mode == ZOOM) {
-                                    mPlayerController.setVisibility(View.GONE);
-                                    float newDist = spacing(event);
-                                    if (newDist > 10f) {
-                                        //Get display width, we cant go over.
-                                        Point point = new Point();
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                            Rect b = mWindowManager.getCurrentWindowMetrics().getBounds();
-                                            point.set(b.width(), b.height());
-                                        } else {
-                                            mWindowManager.getDefaultDisplay().getRealSize(point);
-                                        }
-
-                                        //We start at our minimum size.
-                                        int width = (int) (initialWidth + (newDist - oldDist));
-                                        int maxWidth = point.x;
-                                        if (width < mFloatingPlayerSize)
-                                            width =  mFloatingPlayerSize;
-                                        else if (width > maxWidth)
-                                            width = maxWidth;
-
-                                        //Update width.
-                                        mParamsF.width = width;
-                                        mParamsF.height = getHeight(width);
-                                        mSubtitleManager.setScreenSize(mParamsF.width, mParamsF.height);
-                                        mWindowManager.updateViewLayout(v, mParamsF);
-                                        updateSubsSize();
-                                    }
-
+                                    updateSubsSize();
                                 }
-                                break;
+                            }
+                            break;
                         }
-
 
                         return true; // indicate event was handled
                     }
-
                 });
-
-
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
             PlayerService.sPlayerService.switchPlayerFrontend(this);
             PlayerService.sPlayerService.setUiContext(MiscUtils.getDisplayContext(this, mFloatingPlayerRootView));
-            new Player(this, null, mSurfaceController,false);
+            new Player(this, null, mSurfaceController, false);
 
             PlayerService.sPlayerService.setPlayer();
-            mSubtitleManager = new SubtitleManager(this, (ViewGroup) mFloatingPlayerRootView.findViewById(R.id.subtitle_root_view), mWindowManager, true);
+            mSubtitleManager = new SubtitleManager(
+                this, (ViewGroup)mFloatingPlayerRootView.findViewById(R.id.subtitle_root_view), mWindowManager, true);
             updateSizes(mParamsF);
 
             // Get the last intent which has all video data, then add the position extra
             Intent intentToUse = PlayerService.sPlayerService.getLastIntent();
-            if (mStartIntent != null && mStartIntent.hasExtra(ExternalResumeIntent.FLOATING_POSITION)) {
+            if (mStartIntent != null && mStartIntent.hasExtra(ExternalResumeIntent.FLOATING_POSITION))
+            {
                 intentToUse.putExtra(ExternalResumeIntent.FLOATING_POSITION,
-                        mStartIntent.getIntExtra(ExternalResumeIntent.FLOATING_POSITION, -1));
-                if (log.isDebugEnabled()) log.debug("addFloatingView: Added floating_player_position to intent");
+                                     mStartIntent.getIntExtra(ExternalResumeIntent.FLOATING_POSITION, -1));
+                if (log.isDebugEnabled())
+                    log.debug("addFloatingView: Added floating_player_position to intent");
                 mFloatingPlayerSize = mStartIntent.getIntExtra("floating_player_size", STARTING_WIDTH);
             }
             PlayerService.sPlayerService.onStart(intentToUse);
-
         }
-
     }
 
-    private void startPlayerActivity() {
+    private void startPlayerActivity()
+    {
         Intent lastIntent = PlayerService.sPlayerService.getLastIntent();
         Intent intent = new Intent(FloatingPlayerService.this, PlayerActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setData(lastIntent.getData());
 
         // Copy all extras from original intent EXCEPT RESUME
-        if (lastIntent.getExtras() != null) {
+        if (lastIntent.getExtras() != null)
+        {
             Bundle newExtras = new Bundle(lastIntent.getExtras());
             newExtras.remove(PlayerActivity.RESUME);
             intent.putExtras(newExtras);
@@ -539,7 +594,8 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         intent.putExtra(PlayerActivity.LAUNCH_FROM_FLOATING_PLAYER, true);
 
         // Pass the position owned by PlayerService to the new frontend.
-        if (PlayerService.sPlayerService != null) {
+        if (PlayerService.sPlayerService != null)
+        {
             int currentPos = PlayerService.sPlayerService.getPlaybackSnapshot().getPositionMs();
             intent.putExtra(ExternalResumeIntent.POSITION, currentPos);
             intent.removeExtra(ExternalResumeIntent.FLOATING_POSITION);
@@ -547,24 +603,30 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         startActivity(intent);
     }
 
-    private void updatePlayPauseButton() {
-        mPausePlayButton.setImageResource(Player.sPlayer.isPlaying()?R.drawable.video_pause:R.drawable.video_play);
+    private void updatePlayPauseButton()
+    {
+        mPausePlayButton.setImageResource(Player.sPlayer.isPlaying() ? R.drawable.video_pause : R.drawable.video_play);
     }
 
-    public float dipToPixels(float dipValue) {
+    public float dipToPixels(float dipValue)
+    {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics);
     }
-    private int getHeight(int i) {
-        if(Player.sPlayer.getVideoWidth()==0||Player.sPlayer.getVideoHeight()==0)
-            return (int) dipToPixels(STARTING_HEIGHT);
-        return (int) (((float)((float)i/(float)Player.sPlayer.getVideoWidth()) / Player.sPlayer.getVideoAspect())*Player.sPlayer.getVideoHeight());
+    private int getHeight(int i)
+    {
+        if (Player.sPlayer.getVideoWidth() == 0 || Player.sPlayer.getVideoHeight() == 0)
+            return (int)dipToPixels(STARTING_HEIGHT);
+        return (int)(((float)((float)i / (float)Player.sPlayer.getVideoWidth()) / Player.sPlayer.getVideoAspect()) *
+                     Player.sPlayer.getVideoHeight());
     }
-    private void updateSizes(WindowManager.LayoutParams paramsF) {
+    private void updateSizes(WindowManager.LayoutParams paramsF)
+    {
 
         int width, height;
 
-        width = mFloatingPlayerSize;;
+        width = mFloatingPlayerSize;
+        ;
 
         height = getHeight(width);
         paramsF.width = width;
@@ -575,169 +637,201 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         updateSubsSize();
     }
     @SuppressWarnings("deprecation") // getRealSize: API 30+ uses getCurrentWindowMetrics
-    public void updateSubsSize(){
-        if(mSize>=0) {
+    public void updateSubsSize()
+    {
+        if (mSize >= 0)
+        {
             Point point = new Point();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            {
                 Rect b = mWindowManager.getCurrentWindowMetrics().getBounds();
                 point.set(b.width(), b.height());
-            } else {
+            }
+            else
+            {
                 mWindowManager.getDefaultDisplay().getRealSize(point);
             }
             //int size = (int) ((mParamsF.width / (float)(Math.max(point.y, point.x))) * mSize);
-            int vpos = (int) ((mParamsF.height / (float)(Math.min(point.y, point.x))) * mVPos);
+            int vpos = (int)((mParamsF.height / (float)(Math.min(point.y, point.x))) * mVPos);
             //mSubtitleManager.setSize(size);
             mSubtitleManager.restoreVerticalPosition(PreferenceManager.getDefaultSharedPreferences(this));
         }
     }
-    public void removeFloatingView(boolean isStartingPlayerActivity) {
-        if(contains) {
+    public void removeFloatingView(boolean isStartingPlayerActivity)
+    {
+        if (contains)
+        {
             hideSkipPrompt();
-            if (mSkipButtonContainer != null && mFloatingPlayerRootView != null) {
-                try {
-                    ((ViewGroup) mFloatingPlayerRootView).removeView(mSkipButtonContainer);
-                } catch (Exception ignored) {}
+            if (mSkipButtonContainer != null && mFloatingPlayerRootView != null)
+            {
+                try
+                {
+                    ((ViewGroup)mFloatingPlayerRootView).removeView(mSkipButtonContainer);
+                }
+                catch (Exception ignored)
+                {
+                }
                 mSkipButtonContainer = null;
                 mSkipButton = null;
             }
             if (PlayerService.sPlayerService != null)
-                PlayerService.sPlayerService.removePlayerFrontend(this,isStartingPlayerActivity);
-            try {
+                PlayerService.sPlayerService.removePlayerFrontend(this, isStartingPlayerActivity);
+            try
+            {
                 mWindowManager.removeViewImmediate(mFloatingPlayerRootView);
-            } catch (IllegalArgumentException e){}
+            }
+            catch (IllegalArgumentException e)
+            {
+            }
             contains = false;
         }
     }
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_HIDE_CONTROLLER:
-                    mPlayerController.setVisibility(View.GONE);
-                    break;
-                case MSG_PROGRESS_VISIBLE:
-                    if (mProgressView != null)
-                        mProgressView.setVisibility(View.VISIBLE);
-                    break;
-
+        @Override public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+            case MSG_HIDE_CONTROLLER:
+                mPlayerController.setVisibility(View.GONE);
+                break;
+            case MSG_PROGRESS_VISIBLE:
+                if (mProgressView != null)
+                    mProgressView.setVisibility(View.VISIBLE);
+                break;
             }
         }
     };
 
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
+    @Nullable @Override public IBinder onBind(Intent intent)
+    {
         return null;
     }
 
+    @Override public void onAudioError(boolean isNotSupported, String msg)
+    {
+    }
 
-    @Override
-    public void onAudioError(boolean isNotSupported, String msg) {   }
-
-    @Override
-    public void onVideoDb(VideoDbInfo info, VideoDbInfo remoteInfo) {
+    @Override public void onVideoDb(VideoDbInfo info, VideoDbInfo remoteInfo)
+    {
         PlayerService.sPlayerService.setVideoInfo(info);
     }
 
-    @Override
-    public void setUri(Uri mUri, Uri streamingUri) {  }
+    @Override public void setUri(Uri mUri, Uri streamingUri)
+    {
+    }
 
-    @Override
-    public void setVideoInfo(VideoDbInfo mVideoInfo) {   }
+    @Override public void setVideoInfo(VideoDbInfo mVideoInfo)
+    {
+    }
 
-    @Override
-    public void onEnd() {
+    @Override public void onEnd()
+    {
         removeFloatingView(false);
         stopSelf();
     }
 
-
-    @Override
-    public void onFrontendDetached() {
+    @Override public void onFrontendDetached()
+    {
         //PlayerService.sPlayerService.stopStatusbarNotification();
-        if(contains) {
+        if (contains)
+        {
             mWindowManager.removeViewImmediate(mFloatingPlayerRootView);
             contains = false;
         }
     }
 
-    @Override
-    public void onFirstPlay() {
-
+    @Override public void onFirstPlay()
+    {
     }
 
-    @Override
-    public void onIntroDbReady() {
+    @Override public void onIntroDbReady()
+    {
         // no TV menu in floating mode
     }
 
-    @Override
-    public void onShowSkipPrompt(final IntroSegments.Type type, final long targetMs) {
+    @Override public void onShowSkipPrompt(final IntroSegments.Type type, final long targetMs)
+    {
         mHandler.post(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run()
+            {
                 showSkipPrompt(type, targetMs);
             }
         });
     }
 
-    @Override
-    public void onHideSkipPrompt() {
+    @Override public void onHideSkipPrompt()
+    {
         mHandler.post(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run()
+            {
                 hideSkipPrompt();
             }
         });
     }
 
-    private void initSkipButton() {
-        if (mFloatingPlayerRootView == null) return;
+    private void initSkipButton()
+    {
+        if (mFloatingPlayerRootView == null)
+            return;
         LayoutInflater inflater = LayoutInflater.from(this);
-        mSkipButtonContainer = (ViewGroup) inflater.inflate(R.layout.floating_skip_button_layout, (ViewGroup) mFloatingPlayerRootView, false);
-        mSkipButton = (Button) mSkipButtonContainer.findViewById(R.id.floating_skip_button);
+        mSkipButtonContainer = (ViewGroup)inflater.inflate(R.layout.floating_skip_button_layout,
+                                                           (ViewGroup)mFloatingPlayerRootView, false);
+        mSkipButton = (Button)mSkipButtonContainer.findViewById(R.id.floating_skip_button);
         mSkipProgress = new SkipProgressDrawable(this);
         mSkipButton.setForeground(mSkipProgress);
-        ((ViewGroup) mFloatingPlayerRootView).addView(mSkipButtonContainer);
+        ((ViewGroup)mFloatingPlayerRootView).addView(mSkipButtonContainer);
         mSkipButtonContainer.bringToFront();
 
         mSkipButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            @Override public void onClick(View v)
+            {
                 executeSkipPrompt();
             }
         });
     }
 
-    private void updateSkipButtonText(IntroSegments.Type type) {
-        if (mSkipButton == null) return;
+    private void updateSkipButtonText(IntroSegments.Type type)
+    {
+        if (mSkipButton == null)
+            return;
         int textRes;
-        if (type == IntroSegments.Type.RECAP) {
+        if (type == IntroSegments.Type.RECAP)
+        {
             textRes = R.string.skip_recap_button;
-        } else if (type == IntroSegments.Type.OUTRO || type == IntroSegments.Type.CREDITS) {
+        }
+        else if (type == IntroSegments.Type.OUTRO || type == IntroSegments.Type.CREDITS)
+        {
             textRes = R.string.skip_credits_button;
-        } else if (type == IntroSegments.Type.PREVIEW) {
+        }
+        else if (type == IntroSegments.Type.PREVIEW)
+        {
             textRes = R.string.skip_preview_button;
-        } else {
+        }
+        else
+        {
             textRes = R.string.skip_intro_button;
         }
         mSkipButton.setText(textRes);
     }
 
-    private void executeSkipPrompt() {
-        if (mCurrentSkipTargetMs < 0) return;
+    private void executeSkipPrompt()
+    {
+        if (mCurrentSkipTargetMs < 0)
+            return;
         long targetMs = mCurrentSkipTargetMs;
         IntroSegments.Type type = mCurrentSkipType;
         hideSkipPrompt();
-        if (PlayerService.sPlayerService != null) {
+        if (PlayerService.sPlayerService != null)
+        {
             PlayerService.sPlayerService.executeSkip(type, targetMs);
         }
     }
 
-    private void showSkipPrompt(final IntroSegments.Type type, final long targetMs) {
-        if (mFloatingPlayerRootView == null || mSkipButtonContainer == null || mSkipButton == null) return;
+    private void showSkipPrompt(final IntroSegments.Type type, final long targetMs)
+    {
+        if (mFloatingPlayerRootView == null || mSkipButtonContainer == null || mSkipButton == null)
+            return;
 
         mCurrentSkipType = type;
         mCurrentSkipTargetMs = targetMs;
@@ -747,19 +841,25 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         startSkipProgress(targetMs);
         mSkipButtonContainer.clearAnimation();
         mSkipButtonContainer.bringToFront();
-        if (mSkipButtonContainer.getVisibility() != View.VISIBLE) {
+        if (mSkipButtonContainer.getVisibility() != View.VISIBLE)
+        {
             mSkipButtonContainer.setVisibility(View.VISIBLE);
             Animation fadeIn = new AlphaAnimation(0f, 1f);
             fadeIn.setDuration(250);
             mSkipButtonContainer.startAnimation(fadeIn);
-        } else {
+        }
+        else
+        {
             mSkipButtonContainer.setAlpha(1f);
         }
     }
 
-    private void startSkipProgress(long targetMs) {
-        if (mSkipProgress == null || mSkipButton == null) return;
-        if (mSkipProgressTargetMs != targetMs) {
+    private void startSkipProgress(long targetMs)
+    {
+        if (mSkipProgress == null || mSkipButton == null)
+            return;
+        if (mSkipProgressTargetMs != targetMs)
+        {
             mSkipProgressTargetMs = targetMs;
             mSkipProgressStartMs = (Player.sPlayer != null) ? Player.sPlayer.getCurrentPosition() : targetMs;
         }
@@ -768,119 +868,131 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         mSkipButton.postDelayed(mSkipProgressTicker, SKIP_PROGRESS_TICK_MS);
     }
 
-    private void updateSkipProgress() {
-        if (mSkipProgress == null) return;
+    private void updateSkipProgress()
+    {
+        if (mSkipProgress == null)
+            return;
         final long span = mSkipProgressTargetMs - mSkipProgressStartMs;
-        if (span <= 0 || Player.sPlayer == null) {
+        if (span <= 0 || Player.sPlayer == null)
+        {
             mSkipProgress.setLevel(0);
             return;
         }
         final long position = Player.sPlayer.getCurrentPosition();
-        float fraction = (position - mSkipProgressStartMs) / (float) span;
-        if (fraction < 0f) fraction = 0f;
-        else if (fraction > 1f) fraction = 1f;
+        float fraction = (position - mSkipProgressStartMs) / (float)span;
+        if (fraction < 0f)
+            fraction = 0f;
+        else if (fraction > 1f)
+            fraction = 1f;
         mSkipProgress.setLevel(Math.round(fraction * 10000f));
     }
 
-    private void hideSkipPrompt() {
+    private void hideSkipPrompt()
+    {
         mIsSkipPromptShowing = false;
         mCurrentSkipTargetMs = -1;
-        if (mSkipButton != null) mSkipButton.removeCallbacks(mSkipProgressTicker);
+        if (mSkipButton != null)
+            mSkipButton.removeCallbacks(mSkipProgressTicker);
         mSkipProgressStartMs = -1;
         mSkipProgressTargetMs = -1;
-        if (mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE) {
+        if (mSkipButtonContainer != null && mSkipButtonContainer.getVisibility() == View.VISIBLE)
+        {
             Animation fadeOut = new AlphaAnimation(1f, 0f);
             fadeOut.setDuration(250);
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {}
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (!mIsSkipPromptShowing && mSkipButtonContainer != null) {
+                @Override public void onAnimationStart(Animation animation)
+                {
+                }
+                @Override public void onAnimationEnd(Animation animation)
+                {
+                    if (!mIsSkipPromptShowing && mSkipButtonContainer != null)
+                    {
                         mSkipButtonContainer.setVisibility(View.GONE);
                     }
                 }
-                @Override
-                public void onAnimationRepeat(Animation animation) {}
+                @Override public void onAnimationRepeat(Animation animation)
+                {
+                }
             });
             mSkipButtonContainer.startAnimation(fadeOut);
         }
     }
 
-    @Override
-    public void onPrepared() {
+    @Override public void onPrepared()
+    {
         mProgressView.setVisibility(View.GONE);
         updatePlayPauseButton();
         updateSizes(mParamsF);
     }
 
-    @Override
-    public void onCompletion() {
-        mNextSeek  = -1;
+    @Override public void onCompletion()
+    {
+        mNextSeek = -1;
     }
 
-    @Override
-    public boolean onError(int errorCode, int errorQualCode, String msg) {
+    @Override public boolean onError(int errorCode, int errorQualCode, String msg)
+    {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         removeFloatingView(false);
         return false;
     }
 
-    @Override
-    public void onSeekStart(int pos) {
-
+    @Override public void onSeekStart(int pos)
+    {
     }
 
-    @Override
-    public void onSeekComplete() {
+    @Override public void onSeekComplete()
+    {
         setProgress();
     }
 
-    @Override
-    public void onAllSeekComplete() {
-
+    @Override public void onAllSeekComplete()
+    {
     }
 
-    @Override
-    public void onPlay(int state) {
+    @Override public void onPlay(int state)
+    {
         setProgress();
         //PlayerService.sPlayerService.startStatusbarNotification(isDiscrete());
     }
 
-    @Override
-    public void onPause(int state) {
+    @Override public void onPause(int state)
+    {
         //PlayerService.sPlayerService.startStatusbarNotification(isDiscrete());
     }
 
+    @Override public void onOSDUpdate()
+    {
+    }
 
-    @Override
-    public void onOSDUpdate() {   }
-
-    @Override
-    public void onVideoMetadataUpdated(VideoMetadata vMetadata) {
-        if(mSubtitleManager!=null) {
+    @Override public void onVideoMetadataUpdated(VideoMetadata vMetadata)
+    {
+        if (mSubtitleManager != null)
+        {
             mSubtitleManager.start();
 
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             mVPos = preferences.getInt(PlayerActivity.KEY_SUBTITLE_VPOS, mSubtitleDefaults.vpos);
             mSubtitleManager.restoreStyle(preferences);
-
         }
     }
 
-    @Override
-    public void onAudioMetadataUpdated(VideoMetadata vMetadata, int currentAudio) {    }
-
-    @Override
-    public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int currentSubtitle) {    }
-
-    @Override
-    public void onBufferingUpdate(int percent) {   }
-
-    public void setUIExternalSurface(Surface uiSurface) {
-       // mSubtitleManager.setUIExternalSurface(uiSurface); do not enable this with floating player
+    @Override public void onAudioMetadataUpdated(VideoMetadata vMetadata, int currentAudio)
+    {
     }
 
+    @Override public void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int currentSubtitle)
+    {
+    }
+
+    @Override public void onBufferingUpdate(int percent)
+    {
+    }
+
+    public void setUIExternalSurface(Surface uiSurface)
+    {
+        // mSubtitleManager.setUIExternalSurface(uiSurface); do not enable this with floating player
+    }
 
     private boolean mDragging;
     private boolean mSeekWasPlaying;
@@ -891,11 +1003,10 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
     private int mLastSeek;
     private int mNextSeek = -1;
     private SeekBar.OnSeekBarChangeListener mProgressListener = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onStartTrackingTouch(SeekBar bar) {
+        @Override public void onStartTrackingTouch(SeekBar bar)
+        {
 
             mHandler.removeMessages(MSG_HIDE_CONTROLLER);
-
 
             mDragging = true;
             mSeekComplete = false;
@@ -905,17 +1016,19 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             // the seekbar and b) once the user is done dragging the thumb
             // we will post one of these messages to the queue again and
             // this ensures that there will be exactly one message queued up.
-            if (Player.sPlayer.isPlaying()) {
+            if (Player.sPlayer.isPlaying())
+            {
                 mSeekWasPlaying = true;
                 Player.sPlayer.pause(PlayerController.STATE_SEEK);
             }
             else
-                mSeekWasPlaying=false;
+                mSeekWasPlaying = false;
         }
 
-        @Override
-        public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
-            if (!fromuser) {
+        @Override public void onProgressChanged(SeekBar bar, int progress, boolean fromuser)
+        {
+            if (!fromuser)
+            {
                 // We're not interested in programmatically generated changes to
                 // the progress bar's position.
                 return;
@@ -924,85 +1037,93 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             long duration = Player.sPlayer.getDuration();
             long newposition;
 
-            if (duration > 0) {
+            if (duration > 0)
+            {
                 newposition = (duration * progress) / 1000L;
-            } else {
+            }
+            else
+            {
                 newposition = progress;
                 mLastRelativePosition = Player.sPlayer.getRelativePosition();
-
             }
-
 
             long currentProgressTime = System.currentTimeMillis();
 
             // don't try to seek too much
             if (Player.sPlayer.isLocalVideo() &&
-                    (currentProgressTime - mLastProgressTime > PlayerController.SEEK_PROGRESS_TIME_THRESHOLD) &&
-                    (Math.abs(progress - mLastProgress) > PlayerController.SEEK_PROGRESS_THRESHOLD)) {
+                (currentProgressTime - mLastProgressTime > PlayerController.SEEK_PROGRESS_TIME_THRESHOLD) &&
+                (Math.abs(progress - mLastProgress) > PlayerController.SEEK_PROGRESS_THRESHOLD))
+            {
                 mSeekComplete = false;
-                Player.sPlayer.seekTo((int) newposition);
-                mLastSeek = (int) newposition;
+                Player.sPlayer.seekTo((int)newposition);
+                mLastSeek = (int)newposition;
                 mLastProgressTime = currentProgressTime;
                 mLastProgress = progress;
             }
-            mNextSeek = (int) newposition;
-
+            mNextSeek = (int)newposition;
         }
 
-        @Override
-        public void onStopTrackingTouch(SeekBar bar) {
+        @Override public void onStopTrackingTouch(SeekBar bar)
+        {
             mHandler.sendEmptyMessageDelayed(MSG_HIDE_CONTROLLER, 3000);
             mDragging = false;
 
-            if (mNextSeek != -1 && mNextSeek != mLastSeek) {
+            if (mNextSeek != -1 && mNextSeek != mLastSeek)
+            {
                 Player.sPlayer.seekTo(mNextSeek);
             }
             mLastSeek = -1;
-            if(mSeekWasPlaying)
+            if (mSeekWasPlaying)
                 Player.sPlayer.start(PlayerController.STATE_SEEK);
         }
     };
 
-    private void setProgress() {
+    private void setProgress()
+    {
         int position = mNextSeek == -1 ? Player.sPlayer.getCurrentPosition() : mNextSeek;
-        if (position < 0) {
+        if (position < 0)
+        {
             position = 0;
         }
         int duration = Player.sPlayer.getDuration();
 
-        if (mProgress != null) {
-            if (duration > 0) {
+        if (mProgress != null)
+        {
+            if (duration > 0)
+            {
                 // use long to avoid overflow
                 long pos = 1000L * position / duration;
-                mProgress.setProgress((int) pos);
-
-
-            } else {
-                if (mDragging || !mSeekComplete) {
+                mProgress.setProgress((int)pos);
+            }
+            else
+            {
+                if (mDragging || !mSeekComplete)
+                {
                     mProgress.setProgress(position);
-
-
-                } else {
+                }
+                else
+                {
                     int relativePosition = Player.sPlayer.getRelativePosition();
-                    if (relativePosition != mLastRelativePosition && relativePosition >= 0) {
+                    if (relativePosition != mLastRelativePosition && relativePosition >= 0)
+                    {
                         mLastRelativePosition = relativePosition;
                         mProgress.setProgress(mLastRelativePosition);
                     }
                 }
             }
-            if (!Player.sPlayer.isLocalVideo()) {
+            if (!Player.sPlayer.isLocalVideo())
+            {
                 int bufferPosition = Player.sPlayer.getBufferPosition();
-                if (bufferPosition >= 0) {
+                if (bufferPosition >= 0)
+                {
                     mProgress.setSecondaryProgress(bufferPosition);
                 }
             }
-
-
-
         }
     }
 
-    private void setMusicVolume(int index) {
+    private void setMusicVolume(int index)
+    {
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
         /*
          * Since android jb 4.3, the safe volume warning dialog is displayed only with FLAG_SHOW_UI flag.
@@ -1011,37 +1132,41 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
         int newIndex = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         if (index != newIndex)
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, AudioManager.FLAG_SHOW_UI);
-
     }
 
-    private void updateVolumeBar() {
-        if (mVolumeLevel != null && mAudioManager != null) {
+    private void updateVolumeBar()
+    {
+        if (mVolumeLevel != null && mAudioManager != null)
+        {
             int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             mVolumeLevel.setProgress(volume);
         }
     }
     private SeekBar.OnSeekBarChangeListener mVolumeLevelListener = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
-            if( !fromuser || mAudioManager == null)
+        @Override public void onProgressChanged(SeekBar bar, int progress, boolean fromuser)
+        {
+            if (!fromuser || mAudioManager == null)
                 return;
             setMusicVolume(progress);
             //updating secondary volume view
             updateVolumeBar();
         }
 
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
+        @Override public void onStartTrackingTouch(SeekBar seekBar)
+        {
             mHandler.removeMessages(MSG_HIDE_CONTROLLER);
         }
 
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
+        @Override public void onStopTrackingTouch(SeekBar seekBar)
+        {
             mHandler.sendEmptyMessageDelayed(MSG_HIDE_CONTROLLER, 3000);
         }
     };
 
-    public boolean isDiscrete() {
-        return (mParamsF.flags&WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)== WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE||mParamsF.width==1;
+    public boolean isDiscrete()
+    {
+        return (mParamsF.flags & WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) ==
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE ||
+            mParamsF.width == 1;
     }
 }

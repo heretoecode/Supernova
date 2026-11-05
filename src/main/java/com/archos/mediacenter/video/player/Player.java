@@ -82,62 +82,55 @@ import org.slf4j.LoggerFactory;
  * it can be used in any layout manager, and provides various display options
  * such as scaling and tinting.
  */
-public class Player implements IPlayerControl,
-                               IMediaPlayer.OnPreparedListener,
-                               IMediaPlayer.OnCompletionListener,
-                               IMediaPlayer.OnInfoListener,
-                               IMediaPlayer.OnErrorListener,
-                               IMediaPlayer.OnBufferingUpdateListener,
-                               IMediaPlayer.OnRelativePositionUpdateListener,
-                               IMediaPlayer.OnSeekCompleteListener,
-                               IMediaPlayer.OnVideoSizeChangedListener,
-                               SurfaceHolder.Callback,
-                               TextureView.SurfaceTextureListener{
+public class Player implements IPlayerControl, IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener,
+                               IMediaPlayer.OnInfoListener, IMediaPlayer.OnErrorListener,
+                               IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnRelativePositionUpdateListener,
+                               IMediaPlayer.OnSeekCompleteListener, IMediaPlayer.OnVideoSizeChangedListener,
+                               SurfaceHolder.Callback, TextureView.SurfaceTextureListener
+{
 
     private static final Logger log = LoggerFactory.getLogger(Player.class);
 
-    @SuppressLint("StaticFieldLeak")
-    public static Player sPlayer;
+    @SuppressLint("StaticFieldLeak") public static Player sPlayer;
     // settable by the client
-    private Uri         mUri;
-    private Uri         mSaveUri;
+    private Uri mUri;
+    private Uri mSaveUri;
     private Map<String, String> mExtraMap;
-    private int         mDuration;
+    private int mDuration;
 
     // all possible internal states
-    private static final int STATE_ERROR              = -1;
-    private static final int STATE_IDLE               = 0;
-    private static final int STATE_PREPARING          = 1;
-    private static final int STATE_PREPARED           = 2;
-    private static final int STATE_REFRESH_PREPARED   = 3;
-    private static final int STATE_SURFACE_PREPARED   = 4;
-    private static final int STATE_PLAYING            = 5;
-    private static final int STATE_PAUSED             = 6;
+    private static final int STATE_ERROR = -1;
+    private static final int STATE_IDLE = 0;
+    private static final int STATE_PREPARING = 1;
+    private static final int STATE_PREPARED = 2;
+    private static final int STATE_REFRESH_PREPARED = 3;
+    private static final int STATE_SURFACE_PREPARED = 4;
+    private static final int STATE_PLAYING = 5;
+    private static final int STATE_PAUSED = 6;
     private static final int STATE_PLAYBACK_COMPLETED = 7;
-    
+
     // mCurrentState is a PlayerView object's current state.
     // mTargetState is the state that a method caller intends to reach.
     // For instance, regardless the PlayerView object's current state,
     // calling pause() intends to bring the object to a target state
     // of STATE_PAUSED.
     private int mCurrentState = STATE_IDLE;
-    private int mTargetState  = STATE_IDLE;
-    private final PlaybackDiagnosticState playbackDiagnostics=new PlaybackDiagnosticState();
+    private int mTargetState = STATE_IDLE;
+    private final PlaybackDiagnosticState playbackDiagnostics = new PlaybackDiagnosticState();
 
-    private static final int SCREEN_ON_FLAGS = (
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-         //| WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-         //| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+    private static final int SCREEN_ON_FLAGS = (WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                                //| WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+                                                //| WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
     );
 
     // All the stuff we need for playing and showing a video
-    private Context     mContext = null;
+    private Context mContext = null;
     private SurfaceController mSurfaceController;
     private SurfaceHolder mSurfaceHolder;
     private SurfaceTexture mVideoTexture;
     private Surface mUISurface;
-    private int         mSurfaceWidth;
-    private int         mSurfaceHeight;
+    private int mSurfaceWidth;
+    private int mSurfaceHeight;
     private IMediaPlayer mMediaPlayer;
     private volatile int mOpenGeneration;
     private boolean mSessionPrepared;
@@ -153,22 +146,22 @@ public class Player implements IPlayerControl,
     private boolean mResumeAfterFocusLoss;
     private String mAudioOutputSignature;
 
-    private int         mVideoWidth;
-    private int         mVideoHeight;
-    private double      mVideoAspect;
-    private boolean     mCanPause;
-    private boolean     mCanSeekBack;
-    private boolean     mCanSeekForward;
-    private boolean     mIsLocalVideo;
+    private int mVideoWidth;
+    private int mVideoHeight;
+    private double mVideoAspect;
+    private boolean mCanPause;
+    private boolean mCanSeekBack;
+    private boolean mCanSeekForward;
+    private boolean mIsLocalVideo;
 
-    private boolean     mWaitForNewRate;
-    private final int   NUMBER_RETRIES = 5;
-    private int         numberRetries = NUMBER_RETRIES;
+    private boolean mWaitForNewRate;
+    private final int NUMBER_RETRIES = 5;
+    private int numberRetries = NUMBER_RETRIES;
     private static final float REFRESH_RATE_EPSILON = 0.01f;
     private static final float EPSILON = 0.00001f;
-    private float       mRefreshRate;
-    private int         wantedModeId;
-    private Window      mWindow;
+    private float mRefreshRate;
+    private int wantedModeId;
+    private Window mWindow;
     private AudioManager mAudioManager;
     private AudioFocusRequest mAudioFocusRequest = null;
     private static float mCurrentRefreshRate = 0.0f;
@@ -181,57 +174,80 @@ public class Player implements IPlayerControl,
      * Archos
      */
     private Listener mPlayerListener;
-    private VideoMetadata   mVideoMetadata;
-    private boolean     mIsBusy;
-    private int         mBufferPosition;
-    private int         mRelativePosition;
-    private int         mStopPosition;
-    private int         mSaveStopPosition;
-    private boolean     mUpdateMetadata;
+    private VideoMetadata mVideoMetadata;
+    private boolean mIsBusy;
+    private int mBufferPosition;
+    private int mRelativePosition;
+    private int mStopPosition;
+    private int mSaveStopPosition;
+    private boolean mUpdateMetadata;
 
-    private Handler     mHandler = new Handler(Looper.getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable mPreparedAsync = new Runnable() {
-        @Override
-        public void run() {
-            if (mPlaybackEnding) return;
-            if (mCurrentState == STATE_REFRESH_PREPARED) {
+        @Override public void run()
+        {
+            if (mPlaybackEnding)
+                return;
+            if (mCurrentState == STATE_REFRESH_PREPARED)
+            {
                 mCurrentState = STATE_SURFACE_PREPARED;
-                if (mRestoringSession) {
+                if (mRestoringSession)
+                {
                     mRestoringSession = false;
-                    if (mTargetState == STATE_PLAYING) start(PlayerController.STATE_OTHER);
-                        else pause(PlayerController.STATE_OTHER);
-                    if (mPlayerListener != null) mPlayerListener.onOSDUpdate();
-                } else {
+                    if (mTargetState == STATE_PLAYING)
+                        start(PlayerController.STATE_OTHER);
+                    else
+                        pause(PlayerController.STATE_OTHER);
+                    if (mPlayerListener != null)
+                        mPlayerListener.onOSDUpdate();
+                }
+                else
+                {
                     mSessionPrepared = true;
-                    if (mPlayerListener != null) mPlayerListener.onPrepared();
+                    if (mPlayerListener != null)
+                        mPlayerListener.onPrepared();
                 }
             }
         }
     };
 
     private Runnable mRefreshRateCheckerAsync = new Runnable() {
-        @Override
-        public void run() {
-            if (mPlaybackEnding) return;
-            if (log.isDebugEnabled()) log.debug("mRefreshRateCheckerAsync");
-            if (mCurrentState == STATE_PREPARED) {
-                if (mWaitForNewRate && mWindow != null) {
+        @Override public void run()
+        {
+            if (mPlaybackEnding)
+                return;
+            if (log.isDebugEnabled())
+                log.debug("mRefreshRateCheckerAsync");
+            if (mCurrentState == STATE_PREPARED)
+            {
+                if (mWaitForNewRate && mWindow != null)
+                {
                     View v = mWindow.getDecorView();
                     Display d = v != null ? v.getDisplay() : null;
-                    if (d == null) return;
+                    if (d == null)
+                        return;
                     Display.Mode currentMode = d.getMode();
-                    if (currentMode == null) return;
+                    if (currentMode == null)
+                        return;
                     int currentModeId = currentMode.getModeId();
-                    if (numberRetries > 0) { // only try NUMBER_RETRIES
-                        if (currentModeId != wantedModeId) {
-                            if (log.isDebugEnabled()) log.debug("CONFIG current modeId rate is {} trying to switch to {}, number of retries={}", currentModeId, wantedModeId, numberRetries);
+                    if (numberRetries > 0)
+                    { // only try NUMBER_RETRIES
+                        if (currentModeId != wantedModeId)
+                        {
+                            if (log.isDebugEnabled())
+                                log.debug(
+                                    "CONFIG current modeId rate is {} trying to switch to {}, number of retries={}",
+                                    currentModeId, wantedModeId, numberRetries);
                             numberRetries--;
                             mHandler.postDelayed(mRefreshRateCheckerAsync, 200);
                             return;
                         }
-                        if (log.isDebugEnabled()) log.debug("CONFIG modeId before video start is {}", currentModeId);
+                        if (log.isDebugEnabled())
+                            log.debug("CONFIG modeId before video start is {}", currentModeId);
                         mCurrentRefreshRate = d.getRefreshRate();
-                    } else {
+                    }
+                    else
+                    {
                         log.warn("CONFIG failed to set modeId to {} it is still {}", wantedModeId, currentModeId);
                         Toast.makeText(mContext, R.string.refreshrate_failed, Toast.LENGTH_SHORT).show();
                     }
@@ -239,14 +255,16 @@ public class Player implements IPlayerControl,
 
                 mCurrentState = STATE_REFRESH_PREPARED;
 
-                if (mVideoWidth != 0 && mVideoHeight != 0) {
+                if (mVideoWidth != 0 && mVideoHeight != 0)
+                {
                     mSurfaceController.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
                     if (mEffectRenderer != null)
                         mEffectRenderer.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
                     mHandler.removeCallbacks(mPreparedAsync);
                     mHandler.post(mPreparedAsync);
-
-                } else {
+                }
+                else
+                {
                     // We don't know the video size yet, but should start anyway.
                     // The video size might be reported to us later, or not at all.
                     // Wait 1 second, and play a video with no surface (sound only).
@@ -261,14 +279,16 @@ public class Player implements IPlayerControl,
     private boolean mIsReleased = false;
 
     // --- NEW: Expose the Subtitle Engine for the UI ---
-    public SubtitleEngine getSubtitleEngine() {
+    public SubtitleEngine getSubtitleEngine()
+    {
         return mSubtitleEngine;
     }
 
     // Mirrors getSubtitleEngine() above: lets SubtitleEngine reach back into the effect
     // renderer to wake its draw loop after a paused-3D style change (see
     // VideoEffectRenderer.wakeDrawLoop()'s doc comment for why that hop is needed).
-    public VideoEffectRenderer getEffectRenderer() {
+    public VideoEffectRenderer getEffectRenderer()
+    {
         return mEffectRenderer;
     }
 
@@ -287,8 +307,10 @@ public class Player implements IPlayerControl,
      *
      * Idempotent: safe to call more than once, subsequent calls are a no-op.
      */
-    public void releasePlayer() {
-        if (mIsReleased) return;
+    public void releasePlayer()
+    {
+        if (mIsReleased)
+            return;
         mIsReleased = true;
         stopPlayback();
 
@@ -302,33 +324,39 @@ public class Player implements IPlayerControl,
         // draw3DSubtitles() call can start from that thread, so release() (which still
         // separately synchronizes with SubtitleEngine's own m3DDrawLock, covering the
         // remaining UI-thread redraw3DIfNeeded() path) has nothing left to race against.
-        if (mEffectRenderer != null) {
+        if (mEffectRenderer != null)
+        {
             mEffectRenderer.stop();
             mEffectRenderer = null;
         }
 
-        if (mSubtitleEngine != null) {
+        if (mSubtitleEngine != null)
+        {
             mSubtitleEngine.release();
             mSubtitleEngine = null;
         }
     }
 
-    private class ResumeCtx {
+    private class ResumeCtx
+    {
         private boolean mSubtitleTrackSet;
-        private int     mSeek;
-        private int     mSubtitleTrack;
-        private int     mSubtitleDelay;
-        private int     mSubtitleRatioN;
-        private int     mSubtitleRatioD;
-        private int     mAudioTrack;
-        private int     mAudioFilter;
-        private int     mNightModeOn;
-        private int     mAvDelay;
-        private float   mAvSpeed;
+        private int mSeek;
+        private int mSubtitleTrack;
+        private int mSubtitleDelay;
+        private int mSubtitleRatioN;
+        private int mSubtitleRatioD;
+        private int mAudioTrack;
+        private int mAudioFilter;
+        private int mNightModeOn;
+        private int mAvDelay;
+        private float mAvSpeed;
 
-        public ResumeCtx() {}
+        public ResumeCtx()
+        {
+        }
 
-        public void reset() {
+        public void reset()
+        {
             mSeek = -1;
             mSubtitleTrack = -1;
             mSubtitleTrackSet = false;
@@ -341,10 +369,12 @@ public class Player implements IPlayerControl,
             mAvDelay = 0;
             mAvSpeed = 1.0f;
         }
-        public void onPrepared() {
+        public void onPrepared()
+        {
             if (mSeek != -1)
                 seekTo(mSeek);
-            if (log.isDebugEnabled()) log.debug("onPrepared: subtitleTrack={}", mSubtitleTrack);
+            if (log.isDebugEnabled())
+                log.debug("onPrepared: subtitleTrack={}", mSubtitleTrack);
             if (mSubtitleTrackSet)
                 mMediaPlayer.setSubtitleTrack(presentedSubtitleTrack(mSubtitleTrack));
             if (mSubtitleDelay != 0)
@@ -357,48 +387,61 @@ public class Player implements IPlayerControl,
                 mMediaPlayer.setAvDelay(mAvDelay);
             if (mAvSpeed != 1.0f)
                 mMediaPlayer.setAvSpeed(mAvSpeed);
-            if (log.isTraceEnabled()) log.trace("onPrepared: audioTrack={}", mAudioTrack);
+            if (log.isTraceEnabled())
+                log.trace("onPrepared: audioTrack={}", mAudioTrack);
             if (mAudioTrack != -1)
                 mMediaPlayer.setAudioTrack(mAudioTrack);
             mSeek = -1;
         }
-        public void setSeek(int seek) {
+        public void setSeek(int seek)
+        {
             mSeek = seek;
         }
-        public int getSeek() {
+        public int getSeek()
+        {
             return mSeek;
         }
-        public void setSubtitleTrack(int subtitleTrack) {
-            if (log.isDebugEnabled()) log.debug("setSubtitleTrack: {}", subtitleTrack);
+        public void setSubtitleTrack(int subtitleTrack)
+        {
+            if (log.isDebugEnabled())
+                log.debug("setSubtitleTrack: {}", subtitleTrack);
             mSubtitleTrack = subtitleTrack;
             mSubtitleTrackSet = true;
         }
-        public void setSubtitleDelay(int subtitleDelay) {
+        public void setSubtitleDelay(int subtitleDelay)
+        {
             mSubtitleDelay = subtitleDelay;
         }
-        public void setAudioTrack(int audioTrack) {
-            if (log.isDebugEnabled()) log.debug("setAudioTrack: {}", audioTrack);
+        public void setAudioTrack(int audioTrack)
+        {
+            if (log.isDebugEnabled())
+                log.debug("setAudioTrack: {}", audioTrack);
             mAudioTrack = audioTrack;
         }
-        public void setSubtitleRatio(int n, int d) {
+        public void setSubtitleRatio(int n, int d)
+        {
             mSubtitleRatioN = n;
             mSubtitleRatioD = d;
         }
-        public void setAudioFilter(int n, int enable) {
+        public void setAudioFilter(int n, int enable)
+        {
             mAudioFilter = n;
             mNightModeOn = enable;
         }
-        public void setAvDelay(int delay) {
+        public void setAvDelay(int delay)
+        {
             mAvDelay = delay;
         }
-        public void setAvSpeed(float speed) {
+        public void setAvSpeed(float speed)
+        {
             mAvSpeed = speed;
         }
     }
 
     public ResumeCtx mResumeCtx = new ResumeCtx();
 
-    private void reset() {
+    private void reset()
+    {
         mVideoWidth = 0;
         mVideoHeight = 0;
         mVideoAspect = 1.0f;
@@ -407,19 +450,21 @@ public class Player implements IPlayerControl,
         mStopPosition = -1;
         mUpdateMetadata = false;
         mCurrentState = STATE_IDLE;
-        mTargetState  = STATE_IDLE;
+        mTargetState = STATE_IDLE;
         mIsBusy = false;
         mVideoMetadata = new VideoMetadata();
         mDuration = -1;
     }
 
-    public Player(Context context, Window window, SurfaceController surfaceController, boolean forceSoftwareDecoding) { //force software decoding is specific for floating player
+    public Player(Context context, Window window, SurfaceController surfaceController, boolean forceSoftwareDecoding)
+    { //force software decoding is specific for floating player
         sPlayer = this;
-        if (log.isDebugEnabled()) log.debug("Player");
+        if (log.isDebugEnabled())
+            log.debug("Player");
         reset();
         mSurfaceHolder = null;
         mVideoTexture = null;
-        mForceSoftwareDecoding =forceSoftwareDecoding;
+        mForceSoftwareDecoding = forceSoftwareDecoding;
         mMediaPlayer = null;
         mUri = null;
 
@@ -427,35 +472,43 @@ public class Player implements IPlayerControl,
         mResumeCtx.reset();
         mContext = context;
         mWindow = window;
-        mAudioManager = (AudioManager) mContext.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = (AudioManager)mContext.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mEffectRenderer = new VideoEffectRenderer(mContext, VideoEffect.getDefaultType());
         LibAvos.init(mContext); // Join asynchronous library startup before JNI.
         if (LibAvos.isAvailable())
             mSubtitleEngine = new SubtitleEngine(); // NEW: Create the JNI wrapper
         setSurfaceController(surfaceController);
     }
-    public void setWindow(Window window){
+    public void setWindow(Window window)
+    {
         mWindow = window;
     }
-    public void setSurfaceController(SurfaceController surfaceController){
-        if(surfaceController == mSurfaceController)
+    public void setSurfaceController(SurfaceController surfaceController)
+    {
+        if (surfaceController == mSurfaceController)
             return;
-        if (mDisplayTexture != null) onSurfaceTextureDestroyed(mDisplayTexture);
-            else suspendForSurface();
-        if (mSurfaceController != null) mSurfaceController.clearCallbacks(this, this);
+        if (mDisplayTexture != null)
+            onSurfaceTextureDestroyed(mDisplayTexture);
+        else
+            suspendForSurface();
+        if (mSurfaceController != null)
+            mSurfaceController.clearCallbacks(this, this);
         mSurfaceHolder = null;
         mDisplayTexture = null;
         mVideoTexture = null;
         mSurfaceController = surfaceController;
-        if (mSurfaceController != null) {
+        if (mSurfaceController != null)
+        {
             mSurfaceController.setTextureCallback(this);
             mSurfaceController.setSurfaceCallback(this);
             mSurfaceController.setSubtitleTextureCallback(mSubtitleEngine);
             mSurfaceController.setVideoBoxListener(mSubtitleEngine);
         }
     }
-    private void setGLSupportEnabled(boolean enable) {
-        if (log.isDebugEnabled()) log.debug("setGLSupportEnabled {}", enable);
+    private void setGLSupportEnabled(boolean enable)
+    {
+        if (log.isDebugEnabled())
+            log.debug("setGLSupportEnabled {}", enable);
         int target = mTargetState;
         saveUri();
         suspendForSurface();
@@ -463,23 +516,30 @@ public class Player implements IPlayerControl,
         restoreUri(false); // the new surface callback performs the reopen
         mTargetState = target;
     }
-    
-    public int getEffectType() {
+
+    public int getEffectType()
+    {
         if (mEffectRenderer != null)
             return mEffectRenderer.getEffectType();
-            else return VideoEffect.getDefaultType();
+        else
+            return VideoEffect.getDefaultType();
     }
-    
-    public int getEffectMode() {
+
+    public int getEffectMode()
+    {
         if (mEffectRenderer != null)
             return mEffectRenderer.getEffectMode();
-            else return VideoEffect.getDefaultMode();
+        else
+            return VideoEffect.getDefaultMode();
     }
-    
-    public void setEffect(int type, int mode) {
+
+    public void setEffect(int type, int mode)
+    {
         boolean needToSupportGLEffect = VideoEffect.openGLRequested(type);
-        if (needToSupportGLEffect ^ mSurfaceController.supportOpenGLVideoEffect()) setGLSupportEnabled(needToSupportGLEffect);
-        if (mEffectRenderer != null) {
+        if (needToSupportGLEffect ^ mSurfaceController.supportOpenGLVideoEffect())
+            setGLSupportEnabled(needToSupportGLEffect);
+        if (mEffectRenderer != null)
+        {
             mEffectRenderer.setEffectType(type);
             mEffectRenderer.setEffectMode(mode);
         }
@@ -487,13 +547,18 @@ public class Player implements IPlayerControl,
         mSurfaceController.setEffectMode(mode);
     }
 
-    public int getUIMode() {
-        if (mEffectRenderer != null) return mEffectRenderer.getUIMode();
-            else return VideoEffect.NORMAL_2D_MODE;
+    public int getUIMode()
+    {
+        if (mEffectRenderer != null)
+            return mEffectRenderer.getUIMode();
+        else
+            return VideoEffect.NORMAL_2D_MODE;
     }
 
-    public void setVideoURI(Uri uri, Map<String, String> extraMap) {
-        if (mPlaybackEnding) return; // a delayed service/source callback must not revive this player
+    public void setVideoURI(Uri uri, Map<String, String> extraMap)
+    {
+        if (mPlaybackEnding)
+            return; // a delayed service/source callback must not revive this player
         stopPlayback();
         reset();
         mMetadataReady = false;
@@ -513,23 +578,33 @@ public class Player implements IPlayerControl,
 
         String scheme = mUri.getScheme();
         mIsLocalVideo = false;
-        if (scheme == null || scheme.equals("file")) {
+        if (scheme == null || scheme.equals("file"))
+        {
             mIsLocalVideo = true;
-        } else {
-            if (scheme.equals("content")) {
-                try {
+        }
+        else
+        {
+            if (scheme.equals("content"))
+            {
+                try
+                {
                     if (Integer.parseInt(FileUtils.getName(mUri)) <= ArchosMediaCommon.SCANNED_ID_OFFSET)
                         mIsLocalVideo = true;
-                } catch (NumberFormatException e) {}
+                }
+                catch (NumberFormatException e)
+                {
+                }
             }
         }
 
-        if (uri.getPath() != null) {
+        if (uri.getPath() != null)
+        {
             // FIXME: "smb://hello/world" .getPath() will return something like "hello/world".
             // fixing this the quick way will break all sort of things
             mVideoMetadata.setFile(uri.getPath());
         }
-        if (log.isDebugEnabled()) log.debug("setVideoURI protocol={} outcome=received", Diagnostics.sourceType(uri));
+        if (log.isDebugEnabled())
+            log.debug("setVideoURI protocol={} outcome=received", Diagnostics.sourceType(uri));
         openVideo();
     }
 
@@ -556,8 +631,10 @@ public class Player implements IPlayerControl,
     // stripped filename, permanently defeating the resolved-family fallback for every video
     // from then on. Leaving font_family alone and passing only setDefaultFontName() is what
     // lets the native side's correct resolution actually take effect.
-    private void applySubtitleFontSettings() {
-        if (mSubtitleEngine == null) return;
+    private void applySubtitleFontSettings()
+    {
+        if (mSubtitleEngine == null)
+            return;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         String defaultFont = prefs.getString(VideoPreferencesCommon.KEY_SUBTITLE_DEFAULT_FONT, null);
         mSubtitleEngine.setDefaultFontName(defaultFont);
@@ -571,33 +648,44 @@ public class Player implements IPlayerControl,
         mSubtitleEngine.setFontsFolder(fontsFolder);
     }
 
-    @SuppressWarnings("deprecation")
-    private void abandonFocus() {
+    @SuppressWarnings("deprecation") private void abandonFocus()
+    {
         ++mFocusEpoch;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (mAudioFocusRequest != null) mAudioManager.abandonAudioFocusRequest(mAudioFocusRequest);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            if (mAudioFocusRequest != null)
+                mAudioManager.abandonAudioFocusRequest(mAudioFocusRequest);
             mAudioFocusRequest = null;
-        } else {
-            if (mFocusListener != null) mAudioManager.abandonAudioFocus(mFocusListener);
+        }
+        else
+        {
+            if (mFocusListener != null)
+                mAudioManager.abandonAudioFocus(mFocusListener);
         }
         mFocusListener = null;
         mFocusGranted = false;
     }
 
     /** Mark a deliberate frontend exit without releasing a surface still owned by Android. */
-    public void beginPlaybackExit() {
-        if (mPlaybackEnding) return;
+    public void beginPlaybackExit()
+    {
+        if (mPlaybackEnding)
+            return;
         mPlaybackEnding = true;
         ++mOpenGeneration; // reject source setup already in flight
         mHandler.removeCallbacks(mPreparedAsync);
         mHandler.removeCallbacks(mRefreshRateCheckerAsync);
-        outputEstablished=false;previewFrameRendered=false;
+        outputEstablished = false;
+        previewFrameRendered = false;
         stayAwake(false);
     }
 
-    private void closeCurrentPlayer() {
-        if(playbackDiagnostics!=null)playbackDiagnostics.close(Diagnostics.PlaybackOutcome.CANCELLED);
-        outputEstablished=false;previewFrameRendered=false;
+    private void closeCurrentPlayer()
+    {
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.close(Diagnostics.PlaybackOutcome.CANCELLED);
+        outputEstablished = false;
+        previewFrameRendered = false;
         ++mOpenGeneration;
         mHandler.removeCallbacks(mPreparedAsync);
         mHandler.removeCallbacks(mRefreshRateCheckerAsync);
@@ -607,24 +695,32 @@ public class Player implements IPlayerControl,
         mMetadataReady = false;
         mIsBusy = false;
         mUpdateMetadata = false;
-        if (mSurfaceController != null) mSurfaceController.setMediaPlayer(null);
-        if (mEffectRenderer != null) mEffectRenderer.pause();
-        if (old != null) old.release(); // interrupts prepare/seek and joins rendering
+        if (mSurfaceController != null)
+            mSurfaceController.setMediaPlayer(null);
+        if (mEffectRenderer != null)
+            mEffectRenderer.pause();
+        if (old != null)
+            old.release(); // interrupts prepare/seek and joins rendering
     }
 
-    private void suspendForSurface() {
-        if (isInPlaybackState()) {
+    private void suspendForSurface()
+    {
+        if (isInPlaybackState())
+        {
             mStopPosition = getCurrentPosition();
             mDuration = getDuration();
-            if (mCanSeekBack || mCanSeekForward) mResumeCtx.setSeek(mStopPosition);
+            if (mCanSeekBack || mCanSeekForward)
+                mResumeCtx.setSeek(mStopPosition);
         }
         mRestoringSession = mSessionPrepared;
         closeCurrentPlayer();
         stayAwake(false);
     }
 
-    public void stopPlayback() {
-        if (isInPlaybackState()) {
+    public void stopPlayback()
+    {
+        if (isInPlaybackState())
+        {
             mStopPosition = getCurrentPosition();
             mDuration = getDuration();
         }
@@ -638,21 +734,29 @@ public class Player implements IPlayerControl,
         mResumeCtx.reset();
     }
 
-    private final AudioManager.OnAudioFocusChangeListener afChangeListener = focusChange -> {
-        if (mPlaybackEnding || !mHasAudio || mUri == null) return;
-        if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+    private final AudioManager.OnAudioFocusChangeListener afChangeListener = focusChange ->
+    {
+        if (mPlaybackEnding || !mHasAudio || mUri == null)
+            return;
+        if (focusChange == AudioManager.AUDIOFOCUS_GAIN)
+        {
             mFocusGranted = true;
             mFocusSuspended = false;
             boolean resume = mResumeAfterFocusLoss && mTargetState == STATE_PLAYING;
             mResumeAfterFocusLoss = false;
-            if (resume) start(PlayerController.STATE_OTHER);
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
-                   focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+            if (resume)
+                start(PlayerController.STATE_OTHER);
+        }
+        else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
+                 focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK)
+        {
             mFocusGranted = false;
             mFocusSuspended = true;
             mResumeAfterFocusLoss = mTargetState == STATE_PLAYING;
             pauseForFocus();
-        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+        }
+        else if (focusChange == AudioManager.AUDIOFOCUS_LOSS)
+        {
             mFocusGranted = false;
             mFocusSuspended = true;
             mResumeAfterFocusLoss = false;
@@ -661,37 +765,49 @@ public class Player implements IPlayerControl,
         }
     };
 
-    private void pauseForFocus() {
+    private void pauseForFocus()
+    {
         pausePlayback(PlayerController.STATE_OTHER);
     }
 
-    public void onAudioBecomingNoisy() {
+    public void onAudioBecomingNoisy()
+    {
         if (!mPlaybackEnding && (!mMetadataReady || mHasAudio) && mTargetState == STATE_PLAYING)
             pause(PlayerController.STATE_NORMAL);
     }
 
-    public void openVideo() {
-        if (mPlaybackEnding || mUri == null || (mSurfaceHolder == null && mVideoTexture == null)) {
+    public void openVideo()
+    {
+        if (mPlaybackEnding || mUri == null || (mSurfaceHolder == null && mVideoTexture == null))
+        {
             // not ready for playback just yet, will try again later
             return;
         }
 
         int doViMode = CodecDiscovery.DOVI_MODE_AUTO;
-        try {
-            String doViModeValue = PreferenceManager.getDefaultSharedPreferences(mContext)
-                    .getString(VideoPreferencesCommon.KEY_DOLBY_VISION_MODE, null);
-            if ("off".equals(doViModeValue)) {
+        try
+        {
+            String doViModeValue = PreferenceManager.getDefaultSharedPreferences(mContext).getString(
+                VideoPreferencesCommon.KEY_DOLBY_VISION_MODE, null);
+            if ("off".equals(doViModeValue))
+            {
                 doViMode = CodecDiscovery.DOVI_MODE_OFF;
-            } else if ("force".equals(doViModeValue)) {
+            }
+            else if ("force".equals(doViModeValue))
+            {
                 doViMode = CodecDiscovery.DOVI_MODE_FORCE;
-            } else if (doViModeValue == null) {
-                boolean isDoViDisabled = PreferenceManager.getDefaultSharedPreferences(mContext)
-                        .getBoolean(VideoPreferencesCommon.KEY_DISABLE_DOLBY_VISION, false);
+            }
+            else if (doViModeValue == null)
+            {
+                boolean isDoViDisabled = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(
+                    VideoPreferencesCommon.KEY_DISABLE_DOLBY_VISION, false);
                 doViMode = isDoViDisabled ? CodecDiscovery.DOVI_MODE_OFF : CodecDiscovery.DOVI_MODE_AUTO;
             }
-        } catch (ClassCastException e) {
-            boolean isDoViDisabled = PreferenceManager.getDefaultSharedPreferences(mContext)
-                    .getBoolean(VideoPreferencesCommon.KEY_DISABLE_DOLBY_VISION, false);
+        }
+        catch (ClassCastException e)
+        {
+            boolean isDoViDisabled = PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(
+                VideoPreferencesCommon.KEY_DISABLE_DOLBY_VISION, false);
             doViMode = isDoViDisabled ? CodecDiscovery.DOVI_MODE_OFF : CodecDiscovery.DOVI_MODE_AUTO;
         }
         CodecDiscovery.setDoViMode(doViMode);
@@ -702,19 +818,29 @@ public class Player implements IPlayerControl,
         // called start() previously
         log.info("openVideo protocol={} outcome=attempt", Diagnostics.sourceType(mUri));
         closeCurrentPlayer();
-        final Diagnostics.PlaybackAttempt diagnosticOpen=playbackDiagnostics==null?null:playbackDiagnostics.opening();
-        if (mStopPosition != -1) {
+        final Diagnostics.PlaybackAttempt diagnosticOpen =
+            playbackDiagnostics == null ? null : playbackDiagnostics.opening();
+        if (mStopPosition != -1)
+        {
             mResumeCtx.setSeek(mStopPosition);
         }
         final int generation = mOpenGeneration;
         final Uri uri = mUri;
         final Map<String, String> headers = mExtraMap == null ? null : new HashMap<>(mExtraMap);
         final IMediaPlayer player;
-        try { player = MediaFactory.createPlayer(mContext, mForceSoftwareDecoding); }
-        catch (RuntimeException ex) { onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, ex.getMessage()); return; }
+        try
+        {
+            player = MediaFactory.createPlayer(mContext, mForceSoftwareDecoding);
+        }
+        catch (RuntimeException ex)
+        {
+            onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, ex.getMessage());
+            return;
+        }
         mMediaPlayer = player;
-        if(playbackDiagnostics!=null)playbackDiagnostics.bind(player,diagnosticOpen,getType());
-        mDuration=-1;
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.bind(player, diagnosticOpen, getType());
+        mDuration = -1;
         mCurrentState = STATE_PREPARING;
         player.setOnPreparedListener(this);
         player.setOnCompletionListener(this);
@@ -727,36 +853,61 @@ public class Player implements IPlayerControl,
         mAudioOutputSignature = CustomApplication.getAudioOutputSignature();
         CustomApplication.applyAudioOutputToNative(mContext);
         new Thread(() -> {
-            try {
+            try
+            {
                 NetworkInitialization.awaitReadyForSmb(uri, mContext);
                 // Back/Stop or opening another video invalidates this request, not shared startup.
-                if (generation != mOpenGeneration) return;
-                if (headers != null) player.setDataSource(mContext, uri, headers);
-                    else player.setDataSource(mContext, uri);
+                if (generation != mOpenGeneration)
+                    return;
+                if (headers != null)
+                    player.setDataSource(mContext, uri, headers);
+                else
+                    player.setDataSource(mContext, uri);
                 mHandler.post(() -> {
-                    if (generation != mOpenGeneration || player != mMediaPlayer) return;
-                    try {
-                        if (mSurfaceHolder != null && mSurfaceHolder.getSurface().isValid()) {
+                    if (generation != mOpenGeneration || player != mMediaPlayer)
+                        return;
+                    try
+                    {
+                        if (mSurfaceHolder != null && mSurfaceHolder.getSurface().isValid())
+                        {
                             player.setDisplay(mSurfaceHolder);
-                        } else if (mVideoTexture != null) {
+                        }
+                        else if (mVideoTexture != null)
+                        {
                             Surface surface = new Surface(mVideoTexture);
-                            try { player.setSurface(surface); } finally { surface.release(); }
-                        } else {
+                            try
+                            {
+                                player.setSurface(surface);
+                            }
+                            finally
+                            {
+                                surface.release();
+                            }
+                        }
+                        else
+                        {
                             suspendForSurface();
                             return;
                         }
                         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
                         player.setScreenOnWhilePlaying(true);
-                        if (mResumeCtx.getSeek() != -1 && !mSurfaceController.supportOpenGLVideoEffect()
-                                && player.setStartTime(mResumeCtx.getSeek())) mResumeCtx.setSeek(-1);
-                        if(playbackDiagnostics!=null)playbackDiagnostics.submitted(diagnosticOpen,getType());
+                        if (mResumeCtx.getSeek() != -1 && !mSurfaceController.supportOpenGLVideoEffect() &&
+                            player.setStartTime(mResumeCtx.getSeek()))
+                            mResumeCtx.setSeek(-1);
+                        if (playbackDiagnostics != null)
+                            playbackDiagnostics.submitted(diagnosticOpen, getType());
                         player.prepareAsync();
-                    } catch (IllegalArgumentException | IllegalStateException ex) {
+                    }
+                    catch (IllegalArgumentException | IllegalStateException ex)
+                    {
                         onError(player, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, ex.getMessage());
                     }
                 });
-            } catch (IOException | RuntimeException ex) {
-                if(playbackDiagnostics!=null)playbackDiagnostics.failed(diagnosticOpen);
+            }
+            catch (IOException | RuntimeException ex)
+            {
+                if (playbackDiagnostics != null)
+                    playbackDiagnostics.failed(diagnosticOpen);
                 mHandler.post(() -> {
                     if (generation == mOpenGeneration && player == mMediaPlayer)
                         onError(player, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, ex.getMessage());
@@ -769,16 +920,22 @@ public class Player implements IPlayerControl,
      * The behaviour of mMediaPlayer.setWakeMode is weird, use stayAwake instead
      * stay awake during video opening and video playback, don't stay awake when local video is paused
      */
-    public void stayAwake(boolean awake) {
-        if(mWindow == null) return;
+    public void stayAwake(boolean awake)
+    {
+        if (mWindow == null)
+            return;
         mWindow.getDecorView().post(new Runnable() {
-            @Override
-            public void run() {
-                if (mWindow == null) return;
+            @Override public void run()
+            {
+                if (mWindow == null)
+                    return;
                 LayoutParams lp = mWindow.getAttributes();
-                if (awake) {
+                if (awake)
+                {
                     lp.flags |= SCREEN_ON_FLAGS;
-                } else {
+                }
+                else
+                {
                     lp.flags &= ~SCREEN_ON_FLAGS;
                 }
                 mWindow.setAttributes(lp);
@@ -787,83 +944,107 @@ public class Player implements IPlayerControl,
     }
     private volatile boolean previewFrameRendered;
     private boolean outputEstablished;
-    private void playbackOutput(){
-        if(mCurrentState!=STATE_PLAYING||mMediaPlayer==null||outputEstablished)return;
-        outputEstablished=true;previewFrameRendered=true;
-        if(playbackDiagnostics!=null)playbackDiagnostics.output(mMediaPlayer,getType());
-        if(mPlayerListener!=null)mPlayerListener.onPlaybackEstablished();
+    private void playbackOutput()
+    {
+        if (mCurrentState != STATE_PLAYING || mMediaPlayer == null || outputEstablished)
+            return;
+        outputEstablished = true;
+        previewFrameRendered = true;
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.output(mMediaPlayer, getType());
+        if (mPlayerListener != null)
+            mPlayerListener.onPlaybackEstablished();
     }
-    public boolean hasRenderedPreviewFrame(){return previewFrameRendered;}
+    public boolean hasRenderedPreviewFrame()
+    {
+        return previewFrameRendered;
+    }
     /* TextureView.SurfaceTextureListener */
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    public void onSurfaceTextureUpdated(SurfaceTexture surface)
+    {
         playbackOutput();
-        if (log.isDebugEnabled()) log.debug("CONFIG onSurfaceTextureUpdated");
+        if (log.isDebugEnabled())
+            log.debug("CONFIG onSurfaceTextureUpdated");
     }
 
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-        if (log.isDebugEnabled()) log.debug("CONFIG onSurfaceTextureSizeChanged: {}x{}", width, height);
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height)
+    {
+        if (log.isDebugEnabled())
+            log.debug("CONFIG onSurfaceTextureSizeChanged: {}x{}", width, height);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
-        if (mEffectRenderer != null) mEffectRenderer.setSurfaceSize(width, height);
+        if (mEffectRenderer != null)
+            mEffectRenderer.setSurfaceSize(width, height);
     }
 
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        if (surface != mDisplayTexture) return true;
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface)
+    {
+        if (surface != mDisplayTexture)
+            return true;
         suspendForSurface();
         mDisplayTexture = null;
         mVideoTexture = null;
         mUISurface = null;
-        if(mContext instanceof PlayerActivity)
-            ((PlayerActivity) mContext).setUIExternalSurface(null);
-        if(mContext instanceof FloatingPlayerService)
-            ((FloatingPlayerService) mContext).setUIExternalSurface(null);
-        if(mEffectRenderer!=null){
+        if (mContext instanceof PlayerActivity)
+            ((PlayerActivity)mContext).setUIExternalSurface(null);
+        if (mContext instanceof FloatingPlayerService)
+            ((FloatingPlayerService)mContext).setUIExternalSurface(null);
+        if (mEffectRenderer != null)
+        {
             mEffectRenderer.stop();
             mEffectRenderer = null;
         }
         return true;
     }
 
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        if (log.isDebugEnabled()) log.debug("CONFIG onSurfaceTextureAvailable: {}x{}", width, height);
-        if (surface == mDisplayTexture && mVideoTexture != null) return;
-        if (mSurfaceHolder != null) {
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height)
+    {
+        if (log.isDebugEnabled())
+            log.debug("CONFIG onSurfaceTextureAvailable: {}x{}", width, height);
+        if (surface == mDisplayTexture && mVideoTexture != null)
+            return;
+        if (mSurfaceHolder != null)
+        {
             suspendForSurface();
             mSurfaceHolder = null;
         }
         if (mDisplayTexture != null && mDisplayTexture != surface)
             onSurfaceTextureDestroyed(mDisplayTexture);
         mDisplayTexture = surface;
-        if(mEffectRenderer==null)
+        if (mEffectRenderer == null)
             mEffectRenderer = new VideoEffectRenderer(mContext, VideoEffect.getDefaultType());
 
-        try { mEffectRenderer.setTexture(surface, width, height); }
-        catch (RuntimeException ex) {
+        try
+        {
+            mEffectRenderer.setTexture(surface, width, height);
+        }
+        catch (RuntimeException ex)
+        {
             onError(mMediaPlayer, IMediaPlayer.MEDIA_ERROR_UNKNOWN, 0, ex.getMessage());
             return;
         }
         mVideoTexture = mEffectRenderer.getVideoTexture();
         mUISurface = mEffectRenderer.getUISurface();
-        if(mContext instanceof PlayerActivity)
-            ((PlayerActivity) mContext).setUIExternalSurface(mUISurface);
-        if(mContext instanceof FloatingPlayerService)
-            ((FloatingPlayerService) mContext).setUIExternalSurface(mUISurface);
+        if (mContext instanceof PlayerActivity)
+            ((PlayerActivity)mContext).setUIExternalSurface(mUISurface);
+        if (mContext instanceof FloatingPlayerService)
+            ((FloatingPlayerService)mContext).setUIExternalSurface(mUISurface);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
         openVideo();
-        
     }
 
     /* SurfaceHolder.Callback */
-    public void surfaceChanged(SurfaceHolder holder, int format,
-                                int w, int h)
+    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
     {
-        if (log.isDebugEnabled()) log.debug("CONFIG surfaceChanged: {}x{}", w, h);
+        if (log.isDebugEnabled())
+            log.debug("CONFIG surfaceChanged: {}x{}", w, h);
         mSurfaceWidth = w;
         mSurfaceHeight = h;
         boolean isValidState = (mCurrentState == STATE_PREPARED);
         boolean hasValidSize = (mVideoWidth == w && mVideoHeight == h);
-        if (mMediaPlayer != null && isValidState && hasValidSize) {
+        if (mMediaPlayer != null && isValidState && hasValidSize)
+        {
             mHandler.removeCallbacks(mPreparedAsync);
             mHandler.post(mPreparedAsync);
         }
@@ -871,230 +1052,288 @@ public class Player implements IPlayerControl,
 
     public void surfaceCreated(SurfaceHolder holder)
     {
-        if (log.isDebugEnabled()) log.debug("CONFIG surfaceCreated");
-        if (holder == mSurfaceHolder && mMediaPlayer != null) return;
-        if (mDisplayTexture != null) onSurfaceTextureDestroyed(mDisplayTexture);
+        if (log.isDebugEnabled())
+            log.debug("CONFIG surfaceCreated");
+        if (holder == mSurfaceHolder && mMediaPlayer != null)
+            return;
+        if (mDisplayTexture != null)
+            onSurfaceTextureDestroyed(mDisplayTexture);
         mSurfaceHolder = holder;
         openVideo();
     }
 
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        if (holder != mSurfaceHolder) return;
+        if (holder != mSurfaceHolder)
+            return;
         suspendForSurface(); // joins native consumers before returning to Android
         mSurfaceHolder = null;
         mSurfaceWidth = 0;
         mSurfaceHeight = 0;
     }
 
-    private void saveUri() {
-        if (mMediaPlayer != null) {
-            try {
+    private void saveUri()
+    {
+        if (mMediaPlayer != null)
+        {
+            try
+            {
                 mStopPosition = getCurrentPosition();
                 mDuration = mMediaPlayer.getDuration();
-            } catch (IllegalStateException e) { }
+            }
+            catch (IllegalStateException e)
+            {
+            }
         }
         mSaveUri = mUri;
         mSaveStopPosition = mStopPosition;
     }
-    
-    private void restoreUri(boolean restartVideo) {
-        if (log.isDebugEnabled()) log.debug("restoreUri");
+
+    private void restoreUri(boolean restartVideo)
+    {
+        if (log.isDebugEnabled())
+            log.debug("restoreUri");
         mUri = mSaveUri;
         mStopPosition = mSaveStopPosition;
-        if (restartVideo) openVideo();
+        if (restartVideo)
+            openVideo();
     }
-    
-    @SuppressWarnings("deprecation")
-    private boolean acquireFocus() {
-        if (!mHasAudio) return true;
-        if (mFocusGranted) return true;
-        if (mFocusSuspended) return false;
-        if (mFocusListener == null) {
+
+    @SuppressWarnings("deprecation") private boolean acquireFocus()
+    {
+        if (!mHasAudio)
+            return true;
+        if (mFocusGranted)
+            return true;
+        if (mFocusSuspended)
+            return false;
+        if (mFocusListener == null)
+        {
             final int epoch = ++mFocusEpoch;
-            mFocusListener = change -> {
-                if (epoch == mFocusEpoch) afChangeListener.onAudioFocusChange(change);
+            mFocusListener = change ->
+            {
+                if (epoch == mFocusEpoch)
+                    afChangeListener.onAudioFocusChange(change);
             };
         }
         int result;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (mAudioFocusRequest == null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            if (mAudioFocusRequest == null)
+            {
                 mAudioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                        .setAudioAttributes(new AudioAttributes.Builder()
-                                .setUsage(AudioAttributes.USAGE_MEDIA)
-                                .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE).build())
-                        .setAcceptsDelayedFocusGain(false)
-                        .setWillPauseWhenDucked(true)
-                        .setOnAudioFocusChangeListener(mFocusListener, mHandler).build();
+                                         .setAudioAttributes(new AudioAttributes.Builder()
+                                                                 .setUsage(AudioAttributes.USAGE_MEDIA)
+                                                                 .setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
+                                                                 .build())
+                                         .setAcceptsDelayedFocusGain(false)
+                                         .setWillPauseWhenDucked(true)
+                                         .setOnAudioFocusChangeListener(mFocusListener, mHandler)
+                                         .build();
             }
             result = mAudioManager.requestAudioFocus(mAudioFocusRequest);
-        } else {
+        }
+        else
+        {
             result = mAudioManager.requestAudioFocus(mFocusListener, AudioManager.STREAM_MUSIC,
-                    AudioManager.AUDIOFOCUS_GAIN);
+                                                     AudioManager.AUDIOFOCUS_GAIN);
         }
         return mFocusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
     }
 
-    @Override
-    public void start(int state) {
-        if (mPlaybackEnding) return;
+    @Override public void start(int state)
+    {
+        if (mPlaybackEnding)
+            return;
         mTargetState = STATE_PLAYING;
-        if (state == PlayerController.STATE_NORMAL) {
+        if (state == PlayerController.STATE_NORMAL)
+        {
             mFocusSuspended = false;
             mResumeAfterFocusLoss = false;
         }
-        if (!isInPlaybackState() || !mMetadataReady) return;
-        if (!acquireFocus()) {
+        if (!isInPlaybackState() || !mMetadataReady)
+            return;
+        if (!acquireFocus())
+        {
             mMediaPlayer.pause();
             mCurrentState = STATE_PAUSED;
-            if (mPlayerListener != null) mPlayerListener.onPause(PlayerController.STATE_OTHER);
+            if (mPlayerListener != null)
+                mPlayerListener.onPause(PlayerController.STATE_OTHER);
             stayAwake(false);
             return;
         }
         mMediaPlayer.start();
         mCurrentState = STATE_PLAYING;
         stayAwake(true);
-        if (mPlayerListener != null) mPlayerListener.onPlay(state);
-        if (mEffectRenderer != null) mEffectRenderer.onPlay();
+        if (mPlayerListener != null)
+            mPlayerListener.onPlay(state);
+        if (mEffectRenderer != null)
+            mEffectRenderer.onPlay();
     }
 
-    @Override
-    public void pause(int state) {
+    @Override public void pause(int state)
+    {
         mResumeAfterFocusLoss = false;
         mTargetState = STATE_PAUSED;
         pausePlayback(state);
     }
 
-    private void pausePlayback(int state) {
+    private void pausePlayback(int state)
+    {
         // TODO used to have if (PlayerService.sPlayerService != null) PlayerService.sPlayerService.saveVideoStateIfReady();
-        if (log.isDebugEnabled()) log.debug("pause");
-        if (isInPlaybackState()) {
+        if (log.isDebugEnabled())
+            log.debug("pause");
+        if (isInPlaybackState())
+        {
             // Queue pause even if a preceding native start has not completed yet.
             mMediaPlayer.pause();
             mCurrentState = STATE_PAUSED;
         }
-        if (mPlayerListener != null) {
+        if (mPlayerListener != null)
+        {
             mPlayerListener.onPause(state);
-        } else {
-            if (log.isDebugEnabled()) log.debug("pause: no listener");
+        }
+        else
+        {
+            if (log.isDebugEnabled())
+                log.debug("pause: no listener");
         }
         /* on pause, Don't suspend when video is non local or can't seek */
-        if (canSeekBackward() && canSeekForward()) {
-            if (log.isDebugEnabled()) log.debug("pause: allow to go to sleep");
+        if (canSeekBackward() && canSeekForward())
+        {
+            if (log.isDebugEnabled())
+                log.debug("pause: allow to go to sleep");
             stayAwake(false);
-        } else {
-            if (log.isDebugEnabled()) log.debug("pause: do not sleep");
+        }
+        else
+        {
+            if (log.isDebugEnabled())
+                log.debug("pause: do not sleep");
         }
     }
 
     // cache duration as mDuration for faster access
-    @Override
-    public int getDuration() {
-        if (isInPlaybackState()) {
+    @Override public int getDuration()
+    {
+        if (isInPlaybackState())
+        {
             mDuration = mMediaPlayer.getDuration();
         }
         return mDuration;
     }
 
-    public boolean hasSuspendedPosition() {
+    public boolean hasSuspendedPosition()
+    {
         return mUri != null && mStopPosition >= 0;
     }
 
-    @Override
-    public int getCurrentPosition() {
-        if (isInPlaybackState()) {
+    @Override public int getCurrentPosition()
+    {
+        if (isInPlaybackState())
+        {
             int currentPos = mMediaPlayer.getCurrentPosition();
-            if (log.isDebugEnabled()) log.debug("getCurrentPosition: {}", currentPos);
+            if (log.isDebugEnabled())
+                log.debug("getCurrentPosition: {}", currentPos);
             return currentPos;
-        } else if (mStopPosition != -1) {
+        }
+        else if (mStopPosition != -1)
+        {
             return mStopPosition;
         }
         return 0;
     }
 
-    @Override
-    public int getBufferPosition() {
+    @Override public int getBufferPosition()
+    {
         return mBufferPosition;
     }
 
-    @Override
-    public int getRelativePosition() {
+    @Override public int getRelativePosition()
+    {
         return mRelativePosition;
     }
-    
-    @Override
-    public void seekTo(int msec) {
+
+    @Override public void seekTo(int msec)
+    {
         mStopPosition = msec;
-        Diagnostics.event("seek","target_ms",msec,"state",mCurrentState);
-        if (log.isDebugEnabled()) log.debug("seekTo: {} ms", msec);
-        if (isInPlaybackState()) {
-            if(playbackDiagnostics!=null)playbackDiagnostics.seeking(msec,getType());
-            if (mPlayerListener != null) {
+        Diagnostics.event("seek", "target_ms", msec, "state", mCurrentState);
+        if (log.isDebugEnabled())
+            log.debug("seekTo: {} ms", msec);
+        if (isInPlaybackState())
+        {
+            if (playbackDiagnostics != null)
+                playbackDiagnostics.seeking(msec, getType());
+            if (mPlayerListener != null)
+            {
                 mPlayerListener.onSeekStart(msec);
             }
             mMediaPlayer.seekTo(msec);
             mIsBusy = true;
-        } else {
+        }
+        else
+        {
             mResumeCtx.setSeek(msec);
         }
     }
-    
+
     /*
      * return true if MediaPlayer is seeking on network videos,
      * in that case, avoid to call any MediaPlayer method in order to prevent freeze.
      */
-    @Override
-    public boolean isBusy() {
+    @Override public boolean isBusy()
+    {
         return mIsBusy && !isLocalVideo();
     }
-            
-    @Override
-    public boolean isPlaying() {
+
+    @Override public boolean isPlaying()
+    {
         return isInPlaybackState() && mMediaPlayer.isPlaying();
     }
 
-    public boolean isPauseRequested() {
+    public boolean isPauseRequested()
+    {
         return mTargetState == STATE_PAUSED;
     }
 
-    public boolean isPaused() {
-        return isInPlaybackState() && ! mMediaPlayer.isPlaying();
+    public boolean isPaused()
+    {
+        return isInPlaybackState() && !mMediaPlayer.isPlaying();
     }
 
-    @Override
-    public boolean isInPlaybackState() {
-        return (mMediaPlayer != null &&
-                mCurrentState != STATE_ERROR &&
-                mCurrentState != STATE_IDLE &&
+    @Override public boolean isInPlaybackState()
+    {
+        return (mMediaPlayer != null && mCurrentState != STATE_ERROR && mCurrentState != STATE_IDLE &&
                 mCurrentState != STATE_PREPARING);
     }
 
-    @Override
-    public void setLooping(boolean enable) {
-        if (mMediaPlayer != null) mMediaPlayer.setLooping(enable);
+    @Override public void setLooping(boolean enable)
+    {
+        if (mMediaPlayer != null)
+            mMediaPlayer.setLooping(enable);
     }
-    
-    @Override
-    public boolean isLocalVideo() {
+
+    @Override public boolean isLocalVideo()
+    {
         return mIsLocalVideo;
     }
 
-    @Override
-    public boolean canPause() {
+    @Override public boolean canPause()
+    {
         return mCanPause;
     }
 
-    @Override
-    public boolean canSeekBackward() {
+    @Override public boolean canSeekBackward()
+    {
         return mCanSeekBack;
     }
 
-    @Override
-    public boolean canSeekForward() {
+    @Override public boolean canSeekForward()
+    {
         return mCanSeekForward;
     }
-    
-    public Bitmap screenshot() {
+
+    public Bitmap screenshot()
+    {
         return null;
     }
 
@@ -1102,23 +1341,26 @@ public class Player implements IPlayerControl,
      * Archos Part
      */
 
-    public int getType() {
+    public int getType()
+    {
         if (mMediaPlayer == null)
             return -1;
         else
             return mMediaPlayer.getType();
     }
 
-    public VideoMetadata getVideoMetadata() {
+    public VideoMetadata getVideoMetadata()
+    {
         return mVideoMetadata;
     }
 
-
-    public String getErrorDesc() {
+    public String getErrorDesc()
+    {
         return null;
     }
 
-    public void checkSubtitles() {
+    public void checkSubtitles()
+    {
         if (isInPlaybackState())
             mMediaPlayer.checkSubtitles(); // note that player checks also cache directory with avos
     }
@@ -1140,25 +1382,29 @@ public class Player implements IPlayerControl,
         return mVideoMetadata == null ? selected : subtitlePresentation.track(selected, -1);
     }
 
-    @Override
-    public boolean setSubtitleTrack(int stream) {
+    @Override public boolean setSubtitleTrack(int stream)
+    {
         mResumeCtx.setSubtitleTrack(stream);
-        Diagnostics.event("subtitle_selection","track",stream,"state",mCurrentState);
-        if (log.isDebugEnabled()) log.debug("setSubtitleTrack: select stream {}", stream);
-        if (isInPlaybackState()) {
+        Diagnostics.event("subtitle_selection", "track", stream, "state", mCurrentState);
+        if (log.isDebugEnabled())
+            log.debug("setSubtitleTrack: select stream {}", stream);
+        if (isInPlaybackState())
+        {
             return mMediaPlayer.setSubtitleTrack(presentedSubtitleTrack(stream));
         }
         return true;
     }
 
-    public int checkCurrentFileExists(){
-        return  mMediaPlayer!=null?mMediaPlayer.doesCurrentFileExists():mLastExistState;
+    public int checkCurrentFileExists()
+    {
+        return mMediaPlayer != null ? mMediaPlayer.doesCurrentFileExists() : mLastExistState;
     }
 
-    @Override
-    public void setSubtitleDelay(int delay) {
+    @Override public void setSubtitleDelay(int delay)
+    {
         mResumeCtx.setSubtitleDelay(delay);
-        if (isInPlaybackState()) {
+        if (isInPlaybackState())
+        {
             mMediaPlayer.setSubtitleDelay(delay);
         }
     }
@@ -1171,132 +1417,170 @@ public class Player implements IPlayerControl,
      * <li> otherwise n=d=24000
      * </ul>
      */
-    @Override
-    public void setSubtitleRatio(int ratio) {
-        switch (ratio) {
-            case 1:
-                setSubtitleRatio(25025, 24000);
-                break;
-            case 2:
-                setSubtitleRatio(24000, 25025);
-                break;
-            default:
-                setSubtitleRatio(24000, 24000);
-                break;
+    @Override public void setSubtitleRatio(int ratio)
+    {
+        switch (ratio)
+        {
+        case 1:
+            setSubtitleRatio(25025, 24000);
+            break;
+        case 2:
+            setSubtitleRatio(24000, 25025);
+            break;
+        default:
+            setSubtitleRatio(24000, 24000);
+            break;
         }
     }
 
-    private void setSubtitleRatio(int n, int d) {
+    private void setSubtitleRatio(int n, int d)
+    {
         mResumeCtx.setSubtitleRatio(n, d);
-        if (isInPlaybackState()) {
-            try {
+        if (isInPlaybackState())
+        {
+            try
+            {
                 mMediaPlayer.setSubtitleRatio(n, d);
-            } catch (IllegalStateException e) {
+            }
+            catch (IllegalStateException e)
+            {
                 log.error("setSubtitleRatio fail", e);
             }
         }
     }
-    
-    @Override
-    public boolean setAudioFilter(int n, boolean nightOn) {
-        int enable = nightOn?1:0;
+
+    @Override public boolean setAudioFilter(int n, boolean nightOn)
+    {
+        int enable = nightOn ? 1 : 0;
         mResumeCtx.setAudioFilter(n, enable);
-        if (isInPlaybackState()) {
+        if (isInPlaybackState())
+        {
             mMediaPlayer.setAudioFilter(n, enable);
             return true;
         }
         return true;
     }
 
-    public void setAvDelay(int delay) {
+    public void setAvDelay(int delay)
+    {
         mResumeCtx.setAvDelay(delay);
-        if (isInPlaybackState()) {
+        if (isInPlaybackState())
+        {
             mMediaPlayer.setAvDelay(delay);
         }
     };
 
-    public void setAvSpeed(float speed) {
+    public void setAvSpeed(float speed)
+    {
         mResumeCtx.setAvSpeed(speed);
-        if (isInPlaybackState()) {
+        if (isInPlaybackState())
+        {
             mMediaPlayer.setAvSpeed(speed);
         }
     };
 
-    @Override
-    public boolean setAudioTrack(int stream) {
+    @Override public boolean setAudioTrack(int stream)
+    {
         mResumeCtx.setAudioTrack(stream);
-        Diagnostics.event("audio_selection","track",stream,"state",mCurrentState);
-        if (log.isDebugEnabled()) log.debug("setAudioTrack: select stream {}", stream);
-        if (isInPlaybackState()) {
+        Diagnostics.event("audio_selection", "track", stream, "state", mCurrentState);
+        if (log.isDebugEnabled())
+            log.debug("setAudioTrack: select stream {}", stream);
+        if (isInPlaybackState())
+        {
             return mMediaPlayer.setAudioTrack(stream);
         }
         return true;
     }
 
-    public void refreshAudioOutput() {
-        if (isInPlaybackState() && mHasAudio) {
+    public void refreshAudioOutput()
+    {
+        if (isInPlaybackState() && mHasAudio)
+        {
             mMediaPlayer.refreshAudioOutput();
         }
     }
 
-    public void onAudioOutputChanged() {
-        if (mPlaybackEnding) return;
+    public void onAudioOutputChanged()
+    {
+        if (mPlaybackEnding)
+            return;
         String signature = CustomApplication.getAudioOutputSignature();
-        if (signature.equals(mAudioOutputSignature)) return;
-        if (mMediaPlayer == null || !mMetadataReady) return; // prepare applies the newest snapshot
+        if (signature.equals(mAudioOutputSignature))
+            return;
+        if (mMediaPlayer == null || !mMetadataReady)
+            return; // prepare applies the newest snapshot
         mAudioOutputSignature = signature;
-        if (!mHasAudio) return;
+        if (!mHasAudio)
+            return;
         // Close serializes with seek/track switching and preserves the pending seek target.
         suspendForSurface();
         openVideo();
     }
 
-    private void handleMetadata(IMediaPlayer mp) {
-        if (log.isDebugEnabled()) log.debug("handleMetadata");
-        MediaMetadata data = mp.getMediaMetadata(IMediaPlayer.METADATA_ALL,
-                                       IMediaPlayer.BYPASS_METADATA_FILTER);
-        if (data != null) {
-            if (data.has(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK)) {
+    private void handleMetadata(IMediaPlayer mp)
+    {
+        if (log.isDebugEnabled())
+            log.debug("handleMetadata");
+        MediaMetadata data = mp.getMediaMetadata(IMediaPlayer.METADATA_ALL, IMediaPlayer.BYPASS_METADATA_FILTER);
+        if (data != null)
+        {
+            if (data.has(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK))
+            {
                 mHasAudio = data.getInt(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK) > 0;
                 if (data.has(IMediaPlayer.METADATA_KEY_CURRENT_AUDIO_TRACK))
                     mHasAudio &= data.getInt(IMediaPlayer.METADATA_KEY_CURRENT_AUDIO_TRACK) >= 0;
                 mMetadataReady = true;
-                if (!mHasAudio) { abandonFocus(); mFocusSuspended = mResumeAfterFocusLoss = false; }
+                if (!mHasAudio)
+                {
+                    abandonFocus();
+                    mFocusSuspended = mResumeAfterFocusLoss = false;
+                }
             }
             boolean enabledUpdate = false;
 
-            if (data.has(IMediaPlayer.METADATA_KEY_PAUSE_AVAILABLE)) {
+            if (data.has(IMediaPlayer.METADATA_KEY_PAUSE_AVAILABLE))
+            {
                 mCanPause = data.getBoolean(IMediaPlayer.METADATA_KEY_PAUSE_AVAILABLE);
                 enabledUpdate = true;
             }
-            if (data.has(IMediaPlayer.METADATA_KEY_SEEK_BACKWARD_AVAILABLE)) {
+            if (data.has(IMediaPlayer.METADATA_KEY_SEEK_BACKWARD_AVAILABLE))
+            {
                 mCanSeekBack = data.getBoolean(IMediaPlayer.METADATA_KEY_SEEK_BACKWARD_AVAILABLE);
                 enabledUpdate = true;
             }
-            if (data.has(IMediaPlayer.METADATA_KEY_SEEK_FORWARD_AVAILABLE)) {
+            if (data.has(IMediaPlayer.METADATA_KEY_SEEK_FORWARD_AVAILABLE))
+            {
                 mCanSeekForward = data.getBoolean(IMediaPlayer.METADATA_KEY_SEEK_FORWARD_AVAILABLE);
                 enabledUpdate = true;
             }
-            if (enabledUpdate && mPlayerListener != null) {
+            if (enabledUpdate && mPlayerListener != null)
+            {
                 mPlayerListener.onOSDUpdate();
             }
             mVideoMetadata.setData(data);
 
-            if (mPlayerListener != null) {
+            if (mPlayerListener != null)
+            {
                 if (data.has(IMediaPlayer.METADATA_KEY_NB_VIDEO_TRACK))
                     mPlayerListener.onVideoMetadataUpdated(mVideoMetadata);
-                if (data.has(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK)) {
+                if (data.has(IMediaPlayer.METADATA_KEY_NB_AUDIO_TRACK))
+                {
                     int currentAudio = -1;
                     if (data.has(IMediaPlayer.METADATA_KEY_CURRENT_AUDIO_TRACK))
                         currentAudio = data.getInt(IMediaPlayer.METADATA_KEY_CURRENT_AUDIO_TRACK);
-                    if (log.isDebugEnabled()) log.debug("handleMetadata: currentAudioTrack -1 -> {}, calling onAudioMetadataUpdated", currentAudio);
+                    if (log.isDebugEnabled())
+                        log.debug("handleMetadata: currentAudioTrack -1 -> {}, calling onAudioMetadataUpdated",
+                                  currentAudio);
                     mPlayerListener.onAudioMetadataUpdated(mVideoMetadata, currentAudio);
                 }
-                if (data.has(IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK)) {
+                if (data.has(IMediaPlayer.METADATA_KEY_NB_SUBTITLE_TRACK))
+                {
                     int currentSubtitle = -1;
                     if (data.has(IMediaPlayer.METADATA_KEY_CURRENT_SUBTITLE_TRACK))
                         currentSubtitle = data.getInt(IMediaPlayer.METADATA_KEY_CURRENT_SUBTITLE_TRACK);
-                    if (log.isDebugEnabled()) log.debug("handleMetadata: currentSubtitleTrack -1 -> {}, calling onSubtitleMetadataUpdated", currentSubtitle);
+                    if (log.isDebugEnabled())
+                        log.debug("handleMetadata: currentSubtitleTrack -1 -> {}, calling onSubtitleMetadataUpdated",
+                                  currentSubtitle);
                     mPlayerListener.onSubtitleMetadataUpdated(mVideoMetadata, currentSubtitle);
                 }
             }
@@ -1304,64 +1588,87 @@ public class Player implements IPlayerControl,
     }
 
     /* IMediaPlayer.Listener */
-    public void onPrepared(IMediaPlayer mp) {
-        if (mPlaybackEnding || mp != mMediaPlayer) return;
-        if(playbackDiagnostics!=null)playbackDiagnostics.prepared(mp,getType());
-        Diagnostics.event("player_prepared","backend",getType());
-        previewFrameRendered=false;outputEstablished=false;
+    public void onPrepared(IMediaPlayer mp)
+    {
+        if (mPlaybackEnding || mp != mMediaPlayer)
+            return;
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.prepared(mp, getType());
+        Diagnostics.event("player_prepared", "backend", getType());
+        previewFrameRendered = false;
+        outputEstablished = false;
         mCurrentState = STATE_PREPARED;
         if (mSurfaceController != null)
             mSurfaceController.setMediaPlayer(mMediaPlayer);
 
         // Get the capabilities of the player for this stream
         mCanPause = mCanSeekForward = mCanSeekBack = true;
-        if (log.isDebugEnabled()) log.debug("onPrepared: mCanPause={}, mCanSeekForward={}, mCanSeekBack={} -> handleMetadata", mCanPause, mCanSeekForward, mCanSeekBack);
+        if (log.isDebugEnabled())
+            log.debug("onPrepared: mCanPause={}, mCanSeekForward={}, mCanSeekBack={} -> handleMetadata", mCanPause,
+                      mCanSeekForward, mCanSeekBack);
         handleMetadata(mMediaPlayer);
 
         // No audio tracks is a valid video session, including failed/absent audio decode.
         mMetadataReady = true;
-        if (mHasAudio && !CustomApplication.getAudioOutputSignature().equals(mAudioOutputSignature)) {
+        if (mHasAudio && !CustomApplication.getAudioOutputSignature().equals(mAudioOutputSignature))
+        {
             onAudioOutputChanged();
             return;
         }
         mResumeCtx.onPrepared();
 
-        if (mWindow != null) {
+        if (mWindow != null)
+        {
 
             View v = mWindow.getDecorView();
             Display d = v.getDisplay();
 
             setHdrCapabilities();
 
-            int refreshRateSwitchMode = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString("enable_tv_refreshrate_switch_mode","0"));
-            boolean refreshRateSwitchEnabled = (refreshRateSwitchMode!= 0);
+            int refreshRateSwitchMode =
+                Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(mContext).getString(
+                    "enable_tv_refreshrate_switch_mode", "0"));
+            boolean refreshRateSwitchEnabled = (refreshRateSwitchMode != 0);
 
             CustomApplication.setSupportedRefreshRates(getSupportedRefreshRates());
 
             VideoMetadata.VideoTrack video = mVideoMetadata.getVideoTrack();
-            if (video != null) {
-                float wantedFps = (float) ((double) video.fpsRate / (double) video.fpsScale);
+            if (video != null)
+            {
+                float wantedFps = (float)((double)video.fpsRate / (double)video.fpsScale);
                 mCurrentFps = wantedFps;
 
-                if (refreshRateSwitchEnabled) {
+                if (refreshRateSwitchEnabled)
+                {
                     LayoutParams lp = mWindow.getAttributes();
                     mWaitForNewRate = false;
-                    if (lp != null && video != null && video.fpsRate > 0 && video.fpsScale > 0) {
-                        if (log.isDebugEnabled()) log.debug("CONFIG video.fpsRate={}, video.fpsScale={} -> wantedFps={}", video.fpsRate, video.fpsScale, wantedFps);
-                        if (refreshRateSwitchMode == 2 && Build.VERSION.SDK_INT >= 31 && mSurfaceHolder != null) {
-                            if (log.isDebugEnabled()) log.debug("CONFIG setting frame rate to {} fps through setFrameRate Android 12+ API", wantedFps);
+                    if (lp != null && video != null && video.fpsRate > 0 && video.fpsScale > 0)
+                    {
+                        if (log.isDebugEnabled())
+                            log.debug("CONFIG video.fpsRate={}, video.fpsScale={} -> wantedFps={}", video.fpsRate,
+                                      video.fpsScale, wantedFps);
+                        if (refreshRateSwitchMode == 2 && Build.VERSION.SDK_INT >= 31 && mSurfaceHolder != null)
+                        {
+                            if (log.isDebugEnabled())
+                                log.debug("CONFIG setting frame rate to {} fps through setFrameRate Android 12+ API",
+                                          wantedFps);
                             Surface videoSurface = mSurfaceHolder.getSurface();
                             // Surface.CHANGE_FRAME_RATE_ALWAYS is needed to get the refresh rate switch
-                            videoSurface.setFrameRate(wantedFps, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE, Surface.CHANGE_FRAME_RATE_ALWAYS);
-                        } else {
+                            videoSurface.setFrameRate(wantedFps, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE,
+                                                      Surface.CHANGE_FRAME_RATE_ALWAYS);
+                        }
+                        else
+                        {
                             // select display mode of highest refresh rate matching 0 modulo fps
                             Display.Mode[] supportedModes = d.getSupportedModes();
                             Display.Mode currentMode = d.getMode();
                             int currentModeId = currentMode.getModeId();
-                            if (log.isDebugEnabled()) {
+                            if (log.isDebugEnabled())
+                            {
                                 log.debug("CONFIG current display mode is {}", currentMode);
                                 for (Mode mode : supportedModes)
-                                    if (log.isDebugEnabled()) log.debug("CONFIG display supported mode {}", mode);
+                                    if (log.isDebugEnabled())
+                                        log.debug("CONFIG display supported mode {}", mode);
                             }
 
                             wantedModeId = 0;
@@ -1376,51 +1683,74 @@ public class Player implements IPlayerControl,
                             // minimize judder in 2 passes selecting:
                             // highest rr matching rr%fr=0
                             // else highest rr maximizing number of glitches per second
-                            if (log.isDebugEnabled()) log.debug("CONFIG min judder targeting {} fps video", wantedFps);
-                            if (log.isDebugEnabled()) log.debug("CONFIG min judder: highest rr matching rr%fr=0 pass");
-                            for (int i = 0; i < supportedModes.length; i++) {
+                            if (log.isDebugEnabled())
+                                log.debug("CONFIG min judder targeting {} fps video", wantedFps);
+                            if (log.isDebugEnabled())
+                                log.debug("CONFIG min judder: highest rr matching rr%fr=0 pass");
+                            for (int i = 0; i < supportedModes.length; i++)
+                            {
                                 sM = supportedModes[i];
                                 rhz = Math.round(1001 * sM.getRefreshRate());
-                                if (rhz >= fps) { // no frame drop
+                                if (rhz >= fps)
+                                { // no frame drop
                                     metric = rhz % fps;
-                                    if (log.isDebugEnabled()) log.debug("CONFIG evaluating {}x{}({}Hz) metric = {}", sM.getPhysicalWidth(), sM.getPhysicalHeight(), sM.getRefreshRate(), metric);
+                                    if (log.isDebugEnabled())
+                                        log.debug("CONFIG evaluating {}x{}({}Hz) metric = {}", sM.getPhysicalWidth(),
+                                                  sM.getPhysicalHeight(), sM.getRefreshRate(), metric);
                                     // be more tolerant on metric == 0 check since on firestick roundings make it not null
-                                    if (sM.getPhysicalWidth() == currentMode.getPhysicalWidth() && sM.getPhysicalHeight() == currentMode.getPhysicalHeight() &&
-                                            metric < 10 && rhz >= maxRhz) {
+                                    if (sM.getPhysicalWidth() == currentMode.getPhysicalWidth() &&
+                                        sM.getPhysicalHeight() == currentMode.getPhysicalHeight() && metric < 10 &&
+                                        rhz >= maxRhz)
+                                    {
                                         foundMatch = true;
                                         maxRhz = rhz;
                                         wantedModeId = sM.getModeId();
-                                        if (log.isDebugEnabled()) log.debug("CONFIG selecting modeId {} for {} Hz and {} fps (metric = {})", wantedModeId, rhz, fps, metric);
+                                        if (log.isDebugEnabled())
+                                            log.debug("CONFIG selecting modeId {} for {} Hz and {} fps (metric = {})",
+                                                      wantedModeId, rhz, fps, metric);
                                     }
                                 }
                             }
 
-                            if (!foundMatch) {
+                            if (!foundMatch)
+                            {
                                 int k, kp, g;
                                 maxRhz = 0;
                                 int maxG = 0; // init with lowest number easy to beat
-                                if (log.isDebugEnabled()) log.debug("CONFIG min judder: highest rr maximizing number of glitches pass");
-                                for (int i = 0; i < supportedModes.length; i++) {
+                                if (log.isDebugEnabled())
+                                    log.debug("CONFIG min judder: highest rr maximizing number of glitches pass");
+                                for (int i = 0; i < supportedModes.length; i++)
+                                {
                                     sM = supportedModes[i];
                                     rhz = Math.round(1001 * sM.getRefreshRate());
-                                    if (rhz >= fps) { // no frame drop
+                                    if (rhz >= fps)
+                                    { // no frame drop
                                         k = rhz % fps;
                                         kp = fps - k;
                                         g = Math.min(k, kp); // number of glitches (uneven image duration) in 1001s
-                                        if (log.isDebugEnabled()) log.debug("CONFIG evaluating {}x{}({}Hz) glitches = {}", sM.getPhysicalWidth(), sM.getPhysicalHeight(), sM.getRefreshRate(), g);
-                                        if (sM.getPhysicalWidth() == currentMode.getPhysicalWidth() && sM.getPhysicalHeight() == currentMode.getPhysicalHeight() &&
-                                                g >= maxG && rhz >= maxRhz) {
+                                        if (log.isDebugEnabled())
+                                            log.debug("CONFIG evaluating {}x{}({}Hz) glitches = {}",
+                                                      sM.getPhysicalWidth(), sM.getPhysicalHeight(),
+                                                      sM.getRefreshRate(), g);
+                                        if (sM.getPhysicalWidth() == currentMode.getPhysicalWidth() &&
+                                            sM.getPhysicalHeight() == currentMode.getPhysicalHeight() && g >= maxG &&
+                                            rhz >= maxRhz)
+                                        {
                                             foundMatch = true;
                                             maxRhz = rhz;
                                             maxG = g;
                                             wantedModeId = sM.getModeId();
-                                            if (log.isDebugEnabled()) log.debug("CONFIG selecting modeId {} for {} Hz and {} fps (glitches = {})", wantedModeId, rhz, fps, g);
+                                            if (log.isDebugEnabled())
+                                                log.debug(
+                                                    "CONFIG selecting modeId {} for {} Hz and {} fps (glitches = {})",
+                                                    wantedModeId, rhz, fps, g);
                                         }
                                     }
                                 }
                             }
 
-                            if (wantedModeId != 0 && wantedModeId != currentModeId) {
+                            if (wantedModeId != 0 && wantedModeId != currentModeId)
+                            {
                                 // apply new display mode
                                 mWaitForNewRate = true;
                                 numberRetries = NUMBER_RETRIES;
@@ -1430,114 +1760,163 @@ public class Player implements IPlayerControl,
                         }
                     }
                 }
-            } else {
+            }
+            else
+            {
                 log.warn("onPrepared: videoTrack is null!");
             }
         }
         mHandler.post(mRefreshRateCheckerAsync);
 
-        if (log.isDebugEnabled()) log.debug("CONFIG technicalInfo: {}", CodecDiscovery.getTechnicalInfo(mContext));
+        if (log.isDebugEnabled())
+            log.debug("CONFIG technicalInfo: {}", CodecDiscovery.getTechnicalInfo(mContext));
     }
 
-    public void onCompletion(IMediaPlayer mp) {
-        if (mp != mMediaPlayer) return;
-        Diagnostics.event("playback_completed","state",mCurrentState,"position_ms",getCurrentPosition(),"duration_ms",getDuration());
+    public void onCompletion(IMediaPlayer mp)
+    {
+        if (mp != mMediaPlayer)
+            return;
+        Diagnostics.event("playback_completed", "state", mCurrentState, "position_ms", getCurrentPosition(),
+                          "duration_ms", getDuration());
         mCurrentState = STATE_PLAYBACK_COMPLETED;
         mTargetState = STATE_PLAYBACK_COMPLETED;
-        if (mPlayerListener != null) {
+        if (mPlayerListener != null)
+        {
             mPlayerListener.onCompletion();
         }
     }
-    public int getVideoWidth(){
+    public int getVideoWidth()
+    {
         return mVideoWidth;
     }
-    public int getVideoHeight(){
+    public int getVideoHeight()
+    {
         return mVideoHeight;
     }
-    public double getVideoAspect() { return mVideoAspect; }
-    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height) {
-        if (mp != mMediaPlayer) return;
+    public double getVideoAspect()
+    {
+        return mVideoAspect;
+    }
+    public void onVideoSizeChanged(IMediaPlayer mp, int width, int height)
+    {
+        if (mp != mMediaPlayer)
+            return;
         mVideoWidth = width;
         mVideoHeight = height;
-        if (log.isDebugEnabled()) log.debug("CONFIG OnVideoSizeChanged: {}x{}", mVideoWidth, mVideoHeight);
+        if (log.isDebugEnabled())
+            log.debug("CONFIG OnVideoSizeChanged: {}x{}", mVideoWidth, mVideoHeight);
         mSurfaceController.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
         if (mEffectRenderer != null)
-                mEffectRenderer.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
+            mEffectRenderer.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
     }
 
-    public void onVideoAspectChanged(IMediaPlayer mp, double aspect) {
-        if (mp != mMediaPlayer) return;
+    public void onVideoAspectChanged(IMediaPlayer mp, double aspect)
+    {
+        if (mp != mMediaPlayer)
+            return;
         mVideoAspect = aspect;
-        if (log.isDebugEnabled()) log.debug("CONFIG OnVideoAspectChanged: {}", mVideoAspect);
+        if (log.isDebugEnabled())
+            log.debug("CONFIG OnVideoAspectChanged: {}", mVideoAspect);
         mSurfaceController.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
         if (mEffectRenderer != null)
-                mEffectRenderer.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
+            mEffectRenderer.setVideoSize(mVideoWidth, mVideoHeight, mVideoAspect);
     }
 
-    public void onSeekComplete(IMediaPlayer mp) {
-        if (mp != mMediaPlayer) return;
-        if(playbackDiagnostics!=null)playbackDiagnostics.seekCallback(mp,getType());
-        if (log.isDebugEnabled()) log.debug("onSeekComplete");
-        if (mPlayerListener != null) {
+    public void onSeekComplete(IMediaPlayer mp)
+    {
+        if (mp != mMediaPlayer)
+            return;
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.seekCallback(mp, getType());
+        if (log.isDebugEnabled())
+            log.debug("onSeekComplete");
+        if (mPlayerListener != null)
+        {
             mPlayerListener.onSeekComplete();
         }
     }
 
-    public void onAllSeekComplete(IMediaPlayer mp) {
-        if (mp != mMediaPlayer) return;
-        if(playbackDiagnostics!=null)playbackDiagnostics.allSeeksComplete(mp,getType());
+    public void onAllSeekComplete(IMediaPlayer mp)
+    {
+        if (mp != mMediaPlayer)
+            return;
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.allSeeksComplete(mp, getType());
         mIsBusy = false;
-        if (mUpdateMetadata) {
-            if (log.isDebugEnabled()) log.debug("onAllSeekComplete: mUpdateMetadata = true -> handleMetadata");
+        if (mUpdateMetadata)
+        {
+            if (log.isDebugEnabled())
+                log.debug("onAllSeekComplete: mUpdateMetadata = true -> handleMetadata");
             handleMetadata(mp);
             mUpdateMetadata = false;
-        } else {
-            if (log.isDebugEnabled()) log.debug("onAllSeekComplete: mUpdateMetadata = false");
         }
-        if (mPlayerListener != null) {
+        else
+        {
+            if (log.isDebugEnabled())
+                log.debug("onAllSeekComplete: mUpdateMetadata = false");
+        }
+        if (mPlayerListener != null)
+        {
             mPlayerListener.onAllSeekComplete();
         }
     }
 
-    public void onRelativePositionUpdate(IMediaPlayer mp, int permil) {
-        if (mp != mMediaPlayer) return;
+    public void onRelativePositionUpdate(IMediaPlayer mp, int permil)
+    {
+        if (mp != mMediaPlayer)
+            return;
         mRelativePosition = permil;
     }
 
-    public boolean onInfo(IMediaPlayer mp, int what, int extra) {
-        if (mp != mMediaPlayer) return true;
-        if (log.isDebugEnabled()) log.debug("onInfo: {} {}", what, extra);
-        switch(what) {
+    public boolean onInfo(IMediaPlayer mp, int what, int extra)
+    {
+        if (mp != mMediaPlayer)
+            return true;
+        if (log.isDebugEnabled())
+            log.debug("onInfo: {} {}", what, extra);
+        switch (what)
+        {
         case 3: // Android MEDIA_INFO_VIDEO_RENDERING_START, also forwarded by compatible backends.
-            if(mp==mMediaPlayer)playbackOutput();return true;
+            if (mp == mMediaPlayer)
+                playbackOutput();
+            return true;
         case IMediaPlayer.MEDIA_INFO_METADATA_UPDATE:
-            if (mIsBusy) {
-                if (log.isDebugEnabled()) log.debug("onInfo: mIsBusy set mUpdateMetadata = true");
+            if (mIsBusy)
+            {
+                if (log.isDebugEnabled())
+                    log.debug("onInfo: mIsBusy set mUpdateMetadata = true");
                 mUpdateMetadata = true;
-            } else {
-                if (log.isDebugEnabled()) log.debug("onInfo: handleMetadata");
+            }
+            else
+            {
+                if (log.isDebugEnabled())
+                    log.debug("onInfo: handleMetadata");
                 handleMetadata(mp);
             }
             return true;
         case IMediaPlayer.MEDIA_INFO_AUDIO_SPEED_APPLIED:
             float appliedSpeed = extra / 1000.0f;
-            if (log.isDebugEnabled()) log.debug("onInfo: audio speed applied {}", appliedSpeed);
-            if (mPlayerListener != null) {
+            if (log.isDebugEnabled())
+                log.debug("onInfo: audio speed applied {}", appliedSpeed);
+            if (mPlayerListener != null)
+            {
                 mPlayerListener.onAudioSpeedApplied(appliedSpeed);
             }
             return true;
         case IMediaPlayer.MEDIA_INFO_AUDIO_TRACK_APPLIED:
         case IMediaPlayer.MEDIA_INFO_AUDIO_TRACK_FAILED:
-            if (mPlayerListener != null) {
+            if (mPlayerListener != null)
+            {
                 mPlayerListener.onAudioTrackSelectionCompleted(extra,
-                        what == IMediaPlayer.MEDIA_INFO_AUDIO_TRACK_APPLIED);
+                                                               what == IMediaPlayer.MEDIA_INFO_AUDIO_TRACK_APPLIED);
             }
             return true;
         case IMediaPlayer.MEDIA_INFO_SUBTITLE_TRACK_APPLIED:
         case IMediaPlayer.MEDIA_INFO_SUBTITLE_TRACK_FAILED:
-            if (mPlayerListener != null) {
-                mPlayerListener.onSubtitleTrackSelectionCompleted(extra,
-                        what == IMediaPlayer.MEDIA_INFO_SUBTITLE_TRACK_APPLIED);
+            if (mPlayerListener != null)
+            {
+                mPlayerListener.onSubtitleTrackSelectionCompleted(
+                    extra, what == IMediaPlayer.MEDIA_INFO_SUBTITLE_TRACK_APPLIED);
             }
             return true;
         default:
@@ -1545,53 +1924,70 @@ public class Player implements IPlayerControl,
         }
     }
 
-    public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg) {
-        if (mp != mMediaPlayer) return true;
-        if(playbackDiagnostics!=null)playbackDiagnostics.failed(mp);
+    public boolean onError(IMediaPlayer mp, int errorCode, int errorQualCode, String msg)
+    {
+        if (mp != mMediaPlayer)
+            return true;
+        if (playbackDiagnostics != null)
+            playbackDiagnostics.failed(mp);
         // Error messages can contain network credentials; record numeric backend codes only.
-        Diagnostics.event("player_error","code",errorCode,"qualifier",errorQualCode,"state",mCurrentState);
+        Diagnostics.event("player_error", "code", errorCode, "qualifier", errorQualCode, "state", mCurrentState);
         log.warn("onError: Error: {},{}", errorCode, errorQualCode);
         // The service's error callback runs after stopPlayback destroys native position.
         // Capture the live point first; the existing service error handler persists it.
-        if (Player.sPlayer == this && PlayerService.sPlayerService != null) {
+        if (Player.sPlayer == this && PlayerService.sPlayerService != null)
+        {
             PlayerService.sPlayerService.checkpointBeforePlayerError();
         }
         mCurrentState = STATE_ERROR;
         mTargetState = STATE_ERROR;
 
-        if (mp != null) {
-            if (log.isDebugEnabled()) log.debug("onError: handleMetadata");
+        if (mp != null)
+        {
+            if (log.isDebugEnabled())
+                log.debug("onError: handleMetadata");
             handleMetadata(mp);
         }
         //save "exist" state, may be useful later
-        mLastExistState = mMediaPlayer!=null?mMediaPlayer.doesCurrentFileExists():-1;
+        mLastExistState = mMediaPlayer != null ? mMediaPlayer.doesCurrentFileExists() : -1;
         stopPlayback();
         /* If an error handler has been supplied, use it and finish. */
-        if (mPlayerListener != null) {
+        if (mPlayerListener != null)
+        {
             return mPlayerListener.onError(errorCode, errorQualCode, msg);
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
-    public void onBufferingUpdate(IMediaPlayer mp, int percent) {
-        if (mp != mMediaPlayer) return;
-        if(percent/10!=mBufferPosition/100)Diagnostics.event("buffering","percent",percent,"state",mCurrentState);
+    public void onBufferingUpdate(IMediaPlayer mp, int percent)
+    {
+        if (mp != mMediaPlayer)
+            return;
+        if (percent / 10 != mBufferPosition / 100)
+            Diagnostics.event("buffering", "percent", percent, "state", mCurrentState);
         mBufferPosition = percent * 10;
-        if (mPlayerListener != null) {
+        if (mPlayerListener != null)
+        {
             mPlayerListener.onBufferingUpdate(percent);
         }
     }
 
-    public void setListener(Listener listener) {
+    public void setListener(Listener listener)
+    {
         mPlayerListener = listener;
     }
 
-    public interface Listener {
+    public interface Listener
+    {
         void onPrepared();
-        default void onPlaybackEstablished() {}
+        default void onPlaybackEstablished()
+        {
+        }
         void onCompletion();
-        boolean onError( int errorCode, int errorQualCode, String msg);
+        boolean onError(int errorCode, int errorQualCode, String msg);
         void onSeekStart(int pos);
         void onSeekComplete();
         void onAllSeekComplete();
@@ -1602,45 +1998,64 @@ public class Player implements IPlayerControl,
         void onAudioMetadataUpdated(VideoMetadata vMetadata, int currentAudio);
         void onSubtitleMetadataUpdated(VideoMetadata vMetadata, int currentSubtitle);
         void onBufferingUpdate(int percent);
-        default void onAudioSpeedApplied(float speed) {}
-        default void onAudioTrackSelectionCompleted(int track, boolean success) {}
-        default void onSubtitleTrackSelectionCompleted(int track, boolean success) {}
+        default void onAudioSpeedApplied(float speed)
+        {
+        }
+        default void onAudioTrackSelectionCompleted(int track, boolean success)
+        {
+        }
+        default void onSubtitleTrackSelectionCompleted(int track, boolean success)
+        {
+        }
     }
 
-    public void finishActivity() {
-        if(mContext instanceof PlayerActivity) ((PlayerActivity)mContext).finish();
+    public void finishActivity()
+    {
+        if (mContext instanceof PlayerActivity)
+            ((PlayerActivity)mContext).finish();
     }
 
-    public String getSupportedRefreshRates() {
-        if (mWindow == null) return "";
+    public String getSupportedRefreshRates()
+    {
+        if (mWindow == null)
+            return "";
         View view = mWindow.getDecorView();
-        if (view == null) return "";
+        if (view == null)
+            return "";
         Display display = view.getDisplay();
-        if (display == null) return "";
+        if (display == null)
+            return "";
         StringBuilder refreshRates = new StringBuilder();
 
         Display.Mode currentMode = display.getMode();
-        if (currentMode == null) return "";
+        if (currentMode == null)
+            return "";
         Display.Mode[] supportedModes = display.getSupportedModes();
-        if (supportedModes == null) return "";
-        if (mCurrentRefreshRate < 1) mCurrentRefreshRate = currentMode.getRefreshRate();
+        if (supportedModes == null)
+            return "";
+        if (mCurrentRefreshRate < 1)
+            mCurrentRefreshRate = currentMode.getRefreshRate();
         int currentWidth = currentMode.getPhysicalWidth();
         int currentHeight = currentMode.getPhysicalHeight();
         // Use TreeSet to maintain sorted order
         Set<Float> uniqueRefreshRates = new TreeSet<>();
-        for (Display.Mode mode : supportedModes) {
-            if (mode.getPhysicalWidth() == currentWidth && mode.getPhysicalHeight() == currentHeight) {
+        for (Display.Mode mode : supportedModes)
+        {
+            if (mode.getPhysicalWidth() == currentWidth && mode.getPhysicalHeight() == currentHeight)
+            {
                 // round refreshRate to 2 decimal places
                 float refreshRate = Math.round(mode.getRefreshRate() * 100.0f) / 100.0f;
                 uniqueRefreshRates.add(refreshRate);
             }
         }
         // Build the refresh rates string
-        for (Float rate : uniqueRefreshRates) {
+        for (Float rate : uniqueRefreshRates)
+        {
             refreshRates.append(rate).append("Hz, ");
         }
         // Remove trailing ", " in refreshRates and put the result into parenthesis i.e. ( at start and ) at end
-        if (refreshRates.length() > 0) {
+        if (refreshRates.length() > 0)
+        {
             refreshRates.setLength(refreshRates.length() - 2);
             refreshRates.insert(0, "(");
             refreshRates.append(")");
@@ -1648,64 +2063,85 @@ public class Player implements IPlayerControl,
         return refreshRates.toString();
     }
 
-
-    public static String getRefreshRate() {
+    public static String getRefreshRate()
+    {
         return Math.round(mCurrentRefreshRate * 100.0f) / 100.0f + "Hz";
     }
 
-    public static String getFps() {
+    public static String getFps()
+    {
         return Math.round(mCurrentFps * 100.0f) / 100.0f + "fps";
     }
 
-    @SuppressWarnings("deprecation") // HdrCapabilities.getSupportedHdrTypes() deprecated API 34; Display.Mode.getSupportedHdrTypes() (API 30) is the replacement but this path covers API 24-29
-    private void setHdrCapabilities() {
+    @SuppressWarnings("deprecation")
+    // HdrCapabilities.getSupportedHdrTypes() deprecated API 34; Display.Mode.getSupportedHdrTypes() (API 30) is the replacement but this path covers API 24-29
+    private void setHdrCapabilities()
+    {
         resetHdrCapabilities();
-        if (mWindow != null) {
+        if (mWindow != null)
+        {
 
             View v = mWindow.getDecorView();
             Display d = v != null ? v.getDisplay() : null;
 
-            if (Build.VERSION.SDK_INT >= 24 && d != null) { // HDR capability check
+            if (Build.VERSION.SDK_INT >= 24 && d != null)
+            { // HDR capability check
 
-                if (Build.VERSION.SDK_INT >= 26 && d.isHdr()) if (log.isDebugEnabled()) log.debug("CONFIG HDR display detected");
+                if (Build.VERSION.SDK_INT >= 26 && d.isHdr())
+                    if (log.isDebugEnabled())
+                        log.debug("CONFIG HDR display detected");
 
                 Display.HdrCapabilities hdrCapabilities = d.getHdrCapabilities();
-                if (hdrCapabilities != null) {
+                if (hdrCapabilities != null)
+                {
                     int[] hdrSupportedTypes = hdrCapabilities.getSupportedHdrTypes();
-                    if (hdrSupportedTypes != null) {
-                        for (int hdrSupportedType : hdrSupportedTypes) {
-                            switch (hdrSupportedType) {
-                                case Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION:
-                                    if (log.isDebugEnabled()) log.debug("CONFIG HDR dolby vision supported");
-                                    displaySupportsDoVi(true);
-                                    break;
-                                case Display.HdrCapabilities.HDR_TYPE_HDR10:
-                                    if (log.isDebugEnabled()) log.debug("CONFIG HDR10 supported");
-                                    displaySupportsHdr10(true);
-                                    break;
-                                case Display.HdrCapabilities.HDR_TYPE_HLG:
-                                    if (log.isDebugEnabled()) log.debug("CONFIG HDR HLG supported");
-                                    displaySupportsHdrHLG(true);
-                                    break;
-                                case Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS:
-                                    if (log.isDebugEnabled()) log.debug("CONFIG HDR10+ supported");
-                                    displaySupportsHdr10Plus(true);
-                                    break;
+                    if (hdrSupportedTypes != null)
+                    {
+                        for (int hdrSupportedType : hdrSupportedTypes)
+                        {
+                            switch (hdrSupportedType)
+                            {
+                            case Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION:
+                                if (log.isDebugEnabled())
+                                    log.debug("CONFIG HDR dolby vision supported");
+                                displaySupportsDoVi(true);
+                                break;
+                            case Display.HdrCapabilities.HDR_TYPE_HDR10:
+                                if (log.isDebugEnabled())
+                                    log.debug("CONFIG HDR10 supported");
+                                displaySupportsHdr10(true);
+                                break;
+                            case Display.HdrCapabilities.HDR_TYPE_HLG:
+                                if (log.isDebugEnabled())
+                                    log.debug("CONFIG HDR HLG supported");
+                                displaySupportsHdrHLG(true);
+                                break;
+                            case Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS:
+                                if (log.isDebugEnabled())
+                                    log.debug("CONFIG HDR10+ supported");
+                                displaySupportsHdr10Plus(true);
+                                break;
                             }
                         }
                     }
                 }
-            } else {
+            }
+            else
+            {
                 displaySupportsDoVi(false);
                 displaySupportsHdr10(false);
                 displaySupportsHdrHLG(false);
                 displaySupportsHdr10Plus(false);
             }
-            if (Build.VERSION.SDK_INT >= 26) {
+            if (Build.VERSION.SDK_INT >= 26)
+            {
                 mWindow.setColorMode(ActivityInfo.COLOR_MODE_HDR);
-                if (log.isDebugEnabled()) log.debug("CONFIG setColorMode COLOR_MODE_HDR requested");
+                if (log.isDebugEnabled())
+                    log.debug("CONFIG setColorMode COLOR_MODE_HDR requested");
             }
-        } else {
+        }
+        else
+        {
             displaySupportsDoVi(false);
             displaySupportsHdr10(false);
             displaySupportsHdrHLG(false);
@@ -1713,55 +2149,69 @@ public class Player implements IPlayerControl,
         }
     }
 
-    public static String getHdr(Context context) { // only works with API34...
+    public static String getHdr(Context context)
+    { // only works with API34...
         Window window = sPlayer == null ? null : sPlayer.mWindow;
-        if (window == null || Build.VERSION.SDK_INT < 34) {
+        if (window == null || Build.VERSION.SDK_INT < 34)
+        {
             return "";
         }
         View v = window.getDecorView();
-        if (v == null) {
+        if (v == null)
+        {
             return "";
         }
         Display d = v.getDisplay();
-        if (d == null) {
+        if (d == null)
+        {
             return "";
         }
         Display.Mode currentMode = d.getMode();
-        if (currentMode == null) {
+        if (currentMode == null)
+        {
             return "";
         }
         int[] hdrSupportedTypes = currentMode.getSupportedHdrTypes();
-        if (hdrSupportedTypes == null) {
+        if (hdrSupportedTypes == null)
+        {
             return "";
         }
         int hdrBitMask = 0;
-        for (int hdrSupportedType : hdrSupportedTypes) {
-            switch (hdrSupportedType) {
-                case Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION:
-                    hdrBitMask |= 8;
-                    break;
-                case Display.HdrCapabilities.HDR_TYPE_HDR10:
-                    hdrBitMask |= 1;
-                    break;
-                case Display.HdrCapabilities.HDR_TYPE_HLG:
-                    hdrBitMask |= 2;
-                    break;
-                case Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS:
-                    hdrBitMask |= 4;
-                    break;
+        for (int hdrSupportedType : hdrSupportedTypes)
+        {
+            switch (hdrSupportedType)
+            {
+            case Display.HdrCapabilities.HDR_TYPE_DOLBY_VISION:
+                hdrBitMask |= 8;
+                break;
+            case Display.HdrCapabilities.HDR_TYPE_HDR10:
+                hdrBitMask |= 1;
+                break;
+            case Display.HdrCapabilities.HDR_TYPE_HLG:
+                hdrBitMask |= 2;
+                break;
+            case Display.HdrCapabilities.HDR_TYPE_HDR10_PLUS:
+                hdrBitMask |= 4;
+                break;
             }
         }
         return getHdrScreenCapabilities(context, hdrBitMask);
     }
 
-    public int getSurfaceControllerHeight() {
-        if (mSurfaceController == null) return 0;
+    public int getSurfaceControllerHeight()
+    {
+        if (mSurfaceController == null)
+            return 0;
         return mSurfaceController.getViewHeight();
     }
-    public int getSurfaceControllerWidth() {
-        if (mSurfaceController == null) return 0;
+    public int getSurfaceControllerWidth()
+    {
+        if (mSurfaceController == null)
+            return 0;
         return mSurfaceController.getViewWidth();
     }
-    public boolean isFloatingPlayer() { return mContext instanceof FloatingPlayerService; }
-
+    public boolean isFloatingPlayer()
+    {
+        return mContext instanceof FloatingPlayerService;
+    }
 }
