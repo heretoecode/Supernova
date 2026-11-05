@@ -39,5 +39,18 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
 - For series, should Episodes come first?
 - Which Details fields are actually useful (budget, revenue, also known as, file path)?
 
-**Status:** waiting for the owner's answers, then mock-ups. Planned for 0.157 (0.156 is not held up). Related parked
+**Owner's answers (5 Nov 2026)**
+- **Keep the Details hero card** as it is ("I do like that actually").
+- **Keep the four tabs in principle;** the design of the tabs is "completely wrong". The blue and the invisible titles
+  likely come from the button-style changes (code may be unsure whether tabs are buttons). Claude may change the
+  Codex-era design where needed.
+- **Purpose of Details and Extras:** the owner often looks up trivia on their phone after watching, so that
+  information should be in the app from the start. Hence cast and crew, **capped at 8 each**.
+- **Unknown values stay visible:** Budget, Revenue and the other fields always show, saying "Unknown" when missing (for
+  films too). No hiding.
+- **Runtime:** for series, don't say Unknown when episodes have runtimes. To decide: take it from the files or from
+  the online episode data.
+- Task: find a new way to display the information in the four tabs.
+
+**Status:** mock-ups `docs/design/proposals/details-tabs/01`–`05` sent 5 Nov 2026; waiting for the owner's comments. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
