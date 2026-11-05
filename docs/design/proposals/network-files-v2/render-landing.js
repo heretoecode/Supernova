@@ -44,9 +44,10 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;positio
 .tile.focus .desc{color:#3A4256}
 .desc .live{display:flex;align-items:center;gap:12px}.bar{display:block;width:100%;height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:16px}.bar i{display:block;height:8px;background:#5aa9ff}
 .tile.focus .bar{background:rgba(11,13,18,.15)}.tile.focus .bar i{background:#2f6df0}.ok{color:#5ad18a}.tile.focus .ok{color:#1d8a4e}.wa{color:#f0b44c}.tile.focus .wa{color:#a86400}
+.badge{position:absolute;right:30px;top:30px;min-width:52px;height:52px;border-radius:26px;background:#f0b44c;color:#0B0D12;font-style:normal;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 14px}
 .label{position:absolute;right:56px;bottom:14px;font-size:20px;color:#c9d3e6}`;
 
-const tile = ([k, t, d, f]) => `<div class="tile${f ? ' focus' : ''}" style="${f ? '' : 'background:rgba(22,24,28,.97)'}">
+const tile = ([k, t, d, f, b]) => `<div class="tile${f ? ' focus' : ''}" style="position:relative;${f ? '' : 'background:rgba(22,24,28,.97)'}">${b ? `<em class="badge">${b}</em>` : ''}
   <div class="head">${ic(k)}<span>${t}</span></div><div class="desc">${d}</div></div>`;
 const grid = items => `<div class="grid" style="grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr">${items.map(tile).join('')}</div>`;
 const base = [
@@ -70,6 +71,7 @@ const pages = [
   ['02-landing-scan-running.png', landing('running', false)],
   ['03-landing-scan-done.png', landing('done', false)],
   ['04-landing-scan-error.png', landing('error', true)],
+  ['08-landing-health-badge.png', page(nav('net') + grid([base[0], base[1], base[2], ['health', 'Library Health', '3 new files couldn’t be identified.', false, '3'], base[4], scan.rest]) + '<div class="label">Library Health shows a count when something needs a look; no badge when all is well</div>')],
 ];
 (async () => {
   const browser = await chromium.launch();

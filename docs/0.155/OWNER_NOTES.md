@@ -659,3 +659,12 @@ Codex's branch `codex/0155-code-2026-11-04` (DP-01…DP-07, TV-only stages). **N
   focus to where you left it (audit list to follow in the code work).
 - Search heading size: `search/07` (38 px) re-shown for the final look.
 - **Status:** awaiting the owner's review.
+- **Owner, 5 Nov:** approved — Search heading (`search/07`), shared choice list (`01`), Sleep timer (`02`), Still
+  watching? (`03`), per-series choices (`06`), empty pages (`07`), focus memory, Library Health badge.
+- **Badge mock-up redone on the approved Network & Files landing** (`network-files-v2/08`); the old `suggestions/05`
+  was a stand-in layout and is removed.
+- **Fix match (owner question):** today it already exists as a round trip — Details › More › *Report Incorrect Match*
+  opens the old Library Health page (Incorrect Matches), whose *Find a Match* opens a full-screen search with the old
+  keyboard. Proposal `04` replaces that trip: Details › More › **Fix match** opens the side panel on Details itself
+  (title prefilled, TMDB results with posters, current match marked, OK applies, Details refreshes). Library Health's
+  Incorrect Matches uses the same panel. "Match is correct" stays in Library Health. Awaiting the owner's yes.
