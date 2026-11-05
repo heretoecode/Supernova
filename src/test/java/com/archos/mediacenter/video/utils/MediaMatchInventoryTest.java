@@ -3,15 +3,30 @@ package com.archos.mediacenter.video.utils;
 import android.app.Application;
 import android.content.Context;
 import androidx.preference.PreferenceManager;
-import com.archos.mediacenter.video.utils.backup.*;
+import com.archos.mediacenter.video.utils.backup.BackupCategory;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupArchive;
+import com.archos.mediacenter.video.utils.backup.LogicalBackupCatalog;
+import com.archos.mediacenter.video.utils.backup.MediaMatchIntents;
+import com.archos.mediacenter.video.utils.backup.MediaMatchInventory;
+import com.archos.mediacenter.video.utils.backup.PortableMediaMatches;
+import com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences;
 import com.archos.mediaprovider.video.VideoOpenHelper;
-import java.io.*;
-import java.util.*;
-import org.junit.*;
+import java.io.IOException;
+import java.util.Set;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.*;
-import org.robolectric.annotation.*;
-import static org.junit.Assert.*;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+import org.robolectric.annotation.SQLiteMode;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /** Checks media match inventory uses exact native ownership and detects stale previews without mutation. */
 @RunWith(RobolectricTestRunner.class)
@@ -37,18 +52,18 @@ public class MediaMatchInventoryTest
         try (VideoOpenHelper helper = new VideoOpenHelper(app))
         {
             var db = helper.getWritableDatabase();
-            db.execSQL("INSERT INTO " +
-                       "files(_id,remote_id,media_type,_data,ArchosMediaScraper_type,ArchosMediaScraper_id,bookmark) " +
-                       "VALUES(10,10,3,'file:///PRIVATE_ONE.mkv',11,100,4444),(11,11,3,'file:///" +
-                       "PRIVATE_TWO.mkv',11,200,5555),(12,12,3,'file:///episode.mkv',12,300,-2),(13,13,3,'file:///" +
-                       "unmatched.mkv',0,0,0),(14,14,3,'putio:///ACCOUNT_CANARY/file',11,400,0)");
-            db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie,plot_movie) " +
-                       "VALUES(100,10,123,9,'One','Original facts'),(200,11,456,8,'Two','Other " +
-                       "facts'),(400,14,987,0,'Remote','Private')");
+            db.execSQL("INSERT INTO "
+                       + "files(_id,remote_id,media_type,_data,ArchosMediaScraper_type,ArchosMediaScraper_id,bookmark) "
+                       + "VALUES(10,10,3,'file:///PRIVATE_ONE.mkv',11,100,4444),(11,11,3,'file:///"
+                       + "PRIVATE_TWO.mkv',11,200,5555),(12,12,3,'file:///episode.mkv',12,300,-2),(13,13,3,'file:///"
+                       + "unmatched.mkv',0,0,0),(14,14,3,'putio:///ACCOUNT_CANARY/file',11,400,0)");
+            db.execSQL("INSERT INTO MOVIE(_id,video_id,m_online_id,Nova_pinned,name_movie,plot_movie) "
+                       + "VALUES(100,10,123,9,'One','Original facts'),(200,11,456,8,'Two','Other "
+                       + "facts'),(400,14,987,0,'Remote','Private')");
             db.execSQL("INSERT INTO SHOW(_id,s_online_id,name_show) VALUES(20,789,'Show')");
-            db.execSQL("INSERT INTO " +
-                       "EPISODE(_id,video_id,show_episode,season_episode,number_episode,e_online_id,name_episode) " +
-                       "VALUES(300,12,20,0,2,999,'Episode')");
+            db.execSQL("INSERT INTO "
+                       + "EPISODE(_id,video_id,show_episode,season_episode,number_episode,e_online_id,name_episode) "
+                       + "VALUES(300,12,20,0,2,999,'Episode')");
         }
     }
 
@@ -161,6 +176,43 @@ public class MediaMatchInventoryTest
         {
         }
         assertEquals("AUTH_CANARY", PreferenceManager.getDefaultSharedPreferences(app).getString("oauth_token", null));
+    }
+
+    @Test public void unchangedRawLocalPathValidatesAgainstTheUnfilteredPhysicalSnapshot() throws Exception
+    {
+        seed();
+        String path = "/storage/USB/Raw one.mkv";
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
+            helper.getWritableDatabase().execSQL("UPDATE files SET _data=? WHERE _id=10", new Object[] {path});
+        }
+        var inventory = MediaMatchInventory.capture(app);
+        var physical = new PortablePhysicalReferences(app, LogicalBackupCatalog.capture(app, () -> false).physical);
+        assertEquals(path, physical.video(10).getFilePath());
+        assertEquals("file://" + path, physical.video(10).getFileUri().toString());
+        inventory.validatePhysical(physical);
+        assertEquals(inventory.signature, MediaMatchInventory.capture(app).signature);
+    }
+
+    @Test public void changedStoredPathIsRejectedEvenWhenItsPlayableUriIsIdentical() throws Exception
+    {
+        seed();
+        String path = "/storage/USB/Raw one.mkv";
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
+            helper.getWritableDatabase().execSQL("UPDATE files SET _data=? WHERE _id=10", new Object[] {path});
+        }
+        var physical = new PortablePhysicalReferences(app, LogicalBackupCatalog.capture(app, () -> false).physical);
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
+            helper.getWritableDatabase().execSQL("UPDATE files SET _data=? WHERE _id=10",
+                                                 new Object[] {"file://" + path});
+        }
+        var current = new PortablePhysicalReferences(app, LogicalBackupCatalog.capture(app, () -> false).physical);
+        assertEquals(physical.video(10).getFileUri(), current.video(10).getFileUri());
+        var changed = MediaMatchInventory.capture(app);
+        IOException failure = assertThrows(IOException.class, () -> changed.validatePhysical(physical));
+        assertEquals("Receiving media changed before identification review", failure.getMessage());
     }
 
     @Test

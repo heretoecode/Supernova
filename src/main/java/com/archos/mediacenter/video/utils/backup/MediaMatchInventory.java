@@ -4,13 +4,24 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import com.archos.mediaprovider.video.*;
+import com.archos.mediaprovider.video.ScraperTables;
+import com.archos.mediaprovider.video.VideoOpenHelper;
+import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.BaseTags;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.*;
-import org.json.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** Read-only receiving identification/ownership signature. Never creates stores or rewrites scraper pointers. */
 public final class MediaMatchInventory
@@ -177,7 +188,8 @@ public final class MediaMatchInventory
         for (var owner : owners.values())
         {
             var video = physical.video(owner.videoId);
-            String uri = video == null || video.getFileUri() == null ? null : video.getFileUri().toString();
+            // capture() guards the stored _data text, before playback adds a file:// scheme to local paths.
+            String uri = video == null ? null : video.getFilePath();
             if (video == null || !owner.guard.equals(guard(owner.videoId, uri)))
                 throw new IOException("Receiving media changed before identification review");
         }

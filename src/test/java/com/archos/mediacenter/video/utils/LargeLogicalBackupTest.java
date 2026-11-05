@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertArrayEquals;
 
 import android.app.Application;
 import android.content.Context;
@@ -20,6 +21,8 @@ import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -27,10 +30,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.annotation.SQLiteMode;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(application = Application.class, sdk = 30)
-@org.robolectric.annotation.SQLiteMode(org.robolectric.annotation.SQLiteMode.Mode.NATIVE)
+@SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class LargeLogicalBackupTest
 {
     @Test public void sixtyOneThousandMatchesSurviveClosedVerificationPublicationAndRestorePreview() throws Exception
@@ -124,8 +128,14 @@ public class LargeLogicalBackupTest
             VerifiedBackupPublication.prepare(archive, () -> false);
             Map<BackupCategory, JSONObject> restored = LogicalBackupArchive.readCategories(archive, () -> false);
             assertEquals(selected, restored.keySet());
-            assertEquals(61050, restored.get(BackupCategory.MATCHES).getJSONArray("rows").length());
-            org.junit.Assert.assertArrayEquals(original, Files.readAllBytes(previous.toPath()));
+            JSONArray matches = restored.get(BackupCategory.MATCHES).getJSONArray("rows");
+            assertEquals(61050, matches.length());
+            Set<String> identities = new HashSet<>();
+            for (int i = 0; i < matches.length(); i++)
+                assertTrue(identities.add(matches.getJSONObject(i).getString("identity")));
+            for (int i = 1; i <= 61050; i++)
+                assertTrue(identities.contains("tmdb:movie:" + i));
+            assertArrayEquals(original, Files.readAllBytes(previous.toPath()));
         }
         finally
         {
