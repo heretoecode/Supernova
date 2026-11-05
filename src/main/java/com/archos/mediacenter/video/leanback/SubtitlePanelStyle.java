@@ -375,8 +375,12 @@ public final class SubtitlePanelStyle {
                 line(c, 18, 5, 18, 19);
                 break;
             default:
+                // Shared icons (sound, play, …) must take the same colour as this icon, or they stay white on
+                // the white focus box (0.155 notes #3: Audio and Playback tab icons vanished on focus).
                 PreviewIcon icon = new PreviewIcon(kind);
                 icon.setBounds(0, 0, 24, 24);
+                icon.setColorFilter(p.getColorFilter());
+                icon.setAlpha(p.getAlpha());
                 icon.draw(c);
                 break;
             }
