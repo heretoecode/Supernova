@@ -346,7 +346,7 @@ public class Player implements IPlayerControl,
                 seekTo(mSeek);
             if (log.isDebugEnabled()) log.debug("onPrepared: subtitleTrack={}", mSubtitleTrack);
             if (mSubtitleTrackSet)
-                mMediaPlayer.setSubtitleTrack(mSubtitleTrack);
+                mMediaPlayer.setSubtitleTrack(presentedSubtitleTrack(mSubtitleTrack));
             if (mSubtitleDelay != 0)
                 mMediaPlayer.setSubtitleDelay(mSubtitleDelay);
             if (mSubtitleRatioN != -1 && mSubtitleRatioD != -1)
@@ -1123,13 +1123,38 @@ public class Player implements IPlayerControl,
             mMediaPlayer.checkSubtitles(); // note that player checks also cache directory with avos
     }
 
+    private final java.util.Set<String> subtitleSuppressors = new java.util.HashSet<>();
+
+    /** Presentation gates never alter the chosen track or its persisted resume context. */
+    public synchronized void setSubtitlePresentationSuppressed(String owner, boolean suppressed)
+    {
+        if (suppressed)
+        {
+            subtitleSuppressors.add(owner);
+        }
+        else
+        {
+            subtitleSuppressors.remove(owner);
+        }
+        if (isInPlaybackState() && mVideoMetadata != null)
+        {
+            mMediaPlayer.setSubtitleTrack(subtitleSuppressors.isEmpty() ? mResumeCtx.mSubtitleTrack
+                : mVideoMetadata.getSubtitleTrackNb());
+        }
+    }
+
+    private int presentedSubtitleTrack(int selected)
+    {
+        return subtitleSuppressors.isEmpty() || mVideoMetadata == null ? selected : mVideoMetadata.getSubtitleTrackNb();
+    }
+
     @Override
     public boolean setSubtitleTrack(int stream) {
         mResumeCtx.setSubtitleTrack(stream);
         Diagnostics.event("subtitle_selection","track",stream,"state",mCurrentState);
         if (log.isDebugEnabled()) log.debug("setSubtitleTrack: select stream {}", stream);
         if (isInPlaybackState()) {
-            return mMediaPlayer.setSubtitleTrack(stream);
+            return mMediaPlayer.setSubtitleTrack(presentedSubtitleTrack(stream));
         }
         return true;
     }

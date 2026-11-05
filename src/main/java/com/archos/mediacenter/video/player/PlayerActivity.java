@@ -4934,7 +4934,14 @@ public class PlayerActivity extends AppCompatActivity
                       mSubtitleManager.getSubtitleKind());
         // Always hand over the user's value: for bitmap tracks the manager applies offset 0 by
         // itself and keeps the saved value intact (the old code passed 0 and lost it).
-        mSubtitleManager.setVerticalPosition(vpos);
+        if ("onDelayChanged".equals(caller))
+        {
+            mSubtitleManager.setVerticalPosition(vpos);
+        }
+        else
+        {
+            mSubtitleManager.restoreVerticalPosition(mPreferences);
+        }
     }
 
     private void disableSubtitleDelayTVMenuItem(boolean disable) {

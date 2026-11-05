@@ -587,7 +587,7 @@ public class FloatingPlayerService extends Service implements PlayerService.Play
             //int size = (int) ((mParamsF.width / (float)(Math.max(point.y, point.x))) * mSize);
             int vpos = (int) ((mParamsF.height / (float)(Math.min(point.y, point.x))) * mVPos);
             //mSubtitleManager.setSize(size);
-            mSubtitleManager.setVerticalPosition(vpos);
+            mSubtitleManager.restoreVerticalPosition(mPreferences);
         }
     }
     public void removeFloatingView(boolean isStartingPlayerActivity) {
