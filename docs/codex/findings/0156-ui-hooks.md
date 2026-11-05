@@ -159,3 +159,49 @@ proxy read errors and native-reported I/O failures invoke the recovery engine.
 Apply `medialib-supernova156-network-recovery.patch` after the four A/C/D patches.
 Recovery preserves session/track/seek intent and emits stream_reconnect boundaries;
 see `findings/network-stream-recovery.md` for gate behavior and native visibility limits.
+
+## Screen data item 1 — stop and progress
+
+Code `6dac8747d`. Register `medialib-supernova156-screen-scan.patch` after the current MediaLib operations,
+before `next-medialib-test-fixtures.patch`. `PreviewLibraryScan.install(context)` installs the process observer.
+`PreviewLibraryScan.progress()` / `LibraryScanController.progress()` returns immutable `ScanProgress` with
+sourceLabel, checked, total (-1 while unknown), running, stopping, failure and failureReason(). It performs no
+I/O. `PreviewLibraryScan.stop()` cancels queued work and the active network/local/metadata workers off main;
+running remains true until active workers unwind and send their terminal events. Requests during stopping are
+held out. A subsequent request starts with a fresh cancellation generation. Put.io API sync wiring follows in item 4.
+
+Friendly names are copied from shortcut/storage metadata on a worker. A source-list model can optionally call
+`LibraryScanController.sourceName(indexedRootUri, friendlyName)`; progress immediately uses the cached name.
+No raw exception message or credential is included in failureReason. Stop does not interrupt a database applyBatch;
+the existing atomic provider transaction finishes or rolls back before the worker releases its ownership.
+
+## Screen data item 2 — recent scans
+
+Code `d59573789`. `LibraryScanController.recentScans()` returns the newest ten finished source scans as an immutable memory-only list (initially empty until asynchronous load). Each ScanProgress includes start UTC time, observed duration, source label, added/removed/updated counts and plain failureReason. -1 means unknown. Native local/network terminal events now carry committed removal counts. Entries include cancelled/not-started requests; duplicate terminal broadcasts do not add duplicates. The atomic bounded file is under noBackupFilesDir, outside existing logical backup categories, so no backup category was expanded.
+
+## Screen data item 3 — hourly automatic scans
+
+Code `ff80eaac2`. No new screen call. `PreviewAutoScanPolicy.initialise` defaults an absent schedule to one hour, preserving explicit Off/custom schedules and the onboarding gate. `NetworkAutoRefresh.autoRescanAtStart(context)` now reports admission for this opening, using the enabled preference AND last successful completion strictly over an hour ago; screens should continue reading the preference itself for the selected On/Off value. The native lifecycle observer and existing application polling both use this gate. `ScanSchedulePolicy.completed(context)` records success; native batch and local import terminal paths call it. Put.io success will join in item 4.
+
+## Screen data item 4 — Put.io service status
+
+Code `9f46af2c1`. `PutioSyncScheduler.status()` returns immutable memory-only PutioServiceStatus: signedIn/signedInAs, storageUsed/storageTotal (-1 unknown), reachable and lastCheckedUtcMs, syncState and plain failureReason. `refresh(context)` asynchronously reads the encrypted token and checks account status without syncing. `retry(context)` checks then syncs the selected API-owned scopes. Existing request calls also update status. `stop()` cancels owned HTTP calls and the worker; LibraryScanController.stop includes it. API source syncs feed the same tile/history adapter. No token/cursor/request/body/credential appears in the DTO. A stale quota remains available with its last-check time after an offline failure; unauthorised clears the account data and requests sign-in. Status is process-local; refresh when opening the service row.
+
+## Screen data item 5 — unsaved connection tests
+
+Code `70a38e719`. Register `filecore-supernova156-screen-connections.patch` after the CURRENT FileCore operations, before its CI fixtures (independent of the MediaLib screen-data patch chain). Call `DraftConnectionTest.start(context, new Draft(type, host, port, folder, user, passwordChars), callbackExecutor, resultConsumer)` from `com.archos.filecorelibrary.connections`. Type: SMB, FTP, FTPS (explicit TLS), SFTP, WEBDAV, WEBDAVS. Port -1 uses the protocol default; SMB folder starts with /share. Result exposes succeeded(), folders/videos (immediate children), field and safe reason, cancelled. Job.close cancels. Keep Draft open while useful and close it to wipe its password copy; Job owns a separate copy and wipes it at completion. The caller’s original char[] remains caller-owned. Callback executor controls delivery; close the job on screen exit. The job result deadline is 25 seconds, transport stages normally 5 seconds; there are two workers and four queued slots. No credential/source/session cache writes, including on success. SFTP checks existing SSH pins read-only; a first-use probe accepts only its ephemeral session key and never persists trust. Saving/confirming trust remains the existing connection flow’s job.
+
+## Screen data item 6 — missing files and recovery
+
+Code `a45276960`. Register `medialib-supernova156-screen-missing.patch` after the schedule patch, before CI fixtures. The LibraryHealth attention worker now publishes `MissingFilesRepository.current()` with immutable missing rows and the SAME attention snapshot. Until a successful inventory, current() is null; failed reads preserve prior data. Rows expose id, library title, sourceName, folder, sinceUtcMs (0 unknown for legacy markers), oldFileName and size. Trigger the existing attention refresh after loading/changing the library; re-read current when data refreshes. Worker-only `findAgain(context, row, cancelledSupplier)` traverses the saved source, requires a unique exact name/size match after the complete traversal, verifies it again, then relinks. False means no unique match or a stale guarded row; exceptions mean search/update did not complete. `remove(context,row)` removes library records only. Both invalidate the library cache. Find errors/ambiguity change nothing. Missing timestamp is first observation, retained across repeated scans; successful rediscovery clears it.
+
+## Screen data item 7 — counted cancellable NFO export
+
+Code `3b8b3daff`. Register `medialib-supernova156-screen-nfo.patch` after the missing-media patch, before CI fixtures. Worker-only `NfoExportJob.preflight(context)` returns immutable Plan.total and knownReadOnly before writing anything. It counts every target video, including those without exportable tags; such videos become failed outcomes. Call `NfoExportJob.start(context, plan)` to get a Job; Job.cancel()/close() stops its own work. One export job is admitted at once. Subscribe with existing `NfoExportProgress.listen(callbackExecutor, consumer)` and close the subscription on exit; snapshots retain done/total/currentTitle/finished and add written/skippedReadOnly/failed/cancelled. Count units are videos (one episode may also need its shared show NFO); companion artwork is best effort. current() is memory-only. A cancelled job may finish with done < total; wait for finished before presenting its result. Job.await is worker-only. Put.io and known read-only protocols skip without credential, metadata or network access. Other sources check parent write capability on the worker. The existing export service uses this same job and cancels its owned job on background/destruction. No screen wording changed.
+
+### Item 7 follow-up — cancellation during output opening
+
+Code `a041eb382`. Apply `medialib-supernova156-screen-nfo-cancel.patch` immediately after the NFO job patch.
+No API change. If cancellation wins while getOutputStream is opening, the rejected stream is closed and the empty
+NFO target removed. Both this race and cancellation during a blocked write have regressions. All previously
+published patches remain unchanged. The report lists the final seven registration operations.

@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import com.archos.mediacenter.video.health.MissingFilesRepository;
+import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import java.util.Set;
 
 /** Availability is separate from IDs, metadata, bookmarks, watched state and row membership. */
@@ -54,8 +57,8 @@ public final class LibraryHealth
         Collections.sort(missing);
         StringBuilder text =
             new StringBuilder(
-                "Library records, metadata, watched state and playback progress are retained when storage is " +
-                "unavailable. Reconnect the source and scan to reconcile the same IDs.\n\nSources offline: ")
+                "Library records, metadata, watched state and playback progress are retained when storage is "
+                + "unavailable. Reconnect the source and scan to reconcile the same IDs.\n\nSources offline: ")
                 .append(offline.size());
         for (String root : offline)
             text.append("\n").append(root);
@@ -133,7 +136,7 @@ public final class LibraryHealth
             COUNTS.execute(() -> {
                 try
                 {
-                    Set<Long> indexed = new HashSet<>();
+                    Map<Long, String> indexed = new HashMap<>();
                     Set<Long> incomplete = new HashSet<>();
                     boolean scanning = ImportState.VIDEO.isInitialImport() || ImportState.VIDEO.isRegularImport() ||
                                        LoaderUtils.getScrapeInProgress();
@@ -142,7 +145,7 @@ public final class LibraryHealth
                         if (!(entry.media instanceof Video))
                             continue;
                         Video video = (Video)entry.media;
-                        indexed.add(video.getId());
+                        indexed.put(video.getId(), video.getName());
                         if (!scanning &&
                             (!(video instanceof Movie || video instanceof Episode) || video.getPosterUri() == null ||
                              LibraryHealthActivity.plot(video).trim().isEmpty()))
@@ -150,9 +153,14 @@ public final class LibraryHealth
                             incomplete.add(video.getId());
                         }
                     }
-                    attention = LibraryAttentionCount.count(indexed, incomplete, health.getAll());
+                    attention =
+                        MissingFilesRepository.refresh(context.getApplicationContext(), indexed, incomplete).attention;
                     countedSnapshot = snapshot;
                     countedVersion = version;
+                }
+                catch (Exception failure)
+                {
+                    Diagnostics.error("library_health_inventory_failed", failure);
                 }
                 finally
                 {

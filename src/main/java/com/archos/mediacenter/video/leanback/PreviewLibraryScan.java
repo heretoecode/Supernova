@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -23,8 +22,9 @@ import com.archos.mediaprovider.video.NetworkScannerServiceVideo;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediaprovider.ImportState;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
-import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediascraper.AutoScrapeService;
+import com.archos.mediacenter.video.scanning.LibraryScanController;
+import com.archos.mediacenter.video.scanning.ScanProgress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +47,7 @@ public final class PreviewLibraryScan
 
     public static synchronized void install(Context context)
     {
+        LibraryScanController.install(context);
         if (installed)
             return;
         installed = true;
@@ -146,7 +147,7 @@ public final class PreviewLibraryScan
     {
         install(context);
         Context app = context.getApplicationContext();
-        if (active())
+        if (active() || progress().stopping)
             return;
         if (!SupernovaLibraryPolicy.configured(app))
             return;
@@ -170,7 +171,7 @@ public final class PreviewLibraryScan
     public static synchronized void requestNetwork(Context context, String requestedTrigger)
     {
         install(context);
-        if (!SupernovaLibraryPolicy.configured(context))
+        if (!SupernovaLibraryPolicy.configured(context) || progress().stopping)
             return;
         String origin = Arrays.asList("manual", "startup", "resume", "scheduled").contains(requestedTrigger)
                             ? requestedTrigger
@@ -188,6 +189,7 @@ public final class PreviewLibraryScan
         operation = Diagnostics.operation("library_scan");
         operationEnded = false;
         phase = "queued";
+        LibraryScanController.requested(operation);
         trigger = origin;
         checked = added = updated = completed = 0;
         progress.clear();
@@ -206,6 +208,7 @@ public final class PreviewLibraryScan
                 if (request.equals(operation) && phase.equals("queued"))
                 {
                     phase = "not_started";
+                    LibraryScanController.notStarted(request, NetworkAutoRefresh.getLastError(context) < 0);
                     Diagnostics.event("scan_not_started", "operation_id", operation, "scheduler_error",
                                       NetworkAutoRefresh.getLastError(context));
                     finishOperation("not_started");
@@ -247,6 +250,30 @@ public final class PreviewLibraryScan
     public static synchronized void cancelPendingSelectionScan()
     {
         selectionScanPending = false;
+    }
+
+    /** Memory-only tile data. No preference, database, filesystem or network access. */
+    public static ScanProgress progress()
+    {
+        return LibraryScanController.progress();
+    }
+
+    /** Asynchronous cancellation; use progress().running/stopping until workers have unwound. */
+    public static synchronized void stop()
+    {
+        selectionScanPending = false;
+        if (phase.equals("queued"))
+        {
+            phase = "cancelled";
+            finishOperation("cancelled");
+        }
+        LibraryScanController.stop();
+    }
+
+    public static void stop(Context context)
+    {
+        install(context);
+        stop();
     }
 
     private static void finishOperation(String reason)

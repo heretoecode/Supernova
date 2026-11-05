@@ -1,3 +1,57 @@
+# 0.156 screen data — all items 1–7 ready (5 Nov 2026)
+
+All seven items ready through `a041eb382` on `codex/0155-code-2026-11-04`, after merging Claude `0e6943603` first.
+Each item was committed, documented and pushed separately below. Final checks: **75 isolated component tests pass**,
+54 changed Java files pass Java 17/import/120-column checks, layout checks pass, and both complete dependency patch
+chains match their prepared sources and still accept the CI fixtures. Full Android/provider/remote-write conformance
+and Shield checks remain Claude’s; no Gradle/workflow run was performed.
+
+Register **seven new patch operations**, leaving the existing operations intact: MediaLib scan → history → schedule →
+missing → NFO → NFO cancellation follow-up, plus FileCore connections after its existing operations. Put them before
+the respective CI fixture patches. Exact paths, order and SHA-256 entries are at the end of
+[`reports/2026-11-05-0156-screen-data.md`](reports/2026-11-05-0156-screen-data.md).
+API calls are in [`findings/0156-ui-hooks.md`](findings/0156-ui-hooks.md). No screens/resources were edited; no PR,
+merge into Claude’s branch, rebase, force push, workflow dispatch or fork push. GitHub cleanup is finished.
+
+# 0.156 screen data — item 7 ready (5 Nov 2026)
+
+Item 7 ready at `3b8b3daff` on `codex/0155-code-2026-11-04`. All seven screen-data items are ready. 74 component regressions pass; register the six new dependency patches before full conformance.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
+# 0.156 screen data — item 6 ready (5 Nov 2026)
+
+Item 6 ready at `a45276960` on `codex/0155-code-2026-11-04`. Ten inventory/search/SQLite regressions pass (57 component regressions across items 1–6). Item 7 continues.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
+# 0.156 screen data — item 5 ready (5 Nov 2026)
+
+Item 5 ready at `70a38e719` on `codex/0155-code-2026-11-04`. Nine real connection-probe tests pass (47 component regressions across items 1–5). Items 6–7 continue.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
+# 0.156 screen data — item 4 ready (5 Nov 2026)
+
+Item 4 ready at `9f46af2c1` on `codex/0155-code-2026-11-04`. 38 component regressions pass. Items 5–7 continue; no additional patch for item 4.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
+# 0.156 screen data — item 3 ready (5 Nov 2026)
+
+Item 3 ready at `ff80eaac2` on `codex/0155-code-2026-11-04`. 27 component regressions pass. Items 4–7 continue; register the schedule patch after history.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
+# 0.156 screen data — item 2 ready (5 Nov 2026)
+
+Item 2 ready at `d59573789` on `codex/0155-code-2026-11-04`. 24 component regressions pass. Items 3–7 continue; register the new history patch after the scan patch.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
+# 0.156 screen data — item 1 ready (5 Nov 2026)
+
+Item 1 ready at `6dac8747d` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of
+Claude’s `0e6943603`. Items 2–7 continue. Register **new** `medialib-supernova156-screen-scan.patch` after the
+current registered dependency operations and before the CI fixtures. See
+[`screen-data report`](reports/2026-11-05-0156-screen-data.md) and `findings/0156-ui-hooks.md`.
+Twenty isolated component regressions pass; full worker/transport/Android conformance remains Claude’s.
+GitHub cleanup is finished. No screens, resources, workflow dispatch or fork pushes.
+
 # 0.156 added conformance failures ready — 2026-11-05
 
 Added test fixes ready at `8d9a91e0e` on `codex/0155-code-2026-11-04`, after the authorised fast-forward merge of

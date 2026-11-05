@@ -1,0 +1,1579 @@
+diff --git a/src/com/archos/mediascraper/NfoExportCancellation.java b/src/com/archos/mediascraper/NfoExportCancellation.java
+new file mode 100644
+index 0000000..11874fb
+--- /dev/null
++++ b/src/com/archos/mediascraper/NfoExportCancellation.java
+@@ -0,0 +1,94 @@
++package com.archos.mediascraper;
++
++import java.io.FilterOutputStream;
++import java.io.IOException;
++import java.io.InterruptedIOException;
++import java.io.OutputStream;
++import java.util.HashSet;
++import java.util.Set;
++
++/** Owns only this job's streams; cancellation never closes shared protocol sessions. */
++final class NfoExportCancellation
++{
++    private volatile boolean cancelled;
++    private final Set<OutputStream> streams = new HashSet<>();
++
++    boolean cancelled()
++    {
++        return cancelled;
++    }
++    void check() throws InterruptedIOException
++    {
++        if (cancelled || Thread.currentThread().isInterrupted())
++            throw new InterruptedIOException("NFO export stopped");
++    }
++    void cancel()
++    {
++        Set<OutputStream> closing;
++        synchronized (this)
++        {
++            if (cancelled)
++                return;
++            cancelled = true;
++            closing = new HashSet<>(streams);
++        }
++        if (!closing.isEmpty())
++        {
++            Thread cleanup = new Thread(() -> {
++                for (OutputStream output : closing)
++                    try
++                    {
++                        output.close();
++                    }
++                    catch (IOException ignored)
++                    {
++                        // The writer owns outcome reporting and partial-file cleanup.
++                    }
++            }, "NfoExportCancel");
++            cleanup.setDaemon(true);
++            cleanup.start();
++        }
++    }
++    synchronized OutputStream own(OutputStream output) throws IOException
++    {
++        if (output == null)
++            throw new IOException("NFO output unavailable");
++        if (cancelled)
++        {
++            output.close();
++            check();
++        }
++        streams.add(output);
++        return new FilterOutputStream(output) {
++            @Override public void write(byte[] bytes, int offset, int count) throws IOException
++            {
++                check();
++                out.write(bytes, offset, count);
++            }
++            @Override public void write(int value) throws IOException
++            {
++                check();
++                out.write(value);
++            }
++            @Override public void flush() throws IOException
++            {
++                check();
++                out.flush();
++            }
++            @Override public void close() throws IOException
++            {
++                try
++                {
++                    out.close();
++                }
++                finally
++                {
++                    synchronized (NfoExportCancellation.this)
++                    {
++                        streams.remove(output);
++                    }
++                }
++            }
++        };
++    }
++}
+diff --git a/src/com/archos/mediascraper/NfoExportJob.java b/src/com/archos/mediascraper/NfoExportJob.java
+new file mode 100644
+index 0000000..115b593
+--- /dev/null
++++ b/src/com/archos/mediascraper/NfoExportJob.java
+@@ -0,0 +1,236 @@
++package com.archos.mediascraper;
++
++import android.content.Context;
++import android.database.Cursor;
++import android.net.Uri;
++import com.archos.filecorelibrary.FileUtils;
++import com.archos.filecorelibrary.MetaFile2;
++import com.archos.filecorelibrary.webdav.ScanIoScope;
++import com.archos.mediacenter.filecoreextension.upnp2.MetaFileFactoryWithUpnp;
++import com.archos.mediaprovider.video.VideoStore;
++import java.io.File;
++import java.io.IOException;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Locale;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++import java.util.concurrent.TimeUnit;
++
++/** Count on a worker first, then start the immutable plan. Outcomes count videos, not companion images/files. */
++public final class NfoExportJob
++{
++    static final String[] PROJECTION = {"_id",
++                                        "_data",
++                                        "title",
++                                        "ArchosMediaScraper_id",
++                                        "ArchosMediaScraper_type",
++                                        "bookmark",
++                                        "Archos_bookmark",
++                                        "Archos_lastTimePlayed",
++                                        "duration"};
++    static record Target(long id, Uri file, String title, long scraperId, int type, long resume, long bookmark,
++                         long played, long duration, String storedPath)
++    {
++        Target(long id, Uri file, String title, long scraperId, int type, long resume, long bookmark, long played,
++               long duration)
++        {
++            this(id, file, title, scraperId, type, resume, bookmark, played, duration,
++                 "file".equals(file.getScheme()) ? file.getPath() : file.toString());
++        }
++    }
++    public static final class Plan
++    {
++        public final int total;
++        public final int knownReadOnly;
++        private final List<Target> targets;
++        Plan(List<Target> targets)
++        {
++            this.targets = List.copyOf(targets);
++            total = targets.size();
++            knownReadOnly = (int)targets.stream().filter(row -> readOnlySource(row.file)).count();
++        }
++    }
++    private static final ExecutorService WORK = Executors.newSingleThreadExecutor(r -> {
++        Thread thread = new Thread(r, "NfoExportJob");
++        thread.setDaemon(true);
++        return thread;
++    });
++    private static Job active;
++
++    /** Worker-only count/material snapshot; throws if the complete provider query is unavailable. */
++    public static Plan preflight(Context context) throws IOException
++    {
++        return fromCursor(context.getContentResolver().query(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, PROJECTION,
++                                                             null, null, "_data"));
++    }
++    static Plan fromCursor(Cursor cursor) throws IOException
++    {
++        if (cursor == null)
++            throw new IOException("Library inventory is unavailable");
++        List<Target> targets = new ArrayList<>();
++        try (Cursor rows = cursor)
++        {
++            while (rows.moveToNext())
++            {
++                if (rows.isNull(0) || rows.isNull(1))
++                    throw new IOException("Library file identity is unavailable");
++                String location = rows.getString(1);
++                Uri file = location.startsWith("/") ? Uri.fromFile(new File(location)) : Uri.parse(location);
++                String title = rows.getString(2);
++                if (title == null || title.isBlank())
++                    title = file.getLastPathSegment() == null ? "Unknown title" : file.getLastPathSegment();
++                targets.add(new Target(rows.getLong(0), file, title, rows.getLong(3), rows.getInt(4), rows.getLong(5),
++                                       rows.getLong(6), rows.getLong(7), rows.getLong(8), location));
++            }
++        }
++        return new Plan(targets);
++    }
++    public static Job start(Context context, Plan plan)
++    {
++        return start(plan, new NativeBackend(context.getApplicationContext()));
++    }
++    static synchronized Job start(Plan plan, Backend backend)
++    {
++        if (active != null)
++            throw new IllegalStateException("An NFO export is already running");
++        Job job = new Job(plan, backend);
++        active = job;
++        WORK.execute(job::run);
++        return job;
++    }
++    public static synchronized void cancelActive()
++    {
++        if (active != null)
++            active.cancel();
++    }
++    interface Backend
++    {
++        boolean readOnly(Target row) throws Exception;
++        NfoExportProgress.Outcome write(Target row, NfoExportCancellation cancellation) throws Exception;
++    }
++    static final class NativeBackend implements Backend
++    {
++        final Context context;
++        final NfoWriter.ExportContext export = new NfoWriter.ExportContext();
++        NativeBackend(Context context)
++        {
++            this.context = context;
++        }
++        @Override public boolean readOnly(Target row) throws Exception
++        {
++            MetaFile2 parent = MetaFileFactoryWithUpnp.getMetaFileForUrl(FileUtils.getParentUrl(row.file));
++            if (parent == null || !parent.isDirectory())
++                throw new IOException("Export folder is unavailable");
++            return !parent.canWrite();
++        }
++        @Override
++        public NfoExportProgress.Outcome write(Target row, NfoExportCancellation cancellation) throws Exception
++        {
++            cancellation.check();
++            try (Cursor owner = context.getContentResolver().query(
++                     VideoStore.Video.Media.EXTERNAL_CONTENT_URI, new String[] {"_id"},
++                     "_id=? AND _data=? AND ArchosMediaScraper_id=? AND ArchosMediaScraper_type=?",
++                     new String[] {"" + row.id, row.storedPath, "" + row.scraperId, "" + row.type}, null))
++            {
++                if (owner == null)
++                    throw new IOException("Library identity could not be checked");
++                if (!owner.moveToFirst())
++                    return NfoExportProgress.Outcome.FAILED;
++            }
++            BaseTags tags = row.type == BaseTags.MOVIE     ? TagsFactory.buildMovieTags(context, row.scraperId)
++                            : row.type == BaseTags.TV_SHOW ? TagsFactory.buildEpisodeTags(context, row.scraperId)
++                                                           : null;
++            if (tags == null)
++                return NfoExportProgress.Outcome.FAILED;
++            tags.setFile(row.file);
++            tags.setResume(row.resume);
++            tags.setBookmark(row.bookmark);
++            tags.setLastPlayed(row.played, TimeUnit.SECONDS);
++            tags.setRuntime(row.duration, TimeUnit.MILLISECONDS);
++            return NfoWriter.exportChecked(row.file, tags, export, cancellation);
++        }
++    }
++    public static final class Job implements AutoCloseable
++    {
++        private final Plan plan;
++        private final Backend backend;
++        private final NfoExportProgress.Tracker progress;
++        private final NfoExportCancellation cancellation = new NfoExportCancellation();
++        private final CountDownLatch finished = new CountDownLatch(1);
++        private volatile ScanIoScope scope;
++
++        private Job(Plan plan, Backend backend)
++        {
++            this.plan = plan;
++            this.backend = backend;
++            progress = NfoExportProgress.begin(plan.total);
++        }
++        public void cancel()
++        {
++            cancellation.cancel();
++            ScanIoScope running = scope;
++            if (running != null)
++                running.cancel();
++        }
++        @Override public void close()
++        {
++            cancel();
++        }
++        /** Worker-only; UI observes NfoExportProgress instead of waiting. */
++        public void await() throws InterruptedException
++        {
++            finished.await();
++        }
++        private void run()
++        {
++            try (ScanIoScope owned = new ScanIoScope(24, TimeUnit.HOURS))
++            {
++                scope = owned;
++                for (Target row : plan.targets)
++                {
++                    if (cancellation.cancelled())
++                        break;
++                    NfoExportProgress.Outcome outcome;
++                    try
++                    {
++                        if (readOnlySource(row.file) || backend.readOnly(row))
++                            outcome = NfoExportProgress.Outcome.SKIPPED_READ_ONLY;
++                        else
++                            outcome = backend.write(row, cancellation);
++                    }
++                    catch (Exception failure)
++                    {
++                        outcome = cancellation.cancelled() || Thread.currentThread().isInterrupted()
++                                      ? NfoExportProgress.Outcome.CANCELLED
++                                      : NfoExportProgress.Outcome.FAILED;
++                    }
++                    progress.completed(row.title, outcome);
++                    if (outcome == NfoExportProgress.Outcome.CANCELLED)
++                        break;
++                }
++            }
++            finally
++            {
++                scope = null;
++                progress.finish(cancellation.cancelled() || Thread.currentThread().isInterrupted());
++                synchronized (NfoExportJob.class)
++                {
++                    if (active == this)
++                        active = null;
++                }
++                finished.countDown();
++            }
++        }
++    }
++    static boolean readOnlySource(Uri file)
++    {
++        String host = file.getHost() == null ? "" : file.getHost().toLowerCase(Locale.ROOT);
++        String scheme = file.getScheme() == null ? "" : file.getScheme().toLowerCase(Locale.ROOT);
++        return host.equals("put.io") || host.endsWith(".put.io") || List.of("http", "https", "upnp").contains(scheme);
++    }
++    private NfoExportJob()
++    {
++    }
++}
+diff --git a/src/com/archos/mediascraper/NfoExportProgress.java b/src/com/archos/mediascraper/NfoExportProgress.java
+index 90a680c..1279399 100644
+--- a/src/com/archos/mediascraper/NfoExportProgress.java
++++ b/src/com/archos/mediascraper/NfoExportProgress.java
+@@ -9,6 +9,14 @@ import java.util.function.Consumer;
+ /** Reports completed export tasks, not rows merely dispatched to NfoWriter's queue. */
+ public final class NfoExportProgress
+ {
++    public enum Outcome
++    {
++        WRITTEN,
++        SKIPPED_READ_ONLY,
++        FAILED,
++        CANCELLED,
++        UNREPORTED
++    }
+     public static final class Snapshot
+     {
+         public final long jobId;
+@@ -16,9 +24,20 @@ public final class NfoExportProgress
+         public final int total;
+         public final String currentTitle;
+         public final boolean finished;
++        public final boolean cancelled;
++        public final int written, skippedReadOnly, failed;
+ 
+         Snapshot(long jobId, int done, int total, String currentTitle, boolean finished)
+         {
++            this(jobId, done, total, currentTitle, finished, false, 0, 0, 0);
++        }
++        Snapshot(long jobId, int done, int total, String currentTitle, boolean finished, boolean cancelled, int written,
++                 int skippedReadOnly, int failed)
++        {
++            this.cancelled = cancelled;
++            this.written = written;
++            this.skippedReadOnly = skippedReadOnly;
++            this.failed = failed;
+             this.jobId = jobId;
+             this.done = done;
+             this.total = total;
+@@ -32,6 +51,8 @@ public final class NfoExportProgress
+         private final long jobId;
+         private final int total;
+         private int done;
++        private int written, skipped, failed;
++        private boolean finished, cancelled;
+ 
+         private Tracker(int total)
+         {
+@@ -42,18 +63,38 @@ public final class NfoExportProgress
+ 
+         public synchronized void completed(String title)
+         {
+-            if (done >= total)
++            completed(title, Outcome.UNREPORTED);
++        }
++        public synchronized void completed(String title, Outcome outcome)
++        {
++            if (finished || done >= total)
++                return;
++            if (outcome == Outcome.CANCELLED)
++            {
++                cancelled = true;
+                 return;
++            }
+             done++;
+-            publish(new Snapshot(jobId, done, total, title == null ? "" : title, done == total));
++            if (outcome == Outcome.WRITTEN)
++                written++;
++            else if (outcome == Outcome.SKIPPED_READ_ONLY)
++                skipped++;
++            else if (outcome == Outcome.FAILED)
++                failed++;
++            publish(new Snapshot(jobId, done, total, title == null ? "" : title, done == total, cancelled, written,
++                                 skipped, failed));
+         }
+-
+         public synchronized void finish()
+         {
++            finish(false);
++        }
++        public synchronized void finish(boolean cancelled)
++        {
++            this.cancelled |= cancelled;
++            finished = true;
+             if (current.jobId == jobId)
+-            {
+-                publish(new Snapshot(jobId, done, total, current.currentTitle, true));
+-            }
++                publish(new Snapshot(jobId, done, total, current.currentTitle, true, this.cancelled, written, skipped,
++                                     failed));
+         }
+     }
+ 
+diff --git a/src/com/archos/mediascraper/NfoExportService.java b/src/com/archos/mediascraper/NfoExportService.java
+index 2be786d..eaf4f10 100644
+--- a/src/com/archos/mediascraper/NfoExportService.java
++++ b/src/com/archos/mediascraper/NfoExportService.java
+@@ -265,55 +265,39 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         removeDirTask(data);
+     }
+ 
++    private volatile NfoExportJob.Job ownedJob;
++
+     private void handleCursor(Cursor cursor)
+     {
+-        if (cursor == null)
+-            return;
+-        NfoExportProgress.Tracker progress = NfoExportProgress.begin(cursor.getCount());
+-        try (Cursor rows = cursor)
++        try
+         {
+-            NfoWriter.ExportContext exportContext = new NfoWriter.ExportContext();
+-            while (rows.moveToNext() && isForeground)
++            NfoExportJob.Plan plan = NfoExportJob.fromCursor(cursor);
++            NfoExportJob.Job job = NfoExportJob.start(this, plan);
++            ownedJob = job;
++            try
++            {
++                job.await();
++            }
++            catch (InterruptedException stopped)
++            {
++                job.cancel();
++                Thread.currentThread().interrupt();
++            }
++            finally
+             {
+-                long id = rows.getLong(0);
+-                int type = rows.getInt(1);
+-                BaseTags tags = type == BaseTags.MOVIE     ? TagsFactory.buildMovieTags(this, id)
+-                                : type == BaseTags.TV_SHOW ? TagsFactory.buildEpisodeTags(this, id)
+-                                                           : null;
+-                if (tags == null)
+-                {
+-                    progress.completed("");
+-                    continue;
+-                }
+-                String title = tags.getTitle();
+-                try
+-                {
+-                    NfoWriter.export(tags.getFile(), tags, exportContext, () -> progress.completed(title));
+-                }
+-                catch (IOException failure)
+-                {
+-                    log.warn("NFO export could not be queued", failure);
+-                    progress.completed(title);
+-                }
++                ownedJob = null;
+             }
+         }
+-        finally
++        catch (IOException | IllegalStateException failure)
+         {
+-            NfoWriter.awaitPendingExports();
+-            progress.finish();
++            log.warn("NFO export could not start", failure);
+         }
+     }
+ 
+     private static final Uri URI = VideoStore.Video.Media.EXTERNAL_CONTENT_URI;
+-    private static final String[] PROJECTION = {
+-        VideoColumns.ARCHOS_MEDIA_SCRAPER_ID,   // 0
+-        VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE, // 1
+-    };
+-    private static final String SELECTION_ALL =
+-        VideoColumns.ARCHOS_MEDIA_SCRAPER_ID + " > 0 AND " + VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE + " > 0";
+-    private static final String SELECTION_FOLDER = VideoColumns.ARCHOS_MEDIA_SCRAPER_ID + " > 0 AND " +
+-                                                   VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE + " > 0 AND " +
+-                                                   MediaColumns.DATA + " LIKE ?||'/%'";
++    private static final String[] PROJECTION = NfoExportJob.PROJECTION;
++    private static final String SELECTION_ALL = "1";
++    private static final String SELECTION_FOLDER = MediaColumns.DATA + " LIKE ?||'/%' ESCAPE '\\'";
+     private static final String ORDER = MediaColumns.DATA;
+ 
+     private Cursor getAllCursor()
+@@ -328,7 +312,7 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+         if (path.endsWith("/"))
+             path = path.substring(0, path.length() - 1);
+         ContentResolver cr = getContentResolver();
+-        String[] selectionArgs = {path};
++        String[] selectionArgs = {path.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")};
+         return cr.query(URI, PROJECTION, SELECTION_FOLDER, selectionArgs, ORDER);
+     }
+ 
+@@ -352,6 +336,9 @@ public class NfoExportService extends Service implements DefaultLifecycleObserve
+     private void cleanup()
+     {
+         isForeground = false;
++        NfoExportJob.Job job = ownedJob;
++        if (job != null)
++            job.cancel();
+         // Clear the scheduled tasks
+         sScheduledTasks.clear();
+         // Cancel the notification
+diff --git a/src/com/archos/mediascraper/NfoWriter.java b/src/com/archos/mediascraper/NfoWriter.java
+index 1aa7876..792565a 100644
+--- a/src/com/archos/mediascraper/NfoWriter.java
++++ b/src/com/archos/mediascraper/NfoWriter.java
+@@ -12,7 +12,6 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-
+ package com.archos.mediascraper;
+ 
+ import static com.archos.filecorelibrary.FileUtils.relocateNfoAppPublicDir;
+@@ -50,27 +49,91 @@ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.TimeUnit;
+ 
+-public class NfoWriter {
++public class NfoWriter
++{
++
++    private static final Object WRITE_LOCK = new Object();
++    private static final class CheckedExport
++    {
++        final NfoExportCancellation cancellation;
++        boolean failed;
++        CheckedExport(NfoExportCancellation cancellation)
++        {
++            this.cancellation = cancellation;
++        }
++    }
++    private static final ThreadLocal<CheckedExport> CHECKED = new ThreadLocal<>();
++
++    static NfoExportProgress.Outcome exportChecked(Uri video, BaseTags tags, ExportContext context,
++                                                   NfoExportCancellation cancellation)
++    {
++        synchronized (WRITE_LOCK)
++        {
++            CheckedExport state = new CheckedExport(cancellation);
++            CHECKED.set(state);
++            try
++            {
++                cancellation.check();
++                if (tags instanceof MovieTags movie)
++                    exportInternal(video, movie);
++                else if (tags instanceof EpisodeTags episode)
++                {
++                    exportInternal(video, episode);
++                    cancellation.check();
++                    exportInternal(video, episode.getShowTags(), context);
++                }
++                else
++                    return NfoExportProgress.Outcome.FAILED;
++                return state.failed ? (cancellation.cancelled() ? NfoExportProgress.Outcome.CANCELLED
++                                                                : NfoExportProgress.Outcome.FAILED)
++                                    : NfoExportProgress.Outcome.WRITTEN;
++            }
++            catch (Exception failure)
++            {
++                return cancellation.cancelled() ? NfoExportProgress.Outcome.CANCELLED
++                                                : NfoExportProgress.Outcome.FAILED;
++            }
++            finally
++            {
++                CHECKED.remove();
++            }
++        }
++    }
++
++    private static java.io.OutputStream output(FileEditor editor) throws Exception
++    {
++        CheckedExport state = CHECKED.get();
++        if (state != null)
++            state.cancellation.check();
++        java.io.OutputStream stream = editor.getOutputStream();
++        return state == null ? stream : state.cancellation.own(stream);
++    }
+ 
+     private static final Logger log = LoggerFactory.getLogger(NfoWriter.class);
+ 
+-    public static class ExportContext {
++    public static class ExportContext
++    {
+         private final LruCache<String, String> exportedFiles = new LruCache<String, String>(64);
+-        public void put(String key) {
++        public void put(String key)
++        {
+             exportedFiles.put(key, "");
+         }
+-        public boolean contains(String key) {
++        public boolean contains(String key)
++        {
+             return exportedFiles.get(key) != null;
+         }
+     }
+ 
+-    private NfoWriter() {
++    private NfoWriter()
++    {
+         // all static
+     }
+ 
+     private static void textTag(XmlSerializer serializer, String tag, String text)
+-            throws IllegalArgumentException, IllegalStateException, IOException {
+-        if (text != null && !text.isEmpty()) {
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
++        if (text != null && !text.isEmpty())
++        {
+             serializer.startTag("", tag);
+             serializer.text(text);
+             serializer.endTag("", tag);
+@@ -78,25 +141,29 @@ public class NfoWriter {
+     }
+ 
+     private static void textTag(XmlSerializer serializer, String tag, float value)
+-            throws IllegalArgumentException, IllegalStateException, IOException {
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+         if (value != 0f)
+             textTag(serializer, tag, String.valueOf(value));
+     }
+ 
+     private static void textTag(XmlSerializer serializer, String tag, int value)
+-            throws IllegalArgumentException, IllegalStateException, IOException {
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+         if (value != 0)
+             textTag(serializer, tag, String.valueOf(value));
+     }
+ 
+     private static void textTag(XmlSerializer serializer, String tag, long value)
+-            throws IllegalArgumentException, IllegalStateException, IOException {
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+         if (value != 0L)
+             textTag(serializer, tag, String.valueOf(value));
+     }
+ 
+     private static XmlSerializer initAndStartDocument(Writer output)
+-            throws IllegalArgumentException, IllegalStateException, IOException {
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+         XmlSerializer serializer = Xml.newSerializer();
+         serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+         serializer.setOutput(output);
+@@ -105,14 +172,14 @@ public class NfoWriter {
+     }
+ 
+     private static void endDocument(XmlSerializer serializer)
+-            throws IllegalArgumentException, IllegalStateException, IOException {
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+         serializer.endDocument();
+     }
+ 
+-    public static void writeXmlInner(XmlSerializer serializer, MovieTags tag) throws
+-            IllegalArgumentException,
+-            IllegalStateException,
+-            IOException {
++    public static void writeXmlInner(XmlSerializer serializer, MovieTags tag)
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+ 
+         serializer.startTag("", "movie");
+         {
+@@ -134,12 +201,15 @@ public class NfoWriter {
+             textTag(serializer, "tmdbid", tag.getOnlineId());
+             for (String studio : tag.getStudios())
+                 textTag(serializer, "studio", studio);
+-            for (ScraperTrailer trailer : tag.getTrailers() == null ? java.util.Collections.<ScraperTrailer>emptyList() : tag.getTrailers()) {
++            for (ScraperTrailer trailer :
++                 tag.getTrailers() == null ? java.util.Collections.<ScraperTrailer>emptyList() : tag.getTrailers())
++            {
+                 textTag(serializer, "trailer", trailer.getNfoValue());
+             }
+             for (String genre : tag.getGenres())
+                 textTag(serializer, "genre", genre);
+-            for (Entry<String, String> entry : tag.getActors().entrySet()) {
++            for (Entry<String, String> entry : tag.getActors().entrySet())
++            {
+                 serializer.startTag("", "actor");
+                 {
+                     textTag(serializer, "name", entry.getKey());
+@@ -150,7 +220,8 @@ public class NfoWriter {
+             // only emit the collection block when the movie actually belongs to a set,
+             // otherwise we write a hollow <set/> element on every movie
+             String collectionName = tag.getCollectionName();
+-            if (tag.getCollectionId() > 0 || (collectionName != null && !collectionName.isEmpty())) {
++            if (tag.getCollectionId() > 0 || (collectionName != null && !collectionName.isEmpty()))
++            {
+                 serializer.startTag("", "set");
+                 {
+                     textTag(serializer, "id", tag.getCollectionId());
+@@ -164,9 +235,12 @@ public class NfoWriter {
+                 serializer.endTag("", "set");
+             }
+             List<ScraperImage> posters = tag.getPosters();
+-            if (posters != null) {
+-                for (ScraperImage image : posters) {
+-                    if (!image.isHttpImage()) continue;
++            if (posters != null)
++            {
++                for (ScraperImage image : posters)
++                {
++                    if (!image.isHttpImage())
++                        continue;
+                     serializer.startTag("", "thumb");
+                     serializer.attribute("", "preview", image.getThumbUrl());
+                     serializer.text(image.getLargeUrl());
+@@ -174,10 +248,13 @@ public class NfoWriter {
+                 }
+             }
+             List<ScraperImage> backdrops = tag.getBackdrops();
+-            if (backdrops != null && !backdrops.isEmpty()) {
++            if (backdrops != null && !backdrops.isEmpty())
++            {
+                 serializer.startTag("", "fanart");
+-                for (ScraperImage image : backdrops) {
+-                    if (!image.isHttpImage()) continue;
++                for (ScraperImage image : backdrops)
++                {
++                    if (!image.isHttpImage())
++                        continue;
+                     serializer.startTag("", "thumb");
+                     serializer.attribute("", "preview", image.getThumbUrl());
+                     serializer.text(image.getLargeUrl());
+@@ -187,20 +264,18 @@ public class NfoWriter {
+             }
+         }
+         serializer.endTag("", "movie");
+-
+     }
+ 
+-    private static final SimpleDateFormat SHOW_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd",
+-            Locale.ROOT);
++    private static final SimpleDateFormat SHOW_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+ 
+-    private static String formatShowDate(Date date) {
++    private static String formatShowDate(Date date)
++    {
+         return date != null && date.getTime() > 0 ? SHOW_DATE_FORMAT.format(date) : null;
+     }
+ 
+-    public static void writeXmlInner(XmlSerializer serializer, EpisodeTags tag) throws
+-            IllegalArgumentException,
+-            IllegalStateException,
+-            IOException {
++    public static void writeXmlInner(XmlSerializer serializer, EpisodeTags tag)
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+ 
+         serializer.startTag("", "episodedetails");
+         {
+@@ -222,7 +297,8 @@ public class NfoWriter {
+                 textTag(serializer, "director", director);
+             for (String writer : tag.getWriters())
+                 textTag(serializer, "writer", writer);
+-            for (Entry<String, String> entry : tag.getActors().entrySet()) {
++            for (Entry<String, String> entry : tag.getActors().entrySet())
++            {
+                 serializer.startTag("", "actor");
+                 {
+                     textTag(serializer, "name", entry.getKey());
+@@ -232,13 +308,11 @@ public class NfoWriter {
+             }
+         }
+         serializer.endTag("", "episodedetails");
+-
+     }
+ 
+-    public static void writeXmlInner(XmlSerializer serializer, ShowTags tag) throws
+-            IllegalArgumentException,
+-            IllegalStateException,
+-            IOException {
++    public static void writeXmlInner(XmlSerializer serializer, ShowTags tag)
++        throws IllegalArgumentException, IllegalStateException, IOException
++    {
+ 
+         serializer.startTag("", "tvshow");
+         {
+@@ -258,7 +332,8 @@ public class NfoWriter {
+                 textTag(serializer, "writer", writer);
+             for (String genre : tag.getGenres())
+                 textTag(serializer, "genre", genre);
+-            for (Entry<String, String> entry : tag.getActors().entrySet()) {
++            for (Entry<String, String> entry : tag.getActors().entrySet())
++            {
+                 serializer.startTag("", "actor");
+                 {
+                     textTag(serializer, "name", entry.getKey());
+@@ -268,13 +343,17 @@ public class NfoWriter {
+             }
+             // Note: we expect to get all posters here
+             List<ScraperImage> posters = tag.getPosters();
+-            if (posters != null) {
+-                for (ScraperImage image : posters) {
+-                    if (!image.isHttpImage()) continue;
++            if (posters != null)
++            {
++                for (ScraperImage image : posters)
++                {
++                    if (!image.isHttpImage())
++                        continue;
+                     serializer.startTag("", "thumb");
+                     serializer.attribute("", "preview", image.getThumbUrl());
+                     int season = image.getSeason();
+-                    if (season >= 0) {
++                    if (season >= 0)
++                    {
+                         serializer.attribute("", "type", "season");
+                         serializer.attribute("", "season", String.valueOf(season));
+                     }
+@@ -283,10 +362,13 @@ public class NfoWriter {
+                 }
+             }
+             List<ScraperImage> backdrops = tag.getBackdrops();
+-            if (backdrops != null && !backdrops.isEmpty()) {
++            if (backdrops != null && !backdrops.isEmpty())
++            {
+                 serializer.startTag("", "fanart");
+-                for (ScraperImage image : backdrops) {
+-                    if (!image.isHttpImage()) continue;
++                for (ScraperImage image : backdrops)
++                {
++                    if (!image.isHttpImage())
++                        continue;
+                     serializer.startTag("", "thumb");
+                     serializer.attribute("", "preview", image.getThumbUrl());
+                     serializer.text(image.getLargeUrl());
+@@ -296,130 +378,178 @@ public class NfoWriter {
+             }
+         }
+         serializer.endTag("", "tvshow");
+-
+     }
+ 
+-    private static void exportInternal(Uri video, MovieTags tag) throws IOException {
++    private static void exportInternal(Uri video, MovieTags tag) throws IOException
++    {
+ 
+         String videoName = FileUtils.getFileNameWithoutExtension(video);
+         Uri parent = FileUtils.getParentUrl(video);
+-        Uri exportTarget =  relocateNfoAppPublicDirForNfoJpgFiles(FileUtils.buildChildUri(parent, videoName + NfoParser.CUSTOM_NFO_EXTENSION));
+-        if (log.isDebugEnabled()) log.debug("exportInternal: {} -> {}", video, exportTarget);
+-        try {
++        Uri exportTarget = relocateNfoAppPublicDirForNfoJpgFiles(
++            FileUtils.buildChildUri(parent, videoName + NfoParser.CUSTOM_NFO_EXTENSION));
++        if (log.isDebugEnabled())
++            log.debug("exportInternal: {} -> {}", video, exportTarget);
++        boolean nfoWritten = false;
++        try
++        {
+             FileEditor editor = FileEditorFactoryWithUpnp.getFileEditorForUrl(exportTarget, null);
+-            BufferedWriter  writer = new BufferedWriter(new OutputStreamWriter(
+-                    editor.getOutputStream(), StringUtils.CHARSET_UTF8));
++            BufferedWriter writer =
++                new BufferedWriter(new OutputStreamWriter(output(editor), StringUtils.CHARSET_UTF8));
+ 
+-            try {
++            try
++            {
+ 
+                 XmlSerializer serializer = initAndStartDocument(writer);
+                 writeXmlInner(serializer, tag);
+                 endDocument(serializer);
+                 writer.close();
+                 writer = null;
++                nfoWritten = true;
+                 exportImage(tag.getDefaultPoster(), parent, videoName + NfoParser.POSTER_EXTENSION);
+                 exportImage(tag.getDefaultBackdrop(), parent, videoName + NfoParser.BACKDROP_EXTENSION);
+-            } finally {
+-                if (writer != null) {
++            }
++            finally
++            {
++                if (writer != null)
++                {
+                     // writer is only != null if writing nfo has thrown an exception
+                     // -> get rid of potentially semi-complete nfo files.
+-                    editor.delete();
+                     IOUtils.closeSilently(writer);
++                    editor.delete();
+                 }
+             }
+-        } catch (Exception e) {
++        }
++        catch (Exception e)
++        {
++            CheckedExport state = CHECKED.get();
++            if (state != null && !nfoWritten)
++                state.failed = true;
+             log.error("exportInternal: caught exception for uri {}", exportTarget, e);
+         }
+     }
+ 
+-    private static void exportInternal(Uri video, EpisodeTags tag) throws IOException {
++    private static void exportInternal(Uri video, EpisodeTags tag) throws IOException
++    {
+         String videoName = FileUtils.getFileNameWithoutExtension(video);
+         Uri parent = FileUtils.getParentUrl(video);
+         // relocate uri for local files to writeable location to comply with API30
+-        Uri exportTarget =  relocateNfoAppPublicDirForNfoJpgFiles(FileUtils.buildChildUri(parent, videoName + NfoParser.CUSTOM_NFO_EXTENSION));
+-        if (log.isDebugEnabled()) log.debug("exportInternal: {} -> {}", video, exportTarget);
+-        try {
+-            FileEditor editor = FileEditorFactoryWithUpnp.getFileEditorForUrl(exportTarget,null);
+-            if (log.isTraceEnabled()) log.trace("exportInternal: {}", video);
+-            BufferedWriter  writer = new BufferedWriter(new OutputStreamWriter(
+-                    editor.getOutputStream(), StringUtils.CHARSET_UTF8));
++        Uri exportTarget = relocateNfoAppPublicDirForNfoJpgFiles(
++            FileUtils.buildChildUri(parent, videoName + NfoParser.CUSTOM_NFO_EXTENSION));
++        if (log.isDebugEnabled())
++            log.debug("exportInternal: {} -> {}", video, exportTarget);
++        boolean nfoWritten = false;
++        try
++        {
++            FileEditor editor = FileEditorFactoryWithUpnp.getFileEditorForUrl(exportTarget, null);
++            if (log.isTraceEnabled())
++                log.trace("exportInternal: {}", video);
++            BufferedWriter writer =
++                new BufferedWriter(new OutputStreamWriter(output(editor), StringUtils.CHARSET_UTF8));
+ 
+-            try {
++            try
++            {
+ 
+                 XmlSerializer serializer = initAndStartDocument(writer);
+                 writeXmlInner(serializer, tag);
+                 endDocument(serializer);
+                 writer.close();
+                 writer = null;
++                nfoWritten = true;
+                 String image = NfoParser.getCustomSeasonPosterName(tag.getShowTitle(), tag.getSeason());
+                 exportImage(tag.getDefaultPoster(), parent, image);
+-            } finally {
+-                if (writer != null) {
++            }
++            finally
++            {
++                if (writer != null)
++                {
+                     // writer is only != null if writing nfo has thrown an exception
+                     // -> get rid of potentially semi-complete nfo files.
+-                    editor.delete();
+                     IOUtils.closeSilently(writer);
++                    editor.delete();
+                 }
+             }
+-        } catch (Exception e) {
++        }
++        catch (Exception e)
++        {
++            CheckedExport state = CHECKED.get();
++            if (state != null && !nfoWritten)
++                state.failed = true;
+             log.error("exportInternal: caught exception for uri {}", exportTarget, e);
+         }
+-
+     }
+ 
+-    static void exportInternal(Uri video, ShowTags tag, ExportContext exportContext) throws IOException {
++    static void exportInternal(Uri video, ShowTags tag, ExportContext exportContext) throws IOException
++    {
+         String videoName = FileUtils.getFileNameWithoutExtension(video);
+         Uri parent = FileUtils.getParentUrl(video);
+         String showTitle = StringUtils.fileSystemEncode(tag.getTitle());
+         // relocate uri for local files to writeable location to comply with API30
+-        Uri exportTarget =  relocateNfoAppPublicDirForNfoJpgFiles(FileUtils.buildChildUri(parent, showTitle + NfoParser.CUSTOM_SHOW_NFO_EXTENSION));
++        Uri exportTarget = relocateNfoAppPublicDirForNfoJpgFiles(
++            FileUtils.buildChildUri(parent, showTitle + NfoParser.CUSTOM_SHOW_NFO_EXTENSION));
+         // a single show NFO is shared by every episode; skip if already exported in this context
+         String exportKey = exportTarget.toString();
+-        if (exportContext != null && exportContext.contains(exportKey)) {
+-            if (log.isTraceEnabled()) log.trace("exportInternal: show nfo already exported {}", exportKey);
++        if (exportContext != null && exportContext.contains(exportKey))
++        {
++            if (log.isTraceEnabled())
++                log.trace("exportInternal: show nfo already exported {}", exportKey);
+             return;
+         }
+-        if (log.isDebugEnabled()) log.debug("exportInternal: {} -> {}", video, exportTarget);
+-        try {
++        if (log.isDebugEnabled())
++            log.debug("exportInternal: {} -> {}", video, exportTarget);
++        boolean nfoWritten = false;
++        try
++        {
+             FileEditor editor = FileEditorFactoryWithUpnp.getFileEditorForUrl(exportTarget, null);
+-            BufferedWriter  writer = new BufferedWriter(new OutputStreamWriter(
+-                    editor.getOutputStream(), StringUtils.CHARSET_UTF8));
++            BufferedWriter writer =
++                new BufferedWriter(new OutputStreamWriter(output(editor), StringUtils.CHARSET_UTF8));
+ 
+-            try {
++            try
++            {
+ 
+                 XmlSerializer serializer = initAndStartDocument(writer);
+                 writeXmlInner(serializer, tag);
+                 endDocument(serializer);
+                 writer.close();
+                 writer = null;
+-                exportImage(tag.getDefaultPoster(), parent,  showTitle + NfoParser.POSTER_EXTENSION);
++                nfoWritten = true;
++                exportImage(tag.getDefaultPoster(), parent, showTitle + NfoParser.POSTER_EXTENSION);
+                 exportImage(tag.getDefaultBackdrop(), parent, showTitle + NfoParser.BACKDROP_EXTENSION);
+                 // Mark exported only after the show NFO itself was written successfully, so a
+                 // failed NFO write can be retried by a later episode. Dedup is keyed on the NFO:
+                 // image copies are best-effort (exportImage swallows failures) and are not retried.
+-                if (exportContext != null) exportContext.put(exportKey);
+-            } finally {
+-                if (writer != null) {
++                if (exportContext != null)
++                    exportContext.put(exportKey);
++            }
++            finally
++            {
++                if (writer != null)
++                {
+                     // writer is only != null if writing nfo has thrown an exception
+                     // -> get rid of potentially semi-complete nfo files.
+-                    editor.delete();
+                     IOUtils.closeSilently(writer);
++                    editor.delete();
+                 }
+             }
+-        } catch (Exception e) {
++        }
++        catch (Exception e)
++        {
++            CheckedExport state = CHECKED.get();
++            if (state != null && !nfoWritten)
++                state.failed = true;
+             log.error("exportInternal: caught exception for uri {}", exportTarget, e);
+         }
+-
+     }
+ 
+     // single worker so concurrent exports cannot write the same show NFO/poster at once
+     private static final ExecutorService EXPORT_EXECUTOR = Executors.newSingleThreadExecutor();
+ 
+-    static void enqueueExportTask(Runnable task) {
++    static void enqueueExportTask(Runnable task)
++    {
+         EXPORT_EXECUTOR.execute(task);
+     }
+ 
+-    public static void export(Uri video, BaseTags tag, ExportContext exportContext) throws IOException {
++    public static void export(Uri video, BaseTags tag, ExportContext exportContext) throws IOException
++    {
+         export(video, tag, exportContext, null);
+     }
+ 
+@@ -428,21 +558,35 @@ public class NfoWriter {
+      * The callback is useful for callers which report progress for the actual single-worker
+      * export queue rather than merely for the records they have dispatched to it.
+      */
+-    public static void export(Uri video, BaseTags tag, ExportContext exportContext, Runnable completion) throws IOException {
++    public static void export(Uri video, BaseTags tag, ExportContext exportContext, Runnable completion)
++        throws IOException
++    {
+         enqueueExportTask(() -> {
+-            try {
+-                if (tag instanceof MovieTags) {
+-                    exportInternal(video, (MovieTags)tag);
+-                } else if (tag instanceof EpisodeTags) {
+-                    EpisodeTags etag = (EpisodeTags) tag;
+-                    exportInternal(video, etag);
+-                    // checks if this showTags was already exported within this context
+-                    exportInternal(video, etag.getShowTags(), exportContext);
++            synchronized (WRITE_LOCK)
++            {
++                try
++                {
++                    if (tag instanceof MovieTags)
++                    {
++                        exportInternal(video, (MovieTags)tag);
++                    }
++                    else if (tag instanceof EpisodeTags)
++                    {
++                        EpisodeTags etag = (EpisodeTags)tag;
++                        exportInternal(video, etag);
++                        // checks if this showTags was already exported within this context
++                        exportInternal(video, etag.getShowTags(), exportContext);
++                    }
++                }
++                catch (IOException e)
++                {
++                    log.error("export: failed for {}", video, e);
++                }
++                finally
++                {
++                    if (completion != null)
++                        completion.run();
+                 }
+-            } catch (IOException e) {
+-                log.error("export: failed for {}", video, e);
+-            } finally {
+-                if (completion != null) completion.run();
+             }
+         });
+     }
+@@ -450,34 +594,47 @@ public class NfoWriter {
+     /** Blocks until every export queued before this call has finished. Call from a
+      *  background thread before a batch/scrape service reports completion or stops,
+      *  otherwise queued exports can be lost when the process is terminated. */
+-    public static void awaitPendingExports() {
+-        try {
++    public static void awaitPendingExports()
++    {
++        try
++        {
+             // the executor is single-threaded and FIFO, so once this barrier task runs
+             // all previously submitted exports have completed
+-            EXPORT_EXECUTOR.submit(() -> { }).get();
+-        } catch (InterruptedException e) {
++            EXPORT_EXECUTOR.submit(() -> {}).get();
++        }
++        catch (InterruptedException e)
++        {
+             Thread.currentThread().interrupt();
+-        } catch (ExecutionException e) {
++        }
++        catch (ExecutionException e)
++        {
+             log.error("awaitPendingExports: barrier task failed", e);
+         }
+     }
+ 
+-    private static void exportImage(ScraperImage image, Uri folder,
+-            String imageName) {
++    private static void exportImage(ScraperImage image, Uri folder, String imageName)
++    {
+ 
+         // relocate uri for local files to writeable location to comply with API30
+         Uri target = FileUtils.buildChildUri(relocateNfoAppPublicDir(folder), imageName);
+-        if (log.isDebugEnabled()) log.debug("exportImage: {} -> {}", folder, target);
+-        if (image != null) {
++        if (log.isDebugEnabled())
++            log.debug("exportImage: {} -> {}", folder, target);
++        if (image != null)
++        {
+             File file = image.getLargeFileF();
+             Uri from = Uri.parse(file.getAbsolutePath());
+             FileEditor editor = FileEditorFactoryWithUpnp.getFileEditorForUrl(from, null);
+-            if (from!=null && editor.exists()) {
+-                if (target != null) {
+-                    try {
++            if (from != null && editor.exists())
++            {
++                if (target != null)
++                {
++                    try
++                    {
+                         editor.copyFileTo(target, null);
+                         target = null;
+-                    } catch (Exception e) {
++                    }
++                    catch (Exception e)
++                    {
+                         // target will not be null > will be deleted
+                     }
+                 }
+@@ -485,7 +642,8 @@ public class NfoWriter {
+         }
+     }
+ 
+-    public static boolean isNfoAutoExportEnabled(Context context) {
++    public static boolean isNfoAutoExportEnabled(Context context)
++    {
+         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+         String prefKey = context.getString(R.string.nfo_export_auto_prefkey);
+         boolean prefDefault = context.getResources().getBoolean(R.bool.nfo_export_auto_default);
+diff --git a/test/java/com/archos/mediascraper/NfoExportCancellationTest.java b/test/java/com/archos/mediascraper/NfoExportCancellationTest.java
+new file mode 100644
+index 0000000..9b0e95c
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/NfoExportCancellationTest.java
+@@ -0,0 +1,34 @@
++package com.archos.mediascraper;
++
++import static org.junit.Assert.assertArrayEquals;
++import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
++
++import java.io.ByteArrayOutputStream;
++import java.io.IOException;
++import java.io.OutputStream;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.TimeUnit;
++import org.junit.Test;
++
++public class NfoExportCancellationTest
++{
++    @Test public void cancellationClosesOwnedOutputAndBlocksLaterWritesAndRegistration() throws Exception
++    {
++        NfoExportCancellation cancellation = new NfoExportCancellation();
++        CountDownLatch closed = new CountDownLatch(1);
++        ByteArrayOutputStream raw = new ByteArrayOutputStream() {
++            @Override public void close()
++            {
++                closed.countDown();
++            }
++        };
++        OutputStream output = cancellation.own(raw);
++        output.write(new byte[] {1, 2, 3});
++        cancellation.cancel();
++        assertTrue(closed.await(5, TimeUnit.SECONDS));
++        assertThrows(IOException.class, () -> output.write(4));
++        assertThrows(IOException.class, () -> cancellation.own(new ByteArrayOutputStream()));
++        assertArrayEquals(new byte[] {1, 2, 3}, raw.toByteArray());
++    }
++}
+diff --git a/test/java/com/archos/mediascraper/NfoExportJobTest.java b/test/java/com/archos/mediascraper/NfoExportJobTest.java
+new file mode 100644
+index 0000000..9ee8743
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/NfoExportJobTest.java
+@@ -0,0 +1,136 @@
++package com.archos.mediascraper;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++import static org.mockito.Mockito.verifyNoInteractions;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.nullable;
++import static org.mockito.Mockito.mockStatic;
++import android.content.Context;
++import android.content.ContentResolver;
++
++import android.app.Application;
++import android.database.MatrixCursor;
++import android.net.Uri;
++import java.util.List;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicInteger;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class) @Config(application = Application.class, sdk = 30) public class NfoExportJobTest
++{
++    private NfoExportJob.Target target(String path)
++    {
++        return new NfoExportJob.Target(1, Uri.parse(path), "Library title", 7, BaseTags.MOVIE, 45, 67, 89, 100);
++    }
++    @Test public void preflightIncludesUnmatchedVideosAndCountsPutioWithoutOpeningTransport() throws Exception
++    {
++        MatrixCursor rows = new MatrixCursor(NfoExportJob.PROJECTION);
++        rows.addRow(new Object[] {1, "/storage/drive/One.mkv", "One", 7, 1, 45, 67, 89, 100});
++        rows.addRow(new Object[] {2, "webdavs://webdav.put.io/Films/Two.mkv", "Two", 0, 0, 0, 0, 0, 0});
++        NfoExportJob.Plan plan = NfoExportJob.fromCursor(rows);
++        assertTrue(rows.isClosed());
++        assertEquals(2, plan.total);
++        assertEquals(1, plan.knownReadOnly);
++        assertThrows(java.io.IOException.class, () -> NfoExportJob.fromCursor(null));
++    }
++    @Test public void completedWritesReadOnlyAndFailuresHaveDistinctCounts() throws Exception
++    {
++        AtomicInteger writes = new AtomicInteger(), checked = new AtomicInteger();
++        NfoExportJob.Plan plan = new NfoExportJob.Plan(List.of(target("webdavs://webdav.put.io/Films/One.mkv"),
++                                                               target("file:///readonly.mkv"), target("file:///ok.mkv"),
++                                                               target("file:///failed.mkv")));
++        NfoExportJob.Job job = NfoExportJob.start(plan, new NfoExportJob.Backend() {
++            @Override public boolean readOnly(NfoExportJob.Target row)
++            {
++                checked.incrementAndGet();
++                return row.file().getPath().equals("/readonly.mkv");
++            }
++            @Override
++            public NfoExportProgress.Outcome write(NfoExportJob.Target row, NfoExportCancellation cancellation)
++            {
++                writes.incrementAndGet();
++                return row.file().getPath().equals("/failed.mkv") ? NfoExportProgress.Outcome.FAILED
++                                                                  : NfoExportProgress.Outcome.WRITTEN;
++            }
++        });
++        job.await();
++        NfoExportProgress.Snapshot value = NfoExportProgress.current();
++        assertTrue(value.finished);
++        assertFalse(value.cancelled);
++        assertEquals(4, value.done);
++        assertEquals(1, value.written);
++        assertEquals(2, value.skippedReadOnly);
++        assertEquals(1, value.failed);
++        assertEquals(2, writes.get());
++        assertEquals(3, checked.get());
++    }
++    @Test public void progressDoesNotCountAWriteBeforeCompletionAndCancelStopsBeforeTheNextFile() throws Exception
++    {
++        CountDownLatch entered = new CountDownLatch(1), release = new CountDownLatch(1);
++        AtomicInteger writes = new AtomicInteger();
++        NfoExportJob.Backend backend = new NfoExportJob.Backend() {
++            @Override public boolean readOnly(NfoExportJob.Target row)
++            {
++                return false;
++            }
++            @Override
++            public NfoExportProgress.Outcome write(NfoExportJob.Target row, NfoExportCancellation cancellation)
++                throws Exception
++            {
++                writes.incrementAndGet();
++                entered.countDown();
++                release.await(5, TimeUnit.SECONDS);
++                cancellation.check();
++                return NfoExportProgress.Outcome.WRITTEN;
++            }
++        };
++        NfoExportJob.Plan plan = new NfoExportJob.Plan(List.of(target("file:///one.mkv"), target("file:///two.mkv")));
++        NfoExportJob.Job job = NfoExportJob.start(plan, backend);
++        try
++        {
++            assertTrue(entered.await(5, TimeUnit.SECONDS));
++            assertEquals(0, NfoExportProgress.current().done);
++            assertThrows(IllegalStateException.class, () -> NfoExportJob.start(plan, backend));
++            job.cancel();
++        }
++        finally
++        {
++            release.countDown();
++            job.await();
++        }
++        assertTrue(NfoExportProgress.current().cancelled);
++        assertTrue(NfoExportProgress.current().finished);
++        assertEquals(0, NfoExportProgress.current().done);
++        assertEquals(1, writes.get());
++        NfoExportJob.Job next = NfoExportJob.start(new NfoExportJob.Plan(List.of()), backend);
++        next.await();
++        assertFalse(NfoExportProgress.current().cancelled);
++        assertTrue(NfoExportProgress.current().finished);
++    }
++    @Test public void deletedOrChangedPreflightIdentityFailsBeforeBuildingTagsOrWriting() throws Exception
++    {
++        Context context = mock(Context.class);
++        ContentResolver resolver = mock(ContentResolver.class);
++        when(context.getContentResolver()).thenReturn(resolver);
++        when(resolver.query(any(Uri.class), any(String[].class), any(String.class), any(String[].class),
++                            nullable(String.class)))
++            .thenReturn(new MatrixCursor(new String[] {"_id"}));
++        try (var writer = mockStatic(NfoWriter.class); var tags = mockStatic(TagsFactory.class))
++        {
++            NfoExportProgress.Outcome outcome =
++                new NfoExportJob.NativeBackend(context).write(target("file:///one.mkv"), new NfoExportCancellation());
++            assertEquals(NfoExportProgress.Outcome.FAILED, outcome);
++            writer.verifyNoInteractions();
++            tags.verifyNoInteractions();
++        }
++    }
++}
+diff --git a/test/java/com/archos/mediascraper/NfoExportServiceJobTest.java b/test/java/com/archos/mediascraper/NfoExportServiceJobTest.java
+new file mode 100644
+index 0000000..d1e3093
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/NfoExportServiceJobTest.java
+@@ -0,0 +1,36 @@
++package com.archos.mediascraper;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++
++import android.app.Application;
++import android.content.Context;
++import android.database.Cursor;
++import android.database.MatrixCursor;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.annotation.Config;
++import org.robolectric.util.ReflectionHelpers;
++import org.robolectric.util.ReflectionHelpers.ClassParameter;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class NfoExportServiceJobTest
++{
++    @Test public void legacyServiceRouteUsesCountedJobAndSkipsPutioWithoutMetadataOrNetwork() throws Exception
++    {
++        NfoExportService service = new NfoExportService();
++        ReflectionHelpers.callInstanceMethod(service, "attachBaseContext",
++                                             ClassParameter.from(Context.class, RuntimeEnvironment.getApplication()));
++        MatrixCursor cursor = new MatrixCursor(NfoExportJob.PROJECTION);
++        cursor.addRow(new Object[] {44, "webdavs://webdav.put.io/Films/One.mkv", "One", 0, 0, 0, 0, 0, 0});
++        ReflectionHelpers.callInstanceMethod(service, "handleCursor", ClassParameter.from(Cursor.class, cursor));
++        assertTrue(cursor.isClosed());
++        assertTrue(NfoExportProgress.current().finished);
++        assertEquals(1, NfoExportProgress.current().total);
++        assertEquals(1, NfoExportProgress.current().skippedReadOnly);
++        assertEquals(0, NfoExportProgress.current().failed);
++    }
++}
+diff --git a/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java b/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java
+new file mode 100644
+index 0000000..6ed357d
+--- /dev/null
++++ b/test/java/com/archos/mediascraper/NfoWriterOutcomeTest.java
+@@ -0,0 +1,140 @@
++package com.archos.mediascraper;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertTrue;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.mockStatic;
++import static org.mockito.Mockito.when;
++import com.archos.filecorelibrary.FileEditor;
++import com.archos.mediacenter.filecoreextension.upnp2.FileEditorFactoryWithUpnp;
++import java.io.OutputStream;
++import java.io.FileOutputStream;
++import java.io.IOException;
++import java.util.concurrent.CountDownLatch;
++import java.util.concurrent.FutureTask;
++import java.util.concurrent.TimeUnit;
++
++import android.app.Application;
++import android.net.Uri;
++import androidx.test.core.app.ApplicationProvider;
++import com.archos.filecorelibrary.FileUtilsQ;
++import java.io.File;
++import java.nio.file.Files;
++import org.junit.Before;
++import org.junit.Rule;
++import org.junit.Test;
++import org.junit.rules.TemporaryFolder;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 28)
++public class NfoWriterOutcomeTest
++{
++    @Rule public TemporaryFolder temporary = new TemporaryFolder();
++    @Before public void setup()
++    {
++        FileUtilsQ.getInstance(ApplicationProvider.getApplicationContext());
++    }
++    @Test public void successfulCheckedExportReportsWrittenOnlyAfterCompleteXmlIsClosed() throws Exception
++    {
++        File video = new File(temporary.getRoot(), "One.mkv");
++        MovieTags tags = new MovieTags();
++        tags.setTitle("Library title");
++        assertEquals(NfoExportProgress.Outcome.WRITTEN,
++                     NfoWriter.exportChecked(Uri.fromFile(video), tags, new NfoWriter.ExportContext(),
++                                             new NfoExportCancellation()));
++        String xml = Files.readString(new File(temporary.getRoot(), "One" + NfoParser.CUSTOM_NFO_EXTENSION).toPath());
++        assertTrue(xml.contains("<title>Library title</title>"));
++        assertTrue(xml.contains("</movie>"));
++    }
++    @Test public void swallowedLegacyWriteFailureIsStillAFailedCheckedJobAndMayRetry() throws Exception
++    {
++        File parent = temporary.newFile("not-a-directory");
++        File video = new File(parent, "One.mkv");
++        MovieTags tags = new MovieTags();
++        tags.setTitle("Library title");
++        NfoWriter.ExportContext context = new NfoWriter.ExportContext();
++        assertEquals(NfoExportProgress.Outcome.FAILED,
++                     NfoWriter.exportChecked(Uri.fromFile(video), tags, context, new NfoExportCancellation()));
++        assertTrue(parent.delete());
++        assertTrue(parent.mkdir());
++        assertEquals(NfoExportProgress.Outcome.WRITTEN,
++                     NfoWriter.exportChecked(Uri.fromFile(video), tags, context, new NfoExportCancellation()));
++    }
++    @Test public void cancelledJobNeverCreatesANfoFile() throws Exception
++    {
++        File video = new File(temporary.getRoot(), "One.mkv");
++        MovieTags tags = new MovieTags();
++        tags.setTitle("Library title");
++        NfoExportCancellation cancelled = new NfoExportCancellation();
++        cancelled.cancel();
++        assertEquals(NfoExportProgress.Outcome.CANCELLED,
++                     NfoWriter.exportChecked(Uri.fromFile(video), tags, new NfoWriter.ExportContext(), cancelled));
++        assertFalse(new File(temporary.getRoot(), "One" + NfoParser.CUSTOM_NFO_EXTENSION).exists());
++    }
++    @Test public void cancellingAnActiveWriteClosesOutputBeforeRemovingItsPartialFile() throws Exception
++    {
++        File video = new File(temporary.getRoot(), "One.mkv");
++        File target = new File(temporary.getRoot(), "One" + NfoParser.CUSTOM_NFO_EXTENSION);
++        CountDownLatch writing = new CountDownLatch(1), closed = new CountDownLatch(1);
++        NfoExportCancellation cancellation = new NfoExportCancellation();
++        MovieTags tags = new MovieTags();
++        tags.setTitle("Library title");
++        FutureTask<NfoExportProgress.Outcome> task = new FutureTask<>(() -> {
++            // Static mock is confined to the actual writer thread, just like the export-check context.
++            try (var factory = mockStatic(FileEditorFactoryWithUpnp.class))
++            {
++                FileOutputStream raw = new FileOutputStream(target);
++                OutputStream blocked = new OutputStream() {
++                    @Override public void write(int value) throws IOException
++                    {
++                        raw.write(value);
++                        writing.countDown();
++                        try
++                        {
++                            if (!closed.await(5, TimeUnit.SECONDS))
++                                throw new IOException("Fixture close timed out");
++                        }
++                        catch (InterruptedException interrupted)
++                        {
++                            Thread.currentThread().interrupt();
++                        }
++                        throw new IOException("Fixture write stopped");
++                    }
++                    @Override public void close() throws IOException
++                    {
++                        raw.close();
++                        closed.countDown();
++                    }
++                };
++                FileEditor editor = mock(FileEditor.class);
++                when(editor.getOutputStream()).thenReturn(blocked);
++                when(editor.delete()).thenAnswer(call -> {
++                    assertEquals(0, closed.getCount());
++                    return target.delete();
++                });
++                factory.when(() -> FileEditorFactoryWithUpnp.getFileEditorForUrl(Uri.fromFile(target), null))
++                    .thenReturn(editor);
++                return NfoWriter.exportChecked(Uri.fromFile(video), tags, new NfoWriter.ExportContext(), cancellation);
++            }
++        });
++        Thread worker = new Thread(task, "NfoWriteCancellationFixture");
++        worker.setDaemon(true);
++        worker.start();
++        try
++        {
++            assertTrue(writing.await(5, TimeUnit.SECONDS));
++            cancellation.cancel();
++            assertEquals(NfoExportProgress.Outcome.CANCELLED, task.get(5, TimeUnit.SECONDS));
++            assertFalse(target.exists());
++        }
++        finally
++        {
++            cancellation.cancel();
++            worker.join(5000);
++        }
++    }
++}
