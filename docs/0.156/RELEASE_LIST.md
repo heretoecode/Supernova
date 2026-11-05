@@ -23,6 +23,8 @@ owner gives the go-ahead. ✅ = approved, ◻ = approved in principle / still ne
 16. ✅ OMDb ratings not saved — keep a week per title (#34).
 17. ✅ Remove NOVA's blue "Press UP for the TV menu" first-play box (#38).
 18. ✅ Home rows / top bar: blur and lingering colour on Documentaries (#21).
+18a. ✅ Put.io playback: picture glitch and audio out of sync (or playback failing) after resuming from a pause of a few
+    minutes — reconnect and re-sync (diagnostics review 2, 5 Nov; Codex Part B 17a, Claude verifies on the Shield).
 
 ## Player
 19. ✅ HUD buttons, time bubble and seek bar (#8).
