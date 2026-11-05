@@ -262,4 +262,22 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - `set2-03`: a film's Details tab.
   - `set2-04`: a season's own page.
   - `set2-05`: a title with no file, where **Where to watch** replaces Technical information.
-- **Status:** waiting for the owner.
+- **Owner's decisions (5 Nov 2026):**
+  - **Tab order approved:**
+    - Series: Seasons & Episodes → Details → Extras → More Like This.
+    - Films: Details → Extras → More Like This.
+  - **Extras:** show every kind of video received (TMDB: trailers, teasers, clips, featurettes, behind the scenes,
+    bloopers, opening credits…), each as its own row in the same design. **Trailers always first.** Empty kinds
+    hidden.
+  - **Films:** the same Details design, **with Cast and Crew rows** as for series.
+  - **A title with no file** (e.g. on Netflix, from More Like This): the owner is minded to **open the service's
+    app** rather than a Supernova page, since the user already pays for that service.
+    - Claude: agreed. Use the title's own deep link where the service supports it; otherwise open the app.
+    - `set2-05` is dropped.
+  - **Resume:** show the progress somehow (today it just says Resume). Options in
+    `details-tabs/resume-options-a-b-c.png`, left to right:
+    - A: a line above the buttons.
+    - B: a line inside the button.
+    - C: the time in the label.
+- **Status:** waiting for the resume choice; `set2-01` (Extras), `set2-03` (film, adding Cast and Crew) and `set2-04`
+  (season page) still to confirm.
