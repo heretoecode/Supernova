@@ -41,6 +41,7 @@ import com.archos.filecorelibrary.MetaFile2;
 import com.archos.mediacenter.filecoreextension.upnp2.ListingEngineFactoryWithUpnp;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Episode;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
 import com.archos.mediacenter.video.leanback.PreviewDialog;
@@ -77,6 +78,9 @@ import java.util.concurrent.Executors;
  * It lists through the existing FileCore engine and never changes files on disk.
  */
 public final class LocalStorageView extends LinearLayout {
+    /** Eight poster cards per row, as in the approved grid (local-storage/30). */
+    static final int GRID_COLUMNS = 8;
+
     /** What the surrounding Network &amp; Files screen provides. */
     public interface Host {
         /** Library choices changed (saved when leaving, through the browser's existing review). */
@@ -525,7 +529,7 @@ public final class LocalStorageView extends LinearLayout {
             items.addAll(volumes);
         }
         boolean grid = current != null && prefs.getBoolean(GRID, false);
-        layout.setSpanCount(grid ? 4 : 1);
+        layout.setSpanCount(grid ? GRID_COLUMNS : 1);
         activePosition = -1;
         bindHeader();
         adapter.notifyDataSetChanged();
@@ -1245,29 +1249,55 @@ public final class LocalStorageView extends LinearLayout {
     }
 
     /** Poster-grid card (Grid view): artwork or icon, name underneath; OK as the row; menu for actions. */
+    /**
+     * Grid card (approved 0.156, mock-ups local-storage/27, 30): the film's poster when matched, otherwise the icon; a
+     * corner dot for the library state (in / excluded / not added); the single watched pill on the artwork; the title
+     * and one line under it with the year and library state.
+     */
     private final class Card extends LinearLayout {
+        final FrameLayout frame = new FrameLayout(getContext());
         final ImageView art = new ImageView(getContext());
+        final ImageView dot = new ImageView(getContext());
+        final TextView pill;
         final TextView name;
+        final TextView line;
         Object item;
 
         Card(Context c) {
             super(c);
             setOrientation(VERTICAL);
-            setGravity(Gravity.CENTER_HORIZONTAL);
             setFocusable(true);
             setFocusableInTouchMode(true);
             setBackground(SupernovaStyle.rowWithActions(c));
-            setPadding(dp(8), dp(8), dp(8), dp(8));
-            setLayoutParams(new RecyclerView.LayoutParams(-1, dp(118)));
-            art.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            addView(art, new LayoutParams(dp(40), dp(56)));
+            setPadding(dp(6), dp(6), dp(6), dp(6));
+            setLayoutParams(new RecyclerView.LayoutParams(-1, dp(190)));
+            android.graphics.drawable.GradientDrawable box = new android.graphics.drawable.GradientDrawable();
+            box.setColor(0xFF22262D);
+            box.setCornerRadius(dp(6));
+            frame.setBackground(box);
+            frame.setClipToOutline(true);
+            art.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            frame.addView(art, new FrameLayout.LayoutParams(-1, -1));
+            FrameLayout.LayoutParams dotSize =
+                new FrameLayout.LayoutParams(dp(12), dp(12), Gravity.TOP | Gravity.START);
+            dotSize.setMargins(dp(6), dp(6), 0, 0);
+            frame.addView(dot, dotSize);
+            pill = text("", 9, SupernovaStyle.TEXT);
+            pill.setPadding(dp(6), dp(2), dp(6), dp(2));
+            FrameLayout.LayoutParams pillSize = new FrameLayout.LayoutParams(-2, -2, Gravity.TOP | Gravity.END);
+            pillSize.setMargins(0, dp(5), dp(5), 0);
+            frame.addView(pill, pillSize);
+            addView(frame, new LayoutParams(-1, 0, 1));
             name = text("", 11, SupernovaStyle.TEXT);
-            name.setGravity(Gravity.CENTER);
-            name.setMaxLines(2);
+            name.setSingleLine(true);
             name.setEllipsize(TextUtils.TruncateAt.END);
             LayoutParams nameSize = new LayoutParams(-1, -2);
-            nameSize.topMargin = dp(8);
+            nameSize.topMargin = dp(6);
             addView(name, nameSize);
+            line = text("", 9, SupernovaStyle.TEXT_SECONDARY);
+            line.setSingleLine(true);
+            line.setEllipsize(TextUtils.TruncateAt.END);
+            addView(line, new LayoutParams(-1, -2));
             setOnClickListener(v -> primary(item));
             setOnLongClickListener(v -> {
                 menu(item);
@@ -1286,14 +1316,79 @@ public final class LocalStorageView extends LinearLayout {
             item = value;
             setTag(identity(value));
             MetaFile2 file = (MetaFile2)value;
-            art.setImageDrawable(new PreviewIcon(file.isDirectory() ? "folder" : "video-file"));
-            art.setColorFilter(SupernovaStyle.TEXT);
             Video video = indexed.get(LibraryFileLookup.key(file.getUri()));
+            String state = libraryState(file.getUri());
             String label = file.isDirectory() ? file.getName() : withoutExtension(file.getName());
             if (video != null && video.hasScraperData())
                 label = matchedTitle(video);
             name.setText(label);
-            setAlpha(libraryState(file.getUri()).equals("excluded") ? .55f : 1f);
+            com.squareup.picasso.Picasso.get().cancelRequest(art);
+            art.clearColorFilter();
+            Uri poster = video == null || file.isDirectory() ? null : video.getPosterUri();
+            if (poster != null) {
+                art.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                com.squareup.picasso.Picasso.get().load(poster).fit().centerCrop().into(art);
+            } else {
+                art.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                art.setImageDrawable(new PreviewIcon(file.isDirectory() ? "folder" : "video-file"));
+                art.setColorFilter(SupernovaStyle.TEXT);
+            }
+            boolean videoFile = !file.isDirectory();
+            dot.setVisibility(videoFile ? VISIBLE : GONE);
+            dot.setImageDrawable(new StateDot(state));
+            bindWatched(pill, video, videoFile);
+            String where = state.equals("included") ? "In library" : state.equals("excluded") ? "Excluded"
+                                                                                                  : "Not added";
+            int year = video instanceof Movie ? ((Movie)video).getYear() : 0;
+            line.setText(!videoFile ? "Folder" : year > 0 ? year + " · " + where : where);
+            setAlpha(state.equals("excluded") ? .55f : 1f);
+        }
+    }
+
+    /** The corner dot: green when in the library, a crossed circle when excluded, a ring when not added. */
+    static final class StateDot extends Drawable {
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final String state;
+
+        StateDot(String state) {
+            this.state = state;
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            android.graphics.Rect b = getBounds();
+            float r = Math.min(b.width(), b.height()) / 2f;
+            float cx = b.exactCenterX();
+            float cy = b.exactCenterY();
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(0xCC111317);
+            canvas.drawCircle(cx, cy, r, paint);
+            if (state.equals("included")) {
+                paint.setColor(0xFF4CC38A);
+                canvas.drawCircle(cx, cy, r * .55f, paint);
+                return;
+            }
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(Math.max(1f, r * .18f));
+            paint.setColor(0xFFC9D3E6);
+            canvas.drawCircle(cx, cy, r * .55f, paint);
+            if (state.equals("excluded"))
+                canvas.drawLine(cx - r * .38f, cy - r * .38f, cx + r * .38f, cy + r * .38f, paint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            paint.setAlpha(alpha);
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter filter) {
+            paint.setColorFilter(filter);
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
         }
     }
 
@@ -1330,6 +1425,16 @@ public final class LocalStorageView extends LinearLayout {
                 result.add(new Action("info", "Details", () -> getContext().startActivity(
                     new Intent(getContext(), VideoDetailsActivity.class).putExtra(VideoDetailsFragment.EXTRA_VIDEO,
                                                                                    video))));
+            if (video != null && video.isWatched())
+                result.add(new Action("unwatched", "Mark as unwatched", () -> {
+                    com.archos.mediacenter.video.utils.DbUtils.markAsNotRead(getContext(), video);
+                    refreshAfterWatchedChange();
+                }));
+            else if (video != null)
+                result.add(new Action("watched", "Mark as watched", () -> {
+                    com.archos.mediacenter.video.utils.DbUtils.markAsRead(getContext(), video);
+                    refreshAfterWatchedChange();
+                }));
         }
         String library = libraryState(uri);
         boolean root = selection.roots.contains(BrowserSelection.canonical(uri));
@@ -1344,6 +1449,14 @@ public final class LocalStorageView extends LinearLayout {
         if (file.isDirectory())
             result.add(new Action("save", "Save", () -> PreviewFolderActions.save(getContext(), uri, file.getName())));
         return result;
+    }
+
+    /** Look the folder up again once the database has the change, so the pill and line follow it. */
+    private void refreshAfterWatchedChange() {
+        Uri target = current;
+        int token = generation;
+        if (target != null)
+            postDelayed(() -> worker.execute(() -> lookUp(target, token)), 400);
     }
 
     /** OK on a row: open the folder or drive; play the video (resuming where you stopped). */
