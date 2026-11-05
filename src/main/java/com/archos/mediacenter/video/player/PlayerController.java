@@ -975,7 +975,10 @@ public class PlayerController implements View.OnTouchListener, OnGenericMotionLi
     private void updatePauseButton() {
         if (mSeekState == null || mPauseButton == null || mFormatButton == null)
             return;
-        if (Player.sPlayer.isBusy()) {
+        // NOVA's small spinner sits below the transport row in Supernova's HUD, so it showed half off the bottom
+        // of the screen (owner photos, 5 Nov 2026) and, now the bar grows for Chapters · Episodes, it would push the
+        // controls up while seeking. It stays hidden there until the approved replacement is built.
+        if (Player.sPlayer.isBusy() && !experimentalUi()) {
             mSeekState.setVisibility(View.VISIBLE);
         } else {
             mSeekState.setVisibility(View.GONE);
