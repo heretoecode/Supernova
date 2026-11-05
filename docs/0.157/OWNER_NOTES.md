@@ -188,7 +188,13 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
   - Rule: **Space Black behind every full page; content sits straight on it;** charcoal glass only for side panels
     and pop-ups.
 
-**Status:** round 12 (`details-tabs/v12-01`) sent: on the real Space Black artwork, with Reception separators. Planned for 0.157 (0.156 is not held up). Related parked
+**Status:** round 12 (`details-tabs/v12-01`) sent: on the real Space Black artwork, with Reception separators.
+
+**Owner on round 12 (5 Nov 2026):** the separators are barely visible on the black (only near the lighter top);
+make all of them clearly visible.
+
+**Status:** round 13 (`details-tabs/v13-01`): row separators at 24% white, column dividers at 32%, same 1 px
+thickness. Becomes the rule for separators on Space Black. Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
 
 ## 2. Details hero card: put the description in the hero (owner idea, 5 Nov 2026)
