@@ -1,3 +1,8 @@
+# 0.156 screen data — item 3 ready (5 Nov 2026)
+
+Item 3 ready at `ff80eaac2` on `codex/0155-code-2026-11-04`. 27 component regressions pass. Items 4–7 continue; register the schedule patch after history.
+See `reports/2026-11-05-0156-screen-data.md` and `findings/0156-ui-hooks.md`.
+
 # 0.156 screen data — item 2 ready (5 Nov 2026)
 
 Item 2 ready at `d59573789` on `codex/0155-code-2026-11-04`. 24 component regressions pass. Items 3–7 continue; register the new history patch after the scan patch.
