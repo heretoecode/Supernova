@@ -501,3 +501,5 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
     "No extras found" / "Nothing similar found". Matches the global rule: missing things say so, rows are never
     removed.
   - Optional: what has been fetched before is kept, so going back to a title shows its tabs filled straight away.
+- **APPROVED for 0.157 (owner, 5 Nov 2026):** go with the recommendation (all tabs drawn with the page, content
+  fills in, "Loading…" then a "none found" line). Tab titles must never pop in: "avoid that at all costs".

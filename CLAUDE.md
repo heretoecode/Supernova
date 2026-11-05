@@ -38,6 +38,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   `tools/test_code_layout.py` enforces it; `docs/codex/REFORMAT_QUEUE.txt` lists old files still to reformat (their
   counts may only go down).
 - No pull requests unless the owner asks.
+- **Everything new the owner raises (features, bugs, anything) goes into 0.157.** 0.156 is fixed at its 45
+  approved items (owner, 5 Nov 2026).
 - **Global look (owner, 5 Nov 2026):**
   - Full pages sit on the Space Black artwork, with content straight on it.
   - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
