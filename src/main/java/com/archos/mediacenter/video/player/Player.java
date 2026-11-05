@@ -1131,14 +1131,13 @@ public class Player implements IPlayerControl,
         subtitlePresentation.set(owner, suppressed);
         if (isInPlaybackState() && mVideoMetadata != null)
         {
-            mMediaPlayer.setSubtitleTrack(subtitlePresentation.track(mResumeCtx.mSubtitleTrack,
-                mVideoMetadata.getSubtitleTrackNb()));
+            mMediaPlayer.setSubtitleTrack(subtitlePresentation.track(mResumeCtx.mSubtitleTrack, -1));
         }
     }
 
     private int presentedSubtitleTrack(int selected)
     {
-        return mVideoMetadata == null ? selected : subtitlePresentation.track(selected, mVideoMetadata.getSubtitleTrackNb());
+        return mVideoMetadata == null ? selected : subtitlePresentation.track(selected, -1);
     }
 
     @Override

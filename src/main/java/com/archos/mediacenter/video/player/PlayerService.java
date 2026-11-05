@@ -2778,6 +2778,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (mVideoInfo.audioTrack == -1)
             mVideoInfo.audioTrack = newAudioTrack;
 
+        if (mVideoInfo.isShow && mVideoInfo.scraperShowId != null)
+        {
+            int seriesTrack = new SeriesTrackChoices(this).matchingTrack(mVideoInfo.scraperShowId, true, vMetadata);
+            if (seriesTrack >= 0) mVideoInfo.audioTrack = seriesTrack;
+        }
         mNewAudioTrack = mVideoInfo.audioTrack; // this trigs the change in player
 
         if (mVideoInfo.audioTrack != newAudioTrack && !mPlayer.setAudioTrack(mVideoInfo.audioTrack))
@@ -3124,6 +3129,11 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                     if (log.isDebugEnabled())
                         log.debug("onSubtitleMetadataUpdated: none track or invalid selected, clearing language");
                 }
+            }
+            if (!mIsPreparingSubs && mVideoInfo.isShow && mVideoInfo.scraperShowId != null)
+            {
+                int seriesTrack = new SeriesTrackChoices(this).matchingTrack(mVideoInfo.scraperShowId, false, vMetadata);
+                if (seriesTrack >= 0) mVideoInfo.subtitleTrack = seriesTrack;
             }
             // application logic
             // mVideoInfo.subtitleTrack is the track number without the none track 0<=mVideoInfo.subtitleTrack<=nbTrack, nbTrack is the noneTrack position

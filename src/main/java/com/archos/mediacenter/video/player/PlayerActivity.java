@@ -5000,6 +5000,34 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
+    public boolean seriesTrackChoicesEnabled()
+    {
+        return mVideoInfo != null && mVideoInfo.isShow && mVideoInfo.scraperShowId != null
+            && new SeriesTrackChoices(this).enabled(mVideoInfo.scraperShowId);
+    }
+
+    public void setSeriesTrackChoicesEnabled(boolean enabled)
+    {
+        if (mVideoInfo != null && mVideoInfo.isShow && mVideoInfo.scraperShowId != null)
+        {
+            SeriesTrackChoices choices = new SeriesTrackChoices(this);
+            choices.setEnabled(mVideoInfo.scraperShowId, enabled);
+            if (enabled) rememberSeriesTracks();
+        }
+    }
+
+    private void rememberSeriesTracks()
+    {
+        if (mVideoInfo == null || !mVideoInfo.isShow || mVideoInfo.scraperShowId == null || mPlayer == null) return;
+        VideoMetadata metadata = mPlayer.getVideoMetadata();
+        if (metadata == null) return;
+        SeriesTrackChoices choices = new SeriesTrackChoices(this);
+        choices.remember(mVideoInfo.scraperShowId, true,
+            SeriesTrackChoices.describe(metadata, true, mVideoInfo.audioTrack));
+        choices.remember(mVideoInfo.scraperShowId, false,
+            SeriesTrackChoices.describe(metadata, false, mVideoInfo.subtitleTrack));
+    }
+
     /* TrackInfoAdapter.OnTrackInfoListener */
     @Override
     public boolean onTrackSelected(TrackInfoController trackInfoController, int position, CharSequence name,
@@ -5089,6 +5117,7 @@ public class PlayerActivity extends AppCompatActivity
         }
         if (ret)
             supersedeRestoredTitleChoice();
+        if (ret) rememberSeriesTracks();
         return ret;
     }
 
