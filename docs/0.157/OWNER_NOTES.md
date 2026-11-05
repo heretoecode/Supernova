@@ -83,5 +83,22 @@ the four tabs (Details, Extras, Seasons & Episodes, More Like This).
   - If nothing passes, show a calm empty message.
 - The data side is Codex's (non-visual); Claude does the rows.
 
-**Status:** round 3 mock-ups `details-tabs/v3-01`–`v3-04` sent 5 Nov 2026; waiting for the owner. Planned for 0.157 (0.156 is not held up). Related parked
+**Owner's comments on round 3 (5 Nov 2026)**
+- **Remove the synopsis** under the episode row.
+- Details: that is the data wanted. Claude is free to redesign and rearrange it (e.g. description and reception
+  first, crew last).
+- More Like This: **two rows (In your library / On your services) approved.**
+  - Today a play icon (local) or the service's icon (online) sits in the centre of the thumbnail. With the rows
+    separated, still highlight the service, more strongly than the "N"/"prime" tags in round 3.
+  - Use the **same service icons as the Where to Watch service list** (`res/drawable/provider_*.xml`).
+- **Monochrome or colour service logos: undecided; revisit.** Colour is fine if there is a unifying design across
+  them all (earlier concern: pops of colour look distracting).
+- More Like This sources **approved: all three** (TMDB recommendations, TMDB similar, Trakt related) — "the more
+  recommendations the better".
+
+**Status:** round 4 mock-ups `details-tabs/v4-01`–`v4-04` sent 5 Nov 2026:
+- Episodes without the synopsis.
+- Details rearranged: description and reception first, key information as a grid, then cast, crew and technical.
+- More Like This with the app's own service logos in one uniform dark chip, monochrome (`v4-03`) and full colour
+  (`v4-04`). Planned for 0.157 (0.156 is not held up). Related parked
 item: library statistics colouring (GitHub #100), to be discussed together with this page (#99).
