@@ -60,7 +60,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private final View normalMiddle, normalHelp;
     private final LinearLayout rail;
     private final List<TextView> navigation = new ArrayList<>();
-    private final Map<String, Integer> selections = new HashMap<>();
+    private Map<String, Integer> selections = new HashMap<>();
     private final Set<String> expanded = new HashSet<>();
     private final List<TextView> rows = new ArrayList<>();
     private final List<Runnable> rowSelections = new ArrayList<>();
@@ -275,6 +275,12 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             navigation.get(0).requestFocus();
         else if (selectedNavigation != null)
             selectedNavigation.requestFocus();
+    }
+
+    /** Keeps each About tab's selected entry across rebuilds (focus audit F14); the owner keeps the map. */
+    public void useSelections(Map<String, Integer> kept) {
+        if (kept != null)
+            selections = kept;
     }
 
     public void openSection(int index) {
@@ -501,8 +507,8 @@ public final class FoundationAboutWorkspace extends LinearLayout {
 
     private void releaseRow(JSONObject entry, boolean current) throws Exception {
         String version = current ? BuildConfig.VERSION_NAME : entry.getString("version");
-        String label =
-            version + " · " + (current ? "Foundation · current" : entry.optString("kind", "Development build"));
+        String kind = entry.optString("kind", current ? "In development" : "Development build");
+        String label = version + " · " + kind;
         String date = current ? BuildConfig.PREVIEW_BUILD_UTC : entry.optString("date", "Date unavailable");
         String notes = notes(entry.optJSONArray("notes"));
         String details = notes
@@ -636,6 +642,43 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                     -> showDetails(entry.optString("name"), entry.optString("text"), entry.optString("url"),
                         entry.optString("logo")),
                 null);
+        }
+        }
+        everyComponent();
+    }
+
+    /** 0.156: every service and every open-source component in the APK (Codex's checked catalogue). */
+    private void everyComponent() {
+        java.util.List<com.archos.mediacenter.video.about.AboutCredits.Entry> all;
+        try {
+            all = com.archos.mediacenter.video.about.AboutCredits.load(getContext());
+        } catch (IOException unreadable) {
+            return;
+        }
+        creditGroup("Services Supernova uses", all, true);
+        creditGroup("Open-source software", all, false);
+    }
+
+    private void creditGroup(String title, java.util.List<com.archos.mediacenter.video.about.AboutCredits.Entry> all,
+                             boolean services) {
+        int count = 0;
+        for (com.archos.mediacenter.video.about.AboutCredits.Entry entry : all)
+            if (entry.service == services)
+                count++;
+        if (count == 0)
+            return;
+        TextView heading = text(title + " · " + count, 15);
+        heading.setPadding(dp(10), dp(14), 0, dp(4));
+        heading.setFocusable(false);
+        catalogueBody.addView(heading);
+        for (com.archos.mediacenter.video.about.AboutCredits.Entry entry : all) {
+            if (entry.service != services)
+                continue;
+            String line = entry.version + " · " + entry.licence;
+            String body = entry.role + "\n\nVersion: " + entry.version + "\nLicence: " + entry.licence
+                + (entry.textAsset.isEmpty() ? "" : "\n\nThe full licence text is in Open-source Licences.");
+            TextView credit = row(entry.name + "\n" + line, () -> showDetails(entry.name, body, entry.url, null), null);
+            credit.setTag("about.credit." + entry.id);
         }
     }
 

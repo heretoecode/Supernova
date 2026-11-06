@@ -179,10 +179,12 @@ public final class BackupSettingsController {
         exportChoices = BackupWorkspace.exportChoices(fragment.requireContext());
         exportAction = landingAction("Back up now", "backup.action.export",
             ()
-                -> create(exportChoices.selection()),
+                -> create(BackupPresets.selection(androidx.preference.PreferenceManager.getDefaultSharedPreferences(
+                    fragment.requireContext()))),
             "Choose the configuration categories to export, then save a verified ZIP using Android Files. Media, artwork and credentials are excluded. Filenames and locations are Off by default. Backups are unencrypted.");
         restoreAction = landingAction("Restore from a backup", "backup.action.restore", this::chooseRestore,
             "Choose a backup ZIP using Android Files. Review the available categories and confirm replacement before any settings change. Unselected categories remain unchanged. Reconnect sources, accounts and Android permissions separately.");
+        presetRow();
         for (BackupCategory category : BackupCategory.ordered()) {
             TextView option = exportChoices.directOption(category, focused -> {
                 selectedAction = landingControls.stream()
@@ -196,6 +198,7 @@ public final class BackupSettingsController {
             landingControls.add(option);
             SharedThreePanel.divider(landing);
         }
+        bindPreset();
         landingAction("What's in a backup", "backup.details",
             () -> showInformation(false), "Read the backup contents, exclusions, privacy and replacement policy.");
         landingAction("How restore works", "backup.instructions",
@@ -225,6 +228,115 @@ public final class BackupSettingsController {
                 dismissOperation();
             }
         });
+    }
+
+    // ---- What to include: Everything · Settings only · Custom (approved 0.156, mock-up settings/21) -------------
+
+    private static final BackupSelection.Preset[] PRESETS = {
+        BackupSelection.Preset.EVERYTHING, BackupSelection.Preset.SETTINGS_ONLY, BackupSelection.Preset.CUSTOM
+    };
+    private static final String[] PRESET_NAMES = {"Everything", "Settings only", "Custom"};
+    private static final String[] PRESET_LINES = {
+        "Everything except private items. Choose Custom to add those.",
+        "Only your settings: no viewing history, positions or library choices.",
+        "Choose each part yourself below."
+    };
+    private LinearLayout presetRow;
+    private TextView presetTitle;
+    private TextView presetValue;
+
+    private android.content.SharedPreferences backupPrefs() {
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(fragment.requireContext());
+    }
+
+    private void presetRow() {
+        presetRow = new LinearLayout(fragment.requireContext());
+        presetRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        presetRow.setTag("backup.preset");
+        presetRow.setFocusable(true);
+        presetRow.setFocusableInTouchMode(true);
+        presetRow.setBackground(SharedThreePanel.accentFocus(fragment.requireContext()));
+        presetRow.setPadding(dp(12), dp(12), dp(12), dp(12));
+        presetRow.setMinimumHeight(dp(54));
+        presetTitle = SharedThreePanel.text(fragment.requireContext(), "", 17);
+        presetRow.addView(presetTitle, new LinearLayout.LayoutParams(0, -2, 1));
+        presetValue = SharedThreePanel.text(fragment.requireContext(), "", 15);
+        presetValue.setTag("backup.preset.value");
+        presetRow.addView(presetValue, new LinearLayout.LayoutParams(-2, -2));
+        presetRow.setOnClickListener(v -> stepPreset(1));
+        presetRow.setOnFocusChangeListener((v, yes) -> {
+            if (yes) {
+                selectedAction = presetRow;
+                description.setText("What to include\n\nEverything, Settings only, or Custom to choose each part. "
+                    + "Private items (file names and locations) are only ever included by Custom.");
+                ((ScrollView) help).scrollTo(0, 0);
+            }
+        });
+        presetRow.setOnKeyListener((v, key, event) -> {
+            if (event.getAction() != KeyEvent.ACTION_DOWN)
+                return false;
+            int index = presetIndex();
+            if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (index == 0)
+                    sidebar();
+                else
+                    stepPreset(-1);
+                return true;
+            }
+            if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if (index < PRESETS.length - 1)
+                    stepPreset(1);
+                return true;
+            }
+            if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                moveLanding(key);
+                return true;
+            }
+            return false;
+        });
+        landing.addView(presetRow, new LinearLayout.LayoutParams(-1, -2));
+        landingControls.add(presetRow);
+        SharedThreePanel.divider(landing);
+    }
+
+    private int presetIndex() {
+        BackupSelection.Preset current = BackupPresets.current(backupPrefs());
+        for (int i = 0; i < PRESETS.length; i++)
+            if (PRESETS[i] == current)
+                return i;
+        return 0;
+    }
+
+    private void stepPreset(int direction) {
+        int next = Math.floorMod(presetIndex() + direction, PRESETS.length);
+        try {
+            BackupPresets.select(backupPrefs(), PRESETS[next]);
+        } catch (IllegalStateException notSaved) {
+            notice("Not saved", "The choice could not be saved. Try again.");
+            return;
+        }
+        bindPreset();
+    }
+
+    /** Shows the choice and, for Custom only, the parts to tick. */
+    private void bindPreset() {
+        if (presetRow == null)
+            return;
+        int index = presetIndex();
+        present(presetTitle, "What to include", PRESET_LINES[index]);
+        presetTitle.setPadding(0, 0, 0, 0);
+        presetTitle.setMinHeight(0);
+        StringBuilder value = new StringBuilder();
+        for (int i = 0; i < PRESET_NAMES.length; i++)
+            value.append(i == index ? "[ " + PRESET_NAMES[i] + " ]" : PRESET_NAMES[i]).append(i < 2 ? "   " : "");
+        presetValue.setText(value);
+        presetRow.setContentDescription("What to include, " + PRESET_NAMES[index] + ". " + PRESET_LINES[index]);
+        boolean custom = PRESETS[index] == BackupSelection.Preset.CUSTOM;
+        for (BackupCategory category : BackupCategory.ordered()) {
+            View row = landing.findViewWithTag("backup.category." + category.name());
+            if (row != null)
+                row.setVisibility(custom ? View.VISIBLE : View.GONE);
+        }
     }
 
     private TextView landingAction(String label, String tag, Runnable action, String explanation) {
@@ -479,9 +591,15 @@ public final class BackupSettingsController {
     private void moveLanding(int key) {
         View current = landing.findFocus();
         int index = landingControls.indexOf(current);
-        int next =
-            Math.max(0, Math.min(landingControls.size() - 1, index + (key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1)));
-        landingControls.get(next).requestFocus();
+        int step = key == KeyEvent.KEYCODE_DPAD_UP ? -1 : 1;
+        // Parts are hidden unless Custom is chosen: skip what is not on screen.
+        for (int next = index + step; next >= 0 && next < landingControls.size(); next += step) {
+            View candidate = landingControls.get(next);
+            if (candidate.getVisibility() == View.VISIBLE) {
+                candidate.requestFocus();
+                return;
+            }
+        }
     }
 
     public void enter() {

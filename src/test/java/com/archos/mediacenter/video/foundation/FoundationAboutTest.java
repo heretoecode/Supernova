@@ -71,6 +71,58 @@ public class FoundationAboutTest {
     }
 
     @Test
+    public void aRebuiltAboutKeepsEachTabsSelectedEntry() {
+        FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
+        Prefs prefs = new Prefs();
+        activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
+        LinearLayout split = new LinearLayout(activity);
+        LinearLayout rail = new LinearLayout(activity);
+        LinearLayout middle = new LinearLayout(activity);
+        LinearLayout help = new LinearLayout(activity);
+        split.addView(rail);
+        split.addView(middle);
+        split.addView(help);
+        activity.setContentView(split);
+        TextView about = new TextView(activity);
+        about.setText("About");
+        about.setFocusable(true);
+        rail.addView(about);
+        java.util.Map<String, Integer> kept = new java.util.HashMap<>();
+        kept.put(FoundationAboutWorkspace.SECTIONS[0], 1);
+        FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(prefs, split, middle, help, rail);
+        workspace.useSelections(kept);
+        workspace.show(about);
+        workspace.openSection(0);
+        assertEquals(1, (int) org.robolectric.util.ReflectionHelpers.getField(workspace, "selectedIndex"));
+    }
+
+    @Test
+    public void creditsListEveryServiceAndComponentFromTheCheckedCatalogue() {
+        FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
+        Prefs prefs = new Prefs();
+        activity.getSupportFragmentManager().beginTransaction().add(prefs, "test").commitNow();
+        LinearLayout split = new LinearLayout(activity);
+        LinearLayout rail = new LinearLayout(activity);
+        LinearLayout middle = new LinearLayout(activity);
+        LinearLayout help = new LinearLayout(activity);
+        split.addView(rail);
+        split.addView(middle);
+        split.addView(help);
+        activity.setContentView(split);
+        TextView about = new TextView(activity);
+        about.setText("About");
+        about.setFocusable(true);
+        rail.addView(about);
+        FoundationAboutWorkspace workspace = new FoundationAboutWorkspace(prefs, split, middle, help, rail);
+        workspace.show(about);
+        workspace.openSection(2);
+        assertNotNull(split.findViewWithTag("about.credit.service:TMDB"));
+        assertNotNull(split.findViewWithTag("about.credit.service:OpenSubtitles"));
+        TextView tmdb = split.findViewWithTag("about.credit.service:TMDB");
+        assertTrue(tmdb.getText().toString().startsWith("TMDB"));
+    }
+
+    @Test
     public void appInformationUsesActualVersionAndRequiredLineageWithoutUpdateButton() {
         FragmentActivity activity = Robolectric.buildActivity(FragmentActivity.class).setup().get();
         Prefs prefs = new Prefs();

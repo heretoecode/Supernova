@@ -3047,9 +3047,21 @@ public final class UniversalFileBrowser extends LinearLayout {
         return SharedThreePanel.dp(getContext(), value);
     }
 
+    /** Any row or button used in a section is where coming back from the top bar returns (focus audit F7). */
+    private final android.view.ViewTreeObserver.OnGlobalFocusChangeListener centreWatcher = (before, after) -> {
+        if (networkLayout == null || after == null || after == items)
+            return;
+        for (View at = after; at != null; at = at.getParent() instanceof View ? (View) at.getParent() : null)
+            if (at == items) {
+                centreAnchor = after;
+                return;
+            }
+    };
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        getViewTreeObserver().addOnGlobalFocusChangeListener(centreWatcher);
         readHistoricalRoots();
         scanHandler.post(scanRefresh);
         prefs.registerOnSharedPreferenceChangeListener(changes);
@@ -3059,6 +3071,7 @@ public final class UniversalFileBrowser extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
+        getViewTreeObserver().removeOnGlobalFocusChangeListener(centreWatcher);
         stopDiscovery();
         scanHandler.removeCallbacks(scanRefresh);
         prefs.unregisterOnSharedPreferenceChangeListener(changes);

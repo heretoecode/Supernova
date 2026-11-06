@@ -19,7 +19,13 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
+/** Runs with Robolectric so org.json is the real implementation, not Android's empty stand-in. */
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = 28, application = android.app.Application.class)
 public class AboutCreditsTest
 {
     private static JSONObject json(String path) throws Exception

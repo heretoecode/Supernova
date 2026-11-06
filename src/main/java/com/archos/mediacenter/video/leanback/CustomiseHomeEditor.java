@@ -34,6 +34,8 @@ final class CustomiseHomeEditor {
     private final Dialog dialog;
     private final LinearLayout screen, list, editor;
     private final List<View> bodies = new ArrayList<>(), eyes = new ArrayList<>();
+    /** The row you were on last time, so reopening Customise Home returns there (focus audit F17). */
+    static final String LAST_ROW = "supernova_customise_home_last_row";
     private final List<View> fields = new ArrayList<>();
     private Row selected, draft, moving;
     private List<Row> moveOriginal;
@@ -147,7 +149,10 @@ final class CustomiseHomeEditor {
             blur.setBlurBehindRadius(dp(8));
             window.setAttributes(blur);
         }
-        bodies.get(0).requestFocus();
+        String lastRowId = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(LAST_ROW, null);
+        View last = lastRowId == null ? null : list.findViewWithTag(lastRowId);
+        (last != null ? last : bodies.get(0)).requestFocus();
     }
 
     // Wide enough for a row's settings (name, the three-way Shows choice, sort and direction on one line).
@@ -237,8 +242,11 @@ final class CustomiseHomeEditor {
             grip.setBounds(0, 0, dp(17), dp(17));
             body.setCompoundDrawables(body.getCompoundDrawables()[0], null, grip, null);
             body.setOnFocusChangeListener((view, focused) -> {
-                if (focused)
+                if (focused) {
+                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(context).edit()
+                        .putString(LAST_ROW, row.id).apply();
                     select(row);
+                }
             });
             line.addView(body, new LinearLayout.LayoutParams(0, -2, 1));
             bodies.add(body);

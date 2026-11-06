@@ -198,6 +198,47 @@ public class LocalStorageViewTest {
     }
 
     @Test
+    public void aFileNotInTheLibraryOffersDetailsThatLooksItUpWithoutAddingIt() throws Exception {
+        File movies = new File(drive, "Movies");
+        assertTrue(movies.mkdirs());
+        Uri folder = seed(movies, "Arrival.2016.1080p.mkv");
+        view.open(folder);
+        settle();
+        View row = view.findViewWithTag(Uri.fromFile(new File(movies, "Arrival.2016.1080p.mkv")).toString());
+        assertTrue(row.requestFocus());
+        settle();
+        View details = row.findViewWithTag("local.row.action.details");
+        assertNotNull("a file outside the library still has Details", details);
+        details.performClick();
+        settle();
+        android.app.Dialog page = org.robolectric.shadows.ShadowDialog.getLatestDialog();
+        assertNotNull(page);
+        assertTrue(page.isShowing());
+        View title = page.getWindow().getDecorView().findViewWithTag("unlibrary.title");
+        assertNotNull(title);
+        assertNotNull(page.getWindow().getDecorView().findViewWithTag("unlibrary.action.library"));
+        assertEquals("opening Details adds nothing", 0, changes);
+        page.dismiss();
+    }
+
+    @Test
+    public void aReloadedRowGivesFocusBackToTheButtonYouUsed() throws Exception {
+        Uri folder = seed(drive, "Film.mkv");
+        view.open(folder);
+        settle();
+        View row = view.findViewWithTag(Uri.fromFile(new File(drive, "Film.mkv")).toString());
+        assertNotNull(row);
+        assertTrue(row.requestFocus());
+        settle();
+        View action = row.findViewWithTag("local.row.action.play");
+        assertTrue(action.requestFocus());
+        ReflectionHelpers.callInstanceMethod(view, "rememberFocus");
+        ReflectionHelpers.callInstanceMethod(view, "restoreFocus");
+        settle();
+        assertTrue(action.hasFocus());
+    }
+
+    @Test
     public void backGoesUpOneFolderThenToTheDrivesWithFocusOnWhereYouCameFrom() throws Exception {
         File movies = new File(drive, "Movies");
         assertTrue(movies.mkdirs());

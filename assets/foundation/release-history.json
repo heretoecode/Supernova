@@ -30,7 +30,20 @@
         "Styled (ASS/SSA) subtitles stay on screen in Fit width and zoom; subtitle box padding prepared for a future setting.",
         "No screen changes; arm64-only Shield build."
       ],
-      "documentation": "docs/0.155/"
+      "documentation": "docs/0.155/",
+      "source_sha": "483ad0926c12d2b493e8d51a410967badea02b4d",
+      "evidence": "docs/0.155/SIGNED_QA_EVIDENCE.json",
+      "archive_digest_verified": true,
+      "archive_sha256": "de0438c5f8c2ccb897b15dccce457f1c18ff06eba9582166197d397f59137f12",
+      "artifact_id": 13367287524,
+      "run_id": 41922310251,
+      "apks": [
+        {
+          "sha256": "f787266401ad77d885bd895dc3cd22452874b2a7affe176c5b7880956676719d",
+          "size": 37861014,
+          "filename": "Supernova_0.155.apk"
+        }
+      ]
     },
     {
       "version": "0.154",

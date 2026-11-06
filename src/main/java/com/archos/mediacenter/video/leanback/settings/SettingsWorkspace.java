@@ -31,6 +31,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
     private LinearLayout body, rail, right;
     private ScrollView rightScroll;
     private FoundationAboutWorkspace about;
+    private final java.util.Map<String, Integer> aboutSelections = new java.util.HashMap<>();
     private RecyclerView.Adapter<?> observed;
     private int category = -1, gridSelection;
     private String section = "";
@@ -409,6 +410,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             right.addView(host, new LayoutParams(-1, -1));
             about = new FoundationAboutWorkspace(getContext(), host, new View(getContext()), new View(getContext()),
                                                  shadowRail);
+            about.useSelections(aboutSelections);
             about.useSingleContent(() -> selectedRail().requestFocus());
             TextView parent = text("App information", 18);
             shadowRail.addView(parent);

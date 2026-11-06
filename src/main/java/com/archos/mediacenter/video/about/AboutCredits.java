@@ -53,7 +53,7 @@ public final class AboutCredits
     {
         try
         {
-            JSONObject document = new JSONObject(new String(input.readAllBytes(), StandardCharsets.UTF_8));
+            JSONObject document = new JSONObject(new String(readAll(input), StandardCharsets.UTF_8));
             if (document.getInt("schema") != 1)
                 throw new JSONException("Unsupported credit schema");
             JSONArray rows = document.getJSONArray("entries");
@@ -76,5 +76,20 @@ public final class AboutCredits
 
     private AboutCredits()
     {
+    }
+
+    /** InputStream.readAllBytes needs Android 13; the Shield runs Android 11. Bounded to the catalogue's size. */
+    private static byte[] readAll(InputStream input) throws IOException
+    {
+        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        byte[] buffer = new byte[8192];
+        int n;
+        while ((n = input.read(buffer)) != -1)
+        {
+            if (bytes.size() + n > 4 * 1024 * 1024)
+                throw new IOException("Credit catalogue is too large");
+            bytes.write(buffer, 0, n);
+        }
+        return bytes.toByteArray();
     }
 }
