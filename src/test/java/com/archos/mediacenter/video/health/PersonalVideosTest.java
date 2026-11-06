@@ -13,6 +13,7 @@ import com.archos.mediacenter.video.utils.backup.MediaStateRecovery;
 import com.archos.mediacenter.video.utils.backup.PortableHiddenItems;
 import com.archos.mediacenter.video.utils.backup.PortablePhysicalReferences;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
+import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediaprovider.video.MissingMediaActions;
 import com.archos.mediaprovider.video.PersonalVideoActions;
 import com.archos.mediaprovider.video.VideoOpenHelper;
@@ -57,6 +58,32 @@ public class PersonalVideosTest
     private MissingMediaActions.StoredFile file()
     {
         return new MissingMediaActions.StoredFile(10, "file:///one.mkv", 123);
+    }
+
+    @Test public void previewSnapshotOverrideCannotBypassPersonalFiltering() throws Exception
+    {
+        try (VideoOpenHelper helper = new VideoOpenHelper(app))
+        {
+            PreviewLibraryLoader loader = new PreviewLibraryLoader(app);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try (Cursor visible = db.query("video", new String[] {"_id"},
+                                          "_id=10 AND (" + loader.getSelection() + ")", null, null, null, null))
+            {
+                assertEquals(1, visible.getCount());
+            }
+            PersonalVideoActions.Change undo = PersonalVideoActions.set(app, file(), true);
+            try (Cursor personal = db.query("video", new String[] {"_id"},
+                                           "_id=10 AND (" + loader.getSelection() + ")", null, null, null, null))
+            {
+                assertEquals(0, personal.getCount());
+            }
+            assertTrue(PersonalVideoActions.undo(app, undo));
+            try (Cursor restored = db.query("video", new String[] {"_id"},
+                                           "_id=10 AND (" + loader.getSelection() + ")", null, null, null, null))
+            {
+                assertEquals(1, restored.getCount());
+            }
+        }
     }
 
     @Test public void personalRoleIsPersistentInvisibleToLibraryButRetainsFilesAndPlayback() throws Exception

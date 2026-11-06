@@ -18,6 +18,7 @@ import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediacenter.video.utils.backup.MediaMatchReconciler;
 import com.archos.mediacenter.video.utils.backup.PreferenceRestoreTransaction;
 import com.archos.mediaprovider.video.LoaderUtils;
+import com.archos.mediaprovider.video.PersonalVideoActions;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import com.archos.mediaprovider.video.VideoStore;
 import java.io.BufferedInputStream;
@@ -182,9 +183,9 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
 
     @Override
     public String getSelection() {
-        return LoaderUtils.mustHideUserHiddenObjects()
-            ? LoaderUtils.HIDE_USER_HIDDEN_FILTER
-            : "";
+        return PersonalVideoActions.VISIBLE + (LoaderUtils.mustHideUserHiddenObjects()
+            ? " AND " + LoaderUtils.HIDE_USER_HIDDEN_FILTER
+            : "");
     }
 
     public static Entry next(List<Entry> episodes) {
@@ -541,7 +542,7 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
     @Override
     public Cursor loadInBackground() {
         try {
-            com.archos.mediaprovider.video.PersonalVideoActions.reconcilePending(getContext());
+            PersonalVideoActions.reconcilePending(getContext());
         } catch (Exception unavailable) {
             throw new IllegalStateException("Personal-file policy could not be loaded", unavailable);
         }
