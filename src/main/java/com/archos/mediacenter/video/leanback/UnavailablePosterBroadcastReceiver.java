@@ -102,7 +102,7 @@ public class UnavailablePosterBroadcastReceiver extends BroadcastReceiver {
             try {
                 checkPoster(finalContext, videoId);
             } catch (Exception e) {
-                log.error("Unable to check poster for videoId={}", videoId, e);
+                log.error("Unable to check poster for videoId={}, failure={}", videoId, e.getClass().getSimpleName());
             } finally {
                 pendingResult.finish();
             }
@@ -134,7 +134,6 @@ public class UnavailablePosterBroadcastReceiver extends BroadcastReceiver {
                 where, arg, null);
             if (c != null && c.moveToFirst()) {
                 int coverColumn = c.getColumnIndex(COLUMN_COVER_PATH);
-                int titleColumn = c.getColumnIndex(VideoStore.Video.VideoColumns.TITLE);
                 int idMovieColumn = c.getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_MOVIE_ID);
                 int idEpisodeColumn = c.getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_EPISODE_ID);
                 int scraperTypeColumn = c.getColumnIndex(VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_TYPE);
@@ -158,9 +157,10 @@ public class UnavailablePosterBroadcastReceiver extends BroadcastReceiver {
                             }
                         }
                     } catch (Exception e) {
-                        log.warn("Error checking poster file: {}", path, e);
+                        log.warn("Error checking poster file for videoId={}, failure={}", videoId,
+                                 e.getClass().getSimpleName());
                         shouldClear = true;
-                        reason = "error accessing file: " + e.getMessage();
+                        reason = "error accessing file";
                     }
 
                     if (shouldClear) {
@@ -173,16 +173,16 @@ public class UnavailablePosterBroadcastReceiver extends BroadcastReceiver {
                             cv.put(ScraperStore.Episode.POSTER_ID, -1);
                             cv.putNull(ScraperStore.Episode.COVER);
                             log.warn(
-                                "Cached episode poster missing or corrupted: path={}, title={}, videoId={}, episodeId={}, reason={} - clearing and triggering re-scrape",
-                                path, c.getString(titleColumn), videoId, scraperId, reason);
+                                "Cached episode poster unavailable: videoId={}, episodeId={}, reason={}",
+                                videoId, scraperId, reason);
                         } else {
                             scraperId = c.getLong(idMovieColumn);
                             uri = ContentUris.withAppendedId(ScraperStore.Movie.URI.ID, scraperId);
                             cv.put(ScraperStore.Movie.POSTER_ID, -1);
                             cv.putNull(ScraperStore.Movie.COVER);
                             log.warn(
-                                "Cached movie poster missing or corrupted: path={}, title={}, videoId={}, movieId={}, reason={}  - clearing and triggering re-scrape",
-                                path, c.getString(titleColumn), videoId, scraperId, reason);
+                                "Cached movie poster unavailable: videoId={}, movieId={}, reason={}",
+                                videoId, scraperId, reason);
                         }
                         int n = context.getContentResolver().update(uri, cv, null, null);
                         if (log.isDebugEnabled())
@@ -192,7 +192,7 @@ public class UnavailablePosterBroadcastReceiver extends BroadcastReceiver {
                 } else {
                     if (log.isDebugEnabled())
                         log.debug(
-                            "Video has no poster path in DB: title={}, videoId={}", c.getString(titleColumn), videoId);
+                            "Video has no poster path in DB: videoId={}", videoId);
                 }
             }
         } finally {
