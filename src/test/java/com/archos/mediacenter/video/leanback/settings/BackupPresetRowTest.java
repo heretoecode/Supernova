@@ -53,6 +53,11 @@ public class BackupPresetRowTest
                 View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
             root.layout(0, 0, 960, 540);
             assertTrue(PreviewSettings.enterBackup(fragment));
+            // The Backup page was hidden during the first layout; a key reaches only a laid-out, focused row.
+            root.measure(View.MeasureSpec.makeMeasureSpec(960, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(540, View.MeasureSpec.EXACTLY));
+            root.layout(0, 0, 960, 540);
+            Shadows.shadowOf(Looper.getMainLooper()).idle();
             View row = root.findViewWithTag("backup.preset");
             assertNotNull(row);
             var prefs = PreferenceManager.getDefaultSharedPreferences(host.get());

@@ -3051,10 +3051,11 @@ public final class UniversalFileBrowser extends LinearLayout {
     private final android.view.ViewTreeObserver.OnGlobalFocusChangeListener centreWatcher = this::centreFocusMoved;
 
     private void centreFocusMoved(View before, View after) {
-        if (networkLayout == null || after == null || after == items)
+        if (networkLayout == null || after == null || after == items || after == actions)
             return;
+        // A section's rows live in the centre list; pages such as Library Scanning put their buttons in actions.
         for (View at = after; at != null; at = at.getParent() instanceof View ? (View) at.getParent() : null)
-            if (at == items) {
+            if (at == items || at == actions) {
                 centreAnchor = after;
                 return;
             }

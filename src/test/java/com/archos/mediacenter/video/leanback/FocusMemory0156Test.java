@@ -48,12 +48,14 @@ public class FocusMemory0156Test
             ReflectionHelpers.callInstanceMethod(browser, "openLandingCard",
                 ReflectionHelpers.ClassParameter.from(int.class, 4));
             PreviewPagesTest.layout(browser);
-            // Only rows in the centre list are remembered; the side panels and top bar keep their own focus.
-            android.view.ViewGroup centre = ReflectionHelpers.getField(browser, "items");
+            // A section's rows and buttons are remembered; the top bar keeps its own focus.
             java.util.List<View> targets = new java.util.ArrayList<>();
-            for (View target : centre.getFocusables(View.FOCUS_FORWARD))
-                if (target != centre && target.isShown() && target.isEnabled())
-                    targets.add(target);
+            for (String name : new String[] {"items", "actions"}) {
+                android.view.ViewGroup group = ReflectionHelpers.getField(browser, name);
+                for (View target : group.getFocusables(View.FOCUS_FORWARD))
+                    if (target != group && target.isShown() && target.isEnabled())
+                        targets.add(target);
+            }
             org.junit.Assert.assertTrue(targets.size() > 1);
             View previous = targets.get(targets.size() - 1);
             org.junit.Assert.assertTrue(previous.requestFocus());
@@ -93,12 +95,14 @@ public class FocusMemory0156Test
             show(page, "Extras", true);
             org.junit.Assert.assertSame(cards.get(1), page.findFocus());
             android.widget.ScrollView reading = ReflectionHelpers.getField(page, "reading");
+            // Details is sized to fit the screen and never scrolls, so the reading position is checked on Extras.
             reading.getChildAt(0).setMinimumHeight(5000);
-            show(page, "Details", false);
+            show(page, "Extras", false);
             PreviewPagesTest.layout(page);
             reading.scrollTo(0, 120);
-            show(page, "Extras", false);
+            assertEquals(120, reading.getScrollY());
             show(page, "Details", false);
+            show(page, "Extras", false);
             assertEquals(120, reading.getScrollY());
         } finally {
             host.pause().stop().destroy();
