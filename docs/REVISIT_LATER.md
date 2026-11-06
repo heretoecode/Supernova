@@ -116,6 +116,10 @@ Items already built or scheduled are left out (see the bottom of this file).
   match · Not a film). Mock-ups 06, 08, 09b, 11–14.
   Owner, 6 Nov: tabs renamed on Claude's recommendation to This Shield · Connections · Library Care; Recent scans
   shows 3 with "Show all scans" for the last 10; Scan settings live in Library Care (Settings links there).
+  v9: menus have an icon per item and the tick on the right, and are as wide as their longest item. Find it again
+  shows "Searching…" in the row (Stop), then a notice "Conclave is back in your library" and the row leaves; not
+  found says so and offers Search everywhere · Remove. Fix match opens the side panel (edge on the left) with the
+  name filled in; Not a film acts straight away with a notice and Undo. Mock-ups 11, 12b–d, 14b–c.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

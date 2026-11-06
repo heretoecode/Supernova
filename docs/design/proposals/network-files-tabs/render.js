@@ -42,6 +42,7 @@ const I = {
   time: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   history: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/>',
   source: '<path d="M4 7h16M4 12h16M4 17h10"/>',
+  close: '<path d="M6 6l12 12M18 6L6 18"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'This Shield'], ['shares', 'Connections'], ['library', 'Library Care']]
@@ -132,8 +133,9 @@ ${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret">
 <div class="rl p">Leave Encryption on unless your server only offers plain HTTP. Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
 Test connection checks it without saving anything.</div></div>
 </div></div>`;
-const sortMenu = '<div class="cmenu down">' + [['Name (A–Z)', 'chosen'], ['Name (Z–A)', ''], ['Newest first', 'focus'], ['Oldest first', ''], ['Largest first', ''], ['Smallest first', '']]
-  .map(([n, k]) => `<div class="ci ${k === 'focus' ? 'focus' : ''}">${k === 'chosen' ? icon(I.check, 30) : '<i class="sp"></i>'}<span>${n}</span></div>`).join('') + '</div>';
+const sortMenu = '<div class="cmenu down fit">' + [['sort', 'Name (A–Z)', 'chosen'], ['sort', 'Name (Z–A)', ''], ['time', 'Newest first', 'focus'],
+  ['history', 'Oldest first', ''], ['disk', 'Largest first', ''], ['disk', 'Smallest first', '']]
+  .map(([ic, n, k]) => `<div class="ci ${k === 'focus' ? 'focus' : ''}">${icon(I[ic], 30)}<span>${n}</span><span class="tick">${k === 'chosen' ? icon(I.check, 30) : ''}</span></div>`).join('') + '</div>';
 const sortOpen = folderAt(-1).replace(`<span class="b">${icon(I.sort, 26)}Sort: Name</span>`,
   `<span class="b open menuhost">${icon(I.sort, 26)}Sort: Name${sortMenu}</span>`);
 
@@ -175,6 +177,30 @@ ${lrow('film', 'home-video-2019.mp4', 'Backup #1 › Films · no film or show fo
 ${lrow('film', 'Pressure.2026.2160p.mkv', 'Living-room NAS › Films · several matches', 'Possible', null, false)}
 ${lrow('film', 'S01E01.mkv', 'Put.io › TV · name too short', 'No match', null, false)}
 <div class="note2">Fix match opens the search panel with the name filled in. "Not a film" keeps a personal video in your files but out of Movies and TV Shows.</div>`);
+const notice = (title, detail, button) => `<div class="notice">${icon(I.check, 36)}<div class="nt"><div class="rn">${title}</div><div class="rl">${detail}</div></div>${button ? `<span class="ab nb">${button}</span>` : ''}</div>`;
+const missingSearching = healthPage('Missing files', '', `
+${lrow('film', 'Conclave (2024)', 'Looking in Living-room NAS…', 'Searching…', [['close', 'Stop']], true)}
+${lrow('film', 'The Bear · S3 E4', 'Backup #1 › TV · since 5 Nov', 'Missing', null, false)}
+${lrow('film', 'Arrival (2016)', 'Backup #1 › Films · since 5 Nov', 'Missing', null, false)}`);
+const missingFound = healthPage('Missing files', '', `
+${notice('Conclave is back in your library', 'Found in Living-room NAS › Films › 4K. Where you stopped and what you’ve watched are kept.', '')}
+${lrow('film', 'The Bear · S3 E4', 'Backup #1 › TV · since 5 Nov', 'Missing', [['search', 'Find it again'], ['remove', 'Remove']], true)}
+${lrow('film', 'Arrival (2016)', 'Backup #1 › Films · since 5 Nov', 'Missing', null, false)}`);
+const missingNotFound = healthPage('Missing files', '', `
+${lrow('film', 'The Bear · S3 E4', 'Not on Backup #1 · is the drive plugged in?', 'Not found', [['search', 'Search everywhere'], ['remove', 'Remove']], true)}
+${lrow('film', 'Arrival (2016)', 'Backup #1 › Films · since 5 Nov', 'Missing', null, false)}`);
+const fmRows = [['Pressure', '2026 · Film', true, '#4b5b2e'], ['Pressure', '2015 · Film', false, '#5b3a2e'], ['Pressure', '2024 · TV series', false, '#3a2e5b'], ['Under Pressure', '2022 · Documentary', false, '#2e5b4f']];
+const fixMatch = healthPage('Not matched', '', `
+${lrow('film', 'home-video-2019.mp4', 'Backup #1 › Films · no film or show found', 'No match', null, false)}
+${lrow('film', 'Pressure.2026.2160p.mkv', 'Living-room NAS › Films · several matches', 'Possible', null, false)}
+${lrow('film', 'S01E01.mkv', 'Put.io › TV · name too short', 'No match', null, false)}`) + `<div class="fmpanel"><div class="pd">Fix match · File: Pressure.2026.2160p.mkv</div>
+<div class="pin">${icon(I.search, 30)}<span style="margin-left:14px">Pressure</span></div><div class="sec">Matches on TMDB</div>
+${fmRows.map(([t, l, f, c]) => `<div class="prow ${f ? 'focus' : ''}"><span class="poster" style="background:linear-gradient(160deg,${c},#121418)"></span><div><div class="rn">${t}</div><div class="rl">${l}</div></div></div>`).join('')}
+<div class="pnote">OK picks the match; the details and artwork follow, and the file leaves this list.</div></div>`;
+const notFilm = healthPage('Not matched', '', `
+${notice('home-video-2019.mp4 is now a personal video', 'It stays in This Shield › Backup #1 › Films, out of Movies and TV Shows.', 'Undo')}
+${lrow('film', 'Pressure.2026.2160p.mkv', 'Living-room NAS › Films · several matches', 'Possible', [['search', 'Fix match'], ['exclude', 'Not a film']], true)}
+${lrow('film', 'S01E01.mkv', 'Put.io › TV · name too short', 'No match', null, false)}`);
 const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
 <div class="libclip"><div class="libscroll">${libRows(0)}</div></div></div>`;
 const libraryLower = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
@@ -244,10 +270,15 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .libclip{position:absolute;left:0;right:0;top:136px;bottom:0;overflow:hidden}
 .summary span,.tab{white-space:nowrap}
 .cmenu.down{bottom:auto;top:calc(100% + 12px);right:0;width:440px;text-align:left}.b.menuhost{position:relative;background:#454B55}
-.ci .sp{display:inline-block;width:30px}
+.ci .sp{display:inline-block;width:30px}.cmenu.fit{width:auto;white-space:nowrap}.ci .tick{margin-left:auto;padding-left:40px;width:70px;display:inline-flex;justify-content:flex-end}
 .chips{display:flex;gap:6px;font-size:28px}.chips i{font-style:normal;padding:10px 20px;border-radius:14px;color:#dfe5f1}
 .chips i.on{background:#454B55;color:#fff}.row.focus .chips i{color:#3A4256}.row.focus .chips i.on{background:#0B0D12;color:#fff}
 .note2{margin-top:30px;font-size:26px;color:#9aa3b2;line-height:1.45;max-width:1400px}
+.notice{display:flex;align-items:center;gap:26px;padding:22px 30px;border-radius:24px;background:rgba(255,255,255,.07);margin-bottom:10px;color:#fff}
+.notice .nt{flex:1}.notice .nb{background:#2a2d33;color:#fff}
+.fmpanel{position:absolute;top:0;right:0;bottom:0;width:780px;background:#16181C;border-left:2px solid rgba(255,255,255,.28);padding:56px 44px;box-sizing:border-box}
+.fmpanel .pin{display:flex;align-items:center}.fmpanel .prow{margin-top:10px;padding:14px 20px}.fmpanel .sec{margin-top:30px}
+.poster{display:inline-block;width:64px;height:96px;border-radius:10px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
@@ -255,7 +286,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
   const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
     ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library], ['09b-library-lower.png', libraryLower],
-    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched]];
+    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched], ['12b-find-searching.png', missingSearching], ['12c-find-found.png', missingFound], ['12d-find-not-found.png', missingNotFound], ['14b-fix-match.png', fixMatch], ['14c-not-a-film.png', notFilm]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
