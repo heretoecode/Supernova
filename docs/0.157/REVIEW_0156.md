@@ -14,8 +14,10 @@ those once it is decided.
   Same size (already agreed, 1776×820 at 1080p), same picture, crop and logo position. Inside the card, More info is
   replaced by Play/Resume, service buttons and More, the description fades in and the carousel dots go. The Home rows
   slide away and the Details tabs take their place; Back reverses it and lands on the same Home title.
-  To settle in the mock-up:
-  - the Details text block must fit inside the same card;
-  - Home and Details need the same background (BG);
-  - if the Details artwork differs or is not ready, use a quick fade instead;
-  - the logo keeps its approved glide to the small logo when going down into the tabs.
+  - The Home card is the short version: going in, its tagline expands into the description (up to five lines, More ›
+    Full description, as already approved).
+  - Same picture throughout: Details currently shows the backdrop it was given, then may switch to the title's
+    default backdrop when full details arrive. Build note: Details keeps the Home picture so the card never changes.
+  - Home and Details must share a background. Today's rule (5 Nov) is Space Black for both; plain charcoal is still
+    under consideration (0.157 notes §18). (BG)
+  - The logo keeps its approved glide to the small logo when going down into the tabs.
