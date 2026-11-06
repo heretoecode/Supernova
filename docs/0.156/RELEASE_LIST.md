@@ -110,8 +110,10 @@ storage, reachable, library sync, Retry) and Test connection on Add Connection (
 Committed 6 Nov after that run (next build): #34 saved connections show Open · Edit · Test · Remove on focus; Add
 Connection "choose what you are connecting to" page (add-connection/01); #40 Fix match as a side panel over Details
 (file name in the header, posters, year and kind, current match marked, keyboard folds away in the results).
-Still to do (Claude): Audio & Subtitles Style tab (size, colour, vertical position, outline, background, live sample;
-writes the player's own style keys, so it needs the SubtitleManager rules, not a quick copy), Library Scanning/Health full pages (#35),
+Also committed: Settings › Audio & Subtitles › Style tab (live sample; size, colour, vertical position, outline,
+background, opacity; saved through the same helper as the player; fonts and margins moved here). In conformance run
+42137774102 (00:34 UTC). Run 42134557197 failed only on MediaLib NetworkScanLedgerTest
+cancelledWorkerWaitingForProviderGateCannotPerformLateScan (MediaLib unchanged since the green run; re-run to check)., Library Scanning/Health full pages (#35),
 Settings stage 3 (System/About, Where to Watch, Appearance, Audio & Subtitles incl. Vertical Position), Customise Home
 (#29), Fix match (#40), empty states and focus memory (#43), Local Storage grid and menu (#33).
 Codex: the failing tests in `docs/codex/BRIEF_0156_TEST_FIXES.md`.
