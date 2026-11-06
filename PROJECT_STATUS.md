@@ -21,8 +21,10 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   Build and signing now use `supernova-0156-conformance.yml` / `supernova-0156-qa.yml` (version 0.156, code 156).
   **Built and fully green (6 Nov 2026):** conformance run 42226746764 on commit 9fae8eccb — every app, MediaLib,
   FileCore and tooling test passed, lint clean. Unsigned artifact `supernova-0156-unsigned-candidate`.
-  Next: signing **only when the owner says so** (`supernova-0156-qa.yml`, `conformance_run_id` 42226746764; later
-  docs-only commits are allowed), then the owner's Shield check with
+  **Signed 6 Nov 2026** (owner approved) by run 42239912490 of `supernova-0156-qa.yml`, from green conformance run
+  42233995251 on commit c3d7e6e97. Signed APK: artifact `supernova-0156-signed-qa` of that run. Note: the signing gate
+  allows only files under `docs/` to change after conformance (not root files such as this one).
+  Next: the owner's Shield check with
   [`docs/0.156/SHIELD_CHECKLIST.md`](docs/0.156/SHIELD_CHECKLIST.md).
 - **Not done in 0.156 (flagged to the owner):** focus memory after Android recreates the app (audit F1, F6, F8, F10–F13)
   and F2 (Down from the top bar), which conflicts with the older "first control" rule.

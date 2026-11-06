@@ -124,3 +124,7 @@ passed, lint clean, unsigned artifact `supernova-0156-unsigned-candidate`. Fixes
 Everything (the old tick-boxes' saved defaults had been read as a custom choice); Files › Library Scanning remembers
 the button used when coming back from the top bar; tests brought in line with the Backup three-choice design and the
 Details tab that never scrolls. Not signed: waiting for the owner. Left for 0.157: audit F1, F2, F6, F8, F10–F13.
+
+**6 Nov 2026 — 0.156 signed.** Rebuilt as conformance run 42233995251 (commit c3d7e6e97, fully green) after a
+records-only change outside `docs/` blocked the first signing; signed by run 42239912490 with the established
+certificate. Download: artifact `supernova-0156-signed-qa`. Next: the owner's Shield check (`SHIELD_CHECKLIST.md`).
