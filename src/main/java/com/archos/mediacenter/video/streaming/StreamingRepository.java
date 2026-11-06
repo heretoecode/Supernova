@@ -159,8 +159,8 @@ public final class StreamingRepository
     {
         if (!(kind.equals("movie") || kind.equals("tv")) || id <= 0 ||
             !(Arrays
-                  .asList("", "videos", "recommendations", "credits", "images", "external_ids", "release_dates",
-                          "content_ratings", "alternative_titles")
+                  .asList("", "videos", "recommendations", "similar", "credits", "images", "external_ids",
+                          "release_dates", "content_ratings", "alternative_titles")
                   .contains(section) ||
               kind.equals("tv") && (section.matches("season/[0-9]{1,4}") ||
                                     section.matches("season/[0-9]{1,4}/episode/[0-9]{1,4}/external_ids"))))
@@ -203,12 +203,48 @@ public final class StreamingRepository
     public static JSONObject matchSearch(Context context, String path, Map<String, String> parameters,
                                          OkHttpClient client) throws Exception
     {
-        if (!path.matches("(?:search/(?:movie|tv)|(?:movie|tv)/[1-9][0-9]{0,9}|find/tt[0-9]{7,10})") ||
+        if (!path.matches("(?:search/(?:movie|tv)|(?:movie|tv)/[1-9][0-9]{0,9}|" +
+                          "find/(?:tt[0-9]{7,10}|[1-9][0-9]{0,9}))") ||
             !Set.of("query", "external_source").containsAll(parameters.keySet()))
         {
             throw new IOException("Invalid match search");
         }
         return api(context, path, null, 0, parameters, client);
+    }
+
+    /** Public Trakt title discovery only: no account token, arbitrary URL or personal history. Worker-only. */
+    public static JSONArray traktDiscovery(Context context, String path, OkHttpClient client) throws Exception
+    {
+        if (!path.matches("(?:search/(?:trakt|tmdb)/[1-9][0-9]{0,9}|" +
+                          "(?:movies|shows)/[a-z0-9]+(?:-[a-z0-9]+)*(?:/related)?)"))
+            throw new IOException("Invalid related-title request");
+        Request request = new Request.Builder().url("https://api.trakt.tv/" + path)
+            .header("trakt-api-version", "2")
+            .header("trakt-api-key", context.getString(R.string.trakt_api_key)).build();
+        // A redirect must never carry the application credential to another origin.
+        try (Response response = client.newBuilder().followRedirects(false).followSslRedirects(false).build()
+                 .newCall(request).execute())
+        {
+            if (!response.isSuccessful() || response.body() == null)
+                throw new IOException("Related-title service unavailable");
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            try (InputStream input = response.body().byteStream())
+            {
+                byte[] chunk = new byte[8192];
+                int count;
+                while ((count = input.read(chunk)) != -1)
+                {
+                    if (Thread.currentThread().isInterrupted() || buffer.size() + count > 2 * 1024 * 1024)
+                        throw new IOException("Related-title read stopped");
+                    buffer.write(chunk, 0, count);
+                }
+            }
+            String body = buffer.toString(StandardCharsets.UTF_8.name()).trim();
+            if (body.startsWith("["))
+                return new JSONArray(body);
+            return new JSONArray().put(new JSONObject().put(path.startsWith("movies/") ? "movie" : "show",
+                                                            new JSONObject(body)));
+        }
     }
 
     private static JSONObject api(Context context, String path, String country, int page,
@@ -324,7 +360,7 @@ public final class StreamingRepository
                 throw new IOException("Invalid review page");
             return;
         }
-        if ("recommendations".equals(section))
+        if ("recommendations".equals(section) || "similar".equals(section))
         {
             if (value.optJSONArray("results") == null)
                 throw new IOException("Missing recommendations");

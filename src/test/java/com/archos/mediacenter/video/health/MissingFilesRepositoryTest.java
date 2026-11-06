@@ -135,4 +135,27 @@ public class MissingFilesRepositoryTest
             assertEquals(loaded, MissingFilesRepository.current());
         }
     }
+    @Test public void everywhereSearchProvesGlobalUniquenessAcrossConnections() throws Exception
+    {
+        Uri first = Uri.parse("smb://first/Films");
+        Uri second = Uri.parse("smb://second/Films");
+        Uri replacement = Uri.parse("smb://second/Films/Old.mkv");
+        java.util.List<MissingFileSearch.Progress> progress = new ArrayList<>();
+        assertEquals(replacement, MissingFileSearch.unique(List.of(first, second), "Old.mkv", 12,
+            folder -> folder.equals(second)
+                ? List.of(new MissingFileSearch.FileEntry(replacement, "Old.mkv", 12, false)) : List.of(),
+            () -> false, progress::add));
+        assertEquals(2, progress.size());
+        assertNull(MissingFileSearch.unique(List.of(first, second), "Old.mkv", 12,
+            folder -> List.of(new MissingFileSearch.FileEntry(folder.buildUpon().appendPath("Old.mkv").build(),
+                                                              "Old.mkv", 12, false)),
+            () -> false, ignored -> {}));
+        assertThrows(IOException.class, () -> MissingFileSearch.unique(List.of(first, second), "Old.mkv", 12,
+            folder -> {
+                if (folder.equals(first))
+                    throw new IOException("Offline source");
+                return List.of(new MissingFileSearch.FileEntry(replacement, "Old.mkv", 12, false));
+            }, () -> false, ignored -> {}));
+    }
+
 }

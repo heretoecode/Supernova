@@ -3,6 +3,20 @@ package com.archos.mediacenter.video.scanning;
 /** Immutable scan data. Counts of -1 are unknown; running stays true while cancelled workers unwind. */
 public final class ScanProgress
 {
+    public enum Outcome
+    {
+        RUNNING, FINISHED, STOPPED, FAILED
+    }
+
+    public Outcome outcome()
+    {
+        if (running)
+            return Outcome.RUNNING;
+        if (failure == Failure.CANCELLED)
+            return Outcome.STOPPED;
+        return failure == Failure.NONE ? Outcome.FINISHED : Outcome.FAILED;
+    }
+
     public enum Failure
     {
         NONE,

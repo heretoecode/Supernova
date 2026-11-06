@@ -1,0 +1,92 @@
+diff --git a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+--- a/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
++++ b/src/com/archos/mediaprovider/video/NetworkAutoRefresh.java
+@@ -65,6 +65,7 @@
+     // Note: cleared as soon as delayed scan broadcasts are queued, not when the scans complete,
+     // so it does not protect against overlapping scan batches — that is pre-existing behaviour.
+     private static final AtomicBoolean sRescanInProgress = new AtomicBoolean(false);
++    private static final String REQUEST_SOURCE = "supernova_scan_single_source";
+     private static final String REQUEST_GENERATION = "supernova_scan_request_generation";
+     private static final java.util.concurrent.ExecutorService PREPARATION =
+         java.util.concurrent.Executors.newSingleThreadExecutor(r -> {
+@@ -171,6 +172,9 @@
+         // Use getRescanUris() which opens a local DatabaseHelper, copies results, and closes:
+         // avoids touching the singleton ShortcutDbAdapter.VIDEO mDb from a background thread.
+         List<Uri> toUpdate = traversalRoots(context, ShortcutDbAdapter.VIDEO.getRescanUris(context));
++        String selected = intent.getStringExtra(REQUEST_SOURCE);
++        if (selected != null)
++            toUpdate = selectSource(toUpdate, Uri.parse(selected));
+         for (Uri uri : toUpdate)
+         {
+             if (log.isDebugEnabled())
+@@ -374,7 +378,7 @@
+         List<Uri> result = new ArrayList<>();
+         for (Uri root : roots)
+         {
+-            if (!ProviderDiscoveryGate.excludes(context, root))
++            if (!ProviderDiscoveryGate.excludes(context, root) && !SavedConnectionRemoval.pending(context, root))
+                 result.add(root);
+         }
+         return result;
+@@ -391,6 +395,31 @@
+         context.sendBroadcast(intent);
+     }
+ 
++    /** Main-thread safe: selects one registered network source without changing the saved source list. */
++    public static void forceRescan(Context context, Uri source)
++    {
++        if (source == null || !SupernovaLibraryPolicy.configured(context))
++            return;
++        Intent request = new Intent(context, NetworkAutoRefresh.class)
++            .setAction(ACTION_FORCE_RESCAN_INDEXED_FOLDERS)
++            .setPackage(context.getPackageName())
++            .putExtra(REQUEST_GENERATION, NetworkScanLedger.generation())
++            .putExtra(REQUEST_SOURCE, source.toString());
++        context.sendBroadcast(request);
++    }
++
++    static List<Uri> selectSource(List<Uri> registered, Uri selected)
++    {
++        String key = SupernovaLibraryPolicy.canonical(selected);
++        List<Uri> result = new ArrayList<>();
++        for (Uri root : registered)
++        {
++            if (SupernovaLibraryPolicy.canonical(root).equals(key))
++                result.add(root);
++        }
++        return result;
++    }
++
+     public static int getLastError(Context context)
+     {
+         return PreferenceManager.getDefaultSharedPreferences(context).getInt(AUTO_RESCAN_ERROR, 0);
+diff --git a/test/java/com/archos/mediaprovider/video/SingleSourceSelectionTest.java b/test/java/com/archos/mediaprovider/video/SingleSourceSelectionTest.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/SingleSourceSelectionTest.java
+@@ -0,0 +1,25 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertTrue;
++import android.app.Application;
++import android.net.Uri;
++import java.util.List;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class SingleSourceSelectionTest
++{
++    @Test public void selectsOnlyTheRegisteredRootWithoutChangingTheOriginalSelection()
++    {
++        List<Uri> roots = List.of(Uri.parse("smb://nas/Films"), Uri.parse("smb://nas/Shows"));
++        assertEquals(List.of(roots.get(0)), NetworkAutoRefresh.selectSource(roots, Uri.parse("smb://nas/Films/")));
++        assertEquals(2, roots.size());
++        assertTrue(NetworkAutoRefresh.selectSource(roots, Uri.parse("smb://nas")).isEmpty());
++        assertTrue(NetworkAutoRefresh.selectSource(roots, Uri.parse("smb://other/Films")).isEmpty());
++    }
++}

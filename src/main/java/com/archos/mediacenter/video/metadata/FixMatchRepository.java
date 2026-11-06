@@ -30,6 +30,11 @@ public final class FixMatchRepository
     public interface Transport
     {
         JSONObject request(String path, Map<String, String> parameters) throws Exception;
+
+        default JSONArray trakt(String path) throws Exception
+        {
+            return new JSONArray();
+        }
     }
 
     public static final class Candidate
@@ -40,9 +45,19 @@ public final class FixMatchRepository
         public final String kind;
         public final String poster;
         public final boolean currentMatch;
+        public final int matchScore;
+        public final boolean bestMatch;
 
         Candidate(JSONObject row, String kind, String currentKind, long currentId) throws Exception
         {
+            this(row, kind, currentKind, currentId, 0, false);
+        }
+
+        Candidate(JSONObject row, String kind, String currentKind, long currentId, int score, boolean best)
+            throws Exception
+        {
+            matchScore = score;
+            bestMatch = best;
             id = row.getLong("id");
             if (id <= 0 || id > Integer.MAX_VALUE)
                 throw new IOException("Invalid match identity");
@@ -63,8 +78,18 @@ public final class FixMatchRepository
     public FixMatchRepository(Context context)
     {
         this(context,
-             (path, parameters)
-                 -> StreamingRepository.matchSearch(context, path, parameters),
+             new Transport() {
+                 @Override public JSONObject request(String path, Map<String, String> parameters) throws Exception
+                 {
+                     return StreamingRepository.matchSearch(context, path, parameters);
+                 }
+
+                 @Override public JSONArray trakt(String path) throws Exception
+                 {
+                     return StreamingRepository.traktDiscovery(context, path,
+                                                               StreamingRepository.readOnlyNetworkClient());
+                 }
+             },
              CanonicalMatchMaterial.PROVIDER);
     }
 
@@ -85,49 +110,33 @@ public final class FixMatchRepository
             return Collections.emptyList();
         if (input.length() > 240)
             throw new IOException("Match query too long");
-        List<Candidate> result = new ArrayList<>();
-        if (input.matches("tt[0-9]{7,10}"))
-        {
-            JSONObject found = transport.request("find/" + input, Map.of("external_source", "imdb_id"));
-            if (!scope.equals("tv"))
-                add(result, found.getJSONArray("movie_results"), "movie", currentKind, currentId);
-            if (!scope.equals("movie"))
-                add(result, found.getJSONArray("tv_results"), "tv", currentKind, currentId);
-        }
-        else
-        {
-            if (input.matches("tmdb:(movie|tv):[1-9][0-9]{0,9}"))
-            {
-                String[] identity = input.split(":");
-                scope = identity[1];
-                input = identity[2];
-            }
-            for (String kind : List.of("movie", "tv"))
-            {
-                if (!scope.equals("all") && !scope.equals(kind))
-                    continue;
-                if (input.matches("[1-9][0-9]{0,9}"))
-                {
-                    result.add(
-                        new Candidate(transport.request(kind + "/" + input, Map.of()), kind, currentKind, currentId));
-                }
-                else
-                {
-                    add(result, transport.request("search/" + kind, Map.of("query", input)).getJSONArray("results"),
-                        kind, currentKind, currentId);
-                }
-            }
-        }
-        return Collections.unmodifiableList(result);
+        return search(input, scope, currentKind, currentId, () -> false);
     }
 
-    private static void add(List<Candidate> target, JSONArray rows, String kind, String currentKind, long currentId)
-        throws Exception
+    /** Worker-only; cancellation returns no candidates. Existing apply() remains the only mutation. */
+    public List<Candidate> search(String query, String scope, String currentKind, long currentId,
+                                   BooleanSupplier cancelled) throws Exception
     {
-        for (int i = 0; i < Math.min(40, rows.length()); i++)
+        List<ForgivingMatchSearch.Hit> hits = ForgivingMatchSearch.search(query, scope,
+            new ForgivingMatchSearch.Gateway() {
+                @Override public JSONObject tmdb(String path, Map<String, String> parameters) throws Exception
+                {
+                    return transport.request(path, parameters);
+                }
+
+                @Override public JSONArray trakt(String path) throws Exception
+                {
+                    return transport.trakt(path);
+                }
+            }, cancelled);
+        List<Candidate> result = new ArrayList<>();
+        for (ForgivingMatchSearch.Hit hit : hits)
         {
-            target.add(new Candidate(rows.getJSONObject(i), kind, currentKind, currentId));
+            Candidate candidate = new Candidate(hit.row(), hit.kind(), currentKind, currentId,
+                                                  hit.score(), hit.bestMatch());
+            result.add(candidate);
         }
+        return List.copyOf(result);
     }
 
     /** TV candidates require the file's known season/episode. This API never guesses episode numbers. */

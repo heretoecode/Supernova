@@ -1,0 +1,63 @@
+diff --git a/src/com/archos/mediaprovider/video/MissingMediaActions.java b/src/com/archos/mediaprovider/video/MissingMediaActions.java
+--- a/src/com/archos/mediaprovider/video/MissingMediaActions.java
++++ b/src/com/archos/mediaprovider/video/MissingMediaActions.java
+@@ -46,6 +46,27 @@
+             throw new IOException("Replacement is outside the source");
+         if (!name(expected.path).equals(name(replacement)))
+             throw new IOException("Replacement file name differs");
++        return mutate(context, expected, replacement);
++    }
++
++    /** Separate old/new source guards; mutation still compares the exact old ID, path and size under the scan lock. */
++    public static boolean relinkAcrossSources(Context context, StoredFile expected, Uri oldRoot, Uri newRoot,
++                                              String replacement) throws IOException
++    {
++        if (expected.size < 0 || oldRoot == null || newRoot == null || replacement == null)
++            throw new IOException("File identity is unavailable");
++        if (!SupernovaLibraryPolicy.contains(SupernovaLibraryPolicy.canonical(oldRoot),
++                                             SupernovaLibraryPolicy.canonical(Uri.parse(expected.path))) ||
++            !SupernovaLibraryPolicy.contains(SupernovaLibraryPolicy.canonical(newRoot),
++                                             SupernovaLibraryPolicy.canonical(Uri.parse(replacement))) ||
++            !name(expected.path).equals(name(replacement)))
++            throw new IOException("Replacement is outside the selected sources");
++        String oldScheme = Uri.parse(expected.path).getScheme();
++        String newScheme = Uri.parse(replacement).getScheme();
++        boolean oldLocal = oldScheme == null || oldScheme.equals("file") || oldScheme.equals("content");
++        boolean newLocal = newScheme == null || newScheme.equals("file") || newScheme.equals("content");
++        if (oldLocal != newLocal)
++            throw new IOException("Replacement needs a different physical index owner");
+         return mutate(context, expected, replacement);
+     }
+ 
+diff --git a/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java b/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java
+--- a/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java
++++ b/test/java/com/archos/mediaprovider/video/MissingMediaActionsTest.java
+@@ -146,4 +146,28 @@
+         assertFalse(health.contains("media:44"));
+         assertFalse(health.contains("missing_since:44"));
+     }
++    @Test public void crossSourceRelinkPreservesViewingStateAndRejectsAnUnownedTargetRoot() throws Exception
++    {
++        row(2000000044L, "smb://old/Films/Old.mkv");
++        assertTrue(MissingMediaActions.change(database,
++            new MissingMediaActions.StoredFile(2000000044L, "smb://old/Films/Old.mkv", 123),
++            "webdavs://new/Movies/Old.mkv"));
++        preserved(2000000044L, "webdavs://new/Movies/Old.mkv");
++        assertThrows(java.io.IOException.class, () -> MissingMediaActions.relinkAcrossSources(
++            RuntimeEnvironment.getApplication(),
++            new MissingMediaActions.StoredFile(2000000044L, "smb://old/Films/Old.mkv", 123),
++            android.net.Uri.parse("smb://old/Films"), android.net.Uri.parse("webdavs://different/Movies"),
++            "webdavs://new/Movies/Old.mkv"));
++        preserved(2000000044L, "webdavs://new/Movies/Old.mkv");
++    }
++
++    @Test public void crossingLocalAndNetworkIndexOwnershipIsRejectedWithoutMutation()
++    {
++        assertThrows(java.io.IOException.class, () -> MissingMediaActions.relinkAcrossSources(
++            RuntimeEnvironment.getApplication(),
++            new MissingMediaActions.StoredFile(2000000044L, "smb://old/Films/Old.mkv", 123),
++            android.net.Uri.parse("smb://old/Films"), android.net.Uri.parse("file:///storage/drive"),
++            "file:///storage/drive/Old.mkv"));
++    }
++
+ }

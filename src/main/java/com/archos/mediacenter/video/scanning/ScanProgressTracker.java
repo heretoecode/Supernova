@@ -170,6 +170,7 @@ final class ScanProgressTracker
         }
         if (!running)
             stopping = false;
+        ScanActivitySignal.LIBRARY.set("library_lifecycle", running);
         return new ScanProgress(selected.batchId, selected.sourceId, selected.sourceLabel, checked, total, added,
                                 removed, updated, selected.startedUtcMs, selected.durationMs, running, stopping,
                                 failure);

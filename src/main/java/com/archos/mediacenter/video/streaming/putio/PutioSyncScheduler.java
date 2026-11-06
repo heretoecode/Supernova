@@ -1,6 +1,7 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.content.Context;
+import com.archos.mediacenter.video.scanning.ScanActivitySignal;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
@@ -59,52 +60,63 @@ public final class PutioSyncScheduler
         if (!enabled(context) || !BUSY.compareAndSet(false, true))
             return;
         cancelled = false;
+        ScanActivitySignal.LIBRARY.set("putio_sync", sync);
         Context app = context.getApplicationContext();
-        LibraryScanController.install(app);
-        StreamingRepository.IO.submit(() -> {
-            try
-            {
-                synchronized (PutioSyncScheduler.class)
-                {
-                    activeThread = Thread.currentThread();
-                    if (cancelled)
-                        throw new InterruptedException();
-                }
-                String token = new PutioTokenStore(app).read();
-                if (token == null)
-                {
-                    STATUS.signedOut();
-                    return;
-                }
-                try (PutioReadClient client = new PutioReadClient(token))
+        try
+        {
+            LibraryScanController.install(app);
+            StreamingRepository.IO.submit(() -> {
+                try
                 {
                     synchronized (PutioSyncScheduler.class)
                     {
-                        activeClient = client;
+                        activeThread = Thread.currentThread();
                         if (cancelled)
                             throw new InterruptedException();
                     }
-                    if (sync)
-                        sync(app, trigger, client);
-                    else
-                        STATUS.account(client.account());
+                    String token = new PutioTokenStore(app).read();
+                    if (token == null)
+                    {
+                        STATUS.signedOut();
+                        return;
+                    }
+                    try (PutioReadClient client = new PutioReadClient(token))
+                    {
+                        synchronized (PutioSyncScheduler.class)
+                        {
+                            activeClient = client;
+                            if (cancelled)
+                                throw new InterruptedException();
+                        }
+                        if (sync)
+                            sync(app, trigger, client);
+                        else
+                            STATUS.account(client.account());
+                    }
                 }
-            }
-            catch (Exception failure)
-            {
-                STATUS.failed(failure);
-                Diagnostics.event("putio_sync_incomplete", "reason", "LOCAL_UNAVAILABLE", "trigger", trigger);
-            }
-            finally
-            {
-                synchronized (PutioSyncScheduler.class)
+                catch (Exception failure)
                 {
-                    activeClient = null;
-                    activeThread = null;
-                    BUSY.set(false);
+                    STATUS.failed(failure);
+                    Diagnostics.event("putio_sync_incomplete", "reason", "LOCAL_UNAVAILABLE", "trigger", trigger);
                 }
-            }
-        });
+                finally
+                {
+                    synchronized (PutioSyncScheduler.class)
+                    {
+                        activeClient = null;
+                        activeThread = null;
+                        BUSY.set(false);
+                        ScanActivitySignal.LIBRARY.set("putio_sync", false);
+                    }
+                }
+            });
+        }
+        catch (RuntimeException unavailable)
+        {
+            BUSY.set(false);
+            ScanActivitySignal.LIBRARY.set("putio_sync", false);
+            STATUS.failed(unavailable);
+        }
     }
     /** Runs on the owning worker so transport operations inherit this sync's correlation. */
     static void sync(Context app, String trigger, PutioReadClient client)
