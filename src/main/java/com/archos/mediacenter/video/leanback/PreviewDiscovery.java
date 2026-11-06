@@ -5,10 +5,14 @@ import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import org.json.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import okhttp3.*;
+import okhttp3.ResponseBody;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader.*;
 import com.archos.mediacenter.video.browser.adapters.object.*;
 
@@ -43,7 +47,7 @@ public final class PreviewDiscovery {
                         Request request=new Request.Builder().url("https://api.trakt.tv/"+kind+"s/"+chart+"?page="+page+"&limit=100").header("trakt-api-version","2").header("trakt-api-key",key).build();
                         try(Response response=client.newCall(request).execute()){
                             if(!response.isSuccessful()||response.body()==null)throw new IOException("Chart unavailable");
-                            String body=response.body().string();if(body.length()>2000000)throw new IOException("Chart too large");
+                            String body=readBody(response.body());
                             JSONArray a=new JSONArray(body);for(int i=0;i<a.length();i++)all.put(a.get(i));if(a.length()<100)break;
                         }
                     }
@@ -68,6 +72,23 @@ public final class PreviewDiscovery {
         for(List<Entry> entries:Arrays.asList(snapshot.movies,snapshot.shows))for(Entry e:entries)
             if(e.onlineId>0&&ranks.containsKey(key(e))&&seen.add(key(e)))result.add(e);
         result.sort(Comparator.comparingInt(e->ranks.get(key(e))));return result;
+    }
+    static String readBody(ResponseBody body) throws IOException {
+        final int limit = 2_000_000;
+        if (body.contentLength() > limit)
+            throw new IOException("Chart too large");
+        try (InputStream input = body.byteStream(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[8192];
+            int count;
+            while ((count = input.read(buffer)) != -1) {
+                if (Thread.currentThread().isInterrupted())
+                    throw new IOException("Chart cancelled");
+                if (output.size() > limit - count)
+                    throw new IOException("Chart too large");
+                output.write(buffer, 0, count);
+            }
+            return new String(output.toByteArray(), StandardCharsets.UTF_8);
+        }
     }
     public static List<Entry> similar(Entry selected,Snapshot snapshot){
         List<Entry> result=new ArrayList<>();if(selected==null||selected.genres.isEmpty())return result;
