@@ -3,8 +3,8 @@
 One brief for all of Codex's 0.157 work. Work down the list in order, then hand back once. 0.156 is closed: nothing
 here goes into 0.156.
 
-**Rules** (as before): a new branch `codex/0157-2026-11-06` from `claude/supernova-github-access-yfhe89`; merge that
-branch first and again before you hand back; no PR, no merge into Claude's branch, no workflow dispatch, no `.github/`
+**Rules** (as before): a new branch `codex/0157-2026-11-06` from your `codex/0155-code-2026-11-04` (it holds your
+0.156 LAST work); merge `claude/supernova-github-access-yfhe89` into it first and again before you hand back; no PR, no merge into Claude's branch, no workflow dispatch, no `.github/`
 workflow or Gradle edits (new `.github/build/*.patch` files are fine), nothing in `docs/codex/HANDS_OFF.txt`. No
 screens, layouts, `res/` or on-screen wording: Claude builds every screen from what you deliver. One statement per line,
 lines ≤ 120, `python3 tools/test_code_layout.py` passes. A test for every change; never weaken, skip or delete a test.
