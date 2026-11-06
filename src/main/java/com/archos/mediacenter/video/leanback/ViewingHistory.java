@@ -531,6 +531,25 @@ public final class ViewingHistory
         });
     }
 
+    /** Legacy inventory cannot overwrite a write committed after its initial history snapshot. */
+    private static void migrateIfAbsent(Context context, String key, boolean complete, int position, int duration,
+                                        long played)
+    {
+        if (key == null)
+            return;
+        synchronized (LOCK)
+        {
+            try (Store helper = new Store(context);
+                 Cursor row = helper.getReadableDatabase().query("history", new String[] {"identity"}, "identity=?",
+                                                                 new String[] {key}, null, null, null))
+            {
+                if (row.moveToFirst())
+                    return;
+            }
+            write(context, key, complete, true, position, duration, played, true, true);
+        }
+    }
+
     /** Existing history migrates once per identity; turning tracking off never erases it. Worker only. */
     public static Map<String, Record> reconcile(Context c, List<PreviewLibraryLoader.Entry> entries)
     {
@@ -548,8 +567,8 @@ public final class ViewingHistory
             Record previous = records.get(key);
             if (migrate && tracking(c) && previous == null &&
                 (v.getLastPlayed() > 0 || PreviewSeriesJourney.completed(v)))
-                write(c, key, PreviewSeriesJourney.completed(v), true, positionsReplaced ? 0 : v.getResumeMs(),
-                      positionsReplaced ? 0 : v.getDurationMs(), v.getLastPlayed(), true, true);
+                migrateIfAbsent(c, key, PreviewSeriesJourney.completed(v), positionsReplaced ? 0 : v.getResumeMs(),
+                                positionsReplaced ? 0 : v.getDurationMs(), v.getLastPlayed());
             else if (previous != null)
             {
                 v.applyIdentityHistory(previous.completed, previous.played, resumeEnabled(c) ? previous.position : 0);
