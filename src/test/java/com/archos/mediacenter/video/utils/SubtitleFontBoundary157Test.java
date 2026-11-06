@@ -50,7 +50,8 @@ public class SubtitleFontBoundary157Test
         when(resolver.query(any(Uri.class), any(String[].class), isNull(), isNull(), isNull())).thenReturn(rows);
         Uri tree = Uri.parse("content://test.fonts/tree/fonts");
         Uri valid = DocumentsContract.buildDocumentUriUsingTree(tree, "valid");
-        when(resolver.openInputStream(valid)).thenReturn(new ByteArrayInputStream("font".getBytes(StandardCharsets.UTF_8)));
+        when(resolver.openInputStream(valid))
+                .thenReturn(new ByteArrayInputStream("font".getBytes(StandardCharsets.UTF_8)));
         assertEquals(1, SubtitleFontsFolderSync.syncFromTree(context, tree));
         verify(resolver).openInputStream(valid);
         assertEquals("retained", Files.readString(outside.toPath()));
