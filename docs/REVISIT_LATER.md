@@ -90,6 +90,11 @@ Items already built or scheduled are left out (see the bottom of this file).
   when the row is focused, with the row's buttons after it; grid uses the Home row card (16:9, title and year
   inside on a shade, state chip top right); Add a connection is the last row of Your connections, not a corner
   button, because it opens a page, not a pop-up.
+  v4 (owner notes 6 Nov): everything larger now the panel is gone; status pills are plain text in an outline
+  (no colour dots, no strike-through), the same for library state and reachability, in a fixed column between the
+  names (long names are shortened) and the buttons; grid folders show a mosaic of the artwork inside (plain card if
+  none), library files their artwork, other files a still from the video where one can be made; Add a connection
+  shows its types inline when focused (Computer or NAS · WebDAV · SFTP · More).
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

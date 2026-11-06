@@ -49,7 +49,7 @@ const S = {
   in: ['#5fd38d', 'In library'], out: ['#8a93a3', 'Excluded'], none: ['', 'Not added'],
   up: ['#5fd38d', 'Reachable'], down: ['#f2b544', 'Not reachable'], newf: ['', 'Not added yet'], ok: ['#5fd38d', 'Connected'],
 };
-const state = k => k ? `<span class="state ${k}">${S[k][0] ? `<i style="background:${S[k][0]}"></i>` : '<i class="ring"></i>'}${S[k][1]}</span>` : '';
+const state = k => k ? `<span class="state">${S[k][1]}</span>` : '';
 const acts = list => `<span class="acts">${list.map(([ic, t]) => `<span class="ab">${icon(I[ic], 26)}${t}</span>`).join('')}</span>`;
 const row = (ic, name, line, st, actions, focus, extra = '') => `<div class="row ${focus ? 'focus' : ''}">
   <span class="ri">${icon(I[ic], 40)}</span><div class="rt"><div class="rn">${name}</div><div class="rl">${line}</div>${extra}</div>
@@ -72,22 +72,28 @@ ${crumbrow(['Local Storage', 'Backup #1', 'Films'], tools(false))}
 ${files.map(([ic, n, l, st], i) => row(ic, n, l, st, fileacts, i === 2)).join('')}
 </div>`;
 
-const cards = [['4K', 'Folder', 'in', 1], ['Old rips', 'Folder', 'out', 1], ['Conclave', '2024', 'in'], ['home-video-2019', '1.1 GB', 'none'],
-  ['Nosferatu', '2024', 'in'], ['Flow', '2024', 'in'], ['Anora', '2024', 'in'], ['The Brutalist', '2024', 'in']];
+const cards = [['4K', '86 videos', 'in', 'mosaic'], ['Old rips', '31 videos', 'out', 'plain'], ['Conclave', '2024', 'in', 'art'],
+  ['home-video-2019', '1.1 GB', 'none', 'still'], ['Nosferatu', '2024', 'in', 'art'], ['Flow', '2024', 'in', 'art'],
+  ['Anora', '2024', 'in', 'art'], ['The Brutalist', '2024', 'in', 'art']];
+const grad = i => `linear-gradient(160deg,${art[i % 5][0]},${art[i % 5][1]})`;
+const still = 'linear-gradient(180deg,#5d6066 0%,#3c3f45 45%,#2a2b2e 46%,#4a4d52 100%)';
+const cardBg = (kind, i) => kind === 'art' ? `background:${grad(i)}` : kind === 'still' ? `background:${still}` : '';
 const gridv = `${nav}<div class="page">${head('local', '', [['412', 'videos here'], ['398', 'in library'], ['14', 'not added']])}
 ${crumbrow(['Local Storage', 'Backup #1', 'Films'], tools(true))}
-<div class="g4">${cards.map(([t, l, st, f], i) => `<div class="rc4 ${i === 2 ? 'focus' : ''}" style="${f ? '' : `background:linear-gradient(160deg,${art[i % 5][0]},${art[i % 5][1]})`}">
-${f ? `<span class="fic">${icon(I.folder, 64)}</span>` : ''}<span class="cst">${state(st)}</span>
+<div class="g4">${cards.map(([t, l, st, kind], i) => `<div class="rc4 ${i === 2 ? 'focus' : ''}" style="${cardBg(kind, i)}">
+${kind === 'mosaic' ? `<div class="mos">${[0, 1, 3, 4].map(k => `<i style="background:${grad(k)}"></i>`).join('')}</div>` : ''}
+${kind === 'plain' || kind === 'mosaic' ? `<span class="fic">${icon(I.folder, 30)}</span>` : ''}<span class="cst">${state(st)}</span>
 <div class="shade"><div class="ct">${t}</div><div class="cl">${l}</div></div></div>`).join('')}</div>
 </div>`;
 
 const shares = (focusIdx) => `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
 <div class="sec">Your connections</div>
 ${row('cloud', 'Put.io · heretostream', '98.9 of 107 GB used · synced 3 hours ago', 'up', [['open', 'Open'], ['scan', 'Sync now'], ['test', 'Test']], focusIdx === 0)}
-${row('shares', 'Living-room NAS', 'SMB · 3 folders in your library · 512 videos', 'up', [['open', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']], focusIdx === 1)}
-${row('pc', 'Office PC', 'SFTP · not in your library · last seen yesterday', 'down', [['test', 'Try again'], ['edit', 'Edit'], ['remove', 'Remove']], focusIdx === 2)}
+${row('shares', 'Living-room NAS', 'SMB · 512 videos in your library', 'up', [['open', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']], focusIdx === 1)}
+${row('pc', 'Office PC', 'SFTP · last seen yesterday', 'down', [['test', 'Try again'], ['edit', 'Edit'], ['remove', 'Remove']], focusIdx === 2)}
 <div class="row add ${focusIdx === 3 ? 'focus' : ''}"><span class="ri">${icon(I.plus, 40)}</span><div class="rt"><div class="rn">Add a connection</div>
-<div class="rl">A computer, NAS, WebDAV, SFTP or FTP server</div></div><div class="ra"><span class="rc">${icon(I.chev, 30)}</span></div></div>
+<div class="rl">${focusIdx === 3 ? 'Choose what you are connecting to' : 'Computer, NAS, WebDAV, SFTP or FTP'}</div></div><div class="rs"></div>
+<div class="ra wide">${focusIdx === 3 ? acts([['pc', 'Computer or NAS'], ['globe', 'WebDAV'], ['lock', 'SFTP'], ['more', 'More']]) : `<span class="rc">${icon(I.chev, 30)}</span>`}</div></div>
 <div class="sec">Found on your network</div>
 ${row('pc', 'DESKTOP-7Q', 'SMB · Windows computer', 'newf', [['plus', 'Add']], focusIdx === 4)}
 </div>`;
@@ -132,38 +138,35 @@ const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8}
 .nav .brand{font-size:36px;margin-right:40px;letter-spacing:1px}.nav .sp{flex:1}.nav .on{font-weight:500;color:#fff}.nav .clock{margin-left:20px}
-.page{position:absolute;left:96px;right:96px;top:120px;bottom:40px}
+.page{position:absolute;left:96px;right:96px;top:122px;bottom:40px}
 .tabrow{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:2px solid rgba(255,255,255,.10);margin-bottom:10px}
-.tray{display:inline-flex;gap:6px;padding:6px;border-radius:28px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
-.tab{height:64px;padding:0 28px;border-radius:22px;display:inline-flex;align-items:center;gap:14px;font-size:28px;font-weight:500;color:#dfe5f1}
+.tray{display:inline-flex;gap:8px;padding:7px;border-radius:31px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
+.tab{height:76px;padding:0 34px;border-radius:24px;display:inline-flex;align-items:center;gap:16px;font-size:32px;font-weight:500;color:#dfe5f1}
 .tab.open{background:#454B55;color:#fff}.tab.focus{background:#F4F6FB;color:#0B0D12}
-.summary{display:flex;gap:14px;font-size:26px;color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary i{font-style:normal;color:#6b7383}
-.sec{font-size:26px;font-weight:500;color:#B7BFCC;margin:34px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
-.row{display:flex;align-items:center;gap:28px;min-height:108px;padding:16px 30px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
+.summary{display:flex;gap:16px;font-size:30px;color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary i{font-style:normal;color:#6b7383}
+.sec{font-size:28px;font-weight:500;color:#B7BFCC;margin:36px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
+.row{display:flex;align-items:center;gap:30px;min-height:128px;padding:18px 34px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl{color:#3A4256}
-.ri{color:#c9d3e6;width:40px}.row.focus .ri{color:#0B0D12}.rt{flex:1;min-width:0}.rn{font-size:32px;font-weight:500}.rl{font-size:24px;color:#C9D3E6;margin-top:6px}
-.rs{width:250px}.ra{width:620px;display:flex;justify-content:flex-end}.rc{color:rgba(255,255,255,.35)}.row.focus .rc{color:#0B0D12}
-.state{display:inline-flex;align-items:center;gap:12px;height:46px;padding:0 20px;border-radius:23px;font-size:24px;font-weight:500;background:rgba(255,255,255,.08);color:#fff}
-.state i{width:14px;height:14px;border-radius:50%}.state i.ring{box-shadow:inset 0 0 0 2px #8a93a3}
-.state.out{color:#aab2c0;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.4)}.state.none,.state.newf{background:transparent;box-shadow:inset 0 0 0 2px rgba(255,255,255,.22);color:#dfe5f1}
-.state.down{color:#f6cf7f}
-.row.focus .state{background:#e3e7ee;color:#0B0D12}.row.focus .state.none{background:transparent;box-shadow:inset 0 0 0 2px #9aa3b2}
-.bar{margin-top:14px;width:560px;height:8px;border-radius:4px;background:rgba(255,255,255,.14)}.bar i{display:block;height:100%;border-radius:4px;background:#C9D3E6}
-.acts{display:flex;gap:12px}.ab{white-space:nowrap;height:56px;padding:0 20px;border-radius:18px;background:#dde1ea;color:#0B0D12;display:inline-flex;align-items:center;gap:10px;font-size:24px;font-weight:500}
+.ri{color:#c9d3e6;width:44px}.row.focus .ri{color:#0B0D12}.rt{width:500px;min-width:0;flex-shrink:0}.rn{font-size:36px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rl{font-size:27px;color:#C9D3E6;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rs{width:220px;flex-shrink:0;display:flex;justify-content:center}.ra{flex:1;display:flex;justify-content:flex-end}.rc{color:rgba(255,255,255,.35)}.row.focus .rc{color:#0B0D12}
+.state{white-space:nowrap;display:inline-flex;align-items:center;height:48px;padding:0 24px;border-radius:24px;font-size:26px;font-weight:500;color:#e8edf6;box-shadow:inset 0 0 0 2px rgba(255,255,255,.30)}
+.row.focus .state{color:#0B0D12;box-shadow:inset 0 0 0 2px rgba(11,13,18,.35)}
+.bar{margin-top:16px;width:620px;height:8px;border-radius:4px;background:rgba(255,255,255,.14)}.bar i{display:block;height:100%;border-radius:4px;background:#C9D3E6}
+.acts{display:flex;gap:14px}.ab{white-space:nowrap;height:64px;padding:0 22px;border-radius:20px;background:#dde1ea;color:#0B0D12;display:inline-flex;align-items:center;gap:12px;font-size:26px;font-weight:500}
 .ab:first-child{background:#0B0D12;color:#fff}
 .row.add .ri{color:#fff}.row.add.focus .ri{color:#0B0D12}.row.add .rn{font-weight:500}
-.crumbrow{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px;min-height:58px}
-.crumbs{font-size:30px;color:#C9D3E6}.crumbs b{color:#7d8696;margin:0 10px;font-weight:400}.crumbs span{color:#fff;font-weight:500}
-.tools{display:flex;gap:12px}.b{height:58px;padding:0 24px;border-radius:20px;background:#2a2d33;display:inline-flex;align-items:center;gap:12px;font-size:24px;font-weight:500}
+.crumbrow{display:flex;align-items:center;justify-content:space-between;margin:30px 0 14px;min-height:64px}
+.crumbs{font-size:34px;color:#C9D3E6}.crumbs b{color:#7d8696;margin:0 10px;font-weight:400}.crumbs span{color:#fff;font-weight:500}
+.tools{display:flex;gap:12px}.b{height:64px;padding:0 26px;border-radius:20px;background:#2a2d33;display:inline-flex;align-items:center;gap:12px;font-size:27px;font-weight:500}
 .b.focus{background:#F4F6FB;color:#0B0D12}.b.big{height:76px;padding:0 34px;font-size:30px}
-.g4{display:grid;grid-template-columns:repeat(4,400px);gap:34px 42px;margin-top:22px}
+.g4{display:grid;grid-template-columns:repeat(4,400px);gap:40px 42px;margin-top:26px}
 .rc4{position:relative;width:400px;height:225px;border-radius:16px;background:#22252B;box-shadow:0 0 0 2px rgba(255,255,255,.28);overflow:hidden}
 .rc4.focus{transform:scale(1.1);box-shadow:0 0 0 4px #fff;z-index:2}
-.fic{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);color:#c9d3e6}
-.cst{position:absolute;right:12px;top:12px}.cst .state{height:38px;font-size:20px;padding:0 14px;background:rgba(10,12,16,.72)}
-.cst .state.none{background:rgba(10,12,16,.72)}
+.fic{position:absolute;left:14px;top:12px;width:48px;height:42px;border-radius:12px;background:rgba(10,12,16,.72);display:flex;align-items:center;justify-content:center;color:#fff}
+.mos{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px}.mos i{display:block}
+.cst{position:absolute;right:12px;top:12px}.cst .state{height:40px;font-size:21px;padding:0 16px;background:rgba(10,12,16,.72);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
 .shade{position:absolute;left:0;right:0;bottom:0;padding:44px 20px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
-.ct{font-size:26px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl{font-size:20px;color:#d6dce8;margin-top:2px}
+.ct{font-size:28px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl{font-size:20px;color:#d6dce8;margin-top:2px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:80px}
 .scanbox{display:flex;align-items:center;gap:30px;margin-bottom:22px}
 .kv{display:flex;justify-content:space-between;align-items:center;font-size:28px;padding:20px 4px;border-bottom:2px solid rgba(255,255,255,.08)}.kv span{color:#C9D3E6}.kv b{font-weight:500}
