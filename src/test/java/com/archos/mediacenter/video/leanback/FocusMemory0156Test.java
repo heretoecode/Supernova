@@ -38,6 +38,29 @@ public class FocusMemory0156Test
     }
 
     @Test
+    public void networkSectionReturnsToTheLastRowAfterTheTopBar()
+    {
+        var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
+            var browser = new com.archos.mediacenter.video.leanback.filebrowsing.UniversalFileBrowser(host.get());
+            host.get().setContentView(browser);
+            browser.networkWorkspace();
+            ReflectionHelpers.callInstanceMethod(browser, "openLandingCard",
+                ReflectionHelpers.ClassParameter.from(int.class, 4));
+            PreviewPagesTest.layout(browser);
+            java.util.List<View> targets = browser.getFocusables(View.FOCUS_FORWARD);
+            org.junit.Assert.assertTrue(targets.size() > 1);
+            View previous = targets.get(targets.size() - 1);
+            org.junit.Assert.assertTrue(previous.requestFocus());
+            browser.focusOverview();
+            org.junit.Assert.assertSame(previous, browser.findFocus());
+            browser.close();
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
+
+    @Test
     public void customiseHomeReopensOnTheRowYouLeft()
     {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
