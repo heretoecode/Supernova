@@ -5,6 +5,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 const fontDir = process.env.FONT_DIR;
 const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/woff2;base64,${fs.readFileSync(path.join(fontDir, `roboto-latin-${w}-normal.woff2`)).toString('base64')}) format('woff2')}`;
+const ring = '<i class="scanring"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke="rgba(255,255,255,.25)"/><path d="M12 4a8 8 0 0 1 8 8" stroke="#fff"/></svg></i>';
 const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</span><span>Movies</span><span>TV Shows</span>
   <span>Documentaries</span><span class="sp"></span><span class="on">Network &amp; Files</span><span class="ico">⌕</span>
   <span class="ico">⚙</span><span class="clock">23:40</span></div>`;
@@ -228,11 +229,11 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8}
 .nav .brand{font-size:36px;margin-right:40px;letter-spacing:1px}.nav .sp{flex:1}.nav .on{font-weight:500;color:#fff}.nav .clock{margin-left:20px}
 .page{position:absolute;left:96px;right:96px;top:150px;bottom:40px}
-.tabrow{display:flex;align-items:center;justify-content:space-between;padding-bottom:34px;border-bottom:2px solid rgba(255,255,255,.10);margin-bottom:26px}
+.tabrow{display:flex;align-items:center;justify-content:space-between;gap:56px;padding-bottom:34px;border-bottom:2px solid rgba(255,255,255,.10);margin-bottom:26px}
 .tray{display:inline-flex;gap:8px;padding:7px;border-radius:31px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
-.tab{height:76px;padding:0 34px;border-radius:24px;display:inline-flex;align-items:center;gap:16px;font-size:32px;font-weight:500;color:#dfe5f1}
+.tab{height:76px;padding:0 28px;border-radius:24px;display:inline-flex;align-items:center;gap:16px;font-size:32px;font-weight:500;color:#dfe5f1}
 .tab.open{background:#454B55;color:#fff}.tab.focus{background:#F4F6FB;color:#0B0D12}
-.summary{display:flex;align-items:center;gap:18px;font-size:32px;color:#C9D3E6}.summary span{display:inline-flex;align-items:center;gap:12px}.summary svg{color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary .dot{font-style:normal;color:#6b7383}
+.summary{display:flex;align-items:center;gap:14px;font-size:32px;color:#C9D3E6}.summary span{display:inline-flex;align-items:center;gap:12px}.summary svg{color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary .dot{font-style:normal;color:#6b7383}
 .sec{font-size:28px;font-weight:500;color:#B7BFCC;margin:36px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
 .row{display:flex;align-items:center;gap:30px;min-height:128px;padding:18px 34px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl{color:#3A4256}
@@ -308,18 +309,24 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .code{margin-top:26px;font-size:88px;font-weight:500;letter-spacing:12px;color:#fff;padding:18px 48px;border-radius:24px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
 .row.menuhost2{position:relative;background:rgba(255,255,255,.06);border-radius:24px;box-shadow:none}.rowmenu{right:30px;top:calc(100% - 10px)}
 .rl.wrap{white-space:normal}.rowmenu{z-index:9;top:auto !important;bottom:calc(100% - 40px)}
+.scanring{display:inline-flex;margin-left:14px;vertical-align:middle}.nav span{display:inline-flex;align-items:center}
+.homehero{position:absolute;left:72px;right:72px;top:112px;height:700px;border-radius:28px;background:linear-gradient(120deg,#3a2a22,#16181C 70%);box-shadow:0 0 0 2px rgba(255,255,255,.28)}
+.homerow{position:absolute;left:72px;top:850px;font-size:32px;font-weight:500}.homecards{position:absolute;left:72px;top:905px;display:flex;gap:24px}
+.homecards span{width:400px;height:225px;border-radius:16px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 
 // ---- v12: the rest of the journey -------------------------------------------------------------------------
-const P = (tab, summary, body) => `${nav}<div class="page">${head(tab, '', summary)}${body}</div>`;
+const P = (tab, summary, body, n = nav) => `${n}<div class="page">${head(tab, '', summary)}${body}</div>`;
+const navScan = nav.replace('<span class="on">Network &amp; Files</span>', `<span class="on">Network &amp; Files${ring}</span>`);
+const navScanHome = navScan.replace('<span>Home</span>', '<span class="on">Home</span>').replace('<span class="on">Network &amp; Files', '<span>Network &amp; Files');
 const SUM_LOCAL = [['2', 'devices'], ['1,513', 'videos'], ['1.1 TB', 'free']];
 const SUM_CONN = [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']];
 const SUM_LIB = [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']];
 const scanning = P('library', SUM_LIB, `<div class="sec first">Scanning</div>
-${lrow('scan', 'Scanning Put.io › Films', '240 of 1,809 checked · 2 new so far', 'Scanning…', [['close', 'Stop']], true).replace('240 of 1,809 checked · 2 new so far</div>', `240 of 1,809 checked · 2 new so far</div>${bar(240, 1809)}`)}
+${lrow('scan', 'Put.io › Films', '240 of 1,809 checked · 2 new so far', 'Scanning…', [['close', 'Stop']], true).replace('240 of 1,809 checked · 2 new so far</div>', `240 of 1,809 checked · 2 new so far</div>${bar(240, 1809)}`)}
 <div class="sec">Library Health</div>
 ${lrow('folder', 'Missing files', 'In your library but no longer found', '3 files', null, false)}
-${lrow('film', "Couldn't be read", 'Files Supernova could not open', '2 files', null, false)}`);
+${lrow('film', "Couldn't be read", 'Files Supernova could not open', '2 files', null, false)}`, navScan);
 const putioFiles = [['folder', 'Films', 'Folder · 412 videos', 'in'], ['folder', 'TV', 'Folder · 791 videos', 'in'],
   ['folder', 'Downloads', 'Folder · 18 videos', 'none'], ['film', 'Dune Part Two (2024).mkv', '2024 · 22.4 GB', 'in']];
 const insideConn = P('shares', SUM_CONN, `${crumbrow(['Put.io', 'Films'].slice(0, 1), tools(false))}
@@ -382,6 +389,7 @@ const rowMenu2 = (() => {
 const scanRows = [['cloud', 'Put.io › Films', 'Today 23:28 · 3 new, 1 updated', 'Finished'], ['shares', 'Living-room NAS', 'Today 22:28 · no changes', 'Finished'],
   ['usb', 'Backup #1', 'Today 21:28 · the drive was removed', 'Stopped'], ['cloud', 'Put.io › TV', 'Today 20:28 · 1 new episode', 'Finished'],
   ['shares', 'Living-room NAS', 'Today 19:28 · could not connect', 'Failed'], ['usb', 'Backup #1', 'Today 18:28 · no changes', 'Finished']];
+const homeScan = `${navScanHome}<div class="homehero"></div><div class="homerow">Continue Watching</div><div class="homecards">${[0, 1, 2, 3].map(i => `<span style="background:linear-gradient(160deg,${art[i][0]},${art[i][1]})"></span>`).join('')}</div>`;
 const allScans = P('library', SUM_LIB, `${crumbrow(['Recent scans'])}${scanRows.map(([ic, n, l, st], i) => lrow(ic, n, l, st, null, i === 0)).join('')}`);
 
 (async () => {
@@ -390,7 +398,7 @@ const allScans = P('library', SUM_LIB, `${crumbrow(['Recent scans'])}${scanRows.
   const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
     ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library], ['09b-library-lower.png', libraryLower],
-    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched], ['15-scan-running.png', scanning], ['16-inside-a-connection.png', insideConn], ['17-waiting.png', waiting], ['18-drive-removed.png', gone], ['19-no-usb.png', noUsb], ['20-no-connections.png', noConn], ['21-all-fine.png', healthFine], ['22-test-ok.png', formRes(true)], ['23-test-failed.png', formRes(false)], ['24-removed-undo.png', removed], ['25-find-on-network.png', discovery], ['26-putio-signed-out.png', putioOut], ['27-putio-code.png', putioCode], ['28-row-menu.png', rowMenu2], ['29-all-scans.png', allScans], ['12b-find-searching.png', missingSearching], ['12c-find-found.png', missingFound], ['12d-find-not-found.png', missingNotFound], ['14b-fix-match.png', fixMatch], ['14c-not-a-film.png', notFilm]];
+    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched], ['15-scan-running.png', scanning], ['16-inside-a-connection.png', insideConn], ['17-waiting.png', waiting], ['18-drive-removed.png', gone], ['19-no-usb.png', noUsb], ['20-no-connections.png', noConn], ['21-all-fine.png', healthFine], ['22-test-ok.png', formRes(true)], ['23-test-failed.png', formRes(false)], ['24-removed-undo.png', removed], ['25-find-on-network.png', discovery], ['26-putio-signed-out.png', putioOut], ['27-putio-code.png', putioCode], ['28-row-menu.png', rowMenu2], ['29-all-scans.png', allScans], ['30-scan-indicator.png', homeScan], ['12b-find-searching.png', missingSearching], ['12c-find-found.png', missingFound], ['12d-find-not-found.png', missingNotFound], ['14b-fix-match.png', fixMatch], ['14c-not-a-film.png', notFilm]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);

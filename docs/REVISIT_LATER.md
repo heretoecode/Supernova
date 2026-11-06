@@ -134,6 +134,11 @@ Items already built or scheduled are left out (see the bottom of this file).
   drive removed, empty pages (no USB drive, no connections, "Everything looks fine"), Test connection result on the
   form, Remove with Undo, Find on my network, Put.io signed out and its sign-in code, the Menu-button menu on a row,
   Show all scans, and a count badge on the Library Care tab. Mock-ups 15–29.
+  v13 (owner, 6 Nov): scan row title is the source only (the pill says Scanning…); the tab tray and the summary
+  always keep a clear gap (56 px at 1080p; the summary shrinks before they may touch); while a scan runs, a small
+  spinning ring sits after "Network & Files" in the global top bar on every page, replacing the bottom-right
+  "Scanning local library…" pill. Owner accepts Claude's recommendations on everything else in 15–29.
+  Status: the Network & Files redesign is complete as a design (mock-ups 01–30); not tied to a version yet.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
