@@ -643,7 +643,6 @@ public final class FoundationAboutWorkspace extends LinearLayout {
                         entry.optString("logo")),
                 null);
         }
-        }
         everyComponent();
     }
 
