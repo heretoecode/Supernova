@@ -50,11 +50,31 @@ the player).
   pauses, as designed) stays the same whether playing or paused.
 - **P9 Controls vanish the moment play resumes.** Too abrupt: keep them for about three seconds after resuming, then
   fade.
-- **P10 No seek preview pictures seen** (photos while seeking show none). The switch is Settings › System › Advanced
-  › Seek previews (experimental), on by default. Owner to check the switch and try a local and a Put.io file.
+- **P10 Seek previews missing entirely.** No pictures on Put.io or local files, and Settings › System › Advanced has
+  no "Seek previews (experimental)" switch. The Advanced layout lists `seek_thumbnails_enabled` (SettingsLayout) but
+  the switch itself seems never to be created, so the page skips it. Fix both: the switch and the pictures.
+- **P11 Picture in picture does nothing** when chosen. Owner decision: **remove picture in picture completely** in
+  0.157 (never needed; awkward in other apps). Noted in `docs/REVISIT_LATER.md` to bring back if ever wanted.
+- **P12 Playback Settings tab memory, as tested by the owner:** to change tab you must go Up to the tabs; Claude's
+  check (#27) is: on Text Size, Up to the tabs, over to Audio, back to Subtitles, Down: does it land on Text Size?
+- First-play tip: seen, works. Owner: it sits towards the top; should it be centred? Claude: yes, centre it.
+- NOVA's blue "Press UP" box: not seen since the first install, so it was NOVA's first-run notice. Fine.
+- Not yet tested: Still watching?, Sleep timer (running now), auto-next past hidden episodes, Put.io pause (owner
+  testing now; diagnostics report to follow).
 - Remote checked, as designed: Up reaches Settings, Down the seek bar, Down again the Chapters strip.
 
 ### Ideas and questions (owner), with Claude's view
+- **Split "For this series" into two.** Today one switch on the Audio tab ("Use these choices for MobLand": audio and
+  subtitles together). Owner: one for audio on the Audio tab, one for subtitles on the Subtitles tab. Claude agrees.
+- **Track names as name plus pills.** Today: "Original | English (United Kingdom) (EAC3) · 5.1" and "Original |
+  English (United Kingdom) (TEXT)", "… (SDH) - Hearing I…". These are the track's details: Original = the film's
+  own language; EAC3 = the sound format (Dolby Digital Plus); 5.1 = channels; TEXT = text-based subtitles (not useful:
+  drop); SDH = subtitles for the deaf and hard of hearing. Claude's proposal: the name in plain words ("English"),
+  then small pills: Audio "Original" "Dolby Digital Plus" "5.1"; Subtitles "Original" "SDH" (or "Forced"). Flag stays.
+- **Colours of HUD buttons, time bubble, Chapters/Episodes buttons and Playback Settings:** yes, the 0.157 panel
+  look (90% #16181C, no outline, focused item filled white with black text and icon) covers all of them. That is
+  already agreed and separate from the page background question (0.157 notes §18).
+
 - **New panel look on Playback Settings and Download Subtitles:** yes, the 0.157 look (90% #16181C, no outline,
   focused row filled white with black text and icon) covers both (0.157 notes §5).
 - **Download icon on the right of each subtitle:** keep it on the right: the left is what the row is (flag and

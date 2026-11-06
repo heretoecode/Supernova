@@ -153,3 +153,9 @@ Items already built or scheduled are left out (see the bottom of this file).
   screensaver (with Open Android settings), Shows (Films · TV shows · Both), Change picture every (10 · 20 · 30 s) and
   Show the title and clock. Taken out of 0.156 by the owner; not scheduled for 0.157 either. The rest of Appearance
   (interface language) stays in 0.156.
+
+## Picture in picture (owner, 6 Nov 2026)
+Removed in 0.157: the owner has never needed it and finds it awkward in other apps; in 0.156 choosing it did nothing.
+0.156 had fixed its subtitles and return to full screen (release item 15), so that code is the starting point if it
+is ever wanted back.
+
