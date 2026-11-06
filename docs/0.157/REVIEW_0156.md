@@ -63,6 +63,8 @@ the player).
   walking Up through the rows, Down from a tab always goes to the **first row** of that tab. Remembering a row there
   is pointless (it only remembers the route Up). Memory stays where you jump away directly (closing and reopening a
   panel, going to the top bar and back). Resolves audit F2 for these panels; undo the 0.156 per-tab row memory.
+  Owner: the one place memory matters here is a row that opens its own list (Subtitle Track, Audio Track, Download
+  Subtitles): on return, focus is back on that row.
 - First-play tip: seen, works. Owner: it sits towards the top; should it be centred? Claude: yes, centre it.
 - NOVA's blue "Press UP" box: not seen since the first install, so it was NOVA's first-run notice. Fine.
 - Not yet tested: Still watching?, Sleep timer (running now), auto-next past hidden episodes, Put.io pause (owner
