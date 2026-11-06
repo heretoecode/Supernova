@@ -1425,6 +1425,9 @@ public final class LocalStorageView extends LinearLayout {
                 result.add(new Action("info", "Details", () -> getContext().startActivity(
                     new Intent(getContext(), VideoDetailsActivity.class).putExtra(VideoDetailsFragment.EXTRA_VIDEO,
                                                                                    video))));
+            else
+                result.add(new Action("info", "Details", () -> UnlibraryDetails.show(getContext(), uri, file.getName(),
+                    () -> play(file, true), () -> addToLibrary(uri))));
             if (video != null && video.isWatched())
                 result.add(new Action("unwatched", "Mark as unwatched", () -> {
                     com.archos.mediacenter.video.utils.DbUtils.markAsNotRead(getContext(), video);
@@ -1449,6 +1452,17 @@ public final class LocalStorageView extends LinearLayout {
         if (file.isDirectory())
             result.add(new Action("save", "Save", () -> PreviewFolderActions.save(getContext(), uri, file.getName())));
         return result;
+    }
+
+    /**
+     * Add to library for one file (Codex hooks, LAST section 2): inside a library folder the file is just indexed;
+     * outside one it is included first, then indexed. The root is never widened to the parent folder.
+     */
+    private void addToLibrary(Uri uri) {
+        if (!libraryState(uri).equals("included"))
+            changeLibrary(uri, "include");
+        com.archos.mediaprovider.video.VideoStore.requestIndexing(uri, getContext(), false);
+        refreshAfterWatchedChange();
     }
 
     /** Look the folder up again once the database has the change, so the pill and line follow it. */
