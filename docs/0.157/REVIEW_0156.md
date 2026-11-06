@@ -63,3 +63,8 @@ the player).
 - **Same words on Preparing playback and the HUD:** Preparing shows the tagline ("Chaos reigns."); the HUD shows
   "Season 2 · Episode 8 · We Don't Talk Anymore". Claude suggests both show what is about to play: for an episode,
   season, episode and its title; for a film, its year (and tagline if wanted).
+- **New (owner): age rating at the start of playback,** as streaming services do. Top left for about 6–8 seconds when
+  a film or episode starts (and after a long pause), then fades: the UK rating (BBFC, e.g. 15, 12A) and its reasons
+  where known (e.g. "strong language, violence"). Sits with the title logo. Nothing shown when there is no rating.
+  The owner has asked for this before and it never appeared: Codex to check what rating data Supernova stores, why
+  it is missing (likely the wrong country or not saved), and supply rating and reasons per title; Claude draws it.
