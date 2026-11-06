@@ -107,3 +107,11 @@ the player).
   where known (e.g. "strong language, violence"). Sits with the title logo. Nothing shown when there is no rating.
   The owner has asked for this before and it never appeared: Codex to check what rating data Supernova stores, why
   it is missing (likely the wrong country or not saved), and supply rating and reasons per title; Claude draws it. Needs a mock-up first (place beside the logo, size, reasons).
+- **Title block (logo, information, age rating), Claude's proposal (needs one mock-up: Preparing and HUD side by side):**
+  one block, top left, in the same place on Preparing playback and the HUD, lined up with the hero logo on Home and
+  Details. Top to bottom: title logo; one information line, the same on both screens ("Season 2 · Episode 8 · We
+  Don't Talk Anymore" for an episode, "1991 · 2 h 17 min" for a film); age rating chip with reasons. Preparing adds
+  the spinner and "Preparing playback…" under the block. When the video starts the block stays put (artwork gives way
+  to the picture). The age rating shows for the first 6–8 s, then fades; afterwards the block shows with the
+  controls. Question for the owner: block stays up for the age-rating moment even if the remote is untouched (Claude:
+  yes).
