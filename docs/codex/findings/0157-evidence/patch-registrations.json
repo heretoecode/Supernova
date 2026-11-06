@@ -1,0 +1,120 @@
+[
+  {
+    "kind": "patch",
+    "module": "MediaLib",
+    "path": ".github/build/medialib-supernova157-connection-removal.patch",
+    "sha256": "8fb99c247ab76b6c3f00db99b97e0b37ccc00310c8fa4271092b263ac4420cc4",
+    "unchanged_since": "851ac21ca"
+  },
+  {
+    "kind": "patch",
+    "module": "MediaLib",
+    "path": ".github/build/medialib-supernova157-source-scan.patch",
+    "sha256": "a40f354c7365ef8deb11598fc13d79d13e9ab69257d779df26dd5fa936f8de95",
+    "unchanged_since": "851ac21ca"
+  },
+  {
+    "kind": "patch",
+    "module": "MediaLib",
+    "path": ".github/build/medialib-supernova157-find-everywhere.patch",
+    "sha256": "b07040e60af48e5c5d435decb6e7a89cd63cc6ca2d9ef55436e742866c49b743",
+    "unchanged_since": "851ac21ca"
+  },
+  {
+    "kind": "patch",
+    "module": "MediaLib",
+    "path": ".github/build/medialib-supernova157-import-state.patch",
+    "sha256": "db3bd001612ab39a08efe26c8341f3f1c7253a338ab2ea895de5cbfd709826fb",
+    "unchanged_since": "851ac21ca"
+  },
+  {
+    "kind": "patch",
+    "module": "MediaLib",
+    "path": ".github/build/medialib-supernova157-library-ownership.patch",
+    "sha256": "1c7a67b9efb5c2f81c338cf33a9375f5147d569717b98409f5d9a1bd9ff46b7f",
+    "files": [
+      "src/com/archos/mediacenter/filecoreextension/upnp2/UpnpServiceManager.java",
+      "src/com/archos/medialib/AvosMediaPlayer.java",
+      "src/com/archos/mediaprovider/MediaRetrieverService.java",
+      "src/com/archos/mediaprovider/video/LibraryHealthEvidence.java",
+      "src/com/archos/mediaprovider/video/LibraryScanControl.java",
+      "src/com/archos/mediaprovider/video/LocalSourceScan.java",
+      "src/com/archos/mediaprovider/video/MediaDatabaseUpgrade.java",
+      "src/com/archos/mediaprovider/video/MissingMediaActions.java",
+      "src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java",
+      "src/com/archos/mediaprovider/video/PersonalVideoActions.java",
+      "src/com/archos/mediaprovider/video/PhysicalIndexOwnership.java",
+      "src/com/archos/mediaprovider/video/VideoOpenHelper.java",
+      "src/com/archos/mediaprovider/video/VideoProvider.java",
+      "src/com/archos/mediaprovider/video/VideoStoreImportImpl.java",
+      "src/com/archos/mediaprovider/video/VideoStoreImportService.java",
+      "src/com/archos/mediascraper/AutoScrapeService.java",
+      "src/com/archos/mediascraper/Scraper.java",
+      "src/com/archos/mediascraper/xml/BaseScraper2.java",
+      "test/java/com/archos/mediaprovider/video/LocalSourceScanTest.java",
+      "test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java"
+    ],
+    "apply_check": true,
+    "prepared_source_byte_equality": true
+  },
+  {
+    "kind": "patch",
+    "module": "FileCoreLibrary",
+    "path": ".github/build/filecore-supernova157-owned-observations.patch",
+    "sha256": "0769ed88d3c9dcfbd629adfced121aee3ca761f1586b4ba8af362cbe330039bb",
+    "files": [
+      "src/com/archos/filecorelibrary/FileUtils.java",
+      "src/com/archos/filecorelibrary/TransportOperationTrace.java",
+      "src/com/archos/filecorelibrary/ftp/FtpFileEditor.java",
+      "src/com/archos/filecorelibrary/ftp/Session.java",
+      "src/com/archos/filecorelibrary/jcifs/JcifsFileEditor.java",
+      "src/com/archos/filecorelibrary/sftp/SFTPSession.java",
+      "src/com/archos/filecorelibrary/sftp/SftpFileEditor.java",
+      "src/com/archos/filecorelibrary/smbj/SmbjFileEditor.java",
+      "src/com/archos/filecorelibrary/smbj/SmbjUtils.java",
+      "src/com/archos/filecorelibrary/sshj/SshjFileEditor.java",
+      "src/com/archos/filecorelibrary/webdav/WebdavFileEditor.java",
+      "test/java/com/archos/filecorelibrary/DatabaseLocator157Test.java",
+      "test/java/com/archos/filecorelibrary/TransportOperationTraceTest.java"
+    ],
+    "apply_check": true,
+    "prepared_source_byte_equality": true
+  },
+  {
+    "kind": "patch",
+    "module": "native/avos",
+    "path": ".github/build/avos-supernova157-seek-and-frame-evidence.patch",
+    "sha256": "bdfab8e92fceb6a1d31f943247661328d3da0b6df3feef7793b537d0234197ed",
+    "files": [
+      "Include/frame_observation.h",
+      "Include/seek_picture.h",
+      "Include/stream.h",
+      "Source/avos_mp.c",
+      "Source/avos_mp_video.c",
+      "Source/codec_sfdec2.c",
+      "Source/stream_sink_video_android.c",
+      "Source/stream_sink_video_android2.c",
+      "Source/stream_sink_video_android3.c",
+      "Source/stream_video.c",
+      "jni/libavosjni/avos_media_player.c",
+      "public/avos_mp.h",
+      "test/seek_picture.c",
+      "test/test_seek_picture.py"
+    ],
+    "apply_check": true,
+    "prepared_source_byte_equality": true
+  },
+  {
+    "kind": "patch",
+    "module": "native/avos",
+    "path": ".github/build/avos-supernova157-atomic-alignment.patch",
+    "sha256": "992e7a462f38cc183c3f1c1c3846d3c3dd9791cb299413b8bac0baec46e2b201",
+    "files": [
+      "Include/seek_picture.h",
+      "Include/frame_observation.h",
+      "test/seek_picture.c"
+    ],
+    "apply_check": true,
+    "prepared_source_byte_equality": true
+  }
+]

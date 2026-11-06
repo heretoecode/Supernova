@@ -39,8 +39,8 @@ it sends the existing explicit force-scan request with one source selector. The 
 canonical registered network root; it does not replace the saved selection or turn an arbitrary parent into a root.
 Progress, stop generation, history and terminal events remain the existing dispatcher/ledger's.
 Unknown roots produce no scan. Watch existing progress/request acknowledgement rather than assuming a start.
-Local-device-only import and one-Put.io-folder admission are **not supplied**; do not advertise this overload as
-supporting those source kinds. Existing `LibraryScanController.stop()` still owns worker cancellation.
+Local and Put.io use their distinct owned admission APIs in the continuation section below.
+Existing `LibraryScanController.stop()` still owns library worker cancellation.
 
 ## Top-bar scan activity — item 4
 
@@ -81,15 +81,13 @@ New MediaLib `MissingMediaActions.relinkAcrossSources(context, expected, oldRoot
 exact ID/path/size scan-lock/database guards and changes only locations/display names/availability. Watched state,
 both bookmark fields, history, hidden state and metadata stay intact. It rejects mismatched source guards/names and
 existing destination identities. It is worker-only and can throw IOException; do not bypass the repository's final
-physical size/type check. Recovery still needs an identifiable original source for its old-root guard. Crossing local/import and network/
-scanned physical index ownership is rejected rather than leaving a row in the wrong source table; that migration
-is not implemented. Network-to-network moves retain their existing physical/public identity.
+physical size/type check. The continuation below adds missing-source derivation and local/import ↔ network/scanned ownership migration.
+Do not infer physical ownership from the public ID; the guarded transaction retains that public identity.
 
 ## Personal videos and typed Library Health — items 8–9
 
-No personal-video mutation or typed Damaged/Timed-out/Unsupported health inventory is delivered. Do not implement
-these by hiding a title or treating an unmatched title as damaged. Existing missing-files/attention data remains.
-See the report for the missing durable scan/backup contracts; there is no new UI call for these two items.
+The continuation below documents persisted PersonalVideoActions with Undo/HIDDEN backup and typed
+LibraryHealthRepository rows/retry. Personal is separate from hidden; unmatched is separate from unreadable.
 
 ## Forgiving matching — item 10
 
@@ -361,3 +359,17 @@ MediaLib `UpnpServiceManager.useOwnedProcessService(serviceClass)` is process-st
 the private listing process before singleton creation. Other callers keep the normal shared service. The bridge
 service's Binder and wire are internal and are not public screen APIs. Native handle fields are appended to retain
 existing layout ordering, but the Java bridge, native headers and JNI must be built and reviewed together.
+
+## Post-hunt internal follow-ups
+
+No new screen call is required for DB157-01…04 or DG157-01…04. Preview snapshots now honour the same personal-role
+predicate; history migration cannot replace a newer playback write; chart bodies are byte-bounded; metadata queue
+admission failures release the worker. External-player init resets its row/duration and owns each async lookup
+reply; callers keep using init/result as before. Unscoped IndexHelper.Listener implementation was removed from
+that helper (no production consumer used it). Subtitle search/download keep the same worker-only synchronous APIs,
+with one authentication refresh/retry per invocation. Font SAF copies keep the worker-only API and return count/-1,
+rejecting unsafe provider display names before I/O. These changes require no screen or on-screen wording edit.
+
+Native integration must apply avos-supernova157-atomic-alignment.patch after seek-and-frame-evidence.patch;
+it aligns the new internal 64-bit atomic storage on all ABIs, including i686. The earlier patch bytes and Java
+capability/API contracts are unchanged. See 0157-native-alignment.md and the registration receipt.

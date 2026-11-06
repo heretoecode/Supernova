@@ -1,0 +1,559 @@
+{
+  "scope": "Selected regression suite; not Gradle/AGP lint/APK/full conformance or device acceptance",
+  "source_merge": "9dd9d0c65",
+  "java": {
+    "compiler": "Zulu OpenJDK 21.0.5",
+    "source_target": 17,
+    "sdk_compile": "android-canary-20261104 API 37",
+    "source_files": 1305,
+    "full_compile": "pass",
+    "generated_bindings": "R/BuildConfig and real AIDL outside checkout",
+    "warnings": 9
+  },
+  "tests": {
+    "total_executions": 346,
+    "classes": 83,
+    "broad_suite": {
+      "classes": 81,
+      "executions": 331
+    },
+    "additional": {
+      "SubtitleFileHash157Test": 3,
+      "PutioTokenStoreTest": {
+        "executions": 12,
+        "sdk": [
+          23,
+          28,
+          30
+        ],
+        "keys": "injected; real AES-GCM envelope, not hardware KeyStore"
+      }
+    },
+    "results": [
+      {
+        "test_class": "PhysicalOwnershipRelinkTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "eb41236e247cdce1aaadda5fd626a69eb087cbb1d050586ab72e3c21853c032e"
+      },
+      {
+        "test_class": "MediaStoreUpgradeTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "957da6ee6e66fc946edcf26e4b4a11e7c090427bc8abba3f7e35b769d7e60396"
+      },
+      {
+        "test_class": "HistoricalUpgrade157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "22ae2058f5e6dc66ee10e50f6dfd75969d117863f6c01cc6d8801b7e6d8b56d9"
+      },
+      {
+        "test_class": "FilesTabSummaryTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "f549f476f283071ae17d415df6e9477fc0cd61fe75e2ad0c819fdbc3cd290c58"
+      },
+      {
+        "test_class": "AutomaticScanChoicesTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "f21ed3fb98ede0e9b895b9df72c043320c8349a22e8229e1349f9410cc85b441"
+      },
+      {
+        "test_class": "HourlyScanDefaultsTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "e5919281e43c7895196a2b963e4bc461fa7d2ed968c8fa2c0b1ae471341ebf03"
+      },
+      {
+        "test_class": "ScanHistoryStoreTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "8e4342ce0ebcdbf82907332de922141b06848ddc8789270e149cf72436145046"
+      },
+      {
+        "test_class": "ScanActivitySignalTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "501310898cf4730cad34f6495f540ac0c1f7bcacd06e9ecd8a0949020a05c097"
+      },
+      {
+        "test_class": "ConnectionReachabilityTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "e662abb622c6781cd1d776da1367db1933d90e21b4c91a05fd7d0f37570ef54a"
+      },
+      {
+        "test_class": "ScanProgressTrackerTest",
+        "tests": 10,
+        "failures": 0,
+        "raw_log_sha256": "c940c5e57b4b882beb8f31a36b8652e312b1d69f6d0651fa4d1148e7dc5f903b"
+      },
+      {
+        "test_class": "SavedConnectionReachabilityTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "acab699182858925875c41dc23ce3a5d2bec1134516a46eda14fee16d0db1de3"
+      },
+      {
+        "test_class": "ConnectionFormTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "36bb419b7c3a4aa04708f8464e3be65723de664d67cbfe6bd07220ba94469828"
+      },
+      {
+        "test_class": "HeroArtworkPrefetchTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "b7dc2ba6883abb78620c0a070c15a5943268179e153e970cc1c7a184dd70e889"
+      },
+      {
+        "test_class": "FilesArtworkTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "63362e3eef09f8be7fdc583f5f5f68104f57d7ed3131ffc7f1350753129969c8"
+      },
+      {
+        "test_class": "RelatedTitlesTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "9ab54c68349ea4495da3351e6ff1c0b78c28cfb00d7a4b493159298c51baed11"
+      },
+      {
+        "test_class": "LibraryPageFactsTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "5309c9cd51b85cbe4b5bcd783ef8c3c129999252530f016c16fd6b30fdb509c5"
+      },
+      {
+        "test_class": "DetailsFactsTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "9c4363bd3ff129998ce7d6f1418622b11fda0fc2e77a296476c4c479bbcd133b"
+      },
+      {
+        "test_class": "ExternalResultPrivacy157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "601f4f9144e6cabe0fde8d68d723490c949448986159851e19f96cff4297290f"
+      },
+      {
+        "test_class": "ExternalResultOwnership157Test",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "2a6a43476dc9d21bbe47e219d123afa9e70319353cc4304a8fbb0d3df510427f"
+      },
+      {
+        "test_class": "SubtitleRetry157Test",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "1daab6f97fe650bd74faa786f49664dc658dfbb7a3c05718ded416bad2b57c7b"
+      },
+      {
+        "test_class": "SubtitleFontBoundary157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "670a4181d2549e2034a6a0499ee28408a1b2bc3cb884a2d63416bb78be0a1508"
+      },
+      {
+        "test_class": "HistoryMigration157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "a67f87b53910f238dc53eb25e3fd54df0ca340909c41266076b88eee9441f40a"
+      },
+      {
+        "test_class": "DiscoveryBody157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "0847e885ad137ade29773095fa4a0b1f724c155525ea4e2eb25f8e15416b902e"
+      },
+      {
+        "test_class": "EnrichmentOwnership157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "48ff92b3c9a7450419999674626d01a50bfe59d686a7323e379c6fc01a8f6c72"
+      },
+      {
+        "test_class": "PutioSourceSelectionTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "f74d8f350a25a1a41ca66362ca6fc73f58e61ad39868a3b58a8c8b9c72c3b013"
+      },
+      {
+        "test_class": "PutioSyncSchedulerTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "63d3271f9e0b9d83a3d28c31f399084dbc68e843c8c108662a89df4a4f81447e"
+      },
+      {
+        "test_class": "LegacySchema62MigrationTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "085a31929755edec7be001cf81d0a5f2f3f199bb48ffa7f1d31aa217dc005d6c"
+      },
+      {
+        "test_class": "CanonicalMatchProviderTest",
+        "tests": 27,
+        "failures": 0,
+        "raw_log_sha256": "d55d64aadb5cf2b6965d877a4ab07e0c379d41d14d33dddab7ef7ce444b98fe4"
+      },
+      {
+        "test_class": "PortableHiddenItemsTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "c9aec48f84772f1da6c5604206c75742619962dccba7938bfbe5483e3ce3fded"
+      },
+      {
+        "test_class": "LogicalBackupExporterTest",
+        "tests": 10,
+        "failures": 0,
+        "raw_log_sha256": "62910bfb0afbbafc843f1266de34c76d4517c5c2d148e7d10ae59ce40a6a3755"
+      },
+      {
+        "test_class": "LogicalBackupImportTest",
+        "tests": 5,
+        "failures": 0,
+        "raw_log_sha256": "c328543aeaea18590825de6103e65e3700222d2d891f4b5a4c67cf15e93cbfd2"
+      },
+      {
+        "test_class": "NextListingProcessSocketTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "3c1917f391bcd753568c0f5a8378d50da1a3952db5f90413265d6765e400ac79"
+      },
+      {
+        "test_class": "NextListingOwnershipTest",
+        "tests": 5,
+        "failures": 0,
+        "raw_log_sha256": "7d0690ad48c0258481dbcbf47fa3a8ad929feb8d2de9d42f72a33a9518e8d4f2"
+      },
+      {
+        "test_class": "AutoNextHiddenTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "c130e62b77dffc6f67b69e9ffb870e7218387907f55f65a3eb55e3ad02cecdb5"
+      },
+      {
+        "test_class": "SeekLoadingSignalTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "0473cf8074368a16a15633cbc0453d30c2e4fb5804a6ff3ec8baab922da3f5fb"
+      },
+      {
+        "test_class": "NativeFrameMonitorTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "e90beb6ab0b0ac17a9793ad4b6bd656c08053544b60113ff3099e3f7d7bb79c9"
+      },
+      {
+        "test_class": "PlaybackOwnership157Test",
+        "tests": 5,
+        "failures": 0,
+        "raw_log_sha256": "387a6112ebb33c9a9ca1e54504a3b6b7186441affb606ddec7aead422dd30bce"
+      },
+      {
+        "test_class": "NextListingLogPrivacyTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "1c739bc6aacde2141179dbda5e128f4cad5f828161c2b075371aeca4fc43b26e"
+      },
+      {
+        "test_class": "PlayerSourceLoggingTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "51d56093bcd991b111058c0b9b46b3e1d3fbef1773444bdb473795ba47bb7fc3"
+      },
+      {
+        "test_class": "PlaybackRouteRecoveryTest",
+        "tests": 5,
+        "failures": 0,
+        "raw_log_sha256": "0e2876af626e674868ff7faa3aab2bbe0ddf9ddad10a2fbabfd4a06f7a4b00cf"
+      },
+      {
+        "test_class": "PlayerHdrProducerContractTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "3d2eb33b958c7e94019840f614445489770315af67741a1f20ea01d8bcd7a90a"
+      },
+      {
+        "test_class": "DiagnosticDetailTest",
+        "tests": 8,
+        "failures": 0,
+        "raw_log_sha256": "307bdd7b6f760d5deb4d11a01c076a6a69119c79cfbd5fc7c7b9d8e0d99b6636"
+      },
+      {
+        "test_class": "TransportReadDiagnosticsTest",
+        "tests": 5,
+        "failures": 0,
+        "raw_log_sha256": "13b26f6ce7897337fa8d5ef5e95478f15b0cf9a28305caaf8d6034a8edb9b185"
+      },
+      {
+        "test_class": "NetworkDeviceDiscoveryTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "8adb1d719a6652a0ef83897a7a7056c108c05a590cbc7f31b73631881e4c672a"
+      },
+      {
+        "test_class": "DiscoveryGatewayTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "58a6624faf12992b2e1bcd73e76861ae6f861c63b9759fbdfc528bc160d4df72"
+      },
+      {
+        "test_class": "PersonalVideosTest",
+        "tests": 6,
+        "failures": 0,
+        "raw_log_sha256": "1c9ce74564a903aa4c7b08c709b6cd84a15373b968bd96eb87eeaf418fb2ccd2"
+      },
+      {
+        "test_class": "LibraryHealthRepositoryTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "5ad4e6748083e94bc2f159ddba60028dfed46398237061c0af98e4cb545b9234"
+      },
+      {
+        "test_class": "FixMatchSearchJobTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "8da98204c202a9eefbc0656916f70c22a5b1ddcccfdcd5aec58be4c7a794c2c6"
+      },
+      {
+        "test_class": "ForgivingMatchSearchTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "a72eaca32c7e8494e7534685d5e5e426fd828ff04b264a718d05c27f87cb7db3"
+      },
+      {
+        "test_class": "FixMatchRepositoryTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "935b0fcdefa3b678da10a54b2178c8d868507fdb3482237a40338aaaa1a7c544"
+      },
+      {
+        "test_class": "MissingFilesRepositoryTest",
+        "tests": 6,
+        "failures": 0,
+        "raw_log_sha256": "0ed67bb1a1bebc46663e893c30f231bb51d357d15a3194f1e053d3c2b4425974"
+      },
+      {
+        "test_class": "PutioCodeSignInTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "02420e0286a6feb90f50a8ca8fe6104af2ae766ec405ca579c7a1374d20c4f85"
+      },
+      {
+        "test_class": "VideoStoreImportReconciliationTest",
+        "tests": 11,
+        "failures": 0,
+        "raw_log_sha256": "00a66ec929932061ee9563bd4f356fa3780efbb988b18de2ad5366418d987355"
+      },
+      {
+        "test_class": "VolumeHiddenFilesReconciliationTest",
+        "tests": 7,
+        "failures": 0,
+        "raw_log_sha256": "c3bdf4165d54f0072307c43dd1601b62c28d265b2ee98509b5fe163f90962caf"
+      },
+      {
+        "test_class": "LocalSourceScanTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "d3d5daec5b10c7f5609e5c372eccf28d37037e317b317684c9b4504166b36c35"
+      },
+      {
+        "test_class": "SingleSourceSelectionTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "57282d7b3b32f3d61be1df40e4a9ec1d7c893b621f9a29012b470c4023930edc"
+      },
+      {
+        "test_class": "LocalImportFailureStateTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "500d4713aef3e6504c4ee17c5f4c0e55c51ac4a7c5d6d9e0695e4965cbde00ee"
+      },
+      {
+        "test_class": "SavedConnectionRemovalTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "0ee8d5c4b79fd5b14b4b632794e6cf25ebdece152b6e113e3d32bf2fa43c6aa8"
+      },
+      {
+        "test_class": "MissingMediaActionsTest",
+        "tests": 7,
+        "failures": 0,
+        "raw_log_sha256": "e1e4ac2c646e6ce26a9db0a728b1e6b646a4a3ac63d436fc0aaad73fd9ccf464"
+      },
+      {
+        "test_class": "TransportOperationTraceTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "52c48312d66e3f22f983198df39cec6890edcd670942968f1149b30a64198beb"
+      },
+      {
+        "test_class": "DatabaseLocator157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "e84fffb6214f3a098a5e7789847b1f9420655e60d89a70c65ec23171873b7d78"
+      },
+      {
+        "test_class": "CombinedMediaRestoreTest",
+        "tests": 25,
+        "failures": 0,
+        "raw_log_sha256": "988c86ea55e0ca7f75a535d32008cf901dab267cd0a06a1331a5b9e1fb8d6131"
+      },
+      {
+        "test_class": "LargeLogicalBackupTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "744ab8386fd439cd83f3eb62efab0080ce7d04b7f7a25d630cf620b22b7b212a"
+      },
+      {
+        "test_class": "BackupCycleTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "3837d54ac3e0453f1a079011a2c2673c22cada904fec12cae6a7d7e97bda6772"
+      },
+      {
+        "test_class": "VerifiedBackupPublicationTest",
+        "tests": 5,
+        "failures": 0,
+        "raw_log_sha256": "fa8c438d02df07a98e00d2bb2aa631d1ebb8e143a4e2664ff04782bae8181756"
+      },
+      {
+        "test_class": "LegacyViewingRestoreTest",
+        "tests": 8,
+        "failures": 0,
+        "raw_log_sha256": "a14b245d1b0004d7ccff61bf5877aff73ba72b403768f4d0778973f272509b7a"
+      },
+      {
+        "test_class": "RestoreJournalTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "d6e029b230eb765d015fd637e05d09d05166648b7cff3c14aa81df3c157185e2"
+      },
+      {
+        "test_class": "BackupSelectionTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "9d7a61fd26b26553c89f6195f9a13d1d1a71241a0c0098ac0048adf1abb84a2e"
+      },
+      {
+        "test_class": "VerifiedBackupTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "ad7b74232a3a7eace95e34ef2a9cc72c7e4b9ef5ae199bb3c7b3081da1a1d0ee"
+      },
+      {
+        "test_class": "BackupStageRevalidationTest",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "389b5529c22ce344c1eb2343f884e1655a7eae5f2c8787ba5741fd47e135fff0"
+      },
+      {
+        "test_class": "CombinedViewingRestoreTest",
+        "tests": 11,
+        "failures": 0,
+        "raw_log_sha256": "5814d867df6f62860064a88179c3d902cdd265e38efde4a24b83b77a337bd3f4"
+      },
+      {
+        "test_class": "RestorePublicationTest",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "669924e1cc0b18cfccce5be06ddd3cb8a721ea62ff293a2236150e501837bbc2"
+      },
+      {
+        "test_class": "BackupPrivacyTest",
+        "tests": 6,
+        "failures": 0,
+        "raw_log_sha256": "99b603e13107188adf74fce7ac243f8e5527842dc2b866a981d1a67aba7363de"
+      },
+      {
+        "test_class": "BackupPresetsTest",
+        "tests": 6,
+        "failures": 0,
+        "raw_log_sha256": "fa1eb38bb952921ddb6fcaa4b1da693c8b375ed46be66926dcadc980129ad884"
+      },
+      {
+        "test_class": "BackupImportPreparationTest",
+        "tests": 6,
+        "failures": 0,
+        "raw_log_sha256": "33ff4246c528fb4a422fba6b869fae9659ef6679a68736bd32808c41ed75fe1c"
+      },
+      {
+        "test_class": "BackupDiagnostics156Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "f9a70eeec84adffc1da468bc075ae91905ac63dd850a78e39fec5c12bc990e2e"
+      },
+      {
+        "test_class": "LogicalBackupArchiveTest",
+        "tests": 6,
+        "failures": 0,
+        "raw_log_sha256": "5c36fb8c906670c25aba76333b70b0fc403a1cf1851ac0d33c4ae8320cec2102"
+      },
+      {
+        "test_class": "PreviewLibraryRestoreRaceTest",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "4917cde0075c0db9f01835b524dbe1ad2452435c5fdb92e87add34d7da5c923e"
+      },
+      {
+        "test_class": "PreferenceRestoreTransactionTest",
+        "tests": 11,
+        "failures": 0,
+        "raw_log_sha256": "5fe79fdc3657113ab8345d3ea7dd7c339db96376ed93e56873bb4236abc64846"
+      },
+      {
+        "test_class": "CombinedCurrentRestoreTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "7fa7a6d5790002974dc79d957c3605d028b726ac2f1063bc79b0882f13294d51"
+      },
+      {
+        "test_class": "DiagnosticRestorePolicyTest",
+        "tests": 4,
+        "failures": 0,
+        "raw_log_sha256": "8869562e38ea6f323e9b432d41d4630c2c8776b11cc30a0d58b4ae60a3f962bb"
+      },
+      {
+        "test_class": "SubtitleFileHash157Test",
+        "tests": 3,
+        "failures": 0,
+        "raw_log_sha256": "4935eb908cb20cde6a8df49a8668e9f07522d4b95b0a78cfab209dc12f88f9d6"
+      },
+      {
+        "test_class": "PutioTokenStoreTest",
+        "tests": 12,
+        "failures": 0,
+        "raw_log_sha256": "12beb801173ede4244b8bb97a52da6f7e1eafb477c15097539431df39107ca6d"
+      }
+    ]
+  },
+  "native": {
+    "ndk": "r27d",
+    "api": 23,
+    "production_units": 8,
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "object_compiles": 32,
+    "alignment_assertion_compiles": 4,
+    "alignment_warnings": 0,
+    "host_unit": "UBSan/pthread pass; 1.6 million counter increments; seek generation/epoch/exactly once",
+    "linked_archive": false,
+    "device": false
+  },
+  "layout": {
+    "tests": 2,
+    "result": "pass"
+  },
+  "negative_controls": {
+    "java_classes": 7,
+    "expected_failing_tests": 9,
+    "native_i686_alignment": "expected compile assertion failure"
+  }
+}

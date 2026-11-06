@@ -239,7 +239,7 @@ security-audit.md. Native summary wording predating optional counter support nee
 | `src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSnapshotReader.java` | 115 | `4599559ba1ef8fcdb4039447819960d6061689e2c59fa3dd3b0849a686c09281` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSync.java` | 181 | `bcbb6543a001e1042d3b0d5c635a18dd6b7f59c3f36ea777db3c0c2733316ce1` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/streaming/putio/PutioSyncScheduler.java` | 300 | `1c96d0c96c047a085fee3900e43b5c81ef98c0cd8e08b4d5549d19b2cae8f147` | full read + changed hunks |
-| `src/main/java/com/archos/mediacenter/video/streaming/putio/PutioTokenStore.java` | 159 | `947c3c09a3018c94d1d61aaa1cec18397dcb8f29947d8456f2d44bf30f35ee9f` | full read + changed hunks |
+| `src/main/java/com/archos/mediacenter/video/streaming/putio/PutioTokenStore.java` | 156 | `8095fc6b1637408ca8c677330c458879be19819d989a5ab8f3a112a7446a530d` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/ActiveOperationMonitor.java` | 68 | `b0b4825e74272e1d050a33f9147118e005b5faf6c8999540c33ce8fb2b173914` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/AdditionalServiceSingleton.java` | 148 | `e668c80bb0c12467e5ebed6e51c935e0aa73519a3239417e303e04601afbc6db` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/BackupFormat.java` | 58 | `cde8e1e1de3d2ddeefd64b81cc652b78c6d1beedfc94222e0c671bb10741f6bf` | full read + changed hunks |
@@ -350,3 +350,7 @@ security-audit.md. Native summary wording predating optional counter support nee
 | `src/main/java/com/archos/mediacenter/video/utils/oauth/OAuthCallback.java` | 29 | `3e3cda50be2e124559bf20063053a4d554170f759156507034213e7434b89551` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/oauth/OAuthData.java` | 41 | `a9b40dc9c9b315a5d7f742b9fdf10b172c802125dfc46279ca11e063ed0d6cde` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/oauth/OAuthDialog.java` | 382 | `42ab4516314ea54bd284e494f79d64ad0874beae7bbc46db2259d4befd6ae1e2` | full read + changed hunks |
+
+Later reviewed lint-only hunk removes the impossible pre-23 token-store guard; its envelope tests expand to
+SDK 23/28/30 without changing assertions. SubtitleFileHash157Test adds test-only coverage of unchanged hashing
+(overlapping chunks, ignored middle and sparse >4GiB tail); no utility source change was bundled with those tests.

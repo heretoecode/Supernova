@@ -1,0 +1,67 @@
+[
+  {
+    "source": "ViewingHistory",
+    "baseline": "787b6c684",
+    "test": "HistoryMigration157Test",
+    "exit": 1,
+    "failures": [
+      "firstInventoryMigrationCannotOverwriteAPlaybackWriteAfterItsInitialRead(com.archos.mediacenter.video.leanback.HistoryMigration157Test)"
+    ]
+  },
+  {
+    "source": "PreviewLibraryLoader",
+    "baseline": "787b6c684",
+    "test": "PersonalVideosTest",
+    "exit": 1,
+    "failures": [
+      "previewSnapshotOverrideCannotBypassPersonalFiltering(com.archos.mediacenter.video.health.PersonalVideosTest)"
+    ]
+  },
+  {
+    "source": "PreviewEnrichmentQueue",
+    "baseline": "787b6c684",
+    "test": "EnrichmentOwnership157Test",
+    "exit": 1,
+    "failures": [
+      "anAdmissionDatabaseFailureReleasesTheOwnerAndAllowsANewDrain(com.archos.mediacenter.video.leanback.EnrichmentOwnership157Test)"
+    ]
+  },
+  {
+    "source": "ExternalPlayerResultListener",
+    "baseline": "7da881554",
+    "test": "ExternalResultOwnership157Test",
+    "exit": 1,
+    "failures": [
+      "pendingAndLateLookupsCannotWriteThePreviousVideosState(com.archos.mediacenter.video.utils.ExternalResultOwnership157Test)",
+      "durationFromAnEarlierExternalLaunchCannotReplaceTheCurrentDuration(com.archos.mediacenter.video.utils.ExternalResultOwnership157Test)"
+    ]
+  },
+  {
+    "source": "OpenSubtitlesApiHelper",
+    "baseline": "7da881554",
+    "test": "SubtitleRetry157Test",
+    "exit": 1,
+    "failures": [
+      "aRepeatedlyExpiredSearchTokenGetsOneRefreshAndOneRetry(com.archos.mediacenter.video.utils.SubtitleRetry157Test)",
+      "aFailedDownloadRefreshEndsTheOperation(com.archos.mediacenter.video.utils.SubtitleRetry157Test)"
+    ]
+  },
+  {
+    "source": "SubtitleFontsFolderSync",
+    "baseline": "7da881554",
+    "test": "SubtitleFontBoundary157Test",
+    "exit": 1,
+    "failures": [
+      "providerDisplayNamesCannotEscapeTheFontStore(com.archos.mediacenter.video.utils.SubtitleFontBoundary157Test)"
+    ]
+  },
+  {
+    "source": "ExternalPlayerResultListener",
+    "baseline": "ed31a873e",
+    "test": "ExternalResultPrivacy157Test",
+    "exit": 1,
+    "failures": [
+      "rawLocationsAndArbitraryResultExtrasNeverReachAnAppender(com.archos.mediacenter.video.utils.ExternalResultPrivacy157Test)"
+    ]
+  }
+]

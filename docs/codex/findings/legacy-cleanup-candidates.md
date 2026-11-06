@@ -12,7 +12,7 @@ closure. The retained engine, playback and protocol code stays close to the revi
 | Classic anime grids | UNSURE | 12 | 46,936 | Nested alphabet/year/genre/rating routes and manifest registrations remain; no current Shield reachability results. |
 | TV-show hosts and grids | KEEP | 31 | 235,635 | TvshowActivity/Fragment also host current content, season selection and action routes. Do not remove the whole package. |
 | Collection routes | UNSURE | 12 | 110,826 | VideoViewClickedListener still launches collection details; shared data builders are live. |
-| Player engine and controller | KEEP | 93 | 1,472,126 | Live playback/JNI, external playback and protocol contracts; no broad deletion justified. |
+| Player engine and controller | KEEP | 102 | 1,510,238 | Live playback/JNI, external playback and protocol contracts; no broad deletion justified. |
 
 ## Largest conceptual batch: `try_new_ui` and classic UI routing
 
@@ -59,3 +59,10 @@ After approval: remove only the named exclusive files, update all entry paths as
 compile all affected modules, run full conformance and the relevant Shield journey before taking the next batch.
 The current brief forbids workflow/Gradle/resource edits, so any necessary build or screen integration stays with
 that review. Do not treat item 22's stage-5 carry-forward as overriding item 23's approval requirement.
+
+## Continuation reference closure (after final source merge)
+
+The fresh pass is dead-code-2.md: method roots, earlier disconnected-type candidates, production/tests/XML/manifest
+and reflection-name checks. The switch still has 96 lines across 49 Java files. A source count is not permission
+to delete a route. Private unreachable methods are smaller review batches than package deletion; their enclosing
+screens remain protected. No deletion batch, classic-route migration, resource change or binary saving was made.

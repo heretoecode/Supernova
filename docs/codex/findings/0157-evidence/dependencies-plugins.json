@@ -1,0 +1,17 @@
+[
+  {
+    "coordinate": "com.android.tools.build:gradle:9.3.2",
+    "latest": "9.5.1",
+    "metadata": "https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/maven-metadata.xml"
+  },
+  {
+    "coordinate": "com.github.triplet.play:com.github.triplet.play.gradle.plugin:4.1.1",
+    "latest": "4.1.1",
+    "metadata": "https://plugins.gradle.org/m2/com/github/triplet/play/com.github.triplet.play.gradle.plugin/maven-metadata.xml"
+  },
+  {
+    "coordinate": "io.sentry.android.gradle:io.sentry.android.gradle.gradle.plugin:6.19.0",
+    "latest": "6.26.0",
+    "metadata": "https://plugins.gradle.org/m2/io/sentry/android/gradle/io.sentry.android.gradle.gradle.plugin/maven-metadata.xml"
+  }
+]
