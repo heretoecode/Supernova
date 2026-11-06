@@ -71,6 +71,10 @@ the player).
   testing now; diagnostics report to follow).
 - Remote checked, as designed: Up reaches Settings, Down the seek bar, Down again the Chapters strip.
 
+- **P13 Hard-edged shadow along the bottom of the picture** (owner photo, 6 Nov): the dark shade behind the HUD ends
+  in a visible straight edge across the video, and does not reach the right-hand side (the strip under Settings is
+  lighter), so it reads as a dark band, not a soft fade. Make it a soft gradient across the full width.
+
 ### Ideas and questions (owner), with Claude's view
 - **Split "For this series" into two.** Today one switch on the Audio tab ("Use these choices for MobLand": audio and
   subtitles together). Owner: one for audio on the Audio tab, one for subtitles on the Subtitles tab. Claude agrees.

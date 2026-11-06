@@ -29,11 +29,12 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 - **Not done in 0.156 (flagged to the owner):** focus memory after Android recreates the app (audit F1, F6, F8, F10–F13)
   and F2 (Down from the top bar), which conflicts with the older "first control" rule.
 - **If Claude is unavailable:** Codex can finish the 0.156 build using `docs/codex/BUILD_0156_STANDIN.md`.
-- **Codex:** 0.157 continuation on `codex/0157-2026-11-06`, code `151341d18`, audits `9ac693f14`:
-  personal roles, typed health, local/Put.io source scans, cross-index recovery, discovery, seek/counters,
-  isolated listings and carried audits/reads/fixes delivered. 349 host regressions pass; eight patch registrations,
-  reviewed native archive, full conformance/Shield and owner-approved cleanup gates in
-  [`docs/codex/reports/2026-11-06-0157.md`](docs/codex/reports/2026-11-06-0157.md).
+- **Codex:** 0.156 finished and merged. Now on 0.157 (first partial delivery 6 Nov, `71f7818a9`: 13 of 23
+  items done) and **continuation handed back 6 Nov evening** (`bff775a35`): 19 of 23 done; #15 Key information not
+  fully done, #20 seek loading engine delivered (Shield acceptance pending), #21 newer NOVA not done, #23 legacy
+  removal waiting for owner approval; 349 host tests pass; eight add-only MediaLib patch registrations. Report
+  `docs/codex/reports/2026-11-06-0157.md`. Not yet merged: Claude merges when 0.157 coding starts. Brief `docs/codex/BRIEF_0157.md`,
+  branch `codex/0157-2026-11-06`.
 - **0.157:** decided items in [`docs/0.157/OWNER_NOTES.md`](docs/0.157/OWNER_NOTES.md), including the Files page
   redesign (§16; mock-ups `docs/design/proposals/network-files-tabs/`, principles `docs/design/FLAT_PAGE_PRINCIPLES.md`).
 
