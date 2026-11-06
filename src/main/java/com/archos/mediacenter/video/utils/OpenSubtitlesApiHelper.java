@@ -376,7 +376,14 @@ public class OpenSubtitlesApiHelper {
         return LAST_QUERY_RESULT;
     }
 
-    public static synchronized ArrayList<OpenSubtitlesSearchResult> searchSubtitle(OpenSubtitlesQueryParams fileInfo, String languages) throws IOException {
+    public static synchronized ArrayList<OpenSubtitlesSearchResult> searchSubtitle(OpenSubtitlesQueryParams fileInfo,
+                                                                                 String languages) throws IOException {
+        return searchSubtitle(fileInfo, languages, true);
+    }
+
+    private static ArrayList<OpenSubtitlesSearchResult> searchSubtitle(OpenSubtitlesQueryParams fileInfo,
+                                                                      String languages, boolean allowRefresh)
+            throws IOException {
         if(!integrationEnabled())return new ArrayList<>();
         // Note: only the first result page is queried because it is assumed that it should be enough with order_by criteria
         // input: languages is a comma separated list of languages (e.g. "en,fr")
@@ -473,10 +480,11 @@ public class OpenSubtitlesApiHelper {
                     }
                     case RESULT_CODE_TOKEN_EXPIRED -> {
                         // Handle invalid token error
-                        if (!authTokenValid) { // one retry in case of invalid token
+                        if (allowRefresh && !Thread.currentThread().isInterrupted() && !authTokenValid) {
                             log.warn("searchSubtitle: invalid token, retrying");
-                            login(apiKey, username, password);
-                            return searchSubtitle(fileInfo, languages);
+                            if (login(apiKey, username, password))
+                                return searchSubtitle(fileInfo, languages, false);
+                            return null;
                         } else {
                             return null;
                         }
@@ -493,6 +501,10 @@ public class OpenSubtitlesApiHelper {
     }
 
     public static synchronized String getDownloadSubtitleLink(String file_id) throws IOException {
+        return getDownloadSubtitleLink(file_id, true);
+    }
+
+    private static String getDownloadSubtitleLink(String file_id, boolean allowRefresh) throws IOException {
         if(!integrationEnabled())return null;
         if (log.isDebugEnabled()) log.debug("getDownloadSubtitleLink: file_id={}", file_id);
         // do not attempt to download subtitle if quota is 0 and we are not past reset time
@@ -547,10 +559,11 @@ public class OpenSubtitlesApiHelper {
                     }
                     case RESULT_CODE_TOKEN_EXPIRED -> {
                         // Handle invalid token error
-                        if (!authTokenValid) { // one retry in case of invalid token
+                        if (allowRefresh && !Thread.currentThread().isInterrupted() && !authTokenValid) {
                             log.warn("getDownloadSubtitleLink: invalid token, retrying");
-                            login(apiKey, username, password);
-                            return getDownloadSubtitleLink(file_id);
+                            if (login(apiKey, username, password))
+                                return getDownloadSubtitleLink(file_id, false);
+                            return null;
                         } else {
                             return null;
                         }
