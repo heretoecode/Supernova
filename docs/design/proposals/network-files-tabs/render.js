@@ -51,8 +51,9 @@ const I = {
   mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
+let BADGE = '5';
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'This Shield'], ['shares', 'Connections'], ['library', 'Library Care']]
-  .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k === 'local' ? 'tv' : k], 30)}${t}</span>`).join('')}</div>
+  .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k === 'local' ? 'tv' : k], 30)}${t}${k === 'library' && BADGE ? `<b class="tbadge">${BADGE}</b>` : ''}</span>`).join('')}</div>
   <div class="summary">${summary.map(([v, l]) => `<span>${icon(I[SUMMARY_ICON[l]] || I.info, 32)}<b>${v}</b> ${title(l)}</span>`).join('<i class="dot">·</i>')}</div></div>`;
 const title = l => l.split(' ').map(w => w === 'TB' ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 const SUMMARY_ICON = { devices: 'local', videos: 'film', 'videos here': 'film', free: 'disk', 'in library': 'check',
@@ -299,14 +300,97 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .fixgrid .prow{margin-top:10px;padding:14px 22px}.fixgrid .prow:first-of-type{margin-top:0}.pt2{flex:1}.prow.focus .state{color:#0B0D12;box-shadow:inset 0 0 0 2px rgba(11,13,18,.35)}
 .gk .key{height:62px;font-size:28px}.gk .key.space{flex:3}
 .tips{margin-top:20px}.tip{display:flex;gap:14px;align-items:center;padding:5px 4px;color:#9aa3b2;font-size:23px;white-space:nowrap}.tip b{color:#dfe5f1;font-weight:500}
+.tbadge{margin-left:10px;min-width:34px;height:34px;padding:0 10px;border-radius:17px;background:#F4F6FB;color:#0B0D12;font-size:22px;display:inline-flex;align-items:center;justify-content:center}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:90px;color:#c9d3e6}.et{font-size:40px;font-weight:500;color:#fff;margin-top:22px}.et b{font-weight:500}
+.ed{font-size:28px;margin-top:12px;max-width:1000px;line-height:1.4}.btnrow.center{justify-content:center;margin-top:36px}
+.hint2{display:flex;align-items:center;gap:18px;margin-top:30px;padding:0 30px;font-size:27px;color:#9aa3b2}
+.result{display:flex;align-items:center;gap:20px;margin-top:14px;padding:16px 22px;border-radius:18px;background:rgba(255,255,255,.07)}
+.code{margin-top:26px;font-size:88px;font-weight:500;letter-spacing:12px;color:#fff;padding:18px 48px;border-radius:24px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.row.menuhost2{position:relative;background:rgba(255,255,255,.06);border-radius:24px;box-shadow:none}.rowmenu{right:30px;top:calc(100% - 10px)}
+.rl.wrap{white-space:normal}.rowmenu{z-index:9;top:auto !important;bottom:calc(100% - 40px)}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
+
+// ---- v12: the rest of the journey -------------------------------------------------------------------------
+const P = (tab, summary, body) => `${nav}<div class="page">${head(tab, '', summary)}${body}</div>`;
+const SUM_LOCAL = [['2', 'devices'], ['1,513', 'videos'], ['1.1 TB', 'free']];
+const SUM_CONN = [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']];
+const SUM_LIB = [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']];
+const scanning = P('library', SUM_LIB, `<div class="sec first">Scanning</div>
+${lrow('scan', 'Scanning Put.io › Films', '240 of 1,809 checked · 2 new so far', 'Scanning…', [['close', 'Stop']], true).replace('240 of 1,809 checked · 2 new so far</div>', `240 of 1,809 checked · 2 new so far</div>${bar(240, 1809)}`)}
+<div class="sec">Library Health</div>
+${lrow('folder', 'Missing files', 'In your library but no longer found', '3 files', null, false)}
+${lrow('film', "Couldn't be read", 'Files Supernova could not open', '2 files', null, false)}`);
+const putioFiles = [['folder', 'Films', 'Folder · 412 videos', 'in'], ['folder', 'TV', 'Folder · 791 videos', 'in'],
+  ['folder', 'Downloads', 'Folder · 18 videos', 'none'], ['film', 'Dune Part Two (2024).mkv', '2024 · 22.4 GB', 'in']];
+const insideConn = P('shares', SUM_CONN, `${crumbrow(['Put.io', 'Films'].slice(0, 1), tools(false))}
+${putioFiles.map(([ic, n, l, st], i) => row(ic, n, l, st, [['folder', 'Open'], ['exclude', 'Exclude']], i === 0)).join('')}`);
+const waiting = P('local', SUM_LOCAL, `${crumbrow(['Backup #1', 'Films'])}
+<div class="empty">${icon(I.usb, 64)}<div class="et">Still waiting for Backup #1…</div><div class="ed">The drive is slow to answer. Wait, or go back and try again.</div>
+<div class="btnrow center"><span class="b focus">${icon(I.close, 28)}Cancel</span></div></div>`);
+const gone = P('local', SUM_LOCAL, `${crumbrow(['Backup #1', 'Films'])}
+<div class="empty">${icon(I.usb, 64)}<div class="et">Backup #1 was removed</div><div class="ed">Plug it back in to carry on. Your library keeps its films; they play again when it returns.</div>
+<div class="btnrow center"><span class="b focus">${icon(I.chev, 28)}Back to This Shield</span></div></div>`);
+BADGE = '';
+const noUsb = P('local', [['1', 'device'], ['310', 'videos'], ['14.2 GB', 'free']], `
+${row('tv', 'This Shield', '310 videos · 14.2 GB free of 32 GB', '', null, true, bar(17.8, 32)).split('<div class="rt">').join('<div class="rt grow">')}
+<div class="hint2">${icon(I.usb, 32)}<span>Plug in a USB drive and it appears here.</span></div>`);
+const noConn = P('shares', [['0', 'connections'], ['0', 'reachable'], ['0', 'videos']], `<div class="sec first">Your connections</div>
+<div class="row add focus"><span class="ri">${icon(I.plus, 40)}</span><div class="rt"><div class="rn">Add a connection</div><div class="rl">Choose what you are connecting to</div></div><div class="rs"></div>
+<div class="ra">${acts([['pc', 'Computer or NAS'], ['globe', 'WebDAV'], ['lock', 'SFTP'], ['source', 'FTP']])}</div></div>
+<div class="hint2">${icon(I.cloud, 32)}<span>Put.io, a NAS or a computer on your network: add one and its videos join your library.</span></div>`);
+const healthFine = P('library', [['1,808', 'videos'], ['0', 'to check'], ['3', 'sources']], `<div class="sec first">Scanning</div>
+${lrow('scan', 'Scan now', '12 min ago · 3 new, 1 updated', 'Up to date', null, false)}
+<div class="sec">Library Health</div>
+${lrow('check', 'Everything looks fine', 'No missing, unreadable or unmatched videos', 'All good', null, true).replace(/<div class="ra">.*?<\/div><\/div>$/s, '<div class="ra"></div></div>')}`);
+BADGE = '5';
+const formRes = (ok) => {
+  const box = `<div class="result ${ok ? 'ok' : 'bad'}">${icon(I[ok ? 'check' : 'close'], 34)}<div><div class="rn">${ok ? 'Connected' : 'Check the password'}</div><div class="rl wrap">${ok ? 'webdav.put.io answered · 2 folders, 21 videos found' : 'The server turned down this user name and password.'}</div></div></div>`;
+  let html = form.replace(/<div class="rl p">[\s\S]*?<\/div><\/div>\n<\/div><\/div>`?/, m => m);
+  html = html.replace('<div class="rl p">', box + '<div class="rl p" style="display:none">');
+  html = html.replace('<div class="fld sel">', '<div class="fld">');
+  html = html.replace(`<span class="b">${icon(I.test, 28)}Test connection</span>`, `<span class="b ${ok ? '' : 'focus'}">${icon(I.test, 28)}Test connection</span>`);
+  html = html.replace(`<span class="b">${icon(I.chev, 28)}Save and browse</span>`, `<span class="b ${ok ? 'focus' : ''}">${icon(I.chev, 28)}Save and browse</span>`);
+  html = html.replace('<span class="key  focus">n</span>', '<span class="key  ">n</span>');
+  return html;
+};
+const removed = P('shares', [['2', 'connections'], ['2', 'reachable'], ['1,416', 'videos']], `<div class="sec first">Your connections</div>
+${notice('Office PC was removed', 'Its saved address and password are gone. Nothing on the computer was touched.', 'Undo')}
+${lrow('cloud', 'Put.io · heretostream', '98.9 of 107 GB used · synced 3 hours ago', 'Reachable', null, false)}
+${lrow('shares', 'Living-room NAS', 'SMB · 512 videos in your library', 'Reachable', [['folder', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']], true)}`);
+const found = [['pc', 'DESKTOP-7Q', 'Windows computer · SMB', 'New'], ['shares', 'Living-room NAS', 'Synology NAS · SMB', 'Added'], ['pc', 'MacBook', 'Mac · SMB', 'New']];
+const discovery = P('shares', SUM_CONN, `${crumbrow(['Find on my network'])}
+${found.map(([ic, n, l, st], i) => lrow(ic, n, l, st, i === 0 ? [['plus', 'Add']] : null, i === 0)).join('')}
+<div class="hint2">${icon(I.search, 32)}<span>Still looking… Computers appear as they answer. Not listed? Use Enter address.</span></div>`);
+const putioOut = P('shares', [['2', 'connections'], ['1', 'reachable'], ['512', 'videos']], `<div class="sec first">Your connections</div>
+${lrow('cloud', 'Put.io', 'Sign in to browse, sync your library and search', 'Not signed in', [['plus', 'Sign in']], true)}
+${lrow('shares', 'Living-room NAS', 'SMB · 512 videos in your library', 'Reachable', null, false)}`);
+const putioCode = P('shares', [['2', 'connections'], ['1', 'reachable'], ['512', 'videos']], `${crumbrow(['Sign in to Put.io'])}
+<div class="empty"><div class="et">On your phone or computer, go to <b>put.io/link</b></div><div class="ed">and enter this code</div>
+<div class="code">K7Q-4ZP</div><div class="ed">This page moves on by itself once you have signed in.</div>
+<div class="btnrow center"><span class="b focus">${icon(I.close, 28)}Cancel</span></div></div>`);
+const menuItems = [['play', 'Play'], ['info', 'Details'], ['check', 'Mark as watched'], ['exclude', 'Exclude'], ['search', 'Fix match']];
+const rowMenu2 = (() => {
+  let html = folderAt(-1);
+  const at = html.indexOf('Conclave (2024).mkv');
+  const start = html.lastIndexOf('<div class="row', at);
+  const next = html.indexOf('<div class="row', at);
+  const rowHtml = html.slice(start, next);
+  const menu = `<div class="cmenu down fit rowmenu">${menuItems.map(([ic, n], i) => `<div class="ci ${i === 0 ? 'focus' : ''}">${icon(I[ic], 30)}<span>${n}</span></div>`).join('')}</div>`;
+  const opened = rowHtml.replace('<div class="row ', '<div class="row menuhost2 ').replace(/<\/div>\s*$/, menu + '</div>\n');
+  return html.slice(0, start) + opened + html.slice(next);
+})();
+const scanRows = [['cloud', 'Put.io › Films', 'Today 23:28 · 3 new, 1 updated', 'Finished'], ['shares', 'Living-room NAS', 'Today 22:28 · no changes', 'Finished'],
+  ['usb', 'Backup #1', 'Today 21:28 · the drive was removed', 'Stopped'], ['cloud', 'Put.io › TV', 'Today 20:28 · 1 new episode', 'Finished'],
+  ['shares', 'Living-room NAS', 'Today 19:28 · could not connect', 'Failed'], ['usb', 'Backup #1', 'Today 18:28 · no changes', 'Finished']];
+const allScans = P('library', SUM_LIB, `${crumbrow(['Recent scans'])}${scanRows.map(([ic, n, l, st], i) => lrow(ic, n, l, st, null, i === 0)).join('')}`);
+
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
     ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library], ['09b-library-lower.png', libraryLower],
-    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched], ['12b-find-searching.png', missingSearching], ['12c-find-found.png', missingFound], ['12d-find-not-found.png', missingNotFound], ['14b-fix-match.png', fixMatch], ['14c-not-a-film.png', notFilm]];
+    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched], ['15-scan-running.png', scanning], ['16-inside-a-connection.png', insideConn], ['17-waiting.png', waiting], ['18-drive-removed.png', gone], ['19-no-usb.png', noUsb], ['20-no-connections.png', noConn], ['21-all-fine.png', healthFine], ['22-test-ok.png', formRes(true)], ['23-test-failed.png', formRes(false)], ['24-removed-undo.png', removed], ['25-find-on-network.png', discovery], ['26-putio-signed-out.png', putioOut], ['27-putio-code.png', putioCode], ['28-row-menu.png', rowMenu2], ['29-all-scans.png', allScans], ['12b-find-searching.png', missingSearching], ['12c-find-found.png', missingFound], ['12d-find-not-found.png', missingNotFound], ['14b-fix-match.png', fixMatch], ['14c-not-a-film.png', notFilm]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);

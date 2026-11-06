@@ -129,6 +129,11 @@ Items already built or scheduled are left out (see the bottom of this file).
   numbers. Note: Search looks in the local library; Fix match asks TMDB, which is stricter, so the forgiveness
   (cleaned query, dotted-initials and "The" variants, typo retry) and the Trakt/TVDB number look-ups are engine
   work for Codex when this is built. Trakt has a numeric ID and a slug for every film and show.
+  v12 (owner, 6 Nov): Network & Files always opens on the first tab (This Shield). The rest of the journey drawn,
+  for confirmation: scan running (progress in the row, Stop), inside a connection (same as a folder), still waiting /
+  drive removed, empty pages (no USB drive, no connections, "Everything looks fine"), Test connection result on the
+  form, Remove with Undo, Find on my network, Put.io signed out and its sign-in code, the Menu-button menu on a row,
+  Show all scans, and a count badge on the Library Care tab. Mock-ups 15–29.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
