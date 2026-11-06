@@ -118,3 +118,13 @@ cancelledWorkerWaitingForProviderGateCannotPerformLateScan (MediaLib unchanged s
 196, no failures, lint clean — the MediaLib failure was a one-off timing wobble.
 Still to do (Claude), waiting for Codex's `BRIEF_0156_LAST.md`: About (credits, licences, version history), Backup
 three choices, Local Storage "not in library" Details, and the focus-memory fixes from Codex's audit.
+
+**6 Nov 2026, afternoon — 0.156 built, fully green.** Conformance run 42226746764 on commit 9fae8eccb: all tests
+passed, lint clean, unsigned artifact `supernova-0156-unsigned-candidate`. Fixes on the way: fresh installs back up
+Everything (the old tick-boxes' saved defaults had been read as a custom choice); Files › Library Scanning remembers
+the button used when coming back from the top bar; tests brought in line with the Backup three-choice design and the
+Details tab that never scrolls. Not signed: waiting for the owner. Left for 0.157: audit F1, F2, F6, F8, F10–F13.
+
+**6 Nov 2026 — 0.156 signed.** Rebuilt as conformance run 42233995251 (commit c3d7e6e97, fully green) after a
+records-only change outside `docs/` blocked the first signing; signed by run 42239912490 with the established
+certificate. Download: artifact `supernova-0156-signed-qa`. Next: the owner's Shield check (`SHIELD_CHECKLIST.md`).

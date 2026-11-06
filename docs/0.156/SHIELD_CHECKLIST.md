@@ -24,7 +24,11 @@ like. Tick what passes; for anything that does not, a photo and the step number 
    Up brings it back. OK picks a match and Details refreshes.
 10. Search: QWERTY keyboard with symbols, recent searches, "What you can search", filters and voice.
 
-## Network & Files
+## Network & Files — skip (owner, 6 Nov 2026)
+The owner will not review this page in 0.156: it is being completely redesigned as Files in 0.157 and will be
+reviewed then. Steps 11–19 and 35–39 are skipped. Anything that plainly breaks in normal use (a film from a share
+will not play, a scan misses new videos) is still worth a mention.
+
 11. Local Storage: every row shows In library / Excluded / Not added; one watched pill; grid has artwork.
 12. In Local Storage, Details on a file that is not in the library: it looks the film up and shows it with
     "Not in your library yet", Play and Add to library (or "Couldn't identify this file"). Nothing is added until you

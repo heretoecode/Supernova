@@ -531,6 +531,24 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   else agreed for 0.157).
 
 
+## 17. Settings redesign goes into 0.157 (owner, 6 Nov 2026)
+- Settings moves to the flat-page principles (full page, no panel) in 0.157, as Files did. **Design not final yet:**
+  first mock-ups `docs/design/proposals/settings-flat/01`–`05` (five tabs: Playback · Audio & Subtitles · Library ·
+  Accounts · System); open questions: five tabs, and where Where to Watch belongs.
+- Much of the 0.156 Settings work (rows, wording, choices) carries over; the panel goes and the page spreads out.
+- The owner has issues with the current Settings page that must **not** carry over. In the 0.156 review: review what
+  Settings contains, its wording and behaviour; ignore the panel, layout and styling.
+
+## 18. Space Black on Home and the library pages — under consideration (owner, 6 Nov 2026)
+- Files, Search and Settings are going flat (plain charcoal, no panels). That would leave the Space Black artwork only
+  on Home and the library pages, and the owner is thinking of removing it there too. **Not decided: needs mock-ups**
+  (Home, one library page and Details, each Space Black and plain charcoal side by side).
+- Decide before reviewing Home and library visuals (hero shade and text, card edges, top bar fade all depend on it).
+- If it goes, the global rule "full pages sit on the Space Black artwork" (5 Nov) flips, and the approved Details
+  design (`v15-b`, on Space Black) follows. Owner, 6 Nov: that is easy to build but changes how Details looks, so
+  check it in the mock-ups: separator and edge strengths (tuned on Space Black), the hero's fade into the page, the
+  tab chip and line, and what draws the eye. Layout and content decisions stand.
+
 ## Engine/data delivery record (6 Nov 2026)
 
 Partial implementation on `codex/0157-2026-11-06`, source `71f7818a9`; this is not a new owner decision or a completed

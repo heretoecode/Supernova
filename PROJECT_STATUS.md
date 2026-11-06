@@ -19,14 +19,19 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   types and Test connection, Fix match side panel, Audio & Subtitles Style tab, Backup three choices, About credits
   and version history, Details for files not in the library, and the in-session focus-memory fixes from Codex's audit.
   Build and signing now use `supernova-0156-conformance.yml` / `supernova-0156-qa.yml` (version 0.156, code 156).
-  Next: a fully green 0.156 build, then signing **only when the owner says so**, then the owner's Shield check with
+  **Built and fully green (6 Nov 2026):** conformance run 42226746764 on commit 9fae8eccb — every app, MediaLib,
+  FileCore and tooling test passed, lint clean. Unsigned artifact `supernova-0156-unsigned-candidate`.
+  **Signed 6 Nov 2026** (owner approved) by run 42239912490 of `supernova-0156-qa.yml`, from green conformance run
+  42233995251 on commit c3d7e6e97. Signed APK: artifact `supernova-0156-signed-qa` of that run. Note: the signing gate
+  allows only files under `docs/` to change after conformance (not root files such as this one).
+  Next: the owner's Shield check with
   [`docs/0.156/SHIELD_CHECKLIST.md`](docs/0.156/SHIELD_CHECKLIST.md).
 - **Not done in 0.156 (flagged to the owner):** focus memory after Android recreates the app (audit F1, F6, F8, F10–F13)
   and F2 (Down from the top bar), which conflicts with the older "first control" rule.
-- **Codex:** 0.156 finished and merged. Partial 0.157 engine/data delivery at `71f7818a9` on
-  `codex/0157-2026-11-06`: 68 component tests pass; the brief is **not complete**. Per-item gaps, four new module
-  patches and the fresh source merge's unchanged 0.156 About syntax blocker are recorded in
-  [`docs/codex/reports/2026-11-06-0157.md`](docs/codex/reports/2026-11-06-0157.md).
+- **If Claude is unavailable:** Codex can finish the 0.156 build using `docs/codex/BUILD_0156_STANDIN.md`.
+- **Codex:** 0.156 finished and merged. Now on 0.157 (first partial delivery 6 Nov, `71f7818a9`: 13 of 23
+  items done; report `docs/codex/reports/2026-11-06-0157.md`; not yet merged). Brief `docs/codex/BRIEF_0157.md`,
+  branch `codex/0157-2026-11-06`.
 - **0.157:** decided items in [`docs/0.157/OWNER_NOTES.md`](docs/0.157/OWNER_NOTES.md), including the Files page
   redesign (§16; mock-ups `docs/design/proposals/network-files-tabs/`, principles `docs/design/FLAT_PAGE_PRINCIPLES.md`).
 

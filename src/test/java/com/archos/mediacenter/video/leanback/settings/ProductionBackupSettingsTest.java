@@ -284,6 +284,10 @@ public class ProductionBackupSettingsTest {
     public void actualPreferencesFragmentBuildsFullSidebarAndAllBackupCategoriesAndFlatPages() throws Throwable {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
+            // The parts list shows only for Custom; a fresh install starts on Everything.
+            com.archos.mediacenter.video.utils.backup.BackupPresets.select(
+                PreferenceManager.getDefaultSharedPreferences(host.get()),
+                com.archos.mediacenter.video.utils.backup.BackupSelection.Preset.CUSTOM);
             var fragment = install(host.get());
             View root = fragment.requireView();
             assertNotNull(root.findViewWithTag("settings.section.Backup & restore"));

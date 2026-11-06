@@ -7,11 +7,11 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 
 - An Android TV media player for the owner's **NVIDIA Shield** (52" TV), forked from **NOVA Video Player**
   (Archos). TV only: no phone or tablet layouts.
-- Package `app.supernova.player`. Current released version **0.155** (NOVA 6.6.4 engine), signed 4 Nov 2026 by
-  run 41922310251 of `.github/workflows/supernova-0155-qa.yml`. The APK is the run's artifact; Google Drive
+- Package `app.supernova.player`. Current released version **0.156** (NOVA 6.6.4 engine), signed 6 Nov 2026 by
+  run 42239912490 of `.github/workflows/supernova-0156-qa.yml` (artifact `supernova-0156-signed-qa`). Google Drive
   delivery is not configured.
-- Next version **0.156** is being built now: `docs/0.156/RELEASE_LIST.md` (45 approved items) and the GitHub
-  milestone `0.156`.
+- The owner is reviewing 0.156 on the Shield: notes in `docs/0.157/REVIEW_0156.md` (order from
+  `docs/0.156/REVIEW_BY_PAGE.md`). Next version **0.157**: `docs/0.157/OWNER_NOTES.md`, Codex `BRIEF_0157.md`.
 
 ## Start here, in order
 
@@ -38,6 +38,11 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   `tools/test_code_layout.py` enforces it; `docs/codex/REFORMAT_QUEUE.txt` lists old files still to reformat (their
   counts may only go down).
 - No pull requests unless the owner asks.
+- **Diagnostics before coding (owner, 6 Nov 2026):** whenever the owner gives the go-ahead to code a version, first
+  remind them to send the latest diagnostics report from the Shield, and read it for faults to fix in that version.
+- **Freedom to rethink options (owner, 6 Nov 2026):** when redesigning, existing choices (from NOVA or earlier
+  Supernova) are a starting point, not a constraint. Add, remove, merge or reword options and settings where it
+  suits (e.g. Sleep timer becomes "Stop playing at" with clock times). Still propose; the owner approves.
 - **Everything new the owner raises (features, bugs, anything) goes into 0.157.** 0.156 is fixed at its 45
   approved items (owner, 5 Nov 2026).
 - **Global look (owner, 5 Nov 2026):**
