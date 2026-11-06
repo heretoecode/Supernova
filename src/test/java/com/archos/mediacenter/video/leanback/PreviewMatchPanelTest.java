@@ -59,6 +59,29 @@ public class PreviewMatchPanelTest
     }
 
     @Test
+    public void resultsShowYearAndKindAndMarkTheCurrentMatch()
+    {
+        Activity host = Robolectric.buildActivity(Activity.class).setup().get();
+        PreviewMatchSearch page = new PreviewMatchSearch(host, "Pressure", q -> {
+        }, t -> {
+        });
+        host.setContentView(page);
+        MovieTags current = movie("Pressure", 2026);
+        current.setOnlineId(1234);
+        MovieTags other = movie("Pressure", 2015);
+        other.setOnlineId(99);
+        page.setCurrentOnlineId(1234);
+        page.setResults(Arrays.asList(current, other));
+        PreviewPagesTest.layout(page);
+        assertNotNull(PreviewPagesTest.findText(page, "2026 · Film"));
+        assertNotNull(PreviewPagesTest.findText(page, "Matches on TMDB"));
+        View first = page.findViewWithTag("semantic:match.result:0");
+        View second = page.findViewWithTag("semantic:match.result:1");
+        assertNotNull(first.findViewWithTag("semantic:match.current"));
+        assertEquals(null, second.findViewWithTag("semantic:match.current"));
+    }
+
+    @Test
     public void sidePanelIsNarrowAndOnTheRight()
     {
         Activity host = Robolectric.buildActivity(Activity.class).setup().get();

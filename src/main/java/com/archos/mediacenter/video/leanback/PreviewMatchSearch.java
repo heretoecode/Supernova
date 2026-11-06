@@ -22,6 +22,7 @@ public final class PreviewMatchSearch extends LinearLayout {
     private final TextView status;
     private final TextView title;
     private final ScrollView scroll;
+    private long currentOnlineId = -1;
     private final List<BaseTags> rendered = new ArrayList<>();
     private final Consumer<BaseTags> choose;
     private final Consumer<String> search;
@@ -110,6 +111,46 @@ public final class PreviewMatchSearch extends LinearLayout {
         window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
     }
 
+    /** Marks the result that is today's match ("Current"). */
+    public void setCurrentOnlineId(long onlineId) {
+        currentOnlineId = onlineId;
+    }
+
+    private View poster(BaseTags tags) {
+        ImageView image = new ImageView(getContext());
+        image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        image.setBackgroundColor(0xFF2A2D33);
+        com.archos.mediascraper.ScraperImage art = tags.getDefaultPoster();
+        String url = art == null ? null : art.getThumbUrl();
+        if (url == null || url.isEmpty())
+            return image;
+        try {
+            com.squareup.picasso.Picasso.get().load(url).resize(dp(40), dp(60)).centerCrop().into(image);
+        } catch (RuntimeException unavailable) {
+            // No picture loader (tests, early start): the grey card stays.
+        }
+        return image;
+    }
+
+    static String displayTitle(BaseTags tags) {
+        if (tags instanceof MovieTags)
+            return String.valueOf(((MovieTags) tags).getTitle());
+        return label(tags);
+    }
+
+    /** "2026 · Film", "TV series", "Episode". */
+    static String about(BaseTags tags) {
+        if (tags instanceof MovieTags) {
+            int year = ((MovieTags) tags).getYear();
+            return year > 0 ? year + " · Film" : "Film";
+        }
+        if (tags instanceof ShowTags)
+            return "TV series";
+        if (tags instanceof EpisodeTags)
+            return "Episode";
+        return "";
+    }
+
     /** "Fix match · File: name.mkv" — which file is being matched. */
     public void setSubject(String fileName) {
         if (fileName == null || fileName.isEmpty())
@@ -169,24 +210,35 @@ public final class PreviewMatchSearch extends LinearLayout {
             final int index = i;
             BaseTags tags = results.get(i);
             LinearLayout row = new LinearLayout(getContext());
-            row.setOrientation(VERTICAL);
+            row.setGravity(Gravity.CENTER_VERTICAL);
             row.setTag("semantic:match.result:" + i);
             row.setFocusable(true);
             row.setFocusableInTouchMode(true);
             row.setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS);
-            row.setPadding(dp(12), dp(10), dp(12), dp(10));
+            row.setPadding(dp(8), dp(8), dp(12), dp(8));
             row.setBackground(PreviewDialog.focus(getContext()));
-            TextView title = text(label(tags), 16);
+            row.addView(poster(tags), new LayoutParams(dp(40), dp(60)));
+            LinearLayout words = new LinearLayout(getContext());
+            words.setOrientation(VERTICAL);
+            TextView title = text(displayTitle(tags), 16);
             title.setMaxLines(2);
             title.setEllipsize(TextUtils.TruncateAt.END);
-            row.addView(title);
-            String plot = tags.getPlot();
-            if (plot != null && !plot.trim().isEmpty()) {
-                TextView detail = text(plot, 12);
-                detail.setMaxLines(2);
-                detail.setEllipsize(TextUtils.TruncateAt.END);
-                detail.setPadding(0, dp(5), 0, 0);
-                row.addView(detail);
+            words.addView(title);
+            String about = about(tags);
+            if (!about.isEmpty()) {
+                TextView detail = text(about, 13);
+                detail.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+                detail.setPadding(0, dp(3), 0, 0);
+                words.addView(detail);
+            }
+            LayoutParams wordsSize = new LayoutParams(0, -2, 1);
+            wordsSize.leftMargin = dp(12);
+            row.addView(words, wordsSize);
+            if (currentOnlineId > 0 && tags.getOnlineId() == currentOnlineId) {
+                TextView current = text("Current", 13);
+                current.setTag("semantic:match.current");
+                current.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+                row.addView(current);
             }
             row.setContentDescription(label(tags));
             row.setOnClickListener(v -> choose.accept(tags));
@@ -213,7 +265,7 @@ public final class PreviewMatchSearch extends LinearLayout {
             rows.addView(row, cell);
             rendered.add(tags);
         }
-        status.setText(results.isEmpty() ? "No matches" : "Choose a match to review");
+        status.setText(results.isEmpty() ? "No matches" : "Matches on TMDB");
     }
 
     public void focusInput() {
