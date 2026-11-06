@@ -30,7 +30,10 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   and F2 (Down from the top bar), which conflicts with the older "first control" rule.
 - **If Claude is unavailable:** Codex can finish the 0.156 build using `docs/codex/BUILD_0156_STANDIN.md`.
 - **Codex:** 0.156 finished and merged. Now on 0.157 (first partial delivery 6 Nov, `71f7818a9`: 13 of 23
-  items done; report `docs/codex/reports/2026-11-06-0157.md`; not yet merged). Brief `docs/codex/BRIEF_0157.md`,
+  items done) and **continuation handed back 6 Nov evening** (`bff775a35`): 19 of 23 done; #15 Key information not
+  fully done, #20 seek loading engine delivered (Shield acceptance pending), #21 newer NOVA not done, #23 legacy
+  removal waiting for owner approval; 349 host tests pass; eight add-only MediaLib patch registrations. Report
+  `docs/codex/reports/2026-11-06-0157.md`. Not yet merged: Claude merges when 0.157 coding starts. Brief `docs/codex/BRIEF_0157.md`,
   branch `codex/0157-2026-11-06`.
 - **0.157:** decided items in [`docs/0.157/OWNER_NOTES.md`](docs/0.157/OWNER_NOTES.md), including the Files page
   redesign (§16; mock-ups `docs/design/proposals/network-files-tabs/`, principles `docs/design/FLAT_PAGE_PRINCIPLES.md`).
