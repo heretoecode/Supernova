@@ -15,20 +15,18 @@ included in evidence. Dependency advisories/backports are in dependency-audit.md
 | SEC157-06 | MediaLib Trakt.setAccessToken/setRefreshToken store strings in default SharedPreferences | Trakt tokens rely on app sandbox, unlike Put.io's device-key envelope | User-visible security / high | Migration needs provider/API-wide ownership and device-key/upgrade/logout tests; no silent destructive conversion |
 | SEC157-07 | Manifest has no explicit allowBackup=false; network config permits cleartext base traffic | OS backup policy and intentional FTP/DAV/HTTP support are separate from manual backup sanitisation | User-visible privacy / high | Review platform backup/data-extraction rules and transport choices with source owner; no protected resource/contract edits |
 | SEC157-08 | Exported VideoSearchProvider accepts bound search values and returns library titles/artwork references without a component permission | Read-only system-search contract also exposes matching library metadata to another app | User-visible privacy / high | Query is parameter-bound; do not call this SQL injection. Restricting callers changes an external screen/search contract |
-
 | SEC157-09 / DG157-04 | ExternalPlayerResultListener URI and arbitrary result Bundle logs | Leaks occur before export redaction | User-visible privacy / high | Fixed `14675bc02`; DEBUG appender regression checks raw arguments and formatted text; prior source fails |
 | SEC157-10 / DG157-03 | SAF font document display name becomes a private File child | A provider can overwrite a sibling app-private file using ../name.ttf | User-visible security / high | Fixed `ed31a873e`; reject non-leaf names and canonical-parent escapes; real file regression and negative control |
 | SEC157-11 / DG157-05 | SubtitlesDownloaderActivity2.stageSubtitle account headers sent to returned URL | Credential origin/TLS not validated at this screen call site | User-visible security / high | Screen handoff: exact credential origin, credential-free CDN retrieval, safe redirect handling; no screen edit |
 | SEC157-12 / DG157-06 | OAuthDialog host suffix, mixed content and raw URL logging | Non-exact web-origin admission and sensitive code/state log output | User-visible privacy / high for predicates/logs | Screen handoff; no asserted UUID-state bypass or permissive SSL callback |
 | SEC157-13 | OpenSubtitlesCredentialsDialog stores username/password in its private preferences | Sandbox-only account storage; a manual settings filter is not device encryption | User-visible security / high | Screen/credential migration requires compatibility, rollback and device-key tests; no plaintext-to-KeyStore conversion claimed |
+| SEC157-14 / DG157-10 | Subtitle helper inputs/results/server messages/parse errors and TRACE URL interception | Private media/provider data reaches appenders; TRACE also removed call timeouts | User-visible privacy / high | Fixed `a9b7a4223`, actual HTTP/appender and timeout regressions plus previous-source negative controls; request/result contents unchanged |
+| SEC157-15 / DB157-07 | Poster cache path/title/exception logs | Same pre-export logger disclosure | User-visible privacy / high | Fixed `151341d18`, keep IDs/controlled reason/class; appender test retains actual provider clearing; previous source fails |
 
 The source manifest was reparsed after merge 9dd9d0c65: 15 explicit/implicit exported entries remain; both listing
 services remain non-exported. The protocol and native observation APIs do not expose raw path/credential fields.
 Subtitle-helper and poster-cache log sites are now fixed by SEC157-14/15 below. Remaining screen sites are
 explicit; the app is not declared globally log-clean.
-
-| SEC157-14 / DG157-10 | Subtitle helper inputs/results/server messages/parse errors and TRACE URL interception | Private media/provider data reaches appenders; TRACE also removed call timeouts | User-visible privacy / high | Fixed `a9b7a4223`, actual HTTP/appender and timeout regressions plus previous-source negative controls; request/result contents unchanged |
-| SEC157-15 / DB157-07 | Poster cache path/title/exception logs | Same pre-export logger disclosure | User-visible privacy / high | Fixed `151341d18`, keep IDs/controlled reason/class; appender test retains actual provider clearing; previous source fails |
 
 ## Exported entry points and intent handling
 
