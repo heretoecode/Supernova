@@ -73,6 +73,32 @@ Items already built or scheduled are left out (see the bottom of this file).
   `03` Home, `04` Settings › Playback, `05` Movies library, `06` Movies with the approved stats row, `07` Network &
   Files landing, all on the
   charcoal with no panel.
+  Real renders (5 Nov, background swapped only, panels kept): Home and Movies on Space Black and on charcoal, by
+  `preview-renders.yml` with `"variants": ["normal", "charcoal"]`. Owner: Movies, TV Shows and custom pages share
+  one design, so only one library page needs designing.
+  Network & Files shade options (real renders, 5 Nov): owner prefers option 2 (page #16181C, tiles #22252B) and
+  option 3 (page #0E1013, tiles #1C1F24), and asked for stronger outlines on unfocused tiles: rendered at 2 px
+  28% and 2 px 40% white. Waiting for the owner's pick.
+- **Network & Files as one page with tabs** (owner idea, 5 Nov; not tied to any version, separate from 0.156/0.157):
+  no landing tiles and no panels. Tabs under the top bar: Local Storage · Network Shares (Add connection button) ·
+  Library (Scan now, scanning, recent scans, Library Health). Opens on the last tab used; first visit Local
+  Storage. Folders open below the tabs with a breadcrumb, keeping Grid/List, Sort, Videos only/All files and the
+  inline actions; no "Recently added" (owner). Network Shares holds saved connections (Open, Edit, Test, Remove)
+  and Add connection, which opens in the same tab. Mock-ups `docs/design/proposals/network-files-tabs/01`–`09`.
+  v3 (owner notes 6 Nov): tabs in a tray with a line under the tab row; a summary per tab at the right of the tab
+  row; one status column on every row (In library · Excluded · Not added; Reachable · Not reachable) that stays put
+  when the row is focused, with the row's buttons after it; grid uses the Home row card (16:9, title and year
+  inside on a shade, state chip top right); Add a connection is the last row of Your connections, not a corner
+  button, because it opens a page, not a pop-up.
+  v4 (owner notes 6 Nov): everything larger now the panel is gone; status pills are plain text in an outline
+  (no colour dots, no strike-through), the same for library state and reachability, in a fixed column between the
+  names (long names are shortened) and the buttons; grid folders show a mosaic of the artwork inside (plain card if
+  none), library files their artwork, other files a still from the video where one can be made; Add a connection
+  shows its types inline when focused (Computer or NAS · WebDAV · SFTP · More).
+  v5 (owner notes 6 Nov): tabs lower, with more room above and below; summary text larger; every status pill
+  the same width. Choosing a type opens its form as a page in the same tab (breadcrumb Network Shares › Add a
+  connection › WebDAV server); OK on a field opens the app's keyboard as a side panel beside the form (Done
+  returns); More opens a side panel with FTP, FTP with TLS and WebDAV without encryption. Mock-ups 10–11.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

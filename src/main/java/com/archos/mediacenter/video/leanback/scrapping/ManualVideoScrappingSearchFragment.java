@@ -98,6 +98,15 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
     @Override
     protected void configurePreviewSearch(PreviewMatchSearch search) {
+        if (mVideo != null)
+            search.setSubject(mVideo.getFileNameWithExtension());
+        if (mVideo instanceof com.archos.mediacenter.video.browser.adapters.object.Movie) {
+            com.archos.mediacenter.video.browser.adapters.object.Movie movie =
+                (com.archos.mediacenter.video.browser.adapters.object.Movie) mVideo;
+            search.setCurrentOnlineId(movie.getOnlineId());
+        }
+        else if (mVideo instanceof Episode)
+            search.setCurrentOnlineId(((Episode) mVideo).getOnlineId());
         if (previewEpisode)
             search.parentSeries(((Episode) mVideo).getShowName(),
                 this::changeSeriesMatch);

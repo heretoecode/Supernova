@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.leanback;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import com.archos.mediacenter.video.BuildConfig;
 import com.archos.mediacenter.video.R;
 
@@ -31,6 +32,11 @@ public final class PreviewUtilityBackground extends Drawable {
         Bitmap image =
             BuildConfig.FOUNDATION ? foundationImage : PreviewUtilityBackground.image;
         Rect b = getBounds();
+        int flat = previewColour("SUPERNOVA_PREVIEW_BG", 0);
+        if (flat != 0) {
+            canvas.drawColor(flat);
+            return;
+        }
         canvas.drawColor(0xff09111a);
         if (image == null)
             return;
@@ -42,6 +48,32 @@ public final class PreviewUtilityBackground extends Drawable {
             paint);
         if (!BuildConfig.FOUNDATION)
             canvas.drawColor(0x44050b12);
+    }
+
+    /**
+     * Render tool only: a colour (hex RRGGBB or AARRGGBB) the comparison renders use in place of the normal one.
+     * Never read on a device.
+     */
+    public static int previewColour(String name, int normal) {
+        if (!"robolectric".equals(Build.FINGERPRINT))
+            return normal;
+        String value = System.getenv(name);
+        if (value == null || value.isEmpty())
+            return normal;
+        long parsed = Long.parseLong(value, 16);
+        if (value.length() <= 6)
+            parsed |= 0xff000000L;
+        return (int) parsed;
+    }
+
+    /** Render tool only: a whole number in place of the normal one. Never read on a device. */
+    public static int previewNumber(String name, int normal) {
+        if (!"robolectric".equals(Build.FINGERPRINT))
+            return normal;
+        String value = System.getenv(name);
+        if (value == null || value.isEmpty())
+            return normal;
+        return Integer.parseInt(value);
     }
 
     @Override

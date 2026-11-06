@@ -89,6 +89,12 @@ public final class SupernovaStyle {
         float radius = dp(c, surface == Surface.TILE ? 11 : RADIUS_DP);
         int rest = surface == Surface.STANDARD ? BUTTON_REST : surface == Surface.PANEL ? PANEL_REST : GLASS;
         int edge = surface == Surface.TILE || surface == Surface.HUD ? 0x2EFFFFFF : 0;
+        int edgeWidth = Math.max(1, dp(c, 1));
+        if (surface == Surface.TILE) {
+            rest = PreviewUtilityBackground.previewColour("SUPERNOVA_PREVIEW_TILE", rest);
+            edge = PreviewUtilityBackground.previewColour("SUPERNOVA_PREVIEW_TILE_EDGE", edge);
+            edgeWidth = PreviewUtilityBackground.previewNumber("SUPERNOVA_PREVIEW_TILE_EDGE_PX", edgeWidth);
+        }
         StateListDrawable states = new ButtonStates();
         Drawable focused = new Box(FOCUS_FILL, 0, 0, radius, 0);
         states.addState(new int[] {android.R.attr.state_focused}, focused);
@@ -97,7 +103,7 @@ public final class SupernovaStyle {
                         new Box(withAlpha(rest, DISABLED_ALPHA), edge, dp(c, 1), radius, 0));
         states.addState(new int[] {android.R.attr.state_selected},
                         new Box(rest, Color.WHITE, Math.max(1, dp(c, 1)), radius, 0));
-        states.addState(new int[] {}, new Box(rest, edge, Math.max(1, dp(c, 1)), radius, 0));
+        states.addState(new int[] {}, new Box(rest, edge, edgeWidth, radius, 0));
         return states;
     }
 

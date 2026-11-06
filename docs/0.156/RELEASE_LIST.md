@@ -105,7 +105,14 @@ Committed 5 Nov afternoon, waiting for the next build (player):
   grouped results, bold typed letters, watched pill, voice)
 - #35/#41 Network & Files landing (Library Health tile with count badge, live Scan now tile, Advanced dropped) and
   Library Scanning wording without duplicate scan buttons
-Still to do (Claude): Network Shares page and Add Connection (#34), Library Scanning/Health full pages (#35),
-Settings stage 3 (System/About, Where to Watch, Appearance, Audio & Subtitles incl. Vertical Position), Customise Home
-(#29), Fix match (#40), empty states and focus memory (#43), Local Storage grid and menu (#33).
-Codex: the failing tests in `docs/codex/BRIEF_0156_TEST_FIXES.md`.
+Committed 6 Nov 00:07 UTC, in conformance run 42134557197: #34 Put.io service row on Network Shares (signed in as,
+storage, reachable, library sync, Retry) and Test connection on Add Connection (nothing saved; names the field).
+Committed 6 Nov after that run (next build): #34 saved connections show Open · Edit · Test · Remove on focus; Add
+Connection "choose what you are connecting to" page (add-connection/01); #40 Fix match as a side panel over Details
+(file name in the header, posters, year and kind, current match marked, keyboard folds away in the results).
+Also committed: Settings › Audio & Subtitles › Style tab (live sample; size, colour, vertical position, outline,
+background, opacity; saved through the same helper as the player; fonts and margins moved here). In conformance run
+42137774102 (00:34 UTC). Run 42134557197 failed only on MediaLib NetworkScanLedgerTest
+cancelledWorkerWaitingForProviderGateCannotPerformLateScan (MediaLib unchanged since the green run; re-run to check).
+Still to do (Claude), waiting for Codex's `BRIEF_0156_LAST.md`: About (credits, licences, version history), Backup
+three choices, Local Storage "not in library" Details, and the focus-memory fixes from Codex's audit.

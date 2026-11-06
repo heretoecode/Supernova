@@ -63,9 +63,9 @@ final class SettingsLayout {
                                                     "player_spatialization_enabled"},
              "Subtitles", new String[] {"preview_subtitles_by_default", "favSubLang", "languages_list",
                                         "supernova_subtitle_season_prefetch", "supernova_subtitle_discovery",
-                                        "subtitles_hide_default", "subtitles_show_full_for_local_audio",
-                                        "subtitle_use_margins", "subtitle_fonts_folder_uri",
-                                        "subtitle_default_font"});
+                                        "subtitles_hide_default", "subtitles_show_full_for_local_audio"},
+             "Subtitle style", new String[] {"subtitle_default_font", "subtitle_fonts_folder_uri",
+                                             "subtitle_use_margins"});
         page(2,
              "Library", new String[] {"hide_watched", "sort_ignore_articles", "recreate_sort_titles_prefkey"},
              "Library & metadata", new String[] {"enable_auto_scrap_key", "favScraperLang", "network_nfo_parse",
@@ -111,6 +111,7 @@ final class SettingsLayout {
         TAB_LABELS.put("Interface & theme", "Appearance");
         TAB_LABELS.put("Service integrations", "Services");
         TAB_LABELS.put("Backup & restore", "Backup");
+        TAB_LABELS.put("Subtitle style", "Style");
 
         copy("hide_controls_on_pause", "Hide controls when paused",
              "Shows the paused picture without the controls on top.");

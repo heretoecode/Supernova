@@ -31,6 +31,8 @@ public class ManualShowScrappingActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Fix match is a side panel over Details (0.156 #40).
+        com.archos.mediacenter.video.leanback.PreviewMatchSearch.asSidePanel(this);
         setContentView(R.layout.leanback_manual_show_scrapping_activity);
     }
 
