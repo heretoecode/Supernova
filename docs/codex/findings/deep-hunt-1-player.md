@@ -204,7 +204,7 @@ The historical table above is not rewritten to make an older incomplete run appe
 | --- | ---: | --- |
 | PlayerActivity.java | 6690 | `7506356b892f740269a7ce43496db37ff2953b81e58e19ae31299193a73d70c2` |
 | PlayerController.java | 3699 | `68208096b00be9f4bb248f1ca85608aea508e508364026ffe7e189a86b6466df` |
-| PlayerService.java | 4480 | `5fa485f80d096e725cc6e6ba4d6f2e06070f106d349b6677084ed8821720ee5d` |
+| PlayerService.java | 4480 | `5e9ad2ee1b7f265d5c292d9f340e383c1d2e01f10764018d8443c542b8d2ce3d` |
 
 | ID | File:line / path | Kind | Severity | Confidence | Evidence and disposition |
 | --- | --- | --- | --- | --- | --- |
