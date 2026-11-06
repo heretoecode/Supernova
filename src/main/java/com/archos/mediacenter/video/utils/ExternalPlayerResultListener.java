@@ -30,6 +30,7 @@ import com.archos.mediacenter.utils.trakt.Trakt;
 import com.archos.mediacenter.utils.trakt.TraktService;
 import com.archos.mediacenter.utils.videodb.IndexHelper;
 import com.archos.mediacenter.utils.videodb.VideoDbInfo;
+import com.archos.mediacenter.video.diagnostics.DiagnosticRedactor;
 import com.archos.mediacenter.video.player.ExternalPlayerService;
 import com.archos.mediacenter.video.player.PrivateMode;
 import com.archos.mediaprovider.video.VideoStore;
@@ -94,7 +95,8 @@ public class ExternalPlayerResultListener
         mContentUri = contentUri;
         mPlayerUri = playerUri;
         if (log.isDebugEnabled())
-            log.debug("init: playerUri={}, contentUri={}", playerUri, contentUri);
+            log.debug("init: playerUri={}, contentUri={}", DiagnosticRedactor.clean(String.valueOf(playerUri)),
+                      DiagnosticRedactor.clean(String.valueOf(contentUri)));
         mContentUri = Uri.parse(removeFileSlashSlash(mContentUri.toString())); // we need to remove "file://"
         if (mContext != null && !PrivateMode.isActive()
             && Trakt.isTraktV2Enabled(mContext, PreferenceManager.getDefaultSharedPreferences(mContext)))
@@ -122,12 +124,12 @@ public class ExternalPlayerResultListener
         }
     }
 
-    @SuppressWarnings("deprecation") // bundle.get: debug dumping only
     @Override
     public synchronized void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (log.isDebugEnabled())
             log.debug("onActivityResult: requestCode={}, resultCode={}, mVideoDbInfo!=null {}, mPlayerUri {}",
-                requestCode, resultCode, (mVideoDbInfo != null), mPlayerUri);
+                requestCode, resultCode, (mVideoDbInfo != null),
+                DiagnosticRedactor.clean(String.valueOf(mPlayerUri)));
 
         ExternalPlayerService.stopService(mContext != null ? mContext : ArchosUtils.getGlobalContext());
 
@@ -137,19 +139,7 @@ public class ExternalPlayerResultListener
         // mxplayer https://mx.j2inter.com/api https://sites.google.com/site/mxvpen/api
         // mpv http://mpv-android.github.io/mpv-android/intent.html
         // vimu https://www.vimu.tv/player-api
-        if (data != null) {
-            Bundle bundle = data.getExtras();
-            if (log.isDebugEnabled())
-                log.debug("onActivityResult: data.getData()={}", bundle);
-            if (log.isDebugEnabled()) {
-                if (bundle != null) {
-                    for (String key : bundle.keySet()) {
-                        log.debug("onActivityResult: data {}  : {}", key,
-                            (bundle.get(key) != null ? bundle.get(key) : "NULL"));
-                    }
-                }
-            }
-        } else {
+        if (data == null) {
             // data = null, could be vlc (not following its spec) or hitting back before selecting external player
             if (log.isDebugEnabled())
                 log.debug("onActivityResult: data is null!");
@@ -161,14 +151,6 @@ public class ExternalPlayerResultListener
             boolean isFinished = false;
             if (data != null) {
                 if (data.getExtras() != null) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                            "onActivityResult: JUSTPLAYER_RESULT_EXTRA_end_by={}, VLC_RESULT_EXTRA_position={}, JUSTPLAYER_RESULT_EXTRA_duration={}, VLC_RESULT_EXTRA_duration={}, requestCode={}, resultCode={}",
-                            data.getStringExtra(ExternalPositionExtra.JUSTPLAYER_RESULT_EXTRA_end_by),
-                            data.getLongExtra(ExternalPositionExtra.VLC_RESULT_EXTRA_position, -1),
-                            data.getIntExtra(ExternalPositionExtra.JUSTPLAYER_RESULT_EXTRA_duration, -1),
-                            data.getLongExtra(ExternalPositionExtra.VLC_RESULT_EXTRA_duration, -1), requestCode,
-                            resultCode);
                     if (data.getIntExtra(ExternalPositionExtra.JUSTPLAYER_RESULT_EXTRA_position, -1)
                         != -1) {
                         // justplayer/mxplayer
