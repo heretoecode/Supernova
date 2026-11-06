@@ -181,10 +181,35 @@ public final class EditPagePanel extends LinearLayout {
         return owner.getResources().getDisplayMetrics().heightPixels - kit.s(96 + 40) - kit.s(24 + 22 + 16) - kit.s(70);
     }
 
+    /** Reopening Edit Page for the same page returns to the row you left (focus audit F16). */
+    static final String LAST_PAGE = "supernova_edit_page_last_page";
+    static final String LAST_ROW = "supernova_edit_page_last_row";
+
     private void focusInitial() {
-        View target = body.findViewWithTag(host.isNew() ? "edit.row.name" : "edit.row.name");
+        android.content.SharedPreferences prefs =
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
+        String lastRowTag = prefs.getString(LAST_ROW, null);
+        boolean samePage = host.draft().name.equals(prefs.getString(LAST_PAGE, null));
+        boolean same = !host.isNew() && samePage && lastRowTag != null;
+        View target = body.findViewWithTag(same ? lastRowTag : "edit.row.name");
+        if (target == null)
+            target = body.findViewWithTag("edit.row.name");
         if (target != null)
             target.requestFocus();
+        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> rememberRow(after));
+    }
+
+    private void rememberRow(View focused) {
+        for (View at = focused; at != null; at = at.getParent() instanceof View ? (View) at.getParent() : null) {
+            Object tag = at.getTag();
+            if (tag instanceof String && ((String) tag).startsWith("edit.row.")) {
+                androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+                    .putString(LAST_PAGE, host.draft().name).putString(LAST_ROW, (String) tag).apply();
+                return;
+            }
+            if (at == this)
+                return;
+        }
     }
 
     private void focusFirst() {

@@ -145,6 +145,8 @@ public final class PreviewPages extends FrameLayout {
     private PreviewNetworkWorkspace sharedBrowser, networkBrowser, homeSetupBrowser;
     private final FocusAnchor[] anchors = new FocusAnchor[4];
     private final Parcelable[] scrollStates = new Parcelable[4];
+    /** Each tab's hero position, so coming back shows the same title (focus audit F3). */
+    private final int[] featuredByTab = new int[4];
     private boolean restoringFocus, switchingTab;
     private SharedPreferences preferences;
     private int focusGeneration;
@@ -1146,6 +1148,8 @@ public final class PreviewPages extends FrameLayout {
         }
         rememberFocus();
         scrollStates[this.tab] = layout.onSaveInstanceState();
+        if (this.tab >= 0 && this.tab < featuredByTab.length)
+            featuredByTab[this.tab] = featuredIndex;
         // TopNavigation owns the single full-viewport background, including the header.
         quietOrder.clear();
         switchingTab = true;
@@ -1155,7 +1159,7 @@ public final class PreviewPages extends FrameLayout {
         this.tab = tab;
         startHeroClock();
         setBackground(null);
-        featuredIndex = 0;
+        featuredIndex = tab >= 0 && tab < featuredByTab.length ? featuredByTab[tab] : 0;
         render("tab_change");
         switchingTab = false;
         if (scrollStates[tab] != null)
