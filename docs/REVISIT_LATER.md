@@ -114,6 +114,8 @@ Items already built or scheduled are left out (see the bottom of this file).
   "Twice a day" dropped to keep five) and When Supernova opens a switch; Library Health opens one page per kind in
   the Library tab (Missing files: Find it again · Remove; Couldn't be read: Try again · Exclude; Not matched: Fix
   match · Not a film). Mock-ups 06, 08, 09b, 11–14.
+  Owner, 6 Nov: tabs renamed on Claude's recommendation to This Shield · Connections · Library Care; Recent scans
+  shows 3 with "Show all scans" for the last 10; Scan settings live in Library Care (Settings links there).
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

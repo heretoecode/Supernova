@@ -44,8 +44,8 @@ const I = {
   source: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
-const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
-  .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k], 30)}${t}</span>`).join('')}</div>
+const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'This Shield'], ['shares', 'Connections'], ['library', 'Library Care']]
+  .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k === 'local' ? 'tv' : k], 30)}${t}</span>`).join('')}</div>
   <div class="summary">${summary.map(([v, l]) => `<span>${icon(I[SUMMARY_ICON[l]] || I.info, 32)}<b>${v}</b> ${title(l)}</span>`).join('<i class="dot">·</i>')}</div></div>`;
 const title = l => l.split(' ').map(w => w === 'TB' ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 const SUMMARY_ICON = { devices: 'local', videos: 'film', 'videos here': 'film', free: 'disk', 'in library': 'check',
@@ -109,7 +109,7 @@ ${row('pc', 'DESKTOP-7Q', 'SMB · Windows computer', 'newf', [['plus', 'Add']], 
 </div>`;
 
 const types = `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
-${crumbrow(['Network Shares', 'Add a connection'])}
+${crumbrow(['Add a connection'])}
 ${row('cloud', 'Put.io', 'Sign in with your Put.io account', 'ok', null, false)}
 ${row('pc', 'A computer or NAS', 'Windows, Mac, Linux or a NAS · Supernova finds them for you', '', [['search', 'Find on my network'], ['plus', 'Enter address']], true)}
 ${row('globe', 'A WebDAV server', 'Cloud storage and servers that offer WebDAV', '', null, false)}
@@ -157,7 +157,8 @@ ${switchRow('local', 'When Supernova opens', 'Scans if the last scan is over an 
 <div class="sec">Recent scans</div>
 ${lrow('cloud', 'Put.io › Films', 'Today 23:28 · 3 new, 1 updated', 'Finished', null, focus === 6)}
 ${lrow('shares', 'Living-room NAS', 'Today 22:28 · 48 s · no changes', 'Finished', null, focus === 7)}
-${lrow('usb', 'Backup #1', 'Today 21:28 · the drive was removed', 'Stopped', null, focus === 8)}`;
+${lrow('usb', 'Backup #1', 'Today 21:28 · the drive was removed', 'Stopped', null, focus === 8)}
+<div class="row ${focus === 9 ? 'focus' : ''}"><span class="ri">${icon(I.history, 40)}</span><div class="rt grow"><div class="rn">Show all scans</div><div class="rl">The last 10, with what each one found</div></div><div class="ra"><span class="rc">${icon(I.chev, 30)}</span></div></div>`;
 const healthPage = (title, summary, rows) => `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
 ${crumbrow([title])}${rows}</div>`;
 const missing = healthPage('Missing files', '', `
@@ -177,7 +178,7 @@ ${lrow('film', 'S01E01.mkv', 'Put.io › TV · name too short', 'No match', null
 const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
 <div class="libclip"><div class="libscroll">${libRows(0)}</div></div></div>`;
 const libraryLower = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
-<div class="libclip"><div class="libscroll" style="margin-top:-560px">${libRows(4)}</div></div></div>`;
+<div class="libclip"><div class="libscroll" style="margin-top:-690px">${libRows(9)}</div></div></div>`;
 
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
