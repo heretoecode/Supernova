@@ -373,3 +373,6 @@ rejecting unsafe provider display names before I/O. These changes require no scr
 Native integration must apply avos-supernova157-atomic-alignment.patch after seek-and-frame-evidence.patch;
 it aligns the new internal 64-bit atomic storage on all ABIs, including i686. The earlier patch bytes and Java
 capability/API contracts are unchanged. See 0157-native-alignment.md and the registration receipt.
+
+Final internal logger fixes DG157-10/DB157-07 require no screen call. Subtitle API requests/results and poster
+clearing remain unchanged; TRACE uses the same 5s connect/10s read/15s call deadline as normal subtitle requests.

@@ -63,5 +63,24 @@
     "failures": [
       "rawLocationsAndArbitraryResultExtrasNeverReachAnAppender(com.archos.mediacenter.video.utils.ExternalResultPrivacy157Test)"
     ]
+  },
+  {
+    "source": "OpenSubtitlesApiHelper",
+    "baseline": "b937f2dd4",
+    "test": "SubtitleLogPrivacy157Test",
+    "exit": 1,
+    "failures": [
+      "privateQueryResultsServerMessagesAndParseErrorsDoNotReachAppenders(com.archos.mediacenter.video.utils.SubtitleLogPrivacy157Test)",
+      "traceLoggingRetainsTheProductionNetworkDeadlines(com.archos.mediacenter.video.utils.SubtitleLogPrivacy157Test)"
+    ]
+  },
+  {
+    "source": "UnavailablePosterBroadcastReceiver",
+    "baseline": "b937f2dd4",
+    "test": "PosterLogPrivacy157Test",
+    "exit": 1,
+    "failures": [
+      "failedPosterChecksStillClearTheCacheWithoutLoggingThePathTitleOrException(com.archos.mediacenter.video.leanback.PosterLogPrivacy157Test)"
+    ]
   }
 ]

@@ -129,7 +129,7 @@ Changed data-loader/queue/history/chart hunks were reviewed again. No screen fil
 
 Other bounded observations: main-thread disk/cache reads occur in SharedMetadata.entry/PreviewMetadataCache.read
 and variant compatibility initialisation enumerates codecs from the loader constructor; record in performance audit.
-UnavailablePosterBroadcastReceiver still logs path/title/failure text; add its sites to the privacy fix queue.
+UnavailablePosterBroadcastReceiver path/title/failure logging is fixed by DB157-07 below.
 No old U1/N1/N2/L1/P1/U2/L2/DP-01…07 finding is re-reported. A full source read is not device acceptance or proof
 that every possible defect has been found. Per-file hashes below identify exactly what was read or excluded.
 
@@ -244,7 +244,7 @@ that every possible defect has been found. Per-file hashes below identify exactl
 | `src/main/java/com/archos/mediacenter/video/leanback/TopNavigation.java` | 591 | `8dad747ce49f6245cbc03ca4a8e55fcd8bc938e098711e46fb35a12256423fdd` | read |
 | `src/main/java/com/archos/mediacenter/video/leanback/TvButton.java` | 38 | `d6b3bf76bf3ff2c749fb2a12f21e99797b886a59368e63e77adb997f44eabaa0` | read |
 | `src/main/java/com/archos/mediacenter/video/leanback/TvLayout.java` | 65 | `2a087810fe8a4d0ff9217c0a8103d8de2f397d6473582351449a9d037072e8db` | read |
-| `src/main/java/com/archos/mediacenter/video/leanback/UnavailablePosterBroadcastReceiver.java` | 203 | `21ffe7086fdf3092bf2ccbc627798fdb0404cd3a413071072f4dc9a64e0abfae` | read |
+| `src/main/java/com/archos/mediacenter/video/leanback/UnavailablePosterBroadcastReceiver.java` | 203 | `dbd62dfba6297fc342bb1c8d0afc8dcd16f9f65a72996b107aa82b12b1199dcd` | read |
 | `src/main/java/com/archos/mediacenter/video/leanback/VideoViewClickedListener.java` | 225 | `f9157be58a1aaa93422da3cf9fbff21170714541a60ccaafc73534d7cd6d4bae` | read |
 | `src/main/java/com/archos/mediacenter/video/leanback/VideosByFragment.java` | 495 | `d0ccaf6568b2e0186abb5e167edc4b6e5966c7c7a8a6cb3f003b1f7016d43946` | read |
 | `src/main/java/com/archos/mediacenter/video/leanback/VideosByListActivity.java` | 25 | `40859cadf6528ec029f6d7768b5474fcdf84b29c02f18cbb621c18f18abdd812` | read |
@@ -295,3 +295,10 @@ that every possible defect has been found. Per-file hashes below identify exactl
 Fix commits: DB157-01 `82d8b759b`; DB157-02 `fc439ab2c`; DB157-03 `3b361ff1f`; DB157-04 `4ff8348fa`.
 The table includes reviewed post-hunt hunks. Negative controls against 787b6c684 reproduce the queue, role and
 history defects; the current tests pass. See 0157-evidence/post-hunt-negative-controls.json.
+
+### DB157-07 — poster-cache log privacy (user-visible privacy, high)
+
+checkPoster logged provider path/title and arbitrary exception messages at WARN, before any export redaction.
+Fixed `151341d18`: retain numeric IDs, controlled reason and exception class only; no change to poster clearing or
+provider selection. Captured-appender/provider regression verifies the cache still clears and raw messages,
+argument arrays and Throwable proxies carry no private fixture values. Previous source fails the same regression.

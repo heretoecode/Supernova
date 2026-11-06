@@ -266,7 +266,7 @@ security-audit.md. Native summary wording predating optional counter support nee
 | `src/main/java/com/archos/mediacenter/video/utils/NovaWebView.java` | 73 | `b63ac142e76c450aa496a6f6a7b305b045bd2bab14b1a856477d6e81bcc8510a` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/OnlineId.java` | 46 | `017e57d295e1aae0554c08533d6585779dee19378ab494ccec2daf33425273bd` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/OnlineIdUtils.java` | 50 | `6b94f881b9ad0bd58034d6201d838eaa142df47165ce73b439949b22d2d383bf` | full read + changed hunks |
-| `src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesApiHelper.java` | 635 | `bc66d89ff2b2b7e8ab6e2fe380aca6095446c56a768edd3966bae2aafff58a16` | full read + changed hunks |
+| `src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesApiHelper.java` | 640 | `3645945937b0135649ca33c38fd4c9fdde7c4789743e825c21ef55f2bfdadb63` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesCredentialsDialog.java` | 157 | `2aca2d8a6e1ccca49e57e25c69f73a57924e1d4cfefafd22f983ec1087fe6a7f` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesHasher.java` | 165 | `3e2e95324d2144c59b2d71e8d5e7432b2ab4779f11a12ebe7c6876b4f698f0ce` | full read + changed hunks |
 | `src/main/java/com/archos/mediacenter/video/utils/OpenSubtitlesQueryParams.java` | 61 | `b8a31369cb2db65291dbe8609ec53a2b43ebefe3ab3cf9f0940fb0d134701d84` | full read + changed hunks |
@@ -354,3 +354,11 @@ security-audit.md. Native summary wording predating optional counter support nee
 Later reviewed lint-only hunk removes the impossible pre-23 token-store guard; its envelope tests expand to
 SDK 23/28/30 without changing assertions. SubtitleFileHash157Test adds test-only coverage of unchanged hashing
 (overlapping chunks, ignored middle and sparse >4GiB tail); no utility source change was bundled with those tests.
+
+### DG157-10 — subtitle-helper log privacy and trace deadlines (user-visible privacy/reliability, high)
+
+Search inputs/results, server message/reason, endpoint and parse exceptions reached appenders; TRACE installed an
+HTTP URL logger and lost production timeouts. Fixed `a9b7a4223`: constant/numeric helper events and one bounded
+client at all log levels, without raw URL interception. Original request query/key and parsed result remain intact.
+Actual HTTP plus TRACE appender regression covers success, server failure and malformed JSON; a second regression
+checks 5s connect/10s read/15s call bounds. Previous source fails both. Retry regressions were rerun successfully.

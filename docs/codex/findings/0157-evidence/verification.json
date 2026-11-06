@@ -8,11 +8,13 @@
     "source_files": 1305,
     "full_compile": "pass",
     "generated_bindings": "R/BuildConfig and real AIDL outside checkout",
-    "warnings": 9
+    "warnings": 9,
+    "warnings_detail": "eight existing finalize-removal warnings plus one source/target system-module-path compiler option warning",
+    "final_followup": "full source compile after final logger logic; two final formatted sources also separately compiled"
   },
   "tests": {
-    "total_executions": 346,
-    "classes": 83,
+    "total_executions": 349,
+    "classes": 85,
     "broad_suite": {
       "classes": 81,
       "executions": 331
@@ -27,6 +29,12 @@
           30
         ],
         "keys": "injected; real AES-GCM envelope, not hardware KeyStore"
+      },
+      "final_logging_regressions": {
+        "classes": 2,
+        "executions": 3,
+        "focused_retry_regressions": 3,
+        "note": "retry regressions rerun after logger changes; already counted in broad suite, not added twice"
       }
     },
     "results": [
@@ -148,13 +156,13 @@
         "test_class": "SubtitleRetry157Test",
         "tests": 3,
         "failures": 0,
-        "raw_log_sha256": "1daab6f97fe650bd74faa786f49664dc658dfbb7a3c05718ded416bad2b57c7b"
+        "raw_log_sha256": "de0b6e8cf2aa1ea944bbd80a7374085166ca68561e59f30c9abbd333ffedf4d9"
       },
       {
         "test_class": "SubtitleFontBoundary157Test",
         "tests": 1,
         "failures": 0,
-        "raw_log_sha256": "670a4181d2549e2034a6a0499ee28408a1b2bc3cb884a2d63416bb78be0a1508"
+        "raw_log_sha256": "8174bdc7e1213c1ec0d66b0f3f9976ea49fac575a50fb6eeefa530bb985c0393"
       },
       {
         "test_class": "HistoryMigration157Test",
@@ -527,6 +535,18 @@
         "tests": 12,
         "failures": 0,
         "raw_log_sha256": "12beb801173ede4244b8bb97a52da6f7e1eafb477c15097539431df39107ca6d"
+      },
+      {
+        "test_class": "SubtitleLogPrivacy157Test",
+        "tests": 2,
+        "failures": 0,
+        "raw_log_sha256": "862cb0f33de896c951159343a4ed7a005e070672c80f71beb2110d3f7927ceaa"
+      },
+      {
+        "test_class": "PosterLogPrivacy157Test",
+        "tests": 1,
+        "failures": 0,
+        "raw_log_sha256": "3c04b629949dbbd8ea1c278c062e3f25bcd5c7170a6de8f105200321a2be1e6b"
       }
     ]
   },
@@ -552,8 +572,13 @@
     "result": "pass"
   },
   "negative_controls": {
-    "java_classes": 7,
-    "expected_failing_tests": 9,
+    "java_classes": 9,
+    "expected_failing_tests": 12,
     "native_i686_alignment": "expected compile assertion failure"
+  },
+  "whitespace": {
+    "non_patch_range": "pass",
+    "patch_added_source_lines": "pass",
+    "raw_patch_file_diff_check": "flags literal unified-diff context spaces/tabs; patch syntax retained unchanged"
   }
 }

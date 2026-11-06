@@ -24,8 +24,11 @@ included in evidence. Dependency advisories/backports are in dependency-audit.md
 
 The source manifest was reparsed after merge 9dd9d0c65: 15 explicit/implicit exported entries remain; both listing
 services remain non-exported. The protocol and native observation APIs do not expose raw path/credential fields.
-OpenSubtitles helper still logs file names/search objects/server messages at DEBUG/ERROR; UnavailablePosterBroadcastReceiver
-logs path/title/failure data. These remain a wider privacy-fix queue; the app is not declared globally log-clean.
+Subtitle-helper and poster-cache log sites are now fixed by SEC157-14/15 below. Remaining screen sites are
+explicit; the app is not declared globally log-clean.
+
+| SEC157-14 / DG157-10 | Subtitle helper inputs/results/server messages/parse errors and TRACE URL interception | Private media/provider data reaches appenders; TRACE also removed call timeouts | User-visible privacy / high | Fixed `a9b7a4223`, actual HTTP/appender and timeout regressions plus previous-source negative controls; request/result contents unchanged |
+| SEC157-15 / DB157-07 | Poster cache path/title/exception logs | Same pre-export logger disclosure | User-visible privacy / high | Fixed `151341d18`, keep IDs/controlled reason/class; appender test retains actual provider clearing; previous source fails |
 
 ## Exported entry points and intent handling
 
