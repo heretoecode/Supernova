@@ -841,7 +841,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         mPlayOnResume = !pausedSession;
         if (log.isDebugEnabled())
             log.debug("PlayerService.onStart: pausedSession={} pausedUri={} uri={}", pausedSession,
-                      logUri(pausedUri), logUri(mUri));
+                      DiagnosticRedactor.clean(pausedUri), logUri(mUri));
 
         boolean continuingSession = PlaybackResumePolicy.isContinuingLaunch(
             Objects.equals(mPlaybackSession.uri, mUri), mPlaybackSession.launchGeneration, launchGeneration);
