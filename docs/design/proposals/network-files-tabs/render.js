@@ -38,11 +38,14 @@ const I = {
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>',
   lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   more: '<path d="M5 12h.1M12 12h.1M19 12h.1"/>',
+  disk: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
   .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k], 30)}${t}</span>`).join('')}</div>
-  <div class="summary">${summary.map(([v, l]) => `<span><b>${v}</b> ${l}</span>`).join('<i>·</i>')}</div></div>`;
+  <div class="summary">${summary.map(([v, l]) => `<span>${icon(I[SUMMARY_ICON[l]] || I.info, 32)}<b>${v}</b> ${l}</span>`).join('')}</div></div>`;
+const SUMMARY_ICON = { devices: 'local', videos: 'film', 'videos here': 'film', free: 'disk', 'in library': 'check',
+  'not added': 'plus', connections: 'shares', reachable: 'test', 'need a look': 'library', '12 min ago': 'scan' };
 const bar = (used, total) => `<div class="bar"><i style="width:${Math.round(used / total * 100)}%"></i></div>`;
 // Library / reachability states: one column, same place on every row.
 const S = {
@@ -68,8 +71,8 @@ const fileacts = [['play', 'Play'], ['info', 'Details'], ['check', 'Mark as watc
 const files = [['folder', '4K', 'Folder · 86 videos', 'in'], ['folder', 'Old rips', 'Folder · 31 videos', 'out'],
   ['film', 'Conclave (2024).mkv', '2024 · 14.2 GB', 'in'], ['film', 'home-video-2019.mp4', '1.1 GB', 'none'],
   ['film', 'Nosferatu (2024).mkv', '2024 · 18.9 GB', 'in']];
-const folder = `${nav}<div class="page">${head('local', '', [['412', 'videos here'], ['398', 'in library'], ['14', 'not added']])}
-${crumbrow(['Local Storage', 'Backup #1', 'Films'], tools(false))}
+const folder = `${nav}<div class="page">${head('local', '', [['412', 'videos'], ['398', 'in library'], ['14', 'not added']])}
+${crumbrow(['Backup #1', 'Films'], tools(false))}
 ${files.map(([ic, n, l, st], i) => row(ic, n, l, st, fileacts, i === 2)).join('')}
 </div>`;
 
@@ -79,8 +82,8 @@ const cards = [['4K', '86 videos', 'in', 'mosaic'], ['Old rips', '31 videos', 'o
 const grad = i => `linear-gradient(160deg,${art[i % 5][0]},${art[i % 5][1]})`;
 const still = 'linear-gradient(180deg,#5d6066 0%,#3c3f45 45%,#2a2b2e 46%,#4a4d52 100%)';
 const cardBg = (kind, i) => kind === 'art' ? `background:${grad(i)}` : kind === 'still' ? `background:${still}` : '';
-const gridv = `${nav}<div class="page">${head('local', '', [['412', 'videos here'], ['398', 'in library'], ['14', 'not added']])}
-${crumbrow(['Local Storage', 'Backup #1', 'Films'], tools(true))}
+const gridv = `${nav}<div class="page">${head('local', '', [['412', 'videos'], ['398', 'in library'], ['14', 'not added']])}
+${crumbrow(['Backup #1', 'Films'], tools(true))}
 <div class="g4">${cards.map(([t, l, st, kind], i) => `<div class="rc4 ${i === 2 ? 'focus' : ''}" style="${cardBg(kind, i)}">
 ${kind === 'mosaic' ? `<div class="mos">${[0, 1, 3, 4].map(k => `<i style="background:${grad(k)}"></i>`).join('')}</div>` : ''}
 ${kind === 'plain' || kind === 'mosaic' ? `<span class="fic">${icon(I.folder, 30)}</span>` : ''}<span class="cst">${state(st)}</span>
@@ -110,23 +113,19 @@ ${row('more', 'More types', 'FTP, FTP with TLS, and plain (unencrypted) WebDAV',
 
 const field = (l, v, dim, eye) => `<div class="fld"><span class="fl">${l}</span><span class="fv ${dim ? 'dim' : ''}">${v}</span>${eye ? `<span class="fe">${icon(I.eye, 30)}</span>` : ''}</div>`;
 const fieldF = (l, v, dim, eye, f) => `<div class="fld ${f ? 'sel' : ''}"><span class="fl">${l}</span><span class="fv ${dim ? 'dim' : ''}">${v}</span>${eye ? `<span class="fe">${icon(I.eye, 30)}</span>` : ''}</div>`;
-const formBody = focusUser => `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
-${crumbrow(['Network Shares', 'Add a connection', 'WebDAV server'])}
-<div class="two form"><div class="col">
-${fieldF('Name', 'Put.io Films')}${fieldF('Address', 'webdav.put.io')}${fieldF('Port', '443 · default for HTTPS', true)}
-${fieldF('Folder', '/Films')}${fieldF('Username', focusUser ? 'heretostream' : 'heretostream', false, false, focusUser)}${fieldF('Password', '••••••••••••', false, true)}
-<div class="kv"><span>Remember password</span><span class="sw on"><i></i></span></div>
-<div class="btnrow"><span class="b ${focusUser ? '' : 'focus'}">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
-</div><div class="col"><div class="rn">Test connection</div><div class="rl p">Checks the address and password without saving anything.</div>
-<div class="rn gap">Tips</div><div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.</div></div>
-</div></div>`;
-const form = formBody(false);
 const keyrows = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '@'],
-  ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '-'], ['123', 'Space', '⌫', 'Done']];
-const keyboard = `${formBody(true)}<div class="spanel"><div class="pt">Username</div><div class="pd">WebDAV server · Put.io Films</div>
-<div class="pin">heretostream<i></i></div>
-<div class="keys">${keyrows.map((row, r) => `<div class="krow">${row.map((k, c) => `<span class="key ${k.length > 1 ? 'wide' : ''} ${r === 3 && k === 'Done' ? 'focus' : ''}">${k}</span>`).join('')}</div>`).join('')}</div>
-<div class="pnote">Done saves the field and returns to the form</div></div>`;
+  ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '-'], ['123', 'Space', '⌫', 'Next field']];
+const form = `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
+${crumbrow(['New WebDAV connection'])}
+<div class="formgrid"><div class="col">
+${fieldF('Name', 'Put.io Films')}${fieldF('Address', 'webdav.put.io')}${fieldF('Port', '443 · default for HTTPS', true)}
+${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret"></i>', false, false, true)}${fieldF('Password', '••••••••••••', false, true)}
+<div class="kv"><span>Remember password</span><span class="sw on"><i></i></span></div>
+<div class="btnrow"><span class="b">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
+</div><div class="col"><div class="kb">${keyrows.map(row => `<div class="krow">${row.map(k => `<span class="key ${k.length > 1 ? 'wide' : ''} ${k === 'n' ? 'focus' : ''}">${k}</span>`).join('')}</div>`).join('')}</div>
+<div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
+Test connection checks it without saving anything.</div></div>
+</div></div>`;
 const more = `${shares(-1)}<div class="spanel"><div class="pt">More connection types</div><div class="pd">Less common, or without encryption</div>
 ${[['pc', 'FTP', 'Older servers · not encrypted', true], ['lock', 'FTP with TLS', 'FTP with encryption', false], ['globe', 'WebDAV without encryption', 'Plain HTTP · only on a network you trust', false]]
   .map(([ic, n, l, f]) => `<div class="prow ${f ? 'focus' : ''}"><span class="ri">${icon(I[ic], 36)}</span><div><div class="rn">${n}</div><div class="rl">${l}</div></div></div>`).join('')}</div>`;
@@ -155,7 +154,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .tray{display:inline-flex;gap:8px;padding:7px;border-radius:31px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
 .tab{height:76px;padding:0 34px;border-radius:24px;display:inline-flex;align-items:center;gap:16px;font-size:32px;font-weight:500;color:#dfe5f1}
 .tab.open{background:#454B55;color:#fff}.tab.focus{background:#F4F6FB;color:#0B0D12}
-.summary{display:flex;gap:18px;font-size:34px;color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary i{font-style:normal;color:#6b7383}
+.summary{display:flex;gap:28px;font-size:32px;color:#C9D3E6}.summary span{display:inline-flex;align-items:center;gap:12px}.summary svg{color:#C9D3E6}.summary b{color:#fff;font-weight:500}
 .sec{font-size:28px;font-weight:500;color:#B7BFCC;margin:36px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
 .row{display:flex;align-items:center;gap:30px;min-height:128px;padding:18px 34px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl{color:#3A4256}
@@ -186,10 +185,11 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .hrow{display:flex;align-items:center;gap:28px;min-height:108px;padding:16px 30px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .count{min-width:56px;height:56px;padding:0 16px;border-radius:28px;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;font-size:28px;font-weight:500}
 .count.amber{background:#F2B544;color:#111}
-.form{margin-top:4px}.fld{display:flex;align-items:center;height:64px;padding:0 26px;border-radius:18px;background:rgba(255,255,255,.06);margin-bottom:12px;font-size:28px}
+.form{margin-top:4px}.fld{display:flex;align-items:center;height:60px;padding:0 26px;border-radius:18px;background:rgba(255,255,255,.06);margin-bottom:12px;font-size:28px}
 .fl{width:180px;color:#C9D3E6;font-size:24px}.fv{flex:1}.fv.dim{color:#8a93a3}.fe{color:#c9d3e6}
-.btnrow{display:flex;gap:16px;margin-top:18px}.p{line-height:1.45;margin-top:10px}.p b{color:#fff;font-weight:500}.gap{margin-top:40px}
-.fld.sel{box-shadow:inset 0 0 0 3px rgba(255,255,255,.7);background:rgba(255,255,255,.12)}
+.btnrow{display:flex;gap:16px;margin-top:18px}.p{line-height:1.45;margin-top:22px;white-space:normal}.p b{color:#fff;font-weight:500}.gap{margin-top:40px}
+.formgrid{display:grid;grid-template-columns:760px minmax(0,1fr);gap:60px}.formgrid .col{min-width:0}.caret{display:inline-block;width:3px;height:30px;background:#fff;margin-left:3px;vertical-align:middle}
+.kb{display:flex;flex-direction:column;gap:12px}.kb .krow{display:flex;gap:10px}.kb .key{min-width:0;height:66px;font-size:28px}.fld.sel{box-shadow:inset 0 0 0 3px rgba(255,255,255,.7);background:rgba(255,255,255,.12)}
 .spanel{position:absolute;top:0;right:0;bottom:0;width:820px;background:rgba(22,24,28,.985);padding:60px 48px;box-sizing:border-box}
 .pt{font-size:40px;font-weight:500}.pd{font-size:26px;color:#C9D3E6;margin-top:8px}
 .pin{margin-top:34px;height:76px;border-radius:18px;background:#2a2d33;display:flex;align-items:center;padding:0 26px;font-size:32px}
@@ -207,7 +207,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
   const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
     ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library],
-    ['10-add-connection-keyboard.png', keyboard], ['11-add-connection-more.png', more]];
+    ['11-add-connection-more.png', more]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);

@@ -99,6 +99,9 @@ Items already built or scheduled are left out (see the bottom of this file).
   the same width. Choosing a type opens its form as a page in the same tab (breadcrumb Network Shares › Add a
   connection › WebDAV server); OK on a field opens the app's keyboard as a side panel beside the form (Done
   returns); More opens a side panel with FTP, FTP with TLS and WebDAV without encryption. Mock-ups 10–11.
+  v6 (owner notes 6 Nov): the summary is the same size as the tabs, with an icon per item; the form page shows
+  the keyboard on the page itself (no side panel); breadcrumbs start below the tab (the tab already says where you
+  are: "Backup #1 › Films", "New WebDAV connection") and are signposts, not buttons — Back goes up one level.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
