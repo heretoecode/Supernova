@@ -5,7 +5,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 const fontDir = process.env.FONT_DIR;
 const font = w => `@font-face{font-family:R;font-weight:${w};src:url(data:font/woff2;base64,${fs.readFileSync(path.join(fontDir, `roboto-latin-${w}-normal.woff2`)).toString('base64')}) format('woff2')}`;
-const ring = '<i class="scanring"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="8" stroke="rgba(255,255,255,.25)"/><path d="M12 4a8 8 0 0 1 8 8" stroke="#fff"/></svg></i>';
+const ring = '<i class="scanring"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5" stroke="rgba(255,255,255,.3)"/><path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5" stroke="#fff"/></svg></i>';
 const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</span><span>Movies</span><span>TV Shows</span>
   <span>Documentaries</span><span class="sp"></span><span class="on">Network &amp; Files</span><span class="ico">⌕</span>
   <span class="ico">⚙</span><span class="clock">23:40</span></div>`;
@@ -309,7 +309,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .code{margin-top:26px;font-size:88px;font-weight:500;letter-spacing:12px;color:#fff;padding:18px 48px;border-radius:24px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
 .row.menuhost2{position:relative;background:rgba(255,255,255,.06);border-radius:24px;box-shadow:none}.rowmenu{right:30px;top:calc(100% - 10px)}
 .rl.wrap{white-space:normal}.rowmenu{z-index:9;top:auto !important;bottom:calc(100% - 40px)}
-.scanring{display:inline-flex;margin-left:14px;vertical-align:middle}.nav span{display:inline-flex;align-items:center}
+.scanring{display:inline-flex;margin-right:-16px;vertical-align:middle}.nav span{display:inline-flex;align-items:center}
 .homehero{position:absolute;left:72px;right:72px;top:112px;height:700px;border-radius:28px;background:linear-gradient(120deg,#3a2a22,#16181C 70%);box-shadow:0 0 0 2px rgba(255,255,255,.28)}
 .homerow{position:absolute;left:72px;top:850px;font-size:32px;font-weight:500}.homecards{position:absolute;left:72px;top:905px;display:flex;gap:24px}
 .homecards span{width:400px;height:225px;border-radius:16px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
@@ -317,7 +317,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 
 // ---- v12: the rest of the journey -------------------------------------------------------------------------
 const P = (tab, summary, body, n = nav) => `${n}<div class="page">${head(tab, '', summary)}${body}</div>`;
-const navScan = nav.replace('<span class="on">Network &amp; Files</span>', `<span class="on">Network &amp; Files${ring}</span>`);
+const navScan = nav.replace('<span class="on">Network &amp; Files</span>', `${ring}<span class="on">Network &amp; Files</span>`);
 const navScanHome = navScan.replace('<span>Home</span>', '<span class="on">Home</span>').replace('<span class="on">Network &amp; Files', '<span>Network &amp; Files');
 const SUM_LOCAL = [['2', 'devices'], ['1,513', 'videos'], ['1.1 TB', 'free']];
 const SUM_CONN = [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']];

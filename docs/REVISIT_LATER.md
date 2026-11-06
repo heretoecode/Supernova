@@ -140,7 +140,7 @@ Items already built or scheduled are left out (see the bottom of this file).
   "Scanning local library…" pill. Owner accepts Claude's recommendations on everything else in 15–29.
   Status: the Network & Files redesign is complete as a design (mock-ups 01–30); not tied to a version yet.
   Top bar (owner, 6 Nov): "Network & Files" is renamed **Files** (with the redesign), and the scan ring sits on its
-  left so nothing shifts (mock-up 31, option B). No dots between top-bar items: dots separate facts in a line of
+  left so nothing shifts (mock-up 31, option B), the same size and line weight as the search and settings icons. No dots between top-bar items: dots separate facts in a line of
   text (like the summary), not places and buttons.
 
 ## Parked (owner, 5 Nov 2026) — no version
