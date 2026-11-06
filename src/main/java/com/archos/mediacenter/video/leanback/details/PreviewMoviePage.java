@@ -524,13 +524,48 @@ public final class PreviewMoviePage extends ScrollView {
         return Math.max(0, sectionFrame.getTop() + getPaddingTop() - Math.round(getHeight() / 6f));
     }
 
+    /** Each tab's reading position and last focused item, so going back returns there (focus audit F4, F5). */
+    private final java.util.Map<String, Integer> readingBySection = new java.util.HashMap<>();
+    private final java.util.Map<String, View> focusBySection = new java.util.HashMap<>();
+    private boolean watchingSections, switchingSection;
+
+    private void watchSections() {
+        if (watchingSections)
+            return;
+        watchingSections = true;
+        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> {
+            if (!switchingSection && after != null && inside(after, lower))
+                focusBySection.put(activeSection, after);
+        });
+    }
+
+    private boolean focusRemembered(String label) {
+        View last = focusBySection.get(label);
+        return last != null && last.isAttachedToWindow() && last.isShown() && last.requestFocus();
+    }
+
     private void showSection(String label, boolean enter) {
+        watchSections();
+        switchingSection = true;
+        try {
+            switchSection(label, enter);
+        } finally {
+            switchingSection = false;
+        }
+    }
+
+    private void switchSection(String label, boolean enter) {
         Diagnostics.uiState("details", label, "details", "none", "none",
                                                                      movie != null  ? movie.getId()
                                                                      : show != null ? show.getTvshowId()
                                                                                     : remoteId);
-        if (!activeSection.equals(label))
-            reading.scrollTo(0, 0);
+        if (!activeSection.equals(label)) {
+            readingBySection.put(activeSection, reading.getScrollY());
+            Integer offset = readingBySection.get(label);
+            reading.scrollTo(0, offset == null ? 0 : offset);
+            if (offset != null && offset > 0)
+                reading.post(() -> reading.scrollTo(0, offset));
+        }
         activeSection = label;
         reading.setVerticalScrollBarEnabled(!label.equals("Details"));
         lower.getLayoutParams().height =
@@ -554,6 +589,8 @@ public final class PreviewMoviePage extends ScrollView {
         }
         if (enter) {
             scrollTo(0, expandedScrollTarget());
+            if (focusRemembered(label))
+                return;
             if (label.equals("Seasons & Episodes"))
                 focusNextEpisode();
             else if (label.equals("Extras") && !extraCards.isEmpty())

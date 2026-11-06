@@ -61,6 +61,51 @@ public class FocusMemory0156Test
     }
 
     @Test
+    public void detailsTabsReturnToTheirItemAndReadingPosition()
+    {
+        var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
+        try {
+            var page = new com.archos.mediacenter.video.leanback.details.PreviewMoviePage(
+                host.get(), androidx.leanback.widget.ArrayObjectAdapter::new, action -> {
+                }, () -> {
+                }, uri -> {
+                });
+            host.get().setContentView(page);
+            android.widget.LinearLayout extras = ReflectionHelpers.getField(page, "trailers");
+            java.util.List<View> cards = ReflectionHelpers.getField(page, "extraCards");
+            for (int i = 0; i < 2; i++) {
+                android.widget.Button card = new android.widget.Button(host.get());
+                card.setText("Extra " + i);
+                extras.addView(card);
+                cards.add(card);
+            }
+            show(page, "Extras", true);
+            PreviewPagesTest.layout(page);
+            org.junit.Assert.assertTrue(cards.get(1).requestFocus());
+            show(page, "Details", false);
+            show(page, "Extras", true);
+            org.junit.Assert.assertSame(cards.get(1), page.findFocus());
+            android.widget.ScrollView reading = ReflectionHelpers.getField(page, "reading");
+            reading.getChildAt(0).setMinimumHeight(5000);
+            show(page, "Details", false);
+            PreviewPagesTest.layout(page);
+            reading.scrollTo(0, 120);
+            show(page, "Extras", false);
+            show(page, "Details", false);
+            assertEquals(120, reading.getScrollY());
+        } finally {
+            host.pause().stop().destroy();
+        }
+    }
+
+    private static void show(Object page, String label, boolean enter)
+    {
+        ReflectionHelpers.callInstanceMethod(page, "showSection",
+            ReflectionHelpers.ClassParameter.from(String.class, label),
+            ReflectionHelpers.ClassParameter.from(boolean.class, enter));
+    }
+
+    @Test
     public void customiseHomeReopensOnTheRowYouLeft()
     {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
