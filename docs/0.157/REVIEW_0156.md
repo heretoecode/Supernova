@@ -119,3 +119,10 @@ the player).
   later. Check the diagnostics report around that time for reconnection, sync or buffering problems.
 - Owner on the title block: a logo top left may clash with an age rating top left (why the logo was moved down
   before). Mock-ups: A (all stacked top left) and B (rating alone top left; logo and information bottom left).
+- **Title block direction (owner, 6 Nov):** today the logo and information slide up to the top left when the Chapters
+  strip opens. Owner wants them in a fixed place that the Chapters and Episodes strip never affects, the same place
+  on Preparing playback, with the age rating alone in the top left. Mock-up B (logo just above the bar) would still
+  move, because the bar rises when the strip opens. Direction ("C"): rating in the very top left (fades after
+  6–8 s); logo and information fixed in the upper left, a clear gap below the rating and above the highest point the
+  bar reaches with the strip open; Preparing uses the same spot with the spinner under it. Next: mock-up C with the
+  strip open on the HUD.
