@@ -47,6 +47,14 @@ public class BackupPresetsTest
     }
 
     @Test
+    public void tickBoxDefaultsWrittenBySettingsDoNotTurnAFreshInstallIntoCustom()
+    {
+        preferences.edit().putBoolean("supernova_backup_history", true)
+            .putBoolean("supernova_backup_resume", true).commit();
+        assertEquals(BackupSelection.Preset.EVERYTHING, BackupPresets.current(preferences));
+    }
+
+    @Test
     public void settingsOnlyContainsExactlyTheTenSettingsCategories()
     {
         BackupPresets.select(preferences, BackupSelection.Preset.SETTINGS_ONLY);

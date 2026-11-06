@@ -36,10 +36,11 @@ public final class BackupSettingsController {
     private SharedThreePanel split;
     private BackupWorkspace workspace, exportChoices;
     private ScrollView landingScroll;
-    private final List<TextView> landingControls = new ArrayList<>();
+    private final List<View> landingControls = new ArrayList<>();
     private boolean noticeActive, visible, exportSelection;
     private LinearLayout landing;
-    private TextView description, exportAction, restoreAction, selectedAction;
+    private TextView description, exportAction, restoreAction;
+    private View selectedAction;
     private Dialog operation;
     private final Map<View, Integer> hidden = new IdentityHashMap<>();
     private Set<BackupCategory> selectedRestore;
