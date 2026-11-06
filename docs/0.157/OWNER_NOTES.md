@@ -538,3 +538,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - Much of the 0.156 Settings work (rows, wording, choices) carries over; the panel goes and the page spreads out.
 - The owner has issues with the current Settings page that must **not** carry over. In the 0.156 review: review what
   Settings contains, its wording and behaviour; ignore the panel, layout and styling.
+
+## 18. Space Black on Home and the library pages — under consideration (owner, 6 Nov 2026)
+- Files, Search and Settings are going flat (plain charcoal, no panels). That would leave the Space Black artwork only
+  on Home and the library pages, and the owner is thinking of removing it there too. **Not decided: needs mock-ups**
+  (Home and one library page, Space Black and plain charcoal side by side).
+- Decide before reviewing Home and library visuals (hero shade and text, card edges, top bar fade all depend on it).
+- If it goes, the global rule "full pages sit on the Space Black artwork" (5 Nov) flips, and the approved Details
+  design (`v15-b`, on Space Black) follows.
