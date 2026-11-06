@@ -3048,7 +3048,9 @@ public final class UniversalFileBrowser extends LinearLayout {
     }
 
     /** Any row or button used in a section is where coming back from the top bar returns (focus audit F7). */
-    private final android.view.ViewTreeObserver.OnGlobalFocusChangeListener centreWatcher = (before, after) -> {
+    private final android.view.ViewTreeObserver.OnGlobalFocusChangeListener centreWatcher = this::centreFocusMoved;
+
+    private void centreFocusMoved(View before, View after) {
         if (networkLayout == null || after == null || after == items)
             return;
         for (View at = after; at != null; at = at.getParent() instanceof View ? (View) at.getParent() : null)
@@ -3056,7 +3058,7 @@ public final class UniversalFileBrowser extends LinearLayout {
                 centreAnchor = after;
                 return;
             }
-    };
+    }
 
     @Override
     protected void onAttachedToWindow() {
