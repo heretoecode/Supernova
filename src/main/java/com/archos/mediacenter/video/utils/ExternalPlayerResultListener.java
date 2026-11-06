@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Created by alexandre on 19/09/16.
  */
 public class ExternalPlayerResultListener
-    implements ExternalPlayerWithResultStarter.ResultListener, IndexHelper.Listener {
+    implements ExternalPlayerWithResultStarter.ResultListener {
     private static final Logger log = LoggerFactory.getLogger(ExternalPlayerResultListener.class);
 
     @SuppressLint("StaticFieldLeak") private static ExternalPlayerResultListener sExternalPlayerResultListener;
@@ -61,7 +61,8 @@ public class ExternalPlayerResultListener
     private Uri mPlayerUri;
     private IndexHelper mIndexHelper;
     private VideoDbInfo mVideoDbInfo;
-    private int mDuration;
+    private int mDuration = -1;
+    private long mRequestGeneration;
 
     public static class ExternalPositionExtra {
         public static String VLC_JUSTPLAYER_ACTION_EXTRA_position = "position";
@@ -83,7 +84,12 @@ public class ExternalPlayerResultListener
         return sExternalPlayerResultListener;
     }
 
-    public void init(Context context, Uri contentUri, Uri playerUri, VideoDbInfo videoDbInfo) {
+    public synchronized void init(Context context, Uri contentUri, Uri playerUri, VideoDbInfo videoDbInfo) {
+        final long generation = ++mRequestGeneration;
+        if (mIndexHelper != null)
+            mIndexHelper.abort();
+        mVideoDbInfo = videoDbInfo;
+        mDuration = -1;
         mContext = context != null ? context.getApplicationContext() : ArchosUtils.getGlobalContext();
         mContentUri = contentUri;
         mPlayerUri = playerUri;
@@ -100,13 +106,25 @@ public class ExternalPlayerResultListener
         if (videoDbInfo != null) {
             mVideoDbInfo = videoDbInfo;
         } else {
-            mIndexHelper.requestVideoDb(mContentUri, -1, null, this, false, true);
+            mIndexHelper.requestVideoDb(mContentUri, -1, null, new IndexHelper.Listener() {
+                @Override
+                public void onVideoDb(VideoDbInfo info, VideoDbInfo remoteInfo) {
+                    synchronized (ExternalPlayerResultListener.this) {
+                        if (generation == mRequestGeneration)
+                            mVideoDbInfo = info;
+                    }
+                }
+
+                @Override
+                public void onScraped(ScrapeDetailResult result) {
+                }
+            }, false, true);
         }
     }
 
     @SuppressWarnings("deprecation") // bundle.get: debug dumping only
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public synchronized void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (log.isDebugEnabled())
             log.debug("onActivityResult: requestCode={}, resultCode={}, mVideoDbInfo!=null {}, mPlayerUri {}",
                 requestCode, resultCode, (mVideoDbInfo != null), mPlayerUri);
@@ -234,12 +252,4 @@ public class ExternalPlayerResultListener
         }
     }
 
-    @Override
-    public void onVideoDb(VideoDbInfo info, VideoDbInfo remoteInfo) {
-        mVideoDbInfo = info;
-    }
-
-    @Override
-    public void onScraped(ScrapeDetailResult result) {
-    }
 }
