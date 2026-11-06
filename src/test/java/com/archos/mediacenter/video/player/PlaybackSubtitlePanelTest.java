@@ -228,6 +228,22 @@ public class PlaybackSubtitlePanelTest {
     }
 
     @Test
+    public void goingBackIntoATabReturnsToItsLastRow() {
+        View size = panel.findViewWithTag("subtitles.row.position");
+        org.junit.Assert.assertNotNull(size);
+        org.junit.Assert.assertTrue(size.requestFocus());
+        panel.showTab(PlaybackSubtitlePanel.TAB_AUDIO);
+        layout(main);
+        panel.showTab(PlaybackSubtitlePanel.TAB_SUBTITLES);
+        layout(main);
+        panel.focusTab();
+        View tab = panel.findFocus();
+        tab.dispatchKeyEvent(new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN,
+                                                       android.view.KeyEvent.KEYCODE_DPAD_DOWN));
+        org.junit.Assert.assertEquals("subtitles.row.position", panel.findFocus().getTag());
+    }
+
+    @Test
     public void switchDirectionsSetTheStateWithoutTogglingAgain() {
         model.values.put("enabled", 0);
         panel.refresh();

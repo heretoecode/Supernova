@@ -569,9 +569,32 @@ final class PlaybackSubtitlePanel extends LinearLayout {
 
     // ---- tabs ------------------------------------------------------------------------------
 
+    /** Each tab's last row, so going back into a tab returns there (focus audit F15). */
+    private final java.util.Map<Integer, String> rowByTab = new java.util.HashMap<>();
+    private boolean watchingRows;
+
+    private void watchRows() {
+        if (watchingRows)
+            return;
+        watchingRows = true;
+        getViewTreeObserver().addOnGlobalFocusChangeListener((before, after) -> {
+            if (building || after == null || page != null)
+                return;
+            View at = after;
+            while (at != null && at != this) {
+                if (at.getParent() == body && at.getTag() instanceof String) {
+                    rowByTab.put(tab, (String) at.getTag());
+                    return;
+                }
+                at = at.getParent() instanceof View ? (View) at.getParent() : null;
+            }
+        });
+    }
+
     void showTab(int id) {
         if (closed)
             return;
+        watchRows();
         building = true;
         try {
             page = null;
@@ -624,6 +647,10 @@ final class PlaybackSubtitlePanel extends LinearLayout {
     }
 
     private void focusBody() {
+        String remembered = rowByTab.get(tab);
+        View last = remembered == null ? null : body.findViewWithTag(remembered);
+        if (last != null && last.isFocusable() && last.isEnabled() && last.requestFocus())
+            return;
         for (int i = 0; i < body.getChildCount(); i++) {
             View child = body.getChildAt(i);
             if (child.isFocusable() && child.isEnabled() && child.requestFocus())
