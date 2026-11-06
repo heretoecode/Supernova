@@ -60,7 +60,7 @@ public final class FoundationAboutWorkspace extends LinearLayout {
     private final View normalMiddle, normalHelp;
     private final LinearLayout rail;
     private final List<TextView> navigation = new ArrayList<>();
-    private final Map<String, Integer> selections = new HashMap<>();
+    private Map<String, Integer> selections = new HashMap<>();
     private final Set<String> expanded = new HashSet<>();
     private final List<TextView> rows = new ArrayList<>();
     private final List<Runnable> rowSelections = new ArrayList<>();
@@ -275,6 +275,12 @@ public final class FoundationAboutWorkspace extends LinearLayout {
             navigation.get(0).requestFocus();
         else if (selectedNavigation != null)
             selectedNavigation.requestFocus();
+    }
+
+    /** Keeps each About tab's selected entry across rebuilds (focus audit F14); the owner keeps the map. */
+    public void useSelections(Map<String, Integer> kept) {
+        if (kept != null)
+            selections = kept;
     }
 
     public void openSection(int index) {
