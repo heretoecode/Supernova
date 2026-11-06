@@ -10,6 +10,10 @@ screens, layouts, `res/` or on-screen wording: Claude builds every screen from w
 lines ≤ 120, `python3 tools/test_code_layout.py` passes. A test for every change; never weaken, skip or delete a test.
 Compile every changed file (app and modules) before you hand back and list anything you could not compile. Every new
 API goes in `docs/codex/findings/0157-ui-hooks.md` (main-thread safe or not, threading, cancellation, failure values).
+Two lessons from 0.156 LAST: the app's minimum is Android 6 (API 23) and the Shield runs Android 11, so no newer
+Java/Android calls without a check (lint failed on `InputStream.readAllBytes` in `AboutCredits`, fixed by Claude); and
+any test that touches `org.json` or other Android classes must run under Robolectric (`AboutCreditsTest` hit the
+Android stub on CI).
 
 Designs this serves: `docs/0.157/OWNER_NOTES.md`, the Files redesign (`docs/design/proposals/network-files-tabs/`
 01–31, decisions in `docs/REVISIT_LATER.md` under "Network & Files as one page with tabs", principles in
