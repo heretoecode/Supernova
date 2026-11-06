@@ -126,3 +126,7 @@ the player).
   6–8 s); logo and information fixed in the upper left, a clear gap below the rating and above the highest point the
   bar reaches with the strip open; Preparing uses the same spot with the spinner under it. Next: mock-up C with the
   strip open on the HUD.
+  - Measured from the owner's photos (share of screen height): strip closed, title block 45–60%, bubble top ~68%,
+    bar ~75%; strip open, title pushed to 15–30%, bubble top ~48%, bar ~55%. Safe band for a fixed title block:
+    about 20–40% down. At 1080p: rating top left at ~55–110 px; title block top ~230 px, bottom ~430 px (bubble's
+    highest point ~520 px); Preparing playback the same, spinner under the information line.
