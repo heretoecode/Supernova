@@ -120,6 +120,9 @@ Items already built or scheduled are left out (see the bottom of this file).
   shows "Searching…" in the row (Stop), then a notice "Conclave is back in your library" and the row leaves; not
   found says so and offers Search everywhere · Remove. Fix match opens the side panel (edge on the left) with the
   name filled in; Not a film acts straight away with a notice and Undo. Mock-ups 11, 12b–d, 14b–c.
+  v10: menu rule made global (CLAUDE.md, 0.157 notes #15); Sort icons are unique and mirrored (A→Z / Z→A,
+  long-to-short / short-to-long bars, clock / hourglass). Fix match in the redesign is a page, not a side panel:
+  search field and keyboard on the left, TMDB results with posters on the right ("Best match" pill). Mock-up 14b.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

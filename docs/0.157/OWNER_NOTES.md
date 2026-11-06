@@ -514,3 +514,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   - A: a small white ring beside the time in the bubble, "Chapter 2 · loading".
   - B: the seek dot itself becomes a spinning white ring until the picture is ready.
 - **APPROVED for 0.157 (owner, 5 Nov 2026): A** — the white ring beside the time, "Chapter 2 · loading".
+
+## 15. One rule for every menu (owner, 6 Nov 2026)
+- **Rule (approved):** every pop-up and context menu has an icon on every item, and no two items in one menu share an
+  icon (opposite actions get mirrored icons, e.g. Name A–Z / Z–A, Largest / Smallest first). The current choice is
+  shown by a tick on the **right**. The menu is only as wide as its longest item plus the standard padding (the
+  existing `SupernovaStyle.menuWidth` rule), never a fixed width. Mock-up: `docs/design/proposals/network-files-tabs/11`.
+- **Status:** approved; built in 0.157 across every menu (Details More, Sort, long-press, choice lists).
+

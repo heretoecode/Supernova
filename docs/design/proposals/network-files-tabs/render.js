@@ -43,6 +43,11 @@ const I = {
   history: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/>',
   source: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   close: '<path d="M6 6l12 12M18 6L6 18"/>',
+  az: '<text x="2" y="10" font-size="9" font-family="R" font-weight="500" fill="currentColor" stroke="none">A</text><text x="2" y="21" font-size="9" font-family="R" font-weight="500" fill="currentColor" stroke="none">Z</text><path d="M17 4v16M13 16l4 4 4-4"/>',
+  za: '<text x="2" y="10" font-size="9" font-family="R" font-weight="500" fill="currentColor" stroke="none">Z</text><text x="2" y="21" font-size="9" font-family="R" font-weight="500" fill="currentColor" stroke="none">A</text><path d="M17 20V4M13 8l4-4 4 4"/>',
+  large: '<path d="M4 6h16M4 12h11M4 18h6"/>',
+  small: '<path d="M4 6h6M4 12h11M4 18h16"/>',
+  hourglass: '<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'This Shield'], ['shares', 'Connections'], ['library', 'Library Care']]
@@ -133,8 +138,8 @@ ${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret">
 <div class="rl p">Leave Encryption on unless your server only offers plain HTTP. Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
 Test connection checks it without saving anything.</div></div>
 </div></div>`;
-const sortMenu = '<div class="cmenu down fit">' + [['sort', 'Name (A–Z)', 'chosen'], ['sort', 'Name (Z–A)', ''], ['time', 'Newest first', 'focus'],
-  ['history', 'Oldest first', ''], ['disk', 'Largest first', ''], ['disk', 'Smallest first', '']]
+const sortMenu = '<div class="cmenu down fit">' + [['az', 'Name (A–Z)', 'chosen'], ['za', 'Name (Z–A)', ''], ['time', 'Newest first', 'focus'],
+  ['hourglass', 'Oldest first', ''], ['large', 'Largest first', ''], ['small', 'Smallest first', '']]
   .map(([ic, n, k]) => `<div class="ci ${k === 'focus' ? 'focus' : ''}">${icon(I[ic], 30)}<span>${n}</span><span class="tick">${k === 'chosen' ? icon(I.check, 30) : ''}</span></div>`).join('') + '</div>';
 const sortOpen = folderAt(-1).replace(`<span class="b">${icon(I.sort, 26)}Sort: Name</span>`,
   `<span class="b open menuhost">${icon(I.sort, 26)}Sort: Name${sortMenu}</span>`);
@@ -190,13 +195,15 @@ const missingNotFound = healthPage('Missing files', '', `
 ${lrow('film', 'The Bear · S3 E4', 'Not on Backup #1 · is the drive plugged in?', 'Not found', [['search', 'Search everywhere'], ['remove', 'Remove']], true)}
 ${lrow('film', 'Arrival (2016)', 'Backup #1 › Films · since 5 Nov', 'Missing', null, false)}`);
 const fmRows = [['Pressure', '2026 · Film', true, '#4b5b2e'], ['Pressure', '2015 · Film', false, '#5b3a2e'], ['Pressure', '2024 · TV series', false, '#3a2e5b'], ['Under Pressure', '2022 · Documentary', false, '#2e5b4f']];
-const fixMatch = healthPage('Not matched', '', `
-${lrow('film', 'home-video-2019.mp4', 'Backup #1 › Films · no film or show found', 'No match', null, false)}
-${lrow('film', 'Pressure.2026.2160p.mkv', 'Living-room NAS › Films · several matches', 'Possible', null, false)}
-${lrow('film', 'S01E01.mkv', 'Put.io › TV · name too short', 'No match', null, false)}`) + `<div class="fmpanel"><div class="pd">Fix match · File: Pressure.2026.2160p.mkv</div>
-<div class="pin">${icon(I.search, 30)}<span style="margin-left:14px">Pressure</span></div><div class="sec">Matches on TMDB</div>
-${fmRows.map(([t, l, f, c]) => `<div class="prow ${f ? 'focus' : ''}"><span class="poster" style="background:linear-gradient(160deg,${c},#121418)"></span><div><div class="rn">${t}</div><div class="rl">${l}</div></div></div>`).join('')}
-<div class="pnote">OK picks the match; the details and artwork follow, and the file leaves this list.</div></div>`;
+const fixMatch = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
+${crumbrow(['Not matched', 'Fix match · Pressure.2026.2160p.mkv'])}
+<div class="fixgrid"><div class="col">
+<div class="pin">${icon(I.search, 30)}<span style="margin-left:14px">Pressure</span><i class="caret"></i></div>
+<div class="kb" style="margin-top:22px">${keyrows.map(row => `<div class="krow">${row.map(k => `<span class="key ${k.length > 1 ? 'wide' : ''}">${k === 'Next field' ? 'Results' : k}</span>`).join('')}</div>`).join('')}</div>
+<div class="rl p">Search by title, year, or a TMDB or IMDb number.</div>
+</div><div class="col"><div class="sec first">Matches on TMDB</div>
+${fmRows.map(([t, l, f, c], i) => `<div class="prow ${f ? 'focus' : ''}"><span class="poster" style="background:linear-gradient(160deg,${c},#121418)"></span><div class="pt2"><div class="rn">${t}</div><div class="rl">${l}</div></div>${i === 0 ? '<span class="state" style="margin-left:auto">Best match</span>' : ''}</div>`).join('')}
+</div></div></div>`;
 const notFilm = healthPage('Not matched', '', `
 ${notice('home-video-2019.mp4 is now a personal video', 'It stays in This Shield › Backup #1 › Films, out of Movies and TV Shows.', 'Undo')}
 ${lrow('film', 'Pressure.2026.2160p.mkv', 'Living-room NAS › Films · several matches', 'Possible', [['search', 'Fix match'], ['exclude', 'Not a film']], true)}
@@ -279,6 +286,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .fmpanel{position:absolute;top:0;right:0;bottom:0;width:780px;background:#16181C;border-left:2px solid rgba(255,255,255,.28);padding:56px 44px;box-sizing:border-box}
 .fmpanel .pin{display:flex;align-items:center}.fmpanel .prow{margin-top:10px;padding:14px 20px}.fmpanel .sec{margin-top:30px}
 .poster{display:inline-block;width:64px;height:96px;border-radius:10px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
+.fixgrid{display:grid;grid-template-columns:760px minmax(0,1fr);gap:60px}.fixgrid .col{min-width:0}
+.fixgrid .prow{margin-top:10px;padding:14px 22px}.fixgrid .prow:first-of-type{margin-top:0}.pt2{flex:1}.prow.focus .state{color:#0B0D12;box-shadow:inset 0 0 0 2px rgba(11,13,18,.35)}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();

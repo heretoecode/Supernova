@@ -44,6 +44,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - Full pages sit on the Space Black artwork, with content straight on it.
   - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
     black text and icon (built in 0.157).
+  - Every menu: each item has its own icon (no two alike in one menu), the current choice is a tick on the right,
+    and the menu is only as wide as its longest item plus the standard padding (owner, 6 Nov 2026; 0.157).
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.
   - Every artwork card (posters, hero, Home rows, Details tabs, player strip) has a faint 28% white edge; the focused
     one grows with a solid white ring. No blue caption bars.
