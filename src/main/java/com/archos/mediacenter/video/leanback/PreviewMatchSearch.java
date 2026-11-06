@@ -160,12 +160,14 @@ public final class PreviewMatchSearch extends LinearLayout {
     }
 
     /** The keyboard shows while you type; in the results it folds away so they get the room. */
-    private final ViewTreeObserver.OnGlobalFocusChangeListener focusWatcher = (before, after) -> {
+    private final ViewTreeObserver.OnGlobalFocusChangeListener focusWatcher = this::focusMoved;
+
+    private void focusMoved(View before, View after) {
         if (after == null || !isInside(after, this))
             return;
         boolean inResults = isInside(after, rows);
         keyboard.setVisibility(inResults ? GONE : VISIBLE);
-    };
+    }
 
     private static boolean isInside(View view, View parent) {
         for (View at = view; at != null; ) {
