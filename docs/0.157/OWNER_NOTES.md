@@ -522,3 +522,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   existing `SupernovaStyle.menuWidth` rule), never a fixed width. Mock-up: `docs/design/proposals/network-files-tabs/11`.
 - **Status:** approved; built in 0.157 across every menu (Details More, Sort, long-press, choice lists).
 
+## 16. The Files page redesign goes into 0.157 (owner, 6 Nov 2026)
+- **Decision:** the redesigned Files page (formerly Network & Files) is a 0.157 item: tabs This Shield · Connections ·
+  Library Care on the plain charcoal page, "Files" in the top bar with the scan ring. Design complete: mock-ups
+  `docs/design/proposals/network-files-tabs/01`–`31`, decisions in `docs/REVISIT_LATER.md`, principles in
+  `docs/design/FLAT_PAGE_PRINCIPLES.md`.
+- **Codex:** one brief for all of 0.157, `docs/codex/BRIEF_0157.md` (engine and data for this page and everything
+  else agreed for 0.157).
+

@@ -145,6 +145,7 @@ Items already built or scheduled are left out (see the bottom of this file).
   Background (owner, 6 Nov): the Files redesign uses the plain charcoal page, not the Space Black artwork. Other pages
   will follow the same principles later, Settings first, each with its own mock-ups — see
   `docs/design/FLAT_PAGE_PRINCIPLES.md`.
+  **Scheduled (owner, 6 Nov 2026): the Files redesign is a 0.157 item** (0.157 owner notes §16).
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
