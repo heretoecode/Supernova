@@ -113,6 +113,8 @@ Connection "choose what you are connecting to" page (add-connection/01); #40 Fix
 Also committed: Settings › Audio & Subtitles › Style tab (live sample; size, colour, vertical position, outline,
 background, opacity; saved through the same helper as the player; fonts and margins moved here). In conformance run
 42137774102 (00:34 UTC). Run 42134557197 failed only on MediaLib NetworkScanLedgerTest
-cancelledWorkerWaitingForProviderGateCannotPerformLateScan (MediaLib unchanged since the green run; re-run to check).
+cancelledWorkerWaitingForProviderGateCannotPerformLateScan (MediaLib unchanged since the green run). Re-run
+42138842233 (source 103d08a9c, 6 Nov 01:22 UTC) is fully green: 1,532 app tests, MediaLib 262, FileCore 122, tooling
+196, no failures, lint clean — the MediaLib failure was a one-off timing wobble.
 Still to do (Claude), waiting for Codex's `BRIEF_0156_LAST.md`: About (credits, licences, version history), Backup
 three choices, Local Storage "not in library" Details, and the focus-memory fixes from Codex's audit.
