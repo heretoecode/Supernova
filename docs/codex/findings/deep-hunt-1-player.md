@@ -192,3 +192,31 @@ Paths in the findings table beginning `player/` are relative to `src/main/java/c
 The SQLite predicate probe returned hidden fixture ID 2 for the current next-in-bucket predicate and visible ID 3 after applying the established hidden filter. The XML root-class probe confirmed AudioDelayTVPicker versus TimerDelayTVPicker in the dormant timer mirror; the final source caller check rejected promotion to a reachable crash because its menu entry is commented out. These are narrow read-only checks, not app tests. No credentials, live network media or device logs were used.
 
 No U1/N1/N2/L1/P1/U2/L2 or DP-01…DP-07 finding was re-reported. Keep the three large no rows as the next full-file review boundary; do not skip into later groups or item 6 based on this partial player continuation. All fixes, including the internally fixable logging/cancellation candidates, are deferred until the ordered hunt reaches item 6; UI/playback/template changes remain owner/Claude findings under rule 2.
+
+## 0.157 continuation — complete reads and fixes
+
+Read after source merge 7dc409e80; implementation 24aa1d4eb. All three previously unread large files were read
+sequentially, including imports, fields, every callback/method and teardown. PlayerActivity 1–6690, Controller
+1–3699, Service 1–4423 plus all subsequent changed hunks. Controller 450–625 was reread after tool truncation.
+The historical table above is not rewritten to make an older incomplete run appear complete.
+
+| File | Final lines | SHA-256 |
+| --- | ---: | --- |
+| PlayerActivity.java | 6690 | `7506356b892f740269a7ce43496db37ff2953b81e58e19ae31299193a73d70c2` |
+| PlayerController.java | 3699 | `68208096b00be9f4bb248f1ca85608aea508e508364026ffe7e189a86b6466df` |
+| PlayerService.java | 4480 | `5fa485f80d096e725cc6e6ba4d6f2e06070f106d349b6677084ed8821720ee5d` |
+
+| ID | File:line / path | Kind | Severity | Confidence | Evidence and disposition |
+| --- | --- | --- | --- | --- | --- |
+| DP157-01 | PlayerService.updateNextVideo/setPlayMode/stopAndSaveVideoState/onDestroy | Ownership | User-visible | High | Old next results could survive a mode/source/stop boundary. Owner field clears before cancel, source/generation/task guards reject late results; PlaybackOwnership157Test covers mode, explicit cancel and stop without an index helper. Fixed. |
+| DP157-02 | PlayerService.onDataUriOK / prepareSubs | Ownership | User-visible | High | Old UPnP callback could replace a new streaming URI; old subtitle callback could release a newer readiness latch, even at the same URI. URI/generation and per-request latch guards now fence both; real callback tests pass. Fixed. |
+| DP157-03 | PlayerService.fetchIntroDbIfNeeded | Data / threading | User-visible | High | Non-null previous-video segments suppressed the current fetch, and URI equality alone admitted an old A→B→A reply. Cache and main-thread publish now require the current source/generation; two controlled-worker regressions pass. Fixed. |
+| DP157-04 | PlayerController.detachWindow:951 / installPartsStrip:1658 | View lifetime | User-visible | High | detachWindow clears views but leaves partsStrip; installPartsStrip returns when that old field is non-null. Rebuilt bar can lack its strip and retain the old view. Screen owner must clear/recreate against the new bar; no screen edit. |
+| DP157-05 | PlayerController.seekPictureListener:1875 / stop:2038 | Subscription lifetime | User-visible | High | Listener closes only when listening to another engine, not in stop/detach. Long-lived SeekThumbnails can retain old controller/activity and issue late view callbacks. Screen owner must close on detach and reacquire on attach. |
+| DP157-06 | PlayerController.setProgress:1528–1534 | Main-thread work | Minor | High | updateClock/updatePreviewScrubber run twice in one progress call; scrubber rebuild/layout adds avoidable work. Screen-only consolidation left for owner. |
+| DP157-07 | PlayerActivity.postOnPlayerServiceBind:1371 / started broadcast:5405 | Privacy | User-visible | High | Raw source/intent/subtitle logging and unscoped started-video broadcast; security-audit.md records exact boundaries and proposed fixes. Protected screen unchanged. Service/next-listing URI logs were safely redacted with appender tests. |
+
+Rejected candidate: accessing pauseTimeout before assigning mPlayerController is legal Java because pauseTimeout
+is static. It is not a launch NPE and no fix/test claims one. Malformed numeric preference parsing and a conditional
+metadata-null error path need producer/restore-contract proof before being promoted to high-confidence crashes.
+No duplicate of the older excluded findings is claimed. Host evidence does not certify SurfaceFlinger or Shield.
