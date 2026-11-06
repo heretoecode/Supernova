@@ -542,7 +542,9 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 ## 18. Space Black on Home and the library pages — under consideration (owner, 6 Nov 2026)
 - Files, Search and Settings are going flat (plain charcoal, no panels). That would leave the Space Black artwork only
   on Home and the library pages, and the owner is thinking of removing it there too. **Not decided: needs mock-ups**
-  (Home and one library page, Space Black and plain charcoal side by side).
+  (Home, one library page and Details, each Space Black and plain charcoal side by side).
 - Decide before reviewing Home and library visuals (hero shade and text, card edges, top bar fade all depend on it).
 - If it goes, the global rule "full pages sit on the Space Black artwork" (5 Nov) flips, and the approved Details
-  design (`v15-b`, on Space Black) follows.
+  design (`v15-b`, on Space Black) follows. Owner, 6 Nov: that is easy to build but changes how Details looks, so
+  check it in the mock-ups: separator and edge strengths (tuned on Space Black), the hero's fade into the page, the
+  tab chip and line, and what draws the eye. Layout and content decisions stand.
