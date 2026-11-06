@@ -48,6 +48,7 @@ const I = {
   large: '<path d="M4 6h16M4 12h11M4 18h6"/>',
   small: '<path d="M4 6h6M4 12h11M4 18h16"/>',
   hourglass: '<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'This Shield'], ['shares', 'Connections'], ['library', 'Library Care']]
@@ -195,14 +196,22 @@ const missingNotFound = healthPage('Missing files', '', `
 ${lrow('film', 'The Bear · S3 E4', 'Not on Backup #1 · is the drive plugged in?', 'Not found', [['search', 'Search everywhere'], ['remove', 'Remove']], true)}
 ${lrow('film', 'Arrival (2016)', 'Backup #1 › Films · since 5 Nov', 'Missing', null, false)}`);
 const fmRows = [['Pressure', '2026 · Film', true, '#4b5b2e'], ['Pressure', '2015 · Film', false, '#5b3a2e'], ['Pressure', '2024 · TV series', false, '#3a2e5b'], ['Under Pressure', '2022 · Documentary', false, '#2e5b4f']];
+const gkeys = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/'], ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '@'], ['#+=', 'mic', 'Space', '⌫', 'Clear']];
+const keyLabel = k => k === 'mic' ? icon(I.mic, 30) : k;
+const tips = [['search', 'Forgiving', '“oc” finds The O.C.; punctuation and “The” don’t matter'],
+  ['globe', 'Original titles', 'the original-language title works too'],
+  ['edit', 'Small typos', 'one wrong letter still finds it'],
+  ['info', 'ID numbers', 'TMDB, IMDb (tt…), TVDB or Trakt']];
+const ocRows = [['The O.C.', '2003 · TV series · 4 seasons', true, '#2e4a5b'], ['O.C. Undercover', '2011 · Film', false, '#5b3a2e'], ['OC Life', '2019 · Documentary', false, '#4b5b2e']];
 const fixMatch = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
-${crumbrow(['Not matched', 'Fix match · Pressure.2026.2160p.mkv'])}
+${crumbrow(['Not matched', 'Fix match · The.OC.S01E01.mkv'])}
 <div class="fixgrid"><div class="col">
-<div class="pin">${icon(I.search, 30)}<span style="margin-left:14px">Pressure</span><i class="caret"></i></div>
-<div class="kb" style="margin-top:22px">${keyrows.map(row => `<div class="krow">${row.map(k => `<span class="key ${k.length > 1 ? 'wide' : ''}">${k === 'Next field' ? 'Results' : k}</span>`).join('')}</div>`).join('')}</div>
-<div class="rl p">Search by title, year, or a TMDB or IMDb number.</div>
+<div class="pin">${icon(I.search, 30)}<span style="margin-left:14px">oc</span><i class="caret"></i></div>
+<div class="kb gk" style="margin-top:18px">${gkeys.map(row => `<div class="krow">${row.map(k => `<span class="key ${k.length > 1 ? 'wide' : ''} ${k === 'Space' ? 'space' : ''} ${k === 'c' ? 'focus' : ''}">${keyLabel(k)}</span>`).join('')}</div>`).join('')}</div>
+<div class="tips">${tips.map(([ic, t, l]) => `<div class="tip">${icon(I[ic], 26)}<b>${t}</b><span>${l}</span></div>`).join('')}</div>
 </div><div class="col"><div class="sec first">Matches on TMDB</div>
-${fmRows.map(([t, l, f, c], i) => `<div class="prow ${f ? 'focus' : ''}"><span class="poster" style="background:linear-gradient(160deg,${c},#121418)"></span><div class="pt2"><div class="rn">${t}</div><div class="rl">${l}</div></div>${i === 0 ? '<span class="state" style="margin-left:auto">Best match</span>' : ''}</div>`).join('')}
+${ocRows.map(([t, l, f, c], i) => `<div class="prow ${f ? 'focus' : ''}"><span class="poster" style="background:linear-gradient(160deg,${c},#121418)"></span><div class="pt2"><div class="rn">${t}</div><div class="rl">${l}</div></div>${i === 0 ? '<span class="state" style="margin-left:auto">Best match</span>' : ''}</div>`).join('')}
 </div></div></div>`;
 const notFilm = healthPage('Not matched', '', `
 ${notice('home-video-2019.mp4 is now a personal video', 'It stays in This Shield › Backup #1 › Films, out of Movies and TV Shows.', 'Undo')}
@@ -288,6 +297,8 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .poster{display:inline-block;width:64px;height:96px;border-radius:10px;box-shadow:0 0 0 2px rgba(255,255,255,.28)}
 .fixgrid{display:grid;grid-template-columns:760px minmax(0,1fr);gap:60px}.fixgrid .col{min-width:0}
 .fixgrid .prow{margin-top:10px;padding:14px 22px}.fixgrid .prow:first-of-type{margin-top:0}.pt2{flex:1}.prow.focus .state{color:#0B0D12;box-shadow:inset 0 0 0 2px rgba(11,13,18,.35)}
+.gk .key{height:62px;font-size:28px}.gk .key.space{flex:3}
+.tips{margin-top:20px}.tip{display:flex;gap:14px;align-items:center;padding:5px 4px;color:#9aa3b2;font-size:23px;white-space:nowrap}.tip b{color:#dfe5f1;font-weight:500}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
