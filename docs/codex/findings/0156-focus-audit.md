@@ -1,8 +1,8 @@
 # 0.156 focus memory audit
 
-Source: first merge `aa5c2474d`, 5–6 November 2026. Report only; no screen changes or tests added to `src/`.
+Source: first merge `aa5c2474d`, refreshed after final merge `886a6cda8` of `f1b809d3d`, 6 November 2026. Report only; no screen changes or tests added to `src/`.
 Paths below are relative to `src/main/java/com/archos/mediacenter/video/` unless prefixed `MediaLib:`.
-The audit inventories all 445 Java files under `leanback/` and `player/`, follows their activity/fragment hosts,
+The audit inventories all 451 Java files under `leanback/` and `player/`, follows their activity/fragment hosts,
 shared panels and preference routes, and includes `foundation/FoundationAboutWorkspace`. There is no sibling
 `video/settings/` directory; Settings is `leanback/settings/`.
 
@@ -27,16 +27,16 @@ V = return from player, R = app resume/recreation. A dash means the route has no
 | Details: Seasons & Episodes, season page | Row-to-row motion remembers episode; child Details returns through activity | Re-entry chooses next episode rather than last browsed episode | `details/PreviewMoviePage:598`, `743`; `details/PreviewSeasonActivity:28`, `86`, `92`; F4/F5 |
 | Details: More Like This | Child Details should return to same related title | Re-entry calls `lower.requestFocus()` | `details/PreviewMoviePage:561`; F4/F5 |
 | Search | Results return by selected ID; keyboard remembers its key; modal opener is shared | Filter value persists; focused filter/recent chip does not | `search/PreviewSearch:223`, `461`, `500`, `695`; `search/VideoSearchActivity` delegates saved state; F6. Do not remove existing keyboard/result restoration |
-| Network & Files landing | B from a section returns to its selected tile | Six tiles keep `landingSelection` in the live browser | No durable browser state for recreation. `filebrowsing/UniversalFileBrowser:214`, `260`, `439`, `1107`; F7/F8 |
+| Network & Files landing | B from a section returns to its selected tile | Six tiles keep `landingSelection` in the live browser | No durable browser state for recreation. `filebrowsing/UniversalFileBrowser:218`, `260`, `439`, `1107`; F7/F8 |
 | Local Storage: drives, folders, All files/Videos only | B returns to parent folder/drive; loading has a focus holder; row menu returns via shared dialog | Same-instance row identity is retained | Action-child identity and rebuilt-instance memory are absent. `filebrowsing/LocalStorageView:120`, `271`, `580`, `627`, `1522`; F9/F10 |
-| Network Shares, saved connections, SMB/SMBJ/SFTP/SSHJ/FTP/FTPS/WebDAV/UPnP listings | B remembers directory and may restore live centre anchor | `openLandingCard` clears centre anchor; `focusOverview` selects first location outside landing/local | Folder URI is retained in a live map, not child control across recreation. `filebrowsing/UniversalFileBrowser:439`, `1107`, `1235`, `1471`; F7/F8 |
+| Network Shares, saved connections with inline Open/Edit/Test/Remove controls, SMB/SMBJ/SFTP/SSHJ/FTP/FTPS/WebDAV/UPnP listings | B remembers directory and may restore live centre anchor | `openLandingCard` clears centre anchor; `focusOverview` selects first location outside landing/local | Folder URI is retained in a live map, not child control across recreation. `filebrowsing/UniversalFileBrowser:443`, `1107`, `1235`, `1471`; F7/F8 |
 | Put.io account/files within Network Shares | P: account/choice dialogs use shared restoration; file list owns its row state | Re-entry to enclosing browser has F7/F8 | Account implementation also lies in `streaming/putio/`; `PutioConnectionFocusTest` covers its connection form. No independent new loss asserted here |
-| Add Connection, Test connection, discovery, unsaved-changes choice | B guards a dirty connection; modal returns to caller | Form fields rebuilt on section re-entry | `filebrowsing/UniversalFileBrowser:439`, `2544`, `2980`; F7/F8. Never persist credentials as a focus key |
-| Library Scanning, live scan status, history/schedule choices | P returns to invoking button; live status does not itself take focus | Section re-entry clears anchor | `filebrowsing/UniversalFileBrowser:439`, `scanControls`, `focusOverview`; F7/F8. Scan now is an action, not another page |
+| Add Connection, Test connection, discovery, unsaved-changes choice | B guards a dirty connection; modal returns to caller | Form fields rebuilt on section re-entry | `filebrowsing/UniversalFileBrowser:443`, `2544`, `2980`; F7/F8. Never persist credentials as a focus key |
+| Library Scanning, live scan status, history/schedule choices | P returns to invoking button; live status does not itself take focus | Section re-entry clears anchor | `filebrowsing/UniversalFileBrowser:443`, `scanControls`, `focusOverview`; F7/F8. Scan now is an action, not another page |
 | Library Health embedded and full page, issue/action panes, Find it again | Live refresh retains issue tag and right-hand action; removed issues fall back to category | Same-instance category is retained | Full activity creates category zero; no saved category/issue/action. `LibraryHealthActivity:28`, `49`, `121`, `restoreIssue:235`; F11 |
 | Settings grid and ordinary sections | B returns to the selected category; P restores opener; same-instance rows remembered by tag | Per-section anchors exist in memory | Recreation restores only current row and then focuses section tab. `settings/SettingsWorkspace:92`, `198`, `375`, `782`, `813`; F12/F13 |
 | Playback: General, Resume, Skipping, Picture | Same Settings rule | All four sections use row anchors | F12/F13; `settings/SettingsLayout:51` |
-| Audio & Subtitles: Audio, Subtitles, font browser | Same Settings rule; font browser has browser B/P behaviour | Two sections use row anchors | F12/F13; `settings/SettingsLayout:60`; external picker returning to retained screen relies on normal view focus |
+| Audio & Subtitles: Audio, Subtitles, Style, font browser | Same Settings rule; font browser has browser B/P behaviour | Three sections use row anchors; Style controls retain their live row on stepping | F12/F13; `settings/SubtitleStyleBlock:112`, `settings/SettingsLayout:60`; external picker returning to retained screen relies on normal view focus |
 | Library & Home: Library, Details, Home, History | Same Settings rule; editor is a separate modal | Four section anchors | F12/F13; `settings/SettingsLayout:69` |
 | Where to Watch; Appearance | Same Settings rule; provider/language choice returns to opener | One section each | F12/F13; `settings/SettingsLayout:78`, `82` |
 | Accounts & Services: Services, Trakt, OpenSubtitles | Shared modal returns; OpenSubtitles uses special form | Ordinary anchors; special form has its own controls | F12/F13 for workspace; `settings/SettingsWorkspace:432`; no assertion that account values are focus keys |
@@ -69,6 +69,13 @@ losses without a reproducer.
 | Legacy Settings/licences/more | `settings/VideoSettingsFragment`, `VideoSettingsLicencesFragment`, `VideoSettingsMoreLeanbackFragment`, corresponding activity wrappers; Preference/Leanback hierarchy state; `PreviewSettings` keeps centre/left anchors while retained |
 | Legacy player dialogs, floating/unsupported player | `player/AudioDelayPickerDialog`, `AudioSpeedPickerDialog`, `BrightnessDialog`, `SubtitleDelayPickerDialog`, `SubtitleSettingsDialog`, `FloatingPlayerActivity`, `SDKNotSupportedDialogActivity`; platform dialog/window focus, no stable page anchor added by these classes |
 
+The final merge adds `filebrowsing/ConnectionRow` and `PutioServiceRow` and `settings/SubtitleStyleBlock`.
+Connection action arrows restore the parent row inside the live row (`ConnectionRow:89`); they do not add browser
+instance state. Subtitle Style uses focusable stable tags and updates values without rebuilding on each step
+(`SubtitleStyleBlock:112`). Its recreation is still governed by F12/F13. `player/SubtitleStyleControls` is a data
+helper, not another panel. The newer Network & Files tab mock-ups are documentation; the current browser still has
+its six-tile landing and the section-entry methods audited above.
+
 ## Confirmed loss cases and proposed regressions
 
 The table gives the concrete trigger, desired return, actual behaviour and report test. Source line references above
@@ -83,13 +90,13 @@ adds focus state. They are **not** marked passing and must not be weakened to ma
 | F4 | Details tab → another tab → return into original content → same extra/episode/related item | `details/PreviewMoviePage:557` chooses next episode/first extra/default lower descendant | D |
 | F5 | Leave a scrolled Details tab and return → its previous reading offset | `details/PreviewMoviePage:532` resets shared reading scroll | E |
 | F6 | Recreate Search while focus is on a recent chip/filter → that chip | `search/PreviewSearch:500` saves key/result zone only; constructor `:227` returns non-result zones to keyboard | F |
-| F7 | Network section → top bar → section content → same field/action/location | `filebrowsing/UniversalFileBrowser:1107` returns first location outside local/landing | G |
-| F8 | Recreate Network browser → same section/URI/child | `filebrowsing/UniversalFileBrowser:439` clears anchor; section maps have no saved-state transport | H |
+| F7 | Network section → top bar → section content → same field/action/location | `filebrowsing/UniversalFileBrowser:1216` returns first location outside local/landing | G |
+| F8 | Recreate Network browser → same section/URI/child | `filebrowsing/UniversalFileBrowser:443` clears anchor; section maps have no saved-state transport | H |
 | F9 | Local row action → Details/player/panel return after row reload → same action | `filebrowsing/LocalStorageView:627` saves row identity only; `:606` focuses row | I |
 | F10 | Rebuild Local Storage → same row in remembered folder | `filebrowsing/LocalStorageView:120` map is per-view; no saved-state transport | J |
 | F11 | Recreate Library Health → same category/issue/action | `LibraryHealthActivity:28`, `121` creates category zero, no saved-state override | K |
 | F12 | Recreate Settings with focus in content → same row | `settings/SettingsWorkspace:375` focuses tab even with saved row | L |
-| F13 | Visit two Settings sections, recreate, return to first → its previous row | `settings/SettingsWorkspace:813` writes only current row, despite keeping all section names | M |
+| F13 | Visit two Settings sections, recreate, return to first → its previous row | `settings/SettingsWorkspace:817` writes only current row, despite keeping all section names | M |
 | F14 | About Licences/History → other About tab → back → selected entry/search state | `settings/SettingsWorkspace:401` creates new `FoundationAboutWorkspace`; its selections map is discarded | N |
 | F15 | Switch Playback Settings tabs and re-enter content → previous row per tab | `player/PlaybackSubtitlePanel:572` rebuilds body and resets scroll; `PreviewPlaybackMenus:264` also resets root focus | O |
 | F16 | Close/reopen Edit Page for same draft → previously focused edit row | `EditPagePanel:184` always requests Name | P |
@@ -533,3 +540,133 @@ For D, extend the same assertion to Seasons & Episodes and More Like This with t
 for G, run the same content-entry assertion for Network Shares and Add Connection. These are instances of the same
 reset, not evidence of additional independent defects. Keep the source item's stable ID when lists reorder. Do not
 persist filenames, credentials or provider tokens in diagnostic focus tags.
+
+## Activity, fragment and dialog inventory
+
+This index supplies exact host/delegation locations for the retained-route families above. A wrapper that only
+constructs a fragment delegates B/D/V/R selection to that fragment; it has no additional tab or panel state.
+The positive/negative transition evidence remains in the route matrix, rather than treating a class declaration
+as proof of focus restoration.
+
+| File:line | Host and inherited route |
+| --- | --- |
+| `leanback/CategoryBrowseFragment.java:23` | `CategoryBrowseFragment` → `BrowseSupportFragment` |
+| `leanback/CustomLibraryActivity.java:21` | `CustomLibraryActivity` → `LeanbackActivity` |
+| `leanback/ExperimentalBrowseFragment.java:10` | `ExperimentalBrowseFragment` → `BrowseSupportFragment` |
+| `leanback/LeanbackActivity.java:37` | `LeanbackActivity` → `FragmentActivity` |
+| `leanback/LibraryHealthActivity.java:22` | `LibraryHealthActivity` → `LeanbackActivity` |
+| `leanback/MainActivityLeanback.java:59` | `MainActivityLeanback` → `LeanbackActivity` |
+| `leanback/MainFragment.java:143` | `MainFragment` → `ExperimentalBrowseFragment` |
+| `leanback/SingleFragmentActivity.java:26` | `SingleFragmentActivity` → `LeanbackActivity` |
+| `leanback/VideosByFragment.java:67` | `VideosByFragment` → `CategoryBrowseFragment` |
+| `leanback/VideosByListActivity.java:20` | `VideosByListActivity` → `SingleFragmentActivity` |
+| `leanback/VideosByListFragment.java:38` | `VideosByListFragment` → `VideosByFragment` |
+| `leanback/animes/AllAnimesGridActivity.java:24` | `AllAnimesGridActivity` → `SingleFragmentActivity` |
+| `leanback/animes/AllAnimesGridFragment.java:68` | `AllAnimesGridFragment` → `MyVerticalGridFragment` |
+| `leanback/animes/AnimesByAlphaActivity.java:22` | `AnimesByAlphaActivity` → `SingleFragmentActivity` |
+| `leanback/animes/AnimesByAlphaFragment.java:32` | `AnimesByAlphaFragment` → `VideosByFragment` |
+| `leanback/animes/AnimesByGenreActivity.java:22` | `AnimesByGenreActivity` → `SingleFragmentActivity` |
+| `leanback/animes/AnimesByGenreFragment.java:33` | `AnimesByGenreFragment` → `VideosByFragment` |
+| `leanback/animes/AnimesByRatingActivity.java:22` | `AnimesByRatingActivity` → `SingleFragmentActivity` |
+| `leanback/animes/AnimesByRatingFragment.java:32` | `AnimesByRatingFragment` → `VideosByFragment` |
+| `leanback/animes/AnimesByYearActivity.java:22` | `AnimesByYearActivity` → `SingleFragmentActivity` |
+| `leanback/animes/AnimesByYearFragment.java:32` | `AnimesByYearFragment` → `VideosByFragment` |
+| `leanback/collections/AllAnimeCollectionsGridActivity.java:24` | `AllAnimeCollectionsGridActivity` → `SingleFragmentActivity` |
+| `leanback/collections/AllAnimeCollectionsGridFragment.java:64` | `AllAnimeCollectionsGridFragment` → `MyVerticalGridFragment` |
+| `leanback/collections/AllCollectionsGridActivity.java:24` | `AllCollectionsGridActivity` → `SingleFragmentActivity` |
+| `leanback/collections/AllCollectionsGridFragment.java:66` | `AllCollectionsGridFragment` → `MyVerticalGridFragment` |
+| `leanback/collections/CollectionActivity.java:28` | `CollectionActivity` → `LeanbackActivity` |
+| `leanback/collections/CollectionFragment.java:110` | `CollectionFragment` → `DetailsFragmentWithLessTopOffset` |
+| `leanback/details/PreviewSeasonActivity.java:19` | `PreviewSeasonActivity` → `LeanbackActivity` |
+| `leanback/details/VideoDetailsActivity.java:36` | `VideoDetailsActivity` → `LeanbackActivity` |
+| `leanback/details/VideoDetailsFragment.java:185` | `VideoDetailsFragment` → `DetailsFragmentWithLessTopOffset` |
+| `leanback/details/VideoDetailsFragment.java:2729` | `DialogRetrieveSubtitles` → `DialogFragment` |
+| `leanback/details/VideoDetailsOverlayActivity.java:20` | `VideoDetailsOverlayActivity` → `VideoDetailsActivity` |
+| `leanback/filebrowsing/ExtStorageListingActivity.java:20` | `ExtStorageListingActivity` → `ListingActivity` |
+| `leanback/filebrowsing/ListingActivity.java:47` | `ListingActivity` → `SingleFragmentActivity` |
+| `leanback/filebrowsing/LocalListingActivity.java:23` | `LocalListingActivity` → `ListingActivity` |
+| `leanback/filebrowsing/LocalListingFragment.java:37` | `LocalListingFragment` → `ListingFragment` |
+| `leanback/movies/AllMoviesGridActivity.java:24` | `AllMoviesGridActivity` → `SingleFragmentActivity` |
+| `leanback/movies/AllMoviesGridFragment.java:69` | `AllMoviesGridFragment` → `MyVerticalGridFragment` |
+| `leanback/movies/MoviesByAlphaActivity.java:22` | `MoviesByAlphaActivity` → `SingleFragmentActivity` |
+| `leanback/movies/MoviesByAlphaFragment.java:36` | `MoviesByAlphaFragment` → `VideosByFragment` |
+| `leanback/movies/MoviesByGenreActivity.java:22` | `MoviesByGenreActivity` → `SingleFragmentActivity` |
+| `leanback/movies/MoviesByGenreFragment.java:36` | `MoviesByGenreFragment` → `VideosByFragment` |
+| `leanback/movies/MoviesByRatingActivity.java:22` | `MoviesByRatingActivity` → `SingleFragmentActivity` |
+| `leanback/movies/MoviesByRatingFragment.java:36` | `MoviesByRatingFragment` → `VideosByFragment` |
+| `leanback/movies/MoviesByYearActivity.java:22` | `MoviesByYearActivity` → `SingleFragmentActivity` |
+| `leanback/movies/MoviesByYearFragment.java:36` | `MoviesByYearFragment` → `VideosByFragment` |
+| `leanback/network/NetworkListingFragment.java:45` | `NetworkListingFragment` → `ListingFragment` |
+| `leanback/network/NetworkRootActivity.java:26` | `NetworkRootActivity` → `SingleFragmentActivity` |
+| `leanback/network/NetworkRootFragment.java:98` | `NetworkRootFragment` → `BrowseSupportFragment` |
+| `leanback/network/NetworkServerCredentialsDialog.java:48` | `NetworkServerCredentialsDialog` → `DialogFragment` |
+| `leanback/network/NetworkShortcutDetailsActivity.java:28` | `NetworkShortcutDetailsActivity` → `LeanbackActivity` |
+| `leanback/network/NetworkShortcutDetailsFragment.java:65` | `NetworkShortcutDetailsFragment` → `DetailsSupportFragment` |
+| `leanback/network/ftp/FtpListingActivity.java:21` | `FtpListingActivity` → `ListingActivity` |
+| `leanback/network/ftp/FtpListingFragment.java:40` | `FtpListingFragment` → `NetworkListingFragment` |
+| `leanback/network/ftp/FtpServerCredentialsDialog.java:46` | `FtpServerCredentialsDialog` → `DialogFragment` |
+| `leanback/network/rescan/RescanActivity.java:25` | `RescanActivity` → `LeanbackActivity` |
+| `leanback/network/rescan/RescanFragment.java:43` | `RescanFragment` → `GuidedStepSupportFragment` |
+| `leanback/network/rescan/RescanWhenOpeningApplication.java:33` | `RescanWhenOpeningApplication` → `GuidedStepSupportFragment` |
+| `leanback/network/rescan/ScheduledRescanPeriod.java:36` | `ScheduledRescanPeriod` → `GuidedStepSupportFragment` |
+| `leanback/network/rescan/ScheduledRescanShares.java:33` | `ScheduledRescanShares` → `GuidedStepSupportFragment` |
+| `leanback/network/rescan/ScheduledRescanTime.java:42` | `ScheduledRescanTime` → `GuidedStepSupportFragment` |
+| `leanback/network/smb/SmbListingActivity.java:22` | `SmbListingActivity` → `ListingActivity` |
+| `leanback/network/smb/SmbListingFragment.java:42` | `SmbListingFragment` → `NetworkListingFragment` |
+| `leanback/network/smb/SmbServerCredentialsDialog.java:42` | `SmbServerCredentialsDialog` → `DialogFragment` |
+| `leanback/network/smbj/SmbjListingActivity.java:23` | `SmbjListingActivity` → `ListingActivity` |
+| `leanback/network/sshj/SshjListingActivity.java:23` | `SshjListingActivity` → `ListingActivity` |
+| `leanback/network/upnp/UpnpListingActivity.java:21` | `UpnpListingActivity` → `ListingActivity` |
+| `leanback/network/upnp/UpnpListingFragment.java:29` | `UpnpListingFragment` → `NetworkListingFragment` |
+| `leanback/network/webdav/WebdavListingActivity.java:23` | `WebdavListingActivity` → `ListingActivity` |
+| `leanback/nonscraped/NonScrapedVideosActivity.java:22` | `NonScrapedVideosActivity` → `SingleFragmentActivity` |
+| `leanback/nonscraped/NonScrapedVideosFragment.java:61` | `NonScrapedVideosFragment` → `MyVerticalGridFragment` |
+| `leanback/scrapping/ManualShowScrappingActivity.java:26` | `ManualShowScrappingActivity` → `FragmentActivity` |
+| `leanback/scrapping/ManualShowScrappingSearchFragment.java:72` | `ManualShowScrappingSearchFragment` → `ManualScrappingSearchFragment` |
+| `leanback/scrapping/ManualVideoScrappingActivity.java:26` | `ManualVideoScrappingActivity` → `FragmentActivity` |
+| `leanback/scrapping/ManualVideoScrappingSearchFragment.java:65` | `ManualVideoScrappingSearchFragment` → `ManualScrappingSearchFragment` |
+| `leanback/scrapping/SafeSearchSupportFragment.java:30` | `SafeSearchSupportFragment` → `SearchSupportFragment` |
+| `leanback/search/VideoSearchActivity.java:42` | `VideoSearchActivity` → `FragmentActivity` |
+| `leanback/search/VideoSearchFragment.java:60` | `VideoSearchFragment` → `SafeSearchSupportFragment` |
+| `leanback/settings/VideoSettingsActivity.java:41` | `VideoSettingsActivity` → `LeanbackActivity` |
+| `leanback/settings/VideoSettingsFragment.java:37` | `VideoSettingsFragment` → `LeanbackSettingsFragmentCompat` |
+| `leanback/settings/VideoSettingsFragment.java:91` | `PrefsFragment` → `LeanbackPreferenceFragmentCompat` |
+| `leanback/settings/VideoSettingsLicencesActivity.java:25` | `VideoSettingsLicencesActivity` → `LeanbackActivity` |
+| `leanback/settings/VideoSettingsLicencesFragment.java:40` | `VideoSettingsLicencesFragment` → `LeanbackSettingsFragmentCompat` |
+| `leanback/settings/VideoSettingsLicencesFragment.java:91` | `PrefsFragment` → `LeanbackPreferenceFragmentCompat` |
+| `leanback/settings/VideoSettingsMoreLeanbackActivity.java:24` | `VideoSettingsMoreLeanbackActivity` → `LeanbackActivity` |
+| `leanback/settings/VideoSettingsMoreLeanbackFragment.java:38` | `VideoSettingsMoreLeanbackFragment` → `LeanbackSettingsFragmentCompat` |
+| `leanback/settings/VideoSettingsMoreLeanbackFragment.java:89` | `PrefsFragment` → `LeanbackPreferenceFragmentCompat` |
+| `leanback/tvshow/AllAnimeShowsGridActivity.java:24` | `AllAnimeShowsGridActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/AllAnimeShowsGridFragment.java:61` | `AllAnimeShowsGridFragment` → `MyVerticalGridFragment` |
+| `leanback/tvshow/AllTvshowsGridActivity.java:24` | `AllTvshowsGridActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/AllTvshowsGridFragment.java:64` | `AllTvshowsGridFragment` → `MyVerticalGridFragment` |
+| `leanback/tvshow/AnimeShowsByAlphaActivity.java:22` | `AnimeShowsByAlphaActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/AnimeShowsByAlphaFragment.java:31` | `AnimeShowsByAlphaFragment` → `TvshowsByFragment` |
+| `leanback/tvshow/DocumentaryTvshowsGridActivity.java:8` | `DocumentaryTvshowsGridActivity` → `AllTvshowsGridActivity` |
+| `leanback/tvshow/DocumentaryTvshowsGridFragment.java:17` | `DocumentaryTvshowsGridFragment` → `AllTvshowsGridFragment` |
+| `leanback/tvshow/EpisodesByDateActivity.java:22` | `EpisodesByDateActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/EpisodesByDateFragment.java:43` | `EpisodesByDateFragment` → `VideosByFragment` |
+| `leanback/tvshow/SeasonActivity.java:24` | `SeasonActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/TvshowActivity.java:28` | `TvshowActivity` → `LeanbackActivity` |
+| `leanback/tvshow/TvshowFragment.java:126` | `TvshowFragment` → `DetailsFragmentWithLessTopOffset` |
+| `leanback/tvshow/TvshowMoreDetailsActivity.java:23` | `TvshowMoreDetailsActivity` → `LeanbackActivity` |
+| `leanback/tvshow/TvshowMoreDetailsFragment.java:72` | `TvshowMoreDetailsFragment` → `DetailsFragmentWithLessTopOffset` |
+| `leanback/tvshow/TvshowsByAlphaActivity.java:22` | `TvshowsByAlphaActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/TvshowsByAlphaFragment.java:32` | `TvshowsByAlphaFragment` → `TvshowsByFragment` |
+| `leanback/tvshow/TvshowsByFragment.java:71` | `TvshowsByFragment` → `CategoryBrowseFragment` |
+| `leanback/tvshow/TvshowsByGenreActivity.java:22` | `TvshowsByGenreActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/TvshowsByGenreFragment.java:36` | `TvshowsByGenreFragment` → `TvshowsByFragment` |
+| `leanback/tvshow/TvshowsByRatingActivity.java:22` | `TvshowsByRatingActivity` → `SingleFragmentActivity` |
+| `leanback/tvshow/TvshowsByRatingFragment.java:31` | `TvshowsByRatingFragment` → `TvshowsByFragment` |
+| `leanback/wizard/SubtitlesWizardActivity.java:28` | `SubtitlesWizardActivity` → `LeanbackActivity` |
+| `leanback/wizard/SubtitlesWizardFragment.java:39` | `SubtitlesWizardFragment` → `GuidedStepSupportFragment` |
+| `player/AudioDelayPickerDialog.java:40` | `AudioDelayPickerDialog` → `AlertDialog` |
+| `player/AudioSpeedPickerDialog.java:37` | `AudioSpeedPickerDialog` → `AlertDialog` |
+| `player/BrightnessDialog.java:47` | `BrightnessDialog` → `AlertDialog` |
+| `player/FloatingPlayerActivity.java:34` | `FloatingPlayerActivity` → `FragmentActivity` |
+| `player/PlayerActivity.java:187` | `PlayerActivity` → `AppCompatActivity` |
+| `player/SDKNotSupportedDialogActivity.java:28` | `SDKNotSupportedDialogActivity` → `FragmentActivity` |
+| `player/SDKNotSupportedDialogActivity.java:41` | `SDKNotSupportedDialogFragment` → `DialogFragment` |
+| `player/SubtitleDelayPickerDialog.java:44` | `SubtitleDelayPickerDialog` → `AlertDialog` |
+| `player/SubtitleSettingsDialog.java:47` | `SubtitleSettingsDialog` → `AlertDialog` |

@@ -164,7 +164,7 @@
     {
       "key": "0156-14",
       "title": "0.156 #14: Credits say NOVA 6.6.2 (should be 6.6.4).",
-      "body": "Credits say NOVA 6.6.2 (should be 6.6.4).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 14\n",
+      "body": "Credits say NOVA 6.6.2 (should be 6.6.4).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 14\n\n### LAST data hand-back — 6 Nov 2026\nComplete credits catalogue and offline reader: 136 distinct runtime coordinates, pinned native/modules/artwork and eleven services; current 0.156 and historical 0.155 documentation links. Four inventory/history tests pass.\nImplementation `215f9e385`; source merged at `886a6cda8`. All changed Java compiled locally. Report: `docs/codex/reports/2026-11-06-0156-last.md`; full CI/Shield acceptance pending.\n",
       "labels": [
         "bug",
         "claude"
@@ -422,7 +422,7 @@
     {
       "key": "0156-33",
       "title": "0.156 #33: Local Storage: status on every row, single watched pill, grid artwork and long-press menu.",
-      "body": "Local Storage: status on every row, single watched pill, grid artwork and long-press menu (#11, #13).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 33\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #11, #13\n",
+      "body": "Local Storage: status on every row, single watched pill, grid artwork and long-press menu (#11, #13).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 33\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #11, #13\n\n### LAST data hand-back — 6 Nov 2026\nRead-only asynchronous UnlibraryLookup API uses the scraper filename parser and validated Fix match search; cancellation, deadline and NONE offline result. Existing one-file Add API confirmed separately. Eight lookup/transport tests pass; screen wiring remains Claude’s.\nImplementation `215f9e385`; source merged at `886a6cda8`. All changed Java compiled locally. Report: `docs/codex/reports/2026-11-06-0156-last.md`; full CI/Shield acceptance pending.\n",
       "labels": [
         "network-files",
         "design",
@@ -461,7 +461,7 @@
     {
       "key": "0156-36",
       "title": "0.156 #36: Playback (incl. Skipping), Audio & Subtitles (fonts in Supernova's browser), Library &…",
-      "body": "Playback (incl. Skipping), Audio & Subtitles (fonts in Supernova's browser), Library & Home (.nfo export, Refresh details moved to Library Health), Where to Watch (renamed), Appearance (Accent removed, screensaver), Accounts & Services (renamed), System (Backup three choices + private items, Diagnostics full detail, Advanced), About (credits for every service, full version history, licences with search and QR codes, Device) (#23–#29, #32).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 36\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #23, #29, #32\n\n### Screen data item 7 — 5 Nov 2026\nReady at `3b8b3daff`: counted cancellable NFO export. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n\n### Screen data final hand-back — 5 Nov 2026\nItems 1–7 ready through `a041eb382`. 75 component regressions pass; seven new dependency patch operations require registration before full conformance. See `docs/codex/reports/2026-11-05-0156-screen-data.md` and `docs/codex/findings/0156-ui-hooks.md`.\n",
+      "body": "Playback (incl. Skipping), Audio & Subtitles (fonts in Supernova's browser), Library & Home (.nfo export, Refresh details moved to Library Health), Where to Watch (renamed), Appearance (Accent removed, screensaver), Accounts & Services (renamed), System (Backup three choices + private items, Diagnostics full detail, Advanced), About (credits for every service, full version history, licences with search and QR codes, Device) (#23–#29, #32).\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 36\n- Owner notes: `docs/0.155/OWNER_NOTES.md` item(s) #23, #29, #32\n\n### Screen data item 7 — 5 Nov 2026\nReady at `3b8b3daff`: counted cancellable NFO export. See `docs/codex/reports/2026-11-05-0156-screen-data.md`; full conformance pending.\n\n### Screen data final hand-back — 5 Nov 2026\nItems 1–7 ready through `a041eb382`. 75 component regressions pass; seven new dependency patch operations require registration before full conformance. See `docs/codex/reports/2026-11-05-0156-screen-data.md` and `docs/codex/findings/0156-ui-hooks.md`.\n\n### LAST data hand-back — 6 Nov 2026\nCredits/history and persisted BackupPresets APIs are ready. Five new preset tests and the existing selection test pass; migration preserves custom/private choices. APIs in findings/0156-ui-hooks.md; screen wiring remains Claude’s.\nImplementation `215f9e385`; source merged at `886a6cda8`. All changed Java compiled locally. Report: `docs/codex/reports/2026-11-06-0156-last.md`; full CI/Shield acceptance pending.\n",
       "labels": [
         "settings",
         "design",
@@ -550,7 +550,7 @@
     {
       "key": "0156-43",
       "title": "0.156 #43: Consistent empty states and focus memory everywhere.",
-      "body": "Consistent empty states · ✅ focus memory everywhere.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 43\n",
+      "body": "Consistent empty states · ✅ focus memory everywhere.\n\n### Details\n- Release list: `docs/0.156/RELEASE_LIST.md` item 43\n\n### LAST data hand-back — 6 Nov 2026\nReport-only focus audit inventories current routes and transitions, with 17 concrete loss cases and proposed Robolectric tests kept outside src. Those test blocks compile; screen fixes and adding the tests remain Claude’s.\nImplementation `215f9e385`; source merged at `886a6cda8`. All changed Java compiled locally. Report: `docs/codex/reports/2026-11-06-0156-last.md`; full CI/Shield acceptance pending.\n",
       "labels": [
         "design",
         "claude"

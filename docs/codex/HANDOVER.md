@@ -392,3 +392,4 @@ unapplied drafts; `reports/2026-11-04-0155-engine-build.md` describes their real
 integration and this run's exact continuation. The release section above is the
 current build authority. Existing preparation reports/patches were preserved.
 0.156 FINAL ready at a1e8120d3 — reports/2026-11-05-0156-final.md; patch replacement and deferrals recorded.
+0.156 LAST ready at 215f9e385; source merged at 886a6cda8 — reports/2026-11-06-0156-last.md; APIs in findings/0156-ui-hooks.md; no patch registrations.
