@@ -899,6 +899,111 @@ public final class UniversalFileBrowser extends LinearLayout {
         SharedThreePanel.divider(items);
     }
 
+    /** A saved connection with its buttons on focus: Open, Edit, Test, Remove (owner notes 0.154 #14–17). */
+    private void connectionRow(Shortcut source) {
+        Uri uri = source.getUri();
+        String key = BrowserSelection.canonical(uri);
+        boolean library = selection.included(uri);
+        boolean saved = savedSources.containsKey(key);
+        String detail = PreviewNetworkWorkspace.protocol(uri) + (library ? " · in your library" : "")
+            + (saved ? " · saved" : "");
+        Runnable openIt = () -> {
+            open(uri);
+            focusCentre();
+        };
+        ConnectionRow row = new ConnectionRow(getContext(), source.getName(), detail, openIt);
+        row.setTag("semantic:network.item.source." + source.getId());
+        row.setOnFocusGained(() -> centreAnchor = row);
+        row.addButton("folder", "Open", openIt);
+        if (SavedConnection.protocolIndex(uri.getScheme()) >= 0) {
+            row.addButton("edit", "Edit", () -> editConnection(uri));
+            row.addButton("check", "Test", () -> testSavedConnection(uri));
+        }
+        row.addButton("remove", "Remove", () -> removeConnection(source, library, saved));
+        items.addView(row, new LayoutParams(-1, -2));
+        SharedThreePanel.divider(items);
+    }
+
+    /** Opens the Add Connection form filled in from the saved connection (the password stays masked). */
+    private void editConnection(Uri uri) {
+        int index = SavedConnection.protocolIndex(uri.getScheme());
+        if (index < 0)
+            return;
+        protocol = index;
+        NetworkCredentialsDatabase.Credential credential =
+            NetworkCredentialsDatabase.getInstance().getCredential(uri.toString());
+        connection[0] = uri.getHost() == null ? "" : uri.getHost();
+        connection[1] = uri.getPort() > 0 ? String.valueOf(uri.getPort()) : "";
+        connection[2] = uri.getPath() == null ? "" : uri.getPath();
+        connection[3] = credential == null ? "" : credential.getUsername();
+        connection[4] = credential == null ? "" : credential.getPassword();
+        connection[5] = credential == null ? "" : credential.getDomain();
+        showPassword = false;
+        connectionDirty = false;
+        connectionForm();
+    }
+
+    private void testSavedConnection(Uri uri) {
+        DraftConnectionTest.Type type = SavedConnection.type(SavedConnection.protocolIndex(uri.getScheme()));
+        if (type == null || uri.getHost() == null)
+            return;
+        NetworkCredentialsDatabase.Credential credential =
+            NetworkCredentialsDatabase.getInstance().getCredential(uri.toString());
+        String user = credential == null ? "" : credential.getUsername();
+        String secret = credential == null ? "" : credential.getPassword();
+        String folder = uri.getPath() == null || uri.getPath().isEmpty() ? "/" : uri.getPath();
+        runConnectionTest(type, uri.getHost(), uri.getPort() > 0 ? uri.getPort() : -1, folder, user,
+                          secret.toCharArray());
+    }
+
+    /** Remove asks first. A saved location is forgotten; a library location leaves the library (files stay). */
+    private void removeConnection(Shortcut source, boolean library, boolean saved) {
+        Uri uri = source.getUri();
+        String question = library
+            ? "Remove " + source.getName() + " from your library? Its videos leave the library; the files stay "
+                + "where they are."
+            : "Remove " + source.getName() + "? Library records and media files are kept.";
+        PreviewDialog.choose(getContext(), question, new String[] {
+            "Cancel", "Remove"
+        }, 0, n -> {
+            if (n != 1)
+                return;
+            if (library) {
+                selection.remove(uri);
+                apply(this::networkShares);
+                return;
+            }
+            if (saved && forgetSavedLocation(uri))
+                networkShares();
+        });
+    }
+
+    private boolean forgetSavedLocation(Uri uri) {
+        int removed;
+        try {
+            removed = ShortcutDb.STATIC.removeShortcut(getContext(), uri);
+        } catch (RuntimeException failure) {
+            removed = 0;
+        }
+        if (removed <= 0) {
+            PreviewDialog.read(getContext(), "Removal not confirmed",
+                "The saved location remains visible. Retry after refreshing sources.");
+            return false;
+        }
+        Shortcut gone = savedSources.remove(BrowserSelection.canonical(uri));
+        shares.remove(gone);
+        if (gone != null) {
+            View row = left.findViewWithTag("semantic:network.item.saved." + gone.getId());
+            if (row != null) {
+                locations.remove(row);
+                left.removeView(row);
+                if (leftAnchor == row)
+                    leftAnchor = overview;
+            }
+        }
+        return true;
+    }
+
     private void openPutioAccount() {
         if (putioController != null)
             putioController.close();
@@ -1347,8 +1452,12 @@ public final class UniversalFileBrowser extends LinearLayout {
         putioServiceRow();
         if (shares.isEmpty())
             items.addView(SharedThreePanel.text(getContext(), "No network locations saved", 16));
-        for (Shortcut source : shares)
-            sourceRow(source);
+        for (Shortcut source : shares) {
+            if (networkLayout != null)
+                connectionRow(source);
+            else
+                sourceRow(source);
+        }
         centreAction("Add Network Source", this::beginConnection);
         centreAction("Discover Devices", this::discoverDevices);
         centreAction("Network Scanning", this::scanControls);
@@ -1679,16 +1788,18 @@ public final class UniversalFileBrowser extends LinearLayout {
                 return;
             }
         }
-        DraftConnectionTest.Type type = new DraftConnectionTest.Type[] {
-            DraftConnectionTest.Type.SMB, DraftConnectionTest.Type.WEBDAVS, DraftConnectionTest.Type.WEBDAV,
-            DraftConnectionTest.Type.SFTP, DraftConnectionTest.Type.FTP, DraftConnectionTest.Type.FTPS
-        }[protocol];
+        DraftConnectionTest.Type type = SavedConnection.type(protocol);
         String folder = connection[2].startsWith("/") ? connection[2] : "/" + connection[2];
+        runConnectionTest(type, address, port, folder, connection[3], connection[4].toCharArray());
+    }
+
+    /** Runs DraftConnectionTest (nothing is saved) and shows the plain answer in the status line. */
+    private void runConnectionTest(DraftConnectionTest.Type type, String address, int port, String folder, String user,
+                                   char[] password) {
         stopConnectionTest();
         status.setText("Testing " + address + "…");
-        char[] password = connection[4].toCharArray();
         try (DraftConnectionTest.Draft draft =
-                 new DraftConnectionTest.Draft(type, address, port, folder, connection[3], password)) {
+                 new DraftConnectionTest.Draft(type, address, port, folder, user, password)) {
             connectionTest = DraftConnectionTest.start(getContext(), draft, this::post, result -> {
                 if (closed)
                     return;
