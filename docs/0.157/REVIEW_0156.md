@@ -5,6 +5,9 @@ Notes from the owner's Shield review, in the order of `docs/0.156/REVIEW_BY_PAGE
 those once it is decided.
 
 **Where the review has got to:** 1. Home › Hero (first item).
+**Order agreed (owner, 6 Nov):** the background (0.157 notes §18) is decided page by page first, then the visual
+review. Until then the owner sends only points the background does not affect (behaviour, wording, content, focus,
+the player).
 
 ## 1. Home
 
