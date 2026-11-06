@@ -59,8 +59,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Claude:** everything the user sees (layouts, screens, focus, wording), integration of Codex's work, builds,
   tests, signing (when approved), owner notes and mock-ups. Works on `claude/supernova-github-access-yfhe89`.
 - **Codex** (another AI, run by the owner): non-visual work — engine, data, diagnostics, scanning, backup — on its
-  own branch (currently `codex/0155-code-2026-11-04`). Never touches main, `.github/`, Gradle or files marked
-  hands-off. Its briefs are in `docs/codex/` (current: `BRIEF_0156_CODE.md`). It reports each finished Part in
+  own branch (currently `codex/0157-2026-11-06`). Never touches main, `.github/`, Gradle or files marked
+  hands-off. Its briefs are in `docs/codex/` (current: `BRIEF_0157.md`). It reports each finished Part in
   `docs/codex/HANDOVER.md`; Claude then builds, tests and merges it.
 - Both can work at the same time because `docs/codex/HANDS_OFF.txt` splits the files.
 
@@ -69,7 +69,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 | What | Where |
 | --- | --- |
 | Working branch (all current work, builds and signing) | `claude/supernova-github-access-yfhe89` |
-| Codex's branch | `codex/0155-code-2026-11-04` |
+| Codex's branch | `codex/0157-2026-11-06` (0.157); 0.156 work was on `codex/0155-code-2026-11-04` |
 | `main` | The GitHub front page. Same as the working branch since 5 Nov 2026; brought forward after each signed release. Old main kept as `archive/main-2026-11-05`. |
 | Native engine archive | `native-archive-0146` |
 | `heretoecode/aos-MediaLib` | Fork used by **every** build. Keep. |
@@ -81,11 +81,11 @@ Other `codex/*`, `automation/*` and `archive/*` branches are history; leave them
 
 There is no Android SDK in Claude's container: everything builds on GitHub Actions.
 
-1. **Conformance** — `.github/workflows/supernova-0155-conformance.yml` (manual dispatch on the working branch,
+1. **Conformance** — `.github/workflows/supernova-0156-conformance.yml` (manual dispatch on the working branch,
    about 35 minutes). Builds the unsigned APK and runs every JUnit/Robolectric test, lint and the tooling checks.
    A new dispatch cancels one already running.
 2. **Failures** — `.github/workflows/report-test-failures.yml` with input `run_id` lists the failing tests.
-3. **Signing** (only when the owner says so) — `.github/workflows/supernova-0155-qa.yml` with input
+3. **Signing** (only when the owner says so) — `.github/workflows/supernova-0156-qa.yml` with input
    `conformance_run_id` (a green conformance run of the exact same source). It signs with the established
    certificate in the `supernova-foundation-signing` environment. The signed APK is the run's artifact.
 4. **Other tools:** `preview-renders.yml` renders real Android screens for mock-up checks; `lint-report.yml`;
@@ -93,7 +93,7 @@ There is no Android SDK in Claude's container: everything builds on GitHub Actio
 5. Local checks Claude can run: `python3 tools/test_code_layout.py`.
 
 The version history the app shows (About › What's new) comes from `assets/foundation/release-history.json`, which
-points at `docs/0.135/` … `docs/0.154/`. **Do not move those folders.**
+points at `docs/0.135/` … `docs/0.156/`. **Do not move those folders.**
 
 ## Where things live
 
