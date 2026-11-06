@@ -61,6 +61,7 @@ ${row('tv', 'This Shield', '310 videos · 14.2 GB free of 32 GB', '', null, fals
 ${row('usb', 'Backup #1', 'SanDisk USB drive · 1,203 videos · 1.1 TB free of 2 TB', '', null, false, bar(0.9, 2))}
 </div>`;
 
+const localPage = local.split('<div class="rt">').join('<div class="rt grow">');
 const crumbrow = (trail, tools) => `<div class="crumbrow"><div class="crumbs">${trail.map((t, i) => i === trail.length - 1 ? `<span>${t}</span>` : `${t} <b>›</b> `).join('')}</div>${tools || ''}</div>`;
 const tools = gridOn => `<div class="tools"><span class="b">${icon(gridOn ? I.list : I.grid, 26)}${gridOn ? 'List' : 'Grid'}</span><span class="b">${icon(I.sort, 26)}Sort: Name</span><span class="b">${icon(I.filter, 26)}Videos only</span></div>`;
 const fileacts = [['play', 'Play'], ['info', 'Details'], ['check', 'Mark as watched'], ['exclude', 'Exclude']];
@@ -108,16 +109,27 @@ ${row('more', 'More types', 'FTP, FTP with TLS, and plain (unencrypted) WebDAV',
 </div>`;
 
 const field = (l, v, dim, eye) => `<div class="fld"><span class="fl">${l}</span><span class="fv ${dim ? 'dim' : ''}">${v}</span>${eye ? `<span class="fe">${icon(I.eye, 30)}</span>` : ''}</div>`;
-const form = `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
+const fieldF = (l, v, dim, eye, f) => `<div class="fld ${f ? 'sel' : ''}"><span class="fl">${l}</span><span class="fv ${dim ? 'dim' : ''}">${v}</span>${eye ? `<span class="fe">${icon(I.eye, 30)}</span>` : ''}</div>`;
+const formBody = focusUser => `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
 ${crumbrow(['Network Shares', 'Add a connection', 'WebDAV server'])}
 <div class="two form"><div class="col">
-${field('Name', 'Put.io Films')}${field('Address', 'webdav.put.io')}${field('Port', '443 · default for HTTPS', true)}
-${field('Folder', '/Films')}${field('Username', 'heretostream')}${field('Password', '••••••••••••', false, true)}
+${fieldF('Name', 'Put.io Films')}${fieldF('Address', 'webdav.put.io')}${fieldF('Port', '443 · default for HTTPS', true)}
+${fieldF('Folder', '/Films')}${fieldF('Username', focusUser ? 'heretostream' : 'heretostream', false, false, focusUser)}${fieldF('Password', '••••••••••••', false, true)}
 <div class="kv"><span>Remember password</span><span class="sw on"><i></i></span></div>
-<div class="btnrow"><span class="b focus">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
+<div class="btnrow"><span class="b ${focusUser ? '' : 'focus'}">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
 </div><div class="col"><div class="rn">Test connection</div><div class="rl p">Checks the address and password without saving anything.</div>
 <div class="rn gap">Tips</div><div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.</div></div>
 </div></div>`;
+const form = formBody(false);
+const keyrows = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '@'],
+  ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '-'], ['123', 'Space', '⌫', 'Done']];
+const keyboard = `${formBody(true)}<div class="spanel"><div class="pt">Username</div><div class="pd">WebDAV server · Put.io Films</div>
+<div class="pin">heretostream<i></i></div>
+<div class="keys">${keyrows.map((row, r) => `<div class="krow">${row.map((k, c) => `<span class="key ${k.length > 1 ? 'wide' : ''} ${r === 3 && k === 'Done' ? 'focus' : ''}">${k}</span>`).join('')}</div>`).join('')}</div>
+<div class="pnote">Done saves the field and returns to the form</div></div>`;
+const more = `${shares(-1)}<div class="spanel"><div class="pt">More connection types</div><div class="pd">Less common, or without encryption</div>
+${[['pc', 'FTP', 'Older servers · not encrypted', true], ['lock', 'FTP with TLS', 'FTP with encryption', false], ['globe', 'WebDAV without encryption', 'Plain HTTP · only on a network you trust', false]]
+  .map(([ic, n, l, f]) => `<div class="prow ${f ? 'focus' : ''}"><span class="ri">${icon(I[ic], 36)}</span><div><div class="rn">${n}</div><div class="rl">${l}</div></div></div>`).join('')}</div>`;
 
 const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'need a look'], ['scanned', '12 min ago']])}
 <div class="two"><div class="col"><div class="sec">Scanning</div>
@@ -138,18 +150,18 @@ const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;color:#e8edf8}
 .nav .brand{font-size:36px;margin-right:40px;letter-spacing:1px}.nav .sp{flex:1}.nav .on{font-weight:500;color:#fff}.nav .clock{margin-left:20px}
-.page{position:absolute;left:96px;right:96px;top:122px;bottom:40px}
-.tabrow{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;border-bottom:2px solid rgba(255,255,255,.10);margin-bottom:10px}
+.page{position:absolute;left:96px;right:96px;top:150px;bottom:40px}
+.tabrow{display:flex;align-items:center;justify-content:space-between;padding-bottom:34px;border-bottom:2px solid rgba(255,255,255,.10);margin-bottom:26px}
 .tray{display:inline-flex;gap:8px;padding:7px;border-radius:31px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
 .tab{height:76px;padding:0 34px;border-radius:24px;display:inline-flex;align-items:center;gap:16px;font-size:32px;font-weight:500;color:#dfe5f1}
 .tab.open{background:#454B55;color:#fff}.tab.focus{background:#F4F6FB;color:#0B0D12}
-.summary{display:flex;gap:16px;font-size:30px;color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary i{font-style:normal;color:#6b7383}
+.summary{display:flex;gap:18px;font-size:34px;color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary i{font-style:normal;color:#6b7383}
 .sec{font-size:28px;font-weight:500;color:#B7BFCC;margin:36px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
 .row{display:flex;align-items:center;gap:30px;min-height:128px;padding:18px 34px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl{color:#3A4256}
 .ri{color:#c9d3e6;width:44px}.row.focus .ri{color:#0B0D12}.rt{width:500px;min-width:0;flex-shrink:0}.rn{font-size:36px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rl{font-size:27px;color:#C9D3E6;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rs{width:220px;flex-shrink:0;display:flex;justify-content:center}.ra{flex:1;display:flex;justify-content:flex-end}.rc{color:rgba(255,255,255,.35)}.row.focus .rc{color:#0B0D12}
-.state{white-space:nowrap;display:inline-flex;align-items:center;height:48px;padding:0 24px;border-radius:24px;font-size:26px;font-weight:500;color:#e8edf6;box-shadow:inset 0 0 0 2px rgba(255,255,255,.30)}
+.rt.grow{width:auto;flex:1}.rs{width:220px;flex-shrink:0;display:flex;justify-content:center}.ra{flex:1;display:flex;justify-content:flex-end}.rc{color:rgba(255,255,255,.35)}.row.focus .rc{color:#0B0D12}
+.state{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;width:210px;box-sizing:border-box;height:48px;padding:0 24px;border-radius:24px;font-size:26px;font-weight:500;color:#e8edf6;box-shadow:inset 0 0 0 2px rgba(255,255,255,.30)}
 .row.focus .state{color:#0B0D12;box-shadow:inset 0 0 0 2px rgba(11,13,18,.35)}
 .bar{margin-top:16px;width:620px;height:8px;border-radius:4px;background:rgba(255,255,255,.14)}.bar i{display:block;height:100%;border-radius:4px;background:#C9D3E6}
 .acts{display:flex;gap:14px}.ab{white-space:nowrap;height:64px;padding:0 22px;border-radius:20px;background:#dde1ea;color:#0B0D12;display:inline-flex;align-items:center;gap:12px;font-size:26px;font-weight:500}
@@ -164,7 +176,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .rc4.focus{transform:scale(1.1);box-shadow:0 0 0 4px #fff;z-index:2}
 .fic{position:absolute;left:14px;top:12px;width:48px;height:42px;border-radius:12px;background:rgba(10,12,16,.72);display:flex;align-items:center;justify-content:center;color:#fff}
 .mos{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px}.mos i{display:block}
-.cst{position:absolute;right:12px;top:12px}.cst .state{height:40px;font-size:21px;padding:0 16px;background:rgba(10,12,16,.72);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.cst{position:absolute;right:12px;top:12px}.cst .state{width:150px;height:40px;font-size:21px;padding:0 12px;background:rgba(10,12,16,.72);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
 .shade{position:absolute;left:0;right:0;bottom:0;padding:44px 20px 16px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
 .ct{font-size:28px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl{font-size:20px;color:#d6dce8;margin-top:2px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:80px}
@@ -174,16 +186,28 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .hrow{display:flex;align-items:center;gap:28px;min-height:108px;padding:16px 30px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .count{min-width:56px;height:56px;padding:0 16px;border-radius:28px;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;font-size:28px;font-weight:500}
 .count.amber{background:#F2B544;color:#111}
-.form{margin-top:4px}.fld{display:flex;align-items:center;height:72px;padding:0 26px;border-radius:18px;background:rgba(255,255,255,.06);margin-bottom:12px;font-size:28px}
+.form{margin-top:4px}.fld{display:flex;align-items:center;height:64px;padding:0 26px;border-radius:18px;background:rgba(255,255,255,.06);margin-bottom:12px;font-size:28px}
 .fl{width:180px;color:#C9D3E6;font-size:24px}.fv{flex:1}.fv.dim{color:#8a93a3}.fe{color:#c9d3e6}
 .btnrow{display:flex;gap:16px;margin-top:18px}.p{line-height:1.45;margin-top:10px}.p b{color:#fff;font-weight:500}.gap{margin-top:40px}
+.fld.sel{box-shadow:inset 0 0 0 3px rgba(255,255,255,.7);background:rgba(255,255,255,.12)}
+.spanel{position:absolute;top:0;right:0;bottom:0;width:820px;background:rgba(22,24,28,.985);padding:60px 48px;box-sizing:border-box}
+.pt{font-size:40px;font-weight:500}.pd{font-size:26px;color:#C9D3E6;margin-top:8px}
+.pin{margin-top:34px;height:76px;border-radius:18px;background:#2a2d33;display:flex;align-items:center;padding:0 26px;font-size:32px}
+.pin i{display:inline-block;width:3px;height:40px;background:#fff;margin-left:4px}
+.keys{margin-top:30px;display:flex;flex-direction:column;gap:12px}.krow{display:flex;gap:12px}
+.key{flex:1;height:76px;border-radius:16px;background:#2a2d33;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:500}
+.key.wide{flex:2.2;font-size:26px}.key.focus{background:#F4F6FB;color:#0B0D12}
+.pnote{margin-top:28px;font-size:24px;color:#9aa3b2}
+.prow{display:flex;align-items:center;gap:26px;padding:22px 26px;border-radius:22px;margin-top:14px}.prow.focus{background:#F4F6FB;color:#0B0D12}
+.prow.focus .rl,.prow.focus .ri{color:#3A4256}.prow:first-of-type{margin-top:34px}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  const pages = [['01-local-storage.png', local], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
+  const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
-    ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library]];
+    ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library],
+    ['10-add-connection-keyboard.png', keyboard], ['11-add-connection-more.png', more]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);

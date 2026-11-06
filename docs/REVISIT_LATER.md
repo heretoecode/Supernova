@@ -95,6 +95,10 @@ Items already built or scheduled are left out (see the bottom of this file).
   names (long names are shortened) and the buttons; grid folders show a mosaic of the artwork inside (plain card if
   none), library files their artwork, other files a still from the video where one can be made; Add a connection
   shows its types inline when focused (Computer or NAS · WebDAV · SFTP · More).
+  v5 (owner notes 6 Nov): tabs lower, with more room above and below; summary text larger; every status pill
+  the same width. Choosing a type opens its form as a page in the same tab (breadcrumb Network Shares › Add a
+  connection › WebDAV server); OK on a field opens the app's keyboard as a side panel beside the form (Done
+  returns); More opens a side panel with FTP, FTP with TLS and WebDAV without encryption. Mock-ups 10–11.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
