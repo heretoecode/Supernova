@@ -108,6 +108,12 @@ Items already built or scheduled are left out (see the bottom of this file).
   Library tab (v7, to discuss): one full-width list in the same row style — Scan now (Up to date; Scan now ·
   Scan one source), Library Health (Missing files, Couldn't be read, Not matched, with counts in the pills and
   Review buttons), Scan settings (Automatic scan, When Supernova opens), Recent scans (last 10). Mock-ups 09, 09b.
+  v8 (owner notes 6 Nov): pop-up menus get a faint 28% edge on the flat background (the same as card edges); Add a
+  connection shows Computer or NAS · WebDAV · SFTP · FTP (no More: WebDAV and FTP each have an Encryption switch
+  on their form, on by default); Automatic scan is an inline choice (Off · Hourly · 2 hours · 6 hours · Daily —
+  "Twice a day" dropped to keep five) and When Supernova opens a switch; Library Health opens one page per kind in
+  the Library tab (Missing files: Find it again · Remove; Couldn't be read: Try again · Exclude; Not matched: Fix
+  match · Not a film). Mock-ups 06, 08, 09b, 11–14.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

@@ -41,6 +41,7 @@ const I = {
   disk: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
   time: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   history: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/>',
+  source: '<path d="M4 7h16M4 12h16M4 17h10"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
@@ -70,14 +71,16 @@ ${row('usb', 'Backup #1', 'SanDisk USB drive · 1,203 videos · 1.1 TB free of 2
 const localPage = local.split('<div class="rt">').join('<div class="rt grow">');
 const crumbrow = (trail, tools) => `<div class="crumbrow"><div class="crumbs">${trail.map((t, i) => i === trail.length - 1 ? `<span>${t}</span>` : `${t} <b>›</b> `).join('')}</div>${tools || ''}</div>`;
 const tools = gridOn => `<div class="tools"><span class="b">${icon(gridOn ? I.list : I.grid, 26)}${gridOn ? 'List' : 'Grid'}</span><span class="b">${icon(I.sort, 26)}Sort: Name</span><span class="b">${icon(I.filter, 26)}Videos only</span></div>`;
+let FOLDER_FOCUS = 2;
 const fileacts = [['play', 'Play'], ['info', 'Details'], ['check', 'Mark as watched'], ['exclude', 'Exclude']];
 const files = [['folder', '4K', 'Folder · 86 videos', 'in'], ['folder', 'Old rips', 'Folder · 31 videos', 'out'],
   ['film', 'Conclave (2024).mkv', '2024 · 14.2 GB', 'in'], ['film', 'home-video-2019.mp4', '1.1 GB', 'none'],
   ['film', 'Nosferatu (2024).mkv', '2024 · 18.9 GB', 'in']];
-const folder = `${nav}<div class="page">${head('local', '', [['412', 'videos'], ['398', 'in library'], ['14', 'not added']])}
+const folderAt = f => { FOLDER_FOCUS = f; return `${nav}<div class="page">${head('local', '', [['412', 'videos'], ['398', 'in library'], ['14', 'not added']])}
 ${crumbrow(['Backup #1', 'Films'], tools(false))}
-${files.map(([ic, n, l, st], i) => row(ic, n, l, st, fileacts, i === 2)).join('')}
-</div>`;
+${files.map(([ic, n, l, st], i) => row(ic, n, l, st, fileacts, i === FOLDER_FOCUS)).join('')}
+</div>`; };
+const folder = folderAt(2);
 
 const cards = [['4K', '86 videos', 'in', 'mosaic'], ['Old rips', '31 videos', 'out', 'plain'], ['Conclave', '2024', 'in', 'art'],
   ['home-video-2019', '1.1 GB', 'none', 'still'], ['Nosferatu', '2024', 'in', 'art'], ['Flow', '2024', 'in', 'art'],
@@ -100,7 +103,7 @@ ${row('shares', 'Living-room NAS', 'SMB · 512 videos in your library', 'up', [[
 ${row('pc', 'Office PC', 'SFTP · last seen yesterday', 'down', [['test', 'Try again'], ['edit', 'Edit'], ['remove', 'Remove']], focusIdx === 2)}
 <div class="row add ${focusIdx === 3 ? 'focus' : ''}"><span class="ri">${icon(I.plus, 40)}</span><div class="rt"><div class="rn">Add a connection</div>
 <div class="rl">${focusIdx === 3 ? 'Choose what you are connecting to' : 'Computer, NAS, WebDAV, SFTP or FTP'}</div></div><div class="rs"></div>
-<div class="ra wide">${focusIdx === 3 ? acts([['pc', 'Computer or NAS'], ['globe', 'WebDAV'], ['lock', 'SFTP'], ['more', 'More']]) : `<span class="rc">${icon(I.chev, 30)}</span>`}</div></div>
+<div class="ra wide">${focusIdx === 3 ? acts([['pc', 'Computer or NAS'], ['globe', 'WebDAV'], ['lock', 'SFTP'], ['source', 'FTP']]) : `<span class="rc">${icon(I.chev, 30)}</span>`}</div></div>
 <div class="sec">Found on your network</div>
 ${row('pc', 'DESKTOP-7Q', 'SMB · Windows computer', 'newf', [['plus', 'Add']], focusIdx === 4)}
 </div>`;
@@ -121,22 +124,26 @@ const keyrows = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 
 const form = `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
 ${crumbrow(['New WebDAV connection'])}
 <div class="formgrid"><div class="col">
-${fieldF('Name', 'Put.io Films')}${fieldF('Address', 'webdav.put.io')}${fieldF('Port', '443 · default for HTTPS', true)}
+${fieldF('Name', 'Put.io Films')}${fieldF('Address', 'webdav.put.io')}<div class="kv"><span>Encryption (HTTPS)</span><span class="sw on"><i></i></span></div>${fieldF('Port', '443 · the usual port with encryption', true)}
 ${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret"></i>', false, false, true)}${fieldF('Password', '••••••••••••', false, true)}
 <div class="kv"><span>Remember password</span><span class="sw on"><i></i></span></div>
 <div class="btnrow"><span class="b">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
 </div><div class="col"><div class="kb">${keyrows.map(row => `<div class="krow">${row.map(k => `<span class="key ${k.length > 1 ? 'wide' : ''} ${k === 'n' ? 'focus' : ''}">${k}</span>`).join('')}</div>`).join('')}</div>
-<div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
+<div class="rl p">Leave Encryption on unless your server only offers plain HTTP. Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
 Test connection checks it without saving anything.</div></div>
 </div></div>`;
-const menuHtml = '<div class="cmenu">' +
-  [['pc', 'FTP', true], ['lock', 'FTP with TLS', false], ['globe', 'WebDAV without encryption', false]]
-    .map(([ic, n, f]) => `<div class="ci ${f ? 'focus' : ''}">${icon(I[ic], 30)}<span>${n}</span></div>`).join('') + '</div>';
-const more = shares(3).replace('class="row add focus"', 'class="row add open"')
-  .replace('</div></div>\n<div class="sec">Found on your network</div>', `</div>${menuHtml}</div>\n<div class="sec">Found on your network</div>`);
+const sortMenu = '<div class="cmenu down">' + [['Name (A–Z)', 'chosen'], ['Name (Z–A)', ''], ['Newest first', 'focus'], ['Oldest first', ''], ['Largest first', ''], ['Smallest first', '']]
+  .map(([n, k]) => `<div class="ci ${k === 'focus' ? 'focus' : ''}">${k === 'chosen' ? icon(I.check, 30) : '<i class="sp"></i>'}<span>${n}</span></div>`).join('') + '</div>';
+const sortOpen = folderAt(-1).replace(`<span class="b">${icon(I.sort, 26)}Sort: Name</span>`,
+  `<span class="b open menuhost">${icon(I.sort, 26)}Sort: Name${sortMenu}</span>`);
 
 const pill = t => `<span class="state">${t}</span>`;
 const lrow = (ic, name, line, st, actions, focus) => row(ic, name, line, '', actions, focus).replace('<div class="rs"></div>', `<div class="rs">${pill(st)}</div>`);
+const choiceRow = (ic, name, line, options, chosen, focus) => `<div class="row ${focus ? 'focus' : ''}"><span class="ri">${icon(I[ic], 40)}</span>
+  <div class="rt grow"><div class="rn">${name}</div><div class="rl">${line}</div></div>
+  <span class="chips">${options.map(o => `<i class="${o === chosen ? 'on' : ''}">${o}</i>`).join('')}</span></div>`;
+const switchRow = (ic, name, line, on, focus) => `<div class="row ${focus ? 'focus' : ''}"><span class="ri">${icon(I[ic], 40)}</span>
+  <div class="rt grow"><div class="rn">${name}</div><div class="rl">${line}</div></div><span class="sw ${on ? 'on' : ''}"><i></i></span></div>`;
 const libRows = focus => `
 <div class="sec first">Scanning</div>
 ${lrow('scan', 'Scan now', '12 min ago · 3 new, 1 updated', 'Up to date', [['scan', 'Scan now'], ['history', 'Scan one source']], focus === 0)}
@@ -145,12 +152,28 @@ ${lrow('folder', 'Missing files', 'In your library but no longer found', '3 file
 ${lrow('film', "Couldn't be read", 'Files Supernova could not open', '2 files', [['open', 'Review']], focus === 2)}
 ${lrow('library', 'Not matched', 'Videos without a film or show', '14 videos', [['open', 'Review'], ['search', 'Fix matches']], focus === 3)}
 <div class="sec">Scan settings</div>
-${lrow('time', 'Automatic scan', 'Checks every source for new videos', 'Every hour', null, focus === 4)}
-${lrow('local', 'When Supernova opens', 'Only if the last scan is over an hour old', 'On', null, focus === 5)}
+${choiceRow('time', 'Automatic scan', 'Checks every source for new videos', ['Off', 'Hourly', '2 hours', '6 hours', 'Daily'], 'Hourly', focus === 4)}
+${switchRow('local', 'When Supernova opens', 'Scans if the last scan is over an hour old', true, focus === 5)}
 <div class="sec">Recent scans</div>
 ${lrow('cloud', 'Put.io › Films', 'Today 23:28 · 3 new, 1 updated', 'Finished', null, focus === 6)}
 ${lrow('shares', 'Living-room NAS', 'Today 22:28 · 48 s · no changes', 'Finished', null, focus === 7)}
 ${lrow('usb', 'Backup #1', 'Today 21:28 · the drive was removed', 'Stopped', null, focus === 8)}`;
+const healthPage = (title, summary, rows) => `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
+${crumbrow([title])}${rows}</div>`;
+const missing = healthPage('Missing files', '', `
+${lrow('film', 'Conclave (2024)', 'Living-room NAS › Films · since 3 Nov', 'Missing', [['search', 'Find it again'], ['remove', 'Remove']], true)}
+${lrow('film', 'The Bear · S3 E4', 'Backup #1 › TV · since 5 Nov', 'Missing', null, false)}
+${lrow('film', 'Arrival (2016)', 'Backup #1 › Films · since 5 Nov', 'Missing', null, false)}
+<div class="note2">Find it again searches the same place for the same file and links it back, keeping where you stopped and what you've watched. Remove takes it out of your library only.</div>`);
+const unreadable = healthPage("Couldn't be read", '', `
+${lrow('film', 'holiday-2018.avi', 'Backup #1 › Home videos · 2.3 GB', 'Damaged', [['history', 'Try again'], ['exclude', 'Exclude']], true)}
+${lrow('film', 'concert.ts', 'Put.io › Music · 6.1 GB', 'Timed out', null, false)}
+<div class="note2">Try again reads the file once more. Exclude stops Supernova looking at it; the file itself is left alone.</div>`);
+const unmatched = healthPage('Not matched', '', `
+${lrow('film', 'home-video-2019.mp4', 'Backup #1 › Films · no film or show found', 'No match', [['search', 'Fix match'], ['exclude', 'Not a film']], true)}
+${lrow('film', 'Pressure.2026.2160p.mkv', 'Living-room NAS › Films · several matches', 'Possible', null, false)}
+${lrow('film', 'S01E01.mkv', 'Put.io › TV · name too short', 'No match', null, false)}
+<div class="note2">Fix match opens the search panel with the name filled in. "Not a film" keeps a personal video in your files but out of Movies and TV Shows.</div>`);
 const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
 <div class="libclip"><div class="libscroll">${libRows(0)}</div></div></div>`;
 const libraryLower = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
@@ -213,12 +236,17 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .prow.focus .rl,.prow.focus .ri{color:#3A4256}.prow:first-of-type{margin-top:34px}
 .row.open{position:relative;background:rgba(255,255,255,.06);border-radius:24px;box-shadow:none}
 .row.open .ab{background:#2a2d33;color:#fff}.row.open .ab:last-child{background:#454B55}
-.cmenu{position:absolute;right:30px;bottom:calc(100% + 10px);width:520px;background:rgba(22,24,28,.97);border-radius:26px;padding:20px 18px 16px;z-index:5;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.cmenu{position:absolute;right:30px;bottom:calc(100% + 10px);border:2px solid rgba(255,255,255,.28);width:520px;background:rgba(22,24,28,.97);border-radius:26px;padding:20px 18px 16px;z-index:5;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .ch{font-size:24px;color:#B7BFCC;padding:0 14px 10px}
 .ci{display:flex;align-items:center;gap:18px;height:68px;padding:0 18px;border-radius:18px;font-size:29px;font-weight:500}
 .ci.focus{background:#F4F6FB;color:#0B0D12}
 .libclip{position:absolute;left:0;right:0;top:136px;bottom:0;overflow:hidden}
 .summary span,.tab{white-space:nowrap}
+.cmenu.down{bottom:auto;top:calc(100% + 12px);right:0;width:440px;text-align:left}.b.menuhost{position:relative;background:#454B55}
+.ci .sp{display:inline-block;width:30px}
+.chips{display:flex;gap:6px;font-size:28px}.chips i{font-style:normal;padding:10px 20px;border-radius:14px;color:#dfe5f1}
+.chips i.on{background:#454B55;color:#fff}.row.focus .chips i{color:#3A4256}.row.focus .chips i.on{background:#0B0D12;color:#fff}
+.note2{margin-top:30px;font-size:26px;color:#9aa3b2;line-height:1.45;max-width:1400px}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
@@ -226,7 +254,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
   const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
     ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library], ['09b-library-lower.png', libraryLower],
-    ['11-add-connection-more.png', more]];
+    ['11-sort-menu.png', sortOpen], ['12-missing-files.png', missing], ['13-could-not-read.png', unreadable], ['14-not-matched.png', unmatched]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
