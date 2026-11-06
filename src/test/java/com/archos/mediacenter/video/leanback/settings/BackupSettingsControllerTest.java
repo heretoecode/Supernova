@@ -192,6 +192,7 @@ public class BackupSettingsControllerTest {
     public void realSettingsRailKeepsItsWidthAndAllCategoriesOccupyOnlyCentreList() throws Exception {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
+            chooseCustom(host.get());
             Settings settings = add(host.get());
             View root = settings.requireView(), parent = root.findViewWithTag("semantic:settings:category:Advanced");
             int leftWidth = ((View) parent.getParent()).getWidth();
@@ -201,6 +202,8 @@ public class BackupSettingsControllerTest {
             assertTrue(root.findViewWithTag("backup.action.export").hasFocus());
             settings.backup.navigation(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertTrue(root.findViewWithTag("backup.action.restore").hasFocus());
+            settings.backup.navigation(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
+            assertTrue(root.findViewWithTag("backup.preset").hasFocus());
             settings.backup.navigation(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
             assertTrue(root.findViewWithTag("backup.category.APPEARANCE").hasFocus());
             for (BackupCategory category : BackupCategory.values())
@@ -417,9 +420,17 @@ public class BackupSettingsControllerTest {
         verifyConnectedGeometry("0139-backup-3840");
     }
 
+    /** The parts list shows only for Custom; Everything is the fresh-install choice. */
+    private static void chooseCustom(android.content.Context context) {
+        com.archos.mediacenter.video.utils.backup.BackupPresets.select(
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(context),
+            com.archos.mediacenter.video.utils.backup.BackupSelection.Preset.CUSTOM);
+    }
+
     private void verifyConnectedGeometry(String name) throws Exception {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
+            chooseCustom(host.get());
             Settings settings = add(host.get());
             enter(settings);
             View root = settings.requireView();

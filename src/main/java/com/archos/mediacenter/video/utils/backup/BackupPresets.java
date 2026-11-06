@@ -14,8 +14,10 @@ public final class BackupPresets
         if (!preferences.contains(CHOICE))
         {
             Set<BackupCategory> legacy = stored(preferences);
-            boolean existing = preferences.contains("supernova_backup_history")
-                || preferences.contains("supernova_backup_resume");
+            // The old Settings tick-boxes persist their default "on" values when first shown, so only a switched-off
+            // one shows a deliberate earlier choice.
+            boolean existing = !preferences.getBoolean("supernova_backup_history", true)
+                || !preferences.getBoolean("supernova_backup_resume", true);
             for (BackupCategory category : BackupCategory.values())
             {
                 existing |= preferences.contains(category.preference());

@@ -48,7 +48,12 @@ public class FocusMemory0156Test
             ReflectionHelpers.callInstanceMethod(browser, "openLandingCard",
                 ReflectionHelpers.ClassParameter.from(int.class, 4));
             PreviewPagesTest.layout(browser);
-            java.util.List<View> targets = browser.getFocusables(View.FOCUS_FORWARD);
+            // Only rows in the centre list are remembered; the side panels and top bar keep their own focus.
+            android.view.ViewGroup centre = ReflectionHelpers.getField(browser, "items");
+            java.util.List<View> targets = new java.util.ArrayList<>();
+            for (View target : centre.getFocusables(View.FOCUS_FORWARD))
+                if (target != centre && target.isShown() && target.isEnabled())
+                    targets.add(target);
             org.junit.Assert.assertTrue(targets.size() > 1);
             View previous = targets.get(targets.size() - 1);
             org.junit.Assert.assertTrue(previous.requestFocus());
@@ -61,7 +66,7 @@ public class FocusMemory0156Test
     }
 
     @Test
-    public void detailsTabsReturnToTheirItemAndReadingPosition()
+    public void detailsTabsReturnToTheirItemAndReadingPosition() throws Exception
     {
         var host = Robolectric.buildActivity(TopNavigationTest.Host.class).setup().visible();
         try {
@@ -73,9 +78,11 @@ public class FocusMemory0156Test
             host.get().setContentView(page);
             android.widget.LinearLayout extras = ReflectionHelpers.getField(page, "trailers");
             java.util.List<View> cards = ReflectionHelpers.getField(page, "extraCards");
+            // The page reads these back as its own artwork cards, so the fixture must use the real card class.
+            Class<?> cardClass = Class.forName("com.archos.mediacenter.video.leanback.details.PreviewLandscapeCard");
             for (int i = 0; i < 2; i++) {
-                android.widget.Button card = new android.widget.Button(host.get());
-                card.setText("Extra " + i);
+                View card = (View) ReflectionHelpers.callConstructor(cardClass,
+                    ReflectionHelpers.ClassParameter.from(android.content.Context.class, host.get()));
                 extras.addView(card);
                 cards.add(card);
             }
