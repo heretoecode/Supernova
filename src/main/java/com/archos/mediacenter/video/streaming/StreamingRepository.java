@@ -196,16 +196,29 @@ public final class StreamingRepository
     /** Exact TMDB title/ID discovery for the explicit Fix match operation. */
     public static JSONObject matchSearch(Context context, String path, Map<String, String> parameters) throws Exception
     {
+        return matchSearch(context, path, parameters, HTTP);
+    }
+
+    /** Same validated search path, with caller-owned deadlines and cancellation on its HTTP calls. */
+    public static JSONObject matchSearch(Context context, String path, Map<String, String> parameters,
+                                         OkHttpClient client) throws Exception
+    {
         if (!path.matches("(?:search/(?:movie|tv)|(?:movie|tv)/[1-9][0-9]{0,9}|find/tt[0-9]{7,10})") ||
             !Set.of("query", "external_source").containsAll(parameters.keySet()))
         {
             throw new IOException("Invalid match search");
         }
-        return api(context, path, null, 0, parameters);
+        return api(context, path, null, 0, parameters, client);
     }
 
     private static JSONObject api(Context context, String path, String country, int page,
                                   Map<String, String> parameters) throws Exception
+    {
+        return api(context, path, country, page, parameters, HTTP);
+    }
+
+    private static JSONObject api(Context context, String path, String country, int page,
+                                  Map<String, String> parameters, OkHttpClient client) throws Exception
     {
         Uri.Builder url = Uri.parse("https://api.themoviedb.org/3/" + path)
                               .buildUpon()
@@ -224,7 +237,7 @@ public final class StreamingRepository
         try (Diagnostics.OperationScope ignored = Diagnostics.operationScope(operation))
         {
             long[] responseFacts = new long[] {0, 0};
-            String body = get(url.build().toString(), 2 * 1024 * 1024, operation, HTTP, responseFacts);
+            String body = get(url.build().toString(), 2 * 1024 * 1024, operation, client, responseFacts);
             return parseMetadata(path, body, responseFacts[0], responseFacts[1], operation);
         }
         finally

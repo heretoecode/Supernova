@@ -8,18 +8,30 @@
     "0.135 is backed by exact-source CI signing proof. Its artifact archive download was denied; no signed APK digest has been independently retrieved."
   ],
   "current": {
-    "version": "0.155",
-    "version_code": 155,
-    "date": "2026-11-04",
-    "kind": "Shield QA candidate \u2014 playback engine update from NOVA 6.6.4; physical verification pending",
+    "version": "0.156",
+    "version_code": 156,
+    "date": "2026-11-05",
+    "kind": "In development; not a signed or accepted release",
+    "documentation": "docs/0.156/",
     "notes": [
-      "Playback engine updated to NOVA 6.6.4: Dolby Vision (including profile 9 and AV1) and HDR fixes, retries on another hardware decoder when one fails.",
-      "MPEG-TS duration and resume fixed; correct timing for files with more than one video track.",
-      "Styled (ASS/SSA) subtitles stay on screen in Fit width and zoom; subtitle box padding prepared for a future setting.",
-      "No screen changes; arm64-only Shield build."
+      "Library scanning, backup reliability and diagnostics improvements.",
+      "Player, metadata, network files and Settings improvements; see the release list for device checks."
     ]
   },
   "history": [
+    {
+      "version": "0.155",
+      "version_code": 155,
+      "date": "2026-11-04",
+      "kind": "Shield QA candidate \u2014 playback engine update from NOVA 6.6.4; physical verification pending",
+      "notes": [
+        "Playback engine updated to NOVA 6.6.4: Dolby Vision (including profile 9 and AV1) and HDR fixes, retries on another hardware decoder when one fails.",
+        "MPEG-TS duration and resume fixed; correct timing for files with more than one video track.",
+        "Styled (ASS/SSA) subtitles stay on screen in Fit width and zoom; subtitle box padding prepared for a future setting.",
+        "No screen changes; arm64-only Shield build."
+      ],
+      "documentation": "docs/0.155/"
+    },
     {
       "version": "0.154",
       "version_code": 154,

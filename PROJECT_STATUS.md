@@ -20,15 +20,11 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   position and live sample, sleep timer, Still watching?, seek pictures, per-series choices), Search and the shared
   keyboard, the Network & Files landing. Next: Network Shares and Add Connection, Library Health page, Settings
   stage 3, Customise Home, Fix match, empty states, Local Storage grid.
-- **Codex** (engine and data): final-brief repairs through `ace2f7eee` on `codex/0155-code-2026-11-04`.
-  The eleven restore failures and two scan-context fixtures are repaired; the replacement local-trace patch needs
-  Claude's registration in place of the earlier compile-only fix. All 1,237 production/generated Java files and
-  429 test sources compile locally; 137 selected regressions and the full module suites pass (four existing
-  private-data/server checks remain unavailable). The item-by-item audit, explicit remaining
-  coverage limits and NEXT/MORE deferrals are in
-  [`final engine report`](docs/codex/reports/2026-11-05-0156-final.md). Device checks are in
-  [`Shield engine checklist`](docs/0.156/SHIELD_CHECKLIST_ENGINE.md). The owner's source-specific scan diagnosis,
-  actual private-library acceptance and native measurements are not claimed complete.
+- **Codex** (engine and data): 0.156 LAST data APIs ready at `215f9e385`, with source `f1b809d3d` merged at
+  `886a6cda8`. Credits/history, read-only filename lookup and persisted backup presets are complete; focus audit is
+  report-only for Claude. All changed Java compiles; 18 tests pass. See
+  [`docs/codex/reports/2026-11-06-0156-last.md`](docs/codex/reports/2026-11-06-0156-last.md) and
+  [`docs/codex/findings/0156-ui-hooks.md`](docs/codex/findings/0156-ui-hooks.md). CI and Shield acceptance remain pending.
 - **GitHub:** cleaned up on 5 Nov 2026: this page, `CLAUDE.md`, `AGENTS.md`, the archive, and Issues #31–#102.
 
 ### Known problems being fixed in 0.156

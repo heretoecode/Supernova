@@ -205,3 +205,77 @@ Code `a041eb382`. Apply `medialib-supernova156-screen-nfo-cancel.patch` immediat
 No API change. If cancellation wins while getOutputStream is opening, the rejected stream is closed and the empty
 NFO target removed. Both this race and cancellation during a blocked write have regressions. All previously
 published patches remain unchanged. The report lists the final seven registration operations.
+
+## LAST section 1 — complete About data (6 November 2026)
+
+`about.AboutCredits.load(context)` reads `supernova/credits.json` off the UI thread and returns an immutable list of
+`Entry`: `id`, `name`, `version`, `licence`, `url`, `role`, `textAsset`, `licenceSource`, `service`.
+`read(InputStream)` supports an already-open stream; it leaves that stream open. Bad schema, incomplete entries and
+duplicate identities fail with `IOException`, so do not display a partial catalogue as complete.
+
+The catalogue covers each distinct coordinate of `docs/foundation/RUNTIME_SBOM.json`, pinned local modules, the shipped
+native stack, bundled artwork and all eleven service endpoints. Software entries point at full bundled notices in
+`foundation/legal/`; read that asset locally for licence detail. The new catalogue does not alter those protected
+assets. Service entries link their provider terms/documentation; they are not described as open-source licences or
+as fixed server binaries. `url` is the project/service address for the QR. `source`, exact native commits, archive
+hashes and licence-text hashes remain in the JSON for provenance; they are not screen copy.
+
+Release history now has current **0.156, in development** and historical **0.155**, with `documentation` paths
+`docs/0.156/` and `docs/0.155/`. Existing older entries and documentation directories remain in place. This data edit
+also advances the build's existing data-derived version code/name to 156/0.156; it is not evidence of a signed release.
+
+## LAST section 2 — unindexed file Details
+
+Call `metadata.UnlibraryLookup.start(context, fileUri, callbackExecutor, consumer)`; retain the returned `Job` and
+call `cancel()` (or `close()`) when leaving/rebinding the file. Supply the main executor for a screen callback.
+Cancellation stops the active HTTP call, interrupts the worker and suppresses even an already queued callback.
+A surviving job enqueues at most one result. The deadline is 12 seconds; the callback executor owns delivery timing.
+The bounded pool admits two active and four waiting jobs; overload, offline, malformed/no results and timeout return
+`UnlibraryLookup.NONE`, never an exception or credential-bearing error object.
+
+`Result` has `kind` (`FILM`, `EPISODE`, `SHOW`, `UNKNOWN`), `confidence` (`CONFIDENT`, `POSSIBLE`, `NONE`), `tmdbId`,
+`title`, `year`, `season`, `episode`, `poster`, `backdrop`. For episodes the TMDB ID is the **series** ID; season/episode
+come from filename parsing. Unknown numbers are -1. Artwork URIs may be null. NONE is UNKNOWN/id 0/empty title and
+year. One exact normalised title/year candidate is CONFIDENT; ambiguity/year mismatch is POSSIBLE. Confidence is a
+filename-based estimate, not proof of edition or an instruction to save a match.
+
+The existing MediaLib `SearchPreprocessor` parses only the filename. The existing validated Fix match transport is
+reused through `StreamingRepository.matchSearch(context, path, parameters, callerOwnedClient)`; the original overload
+still uses its original HTTP client. The new overload permits the job to own call cancellation and timeouts. It keeps
+the same endpoint/parameter allow-list, response validation, size limit, authentication and diagnostics.
+The lookup invokes no indexer, scraper-apply path, match journal or database write. Opening Details must not call Add.
+
+**Add to library for one file:** use the existing MediaLib
+`com.archos.mediaprovider.video.VideoStore.requestIndexing(fileUri, context, false)` (or the two-argument overload if
+an explicit re-index is wanted). Source: prepared MediaLib `VideoStore.java:78–184`. It routes a local file to the
+Android single-file MediaScanner and indexable remote/content URIs to the existing provider/network scanner.
+The filename lookup is separate. In Supernova's source-selection browser, first stage `BrowserSelection.include(uri)`
+and save via the existing `ShortcutDbAdapter.VIDEO.applySupernovaRoots(...)` transaction, preserving the configured
+roots/exclusions. Otherwise the library policy may reject a file outside selected sources. Do not widen the root to
+its parent folder just to add a single file. `UniversalFileBrowser.apply` is the existing Save Changes & Scan sequence;
+its follow-up `PreviewLibraryScan.requestAfterChanges` is a source refresh, not the one-file indexing API.
+
+## LAST section 3 — persisted backup presets
+
+Use `utils.backup.BackupPresets` with **the same default SharedPreferences** used by `BackupWorkspace`:
+
+- `current(prefs)` migrates once and returns `BackupSelection.Preset`; fresh installs choose EVERYTHING.
+- `selection(prefs)` returns an immutable set to pass to the existing backup preparation/export operation.
+- `select(prefs, preset)` atomically writes the choice and category flags; CUSTOM retains current choices.
+- `setIncluded(prefs, category, included)` atomically selects CUSTOM and writes its complete category set. Keep the
+  existing private-data consent flow before enabling a private category.
+
+EVERYTHING contains every category for which `isPrivate()` is false, including TITLE_PLAYBACK. SETTINGS_ONLY is exactly
+the ten `PortableSettingsRegistry.Category` domains. Neither preset includes SOURCES, BOOKMARKS or LOCATIONS.
+Migration reads all existing per-category flags, with the original history/resume fallbacks and defaults. An existing
+selection differing from Everything becomes CUSTOM without dropping private opt-ins or other choices. Direct legacy
+category edits are detected on the next read and become CUSTOM. The persisted preset key is
+`supernova_backup_preset_v1`; failures to commit throw `IllegalStateException`. The screen owns error handling.
+No restore choice, archive format, credential policy or export engine changes. Call this API when wiring the new
+three-choice screen; the protected old screen is not edited here.
+
+## LAST section 4 — focus audit
+
+`0156-focus-audit.md` has the route/transition matrix, 17 concrete loss cases and proposed Robolectric regressions.
+Those tests live only in the report. Existing opener restoration, Search key/result memory and Local Storage folder
+memory are explicitly retained. Claude owns the screen fixes and adding the proposed tests.
