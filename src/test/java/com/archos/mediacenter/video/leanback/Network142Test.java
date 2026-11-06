@@ -278,7 +278,7 @@ public class Network142Test {
         select("network_shares");
         PreviewPagesTest.findText(browser, "Add Network Source").performClick();
         layout();
-        PreviewPagesTest.findText(browser, "WebDAV HTTPS").performClick();
+        PreviewPagesTest.findText(browser, "A WebDAV server").performClick();
         layout();
         assertNotNull(PreviewPagesTest.findText(browser, "Server / Address: "));
         assertSame("Protocol choice enters the first required input",
@@ -351,7 +351,7 @@ public class Network142Test {
         select("network_shares");
         PreviewPagesTest.findText(browser, "Add Network Source").performClick();
         layout();
-        PreviewPagesTest.findText(browser, "WebDAV HTTPS").performClick();
+        PreviewPagesTest.findText(browser, "A WebDAV server").performClick();
         layout();
         View connect = exactText(browser, "Connect");
         assertNotNull(connect);

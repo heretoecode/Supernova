@@ -39,6 +39,9 @@ final class ConnectionRow extends LinearLayout
         line = text(detail, 13, SupernovaStyle.TEXT_SECONDARY);
         two.addView(title);
         two.addView(line);
+        // A click on the words is a click on the row (touch and tests); the remote only focuses the row.
+        title.setOnClickListener(v -> performClick());
+        line.setOnClickListener(v -> performClick());
         addView(two, new LayoutParams(0, -2, 1));
         buttons = new LinearLayout(c);
         buttons.setVisibility(GONE);

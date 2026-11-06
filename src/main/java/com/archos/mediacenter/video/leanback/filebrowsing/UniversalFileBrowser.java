@@ -1659,6 +1659,11 @@ public final class UniversalFileBrowser extends LinearLayout {
             "", () -> {
             });
         centreHeading(networkLayout == null ? "Add Network Source" : "Add Connection");
+        if (networkLayout != null) {
+            connectionTypes(false);
+            focusConnectionEntry(null);
+            return;
+        }
         String[] names = {
             "SMB", "WebDAV HTTPS", "WebDAV HTTP", "SFTP", "FTP", "FTP TLS"
         };
@@ -1670,6 +1675,56 @@ public final class UniversalFileBrowser extends LinearLayout {
             });
         }
         focusConnectionEntry(null);
+    }
+
+    /** Choose what you are connecting to, in plain English (mock-up add-connection/01). */
+    private void connectionTypes(boolean moreTypes) {
+        sectionHeading(items, "Recommended for you");
+        boolean putio = PutioSyncScheduler.status().signedIn;
+        typeRow("cloud", "Put.io", putio ? "Already connected" : "Sign in with your Put.io account · browsing, "
+            + "library sync and search in one", this::putio);
+        sectionHeading(items, "On your home network");
+        ConnectionRow computer = typeRow("network", "A computer or NAS",
+            "Windows, Mac, Linux or a NAS (Synology, QNAP…) · Supernova finds them for you", this::discoverDevices);
+        computer.addButton("search", "Find on my network", this::discoverDevices);
+        computer.addButton("plus", "Enter address", () -> chooseProtocol(0));
+        sectionHeading(items, "On the internet");
+        typeRow("streaming", "A WebDAV server", "Cloud storage and servers that offer WebDAV (secure HTTPS)",
+            () -> chooseProtocol(1));
+        typeRow("source", "An SFTP server", "A server you reach over SSH", () -> chooseProtocol(3));
+        if (!moreTypes) {
+            typeRow("more", "More types", "FTP, FTP with TLS, and plain (unencrypted) WebDAV", () -> {
+                centreHeading("Add Connection");
+                connectionTypes(true);
+                View first = items.findViewWithTag("network.type.ftp");
+                if (first != null)
+                    first.requestFocus();
+            });
+            return;
+        }
+        typeRow("source", "FTP", "Older servers · not encrypted", () -> chooseProtocol(4)).setTag("network.type.ftp");
+        typeRow("source", "FTP with TLS", "FTP with encryption", () -> chooseProtocol(5));
+        typeRow("streaming", "WebDAV without encryption", "Plain HTTP · only on a network you trust",
+            () -> chooseProtocol(2));
+    }
+
+    private ConnectionRow typeRow(String icon, String name, String detail, Runnable open) {
+        ConnectionRow row = new ConnectionRow(getContext(), name, detail, open);
+        row.setTag("network.type." + name.toLowerCase(Locale.ROOT));
+        items.addView(row, new LayoutParams(-1, -2));
+        return row;
+    }
+
+    private void sectionHeading(LinearLayout container, String title) {
+        TextView text = SharedThreePanel.text(getContext(), title, 14);
+        text.setTextColor(SupernovaStyle.HEADING);
+        text.setPadding(dp(4), dp(14), 0, dp(4));
+        container.addView(text);
+    }
+
+    private void chooseProtocol(int value) {
+        protocol = value;
+        connectionForm();
     }
 
     private void focusConnectionEntry(String fieldLabel) {

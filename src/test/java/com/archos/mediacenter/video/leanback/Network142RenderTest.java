@@ -110,7 +110,7 @@ public class Network142RenderTest {
             }
             browser.findViewWithTag("network.card.2").performClick();
             layout(nav);
-            PreviewPagesTest.findText(browser, "WebDAV HTTPS").performClick();
+            PreviewPagesTest.findText(browser, "A WebDAV server").performClick();
             layout(nav);
             capture(nav, "0147-shell-webdav-form");
             PreviewPagesTest.findText(browser, "Protocol: WebDAV HTTPS").performClick();
