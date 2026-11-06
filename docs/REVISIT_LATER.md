@@ -102,6 +102,9 @@ Items already built or scheduled are left out (see the bottom of this file).
   v6 (owner notes 6 Nov): the summary is the same size as the tabs, with an icon per item; the form page shows
   the keyboard on the page itself (no side panel); breadcrumbs start below the tab (the tab already says where you
   are: "Backup #1 › Films", "New WebDAV connection") and are signposts, not buttons — Back goes up one level.
+  v7 (owner notes 6 Nov): summary words capitalised with a dot between items; More opens a small menu above the
+  More button in the More-menu style (heading, icon rows, white focus), and a choice opens its form page like
+  WebDAV's.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):

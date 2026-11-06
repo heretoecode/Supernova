@@ -43,7 +43,8 @@ const I = {
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
   .map(([k, t]) => `<span class="tab ${k === open ? 'open' : ''} ${k === focusTab ? 'focus' : ''}">${icon(I[k], 30)}${t}</span>`).join('')}</div>
-  <div class="summary">${summary.map(([v, l]) => `<span>${icon(I[SUMMARY_ICON[l]] || I.info, 32)}<b>${v}</b> ${l}</span>`).join('')}</div></div>`;
+  <div class="summary">${summary.map(([v, l]) => `<span>${icon(I[SUMMARY_ICON[l]] || I.info, 32)}<b>${v}</b> ${title(l)}</span>`).join('<i class="dot">·</i>')}</div></div>`;
+const title = l => l.split(' ').map(w => w === 'TB' ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 const SUMMARY_ICON = { devices: 'local', videos: 'film', 'videos here': 'film', free: 'disk', 'in library': 'check',
   'not added': 'plus', connections: 'shares', reachable: 'test', 'need a look': 'library', '12 min ago': 'scan' };
 const bar = (used, total) => `<div class="bar"><i style="width:${Math.round(used / total * 100)}%"></i></div>`;
@@ -126,9 +127,11 @@ ${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret">
 <div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
 Test connection checks it without saving anything.</div></div>
 </div></div>`;
-const more = `${shares(-1)}<div class="spanel"><div class="pt">More connection types</div><div class="pd">Less common, or without encryption</div>
-${[['pc', 'FTP', 'Older servers · not encrypted', true], ['lock', 'FTP with TLS', 'FTP with encryption', false], ['globe', 'WebDAV without encryption', 'Plain HTTP · only on a network you trust', false]]
-  .map(([ic, n, l, f]) => `<div class="prow ${f ? 'focus' : ''}"><span class="ri">${icon(I[ic], 36)}</span><div><div class="rn">${n}</div><div class="rl">${l}</div></div></div>`).join('')}</div>`;
+const menuHtml = '<div class="cmenu"><div class="ch">More connection types</div>' +
+  [['pc', 'FTP', true], ['lock', 'FTP with TLS', false], ['globe', 'WebDAV without encryption', false]]
+    .map(([ic, n, f]) => `<div class="ci ${f ? 'focus' : ''}">${icon(I[ic], 30)}<span>${n}</span></div>`).join('') + '</div>';
+const more = shares(3).replace('class="row add focus"', 'class="row add open"')
+  .replace('</div></div>\n<div class="sec">Found on your network</div>', `</div>${menuHtml}</div>\n<div class="sec">Found on your network</div>`);
 
 const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'need a look'], ['scanned', '12 min ago']])}
 <div class="two"><div class="col"><div class="sec">Scanning</div>
@@ -154,7 +157,7 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .tray{display:inline-flex;gap:8px;padding:7px;border-radius:31px;background:#22252B;box-shadow:inset 0 0 0 2px rgba(255,255,255,.10)}
 .tab{height:76px;padding:0 34px;border-radius:24px;display:inline-flex;align-items:center;gap:16px;font-size:32px;font-weight:500;color:#dfe5f1}
 .tab.open{background:#454B55;color:#fff}.tab.focus{background:#F4F6FB;color:#0B0D12}
-.summary{display:flex;gap:28px;font-size:32px;color:#C9D3E6}.summary span{display:inline-flex;align-items:center;gap:12px}.summary svg{color:#C9D3E6}.summary b{color:#fff;font-weight:500}
+.summary{display:flex;align-items:center;gap:18px;font-size:32px;color:#C9D3E6}.summary span{display:inline-flex;align-items:center;gap:12px}.summary svg{color:#C9D3E6}.summary b{color:#fff;font-weight:500}.summary .dot{font-style:normal;color:#6b7383}
 .sec{font-size:28px;font-weight:500;color:#B7BFCC;margin:36px 0 12px;letter-spacing:.3px}.sec.small{margin-top:30px;font-size:24px}
 .row{display:flex;align-items:center;gap:30px;min-height:128px;padding:18px 34px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
 .row.focus{background:#F4F6FB;color:#0B0D12;border-radius:24px;box-shadow:none}.row.focus .rl{color:#3A4256}
@@ -200,6 +203,12 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .pnote{margin-top:28px;font-size:24px;color:#9aa3b2}
 .prow{display:flex;align-items:center;gap:26px;padding:22px 26px;border-radius:22px;margin-top:14px}.prow.focus{background:#F4F6FB;color:#0B0D12}
 .prow.focus .rl,.prow.focus .ri{color:#3A4256}.prow:first-of-type{margin-top:34px}
+.row.open{position:relative;background:rgba(255,255,255,.06);border-radius:24px;box-shadow:none}
+.row.open .ab{background:#2a2d33;color:#fff}.row.open .ab:last-child{background:#454B55}
+.cmenu{position:absolute;right:30px;bottom:calc(100% + 10px);width:520px;background:rgba(22,24,28,.97);border-radius:26px;padding:20px 18px 16px;z-index:5;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.ch{font-size:24px;color:#B7BFCC;padding:0 14px 10px}
+.ci{display:flex;align-items:center;gap:18px;height:68px;padding:0 18px;border-radius:18px;font-size:29px;font-weight:500}
+.ci.focus{background:#F4F6FB;color:#0B0D12}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
