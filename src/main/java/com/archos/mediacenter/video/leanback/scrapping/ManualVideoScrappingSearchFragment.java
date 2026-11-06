@@ -98,6 +98,8 @@ public class ManualVideoScrappingSearchFragment extends ManualScrappingSearchFra
 
     @Override
     protected void configurePreviewSearch(PreviewMatchSearch search) {
+        if (mVideo != null)
+            search.setSubject(mVideo.getFileNameWithExtension());
         if (previewEpisode)
             search.parentSeries(((Episode) mVideo).getShowName(),
                 this::changeSeriesMatch);

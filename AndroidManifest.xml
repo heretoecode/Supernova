@@ -1495,11 +1495,11 @@
 
         <activity
             android:name="com.archos.mediacenter.video.leanback.scrapping.ManualVideoScrappingActivity"
-            android:theme="@style/MyLeanbackTheme" />
+            android:theme="@style/MyLeanbackTheme.Transparent" />
 
         <activity
             android:name="com.archos.mediacenter.video.leanback.scrapping.ManualShowScrappingActivity"
-            android:theme="@style/MyLeanbackTheme" />
+            android:theme="@style/MyLeanbackTheme.Transparent" />
 
         <activity
             android:name="com.archos.mediacenter.video.leanback.filebrowsing.LocalListingActivity"

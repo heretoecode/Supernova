@@ -13,10 +13,15 @@ import java.util.function.Consumer;
 
 /** Shared Find a Match presentation; native search and accepted-save handlers stay in the fragment. */
 public final class PreviewMatchSearch extends LinearLayout {
+    /** Side panels: #16181C at 90% (global look, owner 5 Nov 2026). */
+    static final int PANEL = 0xE616181C;
+    static final int PANEL_WIDTH_DP = 440;
     private final EditText input;
     private final PreviewKeyboard keyboard;
     private final LinearLayout rows;
     private final TextView status;
+    private final TextView title;
+    private final ScrollView scroll;
     private final List<BaseTags> rendered = new ArrayList<>();
     private final Consumer<BaseTags> choose;
     private final Consumer<String> search;
@@ -27,19 +32,18 @@ public final class PreviewMatchSearch extends LinearLayout {
         this.search = search;
         this.choose = choose;
         setOrientation(VERTICAL);
-        setPadding(dp(32), dp(20), dp(32), dp(20));
-        setBackground(new PreviewUtilityBackground(context));
-        addView(text("Find a Match", 24));
-        TextView help = text("Search by title, TMDB ID or IMDb ID", 14);
-        help.setPadding(0, dp(6), 0, dp(14));
+        // Approved 0.156 #40 (suggestions/04): a side panel over Details, not a page of its own.
+        setPadding(dp(22), dp(18), dp(22), dp(14));
+        setBackgroundColor(PANEL);
+        title = text("Fix match", 15);
+        title.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        title.setSingleLine(true);
+        title.setEllipsize(TextUtils.TruncateAt.MIDDLE);
+        addView(title);
+        TextView help = text("Search by title, TMDB ID or IMDb ID", 12);
+        help.setTextColor(SupernovaStyle.TEXT_SECONDARY);
+        help.setPadding(0, dp(2), 0, dp(10));
         addView(help);
-        LinearLayout columns = new LinearLayout(context);
-        columns.setClipChildren(false);
-        addView(columns, new LayoutParams(-1, 0, 1));
-        LinearLayout left = new LinearLayout(context);
-        left.setOrientation(VERTICAL);
-        left.setClipChildren(false);
-        columns.addView(left, new LayoutParams(dp(360), -1));
         input = new KeyboardInput(context);
         input.setTag("semantic:match.query");
         input.setSingleLine(true);
@@ -49,22 +53,17 @@ public final class PreviewMatchSearch extends LinearLayout {
         input.setBackground(PreviewDialog.focus(context));
         input.setText(initial);
         input.setSelection(input.length());
-        left.addView(input, new LayoutParams(-1, KeyboardInput.compactHeight(context)));
+        addView(input, new LayoutParams(-1, KeyboardInput.compactHeight(context)));
         keyboard = new PreviewKeyboard(context, input, this::focusResults);
         LayoutParams keys = new LayoutParams(-1, -2);
-        keys.topMargin = dp(12);
-        left.addView(keyboard, keys);
+        keys.topMargin = dp(10);
+        addView(keyboard, keys);
         keyboard.setLeaveDown(this::focusResults);
-        LinearLayout right = new LinearLayout(context);
-        right.setOrientation(VERTICAL);
-        right.setClipChildren(false);
-        LayoutParams resultArea = new LayoutParams(0, -1, 1);
-        resultArea.leftMargin = dp(32);
-        columns.addView(right, resultArea);
         status = text("Searching…", 13);
-        status.setPadding(0, 0, 0, dp(10));
-        right.addView(status);
-        ScrollView scroll = new ScrollView(context);
+        status.setTextColor(SupernovaStyle.HEADING);
+        status.setPadding(dp(2), dp(12), 0, dp(8));
+        addView(status);
+        scroll = new ScrollView(context);
         scroll.setClipChildren(false);
         scroll.setClipToPadding(false);
         rows = new LinearLayout(context);
@@ -72,7 +71,7 @@ public final class PreviewMatchSearch extends LinearLayout {
         rows.setClipChildren(false);
         rows.setClipToPadding(false);
         scroll.addView(rows);
-        right.addView(scroll, new LayoutParams(-1, 0, 1));
+        addView(scroll, new LayoutParams(-1, 0, 1));
         query = () -> search.accept(input.getText().toString().trim());
         input.addTextChangedListener(new TextWatcher() {
             @Override
@@ -102,6 +101,47 @@ public final class PreviewMatchSearch extends LinearLayout {
         post(keyboard::focusLastKey);
     }
 
+    /** Shows the hosting activity as a right-hand side panel; Details stays visible beside it. */
+    public static void asSidePanel(android.app.Activity activity) {
+        android.view.Window window = activity.getWindow();
+        int width = Math.round(PANEL_WIDTH_DP * activity.getResources().getDisplayMetrics().density);
+        window.setGravity(Gravity.END | Gravity.FILL_VERTICAL);
+        window.setLayout(width, ViewGroup.LayoutParams.MATCH_PARENT);
+        window.setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+    }
+
+    /** "Fix match · File: name.mkv" — which file is being matched. */
+    public void setSubject(String fileName) {
+        if (fileName == null || fileName.isEmpty())
+            title.setText("Fix match");
+        else
+            title.setText("Fix match · File: " + fileName);
+    }
+
+    /** The keyboard shows while you type; in the results it folds away so they get the room. */
+    private final ViewTreeObserver.OnGlobalFocusChangeListener focusWatcher = (before, after) -> {
+        if (after == null || !isInside(after, this))
+            return;
+        boolean inResults = isInside(after, rows);
+        keyboard.setVisibility(inResults ? GONE : VISIBLE);
+    };
+
+    private static boolean isInside(View view, View parent) {
+        for (View at = view; at != null; ) {
+            if (at == parent)
+                return true;
+            ViewParent next = at.getParent();
+            at = next instanceof View ? (View) next : null;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getViewTreeObserver().addOnGlobalFocusChangeListener(focusWatcher);
+    }
+
     public void searching() {
         setResults(Collections.emptyList());
         status.setText("Searching…");
@@ -120,8 +160,10 @@ public final class PreviewMatchSearch extends LinearLayout {
             boolean focused = rows.hasFocus();
             rows.removeAllViews();
             rendered.clear();
-            if (focused)
+            if (focused) {
+                keyboard.setVisibility(VISIBLE);
                 keyboard.focusLastKey();
+            }
         }
         for (int i = rendered.size(); i < results.size(); i++) {
             final int index = i;
@@ -151,7 +193,8 @@ public final class PreviewMatchSearch extends LinearLayout {
             row.setOnKeyListener((v, key, event) -> {
                 if (event.getAction() != KeyEvent.ACTION_DOWN)
                     return false;
-                if (key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (key == KeyEvent.KEYCODE_DPAD_LEFT || (key == KeyEvent.KEYCODE_DPAD_UP && index == 0)) {
+                    keyboard.setVisibility(VISIBLE);
                     keyboard.focusLastKey();
                     return true;
                 }
@@ -174,6 +217,7 @@ public final class PreviewMatchSearch extends LinearLayout {
     }
 
     public void focusInput() {
+        keyboard.setVisibility(VISIBLE);
         keyboard.focusLastKey();
     }
 
@@ -219,6 +263,7 @@ public final class PreviewMatchSearch extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
+        getViewTreeObserver().removeOnGlobalFocusChangeListener(focusWatcher);
         removeCallbacks(query);
         super.onDetachedFromWindow();
     }
