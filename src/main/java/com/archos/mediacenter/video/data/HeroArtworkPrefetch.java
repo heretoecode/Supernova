@@ -87,7 +87,7 @@ public final class HeroArtworkPrefetch<T> implements AutoCloseable
             }
         for (Assets assets : wanted)
         {
-            if (assets.backdrop() == null || assets.backdrop().isBlank() || ready.containsKey(assets) ||
+            if (assets.backdrop() == null || assets.backdrop().trim().isEmpty() || ready.containsKey(assets) ||
                 tasks.containsKey(assets))
                 continue;
             try
@@ -109,8 +109,8 @@ public final class HeroArtworkPrefetch<T> implements AutoCloseable
         try
         {
             T backdrop = loader.load(assets.backdrop(), false);
-            T logo = assets.logo() == null || assets.logo().isBlank() ? null : loader.load(assets.logo(), true);
-            if (backdrop == null || assets.logo() != null && !assets.logo().isBlank() && logo == null)
+            T logo = assets.logo() == null || assets.logo().trim().isEmpty() ? null : loader.load(assets.logo(), true);
+            if (backdrop == null || assets.logo() != null && !assets.logo().trim().isEmpty() && logo == null)
                 return;
             synchronized (this)
             {

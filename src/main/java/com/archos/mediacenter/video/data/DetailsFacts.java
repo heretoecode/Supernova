@@ -78,7 +78,7 @@ public final class DetailsFacts
             for (int i = 0; i < production.length(); i++)
             {
                 JSONObject row = production.optJSONObject(i);
-                if (row != null && row.optLong("id") > 0 && !row.optString("name").isBlank())
+                if (row != null && row.optLong("id") > 0 && !row.optString("name").trim().isEmpty())
                     companies.add(row.optString("name"));
             }
         return new Facts(List.copyOf(aliases), runtime, !series,

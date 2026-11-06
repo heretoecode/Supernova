@@ -44,7 +44,7 @@ supporting those source kinds. Existing `LibraryScanController.stop()` still own
 
 ## Top-bar scan activity — item 4
 
-`scanning.ScanActivitySignal.LIBRARY.observe(context.getMainExecutor(), running -> ...)` returns an AutoCloseable
+`scanning.ScanActivitySignal.LIBRARY.observe(mainHandler::post, running -> ...)` returns an AutoCloseable
 `Subscription`. It sends the current state, then changes; main does no polling. Close on view/model disposal.
 `running()` is a memory-only getter. The tracker publishes aggregate local/network lifecycle ownership; Put.io
 publishes admitted sync ownership through its terminal/failure/finally path, including the gaps between folders.

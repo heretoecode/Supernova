@@ -1,5 +1,10 @@
 package com.archos.mediacenter.video.streaming.putio;
 
+import android.app.Application;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -8,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 30)
 public class PutioCodeSignInTest
 {
     @Test public void signedInSnapshotNeverContainsTheCredential() throws Exception

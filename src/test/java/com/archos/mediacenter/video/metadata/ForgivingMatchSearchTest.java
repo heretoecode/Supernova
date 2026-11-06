@@ -1,5 +1,10 @@
 package com.archos.mediacenter.video.metadata;
 
+import android.app.Application;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 30)
 public class ForgivingMatchSearchTest
 {
     private static JSONObject movie(long id, String title)

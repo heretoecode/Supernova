@@ -28,7 +28,8 @@ public final class ForgivingMatchSearch
 
     public static List<Hit> search(String query, String scope, Gateway gateway, BooleanSupplier cancelled)
     {
-        if (query == null || query.isBlank() || query.length() > 240 || !Set.of("movie", "tv", "all").contains(scope))
+        if (query == null || query.trim().isEmpty() || query.length() > 240 ||
+            !Set.of("movie", "tv", "all").contains(scope))
             return List.of();
         if (cancelled.getAsBoolean() || Thread.currentThread().isInterrupted())
             return List.of();
@@ -176,7 +177,7 @@ public final class ForgivingMatchSearch
             if (row == null || row.optLong("id") < 1 || row.optLong("id") > Integer.MAX_VALUE)
                 continue;
             String title = row.optString(kind.equals("movie") ? "title" : "name");
-            if (title.isBlank())
+            if (title.trim().isEmpty())
                 continue;
             int score = forcedScore >= 0 ? forcedScore : Math.max(score(query, title),
                 score(query, row.optString(kind.equals("movie") ? "original_title" : "original_name")));

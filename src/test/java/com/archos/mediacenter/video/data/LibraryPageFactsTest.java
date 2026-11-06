@@ -1,5 +1,10 @@
 package com.archos.mediacenter.video.data;
 
+import android.app.Application;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import static org.junit.Assert.assertEquals;
 import com.archos.mediacenter.video.leanback.LibraryAttentionCount;
 import com.archos.mediacenter.video.leanback.LibraryStatistics;
@@ -11,6 +16,8 @@ import java.util.Set;
 import org.junit.Test;
 import org.robolectric.util.ReflectionHelpers;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 30)
 public class LibraryPageFactsTest
 {
     @Test public void eightStatsPreserveUnknownSizesAndTheStatusHasAnEvidenceReason()

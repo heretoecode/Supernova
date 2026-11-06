@@ -61,7 +61,8 @@ public final class FilesArtwork
         String prefix = canonicalFolder.endsWith("/") ? canonicalFolder : canonicalFolder + "/";
         LinkedHashSet<String> pictures = new LinkedHashSet<>();
         for (Artwork entry : inventory)
-            if (entry.canonicalFile().startsWith(prefix) && entry.picture() != null && !entry.picture().isBlank())
+            if (entry.canonicalFile().startsWith(prefix) && entry.picture() != null &&
+                !entry.picture().trim().isEmpty())
             {
                 pictures.add(entry.picture());
                 if (pictures.size() == 4)

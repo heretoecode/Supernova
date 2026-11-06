@@ -1,5 +1,10 @@
 package com.archos.mediacenter.video.data;
 
+import android.app.Application;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -8,6 +13,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
+@RunWith(RobolectricTestRunner.class)
+@Config(application = Application.class, sdk = 30)
 public class HeroArtworkPrefetchTest
 {
     @Test public void publishesOnlyAfterBothImagesAreWarmAndCachesThePair() throws Exception

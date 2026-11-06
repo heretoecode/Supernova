@@ -45,7 +45,7 @@ public final class MissingFilesRepository
             this.stored = stored;
             id = stored.id();
             size = stored.size();
-            this.title = title == null || title.isBlank() ? "Unknown title" : title;
+            this.title = title == null || title.trim().isEmpty() ? "Unknown title" : title;
             this.source = source == null ? null : source.root;
             sourceName = source == null ? "Source unavailable" : source.label;
             String path = path(stored.path());
