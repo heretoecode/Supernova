@@ -351,8 +351,14 @@ public class SettingsWorkspaceTest {
         layout();
         assertTrue(fragment.findPreference("favSubLang").isEnabled());
         assertTrue(fragment.findPreference("subtitles_show_full_for_local_audio").isEnabled());
+        // The fonts rows moved to the approved Style tab (settings/08–09), after the live sample and style controls.
+        workspace.open(1, "Subtitle style");
+        layout();
         assertNotNull(tagged("settings.preference.subtitle_fonts_folder_uri"));
         assertNotNull(tagged("settings.preference.subtitle_default_font"));
+        assertNotNull(tagged("settings.subtitle.sample"));
+        assertNotNull(tagged("settings.subtitle.position"));
+        assertEquals("Style", ((TextView)tagged("settings.section.Subtitle style")).getText().toString());
     }
 
     @Test

@@ -457,6 +457,7 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             case "Video & Display": return "tv";
             case "Audio output & tracks": return "audio";
             case "Subtitles": return "sub";
+            case "Subtitle style": return "edit";
             case "Library": return "library";
             case "Library & metadata": return "details";
             case "Home": return "home";
@@ -545,6 +546,9 @@ final class SettingsWorkspace extends LinearLayout implements TopNavigation.Cont
             bindings.clear();
             rebuilding = true;
             body.removeAllViews();
+            // Approved 0.156 Style tab: the live sample and the player's own style controls come first.
+            if (section.equals("Subtitle style"))
+                body.addView(new SubtitleStyleBlock(getContext()), new LayoutParams(-1, -2));
             for (SettingsRegistry.Entry e : candidates) {
                 Preference p = e.resolve(fragment.getPreferenceScreen());
                 Row row = previous.get(e.id);

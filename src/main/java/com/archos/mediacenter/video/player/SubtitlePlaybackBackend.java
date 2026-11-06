@@ -120,17 +120,12 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
             return 0;
         switch (key) {
         case "size":
-            return m.getSize();
         case "colour":
-            return m.getColor();
         case "position":
-            return m.getVerticalPosition();
         case "outline":
-            return m.getOutlineState() ? 1 : 0;
         case "background":
-            return m.getBackgroundState() ? 1 : 0;
         case "opacity":
-            return m.getBackgroundOpacity();
+            return SubtitleStyleControls.get(m, key);
         case "delay":
             return player().subtitlePresentationDelay();
         default:
@@ -247,31 +242,12 @@ final class SubtitlePlaybackBackend implements PlaybackSubtitlePanel.Backend {
         SharedPreferences.Editor prefs = PreferenceManager.getDefaultSharedPreferences(owner).edit();
         switch (key) {
         case "size":
-            m.setSize(value);
-            prefs.putInt(PlayerActivity.KEY_SUBTITLE_SIZE, m.getSize())
-                .putInt(SubtitleManager.KEY_FONT_SIZE_PT, m.getFontSizePt());
-            break;
         case "colour":
-            m.setColor(value);
-            prefs.putInt(PlayerActivity.KEY_SUBTITLE_COLOR, value);
-            break;
         case "position":
-            // The manager saves the new percentage key itself; the old pixel key is left alone (engine hook note).
-            m.setVerticalPosition(value);
-            break;
         case "outline":
-            m.setOutlineState(value != 0);
-            prefs.putBoolean(PlayerActivity.KEY_SUBTITLE_OUTLINE, m.getOutlineState())
-                .putFloat(SubtitleManager.KEY_OUTLINE_WIDTH, m.getOutlineWidth());
-            break;
         case "background":
-            m.setBackgroundState(value != 0);
-            prefs.putBoolean(PlayerActivity.KEY_SUBTITLE_BACKGROUND, m.getBackgroundState())
-                .putInt(SubtitleManager.KEY_BG_MODE, m.getBgMode());
-            break;
         case "opacity":
-            m.setBackgroundOpacity(value);
-            prefs.putInt(PlayerActivity.KEY_SUBTITLE_BG_OPACITY, value);
+            SubtitleStyleControls.set(m, prefs, key, value);
             break;
         case "delay":
             player().setSubtitleDelay(value - get("delay"));
