@@ -105,7 +105,9 @@ Committed 5 Nov afternoon, waiting for the next build (player):
   grouped results, bold typed letters, watched pill, voice)
 - #35/#41 Network & Files landing (Library Health tile with count badge, live Scan now tile, Advanced dropped) and
   Library Scanning wording without duplicate scan buttons
-Still to do (Claude): Network Shares page and Add Connection (#34), Library Scanning/Health full pages (#35),
+Committed 6 Nov 00:07 UTC, in conformance run 42134557197: #34 Put.io service row on Network Shares (signed in as,
+storage, reachable, library sync, Retry) and Test connection on Add Connection (nothing saved; names the field).
+Still to do (Claude): rest of Network Shares (Edit/Test/Remove on saved connections) and Add Connection types (#34), Library Scanning/Health full pages (#35),
 Settings stage 3 (System/About, Where to Watch, Appearance, Audio & Subtitles incl. Vertical Position), Customise Home
 (#29), Fix match (#40), empty states and focus memory (#43), Local Storage grid and menu (#33).
 Codex: the failing tests in `docs/codex/BRIEF_0156_TEST_FIXES.md`.
