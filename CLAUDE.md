@@ -38,6 +38,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   `tools/test_code_layout.py` enforces it; `docs/codex/REFORMAT_QUEUE.txt` lists old files still to reformat (their
   counts may only go down).
 - No pull requests unless the owner asks.
+- **Freedom to rethink options (owner, 6 Nov 2026):** when redesigning, existing choices (from NOVA or earlier
+  Supernova) are a starting point, not a constraint. Add, remove, merge or reword options and settings where it
+  suits (e.g. Sleep timer becomes "Stop playing at" with clock times). Still propose; the owner approves.
 - **Everything new the owner raises (features, bugs, anything) goes into 0.157.** 0.156 is fixed at its 45
   approved items (owner, 5 Nov 2026).
 - **Global look (owner, 5 Nov 2026):**
