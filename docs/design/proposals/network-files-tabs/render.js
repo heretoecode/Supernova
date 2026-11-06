@@ -39,6 +39,8 @@ const I = {
   lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
   more: '<path d="M5 12h.1M12 12h.1M19 12h.1"/>',
   disk: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+  time: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  history: '<path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5"/><path d="M4 4v4.5h4.5"/>',
   eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
 };
 const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray">${[['local', 'Local Storage'], ['shares', 'Network Shares'], ['library', 'Library']]
@@ -46,7 +48,7 @@ const head = (open, focusTab, summary) => `<div class="tabrow"><div class="tray"
   <div class="summary">${summary.map(([v, l]) => `<span>${icon(I[SUMMARY_ICON[l]] || I.info, 32)}<b>${v}</b> ${title(l)}</span>`).join('<i class="dot">·</i>')}</div></div>`;
 const title = l => l.split(' ').map(w => w === 'TB' ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 const SUMMARY_ICON = { devices: 'local', videos: 'film', 'videos here': 'film', free: 'disk', 'in library': 'check',
-  'not added': 'plus', connections: 'shares', reachable: 'test', 'need a look': 'library', '12 min ago': 'scan' };
+  'not added': 'plus', connections: 'shares', reachable: 'test', 'need a look': 'library', '12 min ago': 'scan', 'to check': 'library', sources: 'shares' };
 const bar = (used, total) => `<div class="bar"><i style="width:${Math.round(used / total * 100)}%"></i></div>`;
 // Library / reachability states: one column, same place on every row.
 const S = {
@@ -127,26 +129,32 @@ ${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret">
 <div class="rl p">Port and Folder are optional. For Put.io use <b>webdav.put.io</b> and your Put.io username.
 Test connection checks it without saving anything.</div></div>
 </div></div>`;
-const menuHtml = '<div class="cmenu"><div class="ch">More connection types</div>' +
+const menuHtml = '<div class="cmenu">' +
   [['pc', 'FTP', true], ['lock', 'FTP with TLS', false], ['globe', 'WebDAV without encryption', false]]
     .map(([ic, n, f]) => `<div class="ci ${f ? 'focus' : ''}">${icon(I[ic], 30)}<span>${n}</span></div>`).join('') + '</div>';
 const more = shares(3).replace('class="row add focus"', 'class="row add open"')
   .replace('</div></div>\n<div class="sec">Found on your network</div>', `</div>${menuHtml}</div>\n<div class="sec">Found on your network</div>`);
 
-const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'need a look'], ['scanned', '12 min ago']])}
-<div class="two"><div class="col"><div class="sec">Scanning</div>
-<div class="scanbox"><span class="b focus big">${icon(I.scan, 32)}Scan now</span>
-<div class="sl"><div class="rn">Last scan 12 minutes ago</div><div class="rl">Put.io › Films · 2 min 14 s · 3 new, 1 updated</div></div></div>
-<div class="kv"><span>Automatic scan</span><b>Every hour</b></div><div class="kv"><span>When Supernova opens</span><b>On</b></div>
-<div class="sec small">Recent scans</div>
-<div class="mini"><span>Today 23:28</span><span>Put.io › Films</span><span>3 new · 1 updated</span></div>
-<div class="mini"><span>Today 22:28</span><span>Living-room NAS</span><span>No changes</span></div>
-<div class="mini"><span>Today 21:28</span><span>Backup #1</span><span class="warnc">Stopped: drive removed</span></div></div>
-<div class="col"><div class="sec">Library Health</div>
-<div class="hrow"><span class="ri">${icon(I.folder, 40)}</span><div class="rt"><div class="rn">Missing files</div><div class="rl">In your library but no longer found</div></div><span class="count amber">3</span></div>
-<div class="hrow"><span class="ri">${icon(I.film, 40)}</span><div class="rt"><div class="rn">Couldn't be read</div><div class="rl">Files Supernova could not open</div></div><span class="count amber">2</span></div>
-<div class="hrow"><span class="ri">${icon(I.library, 40)}</span><div class="rt"><div class="rn">Not matched</div><div class="rl">Videos without a film or show</div></div><span class="count">14</span></div>
-</div></div></div>`;
+const pill = t => `<span class="state">${t}</span>`;
+const lrow = (ic, name, line, st, actions, focus) => row(ic, name, line, '', actions, focus).replace('<div class="rs"></div>', `<div class="rs">${pill(st)}</div>`);
+const libRows = focus => `
+<div class="sec first">Scanning</div>
+${lrow('scan', 'Scan now', '12 min ago · 3 new, 1 updated', 'Up to date', [['scan', 'Scan now'], ['history', 'Scan one source']], focus === 0)}
+<div class="sec">Library Health</div>
+${lrow('folder', 'Missing files', 'In your library but no longer found', '3 files', [['open', 'Review'], ['search', 'Find them again']], focus === 1)}
+${lrow('film', "Couldn't be read", 'Files Supernova could not open', '2 files', [['open', 'Review']], focus === 2)}
+${lrow('library', 'Not matched', 'Videos without a film or show', '14 videos', [['open', 'Review'], ['search', 'Fix matches']], focus === 3)}
+<div class="sec">Scan settings</div>
+${lrow('time', 'Automatic scan', 'Checks every source for new videos', 'Every hour', null, focus === 4)}
+${lrow('local', 'When Supernova opens', 'Only if the last scan is over an hour old', 'On', null, focus === 5)}
+<div class="sec">Recent scans</div>
+${lrow('cloud', 'Put.io › Films', 'Today 23:28 · 3 new, 1 updated', 'Finished', null, focus === 6)}
+${lrow('shares', 'Living-room NAS', 'Today 22:28 · 48 s · no changes', 'Finished', null, focus === 7)}
+${lrow('usb', 'Backup #1', 'Today 21:28 · the drive was removed', 'Stopped', null, focus === 8)}`;
+const library = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
+<div class="libclip"><div class="libscroll">${libRows(0)}</div></div></div>`;
+const libraryLower = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
+<div class="libclip"><div class="libscroll" style="margin-top:-560px">${libRows(4)}</div></div></div>`;
 
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
@@ -209,13 +217,15 @@ body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;backgro
 .ch{font-size:24px;color:#B7BFCC;padding:0 14px 10px}
 .ci{display:flex;align-items:center;gap:18px;height:68px;padding:0 18px;border-radius:18px;font-size:29px;font-weight:500}
 .ci.focus{background:#F4F6FB;color:#0B0D12}
+.libclip{position:absolute;left:0;right:0;top:136px;bottom:0;overflow:hidden}
+.summary span,.tab{white-space:nowrap}
 .sw{width:76px;height:40px;border-radius:20px;background:#3a3f48;position:relative}.sw i{position:absolute;top:4px;left:4px;width:32px;height:32px;border-radius:50%;background:#fff}.sw.on{background:#cfd6e2}.sw.on i{left:40px;background:#16181C}`;
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   const pages = [['01-local-storage.png', localPage], ['02-inside-a-folder.png', folder], ['03-folder-grid.png', gridv],
     ['04-network-shares.png', shares(1)], ['05-network-shares-unreachable.png', shares(2)], ['06-network-shares-add.png', shares(3)],
-    ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library],
+    ['07-add-connection.png', types], ['08-add-connection-form.png', form], ['09-library.png', library], ['09b-library-lower.png', libraryLower],
     ['11-add-connection-more.png', more]];
   for (const [f, body] of pages) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });

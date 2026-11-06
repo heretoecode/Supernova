@@ -104,7 +104,10 @@ Items already built or scheduled are left out (see the bottom of this file).
   are: "Backup #1 › Films", "New WebDAV connection") and are signposts, not buttons — Back goes up one level.
   v7 (owner notes 6 Nov): summary words capitalised with a dot between items; More opens a small menu above the
   More button in the More-menu style (heading, icon rows, white focus), and a choice opens its form page like
-  WebDAV's.
+  WebDAV's. The top bar (tabs and summary) is confirmed by the owner; the More menu has no heading.
+  Library tab (v7, to discuss): one full-width list in the same row style — Scan now (Up to date; Scan now ·
+  Scan one source), Library Health (Missing files, Couldn't be read, Not matched, with counts in the pills and
+  Review buttons), Scan settings (Automatic scan, When Supernova opens), Recent scans (last 10). Mock-ups 09, 09b.
 
 ## Parked (owner, 5 Nov 2026) — no version
 - **Supernova screensaver** (approved design, owner notes 0.155 #27, mock-ups `docs/design/proposals/settings/16`–`17`):
