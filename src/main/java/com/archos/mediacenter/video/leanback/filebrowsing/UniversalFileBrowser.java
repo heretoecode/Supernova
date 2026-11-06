@@ -53,6 +53,8 @@ import com.archos.mediacenter.video.leanback.details.VideoDetailsFragment;
 import com.archos.mediacenter.video.leanback.settings.PreviewSettings;
 import com.archos.mediacenter.video.leanback.settings.VideoSettingsActivity;
 import com.archos.mediacenter.video.streaming.putio.PutioAccountController;
+import com.archos.mediacenter.video.streaming.putio.PutioServiceStatus;
+import com.archos.mediacenter.video.streaming.putio.PutioSyncScheduler;
 import com.archos.mediacenter.video.streaming.putio.PutioBrowserController;
 import com.archos.mediacenter.video.utils.PlayUtils;
 import com.archos.mediacenter.video.utils.VideoUtils;
@@ -1340,6 +1342,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         command(title, "Saved locations and indexed roots are distinct from verified connections.", "", () -> {
         });
         centreHeading(title);
+        putioServiceRow();
         if (shares.isEmpty())
             items.addView(SharedThreePanel.text(getContext(), "No network locations saved", 16));
         for (Shortcut source : shares)
@@ -1347,6 +1350,27 @@ public final class UniversalFileBrowser extends LinearLayout {
         centreAction("Add Network Source", this::beginConnection);
         centreAction("Discover Devices", this::discoverDevices);
         centreAction("Network Scanning", this::scanControls);
+    }
+
+    /** Put.io service row: signed in as, storage, reachable, library sync, and Retry when something failed. */
+    private void putioServiceRow() {
+        if (!prefs.getBoolean("supernova_putio_enabled", true))
+            return;
+        PutioServiceStatus status = PutioSyncScheduler.status();
+        String summary = PutioServiceRow.summary(status, System.currentTimeMillis());
+        TextView row = action(PutioServiceRow.title(status) + "\n" + summary, this::putio);
+        row.setTag("semantic:network.item.putio");
+        row.setContentDescription(PutioServiceRow.title(status) + ". " + summary);
+        items.addView(row);
+        SharedThreePanel.divider(items);
+        if (PutioServiceRow.offersRetry(status)) {
+            centreAction("Retry Put.io", () -> {
+                PutioSyncScheduler.retry(getContext());
+                networkShares();
+            });
+        }
+        if (!"robolectric".equals(android.os.Build.FINGERPRINT))
+            PutioSyncScheduler.refresh(getContext());
     }
 
     private void toggleLocal() {
