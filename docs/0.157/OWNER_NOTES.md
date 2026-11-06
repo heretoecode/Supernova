@@ -530,3 +530,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - **Codex:** one brief for all of 0.157, `docs/codex/BRIEF_0157.md` (engine and data for this page and everything
   else agreed for 0.157).
 
+
+## 17. Settings redesign goes into 0.157 (owner, 6 Nov 2026)
+- Settings moves to the flat-page principles (full page, no panel) in 0.157, as Files did. **Design not final yet:**
+  first mock-ups `docs/design/proposals/settings-flat/01`–`05` (five tabs: Playback · Audio & Subtitles · Library ·
+  Accounts · System); open questions: five tabs, and where Where to Watch belongs.
+- Much of the 0.156 Settings work (rows, wording, choices) carries over; the panel goes and the page spreads out.
+- The owner has issues with the current Settings page that must **not** carry over. In the 0.156 review: review what
+  Settings contains, its wording and behaviour; ignore the panel, layout and styling.
