@@ -87,6 +87,11 @@ public class SubtitleFontsFolderSync {
 
     private SubtitleFontsFolderSync() {} // static utility, not instantiated
 
+    private static boolean safeLeafName(String name) {
+        return name != null && !name.isEmpty() && name.indexOf('/') < 0 && name.indexOf('\\') < 0
+                && name.indexOf('\0') < 0 && !name.equals(".") && !name.equals("..");
+    }
+
     private static boolean hasFontExtension(String name) {
         int dot = name.lastIndexOf('.');
         if (dot < 0 || dot == name.length() - 1) return false;
@@ -167,7 +172,7 @@ public class SubtitleFontsFolderSync {
                 if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mime)) continue; // subfolder, skip
                 String name = nameIdx >= 0 ? cursor.getString(nameIdx) : null;
                 String docId = idIdx >= 0 ? cursor.getString(idIdx) : null;
-                if (name == null || docId == null || !hasFontExtension(name)) continue;
+                if (!safeLeafName(name) || docId == null || !hasFontExtension(name)) continue;
                 long size = sizeIdx >= 0 ? cursor.getLong(sizeIdx) : 0L;
                 long lastMod = modIdx >= 0 ? cursor.getLong(modIdx) : 0L;
                 docs.add(new FontDoc(docId, name, size, lastMod));
@@ -221,6 +226,13 @@ public class SubtitleFontsFolderSync {
         for (FontDoc doc : docs) {
             Uri docUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, doc.documentId);
             File destFile = new File(storeDir, doc.name);
+            try {
+                if (!safeLeafName(doc.name)
+                        || !storeDir.getCanonicalFile().equals(destFile.getCanonicalFile().getParentFile()))
+                    continue;
+            } catch (IOException unavailable) {
+                continue;
+            }
             try (InputStream in = resolver.openInputStream(docUri);
                  OutputStream out = new FileOutputStream(destFile)) {
                 if (in == null) {
