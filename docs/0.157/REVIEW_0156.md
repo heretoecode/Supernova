@@ -46,6 +46,14 @@ the player).
 - **P7 No Episodes row on some series.** MobLand shows Chapters and Episodes; Marshals and Mayor of Kingstown (several
   episodes in the season) show only Chapters. On Marshals it seemed to appear briefly, then vanish.
 
+- **P8 Play/pause symbol never changes.** The symbol at the left of the bar (an indicator; OK on the bar plays or
+  pauses, as designed) stays the same whether playing or paused.
+- **P9 Controls vanish the moment play resumes.** Too abrupt: keep them for about three seconds after resuming, then
+  fade.
+- **P10 No seek preview pictures seen** (photos while seeking show none). The switch is Settings › System › Advanced
+  › Seek previews (experimental), on by default. Owner to check the switch and try a local and a Put.io file.
+- Remote checked, as designed: Up reaches Settings, Down the seek bar, Down again the Chapters strip.
+
 ### Ideas and questions (owner), with Claude's view
 - **New panel look on Playback Settings and Download Subtitles:** yes, the 0.157 look (90% #16181C, no outline,
   focused row filled white with black text and icon) covers both (0.157 notes §5).
