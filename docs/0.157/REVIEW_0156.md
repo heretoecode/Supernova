@@ -59,9 +59,10 @@ the player).
   investigate.
 - **P11 Picture in picture does nothing** when chosen. Owner decision: **remove picture in picture completely** in
   0.157 (never needed; awkward in other apps). Noted in `docs/REVISIT_LATER.md` to bring back if ever wanted.
-- **P12 Playback Settings tab memory (decision needed):** to change tab you must go Up to the tabs; Claude's
-  check (#27) is: on Text Size, Up to the tabs, over to Audio, back to Subtitles, Down: does it land on Text Size (skipping the three selection rows)? The owner to choose: back to the
-  remembered row, or always the top of the tab (the older "first control" rule, audit F2).
+- **P12 Playback Settings tab memory — decided (owner):** in panels whose tabs sit at the top and are reached by
+  walking Up through the rows, Down from a tab always goes to the **first row** of that tab. Remembering a row there
+  is pointless (it only remembers the route Up). Memory stays where you jump away directly (closing and reopening a
+  panel, going to the top bar and back). Resolves audit F2 for these panels; undo the 0.156 per-tab row memory.
 - First-play tip: seen, works. Owner: it sits towards the top; should it be centred? Claude: yes, centre it.
 - NOVA's blue "Press UP" box: not seen since the first install, so it was NOVA's first-run notice. Fine.
 - Not yet tested: Still watching?, Sleep timer (running now), auto-next past hidden episodes, Put.io pause (owner
@@ -76,7 +77,7 @@ the player).
   own language; EAC3 = the sound format (Dolby Digital Plus); 5.1 = channels; TEXT = text-based subtitles (not useful:
   drop); SDH = subtitles for the deaf and hard of hearing. Claude's proposal: the name in plain words ("English"),
   then small pills: Audio "Original" "Dolby Digital Plus" "5.1"; Subtitles "Original" "SDH" (or "Forced"). Flag stays.
-  Mock-ups `docs/design/proposals/track-names/01`, `02` (0.157 panel look).
+  Mock-ups `docs/design/proposals/track-names/01`, `02` (0.157 panel look). **Approved by the owner (6 Nov).**
 - **Colours of HUD buttons, time bubble, Chapters/Episodes buttons and Playback Settings:** yes, the 0.157 panel
   look (90% #16181C, no outline, focused item filled white with black text and icon) covers all of them. That is
   already agreed and separate from the page background question (0.157 notes §18).
