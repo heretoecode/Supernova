@@ -38,6 +38,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   `tools/test_code_layout.py` enforces it; `docs/codex/REFORMAT_QUEUE.txt` lists old files still to reformat (their
   counts may only go down).
 - No pull requests unless the owner asks.
+- **Diagnostics before coding (owner, 6 Nov 2026):** whenever the owner gives the go-ahead to code a version, first
+  remind them to send the latest diagnostics report from the Shield, and read it for faults to fix in that version.
 - **Freedom to rethink options (owner, 6 Nov 2026):** when redesigning, existing choices (from NOVA or earlier
   Supernova) are a starting point, not a constraint. Add, remove, merge or reword options and settings where it
   suits (e.g. Sleep timer becomes "Stop playing at" with clock times). Still propose; the owner approves.

@@ -115,3 +115,7 @@ the player).
   to the picture). The age rating shows for the first 6–8 s, then fades; afterwards the block shows with the
   controls. Question for the owner: block stays up for the age-rating moment even if the remote is untouched (Claude:
   yes).
+- **Put.io pause test (owner, 6 Nov):** MobLand (Put.io) paused at 17:51–17:52 UK time (UTC), resumed a few minutes
+  later. Check the diagnostics report around that time for reconnection, sync or buffering problems.
+- Owner on the title block: a logo top left may clash with an age rating top left (why the logo was moved down
+  before). Mock-ups: A (all stacked top left) and B (rating alone top left; logo and information bottom left).
