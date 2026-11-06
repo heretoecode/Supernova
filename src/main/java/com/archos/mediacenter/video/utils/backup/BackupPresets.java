@@ -58,7 +58,8 @@ public final class BackupPresets
     }
 
     /** The caller owns any private-data consent. One edit selects Custom and persists its full selection atomically. */
-    public static synchronized void setIncluded(SharedPreferences preferences, BackupCategory category, boolean included)
+    public static synchronized void setIncluded(SharedPreferences preferences, BackupCategory category,
+                                                boolean included)
     {
         current(preferences);
         Set<BackupCategory> custom = EnumSet.noneOf(BackupCategory.class);
