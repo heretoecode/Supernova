@@ -53,9 +53,11 @@ the player).
   name), the right is what OK does, as on Files. Suggest showing it only on the focused row, to calm the list.
 - **Inline choices instead of ‹ value ›:**
   - Playback speed: yes, five chips: 0.75× · 1× · 1.25× · 1.5× · 2×.
-  - Still watching?: yes: Off · 2 · 3 · 5 episodes.
-  - Play mode: five long labels may not fit the panel's width. Try shortened chips (Single · Folder · Repeat one ·
-    Repeat folder · Binge) in a mock-up; if they do not fit, keep a list.
+  - Play mode: **to explore.** Owner rule: one setting is one row; Left/Right goes through its choices, Up/Down
+    between settings; chips never wrap and a setting is never split across two rows. Find a single-row form (shorter
+    names, fewer choices) or keep a list if it cannot fit.
+  - Still watching?: today it asks after 2, 3 or 5 episodes played untouched. Claude's passing idea: count time
+    untouched instead (also covers films playing on from a folder). To look at in the mock-up stage.
 - **Sleep timer:** drop the extra line and show the stop times as the choices: Off · 17:32 · 18:02 · 18:32 · End of
   episode, updating as the clock moves. Claude supports it; perhaps rename the row "Stop playing at".
 - **Title logo in the same place:** the Preparing playback screen and the HUD put the logo in different places.
@@ -67,4 +69,4 @@ the player).
   a film or episode starts (and after a long pause), then fades: the UK rating (BBFC, e.g. 15, 12A) and its reasons
   where known (e.g. "strong language, violence"). Sits with the title logo. Nothing shown when there is no rating.
   The owner has asked for this before and it never appeared: Codex to check what rating data Supernova stores, why
-  it is missing (likely the wrong country or not saved), and supply rating and reasons per title; Claude draws it.
+  it is missing (likely the wrong country or not saved), and supply rating and reasons per title; Claude draws it. Needs a mock-up first (place beside the logo, size, reasons).
