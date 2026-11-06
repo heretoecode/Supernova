@@ -125,7 +125,7 @@ Items already built or scheduled are left out (see the bottom of this file).
   search field and keyboard on the left, TMDB results with posters on the right ("Best match" pill). Mock-up 14b.
   v11 (owner, 6 Nov): Fix match uses the global keyboard (numbers row, / . @, Shift, #+=, voice, Space, delete,
   Clear) with "what you can search" under it, and is as forgiving as Search: punctuation, capitals and a leading
-  "The" ignored ("oc" finds The O.C.), original titles, one-letter typos, and TMDB, IMDb (tt…), TVDB or Trakt
+  "The" ignored, original titles, one-letter typos, and TMDB, IMDb (tt…), TVDB or Trakt
   numbers. Note: Search looks in the local library; Fix match asks TMDB, which is stricter, so the forgiveness
   (cleaned query, dotted-initials and "The" variants, typo retry) and the Trakt/TVDB number look-ups are engine
   work for Codex when this is built. Trakt has a numeric ID and a slug for every film and show.

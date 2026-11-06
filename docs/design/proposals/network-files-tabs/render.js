@@ -199,10 +199,10 @@ const fmRows = [['Pressure', '2026 · Film', true, '#4b5b2e'], ['Pressure', '201
 const gkeys = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
   ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/'], ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '@'], ['#+=', 'mic', 'Space', '⌫', 'Clear']];
 const keyLabel = k => k === 'mic' ? icon(I.mic, 30) : k;
-const tips = [['search', 'Forgiving', '“oc” finds The O.C.; punctuation and “The” don’t matter'],
-  ['globe', 'Original titles', 'the original-language title works too'],
-  ['edit', 'Small typos', 'one wrong letter still finds it'],
-  ['info', 'ID numbers', 'TMDB, IMDb (tt…), TVDB or Trakt']];
+const tips = [['search', 'Any style', 'capitals, dots and dashes and a leading “The” are ignored'],
+  ['globe', 'Original titles', 'search in the film’s own language if you like'],
+  ['edit', 'Near misses', 'a letter out of place is forgiven'],
+  ['info', 'ID numbers', 'type a TMDB, IMDb, TVDB or Trakt number']];
 const ocRows = [['The O.C.', '2003 · TV series · 4 seasons', true, '#2e4a5b'], ['O.C. Undercover', '2011 · Film', false, '#5b3a2e'], ['OC Life', '2019 · Documentary', false, '#4b5b2e']];
 const fixMatch = `${nav}<div class="page">${head('library', '', [['1,808', 'videos'], ['5', 'to check'], ['3', 'sources']])}
 ${crumbrow(['Not matched', 'Fix match · The.OC.S01E01.mkv'])}
