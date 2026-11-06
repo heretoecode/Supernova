@@ -602,8 +602,11 @@ public final class LocalStorageView extends LinearLayout {
     /** Focuses a row, waiting (a few frames at most) for the list to lay it out. */
     private void focusPosition(int position) {
         RecyclerView.ViewHolder holder = list.findViewHolderForAdapterPosition(position);
+        String actionTag = lastActionTag;
+        int actionRow = lastActionRow;
         if (holder != null && holder.itemView.isShown()) {
             holder.itemView.requestFocus();
+            focusAction(holder.itemView, position, actionTag, actionRow);
             return;
         }
         layout.scrollToPositionWithOffset(position, dp(40));
@@ -616,12 +619,26 @@ public final class LocalStorageView extends LinearLayout {
                 if (closed || token != generation)
                     return;
                 RecyclerView.ViewHolder later = list.findViewHolderForAdapterPosition(position);
-                if (later != null && later.itemView.isShown())
+                if (later != null && later.itemView.isShown()) {
                     later.itemView.requestFocus();
-                else if (tries++ < 8)
+                    focusAction(later.itemView, position, actionTag, actionRow);
+                } else if (tries++ < 8)
                     list.postOnAnimation(this);
             }
         });
+    }
+
+    /** The button last used on a row, so a reloaded row gives focus back to it (focus audit F9). */
+    private String lastActionTag;
+    private int lastActionRow = -1;
+
+    private void focusAction(View rowView, int position, String actionTag, int actionRow) {
+        if (actionTag == null || position != actionRow || !(rowView instanceof Row))
+            return;
+        showButtons((Row) rowView, true);
+        View button = rowView.findViewWithTag(actionTag);
+        if (button != null && button.isShown())
+            button.requestFocus();
     }
 
     private void rememberFocus() {
@@ -1565,6 +1582,13 @@ public final class LocalStorageView extends LinearLayout {
         if (rowView instanceof Row) {
             showButtons((Row)rowView, true);
             rowView.setActivated(newFocus != rowView);
+            Object tag = newFocus.getTag();
+            if (tag instanceof String && ((String) tag).startsWith("local.row.action.")) {
+                lastActionTag = (String) tag;
+                lastActionRow = position;
+            } else if (newFocus == rowView) {
+                lastActionTag = null;
+            }
         }
     }
 

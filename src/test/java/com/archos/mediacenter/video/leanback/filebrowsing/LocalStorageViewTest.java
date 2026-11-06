@@ -222,6 +222,23 @@ public class LocalStorageViewTest {
     }
 
     @Test
+    public void aReloadedRowGivesFocusBackToTheButtonYouUsed() throws Exception {
+        Uri folder = seed(drive, "Film.mkv");
+        view.open(folder);
+        settle();
+        View row = view.findViewWithTag(Uri.fromFile(new File(drive, "Film.mkv")).toString());
+        assertNotNull(row);
+        assertTrue(row.requestFocus());
+        settle();
+        View action = row.findViewWithTag("local.row.action.play");
+        assertTrue(action.requestFocus());
+        ReflectionHelpers.callInstanceMethod(view, "rememberFocus");
+        ReflectionHelpers.callInstanceMethod(view, "restoreFocus");
+        settle();
+        assertTrue(action.hasFocus());
+    }
+
+    @Test
     public void backGoesUpOneFolderThenToTheDrivesWithFocusOnWhereYouCameFrom() throws Exception {
         File movies = new File(drive, "Movies");
         assertTrue(movies.mkdirs());
