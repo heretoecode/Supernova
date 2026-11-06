@@ -1,5 +1,7 @@
 package com.archos.mediacenter.video.metadata;
 
+import com.archos.mediaprovider.video.PersonalVideoActions;
+import com.archos.mediaprovider.video.MissingMediaActions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -23,6 +25,52 @@ import org.robolectric.annotation.SQLiteMode;
 @SQLiteMode(SQLiteMode.Mode.NATIVE)
 public class FixMatchRepositoryTest
 {
+    @Test public void markingPersonalDuringRemotePreparationPreventsTheFinalMetadataWrite() throws Exception
+    {
+        CanonicalMatchProviderTest fixture = new CanonicalMatchProviderTest();
+        fixture.setup();
+        Application app = RuntimeEnvironment.getApplication();
+        try
+        {
+            FixMatchRepository repository = new FixMatchRepository(app,
+                (path, query) -> new JSONObject("{id:789,title:'Fresh'}"),
+                (context, requested, file) -> {
+                    try
+                    {
+                        PersonalVideoActions.set(app,
+                            new MissingMediaActions.StoredFile(10, "file:///one.mkv", -1),
+                            true);
+                    }
+                    catch (Exception failure)
+                    {
+                        throw new java.io.IOException("Could not mark the fixture personal", failure);
+                    }
+                    MovieTags tags = new MovieTags();
+                    tags.setOnlineId(789);
+                    tags.setTitle("Fresh");
+                    return new ScrapeDetailResult(tags, true, null, ScrapeStatus.OKAY, null);
+                });
+            var candidate = repository.search("tmdb:movie:789", "all", "movie", 123).get(0);
+            org.junit.Assert.assertThrows(java.io.IOException.class,
+                () -> repository.apply(10, candidate, -1, -1, () -> false));
+            try (VideoOpenHelper helper = new VideoOpenHelper(app);
+                 var row = helper.getReadableDatabase().rawQuery(
+                     "SELECT bookmark,Archos_traktSeen,m_online_id,Supernova_personalVideo FROM video WHERE _id=10",
+                     null))
+            {
+                assertTrue(row.moveToFirst());
+                assertEquals(4444, row.getLong(0));
+                assertEquals(1, row.getInt(1));
+                assertEquals(123, row.getLong(2));
+                assertEquals(1, row.getInt(3));
+            }
+        }
+        finally
+        {
+            fixture.close();
+        }
+    }
+
     @Test public void exactIdCandidateAppliesOwnedMetadataWithoutChangingWatchedOrProgress() throws Exception
     {
         CanonicalMatchProviderTest fixture = new CanonicalMatchProviderTest();
@@ -50,7 +98,8 @@ public class FixMatchRepositoryTest
             try (
                 VideoOpenHelper helper = new VideoOpenHelper(app);
                 var rows = helper.getReadableDatabase().rawQuery(
-                    "SELECT bookmark,Archos_lastTimePlayed,Archos_traktSeen,m_online_id FROM video WHERE _id=10", null))
+                    "SELECT bookmark,Archos_lastTimePlayed,Archos_traktSeen,m_online_id FROM video WHERE _id=10",
+                     null))
             {
                 assertTrue(rows.moveToFirst());
                 assertEquals(4444, rows.getLong(0));

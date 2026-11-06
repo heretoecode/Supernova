@@ -1,6 +1,9 @@
 package com.archos.mediacenter.video.streaming.putio;
 
 import android.content.Context;
+import android.net.Uri;
+import com.archos.mediaprovider.video.SupernovaLibraryPolicy;
+import java.util.ArrayList;
 import com.archos.mediacenter.video.scanning.ScanActivitySignal;
 import android.os.SystemClock;
 import androidx.preference.PreferenceManager;
@@ -29,11 +32,11 @@ public final class PutioSyncScheduler
     }
     public static void refresh(Context context)
     {
-        start(context, "manual", false);
+        start(context, "manual", false, null);
     }
     public static void retry(Context context)
     {
-        start(context, "manual", true);
+        start(context, "manual", true, null);
     }
     public static synchronized void stop()
     {
@@ -51,9 +54,17 @@ public final class PutioSyncScheduler
     }
     public static void request(Context context, String origin)
     {
-        start(context, origin, true);
+        start(context, origin, true, null);
     }
-    private static synchronized void start(Context context, String origin, boolean sync)
+    /** Main-thread safe: only the exact saved API-owned source is admitted; no account/folder guessing. */
+    public static void requestSource(Context context, Uri source)
+    {
+        if (source == null)
+            throw new IllegalArgumentException("Put.io source required");
+        start(context, "manual", true, source);
+    }
+
+    private static synchronized void start(Context context, String origin, boolean sync, Uri source)
     {
         String trigger =
             Arrays.asList("manual", "startup", "resume", "scheduled").contains(origin) ? origin : "unknown";
@@ -62,9 +73,10 @@ public final class PutioSyncScheduler
         cancelled = false;
         ScanActivitySignal.LIBRARY.set("putio_sync", sync);
         Context app = context.getApplicationContext();
+        LibraryScanController.install(app);
+        SourceScan chosen = source == null ? null : new SourceScan(source);
         try
         {
-            LibraryScanController.install(app);
             StreamingRepository.IO.submit(() -> {
                 try
                 {
@@ -89,7 +101,7 @@ public final class PutioSyncScheduler
                                 throw new InterruptedException();
                         }
                         if (sync)
-                            sync(app, trigger, client);
+                            sync(app, trigger, client, source, chosen);
                         else
                             STATUS.account(client.account());
                     }
@@ -101,6 +113,8 @@ public final class PutioSyncScheduler
                 }
                 finally
                 {
+                    if (chosen != null)
+                        chosen.close();
                     synchronized (PutioSyncScheduler.class)
                     {
                         activeClient = null;
@@ -116,10 +130,31 @@ public final class PutioSyncScheduler
             BUSY.set(false);
             ScanActivitySignal.LIBRARY.set("putio_sync", false);
             STATUS.failed(unavailable);
+            if (chosen != null)
+                chosen.close();
         }
     }
     /** Runs on the owning worker so transport operations inherit this sync's correlation. */
     static void sync(Context app, String trigger, PutioReadClient client)
+    {
+        sync(app, trigger, client, null);
+    }
+
+    static void sync(Context app, String trigger, PutioReadClient client, Uri selected)
+    {
+        SourceScan chosen = selected == null ? null : new SourceScan(selected);
+        try
+        {
+            sync(app, trigger, client, selected, chosen);
+        }
+        finally
+        {
+            if (chosen != null)
+                chosen.close();
+        }
+    }
+
+    private static void sync(Context app, String trigger, PutioReadClient client, Uri selected, SourceScan chosen)
     {
         if (!enabled(app))
             return;
@@ -138,33 +173,37 @@ public final class PutioSyncScheduler
             {
                 scopes = store.scopes(account.id);
             }
+            if (selected != null)
+            {
+                scopes = selectScopes(scopes, selected);
+                if (scopes.isEmpty())
+                    throw new IllegalArgumentException("Put.io source is not saved with API ownership");
+            }
             int synced = 0, review = 0;
             for (PutioAssociationStore.Scope scope : scopes)
             {
                 checkInterrupted();
                 if (scope.ownership != PutioAssociationStore.Ownership.API)
                     continue;
-                String batch = UUID.randomUUID().toString();
+                SourceScan scan = chosen == null ? new SourceScan(scope.source) : chosen;
                 LibraryScanController.sourceName(scope.source, "Put.io › " + (scope.source.getLastPathSegment() == null
                                                                                   ? "Files"
                                                                                   : scope.source.getLastPathSegment()));
-                LibraryScanController.sourceEvent(batch, scope.source, "started", 0, -1, 0, 0, 0, null);
+                scan.event("started", 0, -1, 0, 0, 0, null);
                 PutioSync.Review result;
                 try
                 {
                     PutioSync.Review fetched = PutioSync.fetch(app, client, account.id, scope.folderId, scope.source);
                     checkInterrupted();
                     int count = fetched.snapshot.files().size();
-                    LibraryScanController.sourceEvent(batch, scope.source, "indexing", count, count, 0, 0, 0, null);
+                    scan.event("indexing", count, count, 0, 0, 0, null);
                     result = PutioSync.apply(app, fetched, Collections.emptyMap());
                     checkInterrupted();
-                    LibraryScanController.sourceEvent(batch, scope.source, "complete", count, count,
-                                                      result.newlyImported(), 0, -1, null);
+                    scan.event("complete", count, count, result.newlyImported(), 0, -1, null);
                 }
                 catch (Exception failure)
                 {
-                    LibraryScanController.sourceEvent(batch, scope.source,
-                                                      Thread.currentThread().isInterrupted() ? "cancelled" : "failed",
+                    scan.event(Thread.currentThread().isInterrupted() ? "cancelled" : "failed",
                                                       0, -1, -1, -1, -1,
                                                       failure instanceof PutioReadClient.Unavailable
                                                           ? ((PutioReadClient.Unavailable)failure).reason.name()
@@ -205,6 +244,47 @@ public final class PutioSyncScheduler
             Diagnostics.finishOperation(operation, "putio_sync", started);
         }
     }
+    static List<PutioAssociationStore.Scope> selectScopes(List<PutioAssociationStore.Scope> saved,
+                                                         Uri selected)
+    {
+        ArrayList<PutioAssociationStore.Scope> result = new ArrayList<>();
+        String key = SupernovaLibraryPolicy.canonical(selected);
+        for (PutioAssociationStore.Scope scope : saved)
+            if (scope.ownership == PutioAssociationStore.Ownership.API &&
+                SupernovaLibraryPolicy.canonical(scope.source).equals(key))
+                result.add(scope);
+        return List.copyOf(result);
+    }
+
+    /** One selected source owns its terminal event even if account lookup/token/queue admission fails. */
+    private static final class SourceScan implements AutoCloseable
+    {
+        private final Uri source;
+        private final String batch = UUID.randomUUID().toString();
+        private boolean terminal;
+
+        SourceScan(Uri source)
+        {
+            this.source = source;
+            event("queued", 0, -1, 0, 0, 0, null);
+        }
+
+        synchronized void event(String phase, long checked, long total, long added, long removed, long updated,
+                                String reason)
+        {
+            if (terminal)
+                return;
+            terminal = phase.equals("complete") || phase.equals("cancelled") || phase.equals("failed");
+            LibraryScanController.sourceEvent(batch, source, phase, checked, total, added, removed, updated, reason);
+        }
+
+        @Override public void close()
+        {
+            event(Thread.currentThread().isInterrupted() ? "cancelled" : "failed", 0, -1, -1, -1, -1,
+                  "unavailable");
+        }
+    }
+
     private static boolean enabled(Context context)
     {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("supernova_putio_enabled", true);

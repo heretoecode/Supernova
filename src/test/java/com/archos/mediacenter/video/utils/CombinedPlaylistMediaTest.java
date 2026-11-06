@@ -22,6 +22,7 @@ public class CombinedPlaylistMediaTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
             var db = helper.getWritableDatabase();
@@ -145,6 +146,7 @@ public class CombinedPlaylistMediaTest {
 
     @Test
     public void absentMediaStoreNeverCreatedByPendingPlaylistPreparationOrRecovery() throws Exception {
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         JSONObject before = MediaStateRecovery.capture(app, false, false, true);
         var prepared = PlaylistStateRecovery.prepare(before.getJSONObject("playlists"), payload(), false);

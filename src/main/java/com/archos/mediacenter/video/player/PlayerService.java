@@ -72,6 +72,7 @@ import com.archos.mediacenter.video.browser.adapters.object.Episode;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.diagnostics.Diagnostics;
+import com.archos.mediacenter.video.diagnostics.DiagnosticRedactor;
 import com.archos.mediacenter.video.leanback.HeroPlaybackEligibility;
 import com.archos.mediacenter.video.leanback.PreviewLibraryLoader;
 import com.archos.mediacenter.video.leanback.PreviewSeriesJourney;
@@ -324,6 +325,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private volatile SeekThumbnails seekThumbnails;
     private boolean thumbnailForeground = true, thumbnailPip, thumbnailBuffering, thumbnailSeeking;
     private long bufferingStarted;
+    private Runnable nativeFrameSampling;
 
     /** UI obtains this source for scrub/part pictures; it owns no decoder or disk work. */
     public SeekThumbnails seekThumbnails()
@@ -333,6 +335,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private void startSeekThumbnails()
     {
+        startNativeFrameSampling();
         if (seekThumbnails != null || mUri == null || mPlayer == null || mPlayer.getDuration() <= 0)
             return;
         try
@@ -389,8 +392,37 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                  mPlayerState == PlayerState.PLAYING);
     }
 
+    private void startNativeFrameSampling()
+    {
+        if (nativeFrameSampling != null || mPlayer == null || mHandler == null)
+            return;
+        Player owner = mPlayer;
+        NativeFrameMonitor monitor = new NativeFrameMonitor(Diagnostics::event, delta -> {
+            SeekThumbnails thumbnails = seekThumbnails;
+            if (thumbnails != null)
+                thumbnails.droppedFrames(delta);
+        });
+        nativeFrameSampling = new Runnable()
+        {
+            @Override public void run()
+            {
+                if (nativeFrameSampling != this || mPlayer != owner)
+                    return;
+                monitor.sample(owner.nativeFrameMetrics(), owner.initializedNativeDecoder(),
+                               android.os.SystemClock.elapsedRealtime());
+                if (nativeFrameSampling == this)
+                    mHandler.postDelayed(this, 5000);
+            }
+        };
+        mHandler.post(nativeFrameSampling);
+    }
+
     private void closeSeekThumbnails(boolean watched)
     {
+        Runnable sampling = nativeFrameSampling;
+        nativeFrameSampling = null;
+        if (sampling != null && mHandler != null)
+            mHandler.removeCallbacks(sampling);
         SeekThumbnails old = seekThumbnails;
         seekThumbnails = null;
         if (old != null)
@@ -461,8 +493,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private boolean mPreferOriginalAudioTrack;
     private boolean mDestroyed;
     private Runnable mAutoSaveTask;
-    private CountDownLatch mSubtitlesReadyLatch = null;
-    private int mSourceRequestGeneration;
+    private volatile CountDownLatch mSubtitlesReadyLatch = null;
+    private volatile int mSourceRequestGeneration;
     private static final long SUBTITLE_ENUMERATION_TIMEOUT_MS =
         5000; // 5 second timeout for subtitle enumeration before starting video
 
@@ -516,11 +548,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // reset to nothing
         mNextUri = null;
         mNextVideoId = -1;
-        if (mUpdateNextTask != null)
-        {
-            mUpdateNextTask.cancel(false);
-            mUpdateNextTask.setListener(null);
-        }
+        cancelNextLookup();
         if (binge && mPreferences.getBoolean("try_new_ui", false) && mVideoInfo != null && mVideoInfo.isShow &&
             mVideoInfo.id == mVideoId)
         {
@@ -542,14 +570,20 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                                                  ? mIntent.getSerializableExtra(VIDEO, Video.class)
                                                  : (Video)mIntent.getSerializableExtra(VIDEO),
                                              mUri, null, -1, mIntent.getLongExtra(PLAYLIST_ID, -1));
+        final UpdateNextTask owner = mUpdateNextTask;
+        final Uri source = mUri;
+        final int generation = mSourceRequestGeneration;
         if (!sync)
         {
             // seems to be always the case in the calls
             mUpdateNextTask.setListener(new UpdateNextTask.Listener() {
                 @Override public void onResult(Uri uri, long id)
                 {
+                    if (mDestroyed || owner != mUpdateNextTask || generation != mSourceRequestGeneration ||
+                        !Objects.equals(source, mUri))
+                        return;
                     if (log.isDebugEnabled())
-                        log.debug("updateNextVideo: UpdateNextTask onResult: next video and id {}, id: {}", uri, id);
+                        log.debug("updateNextVideo: next video {} id {}", logUri(uri), id);
                     mNextUri = uri;
                     mNextVideoId = id;
                     mUpdateNextTask = null;
@@ -563,14 +597,16 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             UpdateNextTask.Result result = null;
             try
             {
-                result = mUpdateNextTask.get();
+                result = owner.get();
             }
             catch (InterruptedException e)
             {
             }
-            catch (ExecutionException e)
+            catch (ExecutionException | java.util.concurrent.CancellationException e)
             {
             }
+            if (owner != mUpdateNextTask || generation != mSourceRequestGeneration || !Objects.equals(source, mUri))
+                return;
             if (result != null)
             {
                 mNextUri = result.uri;
@@ -596,8 +632,22 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
+    private void cancelNextLookup()
+    {
+        UpdateNextTask obsolete = mUpdateNextTask;
+        mUpdateNextTask = null;
+        if (obsolete != null)
+        {
+            obsolete.setListener(null);
+            obsolete.cancel(false);
+        }
+    }
+
     public void setPlayMode(int newPlaymode, boolean wait)
     {
+        cancelNextLookup();
+        mNextUri = null;
+        mNextVideoId = -1;
         mPlayMode = newPlaymode;
         if (log.isDebugEnabled())
             log.debug("setPlaymode: new Playmode {}", newPlaymode);
@@ -727,6 +777,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         {
             return;
         }
+        cancelNextLookup();
+        invalidateSubtitlePreparation();
         firstTimeAudioCalled = true;
         firstTimeSubCalled = true;
         if (log.isDebugEnabled())
@@ -788,7 +840,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             PlaybackResumePolicy.isPausedSession(userPausedVideo, sessionPosition, pausedUri, mUri.toString());
         mPlayOnResume = !pausedSession;
         if (log.isDebugEnabled())
-            log.debug("PlayerService.onStart: pausedSession={} pausedUri={} uri={}", pausedSession, pausedUri, mUri);
+            log.debug("PlayerService.onStart: pausedSession={} pausedUri={} uri={}", pausedSession,
+                      logUri(pausedUri), logUri(mUri));
 
         boolean continuingSession = PlaybackResumePolicy.isContinuingLaunch(
             Objects.equals(mPlaybackSession.uri, mUri), mPlaybackSession.launchGeneration, launchGeneration);
@@ -806,6 +859,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         if (!continuingSession)
         {
             ++mSourceRequestGeneration;
+            mIntroSegments = null;
+            mIntroDbFetchedUri = null;
             mPlaybackSession.reset(mUri, launchGeneration);
         }
         PlaybackResumePolicy.StartupSource startupSource = PlaybackResumePolicy.chooseStartupSource(
@@ -832,7 +887,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             break;
         }
         if (log.isDebugEnabled())
-            log.debug("onStart() {}", mUri);
+            log.debug("onStart() {}", logUri(mUri));
         mStreamingUri = IntentCompat.getParcelableExtra(intent, KEY_STREAMING_URI, Uri.class);
         if (mPlayerFrontend != null)
             mPlayerFrontend.setUri(mUri, mStreamingUri);
@@ -881,7 +936,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (correctedUri != null)
             {
                 if (log.isDebugEnabled())
-                    log.debug("onStart: correctedUri {}", correctedUri);
+                    log.debug("onStart: correctedUri {}", logUri(correctedUri));
                 mUri = correctedUri;
             }
         }
@@ -890,8 +945,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
         // store file that is playing: this is too soon at this point because information is not available do it later in onStreamingUriOK
         if (log.isDebugEnabled())
-            log.debug("onStart videoUri {}, videoId {}, mVideoInfo.id={}, mVideoInfo.uri={}", mUri, mVideoId,
-                      (mVideoInfo != null ? mVideoInfo.id : "null"), (mVideoInfo != null ? mVideoInfo.uri : "null"));
+            log.debug("onStart videoUri {}, videoId {}, mVideoInfo.id={}, mVideoInfo.uri={}", logUri(mUri), mVideoId,
+                      (mVideoInfo != null ? mVideoInfo.id : "null"),
+                      logUri(mVideoInfo != null ? mVideoInfo.uri : null));
         //CustomApplication.setLastVideoPlayedId(mVideoId);
         //CustomApplication.setLastVideoPlayedUri(mUri);
 
@@ -1062,10 +1118,15 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             log.debug("selectInitialResumePosition: source={} position={}", source, position);
     }
 
+    private static String logUri(Uri uri)
+    {
+        return uri == null ? "null" : DiagnosticRedactor.clean(uri.toString());
+    }
+
     private void onDataUriOK()
     {
         if (log.isDebugEnabled())
-            log.debug("onDataUriOK {}", mUri);
+            log.debug("onDataUriOK {}", logUri(mUri));
         mCallOnDataUriOKWhenVideoInfoIsSet = false;
         //we check if we have a streaming uri, if we don't, streaming Uri must be equal to mUri
         if (mStreamingUri == null)
@@ -1075,10 +1136,14 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         //streamingUri shouldn't start by upnp otherwise player won't be able to play it
         if ("upnp".equals(mStreamingUri.getScheme()))
         {
+            final Uri source = mUri;
+            final int generation = mSourceRequestGeneration;
             StreamUriFinder streamUriFinder = new StreamUriFinder(mStreamingUri, this);
             streamUriFinder.setListener(new StreamUriFinder.Listener() {
                 @Override public void onUriFound(Uri uri)
                 {
+                    if (mDestroyed || generation != mSourceRequestGeneration || !Objects.equals(source, mUri))
+                        return;
                     mStreamingUri = uri;
                     onStreamingUriOK();
                 }
@@ -1095,16 +1160,32 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             onStreamingUriOK();
     }
 
+    private void invalidateSubtitlePreparation()
+    {
+        CountDownLatch old = mSubtitlesReadyLatch;
+        mSubtitlesReadyLatch = null;
+        mIsPreparingSubs = false;
+        if (old != null)
+            old.countDown();
+    }
+
+    private boolean currentSubtitlePreparation(Uri source, CountDownLatch ready)
+    {
+        return !mDestroyed && ready == mSubtitlesReadyLatch && Objects.equals(source, mUri);
+    }
+
     private void prepareSubs()
     {
         if (log.isDebugEnabled())
-            log.debug("prepareSubs: checking cache for mUri={}", mUri);
+            log.debug("prepareSubs: checking cache for mUri={}", logUri(mUri));
         if (!mIsPreparingSubs)
         {
             mIsPreparingSubs = true;
             // Initialize latch to synchronize subtitle enumeration with video playback
             // This ensures video doesn't start until subtitles are enumerated
             mSubtitlesReadyLatch = new CountDownLatch(1);
+            final CountDownLatch ready = mSubtitlesReadyLatch;
+            final Uri preparing = mUri;
 
             // Only use cache for local files. Remote files (SMB, FTP, etc.) need to be copied locally
             // by privatePrefetchSub() before AVOS can access them. Skipping this causes subtitles to disappear.
@@ -1120,7 +1201,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             else
             {
                 if (log.isDebugEnabled())
-                    log.debug("prepareSubs: skipping cache for remote file (requires local copy): {}", mUri);
+                    log.debug("prepareSubs: skipping cache for remote file (requires local copy): {}", logUri(mUri));
             }
 
             if (cachedFiles != null)
@@ -1164,30 +1245,37 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             SubtitleManager subtitleManager = new SubtitleManager(this, new SubtitleManager.Listener() {
                 @Override public void onAbort()
                 {
+                    if (!currentSubtitlePreparation(preparing, ready))
+                        return;
                     mIsPreparingSubs = false;
                     if (log.isDebugEnabled())
                         log.debug("prepareSubs: onAbort - signaling subtitles ready latch");
                     if (mSubtitlesReadyLatch != null)
                     {
-                        mSubtitlesReadyLatch.countDown();
+                        ready.countDown();
                     }
                 }
 
                 @Override public void onError(Uri uri, Exception e)
                 {
+                    if (!currentSubtitlePreparation(preparing, ready))
+                        return;
                     mIsPreparingSubs = false;
                     if (log.isDebugEnabled())
                         log.debug("prepareSubs: onError - signaling subtitles ready latch");
                     if (mSubtitlesReadyLatch != null)
                     {
-                        mSubtitlesReadyLatch.countDown();
+                        ready.countDown();
                     }
                 }
 
                 @Override public void onSuccess(Uri uri)
                 {
+                    if (!currentSubtitlePreparation(preparing, ready))
+                        return;
                     if (log.isDebugEnabled())
-                        log.debug("prepareSubs: onSuccess request player to check subs if {} = {}", mUri, uri);
+                        log.debug("prepareSubs: onSuccess request player to check subs if {} = {}",
+                                  logUri(mUri), logUri(uri));
                     mIsPreparingSubs = false;
                     if (mUri.equals(uri))
                     {
@@ -1214,18 +1302,20 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                         log.debug("prepareSubs: onSuccess - signaling subtitles ready latch");
                     if (mSubtitlesReadyLatch != null)
                     {
-                        mSubtitlesReadyLatch.countDown();
+                        ready.countDown();
                     }
                 }
 
                 @Override public void onNoSubtitlesFound(Uri uri)
                 {
+                    if (!currentSubtitlePreparation(preparing, ready))
+                        return;
                     mIsPreparingSubs = false;
                     if (log.isDebugEnabled())
                         log.debug("prepareSubs: onNoSubtitlesFound - signaling subtitles ready latch");
                     if (mSubtitlesReadyLatch != null)
                     {
-                        mSubtitlesReadyLatch.countDown();
+                        ready.countDown();
                     }
                 }
             });
@@ -1634,6 +1724,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     {
         closeSeekThumbnails(mPlaybackSession.completed);
         ++mSourceRequestGeneration;
+        cancelNextLookup();
+        invalidateSubtitlePreparation();
         if (log.isDebugEnabled())
             log.debug("stopAndSaveVideoState");
         if (mIndexHelper != null)
@@ -1648,12 +1740,6 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 stopTrakt();
             }
             saveVideoStateIfReady();
-            if (mUpdateNextTask != null)
-            {
-                mUpdateNextTask.cancel(false);
-                mUpdateNextTask.setListener(null);
-                mUpdateNextTask = null;
-            }
             if (PERIODIC_BOOKMARK_SAVE)
                 mHandler.removeCallbacks(mAutoSaveTask);
             if (mAutoSkipTask != null)
@@ -2160,7 +2246,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     {
         if (log.isDebugEnabled())
             log.debug("setVideoInfo: videoInfo.id={}, videoInfo.uri={}", (videoInfo != null ? videoInfo.id : "null"),
-                      (videoInfo != null ? videoInfo.uri : "null"));
+                      logUri(videoInfo != null ? videoInfo.uri : null));
         mVideoInfo = videoInfo;
         try
         {
@@ -2209,6 +2295,10 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     @Override public void onDestroy()
     {
+        mDestroyed = true;
+        ++mSourceRequestGeneration;
+        cancelNextLookup();
+        invalidateSubtitlePreparation();
         closeSeekThumbnails(mPlaybackSession.completed);
         if (playbackLimits != null)
         {
@@ -2353,16 +2443,13 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         final Uri uri = mVideoInfo.uri;
         if (uri == null)
             return;
-        // If already fetched and cached, simply notify the frontend so the UI updates
-        if (mIntroSegments != null)
+        // Cache and in-flight ownership belong to this exact video.
+        if (uri.equals(mIntroDbFetchedUri))
         {
-            if (mPlayerFrontend != null)
+            if (mIntroSegments != null && mPlayerFrontend != null)
                 mPlayerFrontend.onIntroDbReady();
             return;
         }
-        // already fetched (or fetch in flight) for this video
-        if (uri.equals(mIntroDbFetchedUri))
-            return;
         mIntroDbFetchedUri = uri;
         mIntroSegments = null; // drop any stale data from the previous video
         mLastAutoSkippedEndMs = -1;
@@ -2379,38 +2466,38 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
         if (log.isDebugEnabled())
             log.debug("fetchIntroDbIfNeeded: querying {}", query);
+        final int generation = mSourceRequestGeneration;
         new Thread("IntroDbFetch") {
             @Override public void run()
             {
                 long started = android.os.SystemClock.elapsedRealtime();
-                IntroSegments segments = IntroDbManager.fetch(query);
+                IntroSegments segments = fetchIntroSegments(query);
                 int count = 0;
                 if (segments != null)
                     for (IntroSegments.Type type : IntroSegments.Type.values())
                         count += segments.get(type).size();
                 Diagnostics.event("introdb_lookup", "hit", count > 0, "segments", count, "duration_ms",
                                   android.os.SystemClock.elapsedRealtime() - started);
-                if (uri.equals(mIntroDbFetchedUri))
-                {
+                mHandler.post(() -> {
+                    if (mDestroyed || generation != mSourceRequestGeneration || !Objects.equals(uri, mUri) ||
+                        !uri.equals(mIntroDbFetchedUri))
+                        return;
                     mIntroSegments = segments;
-                    if (log.isDebugEnabled())
-                        log.debug("fetchIntroDbIfNeeded: stored {}", segments);
                     if (segments != null)
                     {
-                        showIntroDbDebugToast(segments.toDebugString(introLabels(getApplicationContext())));
-                        mHandler.post(() -> {
-                            if (mPlayerFrontend != null)
-                                mPlayerFrontend.onIntroDbReady();
-                        });
+                        if (log.isTraceEnabled())
+                            showIntroDbDebugToast(segments.toDebugString(introLabels(getApplicationContext())));
+                        if (mPlayerFrontend != null)
+                            mPlayerFrontend.onIntroDbReady();
                     }
-                }
-                else
-                {
-                    if (log.isDebugEnabled())
-                        log.debug("fetchIntroDbIfNeeded: video changed, dropping result");
-                }
+                });
             }
         }.start();
+    }
+
+    IntroSegments fetchIntroSegments(IntroDbQueryParams query)
+    {
+        return IntroDbManager.fetch(query);
     }
 
     /**
@@ -2765,7 +2852,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
             if (mNextUri != null)
             {
                 if (log.isDebugEnabled())
-                    log.debug("onCompletion: we have a new video {}", mNextUri);
+                    log.debug("onCompletion: we have a new video {}", logUri(mNextUri));
                 stopAndSaveVideoState();
                 if (mPlayerFrontend != null)
                 {
@@ -2863,6 +2950,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     public void previewCancelAutoNext()
     {
+        cancelNextLookup();
         mNextUri = null;
         mNextVideoId = -1;
     }
@@ -3737,7 +3825,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         // Cache the AVOS metadata result for future playback within 10 second TTL
         SubtitleManager.cacheProcessedMetadata(mUri, vMetadata);
         if (log.isDebugEnabled())
-            log.debug("onSubtitleMetadataUpdated: cached AVOS metadata for {}", mUri);
+            log.debug("onSubtitleMetadataUpdated: cached AVOS metadata for {}", logUri(mUri));
     }
 
     @Override public void onSubtitleTrackSelectionCompleted(int track, boolean success)

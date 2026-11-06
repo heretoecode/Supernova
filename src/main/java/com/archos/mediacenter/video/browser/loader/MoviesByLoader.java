@@ -55,7 +55,8 @@ public abstract class MoviesByLoader extends CursorLoader implements CompatAndSD
     abstract protected String getSelection(Context context);
 
     protected String getCommonSelection() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(" AND " +
+            com.archos.mediaprovider.video.PersonalVideoActions.VISIBLE);
 
         if (LoaderUtils.mustHideUserHiddenObjects()) {
             sb.append(" AND "+LoaderUtils.HIDE_USER_HIDDEN_FILTER);

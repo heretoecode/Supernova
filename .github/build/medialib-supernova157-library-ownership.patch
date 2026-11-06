@@ -1,0 +1,2193 @@
+diff --git a/src/com/archos/mediacenter/filecoreextension/upnp2/UpnpServiceManager.java b/src/com/archos/mediacenter/filecoreextension/upnp2/UpnpServiceManager.java
+--- a/src/com/archos/mediacenter/filecoreextension/upnp2/UpnpServiceManager.java
++++ b/src/com/archos/mediacenter/filecoreextension/upnp2/UpnpServiceManager.java
+@@ -77,6 +77,16 @@
+      */
+     private static final int SERVER_SEARCH_PERIOD_MS = 5*60*1000; // try 5 minutes for now
+     private static UpnpServiceManager singleton = null;
++    private static Class<? extends NovaUpnpService> serviceClass = NovaUpnpService.class;
++
++    /** Private process only, before any manager is created. Never retarget a live/shared service. */
++    public static synchronized void useOwnedProcessService(Class<? extends NovaUpnpService> owned)
++    {
++        if (singleton != null)
++            throw new IllegalStateException("UPnP process already has an owner");
++        serviceClass = java.util.Objects.requireNonNull(owned);
++    }
++
+ 
+     private enum State {
+         NOT_RUNNING,
+@@ -225,7 +235,7 @@
+      */
+     public void start() {
+         if (mState == State.NOT_RUNNING || mState == State.ERROR) {
+-            boolean result = mContext.bindService(new Intent(mContext, NovaUpnpService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
++            boolean result = mContext.bindService(new Intent(mContext, serviceClass), mServiceConnection, Context.BIND_AUTO_CREATE);
+             if (result) {
+                 mState = State.STARTING;
+                 if (log.isDebugEnabled()) log.debug("State STARTING");
+diff --git a/src/com/archos/medialib/AvosMediaPlayer.java b/src/com/archos/medialib/AvosMediaPlayer.java
+--- a/src/com/archos/medialib/AvosMediaPlayer.java
++++ b/src/com/archos/medialib/AvosMediaPlayer.java
+@@ -540,6 +540,54 @@
+ 
+     public native int getRelativePosition();
+ 
++    public static final int MEDIA_INFO_SEEK_PICTURE_READY = 10005;
++    public static final int MEDIA_INFO_SEEK_PICTURE_FAILED = 10006;
++
++    /** True only when the matching native/JNI ABI admitted this token. Old archives safely use legacy seekTo. */
++    public boolean seekToTracked(int position, int token)
++    {
++        try
++        {
++            return nativeSeekToTracked(position, token);
++        }
++        catch (UnsatisfiedLinkError unsupported)
++        {
++            return false;
++        }
++    }
++
++    private native boolean nativeSeekToTracked(int position, int token);
++
++    /** Nonblocking native snapshot, or null for an old archive, busy lifecycle or unsupported backend. */
++    public long[] frameMetrics()
++    {
++        try
++        {
++            return nativeFrameMetrics();
++        }
++        catch (UnsatisfiedLinkError | IllegalStateException unavailable)
++        {
++            return null;
++        }
++    }
++
++    /** Explicitly selected decoder only after native initialization; null when the platform chooses its name. */
++    public String initializedDecoder()
++    {
++        try
++        {
++            return nativeInitializedDecoder();
++        }
++        catch (UnsatisfiedLinkError | IllegalStateException unavailable)
++        {
++            return null;
++        }
++    }
++
++    private native long[] nativeFrameMetrics();
++    private native String nativeInitializedDecoder();
++
++
+     public native void seekTo(int pos);
+ 
+     public boolean setStartTime(int pos)
+diff --git a/src/com/archos/mediaprovider/MediaRetrieverService.java b/src/com/archos/mediaprovider/MediaRetrieverService.java
+--- a/src/com/archos/mediaprovider/MediaRetrieverService.java
++++ b/src/com/archos/mediaprovider/MediaRetrieverService.java
+@@ -49,6 +49,10 @@
+             MediaRetrieverService service = mServiceRef.get();
+             if (service != null) {
+                 if (msg.what == TIMEOUT_MSG) {
++                    String path = service.activePath;
++                    if (path != null)
++                        com.archos.mediaprovider.video.LibraryHealthEvidence.readFailure(
++                            service, path, new java.util.concurrent.TimeoutException());
+                     Runtime.getRuntime().exit(-1);
+                 }
+             }
+@@ -83,16 +87,26 @@
+         return mBinder;
+     }
+ 
+-    public MediaMetadata getMetadata(String path) {
++    private volatile String activePath;
++
++    public synchronized MediaMetadata getMetadata(String path) {
++        activePath = path;
+         mHandler.sendEmptyMessageDelayed(0, TIMEOUT_MS);
+         IMediaMetadataRetriever retriever = MediaFactory.createMetadataRetriever(this);
+         try {
+             retriever.setDataSource(path);
+-            return retriever.getMediaMetadata();
++            MediaMetadata metadata = retriever.getMediaMetadata();
++            if (metadata == null)
++                com.archos.mediaprovider.video.LibraryHealthEvidence.readFailure(this, path, null);
++            else
++                com.archos.mediaprovider.video.LibraryHealthEvidence.clear(this, path,
++                    com.archos.mediaprovider.video.LibraryHealthEvidence.Kind.COULD_NOT_READ);
++            return metadata;
+         } catch (Throwable t) {
+-            // something failed, return null instead
++            com.archos.mediaprovider.video.LibraryHealthEvidence.readFailure(this, path, t);
+             return null;
+         } finally {
++            activePath = null;
+             mHandler.removeMessages(0);
+             try {
+                 retriever.release();
+diff --git a/src/com/archos/mediaprovider/video/LibraryHealthEvidence.java b/src/com/archos/mediaprovider/video/LibraryHealthEvidence.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/LibraryHealthEvidence.java
+@@ -0,0 +1,164 @@
++package com.archos.mediaprovider.video;
++
++import android.content.ContentValues;
++import android.content.Context;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
++import android.database.sqlite.SQLiteOpenHelper;
++import java.io.EOFException;
++import java.io.File;
++import java.net.SocketTimeoutException;
++import java.nio.charset.StandardCharsets;
++import java.security.MessageDigest;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Locale;
++
++/** Bounded private evidence, shared with the isolated retriever process. No locator or exception text is stored. */
++public final class LibraryHealthEvidence extends SQLiteOpenHelper
++{
++    public enum Kind
++    {
++        COULD_NOT_READ, NOT_MATCHED
++    }
++
++    public enum Reason
++    {
++        DAMAGED, TIMED_OUT, UNSUPPORTED, UNKNOWN, NO_MATCH, POSSIBLE
++    }
++
++    public record Evidence(String physical, Kind kind, Reason reason, int candidates, boolean more, long checkedUtcMs)
++    {
++    }
++
++    public LibraryHealthEvidence(Context context)
++    {
++        super(context.getApplicationContext(),
++              new File(context.getNoBackupFilesDir(), "library-health-v1.db").getPath(), null, 1);
++    }
++
++    @Override public void onCreate(SQLiteDatabase db)
++    {
++        db.execSQL("CREATE TABLE evidence (physical TEXT NOT NULL,kind TEXT NOT NULL,reason TEXT NOT NULL," +
++                   "candidates INTEGER NOT NULL,more INTEGER NOT NULL,checked INTEGER NOT NULL," +
++                   "PRIMARY KEY(physical,kind))");
++    }
++
++    @Override public void onUpgrade(SQLiteDatabase db, int before, int after)
++    {
++        throw new IllegalStateException("Unsupported health-evidence upgrade");
++    }
++
++    public static String physical(String path) throws Exception
++    {
++        String portable = PersonalVideoActions.fingerprint(path);
++        if (portable != null)
++            return portable;
++        if (path == null)
++            return null;
++        StringBuilder key = new StringBuilder("private:");
++        for (byte part : MessageDigest.getInstance("SHA-256").digest(path.getBytes(StandardCharsets.UTF_8)))
++            key.append(String.format(Locale.ROOT, "%02x", part & 255));
++        return key.toString();
++    }
++
++    public static Reason readReason(Throwable failure)
++    {
++        Throwable current = failure;
++        for (int depth = 0; current != null && depth < 8; depth++, current = current.getCause())
++        {
++            if (current instanceof SocketTimeoutException || current instanceof java.util.concurrent.TimeoutException)
++                return Reason.TIMED_OUT;
++            if (current instanceof UnsupportedOperationException)
++                return Reason.UNSUPPORTED;
++            if (current instanceof EOFException || current instanceof java.util.zip.ZipException)
++                return Reason.DAMAGED;
++            if (current == current.getCause())
++                break;
++        }
++        return Reason.UNKNOWN;
++    }
++
++    public static void readFailure(Context context, String path, Throwable failure)
++    {
++        record(context, path, Kind.COULD_NOT_READ, readReason(failure), 0, false);
++    }
++
++    public static void recordMatches(Context context, String path,
++                                     com.archos.mediascraper.ScrapeSearchResult result, int requestedLimit)
++    {
++        if (result == null || (result.status != com.archos.mediascraper.ScrapeStatus.OKAY &&
++                               result.status != com.archos.mediascraper.ScrapeStatus.NOT_FOUND))
++            return;
++        int count = result.results == null ? 0 : result.results.size();
++        record(context, path, Kind.NOT_MATCHED, count == 0 ? Reason.NO_MATCH : Reason.POSSIBLE,
++               count, requestedLimit > 0 && count >= requestedLimit);
++    }
++
++    public static void record(Context context, String path, Kind kind, Reason reason, int count, boolean more)
++    {
++        try (LibraryHealthEvidence store = new LibraryHealthEvidence(context))
++        {
++            String key = physical(path);
++            if (key == null)
++                return;
++            if (kind == Kind.COULD_NOT_READ && (reason == Reason.NO_MATCH || reason == Reason.POSSIBLE) ||
++                kind == Kind.NOT_MATCHED && reason != Reason.NO_MATCH && reason != Reason.POSSIBLE ||
++                count < 0 || count > 100000)
++                throw new IllegalArgumentException("Invalid health evidence");
++            ContentValues values = new ContentValues();
++            values.put("physical", key);
++            values.put("kind", kind.name());
++            values.put("reason", reason.name());
++            values.put("candidates", count);
++            values.put("more", more ? 1 : 0);
++            values.put("checked", System.currentTimeMillis());
++            SQLiteDatabase db = store.getWritableDatabase();
++            db.beginTransaction();
++            try
++            {
++                db.insertWithOnConflict("evidence", null, values, SQLiteDatabase.CONFLICT_REPLACE);
++                db.execSQL("DELETE FROM evidence WHERE rowid IN (SELECT rowid FROM evidence " +
++                           "ORDER BY checked DESC,rowid DESC LIMIT -1 OFFSET 10000)");
++                db.setTransactionSuccessful();
++            }
++            finally
++            {
++                db.endTransaction();
++            }
++        }
++        catch (Exception unavailable)
++        {
++            // Evidence failure cannot turn successful playback/indexing into a data mutation or a crash.
++        }
++    }
++
++    public static void clear(Context context, String path, Kind kind)
++    {
++        try (LibraryHealthEvidence store = new LibraryHealthEvidence(context))
++        {
++            String key = physical(path);
++            if (key != null)
++                store.getWritableDatabase().delete("evidence", "physical=? AND kind=?",
++                                                   new String[] {key, kind.name()});
++        }
++        catch (Exception unavailable)
++        {
++            // The next successful retry can clear stale evidence.
++        }
++    }
++
++    public List<Evidence> read(Kind kind)
++    {
++        List<Evidence> result = new ArrayList<>();
++        try (Cursor rows = getReadableDatabase().query("evidence",
++            new String[] {"physical", "reason", "candidates", "more", "checked"}, "kind=?",
++            new String[] {kind.name()}, null, null, "checked DESC", "10000"))
++        {
++            while (rows.moveToNext())
++                result.add(new Evidence(rows.getString(0), kind, Reason.valueOf(rows.getString(1)), rows.getInt(2),
++                                        rows.getInt(3) == 1, rows.getLong(4)));
++        }
++        return List.copyOf(result);
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/LibraryScanControl.java b/src/com/archos/mediaprovider/video/LibraryScanControl.java
+--- a/src/com/archos/mediaprovider/video/LibraryScanControl.java
++++ b/src/com/archos/mediaprovider/video/LibraryScanControl.java
+@@ -11,6 +11,7 @@
+     public static void stop(Context context)
+     {
+         NetworkScanLedger.cancelAll();
++        LocalSourceScan.stop();
+         ScanMetadataHandoff.cancelPending(context);
+         try
+         {
+diff --git a/src/com/archos/mediaprovider/video/LocalSourceScan.java b/src/com/archos/mediaprovider/video/LocalSourceScan.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/LocalSourceScan.java
+@@ -0,0 +1,295 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.content.Intent;
++import android.media.MediaScannerConnection;
++import android.net.Uri;
++import androidx.preference.PreferenceManager;
++import java.io.File;
++import java.io.IOException;
++import java.util.ArrayDeque;
++import java.util.ArrayList;
++import java.util.HashSet;
++import java.util.concurrent.atomic.AtomicInteger;
++import java.util.Set;
++import java.util.UUID;
++import java.util.concurrent.Executors;
++import java.util.concurrent.ScheduledExecutorService;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicReference;
++
++/** One owned local-source request. Android's system scan is not killed; stale callbacks cannot admit an import. */
++public final class LocalSourceScan
++{
++    static final String ACTION = "app.supernova.player.SCAN_ONE_LOCAL_SOURCE";
++    private static final AtomicReference<Job> ACTIVE = new AtomicReference<>();
++    private static final java.util.concurrent.ThreadPoolExecutor WORK = new java.util.concurrent.ThreadPoolExecutor(
++        1, 1, 0, TimeUnit.MILLISECONDS, new java.util.concurrent.ArrayBlockingQueue<>(1), task -> {
++        Thread thread = new Thread(task, "LocalSourceAdmission");
++        thread.setDaemon(true);
++        return thread;
++    });
++    private static final ScheduledExecutorService CLOCK = Executors.newSingleThreadScheduledExecutor(task -> {
++        Thread thread = new Thread(task, "LocalSourceStartDeadline");
++        thread.setDaemon(true);
++        return thread;
++    });
++
++    private static final class Job
++    {
++        final Context context;
++        final Uri root;
++        final String batch = UUID.randomUUID().toString();
++        final long generation = NetworkScanLedger.generation();
++        volatile boolean stopped;
++        volatile long lastProgress = android.os.SystemClock.elapsedRealtime();
++        boolean running, ended;
++        long checked, total = -1, added, removed, updated;
++        java.util.concurrent.ScheduledFuture<?> deadline;
++
++        Job(Context context, Uri root)
++        {
++            this.context = context;
++            this.root = root;
++        }
++    }
++
++    public static boolean request(Context context, Uri root)
++    {
++        if (root == null || !"file".equals(root.getScheme()) || root.getPath() == null ||
++            root.getPath().isEmpty() || root.getAuthority() != null && !root.getAuthority().isEmpty())
++            return false;
++        Job job = new Job(context.getApplicationContext(), root);
++        if (!ACTIVE.compareAndSet(null, job))
++            return false;
++        event(job, "queued");
++        job.deadline = CLOCK.scheduleWithFixedDelay(() -> checkDeadline(job), 5, 5, TimeUnit.SECONDS);
++        try
++        {
++            WORK.execute(() -> {
++            try
++            {
++                if (stopped(job))
++                    return;
++                Set<String> configured = PreferenceManager.getDefaultSharedPreferences(job.context)
++                    .getStringSet("supernova_library_roots", Set.of());
++                if (!SupernovaLibraryPolicy.configured(job.context) || !registered(configured, root) ||
++                    !new File(root.getPath()).isDirectory())
++                    throw new IllegalArgumentException("Local source is unavailable or not registered");
++                if (stopped(job))
++                {
++                    finish(job, "cancelled");
++                    return;
++                }
++                java.util.function.BooleanSupplier checkpoint = () -> {
++                    job.lastProgress = android.os.SystemClock.elapsedRealtime();
++                    return stopped(job);
++                };
++                String[] paths = inventory(new File(root.getPath()), checkpoint);
++                paths = changedFiles(job.context, root, paths, checkpoint);
++                if (paths.length == 0)
++                    ready(job);
++                else
++                {
++                    AtomicInteger remaining = new AtomicInteger(paths.length);
++                    MediaScannerConnection.scanFile(job.context, paths, null, (path, uri) -> {
++                        job.lastProgress = android.os.SystemClock.elapsedRealtime();
++                        if (remaining.decrementAndGet() == 0)
++                            ready(job);
++                    });
++                }
++            }
++            catch (Exception unavailable)
++            {
++                finish(job, stopped(job) ? "cancelled" : "failed");
++            }
++            });
++            return true;
++        }
++        catch (java.util.concurrent.RejectedExecutionException unavailable)
++        {
++            finish(job, "failed");
++            return false;
++        }
++    }
++
++    /** Probe only new/changed entries. Re-reading metadata for every unchanged file doubles ordinary scan work. */
++    static String[] changedFiles(Context context, Uri root, String[] paths,
++                                 java.util.function.BooleanSupplier stopped) throws IOException
++    {
++        java.util.Map<String, long[]> indexed = new java.util.HashMap<>();
++        String base = new File(root.getPath()).getCanonicalPath();
++        String prefix = base.endsWith("/") ? base : base + "/";
++        try (android.database.Cursor rows = context.getContentResolver().query(
++            android.provider.MediaStore.Files.getContentUri("external"),
++            new String[] {"_data", "_size", "date_modified"}, "_data LIKE ? ESCAPE '\\'",
++            new String[] {VideoStoreImportImpl.literalPrefix(prefix) + "%"}, null))
++        {
++            if (rows == null)
++                throw new IOException("Local source MediaStore snapshot unavailable");
++            while (rows.moveToNext())
++            {
++                if (stopped.getAsBoolean())
++                    throw new java.io.InterruptedIOException("Local source scan stopped");
++                if (!rows.isNull(0) && rows.getString(0).startsWith(prefix))
++                    indexed.put(rows.getString(0), new long[] {rows.isNull(1) ? -1 : rows.getLong(1),
++                                                              rows.isNull(2) ? -1 : rows.getLong(2)});
++            }
++        }
++        ArrayList<String> changed = new ArrayList<>();
++        for (String path : paths)
++        {
++            if (stopped.getAsBoolean())
++                throw new java.io.InterruptedIOException("Local source scan stopped");
++            File file = new File(path);
++            long[] known = indexed.get(path);
++            if (known == null || known[0] != file.length() || known[1] <= 0 ||
++                known[1] != file.lastModified() / 1000)
++                changed.add(path);
++        }
++        return changed.toArray(new String[0]);
++    }
++
++    /** Canonical containment prevents symlinks escaping the selected source; bounds fail before importing. */
++    static String[] inventory(File root, java.util.function.BooleanSupplier stopped) throws IOException
++    {
++        String base = root.getCanonicalPath();
++        String prefix = base.endsWith("/") ? base : base + "/";
++        ArrayDeque<File> pending = new ArrayDeque<>();
++        Set<String> visited = new HashSet<>();
++        ArrayList<String> paths = new ArrayList<>();
++        pending.add(root);
++        while (!pending.isEmpty())
++        {
++            if (stopped.getAsBoolean())
++                throw new java.io.InterruptedIOException("Local source scan stopped");
++            File entry = pending.removeFirst();
++            String path = entry.getCanonicalPath();
++            if (!(path.equals(base) || path.startsWith(prefix)) || !visited.add(path))
++                continue;
++            if (visited.size() > 100000)
++                throw new IOException("Local source inventory exceeds the safe bound");
++            if (entry.isDirectory())
++            {
++                File[] children = entry.listFiles();
++                if (children == null)
++                    throw new IOException("Local source directory could not be read");
++                java.util.Collections.addAll(pending, children);
++            }
++            else if (entry.isFile())
++                paths.add(path);
++        }
++        return paths.toArray(new String[0]);
++    }
++
++    static boolean registered(Set<String> configured, Uri root)
++    {
++        String key = SupernovaLibraryPolicy.canonical(root);
++        for (String saved : configured)
++            if (SupernovaLibraryPolicy.canonical(Uri.parse(saved)).equals(key))
++                return true;
++        return false;
++    }
++
++    private static synchronized boolean stopped(Job job)
++    {
++        return job.stopped || job.ended || ACTIVE.get() != job || job.generation != NetworkScanLedger.generation();
++    }
++
++    private static void ready(Job job)
++    {
++        if (stopped(job))
++            return;
++        try
++        {
++            job.context.startService(new Intent(job.context, VideoStoreImportService.class).setAction(ACTION)
++                .setData(job.root).putExtra("source_batch", job.batch));
++        }
++        catch (RuntimeException unavailable)
++        {
++            finish(job, "failed");
++        }
++    }
++
++    static void run(Context context, VideoStoreImportImpl importer, String batch)
++    {
++        Job job;
++        synchronized (LocalSourceScan.class)
++        {
++            job = ACTIVE.get();
++            if (job == null || !job.batch.equals(batch) || stopped(job))
++                return;
++            job.running = true;
++            job.deadline.cancel(false);
++        }
++        event(job, "started");
++        try
++        {
++            VideoStoreImportImpl.SourceResult result = importer.doScopedImport(job.root,
++                (checked, total, added, removed, updated) -> {
++                    synchronized (LocalSourceScan.class)
++                    {
++                        job.checked = checked;
++                        job.total = total;
++                        job.added = added;
++                        job.removed = removed;
++                        job.updated = updated;
++                    }
++                    event(job, "indexing");
++                }, () -> stopped(job));
++            job.checked = result.checked();
++            job.total = result.checked();
++            job.added = result.added();
++            job.removed = result.removed();
++            job.updated = result.updated();
++            finish(job, stopped(job) ? "cancelled" : "complete");
++        }
++        catch (Exception unavailable)
++        {
++            finish(job, stopped(job) || Thread.currentThread().isInterrupted() ? "cancelled" : "failed");
++        }
++    }
++
++    public static synchronized void stop()
++    {
++        Job job = ACTIVE.get();
++        if (job != null)
++        {
++            job.stopped = true;
++            if (!job.running)
++                finish(job, "cancelled");
++        }
++    }
++
++    static boolean active()
++    {
++        return ACTIVE.get() != null;
++    }
++
++    private static synchronized void checkDeadline(Job job)
++    {
++        if (!job.ended && !job.running && android.os.SystemClock.elapsedRealtime() - job.lastProgress >= 60000)
++            finish(job, "failed");
++    }
++
++    private static synchronized void finish(Job job, String phase)
++    {
++        if (job.ended)
++            return;
++        job.ended = true;
++        if (job.deadline != null)
++            job.deadline.cancel(false);
++        event(job, phase);
++        ACTIVE.compareAndSet(job, null);
++    }
++
++    private static synchronized void event(Job job, String phase)
++    {
++        NetworkScannerServiceVideo.previewSourceEvent(job.context, job.root, phase, job.batch, 1,
++            job.checked, job.total, job.added, job.updated, job.removed);
++    }
++
++    private LocalSourceScan()
++    {
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/MediaDatabaseUpgrade.java b/src/com/archos/mediaprovider/video/MediaDatabaseUpgrade.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/MediaDatabaseUpgrade.java
+@@ -0,0 +1,98 @@
++package com.archos.mediaprovider.video;
++
++import android.content.Context;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
++import java.io.File;
++import java.io.FileInputStream;
++import java.io.FileOutputStream;
++import java.io.IOException;
++import java.io.RandomAccessFile;
++import java.nio.channels.FileLock;
++
++/** A new ownership format gets its own store. Old APKs retain their original media.db snapshot. Worker only. */
++final class MediaDatabaseUpgrade
++{
++    static synchronized void prepare(Context context, String current, int maximum) throws IOException
++    {
++        File target = context.getDatabasePath(current);
++        File legacy = context.getDatabasePath("media.db");
++        if (target.isFile() || !legacy.isFile())
++            return;
++        File directory = target.getParentFile();
++        if (!directory.isDirectory() && !directory.mkdirs())
++            throw new IOException("Cannot prepare the versioned media database directory");
++        try (RandomAccessFile owner = new RandomAccessFile(new File(directory, current + ".migration.lock"), "rw");
++             FileLock lock = owner.getChannel().lock())
++        {
++            if (target.isFile() || !legacy.isFile())
++                return;
++            // No old process survives an APK replacement. Other new processes use this same migration lease.
++            try (SQLiteDatabase source = SQLiteDatabase.openDatabase(legacy.getPath(), null,
++                                                                     SQLiteDatabase.OPEN_READWRITE))
++            {
++                if (source.getVersion() < 36 || source.getVersion() > maximum)
++                    throw new IOException("Unsupported original media schema; original file retained");
++                try (Cursor checkpoint = source.rawQuery("PRAGMA wal_checkpoint(TRUNCATE)", null))
++                {
++                    if (!checkpoint.moveToFirst() || checkpoint.getInt(0) != 0)
++                        throw new IOException("Original media database is still busy");
++                }
++                check(source);
++            }
++            File staged = new File(directory, current + ".migration-next");
++            try
++            {
++                SQLiteDatabase.deleteDatabase(staged);
++                try (FileInputStream input = new FileInputStream(legacy);
++                     FileOutputStream output = new FileOutputStream(staged))
++                {
++                    byte[] buffer = new byte[65536];
++                    for (int count; (count = input.read(buffer)) != -1;)
++                        output.write(buffer, 0, count);
++                    output.getFD().sync();
++                }
++                try (VideoOpenHelper helper = new VideoOpenHelper(context, staged.getName(), maximum))
++                {
++                    SQLiteDatabase copied = helper.getWritableDatabase();
++                    check(copied);
++                    try (Cursor checkpoint = copied.rawQuery("PRAGMA wal_checkpoint(TRUNCATE)", null))
++                    {
++                        if (!checkpoint.moveToFirst() || checkpoint.getInt(0) != 0)
++                            throw new IOException("Versioned media copy is still busy");
++                    }
++                    copied.disableWriteAheadLogging();
++                    try (Cursor mode = copied.rawQuery("PRAGMA journal_mode", null))
++                    {
++                        if (!mode.moveToFirst() || "wal".equalsIgnoreCase(mode.getString(0)))
++                            throw new IOException("Versioned media copy has an outstanding journal");
++                    }
++                }
++                try (RandomAccessFile synced = new RandomAccessFile(staged, "rw"))
++                {
++                    synced.getFD().sync();
++                }
++                if (!staged.renameTo(target))
++                    throw new IOException("Cannot install the versioned media copy");
++            }
++            finally
++            {
++                if (staged.exists() && !SQLiteDatabase.deleteDatabase(staged))
++                    throw new IOException("Could not remove incomplete media copy; original file retained");
++            }
++        }
++    }
++
++    private static void check(SQLiteDatabase database) throws IOException
++    {
++        try (Cursor check = database.rawQuery("PRAGMA quick_check", null))
++        {
++            if (!check.moveToFirst() || !"ok".equals(check.getString(0)))
++                throw new IOException("Media copy failed integrity verification; original file retained");
++        }
++    }
++
++    private MediaDatabaseUpgrade()
++    {
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/MissingMediaActions.java b/src/com/archos/mediaprovider/video/MissingMediaActions.java
+--- a/src/com/archos/mediaprovider/video/MissingMediaActions.java
++++ b/src/com/archos/mediaprovider/video/MissingMediaActions.java
+@@ -53,7 +53,10 @@
+     public static boolean relinkAcrossSources(Context context, StoredFile expected, Uri oldRoot, Uri newRoot,
+                                               String replacement) throws IOException
+     {
+-        if (expected.size < 0 || oldRoot == null || newRoot == null || replacement == null)
++        if (oldRoot == null)
++            oldRoot = Uri.parse(expected.path).buildUpon().path(Uri.parse(expected.path).getPath()
++                .replaceFirst("/[^/]*$", "")).build();
++        if (expected.size < 0 || newRoot == null || replacement == null)
+             throw new IOException("File identity is unavailable");
+         if (!SupernovaLibraryPolicy.contains(SupernovaLibraryPolicy.canonical(oldRoot),
+                                              SupernovaLibraryPolicy.canonical(Uri.parse(expected.path))) ||
+@@ -61,12 +64,6 @@
+                                              SupernovaLibraryPolicy.canonical(Uri.parse(replacement))) ||
+             !name(expected.path).equals(name(replacement)))
+             throw new IOException("Replacement is outside the selected sources");
+-        String oldScheme = Uri.parse(expected.path).getScheme();
+-        String newScheme = Uri.parse(replacement).getScheme();
+-        boolean oldLocal = oldScheme == null || oldScheme.equals("file") || oldScheme.equals("content");
+-        boolean newLocal = newScheme == null || newScheme.equals("file") || newScheme.equals("content");
+-        if (oldLocal != newLocal)
+-            throw new IOException("Replacement needs a different physical index owner");
+         return mutate(context, expected, replacement);
+     }
+ 
+@@ -83,7 +80,11 @@
+                                          () -> Thread.currentThread().isInterrupted());
+              VideoOpenHelper helper = new VideoOpenHelper(context))
+         {
+-            changed = change(helper.getWritableDatabase(), expected, replacement);
++            ContentValues local = replacement != null && PhysicalIndexOwnership.local(replacement) &&
++                !PhysicalIndexOwnership.local(expected.path)
++                ? PhysicalIndexOwnership.localDestination(context.getContentResolver(), replacement, expected.size)
++                : null;
++            changed = change(helper.getWritableDatabase(), expected, replacement, local);
+         }
+         if (changed)
+         {
+@@ -99,6 +100,12 @@
+ 
+     static boolean change(SQLiteDatabase database, StoredFile expected, String replacement) throws IOException
+     {
++        return change(database, expected, replacement, null);
++    }
++
++    static boolean change(SQLiteDatabase database, StoredFile expected, String replacement, ContentValues local)
++        throws IOException
++    {
+         database.beginTransaction();
+         try
+         {
+@@ -112,9 +119,14 @@
+                     return false;
+                 remote = row.getLong(0);
+             }
+-            boolean scanned = expected.id >= VideoOpenHelper.SCANNED_ID_OFFSET;
+-            if (remote != expected.id)
+-                throw new IOException("Library identity changed");
++            boolean scanned = remote >= VideoOpenHelper.SCANNED_ID_OFFSET;
++            if (replacement != null && scanned == PhysicalIndexOwnership.local(replacement))
++            {
++                boolean moved = PhysicalIndexOwnership.move(database, expected, remote, replacement, local);
++                if (moved)
++                    database.setTransactionSuccessful();
++                return moved;
++            }
+             long raw = scanned ? remote - VideoOpenHelper.SCANNED_ID_OFFSET : remote;
+             String table = scanned ? "files_scanned" : "files_import";
+             String[] physical = expected.size < 0 ? new String[] {"" + raw, expected.path}
+diff --git a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+--- a/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
++++ b/src/com/archos/mediaprovider/video/NetworkScannerServiceVideo.java
+@@ -957,6 +957,13 @@
+     static void previewScanEvent(android.content.Context context, Uri root, String phase, String batch, int total,
+                                  int checked, int added, int updated, int removed)
+     {
++        previewSourceEvent(context, root, phase, batch, total, checked,
++                           "complete".equals(phase) ? checked : -1, added, updated, removed);
++    }
++
++    static void previewSourceEvent(android.content.Context context, Uri root, String phase, String batch, int sources,
++                                   long checked, long total, long added, long updated, long removed)
++    {
+         try
+         {
+             java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+@@ -969,11 +976,11 @@
+             event.putExtra("phase", phase)
+                 .putExtra("source_id", id.toString())
+                 .putExtra("checked", checked)
+-                .putExtra("total", "complete".equals(phase) ? checked : -1)
++                .putExtra("total", total)
+                 .putExtra("added", added)
+                 .putExtra("updated", updated)
+                 .putExtra("removed", removed)
+-                .putExtra("sources_total", total)
++                .putExtra("sources_total", sources)
+                 .putExtra("batch_id", batch)
+                 .putExtra("source_location", (root.getHost() == null ? "" : root.getHost()) +
+                                                  (root.getPath() == null ? "" : root.getPath()));
+@@ -2432,7 +2439,9 @@
+     }
+ 
+     private static final String WHERE_FILE = VideoStore.MediaColumns.DATA + "=?";
+-    private static final String[] PROJECT_ID = {BaseColumns._ID, VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID};
++    private static final String[] PROJECT_ID = {
++        BaseColumns._ID, VideoStore.Video.VideoColumns.ARCHOS_MEDIA_SCRAPER_ID, PersonalVideoActions.COLUMN
++    };
+     private static boolean hasScraperInfo(Uri video, ContentResolver cr)
+     {
+         boolean result = false;
+@@ -2443,7 +2452,7 @@
+             if (c.moveToFirst())
+             {
+                 // if ScraperID > 0
+-                if (c.getInt(1) > 0)
++                if (c.getInt(1) > 0 || c.getInt(2) != 0)
+                     result = true;
+             }
+             c.close();
+diff --git a/src/com/archos/mediaprovider/video/PersonalVideoActions.java b/src/com/archos/mediaprovider/video/PersonalVideoActions.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/PersonalVideoActions.java
+@@ -0,0 +1,319 @@
++package com.archos.mediaprovider.video;
++
++import android.content.ContentValues;
++import android.content.Context;
++import android.content.SharedPreferences;
++import android.database.Cursor;
++import android.database.sqlite.SQLiteDatabase;
++import android.net.Uri;
++import androidx.preference.PreferenceManager;
++import java.io.File;
++import java.io.IOException;
++import java.nio.charset.StandardCharsets;
++import java.security.MessageDigest;
++import java.util.HashSet;
++import java.util.Locale;
++import java.util.Set;
++import org.json.JSONArray;
++import org.json.JSONObject;
++
++/** Worker-only personal-file role. Identification, hidden state and playback columns are never overwritten. */
++public final class PersonalVideoActions
++{
++    public static final String COLUMN = "Supernova_personalVideo";
++    public static final String REVISION = "Supernova_personalRevision";
++    public static final String VISIBLE = "ifnull(" + COLUMN + ",0)=0";
++    public static final String PENDING = "supernova_restore_pending_hidden_v2";
++
++    public static final class Change
++    {
++        public final long videoId;
++        private final MissingMediaActions.StoredFile expected;
++        private final boolean before, after;
++        private final long revision;
++        private final String pendingBefore, pendingAfter;
++
++        private Change(MissingMediaActions.StoredFile expected, boolean before, boolean after,
++                       String pendingBefore, String pendingAfter, long revision)
++        {
++            videoId = expected.id();
++            this.expected = expected;
++            this.before = before;
++            this.after = after;
++            this.pendingBefore = pendingBefore;
++            this.pendingAfter = pendingAfter;
++            this.revision = revision;
++        }
++    }
++
++    static boolean hasColumn(SQLiteDatabase database)
++    {
++        try (Cursor columns = database.rawQuery("PRAGMA table_info(files)", null))
++        {
++            while (columns.moveToNext())
++                if (COLUMN.equals(columns.getString(1)))
++                    return true;
++        }
++        return false;
++    }
++
++    /** Unfiltered inventory for backup and Files. Returns empty on historical schemas without the extension. */
++    public static Set<Long> read(SQLiteDatabase database)
++    {
++        if (!hasColumn(database))
++            return Set.of();
++        Set<Long> ids = new HashSet<>();
++        try (Cursor rows = database.query("files", new String[] {"_id"}, COLUMN + "=1", null, null, null, null))
++        {
++            while (rows.moveToNext())
++                ids.add(rows.getLong(0));
++        }
++        return Set.copyOf(ids);
++    }
++
++    public static boolean isPersonal(Context context, long id)
++    {
++        try (VideoOpenHelper helper = new VideoOpenHelper(context);
++             Cursor row = helper.getReadableDatabase().query("files", new String[] {COLUMN}, "_id=?",
++                                                              new String[] {Long.toString(id)}, null, null, null))
++        {
++            return row.moveToFirst() && row.getInt(0) == 1;
++        }
++    }
++
++    public static Change set(Context context, MissingMediaActions.StoredFile expected, boolean personal)
++        throws Exception
++    {
++        try (ScanProcessLock lock = ScanProcessLock.acquire(new File(context.getFilesDir(), "supernova-scan.lock"),
++                                                           () -> Thread.currentThread().isInterrupted());
++             VideoOpenHelper helper = new VideoOpenHelper(context))
++        {
++            SQLiteDatabase db = helper.getWritableDatabase();
++            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
++            db.beginTransaction();
++            try
++            {
++                reconcilePending(db, prefs.getString(PENDING, null));
++                boolean before = role(db, expected);
++                String pending = prefs.getString(PENDING, null);
++                String after = withoutPending(pending, fingerprint(expected.path()));
++                write(db, expected, personal);
++                if (!java.util.Objects.equals(pending, after))
++                    savePending(prefs, after);
++                db.setTransactionSuccessful();
++                return new Change(expected, before, personal, pending, after, revision(db, expected.id()));
++            }
++            finally
++            {
++                db.endTransaction();
++                context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
++            }
++        }
++    }
++
++    public static boolean undo(Context context, Change change) throws Exception
++    {
++        try (ScanProcessLock lock = ScanProcessLock.acquire(new File(context.getFilesDir(), "supernova-scan.lock"),
++                                                           () -> Thread.currentThread().isInterrupted());
++             VideoOpenHelper helper = new VideoOpenHelper(context))
++        {
++            SQLiteDatabase db = helper.getWritableDatabase();
++            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
++            db.beginTransaction();
++            try
++            {
++                if (revision(db, change.videoId) != change.revision || role(db, change.expected) != change.after ||
++                    !java.util.Objects.equals(prefs.getString(PENDING, null), change.pendingAfter))
++                    return false;
++                write(db, change.expected, change.before);
++                if (!java.util.Objects.equals(change.pendingBefore, change.pendingAfter))
++                    savePending(prefs, change.pendingBefore);
++                db.setTransactionSuccessful();
++            }
++            finally
++            {
++                db.endTransaction();
++            }
++        }
++        context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
++        return true;
++    }
++
++    private static boolean role(SQLiteDatabase db, MissingMediaActions.StoredFile expected) throws IOException
++    {
++        try (Cursor row = db.query("files", new String[] {COLUMN}, guard(expected), arguments(expected),
++                                   null, null, null))
++        {
++            if (!row.moveToFirst())
++                throw new IOException("Personal-file identity changed");
++            return row.getInt(0) == 1;
++        }
++    }
++
++    private static void write(SQLiteDatabase db, MissingMediaActions.StoredFile expected, boolean personal)
++        throws IOException
++    {
++        ContentValues values = new ContentValues();
++        values.put(COLUMN, personal ? 1 : 0);
++        if (db.update("files", values, guard(expected), arguments(expected)) != 1)
++            throw new IOException("Personal-file identity changed");
++        advanceRevision(db, expected.id());
++    }
++
++    public static void advanceRevision(SQLiteDatabase db, long id)
++    {
++        db.execSQL("UPDATE files SET " + REVISION + "=ifnull(" + REVISION + ",0)+1 WHERE _id=?", new Object[] {id});
++    }
++
++    private static long revision(SQLiteDatabase db, long id) throws IOException
++    {
++        try (Cursor row = db.query("files", new String[] {REVISION}, "_id=?",
++                                   new String[] {Long.toString(id)}, null, null, null))
++        {
++            if (!row.moveToFirst())
++                throw new IOException("Personal-file identity changed");
++            return row.getLong(0);
++        }
++    }
++
++    private static String guard(MissingMediaActions.StoredFile row)
++    {
++        return "_id=? AND _data=? AND " + (row.size() < 0 ? "(_size IS NULL OR _size<0)" : "_size=?");
++    }
++
++    private static String[] arguments(MissingMediaActions.StoredFile row)
++    {
++        return row.size() < 0 ? new String[] {"" + row.id(), row.path()}
++                             : new String[] {"" + row.id(), row.path(), "" + row.size()};
++    }
++
++    private static void savePending(SharedPreferences prefs, String pending) throws IOException
++    {
++        SharedPreferences.Editor edit = prefs.edit();
++        if (pending == null)
++            edit.remove(PENDING);
++        else
++            edit.putString(PENDING, pending);
++        if (!edit.commit())
++            throw new IOException("Personal-file pending state could not be saved");
++    }
++
++    private static String withoutPending(String pending, String fingerprint) throws Exception
++    {
++        if (pending == null || fingerprint == null)
++            return pending;
++        JSONObject payload = new JSONObject(pending);
++        JSONArray personal = payload.optJSONArray("personal");
++        if (payload.optInt("schema") != 2 || personal == null)
++            return pending;
++        JSONArray retained = new JSONArray();
++        for (int i = 0; i < personal.length(); i++)
++            if (!fingerprint.equals(personal.getJSONObject(i).getString("physical")))
++                retained.put(personal.getJSONObject(i));
++        if (retained.length() == personal.length())
++            return pending;
++        return payload.put("personal", retained).toString();
++    }
++
++    /** Restore future-file roles before automatic matching or a library snapshot is admitted. */
++    public static void reconcilePending(Context context) throws Exception
++    {
++        String pending = PreferenceManager.getDefaultSharedPreferences(context).getString(PENDING, null);
++        if (pending == null || !pending.contains("\"personal\""))
++            return;
++        try (VideoOpenHelper helper = new VideoOpenHelper(context))
++        {
++            SQLiteDatabase db = helper.getWritableDatabase();
++            db.beginTransaction();
++            try
++            {
++                reconcilePending(db, pending);
++                db.setTransactionSuccessful();
++            }
++            finally
++            {
++                db.endTransaction();
++            }
++        }
++    }
++
++    private static void reconcilePending(SQLiteDatabase db, String pending) throws Exception
++    {
++        if (pending == null)
++            return;
++        JSONObject payload = new JSONObject(pending);
++        JSONArray personal = payload.optJSONArray("personal");
++        if (payload.optInt("schema") != 2 || personal == null)
++            return;
++        if (personal.length() > 100000)
++            throw new IOException("Personal-file restore exceeds supported limits");
++        Set<String> wanted = new HashSet<>();
++        for (int i = 0; i < personal.length(); i++)
++        {
++            String ref = personal.getJSONObject(i).getString("physical");
++            if (ref.matches("file:[a-f0-9]{64}"))
++                wanted.add(ref);
++        }
++        if (wanted.isEmpty())
++            return;
++        try (Cursor rows = db.query("files", new String[] {"_id", "_data"}, VISIBLE, null, null, null, null))
++        {
++            while (rows.moveToNext())
++            {
++                if (Thread.currentThread().isInterrupted())
++                    throw new java.io.InterruptedIOException("Personal-file restore stopped");
++                if (wanted.contains(fingerprint(rows.getString(1))))
++                {
++                    ContentValues value = new ContentValues();
++                    value.put(COLUMN, 1);
++                    db.update("files", value, "_id=?", new String[] {Long.toString(rows.getLong(0))});
++                }
++            }
++        }
++    }
++
++    /** Exact portable physical reference; credential/query-bearing locators never auto-bind. */
++    public static String fingerprint(String path) throws Exception
++    {
++        if (path == null || path.isEmpty())
++            return null;
++        Uri uri = Uri.parse(path);
++        if (uri.getEncodedQuery() != null || uri.getEncodedFragment() != null ||
++            uri.getAuthority() != null && uri.getAuthority().contains("@"))
++            return null;
++        if (uri.getScheme() == null)
++        {
++            if (!path.startsWith("/"))
++                return null;
++            uri = Uri.fromFile(new File(path));
++        }
++        if ("file".equalsIgnoreCase(uri.getScheme()) && (uri.getHost() == null || uri.getHost().isEmpty()))
++            uri = Uri.fromFile(new File(uri.getPath()));
++        Uri.Builder safe = uri.buildUpon().clearQuery().fragment(null);
++        if (uri.getHost() != null)
++            safe.encodedAuthority(uri.getHost() + (uri.getPort() > 0 ? ":" + uri.getPort() : ""));
++        StringBuilder value = new StringBuilder("file:");
++        for (byte part : MessageDigest.getInstance("SHA-256").digest(
++                 safe.build().toString().getBytes(StandardCharsets.UTF_8)))
++            value.append(String.format(Locale.ROOT, "%02x", part & 255));
++        return value.toString();
++    }
++
++    /** Serialises a scan's final metadata save with role changes; -2 means deliberately personal. */
++    public static long saveIfMatchable(Context context, long id, com.archos.mediascraper.BaseTags tags)
++    {
++        try (ScanProcessLock lock = ScanProcessLock.acquire(new File(context.getFilesDir(), "supernova-scan.lock"),
++                                                           () -> Thread.currentThread().isInterrupted()))
++        {
++            return isPersonal(context, id) ? -2 : tags.save(context, id);
++        }
++        catch (IOException unavailable)
++        {
++            throw new IllegalStateException("Matching ownership unavailable", unavailable);
++        }
++    }
++
++    private PersonalVideoActions()
++    {
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/PhysicalIndexOwnership.java b/src/com/archos/mediaprovider/video/PhysicalIndexOwnership.java
+new file mode 100644
+--- /dev/null
++++ b/src/com/archos/mediaprovider/video/PhysicalIndexOwnership.java
+@@ -0,0 +1,207 @@
++package com.archos.mediaprovider.video;
++
++import android.content.ContentResolver;
++import android.content.ContentValues;
++import android.database.Cursor;
++import android.database.DatabaseUtils;
++import android.database.sqlite.SQLiteDatabase;
++import android.net.Uri;
++import android.provider.MediaStore;
++import java.io.IOException;
++import java.util.HashSet;
++import java.util.Set;
++
++/** Physical remote_id belongs to an index. Public _id belongs to the user's library row. */
++final class PhysicalIndexOwnership
++{
++    static boolean local(String path)
++    {
++        String scheme = Uri.parse(path).getScheme();
++        return scheme == null || scheme.equals("file") || scheme.equals("content");
++    }
++
++    static ContentValues localDestination(ContentResolver resolver, String replacement, long size) throws IOException
++    {
++        Uri uri = Uri.parse(replacement);
++        if (uri.getScheme() != null && !uri.getScheme().equals("file"))
++            throw new IOException("Replacement needs an indexed local file");
++        String path = uri.getScheme() == null ? replacement : uri.getPath();
++        try (Cursor rows = resolver.query(MediaStore.Files.getContentUri("external"),
++            new String[] {"_id", "_data", "_display_name", "_size", "date_modified"},
++            "_data=? AND media_type=3", new String[] {path}, null))
++        {
++            if (rows == null || rows.getCount() != 1 || !rows.moveToFirst() || rows.isNull(3) || rows.getLong(3) != size)
++                throw new IOException("Replacement has no unique local MediaStore identity");
++            ContentValues values = new ContentValues();
++            DatabaseUtils.cursorRowToContentValues(rows, values);
++            if (values.getAsLong("_id") <= 0 || values.getAsLong("_id") >= VideoOpenHelper.SCANNED_ID_OFFSET)
++                throw new IOException("Local MediaStore identity is outside its index range");
++            return values;
++        }
++        catch (RuntimeException unavailable)
++        {
++            throw new IOException("Local MediaStore identity is unavailable", unavailable);
++        }
++    }
++
++    /** Import replacements use an in-place write so recursive DELETE triggers cannot destroy retained user state. */
++    static long upsertImported(SQLiteDatabase db, ContentValues values)
++    {
++        Long id = values.getAsLong("_id");
++        String path = values.getAsString("_data");
++        if (id == null || path == null)
++            return db.insert("files_import", null, values);
++        db.beginTransaction();
++        try
++        {
++            boolean existing;
++            try (Cursor row = db.rawQuery("SELECT _id,_data FROM files_import WHERE _id=? OR _data=?",
++                                         new String[] {"" + id, path}))
++            {
++                existing = row.moveToFirst();
++                if (existing && (row.getCount() != 1 || row.getLong(0) != id || !path.equals(row.getString(1))))
++                    throw new IllegalStateException("Import identity requires reconciliation before replacement");
++            }
++            long result;
++            if (existing)
++            {
++                db.update("files_import", values, "_id=? AND _data=?", new String[] {"" + id, path});
++                ContentValues physical = compatible(db, "files", values);
++                physical.remove("_id");
++                physical.remove("remote_id");
++                db.update("files", physical, "remote_id=? AND _data=?", new String[] {"" + id, path});
++                result = id;
++            }
++            else
++                result = db.insertOrThrow("files_import", null, values);
++            db.setTransactionSuccessful();
++            return result;
++        }
++        finally
++        {
++            db.endTransaction();
++        }
++    }
++
++    static long publicId(ContentResolver resolver, long remote, String path)
++    {
++        try (Cursor row = resolver.query(VideoStoreInternal.FILES, new String[] {"_id"},
++                                         "remote_id=? AND _data=?", new String[] {"" + remote, path}, null))
++        {
++            return row != null && row.moveToFirst() ? row.getLong(0) : remote;
++        }
++    }
++
++    /** Caller owns the SQLite transaction and scan lock. No identity, metadata or playback row is replaced. */
++    static boolean move(SQLiteDatabase db, MissingMediaActions.StoredFile expected, long oldRemote,
++                        String replacement, ContentValues local) throws IOException
++    {
++        boolean toLocal = local(replacement);
++        if (toLocal && local == null)
++            throw new IOException("Local destination must be resolved through MediaStore");
++        String oldTable = oldRemote >= VideoOpenHelper.SCANNED_ID_OFFSET ? "files_scanned" : "files_import";
++        long oldRaw = oldRemote >= VideoOpenHelper.SCANNED_ID_OFFSET
++            ? oldRemote - VideoOpenHelper.SCANNED_ID_OFFSET : oldRemote;
++        ContentValues previous = new ContentValues();
++        try (Cursor source = db.query(oldTable, null, "_id=? AND _data=? AND _size=?",
++                                       new String[] {"" + oldRaw, expected.path(), "" + expected.size()}, null, null, null))
++        {
++            if (!source.moveToFirst())
++                return false;
++            DatabaseUtils.cursorRowToContentValues(source, previous);
++        }
++        String path = toLocal ? local.getAsString("_data") : replacement;
++        String table = toLocal ? "files_import" : "files_scanned";
++        long raw = toLocal ? local.getAsLong("_id") : nextScannedId(db);
++        long remote = toLocal ? raw : raw + VideoOpenHelper.SCANNED_ID_OFFSET;
++        try (Cursor conflict = db.rawQuery("SELECT _id FROM files WHERE _data=? OR remote_id=? UNION ALL "
++                                          + "SELECT _id FROM " + table + " WHERE _data=? OR _id=?",
++                                          new String[] {path, "" + remote, path, "" + raw}))
++        {
++            if (conflict.moveToFirst())
++                return false;
++        }
++        ContentValues physical = compatible(db, table, previous);
++        if (toLocal)
++            physical.putAll(compatible(db, table, local));
++        physical.put("_id", raw);
++        physical.put("_data", path);
++        physical.put("_display_name", Uri.parse(replacement).getLastPathSegment());
++        if (!toLocal)
++        {
++            physical.put("media_type", 3);
++            physical.put("date_modified", 0);
++            physical.put("parent", -1);
++            physical.put("Archos_smbserver", server(db, Uri.parse(replacement)));
++            physical.put("archos_unique_id", "");
++        }
++        ContentValues publicRow = new ContentValues();
++        publicRow.put("remote_id", remote);
++        publicRow.put("_data", path);
++        publicRow.put("_display_name", physical.getAsString("_display_name"));
++        publicRow.put("volume_hidden", 0);
++        publicRow.put("Archos_smbserver", toLocal ? 0 : physical.getAsLong("Archos_smbserver"));
++        if (db.update("files", publicRow, "_id=? AND remote_id=? AND _data=? AND _size=?",
++                      new String[] {"" + expected.id(), "" + oldRemote, expected.path(), "" + expected.size()}) != 1)
++            return false;
++        // Moving the public locator/owner first makes both old index delete triggers harmless.
++        if (db.delete(oldTable, "_id=? AND _data=?", new String[] {"" + oldRaw, expected.path()}) != 1)
++            throw new IOException("Old physical index changed");
++        db.insertOrThrow(table, null, physical);
++        try (Cursor check = db.rawQuery("SELECT _id FROM files WHERE _id=? AND remote_id=? AND _data=?",
++                                        new String[] {"" + expected.id(), "" + remote, path}))
++        {
++            if (!check.moveToFirst())
++                throw new IOException("Physical ownership transition did not preserve the library identity");
++        }
++        return true;
++    }
++
++    private static ContentValues compatible(SQLiteDatabase db, String table, ContentValues values)
++    {
++        Set<String> columns = new HashSet<>();
++        try (Cursor schema = db.rawQuery("PRAGMA table_info(" + table + ")", null))
++        {
++            while (schema.moveToNext())
++                columns.add(schema.getString(1));
++        }
++        ContentValues result = new ContentValues(values);
++        for (String key : new HashSet<>(result.keySet()))
++            if (!columns.contains(key) || key.equals("inserted"))
++                result.remove(key);
++        return result;
++    }
++
++    private static long nextScannedId(SQLiteDatabase db) throws IOException
++    {
++        try (Cursor next = db.rawQuery("SELECT max(ifnull((SELECT max(_id) FROM files_scanned),0),"
++                                      + "ifnull((SELECT seq FROM sqlite_sequence WHERE name='files_scanned'),0))+1", null))
++        {
++            next.moveToFirst();
++            long id = next.getLong(0);
++            if (id <= 0 || id > Long.MAX_VALUE - VideoOpenHelper.SCANNED_ID_OFFSET)
++                throw new IOException("Network index identity range exhausted");
++            return id;
++        }
++    }
++
++    private static long server(SQLiteDatabase db, Uri replacement)
++    {
++        String server = NetworkScannerServiceVideo.extractSmbServer(replacement);
++        ContentValues values = new ContentValues();
++        values.put("_data", server);
++        values.put("active", 1);
++        values.put("last_seen", System.currentTimeMillis() / 1000);
++        db.insertWithOnConflict("smb_server", null, values, SQLiteDatabase.CONFLICT_IGNORE);
++        try (Cursor row = db.rawQuery("SELECT _id FROM smb_server WHERE _data=?", new String[] {server}))
++        {
++            if (!row.moveToFirst())
++                throw new IllegalStateException("Network server identity unavailable");
++            return row.getLong(0);
++        }
++    }
++
++    private PhysicalIndexOwnership()
++    {
++    }
++}
+diff --git a/src/com/archos/mediaprovider/video/VideoOpenHelper.java b/src/com/archos/mediaprovider/video/VideoOpenHelper.java
+--- a/src/com/archos/mediaprovider/video/VideoOpenHelper.java
++++ b/src/com/archos/mediaprovider/video/VideoOpenHelper.java
+@@ -24,7 +24,7 @@
+ import com.archos.mediaprovider.ArchosMediaCommon;
+ import com.archos.mediaprovider.CustomCursorFactory;
+ import com.archos.mediaprovider.SQLiteUtils;
+-import com.archos.mediaprovider.DeleteOnDowngradeSQLiteOpenHelper;
++import android.database.sqlite.SQLiteOpenHelper;
+ import com.archos.mediaprovider.video.VideoStore.MediaColumns;
+ import com.archos.mediaprovider.video.VideoStore.Video.VideoColumns;
+ import com.archos.mediascraper.ScraperImage;
+@@ -41,14 +41,14 @@
+ /**
+  * Creates the video database
+  */
+-public class VideoOpenHelper extends DeleteOnDowngradeSQLiteOpenHelper {
++public class VideoOpenHelper extends SQLiteOpenHelper {
+     private static final Logger log = LoggerFactory.getLogger(VideoOpenHelper.class);
+ 
+     // that is what onCreate creates
+     private static final int DATABASE_CREATE_VERSION = 36; // initial version for v1.0 of nova (archos was 10)
+     // that is the current version
+-    private static final int DATABASE_VERSION = 63;
+-    private static final String DATABASE_NAME = "media.db";
++    private static final int DATABASE_VERSION = 64;
++    private static final String DATABASE_NAME = "media-v64.db";
+ 
+     // (Integer.MAX_VALUE / 2) rounded to human readable form
+     /* package */ static final long SCANNED_ID_OFFSET = ArchosMediaCommon.SCANNED_ID_OFFSET;
+@@ -1712,6 +1712,7 @@
+ 
+     private final Context mContext;
+     private final int mTargetVersion;
++    private final String mDatabaseName;
+ 
+     public VideoOpenHelper(Context context) {
+         this(context, DATABASE_NAME, DATABASE_VERSION);
+@@ -1721,6 +1722,33 @@
+         super(context, name, new CustomCursorFactory(), version);
+         mContext = context;
+         mTargetVersion = version;
++        mDatabaseName = name;
++    }
++
++    private void prepareVersionedStore()
++    {
++        if (!DATABASE_NAME.equals(mDatabaseName))
++            return;
++        try
++        {
++            MediaDatabaseUpgrade.prepare(mContext, DATABASE_NAME, DATABASE_VERSION);
++        }
++        catch (java.io.IOException failure)
++        {
++            throw new android.database.sqlite.SQLiteException("Could not prepare the versioned media store", failure);
++        }
++    }
++
++    @Override public synchronized SQLiteDatabase getWritableDatabase()
++    {
++        prepareVersionedStore();
++        return super.getWritableDatabase();
++    }
++
++    @Override public synchronized SQLiteDatabase getReadableDatabase()
++    {
++        prepareVersionedStore();
++        return super.getReadableDatabase();
+     }
+ 
+     /**
+@@ -1739,6 +1767,90 @@
+         // turn on foreign key support used in scraper tables
+         db.setForeignKeyConstraintsEnabled(true);
+         ensureGenreIdExtension(db);
++        ensurePersonalVideoExtension(db);
++        ensurePhysicalOwnershipExtension(db);
++    }
++
++    private void ensurePhysicalOwnershipExtension(SQLiteDatabase db)
++    {
++        if (db.getVersion() < 64)
++            return;
++        installPhysicalOwnershipExtension(db);
++    }
++
++    private void installPhysicalOwnershipExtension(SQLiteDatabase db)
++    {
++        try (Cursor trigger = db.rawQuery("SELECT sql FROM sqlite_master WHERE name='after_insert_files_import'", null))
++        {
++            if (trigger.moveToFirst() && trigger.getString(0).contains("coalesce(_id,"))
++                return;
++        }
++        db.beginTransaction();
++        try
++        {
++            String imported = CREATE_FILES_IMPORT_TRIGGER_INSERT_V21.replace("\n_id = NEW._id ,",
++                "\n_id = " + stablePublicId("NEW._id") + " ,");
++            String scanned = CREATE_FILES_SCANNED_TRIGGER_INSERT_V32.replace(
++                "_id = (NEW._id + " + SCANNED_ID_OFFSET + "),",
++                "_id = " + stablePublicId("NEW._id + " + SCANNED_ID_OFFSET) + ",");
++            db.execSQL("DROP TRIGGER IF EXISTS after_insert_files_import");
++            db.execSQL("DROP TRIGGER IF EXISTS after_insert_files_scanned");
++            db.execSQL("DROP TRIGGER IF EXISTS after_update_files_import");
++            db.execSQL(imported);
++            db.execSQL(scanned);
++            db.execSQL(CREATE_FILES_IMPORT_TRIGGER_UPDATE_V21.replace("WHERE _id = OLD._id",
++                                                                    "WHERE remote_id = OLD._id"));
++            db.setTransactionSuccessful();
++        }
++        finally
++        {
++            db.endTransaction();
++        }
++    }
++
++    private static String stablePublicId(String nativeId)
++    {
++        return "coalesce(_id,CASE WHEN EXISTS(SELECT 1 FROM files AS occupied WHERE occupied._id=(" + nativeId +
++            ")) THEN (SELECT CASE WHEN ifnull(max(_id),0)>=1999999999 " +
++            "THEN RAISE(ABORT,'Library identity range exhausted') ELSE ifnull(max(_id),0)+1 END " +
++            "FROM files WHERE _id<2000000000) ELSE (" + nativeId + ") END)";
++    }
++
++    private void ensurePersonalVideoExtension(SQLiteDatabase db)
++    {
++        if (db.getVersion() < 64)
++            return;
++        installPersonalVideoExtension(db);
++    }
++
++    private void installPersonalVideoExtension(SQLiteDatabase db)
++    {
++        boolean missing = !hasColumn(db, FILES_TABLE_NAME, PersonalVideoActions.COLUMN);
++        boolean revisionMissing = !hasColumn(db, FILES_TABLE_NAME, PersonalVideoActions.REVISION);
++        if (!missing && !revisionMissing && hasColumn(db, VIDEO_VIEW_NAME, PersonalVideoActions.COLUMN))
++            return;
++        if (db.isReadOnly())
++            throw new IllegalStateException("Writable media database required for personal-video extension");
++        db.beginTransaction();
++        try
++        {
++            if (missing)
++                db.execSQL("ALTER TABLE files ADD COLUMN " + PersonalVideoActions.COLUMN + " INTEGER NOT NULL DEFAULT 0");
++            if (revisionMissing)
++                db.execSQL("ALTER TABLE files ADD COLUMN " + PersonalVideoActions.REVISION +
++                           " INTEGER NOT NULL DEFAULT 0");
++            SQLiteUtils.dropView(db, VIDEO_VIEW_NAME);
++            String view = withGenreIds(CREATE_VIDEO_VIEW_V63);
++            String anchor = "    Archos_hiddenByUser,\n";
++            if (!view.contains(anchor))
++                throw new IllegalStateException("Personal-video view anchor unavailable");
++            db.execSQL(view.replace(anchor, anchor + "    " + PersonalVideoActions.COLUMN + ",\n"));
++            db.setTransactionSuccessful();
++        }
++        finally
++        {
++            db.endTransaction();
++        }
+     }
+ 
+     /**
+@@ -1748,7 +1860,11 @@
+      * columns and the extra view projections without a destructive downgrade.
+      */
+     private void ensureGenreIdExtension(SQLiteDatabase db) {
+-        if (db.getVersion() < 63) return; // Historical migration fixtures must keep their own schema.
++        ensureGenreIdExtension(db, false);
++    }
++
++    private void ensureGenreIdExtension(SQLiteDatabase db, boolean migrating) {
++        if (!migrating && db.getVersion() < 63) return; // Historical fixtures retain their own schema.
+         boolean movieMissing = !hasColumn(db, ScraperTables.MOVIE_TABLE_NAME, ScraperStore.Movie.GENRE_IDS);
+         boolean showMissing = !hasColumn(db, ScraperTables.SHOW_TABLE_NAME, ScraperStore.Show.GENRE_IDS);
+         boolean viewMissing = !hasColumn(db, VIDEO_VIEW_NAME, "genre_ids");
+@@ -1861,8 +1977,7 @@
+         if (log.isDebugEnabled()) log.debug("onUpgrade: upgrading Database from {} to {}", oldVersion, newVersion);
+         if (oldVersion < DATABASE_CREATE_VERSION) {
+             if (log.isDebugEnabled()) log.debug("onUpgrade: upgrade not supported for version {}, recreating the database.", oldVersion);
+-            // triggers database deletion
+-            deleteDatabase();
++            throw new android.database.sqlite.SQLiteException("Unsupported media schema; original retained");
+         }
+         if (oldVersion < 37 && newVersion >= 37) {
+             SQLiteUtils.dropView(db, VIDEO_VIEW_NAME);
+@@ -2053,6 +2168,11 @@
+             if (log.isDebugEnabled()) log.debug("onUpgrade: {} - require the current scraper kind for joined metadata", 63);
+             SQLiteUtils.dropView(db, VIDEO_VIEW_NAME);
+             db.execSQL(CREATE_VIDEO_VIEW_V63);
++        }
++        if (oldVersion < 64 && newVersion >= 64) {
++            ensureGenreIdExtension(db, true);
++            installPersonalVideoExtension(db);
++            installPhysicalOwnershipExtension(db);
+         }
+     }
+ 
+@@ -2238,7 +2358,16 @@
+      * @param context
+      * @return the SQL DB file
+      */
++    /** Worker-only on the first upgrade: creates a verified copy while retaining the older APK's store. */
+     static public File getDatabaseFile(Context context) {
++        try
++        {
++            MediaDatabaseUpgrade.prepare(context, DATABASE_NAME, DATABASE_VERSION);
++        }
++        catch (java.io.IOException failure)
++        {
++            throw new android.database.sqlite.SQLiteException("Could not prepare the versioned media store", failure);
++        }
+         return context.getDatabasePath(DATABASE_NAME);
+     }
+ }
+diff --git a/src/com/archos/mediaprovider/video/VideoProvider.java b/src/com/archos/mediaprovider/video/VideoProvider.java
+--- a/src/com/archos/mediaprovider/video/VideoProvider.java
++++ b/src/com/archos/mediaprovider/video/VideoProvider.java
+@@ -462,7 +462,8 @@
+         // insert into our custom files tables.
+         if (match == RAW) {
+             String table = FileUtils.getName(uri);
+-            long rowId = db.insert(table, null, values);
++            long rowId = VideoOpenHelper.FILES_IMPORT_TABLE_NAME.equals(table)
++                ? PhysicalIndexOwnership.upsertImported(db, values) : db.insert(table, null, values);
+             if (rowId > 0) {
+                 Uri result = ContentUris.withAppendedId(uri, rowId);
+                 if (!db.inTransaction()) {
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportImpl.java
+@@ -280,6 +280,110 @@
+         }
+     }
+ 
++    public record SourceResult(long checked, long added, long removed, long updated)
++    {
++    }
++
++    public interface SourceProgress
++    {
++        void accept(long checked, long total, long added, long removed, long updated);
++    }
++
++    private java.util.function.LongConsumer scopedProgress;
++    private long scopedChecked;
++
++    /** Registered local source only; the existing native importer owns all physical/public row mutations. */
++    public SourceResult doScopedImport(Uri root, SourceProgress progress,
++                                        java.util.function.BooleanSupplier cancelled) throws Exception
++    {
++        mIsImportInterrupted = false;
++        if (cancelled.getAsBoolean())
++            throw new java.io.InterruptedIOException("Local source scan stopped");
++        String canonical = SupernovaLibraryPolicy.canonical(root);
++        Set<String> configured = androidx.preference.PreferenceManager.getDefaultSharedPreferences(mContext)
++            .getStringSet("supernova_library_roots", java.util.Collections.emptySet());
++        if (!LocalSourceScan.registered(configured, root) || !canonical.startsWith("file:"))
++            throw new IllegalArgumentException("Local source is not registered");
++        try (ScanProcessLock lock = ScanProcessLock.acquire(
++                 new File(mContext.getFilesDir(), "supernova-scan.lock"), VideoStoreImportImpl::previewImportInterrupted))
++        {
++            ImportState.VIDEO.setState(State.REGULAR_IMPORT);
++            try
++            {
++                String path = Uri.parse(canonical).getPath();
++                if (!new File(path).isDirectory())
++                    throw new java.io.IOException("Local source is no longer mounted");
++                Integer storage = null;
++                boolean primary = false;
++                for (StorageLocation mounted : getMountedStorageLocations())
++                    if (path.equals(mounted.path) || path.startsWith(mounted.path + "/"))
++                    {
++                        storage = mounted.storageId;
++                        primary = mounted.primary;
++                    }
++                ReconciliationSnapshot snapshot = loadMountedStorageSnapshot(mCr,
++                    java.util.List.of(new StorageLocation(path, storage, primary)));
++                if (!snapshot.complete)
++                    throw new java.io.IOException("Local source inventory did not complete");
++                if (previewImportInterrupted())
++                    throw new java.io.InterruptedIOException("Local source scan stopped");
++                if (!new File(path).isDirectory())
++                    throw new java.io.IOException("Local source disappeared during inventory");
++                rejectOutsideOwnership(mCr, snapshot);
++                LocalReconciliationResult reconciled = reconcileStorageSnapshot(mCr, snapshot, mContext);
++                Set<Long> newIds = new java.util.HashSet<>(snapshot.mediaStoreIds);
++                newIds.removeAll(snapshot.importedById.keySet());
++                int expected = newIds.size();
++                int added = copySnapshotData(mCr, snapshot, null);
++                if (added < expected)
++                    throw new java.io.IOException("Local source import did not complete");
++                long total = snapshot.mediaStoreIds.size();
++                progress.accept(0, total, added, reconciled.removed, reconciled.updated);
++                scopedChecked = 0;
++                scopedProgress = checked -> progress.accept(Math.min(checked, total), total, added,
++                                                            reconciled.removed, reconciled.updated);
++                doScan(mCr, mContext, mBlackList, path);
++                if (previewImportInterrupted())
++                    throw new java.io.InterruptedIOException("Local source scan stopped");
++                return new SourceResult(total, added, reconciled.removed, reconciled.updated);
++            }
++            finally
++            {
++                scopedProgress = null;
++                ImportState.VIDEO.setDeleting(false);
++                ImportState.VIDEO.setRemainingCount(0);
++                ImportState.VIDEO.setNumberOfFilesRemainingToDelete(0);
++                ImportState.VIDEO.setState(State.IDLE);
++            }
++        }
++    }
++
++    private static void rejectOutsideOwnership(ContentResolver resolver, ReconciliationSnapshot snapshot)
++        throws java.io.IOException
++    {
++        List<Long> added = new ArrayList<>(snapshot.mediaStoreIds);
++        added.removeAll(snapshot.importedById.keySet());
++        for (int offset = 0; offset < added.size(); offset += 100)
++        {
++            List<Long> batch = added.subList(offset, Math.min(offset + 100, added.size()));
++            StringBuilder placeholders = new StringBuilder();
++            String[] ids = new String[batch.size()];
++            for (int i = 0; i < batch.size(); i++)
++            {
++                if (i > 0)
++                    placeholders.append(',');
++                placeholders.append('?');
++                ids[i] = String.valueOf(batch.get(i));
++            }
++            try (Cursor row = resolver.query(VideoStoreInternal.FILES_IMPORT, new String[] {BaseColumns._ID},
++                                              BaseColumns._ID + " IN (" + placeholders + ")", ids, null))
++            {
++                if (row == null || row.moveToFirst())
++                    throw new java.io.IOException("Local source identity belongs to another import scope");
++            }
++        }
++    }
++
+     static final class LocalReconciliationResult
+     {
+         int updated;
+@@ -476,7 +580,7 @@
+                 Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? FILES_PROJECTION_AP : FILES_PROJECTION_BP;
+             String selection =
+                 (Build.VERSION.SDK_INT > Build.VERSION_CODES.O ? NOT_NETWORKINDEXED_AP : NOT_NETWORKINDEXED_BP) +
+-                " AND " + MediaColumnsDATA + " LIKE ?"
++                " AND " + MediaColumnsDATA + " LIKE ? ESCAPE '\\'"
+                 + " AND " + BaseColumns._ID + ">?";
+             if (!TextUtils.isEmpty(BLACKLIST))
+                 selection += BLACKLIST;
+@@ -506,8 +610,8 @@
+             long pageLastId = lastSeenId;
+             try
+             {
+-                String selection = MediaColumnsDATA + " LIKE ? AND " + BaseColumns._ID + ">?";
+-                String[] selectionArgs = {storagePrefix + "%", String.valueOf(lastSeenId)};
++                String selection = MediaColumnsDATA + " LIKE ? ESCAPE '\\' AND " + BaseColumns._ID + ">?";
++                String[] selectionArgs = {literalPrefix(storagePrefix) + "%", String.valueOf(lastSeenId)};
+                 imported = queryIdentityPage(cr, VideoStoreInternal.FILES_IMPORT, IMPORT_IDENTITY_PROJECTION, selection,
+                                              selectionArgs);
+                 if (imported == null)
+@@ -568,7 +672,7 @@
+             long pageLastId = lastSeenId;
+             try
+             {
+-                String[] selectionArgs = {storagePrefix + "%", String.valueOf(lastSeenId)};
++                String[] selectionArgs = {literalPrefix(storagePrefix) + "%", String.valueOf(lastSeenId)};
+                 mediaStore = CustomCursor.wrap(queryIdentityPage(cr, MediaStore.Files.getContentUri("external"),
+                                                                  projection, selection, selectionArgs));
+                 if (mediaStore == null)
+@@ -761,7 +865,8 @@
+                 try
+                 {
+                     cr.applyBatch(VideoStore.AUTHORITY,
+-                                  buildChangedIdRemapOperations(source, destination, repairDuplicate));
++                                  buildChangedIdRemapOperations(source, destination, repairDuplicate,
++                            PhysicalIndexOwnership.publicId(cr, source.id, source.path)));
+                     remappedSourceIds.add(source.id);
+                     snapshot.importedIds.remove(source.id);
+                     snapshot.importedIds.add(destination.id);
+@@ -796,7 +901,8 @@
+                 boolean present = new File(identity.path).exists();
+                 if (location != null && new File(location.path).canRead())
+                 {
+-                    SupernovaLibraryPolicy.availability(context, identity.id, Uri.fromFile(new File(identity.path)),
++                    SupernovaLibraryPolicy.availability(context, PhysicalIndexOwnership.publicId(cr, identity.id, identity.path),
++                                                        Uri.fromFile(new File(identity.path)),
+                                                         !present);
+                     SupernovaLibraryPolicy.sourceAvailable(context, Uri.fromFile(new File(location.path)), true);
+                 }
+@@ -998,6 +1104,7 @@
+         + "AND ifnull(Archos_favorite_track,0)=0 "
+         + "AND ifnull(Archos_traktSeen,0)=0 AND ifnull(Archos_traktLibrary,0)=0 "
+         + "AND ifnull(Archos_traktResume,0)=0 AND ifnull(Archos_hiddenByUser,0)=0 "
++        + "AND ifnull(Supernova_personalVideo,0)=0 "
+         + "AND ifnull(Archos_title,'')='' "
+         + "AND NOT EXISTS (SELECT 1 FROM movie WHERE video_id=files.remote_id) "
+         + "AND NOT EXISTS (SELECT 1 FROM episode WHERE video_id=files.remote_id)";
+@@ -1027,6 +1134,13 @@
+     static ArrayList<ContentProviderOperation>
+     buildChangedIdRemapOperations(ImportIdentity source, MediaStoreIdentity destination, boolean repairDuplicate)
+     {
++        return buildChangedIdRemapOperations(source, destination, repairDuplicate, source.id);
++    }
++
++    private static ArrayList<ContentProviderOperation> buildChangedIdRemapOperations(
++        ImportIdentity source, MediaStoreIdentity destination, boolean repairDuplicate, long publicId)
++    {
++        long targetId = publicId == source.id ? destination.id : publicId;
+         ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+ 
+         if (repairDuplicate)
+@@ -1043,22 +1157,22 @@
+         }
+ 
+         ContentValues fileValues = new ContentValues(destination.values);
+-        fileValues.put(BaseColumns._ID, destination.id);
++        fileValues.put(BaseColumns._ID, targetId);
+         fileValues.put("remote_id", destination.id);
+         fileValues.put(VideoStoreInternal.KEY_IMPORT_RECONCILE_ID, true);
+         operations.add(
+             ContentProviderOperation.newUpdate(VideoStoreInternal.FILES)
+                 .withSelection(BaseColumns._ID + "=? AND remote_id=? AND " + MediaColumnsDATA + "=?",
+-                               new String[] {String.valueOf(source.id), String.valueOf(source.id), source.path})
++                               new String[] {String.valueOf(publicId), String.valueOf(source.id), source.path})
+                 .withValues(fileValues)
+                 .withExpectedCount(1)
+                 .build());
+ 
+         ContentValues thumbnailValues = new ContentValues();
+-        thumbnailValues.put("video_id", destination.id);
++        thumbnailValues.put("video_id", targetId);
+         operations.add(
+             ContentProviderOperation.newUpdate(VideoStoreInternal.getRawUri(VideoOpenHelper.VIDEOTHUMBNAIL_TABLE_NAME))
+-                .withSelection("video_id=?", new String[] {String.valueOf(source.id)})
++                .withSelection("video_id=?", new String[] {String.valueOf(publicId)})
+                 .withValues(thumbnailValues)
+                 .build());
+ 
+@@ -1091,6 +1205,11 @@
+         return reconcileStorageSnapshot(cr, snapshot);
+     }
+ 
++    static String literalPrefix(String path)
++    {
++        return path.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
++    }
++
+     static boolean isStoragePath(String storagePrefix, String path)
+     {
+         return path != null && path.startsWith(storagePrefix);
+@@ -1098,7 +1217,7 @@
+ 
+     private static final String[] ID_DATA_PROJ =
+         new String[] {BaseColumns._ID, MediaColumnsDATA, VideoColumns.ARCHOS_MEDIA_SCRAPER_ID};
+-    private static final String UPDATE_WHERE = "remote_id=?";
++    private static final String UPDATE_WHERE = "_id=?";
+     /** scans every file in cursor and update database, also closes cursor */
+     private void handleScanCursor(Cursor c, ContentResolver cr, Context context, Blacklist blacklist)
+     {
+@@ -1133,6 +1252,8 @@
+             {
+                 count++;
+                 PreviewLocalImportTrace.checked();
++                if (scopedProgress != null)
++                    scopedProgress.accept(++scopedChecked);
+                 ImportState.VIDEO.setRemainingCount(remaining--);
+                 if (log.isDebugEnabled())
+                     log.debug("handleScanCursor: ImportState.VIDEO.setRemainingCount {} count {}", remaining, count);
+@@ -1209,7 +1330,8 @@
+                 if (CHECK_NFO)
+                 {
+                     // .nfo auto-parsing
+-                    if (job.mRetrieve && scraperID <= 0)
++                    if (job.mRetrieve && scraperID <= 0 &&
++                        !PersonalVideoActions.isPersonal(context, parseLong(job.mId, -1)))
+                     {
+                         Uri videoFile = job.mPath;
+                         if (videoFile != null)
+@@ -1351,6 +1473,19 @@
+     /** executes metadata scan of files defined by Uri */
+     public void doScan(Uri what)
+     {
++        try (ScanProcessLock lock = ScanProcessLock.acquire(new File(mContext.getFilesDir(), "supernova-scan.lock"),
++                                                           VideoStoreImportImpl::previewImportInterrupted))
++        {
++            doScanOwned(what);
++        }
++        catch (java.io.IOException unavailable)
++        {
++            throw new IllegalStateException("Local file scan ownership unavailable", unavailable);
++        }
++    }
++
++    private void doScanOwned(Uri what)
++    {
+         // TODO MARC only works with local storage does not work with FileEditor editor =
+         // FileEditorFactoryWithUpnp.getFileEditorForUrl(what, null);
+         // TODO MARC this makes fail the associate sub on remote storage
+@@ -1384,14 +1519,22 @@
+     private static final String DIRECTORY_NEEDS_SCAN =
+         "scan_state < (select date_modified from files as files_parent where files_parent._id = files.parent)";
+     private static final String WHERE_UNSCANNED = "scan_state >= 0 AND (" + SELF_NEEDS_SCAN + " OR " +
+-                                                  DIRECTORY_NEEDS_SCAN + ") AND _id < " +
+-                                                  VideoOpenHelper.SCANNED_ID_OFFSET;
++                                                  DIRECTORY_NEEDS_SCAN + ") AND EXISTS (SELECT 1 FROM files_import AS owner "
++        + "WHERE owner._id=files.remote_id AND owner._data=files._data)";
+     /** executes metadata scan of every unscanned file */
+     private void doScan(ContentResolver cr, Context context, Blacklist blacklist)
+     {
++        mIsImportInterrupted = false;
++        doScan(cr, context, blacklist, null);
++    }
++
++    private void doScan(ContentResolver cr, Context context, Blacklist blacklist, String source)
++    {
++        String scope = source == null ? "" : " AND _data LIKE ? ESCAPE '\\'";
++        String[] arguments = source == null ? null :
++            new String[] {literalPrefix(source.endsWith("/") ? source : source + "/") + "%"};
+         if (log.isDebugEnabled())
+             log.debug("doScan: Scanning Metadata all unscanned files");
+-        mIsImportInterrupted = false;
+         Cursor c = null;
+         int cursorCount = 0;
+         long afterId = -1;
+@@ -1405,8 +1548,8 @@
+                 { // API>30 requires bundle to LIMIT
+                     final Bundle bundle = new Bundle();
+                     bundle.putString(ContentResolver.QUERY_ARG_SQL_SELECTION,
+-                                     WHERE_UNSCANNED + " AND _id > " + afterId);
+-                    bundle.putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, null);
++                                     WHERE_UNSCANNED + scope + " AND _id > " + afterId);
++                    bundle.putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, arguments);
+                     bundle.putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, new String[] {BaseColumns._ID});
+                     bundle.putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION,
+                                   ContentResolver.QUERY_SORT_DIRECTION_ASCENDING);
+@@ -1418,8 +1561,8 @@
+                 }
+                 else
+                 {
+-                    c = cr.query(VideoStoreInternal.FILES, ID_DATA_PROJ, WHERE_UNSCANNED + " AND _id > " + afterId,
+-                                 null, BaseColumns._ID + " ASC LIMIT " + WINDOW_SIZE);
++                    c = cr.query(VideoStoreInternal.FILES, ID_DATA_PROJ, WHERE_UNSCANNED + scope + " AND _id > " + afterId,
++                                 arguments, BaseColumns._ID + " ASC LIMIT " + WINDOW_SIZE);
+                 }
+                 if (c != null)
+                     cursorCount = c.getCount();
+@@ -1456,6 +1599,8 @@
+             {
+                 log.error("SQLException or IllegalStateException", e);
+                 PreviewLocalImportTrace.problem("doScan", e);
++                if (source != null)
++                    throw e;
+                 if (CRASH_ON_ERROR)
+                     throw new RuntimeException(e);
+                 break;
+diff --git a/src/com/archos/mediaprovider/video/VideoStoreImportService.java b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+--- a/src/com/archos/mediaprovider/video/VideoStoreImportService.java
++++ b/src/com/archos/mediaprovider/video/VideoStoreImportService.java
+@@ -80,6 +80,7 @@
+     private static final int MESSAGE_REMOVE_FILE = 5;
+     private static final int MESSAGE_HIDE_VOLUME = 6;
+     private static final int MESSAGE_VOLUME_MOUNTED = 7;
++    private static final int MESSAGE_IMPORT_SOURCE = 8;
+ 
+     // handler.arg1 contains startId or this
+     private static final int DONT_KILL_SELF = -1;
+@@ -443,6 +444,12 @@
+                 Message m = mHandler.obtainMessage(MESSAGE_KILL, startId, flags);
+                 mHandler.sendMessageDelayed(m, 1000);
+             }
++            else if (LocalSourceScan.ACTION.equals(action))
++            {
++                Message message = mHandler.obtainMessage(MESSAGE_IMPORT_SOURCE, startId, flags,
++                                                         intent.getStringExtra("source_batch"));
++                message.sendToTarget();
++            }
+             else if (ArchosMediaIntent.ACTION_VIDEO_SCANNER_IMPORT_INCR.equals(action))
+             {
+                 if (log.isDebugEnabled())
+@@ -596,6 +603,11 @@
+                 if (log.isDebugEnabled())
+                     log.debug("handleMessage: MESSAGE_KILL: do not stopSelf");
+             }
++            break;
++        case MESSAGE_IMPORT_SOURCE:
++            LocalSourceScan.run(this, mImporter, (String)msg.obj);
++            if (!mCleanupCalled)
++                mHandler.obtainMessage(MESSAGE_KILL, DONT_KILL_SELF, msg.arg2).sendToTarget();
+             break;
+         case MESSAGE_IMPORT_INCR:
+             // Incremental import: runs while user may be active (bookmarks, watched state).
+@@ -1129,6 +1141,11 @@
+         {
+             if (log.isDebugEnabled())
+                 log.debug("onChange");
++            if (LocalSourceScan.active())
++            {
++                ImportState.VIDEO.setDirty(true);
++                return;
++            }
+             // to avoid sending message to dead thread because mHandlerThread is no more, need to relaunch the service
+             // so that it is recreated in onCreate
+             // happens really often
+diff --git a/src/com/archos/mediascraper/AutoScrapeService.java b/src/com/archos/mediascraper/AutoScrapeService.java
+--- a/src/com/archos/mediascraper/AutoScrapeService.java
++++ b/src/com/archos/mediascraper/AutoScrapeService.java
+@@ -1253,9 +1253,10 @@
+                                                 log.trace("startScraping: NFO tags.save ID={}", ID);
+                                             if (Thread.currentThread().isInterrupted())
+                                                 return;
+-                                            long savedId = tags.save(AutoScrapeService.this, ID);
++                                            long savedId = com.archos.mediaprovider.video.PersonalVideoActions.saveIfMatchable(
++                                                AutoScrapeService.this, ID, tags);
+                                             DeleteFileCallback.DO_NOT_DELETE.clear();
+-                                            if (savedId < 0)
++                                            if (savedId < 0 && savedId != -2)
+                                             {
+                                                 log.warn("startScraping: NFO save failed for ID {}", ID);
+                                                 persistenceFailed = true;
+@@ -1427,9 +1428,18 @@
+                                         //Save the tags to the database.
+                                         if (Thread.currentThread().isInterrupted())
+                                             return;
+-                                        long savedId = result.tag.save(AutoScrapeService.this, ID);
+-                                        if (savedId != -1)
++                                        long savedId = com.archos.mediaprovider.video.PersonalVideoActions.saveIfMatchable(
++                                            AutoScrapeService.this, ID, result.tag);
++                                        if (savedId == -2)
+                                         {
++                                            notScraped = false;
++                                            noScrapeError = true;
++                                        }
++                                        else if (savedId != -1)
++                                        {
++                                            com.archos.mediaprovider.video.LibraryHealthEvidence.clear(
++                                                AutoScrapeService.this, fileUri.toString(),
++                                                com.archos.mediaprovider.video.LibraryHealthEvidence.Kind.NOT_MATCHED);
+                                             DeleteFileCallback.DO_NOT_DELETE.clear();
+                                             // result exists thus scraped and no error for now
+                                             notScraped = false;
+@@ -1739,6 +1749,7 @@
+     }
+ 
+     private static final String WHERE_BASE =
++        com.archos.mediaprovider.video.PersonalVideoActions.VISIBLE + " AND " +
+         VideoStore.Video.VideoColumns.ARCHOS_HIDE_FILE + "=0 AND " + VideoStore.MediaColumns.DATA + " NOT LIKE ?";
+     // Never-scraped files only. Deliberately excludes both the legacy/user-opt-out value (-1,
+     // written by DbUtils.deleteScraperInfo()/VideoDetailsFragment.deleteScraperInfo() when the user
+@@ -1776,6 +1787,14 @@
+ 
+     private String getWhereClause(int scrapStatusParam)
+     {
++        try
++        {
++            com.archos.mediaprovider.video.PersonalVideoActions.reconcilePending(this);
++        }
++        catch (Exception unavailable)
++        {
++            throw new IllegalStateException("Personal-file policy could not be loaded", unavailable);
++        }
+         switch (scrapStatusParam)
+         {
+         case PARAM_NOT_SCRAPED:
+diff --git a/src/com/archos/mediascraper/Scraper.java b/src/com/archos/mediascraper/Scraper.java
+--- a/src/com/archos/mediascraper/Scraper.java
++++ b/src/com/archos/mediascraper/Scraper.java
+@@ -83,9 +83,12 @@
+             if (log.isDebugEnabled()) log.debug("getMatches: skipScraping set for {}, not querying", info.getFile());
+             return new ScrapeSearchResult(null, !info.isTvShow(), ScrapeStatus.NOT_FOUND, null);
+         }
+-        if (info.isTvShow())
+-            return mShowScraper.getMatches2(info, maxItems);
+-        return mMovieScraper.getMatches2(info, maxItems);
++        ScrapeSearchResult result = info.isTvShow() ? mShowScraper.getMatches2(info, maxItems)
++                                                   : mMovieScraper.getMatches2(info, maxItems);
++        if (info.getOriginalUri() != null)
++            com.archos.mediaprovider.video.LibraryHealthEvidence.recordMatches(
++                mContext, info.getOriginalUri().toString(), result, maxItems);
++        return result;
+     }
+ 
+     /**
+diff --git a/src/com/archos/mediascraper/xml/BaseScraper2.java b/src/com/archos/mediascraper/xml/BaseScraper2.java
+--- a/src/com/archos/mediascraper/xml/BaseScraper2.java
++++ b/src/com/archos/mediascraper/xml/BaseScraper2.java
+@@ -95,6 +95,9 @@
+         }
+         ScrapeDetailResult result = null;
+         ScrapeSearchResult searchResult = getMatches2(info, 1);
++        if (info.getOriginalUri() != null)
++            com.archos.mediaprovider.video.LibraryHealthEvidence.recordMatches(
++                mContext, info.getOriginalUri().toString(), searchResult, 1);
+         if (searchResult.isOkay()) {
+             if (info.isTvShow()) {
+                 if (log.isDebugEnabled()) log.debug("search: tv show");
+diff --git a/test/java/com/archos/mediaprovider/video/LocalSourceScanTest.java b/test/java/com/archos/mediaprovider/video/LocalSourceScanTest.java
+new file mode 100644
+--- /dev/null
++++ b/test/java/com/archos/mediaprovider/video/LocalSourceScanTest.java
+@@ -0,0 +1,106 @@
++package com.archos.mediaprovider.video;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertFalse;
++import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
++import android.app.Application;
++import android.net.Uri;
++import android.content.ContentResolver;
++import android.database.MatrixCursor;
++import android.os.Bundle;
++import android.provider.MediaStore;
++import java.util.List;
++import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.eq;
++import static org.mockito.ArgumentMatchers.isNull;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++import java.io.File;
++import java.nio.file.Files;
++import java.util.Arrays;
++import java.util.Set;
++import org.junit.Rule;
++import org.junit.Test;
++import org.junit.rules.TemporaryFolder;
++import org.junit.runner.RunWith;
++import org.robolectric.RobolectricTestRunner;
++import org.robolectric.annotation.Config;
++
++@RunWith(RobolectricTestRunner.class)
++@Config(application = Application.class, sdk = 30)
++public class LocalSourceScanTest
++{
++    @Rule public TemporaryFolder temporary = new TemporaryFolder();
++
++    @Test public void exactRegisteredFolderIsRequiredAndSqlWildcardsAreLiteral()
++    {
++        Set<String> roots = Set.of("file:///storage/Movies_100%", "file:///storage/Shows");
++        assertTrue(LocalSourceScan.registered(roots, Uri.parse("file:///storage/Movies_100%/")));
++        assertFalse(LocalSourceScan.registered(roots, Uri.parse("file:///storage")));
++        assertFalse(LocalSourceScan.registered(roots, Uri.parse("file:///storage/Movies_100%/Other")));
++        assertEquals("/storage/Movies\\_100\\%/", VideoStoreImportImpl.literalPrefix("/storage/Movies_100%/"));
++    }
++
++    @Test public void sourceSnapshotRejectsRowsOutsideTheChosenFolderEvenIfProviderIgnoresItsSelection()
++    {
++        ContentResolver resolver = mock(ContentResolver.class);
++        String chosen = "/storage/Movies_100%";
++        MatrixCursor imported = new MatrixCursor(new String[] {"_id", "_data"});
++        imported.addRow(new Object[] {10, chosen + "/One.mkv"});
++        imported.addRow(new Object[] {11, "/storage/Shows/Other.mkv"});
++        MatrixCursor media = new MatrixCursor(new String[] {"_id", "_data", "_display_name", "_size",
++            "date_added", "date_modified", "bucket_id", "bucket_display_name", "format", "parent"});
++        media.addRow(new Object[] {10, chosen + "/One.mkv", "One.mkv", 123, 100, 200, "b", "Movies", 0, 1});
++        media.addRow(new Object[] {11, "/storage/Shows/Other.mkv", "Other.mkv", 123, 100, 200, "c", "Shows", 0, 1});
++        when(resolver.query(eq(VideoStoreInternal.FILES_IMPORT), any(String[].class), any(Bundle.class), isNull()))
++            .thenReturn(imported);
++        when(resolver.query(eq(MediaStore.Files.getContentUri("external")), any(String[].class),
++                            any(Bundle.class), isNull())).thenReturn(media);
++        var snapshot = VideoStoreImportImpl.loadMountedStorageSnapshot(resolver,
++            List.of(new VideoStoreImportImpl.StorageLocation(chosen, null, false)));
++        assertTrue(snapshot.complete);
++        assertEquals(Set.of(10L), snapshot.mediaStoreIds);
++        assertEquals(Set.of(10L), snapshot.importedIds);
++    }
++
++    @Test public void unchangedFilesSkipSystemMetadataProbeAndChangedOrNewFilesRemainInTheSelectedScope()
++        throws Exception
++    {
++        File chosen = temporary.newFolder("chosen_100%");
++        File unchanged = new File(chosen, "same.mkv");
++        File changed = new File(chosen, "changed.mkv");
++        File added = new File(chosen, "new.mkv");
++        Files.write(unchanged.toPath(), new byte[] {1});
++        Files.write(changed.toPath(), new byte[] {1, 2});
++        Files.write(added.toPath(), new byte[] {1});
++        android.content.Context context = mock(android.content.Context.class);
++        ContentResolver resolver = mock(ContentResolver.class);
++        when(context.getContentResolver()).thenReturn(resolver);
++        MatrixCursor rows = new MatrixCursor(new String[] {"_data", "_size", "date_modified"});
++        rows.addRow(new Object[] {unchanged.getCanonicalPath(), 1, unchanged.lastModified() / 1000});
++        rows.addRow(new Object[] {changed.getCanonicalPath(), 1, changed.lastModified() / 1000});
++        when(resolver.query(eq(MediaStore.Files.getContentUri("external")), any(String[].class),
++                            any(String.class), any(String[].class), isNull())).thenReturn(rows);
++        assertEquals(Set.of(changed.getCanonicalPath(), added.getCanonicalPath()), Set.copyOf(Arrays.asList(
++            LocalSourceScan.changedFiles(context, Uri.fromFile(chosen),
++                new String[] {unchanged.getCanonicalPath(), changed.getCanonicalPath(), added.getCanonicalPath()},
++                () -> false))));
++    }
++
++    @Test public void recursiveSystemScanInventoryNeverLeavesTheSelectedRoot() throws Exception
++    {
++        File chosen = temporary.newFolder("chosen");
++        File child = new File(chosen, "child");
++        assertTrue(child.mkdir());
++        File video = new File(child, "Movie.mkv");
++        assertTrue(video.createNewFile());
++        File outside = temporary.newFolder("outside");
++        assertTrue(new File(outside, "Other.mkv").createNewFile());
++        Files.createSymbolicLink(new File(chosen, "escape").toPath(), outside.toPath());
++        Files.createSymbolicLink(new File(child, "loop").toPath(), chosen.toPath());
++        assertEquals(Set.of(video.getCanonicalPath()),
++                     Set.copyOf(Arrays.asList(LocalSourceScan.inventory(chosen, () -> false))));
++        assertThrows(java.io.InterruptedIOException.class, () -> LocalSourceScan.inventory(chosen, () -> true));
++    }
++}
+diff --git a/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java b/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java
+--- a/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java
++++ b/test/java/com/archos/mediaprovider/video/VideoStoreImportReconciliationTest.java
+@@ -334,7 +334,7 @@
+         assertTrue(snapshot.complete);
+         assertEquals(Collections.singleton(42L), snapshot.importedIds);
+         verify(resolver).query(eq(VideoStoreInternal.FILES_IMPORT), any(String[].class),
+-                eq("_data LIKE ? AND _id>?"),
++                eq("_data LIKE ? ESCAPE '\\' AND _id>?"),
+                 eq(new String[] { removable + "/%", "-1" }),
+                 eq("_id ASC LIMIT 2500"));
+     }

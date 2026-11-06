@@ -14,6 +14,8 @@
 
 package com.archos.mediacenter.video.player;
 
+import org.robolectric.util.ReflectionHelpers;
+
 import android.app.Application;
 import android.net.Uri;
 import android.os.Handler;
@@ -55,6 +57,7 @@ public class PlaybackRouteRecoveryTest {
     public void setUp() throws Exception {
         // Run the real recovery methods without constructing the native renderer.
         player = mock(Player.class, CALLS_REAL_METHODS);
+        ReflectionHelpers.setField(player, "seekLoading", new SeekLoadingSignal());
         media = mock(IMediaPlayer.class);
         handler = new Handler(Looper.getMainLooper());
         prepared = mock(Runnable.class);

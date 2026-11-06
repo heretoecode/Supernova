@@ -14,6 +14,7 @@
 
 package com.archos.mediacenter.video.player;
 
+import com.archos.mediacenter.video.diagnostics.DiagnosticRedactor;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,14 +25,11 @@ import android.provider.BaseColumns;
 import androidx.loader.content.CursorLoader;
 
 import com.archos.environment.ArchosUtils;
-import com.archos.filecorelibrary.AuthenticationException;
 import com.archos.filecorelibrary.FileComparator;
 import com.archos.filecorelibrary.FileUtils;
 import com.archos.filecorelibrary.ListingEngine;
 import com.archos.filecorelibrary.MetaFile2;
-import com.archos.filecorelibrary.RawLister;
 import com.archos.mediacenter.filecoreextension.UriUtils;
-import com.archos.mediacenter.filecoreextension.upnp2.RawListerFactoryWithUpnp;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.loader.NextEpisodeLoader;
 import com.archos.mediaprovider.video.ListTables;
@@ -40,8 +38,6 @@ import com.archos.mediaprovider.video.VideoStore;
 import com.archos.mediascraper.BaseTags;
 import com.archos.mediascraper.EpisodeTags;
 import com.archos.mediascraper.MovieTags;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,17 +64,30 @@ public class UpdateNextTask
 
     private static final Logger log = LoggerFactory.getLogger(UpdateNextTask.class);
 
+    private static String privateLocation(Object value)
+    {
+        return DiagnosticRedactor.clean(String.valueOf(value));
+    }
+
+
     private final ArrayList<String> mRemoteUrlsList;
     private final int mRemotePosition;
     private final ContentResolver mResolver;
     private final long mPlaylistId;
     private final Video mVideo;
     private Uri mUri;
-    private Listener mListener;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private volatile Listener mListener;
+    private final NextListingProcess listing = new NextListingProcess();
+    private boolean executed;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor(task -> {
+        Thread thread = new Thread(task, "NextLookup");
+        thread.setDaemon(true);
+        return thread;
+    });
     private final Handler handler = new Handler(Looper.getMainLooper());
     private volatile boolean isCancelled = false;
     private Future<Result> mFuture;
+    private final java.util.concurrent.CountDownLatch stopped = new java.util.concurrent.CountDownLatch(1);
     protected static class Result
     {
         public final Uri uri;
@@ -98,7 +107,7 @@ public class UpdateNextTask
                           int remotePosition, long playlistId)
     {
         if (log.isDebugEnabled())
-            log.debug("UpdateNextTask: what is the next video after {}", uri);
+            log.debug("UpdateNextTask: what is the next video after {}", privateLocation(uri));
         mResolver = resolver;
         mUri = uri;
         mRemoteUrlsList = remoteUrlsList;
@@ -126,13 +135,13 @@ public class UpdateNextTask
     // WHERE bucket_id=?
     private final static String QUERY_WHERE_FIRST_VIDEO_IN_FOLDER =
         VideoStore.Video.VideoColumns.BUCKET_ID + "=? AND " + LoaderUtils.HIDE_USER_HIDDEN_FILTER;
-    // ORDER BY data LIMIT 1;  // XXX Limit added to Order since we only need 1 entry and query() does not have a place for Limit
+    // ORDER BY data LIMIT 1: query() has no separate limit parameter.
     private final static String QUERY_ORDER_BY_DATA_LIMIT1 = VideoStore.MediaColumns.DATA + " LIMIT 1";
 
     static Cursor getNextInBucket(ContentResolver cr, int bucketId, String fullPathOfVideo)
     {
         if (log.isDebugEnabled())
-            log.debug("getNextInBucket: bucketId {} for video {}", bucketId, fullPathOfVideo);
+            log.debug("getNextInBucket: bucketId {} for video {}", bucketId, privateLocation(fullPathOfVideo));
         return cr.query(QUERY_VIDEO_TABLE, QUERY_COLUMNS_ID_DATA, QUERY_WHERE_NEXT_VIDEO_IN_FOLDER,
                         new String[] {String.valueOf(bucketId), fullPathOfVideo}, QUERY_ORDER_BY_DATA_LIMIT1);
     }
@@ -168,11 +177,12 @@ public class UpdateNextTask
                 int id = cursor2.getColumnIndex(VideoStore.Files.FileColumns._ID);
                 int uri = cursor2.getColumnIndex(VideoStore.MediaColumns.DATA);
                 Uri uri2 = Uri.parse(cursor2.getString(uri));
-                int id2 = cursor2.getInt(id);
+                long id2 = cursor2.getLong(id);
                 int episodeColumn = cursor2.getColumnIndex(VideoStore.Video.VideoColumns.SCRAPER_E_EPISODE);
                 if (log.isDebugEnabled())
                     log.debug("findEpisode: found new episode {} {}",
-                              (episodeColumn >= 0 ? cursor2.getInt(episodeColumn) : -1), cursor2.getString(uri));
+                              (episodeColumn >= 0 ? cursor2.getInt(episodeColumn) : -1),
+                              privateLocation(cursor2.getString(uri)));
                 cursor2.close();
                 return new Result(uri2, id2);
             }
@@ -200,6 +210,7 @@ public class UpdateNextTask
             {
                 while (rows.moveToNext())
                 {
+                listing.checkpoint();
                     if (!rows.isNull(0))
                     {
                         hidden.add(canonical(Uri.parse(rows.getString(0))));
@@ -211,6 +222,19 @@ public class UpdateNextTask
     }
 
     public UpdateNextTask.Result run(boolean repeatFolder, boolean binge)
+    {
+        listing.enter();
+        try
+        {
+            return runOwned(repeatFolder, binge);
+        }
+        finally
+        {
+            listing.close();
+        }
+    }
+
+    private Result runOwned(boolean repeatFolder, boolean binge)
     {
         if (log.isDebugEnabled())
             log.debug("UpdateNextTask.Result: repeatFolder {}, binge {}", repeatFolder, binge);
@@ -226,6 +250,7 @@ public class UpdateNextTask
             int total = mRemoteUrlsList.size();
             for (int offset = 1; offset <= total; offset++)
             {
+                listing.checkpoint();
                 int next = mRemotePosition + offset;
                 if (!repeatFolder && next >= total)
                 {
@@ -243,7 +268,7 @@ public class UpdateNextTask
         {
             if (log.isDebugEnabled())
                 log.debug("UpdateNextTask.Result: mRemoteUrlsList null, mPlaylistId {}, mVideo {}", mPlaylistId,
-                          ((mVideo == null) ? "null" : mVideo.getFilePath()));
+                          ((mVideo == null) ? "null" : privateLocation(mVideo.getFilePath())));
             if (mPlaylistId != -1 && mVideo != null)
             { //next in playlist
                 BaseTags tags = mVideo.getFullScraperTags(ArchosUtils.getGlobalContext());
@@ -264,7 +289,7 @@ public class UpdateNextTask
                     }
                     c.close();
                     if (log.isDebugEnabled())
-                        log.debug("UpdateNextTask.Result binge mode {}", nextUri);
+                        log.debug("UpdateNextTask.Result binge mode {}", privateLocation(nextUri));
                     if (nextUri != null)
                         return new Result(nextUri, nextId);
                     else
@@ -305,6 +330,7 @@ public class UpdateNextTask
                         int episodeIdColumn = cursor.getColumnIndex(VideoStore.VideoList.Columns.E_ONLINE_ID);
                         while (cursor.moveToNext())
                         {
+                listing.checkpoint();
                             long episodeId = cursor.getLong(episodeIdColumn);
                             long movieId = cursor.getLong(movieIdColumn);
                             if (log.isDebugEnabled())
@@ -343,7 +369,7 @@ public class UpdateNextTask
         { // when we can't list folder
             if (log.isDebugEnabled())
                 log.debug("UpdateNextTask.Result: scheme for {} not supported -> cannot list folder thus no next...",
-                          mUri);
+                          privateLocation(mUri));
             return null;
         }
         /*
@@ -352,7 +378,7 @@ public class UpdateNextTask
         if (mUri != null)
         {
             if (log.isDebugEnabled())
-                log.debug("UpdateNextTask.Result: trying to find next for mUri {}", mUri);
+                log.debug("UpdateNextTask.Result: trying to find next for mUri {}", privateLocation(mUri));
 
             // Only use episode logic for binge mode, not for folder modes
             if (binge)
@@ -384,7 +410,7 @@ public class UpdateNextTask
                     if (show > 0 && season >= 0 && episode >= 0)
                     {
                         if (log.isDebugEnabled())
-                            log.debug("current episode : {} {}", episode, mUri);
+                            log.debug("current episode : {} {}", episode, privateLocation(mUri));
                         Result result = findEpisode(episode + 1, season, show);
                         if (result != null)
                             return result;
@@ -418,10 +444,10 @@ public class UpdateNextTask
                             if (dataColumn >= 0)
                                 nextUri = Uri.parse(cursor.getString(dataColumn));
                             if (idColumn >= 0)
-                                nextId = cursor.getInt(idColumn);
+                                nextId = cursor.getLong(idColumn);
                             if (log.isDebugEnabled())
                                 log.debug("updateNextVideo({}) - next via getNextInBucket(DB):{}", repeatFolder,
-                                          nextUri);
+                                          privateLocation(nextUri));
                             return new Result(nextUri, nextId);
                         }
                         else
@@ -458,10 +484,10 @@ public class UpdateNextTask
                                 if (dataColumn >= 0)
                                     nextUri = Uri.parse(cursor.getString(dataColumn));
                                 if (idColumn >= 0)
-                                    nextId = cursor.getInt(idColumn);
+                                    nextId = cursor.getLong(idColumn);
                                 if (log.isDebugEnabled())
                                     log.debug("updateNextVideo({}) - next via getFirstInBucket(DB):{}", repeatFolder,
-                                              nextUri);
+                                              privateLocation(nextUri));
                                 return new Result(nextUri, nextId);
                             }
                             else if (log.isDebugEnabled())
@@ -481,17 +507,16 @@ public class UpdateNextTask
                 Uri parentUri = FileUtils.getParentUrl(mUri);
                 if (parentUri != null)
                 {
-                    RawLister lister = RawListerFactoryWithUpnp.getRawListerForUrl(parentUri);
-
                     try
                     {
-                        List<MetaFile2> files = lister.getFileList();
+                        List<MetaFile2> files = listing.list(ArchosUtils.getGlobalContext(), parentUri);
                         if (files != null && files.size() > 0)
                         {
                             List<MetaFile2> filteredList = new ArrayList<MetaFile2>();
                             //filter folder
                             for (int i = 0; i < files.size(); i++)
                             {
+                listing.checkpoint();
                                 if (files.get(i).isFile())
                                 {
                                     String mimeType = files.get(i).getMimeType();
@@ -503,12 +528,16 @@ public class UpdateNextTask
                             }
                             final Comparator<? super MetaFile2> comparator =
                                 new FileComparator().selectFileComparator(ListingEngine.SortOrder.SORT_BY_NAME_ASC);
-                            Collections.sort(filteredList, comparator);
+                            Collections.sort(filteredList, (left, right) -> {
+                                listing.checkpoint();
+                                return comparator.compare(left, right);
+                            });
                             int total = filteredList.size();
                             int current = -1;
                             // try to find the current video in the list
                             for (int i = 0; i < filteredList.size(); i++)
                             {
+                listing.checkpoint();
                                 if (mUri.equals(filteredList.get(i).getUri()))
                                 {
                                     current = i;
@@ -529,7 +558,7 @@ public class UpdateNextTask
                                     }
                                     if (log.isDebugEnabled())
                                         log.debug("updateNextVideo({}) - next via filesystem:{}", repeatFolder,
-                                                  nextUri);
+                                                  privateLocation(nextUri));
                                     return new Result(nextUri, nextId);
                                 }
                                 else if (next < total)
@@ -538,108 +567,91 @@ public class UpdateNextTask
                                     nextUri = filteredList.get(next).getUri();
                                     if (log.isDebugEnabled())
                                         log.debug("updateNextVideo({}) - next via filesystem:{}", repeatFolder,
-                                                  nextUri);
+                                                  privateLocation(nextUri));
                                     return new Result(nextUri, nextId);
                                 }
                                 else if (log.isDebugEnabled())
                                     log.debug("updateNextVideo({}) - no next in filesystem, it's the last:{}",
-                                              repeatFolder, mUri);
+                                              repeatFolder, privateLocation(mUri));
                             }
                             else if (log.isDebugEnabled())
-                                log.debug("updateNextVideo({}) - could not find video in list:{}", repeatFolder, mUri);
+                                log.debug("updateNextVideo({}) - could not find video in list:{}",
+                                          repeatFolder, privateLocation(mUri));
                         }
                         else if (log.isDebugEnabled())
-                            log.debug("updateNextVideo({}) - could not list files / empty dir:{}", repeatFolder, mUri);
+                            log.debug("updateNextVideo({}) - could not list files / empty dir:{}",
+                                      repeatFolder, privateLocation(mUri));
                     }
                     catch (IOException e)
                     {
-                        log.error("UpdateNextTask.Result: caught IOException ", e);
-                    }
-                    catch (AuthenticationException e)
-                    {
-                        log.error("UpdateNextTask.Result: caught AuthenticationException ", e);
-                    }
-                    catch (SftpException e)
-                    {
-                        log.error("UpdateNextTask.Result: caught SftpException ", e);
-                    }
-                    catch (JSchException e)
-                    {
-                        log.error("UpdateNextTask.Result: caught JSchException ", e);
+                        log.error("UpdateNextTask.Result: caught IOException ", DiagnosticRedactor.trace(e));
                     }
                 }
                 else if (log.isDebugEnabled())
-                    log.debug("updateNextVideo({}) - no parent file:{}", repeatFolder, mUri);
+                    log.debug("updateNextVideo({}) - no parent file:{}", repeatFolder, privateLocation(mUri));
             }
         }
         else if (log.isDebugEnabled())
-            log.debug("updateNextVideo({}) - not a local file:{}", repeatFolder, mUri);
+            log.debug("updateNextVideo({}) - not a local file:{}", repeatFolder, privateLocation(mUri));
 
         if (log.isDebugEnabled())
             log.debug("updateNextVideo({}) - No next found", repeatFolder);
         return null;
     }
 
-    public void execute(boolean repeatFolder, boolean binge)
+    public synchronized void execute(boolean repeatFolder, boolean binge)
     {
-        mFuture = executor.submit(() -> run(repeatFolder, binge));
+        if (isCancelled || executed)
+            return;
+        executed = true;
+        java.util.concurrent.FutureTask<Result> submitted = new java.util.concurrent.FutureTask<>(() -> {
+            try
+            {
+                Result result = run(repeatFolder, binge);
+                if (!isCancelled && !listing.cancelled())
+                    handler.post(() -> {
+                        if (isCancelled || listing.cancelled())
+                            return;
+                        Listener listener = mListener;
+                        if (listener != null)
+                            listener.onResult(result == null ? null : result.uri, result == null ? -1 : result.id);
+                    });
+                return result;
+            }
+            catch (CancellationException obsolete)
+            {
+                return null;
+            }
+        });
+        mFuture = submitted;
         executor.execute(() -> {
             try
             {
-                Result result = mFuture.get();
-                if (!isCancelled)
-                {
-                    handler.post(() -> {
-                        if (isCancelled)
-                            return;
-                        if (log.isDebugEnabled())
-                            log.debug("onPostExecute: result={}, mListener={}", (result != null ? result.uri : "null"),
-                                      (mListener != null ? "set" : "null"));
-                        if (mListener != null)
-                        {
-                            if (result != null)
-                            {
-                                if (log.isDebugEnabled())
-                                    log.debug("onPostExecute: calling mListener.onResult with uri={}, id={}",
-                                              result.uri, result.id);
-                                mListener.onResult(result.uri, result.id);
-                            }
-                            else
-                            {
-                                if (log.isDebugEnabled())
-                                    log.debug("onPostExecute: calling mListener.onResult with null uri");
-                                mListener.onResult(null, -1);
-                            }
-                        }
-                        else
-                        {
-                            if (log.isDebugEnabled())
-                                log.debug("onPostExecute: mListener is null, cannot call onResult");
-                        }
-                    });
-                }
-            }
-            catch (ExecutionException | InterruptedException | CancellationException e)
-            {
-                if (!isCancelled)
-                    log.error("UpdateNextTask error", e);
+                submitted.run();
             }
             finally
             {
+                listing.close();
+                stopped.countDown();
                 executor.shutdown();
             }
         });
     }
 
-    public void cancel(boolean mayInterruptIfRunning)
+    boolean awaitStopped(long timeoutMs) throws InterruptedException
+    {
+        return stopped.await(timeoutMs, java.util.concurrent.TimeUnit.MILLISECONDS);
+    }
+
+    public synchronized void cancel(boolean mayInterruptIfRunning)
     {
         isCancelled = true;
+        listing.cancel();
         if (mFuture != null)
             mFuture.cancel(mayInterruptIfRunning);
-        if (mayInterruptIfRunning)
-            executor.shutdownNow();
-        else
-            executor.shutdown();
+        executor.shutdown();
+        if (!executed)
+            stopped.countDown();
     }
 
     public Result get() throws ExecutionException, InterruptedException

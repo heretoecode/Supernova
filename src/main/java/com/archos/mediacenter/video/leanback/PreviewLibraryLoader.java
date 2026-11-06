@@ -540,6 +540,11 @@ public final class PreviewLibraryLoader extends AllVideosLoader {
 
     @Override
     public Cursor loadInBackground() {
+        try {
+            com.archos.mediaprovider.video.PersonalVideoActions.reconcilePending(getContext());
+        } catch (Exception unavailable) {
+            throw new IllegalStateException("Personal-file policy could not be loaded", unavailable);
+        }
         String operation = Diagnostics.operation("indexed_library_load");
         long started = SystemClock.elapsedRealtime();
         Cursor c = null;

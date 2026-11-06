@@ -181,10 +181,8 @@ public final class MissingFilesRepository
         {
             Uri candidate = MissingFileSearch.unique(roots, row.oldFileName, row.size, folder -> {
                 ScanIoScope.checkpoint();
-                MetaFile2 directory = MetaFileFactoryWithUpnp.getMetaFileForUrl(folder);
-                if (directory == null || !directory.isDirectory())
-                    throw new IOException("Source folder is unavailable");
-                List<MetaFile2> files = directory.getRawListerInstance().getFileList();
+                List<MetaFile2> files = com.archos.mediacenter.video.player.FileListingOwner.directory(
+                    context, folder, cancelled);
                 if (files == null)
                     throw new IOException("Source listing is unavailable");
                 List<MissingFileSearch.FileEntry> entries = new ArrayList<>();
@@ -203,10 +201,12 @@ public final class MissingFilesRepository
             if (candidate == null)
                 return false;
             ScanIoScope.checkpoint();
-            MetaFile2 file = MetaFileFactoryWithUpnp.getMetaFileForUrl(candidate);
+            MetaFile2 file = com.archos.mediacenter.video.player.FileListingOwner.inspect(
+                context, candidate, cancelled);
             if (cancelled.getAsBoolean() || file == null || !file.isFile() || file.length() != row.size)
                 throw new IOException("Replacement changed during search");
-            String replacement = row.stored.path().startsWith("/") ? candidate.getPath() : candidate.toString();
+            String replacement = row.stored.path().startsWith("/") && "file".equals(candidate.getScheme())
+                ? candidate.getPath() : candidate.toString();
             Uri targetRoot = null;
             for (Uri root : roots)
                 if (SupernovaLibraryPolicy.contains(SupernovaLibraryPolicy.canonical(root),

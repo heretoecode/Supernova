@@ -124,7 +124,7 @@ false means expired/already undone. Worker exceptions mean the journal/database 
 `resume(context)` is main safe; the LibraryScanController installation already calls it. It reaps persisted deadlines
 on a worker after process restart; database/storage failure retains the journal and retries. Final deletion uses
 `ShortcutDbAdapter.deleteShortcut(context, id, expectedUri)` so an ID reused at a different address is protected.
-The transient journal is outside the backup settings allow-list. Discovery New/Added/device-kind data is not added.
+The transient journal is outside the backup settings allow-list. Discovery is described in the continuation below.
 
 ## Put.io code state — item 12
 
@@ -190,5 +190,174 @@ are distinct. The caller still owns page selection and formatting; there is no p
 
 No new call for item 19: the MediaLib import-state patch fixes both full/incremental finally cleanup. Existing
 lifecycle events turn off scan ownership; exceptions still propagate and remain failure evidence.
-No reliable presented-picture/seek-generation hook is supplied for item 20. Do not substitute seek acknowledgement
-or a timeout for actual frame readiness; the required native event is still open.
+The continuation below supplies the seek-generation/output handoff contract for item 20.
+
+## Continuation: completed source, role, health, discovery and seek contracts
+
+This section supersedes the earlier partial-scope statements for items 3, 7, 8, 9, 11 and 20. Register the new
+0.157 continuation patches in the report before compiling these calls. The physical media database is now **64**:
+public library IDs and backing index IDs can differ. Always retain IDs as `long`; resolve the physical locator
+rather than inferring local/network ownership from a public ID. The new store is `media-v64.db`. Old APKs continue
+to open the retained schema-63 `media.db` rollback snapshot and do not see later 0.157 edits. Their inherited
+downgrade helper can delete an unsupported database, so never give them the new store. The current helper uses
+SQLite's normal refusing downgrade guard. Verified schema-62/63 raw backups migrate on a private replacement to
+schema 64; the reviewed native archive is not changed. Logical backup categories remain the existing categories.
+
+`VideoOpenHelper.getDatabaseFile(context)` is worker-only: its first call may checkpoint/copy/upgrade the old store
+under a cross-process migration lease. Failure preserves the old logical data and throws; do not call during a
+screen bind. `FileUtils.installDatabaseLocator(BiFunction<Context, String, File>)` is startup-only configuration,
+installed by CustomApplication for legacy database-export callers. Its callback executes on the exporting worker.
+Raw backup ZIP entries keep the historical logical name `media.db`; live replacement resolves the current file.
+No old store is automatically deleted, so allow disk space for both versions during migration.
+
+### Scan one local source and one Put.io scope — item 3
+
+MediaLib `LocalSourceScan.request(context, fileRoot)` is main-thread safe. It returns false for a wrong source kind
+or an already owned local-source request. Admission, filesystem inventory and Android MediaStore scanning happen
+on workers; a non-registered/unavailable source finishes Failed. The selected URI must exactly match a configured
+local library root. Descendants are inventoried recursively, with canonical containment, symlink-cycle protection
+and a 100,000-entry bound. A watchdog stops admission after 60 seconds without filesystem/system-scanner progress;
+accepted native importing uses the existing importer cancellation/lifecycle. Late
+system callbacks after Stop/deadline cannot start importing. Android's system scanner itself is not killed.
+The native importer reconciles/imports/extracts file metadata only under that root, with literal SQL wildcard
+escaping, keyset paging and the existing cross-process scan lock. It rejects an ID owned by another import scope.
+The same lifecycle broadcasts supply checked/total/change counts, aggregate activity and last-ten history.
+Use existing `LibraryScanController.stop()`; active import stops through its existing service cancellation and
+releases its busy/delete state in finally. Completion means the native inventory/metadata import has returned.
+
+`PutioSyncScheduler.requestSource(context, sourceUri)` is main-thread safe. Only an exact saved API-owned scope for
+the signed-in account is selected; parent folders and generic/WebDAV-owned scopes are not substituted. Disabled
+or already busy integration admits no new request. Observe existing scheduler status and scan progress, rather
+than treating the void return as acknowledgement. The selected scope owns a queued and exactly one terminal
+history event even when token/account lookup fails. Existing Put.io client cancellation and aggregate scan activity
+cover the whole job. Neither overload changes the saved source selection or scans neighbouring scopes.
+
+### Personal files — item 8
+
+MediaLib `PersonalVideoActions.set(context, StoredFile(id, exactStoredPath, size), personal)` is worker-only and
+returns a `Change` for Undo. `undo(context, change)` returns false for a stale identity/revision/newer choice;
+I/O/database errors throw. `isPersonal(context, id)` and `read(database)` are worker-only reads. The role is a native
+per-file column, separate from identification, user-hidden state, watched flags and every playback-position column.
+Movies/TV data loaders and automatic matching exclude personal files independently of show-hidden preferences.
+Both local/network NFO imports and already running automatic match results respect the role. Manual Fix match
+rechecks it inside the final database transaction after remote preparation. No metadata is erased by marking.
+
+The existing HIDDEN category exports schema 2 with opaque physical personal-file references; schema-1 imports keep
+existing roles. Unresolved role references remain pending and are applied before library loading/matching once the
+physical file is indexed. Explicit unmarking supersedes a pending choice; Undo is revision-guarded. No locator,
+credential, artwork or media byte is added to that default backup category. `reconcilePending(context)` is a worker
+operation used by those engines, not a screen bind. Native role restoration is part of the existing media recovery
+transaction; this does not create a new backup category or change its on-screen label.
+
+### Health rows — item 9
+
+`health.LibraryHealthRepository.read(context, kind, cancelledSupplier)` is worker-only and returns immutable rows.
+Kind comes from MediaLib `LibraryHealthEvidence.Kind`: COULD_NOT_READ or NOT_MATCHED. Rows expose video ID, title,
+reason, candidate count, whether that count is a lower bound, and evidence UTC time (0 means unknown).
+COULD_NOT_READ reasons are DAMAGED, TIMED_OUT, UNSUPPORTED or UNKNOWN; an unclassified failure remains UNKNOWN.
+NOT_MATCHED reasons are NO_MATCH or POSSIBLE. A limited search never invents an exact total: `more=true` means at
+least the returned count. Successful native reads/manual matches clear their own evidence kind. Personal files
+are excluded. Retry is `tryAgain(context, row, cancelledSupplier)` on a worker: false means stale/changed/not
+retryable; exceptions mean admission failed. It requests the existing native indexing path and retains evidence
+until an actual successful read, rather than clearing it on button press.
+
+MediaLib `LibraryHealthEvidence.record`, `readFailure`, `recordMatches` and `clear` are producer APIs, worker-only
+except the retriever's existing process-kill watchdog. They persist bounded evidence under noBackupFilesDir;
+recording failure cannot turn a successful media operation into a failed one. Never send raw provider text as a
+reason. Ordinary unmatched library rows with no stored provider result have count 0 and unknown check time.
+
+### Find everywhere and owned file operations — items 7 and 22 (DP-10)
+
+`MissingFilesRepository.findAgain` keeps its worker/progress/Stop/unique-match contract. Original saved-source
+identity may now be absent: the exact stored ID/path/size still guards the old row. Cross-index moves transfer the
+physical row between files_import/files_scanned in one SQLite transaction while retaining the public library ID,
+identification, watched state, bookmarks, resume position and personal role. A local destination must have a
+unique, size-matching MediaStore identity. An occupied destination is refused. Native import upserts preserve
+retained rows even with recursive delete triggers enabled; old MediaStore-ID reuse allocates a non-conflicting
+public ID within the existing positive local range. The old index no longer owns the relocated file.
+
+`player.FileListingOwner.directory(context, uri, cancelledSupplier)` and `inspect(...)` are worker-only snapshots
+used by recovery. They use the same private-process ownership as next-file listing, including setup, DNS, cached
+SSH/SMB transports and actual UPnP requests. Stop suppliers must be cheap, thread-safe reads. The engine observes
+them and caller interruption; each operation has a 30-second deadline. The complete recovery search retains its
+60-second outer deadline and global uniqueness checks. Failed/unavailable roots do not permit a partial relink.
+Returned MetaFile2 values are read-only snapshots: URI/name/type/MIME/size; editor/lister calls are unsupported.
+The wire is bounded to 100,000 rows, bounded strings and four million name/URI characters; an incomplete pipe
+never yields a usable partial list.
+
+`UpdateNextTask` now owns cancellation before execute, including cancel(false). A private, non-exported service
+process owns exactly one listing; it shares no network caches with playback. Its own UPnP service runs there too.
+Private Binder cancellation executes off the main looper and stops only that process. A token rejects stale Stop
+messages; Binder death and unbinding precede slot reuse. No external PID-kill API is exposed. Temporary credentials
+cross only that private UID-checked Binder and are never saved or logged by the bridge. The process bypasses app
+restore recovery, scan scheduling, playback, image warmup and account telemetry; only required transport setup runs.
+Filtering/comparison/traversal and both result-post boundaries remain cancellable. Name ordering, repeat wrap,
+remote queues, database preference and binge selection are unchanged. Screens still use the existing task API.
+`get()` retains its result semantics; cancellation of a Future is not proof that the worker has ended.
+
+### Network discovery — item 11
+
+`connections.NetworkDeviceDiscovery.start(context, callbackExecutor, listener)` is main-thread safe and returns an
+owned `Job`. `current()` is memory-only; `close()` fences queued callbacks and detaches discovery. Snapshots expose
+LOADING_SAVED / DISCOVERING / FINISHED / FAILED / CLOSED and partial-failure state. A 25-second bound covers saved
+connection loading plus discovery. Saved inventory failure never labels unknown devices New. Results are immutable
+and carry URI, bounded name, kind and NEW/ADDED. SMB address plus advertised-name aliases recognise saved child
+shares without DNS guesses. UPnP uses the existing device identity. Known kinds are SMB_SERVER and MEDIA_SERVER;
+other UPnP types remain NETWORK_DEVICE. SMB discovery cannot reliably distinguish a NAS from a computer, so no
+hardware kind is invented. `job.saved(alreadyLoadedUris)` refreshes membership after a successful connection change.
+The job removes only its UPnP listener; it does not stop the shared service. No screen was changed.
+
+### Seek picture loading — item 20
+
+`Player.seekLoading()` returns `SeekLoadingSignal`. Observe with `observe(mainHandler::post, consumer)` and close
+the returned subscription on disposal; `current()` is a synchronous memory read. Snapshot state is IDLE, WAITING,
+READY, FAILED or UNAVAILABLE; `loading()` is true only for WAITING. Position is the requested seek position; chapter
+index/title come from cached embedded chapter metadata, with index -1/empty title when unknown. No metadata/network
+lookup happens while binding the ring. Source replacement, release, playback completion and errors clear ownership.
+
+The new MediaLib/native bridge is `AvosMediaPlayer.seekToTracked(position, token)`, called by Player. Old native
+archives safely return unsupported via the absent JNI entry; Player uses the existing seek and publishes
+UNAVAILABLE. The Android MediaPlayer fallback also remains UNAVAILABLE, never a fabricated ready result.
+The matching native patch carries each token through the queued seek, binds it to the actual decoded frame epoch,
+and sends READY only after successful MediaCodec render submission or Android buffer queue. Dropped/stale frames,
+queue failures, the one-second preview timeout and seek acknowledgements cannot produce READY. This proves an
+image has reached the platform output boundary; it is **not a SurfaceFlinger/photon presentation timestamp**.
+A paused seek without output remains WAITING until output/failure/Stop. No timeout clears the ring as if a picture
+had appeared. The report lists native source compilation, host regressions and required archive registration;
+no old native binary is relabelled as implementing this ABI.
+
+### Native observations and transport operations — item 22
+
+`Player.nativeFrameMetrics()` and `initializedNativeDecoder()` are worker-sampled reads of the current native
+backend. MediaLib's corresponding `AvosMediaPlayer.frameMetrics()` / `initializedDecoder()` return null for an
+older archive, unsupported/busy lifecycle or unavailable decoder. No caller may translate null into zero drops.
+`NativeFrameMonitor.sample(values, decoder)` is the pure policy boundary; it rejects malformed/reset counters and
+only calculates covered deltas. PlayerService owns five-second sampling, source/backend fences and cancellation;
+an initial or minute sample enters the existing diagnostics session. Screens need no sampling timer.
+
+Native metric coverage bits are 1 accepted output handoff, 2 instrumented late drops, 4 stale epoch drops,
+8 scheduled A/V clock phase, 16 early drops. Values are totals plus the last monotonic submission timestamp and
+scheduled phase. A physical presentation timestamp and hardware A/V drift are explicitly unavailable. The decoder
+name is published only after its real initialisation. Instrumented native paths do not count every codec's internal
+drop; an uncovered value is unknown. Known late/early deltas feed the existing thumbnail back-pressure policy.
+
+FileCore `TransportOperationTrace.installFactory(factory)` is startup-only instrumentation configuration;
+`begin(protocol)` owns one actual editor-open/read lifetime, `inOperation()` prevents duplicate legacy read hooks.
+Sinks execute on the operation's I/O thread, must be fast and must not do provider/network work. They receive an
+opaque ID and enum/numeric observations only, never an address, credential or exception message. Sink failure does
+not break playback. Closing the wrapped stream closes the trace; caller interruption records Stopped. This API
+does not cancel a transport by itself. Public `response(status)` and `retry()` hooks are called only at observed
+transport boundaries; no missing status or invisible library retry is fabricated.
+
+The app installs the factory and captures the playback diagnostic session at Requested, before connection setup.
+Schema-3 `transport_read` events include Requested/Open/Response/Retry/FirstBytes/Window/Eof and one terminal
+Closed/Failed/Timeout/Stopped event, setup latency, real HTTP status, explicit reconnect count and completed-read
+bytes/read time. Minute windows are emitted on real read completion, including a final short window; a blocked read
+does not emit invented throughput. Library-internal/auth/read retries outside explicit hooks remain unknown.
+SMB/SMBJ/SFTP/SSHJ/FTP/FTPS/DAV/DAVS deep editor overloads preserve their original options and return semantics.
+Direct legacy TransportReadObserver users retain schema-2 events; nesting never counts the same bytes twice.
+
+MediaLib `UpnpServiceManager.useOwnedProcessService(serviceClass)` is process-start configuration, called only in
+the private listing process before singleton creation. Other callers keep the normal shared service. The bridge
+service's Binder and wire are internal and are not public screen APIs. Native handle fields are appended to retain
+existing layout ordering, but the Java bridge, native headers and JNI must be built and reviewed together.

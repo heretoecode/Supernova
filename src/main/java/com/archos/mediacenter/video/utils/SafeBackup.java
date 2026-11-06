@@ -104,8 +104,7 @@ public final class SafeBackup {
         if (!new File(stage, "RESTORE_INSTRUCTIONS.txt").isFile())
             throw new IOException("Backup instructions are missing");
         int version = Integer.parseInt(read(new File(stage, "db_version.txt")).trim());
-        if (version != VideoOpenHelper.getDatabaseVersion()
-            && !(version == 62 && VideoOpenHelper.getDatabaseVersion() == 63))
+        if (!compatibleMediaVersion(version))
             throw new IOException("Backup database version is incompatible");
         File history = new File(stage, ViewingHistory.DATABASE);
         if (history.isFile())
@@ -248,18 +247,24 @@ public final class SafeBackup {
         }
     }
 
-    /** Migrate only the verified known62 ->63 view change on a private replacement, never the reviewed source. */
+    private static boolean compatibleMediaVersion(int version)
+    {
+        int current = VideoOpenHelper.getDatabaseVersion();
+        return version == current || current == 64 && (version == 62 || version == 63);
+    }
+
+    /** Migrate only verified schema 62/63 replacements to 64; never write the reviewed source or downgrade. */
     private static void migrateLegacyMedia(Context context, File fresh) throws IOException {
         try (SQLiteDatabase database =
                  SQLiteDatabase.openDatabase(fresh.getPath(), null, SQLiteDatabase.OPEN_READWRITE)) {
             if (database.getVersion() == VideoOpenHelper.getDatabaseVersion())
                 return;
-            if (database.getVersion() != 62 || VideoOpenHelper.getDatabaseVersion() != 63)
+            if (!compatibleMediaVersion(database.getVersion()))
                 throw new IOException("Unsupported legacy media migration");
             database.beginTransaction();
             try (VideoOpenHelper helper = new VideoOpenHelper(context)) {
-                helper.onUpgrade(database, 62, 63);
-                database.setVersion(63);
+                helper.onUpgrade(database, database.getVersion(), VideoOpenHelper.getDatabaseVersion());
+                database.setVersion(VideoOpenHelper.getDatabaseVersion());
                 try (Cursor projection = database.rawQuery(
                          "SELECT _id,ArchosMediaScraper_type,m_name,e_name,s_id FROM video LIMIT 0", null)) {
                     projection.getCount();
@@ -313,7 +318,7 @@ public final class SafeBackup {
                 // Its documented full-restore credential disconnect remains explicit and separate.
                 if (!name.equals("credentials_db") && !staged.isFile())
                     continue;
-                File dest = c.getDatabasePath(name);
+                File dest = name.equals("media.db") ? VideoOpenHelper.getDatabaseFile(c) : c.getDatabasePath(name);
                 Swap replacement = new Swap(dest, staged, token);
                 swaps.add(replacement);
                 if (name.equals("media.db") && replacement.fresh.isFile())

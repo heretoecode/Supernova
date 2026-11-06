@@ -29,6 +29,7 @@ public class LegacySchema62MigrationTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
@@ -104,7 +105,7 @@ public class LegacySchema62MigrationTest {
             var row = db.rawQuery(
                 "SELECT m.m_online_id,m.name_movie,m.plot_movie,m.Nova_pinned,f.bookmark,f.Archos_lastTimePlayed,f.Archos_traktSeen,i.media_id FROM MOVIE m JOIN files f ON f._id=m.video_id JOIN user_collection_item i ON i.media_id=m._id WHERE m._id=100",
                 null)) {
-            assertEquals(63, db.getVersion());
+            assertEquals(64, db.getVersion());
             assertTrue(row.moveToFirst());
             assertEquals(123, row.getLong(0));
             assertEquals("Historical title", row.getString(1));
@@ -140,7 +141,7 @@ public class LegacySchema62MigrationTest {
         try (var db = SQLiteDatabase.openDatabase(
                  VideoOpenHelper.getDatabaseFile(app).getPath(), null, SQLiteDatabase.OPEN_READONLY);
             var row = db.rawQuery("SELECT bookmark FROM files WHERE _id=10", null)) {
-            assertEquals(63, db.getVersion());
+            assertEquals(64, db.getVersion());
             assertTrue(row.moveToFirst());
             assertEquals(4444, row.getLong(0));
         }

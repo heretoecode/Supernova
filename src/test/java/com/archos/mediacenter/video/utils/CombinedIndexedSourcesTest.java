@@ -35,6 +35,7 @@ public class CombinedIndexedSourcesTest {
     public void setup() throws Exception {
         fixture.setup();
         var app = fixture.app;
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         app.deleteDatabase(BookmarkStoreRecovery.DATABASE);
         app.deleteDatabase(IndexedSourceStoreRecovery.DATABASE);

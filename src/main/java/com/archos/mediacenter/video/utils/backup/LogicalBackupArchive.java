@@ -416,7 +416,8 @@ public final class LogicalBackupArchive
                 BackupCategory category = BackupCategory.valueOf(item.getString("id"));
                 if (item.length() != 4 || !registered().contains(category) || !integer(item.get("schema")) ||
                     item.getLong("schema") != PortableSettingsRegistry.SCHEMA &&
-                        !((category == BackupCategory.SOURCES || category == BackupCategory.TITLE_PLAYBACK) &&
+                        !((category == BackupCategory.SOURCES || category == BackupCategory.TITLE_PLAYBACK ||
+                           category == BackupCategory.HIDDEN) &&
                           item.getLong("schema") == 2) ||
                     result.containsKey(category))
                     throw new IOException("Unsupported or duplicate category schema");

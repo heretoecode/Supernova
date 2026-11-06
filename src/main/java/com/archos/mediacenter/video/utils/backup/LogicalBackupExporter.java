@@ -147,7 +147,7 @@ public final class LogicalBackupExporter
                         payload = PortablePinnedTitles.export(context, catalog.pins);
                         break;
                     case HIDDEN:
-                        payload = PortableHiddenItems.export(context, catalog.hidden, physical);
+                        payload = PortableHiddenItems.export(context, catalog.hidden, physical, catalog.personal);
                         break;
                     case HISTORY:
                     case POSITIONS:

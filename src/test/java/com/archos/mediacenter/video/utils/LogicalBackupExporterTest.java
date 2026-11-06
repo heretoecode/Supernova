@@ -35,6 +35,7 @@ public class LogicalBackupExporterTest {
             .putString("oauth_token", "AUTH_CANARY")
             .putString("smb_password", "PASSWORD_CANARY")
             .commit();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         app.deleteDatabase(ViewingHistory.DATABASE);
     }

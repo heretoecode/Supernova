@@ -656,6 +656,10 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        if (com.archos.mediacenter.video.player.NextListingWorkerBootstrap.install(base)) {
+            SftpHostTrust.initialise(base);
+            return;
+        }
         try {
             RestoreJournal.recover(base);
             PreferenceRestoreTransaction.recoverAtStartup(base);
@@ -851,6 +855,11 @@ public class CustomApplication extends Application implements DefaultLifecycleOb
     @Override
     public void onCreate() {
         super.onCreate();
+        if (com.archos.mediacenter.video.player.NextListingWorkerBootstrap.install(this))
+            return;
+        com.archos.filecorelibrary.FileUtils.installDatabaseLocator((context, name) ->
+            "media.db".equals(name) ? com.archos.mediaprovider.video.VideoOpenHelper.getDatabaseFile(context)
+                                   : context.getDatabasePath(name));
         FoundationUiPolicy.apply(this);
         Diagnostics.install(this);
 

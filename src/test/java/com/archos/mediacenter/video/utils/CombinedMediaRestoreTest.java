@@ -49,6 +49,7 @@ public class CombinedMediaRestoreTest extends CombinedViewingRestoreTest
     }
     @Before public void media() throws Exception
     {
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         try (VideoOpenHelper helper = new VideoOpenHelper(app))
         {

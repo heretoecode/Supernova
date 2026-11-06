@@ -30,6 +30,7 @@ public class CombinedPlaylistJournalTest {
     public void setup() throws Exception {
         fixture.setup();
         var app = fixture.app;
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         app.deleteDatabase(BookmarkStoreRecovery.DATABASE);
         try (VideoOpenHelper helper = new VideoOpenHelper(app)) {
@@ -273,6 +274,7 @@ public class CombinedPlaylistJournalTest {
 
     @Test
     public void newDevicePendingDefinitionReexportsExactIdentityWithoutCreatingMediaDatabase() throws Exception {
+        fixture.app.deleteDatabase("media-v64.db");
         fixture.app.deleteDatabase("media.db");
         var selected = Map.of(BackupCategory.PLAYLISTS, payload());
         var plan = fixture.transaction.prepare(selected, null);
@@ -321,6 +323,7 @@ public class CombinedPlaylistJournalTest {
         }
         assertEquals(before, media());
         assertFalse(fixture.journal.exists());
+        fixture.app.deleteDatabase("media-v64.db");
         fixture.app.deleteDatabase("media.db");
         fixture.prefs.edit().putString(PortableSavedPlaylists.PENDING, payload().toString()).commit();
         fixture.transaction.reconcilePlaylists();

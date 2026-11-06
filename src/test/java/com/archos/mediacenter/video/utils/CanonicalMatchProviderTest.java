@@ -47,6 +47,7 @@ public class CanonicalMatchProviderTest {
     @Before
     public void setup() {
         app = RuntimeEnvironment.getApplication();
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         holder = new DbHolder(new VideoOpenHelper(app));
         ScraperProvider.hookUriMatcher(new UriMatcher(UriMatcher.NO_MATCH));
@@ -913,7 +914,7 @@ public class CanonicalMatchProviderTest {
         db.setVersion(62);
         holder.close();
         db = holder.get();
-        assertEquals(63, db.getVersion());
+        assertEquals(64, db.getVersion());
         try (
             var row = db.rawQuery(
                 "SELECT m.m_online_id,m.name_movie,m.plot_movie,m.Nova_pinned,f.bookmark,f.Archos_lastTimePlayed,f.Archos_traktSeen FROM MOVIE m JOIN files f ON f._id=m.video_id WHERE m._id=100",

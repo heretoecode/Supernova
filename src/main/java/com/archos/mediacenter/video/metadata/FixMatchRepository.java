@@ -143,6 +143,8 @@ public final class FixMatchRepository
     public void apply(long videoId, Candidate candidate, int season, int episode, BooleanSupplier cancelled)
         throws Exception
     {
+        if (com.archos.mediaprovider.video.PersonalVideoActions.isPersonal(context, videoId))
+            throw new IOException("Personal video is excluded from matching");
         if (candidate == null || videoId <= 0)
             throw new IOException("Missing match target");
         if ("tv".equals(candidate.kind) && (season < 0 || episode < 1))
@@ -175,6 +177,13 @@ public final class FixMatchRepository
             database.beginTransaction();
             try
             {
+                try (Cursor allowed = database.query("files", new String[] {"_id"}, "_id=? AND " +
+                    com.archos.mediaprovider.video.PersonalVideoActions.VISIBLE,
+                    new String[] {"" + videoId}, null, null, null))
+                {
+                    if (!allowed.moveToFirst())
+                        throw new IOException("Personal video or stale file is excluded from matching");
+                }
                 Map<String, Object> before = userState(database, videoId);
                 for (OwnedCanonicalBatch batch : batches)
                 {
@@ -191,6 +200,8 @@ public final class FixMatchRepository
                 database.endTransaction();
             }
         }
+        com.archos.mediaprovider.video.LibraryHealthEvidence.clear(context, file.toString(),
+            com.archos.mediaprovider.video.LibraryHealthEvidence.Kind.NOT_MATCHED);
         PreviewLibraryLoader.invalidateHistoryCache(context);
         context.getContentResolver().notifyChange(VideoStore.Video.Media.EXTERNAL_CONTENT_URI, null);
     }

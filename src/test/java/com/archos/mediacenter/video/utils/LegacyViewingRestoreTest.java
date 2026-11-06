@@ -40,6 +40,7 @@ public class LegacyViewingRestoreTest {
         app = RuntimeEnvironment.getApplication();
         ViewingHistory.awaitWrites();
         app.deleteDatabase(ViewingHistory.DATABASE);
+        app.deleteDatabase("media-v64.db");
         app.deleteDatabase("media.db");
         PreferenceManager.getDefaultSharedPreferences(app)
             .edit()
