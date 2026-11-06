@@ -530,3 +530,10 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - **Codex:** one brief for all of 0.157, `docs/codex/BRIEF_0157.md` (engine and data for this page and everything
   else agreed for 0.157).
 
+
+## Engine/data delivery record (6 Nov 2026)
+
+Partial implementation on `codex/0157-2026-11-06`, source `71f7818a9`; this is not a new owner decision or a completed
+release. The single delivery report is `docs/codex/reports/2026-11-06-0157.md`, including every unfinished brief item,
+68 passing component regressions, the final merged source's About compile blocker and the four required patch
+registrations. Legacy removal remains unapproved; the candidate report is ready and no legacy file was removed.

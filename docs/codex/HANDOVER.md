@@ -393,3 +393,5 @@ integration and this run's exact continuation. The release section above is the
 current build authority. Existing preparation reports/patches were preserved.
 0.156 FINAL ready at a1e8120d3 — reports/2026-11-05-0156-final.md; patch replacement and deferrals recorded.
 0.156 LAST ready at 215f9e385; source merged at 886a6cda8 — reports/2026-11-06-0156-last.md; APIs in findings/0156-ui-hooks.md; no patch registrations.
+
+0.157 partial delivery at `71f7818a9` on `codex/0157-2026-11-06`; 68 component tests pass, brief incomplete and final merged About source does not compile; see `reports/2026-11-06-0157.md`, `findings/0157-ui-hooks.md` and its four patch registrations; no legacy removal or 0.156 fix.

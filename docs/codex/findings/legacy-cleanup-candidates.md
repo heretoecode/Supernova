@@ -12,11 +12,11 @@ closure. The retained engine, playback and protocol code stays close to the revi
 | Classic anime grids | UNSURE | 12 | 46,936 | Nested alphabet/year/genre/rating routes and manifest registrations remain; no current Shield reachability results. |
 | TV-show hosts and grids | KEEP | 31 | 235,635 | TvshowActivity/Fragment also host current content, season selection and action routes. Do not remove the whole package. |
 | Collection routes | UNSURE | 12 | 110,826 | VideoViewClickedListener still launches collection details; shared data builders are live. |
-| Player engine and controller | KEEP | 93 | 1,471,003 | Live playback/JNI, external playback and protocol contracts; no broad deletion justified. |
+| Player engine and controller | KEEP | 93 | 1,472,126 | Live playback/JNI, external playback and protocol contracts; no broad deletion justified. |
 
 ## Largest conceptual batch: `try_new_ui` and classic UI routing
 
-There are 97 Java lines mentioning the switch across 50 files in this exact tree.
+There are 96 Java lines mentioning the switch across 49 files in this exact tree.
 This is **UNSURE**, not an unused feature: both branches still select live routes and shared hosts. A blanket switch
 removal could strand restored preferences, external intents, player information, collection/season actions and Back.
 Treat migration of the preference separately from deleting exclusive classic subtrees. Start with one grid pair,

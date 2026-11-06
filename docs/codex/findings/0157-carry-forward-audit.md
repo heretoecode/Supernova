@@ -78,3 +78,11 @@ report must not be reported as APK savings.
 A complete version/advisory audit needs a frozen resolved graph plus native lock/SBOM inventory and checked advisory
 sources. Collecting Maven artifacts to compile does not establish newest stable versions or vulnerability status.
 Do not relabel the old NOVA 6.6.4 engine archive as a newer reviewed stack.
+
+## Final-merge compile blocker
+
+The required second merge imports an extra closing brace in the source branch's 0.156
+`foundation/FoundationAboutWorkspace.java:646`; the call at line 647 is outside its method. The exact source file
+was not edited here. Whole-tree compilation of the final merge fails there. The own 0.157 app/module files and
+changed tests compile separately, and their 68 regressions pass; see the delivery report for classpath/resource
+binding limitations. Do not treat that component pass as a green final application build.

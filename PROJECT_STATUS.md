@@ -23,7 +23,10 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
   [`docs/0.156/SHIELD_CHECKLIST.md`](docs/0.156/SHIELD_CHECKLIST.md).
 - **Not done in 0.156 (flagged to the owner):** focus memory after Android recreates the app (audit F1, F6, F8, F10–F13)
   and F2 (Down from the top bar), which conflicts with the older "first control" rule.
-- **Codex:** 0.156 finished and merged. Now on 0.157 (`docs/codex/BRIEF_0157.md`, branch `codex/0157-2026-11-06`).
+- **Codex:** 0.156 finished and merged. Partial 0.157 engine/data delivery at `71f7818a9` on
+  `codex/0157-2026-11-06`: 68 component tests pass; the brief is **not complete**. Per-item gaps, four new module
+  patches and the fresh source merge's unchanged 0.156 About syntax blocker are recorded in
+  [`docs/codex/reports/2026-11-06-0157.md`](docs/codex/reports/2026-11-06-0157.md).
 - **0.157:** decided items in [`docs/0.157/OWNER_NOTES.md`](docs/0.157/OWNER_NOTES.md), including the Files page
   redesign (§16; mock-ups `docs/design/proposals/network-files-tabs/`, principles `docs/design/FLAT_PAGE_PRINCIPLES.md`).
 
