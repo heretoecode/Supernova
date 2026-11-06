@@ -53,10 +53,15 @@ the player).
 - **P10 Seek previews missing entirely.** No pictures on Put.io or local files, and Settings › System › Advanced has
   no "Seek previews (experimental)" switch. The Advanced layout lists `seek_thumbnails_enabled` (SettingsLayout) but
   the switch itself seems never to be created, so the page skips it. Fix both: the switch and the pictures.
+- P10 cause of the missing switch (checked in the history): Claude's 0.156 commit `eccb17b58` added the switch to
+  the settings file and the Advanced layout but not to `PreviewSettings`' list of keys moved into Advanced, so it is
+  left in a hidden section. The missing pictures are a separate fault (engine by Codex, switch defaults on): to
+  investigate.
 - **P11 Picture in picture does nothing** when chosen. Owner decision: **remove picture in picture completely** in
   0.157 (never needed; awkward in other apps). Noted in `docs/REVISIT_LATER.md` to bring back if ever wanted.
-- **P12 Playback Settings tab memory, as tested by the owner:** to change tab you must go Up to the tabs; Claude's
-  check (#27) is: on Text Size, Up to the tabs, over to Audio, back to Subtitles, Down: does it land on Text Size?
+- **P12 Playback Settings tab memory (decision needed):** to change tab you must go Up to the tabs; Claude's
+  check (#27) is: on Text Size, Up to the tabs, over to Audio, back to Subtitles, Down: does it land on Text Size (skipping the three selection rows)? The owner to choose: back to the
+  remembered row, or always the top of the tab (the older "first control" rule, audit F2).
 - First-play tip: seen, works. Owner: it sits towards the top; should it be centred? Claude: yes, centre it.
 - NOVA's blue "Press UP" box: not seen since the first install, so it was NOVA's first-run notice. Fine.
 - Not yet tested: Still watching?, Sleep timer (running now), auto-next past hidden episodes, Put.io pause (owner
@@ -71,6 +76,7 @@ the player).
   own language; EAC3 = the sound format (Dolby Digital Plus); 5.1 = channels; TEXT = text-based subtitles (not useful:
   drop); SDH = subtitles for the deaf and hard of hearing. Claude's proposal: the name in plain words ("English"),
   then small pills: Audio "Original" "Dolby Digital Plus" "5.1"; Subtitles "Original" "SDH" (or "Forced"). Flag stays.
+  Mock-ups `docs/design/proposals/track-names/01`, `02` (0.157 panel look).
 - **Colours of HUD buttons, time bubble, Chapters/Episodes buttons and Playback Settings:** yes, the 0.157 panel
   look (90% #16181C, no outline, focused item filled white with black text and icon) covers all of them. That is
   already agreed and separate from the page background question (0.157 notes §18).
