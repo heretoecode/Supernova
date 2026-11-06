@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.*;
 import com.archos.filecorelibrary.ListingEngine;
 import com.archos.filecorelibrary.MetaFile2;
 import com.archos.filecorelibrary.samba.NetworkCredentialsDatabase;
+import com.archos.filecorelibrary.connections.DraftConnectionTest;
 import com.archos.filecorelibrary.samba.SambaDiscovery;
 import com.archos.filecorelibrary.samba.Share;
 import com.archos.filecorelibrary.samba.Workgroup;
@@ -109,6 +110,7 @@ public final class UniversalFileBrowser extends LinearLayout {
     private ListingEngine engine;
     private int generation, listingRenderGeneration;
     private boolean closed, listingFailed;
+    private DraftConnectionTest.Job connectionTest;
     private TextView scanOverview, scanButton;
     private final Handler scanHandler = new Handler(Looper.getMainLooper());
     private final Runnable scanRefresh = new Runnable() {
@@ -1655,9 +1657,55 @@ public final class UniversalFileBrowser extends LinearLayout {
         });
         if (networkLayout != null) {
             actions.removeAllViews();
+            centreAction("Test connection", this::testConnection);
             centreAction("Connect", this::connect);
             focusConnectionEntry(fieldLabel);
         }
+    }
+
+    /** Tests the draft without saving anything (DraftConnectionTest); the answer goes in the status line. */
+    private void testConnection() {
+        String address = connection[0].trim();
+        if (address.isEmpty()) {
+            status.setText("Enter the server name or address first.");
+            return;
+        }
+        int port = -1;
+        if (!connection[1].isEmpty()) {
+            try {
+                port = Integer.parseInt(connection[1]);
+            } catch (NumberFormatException wrong) {
+                status.setText("Enter a port from 1 to 65535.");
+                return;
+            }
+        }
+        DraftConnectionTest.Type type = new DraftConnectionTest.Type[] {
+            DraftConnectionTest.Type.SMB, DraftConnectionTest.Type.WEBDAVS, DraftConnectionTest.Type.WEBDAV,
+            DraftConnectionTest.Type.SFTP, DraftConnectionTest.Type.FTP, DraftConnectionTest.Type.FTPS
+        }[protocol];
+        String folder = connection[2].startsWith("/") ? connection[2] : "/" + connection[2];
+        stopConnectionTest();
+        status.setText("Testing " + address + "…");
+        char[] password = connection[4].toCharArray();
+        try (DraftConnectionTest.Draft draft =
+                 new DraftConnectionTest.Draft(type, address, port, folder, connection[3], password)) {
+            connectionTest = DraftConnectionTest.start(getContext(), draft, this::post, result -> {
+                if (closed)
+                    return;
+                connectionTest = null;
+                status.setText(ConnectionTestWords.message(result.cancelled, result.field, result.reason,
+                                                           result.folders, result.videos));
+            });
+        } finally {
+            java.util.Arrays.fill(password, '\0');
+        }
+    }
+
+    private void stopConnectionTest() {
+        if (connectionTest == null)
+            return;
+        connectionTest.close();
+        connectionTest = null;
     }
 
     private void connect() {
@@ -2860,6 +2908,7 @@ public final class UniversalFileBrowser extends LinearLayout {
         }
         scanHandler.removeCallbacksAndMessages(null);
         closed = true;
+        stopConnectionTest();
         stopDiscovery();
         stopListing();
         metadata.shutdownNow();
