@@ -47,9 +47,11 @@ function mark(name) {
   return `<svg viewBox="0 0 ${vw} ${vh}">${parts.join('')}</svg>`;
 }
 
-function rating(markHtml, value, note) {
+function rating(markHtml, label, value, note) {
   const unknown = value === 'Unknown' ? ' class="unk"' : '';
-  return `<div class="rate"><i>${markHtml}</i><div><b${unknown}>${value}</b><span>${note}</span></div></div>`;
+  const name = label ? `<span class="lbl">${label}</span>` : '';
+  return `<div class="rate r2"><i>${markHtml}</i>${name}<div class="val"><b${unknown}>${value}</b>`
+    + `${note ? `<span>${note}</span>` : ''}</div></div>`;
 }
 const BRAND = { netflix: '#E50914', primevideo: '#1A98FF', disneyplus: '#2E6BFF' };
 const fontDir = process.env.FONT_DIR;
@@ -170,11 +172,11 @@ function quiet(pairs) {
 const details = header(1) + `<div class="content page two">
   <div class="three">
     <div class="col3 recepcol"><h3>Reception</h3>
-      ${rating('<em class="imdbw">IMDb</em>', '6.1/10', '18.5K votes')}
-      ${rating(mark('rotten_tomatoes'), 'Unknown', 'Rotten Tomatoes')}
-      ${rating(mark('metacritic'), 'Unknown', 'Metacritic')}
-      ${rating('<em class="tmdbw">TMDB</em>', '8.0/10', '419 votes')}
-      ${rating('<em class="award">🏆</em>', 'Unknown', 'Awards')}</div>
+      ${rating('<em class="imdbw">IMDb</em>', '', '6.1/10', '18.5K votes')}
+      ${rating(mark('rotten_tomatoes'), 'Rotten Tomatoes', 'Unknown', '')}
+      ${rating(mark('metacritic'), 'Metacritic', 'Unknown', '')}
+      ${rating('<em class="tmdbw">TMDB</em>', '', '8.0/10', '419 votes')}
+      ${rating('<em class="award">🏆</em>', 'Awards', 'Unknown', '')}</div>
     <div class="col3"><h3>Key information</h3>${list([
       ['First aired', '1 March 2026'], ['Runtime', '42–48 min per episode'], ['Genres', 'Drama, Crime, Action & Adventure'],
       ['Seasons', '1 · 13 episodes'], ['Created by', 'Spencer Hudnut'], ['Network', 'CBS'], ['Studio', '101 Studios'],
@@ -323,6 +325,10 @@ body.blue{--uline:#4d8dff}body.blue .two h3:after{box-shadow:0 0 10px rgba(77,14
 body.white{--uline:rgba(255,255,255,.85)}
 
 body.flat{background:#16181C !important}
+.rate.r2{display:flex;align-items:center}.rate.r2 .lbl{font-size:24px;font-weight:500;color:#fff;margin-left:4px;white-space:nowrap}
+.rate.r2 .val b{font-size:30px}.rate.r2 .val b.unk{font-size:26px}
+.rate.r2 .val{margin-left:auto;text-align:right}.rate.r2 .val span{display:block}
+body.v16 .two .sec h3{margin-bottom:60px}
 .tab.open{background:#454B55;border-radius:16px;padding:8px 18px 10px;margin:-8px -18px 6px;color:#fff}
 .tab.open:after{display:none}
 `;
@@ -330,6 +336,7 @@ body.flat{background:#16181C !important}
 const shots = [
   ['02-details-tab-space-black.png', details, 2160, 'white'],
   ['04-details-tab-charcoal.png', details, 2160, 'white flat'],
+  ['06-v16-details-tab.png', details, 2160, 'white flat v16'],
 ];
 
 (async () => {
