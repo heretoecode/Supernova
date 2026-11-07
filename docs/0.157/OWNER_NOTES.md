@@ -588,4 +588,18 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   field and global keyboard on the left, right side shows Recent searches and What you can search, then results with
   filter chips (All · Movies · TV Shows · People · On your services), grouped rows with a thumbnail (artwork edge),
   typed letters in bold and status pills (In library / Watched / service).
+- **Owner on the 7 Nov batch:**
+  - Seasons & Episodes approved. Fix: the open-tab chip (and the focused season-heading chip) sit off the left edge;
+    every chip's outer edge must line up with the page's left edge, text indented inside.
+  - Icons on rows/tabs (Claude's view, owner to confirm before mock-ups): icons on the Details tabs (as Files and the
+    Settings tray tabs) and on Extras / More Like This row titles (different kinds); not on season headings (would
+    repeat, breaking "no two alike").
+  - More Like This approved; fix the service logos so they are centred in the space above the title.
+  - Files folder grid approved.
+  - **Settings tab count:** the summary on the right never limits the number of tabs; it can move or go. Re-group
+    Settings on its merits (eight tabs if eight are needed) and explain the choice.
+  - **Search:** keyboard always visible, with a permanent number row (as 0.156); "Recent searches" and "What you can
+    search" as proper headings, larger and whiter; filter chips dropped (they duplicate the groups). "On your
+    services": Supernova is library-first, services enhance the library (not a JustWatch-style app); no services
+    filter. Open question: a short final "Also on your services" group, or no streaming-only results in Search.
 
