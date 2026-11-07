@@ -553,3 +553,7 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   Details and Home may have different backgrounds (Claude's earlier "must match" was overstated). Only check the
   hero's bottom fade into the page. Home is light work and can follow later. Next: Details mock-ups, Space Black and
   plain charcoal side by side (top with hero and tabs; the Details tab).
+- **Files page: done** (owner, 7 Nov 2026): redesign, background and wording all decided (§16).
+- Details background mock-ups sent 7 Nov: `docs/design/proposals/details-background/01`–`04` (top and Details tab,
+  Space Black and plain charcoal; open tab in the grey chip; top bar says Files).
+
