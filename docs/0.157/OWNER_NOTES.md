@@ -611,4 +611,10 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   Codex derives them (shared name, spin-off links, creator); best effort. Data work for Codex; Claude draws it.
 - Icons: Claude's suggestion stands unless the owner objects (Details tabs and Extras / More Like This row titles
   get icons; season headings do not).
+- **What "related" means in Search (Claude's proposal, 7 Nov; owner to confirm):** same story or same person, never
+  "similar". Title search: its family on your services (sequels, prequels, spin-offs: The Handmaid's Tale → The
+  Testaments; Yellowstone → 1883, 1923, Marshals; not Mayor of Kingstown, same creator but a different story).
+  Person search (e.g. Taylor Sheridan): if any of their work is in the library, their other work on your services
+  ("More from Taylor Sheridan on your services"). "Similar" titles (Slow Horses → The Night Manager, Cross) stay in
+  More Like This on Details, not in Search. Icons recommendation confirmed by the owner.
 
