@@ -34,12 +34,24 @@ public final class SeriesTrackChoices
 
     public void setEnabled(String series, boolean enabled)
     {
-        prefs.edit().putBoolean(key(series) + ":enabled", enabled).apply();
+        prefs.edit().putBoolean(key(series) + ":enabled", enabled)
+                .putBoolean(key(series) + ":audio_enabled", enabled)
+                .putBoolean(key(series) + ":subtitle_enabled", enabled).apply();
+    }
+
+    public boolean enabled(String series, boolean audio)
+    {
+        return prefs.getBoolean(key(series) + (audio ? ":audio_enabled" : ":subtitle_enabled"), enabled(series));
+    }
+
+    public void setEnabled(String series, boolean audio, boolean enabled)
+    {
+        prefs.edit().putBoolean(key(series) + (audio ? ":audio_enabled" : ":subtitle_enabled"), enabled).apply();
     }
 
     public void remember(String series, boolean audio, TrackPreference track)
     {
-        if (!enabled(series) || track == null)
+        if (!enabled(series, audio) || track == null)
             return;
         try
         {
@@ -59,7 +71,7 @@ public final class SeriesTrackChoices
 
     public TrackPreference choice(String series, boolean audio)
     {
-        if (!enabled(series))
+        if (!enabled(series, audio))
             return null;
         try
         {
