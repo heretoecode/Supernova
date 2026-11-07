@@ -566,4 +566,13 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
      labelled); rating moved to the right, in line with the Key information rows.
   3. Cast and Crew: the row titles sit too close to the portraits; move them up a little.
   Otherwise the tabs need little change.
+- **Owner on v16 (7 Nov 2026):** Cast/Crew spacing approved. Background rule clarified: page by page, each reviewed on
+  charcoal first (not a blanket switch). Reception not yet right:
+  - Icons only, no written names (the tomato, Metacritic mark and trophy are recognisable, like the IMDb/TMDB logos).
+  - The rating on one line, centred in the space beside the icon (e.g. **6.1/10** · 18.5K votes in smaller text;
+    "Unknown" in the same place; Awards e.g. "2 wins · 5 nominations").
+  - Owner asked whether the grey labels (Bitrate, Audio languages…) are too hard to read beside white values.
+    Claude's view (no mock-up asked): brighten labels to the soft near-white used for second lines on Files
+    (`#C9D3E6`), values pure white and slightly bolder; difference by weight, not dimness; "Unknown" stays quieter.
+    Waiting for the owner's answer.
 
