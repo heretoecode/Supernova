@@ -165,9 +165,12 @@ public final class StreamingRepository
               kind.equals("tv") && (section.matches("season/[0-9]{1,4}") ||
                                     section.matches("season/[0-9]{1,4}/episode/[0-9]{1,4}/external_ids"))))
             throw new IOException("Invalid metadata request");
-        return PreviewMetadataCache.load(
+        JSONObject result = PreviewMetadataCache.load(
             context, kind, id, section,
             () -> api(context, kind + "/" + id + (section.isEmpty() ? "" : "/" + section), null));
+        if ("release_dates".equals(section) || "content_ratings".equals(section))
+            com.archos.mediacenter.video.metadata.AgeCertificates.remember(context, kind, id, result);
+        return result;
     }
 
     /** TMDB user reviews, existing application API access only. Bounded pages; no account flow. */
