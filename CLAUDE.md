@@ -46,7 +46,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Everything new the owner raises (features, bugs, anything) goes into 0.157.** 0.156 is fixed at its 45
   approved items (owner, 5 Nov 2026).
 - **Global look (owner, 5 Nov 2026):**
-  - Full pages sit on the Space Black artwork, with content straight on it.
+  - **Every page is plain charcoal `#16181C`, content straight on it; the Space Black artwork is retired app-wide**
+    (owner, 7 Nov 2026; replaces the 5 Nov rule; built in 0.157).
   - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
     black text and icon (built in 0.157).
   - Every menu: each item has its own icon (no two alike in one menu), the current choice is a tick on the right,

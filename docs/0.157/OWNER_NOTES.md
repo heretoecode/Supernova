@@ -556,4 +556,14 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
 - **Files page: done** (owner, 7 Nov 2026): redesign, background and wording all decided (§16).
 - Details background mock-ups sent 7 Nov: `docs/design/proposals/details-background/01`–`04` (top and Details tab,
   Space Black and plain charcoal; open tab in the grey chip; top bar says Files).
+- **Decided (owner, 7 Nov 2026): Space Black is retired from the whole app.** Every page goes plain charcoal
+  (`#16181C`): "a phase in the UI development… the way we're going is a lot more elegant and clean". §18 closed.
+  Pages are now judged on what their design needs given the new background, not on the background itself.
+- **Details on charcoal, owner's changes (v16):**
+  1. Hero card edge: the faint white edge fades out where the artwork is light. Add a very thin black line around
+     the card, with the white line outside it, so the edge always shows.
+  2. Reception: use the column's width. Name shown once (no "Rotten Tomatoes" under a tomato that is already
+     labelled); rating moved to the right, in line with the Key information rows.
+  3. Cast and Crew: the row titles sit too close to the portraits; move them up a little.
+  Otherwise the tabs need little change.
 
