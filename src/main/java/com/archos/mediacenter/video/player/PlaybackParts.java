@@ -54,6 +54,28 @@ public final class PlaybackParts
         return parts;
     }
 
+    /** Proposed display data: renumber only generic chapter labels after merging; retain authored names. */
+    public List<Part> numberedChapters()
+    {
+        List<Part> result = new ArrayList<>();
+        int chapter = 0;
+        for (Part part : parts) {
+            String name = part.name;
+            if (part.kind == Kind.CHAPTER) {
+                chapter++;
+                if (name.isEmpty() || name.matches("(?i)chapter\\s*0*[0-9]+"))
+                    name = "Chapter " + chapter;
+            }
+            result.add(new Part(name, part.kind, part.startMs, part.endMs));
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    public PlaybackParts numbered()
+    {
+        return new PlaybackParts(numberedChapters());
+    }
+
     /** Half-open intervals; an end boundary belongs to the following part. */
     public Part partAt(long positionMs)
     {

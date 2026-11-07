@@ -323,6 +323,12 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     private Uri mUri;
     private Uri mStreamingUri;
     private volatile SeekThumbnails seekThumbnails;
+    private DeferredPartFrames partFrames = new DeferredPartFrames();
+
+    public PartPictures.FrameSource partFrameSource()
+    {
+        return partFrames;
+    }
     private boolean thumbnailForeground = true, thumbnailPip, thumbnailBuffering, thumbnailSeeking;
     private long bufferingStarted;
     private Runnable nativeFrameSampling;
@@ -348,6 +354,7 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
                 track == null ? "unknown" : track.format);
             seekThumbnails = new SeekThumbnails(this, source, () -> mPlayer == null ? 0 : mPlayer.getCurrentPosition());
             updateThumbnailState();
+            partFrames.attach(seekThumbnails);
         }
         catch (Exception failure)
         {
@@ -419,6 +426,8 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
 
     private void closeSeekThumbnails(boolean watched)
     {
+        partFrames.close();
+        partFrames = new DeferredPartFrames();
         Runnable sampling = nativeFrameSampling;
         nativeFrameSampling = null;
         if (sampling != null && mHandler != null)
@@ -2297,6 +2306,9 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
     {
         mDestroyed = true;
         ++mSourceRequestGeneration;
+        if (playerEpisodeCancellation != null)
+            playerEpisodeCancellation.cancel();
+        playerEpisodeWorker.shutdownNow();
         cancelNextLookup();
         invalidateSubtitlePreparation();
         closeSeekThumbnails(mPlaybackSession.completed);
@@ -2818,7 +2830,17 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         playbackLimits.configureStillWatching(
             settings.getBoolean(PlaybackLimits.KEY_STILL_WATCHING, true),
             settings.getInt(PlaybackLimits.KEY_EPISODES, PlaybackLimits.DEFAULT_EPISODES));
+        playbackLimits.configureEpisodeCounting(settings.getBoolean(PlaybackLimits.KEY_COUNT_EPISODES, true));
+        playbackLimits.configureInactivity(Math.max(0L,
+                settings.getInt(PlaybackLimits.KEY_IDLE_MINUTES, 0)) * 60000);
+        playbackLimits.checkDeadlines();
         return playbackLimits;
+    }
+
+    /** Screen owner forwards actual remote interaction; progress/render callbacks must not call this. */
+    public void playbackInteraction()
+    {
+        playbackLimits().interaction();
     }
 
     private boolean advancing;
@@ -2906,21 +2928,80 @@ public class PlayerService extends Service implements Player.Listener, IndexHelp
         }
     }
 
+    private volatile List<PreviewLibraryLoader.Entry> playerEpisodeRows = java.util.Collections.emptyList();
+    private String playerEpisodeKey = "";
+    private boolean playerEpisodeLoaded;
+    private android.os.CancellationSignal playerEpisodeCancellation;
+    private long playerEpisodeRetryAt;
+    private java.util.concurrent.Future<?> playerEpisodeWork;
+    private final java.util.concurrent.ExecutorService playerEpisodeWorker =
+            java.util.concurrent.Executors.newSingleThreadExecutor();
+
+    private List<PreviewLibraryLoader.Entry> playerEpisodes()
+    {
+        if (mDestroyed || mVideoInfo == null || !mVideoInfo.isShow)
+            return java.util.Collections.emptyList();
+        String key = mSourceRequestGeneration + ":" + mVideoInfo.id + ":" + mVideoInfo.scraperShowId;
+        if (!key.equals(playerEpisodeKey) || (playerEpisodeWork == null || playerEpisodeWork.isDone())
+                && android.os.SystemClock.elapsedRealtime() >= playerEpisodeRetryAt) {
+            if (!key.equals(playerEpisodeKey)) {
+                playerEpisodeRows = java.util.Collections.emptyList();
+                playerEpisodeLoaded = false;
+            }
+            playerEpisodeKey = key;
+            playerEpisodeRetryAt = android.os.SystemClock.elapsedRealtime() + 30000;
+            if (playerEpisodeCancellation != null)
+                playerEpisodeCancellation.cancel();
+            android.os.CancellationSignal cancellation = new android.os.CancellationSignal();
+            playerEpisodeCancellation = cancellation;
+            int generation = mSourceRequestGeneration;
+            if (playerEpisodeWork != null)
+                playerEpisodeWork.cancel(true);
+            String series = mVideoInfo.scraperShowId;
+            playerEpisodeWork = playerEpisodeWorker.submit(() -> {
+                try {
+                    List<PreviewLibraryLoader.Entry> rows = PlayerEpisodeRepository.load(this, series, cancellation);
+                    mHandler.post(() -> {
+                        if (!mDestroyed && generation == mSourceRequestGeneration && key.equals(playerEpisodeKey)
+                                && !cancellation.isCanceled()) {
+                            playerEpisodeRows = rows;
+                            playerEpisodeLoaded = true;
+                        }
+                    });
+                } catch (Exception failure) {
+                    if (!cancellation.isCanceled())
+                        Diagnostics.error("player_episode_inventory_failed", failure);
+                    mHandler.post(() -> {
+                        if (generation == mSourceRequestGeneration && key.equals(playerEpisodeKey)) {
+                            playerEpisodeWork = null;
+                            playerEpisodeRetryAt = android.os.SystemClock.elapsedRealtime() + 30000;
+                        }
+                    });
+                }
+            });
+        }
+        if (playerEpisodeLoaded)
+            return playerEpisodeRows;
+        PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
+        if (snapshot != null)
+            for (PreviewLibraryLoader.Entry entry : snapshot.episodes)
+                if (((Video)entry.media).getId() == mVideoInfo.id
+                        && String.valueOf(entry.onlineId).equals(mVideoInfo.scraperShowId))
+                    return snapshot.episodes;
+        return java.util.Collections.emptyList();
+    }
+
     public Episode previewAdjacentEpisode(int direction)
     {
         if (mVideoInfo == null || !mVideoInfo.isShow)
             return null;
-        PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
-        if (snapshot == null)
-            return null;
-        return PlaybackEpisodes.adjacent(snapshot.episodes, mVideoInfo.id, direction);
+        return PlaybackEpisodes.adjacent(playerEpisodes(), mVideoInfo.id, direction);
     }
 
     public List<PlaybackEpisodes.Item> previewSeasonEpisodes()
     {
-        PreviewLibraryLoader.Snapshot snapshot = PreviewLibraryLoader.memoryCache();
-        return snapshot == null || mVideoInfo == null ? java.util.Collections.emptyList()
-                                                      : PlaybackEpisodes.season(this, snapshot.episodes, mVideoInfo.id);
+        return mVideoInfo == null ? java.util.Collections.emptyList()
+                : PlaybackEpisodes.season(this, playerEpisodes(), mVideoInfo.id);
     }
 
     public void previewNavigateEpisode(int direction)
