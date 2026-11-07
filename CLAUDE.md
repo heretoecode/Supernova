@@ -54,8 +54,15 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - Every menu: each item has its own icon (no two alike in one menu), the current choice is a tick on the right,
     and the menu is only as wide as its longest item plus the standard padding (owner, 6 Nov 2026; 0.157).
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.
-  - Every artwork card (posters, hero, Home rows, Details tabs, player strip) has a faint 28% white edge; the focused
-    one grows with a solid white ring. No blue caption bars.
+  - **Artwork edge (owner, 7 Nov 2026; replaces the 28% edge/white ring):** every piece of artwork — both heroes
+    (Home and Details), every row card (Home, Details tabs: Seasons & Episodes, Extras, More Like This), the player's
+    Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (about 60%) with a
+    soft inner shade just inside it, so the edge shows on light and dark artwork alike. Every item has the edge all the
+    time; **focus = the item grows** (as library pages do today). Mock-up `details-background/07-v17-top`. No blue
+    caption bars.
+  - **Text on the page (owner, 7 Nov 2026):** label/value pairs everywhere use soft near-white labels (`#C9D3E6`) and
+    pure white, bolder values; "Unknown" stays quieter. Difference by weight, not dimness. Mock-up
+    `details-background/08-v17-details-tab`.
   - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
   - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
     carousel dots. Tabs: the open one in a grey chip, the focused one filled white.

@@ -575,4 +575,11 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
     Claude's view (no mock-up asked): brighten labels to the soft near-white used for second lines on Files
     (`#C9D3E6`), values pure white and slightly bolder; difference by weight, not dimness; "Unknown" stays quieter.
     Waiting for the owner's answer.
+- **Details page: done** (owner, 7 Nov 2026): v17 approved — hero edge (single white line on the edge, soft inner
+  shade), Reception icons only with one-line centred ratings, brighter labels / bolder values, Cast/Crew spacing.
+  Mock-ups `docs/design/proposals/details-background/07`, `08`.
+- **Two app-wide rules from it (owner, 7 Nov 2026), now in CLAUDE.md "Global look":**
+  1. The artwork edge on every hero, row card, player strip card and library poster; every item always has it, and
+     focus simply makes the item grow.
+  2. The label/value text treatment wherever text sits on the page.
 
