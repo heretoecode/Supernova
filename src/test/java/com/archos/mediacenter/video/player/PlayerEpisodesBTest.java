@@ -202,6 +202,36 @@ public class PlayerEpisodesBTest
         assertEquals(0, service.previewSeasonEpisodes().size());
     }
 
+    @Test public void firstMainThreadProjectionDoesNotEnumerateCapabilities()
+            throws Exception
+    {
+        Context guarded = new android.content.ContextWrapper(RuntimeEnvironment.getApplication()) {
+            @Override public Context getApplicationContext()
+            {
+                return this;
+            }
+            @Override public ContentResolver getContentResolver()
+            {
+                return resolver;
+            }
+            @Override public Object getSystemService(String name)
+            {
+                if (Looper.myLooper() == Looper.getMainLooper())
+                    throw new AssertionError("Capability enumeration on main");
+                return super.getSystemService(name);
+            }
+        };
+        ExecutorService worker = java.util.concurrent.Executors.newSingleThreadExecutor();
+        try {
+            var rows = worker.submit(() -> PlayerEpisodeRepository.load(guarded, "123", new CancellationSignal()))
+                    .get(3, TimeUnit.SECONDS);
+            assertEquals(2, PlaybackEpisodes.season(guarded, rows, 1).size());
+        } finally {
+            worker.shutdownNow();
+            assertTrue(worker.awaitTermination(3, TimeUnit.SECONDS));
+        }
+    }
+
     private void info(long id, String series, int generation)
     {
         VideoDbInfo info = new VideoDbInfo(Uri.parse("file:///storage/" + id));

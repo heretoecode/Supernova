@@ -3,6 +3,7 @@ package com.archos.mediacenter.video.player;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.CancellationSignal;
+import com.archos.mediacenter.video.leanback.PreviewVariants;
 import com.archos.mediacenter.video.browser.adapters.mappers.VideoCursorMapper;
 import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.loader.VideoLoader;
@@ -20,6 +21,8 @@ public final class PlayerEpisodeRepository
         if (tmdbSeries == null || !tmdbSeries.matches("[1-9][0-9]{0,17}"))
             return List.of();
         cancelled.throwIfCanceled();
+        PreviewVariants.initialize(context);
+        context.getSharedPreferences(SupernovaLibraryPolicy.HEALTH, Context.MODE_PRIVATE).getAll();
         List<Entry> result = new ArrayList<>();
         String where = VideoStore.Video.VideoColumns.SCRAPER_S_ONLINE_ID + "=? AND " + PersonalVideoActions.VISIBLE;
         try (Cursor rows = context.getContentResolver().query(VideoStore.Video.Media.EXTERNAL_CONTENT_URI,
