@@ -548,3 +548,8 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   design (`v15-b`, on Space Black) follows. Owner, 6 Nov: that is easy to build but changes how Details looks, so
   check it in the mock-ups: separator and edge strengths (tuned on Space Black), the hero's fade into the page, the
   tab chip and line, and what draws the eye. Layout and content decisions stand.
+- **Owner, 7 Nov 2026:** decide **Details first, on its own**, so Details (like Files) is completely done. The hero card
+  staying put only needs the card itself to match (size, picture, position); the page around it changes anyway, so
+  Details and Home may have different backgrounds (Claude's earlier "must match" was overstated). Only check the
+  hero's bottom fade into the page. Home is light work and can follow later. Next: Details mock-ups, Space Black and
+  plain charcoal side by side (top with hero and tabs; the Details tab).
