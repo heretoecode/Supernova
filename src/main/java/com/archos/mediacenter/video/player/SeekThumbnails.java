@@ -127,6 +127,7 @@ public final class SeekThumbnails implements PartPictures.FrameSource, AutoClose
     private boolean playing = true;
     private boolean lookupQueued;
     private long latestLookup;
+    private Long previewTarget;
     private long nextDue;
     private long backoffUntil;
     private String lastSkip = "";
@@ -199,7 +200,7 @@ public final class SeekThumbnails implements PartPictures.FrameSource, AutoClose
     /** Memory-only on the UI thread. A miss schedules one coalesced disk lookup, never a synchronous read. */
     public synchronized Bitmap nearest(long positionMs)
     {
-        if (closed || !SeekThumbnailPreferences.enabled(context))
+        if (closed || source.durationMs <= 0 || !SeekThumbnailPreferences.enabled(context))
             return null;
         Map.Entry<Long, Bitmap> before = memory.floorEntry(positionMs);
         Map.Entry<Long, Bitmap> after = memory.ceilingEntry(positionMs);
@@ -214,6 +215,14 @@ public final class SeekThumbnails implements PartPictures.FrameSource, AutoClose
             lru.get(nearest.getKey());
             return nearest.getValue();
         }
+        if (previewTarget != null && priority.containsKey(previewTarget) && priority.get(previewTarget).isEmpty())
+            priority.remove(previewTarget);
+        long target = Math.max(0, Math.min(source.durationMs - 1, positionMs));
+        if (priority.size() < 256 || priority.containsKey(target)) {
+            previewTarget = target;
+            priority.computeIfAbsent(target, ignored -> new ArrayList<>());
+        }
+        tick();
         latestLookup = positionMs;
         if (initialized && !lookupQueued)
         {
@@ -316,7 +325,13 @@ public final class SeekThumbnails implements PartPictures.FrameSource, AutoClose
         Map.Entry<Long, List<Consumer<Bitmap>>> request;
         synchronized (this)
         {
-            request = priority.pollFirstEntry();
+            if (previewTarget != null && priority.containsKey(previewTarget)) {
+                request = new java.util.AbstractMap.SimpleImmutableEntry<>(previewTarget,
+                        priority.remove(previewTarget));
+                previewTarget = null;
+            } else {
+                request = priority.pollFirstEntry();
+            }
         }
         boolean explicit = request != null;
         long target = request == null ? samplePosition() : request.getKey();
