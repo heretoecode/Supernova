@@ -617,4 +617,21 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   Person search (e.g. Taylor Sheridan): if any of their work is in the library, their other work on your services
   ("More from Taylor Sheridan on your services"). "Similar" titles (Slow Horses → The Night Manager, Cross) stay in
   More Like This on Details, not in Search. Icons recommendation confirmed by the owner.
+- **Owner on Details v2 / Search v2 (7 Nov 2026):** tab icons, Extras and More Like This approved. Fix on every tab: the
+  open/focused tab chip overlaps the separator line; lift it to sit just above. Search changes:
+  - "What you can search" gains a streaming line ("Your services: related titles you can stream, for things already
+    in your library"), shown only when Where to Watch is on.
+  - Clear recent searches: a small Clear button at the end of the "Recent searches" heading, plus the option in
+    Settings (Claude's proposal).
+  - Family heading wording: "The Yellowstone family on your services" (proposed; owner to confirm).
+  - Faint separator lines between results, as on Files.
+  - Person matches: no single person row standing for several titles; "In your library" lists each title separately
+    with the reason ("Taylor Sheridan · creator").
+  - Keyboard position: Claude recommends keeping it top-aligned (search box level with the first result); can show a
+    vertically centred version if wanted.
+- **Where to Watch switch (checked in code, 7 Nov):** today it hides the service buttons on Details and stops the
+  availability checks; it does **not** affect Home's Trending/Popular rows (TMDB/Trakt discovery). Proposal: make it a
+  true "local only for streaming" switch — off removes service buttons/pills, More Like This "On your services", the
+  Search family/person streaming results and the streaming line in "What you can search". Open question: should
+  Trending and Popular also go off with it?
 
