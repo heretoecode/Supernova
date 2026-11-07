@@ -47,9 +47,10 @@ function mark(name) {
   return `<svg viewBox="0 0 ${vw} ${vh}">${parts.join('')}</svg>`;
 }
 
+let document_v17 = false;
 function rating(markHtml, label, value, note) {
   const unknown = value === 'Unknown' ? ' class="unk"' : '';
-  const name = label ? `<span class="lbl">${label}</span>` : '';
+  const name = label && !document_v17 ? `<span class="lbl">${label}</span>` : '';
   return `<div class="rate r2"><i>${markHtml}</i>${name}<div class="val"><b${unknown}>${value}</b>`
     + `${note ? `<span>${note}</span>` : ''}</div></div>`;
 }
@@ -206,6 +207,9 @@ function more(colour, pos) {
   ], '3 titles')}</div>`;
 }
 
+document_v17 = true;
+const details17 = details.replace(/<span class="lbl">[^<]*<\/span>/g, '');
+document_v17 = false;
 const css = `${font(400)}${font(500)}${font(700)}
 *{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;position:relative;
@@ -329,6 +333,9 @@ body.flat{background:#16181C !important}
 .rate.r2 .val b{font-size:30px}.rate.r2 .val b.unk{font-size:26px}
 .rate.r2 .val{margin-left:auto;text-align:right}.rate.r2 .val span{display:block}
 body.v16 .two .sec h3{margin-bottom:60px}
+body.v17 .rate.r2 .val{flex:1;margin-left:0;text-align:center;display:flex;align-items:baseline;justify-content:center;gap:14px}
+body.v17 .rate.r2 .val span{display:inline;font-size:21px}
+body.v17 .kv span{color:#C9D3E6}body.v17 .kv b{font-weight:700}body.v17 .kv b.unk{font-weight:400}
 .tab.open{background:#454B55;border-radius:16px;padding:8px 18px 10px;margin:-8px -18px 6px;color:#fff}
 .tab.open:after{display:none}
 `;
@@ -337,6 +344,7 @@ const shots = [
   ['02-details-tab-space-black.png', details, 2160, 'white'],
   ['04-details-tab-charcoal.png', details, 2160, 'white flat'],
   ['06-v16-details-tab.png', details, 2160, 'white flat v16'],
+  ['08-v17-details-tab.png', details17, 2160, 'white flat v16 v17'],
 ];
 
 (async () => {

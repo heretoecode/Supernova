@@ -217,6 +217,8 @@ h3 + .kv{border-top:none}
   border-bottom:2px solid rgba(255,255,255,.28);padding-bottom:16px}.htabs .open{color:#fff}
 
 body.flat{background:#16181C !important}
+body.v17 .hero:after{content:'';position:absolute;inset:0;border-radius:26px;z-index:5;pointer-events:none;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 26px 6px rgba(0,0,0,.45)}
 body.v16 .hero{box-shadow:0 0 0 2px #000,0 0 0 4px rgba(255,255,255,.55),0 18px 50px rgba(0,0,0,.45)}
 .tab.open{background:#454B55;border-radius:16px;padding:8px 18px 10px;margin:-8px -18px 6px;color:#fff}
 .tab.open:after{display:none}
@@ -228,6 +230,7 @@ const shots = [
   ['01-top-space-black.png', heroCard, ''],
   ['03-top-charcoal.png', heroCard, 'flat'],
   ['05-v16-top.png', heroCard, 'flat v16'],
+  ['07-v17-top.png', heroCard, 'flat v17'],
 ];
 
 (async () => {
