@@ -602,4 +602,13 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
     search" as proper headings, larger and whiter; filter chips dropped (they duplicate the groups). "On your
     services": Supernova is library-first, services enhance the library (not a JustWatch-style app); no services
     filter. Open question: a short final "Also on your services" group, or no streaming-only results in Search.
+- **Search and streaming — decided (owner, 7 Nov 2026): "the library is the key".** Search looks in the library. If
+  nothing in the library matches, no streaming results are shown at all (even if a service has the title). If a
+  library title matches, Search also shows **related** titles on the owner's services, as a small group under the
+  library results named after the owned title ("More Dexter on your services"), each with its service pill.
+  Related = films: the same TMDB collection (Terminator, Dune, Resident Evil); series: the same family (spin-offs,
+  sequels, prequels: Dexter → Dexter, New Blood, Original Sin). Series families have no official TMDB collection, so
+  Codex derives them (shared name, spin-off links, creator); best effort. Data work for Codex; Claude draws it.
+- Icons: Claude's suggestion stands unless the owner objects (Details tabs and Extras / More Like This row titles
+  get icons; season headings do not).
 
