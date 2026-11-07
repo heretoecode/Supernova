@@ -394,4 +394,4 @@ current build authority. Existing preparation reports/patches were preserved.
 0.156 FINAL ready at a1e8120d3 — reports/2026-11-05-0156-final.md; patch replacement and deferrals recorded.
 0.156 LAST ready at 215f9e385; source merged at 886a6cda8 — reports/2026-11-06-0156-last.md; APIs in findings/0156-ui-hooks.md; no patch registrations.
 
-0.157 continuation ready: code `151341d18`, audits `9ac693f14`, branch `codex/0157-2026-11-06`; 349 host regressions/85 classes pass and all Java/32 native object compiles pass. Same report `reports/2026-11-06-0157.md`, API hooks and eight add-only patch registrations; reviewed archive/full conformance/Shield and owner-approved removal gates remain; no authored 0.156 or screen change.
+0.157 Part B source ready at `e3589f047` on `codex/0157-2026-11-06`; 66 host regressions/22 classes pass, 1,309 Java sources compile. Same report `reports/2026-11-06-0157.md`, hooks and `findings/0157-b-integration.md`; PiP screen removal, owner pause/company evidence and native archive/Shield acceptance remain explicit gates; no new patch registrations or authored 0.156/screen changes.

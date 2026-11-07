@@ -555,3 +555,11 @@ Continuation code `151341d18`, audits `9ac693f14`, branch `codex/0157-2026-11-06
 This is a non-visual source delivery, not a release or new owner decision. The single report remains
 `docs/codex/reports/2026-11-06-0157.md`, with all item dispositions, eight patch registrations and the native
 archive/conformance/Shield acceptance gates. No legacy deletion is approved or performed; no 0.156 fix is authored.
+
+
+### Engine/data Part B handoff (7 Nov 2026)
+
+Part B source `e3589f047`, 66 passing host regressions and API/diagnosis notes are recorded in the same
+`docs/codex/reports/2026-11-06-0157.md`. This records delivery, not a new owner decision or release. PiP needs the
+source-owned screen removal; the actual 6 November pause report and Marshals data are still required for those
+specific diagnoses. Native archive/full conformance/Shield acceptance remain separate gates. No 0.156 fix authored.

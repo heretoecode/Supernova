@@ -376,3 +376,122 @@ capability/API contracts are unchanged. See 0157-native-alignment.md and the reg
 
 Final internal logger fixes DG157-10/DB157-07 require no screen call. Subtitle API requests/results and poster
 clearing remain unchanged; TRACE uses the same 5s connect/10s read/15s call deadline as normal subtitle requests.
+
+## Part B — 7 November 2026
+
+These APIs are for 0.157 only. See 0157-b-integration.md for the source diagnosis, protected PiP removal map,
+company provenance, missing pause archive and Shield acceptance packet. No new patch registration accompanies
+Part B; the existing eight registrations and reviewed-native-archive requirement still apply.
+
+### GB certificates (B1)
+
+`metadata.AgeCertificates.Certificate(rating, reasons, seriesFallback)` is an immutable value. `null` is no known
+certificate; empty reasons mean no supplied advice. Only U/PG/12/12A/15/18/R18 are accepted. GB is independent of the
+service-availability country (whose legacy default is IE). No US/IE or unqualified indexed certificate is substituted.
+
+- `parse(JSONObject, boolean series)` is pure; prefer a worker for a full provider response. It selects GB,
+  preferring a film theatrical release, and retains only bounded string descriptors. Release notes are not advice.
+- `remember(context, kind, id, response)` is worker-only; validates exact response ID, writes the private
+  gb-certificates-v1 title store, and throws on invalid identity or failed persistence. StreamingRepository.metadata
+  calls it after release_dates/content_ratings acquisition, including cached acquisition. Known advice survives a
+  refresh with the same certificate and no descriptors. A successful no-GB response records none; a failed fetch
+  does not erase previously stored advice.
+- `read(context, kind, id, season, episode)` is worker-only disk access; use (-1,-1) for a film or series. A TV
+  episode first uses exact episode advice, then returns its series certificate with seriesFallback=true. Do not
+  present that fallback as a verified episode-specific BBFC decision. Locale changes do not change storage keys.
+- `verifiedAdvice(context, kind, id, season, episode, certificate)` is a worker-only producer hook for verified
+  advice; null clears only that exact scope. It is not a new BBFC lookup service. An absent episode lookup is not
+  filled from an invented episode rating. Invalid kind/ID/episode scope throws IllegalArgumentException.
+- `refresh(context, kind, id, season, episode)` is synchronous worker-only acquisition using the existing bounded
+  metadata gateway, then read. It throws on unavailable uncached data/storage failure. There is no new owned Job
+  or cancellation handle: caller owns its worker and suppresses superseded delivery; existing HTTP bounds apply.
+
+Screens should preload/read on a model worker, then publish the immutable value on main. TMDB commonly supplies
+no content-advice descriptors; reasons remain empty in that case. No token, path or authentication data is stored.
+
+### Scrub previews and all part pictures (B2–3)
+
+Existing `SeekThumbnails.nearest(positionMs)` remains main-thread safe and immediately returns a cached bitmap or
+null. A miss now schedules/coalesces an extraction at the latest target, not just a disk lookup. It cannot block on
+source setup/read/decoding. Existing enabled/buffering/seeking/background gates and close fencing are retained.
+The memory listener signals a completed picture; use that existing callback to redraw. Put.io uses the playback
+resolved URL in the independently owned extractor; callers must not substitute a guessed WebDAV URL.
+
+`PlayerService.partFrameSource()` is a main-thread getter returning a bounded `DeferredPartFrames` bridge even
+before the thumbnail engine exists. `PlayerStripSource.frames()` uses it now. `frameAt` queues across startup,
+then delegates to the active owned SeekThumbnails. Close/source replacement suppresses old delivery. Standalone
+DeferredPartFrames has no I/O; use it on main with a source whose callbacks post to main. At 256 pending requests
+it returns a null bitmap for excess admission; after close it suppresses callbacks. `attach` accepts one source,
+not a decoder replacement; replace/close the bridge for a new source.
+
+`PartPictures` now admits four requests at a time so timelines longer than the engine's 256-request bound can
+still request every part. It preserves the existing callback/fallback/close contract. A 300-part regression proves
+all requests can finish after delayed startup. Codec failure still means no bitmap; no fake frame is generated.
+
+`PlaybackParts.numberedChapters()` / `numbered()` are pure/main-safe copies. They number surviving CHAPTER intervals
+1…n and replace only blank or generic Chapter N names. Authored names, IntroDB labels, kinds and time boundaries
+are retained. The data adapter uses numbered(); no controller/view/resource text was edited. Marker-split ordinary
+intervals count separately. The supplied rule is described for the screen owner in 0157-b-integration.md.
+
+### Player episode ownership (B4)
+
+Existing `PlayerService.previewSeasonEpisodes()` / `previewAdjacentEpisode(direction)` remain main-thread data
+calls. They schedule a coalesced exact-series query on the service worker and retain its immutable result across
+Home cache replacement. A matching Home snapshot can seed the initial response; an authoritative empty result
+cannot revive a stale snapshot. Requests are keyed by source generation, physical ID and TMDB series identity.
+Refresh/retry is at most every 30 seconds. Source replacement cancels the earlier query; stop/generation/destruction
+fences its publish. Destruction cancels the provider signal and shuts down the worker. Result publication is on
+main. A first unknown result can still be empty while local inventory loads; it is not an unavailable-series claim.
+
+`PlayerEpisodeRepository.load(context, tmdbSeries, CancellationSignal)` is worker-only. It queries the local app
+video provider with a bound series parameter and the personal-role predicate; filters configured exclusions; maps
+actual physical IDs; and rejects more than 10,000 visited rows, interruption, cancelled or unavailable inventory.
+CancellationSignal must be non-null. Existing season/hidden/version-choice rules still decide projection. Version
+compatibility/health preference state is warmed on that worker before publication. These calls do not list remote
+servers or probe the files. Existing metadata without a valid series identity produces no fabricated episode row.
+
+### Separate track fields and per-series policies (B5–6)
+
+`TrackDetails.of(language, format, channels, disposition)` and `audio(AudioTrack)` / `subtitle(SubtitleTrack)` are
+pure/main-safe immutable projections. The typed-track factories require non-null metadata. Fields are language
+(plain UK-English name, or blank), original, format, channels, sdh, forced and audioDescription. Known codec/channel
+codes are expanded, TEXT is blank. Original/SDH/forced/description use native disposition bits, not track-name guesses.
+Unknown fields remain empty/original metadata rather than becoming a made-up codec. Track selection/indexes are
+unchanged. Screens must consume the separate fields rather than split an already concatenated chooser label.
+
+`SeriesTrackChoices.enabled(series, audio)` / `setEnabled(series, audio, enabled)` select independent policies;
+audio=true means audio, false subtitles. Existing remember/choice/matchingTrack now honour that side only. Missing
+new flags fall back to the old :enabled bit, preserving every old choice JSON. Turning a side off retains its saved
+description for re-enable. Legacy setEnabled(series, enabled) changes both sides; the legacy enabled(series) reads
+the legacy bit and cannot describe a split choice. New screens must use the overloads. Invalid TMDB series IDs
+throw; an absent/disabled/bad description returns null or matching index -1. These APIs access SharedPreferences:
+warm/construct on a worker before main use; cold preference loading can block. Writes use the existing apply path.
+
+### Clock stops and inactivity (B8)
+
+`PlaybackLimits.stopAtEpochMs(choice, wallClockMs)` is a pure/main-safe projection for Off, +30, +60, +90 and end.
+Recompute on the screen's clock tick so offered times move. -1 means no finite clock time (the enum distinguishes
+Off/end). `selectedStopAtEpochMs(wallClockMs)` projects the fixed elapsed deadline onto the current wall clock;
+redrawing choices never restarts the selected timer.
+
+`configureInactivity(durationMs)` enables elapsed-time-without-input questions, zero disables, bounded to 24 hours.
+Repeating the same configuration does not reset the deadline. `interaction()` resets it for real user input.
+`configureEpisodeCounting(enabled)` permits episode-only, time-only or both, under the existing master switch.
+Existing configureStillWatching(enabled, episodes) keeps its episode threshold and master enable semantics.
+`inactivityQuestion()` identifies the reason. Inactivity counts elapsed time including pauses unless the caller
+explicitly disables/reconfigures it; progress/render callbacks must never be counted as interaction.
+
+The existing 60-second question timeout still stops. Keep watching on an idle question emits IDLE_CONTINUE and
+continues the current video; it does not call completion. If an actual automatic episode boundary was held during
+the question, approval emits the existing CONTINUE and releases that boundary. Old/superseded question callbacks
+cannot stop a newer session. close cancels all timers and clears pending state.
+
+`checkDeadlines()` reconciles elapsed deadlines after device sleep instead of waiting for Handler uptime delays.
+PlayerService.playbackLimits() invokes it; call it before a new input after wake. The service's Handler scheduler
+and event handling run on main; UI must call the service APIs on main. Class methods themselves are synchronized;
+a custom Scheduler/listener must honour the caller's executor contract.
+
+Service reads `still_watching_idle_minutes` (default 0) and `still_watching_count_episodes` (default true), retaining
+the existing enabled/episode-count keys. `PlayerService.playbackInteraction()` is the main-thread hook for the
+screen owner to call on actual remote input/source launch; it is intentionally not wired by editing PlayerActivity.
+No settings row, option wording, focus, card layout or master-switch screen was changed here.
