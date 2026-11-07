@@ -582,4 +582,10 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   1. The artwork edge on every hero, row card, player strip card and library poster; every item always has it, and
      focus simply makes the item grow.
   2. The label/value text treatment wherever text sits on the page.
+- **Mock-ups sent 7 Nov 2026 for confirmation:** Details tabs on charcoal with the new artwork edge
+  (`details-background/09` Seasons & Episodes, `10` Extras, `11` More Like This); Files folder grid with the edge
+  (`network-files-tabs/32`); **Search on the flat principles** (`search-flat/01` start, `02` results): charcoal page,
+  field and global keyboard on the left, right side shows Recent searches and What you can search, then results with
+  filter chips (All · Movies · TV Shows · People · On your services), grouped rows with a thumbnail (artwork edge),
+  typed letters in bold and status pills (In library / Watched / service).
 
