@@ -24,11 +24,12 @@ const I = {
 const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</span><span>Movies</span><span>TV Shows</span>
   <span>Documentaries</span><span class="sp"></span><span>Files</span><span class="ico on">${icon(I.search, 34)}</span>
   <span class="ico">${icon(I.cog, 34)}</span><span class="clock">00:52</span></div>`;
-const keys = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-'],
+const keys = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-'],
   ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', "'", '.'], ['#+=', 'mic', 'Space', '⌫', 'Clear']];
 const kb = focus => `<div class="kb">${keys.map(r => `<div class="krow">${r.map(k => `<span class="key
   ${k.length > 1 ? 'wide' : ''} ${k === 'Space' ? 'space' : ''} ${k === focus ? 'focus' : ''}">${k === 'mic'
   ? icon(I.mic, 28) : k}</span>`).join('')}</div>`).join('')}</div>`;
+const head = t => `<div class="hd">${t}</div>`;
 const field = text => `<div class="pin">${icon(I.search, 32)}<span>${text || '<i class="ph">Films, series, people…</i>'}
   </span>${text ? '<i class="caret"></i>' : ''}</div>`;
 const art = ['#5b3a2e', '#2e4a5b', '#4b5b2e', '#5b2e4a', '#2e5b4f', '#3a2e5b'];
@@ -41,25 +42,31 @@ const chips = on => `<div class="chips">${['All', 'Movies', 'TV Shows', 'People'
   .map(c => `<i class="${c === on ? 'on' : ''}">${c}</i>`).join('')}</div>`;
 const page = (left, right) => `${nav}<div class="page"><div class="col left">${left}</div>
   <div class="col right">${right}</div></div>`;
-const empty = page(`${field('')}${kb('m')}`, `${sec('Recent searches')}
+const empty = page(`${field('')}${kb('m')}`, `${head('Recent searches')}
   ${['Marshals', 'Slow Horses', 'Denis Villeneuve', 'Christmas films'].map(t => `<div class="rec">${icon(I.clock, 28)}
   <span>${t}</span></div>`).join('')}
-  ${sec('What you can search')}
+  ${head('What you can search')}
   ${tip('film', 'Titles', 'films and series, in your library and on your services')}
   ${tip('person', 'People', 'actors, directors and writers')}
   ${tip('tag', 'Genres', 'e.g. "comedy" or "crime drama"')}
   ${tip('cal', 'Years', 'e.g. "1994" or "1990s"')}`);
 const b = (t, n) => `<b>${t.slice(0, n)}</b>${t.slice(n)}`;
-const results = page(`${field('mar')}${kb('r')}`, `${chips('All')}
-  ${sec('TV Shows', '2')}
-  ${res(0, b('Marshals', 3), '2026 · TV series · 1 season', 'In library', true)}
-  ${res(1, b('Mare of Easttown', 3), '2021 · TV series · limited', 'Watched', false)}
-  ${sec('Movies', '3')}
-  ${res(2, b('Marty Supreme', 3), '2025 · Film', 'Netflix', false)}
-  ${res(3, 'The ' + b('Martian', 3), '2015 · Film', 'In library', false)}
-  ${res(4, b('Marriage Story', 3), '2019 · Film', 'Netflix', false)}
-  ${sec('People', '1')}
-  ${res(5, b('Mark Strong', 3), 'Actor · 4 titles in your library', '', false, true)}`);
+const results = page(`${field('yellowstone')}${kb('e')}`, `${head('In your library')}
+  ${res(0, b('Yellowstone', 11), '2018 · TV series · 5 seasons', 'In library', true)}
+  ${head('More Yellowstone on your services')}
+  ${res(1, '1883', '2021 · TV series · prequel', 'Paramount+', false)}
+  ${res(2, '1923', '2022 · TV series · prequel', 'Paramount+', false)}
+  ${res(3, 'Marshals', '2026 · TV series · spin-off', 'Paramount+', false)}`);
+const person = page(`${field('taylor sheridan')}${kb('n')}`, `${head('In your library')}
+  ${res(5, b('Taylor Sheridan', 15), 'Creator · 2 titles in your library: Yellowstone, Marshals', '', true, true)}
+  ${head('More from Taylor Sheridan on your services')}
+  ${res(1, '1883', '2021 · TV series', 'Paramount+', false)}
+  ${res(4, 'Mayor of Kingstown', '2021 · TV series', 'Paramount+', false)}
+  ${res(2, 'Sicario', '2015 · Film · writer', 'Netflix', false)}
+  ${res(0, 'Hell or High Water', '2016 · Film · writer', 'Prime Video', false)}`);
+const none = page(`${field('terminator')}${kb('r')}`, `<div class="empty"><div class="et">Nothing in your library
+  matches "terminator"</div><div class="ed">Search shows what is in your library, and titles related to it on your
+  services.</div></div>`);
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C;position:relative}
 .nav{position:absolute;left:56px;right:56px;top:28px;height:56px;display:flex;align-items:center;gap:30px;font-size:34px;
@@ -72,13 +79,16 @@ color:#e8edf8}.nav span{display:inline-flex;align-items:center}.nav .brand{font-
 font-size:36px}.pin .ph{font-style:normal;color:#8a93a3}.caret{display:inline-block;width:3px;height:42px;
 background:#fff;margin-left:-14px}
 .kb{display:flex;flex-direction:column;gap:12px;margin-top:22px}.krow{display:flex;gap:10px}
-.key{flex:1;height:72px;border-radius:16px;background:#2a2d33;display:flex;align-items:center;justify-content:center;
+.key{flex:1;height:64px;border-radius:16px;background:#2a2d33;display:flex;align-items:center;justify-content:center;
 font-size:30px;font-weight:500}.key.wide{flex:1.6;font-size:24px}.key.space{flex:3}
 .key.focus{background:#F4F6FB;color:#0B0D12}
 .sec{font-size:26px;font-weight:500;color:#B7BFCC;margin:26px 0 10px}.sec em{font-style:normal;color:#7d8696;
 margin-left:8px}.right .sec:first-child,.chips + .sec{margin-top:18px}
 .rec{display:flex;align-items:center;gap:20px;height:74px;padding:0 24px;font-size:32px;color:#fff;
 box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}.rec svg{color:#C9D3E6}
+.hd{font-size:32px;font-weight:500;color:#fff;margin:30px 0 12px}.right .hd:first-child{margin-top:4px}
+.empty{margin-top:120px;text-align:center}.et{font-size:36px;font-weight:500}.ed{font-size:27px;color:#C9D3E6;
+margin:16px auto 0;max-width:780px;line-height:1.4}
 .tip{display:flex;align-items:center;gap:18px;height:64px;padding:0 24px;font-size:28px;color:#C9D3E6}
 .tip b{color:#fff;font-weight:500;min-width:120px}
 .chips{display:flex;gap:8px;font-size:28px}.chips i{font-style:normal;padding:12px 22px;border-radius:16px;color:#dfe5f1}
@@ -95,7 +105,7 @@ border-radius:22px;font-size:24px;font-weight:500;color:#e8edf6;box-shadow:inset
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  for (const [f, body] of [['01-search-start.png', empty], ['02-search-results.png', results]]) {
+  for (const [f, body] of [['03-v2-start.png', empty], ['04-v2-title-family.png', results], ['05-v2-person.png', person], ['06-v2-not-in-library.png', none]]) {
     await tab.setContent(`<html><head><style>${css}</style></head><body>${body}</body></html>`, { waitUntil: 'load' });
     await tab.evaluate(() => document.fonts.ready);
     await tab.screenshot({ path: path.join(__dirname, f) });

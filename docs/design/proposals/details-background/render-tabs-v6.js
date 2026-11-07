@@ -18,6 +18,18 @@ function logo(name, colour) {
   return `<svg viewBox="0 0 ${vw} ${vh}" preserveAspectRatio="xMidYMid meet">${paths}</svg>`;
 }
 const BRAND = { netflix: '#E50914', primevideo: '#1A98FF', disneyplus: '#2E6BFF' };
+const ICON = {
+  'Seasons &amp; Episodes': '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/><path d="M10 8l5 2.5-5 2.5z"/>',
+  'Seasons & Episodes': '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/><path d="M10 8l5 2.5-5 2.5z"/>',
+  'Details': '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.1"/>',
+  'Extras': '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7l3-4h3l-3 4M10 7l3-4h3l-3 4"/>',
+  'More Like This': '<path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/>',
+  'Trailers': '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>',
+  'Behind the scenes': '<path d="M3 8h13v10H3zM16 11l5-3v10l-5-3"/>',
+  'In your library': '<rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><path d="M17 5l4 14"/>',
+  'On your services': '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4M10 9l4 2-4 2z"/>',
+};
+const ic = (t, s) => ICON[t] ? `<svg class="ti" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[t]}</svg>` : '';
 const fontDir = process.env.FONT_DIR;
 
 function font(weight) {
@@ -37,7 +49,7 @@ const art = [
 const tabNames = ['Seasons & Episodes', 'Details', 'Extras', 'More Like This'];
 
 function header(open) {
-  const tabs = tabNames.map((name, i) => `<span class="tab${i === open ? ' open' : ''}">${name}</span>`).join('');
+  const tabs = tabNames.map((name, i) => `<span class="tab${i === open ? ' open' : ''}">${ic(name, 28)}${name}</span>`).join('');
   return `<div class="top"><div class="logo">MARSHALS</div><div class="tabs">${tabs}</div></div>`;
 }
 
@@ -57,7 +69,7 @@ function card(i, title, sub, opts) {
 function row(heading, cards, note, link) {
   const extra = note ? `<em>${note}</em>` : '';
   const more = link ? '<i class="chev">›</i>' : '';
-  return `<div class="rowblock"><h4${link === 'focus' ? ' class="hf"' : ''}>${heading}${more}${extra}</h4><div class="rail">${cards.join('')}</div></div>`;
+  return `<div class="rowblock"><h4${link === 'focus' ? ' class="hf"' : ''}>${ic(heading, 30)}${heading}${more}${extra}</h4><div class="rail">${cards.join('')}</div></div>`;
 }
 
 const synopsis = 'The team track a fugitive into the Wind River Range, where an old feud with the reservation police '
@@ -243,11 +255,17 @@ body{background:#16181C !important}
 .hc:after{content:'';position:absolute;inset:0;border-radius:inherit;z-index:6;pointer-events:none;
   box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px 4px rgba(0,0,0,.45)}
 .hc.f{box-shadow:0 12px 30px rgba(0,0,0,.55) !important}
+
+.tabs .tab{display:inline-flex;align-items:center;gap:12px;padding:8px 18px 10px;border-radius:16px;margin:0}
+.tabs{gap:10px}.tab.open{margin:0 !important;padding:8px 18px 10px !important}
+.htabs span{display:inline-flex;align-items:center;gap:12px}
+h4 .ti{margin-right:12px;vertical-align:-4px}
+.svc.centre{top:50% !important}
 `;
 
 const shots = [
-  ['09-seasons-episodes.png', episodes, 1080],
-  ['11-more-like-this.png', more(true, 'centre'), 1080],
+  ['12-v2-seasons-episodes.png', episodes, 1080],
+  ['14-v2-more-like-this.png', more(true, 'centre'), 1080],
 ];
 
 (async () => {

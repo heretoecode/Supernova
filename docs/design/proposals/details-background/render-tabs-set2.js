@@ -7,6 +7,18 @@ const path = require('path');
 const { chromium } = require('playwright');
 
 const out = __dirname;
+const ICON = {
+  'Seasons &amp; Episodes': '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/><path d="M10 8l5 2.5-5 2.5z"/>',
+  'Seasons & Episodes': '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/><path d="M10 8l5 2.5-5 2.5z"/>',
+  'Details': '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.1"/>',
+  'Extras': '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 7l3-4h3l-3 4M10 7l3-4h3l-3 4"/>',
+  'More Like This': '<path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/>',
+  'Trailers': '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z"/>',
+  'Behind the scenes': '<path d="M3 8h13v10H3zM16 11l5-3v10l-5-3"/>',
+  'In your library': '<rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><path d="M17 5l4 14"/>',
+  'On your services': '<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8M12 17v4M10 9l4 2-4 2z"/>',
+};
+const ic = (t, s) => ICON[t] ? `<svg class="ti" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[t]}</svg>` : '';
 const fontDir = process.env.FONT_DIR;
 const RES = path.join(__dirname, '../../../../res/drawable');
 const SPACE = 'data:image/jpeg;base64,' + fs.readFileSync(process.env.SPACE_JPG).toString('base64');
@@ -43,7 +55,7 @@ const art = [
 ];
 
 function header(logo, tabs, open) {
-  const t = tabs.map((name, i) => `<span class="tab${i === open ? ' open' : ''}">${name}</span>`).join('');
+  const t = tabs.map((name, i) => `<span class="tab${i === open ? ' open' : ''}">${ic(name, 28)}${name}</span>`).join('');
   return `<div class="top"><div class="logo">${logo}</div><div class="tabs">${t}</div></div>`;
 }
 
@@ -55,7 +67,7 @@ function card(i, title, sub, o) {
 }
 
 function row(title, cards) {
-  return `<div class="rowblock"><h4>${title}</h4><div class="rail">${cards.join('')}</div></div>`;
+  return `<div class="rowblock"><h4>${ic(title, 30)}${title}</h4><div class="rail">${cards.join('')}</div></div>`;
 }
 
 function kv(pairs) {
@@ -222,10 +234,16 @@ body{background:#16181C !important}
 .hc:after{content:'';position:absolute;inset:0;border-radius:inherit;z-index:6;pointer-events:none;
   box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px 4px rgba(0,0,0,.45)}
 .hc.f{box-shadow:0 12px 30px rgba(0,0,0,.55) !important}
+
+.tabs .tab{display:inline-flex;align-items:center;gap:12px;padding:8px 18px 10px;border-radius:16px;margin:0}
+.tabs{gap:10px}.tab.open{margin:0 !important;padding:8px 18px 10px !important}
+.htabs span{display:inline-flex;align-items:center;gap:12px}
+h4 .ti{margin-right:12px;vertical-align:-4px}
+.svc.centre{top:50% !important}
 `;
 
 const shots = [
-  ['10-extras.png', extras],
+  ['13-v2-extras.png', extras],
 ];
 
 (async () => {
