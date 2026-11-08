@@ -1,0 +1,237 @@
+{
+  "source_merge": "ceb128fdc",
+  "source_ref": "b64ea96ec",
+  "implementation": "c359a5c3b",
+  "scope": "Isolated Java 17 compile and host JUnit/Robolectric; NOT full app/module build, lint, APK or device acceptance",
+  "runtime": "Zulu 21.0.5; release 17; android-all 14 compile; Robolectric 4.14.1 API 23 and 30 for new Android/JSON tests",
+  "tests": [
+    {
+      "name": "com.archos.mediacenter.video.data.DetailsDataCTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.data.LibrarySearchTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.data.RelatedTitlesTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.data.SearchStorageMetadataTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.data.SeriesFamilyLinksTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.data.StreamingMasterSwitchTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.data.WrongMatchesTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.leanback.search.PreviewSearchTextTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.archos.mediacenter.video.metadata.OmdbRatingsCacheTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "total_tests": 37,
+  "compiled_changed_sources": [
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/DetailsReception.java",
+      "sha256": "9bdc5271dfcbe7684b0e0270431471b079033140890e2e583daa15aec5963d37",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/DetailsTechnical.java",
+      "sha256": "dcc46f299a01a73d545a0c0a033cc3c2e38140445a5c01ab767df7b101478854",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/HeroHandover.java",
+      "sha256": "bbc0d9f4bd291e5e9cd4b0c5d952ecb65280edc628036801753c2d829885c885",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/IndexedTechnical.java",
+      "sha256": "50be5579ed0bed572c85e4c88d0d95bb1ebcb6748ff2d605b2350e5c672b0523",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/LibrarySearch.java",
+      "sha256": "56c997236a9a81af3cb9a16255fa5a0bcbda3b5784953143fb4869cd00e7b98b",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/LibrarySearchMetadata.java",
+      "sha256": "b10d18d7dcbae5936f7cd20632dba6e92ae37310df3f5ceacf6ce4f2e77f9236",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/LibrarySearchServices.java",
+      "sha256": "36e6032162b978a74f7413aeb3281f3215470d75df109410a9438ad295203bbb",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/LibrarySearchSession.java",
+      "sha256": "b7ae96bb5fa76615c4840915eb1d235b2b95bf061d39ce74e26dfb0f024485fb",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/RecentSearches.java",
+      "sha256": "19e1d910481132714111513c5a2c8d6396c1afaba9728c993d4cec2eef5d56b3",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/RelatedTitles.java",
+      "sha256": "5f1b3e000c27b953b9d51824f713196c9930ffa2352d580c5c6f11f5ec0f5cd5",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/RelatedTitlesRepository.java",
+      "sha256": "47f20b2fec030157260044d6b59c79760aae3f52345f9b33e40a959ea5a79032",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/data/SeriesFamilyLinks.java",
+      "sha256": "67a7988cc418ddc632723fb9ae73116259ae50df1e7e596676d904de28a85195",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/metadata/FixMatchRepository.java",
+      "sha256": "6967dbd4b8936baba313d1af6c1ebe5d3636957ebb76ee9bc4ba00e85166249e",
+      "isolated_source_matches": false,
+      "compiled": false
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/metadata/WrongMatchInventory.java",
+      "sha256": "f929245ddbeb22d09d20c91ec557eec9f6d4d1072d3bf2bb40671c723c87ffa3",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/metadata/WrongMatches.java",
+      "sha256": "c405348d9658f2a05956b7397270990ade28bad0533d2cd516e1e70cd90b984d",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/main/java/com/archos/mediacenter/video/streaming/StreamingRepository.java",
+      "sha256": "51cb8cd9e3dc6c355c45d46b0ceac41b0a7256f08404d80496b276beda6ce199",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/data/DetailsDataCTest.java",
+      "sha256": "a32ca9b929ba950fdddd35d431d4cb3d73614258a65ff8643df53d915cd58f78",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/data/LibrarySearchTest.java",
+      "sha256": "bc820452a67b237b3ceef47d00b7d94ec81a0006fad2fc9bd8dc035645e24965",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/data/SearchStorageMetadataTest.java",
+      "sha256": "ab4840a396cbd095f44a8d028c347e913bae2c637c7b41512211a784106d0d11",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/data/SeriesFamilyLinksTest.java",
+      "sha256": "1afb6f531179feeaf966448512bec4fca82ef6a1c292aa9b084d502bb5c98070",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/data/StreamingMasterSwitchTest.java",
+      "sha256": "c2c871f0dfe8771fe1f3cbad91debf37a3fc980981f33424b601ad62e6e63909",
+      "isolated_source_matches": true,
+      "compiled": true
+    },
+    {
+      "path": "src/test/java/com/archos/mediacenter/video/data/WrongMatchesTest.java",
+      "sha256": "fcdd5b1c0cf9df8be33109ffc57cd7491c1fc78708656339769c4c53fdd5796f",
+      "isolated_source_matches": true,
+      "compiled": true
+    }
+  ],
+  "uncompiled": [
+    "src/main/java/com/archos/mediacenter/video/metadata/FixMatchRepository.java"
+  ],
+  "harness_boundaries": [
+    "Temporary AndroidX PreferenceManager shim selects normal default preference file",
+    "Temporary MediaLib R maps credential resource IDs to android.R.string.ok for injected transport tests; no live metadata request",
+    "Temporary Diagnostics facade has no-op event/error/operation methods; real DiagnosticHttpEvent is compiled",
+    "Real PreviewMetadataCache, ProviderCatalogueCache, AgeCertificates, OmdbSupplement and OmdbRatingsCache compiled unchanged"
+  ],
+  "log_sha256": "4740db326950507557de6da38a35e218f12363cd3ffcb127c6dbc5817f0e7e7d",
+  "patch_registrations": {
+    "add": [],
+    "replace": [],
+    "unregister": []
+  },
+  "uncompiled_attempt_log_sha256": "e9cd57ebf5117d8ead71b59a773393dc02b4a039ed382622a47dc2667003d05d",
+  "live_family_catalogue_smoke": {
+    "source_tv_id": 73586,
+    "returned_tv_ids": [
+      157744,
+      225891,
+      299167,
+      118357,
+      290856
+    ],
+    "production_method": "SeriesFamilyLinks.load",
+    "outcome": "pass",
+    "scope": "Public relationship lookup only. No live TMDB-title validation or owner-service availability claimed.",
+    "log_sha256": "b7088e826d0e2d7b7e858b7af68b03eaae2eca463fc73fee07091e84ae9b9900"
+  }
+}

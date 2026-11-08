@@ -29,11 +29,12 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 - **Not done in 0.156 (flagged to the owner):** focus memory after Android recreates the app (audit F1, F6, F8, F10–F13)
   and F2 (Down from the top bar), which conflicts with the older "first control" rule.
 - **If Claude is unavailable:** Codex can finish the 0.156 build using `docs/codex/BUILD_0156_STANDIN.md`.
-- **Codex:** 0.157 Part B source at `e3589f047` on `codex/0157-2026-11-06`; GB certificates, seek/part pictures,
-  episode ownership, separate track/series policies and clock/inactivity logic delivered; 66 host regressions pass.
-  Protected PiP removal, actual pause/company evidence and native archive/full conformance/Shield gates are explicit
-  in [`docs/codex/reports/2026-11-06-0157.md`](docs/codex/reports/2026-11-06-0157.md). Prior continuation stays recorded;
-  no 0.156 or screen edit authored.
+- **Codex:** 0.157 Part C source handoff (8 Nov), source through `c359a5c3b`, latest source merged at
+  `ceb128fdc`. Library-gated search, streaming master switch, Details data and wrong-match APIs delivered;
+  **37 host tests pass**, new Android/JSON cases on API 23/30. Explicit gaps: uncompiled production
+  FixMatchRepository hook, screen adoption and owner diagnostics/company/Shield acceptance. Newer native stack remains last, not started. Same report `docs/codex/reports/2026-11-06-0157.md`;
+  APIs in `docs/codex/findings/0157-ui-hooks.md`. Branch `codex/0157-2026-11-06`; no release/signing claimed.
+
 - **0.157:** decided items in [`docs/0.157/OWNER_NOTES.md`](docs/0.157/OWNER_NOTES.md), including the Files page
   redesign (§16; mock-ups `docs/design/proposals/network-files-tabs/`, principles `docs/design/FLAT_PAGE_PRINCIPLES.md`).
 

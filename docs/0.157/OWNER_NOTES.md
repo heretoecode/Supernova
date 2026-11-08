@@ -672,3 +672,12 @@ Part B source `e3589f047`, 66 passing host regressions and API/diagnosis notes a
 `docs/codex/reports/2026-11-06-0157.md`. This records delivery, not a new owner decision or release. PiP needs the
 source-owned screen removal; the actual 6 November pause report and Marshals data are still required for those
 specific diagnoses. Native archive/full conformance/Shield acceptance remain separate gates. No 0.156 fix authored.
+
+### Engine/data Part C source handoff (8 Nov 2026)
+
+Source through `c359a5c3b`, latest source merged at `ceb128fdc`; 37 host regression executions pass. Same report
+`docs/codex/reports/2026-11-06-0157.md` records all C items, API contracts and limits. This is not a new owner
+approval or a release. Explicit spin-off/sequence/franchise links now back differently named series families; the
+FixMatchRepository post-commit hook needs full production compilation. Screens must adopt the APIs. The actual
+pause/company evidence and Shield/native acceptance remain outstanding; native-next was not started because C
+requires it last after those prerequisites. No legacy removal or native patch registration.

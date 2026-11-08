@@ -395,3 +395,5 @@ current build authority. Existing preparation reports/patches were preserved.
 0.156 LAST ready at 215f9e385; source merged at 886a6cda8 — reports/2026-11-06-0156-last.md; APIs in findings/0156-ui-hooks.md; no patch registrations.
 
 0.157 Part B source ready at `e3589f047` on `codex/0157-2026-11-06`; 66 host regressions/22 classes pass, 1,309 Java sources compile. Same report `reports/2026-11-06-0157.md`, hooks and `findings/0157-b-integration.md`; PiP screen removal, owner pause/company evidence and native archive/Shield acceptance remain explicit gates; no new patch registrations or authored 0.156/screen changes.
+
+0.157 Part C source at `c359a5c3b`, source merged at `ceb128fdc`; 37 host tests pass (new Android/JSON cases at API 23/30), 21 changed sources compile in isolation. Same report `reports/2026-11-06-0157.md` and hooks updated. Uncompiled FixMatchRepository hook, screen adoption and owner evidence/Shield gates remain explicit; no patch registrations or native-next work.

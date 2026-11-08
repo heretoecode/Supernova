@@ -495,3 +495,102 @@ Service reads `still_watching_idle_minutes` (default 0) and `still_watching_coun
 the existing enabled/episode-count keys. `PlayerService.playbackInteraction()` is the main-thread hook for the
 screen owner to call on actual remote input/source launch; it is intentionally not wired by editing PlayerActivity.
 No settings row, option wording, focus, card layout or master-switch screen was changed here.
+
+## Part C — 8 November 2026
+
+All additions below are data contracts; screens must adopt them. No screen/resource was edited. Do not treat the
+new producer as wired into the old Search page or the old Details page.
+
+### Library search
+
+- `LibrarySearch.Identity(kind,id)` validates movie/tv and a positive TMDB ID. `Person(id,name,role)` retains the
+  exact credited person ID and role. `Title(identity,title,aliases,people,genres,year)` copies its lists. Build a
+  complete immutable **indexed library** snapshot, one title per film/whole series; do not seed it from discovery.
+- Worker-only `LibrarySearch.load(query,library,sources,enabled,cancelled)` returns `Result(library,families,people)`.
+  Each `Match(title,reasons)` is a separate owned title. Each reason is a credited Person, not a replacement person
+  result. Each `Group(owner,person,items)` is either an owned-title family or person filmography; `Item(title,services)`
+  carries deduplicated service names. Missing/offline sources leave library matches; cancellation returns EMPTY.
+  Genres/years stay local. No library match means **zero remote calls**. Limits: 12 owned-title families, 8 people,
+  40 candidates per group. Owned titles are removed from streaming groups; identity includes kind.
+- `Family(...).accepted(kind)` requires the same positive collection for films. Series require an explicit spin-off
+  link or shared name **and** creator **and** characters. This is a conservative evidence threshold, not similarity.
+- `LibrarySearchMetadata(Transport)` implements Sources using exact collection parts and exact-person combined
+  credits. Series first uses explicit public Wikidata relationships (spin-off P2512, sequence P155/P156, franchise
+  P8345, at most two relation edges), then independently tries root-name/creator/character evidence. Each linked
+  TMDB ID is verified by the TV metadata endpoint. Failures of name search do not discard explicit links.
+- `SeriesFamilyLinks.query(tvId)` builds a numeric-only fixed SPARQL query; `parse(tvId,response)` requires matching
+  seed identity, positive distinct TV IDs and at most 40 bindings. Worker-only `load(tvId,client,cancelled)` requests
+  only query.wikidata.org, no credential, redirects disabled, eight-second call timeout, 512-KiB body bound. Public
+  catalogue facts are CC0. This supports differently named families without guessing from a creator; catalogue
+  coverage is best effort. `Transport.familyLinks(tvId,cancelled)` is injectable (default empty); production binds
+  this provider and verifies up to 12 linked titles before checking the owner's configured services.
+- `LibrarySearchServices(context,client)` supplies the production Transport. Uses only the bounded allow-listed
+  `StreamingRepository.libraryDiscovery(context,path,parameters,client)` (worker-only; invalid paths throw IOException).
+  Person credits and collections are never arbitrary URLs. `request`, `family`, `work`, `services` are worker-only;
+  failures throw to the core, which retains the base library. `cancel()` forwards to the adapter's own HTTP dispatcher.
+- `LibrarySearchSession(sources,enabled,callbackExecutor)` owns one worker/one queued task. Main-thread-safe
+  `submit(query,snapshot,serviceScope,listener)` cancels the previous keystroke and fences queued callbacks. Pass a
+  main executor. Include country and sorted selected service IDs in serviceScope. A new snapshot invalidates changed
+  library data. Cache: per-session, 24 entries, 10 minutes; no shared cross-account result cache. Discovery has a
+  cooperative 12-second budget, checked between calls, not a hard 12-second callback deadline. Supply an HTTP client
+  with bounded call timeouts (existing default: 20 seconds). A budget expiry retains library results and is not cached.
+  `close()` cancels transport/work and suppresses callbacks; call when the page closes. Source implementations must
+  honour cancellation. No persistent worker/file access runs on the caller thread.
+- `RecentSearches(sharedPreferences)` shares the **existing** `preview_search_recent` key. Main-thread-safe
+  `read()` returns at most eight; `remember(query)` sanitises/deduplicates; `clear()` is the single Search/Settings
+  clear call. Writes use apply. Screens should call remember only after a result is opened, as before.
+
+### Where to Watch
+
+- Main-thread-safe `StreamingRepository.enabled(context)` is the Search-help visibility flag and common feature
+  flag (default false, matching existing service actions). Availability `load` and `cachedAvailability` return an
+  empty Availability while disabled; `knownOn` returns false; title/episode links return empty. Cached offers do not
+  bypass the flag. An active availability HTTP call registers a temporary preference listener and is cancelled
+  when disabled; the listener is unregistered on completion. No metadata/discovery master switch was added.
+- Worker `load(context,kind,id,country,season,client)` adds caller-owned HTTP cancellation to availability; existing
+  overloads retain the shared bounded client. Disabled loads do not validate/fetch title identity or consult caches.
+- `RelatedTitles.Sources.streamingEnabled()` defaults true for existing adapters; production overrides it from the
+  switch. The merge skips availability checks and strips streaming results when disabled, retaining local related
+  results. Home Trending/Popular producers were not changed. Screens holding an old Result must rebind on preference
+  changes; this does not mutate already-delivered immutable snapshots or edit their protected renderers.
+
+### Details
+
+- `IndexedTechnical.read(cursor,expectedVideoId)` projects the cursor's **current exact file row**; a wrong/unpositioned
+  row throws IllegalArgumentException. Worker owns query/close. Use the provider video-view row, including `_data`,
+  `_size`, `date_modified`, width/height, `date_added`, `mime_type`, measured codec/bitrate/audio columns. No network
+  or native probe. Source is host/local plus folder, stripping user info/query/fragment. Date seconds → ms;
+  indexed/native kb/s → bits/s. Legacy fps storage lacks a trustworthy rational denominator, so it stays Unknown.
+- `DetailsTechnical.File(...)`, `Audio(...)`, `Facts(...)` are immutable single-file data. For an already measured
+  native file, populate File with its exact video ID/revision, rational fps and measured tracks; never mix episodes
+  or infer HDR/bit depth/languages from filenames. `read(File)` is a pure main-thread-safe projection. Text missing
+  = Unknown; numeric missing = -1; empty language lists become [Unknown]. Bit depth/HDR are unknown in the legacy
+  indexed adapter. `averageEpisodeBytes(files)` requires **one selected file per logical episode**, deduplicates file
+  IDs, returns -1 if any size is unknown/overflow or input empty. It does not choose between episode versions.
+- Worker-only `DetailsReception.cached(context,kind,id)` combines persisted TMDB and OMDb envelopes, even without
+  a key/network. Pure `read(kind,id,details,supplementary)` returns five fixed rows: IMDb, RT, Metacritic, TMDB,
+  awards. `Score(rating,votes)` keeps counts separate. Wrong TMDB identity/kind and absent fields are Unknown;
+  scores keep their denominators. Awards remain plain provider text. Existing enrichment still performs/persists
+  refreshes; no bundled key or additional request budget was introduced.
+- `HeroHandover(kind,tmdbId,artworkIdentity)` carries the exact image Home displayed. Main-thread-safe
+  `resolve(detailsKind,detailsId,defaultArtwork)` keeps that image through enrichment for the same kind/ID, falls
+  back only for a different title. Put it in the navigation model and consult it on **every** Details rebind.
+  Constructor rejects missing identity/artwork. No view or Intent extra is automatically changed.
+
+### Wrong match / Library Care
+
+- On the worker, query the full indexed video view (including Put.io and all series episodes) using
+  `WrongMatchInventory.projection()`, then `read(cursor,cancelled)`; caller closes cursor. Returns immutable
+  `WrongMatches.Member(videoId,kind,tmdbId,matchRevision)` values. SHA-256 revision binds physical path and native
+  matching pointer without storing the path in the new marker. Cancellation throws InterruptedIOException.
+- Worker `WrongMatches.production(context)` uses existing `supernova_library_health_v1` preferences;
+  `WrongMatches(healthPreferences)` supports tests. `mark(kind,tmdbId,completeInventory)` marks every matching file
+  (whole series), commits before returning `Selection(kind,tmdbId,category=1,videoIds)`. Empty/stale inventory or failed
+  persistence throws IOException. Hand Selection to the **existing Files › Library Care Fix match** flow, selecting
+  those IDs. The protected Files screen must consume the handoff; no new dialog/wording is supplied here.
+- `read(completeInventory)` returns marked IDs and clears changed/deleted owners. Do not pass a filtered/partial
+  inventory: absent IDs are treated as deleted. `applied(videoId)` clears after a successful matching transaction;
+  `FixMatchRepository.apply` calls it after commit, before notifying observers. A failed/cancelled match retains the
+  marker. Existing manual Files flow already removes incorrect:videoId. New marks use the same keys, so counts and
+  backup review-note handling remain compatible. Whole-series selection is data; the existing matcher must still
+  apply each episode's proper season/episode identity.
