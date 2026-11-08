@@ -21,8 +21,8 @@ the player).
     Full description, as already approved).
   - Same picture throughout: Details currently shows the backdrop it was given, then may switch to the title's
     default backdrop when full details arrive. Build note: Details keeps the Home picture so the card never changes.
-  - Home and Details must share a background. Today's rule (5 Nov) is Space Black for both; plain charcoal is still
-    under consideration (0.157 notes §18). (BG)
+  - Backgrounds: only the card must match; Home and Details may differ (owner, 7 Nov; 0.157 notes §18). Check the
+    hero's bottom fade on each.
   - The logo keeps its approved glide to the small logo when going down into the tabs.
 
 ## 4. Player (owner photos, MobLand S2 E8, 6 Nov 2026)

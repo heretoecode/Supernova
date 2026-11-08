@@ -548,6 +548,115 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   design (`v15-b`, on Space Black) follows. Owner, 6 Nov: that is easy to build but changes how Details looks, so
   check it in the mock-ups: separator and edge strengths (tuned on Space Black), the hero's fade into the page, the
   tab chip and line, and what draws the eye. Layout and content decisions stand.
+- **Owner, 7 Nov 2026:** decide **Details first, on its own**, so Details (like Files) is completely done. The hero card
+  staying put only needs the card itself to match (size, picture, position); the page around it changes anyway, so
+  Details and Home may have different backgrounds (Claude's earlier "must match" was overstated). Only check the
+  hero's bottom fade into the page. Home is light work and can follow later. Next: Details mock-ups, Space Black and
+  plain charcoal side by side (top with hero and tabs; the Details tab).
+- **Files page: done** (owner, 7 Nov 2026): redesign, background and wording all decided (§16).
+- Details background mock-ups sent 7 Nov: `docs/design/proposals/details-background/01`–`04` (top and Details tab,
+  Space Black and plain charcoal; open tab in the grey chip; top bar says Files).
+- **Decided (owner, 7 Nov 2026): Space Black is retired from the whole app.** Every page goes plain charcoal
+  (`#16181C`): "a phase in the UI development… the way we're going is a lot more elegant and clean". §18 closed.
+  Pages are now judged on what their design needs given the new background, not on the background itself.
+- **Details on charcoal, owner's changes (v16):**
+  1. Hero card edge: the faint white edge fades out where the artwork is light. Add a very thin black line around
+     the card, with the white line outside it, so the edge always shows.
+  2. Reception: use the column's width. Name shown once (no "Rotten Tomatoes" under a tomato that is already
+     labelled); rating moved to the right, in line with the Key information rows.
+  3. Cast and Crew: the row titles sit too close to the portraits; move them up a little.
+  Otherwise the tabs need little change.
+- **Owner on v16 (7 Nov 2026):** Cast/Crew spacing approved. Background rule clarified: page by page, each reviewed on
+  charcoal first (not a blanket switch). Reception not yet right:
+  - Icons only, no written names (the tomato, Metacritic mark and trophy are recognisable, like the IMDb/TMDB logos).
+  - The rating on one line, centred in the space beside the icon (e.g. **6.1/10** · 18.5K votes in smaller text;
+    "Unknown" in the same place; Awards e.g. "2 wins · 5 nominations").
+  - Owner asked whether the grey labels (Bitrate, Audio languages…) are too hard to read beside white values.
+    Claude's view (no mock-up asked): brighten labels to the soft near-white used for second lines on Files
+    (`#C9D3E6`), values pure white and slightly bolder; difference by weight, not dimness; "Unknown" stays quieter.
+    Waiting for the owner's answer.
+- **Details page: done** (owner, 7 Nov 2026): v17 approved — hero edge (single white line on the edge, soft inner
+  shade), Reception icons only with one-line centred ratings, brighter labels / bolder values, Cast/Crew spacing.
+  Mock-ups `docs/design/proposals/details-background/07`, `08`.
+- **Two app-wide rules from it (owner, 7 Nov 2026), now in CLAUDE.md "Global look":**
+  1. The artwork edge on every hero, row card, player strip card and library poster; every item always has it, and
+     focus simply makes the item grow.
+  2. The label/value text treatment wherever text sits on the page.
+- **Mock-ups sent 7 Nov 2026 for confirmation:** Details tabs on charcoal with the new artwork edge
+  (`details-background/09` Seasons & Episodes, `10` Extras, `11` More Like This); Files folder grid with the edge
+  (`network-files-tabs/32`); **Search on the flat principles** (`search-flat/01` start, `02` results): charcoal page,
+  field and global keyboard on the left, right side shows Recent searches and What you can search, then results with
+  filter chips (All · Movies · TV Shows · People · On your services), grouped rows with a thumbnail (artwork edge),
+  typed letters in bold and status pills (In library / Watched / service).
+- **Owner on the 7 Nov batch:**
+  - Seasons & Episodes approved. Fix: the open-tab chip (and the focused season-heading chip) sit off the left edge;
+    every chip's outer edge must line up with the page's left edge, text indented inside.
+  - Icons on rows/tabs (Claude's view, owner to confirm before mock-ups): icons on the Details tabs (as Files and the
+    Settings tray tabs) and on Extras / More Like This row titles (different kinds); not on season headings (would
+    repeat, breaking "no two alike").
+  - More Like This approved; fix the service logos so they are centred in the space above the title.
+  - Files folder grid approved.
+  - **Settings tab count:** the summary on the right never limits the number of tabs; it can move or go. Re-group
+    Settings on its merits (eight tabs if eight are needed) and explain the choice.
+  - **Search:** keyboard always visible, with a permanent number row (as 0.156); "Recent searches" and "What you can
+    search" as proper headings, larger and whiter; filter chips dropped (they duplicate the groups). "On your
+    services": Supernova is library-first, services enhance the library (not a JustWatch-style app); no services
+    filter. Open question: a short final "Also on your services" group, or no streaming-only results in Search.
+- **Search and streaming — decided (owner, 7 Nov 2026): "the library is the key".** Search looks in the library. If
+  nothing in the library matches, no streaming results are shown at all (even if a service has the title). If a
+  library title matches, Search also shows **related** titles on the owner's services, as a small group under the
+  library results named after the owned title ("More Dexter on your services"), each with its service pill.
+  Related = films: the same TMDB collection (Terminator, Dune, Resident Evil); series: the same family (spin-offs,
+  sequels, prequels: Dexter → Dexter, New Blood, Original Sin). Series families have no official TMDB collection, so
+  Codex derives them (shared name, spin-off links, creator); best effort. Data work for Codex; Claude draws it.
+- Icons: Claude's suggestion stands unless the owner objects (Details tabs and Extras / More Like This row titles
+  get icons; season headings do not).
+- **What "related" means in Search (Claude's proposal, 7 Nov; owner to confirm):** same story or same person, never
+  "similar". Title search: its family on your services (sequels, prequels, spin-offs: The Handmaid's Tale → The
+  Testaments; Yellowstone → 1883, 1923, Marshals; not Mayor of Kingstown, same creator but a different story).
+  Person search (e.g. Taylor Sheridan): if any of their work is in the library, their other work on your services
+  ("More from Taylor Sheridan on your services"). "Similar" titles (Slow Horses → The Night Manager, Cross) stay in
+  More Like This on Details, not in Search. Icons recommendation confirmed by the owner.
+- **Owner on Details v2 / Search v2 (7 Nov 2026):** tab icons, Extras and More Like This approved. Fix on every tab: the
+  open/focused tab chip overlaps the separator line; lift it to sit just above. Search changes:
+  - "What you can search" gains a streaming line ("Your services: related titles you can stream, for things already
+    in your library"), shown only when Where to Watch is on.
+  - Clear recent searches: a small Clear button at the end of the "Recent searches" heading, plus the option in
+    Settings (Claude's proposal).
+  - Family heading wording: "The Yellowstone family on your services" (proposed; owner to confirm).
+  - Faint separator lines between results, as on Files.
+  - Person matches: no single person row standing for several titles; "In your library" lists each title separately
+    with the reason ("Taylor Sheridan · creator").
+  - Keyboard position: Claude recommends keeping it top-aligned (search box level with the first result); can show a
+    vertically centred version if wanted.
+- **Where to Watch switch (checked in code, 7 Nov):** today it hides the service buttons on Details and stops the
+  availability checks; it does **not** affect Home's Trending/Popular rows (TMDB/Trakt discovery). Proposal: make it a
+  true "local only for streaming" switch — off removes service buttons/pills, More Like This "On your services", the
+  Search family/person streaming results and the streaming line in "What you can search". Open question: should
+  Trending and Popular also go off with it?
+- **Where to Watch switch — decided (owner, 8 Nov 2026):** off removes every streaming feature (service buttons and
+  pills, More Like This "On your services", Search family/person streaming results, the streaming line in "What you
+  can search"). Home's Trending and Popular rows are **not** affected: they keep their own switches in Settings ›
+  Library & Home › Home (they show what is trending on Trakt that is in the library). Family heading wording: owner
+  will decide later.
+
+## 19. Home rows, move mode and library long-press (owner photos, 8 Nov 2026)
+- **Row arrow too close to the artwork:** the "‹" that appears left of a row sits right against the first card. Move
+  the **whole row** (every card, same spacing) a little to the right, and centre the arrow in the space this opens.
+  Never move only the first card.
+- **Hide and Move buttons look poor:** filled circles behind the icons (against the no-background icon rule), and the
+  crossed-out eye for Hide looks odd. Redesign them (mock-up).
+- **Move mode bug:** while moving a row, Up from the top row escapes to the hero (and even the top bar) with the move
+  instructions still showing; coming back lands on the first card. Move mode must lock focus to the row being moved
+  until OK/Back ends it. (The live move, the blur and the "Row 1 of 4 · arrows to move · OK/Back when done" text are
+  liked.)
+- **Library long-press menu:** appears in the top-right corner whatever item is focused; it should open beside the
+  focused item. "More Info" is redundant (OK already opens Details): remove it.
+- **New: Fix match on the library long-press menu.** Mismatched items are obvious from the wrong artwork; today the
+  only route is Details › More › Change info of all episodes. Long-press › **Fix match** marks the title as wrongly
+  matched and opens the Files › Library Care Fix match flow with it selected (the same flow and wording as Files).
+
+
 
 ## Engine/data delivery record (6 Nov 2026)
 

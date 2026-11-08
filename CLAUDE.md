@@ -46,14 +46,23 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Everything new the owner raises (features, bugs, anything) goes into 0.157.** 0.156 is fixed at its 45
   approved items (owner, 5 Nov 2026).
 - **Global look (owner, 5 Nov 2026):**
-  - Full pages sit on the Space Black artwork, with content straight on it.
+  - **Direction: every page becomes plain charcoal `#16181C`, content straight on it; Space Black is being retired**
+    (owner, 7 Nov 2026). **Not a blanket switch:** each page changes only after it has been reviewed on charcoal and
+    its elements adjusted (as done for Files and Details). Pages not yet reviewed keep Space Black until then.
   - Pop-ups, menus and side panels are `#16181C` at 90% opacity with no outline, and the focused item is filled white with
     black text and icon (built in 0.157).
   - Every menu: each item has its own icon (no two alike in one menu), the current choice is a tick on the right,
     and the menu is only as wide as its longest item plus the standard padding (owner, 6 Nov 2026; 0.157).
   - In choice rows the chosen option sits in a small chip; single values are plain white. No blue for values.
-  - Every artwork card (posters, hero, Home rows, Details tabs, player strip) has a faint 28% white edge; the focused
-    one grows with a solid white ring. No blue caption bars.
+  - **Artwork edge (owner, 7 Nov 2026; replaces the 28% edge/white ring):** every piece of artwork — both heroes
+    (Home and Details), every row card (Home, Details tabs: Seasons & Episodes, Extras, More Like This), the player's
+    Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (about 60%) with a
+    soft inner shade just inside it, so the edge shows on light and dark artwork alike. Every item has the edge all the
+    time; **focus = the item grows** (as library pages do today). Mock-up `details-background/07-v17-top`. No blue
+    caption bars.
+  - **Text on the page (owner, 7 Nov 2026):** label/value pairs everywhere use soft near-white labels (`#C9D3E6`) and
+    pure white, bolder values; "Unknown" stays quieter. Difference by weight, not dimness. Mock-up
+    `details-background/08-v17-details-tab`.
   - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
   - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
     carousel dots. Tabs: the open one in a grey chip, the focused one filled white.
@@ -65,7 +74,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   tests, signing (when approved), owner notes and mock-ups. Works on `claude/supernova-github-access-yfhe89`.
 - **Codex** (another AI, run by the owner): non-visual work — engine, data, diagnostics, scanning, backup — on its
   own branch (currently `codex/0157-2026-11-06`). Never touches main, `.github/`, Gradle or files marked
-  hands-off. Its briefs are in `docs/codex/` (current: `BRIEF_0157.md`, then `BRIEF_0157_B.md`). It reports each finished Part in
+  hands-off. Its briefs are in `docs/codex/` (0.157: `BRIEF_0157.md`, `BRIEF_0157_B.md`, then `BRIEF_0157_C.md`). It reports each finished Part in
   `docs/codex/HANDOVER.md`; Claude then builds, tests and merges it.
 - Both can work at the same time because `docs/codex/HANDS_OFF.txt` splits the files.
 
