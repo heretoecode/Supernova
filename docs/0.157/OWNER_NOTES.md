@@ -634,4 +634,25 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   true "local only for streaming" switch — off removes service buttons/pills, More Like This "On your services", the
   Search family/person streaming results and the streaming line in "What you can search". Open question: should
   Trending and Popular also go off with it?
+- **Where to Watch switch — decided (owner, 8 Nov 2026):** off removes every streaming feature (service buttons and
+  pills, More Like This "On your services", Search family/person streaming results, the streaming line in "What you
+  can search"). Home's Trending and Popular rows are **not** affected: they keep their own switches in Settings ›
+  Library & Home › Home (they show what is trending on Trakt that is in the library). Family heading wording: owner
+  will decide later.
+
+## 19. Home rows, move mode and library long-press (owner photos, 8 Nov 2026)
+- **Row arrow too close to the artwork:** the "‹" that appears left of a row sits right against the first card. Move
+  the **whole row** (every card, same spacing) a little to the right, and centre the arrow in the space this opens.
+  Never move only the first card.
+- **Hide and Move buttons look poor:** filled circles behind the icons (against the no-background icon rule), and the
+  crossed-out eye for Hide looks odd. Redesign them (mock-up).
+- **Move mode bug:** while moving a row, Up from the top row escapes to the hero (and even the top bar) with the move
+  instructions still showing; coming back lands on the first card. Move mode must lock focus to the row being moved
+  until OK/Back ends it. (The live move, the blur and the "Row 1 of 4 · arrows to move · OK/Back when done" text are
+  liked.)
+- **Library long-press menu:** appears in the top-right corner whatever item is focused; it should open beside the
+  focused item. "More Info" is redundant (OK already opens Details): remove it.
+- **New: Fix match on the library long-press menu.** Mismatched items are obvious from the wrong artwork; today the
+  only route is Details › More › Change info of all episodes. Long-press › **Fix match** marks the title as wrongly
+  matched and opens the Files › Library Care Fix match flow with it selected (the same flow and wording as Files).
 
