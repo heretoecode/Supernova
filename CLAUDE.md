@@ -74,7 +74,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   tests, signing (when approved), owner notes and mock-ups. Works on `claude/supernova-github-access-yfhe89`.
 - **Codex** (another AI, run by the owner): non-visual work — engine, data, diagnostics, scanning, backup — on its
   own branch (currently `codex/0157-2026-11-06`). Never touches main, `.github/`, Gradle or files marked
-  hands-off. Its briefs are in `docs/codex/` (0.157: `BRIEF_0157.md`, `BRIEF_0157_B.md`, then `BRIEF_0157_C.md`). It reports each finished Part in
+  hands-off. Its briefs are in `docs/codex/` (0.157: `BRIEF_0157.md`, `BRIEF_0157_B.md`, then `BRIEF_0157_C.md`, `BRIEF_0157_D.md`). It reports each finished Part in
   `docs/codex/HANDOVER.md`; Claude then builds, tests and merges it.
 - Both can work at the same time because `docs/codex/HANDS_OFF.txt` splits the files.
 
