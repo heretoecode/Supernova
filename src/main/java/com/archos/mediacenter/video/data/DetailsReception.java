@@ -23,20 +23,21 @@ public final class DetailsReception
             throw new IllegalArgumentException("Exact title identity required");
         JSONObject envelope = PreviewMetadataCache.read(context, kind, id, "");
         JSONObject details = envelope == null ? null : envelope.optJSONObject("data");
-        return read(id, details, OmdbSupplement.cached(context, kind, id));
+        return read(kind, id, details, OmdbSupplement.cached(context, kind, id));
     }
 
     /** Pure projection; all rows and independent vote counts remain present, including absent scores. */
-    public static Facts read(long id, JSONObject details, OmdbSupplement.Ratings supplementary)
+    public static Facts read(String kind, long id, JSONObject details, OmdbSupplement.Ratings supplementary)
     {
-        boolean exact = details != null && id > 0 && details.optLong("id") == id;
+        boolean exact = details != null && id > 0 && details.optLong("id") == id &&
+            ("movie".equals(kind) && details.has("title") || "tv".equals(kind) && details.has("name"));
         double rating = exact ? details.optDouble("vote_average", -1) : -1;
         long votes = exact ? details.optLong("vote_count", -1) : -1;
         return new Facts(new Score(known(supplementary.imdb), known(supplementary.imdbVotes)),
             new Score(known(supplementary.rottenTomatoes), known(supplementary.tomatoReviews)),
             new Score(known(supplementary.metacritic), known(supplementary.metacriticReviews)),
-            new Score(Double.isFinite(rating) && rating > 0 && rating <= 10 ? Double.toString(rating) : "Unknown",
-                      votes > 0 ? Long.toString(votes) : "Unknown"), known(supplementary.awards));
+            new Score(!Double.isNaN(rating) && !Double.isInfinite(rating) && rating > 0 && rating <= 10 ? Double.toString(rating) + "/10" : "Unknown",
+                      votes >= 0 ? Long.toString(votes) : "Unknown"), known(supplementary.awards));
     }
 
     private static String known(String value)

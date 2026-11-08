@@ -14,7 +14,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = Application.class, sdk = 30, manifest = Config.NONE)
+@Config(application = Application.class, sdk = {23, 30}, manifest = Config.NONE)
 public class DetailsDataCTest
 {
     private DetailsTechnical.File file(long id, long bytes)
@@ -65,19 +65,49 @@ public class DetailsDataCTest
         assertEquals("default", handover.resolve("movie", 2, "default"));
     }
 
+    @Test public void supplementaryRatingsRemainReadableOfflineWithoutAnAccount() throws Exception
+    {
+        var context = RuntimeEnvironment.getApplication();
+        var access = new OmdbSupplement.Access() {
+            @Override public boolean permitted()
+            {
+                return true;
+            }
+            @Override public boolean acquireRequest()
+            {
+                return true;
+            }
+            @Override public String apiKey()
+            {
+                return "testonly1";
+            }
+        };
+        var supplement = new OmdbSupplement(access, url -> new JSONObject().put("Response", "True")
+            .put("imdbID", "tt1234567").put("Type", "movie").put("imdbRating", "6.1")
+            .put("imdbVotes", "18,500").put("Metascore", "70").put("Awards", "2 wins · 5 nominations")
+            .put("Ratings", new org.json.JSONArray().put(new JSONObject().put("Source", "Rotten Tomatoes")
+                .put("Value", "80%"))));
+        supplement.loadCached(context, "movie", 502, () -> "tt1234567");
+        var offline = DetailsReception.cached(context, "movie", 502);
+        assertEquals("6.1/10", offline.imdb().rating());
+        assertEquals("80%", offline.rottenTomatoes().rating());
+        assertTrue(!"Unknown".equals(offline.metacritic().rating()));
+        assertEquals("2 wins · 5 nominations", offline.awards());
+    }
+
     @Test public void receptionIsCompleteOfflineAndRejectsMismatchedTmdb() throws Exception
     {
         var context = RuntimeEnvironment.getApplication();
-        PreviewMetadataCache.load(context, "movie", 501, "", () -> new JSONObject().put("id", 501)
+        PreviewMetadataCache.load(context, "movie", 501, "", () -> new JSONObject().put("id", 501).put("title", "A film")
             .put("vote_average", 6.1).put("vote_count", 18500));
         var cached = DetailsReception.cached(context, "movie", 501);
-        assertEquals("6.1", cached.tmdb().rating());
+        assertEquals("6.1/10", cached.tmdb().rating());
         assertEquals("18500", cached.tmdb().votes());
         assertEquals("Unknown", cached.imdb().rating());
         assertEquals("Unknown", cached.rottenTomatoes().rating());
         assertEquals("Unknown", cached.metacritic().rating());
         assertEquals("Unknown", cached.awards());
-        assertEquals("Unknown", DetailsReception.read(999, new JSONObject().put("id", 501)
+        assertEquals("Unknown", DetailsReception.read("movie", 999, new JSONObject().put("id", 501).put("title", "A film")
             .put("vote_average", 10), OmdbSupplement.Ratings.EMPTY).tmdb().rating());
     }
 }

@@ -52,7 +52,7 @@ public final class DetailsTechnical
             positive(file.addedUtcMs()));
     }
 
-    /** Average only when every distinct episode has a known size; duplicate versions do not inflate it. */
+    /** Input selects one file per logical episode. Unknown sizes and overflow make the average unknown. */
     public static long averageEpisodeBytes(List<File> episodes)
     {
         if (episodes.isEmpty())
