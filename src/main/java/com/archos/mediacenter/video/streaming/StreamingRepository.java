@@ -215,6 +215,17 @@ public final class StreamingRepository
         return api(context, path, null, 0, parameters, client);
     }
 
+    /** Worker-only library-gated discovery gateway. No arbitrary URLs or user credentials. */
+    public static JSONObject libraryDiscovery(Context context, String path, Map<String, String> parameters,
+                                               OkHttpClient client) throws Exception
+    {
+        if (!path.matches("(?:search/tv|(?:movie|tv)/[1-9][0-9]{0,9}(?:/credits)?|" +
+                          "collection/[1-9][0-9]{0,9}|person/[1-9][0-9]{0,9}/combined_credits)") ||
+            !Set.of("query").containsAll(parameters.keySet()))
+            throw new IOException("Invalid library discovery request");
+        return api(context, path, null, 0, parameters, client);
+    }
+
     /** Public Trakt title discovery only: no account token, arbitrary URL or personal history. Worker-only. */
     public static JSONArray traktDiscovery(Context context, String path, OkHttpClient client) throws Exception
     {
