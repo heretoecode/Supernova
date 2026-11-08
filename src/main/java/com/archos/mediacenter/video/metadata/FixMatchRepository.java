@@ -200,6 +200,7 @@ public final class FixMatchRepository
                 database.endTransaction();
             }
         }
+        WrongMatches.production(context).applied(videoId);
         com.archos.mediaprovider.video.LibraryHealthEvidence.clear(context, file.toString(),
             com.archos.mediaprovider.video.LibraryHealthEvidence.Kind.NOT_MATCHED);
         PreviewLibraryLoader.invalidateHistoryCache(context);
