@@ -133,6 +133,17 @@ public final class StreamingRepository
         return PreferenceManager.getDefaultSharedPreferences(c);
     }
 
+    /** Main-thread-safe feature flag, also used to hide Search's streaming help line. */
+    public static boolean enabled(Context context)
+    {
+        return prefs(context).getBoolean(ENABLED, false);
+    }
+
+    private static Availability noAvailability()
+    {
+        return new Availability(Collections.emptyList(), "");
+    }
+
     public static String country(Context c)
     {
         String country = prefs(c).getString(COUNTRY, "IE");
@@ -576,6 +587,8 @@ public final class StreamingRepository
 
     public static Availability load(Context context, String kind, long id, String country, int season) throws Exception
     {
+        if (!enabled(context))
+            return noAvailability();
         Diagnostics.event("provider_metadata_lookup", "media_kind", kind, "season", season);
         if (!("movie".equals(kind) || "tv".equals(kind)) || id <= 0)
             throw new IOException("Missing title ID");
@@ -595,9 +608,10 @@ public final class StreamingRepository
             }
             return persisted;
         }
-        JSONObject response = api(
-            context,
-            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", null);
+        JSONObject response = availabilityRequest(context,
+            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers");
+        if (!enabled(context))
+            return noAvailability();
         Availability availability = parseAvailability(response, country);
         synchronized (CACHE)
         {
@@ -621,9 +635,37 @@ public final class StreamingRepository
         return availability;
     }
 
+    private static JSONObject availabilityRequest(Context context, String path) throws Exception
+    {
+        java.util.concurrent.atomic.AtomicReference<okhttp3.Call> active =
+            new java.util.concurrent.atomic.AtomicReference<>();
+        SharedPreferences.OnSharedPreferenceChangeListener listener = (preferences, key) -> {
+            if (ENABLED.equals(key) && !enabled(context) && active.get() != null)
+                active.get().cancel();
+        };
+        SharedPreferences preferences = prefs(context);
+        preferences.registerOnSharedPreferenceChangeListener(listener);
+        try
+        {
+            OkHttpClient client = HTTP.newBuilder().addInterceptor(chain -> {
+                active.set(chain.call());
+                if (!enabled(context))
+                    chain.call().cancel();
+                return chain.proceed(chain.request());
+            }).build();
+            return api(context, path, null, 0, Collections.emptyMap(), client);
+        }
+        finally
+        {
+            preferences.unregisterOnSharedPreferenceChangeListener(listener);
+        }
+    }
+
     /** Disk-only availability; null means unknown/stale, not known unavailable. */
     public static Availability cachedAvailability(Context context, String kind, long id, String country, int season)
     {
+        if (!enabled(context))
+            return noAvailability();
         String key = kind + ":" + id + ":" + country + ":" + season;
         SharedPreferences preferences = prefs(context);
         long age = System.currentTimeMillis() - preferences.getLong("streaming_known_at:" + key, 0);
@@ -648,6 +690,8 @@ public final class StreamingRepository
     /** Only fresh, successfully returned availability is eligible; unknown is not a match. */
     public static boolean knownOn(Context context, String kind, long id, String provider)
     {
+        if (!enabled(context))
+            return false;
         String key = kind + ":" + id + ":" + country(context) + ":-1";
         if (id <= 0 || System.currentTimeMillis() - prefs(context).getLong("streaming_known_at:" + key, 0) >= TTL)
             return false;
@@ -688,6 +732,8 @@ public final class StreamingRepository
     public static String titleLink(Context context, String kind, long id, String country, Availability availability,
                                    int providerId)
     {
+        if (!enabled(context))
+            return "";
         if (!availability.offers.isEmpty() && isTmdbWatchUrl(availability.watchUrl, kind, id))
         {
             try
@@ -791,7 +837,7 @@ public final class StreamingRepository
     public static String episodeLink(Context c, long showId, int season, int episode, Availability availability,
                                      int provider)
     {
-        if (!exactEpisodeAvailability(availability, showId, season, episode))
+        if (!enabled(c) || !exactEpisodeAvailability(availability, showId, season, episode))
             return "";
         String link = titleLink(c, "tv", showId, country(c), availability, provider);
         return safeWebUrl(link) ? resolveTitleUrl(link) : availability.watchUrl;

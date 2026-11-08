@@ -18,6 +18,10 @@ public final class RelatedTitles
         JSONArray similar() throws Exception;
         JSONArray traktRelated() throws Exception;
         boolean onServices(String kind, long tmdbId) throws Exception;
+        default boolean streamingEnabled()
+        {
+            return true;
+        }
     }
 
     public record Title(String kind, long id, JSONObject metadata)
@@ -72,7 +76,8 @@ public final class RelatedTitles
             {
                 try
                 {
-                    if (sources.onServices(kind, title.id()))
+                    if (sources.streamingEnabled() && sources.onServices(kind, title.id()) &&
+                        sources.streamingEnabled())
                         remote.add(title);
                 }
                 catch (Exception unavailable)
@@ -81,7 +86,7 @@ public final class RelatedTitles
                 }
             }
         }
-        return new Result(List.copyOf(local), List.copyOf(remote));
+        return new Result(List.copyOf(local), sources.streamingEnabled() ? List.copyOf(remote) : List.of());
     }
 
     private RelatedTitles()

@@ -43,10 +43,15 @@ public final class RelatedTitlesRepository
                 return new JSONArray();
             }
 
+            @Override public boolean streamingEnabled()
+            {
+                return StreamingRepository.enabled(app);
+            }
+
             @Override public boolean onServices(String titleKind, long titleId) throws Exception
             {
                 if (cancelled.getAsBoolean() || !PreferenceManager.getDefaultSharedPreferences(app)
-                        .getBoolean(StreamingRepository.ENABLED, true))
+                        .getBoolean(StreamingRepository.ENABLED, false))
                     return false;
                 return !StreamingRepository.filter(StreamingRepository.load(app, titleKind, titleId,
                     StreamingRepository.country(app)), StreamingRepository.selected(app),
