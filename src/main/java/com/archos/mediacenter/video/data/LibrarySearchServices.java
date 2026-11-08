@@ -20,6 +20,11 @@ public final class LibrarySearchServices implements LibrarySearchMetadata.Transp
         this.client = client.newBuilder().dispatcher(new okhttp3.Dispatcher()).build();
     }
 
+    @Override public List<Long> familyLinks(long tvId, BooleanSupplier cancelled) throws Exception
+    {
+        return SeriesFamilyLinks.load(tvId, client, cancelled);
+    }
+
     @Override public void cancel()
     {
         client.dispatcher().cancelAll();

@@ -17,6 +17,10 @@ public final class LibrarySearchMetadata implements LibrarySearch.Sources
     {
         JSONObject request(String path, Map<String, String> parameters) throws Exception;
         List<String> services(LibrarySearch.Identity title, BooleanSupplier cancelled) throws Exception;
+        default List<Long> familyLinks(long tvId, BooleanSupplier cancelled) throws Exception
+        {
+            return List.of();
+        }
         default void cancel()
         {
         }
@@ -67,30 +71,52 @@ public final class LibrarySearchMetadata implements LibrarySearch.Sources
             }
             return List.copyOf(result);
         }
-        String root = owned.title().split(":", 2)[0].trim();
-        JSONObject response = transport.request("search/tv", Map.of("query", root));
-        JSONArray rows = response.optJSONArray("results");
-        JSONObject originalCredits = get("tv/" + identity.id() + "/credits", cancelled);
-        if (originalCredits.optLong("id") != identity.id())
-            return List.of();
-        Set<Long> creators = ids(details.optJSONArray("created_by"));
-        Set<String> characters = characters(originalCredits);
-        for (int i = 0; rows != null && i < Math.min(8, rows.length()); i++)
+        try
         {
-            LibrarySearch.Title candidate = title(rows.optJSONObject(i), "tv");
-            if (candidate == null || candidate.identity().equals(identity) ||
-                PreviewSearchText.rank(root, candidate.title()) == 0)
-                continue;
-            JSONObject next = get("tv/" + candidate.identity().id(), cancelled);
-            if (next.optLong("id") != candidate.identity().id())
-                continue;
-            Set<Long> shared = ids(next.optJSONArray("created_by"));
-            shared.retainAll(creators);
-            if (shared.isEmpty())
-                continue;
-            Set<String> sharedCharacters = characters(get("tv/" + candidate.identity().id() + "/credits", cancelled));
-            sharedCharacters.retainAll(characters);
-            result.add(new LibrarySearch.Family(candidate, 0, 0, false, true, true, !sharedCharacters.isEmpty()));
+            List<Long> links = transport.familyLinks(identity.id(), cancelled);
+            for (long id : links.subList(0, Math.min(12, links.size())))
+            {
+                JSONObject linked = get("tv/" + id, cancelled);
+                LibrarySearch.Title candidate = linked.optLong("id") == id ? title(linked, "tv") : null;
+                if (candidate != null)
+                    result.add(new LibrarySearch.Family(candidate, 0, 0, true, false, false, false));
+            }
+        }
+        catch (Exception unavailable)
+        {
+            // Explicit links are best effort; independent name/creator/character evidence can still contribute.
+        }
+        try
+        {
+            String root = owned.title().split(":", 2)[0].trim();
+            JSONObject response = transport.request("search/tv", Map.of("query", root));
+            JSONArray rows = response.optJSONArray("results");
+            JSONObject originalCredits = get("tv/" + identity.id() + "/credits", cancelled);
+            if (originalCredits.optLong("id") != identity.id())
+                return List.copyOf(result);
+            Set<Long> creators = ids(details.optJSONArray("created_by"));
+            Set<String> characters = characters(originalCredits);
+            for (int i = 0; rows != null && i < Math.min(8, rows.length()); i++)
+            {
+                LibrarySearch.Title candidate = title(rows.optJSONObject(i), "tv");
+                if (candidate == null || candidate.identity().equals(identity) ||
+                    PreviewSearchText.rank(root, candidate.title()) == 0)
+                    continue;
+                JSONObject next = get("tv/" + candidate.identity().id(), cancelled);
+                if (next.optLong("id") != candidate.identity().id())
+                    continue;
+                Set<Long> shared = ids(next.optJSONArray("created_by"));
+                shared.retainAll(creators);
+                if (shared.isEmpty())
+                    continue;
+                Set<String> sharedCharacters = characters(get("tv/" + candidate.identity().id() + "/credits", cancelled));
+                sharedCharacters.retainAll(characters);
+                result.add(new LibrarySearch.Family(candidate, 0, 0, false, true, true, !sharedCharacters.isEmpty()));
+            }
+        }
+        catch (Exception unavailable)
+        {
+            // Keep verified explicit links when name-based discovery fails.
         }
         return List.copyOf(result);
     }
