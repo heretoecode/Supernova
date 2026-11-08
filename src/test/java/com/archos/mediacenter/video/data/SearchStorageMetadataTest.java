@@ -15,7 +15,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = Application.class, sdk = 30, manifest = Config.NONE)
+@Config(application = Application.class, sdk = {23, 30}, manifest = Config.NONE)
 public class SearchStorageMetadataTest
 {
     @Test public void existingRecentKeySurvivesReopenAndOneCallClearsBothConsumers()

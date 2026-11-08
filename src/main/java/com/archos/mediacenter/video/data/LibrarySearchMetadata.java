@@ -17,6 +17,9 @@ public final class LibrarySearchMetadata implements LibrarySearch.Sources
     {
         JSONObject request(String path, Map<String, String> parameters) throws Exception;
         List<String> services(LibrarySearch.Identity title, BooleanSupplier cancelled) throws Exception;
+        default void cancel()
+        {
+        }
     }
 
     private final Transport transport;
@@ -24,6 +27,11 @@ public final class LibrarySearchMetadata implements LibrarySearch.Sources
     public LibrarySearchMetadata(Transport transport)
     {
         this.transport = transport;
+    }
+
+    @Override public void cancel()
+    {
+        transport.cancel();
     }
 
     private JSONObject get(String path, BooleanSupplier cancelled) throws Exception
@@ -63,6 +71,8 @@ public final class LibrarySearchMetadata implements LibrarySearch.Sources
         JSONObject response = transport.request("search/tv", Map.of("query", root));
         JSONArray rows = response.optJSONArray("results");
         JSONObject originalCredits = get("tv/" + identity.id() + "/credits", cancelled);
+        if (originalCredits.optLong("id") != identity.id())
+            return List.of();
         Set<Long> creators = ids(details.optJSONArray("created_by"));
         Set<String> characters = characters(originalCredits);
         for (int i = 0; rows != null && i < Math.min(8, rows.length()); i++)

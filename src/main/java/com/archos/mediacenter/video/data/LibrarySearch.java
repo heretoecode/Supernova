@@ -76,6 +76,9 @@ public final class LibrarySearch
         List<Family> family(Title owned, BooleanSupplier cancelled) throws Exception;
         List<Title> work(Person person, BooleanSupplier cancelled) throws Exception;
         List<String> services(Identity title, BooleanSupplier cancelled) throws Exception;
+        default void cancel()
+        {
+        }
     }
 
     public static Result load(String query, List<Title> library, Sources sources, BooleanSupplier enabled,

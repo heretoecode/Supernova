@@ -38,7 +38,7 @@ public final class RecentSearches
             List<String> values = new ArrayList<>(read());
             values.removeIf(value -> value.equalsIgnoreCase(clean));
             values.add(0, clean);
-            preferences.edit().putString(KEY, String.join("\n", values.subList(0, Math.min(8, values.size())))).apply();
+            preferences.edit().putString(KEY, android.text.TextUtils.join("\n", values.subList(0, Math.min(8, values.size())))).apply();
         }
     }
 

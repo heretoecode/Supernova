@@ -14,7 +14,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = Application.class, sdk = 30, manifest = Config.NONE)
+@Config(application = Application.class, sdk = {23, 30}, manifest = Config.NONE)
 public class StreamingMasterSwitchTest
 {
     @Test public void offHidesFreshDiskAvailabilityAndDoesNotNeedValidNetworkIdentity() throws Exception
@@ -22,12 +22,63 @@ public class StreamingMasterSwitchTest
         var context = RuntimeEnvironment.getApplication();
         var preferences = StreamingRepository.prefs(context);
         preferences.edit().clear().putBoolean(StreamingRepository.ENABLED, false)
+            .putString(StreamingRepository.COUNTRY, "GB")
             .putLong("streaming_known_at:movie:1:GB:-1", System.currentTimeMillis())
             .putStringSet("streaming_known:movie:1:GB:-1", Set.of("8")).commit();
         assertFalse(StreamingRepository.enabled(context));
         assertTrue(StreamingRepository.load(context, "invalid", -1, "GB").offers.isEmpty());
         assertTrue(StreamingRepository.cachedAvailability(context, "movie", 1, "GB", -1).offers.isEmpty());
         assertFalse(StreamingRepository.knownOn(context, "movie", 1, "8"));
+    }
+
+    @Test public void disablingCancelsAnActiveAvailabilityCall() throws Exception
+    {
+        var context = RuntimeEnvironment.getApplication();
+        StreamingRepository.invalidate();
+        StreamingRepository.prefs(context).edit().clear().putBoolean(StreamingRepository.ENABLED, true).commit();
+        var started = new java.util.concurrent.CountDownLatch(1);
+        var cancelled = new java.util.concurrent.CountDownLatch(1);
+        var client = new okhttp3.OkHttpClient.Builder().addInterceptor(chain -> {
+            started.countDown();
+            long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(3);
+            while (!chain.call().isCanceled() && System.nanoTime() < deadline)
+            {
+                try
+                {
+                    Thread.sleep(5);
+                }
+                catch (InterruptedException interrupted)
+                {
+                    throw new java.io.InterruptedIOException();
+                }
+            }
+            if (chain.call().isCanceled())
+                cancelled.countDown();
+            throw new java.io.IOException("Stopped test transport");
+        }).build();
+        var executor = java.util.concurrent.Executors.newSingleThreadExecutor();
+        try
+        {
+            var request = executor.submit(() -> {
+                try
+                {
+                    StreamingRepository.load(context, "movie", 987654, "GB", -1, client);
+                }
+                catch (Exception stopped)
+                {
+                    // Expected cancellation of the real availability producer.
+                }
+            });
+            assertTrue(started.await(3, java.util.concurrent.TimeUnit.SECONDS));
+            StreamingRepository.prefs(context).edit().putBoolean(StreamingRepository.ENABLED, false).commit();
+            org.robolectric.Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+            assertTrue(cancelled.await(3, java.util.concurrent.TimeUnit.SECONDS));
+            request.get(3, java.util.concurrent.TimeUnit.SECONDS);
+        }
+        finally
+        {
+            executor.shutdownNow();
+        }
     }
 
     @Test public void offDoesNotCallRelatedAvailabilityAndRetainsLocalRecommendations()

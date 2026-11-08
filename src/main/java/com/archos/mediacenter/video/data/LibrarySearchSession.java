@@ -52,6 +52,7 @@ public final class LibrarySearchSession implements AutoCloseable
         long request = ++generation;
         if (work != null)
             work.cancel(true);
+        sources.cancel();
         worker.getQueue().clear();
         Key key = new Key(query, List.copyOf(library), serviceScope + ":" + enabled.getAsBoolean());
         work = worker.submit(() -> {
@@ -64,12 +65,15 @@ public final class LibrarySearchSession implements AutoCloseable
             }
             if (result == null)
             {
-                result = LibrarySearch.load(query, key.library(), sources, enabled, () -> stale(request));
+                long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(12);
+                result = LibrarySearch.load(query, key.library(), sources,
+                    () -> enabled.getAsBoolean() && System.nanoTime() < deadline, () -> stale(request));
                 synchronized (this)
                 {
                     if (stale(request))
                         return;
-                    cache.put(key, new Cached(System.nanoTime(), result));
+                    if (System.nanoTime() < deadline)
+                        cache.put(key, new Cached(System.nanoTime(), result));
                     while (cache.size() > 24)
                         cache.remove(cache.keySet().iterator().next());
                 }
@@ -97,6 +101,7 @@ public final class LibrarySearchSession implements AutoCloseable
         generation++;
         if (work != null)
             work.cancel(true);
+        sources.cancel();
         worker.shutdownNow();
         cache.clear();
     }

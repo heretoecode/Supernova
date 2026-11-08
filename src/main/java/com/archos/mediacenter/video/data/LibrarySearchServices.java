@@ -17,7 +17,12 @@ public final class LibrarySearchServices implements LibrarySearchMetadata.Transp
     public LibrarySearchServices(Context context, OkHttpClient client)
     {
         this.context = context.getApplicationContext();
-        this.client = client;
+        this.client = client.newBuilder().dispatcher(new okhttp3.Dispatcher()).build();
+    }
+
+    @Override public void cancel()
+    {
+        client.dispatcher().cancelAll();
     }
 
     @Override public JSONObject request(String path, Map<String, String> parameters) throws Exception
@@ -31,11 +36,14 @@ public final class LibrarySearchServices implements LibrarySearchMetadata.Transp
             .getBoolean(StreamingRepository.ENABLED, false))
             return List.of();
         var availability = StreamingRepository.load(context, title.kind(), title.id(),
-                                                    StreamingRepository.country(context));
+                                                    StreamingRepository.country(context), -1, client);
         if (cancelled.getAsBoolean() || !StreamingRepository.prefs(context)
             .getBoolean(StreamingRepository.ENABLED, false))
             return List.of();
-        return StreamingRepository.filter(availability, StreamingRepository.selected(context),
-            StreamingRepository.preferred(context)).stream().map(offer -> offer.provider.name).distinct().toList();
+        java.util.Set<String> services = new java.util.LinkedHashSet<>();
+        for (var offer : StreamingRepository.filter(availability, StreamingRepository.selected(context),
+                                                    StreamingRepository.preferred(context)))
+            services.add(offer.provider.name);
+        return List.copyOf(services);
     }
 }

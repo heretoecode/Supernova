@@ -587,6 +587,13 @@ public final class StreamingRepository
 
     public static Availability load(Context context, String kind, long id, String country, int season) throws Exception
     {
+        return load(context, kind, id, country, season, HTTP);
+    }
+
+    /** Worker-only availability with caller-owned transport cancellation; the master switch still applies. */
+    public static Availability load(Context context, String kind, long id, String country, int season,
+                                    OkHttpClient client) throws Exception
+    {
         if (!enabled(context))
             return noAvailability();
         Diagnostics.event("provider_metadata_lookup", "media_kind", kind, "season", season);
@@ -609,7 +616,7 @@ public final class StreamingRepository
             return persisted;
         }
         JSONObject response = availabilityRequest(context,
-            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers");
+            kind + "/" + id + (season >= 0 && "tv".equals(kind) ? "/season/" + season : "") + "/watch/providers", client);
         if (!enabled(context))
             return noAvailability();
         Availability availability = parseAvailability(response, country);
@@ -635,7 +642,7 @@ public final class StreamingRepository
         return availability;
     }
 
-    private static JSONObject availabilityRequest(Context context, String path) throws Exception
+    private static JSONObject availabilityRequest(Context context, String path, OkHttpClient base) throws Exception
     {
         java.util.concurrent.atomic.AtomicReference<okhttp3.Call> active =
             new java.util.concurrent.atomic.AtomicReference<>();
@@ -647,13 +654,14 @@ public final class StreamingRepository
         preferences.registerOnSharedPreferenceChangeListener(listener);
         try
         {
-            OkHttpClient client = HTTP.newBuilder().addInterceptor(chain -> {
+            OkHttpClient.Builder builder = base.newBuilder();
+            builder.interceptors().add(0, chain -> {
                 active.set(chain.call());
                 if (!enabled(context))
                     chain.call().cancel();
                 return chain.proceed(chain.request());
-            }).build();
-            return api(context, path, null, 0, Collections.emptyMap(), client);
+            });
+            return api(context, path, null, 0, Collections.emptyMap(), builder.build());
         }
         finally
         {
