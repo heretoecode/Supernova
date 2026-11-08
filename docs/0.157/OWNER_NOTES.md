@@ -656,3 +656,54 @@ item: library statistics colouring (GitHub #100), to be discussed together with 
   only route is Details › More › Change info of all episodes. Long-press › **Fix match** marks the title as wrongly
   matched and opens the Files › Library Care Fix match flow with it selected (the same flow and wording as Files).
 
+
+## 20. Settings walk-through (owner voice memo, recorded 8 Nov 2026 ~01:00; for the Settings redesign)
+The redesign is a full page with tabs (like Files/Search/Details). Nothing below may carry over. Settings may be
+renamed, reworded, moved or removed wherever it helps (owner, see CLAUDE.md "Freedom to rethink options").
+
+**Every page**
+- Rows: title, description and switch are not vertically centred (worse on some pages). Fix everywhere.
+- Inline choices instead of pop-ups wherever they fit (up to five): Skipping (each of the five parts: four choices),
+  Automatic refresh rate (two), Dolby Vision mode (three), Surround sound (four), Choose audio decoder (three).
+  Outline and Background (Style) become plain switches.
+- **One choice list for every long list** (languages, countries, encodings): the chosen item has the **white tick on
+  the right** (as in Your services), never a radio circle on the left; the small blue tick in the player's track
+  lists goes too. Flag (or mark), name, then pills where useful. **No Cancel / Done buttons** — Back closes. Countries
+  get flags. Needs a mock-up.
+- Focus bugs: Style › Vertical position and Background opacity — Left jumps to the tab instead of lowering the value;
+  Backup › What to include — Right does nothing, Left jumps to the tab, only OK cycles; About › Release notes,
+  Licences, Credits — Up does nothing from the first item.
+
+**Playback:** Skipping inline; Picture inline (above).
+**Audio & Subtitles:** Preferred audio / subtitle language and Languages to search online use three different list
+designs on one page — unify (above). Custom fonts folder opens Android's file picker: use Supernova's own Files
+browser where Android allows.
+**Library & Home:** "Recreate sort titles" — mentions collections (gone), shows an arrow but nothing visible happens.
+OMDb ratings key: third-party service, probably belongs with the services. Details language: shared choice list.
+**Where to Watch:** Country list needs flags and the shared list. Your services: Done button removed; a service
+chosen
+  from "Other providers" moves up into "Selected" straight away (animated), not on reopening; keep its white tick (the
+  model for every list). JustWatch row shows an arrow but says "No application can handle this action" — fix or remove.
+  Service logos colour vs monochrome: decide once for the whole app.
+**Appearance:** one tab with one setting (Interface language) — a whole tile wasted; rehome it and remove the tile.
+**Accounts & Services:** split by where things are used — IntroDB switch belongs with Playback › Skipping;
+OpenSubtitles sign-in and switch with Audio & Subtitles › Subtitles; Trakt (scrobble, sync resume, push/pull) could
+join Where to Watch in one renamed area ("Where to Watch and Trakt" or a better name).
+**System › Backup:** the worst page. "What to include" with Everything leaves ~30 stray separators; Custom shows ~30
+items with separators; the whole what-to-include idea needs redoing from scratch (fewer, clearer categories, or a
+better way to pick). "What's in a backup" and "How restore works" open huge blue full-page boxes of text — redo.
+**System › Diagnostics:** Save report opens Android's file picker (use ours where allowed). Add **Clear diagnostics**
+(after exporting) and **Keep diagnostics for** (inline: e.g. 1 week · 2 weeks · 4 weeks) so the log stays small.
+Remove **Issue digest** from the whole app: diagnostics are automatic. **Lag noted 01:05 on 8 Nov** after leaving
+System settings: check the diagnostics report around then.
+**System › Advanced:** PCM playback speed engine (FFmpeg atempo · Sonic) inline buttons look odd (one bar or two?).
+Subtitle encoding: unexplained codes (CP1252…), a Cancel button and radio circles — explain in plain words.
+**About:** Release notes — only 0.156 opens with OK (others only with Right); list titles carry odd text ("In
+development, not a signed or accepted release", "Shield QA candidate…"); show just version and date (day month
+year); 0.156's notes are two vague lines; several items cram four changes into one line; every version needs proper
+notes (more detail, one change per line); the full-width list-then-click design should change. Open-source licences —
+a "Find in notice" pop-up flashes on entering; one extremely wide Find button; AndroidX/Kotlin/JetBrains entries show
+long lists of versions; Sentry shows two versions; question whether full licence text is needed vs a QR code.
+Credits — same Up focus bug; better than Licences but needs a look. App information — fine but could be improved.
+**Structure:** look at every setting (tag it), then arrange the tabs on merit — eight if needed; the summary on the
+right never limits the count.
