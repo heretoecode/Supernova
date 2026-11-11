@@ -49,3 +49,21 @@ and the GitHub milestone **0.156**. The owner gave the go-ahead to code on 5 Nov
 - The older status page (0.140–0.142 and the Preview 4.1.7 baseline):
   [`docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md`](docs/archive/root-history/PROJECT_STATUS_0.140-0.142.md).
 - Older Preview-era files and early planning: [`docs/archive/`](docs/archive/README.md).
+
+### Mock-ups still to make (list agreed 11 Nov 2026; none started)
+1. Settings: tab arrangement and each tab; the shared choice list (white tick, flags); Backup; Diagnostics; About
+   (release notes, licences, credits).
+2. Tabs style: grey chip vs underline (Details, Files, Settings together).
+3. Home on charcoal: hero with capped description and carousel dots, rows with the artwork edge, row arrow spacing,
+   Hide/Move buttons, move mode.
+4. Library pages on charcoal: posters with the edge, captions, toolbar, filters and sort menus, long-press menu
+   (Fix match, Remove from library, Delete file), list view.
+5. Details by kind: film, series, season, episode (what each shows and offers); More menu; artwork picker.
+6. Search: family heading wording, separators, Clear recent, streaming line.
+7. Player: title block (option C) with age rating; Playback Settings rows (speed, Stop playing at, Still watching,
+   play mode); Download Subtitles as a replacing panel; seek spinner.
+8. Top bar: "Files" with scan ring and the attention mark.
+9. Delete file: one confirmation. Fix match as a page reached from the library.
+10. Launcher icon/banner and splash on the new look.
+11. Edit Page and Customise Home in the new panel look.
+

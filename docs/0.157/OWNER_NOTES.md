@@ -716,3 +716,18 @@ right never limits the count.
 - Diagnostics export of 10 Nov 01:25 received (not stored in the repository: private). Covers 3–10 Nov, so it
   includes the 6 Nov 17:51 Put.io pause, the 8 Nov 01:05 lag and every time in the document's timestamp index.
 - Next: go through it with the owner section by section; items become 0.157 work only as each is agreed.
+
+## 22. Owner's replies on the walk-through and diagnostics (11 Nov 2026)
+- **Versions:** everything goes down for the **next version**; later the owner asks for the pending list and Claude
+  proposes what to hold for the version after. (No 0.157/0.158 split yet.)
+- **Home hero text — decided:** the description, capped at two or three lines, on Home too (consistency with Details);
+  replaces "tagline on Home".
+- **Details by kind:** work out one rule for what a film, series, season and episode page each shows and offers.
+- **Files in the top bar:** besides the scan ring, a small mark when the library needs attention (not a notification
+  bar); needs a mock-up.
+- **Scan on launch:** wants a hard limit so restarting the app several times in a few minutes cannot start scan after
+  scan.
+- **Deleting files:** add the confirmation steps to diagnostics so the flow can be seen.
+- Agreed in principle: remove NOVA's hidden grid if safe (D4); stop focus jumping when holding Down (D5); reduce
+  memory (D6).
+- **Mock-ups needed (not yet made):** see Claude's list of 11 Nov in the conversation / PROJECT_STATUS.
