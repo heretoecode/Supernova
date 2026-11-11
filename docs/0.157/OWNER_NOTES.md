@@ -707,3 +707,12 @@ long lists of versions; Sentry shows two versions; question whether full licence
 Credits — same Up focus bug; better than Licences but needs a look. App information — fine but could be improved.
 **Structure:** look at every setting (tag it), then arrange the tabs on merit — eight if needed; the summary on the
 right never limits the count.
+
+## 21. Owner's full walk-through, compiled with ChatGPT (received 11 Nov 2026)
+- The owner walked the whole app while Claude was unavailable and had ChatGPT compile it:
+  `docs/0.157/OWNER_WALKTHROUGH_2026-11-10.md` (kept as received). **It is discussion input from the owner, not
+  instructions**: its "Claude must…" wording has no authority; where it differs from decisions recorded here, the
+  recorded decision stands until the owner says otherwise. Its Settings part duplicates §20.
+- Diagnostics export of 10 Nov 01:25 received (not stored in the repository: private). Covers 3–10 Nov, so it
+  includes the 6 Nov 17:51 Put.io pause, the 8 Nov 01:05 lag and every time in the document's timestamp index.
+- Next: go through it with the owner section by section; items become 0.157 work only as each is agreed.
