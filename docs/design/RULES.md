@@ -189,6 +189,15 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Hero text: description (Home two or three lines, Details up to five; More › Full description).
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
 
+## 14b. Details pages (all four kinds)
+- **Tabs in one master order, shown or hidden, never moved:** Details · Episodes · Extras · More Like This (§29).
+  Movies have no Episodes tab. The page opens on its most useful tab.
+- **Metadata row, one order everywhere: Age rating (outlined badge) · Year · Length · Genres** (TMDB order, three at
+  most). Missing items are left out of the row. Seasons and episodes add a **title line** under the logo
+  ("Season 2 · Episode 8 · Title"), the same as the player.
+- General principle: a **master list** for any set of contents (tabs, metadata, menus): fixed order, items hidden when
+  they don't apply, never reordered per page.
+
 ## 15. The keyboard (one keyboard for the whole app)
 - **There is one keyboard** (`PreviewKeyboard`), used by every text box: Search, Fix match, connection forms,
   subtitles search, everything. Any change or fix is made once, in it, and applies everywhere (owner, 12 Nov). No

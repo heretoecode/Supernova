@@ -901,3 +901,23 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   history, Remove from Trakt history (only when Trakt is connected; Trakt must not re-add what was removed);
   focus starts on Keep file. Approved ("I like having options for things rather than just standard answers").
 - Wording: Movies / TV Shows as in the top bar (pills "Movie" / "TV show").
+
+## 29. Details — tabs and metadata row for all four kinds (owner, 12 Nov 2026; decided)
+- Details opens for four kinds: movie, TV show, season, episode (episodes do have their own page; streaming-only
+  episodes not in the library have none: OK opens the service, or asks which when more than one has it).
+- **Tabs: one master order, each tab shown or hidden, never moved:** Details · Episodes · Extras · More Like This.
+  Movie: Details · Extras · More Like This. TV show, season and episode: all four. "Episodes" is the one name (replaces
+  "Seasons & Episodes"; on a show it holds one row per season). The page opens on the most useful tab (TV show and
+  season: Episodes; movie and episode: Details). Replaces the 5 Nov series order (Seasons & Episodes first).
+- **Extras:** most specific first — an episode's own videos, then its season's, then the show's (TMDB has season and
+  episode videos, patchily). **More Like This** on season and episode pages uses the show's suggestions.
+- **Single-season shows:** no season page; the Episodes tab lists the episodes directly and the season heading is not
+  clickable.
+- **Metadata row, one order everywhere (Home and Details): Age rating · Year · Length · Genres.** Age rating in a small
+  outlined badge; Length = running time (movie, episode), seasons (show), episodes (season); genres in TMDB's order,
+  three at most; anything missing is left out of the row (the Details tab still says "Unknown"). Season and episode
+  ratings come from the first available episode, else the show's.
+- **Title line** under the logo for seasons and episodes, the same as the player: "Season 2" /
+  "Season 2 · Episode 8 · We Don't Talk Anymore".
+- Still to see in pictures: the Details tab under the new heading and line rules, the artwork picker, and the More
+  menu's final contents.
