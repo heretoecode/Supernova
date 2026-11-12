@@ -52,6 +52,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Focus never disappears and never jumps somewhere unexpected: holding Down must not lose it; a hidden view must
   never take it (diagnostics, NOVA's hidden grid); after an action it stays on the item you pressed.
 - Mock-ups showing focus are checked by the owner reading them **without captions**.
+- **No NOVA screen may run hidden behind a Supernova screen** (owner, 12 Nov). Hidden NOVA screens steal focus (the
+  hidden grid; the search screen behind Fix match). When coding starts: one sweep finds them all and removes them,
+  each with a build and tests; anything not obviously dead goes to the owner as a list first.
 
 ## 4. Tabs
 - Plain words on one line, each with its own icon (Details tabs, Files tabs; §18), under the top bar.

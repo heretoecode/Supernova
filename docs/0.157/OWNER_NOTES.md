@@ -872,3 +872,7 @@ Replaces the heading wording in §22 and §23.1. Approved by the owner.
   so no screen can break it.
 - Mock-up correction: the Search pictures drew `-` and `' .` keys and started on M; the real keyboard has `/` after L
   and `. @` after M and starts on T. Redrawn.
+- **No hidden NOVA screens (owner, 12 Nov 2026):** rule approved — no NOVA screen may run hidden behind a Supernova
+  screen. When coding starts, one sweep finds and removes them all (each with a build and tests), beyond the SAFE
+  clean-out list; anything not obviously dead is listed for the owner first. In `docs/design/RULES.md` §3.
+- The four open questions in RULES.md are answered when the related mock-ups are made, not now (owner).
