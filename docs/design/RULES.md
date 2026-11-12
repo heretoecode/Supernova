@@ -28,8 +28,8 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   (Search results) may use about 96 px rows with 32 px names and 24 px second lines.
 
 ## 2. Top bar
-- Left to right: SUPERNOVA, Home · Movies · TV Shows · library pages, then on the right Files, the search icon, the
-  settings icon and the clock. Places are words, tools are icons; **no dots** between them; no line under the bar.
+- Left to right: SUPERNOVA, then the places as words — Home · Movies · TV Shows · library pages · Files — then on
+  the right the search icon, the settings icon and the clock (`tab-style/08`–`15`). Places are words, tools are icons; **no dots** between them; no line under the bar.
 - Background work (a scan) is a small spinning ring on the left of "Files", the same size and line weight as the
   icons. When the library needs attention, a small mark on Files (not a notification bar; mock-up pending, §22).
 - Home + Left stays on Home; the clock is not focusable.
