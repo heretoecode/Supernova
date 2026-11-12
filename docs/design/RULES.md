@@ -32,8 +32,9 @@ Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVI
   the settings icon and the clock (Files v13; owner, 12 Nov: Files stays on the right). Places are words, tools are
   icons; **no dots** between them; no line under the bar. (The `tab-style` mock-ups drew Files on the left by mistake;
   only their focus look was approved.)
-- Background work (a scan) is a small spinning ring on the left of "Files", the same size and line weight as the
-  icons. When the library needs attention, a small mark on Files (not a notification bar; mock-up pending, §22).
+- **One signal slot on the left of "Files"** (owner, 12 Nov), showing one thing at a time: a small spinning ring while
+  a scan runs (the same size and line weight as the icons); otherwise a small white dot when the library needs
+  attention; otherwise nothing. Nothing shifts when it changes. Not a notification bar.
 - Home + Left stays on Home; the clock is not focusable.
 - The top bar follows the focus-and-path rule (section 3): it switches page after a short pause.
 
