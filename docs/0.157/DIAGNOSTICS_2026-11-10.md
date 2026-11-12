@@ -1,7 +1,7 @@
 # Diagnostics report of 10 Nov 2026 01:25 (0.156) — what it shows
 
 Read by Claude on 11 Nov 2026 against the owner's timestamp index (`OWNER_WALKTHROUGH_2026-11-10.md`). Times are UTC
-(= Irish time). The export covers 3–10 Nov but is trimmed by size, so busy hours push older ones out: **nothing is
+(= the owner's local time). The export covers 3–10 Nov but is trimmed by size, so busy hours push older ones out: **nothing is
 retained for 6 Nov 00:00–21:00 or 8 Nov 00:00–02:00**, so the 6 Nov 17:51 Put.io pause and the 8 Nov 01:05 lag
 cannot be checked. The export itself is not stored in the repository (private).
 

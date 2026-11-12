@@ -32,8 +32,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   inside the designs. Panels sized to their content. Up to about five inline choices; more go in a side panel.
 - **The owner approves every signing.** Never sign or publish without being asked.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
-  names, email, addresses, device names, real storage figures. Mock-ups and tests use made-up names (owner, 12 Nov
-  2026).
+  names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
+  time". Mock-ups and tests use made-up names (owner, 12 Nov 2026). The owner intends to make it private; it may go
+  public again one day, so keep to this rule either way.
 - **Never paste keys, passwords or OAuth secrets** anywhere (chat, commits, issues). The OMDb key is not built into
   the app (owner decision; see `docs/REVISIT_LATER.md`).
 - **No AI model names** in commits, code, comments, issues or PRs.

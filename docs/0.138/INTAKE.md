@@ -8,7 +8,7 @@ Approved documentation is inspected independently at `a591034c` in `docs/nova-up
 
 Package `app.supernova.player`; certificate SHA-256 `79ed34c52c3e359756ade0634d7bbb6f8e94e42a059020c1220bd8c7092a9f5e`. Pinned module/runtime/native revisions and protected signing gates are retained. At initial implementation intake, no replacement key, debug Foundation build, merge, APK distribution or private evidence upload was authorised. The subsequent QA-only signing/distribution approval and completed verification are recorded below; the other restrictions remain.
 
-The workspace has no attached Shield, Android emulator, user diagnostic export or original QA media. The 23:22 event and 02:36 Ireland licence failure cannot be correlated with private diagnostics here. Automated reproduction and local synthetic renders can establish source regressions, not physical Shield acceptance. Record these distinctions in conformance.
+The workspace has no attached Shield, Android emulator, user diagnostic export or original QA media. The 23:22 event and 02:36 licence failure cannot be correlated with private diagnostics here. Automated reproduction and local synthetic renders can establish source regressions, not physical Shield acceptance. Record these distinctions in conformance.
 
 ## Implementation checkpoints
 

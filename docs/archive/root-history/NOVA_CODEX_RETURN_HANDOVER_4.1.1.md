@@ -51,7 +51,7 @@ Date: 19 September 2026. Corrective implementation over Preview 4.1. This is a d
 | Network / real file browser | `PreviewPages`, `TopNavigation`, `PreviewAccent`, `ListingFragment`, `ListPresenter`: compact scan action, transparent utility navigation, neutral gradient, 54 dp file rows/path treatment | Implemented; specialist/optional classic surfaces remain (audit) |
 | Automatic WebDAV | `PreviewAutoScanPolicy`, `CustomApplication`, Settings controls, `.github/build/medialib-preview40.patch` | Corrected source-level trigger/eligibility gaps; physical persistent failure remains unconfirmed |
 | Indexed Search | New `PreviewSearchText`, `PreviewSearch`: Unicode-normalised background matching before full model mapping | Implemented; real Shōgun index and large-library performance QA pending |
-| Streaming chain | `PreviewPreferenceDialogs`, `PreviewDialog`, `StreamingPreferences`, `StreamingRepository`, `StreamingActions`: immediate persistence, stable keys, in-place checks, retained real logo paths, consistent disabled default | Implemented persistence/presentation corrections; actual Ireland offers/handoff unverified |
+| Streaming chain | `PreviewPreferenceDialogs`, `PreviewDialog`, `StreamingPreferences`, `StreamingRepository`, `StreamingActions`: immediate persistence, stable keys, in-place checks, retained real logo paths, consistent disabled default | Implemented persistence/presentation corrections; actual the owner's country offers/handoff unverified |
 | Settings refinement | `PreviewSettings`: 54 dp rows, balanced help column, activity-normalised contextual-help lookup | Implemented; category/Legacy architecture and underlying settings retained |
 | Playback HUD / panels | `PreviewTrackLabel`, `PlayerActivity`, `PlayerController`, `PreviewPlaybackMenus`, `AudioSpeedTVPicker`, `AudioDelayTVPicker`, `SubtitleDelayTVPicker`, `TimerDelayTVPicker`, controller XML and 10-second vectors | Implemented presentation corrections; actual decoder/track/menu/Shield QA pending |
 | Up Next | `PreviewUpNext`: restrained rounded translucent panel and available artwork, concise countdown | Visual changes only; PASSED timing/selection algorithm deliberately preserved |
@@ -73,7 +73,7 @@ SQLite's previous title LIKE stage could reject diacritic variants before Java e
 
 The multi-select wrapper previously rebuilt its dialog after each selection and persisted only when Done was selected. Back lost those pending changes. Dynamic provider preference keys were also assigned after attaching to the preference hierarchy, preventing normal initial hydration. The correction persists each accepted toggle, assigns keys before attachment and updates visible checkmarks without closing the window.
 
-The existing chain was traced: local movie TMDb ID or episode parent-show ID → configured country/season provider lookup → selected provider IDs → genuine provider actions → existing title handoff/optional JustWatch fallback. Real returned logo paths were being discarded; they now survive parsing. The global enable default now agrees with the disabled Settings default. No subscription/account detection, guessed Ireland availability, unsupported episode service offer or remote Search catalogue was added. An empty season response is not relabelled as a confirmed episode offer. Shōgun/MobLand Ireland results and installed-provider handoff still require real-service QA.
+The existing chain was traced: local movie TMDb ID or episode parent-show ID → configured country/season provider lookup → selected provider IDs → genuine provider actions → existing title handoff/optional JustWatch fallback. Real returned logo paths were being discarded; they now survive parsing. The global enable default now agrees with the disabled Settings default. No subscription/account detection, guessed the owner's country availability, unsupported episode service offer or remote Search catalogue was added. An empty season response is not relabelled as a confirmed episode offer. Shōgun/MobLand the owner's country results and installed-provider handoff still require real-service QA.
 
 ### Featured and title logos
 
@@ -111,7 +111,7 @@ Credential audit: FileCore's saved network credential database uses portable leg
 - Release lint: **0 errors, 1,396 warnings**, inventory retained in CI diagnostics. No exhaustive regression, live streaming/WebDAV or physical playback test was performed.
 - Reviewed available final release/Settings captures and source/fixture renders for Home, Details, List, Network, Rows and playback surfaces. Source review covered changes not exercised with real media. See the UI audit for limitations.
 
-No physical Nvidia Shield, personal NAS/WebDAV endpoint, Ireland provider-account session or real user library was available. Test fixture titles/artwork are test-only and are not shipped as fake library data.
+No physical Nvidia Shield, personal NAS/WebDAV endpoint, regional provider-account session or real user library was available. Test fixture titles/artwork are test-only and are not shipped as fake library data.
 
 ## NOT TESTED — USER QA REQUIRED
 
@@ -119,7 +119,7 @@ No physical Nvidia Shield, personal NAS/WebDAV endpoint, Ireland provider-accoun
 2. Cold/warm Shield startup composition, populated Featured artwork and title transitions; official-logo availability on actual titles and cached loading/HUD reuse; no flash on first frame/return.
 3. Automatic WebDAV: check startup/interval Settings, add a real file, wait one configured interval while foreground, cold restart and offline recovery. Verify import and Home Recently Added. Manual Scan must still work. Saved explicit Off remains Off.
 4. Search Shogun/Shōgun and MobLand against the real indexed library, show/episode results and remote keyboard performance; long/large-library searches.
-5. Ireland provider choices after Back, restart and country round-trip; actual TMDb season/title offers, artwork, provider app/browser/JustWatch handoff.
+5. regional provider choices after Back, restart and country round-trip; actual TMDb season/title offers, artwork, provider app/browser/JustWatch handoff.
 6. Full D-pad flow through compact Rows, confirmation Clear/Cancel, Details Actions/Information, real file browsers, contextual Settings and list separators. Hiding must retain membership; Clear must remove membership only.
 7. Real audio/subtitle track names and live changes, speed/delay panels, anchors/Back focus, current/end clock, Up Next near completion, recap skip and Continue Watching after next episode. Preserve all PASSED baseline behaviour.
 8. Actual SAF backup to each used provider, file-manager naming while writing, restore to a fresh/second installation, credentials/history/rows/provider recovery, Android grant renewal, offline artwork retry and interrupted/failing restore recovery. Keep an independent existing backup until accepted.

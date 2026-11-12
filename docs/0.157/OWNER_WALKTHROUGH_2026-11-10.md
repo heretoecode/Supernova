@@ -63,14 +63,14 @@ This handover is **discussion-only**. Reported observations are not independentl
 
 - Startup, loading, initial focus, resume from standby and app-switching remain **walkthrough checks**, not new confirmed defects.
 
-### Startup and resume walkthrough — 10 November 2026, approximately 00:53 Ireland time
+### Startup and resume walkthrough — 10 November 2026, approximately 00:53 local time
 
 - USER TEST METHOD: Repeatedly navigated to Movies, TV Shows, custom Documentaries, Search, Settings and Network & Files; returned to the Shield home screen and relaunched Supernova via its launcher icon; also switched to Google Play Store and back using the Shield's app-switching option. The exact app lifecycle state (fresh process start versus resumed existing activity) was not verified.
 - OBSERVED: Splash screen appeared on some returns but not others. The app sometimes displayed Home instead of the previously viewed page; at other times the last Library page was restored. This inconsistency is not proof that a fresh launch should always restore the last page; expected startup/resume policy needs confirmation.
 - OBSERVED: In one Settings test, Home content loaded while the top navigation still highlighted Settings. In Search tests, Home or the previously visited TV Shows page loaded while the Search tab remained highlighted.
 - OBSERVED: Later Search and Settings tests after visiting Network & Files repeatedly returned to Network & Files with no visible focus anywhere, even though the user had left the app from Search, Settings or Settings > Library & Home.
 - OBSERVED: Movies, TV Shows and Documentaries generally restored their own page after minimise/relaunch; Movies could lose top-navigation focus. Switching directly to Google Play Store and back preserved Settings and Search correctly in the user's final tests.
-- INVESTIGATE: Correlate diagnostic timestamps around 00:53 on 10 November 2026 (Ireland local time) with activity/process lifecycle, restored navigation state, page-content selection, top-navigation selected state and remote focus ownership. Compare Shield launcher relaunch with task/app switching; capture the actual sequence before inferring root cause. Diagnostic export has not yet been supplied.
+- INVESTIGATE: Correlate diagnostic timestamps around 00:53 on 10 November 2026 (local time) with activity/process lifecycle, restored navigation state, page-content selection, top-navigation selected state and remote focus ownership. Compare Shield launcher relaunch with task/app switching; capture the actual sequence before inferring root cause. Diagnostic export has not yet been supplied.
 - STATUS: Navigation memory and app-switching walkthroughs covered, but restoration and focus issues remain unresolved; actual device standby behaviour not separately tested.
 
 ## 03. Home
@@ -225,7 +225,7 @@ This handover is **discussion-only**. Reported observations are not independentl
 
 - PROPOSAL: offer quick Fix Match from Details/Library, and potentially a full-screen investigation flow from Files/Library Health. Verify redesigned Files capabilities before choosing a shared flow.
 
-### Top-navigation fade and custom Library-page focus — 9 November 2026, ~21:30–21:33 Ireland time
+### Top-navigation fade and custom Library-page focus — 9 November 2026, ~21:30–21:33 local time
 
 - OBSERVED / EXPECTED: Content should scroll behind the top navigation bar with a subtle fade/blur, and the effect should clear once content is no longer beneath it.
 - BUG OBSERVED: Movies and TV Shows retain some blur after returning to the top, potentially delayed. User-created Documentaries additionally shows a solid horizontal bar beneath navigation.
@@ -235,7 +235,7 @@ This handover is **discussion-only**. Reported observations are not independentl
 - OBSERVED RECOVERY: After Documentaries → Home loses visible focus, pressing Down restores visible focus to Home.
 - CLAUDE INVESTIGATION: Inspect focus ownership, navigation focus restoration, custom-page teardown and transition timing, including why only navigation destinations Home/Movies/TV Shows lose the indicator. Reproduce on current build and correlate with diagnostics if supplied.
 - SEPARATE OPEN DESIGN QUESTION: In the upcoming renamed/redesigned Files page, decide where focus should land after navigating from the top bar; do not assume today's Network & Files first-tile behaviour is approved for the redesign.
-- DIAGNOSTICS: User reports occurrence approximately 21:30–21:33, 9 November 2026 (Ireland local time). Diagnostic export was mentioned but has not been supplied in this chat.
+- DIAGNOSTICS: User reports occurrence approximately 21:30–21:33, 9 November 2026 (local time). Diagnostic export was mentioned but has not been supplied in this chat.
 - STATUS: Discussion/investigation only; no implementation or GitHub changes authorised.
 
 ## 05. Files — sources, scanning and transfers
@@ -474,7 +474,7 @@ This handover is **discussion-only**. Reported observations are not independentl
 
 - OBSERVED: Content and selected tab can disagree after return to Supernova: Settings or Search remains highlighted while Home or TV Shows is displayed. After using Network & Files, the app may reopen on that page regardless of the last selected Search/Settings screen, with no visible focus. On Network & Files, pressing Down can restore focus to Home while Files content remains visible.
 - CONTRAST: Returning from Movies, TV Shows and Documentaries generally preserves page content; direct Shield app switching preserved Search and Settings in the final tests. This suggests multiple return paths to compare, not a confirmed lifecycle cause.
-- INVESTIGATE: Single source of truth for active page and selected navigation item, restoration ordering, focus hand-off, task resumption and recreation; compare with earlier Documentaries-to-other-page focus loss. Diagnostics window approximately 00:53 Ireland time, 10 November 2026. User has not yet provided the diagnostic report.
+- INVESTIGATE: Single source of truth for active page and selected navigation item, restoration ordering, focus hand-off, task resumption and recreation; compare with earlier Documentaries-to-other-page focus loss. Diagnostics window approximately 00:53 local time, 10 November 2026. User has not yet provided the diagnostic report.
 - STATUS: Observed and repeatedly tested by user; not independently reproduced or fixed.
 
 ## 11. Documentation and development workflow
@@ -500,7 +500,7 @@ This handover is **discussion-only**. Reported observations are not independentl
 - OBSERVED / PUT.IO PAUSE: Same title on put.io, sought to about 17:18 and playing at 17:25, paused at approximately 01:09. At approximately 01:11, first attempt to resume returned to Details instead; user could not confirm which remote button was pressed, so input error is possible. Restarted playback, sought to about 18:30 and paused again. On a later confirmed Play press (approximately 01:12), a brief visual glitch occurred, but playback resumed and audio remained in sync during subsequent viewing. A prior audio desynchronisation after a long pause was reported historically, NOT reproduced in this test.
 - INVESTIGATE: Playback lifecycle and pause duration, put.io buffering/stream reinitialisation, decoder/timestamp handling, AV sync, player-to-Details navigation and remote input events. Correlate actual diagnostic records; do not claim cause from observations alone. Diagnostic export not yet provided.
 
-### Diagnostic timestamp index — user-reported local times (Ireland)
+### Diagnostic timestamp index — user-reported local times (local)
 
 | Date | Approximate time | What Claude should inspect |
 | --- | --- | --- |
@@ -514,7 +514,7 @@ This handover is **discussion-only**. Reported observations are not independentl
 | 10 Nov 2026 | 01:09–01:12 | put.io pause, unexpected return to Details, second resume with visual glitch but synchronised audio |
 | 10 Nov 2026 | Time not supplied, after the 01:09–01:12 tests | Rapid Home hero navigation: right preview thinner during sustained Right, left preview thinner during sustained Left; no major slowdown. Correlate only if log timing can be established |
 
-- All times are user-reported Ireland local times (GMT/UTC on these November dates), approximate unless stated; verify diagnostic log timezone and clock alignment. Events may not all be retained in available logs. Correlate only after user supplies diagnostic export. This index is for investigation, not evidence that logs already prove a defect.
+- All times are user-reported local time (GMT/UTC on these November dates), approximate unless stated; verify diagnostic log timezone and clock alignment. Events may not all be retained in available logs. Correlate only after user supplies diagnostic export. This index is for investigation, not evidence that logs already prove a defect.
 
 ### Evidence, questions and next steps for Claude
 

@@ -6,7 +6,7 @@
 - Multiple files were removed independently from the WebDAV service several days before 2026-10-27.
 - They no longer exist on WebDAV but still appear in Supernova's library.
 - Selecting **Delete** in Supernova displays a deletion-failed error; stale entries remain.
-- User attempted deletion at about 21:47 Ireland local time on 2026-10-27; supplied diagnostic archive `Supernova Diagnostics - 2026-10-27 21-48-16-706.zip`.
+- User attempted deletion at about 21:47 local time on 2026-10-27; supplied diagnostic archive `Supernova Diagnostics - 2026-10-27 21-48-16-706.zip`.
 - The diagnostic coverage is partial; no deletion-specific exception was established. Earlier repeated scan failures were **not proven** to belong to WebDAV.
 
 ## Codex work — investigate, implement and test

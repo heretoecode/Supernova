@@ -40,7 +40,7 @@ Date: 2026-10-12. Status: owner-reported runtime observations and owner-approved
 - Continue Watching absent despite resume state visible in Dune Details; investigate independently.
 
 ## Critical playback failure
-- Dune: Part Two and Tulsa King attempted ~13:30–13:31 Dublin time; “Preparing playback” then returned to Details, playback never starts. Owner called crash; process crash not verified. Release-blocking candidate, root cause unknown. Await diagnostic ZIP **at end of walkthrough**, do not repeatedly request it or interrupt QA. Preserve user data and update path.
+- Dune: Part Two and Tulsa King attempted ~13:30–13:31 local time; “Preparing playback” then returned to Details, playback never starts. Owner called crash; process crash not verified. Release-blocking candidate, root cause unknown. Await diagnostic ZIP **at end of walkthrough**, do not repeatedly request it or interrupt QA. Preserve user data and update path.
 
 ## Release/process boundaries
 - 0.138 signed QA installed over 0.137; onboarding deferred until future clean-install test.

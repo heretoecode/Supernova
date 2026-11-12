@@ -24,7 +24,7 @@ Same rules as `BRIEF_0157.md`: branch `codex/0157-2026-11-06`, non-visual work o
    (`docs/REVISIT_LATER.md` has the note).
 8. **Sleep timer and Still watching? logic:** stop-at clock times that move with the clock (Off · now+30 · now+60 ·
    now+90 · end of episode); Still watching? able to count time untouched as well as episodes. Claude draws the rows.
-9. **Put.io pause test:** when the owner's 0.156 diagnostics report arrives, read around 17:51–17:55 UK time on
+9. **Put.io pause test:** when the owner's 0.156 diagnostics report arrives, read around 17:51–17:55 local time on
    6 Nov (MobLand on Put.io paused a few minutes, then resumed) and report what happened.
 10. **Leftovers:** item 15 (Marshals production company: find the real cause) and item 20 (seek loading: make it
     ready for Shield acceptance once Claude draws the spinner).

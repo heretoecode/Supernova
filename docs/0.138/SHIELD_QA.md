@@ -40,7 +40,7 @@ The exact branch was added to the existing signing allowlist with the user's app
 
 ## Historical diagnostic investigations
 
-The 23:22 blind event needs its authorised exported log, including date/timezone/clock source and a window before/after. Present log-supported findings before asking the user what happened. The licence event was reported at 02:36 Ireland local time on 2026-10-12; do not assume its root cause from a recording or from the bounded reader fix. Neither export was supplied or read here. These investigations remain UNKNOWN; do not put raw diagnostics/media in this PR or a source bundle.
+The 23:22 blind event needs its authorised exported log, including date/timezone/clock source and a window before/after. Present log-supported findings before asking the user what happened. The licence event was reported at 02:36 local time on 2026-10-12; do not assume its root cause from a recording or from the bounded reader fix. Neither export was supplied or read here. These investigations remain UNKNOWN; do not put raw diagnostics/media in this PR or a source bundle.
 
 ## Parked discussions
 

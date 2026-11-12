@@ -41,7 +41,7 @@ Known limitations / NOT TESTED — USER QA REQUIRED:
 - Physical Shield install-over with the user's database, full D-pad behaviour, populated startup/Featured/logo transitions, playback first-frame/return flashing and device-specific A/V output.
 - Automatic WebDAV with the actual source/preferences, foreground interval/restart/offline recovery and Recently Added. Findings are code-grounded; the persistent Shield failure is not claimed physically verified. Check Settings if an explicit Off value was previously saved.
 - Actual indexed Shōgun/MobLand Search and large-library query responsiveness. Hidden/excluded titles still obey existing filters.
-- Ireland provider availability, empty season responses, real provider apps/browser handoff and account expiry. No confirmed offer is fabricated from a series-level guess.
+- regional provider availability, empty season responses, real provider apps/browser handoff and account expiry. No confirmed offer is fabricated from a series-level guess.
 - Genuine PNG logo availability; first uncached direct playback uses text. Some optional classic/native/system UI remains, documented in the audit.
 - Real backup/SAF providers and fresh-device restoration, source paths/Android grant renewal, credential/token validity and artwork retry. Backups contain private credentials and are not strongly encrypted. Providers without rename support retain a verified in-progress filename with a manual-rename message.
 - PASSED 4.1 journey/bookmark/Up Next/Back functionality deliberately preserved; must be checked on installed Shield update. No 4.2 features, analytics or unsupported playback functionality added.

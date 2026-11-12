@@ -11,7 +11,7 @@
 - **Status:** approved for next fixes-only release; **not yet implemented or device retested**.
 
 ## QA-NEW-02 — Playback unexpectedly re-enters Preparing Playback
-- **Evidence:** user observation of MobLand Season 2 Episode 4 at approximately 02:32 Dublin local time (incident timestamp not yet independently verified).
+- **Evidence:** user observation of MobLand Season 2 Episode 4 at approximately 02:32 local time (incident timestamp not yet independently verified).
 - **Observed:** video was playing, then returned unexpectedly to Preparing Playback.
 - **Needs:** user diagnostic ZIP; correlate lifecycle/player recreation, media-source/network interruptions, decoder, memory, retries, and app state. **No root cause established.**
 - **Status:** pending diagnostic export and investigation. Remind user conversationally before next Codex handover; **no scheduled reminder**.

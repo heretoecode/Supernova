@@ -16,7 +16,7 @@
 
 **Absolute exclusions:** never export usernames, passwords, session cookies, API/OAuth/access/refresh tokens, authentication headers, signing/security keys or secret-bearing URIs; sanitise exception messages and URLs. Single-user test environment permits detailed non-secret technical events, not credential leakage.
 
-**First regression scenario:** MobLand Season 2 Episode 4, ~02:32 Dublin local time on 9 October 2026 (date/time to confirm from report); while playing, returned unexpectedly to **Preparing Playback**. Await user's exported diagnostic ZIP before asserting root cause. Correlate events within a time window before/after with player state, activity lifecycle, decoder errors, source/network interruptions, memory pressure and reprepare reasons. Keep as **unverified observed incident**; no inferred fix.
+**First regression scenario:** MobLand Season 2 Episode 4, ~02:32 local time on 9 October 2026 (date/time to confirm from report); while playing, returned unexpectedly to **Preparing Playback**. Await user's exported diagnostic ZIP before asserting root cause. Correlate events within a time window before/after with player state, activity lifecycle, decoder errors, source/network interruptions, memory pressure and reprepare reasons. Keep as **unverified observed incident**; no inferred fix.
 
 **Acceptance evidence:** reproduced/fault-injected traces demonstrate causal sequence; toggle OFF/ON and ZIP export work; bounded log overhead; exported sample scrubbed for secrets. Tests are implementation checks, not new product decisions.
 

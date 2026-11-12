@@ -819,3 +819,10 @@ right never limits the count.
   ones in every mock-up script, the re-drawn pictures and one test; the owner's email removed from four old signing
   logs (it was the signing certificate's contact field). Older commits still contain them until history is rewritten
   or the repository is made private: owner to decide. Rule added to CLAUDE.md.
+- **Privacy, continued (owner, 12 Nov 2026):** location references removed from the current documents (24 files,
+  including old planning notes and the signing logs' certificate fields). Not yet done: (a) film and series titles
+  in notes and mock-ups (they are in hundreds of places and identify the bugs); the owner leans towards making the
+  repository private, which covers them; scrub before any return to public; (b) the app's default Where to Watch
+  country is hard-coded in the code: change to the device's region in 0.157; (c) old commits still hold everything.
+  The owner may release the app publicly one day: keep a "going public" checklist (history, titles, certificate
+  contact, licence notices).

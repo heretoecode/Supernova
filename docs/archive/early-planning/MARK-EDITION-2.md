@@ -15,7 +15,7 @@ Version: **6.4.63-mark.2**, version code **6040064**. Based on NOVA 6.4.63.
 ## Getting started
 
 1. Open **Preferences → Streaming services**.
-2. Choose **Country** (Ireland is the initial default), then **My providers** and optionally **Preferred provider**.
+2. Choose **Country** (the owner's country is the initial default), then **My providers** and optionally **Preferred provider**.
 3. Open a scraped film or TV title. Use local playback, the available provider action, or **More providers**.
 4. Select **Documentaries** in the left navigation for documentary TV shows.
 
