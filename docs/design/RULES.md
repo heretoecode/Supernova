@@ -77,7 +77,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Every section heading has an icon**, then the heading in white, 32 px, medium weight (§26).
 - **A heading sits closer to its own content than to what is above it:** about 26 px below, 64 px above. Sections
   are separated by that gap, **never by a line**.
-- **Lines only between rows you can select**, never under the last row. Plain information (tips, read-only facts)
+- **Lines only between rows you can select**, never under the last row. Exception (owner, 12 Nov): long read-only lists
+  of facts (the Details tab) get faint row lines, no column lines. Plain information (tips, read-only facts)
   has no lines (§26). Lines are faint (Search and Files: about 8% white on charcoal).
 - On Details' read-only columns, column dividers and row separators are visible but quiet (see Open questions).
 - Headings line up with everything else; a focused heading never sticks out to the left (§1 round 5).
@@ -153,7 +154,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Every item has its own icon; no two alike in one menu**; opposites get mirrored icons (A–Z / Z–A) (§15).
 - **The current choice is a tick on the right.**
 - **Only as wide as the longest item plus the standard padding** (24 px each side), never a fixed width.
-- No menu title; a single list has no heading. Two or more groups: each group has a heading followed by a thin line
+- No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
+  such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
 - Opens beside the item it belongs to, not in a corner (§19).
 - Never offer what does nothing or makes no sense (no Restart on an unstarted film; no "More info" when OK already
@@ -188,10 +190,11 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   every library page, with a plain white title and grey line underneath.
 - **Heroes:** Home and Details the same size and place, 1776×820, the next row or tabs peeking below; Home has
   carousel dots. Going from a Home hero into Details the card stays exactly where it is (REVIEW_0156 Home).
-- Hero text: description **two lines** on Home and Details; More › Full description opens a pop-up sized to the text.
+- Hero text: description **two lines** on Home and Details; More › Full description opens a pop-up sized to the
+  text, mirroring the hero: title, title line (seasons/episodes), then the text; no icon.
 - **Hero buttons sit in a fixed place at the bottom left** of the hero, whatever the text length (owner, 12 Nov).
-- **Artwork picker by place:** Hero · Rows · Library page (backdrops; Rows starts with "Same as hero"; posters for
-  Library page); a side panel sliding in from the right, the hero previewing the picture you are on.
+- **Artwork picker by place:** Hero and rows · Library page (one backdrop for hero and rows; posters for library
+  pages); no title; a side panel sliding in from the right, the hero previewing the picture you are on.
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
 
 ## 14b. Details pages (all four kinds)

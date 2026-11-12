@@ -929,3 +929,7 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   Library page** (backdrops for Hero and Rows, Rows first offers "Same as hero"; posters for Library page), as a side
   panel sliding in from the right with the hero previewing. Open: line structure on the Details tab
   (`details-background/18`: none / row lines / row and column lines). Mock-ups `details-background/15`–`20`.
+- **Details re-tick done (owner, 12 Nov 2026).** Final changes: Details tab uses **faint row lines** (middle version of
+  `details-background/18`; no column lines); Full description pop-up mirrors the hero, no icon: title, then the title
+  line (seasons/episodes), then the text; artwork picker **Choose for: Hero and rows · Library page** (one picture for
+  hero and rows, posters for library pages); the picker has **no title** (opened from a named item).
