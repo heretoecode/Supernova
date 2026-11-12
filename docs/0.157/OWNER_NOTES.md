@@ -876,3 +876,28 @@ Replaces the heading wording in §22 and §23.1. Approved by the owner.
   screen. When coding starts, one sweep finds and removes them all (each with a build and tests), beyond the SAFE
   clean-out list; anything not obviously dead is listed for the owner first. In `docs/design/RULES.md` §3.
 - The four open questions in RULES.md are answered when the related mock-ups are made, not now (owner).
+
+## 28. Files — re-tick done (owner, 12 Nov 2026; mock-ups `network-files-tabs/33`–`41`)
+The approved Files design (§16) with every rule in `docs/design/RULES.md` applied, plus the new pieces. **Done.**
+- **Top bar:** Files stays on the right. One signal slot on its left: scan ring while scanning, else a white dot when
+  something needs attention, else nothing.
+- **Tab row, right side:** the open tab's facts ("1,808 Videos · 9 To Check"), ending with "⟳ 12 min ago" — the scan
+  control on every Files tab (Right from the last tab; OK = Scan now, Stop while scanning). While a scan runs it reads
+  "Scanning Put.io · 42%". No separator between tabs and facts: the guaranteed gap and the dots do it.
+- **Library Care:** first section renamed **"To check"** (matches the summary and the badge), with about 48 px under
+  the tab line. Rows: Missing files, Couldn't be read, Not matched, **Check matches** (new). The badge and "To check"
+  count everything waiting (problems plus suggested changes). Section **Scanning:** Scan one source (the focused row
+  shows one button per source), then Recent scans as approved (last three, Show all scans). The old Scan now row goes.
+- **Check matches:** results page (breadcrumb "Check matches"); each row old → new with the reason and a Movie / TV show
+  pill; focused row Accept · Keep current · Fix match; "Accept all" as plain words on the heading; "Left alone" lists
+  titles fixed by hand, which checks never change.
+- **Transfers (fourth tab):** Copying now (progress, Pause · Cancel), Waiting (gives way to network playback),
+  Finished ("Copied and checked"), Where copies go: two rows **Movies** and **TV Shows**, each opening the folder
+  picker; "Remove the network copy" switch, off by default.
+- **Folder picker (one for the whole app:** copy folders, fonts folder, diagnostics export): heading states the task
+  ("Choose a folder for Movies"), one breadcrumb for the location; "Current" pill; focused folder Use this folder ·
+  Open; New folder at the bottom.
+- **Delete:** one warning in Supernova's design, left-aligned; two switches, off by default: Remove from Supernova
+  history, Remove from Trakt history (only when Trakt is connected; Trakt must not re-add what was removed);
+  focus starts on Keep file. Approved ("I like having options for things rather than just standard answers").
+- Wording: Movies / TV Shows as in the top bar (pills "Movie" / "TV show").

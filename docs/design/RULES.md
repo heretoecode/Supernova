@@ -112,6 +112,19 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Instant actions with an **Undo** notice instead of "are you sure?" where the action can be undone. Real deletions:
   one clear warning in Supernova's own design (§23.5).
 
+## 7b. Pickers, warnings and options
+- **One folder picker for the whole app** (Files browser in picking mode): the heading states the task ("Choose a
+  folder for Movies"), one breadcrumb shows the location; "Current" marks the folder in use; the focused folder offers
+  Use this folder · Open; New folder at the bottom (§28).
+- **Warnings:** left-aligned (heading, name, text, options, buttons); the safe choice has focus first ("Keep file").
+- **Offer real options, not just yes/no** (owner, 12 Nov): e.g. Delete has switches for Supernova history and Trakt
+  history, off by default.
+- **Badges and counts agree:** a tab's badge, its summary fact and its rows use the same number and words (§28).
+- **Tab row facts:** the right of a tab row shows the open tab's facts, dot-separated; on Files it ends with the scan
+  control. No line between tabs and facts; a guaranteed gap instead.
+- The first heading under a tab row sits about 48 px below the line, so it reads as the page, not part of the tabs.
+  A heading never repeats the tab's own name.
+
 ## 8. Choices and settings
 - **One setting is one row.** Up/Down moves between settings; Left/Right goes through its choices. Chips never wrap
   and a setting is never split across two rows (REVIEW_0156 ideas).
