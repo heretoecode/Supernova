@@ -804,3 +804,14 @@ right never limits the count.
 - **Media Transfers versions — decided (owner, 12 Nov 2026):** **0.157:** copy (folders, space check, Transfers page,
   verification, same title), resilience, and delete-after-verified-copy (off by default). **0.158:** the per-series
   "Bring new episodes" switch **and the schedule (the owner does want it)**.
+- **12 Nov, more answers:** coding start: on hold while the owner decides about Codex. Re-check of matches: approved as
+  proposed. Smarter hero backdrops (calmer/darker pick; hero and rows may use different artwork): simple first version
+  in 0.157; test titles from the walk-through (Heart of the Beast, Mr. Robot, High Potential, Michael, Practical Magic
+  2). "Still watching?": offer both episodes and time. JustWatch row: plain credit line, nothing to click. Bring `main`
+  up to date with 0.156 when coding starts.
+- The dead WebDAV connection / missing files: the owner deleted watched files on the Put.io website because deleting
+  in the app was awkward. The library should notice files removed elsewhere at the next scan and tidy them away
+  (keeping watched history) without errors.
+- **Releases page (owner wants one, private):** GitHub Releases can hold each version's notes and signed APK.
+  **Found 12 Nov: the repository is public** (and is a GitHub fork of `nova-video-player/aos-Video`, which GitHub does
+  not allow to be made private directly). Options put to the owner; decision needed before publishing any release.
