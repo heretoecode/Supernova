@@ -90,6 +90,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Standard wording (use it everywhere the same thing appears):**
   - Play / "Resume S1 E1 · 16 min left" (Details hero, §3). Short form on pills: "Resume S5 E3" (§26).
   - "Watched", "Unwatched" for state.
+  - **Movies and TV Shows, as in the top bar** (owner, 12 Nov): never "film", "series" or "TV series" in labels, pills
+    or headings (e.g. pills "Movie" / "TV show", folders "Movies" / "TV Shows").
   - "Fix match" (not "Report Incorrect Match"), "Clear history", "Show all …".
   - Streaming: "Stream more from the world of X" (fiction), "Stream more related to X" (non-fiction), "Stream more
     from <person>" (§26). Never "similar" in Search.
