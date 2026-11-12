@@ -854,3 +854,5 @@ Replaces the heading wording in §22 and §23.1. Approved by the owner.
 - **Library pills show where you are, in the Details wording:** "Resume S5 E3", "Watched", "Unwatched" (no "In
   library"). OK on a library result opens its Details page.
 - Focus: on a results screen the remote is on a result; the keyboard shows no focus.
+- **Heading spacing (owner, same day; app-wide rule in CLAUDE.md):** more space between a heading and its results, so
+  the heading reads as a heading, not part of the list: about 26 px below a heading, 64 px above it.

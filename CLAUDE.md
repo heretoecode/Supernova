@@ -76,6 +76,10 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   - **Text on the page (owner, 7 Nov 2026):** label/value pairs everywhere use soft near-white labels (`#C9D3E6`) and
     pure white, bolder values; "Unknown" stays quieter. Difference by weight, not dimness. Mock-up
     `details-background/08-v17-details-tab`.
+  - **Sections and headings (owner, 12 Nov 2026):** every section heading has an icon. A heading sits clearly closer to
+    its own content than to the section above (about 26 px below it, 64 px above it at 1080p), so it reads as a heading,
+    not as part of the list. Sections are split by that gap, never by a line. Lines go only between rows you can select,
+    never under the last row; plain information has no lines. Mock-up `search-flat/17`–`21`.
   - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
   - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
     carousel dots. Tabs follow the focus-and-path rule above.
