@@ -75,7 +75,7 @@ and how the owner works. **If you are new: read this file, then the "Start here"
     `details-background/08-v17-details-tab`.
   - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
   - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
-    carousel dots. Tabs follow the focus-and-path rule below.
+    carousel dots. Tabs follow the focus-and-path rule above.
   - Missing information says "Unknown"; rows are never removed.
 
 ## Who does what
