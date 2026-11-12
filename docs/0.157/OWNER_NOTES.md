@@ -744,3 +744,29 @@ right never limits the count.
     the world of Yellowstone / Terminator / Dune / Dexter). Person searches keep "More from <person> on your services".
   - Tab style (chip vs underline) and Home row text (inside vs below the picture): both to be mocked up and decided
     then.
+
+## 23. Quick decisions (owner, 12 Nov 2026)
+1. Search headings: "From the world of …" (fiction), "Related to …" (non-fiction), "More from …" (people), under one
+   "On your services" label.
+2. When Android has ended the app, it reopens on the page you were on with focus restored; a first launch after a
+   reboot opens Home.
+3. Back in the middle of a library page: first Back jumps to the top (focus on the first poster); second Back goes to
+   the top bar.
+4. No automatic scan within 15 minutes of the last one finishing; one scan at a time; Scan now always allowed.
+5. Deleting a file: one clear warning in Supernova's own design; **no Android screens** in the flow. (The app does not
+   hold "All files access", so Android 11 forces its own consent screen for local files; Claude proposes asking for
+   All files access once so deletes, and the folder pickers, stay inside Supernova. Awaiting the owner's yes.)
+6. **Continue Watching:** a title you have started leaves Recently Added (owner believes this was the behaviour
+   already: treat as a bug). Promote promptly, most recent first.
+7. One "Release date" sort everywhere (air date for series); the separate Year sort goes.
+8. Hide Watched setting replaced by a filter on each library page (All · Unwatched · In progress · Watched) and a small
+   tick on watched posters.
+9. Service logos in full colour app-wide.
+10. Diagnostics kept 2 weeks by default (1 / 2 / 4); export folder chosen once, then reused.
+12. Documentation website parked.
+13. **Legacy clean-out approved for the SAFE list only** (includes removing NOVA's hidden grid).
+15. Media Transfers: wanted; stages to be agreed (Claude's proposal 12 Nov: copy → destinations and resilience →
+    schedule → move → automation).
+- Note: "Rescrape all / all movies / all collections" still exist in the code but are not shown in 0.156 Settings
+  (they were to become "Refresh details" in Library Health). Any re-check of matches must show changes first and
+  protect manual fixes.
