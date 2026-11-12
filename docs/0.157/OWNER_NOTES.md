@@ -788,3 +788,10 @@ right never limits the count.
   series is flagged; whenever a scan finds a new episode of it on any connection, it is copied, verified, then (if
   chosen) the network copy is deleted. It follows the series, not a folder, so it works when nothing is left on the
   network. The Transfers page lists the series that have it on.
+- **Media Transfers, revised stages (owner, 12 Nov):** default folders and the free-space check belong in stage 1.
+  1 Copy: choose/default destination folders (films, series), space check, Transfers page, verification, same-title
+  identity (~50%); 2 Resilience: carry on after restart / power cut / dropped connection, resume part-copied files,
+  start from Details and long-press as well as Files (~15%); 3 Schedule (~10%); 4 Move (~10%); 5 Per-series
+  "bring new episodes" with a way to switch it off from Details › More and from the Transfers page (~15%).
+  Sleep: the owner has run a Plex server on this Shield while it slept, so background work is known to be possible;
+  still verify early.
