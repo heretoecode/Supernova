@@ -736,3 +736,11 @@ right never limits the count.
   engine/data jobs too until the owner says Codex is back (briefs D and any "for Codex" items become Claude's).
   Fix match: Claude proposes one Fix match page everywhere (library long-press, Details › More, Files › Library Care)
   and retiring the 0.156 side panel; waiting for the owner's yes.
+- **Decided (owner, 12 Nov 2026):**
+  - **One Fix match, on Files.** Fix match from anywhere (library long-press, Details › More) takes you to Files ›
+    Library Care, straight to the Fix match page for that title; Back returns to where you came from. The 0.156
+    Fix match side panel is retired ("no point having two things that do the same").
+  - **Search heading for related streaming titles: "From the world of <title>"** (works for films and series: From
+    the world of Yellowstone / Terminator / Dune / Dexter). Person searches keep "More from <person> on your services".
+  - Tab style (chip vs underline) and Home row text (inside vs below the picture): both to be mocked up and decided
+    then.
