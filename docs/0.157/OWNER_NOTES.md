@@ -970,3 +970,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   uses that same layout inside it, centred over the dot; seek dot 50% larger. **Menu and panel group headings
   everywhere: centred on their line, Title Case, a little larger** (Playback Settings, More menu, long-press…).
   Mock-ups get a light frame so their edge shows.
+- **Player v8–v9 (owner, 12 Nov 2026):** bar-to-tabs gap doubled (approved). Playback tab's "Playback" section renamed
+  **"While Watching"** for now (heading must not repeat the tab name). "For This Series" kept on Subtitles and Audio (acts
+  like a save button). Proposed, awaiting the owner: Playback tab with **no section headings** (one plain list, since
+  Picture held one row) and a save row "Use this format and skipping for all of <show>"; **title block at the top left,
+  level with the clock**, with the age rating's reasons beside the badge at the start (fading after 8 s) and Preparing
+  playback moving to match (`player/21`, `22`).
