@@ -104,7 +104,8 @@ body>.cards{position:absolute;left:96px;top:856px}
 .cards{display:flex;gap:26px}.card{width:400px;height:225px;border-radius:16px;flex:none;
 box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px 4px rgba(0,0,0,.45)}
 .card.grow{width:440px;height:248px;margin-top:-12px;box-shadow:0 0 0 5px #fff,inset 0 0 18px 4px rgba(0,0,0,.45),0 14px 34px rgba(0,0,0,.55)}
-.dpage{position:absolute;left:96px;right:96px;top:700px}`;
+.dpage{position:absolute;left:96px;right:96px;top:700px}
+.dpage .cards{margin-top:34px}`;
 (async () => {
   const browser = await chromium.launch();
   const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });

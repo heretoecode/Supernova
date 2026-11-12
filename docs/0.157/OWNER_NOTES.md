@@ -835,3 +835,6 @@ right never limits the count.
   after a short pause, so a row's box always sits on its open item. Never more than three levels on screen.
 - A written breadcrumb under the top bar on deeper pages ("Movies › Marshals") remains an option alongside.
 - Replaces both the grey-chip and the plain-underline tab mock-ups (`tab-style/01–07`).
+- **§25 approved (owner, 12 Nov 2026):** read correctly from the pictures alone. Focused artwork: solid thick white ring
+  plus grow, with room around it. Recorded as app-wide rules in CLAUDE.md "Global look" (replaces the grey-chip tabs
+  and "focus = grows only").

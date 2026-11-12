@@ -62,14 +62,20 @@ and how the owner works. **If you are new: read this file, then the "Start here"
     (Home and Details), every row card (Home, Details tabs: Seasons & Episodes, Extras, More Like This), the player's
     Chapters/Episodes strip and library-page posters — has one thin white line exactly on its edge (about 60%) with a
     soft inner shade just inside it, so the edge shows on light and dark artwork alike. Every item has the edge all the
-    time; **focus = the item grows** (as library pages do today). Mock-up `details-background/07-v17-top`. No blue
-    caption bars.
+    time. **Focused artwork grows and gets a solid, thick white ring** (owner, 12 Nov 2026), with space around it so
+    the grown card never crowds a line or heading. Hero cards show focus on their first button instead. Mock-ups
+    `details-background/07-v17-top`, `tab-style/15-v3`. No blue caption bars.
+  - **Focus and path (owner, 12 Nov 2026), everywhere incl. top bar and tabs:** white box with black text and icon =
+    where the remote is; bright white underline = the step you just came from; dull underline = everything else on
+    your path, including the open tab ahead of the remote. Moving along tabs switches the page; the top bar switches
+    after a short pause. Mock-ups `tab-style/08`–`15` (v3). Focus mock-ups are checked by the owner reading them
+    without captions.
   - **Text on the page (owner, 7 Nov 2026):** label/value pairs everywhere use soft near-white labels (`#C9D3E6`) and
     pure white, bolder values; "Unknown" stays quieter. Difference by weight, not dimness. Mock-up
     `details-background/08-v17-details-tab`.
   - One row card size everywhere (16:9, 400×225 px at 1080p; focused 440×248).
   - Home and Details heroes the same size (1776×820 at 1080p), with the next row or tabs peeking below; Home has
-    carousel dots. Tabs: the open one in a grey chip, the focused one filled white.
+    carousel dots. Tabs follow the focus-and-path rule below.
   - Missing information says "Unknown"; rows are never removed.
 
 ## Who does what
