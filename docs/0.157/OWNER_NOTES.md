@@ -801,3 +801,6 @@ right never limits the count.
   (per-series switch, one item in Details › More that reads "Bring new episodes to this Shield" / "Stop bringing new
   episodes") and stage 3 (schedule, only if wanted; transfers already give way to network playback). Needs mock-ups
   (Transfers page, per-title action); likely a fourth Files tab.
+- **Media Transfers versions — decided (owner, 12 Nov 2026):** **0.157:** copy (folders, space check, Transfers page,
+  verification, same title), resilience, and delete-after-verified-copy (off by default). **0.158:** the per-series
+  "Bring new episodes" switch **and the schedule (the owner does want it)**.
