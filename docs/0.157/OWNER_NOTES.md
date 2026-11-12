@@ -826,3 +826,12 @@ right never limits the count.
   country is hard-coded in the code: change to the device's region in 0.157; (c) old commits still hold everything.
   The owner may release the app publicly one day: keep a "going public" checklist (history, titles, certificate
   contact, licence notices).
+
+## 25. Focus and "where am I" — direction (owner, 12 Nov 2026; mock-up next)
+- One brightness scale that follows the path: **white box = where the remote is** (artwork: the card grows);
+  **bright white underline = one step back** (the open tab / page you came through); **dull underline = two steps
+  back**. E.g. Settings: remote on Put.io row → row boxed, Accounts tab bright underline, cog in the top bar dull
+  underline. Applies to the top bar and every set of tabs. Moving along tabs switches the page; the top bar switches
+  after a short pause, so a row's box always sits on its open item. Never more than three levels on screen.
+- A written breadcrumb under the top bar on deeper pages ("Movies › Marshals") remains an option alongside.
+- Replaces both the grey-chip and the plain-underline tab mock-ups (`tab-style/01–07`).
