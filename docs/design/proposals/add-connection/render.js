@@ -59,7 +59,7 @@ const form = state => `${nav}<div class="sheet">${head('globe', `${chip('Network
   ${field('Address', state === 'error' ? 'webdav.put.oi' : 'webdav.put.io', { err: state === 'error', focus: state === 'error' })}
   ${field('Port', '443 · default for HTTPS', { ph: true })}
   ${field('Folder', '/Films', {})}
-  ${field('Username', 'heretostream', {})}
+  ${field('Username', 'yourname', {})}
   ${field('Password', '••••••••••••', { right: `<span class="eye">${ic('eye', 26)}</span>` })}
   <div class="sw">Remember password <span class="tg on"><i></i></span></div>
   <div class="actions">${btn('check', 'Test connection', state === 'form')}${btn('open', 'Save and browse', state === 'ok')}</div></div>

@@ -815,3 +815,7 @@ right never limits the count.
 - **Releases page (owner wants one, private):** GitHub Releases can hold each version's notes and signed APK.
   **Found 12 Nov: the repository is public** (and is a GitHub fork of `nova-video-player/aos-Video`, which GitHub does
   not allow to be made private directly). Options put to the owner; decision needed before publishing any release.
+- **Privacy clean-up (owner, 12 Nov 2026):** the Put.io account name and real storage figures replaced with made-up
+  ones in every mock-up script, the re-drawn pictures and one test; the owner's email removed from four old signing
+  logs (it was the signing certificate's contact field). Older commits still contain them until history is rewritten
+  or the repository is made private: owner to decide. Rule added to CLAUDE.md.

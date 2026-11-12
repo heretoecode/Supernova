@@ -107,7 +107,7 @@ ${kind === 'plain' || kind === 'mosaic' ? `<span class="fic">${icon(I.folder, 30
 
 const shares = (focusIdx) => `${nav}<div class="page">${head('shares', '', [['3', 'connections'], ['2', 'reachable'], ['1,416', 'videos']])}
 <div class="sec">Your connections</div>
-${row('cloud', 'Put.io · heretostream', '98.9 of 107 GB used · synced 3 hours ago', 'up', [['open', 'Open'], ['scan', 'Sync now'], ['test', 'Test']], focusIdx === 0)}
+${row('cloud', 'Put.io · yourname', '42 of 100 GB used · synced 3 hours ago', 'up', [['open', 'Open'], ['scan', 'Sync now'], ['test', 'Test']], focusIdx === 0)}
 ${row('shares', 'Living-room NAS', 'SMB · 512 videos in your library', 'up', [['open', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']], focusIdx === 1)}
 ${row('pc', 'Office PC', 'SFTP · last seen yesterday', 'down', [['test', 'Try again'], ['edit', 'Edit'], ['remove', 'Remove']], focusIdx === 2)}
 <div class="row add ${focusIdx === 3 ? 'focus' : ''}"><span class="ri">${icon(I.plus, 40)}</span><div class="rt"><div class="rn">Add a connection</div>
@@ -134,7 +134,7 @@ const form = `${nav}<div class="page">${head('shares', '', [['3', 'connections']
 ${crumbrow(['New WebDAV connection'])}
 <div class="formgrid"><div class="col">
 ${fieldF('Name', 'Put.io Films')}${fieldF('Address', 'webdav.put.io')}<div class="kv"><span>Encryption (HTTPS)</span><span class="sw on"><i></i></span></div>${fieldF('Port', '443 · the usual port with encryption', true)}
-${fieldF('Folder', '/Films')}${fieldF('Username', 'heretostream<i class="caret"></i>', false, false, true)}${fieldF('Password', '••••••••••••', false, true)}
+${fieldF('Folder', '/Films')}${fieldF('Username', 'yourname<i class="caret"></i>', false, false, true)}${fieldF('Password', '••••••••••••', false, true)}
 <div class="kv"><span>Remember password</span><span class="sw on"><i></i></span></div>
 <div class="btnrow"><span class="b">${icon(I.test, 28)}Test connection</span><span class="b">${icon(I.chev, 28)}Save and browse</span></div>
 </div><div class="col"><div class="kb">${keyrows.map(row => `<div class="krow">${row.map(k => `<span class="key ${k.length > 1 ? 'wide' : ''} ${k === 'n' ? 'focus' : ''}">${k}</span>`).join('')}</div>`).join('')}</div>
@@ -362,7 +362,7 @@ const formRes = (ok) => {
 };
 const removed = P('shares', [['2', 'connections'], ['2', 'reachable'], ['1,416', 'videos']], `<div class="sec first">Your connections</div>
 ${notice('Office PC was removed', 'Its saved address and password are gone. Nothing on the computer was touched.', 'Undo')}
-${lrow('cloud', 'Put.io · heretostream', '98.9 of 107 GB used · synced 3 hours ago', 'Reachable', null, false)}
+${lrow('cloud', 'Put.io · yourname', '42 of 100 GB used · synced 3 hours ago', 'Reachable', null, false)}
 ${lrow('shares', 'Living-room NAS', 'SMB · 512 videos in your library', 'Reachable', [['folder', 'Open'], ['edit', 'Edit'], ['test', 'Test'], ['remove', 'Remove']], true)}`);
 const found = [['pc', 'DESKTOP-7Q', 'Windows computer · SMB', 'New'], ['shares', 'Living-room NAS', 'Synology NAS · SMB', 'Added'], ['pc', 'MacBook', 'Mac · SMB', 'New']];
 const discovery = P('shares', SUM_CONN, `${crumbrow(['Find on my network'])}

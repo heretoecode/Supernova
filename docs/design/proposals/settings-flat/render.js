@@ -124,7 +124,7 @@ ${sw('history', 'Keep viewing history', 'Until you clear it', true, false)}`);
 
 const accounts = page('person', [['check', '2', 'Signed In']], `
 ${sec('Your accounts', true)}
-${pillRow('cloud', 'Put.io', 'heretostream · 98.9 of 107 GB used', 'Signed in', null, false)}
+${pillRow('cloud', 'Put.io', 'yourname · 42 of 100 GB used', 'Signed in', null, false)}
 ${pillRow('trakt', 'Trakt', 'Watched and progress sync · last synced 10 minutes ago', 'Signed in',
   [['sync', 'Sync now'], ['wrench', 'Options'], ['signout', 'Sign out']], true)}
 ${pillRow('subs', 'OpenSubtitles', 'Download subtitles from inside the player', 'Not signed in', null, false)}

@@ -14,7 +14,7 @@ public class PutioServiceRowTest
     private static PutioServiceStatus status(boolean signedIn, boolean reachable, long checked,
                                              PutioServiceStatus.SyncState state, String reason)
     {
-        return new PutioServiceStatus(signedIn, "heretostream", 98_900_000_000L, 107_000_000_000L, reachable,
+        return new PutioServiceStatus(signedIn, "yourname", 42_500_000_000L, 100_000_000_000L, reachable,
                                       checked, state, reason);
     }
 
@@ -22,8 +22,8 @@ public class PutioServiceRowTest
     public void signedInAndUpToDateReadsPlainly()
     {
         PutioServiceStatus s = status(true, true, NOW - 3 * 60_000L, PutioServiceStatus.SyncState.UP_TO_DATE, null);
-        assertEquals("Put.io · heretostream", PutioServiceRow.title(s));
-        assertEquals("98.9 GB of 107 GB used · Library up to date · checked 3 min ago",
+        assertEquals("Put.io · yourname", PutioServiceRow.title(s));
+        assertEquals("42.5 GB of 100 GB used · Library up to date · checked 3 min ago",
                      PutioServiceRow.summary(s, NOW));
         assertFalse(PutioServiceRow.offersRetry(s));
     }
@@ -33,7 +33,7 @@ public class PutioServiceRowTest
     {
         PutioServiceStatus s =
             status(true, true, NOW - 2 * 3_600_000L, PutioServiceStatus.SyncState.FAILED, "Put.io did not answer");
-        assertEquals("98.9 GB of 107 GB used · Library sync failed: Put.io did not answer · checked 2 hours ago",
+        assertEquals("42.5 GB of 100 GB used · Library sync failed: Put.io did not answer · checked 2 hours ago",
                      PutioServiceRow.summary(s, NOW));
         assertTrue(PutioServiceRow.offersRetry(s));
     }
@@ -42,7 +42,7 @@ public class PutioServiceRowTest
     public void unreachableAfterACheckOffersRetry()
     {
         PutioServiceStatus s = status(true, false, NOW - 10_000L, PutioServiceStatus.SyncState.UNKNOWN, null);
-        assertEquals("98.9 GB of 107 GB used · Not reachable · checked just now", PutioServiceRow.summary(s, NOW));
+        assertEquals("42.5 GB of 100 GB used · Not reachable · checked just now", PutioServiceRow.summary(s, NOW));
         assertTrue(PutioServiceRow.offersRetry(s));
     }
 

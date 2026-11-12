@@ -37,7 +37,7 @@ const tick = `<span class="st ok">${ic('check', 26)}</span>`;
 const landing = focus => `${nav}<div class="sheet">${head('servers', '', 'Network Shares', pill('1 service') + pill('Put.io reachable', 'ok') + pill('Library synced 3 hours ago'),
   btn('plus', 'Add share'))}
   ${heading('Put.io')}
-  ${row('cloud', 'Put.io · heretostream', '98.9 GB of 107 GB used · Library sync: automatic, last 3 hours ago', {
+  ${row('cloud', 'Put.io · yourname', '42 GB of 100 GB used · Library sync: automatic, last 3 hours ago', {
     focus: focus === 'service', right: bar(98.9, 107),
     buttons: focus === 'service' ? `<span class="ibtns">${btn('sync', 'Sync now')}${btn('search', 'Search')}${btn('info', 'Account')}</span>` : ''})}
   ${row('folder', 'Films', 'Put.io · 9 videos · in your library', { focus: focus === 'films',
@@ -65,7 +65,7 @@ const folder = state => `${nav}<div class="sheet">${head('folder', `${chip('Netw
 const down = () => `${nav}<div class="sheet">${head('servers', '', 'Network Shares', pill('1 service') + pill('Put.io not reachable', 'warn') + pill('Library kept as it is'),
   btn('plus', 'Add share'))}
   ${heading('Put.io')}
-  ${row('cloud', 'Put.io · heretostream', "Couldn't reach Put.io at 20:51 · check the internet connection · your library and progress are safe", {
+  ${row('cloud', 'Put.io · yourname', "Couldn't reach Put.io at 20:51 · check the internet connection · your library and progress are safe", {
     focus: true, buttons: `<span class="ibtns">${btn('retry', 'Retry')}${btn('info', 'Account')}</span>` })}
   ${row('folder', 'Films', 'Put.io · not reachable right now', { dim: true })}
   ${row('folder', 'TV', 'Put.io · not reachable right now', { dim: true })}
