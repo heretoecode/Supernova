@@ -770,3 +770,21 @@ right never limits the count.
 - Note: "Rescrape all / all movies / all collections" still exist in the code but are not shown in 0.156 Settings
   (they were to become "Refresh details" in Library Health). Any re-check of matches must show changes first and
   protect manual fixes.
+- **12 Nov, more decisions:** (5) **No Android screens:** do whatever is needed — ask for All files access once; deletes,
+  the fonts folder and the diagnostics folder all use Supernova's own design and Files browser. (11) Title logo and
+  episode line appear with the age rating at the start, then fade together. (14) The re-check of matches lives on
+  **Files › Library Care** (not Settings): shows changes first, never touches manual fixes; replaces the hidden
+  Rescrape options.
+
+## 24. Media Transfers — shaping (owner and Claude, 12 Nov 2026; needs mock-ups; not yet scheduled)
+- Stages and rough share of the whole: 1 Copy with a Transfers page, verification and same-title identity (~40%);
+  2 Robustness: default folders, free space, resume after restart/power cut, start from Details / long-press / Files
+  (~25%); 3 Schedule: overnight window plus Start now (~10%); 4 Move: delete the network original after a verified
+  copy (~10%); 5 Automation (~15%).
+- Transfers run while the app is in use, including during playback; slow down or pause automatically while playing
+  from the network so playback never stutters. Running while the Shield sleeps is the main technical risk: test early.
+- Playback itself streams (reads what it needs, keeps nothing), so it is not a download.
+- **Automation as a per-series switch (owner's idea):** Details › More › e.g. "Bring new episodes to this Shield". The
+  series is flagged; whenever a scan finds a new episode of it on any connection, it is copied, verified, then (if
+  chosen) the network copy is deleted. It follows the series, not a folder, so it works when nothing is left on the
+  network. The Transfers page lists the series that have it on.
