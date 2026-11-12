@@ -933,3 +933,28 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   `details-background/18`; no column lines); Full description pop-up mirrors the hero, no icon: title, then the title
   line (seasons/episodes), then the text; artwork picker **Choose for: Hero and rows · Library page** (one picture for
   hero and rows, posters for library pages); the picker has **no title** (opened from a named item).
+
+## 30. Player — re-tick (owner, 12 Nov 2026; mock-ups `player/01`–`07`)
+- **Title block** (logo, title line, metadata row, as on Details) in one fixed place, upper left; never moves when the
+  controls slide up for Chapters / Episodes. **Preparing playback** shows the identical block in the identical place,
+  with the app's ring spinner (the same as the scan ring on Files) and "Preparing playback…" under it; the old spinner
+  goes.
+- **Age rating with reasons** ("15 · Strong language, violence") alone in the top left **once, as playback starts**
+  (straight after Preparing playback): fade in, fully shown for 8 seconds, fade out. Not shown again until playback is
+  left and started again (the "after a long pause" idea is dropped). Afterwards the title block's badge is enough.
+- Chapters / Episodes are a tab row with the line under it. Chapters renumbered after merging IntroDB parts (Recap ·
+  Chapter 1 · Intro · Chapter 2 …), every card with a picture; one card size; focused card grows with the ring.
+- Soft full-width dark fade behind the controls (no blur); play/pause and Settings keep the dark rest box, no outline.
+- **Seek previews:** the controls group moves down into the spare space below the strip; the time bubble holds the
+  preview picture with the time and chapter beside it (loading ring while it fetches).
+- **Playback Settings, tabs in order of use: Subtitles · Audio · Playback** (opens on Subtitles). Every current setting
+  kept, in sections with icon headings:
+  - Subtitles — *Subtitle selection:* Subtitles on/off, Subtitle track ›, Download subtitles ›, **Subtitle delay
+    (moved here: timing is judged against the real subtitles)**; *Subtitle appearance:* Text size (chips), Text colour
+    (colour dots), Vertical position (− +), Outline (switch), Background (switch), Background opacity (chips); *For this
+    series:* use these subtitles for the whole show. On any appearance row the real subtitles hide and a sample line
+    shows the change.
+  - Audio — *Audio selection:* Audio track ›; *For this series:* use this audio for the whole show; *Audio adjustment:*
+    Audio delay (− +), Audio boost (chips), Night mode, Spatial audio (switches).
+  - Playback — *Picture:* Format (chips; picture in picture removed); *Playback:* Speed, Stop playing at, Still
+    watching?, Play mode, Skip intros and credits (Off · Show button · Automatic).
