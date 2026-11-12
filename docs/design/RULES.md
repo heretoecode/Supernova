@@ -46,6 +46,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   plain until focused (e.g. Search's Clear history, §26).
 - **Bright white underline = the step you just came from** (e.g. the open tab while you are in its rows).
 - **Dull underline = everything else on your path,** including the open tab ahead of the remote.
+- **Path underlines are only for tabs and the top bar.** A button that opened a menu goes back to its resting look;
+  the menu beside it shows where you came from (owner, 12 Nov).
 - **Artwork does not get a box:** it grows and gets a solid, thick white ring, with room around it so the grown card
   never crowds a line or heading. **Hero cards** show focus on their first button instead.
 - **Exactly one focus on screen.** E.g. on Search results the remote is on a result, so the keyboard shows no focus.
@@ -186,7 +188,10 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
   every library page, with a plain white title and grey line underneath.
 - **Heroes:** Home and Details the same size and place, 1776×820, the next row or tabs peeking below; Home has
   carousel dots. Going from a Home hero into Details the card stays exactly where it is (REVIEW_0156 Home).
-- Hero text: description (Home two or three lines, Details up to five; More › Full description).
+- Hero text: description **two lines** on Home and Details; More › Full description opens a pop-up sized to the text.
+- **Hero buttons sit in a fixed place at the bottom left** of the hero, whatever the text length (owner, 12 Nov).
+- **Artwork picker by place:** Hero · Rows · Library page (backdrops; Rows starts with "Same as hero"; posters for
+  Library page); a side panel sliding in from the right, the hero previewing the picture you are on.
 - Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
 
 ## 14b. Details pages (all four kinds)

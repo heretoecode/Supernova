@@ -921,3 +921,11 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   "Season 2 · Episode 8 · We Don't Talk Anymore".
 - Still to see in pictures: the Details tab under the new heading and line rules, the artwork picker, and the More
   menu's final contents.
+- **Owner on v18 (12 Nov 2026):** section headings with icons (no underline) approved; title line and metadata row
+  approved; anything not mentioned is approved. Changes: hero buttons sit in a **fixed place at the bottom left** of
+  the hero (never move with the text); description **two lines** on Details as on Home; More › Full description opens
+  a **pop-up sized to the text** (usual pop-up design, left-aligned, Back closes); **path underlines only on tabs and the
+  top bar** (a button that opened a menu returns to its resting look); artwork picker chooses **by place: Hero · Rows ·
+  Library page** (backdrops for Hero and Rows, Rows first offers "Same as hero"; posters for Library page), as a side
+  panel sliding in from the right with the hero previewing. Open: line structure on the Details tab
+  (`details-background/18`: none / row lines / row and column lines). Mock-ups `details-background/15`–`20`.
