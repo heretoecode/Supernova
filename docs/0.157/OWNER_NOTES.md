@@ -731,3 +731,8 @@ right never limits the count.
 - Agreed in principle: remove NOVA's hidden grid if safe (D4); stop focus jumping when holding Down (D5); reduce
   memory (D6).
 - **Mock-ups needed (not yet made):** see Claude's list of 11 Nov in the conversation / PROJECT_STATUS.
+- **11–12 Nov 2026, owner:** remove NOVA's hidden grid completely (D4). Deletion-step logging goes in the next
+  version (D8). **Codex is unavailable for now** (owner out of Codex usage): do not assign it work; Claude does the
+  engine/data jobs too until the owner says Codex is back (briefs D and any "for Codex" items become Claude's).
+  Fix match: Claude proposes one Fix match page everywhere (library long-press, Details › More, Files › Library Care)
+  and retiring the 0.156 side panel; waiting for the owner's yes.

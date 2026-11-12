@@ -77,6 +77,8 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   hands-off. Its briefs are in `docs/codex/` (0.157: `BRIEF_0157.md`, `BRIEF_0157_B.md`, then `BRIEF_0157_C.md`, `BRIEF_0157_D.md`). It reports each finished Part in
   `docs/codex/HANDOVER.md`; Claude then builds, tests and merges it.
 - Both can work at the same time because `docs/codex/HANDS_OFF.txt` splits the files.
+- **Codex paused (owner, 12 Nov 2026):** the owner has no Codex usage for now. Do not assign Codex work; Claude does
+  the engine/data jobs too (including unstarted `BRIEF_0157_D.md`) until the owner says Codex is back.
 
 ## Branches and repositories
 
