@@ -1,3 +1,6 @@
+**Start with [`RULES.md`](RULES.md): every agreed design rule in one place (12 Nov 2026). It overrides the older
+files in this folder where they differ.**
+
 # Supernova — Design Authority Index
 
 Status: **ACTIVE durable project authority**

@@ -1,0 +1,232 @@
+# Supernova design rules
+
+**The one place for every agreed design rule** (started 12 Nov 2026 at the owner's request). When the owner says
+"redesign this page", the page is built from these rules first; the owner is only asked about what they do not
+settle. Each rule names where it was decided and the mock-up that shows it. Where an older document disagrees, this
+file wins; where this file and the owner disagree, the owner wins and this file is corrected the same day.
+
+How to use it:
+1. Read the whole file before drawing a page. Check every element on the page against its section.
+2. If a rule nearly fits but the page is different, follow the rule and say so in the message to the owner.
+3. Only ask the owner about things no rule covers. Every answer becomes a rule here (or changes one).
+4. Rules are tweaked, added and removed as pages are designed. Note the date and the reason; move replaced rules to
+   "Replaced rules" at the bottom so nobody revives them.
+
+Sizes are at 1080p. Sources: `docs/0.157/OWNER_NOTES.md` (§n), `docs/0.157/REVIEW_0156.md` (P-numbers and ideas),
+`docs/REVISIT_LATER.md` (Files v1–v13), `CLAUDE.md` "Global look".
+
+---
+
+## 1. Pages and background
+- **Every page is plain charcoal `#16181C`**, content straight on it, using the full width. No Space Black artwork, no
+  page panels (owner, 7 Nov; §18). Pages change over one by one, after each is reviewed on charcoal.
+- No page title on a top-level page: the top bar already says where you are.
+- TV safe margins: about 56 px at the sides, 54 px at the bottom.
+- **Typing happens on a page,** not in a side panel: fields on one side, the keyboard on the page, help under it
+  (Files v6, Search, Fix match).
+- Flat-page sizes (Files): rows about 128 px tall, names 36 px, second lines 27 px, buttons 64 px. Denser lists
+  (Search results) may use about 96 px rows with 32 px names and 24 px second lines.
+
+## 2. Top bar
+- Left to right: SUPERNOVA, Home · Movies · TV Shows · library pages, then on the right Files, the search icon, the
+  settings icon and the clock. Places are words, tools are icons; **no dots** between them; no line under the bar.
+- Background work (a scan) is a small spinning ring on the left of "Files", the same size and line weight as the
+  icons. When the library needs attention, a small mark on Files (not a notification bar; mock-up pending, §22).
+- Home + Left stays on Home; the clock is not focusable.
+- The top bar follows the focus-and-path rule (section 3): it switches page after a short pause.
+
+## 3. Focus and "where am I" (the most important rule)
+One brightness scale that follows your path, everywhere, top bar and tabs included (§25; mock-ups
+`tab-style/08`–`15`):
+- **White box with black text and icon = where the remote is.** Fill `#F4F6FB`, ink `#0B0D12`. Nothing else on
+  screen is a box at rest: anything that would look like a half-focused box (a grey button, a chip behind a tab) is
+  plain until focused (e.g. Search's Clear history, §26).
+- **Bright white underline = the step you just came from** (e.g. the open tab while you are in its rows).
+- **Dull underline = everything else on your path,** including the open tab ahead of the remote.
+- **Artwork does not get a box:** it grows and gets a solid, thick white ring, with room around it so the grown card
+  never crowds a line or heading. **Hero cards** show focus on their first button instead.
+- **Exactly one focus on screen.** E.g. on Search results the remote is on a result, so the keyboard shows no focus.
+- Inside a focused row everything turns to dark ink: labels and icons black; the chosen chip black with white text;
+  switches: on = dark track, white knob; off = light grey track, dark knob; colour dots keep their colours, the chosen
+  one gets a black ring (§5, §6).
+- Focus never disappears and never jumps somewhere unexpected: holding Down must not lose it; a hidden view must
+  never take it (diagnostics, NOVA's hidden grid); after an action it stays on the item you pressed.
+- Mock-ups showing focus are checked by the owner reading them **without captions**.
+
+## 4. Tabs
+- Plain words on one line, each with its own icon (Details tabs, Files tabs; §18), under the top bar.
+- Focus and path as section 3: focused tab = white box; open tab while you are below = bright underline; open tab
+  ahead of the remote = dull underline. The underline never overlaps a separator line.
+- **Moving along tabs switches the page** straight away.
+- **Down from a tab goes to that tab's first row.** Memory is kept where you jump away directly (closing and
+  reopening a panel, the top bar and back), and a row that opens its own list gets focus back on return (P12).
+- Tab titles **never pop in**: the full set is drawn with the page; content fills in inside with "Loading…", then a
+  "none found" line (§12). Empty tabs on Details hide (the rest close up).
+- A count badge on a tab when something there needs a look (Files).
+- The number of tabs follows the content; nothing on the right of the tab row limits it (§18).
+
+## 5. Sections, headings, lines and gaps
+- **Every section heading has an icon**, then the heading in white, 32 px, medium weight (§26).
+- **A heading sits closer to its own content than to what is above it:** about 26 px below, 64 px above. Sections
+  are separated by that gap, **never by a line**.
+- **Lines only between rows you can select**, never under the last row. Plain information (tips, read-only facts)
+  has no lines (§26). Lines are faint (Search and Files: about 8% white on charcoal).
+- On Details' read-only columns, column dividers and row separators are visible but quiet (see Open questions).
+- Headings line up with everything else; a focused heading never sticks out to the left (§1 round 5).
+
+## 6. Text and wording
+- **British English, plain words.** Short labels; reword rather than wrap.
+- **Label / value pairs:** labels soft near-white `#C9D3E6`, values pure white and a little bolder. Difference by
+  weight, not dimness. Second lines also `#C9D3E6`.
+- **Missing information says "Unknown"** (quieter than real values); a row is never removed (§1).
+- **No blue for text or values** anywhere (§6). Single values (steppers, lists) are plain white.
+- Dates: day month year, e.g. "12 Nov 2026"; with a time "5 Nov · 14:40". Say "local time", never a place or zone.
+- Dots (·) separate facts in a line of text, never places or buttons.
+- **Standard wording (use it everywhere the same thing appears):**
+  - Play / "Resume S1 E1 · 16 min left" (Details hero, §3). Short form on pills: "Resume S5 E3" (§26).
+  - "Watched", "Unwatched" for state.
+  - "Fix match" (not "Report Incorrect Match"), "Clear history", "Show all …".
+  - Streaming: "Stream more from the world of X" (fiction), "Stream more related to X" (non-fiction), "Stream more
+    from <person>" (§26). Never "similar" in Search.
+  - Empty states say what is going on: "Everything looks fine", "Nothing in your library matches …".
+- Typed letters show in bold inside matching results (Search).
+
+## 7. Rows
+- One row style everywhere: icon (or thumbnail), name, plain second line; long names end in "…".
+- **Status pills** sit in a fixed column between the names and the buttons: plain text in a thin outline, no colour,
+  all the same width, and they stay put when the row is focused (Files v4). A pill may carry an icon (Search §26:
+  ▶ Resume, ✓ Watched, ○ Unwatched; the open-in-app icon for a service).
+- A pill tells you something the heading doesn't (no "In library" under "In your library").
+- The left of a row is what it is; the right is what OK does (e.g. the download icon on a subtitle, shown on the
+  focused row only).
+- The focused row shows its own buttons (up to about five); the remote's Menu button opens the same actions as a menu.
+- Title, description and switch are vertically centred on every row (§20).
+- Instant actions with an **Undo** notice instead of "are you sure?" where the action can be undone. Real deletions:
+  one clear warning in Supernova's own design (§23.5).
+
+## 8. Choices and settings
+- **One setting is one row.** Up/Down moves between settings; Left/Right goes through its choices. Chips never wrap
+  and a setting is never split across two rows (REVIEW_0156 ideas).
+- **Up to five choices → inline chips on the row.** The chosen one sits in a small rounded chip (light grey at rest;
+  black with white text on a focused row). No separators between chips (§6).
+- **On/off → a switch.**
+- More than five → **reduce or reword** the options first (freedom to rethink, CLAUDE.md); only then the shared
+  choice list (section 9).
+- Prefer clock times and real values to abstract ones (Sleep timer → "Stop playing at": Off · 17:32 · 18:02 · 18:32 ·
+  End of episode).
+- Avoid click-throughs and pop-ups wherever an inline choice fits. No "‹ value ›" arrows where chips fit.
+- Long explanations are short help lines, never full-page blue boxes of text (§20 Backup).
+
+## 9. The shared choice list (long lists: languages, countries, encodings, services)
+- One design for every long list (§20): flag or mark, name, then pills where useful (e.g. "Original", "SDH").
+- **The chosen item has the white tick on the right** — never a radio circle, never a blue tick.
+- **No Cancel / Done buttons:** Back closes. A choice takes effect at once (a chosen service moves up into
+  "Selected" straight away, animated).
+- Countries get flags; languages use flags only for real locales, otherwise a neutral globe.
+- Codes get plain words (subtitle encodings: no bare "CP1252").
+- Needs a mock-up (re-tick step 5).
+
+## 10. Menus (pop-up and context menus)
+- **Every item has its own icon; no two alike in one menu**; opposites get mirrored icons (A–Z / Z–A) (§15).
+- **The current choice is a tick on the right.**
+- **Only as wide as the longest item plus the standard padding** (24 px each side), never a fixed width.
+- No menu title; a single list has no heading. Two or more groups: each group has a heading followed by a thin line
+  on the same line ("Library ———").
+- Opens beside the item it belongs to, not in a corner (§19).
+- Never offer what does nothing or makes no sense (no Restart on an unstarted film; no "More info" when OK already
+  opens it) (§4, §19).
+
+## 11. Panels and pop-ups
+- Pop-ups, menus and side panels: `#16181C` at **90%** opacity, no outline, soft shadow; one shared value (§4).
+  On the flat charcoal page a menu gets a faint edge so it separates (Files v8).
+- Focused item: filled white, black text and icon (section 3).
+- Never stack one panel on another: a row that opens a list replaces the panel, Back returns (P5).
+- Panels are sized to their content.
+
+## 12. Buttons
+- Rest: plain (no grey box that could read as focus) — on artwork, a dark box at about 72% so text stays readable.
+  Focused: the white box. Disabled: the rest look at 40%.
+- **Size never changes** between states. One shape: rounded rectangle, 12 dp corners. Buttons fit their content.
+- Icons are one size and invert with the text on focus.
+- **Streaming button:** the service's name with the **open-in-app icon** (a box with an arrow leaving it); OK opens
+  the title in that app (deep link where possible) (BUTTONS doc; §3). The same icon on every streaming pill.
+
+## 13. Icons and logos
+- Line icons, no background behind them (no filled circles) (§1 round 4, §19).
+- Service logos in **full colour**, app-wide, no background (§23.9).
+- Reception: icons only (IMDb, Rotten Tomatoes, Metacritic, TMDB, the awards trophy), no written names.
+
+## 14. Artwork, cards and heroes
+- **Every piece of artwork has one thin white line on its edge (about 60%) with a soft inner shade** — heroes, row
+  cards, Details tab cards, the player strip, library posters, Search thumbnails (§18 v17).
+- Focused artwork grows and gets the solid thick white ring (section 3).
+- **One row card size:** 16:9, 400×225 (focused 440×248), 24 px gap, a sliver of the next card at the edge (§9).
+  Title and details inside the picture on a shade; no blue caption bars. Library posters keep one portrait size on
+  every library page, with a plain white title and grey line underneath.
+- **Heroes:** Home and Details the same size and place, 1776×820, the next row or tabs peeking below; Home has
+  carousel dots. Going from a Home hero into Details the card stays exactly where it is (REVIEW_0156 Home).
+- Hero text: description (Home two or three lines, Details up to five; More › Full description).
+- Service titles in a row: centred colour logo, title · year on one line; no play icon on library items.
+
+## 15. The keyboard (one keyboard for the whole app)
+- **There is one keyboard** (`PreviewKeyboard`), used by every text box: Search, Fix match, connection forms,
+  subtitles search, everything. Any change or fix is made once, in it, and applies everywhere (owner, 12 Nov). No
+  screen builds its own keyboard or its own keyboard focus handling.
+- Layout: number row always shown; lower-case QWERTY; `/` after L; `. @` after M; Shift; `#+=` opens the symbols
+  page (ABC returns); bottom row `#+=` · Voice · Space · Delete · Clear. Forms add Done · Cancel; Search does not.
+- **Focus starts on T** (the most common first letter of film and series titles).
+- **Focus stays on the key you pressed,** however fast you type. Results arriving or the page refreshing never take
+  it away (Fix match bug, §27).
+- Shown on the page, not in a side panel. On Search the field and keyboard are on the left, results on the right; the
+  keyboard stays visible.
+- Typing is forgiving wherever it searches: capitals, punctuation and a leading "The" ignored, one-letter typos,
+  original titles, TMDB / IMDb / TVDB / Trakt numbers (Files v11).
+
+## 16. Moving around (remote behaviour)
+- Back from the middle of a long page first jumps to the top, then to the top bar (§23.3).
+- After Android ends the app it reopens on the same page with focus restored; a first launch after a reboot opens
+  Home (§23.2).
+- Read-only pages (Details tab) have nothing focusable: Down/Up scroll, one more Up returns to the tabs (§1).
+- Move mode locks focus to what is being moved until OK/Back (§19).
+- Rows a left arrow appears beside: move the whole row right to make room; never just the first card (§19).
+
+## 17. Motion
+- Smooth, never popping: tabs drawn at once (§12); the hero changes by cross-fade with artwork pre-loaded (§11); the
+  title logo glides to the compact logo going into the tabs (§1); player controls linger about 3 s after resuming
+  (P9); the HUD shade is a soft full-width gradient (P13).
+- Follows the system "remove animations" setting.
+
+## 18. Streaming and the library
+- **The library is the key:** Search shows streaming titles only when something in the library matches, as related
+  titles under it (§18).
+- **Where to Watch off removes every streaming feature** (buttons, pills, More Like This "On your services", Search
+  streaming results, the streaming tip); Trending and Popular keep their own switches (§18).
+- A title with no file opens its service's app, never a Supernova page (§3).
+
+## 19. Player
+- Title block in one fixed place, the same on Preparing playback and the HUD; the age rating alone top left for the
+  first 6–8 s; logo and episode line appear with it, then fade together (REVIEW_0156, §23.11).
+- Track names in plain words plus pills (`track-names/01`, `02`).
+- Seek loading: a small white ring beside the time ("Chapter 2 · loading") (§14).
+
+---
+
+## Open questions (to settle when the page comes up)
+- **Details' section titles** (Reception, Key information…) still use the old short white underline (`v15-b`). Under
+  section 5 they would get an icon and the heading spacing instead. Settle in re-tick step 3 (Details).
+- **Home row text:** inside the picture (current rule) or below it — to mock up (§22).
+- **Written breadcrumb** under the top bar on deeper pages ("Movies › Marshals") — an option alongside the path rule.
+- **Separator strength on charcoal:** the Details values (24% rows / 32% columns) were tuned on Space Black; check them
+  on charcoal in step 3.
+
+## Replaced rules (do not use)
+- Navy glass at 97% with a light outline for panels → 90% `#16181C`, no outline (5 Nov).
+- White outline as row focus; blue glow focus → filled white box (5 Nov).
+- Open tab as a grey chip; plain-underline tabs → the focus-and-path rule (12 Nov).
+- Card edge 1.5 px at 28%; "focus = grows only" → 60% edge with inner shade; focus = grow + thick ring (7 and 12 Nov).
+- Space Black behind full pages → plain charcoal (7 Nov).
+- Blue values; blue open tab; dark-blue chosen value on focused rows → chips, plain white values (5 Nov).
+- Monochrome provider logos in tiles → full-colour logos, no background (12 Nov).
+- Section separator lines → gaps (12 Nov).
+- "Clear" (beside Recent searches), "In library" pill, two-line "On your services" headings (12 Nov).
+- The Fix match side panel → one Fix match page on Files › Library Care (12 Nov).

@@ -42,7 +42,7 @@ const nav = `<div class="nav"><span class="brand">SUPERNOVA</span><span>Home</sp
   <span>Documentaries</span><span class="sp"></span><span>Files</span><span class="ico line">${icon(I.search, 34)}</span>
   <span class="ico">${icon(I.cog, 34)}</span><span class="clock">00:52</span></div>`;
 const keys = [['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-'], ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', "'", '.'],
+  ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '/'], ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '.', '@'],
   ['#+=', 'mic', 'Space', '⌫', 'Clear']];
 const kb = focus => `<div class="kb">${keys.map(r => `<div class="krow">${r.map(k => `<span class="key
   ${k.length > 1 ? 'wide' : ''} ${k === 'Space' ? 'space' : ''} ${k === focus ? 'focus' : ''}">${k === 'mic'
@@ -60,7 +60,7 @@ const tip = (ic, t, l) => `<div class="tip">${icon(I[ic], 28)}<b>${t}</b><span>$
 const page = (left, right) => `${nav}<div class="page"><div class="col left">${left}</div>
   <div class="col right">${right}</div></div>`;
 const b = (t, n) => `<b>${t.slice(0, n)}</b>${t.slice(n)}`;
-const start = page(`${field('')}${kb('m')}`, `${hd('Recent searches', `<span class="clr">${icon(I.x, 22)}Clear history</span>`, 'clock')}
+const start = page(`${field('')}${kb('t')}`, `${hd('Recent searches', `<span class="clr">${icon(I.x, 22)}Clear history</span>`, 'clock')}
   ${['Marshals', 'Slow Horses', 'Denis Villeneuve', 'Christmas films'].map(t => `<div class="rec">${icon(I.search, 28)}
   <span>${t}</span></div>`).join('')}
   ${hd('What you can search', '', 'bulb').replace('class="hd"', 'class="hd gap"')}

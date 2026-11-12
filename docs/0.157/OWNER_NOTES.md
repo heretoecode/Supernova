@@ -856,3 +856,19 @@ Replaces the heading wording in §22 and §23.1. Approved by the owner.
 - Focus: on a results screen the remote is on a result; the keyboard shows no focus.
 - **Heading spacing (owner, same day; app-wide rule in CLAUDE.md):** more space between a heading and its results, so
   the heading reads as a heading, not part of the list: about 26 px below a heading, 64 px above it.
+
+## 27. One design rulebook, one keyboard (owner, 12 Nov 2026)
+- **Search v5 approved** (`search-flat/17`–`21`), with the heading spacing.
+- **Design rulebook:** every agreed rule gathered in `docs/design/RULES.md`, so "redesign this page" can be built
+  from it and only new questions go to the owner. Rules are tweaked, added and removed as pages are designed.
+- **One keyboard everywhere.** Every text box uses the same keyboard (`PreviewKeyboard`, already shared in code), with
+  the same layout and focus behaviour; a change or fix made to it applies to every keyboard in the app. Focus starts
+  on **T** (the most common first letter of titles) and **stays on the key just pressed**, however fast you type.
+- **Bug (owner, Shield):** Details › More › Change info of all episodes (the 0.156 Fix match panel): after typing a
+  letter, focus vanishes; Up, Down and Left do nothing; Right lands on "1". On Search the same keyboard keeps focus on
+  the key pressed (H, E, L, L, O typed quickly). Likely cause: the old NOVA search screen still runs hidden behind the
+  panel and takes focus when results arrive (the same pattern as NOVA's hidden grid). The panel is being retired
+  (§22), but the fix belongs in the shared keyboard too: if focus is lost after a key press, it returns to that key,
+  so no screen can break it.
+- Mock-up correction: the Search pictures drew `-` and `' .` keys and started on M; the real keyboard has `/` after L
+  and `. @` after M and starts on T. Redrawn.

@@ -52,6 +52,11 @@ and how the owner works. **If you are new: read this file, then the "Start here"
 - **Consistency first (owner, 12 Nov 2026):** before asking the owner how something should look, read or behave, check
   whether the same thing is already decided elsewhere in the app (e.g. Details' "Resume S2 E2" wording, the open-in-app
   streaming button) and follow that. Only ask when nothing already settles it.
+- **Design rulebook (owner, 12 Nov 2026): `docs/design/RULES.md` holds every agreed design rule.** Read it before
+  drawing any page; build from it and only ask the owner what it does not settle; record every new decision there the
+  same day. The summary below is kept for quick reference; RULES.md wins if they differ.
+- **One keyboard (owner, 12 Nov 2026):** every text box uses the one shared keyboard; changes and fixes are made once
+  and apply everywhere. Focus starts on T and stays on the key just pressed.
 - **Global look (owner, 5 Nov 2026):**
   - **Direction: every page becomes plain charcoal `#16181C`, content straight on it; Space Black is being retired**
     (owner, 7 Nov 2026). **Not a blanket switch:** each page changes only after it has been reviewed on charcoal and
