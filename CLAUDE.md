@@ -30,6 +30,10 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   → Claude makes mock-ups → the owner approves → **code only after the owner's go-ahead**.
 - **Mock-ups:** send only final ones, as one numbered group, with captions only. No owner notes or annotations
   inside the designs. Panels sized to their content. Up to about five inline choices; more go in a side panel.
+- **Fewest mock-ups (owner, 12 Nov 2026; mindful of usage):** one picture covers as many things to assess as can be
+  seen together on one screen; never one picture per item. Applying agreed rules (`docs/design/RULES.md`) to an
+  approved page needs no mock-up (at most one sample screen); only genuinely new pieces are drawn. With each picture,
+  one line in the message (not on the picture) says what is new to look at.
 - **The owner approves every signing.** Never sign or publish without being asked.
 - **This repository is public** (a GitHub fork of NOVA). Never put the owner's personal details in it: account
   names, email, location (country, city, time zone names), addresses, device names, real storage figures. Say "local
