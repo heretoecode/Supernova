@@ -1,5 +1,7 @@
 // Focus brightness scale (owner, 12 Nov 2026): white box = where the remote is (artwork grows instead); bright
 // underline = one step back; dull underline = two steps back. Top bar and tabs alike.
+// v3b: anything ahead of the remote gets the dull underline; hero focus = its first button boxed; focused
+// artwork grows with a solid white ring (resting artwork keeps the thin soft edge).
 // Run: FONT_DIR=<roboto woff2 dir> node render-v3.js
 const fs = require('fs');
 const path = require('path');
@@ -43,24 +45,24 @@ const DET = [['eps', 'Seasons &amp; Episodes'], ['info', 'Details'], ['extras', 
 const row = (ic, name, line, focus) => `<div class="row ${focus ? 'focus' : ''}"><span class="ri">${svg(I[ic], 38)}
   </span><div><div class="rn">${name}</div><div class="rl">${line}</div></div><span class="pill">Signed in</span></div>`;
 const settings = (level) => `${nav('cog', ['box', 'line', 'dull'][level])}<div class="page">
-  ${tabs(SET, 'Accounts', ['line', 'box', 'line'][level])}
+  ${tabs(SET, 'Accounts', ['dull', 'box', 'line'][level])}
   ${row('cloud', 'Put.io', 'yourname · 42 of 100 GB used', level === 2)}
   ${row('sync', 'Trakt', 'Watched and progress sync', false)}
   ${row('subs', 'OpenSubtitles', 'Download subtitles from inside the player', false)}</div>`;
 const art = ['#5b3a2e', '#2e4a5b', '#4b5b2e', '#5b2e4a', '#2e5b4f', '#3a2e5b'];
 const card = (i, big) => `<span class="card ${big ? 'grow' : ''}" style="background:linear-gradient(160deg,${art[i]},
   #121418)"></span>`;
-const home = (onHero) => `${nav('Home', onHero ? 'line' : 'box')}<div class="hero ${onHero ? 'grow' : ''}">
+const home = (onHero) => `${nav('Home', onHero ? 'line' : 'box')}<div class="hero">
   <div class="hcopy"><div class="hlogo">SLOW HORSES</div><div class="hmeta">2022 · Drama, Thriller</div>
   <div class="hdesc">A team of disgraced MI5 agents, banished to a dumping ground, find themselves drawn into one
-  dangerous case after another.</div><span class="btn">${svg(I.info, 26)}More info</span></div>
+  dangerous case after another.</div><span class="btn ${onHero ? 'focus' : ''}">${svg(I.info, 26)}More info</span></div>
   <div class="dots"><i class="on"></i><i></i><i></i><i></i></div></div>
   <div class="rowtitle">Continue Watching</div><div class="cards">${[0, 1, 2, 3].map(i => card(i, false)).join('')}</div>`;
 const details = (level) => `${nav('TV Shows', ['line', 'line', 'dull'][level])}<div class="dhero">
   <div class="hcopy"><div class="hlogo">MARSHALS</div><div class="hmeta">2026 · Drama, Crime</div>
   <span class="btn ${level === 0 ? 'focus' : ''}">${svg(I.play, 26)}Resume S1 E1</span>
   <span class="btn ${''}">${svg(I.dots, 26)}More</span></div></div>
-  <div class="dpage">${tabs(DET, 'Seasons &amp; Episodes', ['line', 'box', 'line'][level])}
+  <div class="dpage">${tabs(DET, 'Seasons &amp; Episodes', ['dull', 'box', 'line'][level])}
   <div class="cards">${[0, 1, 2, 3].map(i => card(i + 1, level === 2 && i === 0)).join('')}</div></div>`;
 const css = `${font(400)}${font(500)}*{box-sizing:border-box;margin:0}
 body{width:1920px;height:1080px;overflow:hidden;font-family:R;color:#fff;background:#16181C}
@@ -101,7 +103,7 @@ margin-right:14px;font-size:28px;font-weight:500;background:rgba(22,24,28,.72);c
 body>.cards{position:absolute;left:96px;top:856px}
 .cards{display:flex;gap:26px}.card{width:400px;height:225px;border-radius:16px;flex:none;
 box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),inset 0 0 18px 4px rgba(0,0,0,.45)}
-.card.grow{width:440px;height:248px;margin-top:-12px}
+.card.grow{width:440px;height:248px;margin-top:-12px;box-shadow:0 0 0 5px #fff,inset 0 0 18px 4px rgba(0,0,0,.45),0 14px 34px rgba(0,0,0,.55)}
 .dpage{position:absolute;left:96px;right:96px;top:700px}`;
 (async () => {
   const browser = await chromium.launch();
