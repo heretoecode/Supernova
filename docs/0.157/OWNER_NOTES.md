@@ -795,3 +795,9 @@ right never limits the count.
   "bring new episodes" with a way to switch it off from Details › More and from the Transfers page (~15%).
   Sleep: the owner has run a Plex server on this Shield while it slept, so background work is known to be possible;
   still verify early.
+- **Media Transfers plan agreed (owner, 12 Nov):** first build = stage 1 (copy), stage 2 (resilience) and stage 4
+  (move: delete the network copy after a verified, correctly matched transfer; **off by default**, small job since
+  copy, verification and deletion already exist; handle failed deletes and empty folders). **Later:** stage 5
+  (per-series switch, one item in Details › More that reads "Bring new episodes to this Shield" / "Stop bringing new
+  episodes") and stage 3 (schedule, only if wanted; transfers already give way to network playback). Needs mock-ups
+  (Transfers page, per-title action); likely a fourth Files tab.
