@@ -154,8 +154,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Every item has its own icon; no two alike in one menu**; opposites get mirrored icons (A–Z / Z–A) (§15).
 - **The current choice is a tick on the right.**
 - **Only as wide as the longest item plus the standard padding** (24 px each side), never a fixed width.
-- **Group headings in menus and side panels:** the words followed by a thin line to the far edge ("Library ———");
-  pages use icon headings and gaps (owner, 12 Nov).
+- **Group headings in menus and side panels** (More menu, long-press, Playback Settings, every one): the words
+  **centred on a thin line** ("——— Files & Media ———"), **Title Case** (each word capitalised), a little larger than the
+  rows' second lines (28 px). Pages use icon headings and gaps (owner, 12 Nov).
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
   such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
@@ -247,7 +248,9 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - Title block in one fixed place, the same on Preparing playback and the HUD; the age rating alone top left for the
   first 6–8 s; logo and episode line appear with it, then fade together (REVIEW_0156, §23.11).
 - Track names in plain words plus pills (`track-names/01`, `02`).
-- Seek loading: a small white ring beside the time ("Chapter 2 · loading") (§14).
+- **One loading ring for the player, in the centre of the screen** (the app's ring, as on Preparing playback and the
+  Files scan) whenever playback waits (after a seek, slow network). The time box only ever shows the time over the
+  chapter name; the seek preview picture uses exactly that layout inside it (owner, 12 Nov; replaces §14 A).
 
 ---
 

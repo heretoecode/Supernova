@@ -964,3 +964,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   at offers now + 30 / 60 / 90 min (rolling) and End of episode / End of movie; Still watching? on movies shows only
   the time choices (an episode choice falls back to 3 hours); **Play mode: Stop after this · Play next · Repeat this ·
   Repeat all** (Folder and Binge watching merged into Play next — approved; no Shuffle).
+- **Player v6–v7 (owner, 12 Nov 2026):** Chapters / Episodes tabs always shown under the bar (cards only when focused);
+  positions approved. **One loading ring in the centre of the screen** whenever playback waits (seek, network),
+  replacing the ring beside the time; the time box shows only the time over the chapter name, and the preview picture
+  uses that same layout inside it, centred over the dot; seek dot 50% larger. **Menu and panel group headings
+  everywhere: centred on their line, Title Case, a little larger** (Playback Settings, More menu, long-press…).
+  Mock-ups get a light frame so their edge shows.
