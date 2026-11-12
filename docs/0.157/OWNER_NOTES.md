@@ -838,3 +838,19 @@ right never limits the count.
 - **§25 approved (owner, 12 Nov 2026):** read correctly from the pictures alone. Focused artwork: solid thick white ring
   plus grow, with room around it. Recorded as app-wide rules in CLAUDE.md "Global look" (replaces the grey-chip tabs
   and "focus = grows only").
+
+## 26. Search — final pass (owner, 12 Nov 2026; approved; mock-ups `search-flat/17`–`21` v5)
+
+Replaces the heading wording in §22 and §23.1. Approved by the owner.
+- **Clear history** (not "Clear", which the keyboard already has): plain words with a small ✕, no box until focused.
+- **Every section heading has an icon:** Recent searches (clock), What you can search (light bulb), In your library
+  (books and films), streaming section (cloud). Recent search rows use a magnifying glass.
+- **Sections are separated by a bigger gap, not a line.** No line under a list's last row.
+- **Lines only under rows you can select.** The "What you can search" tips are information, so they have no lines.
+- **Streaming headings, one line starting with "Stream":** "Stream more from the world of Yellowstone" (fiction),
+  "Stream more related to Planet Earth II" (non-fiction), "Stream more from Taylor Sheridan" (people).
+- **Streaming pills use the Details open-in-app icon** (box with arrow) and the service name; OK opens the title in that
+  app, the same as Details.
+- **Library pills show where you are, in the Details wording:** "Resume S5 E3", "Watched", "Unwatched" (no "In
+  library"). OK on a library result opens its Details page.
+- Focus: on a results screen the remote is on a result; the keyboard shows no focus.

@@ -49,6 +49,9 @@ and how the owner works. **If you are new: read this file, then the "Start here"
   suits (e.g. Sleep timer becomes "Stop playing at" with clock times). Still propose; the owner approves.
 - **Everything new the owner raises (features, bugs, anything) goes into 0.157.** 0.156 is fixed at its 45
   approved items (owner, 5 Nov 2026).
+- **Consistency first (owner, 12 Nov 2026):** before asking the owner how something should look, read or behave, check
+  whether the same thing is already decided elsewhere in the app (e.g. Details' "Resume S2 E2" wording, the open-in-app
+  streaming button) and follow that. Only ask when nothing already settles it.
 - **Global look (owner, 5 Nov 2026):**
   - **Direction: every page becomes plain charcoal `#16181C`, content straight on it; Space Black is being retired**
     (owner, 7 Nov 2026). **Not a blanket switch:** each page changes only after it has been reviewed on charcoal and
