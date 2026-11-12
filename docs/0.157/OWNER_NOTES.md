@@ -958,3 +958,9 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
     Audio delay (− +), Audio boost (chips), Night mode, Spatial audio (switches).
   - Playback — *Picture:* Format (chips; picture in picture removed); *Playback:* Speed, Stop playing at, Still
     watching?, Play mode, Skip intros and credits (Off · Show button · Automatic).
+- **Player v4 (owner, 12 Nov 2026):** controls moved lower; the seek preview is a card like the row cards (time and
+  chapter inside on the shade); running time and "Ends 18:14" back between the bar and Settings; panel section headings
+  as words plus a line (menu style); colour row: one ring marks the chosen colour, Left/Right moves it; Stop playing
+  at offers now + 30 / 60 / 90 min (rolling) and End of episode / End of movie; Still watching? on movies shows only
+  the time choices (an episode choice falls back to 3 hours); **Play mode: Stop after this · Play next · Repeat this ·
+  Repeat all** (Folder and Binge watching merged into Play next — approved; no Shuffle).

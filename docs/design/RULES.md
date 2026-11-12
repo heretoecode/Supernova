@@ -154,6 +154,8 @@ One brightness scale that follows your path, everywhere, top bar and tabs includ
 - **Every item has its own icon; no two alike in one menu**; opposites get mirrored icons (A–Z / Z–A) (§15).
 - **The current choice is a tick on the right.**
 - **Only as wide as the longest item plus the standard padding** (24 px each side), never a fixed width.
+- **Group headings in menus and side panels:** the words followed by a thin line to the far edge ("Library ———");
+  pages use icon headings and gaps (owner, 12 Nov).
 - No menu title; a single list has no heading. **Anything opened from a named item has no title** (menus, side panels
   such as Artwork); warnings and the Full description keep their heading because it is content. Two or more groups: each group has a heading followed by a thin line
   on the same line ("Library ———").
