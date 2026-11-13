@@ -156,3 +156,21 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
 - Automatic 3D TV switch: **removed**. "Show all providers" toggle: **removed** (the services list shows everything).
 - Licences: **QR code** to the full text, not in the app. Customise Home: **only on Home** (its button at the bottom of
   Home already exists); the Settings shortcut goes. Seven tabs: judged on the mock-ups. Mock-ups started.
+
+## Owner on batch 1 (13 Nov 2026) and answers
+- Seek previews: marked **Experimental** beside its name; diagnostics to record performance with it on and off.
+- Open videos in another player: kept for others who may use it, **moved to System › Advanced**. When on, Play shows
+  Android's "Open with" list of your video apps.
+- Skip times: two services today — **TheIntroDB** (by TMDB id) and **IntroDB** (by IMDb id + season/episode). Files can
+  mark intros and credits as named chapters (common on anime and some rips); the services fill in when they don't. Row
+  reworded "Look up skip times online".
+- "Full subtitles when the audio is in your language": off = only forced subtitles (signs, foreign-language lines) when
+  the audio already matches your subtitle language; on = full subtitles even then.
+- Several languages show their flags. Appearance on this page = the **defaults**; Playback Settings' "For This Series"
+  saves per show.
+- **Smarter subtitle fetching (new for 0.157):** today Supernova only *checks* availability, for the rest of the season.
+  Change: fetch the subtitle **while Preparing playback** so it is there when the video starts, and prepare **the next
+  two episodes** only (never a whole season), spaced to respect OpenSubtitles' limits. Row "Have subtitles ready".
+- Panels drawn (`settings-v2/06`): OpenSubtitles (account, downloads left today, Change account, Sign out), Font
+  (built in, then from your folder, each previewed), Text encoding (Automatic, then by language with flags). Custom fonts
+  folder uses the shared folder picker (`network-files-tabs/40`).
