@@ -1030,3 +1030,8 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   tick on watched ones; long-press menu beside the poster (Play; Mark as watched, Fix match, Remove from library;
   Delete file); Edit page as one master-list panel (Page name, Shows, Genres, Years, Sources, Opens sorted by, Delete
   page), with Movies / TV Shows hiding what does not apply.
+- **Correction (13 Nov 2026):** the first Edit page drawing missed real rows and invented "Sources". Redrawn from the code
+  (`library-pages/06`): What To Show — Page name, Includes, Genres, Match (any / all genres), Years (with its quick
+  ranges: this year, last 5 years, decades), Minimum rating (stepper), Original language, Studio / Network; How To Show
+  It — Show, Sort by (Title · Release date · Date added), Order, View (Grid / List); This Page — Save changes, Delete page.
+  Pictures 1–2 redrawn on the owner's own page (`04`, `05`).
