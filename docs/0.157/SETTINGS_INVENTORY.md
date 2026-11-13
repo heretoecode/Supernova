@@ -151,3 +151,8 @@ item reaches the tabs; no "Find in notice" flash; no odd version lists.
 3. "Show all services" — what should it do, or remove it?
 4. Licences: full text in the app, or a QR code to it?
 5. Keep a "Customise Home" shortcut in Settings, or only on Home?
+
+## Owner's answers (13 Nov 2026)
+- Automatic 3D TV switch: **removed**. "Show all providers" toggle: **removed** (the services list shows everything).
+- Licences: **QR code** to the full text, not in the app. Customise Home: **only on Home** (its button at the bottom of
+  Home already exists); the Settings shortcut goes. Seven tabs: judged on the mock-ups. Mock-ups started.
