@@ -1118,3 +1118,8 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   Add a row. Order changed with the move gesture.
 - Bugs to fix: first automatic hero change after returning to Home is slower; Continue Watching slow to update after
   playback.
+- **Home, owner 13 Nov 2026:** Home and Details heroes share one design (confirmed). Caption box recommended (the picture
+  stays exactly 16:9; the caption is a strip under it). Move / Hide beside the heading; focus: Down from a card lands
+  on Move, Down again on the next row's first card, Right from Move to Hide. Customise Home: **Your Rows above
+  Built-In Rows**. Add a row opens on top (`home-v2/04`): Row name, Includes, Genres, Years, Minimum rating, Add new
+  titles automatically; Sort by, Order; Delete row — the same rows as Customise page.
