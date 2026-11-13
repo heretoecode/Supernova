@@ -1105,3 +1105,16 @@ The approved Files design (§16) with every rule in `docs/design/RULES.md` appli
   time, Resolution, Audio, File size, Date added; TV Shows — Seasons, Episodes, Running time, Resolution, File size, Size
   per episode, Date added; own page — Release date, Episodes, Running time, Resolution, File size, Size per episode, Date
   added (Title always first). **Library pages done (owner, 13 Nov 2026).** Next: Home.
+
+## 33. Home — first pass (13 Nov 2026; mock-ups `home-v2/01`–`03`)
+- Hero as Details (no tagline, two-line description, fixed buttons, dots). Rows compared: Continue Watching with the
+  caption box under each card (title, one line, inset progress bar) vs Recently Added with the title inside the picture.
+  Claude recommends the caption box (matches library posters); the player strip keeps text inside.
+- Row heading: on it, Move and Hide appear beside the heading as plain buttons (no filled circles; Hide is a minus
+  circle, not the crossed-out eye). Move mode uses the app-wide gesture: the heading lifts with ⌃⌄ and "Row 1 of 6 · OK
+  when done", other rows dimmed.
+- Customise Home: floating panel; Built-In Rows (Continue Watching, Recently Added, Watch Next, Trending on Trakt,
+  Popular on Trakt, Recently Watched, Because You Watched) each with a switch; Your Rows with their own settings (›);
+  Add a row. Order changed with the move gesture.
+- Bugs to fix: first automatic hero change after returning to Home is slower; Continue Watching slow to update after
+  playback.
